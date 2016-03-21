@@ -17,7 +17,7 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
 
     public PdfFreeTextAnnotation(Rectangle rect, String appearanceString) {
         super(rect);
-        setDrawnAfter(new PdfString(appearanceString));
+        setDefaultAppearance(new PdfString(appearanceString));
     }
 
     public PdfFreeTextAnnotation(PdfDictionary pdfObject) {

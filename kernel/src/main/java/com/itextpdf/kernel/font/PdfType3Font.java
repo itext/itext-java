@@ -4,12 +4,13 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.otf.Glyph;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 
 /**
  * Low-level API class for Type 3 fonts.
@@ -17,6 +18,10 @@ import com.itextpdf.kernel.pdf.PdfNumber;
  * In Type 3 fonts, glyphs are defined by streams of PDF graphics operators.
  * These streams are associated with character names. A separate encoding entry
  * maps character codes to the appropriate character names for the glyphs.
+ *
+ * <br><br>
+ * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
+ * must be indirect.
  */
 public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
 
@@ -37,12 +42,13 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
     }
 
     /**
-     * Creates a Type3 font based on an existing font dictionary.
+     * Creates a Type3 font based on an existing font dictionary, which must be an indirect object.
      *
-     * @param fontDictionary a dictionary of type <code>/Font</code>
+     * @param fontDictionary a dictionary of type <code>/Font</code>, must have an indirect reference.
      */
     PdfType3Font(PdfDictionary fontDictionary) {
         super(fontDictionary);
+        ensureObjectIsAddedToDocument(fontDictionary);
         checkFontDictionary(fontDictionary, PdfName.Type3);
         subset = true;
         embedded = true;
@@ -70,7 +76,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
             Integer unicode = AdobeGlyphList.nameToUnicode(glyphName.getValue());
             if (unicode != null && fontEncoding.canEncode(unicode)) {
                 int code = fontEncoding.convertToByte(unicode);
-                fontProgram.addGlyph(code, unicode, widths[code], null, new Type3Glyph(charProcsDic.getAsStream(glyphName)));
+                fontProgram.addGlyph(code, unicode, widths[code], null, new Type3Glyph(charProcsDic.getAsStream(glyphName), getDocument()));
             }
         }
     }
@@ -118,7 +124,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         if (glyph != null) {
             return glyph;
         }
-        int code = fontEncoding.getFirstEmptyCode();
+        int code = getFirstEmptyCode();
         glyph = new Type3Glyph(getDocument(), wx, llx, lly, urx, ury, fontProgram.isColorized());
         fontProgram.addGlyph(code, c, wx, new int[]{llx, lly, urx, ury}, glyph);
         fontEncoding.addSymbol((byte) code, c);
@@ -140,8 +146,15 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
 
     @Override
     public Glyph getGlyph(int unicode) {
-        if (fontEncoding.canEncode(unicode)) {
-            return getFontProgram().getGlyph(unicode);
+        if (fontEncoding.canEncode(unicode) || unicode < 33) {
+            Glyph glyph = getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(unicode));
+                if (glyph == null && (glyph = notdefGlyphs.get(unicode)) == null) {
+                    // Handle special layout characters like sfthyphen (00AD).
+                    // This glyphs will be skipped while converting to bytes
+                    glyph = new Glyph(-1, 0, unicode);
+                    notdefGlyphs.put(unicode, glyph);
+                }
+            return glyph;
         }
         return null;
     }
@@ -153,6 +166,10 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
 
     @Override
     protected void addFontStream(PdfDictionary fontDescriptor) {
+    }
+
+    protected PdfDocument getDocument() {
+        return getPdfObject().getIndirectReference().getDocument();
     }
 
     @Override
@@ -172,5 +189,19 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         getPdfObject().put(PdfName.FontBBox, new PdfArray(fontProgram.getFontMetrics().getBbox()));
         super.flushFontData(null, PdfName.Type3);
         super.flush();
+    }
+
+    /**
+     * Gets first empty code, that could use with {@see addSymbol()}
+     * @return code from 1 to 255 or -1 if all slots are busy.
+     */
+    private int getFirstEmptyCode() {
+        final int startFrom = 1;
+        for (int i = startFrom; i < 256; i++) {
+            if (!fontEncoding.canDecode(i)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

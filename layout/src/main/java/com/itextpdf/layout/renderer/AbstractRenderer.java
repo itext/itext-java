@@ -1,17 +1,17 @@
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.Property;
@@ -19,12 +19,21 @@ import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Defines the most common properties and behavior that are shared by most
+ * {@link IRenderer} implementations. All default Renderers are subclasses of
+ * this default implementation.
+ */
 public abstract class AbstractRenderer implements IRenderer {
 
     public static final float EPS = 1e-4f;
@@ -40,11 +49,30 @@ public abstract class AbstractRenderer implements IRenderer {
     protected Map<Property, Object> properties = new EnumMap<>(Property.class);
     protected boolean isLastRendererForModelElement = true;
 
+    /**
+     * Creates a renderer.
+     */
     public AbstractRenderer() {
     }
 
+    /**
+     * Creates a renderer for the specified layout element.
+     *
+     * @param modelElement the layout element that will be drawn by this renderer
+     */
     public AbstractRenderer(IPropertyContainer modelElement) {
         this.modelElement = modelElement;
+    }
+
+    protected AbstractRenderer(AbstractRenderer other) {
+        this.childRenderers = other.childRenderers;
+        this.positionedRenderers = other.positionedRenderers;
+        this.modelElement = other.modelElement;
+        this.flushed = other.flushed;
+        this.occupiedArea = other.occupiedArea.clone();
+        this.parent = other.parent;
+        this.properties = other.properties;
+        this.isLastRendererForModelElement = other.isLastRendererForModelElement;
     }
 
     @Override
@@ -139,23 +167,48 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    /**
+     * Returns a property with a certain key, as a font object.
+     * @param property an {@link Property enum value}
+     * @return a {@link PdfFont}
+     */
     public PdfFont getPropertyAsFont(Property property) {
         return getProperty(property);
     }
 
+    /**
+     * Returns a property with a certain key, as a color.
+     * @param property an {@link Property enum value}
+     * @return a {@link Color}
+     */
     public Color getPropertyAsColor(Property property) {
         return getProperty(property);
     }
 
+    /**
+     * Returns a property with a certain key, as a floating point value.
+     * @param property an {@link Property enum value}
+     * @return a {@link Float}
+     */
     public Float getPropertyAsFloat(Property property) {
         Number value = getProperty(property);
         return value != null ? value.floatValue() : null;
     }
 
+    /**
+     * Returns a property with a certain key, as a boolean value.
+     * @param property an {@link Property enum value}
+     * @return a {@link Boolean}
+     */
     public Boolean getPropertyAsBoolean(Property property) {
         return getProperty(property);
     }
 
+    /**
+     * Returns a property with a certain key, as an integer value.
+     * @param property an {@link Property enum value}
+     * @return a {@link Integer}
+     */
     public Integer getPropertyAsInteger(Property property) {
         Number value = getProperty(property);
         return value != null ? value.intValue() : null;
@@ -170,6 +223,7 @@ public abstract class AbstractRenderer implements IRenderer {
         return sb.toString();
     }
 
+    @Override
     public LayoutArea getOccupiedArea() {
         return occupiedArea;
     }
@@ -195,6 +249,12 @@ public abstract class AbstractRenderer implements IRenderer {
         flushed = true;
     }
 
+    /**
+     * Draws a background layer if it is defined by a key {@link Property#BACKGROUND}
+     * in either the layout element or this {@link IRenderer} itself.
+     *
+     * @param drawContext the context (canvas, document, etc) of this drawing operation.
+     */
     public void drawBackground(DrawContext drawContext) {
         Property.Background background = getProperty(Property.BACKGROUND);
         if (background != null) {
@@ -206,6 +266,11 @@ public abstract class AbstractRenderer implements IRenderer {
                 drawContext.getCanvas().openTag(new CanvasArtifact());
             }
             Rectangle backgroundArea = applyMargins(bBox, false);
+            if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
+                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
+                return;
+            }
             drawContext.getCanvas().saveState().setFillColor(background.getColor()).
                     rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
                             backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
@@ -218,12 +283,25 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    /**
+     * Performs the drawing operation for all {@link IRenderer children}
+     * of this renderer.
+     *
+     * @param drawContext the context (canvas, document, etc) of this drawing operation.
+     */
     public void drawChildren(DrawContext drawContext) {
         for (IRenderer child : childRenderers) {
             child.draw(drawContext);
         }
     }
 
+    /**
+     * Performs the drawing operation for the border of this renderer, if
+     * defined by any of the {@link Property#BORDER} values in either the layout
+     * element or this {@link IRenderer} itself.
+     *
+     * @param drawContext the context (canvas, document, etc) of this drawing operation.
+     */
     public void drawBorder(DrawContext drawContext) {
         Border[] borders = getBorders();
         boolean gotBorders = false;
@@ -237,10 +315,12 @@ public abstract class AbstractRenderer implements IRenderer {
             float bottomWidth = borders[2] != null ? borders[2].getWidth() : 0;
             float leftWidth = borders[3] != null ? borders[3].getWidth() : 0;
 
-            Rectangle bBox = getOccupiedAreaBBox();
-
-            applyMargins(bBox, false);
-            applyBorderBox(bBox, false);
+            Rectangle bBox = getBorderAreaBBox();
+            if (bBox.getWidth() <= 0 || bBox.getHeight() <= 0) {
+                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "border"));
+                return;
+            }
             float x1 = bBox.getX();
             float y1 = bBox.getY();
             float x2 = bBox.getX() + bBox.getWidth();
@@ -279,15 +359,18 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    @Override
     public boolean isFlushed() {
         return flushed;
     }
 
+    @Override
     public IRenderer setParent(IRenderer parent) {
         this.parent = parent;
         return this;
     }
 
+    @Override
     public void move(float dxRight, float dyUp) {
         occupiedArea.getBBox().moveRight(dxRight);
         occupiedArea.getBBox().moveUp(dyUp);
@@ -296,35 +379,59 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    /**
+     * Gets all rectangles that this {@link IRenderer} can draw upon in the given area.
+     * @param area a physical area on the {@link DrawingContext}
+     * @return a list of {@link Rectangle rectangles}
+     */
     public List<Rectangle> initElementAreas(LayoutArea area) {
         return Collections.singletonList(area.getBBox());
     }
 
-    protected Rectangle getOccupiedAreaBBox() {
+    /**
+     * Gets the bounding box that contains all content written to the
+     * {@link DrawingContext} by this {@link IRenderer}.
+     * @return the smallest {@link Rectangle} that surrounds the content
+     */
+    public Rectangle getOccupiedAreaBBox() {
         return occupiedArea.getBBox().clone();
     }
 
-    protected Rectangle getBorderBBox() {
+    /**
+     * Gets the border box of a renderer.
+     * This is a box used to draw borders.
+     * @return border box of a renderer
+     */
+    public Rectangle getBorderAreaBBox() {
         Rectangle rect = getOccupiedAreaBBox();
         applyMargins(rect, false);
         applyBorderBox(rect, false);
         return rect;
     }
 
-    protected Rectangle getInnerBBox() {
+    public Rectangle getInnerAreaBBox() {
         Rectangle rect = getOccupiedAreaBBox();
+        applyMargins(rect, false);
+        applyBorderBox(rect, false);
         applyPaddings(rect, false);
         return rect;
     }
 
-
     protected Float retrieveWidth(float parentBoxWidth) {
-        Property.UnitValue width = getProperty(Property.WIDTH);
-        if (width != null) {
-            if (width.getUnitType() == Property.UnitValue.POINT) {
-                return width.getValue();
-            } else if (width.getUnitType() == Property.UnitValue.PERCENT) {
-                return width.getValue() * parentBoxWidth / 100;
+        return retrieveUnitValue(parentBoxWidth, Property.WIDTH);
+    }
+
+    protected Float retrieveHeight() {
+        return getProperty(Property.HEIGHT);
+    }
+
+    protected Float retrieveUnitValue(float basePercentValue, Property property) {
+        Property.UnitValue value = getProperty(property);
+        if (value != null) {
+            if (value.getUnitType() == Property.UnitValue.POINT) {
+                return value.getValue();
+            } else if (value.getUnitType() == Property.UnitValue.PERCENT) {
+                return value.getValue() * basePercentValue / 100;
             } else {
                 throw new IllegalStateException("invalid unit type");
             }
@@ -401,7 +508,7 @@ public abstract class AbstractRenderer implements IRenderer {
             array.add(new PdfNumber(occupiedArea.getBBox().getX()));
             array.add(new PdfNumber(occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight()));
             array.add(new PdfNumber(1));
-            document.addNewName(new PdfString(destination), array);
+            document.addNameDestination(destination, array.makeIndirect(document));
         }
     }
 

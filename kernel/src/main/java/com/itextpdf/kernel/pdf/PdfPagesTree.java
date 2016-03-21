@@ -56,7 +56,7 @@ class PdfPagesTree {
         PdfPage pdfPage = pages.get(pageNum);
         if (pdfPage == null) {
             loadPage(pageNum);
-            pdfPage = new PdfPage(pageRefs.get(pageNum), document);
+            pdfPage = new PdfPage(pageRefs.get(pageNum));
             int parentIndex = findPageParent(pageNum);
             PdfPages parentPages = parents.get(parentIndex);
             pdfPage.parentPages = parentPages;
@@ -182,36 +182,12 @@ class PdfPagesTree {
      */
     public PdfPage removePage(int pageNum) {
         PdfPage pdfPage = getPage(pageNum);
+        //TODO log removing flushed page
         if (internalRemovePage(--pageNum)) {
-            if (!pdfPage.getPdfObject().isFlushed()) {
-                pdfPage.getPdfObject().remove(PdfName.Parent);
-            }
-            pdfPage.getPdfObject().getIndirectReference().setFree();
             return pdfPage;
         } else {
             return null;
         }
-    }
-
-    /**
-     * Removes the first occurrence of the specified page from this list,
-     * if it is present. Returns <tt>true</tt> if this list
-     * contained the specified element (or equivalently, if this list
-     * changed as a result of the call).
-     *
-     * @param pdfPage page to be removed from this list, if present
-     * @return <tt>true</tt> if this list contained the specified page
-     */
-    public boolean removePage(PdfPage pdfPage) {
-        int pageNum = getPageNumber(pdfPage) - 1;
-        if (pageNum < 0)
-            return false;
-        if (!pdfPage.getPdfObject().isFlushed()) {
-            pdfPage.getPdfObject().remove(PdfName.Parent);
-        }
-        pdfPage.getPdfObject().getIndirectReference().setFree();
-        internalRemovePage(pageNum);
-        return true;
     }
 
     /**

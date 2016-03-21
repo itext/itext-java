@@ -46,7 +46,7 @@ public class PdfReaderTest extends ExtendedITextTest{
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor(author).
+        pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
         pdfDoc.addNewPage();
@@ -54,9 +54,9 @@ public class PdfReaderTest extends ExtendedITextTest{
 
         com.itextpdf.kernel.pdf.PdfReader reader = new com.itextpdf.kernel.pdf.PdfReader(new FileInputStream(filename));
         pdfDoc = new PdfDocument(reader);
-        Assert.assertEquals(author, pdfDoc.getInfo().getAuthor());
-        Assert.assertEquals(creator, pdfDoc.getInfo().getCreator());
-        Assert.assertEquals(title, pdfDoc.getInfo().getTitle());
+        Assert.assertEquals(author, pdfDoc.getDocumentInfo().getAuthor());
+        Assert.assertEquals(creator, pdfDoc.getDocumentInfo().getCreator());
+        Assert.assertEquals(title, pdfDoc.getDocumentInfo().getTitle());
         PdfObject object = pdfDoc.getPdfObject(1);
         Assert.assertEquals(PdfObject.Dictionary, object.getType());
         Assert.assertTrue(objectTypeEqualTo(object, PdfName.Catalog));
@@ -879,9 +879,9 @@ public class PdfReaderTest extends ExtendedITextTest{
         PdfDocument document = new PdfDocument(reader);
         Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
 
-        Assert.assertEquals(author, document.getInfo().getAuthor());
-        Assert.assertEquals(creator, document.getInfo().getCreator());
-        Assert.assertEquals(title, document.getInfo().getTitle());
+        Assert.assertEquals(author, document.getDocumentInfo().getAuthor());
+        Assert.assertEquals(creator, document.getDocumentInfo().getCreator());
+        Assert.assertEquals(title, document.getDocumentInfo().getTitle());
 
         int pageCount = document.getNumberOfPages();
         Assert.assertEquals(10, pageCount);
@@ -904,9 +904,9 @@ public class PdfReaderTest extends ExtendedITextTest{
         PdfDocument document = new PdfDocument(reader);
         Assert.assertTrue("Need rebuildXref()", reader.hasRebuiltXref());
 
-        Assert.assertEquals(author, document.getInfo().getAuthor());
-        Assert.assertEquals(creator, document.getInfo().getCreator());
-        Assert.assertEquals(title, document.getInfo().getTitle());
+        Assert.assertEquals(author, document.getDocumentInfo().getAuthor());
+        Assert.assertEquals(creator, document.getDocumentInfo().getCreator());
+        Assert.assertEquals(title, document.getDocumentInfo().getTitle());
 
         int pageCount = document.getNumberOfPages();
         Assert.assertEquals(10, pageCount);
@@ -931,9 +931,9 @@ public class PdfReaderTest extends ExtendedITextTest{
         Assert.assertFalse("No need in fixXref()", reader.hasFixedXref());
         Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
 
-        Assert.assertEquals(null, document.getInfo().getAuthor());
-        Assert.assertEquals(null, document.getInfo().getCreator());
-        Assert.assertEquals(null, document.getInfo().getTitle());
+        Assert.assertEquals(null, document.getDocumentInfo().getAuthor());
+        Assert.assertEquals(null, document.getDocumentInfo().getCreator());
+        Assert.assertEquals(null, document.getDocumentInfo().getTitle());
 
         int pageCount = document.getNumberOfPages();
         Assert.assertEquals(10, pageCount);

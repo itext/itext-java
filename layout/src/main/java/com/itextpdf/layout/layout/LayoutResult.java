@@ -1,6 +1,6 @@
 package com.itextpdf.layout.layout;
 
-import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.renderer.IRenderer;
 
 public class LayoutResult {
@@ -13,7 +13,7 @@ public class LayoutResult {
     protected LayoutArea occupiedArea;
     protected IRenderer splitRenderer;
     protected IRenderer overflowRenderer;
-    protected PageSize newPageSize;
+    protected AreaBreak areaBreak;
 
     public LayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer) {
         this.status = status;
@@ -46,12 +46,36 @@ public class LayoutResult {
         this.overflowRenderer = overflowRenderer;
     }
 
-    public PageSize getNewPageSize() {
-        return newPageSize;
+    public AreaBreak getAreaBreak() {
+        return areaBreak;
     }
 
-    public LayoutResult setNewPageSize(PageSize pageSize) {
-        this.newPageSize = pageSize;
+    public LayoutResult setAreaBreak(AreaBreak areaBreak) {
+        this.areaBreak = areaBreak;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        String status;
+        switch (getStatus()) {
+            case FULL:
+                status = "Full";
+                break;
+            case NOTHING:
+                status = "Nothing";
+                break;
+            case PARTIAL:
+                status = "Partial";
+                break;
+            default:
+                status = "None";
+                break;
+        }
+        return "LayoutResult{" +
+                status +
+                ", areaBreak=" + areaBreak +
+                ", occupiedArea=" + occupiedArea +
+                '}';
     }
 }

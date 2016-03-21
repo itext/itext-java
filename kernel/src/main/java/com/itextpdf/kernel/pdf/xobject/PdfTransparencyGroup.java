@@ -38,4 +38,9 @@ public class PdfTransparencyGroup extends PdfObjectWrapper<PdfDictionary> {
     public void setColorSpace(PdfArray colorSpace) {
         put(PdfName.CS, colorSpace);
     }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
 }

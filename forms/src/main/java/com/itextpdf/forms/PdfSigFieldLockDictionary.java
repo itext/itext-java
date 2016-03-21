@@ -114,4 +114,9 @@ public class PdfSigFieldLockDictionary extends PdfObjectWrapper<PdfDictionary> {
             return number;
         }
     }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
 }

@@ -310,7 +310,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     }
 
     @Override
-    public int getType() {
+    public byte getType() {
         return Array;
     }
 
@@ -347,8 +347,8 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfArray copyToDocument(PdfDocument document) {
-        return super.copyToDocument(document, true);
+    public PdfArray copyTo(PdfDocument document) {
+        return super.copyTo(document, true);
     }
 
     /**
@@ -363,8 +363,8 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfArray copyToDocument(PdfDocument document, boolean allowDuplicating) {
-        return super.copyToDocument(document, allowDuplicating);
+    public PdfArray copyTo(PdfDocument document, boolean allowDuplicating) {
+        return super.copyTo(document, allowDuplicating);
     }
 
     @Override

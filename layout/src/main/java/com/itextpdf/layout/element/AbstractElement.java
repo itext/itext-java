@@ -12,6 +12,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Defines the most common properties that most {@link IElement} implementations
+ * share.
+ * 
+ * @param <Type> the type of the implementation
+ */
 public abstract class AbstractElement<Type extends AbstractElement> extends ElementPropertyContainer<Type> implements IElement<Type> {
 
     protected IRenderer nextRenderer;
@@ -97,6 +103,10 @@ public abstract class AbstractElement<Type extends AbstractElement> extends Elem
                 }
             }
         }
+    }
+
+    public boolean isEmpty() {
+        return 0 == childElements.size();
     }
 
 }

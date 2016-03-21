@@ -1,6 +1,8 @@
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -9,6 +11,9 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfWriter extends PdfOutputStream {
 
@@ -21,7 +26,7 @@ public class PdfWriter extends PdfOutputStream {
      * Indicates if the writer copy objects in a smart mode. If so PdfDictionary and PdfStream will be hashed
      * and reused if there's an object with the same content later.
      */
-    private boolean smartCopyMode;
+    private boolean smartMode;
 
     /**
      * Indicates if to use full compression (using object streams).
@@ -36,7 +41,7 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected PdfObjectStream objectStream = null;
 
-    protected Hashtable<Integer, PdfIndirectReference> copiedObjects = new Hashtable<Integer, PdfIndirectReference>();
+    protected Hashtable<Integer, PdfIndirectReference> copiedObjects = new Hashtable<>();
 
     //forewarned is forearmed
     protected boolean isUserWarnedAboutAcroFormCopying;
@@ -90,12 +95,16 @@ public class PdfWriter extends PdfOutputStream {
     }
 
     /**
-     * Sets the smart copy mode.
-     * @param smartCopyMode
-     * @return
+     * Sets the smart mode.
+     * <p/>
+     * In smart mode when resources (such as fonts, images,...) are
+     * encountered, a reference to these resources is saved
+     * in a cache, so that they can be reused.
+     * This requires more memory, but reduces the file size
+     * of the resulting PDF document.
      */
-    public PdfWriter setSmartCopyMode(boolean smartCopyMode) {
-        this.smartCopyMode = smartCopyMode;
+    public PdfWriter setSmartMode(boolean smartMode) {
+        this.smartMode = smartMode;
         return this;
     }
 
@@ -200,6 +209,12 @@ public class PdfWriter extends PdfOutputStream {
         if (object == null) {
             object = PdfNull.PdfNull;
         }
+        if (checkTypeOfPdfDictionary(object, PdfName.Catalog)) {
+            Logger logger = LoggerFactory.getLogger(PdfReader.class);
+            logger.warn(LogMessageConstant.MAKE_COPY_OF_CATALOG_DICTIONARY_IS_FORBIDDEN);
+            object = PdfNull.PdfNull;
+        }
+
         PdfIndirectReference indirectReference = object.getIndirectReference();
         PdfIndirectReference copiedIndirectReference;
 
@@ -211,20 +226,22 @@ public class PdfWriter extends PdfOutputStream {
                 return copiedIndirectReference.getRefersTo();
         }
 
+        if (smartMode && !checkTypeOfPdfDictionary(object, PdfName.Page)) {
+            PdfObject copiedObject = smartCopyObject(object);
+            if (copiedObject != null) {
+                return copiedObjects.get(getCopyObjectKey(copiedObject)).getRefersTo();
+            }
+        }
+
         PdfObject newObject = object.newInstance();
         if (indirectReference != null) {
             if (copyObjectKey == 0)
                 copyObjectKey = getCopyObjectKey(object);
-            copiedObjects.put(copyObjectKey, newObject.makeIndirect(document).getIndirectReference());
+            PdfIndirectReference in = newObject.makeIndirect(document).getIndirectReference();
+            copiedObjects.put(copyObjectKey, in);
         }
         newObject.copyContent(object, document);
 
-        if (smartCopyMode) {
-            PdfObject copiedObject = smartCopyObject(newObject);
-            if (copiedObject != null) {
-                return copiedObject;
-            }
-        }
         return newObject;
     }
 
@@ -237,7 +254,7 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected void writeToBody(PdfObject object) throws IOException {
         if (crypto != null) {
-            crypto.setHashKey(object.getIndirectReference().getObjNumber(), object.getIndirectReference().getGenNumber());
+            crypto.setHashKeyForNextObject(object.getIndirectReference().getObjNumber(), object.getIndirectReference().getGenNumber());
         }
         writeInteger(object.getIndirectReference().getObjNumber()).
                 writeSpace().
@@ -294,9 +311,11 @@ public class PdfWriter extends PdfOutputStream {
         PdfXrefTable xref = document.getXref();
         for (int i = 1; i < xref.size(); i++) {
             PdfIndirectReference indirectReference = xref.get(i);
-            PdfObject object = indirectReference.getRefersTo(false);
-            if (object != null && !object.equals(objectStream) && object.isModified()) {
-                object.flush();
+            if (null != indirectReference) {
+                PdfObject object = indirectReference.getRefersTo(false);
+                if (object != null && !object.equals(objectStream) && object.isModified()) {
+                    object.flush();
+                }
             }
         }
         if (objectStream != null && objectStream.getSize() > 0) {
@@ -313,8 +332,14 @@ public class PdfWriter extends PdfOutputStream {
      * @return calculated hash code.
      */
     protected int getCopyObjectKey(PdfObject object) {
-        int result = object.getIndirectReference().hashCode();
-        result = 31 * result + object.getDocument().hashCode();
+        PdfIndirectReference in;
+        if (object.isIndirectReference()) {
+            in = (PdfIndirectReference) object;
+        } else {
+            in = object.getIndirectReference();
+        }
+        int result = in.hashCode();
+        result = 31 * result + in.getDocument().hashCode();
         return result;
     }
 
@@ -324,7 +349,7 @@ public class PdfWriter extends PdfOutputStream {
             streamKey = new ByteStore((PdfStream) object, serialized);
             PdfIndirectReference streamRef = streamMap.get(streamKey);
             if (streamRef != null) {
-                return  streamRef;
+                return streamRef;
             }
             streamMap.put(streamKey, object.getIndirectReference());
         } else if (object.isDictionary()) {
@@ -339,11 +364,14 @@ public class PdfWriter extends PdfOutputStream {
         return null;
     }
 
+    private static boolean checkTypeOfPdfDictionary(PdfObject dictionary, PdfName expectedType) {
+        return dictionary.isDictionary() && expectedType.equals(((PdfDictionary)dictionary).getAsName(PdfName.Type));
+    }
+
     static class ByteStore {
         private final byte[] b;
         private final int hash;
         private MessageDigest md5;
-
         private void serObject(PdfObject obj, int level, ByteBuffer bb, HashMap<Integer, Integer> serialized) {
             if (level <= 0)
                 return;
@@ -408,7 +436,7 @@ public class PdfWriter extends PdfOutputStream {
                 if(keys[k].equals(PdfName.P) &&(dic.get((PdfName)keys[k]).isIndirectReference() || dic.get((PdfName)keys[k]).isDictionary()) || keys[k].equals(PdfName.Parent)) // ignore recursive call
                     continue;
                 serObject((PdfObject) keys[k], level, bb, serialized);
-                serObject(dic.get((PdfName) keys[k]), level, bb, serialized);
+                serObject(dic.get((PdfName) keys[k], false), level, bb, serialized);
 
             }
         }
@@ -418,7 +446,7 @@ public class PdfWriter extends PdfOutputStream {
             if (level <= 0)
                 return;
             for (int k = 0; k < array.size(); ++k) {
-                serObject(array.get(k), level, bb, serialized);
+                serObject(array.get(k, false), level, bb, serialized);
             }
         }
 
@@ -475,8 +503,14 @@ public class PdfWriter extends PdfOutputStream {
         }
 
         protected int getCopyObjectKey(PdfObject object) {
-            int result = object.getIndirectReference().hashCode();
-            result = 31 * result + object.getDocument().hashCode();
+            PdfIndirectReference in;
+            if (object.isIndirectReference()) {
+                in = (PdfIndirectReference) object;
+            } else {
+                in = object.getIndirectReference();
+            }
+            int result = in.hashCode();
+            result = 31 * result + in.getDocument().hashCode();
             return result;
         }
     }

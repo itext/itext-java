@@ -21,6 +21,10 @@ import java.util.List;
  * An optional content group is a dictionary representing a collection of graphics
  * that can be made visible or invisible dynamically by users of viewer applications.
  * In iText they are referenced as layers.
+ *
+ * <br><br>
+ * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
+ * must be indirect.
  */
 public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG {
 
@@ -35,14 +39,14 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
     protected List<PdfLayer> children;
 
     /**
-     * Creates a new layer by existing dictionary and document.
-     * @param layerDictionary the layer dictionary
-     * @param document the PdfDocument which the layer belongs to
+     * Creates a new layer by existing dictionary, which must be an indirect object.
+     *
+     * @param layerDictionary the layer dictionary, must have an indirect reference.
      * @throws PdfException
      */
-    public PdfLayer(PdfDictionary layerDictionary,PdfDocument document) {
+    public PdfLayer(PdfDictionary layerDictionary) {
         super(layerDictionary);
-        makeIndirect(document);
+        ensureObjectIsAddedToDocument(layerDictionary);
     }
 
     /**
@@ -345,7 +349,6 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * Indicates that the group contains a pagination artifact.
      * @param pe one of the following names: "HF" (Header Footer),
      * "FG" (Foreground), "BG" (Background), or "L" (Logo).
-     * @since 5.0.2
      */
     public void setPageElement(String pe) {
         PdfDictionary usage = getUsage();
@@ -381,6 +384,15 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      */
     public List<PdfLayer> getChildren() {
         return children == null ? null : new ArrayList<>(children);
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
+
+    protected PdfDocument getDocument() {
+        return getPdfObject().getIndirectReference().getDocument();
     }
 
     /**

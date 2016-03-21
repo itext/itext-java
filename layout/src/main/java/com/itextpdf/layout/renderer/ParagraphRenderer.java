@@ -2,6 +2,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.Property;
+import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -65,6 +66,20 @@ public class ParagraphRenderer extends BlockRenderer {
             currentRenderer.addChild(child);
         }
 
+        if (0 == childRenderers.size()) {
+            anythingPlaced = true;
+            currentRenderer = null;
+            setProperty(Property.MARGIN_TOP, 0);
+            setProperty(Property.MARGIN_RIGHT, 0);
+            setProperty(Property.MARGIN_BOTTOM, 0);
+            setProperty(Property.MARGIN_LEFT, 0);
+            setProperty(Property.PADDING_TOP, 0);
+            setProperty(Property.PADDING_RIGHT, 0);
+            setProperty(Property.PADDING_BOTTOM, 0);
+            setProperty(Property.PADDING_LEFT, 0);
+            setProperty(Property.BORDER, Border.NO_BORDER);
+        }
+
         float lastYLine = layoutBox.getY() + layoutBox.getHeight();
         Property.Leading leading = getProperty(Property.LEADING);
         float leadingValue = 0;
@@ -109,8 +124,16 @@ public class ParagraphRenderer extends BlockRenderer {
             if (processedRenderer != null && processedRenderer.containsImage()){
                 leadingValue -= previousDescent;
             }
-            boolean doesNotFit = result.getStatus() == LayoutResult.NOTHING ||
-                    processedRenderer != null && leading != null && processedRenderer.getOccupiedArea().getBBox().getHeight() + processedRenderer.getLeadingValue(leading) - processedRenderer.getMaxAscent() > layoutBox.getHeight();
+            boolean doesNotFit = result.getStatus() == LayoutResult.NOTHING;
+            float deltaY = 0;
+            if (!doesNotFit) {
+                lastLineHeight = processedRenderer.getOccupiedArea().getBBox().getHeight();
+                deltaY = lastYLine - leadingValue - processedRenderer.getYLine();
+                // for the first and last line in a paragraph, leading is smaller
+                if (firstLineInBox)
+                    deltaY = -(leadingValue - lastLineHeight) / 2;
+                doesNotFit = leading != null && processedRenderer.getOccupiedArea().getBBox().getY() + deltaY < layoutBox.getY();
+            }
 
             if (doesNotFit) {
                 if (currentAreaPos + 1 < areas.size()) {
@@ -142,17 +165,16 @@ public class ParagraphRenderer extends BlockRenderer {
                         if (anythingPlaced) {
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]);
                         } else {
-                            return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                            if (getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                                return new LayoutResult(LayoutResult.FULL, occupiedArea, null, this);
+                            } else {
+                                return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                            }
                         }
                     }
                 }
             } else {
-                lastLineHeight = processedRenderer.getOccupiedArea().getBBox().getHeight();
                 if (leading != null) {
-                    float deltaY = lastYLine - leadingValue - processedRenderer.getYLine();
-                    // for the first and last line in a paragraph, leading is smaller
-                    if (firstLineInBox)
-                        deltaY = -(leadingValue - lastLineHeight) / 2;
                     processedRenderer.move(0, deltaY);
                     lastYLine = processedRenderer.getYLine();
                 }
@@ -169,8 +191,9 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         if (!isPositioned()) {
-            occupiedArea.getBBox().moveDown((leadingValue - lastLineHeight) / 2);
-            occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + (leadingValue - lastLineHeight) / 2);
+            float moveDown = Math.min((leadingValue - lastLineHeight) / 2, occupiedArea.getBBox().getY() - layoutBox.getY());
+            occupiedArea.getBBox().moveDown(moveDown);
+            occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
         }
         Float blockHeight = getPropertyAsFloat(Property.HEIGHT);
         applyPaddings(occupiedArea.getBBox(), true);

@@ -1,7 +1,13 @@
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.crypto.BadPasswordException;
+
 import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 abstract public class PdfObject {
 
@@ -22,30 +28,38 @@ abstract public class PdfObject {
     protected PdfIndirectReference indirectReference = null;
 
     // Indicates if the object has been flushed.
-    protected static final byte Flushed = 1;
+    protected static final short Flushed = 1;
     // Indicates that the indirect reference of the object could be reused or have to be marked as free.
-    protected static final byte Free = 2;
+    protected static final short Free = 2;
     // Indicates that definition of the indirect reference of the object still not found (e.g. keys in XRefStm).
-    protected static final byte Reading = 4;
+    protected static final short Reading = 4;
     // Indicates that object changed (using in stamp mode).
-    protected static final byte Modified = 8;
+    protected static final short Modified = 8;
     // Indicates that the indirect reference of the object represents ObjectStream from original document.
     // When PdfReader read ObjectStream reference marked as OriginalObjectStream
     // to avoid further reusing.
-    protected static final byte OriginalObjectStream = 16;
+    protected static final short OriginalObjectStream = 16;
     // For internal usage only. Marks objects that shall be written to the output document.
     // Option is needed to build the correct PDF objects tree when closing the document.
     // As a result it avoids writing unused (removed) objects.
-    protected static final byte MustBeFlushed = 32;
+    protected static final short MustBeFlushed = 32;
     // Indicates that the object shall be indirect when it is written to the document.
     // It is used to postpone the creation of indirect reference for the objects that shall be indirect,
     // so it is possible to create such objects without PdfDocument instance.
-    protected static final byte MustBeIndirect = 64;
+    protected static final short MustBeIndirect = 64;
+    // Indicates that the object is highly sensitive and we do not want to release it even if release() is called.
+    // This flag can be set in stamping mode in object wrapper constructors and is automatically set when setModified
+    // flag is set (we do not want to release changed objects).
+    // The flag is set automatically for some wrappers that need document even in reader mode (FormFields etc).
+    protected static final short ForbidRelease = 128;
+    // Indicates that we do not want this object to be ever written into the resultant document
+    // (because of multiple objects read from the same reference inconsistency).
+    protected static final short ReadOnly = 256;
 
     /**
      * Indicate same special states of PdfIndirectObject or PdfObject like @see Free, @see Reading, @see Modified.
      */
-    private byte state;
+    private short state;
 
     public PdfObject() {
 
@@ -56,7 +70,7 @@ abstract public class PdfObject {
      *
      * @return object type.
      */
-    abstract public int getType();
+    abstract public byte getType();
 
     /**
      * Flushes the object to the document.
@@ -80,7 +94,7 @@ abstract public class PdfObject {
             return;
         }
         try {
-            PdfDocument document = getDocument();
+            PdfDocument document = getIndirectReference().getDocument();
             if (document != null) {
                 document.checkIsoConformance(this, IsoKey.PDF_OBJECT);
                 document.flushObject(this, canBeInObjStm && getType() != Stream
@@ -154,7 +168,7 @@ abstract public class PdfObject {
      * @param state special flag to check
      * @return true if the state was set.
      */
-    protected boolean checkState(byte state) {
+    protected boolean checkState(short state) {
         return (this.state & state) == state;
     }
 
@@ -162,7 +176,7 @@ abstract public class PdfObject {
      * Sets special states of current object.
      * @param state special flag of current object
      */
-    protected <T extends PdfObject> T setState(byte state) {
+    protected <T extends PdfObject> T setState(short state) {
         this.state |= state;
         return (T) this;
     }
@@ -171,8 +185,8 @@ abstract public class PdfObject {
      * Clear state of the flag of current object.
      * @param state special flag state to clear
      */
-    protected <T extends PdfObject> T clearState(byte state) {
-        this.state &= 0xFF^state;
+    protected <T extends PdfObject> T clearState(short state) {
+        this.state &= ~state;
         return (T) this;
     }
 
@@ -194,17 +208,6 @@ abstract public class PdfObject {
     public boolean isModified() {
         PdfIndirectReference indirectReference = getIndirectReference();
         return (indirectReference != null && indirectReference.checkState(Modified));
-    }
-
-    /**
-     * Gets the document the object belongs to.
-     *
-     * @return a document the object belongs to. If object is direct return null.
-     */
-    public PdfDocument getDocument() {
-        if (indirectReference != null)
-            return indirectReference.getDocument();
-        return null;
     }
 
     /**
@@ -230,8 +233,8 @@ abstract public class PdfObject {
      * @param document document to copy object to.
      * @return copied object.
      */
-    public <T extends PdfObject> T copyToDocument(PdfDocument document) {
-        return copyToDocument(document, true);
+    public <T extends PdfObject> T copyTo(PdfDocument document) {
+        return copyTo(document, true);
     }
 
     /**
@@ -244,12 +247,17 @@ abstract public class PdfObject {
      *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
      * @return copied object.
      */
-    public  <T extends PdfObject> T copyToDocument(PdfDocument document, boolean allowDuplicating) {
+    public  <T extends PdfObject> T copyTo(PdfDocument document, boolean allowDuplicating) {
         if (document == null)
             throw new PdfException(PdfException.DocumentToCopyToCannotBeNull);
 
-        if ((indirectReference != null && indirectReference.getWriter() != null) || checkState(MustBeIndirect)) {
-            throw new PdfException(PdfException.CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten);
+        if (indirectReference != null) {
+            if (indirectReference.getWriter() != null || checkState(MustBeIndirect)) {
+                throw new PdfException(PdfException.CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten);
+            }
+            if (!indirectReference.getReader().isOpenedWithFullPermission()) {
+                throw new BadPasswordException(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);
+            }
         }
 
         return processCopying(document, allowDuplicating);
@@ -265,19 +273,19 @@ abstract public class PdfObject {
      * This two cases are distinguished by the state of <code>document</code> parameter:
      * the second case is processed if <code>document</code> is <code>null</code>.
      *
-     * @param document if not null: document to copy object to; otherwise indicates that object is to be cloned.
+     * @param documentTo if not null: document to copy object to; otherwise indicates that object is to be cloned.
      * @param allowDuplicating indicates if to allow copy objects which already have been copied.
      *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
      *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
      * @return copied object.
      */
-    protected <T extends PdfObject> T processCopying(PdfDocument document, boolean allowDuplicating) {
-        if (document != null) {
-            //copyToDocument case
-            PdfWriter writer = document.getWriter();
+    protected <T extends PdfObject> T processCopying(PdfDocument documentTo, boolean allowDuplicating) {
+        if (documentTo != null) {
+            //copyTo case
+            PdfWriter writer = documentTo.getWriter();
             if (writer == null)
                 throw new PdfException(PdfException.CannotCopyToDocumentOpenedInReadingMode);
-            return (T) writer.copyObject(this, document, allowDuplicating);
+            return (T) writer.copyObject(this, documentTo, allowDuplicating);
 
         } else {
             //clone case
@@ -286,8 +294,7 @@ abstract public class PdfObject {
                 PdfObject refTo = ((PdfIndirectReference) obj).getRefersTo();
                 obj = refTo != null ? refTo : obj;
             }
-            boolean isIndirect = obj.getIndirectReference() != null || obj.checkState(MustBeIndirect);
-            if (isIndirect && !allowDuplicating) {
+            if (obj.isIndirect() && !allowDuplicating) {
                 return (T) obj;
             }
             return (T) obj.clone();
@@ -299,43 +306,28 @@ abstract public class PdfObject {
         return (T) this;
     }
 
-    /**
-     * Gets a PdfWriter associated with the document object belongs to.
-     *
-     * @return PdfWriter.
-     */
-    protected PdfWriter getWriter() {
-        PdfDocument doc = getDocument();
-        if (doc != null)
-            return doc.getWriter();
-        return null;
-    }
-
-    /**
-     * Gets a PdfReader associated with the document object belongs to.
-     *
-     * @return PdfReader.
-     */
-    protected PdfReader getReader() {
-        PdfDocument doc = getDocument();
-        if (doc != null)
-            return doc.getReader();
-        return null;
-    }
-
     //TODO comment! Add note about flush, modified flag and xref.
     public void setModified() {
-        if (indirectReference != null)
+        if (indirectReference != null) {
             indirectReference.setState(Modified);
+            setState(ForbidRelease);
+        }
     }
 
     public void release() {
-        if (getReader() != null && indirectReference != null
-                && !indirectReference.checkState(Flushed)) {
-            indirectReference.refersTo = null;
-            indirectReference = null;
+        // In case ForbidRelease flag is set, release will not be performed.
+        if (checkState(ForbidRelease)) {
+            Logger logger = LoggerFactory.getLogger(PdfObject.class);
+            logger.warn(LogMessageConstant.FORBID_RELEASE_IS_SET);
+        } else {
+            if (indirectReference != null && indirectReference.getReader() != null
+                    && !indirectReference.checkState(Flushed)) {
+                indirectReference.refersTo = null;
+                indirectReference = null;
+                setState(ReadOnly);
+            }
+            //TODO log reasonless call of method
         }
-        //TODO log reasonless call of method
     }
 
     /**

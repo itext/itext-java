@@ -1,8 +1,8 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.font.cmap.CMapCidUni;
 import com.itextpdf.io.font.otf.Glyph;
-import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.IntHashtable;
 
 import java.util.Map;
@@ -11,8 +11,6 @@ import java.util.StringTokenizer;
 
 public class CidFont extends FontProgram {
 
-    private IntHashtable hMetrics;
-    private IntHashtable vMetrics;
     private int pdfFontFlags;
     private Set<String> compatibleCmaps;
 
@@ -24,13 +22,6 @@ public class CidFont extends FontProgram {
             throw new IOException("no.such.predefined.font.1").setMessageParams(fontName);
         }
         initializeCidFontProperties(fontDesc);
-        avgWidth = 0;
-        for(int code : hMetrics.getKeys()) {
-            avgWidth += hMetrics.get(code);
-        }
-        if (hMetrics.size() != 0) {
-            avgWidth /= hMetrics.size();
-        }
     }
 
     CidFont(String fontName, Set<String> cmaps, Map<String, Object> fontDescription) {
@@ -45,27 +36,6 @@ public class CidFont extends FontProgram {
         } else {
             return compatibleCmaps != null && compatibleCmaps.contains(cmap);
         }
-    }
-
-    public IntHashtable getHMetrics() {
-        return hMetrics;
-    }
-
-    public IntHashtable getVMetrics() {
-        return vMetrics;
-    }
-
-    public void setHMetrics(IntHashtable hMetrics) {
-        this.hMetrics = hMetrics;
-    }
-
-    public void setVMetrics(IntHashtable vMetrics) {
-        this.vMetrics = vMetrics;
-    }
-
-    @Override
-    public int getWidth(int ch) {
-        return hMetrics.get(ch);
     }
 
     @Override
@@ -83,11 +53,6 @@ public class CidFont extends FontProgram {
         return false;
     }
 
-    //TODO remove
-    public GlyphLine createGlyphLine(String content) {
-        return null;
-    }
-
     private void initializeCidFontNameAndStyle(String fontName) {
         String nameBase = getBaseName(fontName);
         if (nameBase.length() < fontName.length()) {
@@ -99,8 +64,6 @@ public class CidFont extends FontProgram {
     }
 
     private void initializeCidFontProperties(Map<String, Object> fontDesc) {
-        setHMetrics((IntHashtable) fontDesc.get("W"));
-        setVMetrics((IntHashtable) fontDesc.get("W2"));
         fontIdentification.setPanose((String) fontDesc.get("Panose"));
         fontMetrics.setItalicAngle(Integer.parseInt((String) fontDesc.get("ItalicAngle")));
         fontMetrics.setCapHeight(Integer.parseInt((String) fontDesc.get("CapHeight")));
@@ -116,5 +79,34 @@ public class CidFont extends FontProgram {
         Integer ury = Integer.parseInt(tk.nextToken());
         fontMetrics.updateBbox(llx, lly, urx, ury);
         registry = (String) fontDesc.get("Registry");
+        String uniMap = getCompatibleUniMap(registry);
+        if (uniMap != null) {
+            IntHashtable metrics = (IntHashtable) fontDesc.get("W");
+            CMapCidUni cid2Uni = FontCache.getCid2UniCmap(uniMap);
+            avgWidth = 0;
+            for (int cid : cid2Uni.getCids()) {
+                int uni = cid2Uni.lookup(cid);
+                int width = metrics.containsKey(cid) ? metrics.get(cid) : DEFAULT_WIDTH;
+                Glyph glyph = new Glyph(cid, width, uni);
+                avgWidth += glyph.getWidth();
+                codeToGlyph.put(cid, glyph);
+                unicodeToGlyph.put(uni, glyph);
+            }
+            fixSpaceIssue();
+            if (codeToGlyph.size() != 0) {
+                avgWidth /= codeToGlyph.size();
+            }
+        }
+    }
+
+    private static String getCompatibleUniMap(String registry) {
+        String uniMap = "";
+        for (String name : CidFontProperties.getRegistryNames().get(registry + "_Uni")) {
+            uniMap = name;
+            if (name.endsWith("H")) {
+                break;
+            }
+        }
+        return uniMap;
     }
 }

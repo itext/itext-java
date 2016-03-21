@@ -1,10 +1,6 @@
 package com.itextpdf.forms.fields;
 
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 
 /**
@@ -52,7 +48,9 @@ public class PdfChoiceFormField extends PdfFormField {
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setTopIndex(int index) {
-        return put(PdfName.TI, new PdfNumber(index));
+        put(PdfName.TI, new PdfNumber(index));
+        regenerateField();
+        return this;
     }
 
     /**
@@ -71,6 +69,75 @@ public class PdfChoiceFormField extends PdfFormField {
      */
     public PdfChoiceFormField setIndices(PdfArray indices) {
         return put(PdfName.I, indices);
+    }
+    /**
+     * Highlights the options. If this method is used for Combo box, the first value in input array
+     * will be the field value
+     * @param optionValues Array of options to be highlighted
+     * @return
+     */
+    public PdfChoiceFormField setListSelected(String[] optionValues) {
+        PdfArray options = getOptions();
+        PdfArray indices = new PdfArray();
+        PdfArray values = new PdfArray();
+        for (String element : optionValues) {
+            for (int index = 0; index < options.size(); index++) {
+                PdfObject option = options.get(index);
+                PdfString value = null;
+                if (option.isString()) {
+                    value = (PdfString) option;
+                } else if (option.isArray()) {
+                    value = (PdfString) ((PdfArray)option).get(1);
+                }
+                if (value != null && value.toUnicodeString().equals(element)) {
+                    indices.add(new PdfNumber(index));
+                    values.add(value);
+                }
+            }
+        }
+        if (indices.size() > 0) {
+            setIndices(indices);
+            if (values.size() == 1) {
+                put(PdfName.V, values.get(0));
+            } else {
+                put(PdfName.V, values);
+            }
+        }
+        regenerateField();
+        return this;
+    }
+
+    /**
+     * Highlights the options. Is this method is used for Combo box, the first value in input array
+     * will be the field value
+     * @param optionNumbers
+     * @return
+     */
+    public PdfChoiceFormField setListSelected(int[] optionNumbers) {
+        PdfArray indices = new PdfArray();
+        PdfArray values = new PdfArray();
+        PdfArray options = getOptions();
+        for (Integer number : optionNumbers) {
+            if (number >= 0 && number < options.size()) {
+                indices.add(new PdfNumber(number));
+                PdfObject option = options.get(number);
+                if (option.isString()) {
+                    values.add(option);
+                } else if (option.isArray()) {
+                    values.add(((PdfArray)option).get(0));
+                }
+            }
+        }
+        if (indices.size() > 0) {
+            setIndices(indices);
+            if (values.size() == 1) {
+                put(PdfName.V, values.get(0));
+            } else {
+                put(PdfName.V, values);
+            }
+        }
+        regenerateField();
+        return this;
     }
 
     /**

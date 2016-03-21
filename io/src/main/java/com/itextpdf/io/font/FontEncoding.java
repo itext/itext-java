@@ -65,7 +65,6 @@ public class FontEncoding {
         return encoding;
     }
 
-
     /**
      * This encoding will base on font encoding (FontSpecific encoding in Type 1 terminology)
      */
@@ -97,6 +96,7 @@ public class FontEncoding {
             unicodeToCode.put(unicode, code);
             codeToUnicode[code] = unicode;
             differences[code] = glyphName;
+            unicodeDifferences.put(unicode, unicode);
             return true;
         } else {
             return false;
@@ -171,19 +171,6 @@ public class FontEncoding {
      */
     public boolean canDecode(int code) {
         return codeToUnicode[code] != null;
-    }
-
-    /**
-     * Gets first empty code, that could use with {@see addSymbol()}
-     * @return code from 1 to 255 or -1 if all slots are busy.
-     */
-    public int getFirstEmptyCode() {
-        for (int i = 1; i < codeToUnicode.length; i++) {
-            if (codeToUnicode[i] == null) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     protected void fillCustomEncoding() {

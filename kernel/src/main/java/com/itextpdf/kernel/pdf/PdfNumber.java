@@ -31,7 +31,7 @@ public class PdfNumber extends PdfPrimitiveObject {
     }
 
     @Override
-    public int getType() {
+    public byte getType() {
         return Number;
     }
 
@@ -106,8 +106,8 @@ public class PdfNumber extends PdfPrimitiveObject {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfNumber copyToDocument(PdfDocument document) {
-        return super.copyToDocument(document, true);
+    public PdfNumber copyTo(PdfDocument document) {
+        return super.copyTo(document, true);
     }
 
     /**
@@ -122,8 +122,8 @@ public class PdfNumber extends PdfPrimitiveObject {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfNumber copyToDocument(PdfDocument document, boolean allowDuplicating) {
-        return super.copyToDocument(document, allowDuplicating);
+    public PdfNumber copyTo(PdfDocument document, boolean allowDuplicating) {
+        return super.copyTo(document, allowDuplicating);
     }
 
     @Override

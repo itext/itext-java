@@ -34,5 +34,8 @@ public class PdfAnnotationAppearance extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().keySet();
     }
 
-
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
 }

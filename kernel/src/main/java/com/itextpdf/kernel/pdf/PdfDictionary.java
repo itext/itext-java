@@ -310,7 +310,7 @@ public class PdfDictionary extends PdfObject {
     }
 
     @Override
-    public int getType() {
+    public byte getType() {
         return Dictionary;
     }
 
@@ -378,8 +378,8 @@ public class PdfDictionary extends PdfObject {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfDictionary copyToDocument(PdfDocument document) {
-        return super.copyToDocument(document, true);
+    public PdfDictionary copyTo(PdfDocument document) {
+        return super.copyTo(document, true);
     }
 
     /**
@@ -394,8 +394,8 @@ public class PdfDictionary extends PdfObject {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfDictionary copyToDocument(PdfDocument document, boolean allowDuplicating) {
-        return super.copyToDocument(document, allowDuplicating);
+    public PdfDictionary copyTo(PdfDocument document, boolean allowDuplicating) {
+        return super.copyTo(document, allowDuplicating);
     }
 
     /**
@@ -404,18 +404,18 @@ public class PdfDictionary extends PdfObject {
      *
      * @param document    document to copy dictionary to.
      * @param excludeKeys list of objects to exclude when copying dictionary.
-     * @param allowDuplicating {@link PdfObject}
+     * @param allowDuplicating {@link PdfObject#copyTo(PdfDocument, boolean)}
      * @return copied dictionary.
      * @throws PdfException
      */
-    public PdfDictionary copyToDocument(PdfDocument document, List<PdfName> excludeKeys, boolean allowDuplicating) {
+    public PdfDictionary copyTo(PdfDocument document, List<PdfName> excludeKeys, boolean allowDuplicating) {
         Map<PdfName, PdfObject> excluded = new TreeMap<>();
         for (PdfName key : excludeKeys) {
             PdfObject obj = map.get(key);
             if (obj != null)
                 excluded.put(key, map.remove(key));
         }
-        PdfDictionary dictionary = copyToDocument(document, allowDuplicating);
+        PdfDictionary dictionary = copyTo(document, allowDuplicating);
         map.putAll(excluded);
         return dictionary;
     }

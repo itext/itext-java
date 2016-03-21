@@ -9,7 +9,7 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.parser.LocationTextExtractionStrategy;
 import com.itextpdf.kernel.parser.TextExtractionStrategy;
 import com.itextpdf.kernel.parser.PdfTextExtractor;
-import com.itextpdf.kernel.parser.Vector;
+import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;

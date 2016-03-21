@@ -12,7 +12,8 @@ public class IOException extends RuntimeException {
     public static final String _1IsNotAValidJpegFile = "{0} is.not.a.valid.jpeg.file";
     public static final String _1MustHave8BitsPerComponent = "{0} must.have.8.bits.per.component";
     public static final String _1UnsupportedJpegMarker2 = "{0} unsupported.jpeg.marker {1}";
-    public static final String _1IsNotAnAFMorPfmFontFile = "{0} is.not.an.afm.or.pfm.font.file";
+    public static final String _1IsNotAnAfmOrPfmFontFile = "{0} is.not.an.afm.or.pfm.font.file";
+    public static final String _1NotFoundAsFileOrResource = "{0} not found as file or resource.";
 
     public static final String AllFillBitsPrecedingEolCodeMustBe0 = "all.fill.bits.preceding.eol.code.must.be.0";
     public static final String BadEndiannessTagNot0x4949Or0x4d4d = "bad.endianness.tag.not.0x4949.or.0x4d4d";
@@ -35,6 +36,8 @@ public class IOException extends RuntimeException {
     public static final String CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d = "ccitt.compression.type.must.be.ccittg4.ccittg3.1d.or.ccittg3.2d";
     public static final String ComponentsMustBe1_3Or4 = "components.must.be.1.3.or.4";
     public static final String Compression1IsNotSupported = "compression {0} is.not.supported";
+    public static final String ColorDepthIsNotSupported = "the.color.depth {0} is.not.supported";
+    public static final String ColorSpaceIsNotSupported = "the.color.space {0} is.not.supported";
     public static final String CompressionJpegIsOnlySupportedWithASingleStripThisImageHas1Strips = "compression.jpeg.is.only.supported.with.a.single.strip.this.image.has {0} strips";
     public static final String DirectoryNumberTooLarge = "directory.number.too.large";
     public static final String EolCodeWordEncounteredInBlackRun = "eol.code.word.encountered.in.black.run";
@@ -79,6 +82,7 @@ public class IOException extends RuntimeException {
     public static final String JpegImageException = "jpeg.image.exception";
     public static final String Jpeg2000ImageException = "jpeg2000.image.exception";
     public static final String MissingTagSForOjpegCompression = "missing.tag.s.for.ojpeg.compression";
+    public static final String NValueIsNotSupported = "N.value.1.is.not.supported";
     public static final String PageNumberMustBeGtEq1 = "page.number.must.be.gt.eq {0}";
     public static final String PdfEncodings = "pdf.encodings";
     public static final String PdfHeaderNotFound = "pdf.header.not.found";
@@ -101,7 +105,7 @@ public class IOException extends RuntimeException {
     public static final String UnsupportedBoxSizeEqEq0 = "unsupported.box.size.eq.eq.0";
     public static final String WrongNumberOfComponentsInIccProfile = "icc.profile.contains {0} components.the.image.data.contains {2} components";
 
-    protected Object object;
+    protected Object obj;
     private List<Object> messageParams;
 
     public IOException(String message) {
@@ -112,18 +116,18 @@ public class IOException extends RuntimeException {
         super(cause);
     }
 
-    public IOException(String message, Object object) {
+    public IOException(String message, Object obj) {
         this(message);
-        this.object = object;
+        this.obj = obj;
     }
 
     public IOException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public IOException(String message, Throwable cause, Object object) {
+    public IOException(String message, Throwable cause, Object obj) {
         this(message, cause);
-        this.object = object;
+        this.obj = obj;
     }
 
     @Override

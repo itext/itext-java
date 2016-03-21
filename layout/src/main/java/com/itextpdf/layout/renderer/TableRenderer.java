@@ -22,6 +22,11 @@ import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class represents the {@link IRenderer renderer} object for a {@link Table}
+ * object. It will delegate its drawing operations on to the {@link CellRenderer}
+ * instances associated with the {@link Cell table cells}.
+ */
 public class TableRenderer extends AbstractRenderer {
 
     protected List<CellRenderer[]> rows = new ArrayList<>();
@@ -38,11 +43,21 @@ public class TableRenderer extends AbstractRenderer {
     private float[] columnWidths = null;
     private List<Float> heights = new ArrayList<>();
 
+    /**
+     * Creates a TableRenderer from a {@link Table} which will partially render
+     * the table.
+     * @param modelElement the table to be rendered by this renderer
+     * @param rowRange the table rows to be rendered
+     */
     public TableRenderer(Table modelElement, Table.RowRange rowRange) {
         super(modelElement);
         setRowRange(rowRange);
     }
 
+    /**
+     * Creates a TableRenderer from a {@link Table}.
+     * @param modelElement the table to be rendered by this renderer
+     */
     public TableRenderer(Table modelElement) {
         this(modelElement, new Table.RowRange(0, modelElement.getNumberOfRows()));
     }
@@ -72,6 +87,7 @@ public class TableRenderer extends AbstractRenderer {
             setProperty(Property.MARGIN_TOP, 0);
         }
         applyMargins(layoutBox, false);
+        applyBorderBox(layoutBox, false);
 
         if (isPositioned()) {
             float x = getPropertyAsFloat(Property.X);
@@ -184,7 +200,9 @@ public class TableRenderer extends AbstractRenderer {
                 LayoutResult cellResult = cell.layout(new LayoutContext(cellArea));
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
                 //width of BlockRenderer depends on child areas, while in cell case it is hardly define.
-                cell.getOccupiedArea().getBBox().setWidth(cellWidth);
+                if (cellResult.getStatus() != LayoutResult.NOTHING) {
+                    cell.getOccupiedArea().getBBox().setWidth(cellWidth);
+                }
 
                 if (currentCellHasBigRowspan) {
                     // cell from the future
@@ -246,19 +264,14 @@ public class TableRenderer extends AbstractRenderer {
                                 }
                             }
                         }
-
                         split = true;
                         if (cellResult.getStatus() == LayoutResult.NOTHING) {
                             hasContent = false;
                         }
-
                         splits[col] = cellResult;
-                        currentRow[col] = (CellRenderer) cellResult.getSplitRenderer();
                     }
                 }
-
                 currChildRenderers.add(cell);
-
                 if (!currentCellHasBigRowspan && cellResult.getStatus() != LayoutResult.NOTHING) {
                     rowHeight = Math.max(rowHeight, cell.getOccupiedArea().getBBox().getHeight() - rowspanOffset);
                 }
@@ -284,8 +297,7 @@ public class TableRenderer extends AbstractRenderer {
                         horizontalBorders[rowN][col] = cell.getBorders()[2];
                     }
 
-
-                    // Coorrection of cell bbox only. We don't need #move() here.
+                    // Correcting cell bbox only. We don't need #move() here.
                     // This is because of BlockRenderer's specificity regarding occupied area.
                     float shift = height - cell.getOccupiedArea().getBBox().getHeight();
                     Rectangle bBox = cell.getOccupiedArea().getBBox();
@@ -296,23 +308,31 @@ public class TableRenderer extends AbstractRenderer {
 
                 occupiedArea.getBBox().moveDown(rowHeight);
                 occupiedArea.getBBox().increaseHeight(rowHeight);
-            }
 
+                layoutBox.decreaseHeight(rowHeight);
+            }
             if (split) {
-                TableRenderer splitResult[] = split(row, hasContent);
+                TableRenderer[] splitResult = split(row, hasContent);
                 for (int col = 0; col < currentRow.length; col++) {
                     if (splits[col] != null) {
-                        BlockRenderer cellSplit = currentRow[col];
-                        if (splits[col].getStatus() != LayoutResult.NOTHING) {
+                        CellRenderer cellSplit;
+                        if (splits[col].getStatus() != LayoutResult.FULL) {
+                            cellSplit = (CellRenderer) splits[col].getSplitRenderer();
+                        } else {
+                            cellSplit = currentRow[col];
+                        }
+                        if (splits[col].getStatus() != LayoutResult.NOTHING && (hasContent || cellWithBigRowspanAdded)) {
                             childRenderers.add(cellSplit);
                         }
-                        currentRow[col] = null;
-                        rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) splits[col].getOverflowRenderer().setParent(splitResult[1]);
+                        if (hasContent || cellWithBigRowspanAdded || splits[col].getStatus() == LayoutResult.NOTHING) {
+                            currentRow[col] = null;
+                            rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) splits[col].getOverflowRenderer().setParent(splitResult[1]);
+                        } else {
+                            rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) currentRow[col].setParent(splitResult[1]);
+                        }
                     } else if (hasContent && currentRow[col] != null) {
-//                        Cell overflowCell = currentRow[col].getModelElement().clone(false);
-                        //TODO review and double check this logic
-                        // Here I use the same cell, but create a new renderer which doesn't have any children, therefore it won't have any content,
-                        // May be I'm missing something?
+                        // Here we use the same cell, but create a new renderer which doesn't have any children,
+                        // therefore it won't have any content.
                         Cell overflowCell = currentRow[col].getModelElement();
                         currentRow[col].isLastRendererForModelElement = false;
                         childRenderers.add(currentRow[col]);
@@ -322,26 +342,34 @@ public class TableRenderer extends AbstractRenderer {
                 }
 
                 if (row == rowRange.getFinishRow() && footerRenderer != null) {
-                    footerRenderer.getOccupiedAreaBBox().setY(splitResult[0].getOccupiedAreaBBox().getY() - footerRenderer.getOccupiedAreaBBox().getHeight());
+                    footerRenderer.getOccupiedAreaBBox().setY(splitResult[0].getOccupiedAreaBBox().getY()
+                            - footerRenderer.getOccupiedAreaBBox().getHeight());
                     for (IRenderer renderer : footerRenderer.getChildRenderers()) {
-                        renderer.move(0, splitResult[0].getOccupiedAreaBBox().getY() - renderer.getOccupiedArea().getBBox().getY() - renderer.getOccupiedArea().getBBox().getHeight());
+                        renderer.move(0, splitResult[0].getOccupiedAreaBBox().getY()
+                                - renderer.getOccupiedArea().getBBox().getY() - renderer.getOccupiedArea().getBBox().getHeight());
                     }
                 } else {
                     adjustFooterAndFixOccupiedArea(layoutBox);
                 }
 
-
-                int status = childRenderers.isEmpty() && footerRenderer == null ? LayoutResult.NOTHING : LayoutResult.PARTIAL;
-                if (status == LayoutResult.NOTHING && getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
-                    return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+                applyBorderBox(occupiedArea.getBBox(), true);
+                applyMargins(occupiedArea.getBBox(), true);
+                if (getPropertyAsBoolean(Property.KEEP_TOGETHER) && !getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                } else {
+                    int status = (childRenderers.isEmpty() && footerRenderer == null)
+                            ? LayoutResult.NOTHING
+                            : LayoutResult.PARTIAL;
+                    if (status == LayoutResult.NOTHING && getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+                    } else {
+                        return new LayoutResult(status, occupiedArea, splitResult[0], splitResult[1]);
+                    }
                 }
-                return new LayoutResult(status, occupiedArea, splitResult[0], splitResult[1]);
             } else {
                 childRenderers.addAll(currChildRenderers);
                 currChildRenderers.clear();
             }
-
-            layoutBox.decreaseHeight(rowHeight);
         }
 
         if (isPositioned()) {
@@ -350,6 +378,7 @@ public class TableRenderer extends AbstractRenderer {
             move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
 
+        applyBorderBox(occupiedArea.getBBox(), true);
         applyMargins(occupiedArea.getBBox(), true);
         if (tableModel.isSkipLastFooter() || !tableModel.isComplete()) {
             footerRenderer = null;

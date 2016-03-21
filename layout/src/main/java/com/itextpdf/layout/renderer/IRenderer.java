@@ -10,6 +10,15 @@ import com.itextpdf.layout.layout.LayoutResult;
 
 import java.util.List;
 
+/**
+ * A renderer object is responsible for drawing a corresponding layout object on
+ * a document or canvas. Every layout object has a renderer, by default one of
+ * the corresponding type, e.g. you can ask an {@link com.itextpdf.layout.element.Image}
+ * for its {@link ImageRenderer}.
+ * 
+ * Renderers are designed to be extensible, and custom implementations can be
+ * seeded to layout objects (or their custom subclasses) at runtime.
+ */
 public interface IRenderer extends IPropertyContainer<IRenderer> {
 
     /**
@@ -48,17 +57,44 @@ public interface IRenderer extends IPropertyContainer<IRenderer> {
      */
     LayoutArea getOccupiedArea();
 
+    /**
+     * Gets a property from this entity or one of its hierarchical parents.
+     * If the property is not found, {@code defaultValue} will be returned.
+     * @param <T> the return type associated with the property
+     * @param property the property to be retrieved
+     * @param defaultValue a fallback value
+     * @return the value of the given property
+     */
     <T> T getProperty(Property property, T defaultValue);
 
+    /**
+     * Explicitly sets this object as the child of another {@link IRenderer} in
+     * the renderer hierarchy. Some implementations also use this method
+     * internally to create a consistent hierarchy tree.
+     * 
+     * @param parent the object to place higher in the renderer hierarchy
+     * @return by default, this object
+     */
     IRenderer setParent(IRenderer parent);
 
+    /**
+     * Gets the model element associated with this renderer.
+     * 
+     * @return the model element, as a {@link IPropertyContainer container of properties}
+     */
     IPropertyContainer getModelElement();
 
+    /**
+     * Gets the child {@link IRenderer}s.
+     * 
+     * @return a list of direct child {@link IRenderer renderers} of this instance
+     */
     List<IRenderer> getChildRenderers();
 
     /**
      * Indicates whether this renderer is flushed or not, i.e. if {@link #draw(DrawContext)} has already
      * been called.
+     * @return whether the renderer has been flushed
      */
     boolean isFlushed();
 

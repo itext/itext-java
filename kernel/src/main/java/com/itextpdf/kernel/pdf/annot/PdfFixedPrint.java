@@ -2,20 +2,18 @@ package com.itextpdf.kernel.pdf.annot;
 
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 
 public class PdfFixedPrint extends PdfObjectWrapper<PdfDictionary> {
 
-    public PdfFixedPrint(PdfDocument pdfDocument) {
-        this(new PdfDictionary(), pdfDocument);
+    public PdfFixedPrint() {
+        this(new PdfDictionary());
     }
 
-    public PdfFixedPrint(PdfDictionary pdfObject, PdfDocument pdfDocument) {
+    public PdfFixedPrint(PdfDictionary pdfObject) {
         super(pdfObject);
-        makeIndirect(pdfDocument);
         pdfObject.put(PdfName.Type, PdfName.FixedPrint);
     }
 
@@ -45,5 +43,10 @@ public class PdfFixedPrint extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfNumber getVerticalTranslation() {
         return getPdfObject().getAsNumber(PdfName.V);
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
     }
 }

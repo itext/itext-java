@@ -44,7 +44,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                 List<PdfName> excludedKeys = new ArrayList<>();
                 excludedKeys.add(PdfName.Fields);
                 excludedKeys.add(PdfName.DR);
-                PdfDictionary dict = formFrom.getPdfObject().copyToDocument(documentTo, excludedKeys, false);
+                PdfDictionary dict = formFrom.getPdfObject().copyTo(documentTo, excludedKeys, false);
                 formTo.getPdfObject().mergeDifferent(dict);
             }
         }
@@ -96,7 +96,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
 
     private PdfFormField mergeFieldsWithTheSameName(PdfFormField existingField, PdfFormField newField) {
         PdfFormField mergedField = PdfFormField.createEmptyField(documentTo);
-        formTo.removeField(existingField.getFieldName().toUnicodeString());
+        formTo.getFields().remove(newField.getPdfObject());
         mergedField.
                 put(PdfName.FT, existingField.getFormType()).
                 put(PdfName.T, existingField.getFieldName()).

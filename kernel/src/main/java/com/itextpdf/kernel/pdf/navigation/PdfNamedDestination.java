@@ -17,10 +17,10 @@ public class PdfNamedDestination extends PdfDestination<PdfName> {
     }
 
     @Override
-    public PdfObject getDestinationPage(final Map<Object, PdfObject> names) {
-        PdfArray array = (PdfArray) names.get(getPdfObject());
+    public PdfObject getDestinationPage(final Map<String, PdfObject> names) {
+        PdfArray array = (PdfArray) names.get(getPdfObject().getValue());
 
-        return array != null ? array.get(0, false) : null;
+        return array != null ? array.get(0) : null;
     }
 
     @Override
@@ -31,5 +31,10 @@ public class PdfNamedDestination extends PdfDestination<PdfName> {
             return PdfDestination.makeDestination(array);
         }
         return null;
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
     }
 }

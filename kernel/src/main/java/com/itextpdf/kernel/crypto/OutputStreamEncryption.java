@@ -1,43 +1,17 @@
 package com.itextpdf.kernel.crypto;
 
-import com.itextpdf.kernel.PdfException;
 import java.io.IOException;
 
-public class OutputStreamEncryption extends java.io.OutputStream {
+public abstract class OutputStreamEncryption extends java.io.OutputStream {
 
     protected java.io.OutputStream out;
-    protected ARCFOUREncryption arcfour;
-    protected AESCipher cipher;
     private byte[] sb = new byte[1];
-    private static final int AES_128 = 4;
-    private static final int AES_256 = 5;
-    private boolean aes;
-    private boolean finished;
 
     /**
      * Creates a new instance of OutputStreamCounter
      */
-    public OutputStreamEncryption(java.io.OutputStream out, byte key[], int off, int len, int revision) {
+    public OutputStreamEncryption(java.io.OutputStream out) {
         this.out = out;
-        aes = (revision == AES_128 || revision == AES_256);
-        if (aes) {
-            byte[] iv = IVGenerator.getIV();
-            byte[] nkey = new byte[len];
-            System.arraycopy(key, off, nkey, 0, len);
-            cipher = new AESCipher(true, nkey, iv);
-            try {
-                write(iv);
-            } catch (IOException e) {
-                throw new PdfException(PdfException.PdfEncryption, e);
-            }
-        } else {
-            arcfour = new ARCFOUREncryption();
-            arcfour.prepareARCFOURKey(key, off, len);
-        }
-    }
-
-    public OutputStreamEncryption(java.io.OutputStream out, byte key[], int revision) {
-        this(out, key, 0, key.length, revision);
     }
 
     /**
@@ -132,35 +106,7 @@ public class OutputStreamEncryption extends java.io.OutputStream {
      *                     an {@code IOException} is thrown if the output
      *                     stream is closed.
      */
-    public void write(byte[] b, int off, int len) throws IOException {
-        if (aes) {
-            byte[] b2 = cipher.update(b, off, len);
-            if (b2 == null || b2.length == 0)
-                return;
-            out.write(b2, 0, b2.length);
-        } else {
-            byte[] b2 = new byte[Math.min(len, 4192)];
-            while (len > 0) {
-                int sz = Math.min(len, b2.length);
-                arcfour.encryptARCFOUR(b, off, sz, b2, 0);
-                out.write(b2, 0, sz);
-                len -= sz;
-                off += sz;
-            }
-        }
-    }
+    public abstract void write(byte[] b, int off, int len) throws IOException;
 
-    public void finish() {
-        if (!finished) {
-            finished = true;
-            if (aes) {
-                byte[] b = cipher.doFinal();
-                try {
-                    out.write(b, 0, b.length);
-                } catch (IOException e) {
-                    throw new PdfException(PdfException.PdfEncryption, e);
-                }
-            }
-        }
-    }
+    public abstract void finish();
 }

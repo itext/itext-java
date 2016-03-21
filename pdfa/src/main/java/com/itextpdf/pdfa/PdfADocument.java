@@ -30,7 +30,6 @@ import java.io.IOException;
 
 public class PdfADocument extends PdfDocument {
     private PdfAChecker checker;
-    private int gStateIndex = -1;
 
     public PdfADocument(PdfWriter writer, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {
         super(writer);
@@ -63,33 +62,29 @@ public class PdfADocument extends PdfDocument {
 
     @Override
     public void checkIsoConformance(Object obj, IsoKey key) {
-        checkIsoConformance(obj, key, null, 0);
+        checkIsoConformance(obj, key, null);
     }
 
     @Override
-    public void checkShowTextIsoConformance(Object obj, PdfResources resources, int gStateIndex) {
+    public void checkShowTextIsoConformance(Object obj, PdfResources resources) {
         CanvasGraphicsState gState = (CanvasGraphicsState) obj;
         boolean fill = false;
         boolean stroke = false;
 
-        if (gState.getTextRenderingMode() != null) {
-            switch (gState.getTextRenderingMode()) {
-                case PdfCanvasConstants.TextRenderingMode.STROKE:
-                case PdfCanvasConstants.TextRenderingMode.STROKE_CLIP:
-                    stroke = true;
-                    break;
-                case PdfCanvasConstants.TextRenderingMode.FILL:
-                case PdfCanvasConstants.TextRenderingMode.FILL_CLIP:
-                    fill = true;
-                    break;
-                case PdfCanvasConstants.TextRenderingMode.FILL_STROKE:
-                case PdfCanvasConstants.TextRenderingMode.FILL_STROKE_CLIP:
-                    stroke = true;
-                    fill = true;
-                    break;
-            }
-        } else {
-            fill = true;
+        switch (gState.getTextRenderingMode()) {
+            case PdfCanvasConstants.TextRenderingMode.STROKE:
+            case PdfCanvasConstants.TextRenderingMode.STROKE_CLIP:
+                stroke = true;
+                break;
+            case PdfCanvasConstants.TextRenderingMode.FILL:
+            case PdfCanvasConstants.TextRenderingMode.FILL_CLIP:
+                fill = true;
+                break;
+            case PdfCanvasConstants.TextRenderingMode.FILL_STROKE:
+            case PdfCanvasConstants.TextRenderingMode.FILL_STROKE_CLIP:
+                stroke = true;
+                fill = true;
+                break;
         }
 
         IsoKey drawMode = null;
@@ -102,12 +97,12 @@ public class PdfADocument extends PdfDocument {
         }
 
         if (fill || stroke) {
-            checkIsoConformance(gState, drawMode, resources, gStateIndex);
+            checkIsoConformance(gState, drawMode, resources);
         }
     }
 
     @Override
-    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, int gStateIndex) {
+    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources) {
         CanvasGraphicsState gState;
         PdfDictionary currentColorSpaces = null;
         if (resources != null) {
@@ -127,36 +122,24 @@ public class PdfADocument extends PdfDocument {
                 checker.checkInlineImage((PdfStream) obj, currentColorSpaces);
                 break;
             case GRAPHIC_STATE_ONLY:
-                if (this.gStateIndex != gStateIndex) {
                     gState = (CanvasGraphicsState) obj;
                     checker.checkExtGState(gState);
-                    this.gStateIndex = gStateIndex;
-                }
                 break;
             case DRAWMODE_FILL:
-                if (this.gStateIndex != gStateIndex) {
                     gState = (CanvasGraphicsState) obj;
                     checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
                     checker.checkExtGState(gState);
-                    this.gStateIndex = gStateIndex;
-                }
                 break;
             case DRAWMODE_STROKE:
-                if (this.gStateIndex != gStateIndex) {
                     gState = (CanvasGraphicsState) obj;
                     checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
                     checker.checkExtGState(gState);
-                    this.gStateIndex = gStateIndex;
-                }
                 break;
             case DRAWMODE_FILL_STROKE:
-                if (this.gStateIndex != gStateIndex) {
                     gState = (CanvasGraphicsState) obj;
                     checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
                     checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
                     checker.checkExtGState(gState);
-                    this.gStateIndex = gStateIndex;
-                }
                 break;
             case PAGE:
                 checker.checkSinglePage((PdfPage)obj);

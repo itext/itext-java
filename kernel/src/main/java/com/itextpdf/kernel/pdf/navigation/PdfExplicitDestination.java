@@ -19,8 +19,8 @@ public class PdfExplicitDestination extends PdfDestination<PdfArray> {
     }
 
     @Override
-    public PdfObject getDestinationPage(Map<Object, PdfObject> names) {
-        return getPdfObject().get(0, false);
+    public PdfObject getDestinationPage(Map<String, PdfObject> names) {
+        return getPdfObject().get(0);
     }
 
     @Override
@@ -98,6 +98,11 @@ public class PdfExplicitDestination extends PdfDestination<PdfArray> {
 
     static public PdfExplicitDestination create(int pageNum, PdfName type, float left, float bottom, float right, float top, float zoom) {
         return new PdfExplicitDestination().add(--pageNum).add(type).add(left).add(bottom).add(right).add(top).add(zoom);
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
     }
 
     private PdfExplicitDestination add(float value) {

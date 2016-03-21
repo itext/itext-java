@@ -2,6 +2,7 @@ package com.itextpdf.kernel.parser;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -73,7 +74,6 @@ public class HighlightItemsTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Seems to be a problem with decode. CJK not supported")
     public void highlightHeaderFooter() throws IOException, InterruptedException {
         String input = sourceFolder + "HeaderFooter.pdf";
         String output = outputPath + "HeaderFooter.pdf";
@@ -83,7 +83,6 @@ public class HighlightItemsTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Seems to be a problem with decode. CJK not supported")
     public void highlightCharactersHeaderFooter() throws IOException, InterruptedException {
         String input = sourceFolder + "HeaderFooter.pdf";
         String output = outputPath + "HeaderFooter_characters.pdf";

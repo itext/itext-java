@@ -30,14 +30,14 @@ public class Utilities {
      * -method that doesn't seem to work properly for big values of {@code size
      * }.
      *
-     * @param is   the {@code InputStream}
+     * @param stream   the {@code InputStream}
      * @param size the number of bytes to skip
      * @throws java.io.IOException
      */
-    static public void skip(InputStream is, int size) throws java.io.IOException {
+    public static void skip(InputStream stream, int size) throws java.io.IOException {
         long n;
         while (size > 0) {
-            n = is.skip(size);
+            n = stream.skip(size);
             if (n <= 0)
                 break;
             size -= n;
@@ -150,50 +150,50 @@ public class Utilities {
     /**
      * A helper to FlateDecode.
      *
-     * @param in     the input data
+     * @param input     the input data
      * @param strict <CODE>true</CODE> to read a correct stream. <CODE>false</CODE>
      *               to try to read a corrupted stream
      * @return the decoded data
      */
-    public static byte[] flateDecode(byte in[], boolean strict) {
-        ByteArrayInputStream stream = new ByteArrayInputStream(in);
+    public static byte[] flateDecode(byte[] input, boolean strict) {
+        ByteArrayInputStream stream = new ByteArrayInputStream(input);
         InflaterInputStream zip = new InflaterInputStream(stream);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte b[] = new byte[strict ? 4092 : 1];
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        byte[] b = new byte[strict ? 4092 : 1];
         try {
             int n;
             while ((n = zip.read(b)) >= 0) {
-                out.write(b, 0, n);
+                output.write(b, 0, n);
             }
             zip.close();
-            out.close();
-            return out.toByteArray();
+            output.close();
+            return output.toByteArray();
         } catch (Exception e) {
             if (strict)
                 return null;
-            return out.toByteArray();
+            return output.toByteArray();
         }
     }
 
     /**
      * Decodes a stream that has the FlateDecode filter.
      *
-     * @param in the input data
+     * @param input the input data
      * @return the decoded data
      */
-    public static byte[] flateDecode(byte in[]) {
-        byte b[] = flateDecode(in, true);
+    public static byte[] flateDecode(byte[] input) {
+        byte[] b = flateDecode(input, true);
         if (b == null)
-            return flateDecode(in, false);
+            return flateDecode(input, false);
         return b;
     }
 
-    public static void transferBytes(InputStream in, java.io.OutputStream out) throws java.io.IOException {
+    public static void transferBytes(InputStream input, java.io.OutputStream output) throws java.io.IOException {
         byte[] buffer = new byte[transferSize];
         for (; ; ) {
-            int len = in.read(buffer, 0, transferSize);
+            int len = input.read(buffer, 0, transferSize);
             if (len > 0)
-                out.write(buffer, 0, len);
+                output.write(buffer, 0, len);
             else
                 break;
         }
@@ -202,21 +202,21 @@ public class Utilities {
     /**
      * Reads the full content of a stream and returns them in a byte array
      *
-     * @param is the stream to read
+     * @param stream the stream to read
      * @return a byte array containing all of the bytes from the stream
      * @throws java.io.IOException if there is a problem reading from the input stream
      */
-    public static byte[] inputStreamToArray(InputStream is) throws java.io.IOException {
+    public static byte[] inputStreamToArray(InputStream stream) throws java.io.IOException {
         byte b[] = new byte[8192];
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
         while (true) {
-            int read = is.read(b);
+            int read = stream.read(b);
             if (read < 1)
                 break;
-            out.write(b, 0, read);
+            output.write(b, 0, read);
         }
-        out.close();
-        return out.toByteArray();
+        output.close();
+        return output.toByteArray();
     }
 
     /**
@@ -225,10 +225,10 @@ public class Utilities {
      * @param source the {@code RandomAccessSource} copy from.
      * @param start  start position of source copy from.
      * @param length length copy to.
-     * @param outs   the {@code OutputStream} copy to.
+     * @param output   the {@code OutputStream} copy to.
      * @throws java.io.IOException on error.
      */
-    public static void copyBytes(RandomAccessSource source, long start, long length, java.io.OutputStream outs) throws java.io.IOException {
+    public static void copyBytes(RandomAccessSource source, long start, long length, java.io.OutputStream output) throws java.io.IOException {
         if (length <= 0)
             return;
         long idx = start;
@@ -238,7 +238,7 @@ public class Utilities {
             if (n <= 0) {
                 throw new EOFException();
             }
-            outs.write(buf, 0, (int) n);
+            output.write(buf, 0, (int) n);
             idx += n;
             length -= n;
         }
@@ -264,30 +264,30 @@ public class Utilities {
     public static InputStream getResourceStream(String key, ClassLoader loader) {
         if (key.startsWith("/"))
             key = key.substring(1);
-        InputStream is = null;
+        InputStream stream = null;
         if (loader != null) {
-            is = loader.getResourceAsStream(key);
-            if (is != null) {
-                return is;
+            stream = loader.getResourceAsStream(key);
+            if (stream != null) {
+                return stream;
             }
         }
         // Try to use Context Class Loader to load the properties file.
         try {
             ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
             if (contextClassLoader != null) {
-                is = contextClassLoader.getResourceAsStream(key);
+                stream = contextClassLoader.getResourceAsStream(key);
             }
         } catch (Throwable e) {
             // empty body
         }
 
-        if (is == null) {
-            is = Utilities.class.getResourceAsStream("/" + key);
+        if (stream == null) {
+            stream = Utilities.class.getResourceAsStream("/" + key);
         }
-        if (is == null) {
-            is = ClassLoader.getSystemResourceAsStream(key);
+        if (stream == null) {
+            stream = ClassLoader.getSystemResourceAsStream(key);
         }
-        return is;
+        return stream;
     }
 
     /**
@@ -296,7 +296,6 @@ public class Utilities {
      *
      * @param c the character
      * @return true if the character belongs to the interval
-     * @since 2.1.2
      */
     public static boolean isSurrogateHigh(char c) {
         return c >= '\ud800' && c <= '\udbff';
@@ -308,7 +307,6 @@ public class Utilities {
      *
      * @param c the character
      * @return true if the character belongs to the interval
-     * @since 2.1.2
      */
     public static boolean isSurrogateLow(char c) {
         return c >= '\udc00' && c <= '\udfff';
@@ -322,7 +320,6 @@ public class Utilities {
      * @param text the String with the high and low surrogate characters
      * @param idx  the index of the 'high' character in the pair
      * @return true if the characters are surrogate pairs
-     * @since 2.1.2
      */
     public static boolean isSurrogatePair(String text, int idx) {
         if (idx < 0 || idx > text.length() - 2) {
@@ -367,7 +364,6 @@ public class Utilities {
      * @param text a character array that has the unicode character(s)
      * @param idx  the index of the 'high' character
      * @return the code point value
-     * @since 2.1.2
      */
     public static int convertToUtf32(char[] text, int idx) {
         return (text[idx] - 0xd800) * 0x400 + text[idx + 1] - 0xdc00 + 0x10000;

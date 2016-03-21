@@ -1,12 +1,13 @@
 package com.itextpdf.kernel.parser;
 
+import com.itextpdf.kernel.geom.Matrix;
+import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 
 /**
  * Represents image data from a PDF
- * @since 5.0.1
  */
 public class ImageRenderInfo implements EventData {
     /** The coordinate transformation matrix that was in effect when the image was rendered */
@@ -55,7 +56,6 @@ public class ImageRenderInfo implements EventData {
 
     /**
      * @return The coordinate transformation matrix which was active when this image was rendered. Coordinates are in User space.
-     * @since 5.0.3
      */
     public Matrix getImageCtm(){
         return ctm;
@@ -63,7 +63,6 @@ public class ImageRenderInfo implements EventData {
 
     /**
      * @return the size of the image, in User space units
-     * @since 5.0.3
      */
     public float getArea(){
         // the image space area is 1, so we multiply that by the determinant of the CTM to get the transformed area

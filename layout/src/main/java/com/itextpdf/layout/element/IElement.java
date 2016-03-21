@@ -3,6 +3,13 @@ package com.itextpdf.layout.element;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.renderer.IRenderer;
 
+/**
+ * This class represents a layout element, i.e. a piece of content that will
+ * take up 'physical' space on a canvas or document. Its presence and positioning
+ * may influence the position of other {@link IElement}s on the layout surface.
+ * 
+ * @param <Type> the type of the implementation
+ */
 public interface IElement<Type extends IElement> extends IPropertyContainer<Type> {
 
     /**

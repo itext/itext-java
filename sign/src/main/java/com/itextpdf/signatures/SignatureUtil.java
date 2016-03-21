@@ -222,6 +222,29 @@ public class SignatureUtil {
         return sigs;
     }
 
+    public int getTotalRevisions() {
+        getSignatureNames();
+        return totalRevisions;
+    }
+
+
+    public int getRevision(String field) {
+        getSignatureNames();
+        field = getTranslatedFieldName(field);
+        if (!sigNames.containsKey(field))
+            return 0;
+         return sigNames.get(field)[1];
+    }
+
+    public String getTranslatedFieldName(String name) {
+        if (acroForm.getXfaForm().isXfaPresent()) {
+            String namex = acroForm.getXfaForm().findFieldName(name, acroForm);
+            if (namex != null)
+                name = namex;
+        }
+        return name;
+    }
+
     /**
      * Extracts a revision from the document.
      *
@@ -260,7 +283,6 @@ public class SignatureUtil {
      *
      * @param name name of the field
      * @return boolean does the signature field exist
-     * @since 5.5.1
      */
     public boolean doesSignatureFieldExist(String name) {
         return getBlankSignatureNames().contains(name) || getSignatureNames().contains(name);

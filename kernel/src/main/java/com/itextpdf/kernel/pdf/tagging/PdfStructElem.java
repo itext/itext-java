@@ -18,6 +18,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
+ * must be indirect.
+ */
 public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
 
     static public int Unknown = 0;
@@ -90,11 +94,13 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     protected int type = Unknown;
 
+    /**
+     * @param pdfObject must be an indirect object.
+     */
     public PdfStructElem(PdfDictionary pdfObject) {
         super(pdfObject);
-        if (pdfObject.getIndirectReference() == null) {
-            throw new PdfException(PdfException.StructElemDictionaryShallBeIndirectObject);
-        }
+        ensureObjectIsAddedToDocument(pdfObject);
+        setForbidRelease();
         PdfName role = getPdfObject().getAsName(PdfName.S);
         type = identifyType(getDocument(), role);
     }
@@ -200,9 +206,6 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public PdfMcr addKid(int index, PdfMcr kid) {
-        if (this != kid.getParent())
-            throw new PdfException(PdfException.IncorrectMcrParent);
-
         getDocument().getStructTreeRoot().registerMcr(kid);
         addKidObject(index, kid.getPdfObject());
         return kid;
@@ -253,23 +256,6 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         return getPdfObject().get(PdfName.K);
     }
 
-    public PdfDictionary getParentObject() {
-        return getPdfObject().getAsDictionary(PdfName.P);
-    }
-
-    public void setParentObject(PdfDictionary parent) {
-        if (PdfName.MCR.equals(getPdfObject().getAsName(PdfName.Type)))
-            return;
-        // Remove current tag from previous parent element.
-        PdfDictionary oldParent = getParentObject();
-        if (oldParent != null) {
-            PdfArray oldChildren = oldParent.getAsArray(PdfName.K);
-            if (oldChildren != null)
-                oldChildren.remove(getPdfObject());
-        }
-        getPdfObject().put(PdfName.P, parent);
-    }
-
     public static int identifyType(PdfDocument doc, PdfName role) {
         PdfDictionary roleMap = doc.getStructTreeRoot().getRoleMap();
         if (roleMap.containsKey(role))
@@ -290,6 +276,15 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     public void flush() {
         //TODO log that to prevent undefined behaviour, use StructTreeRoot#flushStructElem method
         super.flush();
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
+
+    protected PdfDocument getDocument() {
+        return getPdfObject().getIndirectReference().getDocument();
     }
 
     private void addKidObjectToStructElemList(PdfObject k, List<IPdfStructElem> list) {

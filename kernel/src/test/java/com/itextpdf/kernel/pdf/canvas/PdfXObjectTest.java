@@ -31,7 +31,7 @@ import org.junit.experimental.categories.Category;
 public class PdfXObjectTest extends ExtendedITextTest{
 
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfXObjectTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/PdfXObjectTest/";
+    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfXObjectTest/";
 
     static final public String[] images = new String[]{sourceFolder + "WP_20140410_001.bmp",
             sourceFolder + "WP_20140410_001.JPC",

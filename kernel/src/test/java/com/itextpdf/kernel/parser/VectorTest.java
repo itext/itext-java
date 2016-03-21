@@ -1,5 +1,7 @@
 package com.itextpdf.kernel.parser;
 
+import com.itextpdf.kernel.geom.Matrix;
+import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 

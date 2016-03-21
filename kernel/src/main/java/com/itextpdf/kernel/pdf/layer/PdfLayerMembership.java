@@ -19,6 +19,10 @@ import java.util.List;
  * complex visibility policies, content should not declare itself to belong to an optional
  * content group directly, but rather to an optional content membership dictionary
  * represented by this class.
+ *
+ * <br><br>
+ * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
+ * must be indirect.
  */
 public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implements PdfOCG {
 
@@ -33,12 +37,14 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
     }
 
     /**
-     * Creates a new PdfLayerMembership instance by its PdfDictionary.
+     * Creates a new PdfLayerMembership instance by its PdfDictionary, which must be an indirect object.
+     *
+     * @param membershipDictionary the membership dictionary, must have an indirect reference.
      * @throws PdfException
      */
-    public PdfLayerMembership(PdfDictionary membershipDictionary, PdfDocument doc) {
+    public PdfLayerMembership(PdfDictionary membershipDictionary) {
         super(membershipDictionary);
-        makeIndirect(doc);
+        ensureObjectIsAddedToDocument(membershipDictionary);
         if (!PdfName.OCMD.equals(membershipDictionary.getAsName(PdfName.Type)))
             throw new IllegalArgumentException("Invalid membershipDictionary.");
     }
@@ -50,11 +56,11 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
     public Collection<PdfLayer> getLayers() {
         final PdfObject layers = getPdfObject().get(PdfName.OCGs);
         if (layers instanceof PdfDictionary)
-            return new ArrayList<PdfLayer>() {{add(new PdfLayer((PdfDictionary) layers, getDocument()));}};
+            return new ArrayList<PdfLayer>() {{add(new PdfLayer(((PdfDictionary) layers).makeIndirect(getDocument())));}};
         else if (layers instanceof PdfArray) {
             List<PdfLayer> layerList = new ArrayList<>();
             for (int ind = 0; ind < ((PdfArray) layers).size(); ind++) {
-                layerList.add(new PdfLayer(((PdfArray) layers).getAsDictionary(ind), getDocument()));
+                layerList.add(new PdfLayer((((PdfArray) layers).makeIndirect(getDocument())).getAsDictionary(ind)));
             }
             return layerList;
         }
@@ -133,5 +139,14 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
     public PdfIndirectReference getIndirectReference() {
         getPdfObject().makeIndirect(getDocument());
         return getPdfObject().getIndirectReference();
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
+
+    protected PdfDocument getDocument() {
+        return getPdfObject().getIndirectReference().getDocument();
     }
 }

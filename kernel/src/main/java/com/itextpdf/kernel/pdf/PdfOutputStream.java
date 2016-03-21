@@ -133,6 +133,9 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             pdfObject.makeIndirect(document);
             pdfObject = pdfObject.getIndirectReference();
         }
+        if (pdfObject.checkState(PdfObject.ReadOnly)) {
+            throw new PdfException(PdfException.CannotWriteObjectAfterItWasReleased);
+        }
         switch (pdfObject.getType()) {
             case PdfObject.Array:
                 write((PdfArray) pdfObject);
@@ -186,9 +189,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     public void setEncryption(final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType) {
         if (document != null)
             throw new PdfException(PdfException.EncryptionCanOnlyBeAddedBeforeOpeningDocument);
-        crypto = new PdfEncryption();
-        crypto.setCryptoMode(encryptionType, 0);
-        crypto.setupAllKeys(userPassword, ownerPassword, permissions);
+        crypto = new PdfEncryption(userPassword, ownerPassword, permissions, encryptionType, PdfEncryption.generateNewDocumentId());
     }
 
     /**
@@ -208,14 +209,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     public void setEncryption(final Certificate[] certs, final int[] permissions, final int encryptionType) {
         if (document != null)
             throw new PdfException(PdfException.EncryptionCanOnlyBeAddedBeforeOpeningDocument);
-        crypto = new PdfEncryption();
-        if (certs != null) {
-            for (int i = 0; i < certs.length; i++) {
-                crypto.addRecipient(certs[i], permissions[i]);
-            }
-        }
-        crypto.setCryptoMode(encryptionType, 0);
-        crypto.getEncryptionDictionary();
+        crypto = new PdfEncryption(certs, permissions, encryptionType);
     }
 
     PdfEncryption getEncryption() {
@@ -377,10 +371,10 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             } else {
                 //When document is opened in stamping mode the output stream can be uninitialized.
                 //We have to initialize it and write all data from streams input to streams output.
-                if (pdfStream.getOutputStream() == null && pdfStream.getReader() != null) {
+                if (pdfStream.getOutputStream() == null && pdfStream.getIndirectReference().getReader() != null) {
                     // If new specific compression is set for stream,
                     // then compressed stream should be decoded and written with new compression settings
-                    byte[] bytes = pdfStream.getReader().readStreamBytes(pdfStream, false);
+                    byte[] bytes = pdfStream.getIndirectReference().getReader().readStreamBytes(pdfStream, false);
                     if (userDefinedCompression) {
                         bytes = decodeFlateBytes(pdfStream, bytes);
                     }

@@ -34,7 +34,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "emptyDocument.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor("Alexander Chingarev").
+        pdfDoc.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
         PdfPage page = pdfDoc.addNewPage();
@@ -178,7 +178,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         PdfPage page2 = pdfDoc2.addNewPage();
         page2.flush();
         PdfDictionary catalog2 = pdfDoc2.getCatalog().getPdfObject();
-        catalog2.put(new PdfName("aDirect"), aDirect.copyToDocument(pdfDoc2));
+        catalog2.put(new PdfName("aDirect"), aDirect.copyTo(pdfDoc2));
 
         pdfDoc1.close();
         pdfDoc2.close();
@@ -243,7 +243,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         PdfPage page2 = pdfDoc2.addNewPage();
         page2.flush();
         PdfDictionary catalog2 = pdfDoc2.getCatalog().getPdfObject();
-        catalog2.put(aDirectName, aDirect.copyToDocument(pdfDoc2));
+        catalog2.put(aDirectName, aDirect.copyTo(pdfDoc2));
 
         pdfDoc1R.close();
         pdfDoc2.close();
@@ -303,7 +303,7 @@ public class PdfWriterTest extends ExtendedITextTest {
             PdfPage page2 = pdfDoc2.addNewPage();
             page2.flush();
             PdfDictionary catalog2 = pdfDoc2.getCatalog().getPdfObject();
-            catalog2.put(arr1Name, arr1.copyToDocument(pdfDoc2));
+            catalog2.put(arr1Name, arr1.copyTo(pdfDoc2));
 
             pdfDoc1R.close();
             pdfDoc2.close();
@@ -355,7 +355,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         PdfPage page2 = pdfDoc2.addNewPage();
         page2.flush();
         PdfDictionary catalog2 = pdfDoc2.getCatalog().getPdfObject();
-        catalog2.put(new PdfName("stream"), stream1.copyToDocument(pdfDoc2));
+        catalog2.put(new PdfName("stream"), stream1.copyTo(pdfDoc2));
 
         pdfDoc1R.close();
         pdfDoc2.close();
@@ -392,7 +392,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyObject5_2.pdf");
         PdfWriter writer2 = new PdfWriter(fos2);
         PdfDocument pdfDoc2 = new PdfDocument(writer2);
-        PdfPage page2 = page1.copy(pdfDoc2);
+        PdfPage page2 = page1.copyTo(pdfDoc2);
         pdfDoc2.addPage(page2);
         page2.flush();
         page2 = pdfDoc2.addNewPage();
@@ -435,9 +435,9 @@ public class PdfWriterTest extends ExtendedITextTest {
         PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "copyObject6_2.pdf")));
         PdfPage page1 = pdfDoc1.addNewPage();
 
-        page1.getPdfObject().put(new PdfName("HelloWorldCopy1"), helloWorld.copyToDocument(pdfDoc1));
-        page1.getPdfObject().put(new PdfName("HelloWorldCopy2"), helloWorld.copyToDocument(pdfDoc1, true));
-        page1.getPdfObject().put(new PdfName("HelloWorldCopy3"), helloWorld.copyToDocument(pdfDoc1, false));
+        page1.getPdfObject().put(new PdfName("HelloWorldCopy1"), helloWorld.copyTo(pdfDoc1));
+        page1.getPdfObject().put(new PdfName("HelloWorldCopy2"), helloWorld.copyTo(pdfDoc1, true));
+        page1.getPdfObject().put(new PdfName("HelloWorldCopy3"), helloWorld.copyTo(pdfDoc1, false));
         page1.flush();
 
         pdfDoc.close();
@@ -495,8 +495,8 @@ public class PdfWriterTest extends ExtendedITextTest {
             page1.getPdfObject().put(new PdfName("HelloWorldIndirect"), indirectDict);
 
             PdfPage page2 = pdfDoc2.addNewPage();
-            page2.getPdfObject().put(new PdfName("HelloWorldDirect"), directDict.copyToDocument(pdfDoc2));
-            page2.getPdfObject().put(new PdfName("HelloWorldIndirect"), indirectDict.copyToDocument(pdfDoc2));
+            page2.getPdfObject().put(new PdfName("HelloWorldDirect"), directDict.copyTo(pdfDoc2));
+            page2.getPdfObject().put(new PdfName("HelloWorldIndirect"), indirectDict.copyTo(pdfDoc2));
         } catch (PdfException ex) {
             exceptionMessage = ex.getMessage();
         } finally {
@@ -527,7 +527,7 @@ public class PdfWriterTest extends ExtendedITextTest {
             page1.getPdfObject().put(new PdfName("HelloWorldDirect"), directDict);
             page1.getPdfObject().put(new PdfName("HelloWorldIndirect"), indirectDict);
 
-            indirectDict.copyToDocument(null);
+            indirectDict.copyTo(null);
 
         } catch (PdfException ex) {
             exceptionMessage = ex.getMessage();
@@ -599,7 +599,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
-        document.getInfo().setAuthor("Alexander Chingarev").
+        document.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
         PdfPage page = document.addNewPage();
@@ -614,7 +614,7 @@ public class PdfWriterTest extends ExtendedITextTest {
 //        com.itextpdf.text.pdf.PdfReader reader = new PdfReader(filename);
 //        Assert.assertEquals("Rebuilt", false, reader.isRebuilt());
 //        Assert.assertNotNull(reader.getPageN(1));
-//        String date = reader.getInfo().get("CreationDate");
+//        String date = reader.getDocumentInfo().get("CreationDate");
 //        Calendar cl = com.itextpdf.text.pdf.PdfDate.decode(date);
 //        long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
 //        String message = "Unexpected creation date. Different from now is " + (float)diff/1000 + "s";

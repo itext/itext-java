@@ -52,17 +52,22 @@ import com.itextpdf.io.IOException;
  */
 public class TIFFLZWDecoder {
 
-    byte stringTable[][];
-    byte data[] = null, uncompData[];
-    int tableIndex, bitsToGet = 9;
-    int bytePointer, bitPointer;
+    byte[][] stringTable;
+    byte[] data = null;
+    byte[] uncompData;
+    int tableIndex;
+    int bitsToGet = 9;
+    int bytePointer;
+    int bitPointer;
     int dstIndex;
-    int w, h;
-    int predictor, samplesPerPixel;
+    int w;
+    int h;
+    int predictor;
+    int samplesPerPixel;
     int nextData = 0;
     int nextBits = 0;
 
-    int andTable[] = {
+    int[] andTable = {
             511,
             1023,
             2047,
@@ -82,7 +87,7 @@ public class TIFFLZWDecoder {
      * @param uncompData Array to return the uncompressed data in.
      * @param h          The number of rows the compressed data contains.
      */
-    public byte[] decode(byte data[], byte uncompData[], int h) {
+    public byte[] decode(byte[] data, byte[] uncompData, int h) {
 
         if (data[0] == (byte) 0x00 && data[1] == (byte) 0x01) {
             throw new IOException(IOException.Tiff50StyleLzwCodesAreNotSupported);
@@ -99,59 +104,45 @@ public class TIFFLZWDecoder {
         bitPointer = 0;
         dstIndex = 0;
 
-
         nextData = 0;
         nextBits = 0;
 
         int code, oldCode = 0;
-        byte string[];
+        byte[] str;
 
         while (((code = getNextCode()) != 257) &&
                 dstIndex < uncompData.length) {
 
             if (code == 256) {
-
                 initializeStringTable();
                 code = getNextCode();
-
                 if (code == 257) {
                     break;
                 }
-
                 writeString(stringTable[code]);
                 oldCode = code;
 
             } else {
-
                 if (code < tableIndex) {
-
-                    string = stringTable[code];
-
-                    writeString(string);
-                    addStringToTable(stringTable[oldCode], string[0]);
+                    str = stringTable[code];
+                    writeString(str);
+                    addStringToTable(stringTable[oldCode], str[0]);
                     oldCode = code;
-
                 } else {
-
-                    string = stringTable[oldCode];
-                    string = composeString(string, string[0]);
-                    writeString(string);
-                    addStringToTable(string);
+                    str = stringTable[oldCode];
+                    str = composeString(str, str[0]);
+                    writeString(str);
+                    addStringToTable(str);
                     oldCode = code;
                 }
-
             }
-
         }
 
         // Horizontal Differencing Predictor
         if (predictor == 2) {
-
             int count;
             for (int j = 0; j < h; j++) {
-
                 count = samplesPerPixel * (j * w + 1);
-
                 for (int i = samplesPerPixel; i < w * samplesPerPixel; i++) {
 
                     uncompData[count] += uncompData[count - samplesPerPixel];
@@ -168,7 +159,6 @@ public class TIFFLZWDecoder {
      * Initialize the string table.
      */
     public void initializeStringTable() {
-
         stringTable = new byte[4096][];
 
         for (int i = 0; i < 256; i++) {
@@ -183,26 +173,26 @@ public class TIFFLZWDecoder {
     /**
      * Write out the string just uncompressed.
      */
-    public void writeString(byte string[]) {
+    public void writeString(byte[] str) {
         // Fix for broken tiff files
         int max = uncompData.length - dstIndex;
-        if (string.length < max)
-            max = string.length;
-        System.arraycopy(string, 0, uncompData, dstIndex, max);
+        if (str.length < max)
+            max = str.length;
+        System.arraycopy(str, 0, uncompData, dstIndex, max);
         dstIndex += max;
     }
 
     /**
      * Add a new string to the string table.
      */
-    public void addStringToTable(byte oldString[], byte newString) {
+    public void addStringToTable(byte[] oldString, byte newString) {
         int length = oldString.length;
-        byte string[] = new byte[length + 1];
-        System.arraycopy(oldString, 0, string, 0, length);
-        string[length] = newString;
+        byte[] str = new byte[length + 1];
+        System.arraycopy(oldString, 0, str, 0, length);
+        str[length] = newString;
 
         // Add this new String to the table
-        stringTable[tableIndex++] = string;
+        stringTable[tableIndex++] = str;
 
         if (tableIndex == 511) {
             bitsToGet = 10;
@@ -216,10 +206,10 @@ public class TIFFLZWDecoder {
     /**
      * Add a new string to the string table.
      */
-    public void addStringToTable(byte string[]) {
+    public void addStringToTable(byte[] str) {
 
         // Add this new String to the table
-        stringTable[tableIndex++] = string;
+        stringTable[tableIndex++] = str;
 
         if (tableIndex == 511) {
             bitsToGet = 10;
@@ -233,13 +223,13 @@ public class TIFFLZWDecoder {
     /**
      * Append <code>newString</code> to the end of <code>oldString</code>.
      */
-    public byte[] composeString(byte oldString[], byte newString) {
+    public byte[] composeString(byte[] oldString, byte newString) {
         int length = oldString.length;
-        byte string[] = new byte[length + 1];
-        System.arraycopy(oldString, 0, string, 0, length);
-        string[length] = newString;
+        byte[] str = new byte[length + 1];
+        System.arraycopy(oldString, 0, str, 0, length);
+        str[length] = newString;
 
-        return string;
+        return str;
     }
 
     // Returns the next 9, 10, 11 or 12 bits

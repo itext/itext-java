@@ -4,7 +4,6 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.color.IccProfile;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -15,30 +14,34 @@ import java.util.ArrayList;
 
 abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
 
-    public PdfCieBasedCs(PdfArray pdfObject, PdfDocument document) {
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
+
+    public PdfCieBasedCs(PdfArray pdfObject) {
         super(pdfObject);
-        makeIndirect(document);
     }
 
     static public class CalGray extends PdfCieBasedCs {
-        public CalGray(PdfArray pdfObject, PdfDocument document) {
-            super(pdfObject, document);
+        public CalGray(PdfArray pdfObject) {
+            super(pdfObject);
         }
 
-        public CalGray(PdfDocument document, float[] whitePoint) {
+        public CalGray(float[] whitePoint) {
             this(new PdfArray(new ArrayList<PdfObject>() {{
                 add(PdfName.CalGray);
                 add(new PdfDictionary());
-            }}), document);
+            }}));
             if (whitePoint == null || whitePoint.length != 3)
                 throw new PdfException(PdfException.WhitePointIsIncorrectlySpecified, this);
-            PdfDictionary d = ((PdfArray) getPdfObject()).getAsDictionary(1);
+            PdfDictionary d = (getPdfObject()).getAsDictionary(1);
             d.put(PdfName.WhitePoint, new PdfArray(whitePoint));
         }
 
-        public CalGray(PdfDocument document, float[] whitePoint, float[] blackPoint, float gamma) {
-            this(document, whitePoint);
-            PdfDictionary d = ((PdfArray) getPdfObject()).getAsDictionary(1);
+        public CalGray(float[] whitePoint, float[] blackPoint, float gamma) {
+            this(whitePoint);
+            PdfDictionary d = (getPdfObject()).getAsDictionary(1);
             if (blackPoint != null)
                 d.put(PdfName.BlackPoint, new PdfArray(blackPoint));
             if (gamma != Float.NaN)
@@ -52,24 +55,24 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
     }
 
     static public class CalRgb extends PdfCieBasedCs {
-        public CalRgb(PdfArray pdfObject, PdfDocument document) {
-            super(pdfObject, document);
+        public CalRgb(PdfArray pdfObject) {
+            super(pdfObject);
         }
 
-        public CalRgb(PdfDocument document, float[] whitePoint) {
+        public CalRgb(float[] whitePoint) {
             this(new PdfArray(new ArrayList<PdfObject>() {{
                 add(PdfName.CalRGB);
                 add(new PdfDictionary());
-            }}), document);
+            }}));
             if (whitePoint == null || whitePoint.length != 3)
                 throw new PdfException(PdfException.WhitePointIsIncorrectlySpecified, this);
-            PdfDictionary d = ((PdfArray) getPdfObject()).getAsDictionary(1);
+            PdfDictionary d = (getPdfObject()).getAsDictionary(1);
             d.put(PdfName.WhitePoint, new PdfArray(whitePoint));
         }
 
-        public CalRgb(PdfDocument document, float[] whitePoint, float[] blackPoint, float[] gamma, float[] matrix) {
-            this(document, whitePoint);
-            PdfDictionary d = ((PdfArray) getPdfObject()).getAsDictionary(1);
+        public CalRgb(float[] whitePoint, float[] blackPoint, float[] gamma, float[] matrix) {
+            this(whitePoint);
+            PdfDictionary d = (getPdfObject()).getAsDictionary(1);
             if (blackPoint != null)
                 d.put(PdfName.BlackPoint, new PdfArray(blackPoint));
             if (gamma != null)
@@ -85,24 +88,24 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
     }
 
     static public class Lab extends PdfCieBasedCs {
-        public Lab(PdfArray pdfObject, PdfDocument document) {
-            super(pdfObject, document);
+        public Lab(PdfArray pdfObject) {
+            super(pdfObject);
         }
 
-        public Lab(PdfDocument document, float[] whitePoint) {
+        public Lab(float[] whitePoint) {
             this(new PdfArray(new ArrayList<PdfObject>() {{
                 add(PdfName.Lab);
                 add(new PdfDictionary());
-            }}), document);
+            }}));
             if (whitePoint == null || whitePoint.length != 3)
                 throw new PdfException(PdfException.WhitePointIsIncorrectlySpecified, this);
-            PdfDictionary d = ((PdfArray) getPdfObject()).getAsDictionary(1);
+            PdfDictionary d = (getPdfObject()).getAsDictionary(1);
             d.put(PdfName.WhitePoint, new PdfArray(whitePoint));
         }
 
-        public Lab(PdfDocument document, float[] whitePoint, float[] blackPoint, float[] range) {
-            this(document, whitePoint);
-            PdfDictionary d = ((PdfArray) getPdfObject()).getAsDictionary(1);
+        public Lab(float[] whitePoint, float[] blackPoint, float[] range) {
+            this(whitePoint);
+            PdfDictionary d = (getPdfObject()).getAsDictionary(1);
             if (blackPoint != null)
                 d.put(PdfName.BlackPoint, new PdfArray(blackPoint));
             if (range != null)
@@ -116,27 +119,27 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
     }
 
     static public class IccBased extends PdfCieBasedCs {
-        public IccBased(PdfArray pdfObject, PdfDocument document) {
-            super(pdfObject, document);
+        public IccBased(PdfArray pdfObject) {
+            super(pdfObject);
         }
 
-        public IccBased(PdfDocument document, final InputStream iccStream) {
+        public IccBased(final InputStream iccStream) {
             this(new PdfArray(new ArrayList<PdfObject>() {{
                 add(PdfName.ICCBased);
                 add(getIccProfileStream(iccStream));
-            }}), document);
+            }}));
         }
 
-        public IccBased(PdfDocument document, final InputStream iccStream, final float[] range) {
+        public IccBased(final InputStream iccStream, final float[] range) {
             this(new PdfArray(new ArrayList<PdfObject>() {{
                 add(PdfName.ICCBased);
                 add(getIccProfileStream(iccStream, range));
-            }}), document);
+            }}));
         }
 
         @Override
         public int getNumberOfComponents() {
-            return ((PdfArray) getPdfObject()).getAsStream(1).getAsInt(PdfName.Action.N);
+            return (getPdfObject()).getAsStream(1).getAsInt(PdfName.Action.N);
         }
 
 

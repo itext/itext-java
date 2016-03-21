@@ -125,7 +125,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
     @Test
     public void buttonFieldTest01() throws IOException, InterruptedException {
-
         String filename = destinationFolder + "buttonFieldTest01.pdf";
         PdfWriter writer = new PdfWriter(new FileOutputStream(filename));
 
@@ -153,6 +152,25 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_buttonFieldTest01.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void buttonFieldTest02() throws IOException, InterruptedException {
+        String filename = destinationFolder + "buttonFieldTest02.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(destinationFolder + "buttonFieldTest01.pdf"), new PdfWriter(new FileOutputStream(filename)));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        ((PdfButtonFormField) form.getField("push")).setImage(sourceFolder + "Desert.jpg");
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_buttonFieldTest02.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }

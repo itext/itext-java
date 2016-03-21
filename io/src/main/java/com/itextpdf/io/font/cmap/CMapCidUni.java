@@ -27,4 +27,8 @@ public class CMapCidUni extends AbstractCMap {
     public int lookup(int character) {
         return map.get(character);
     }
+
+    public int[] getCids(){
+        return map.getKeys();
+    }
 }

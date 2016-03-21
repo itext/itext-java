@@ -9,10 +9,12 @@ import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
 
 public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
@@ -51,6 +53,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Add font to resources and register PdfFont in the document for further flushing.
+     *
      * @return font resource name.
      */
     public PdfName addFont(PdfDocument pdfDocument, PdfFont font) {
@@ -76,15 +79,16 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Adds the given Form XObject to the current instance of {@link PdfResources}.
+     *
      * @param form Form XObject.
      * @param name Preferred name for the given Form XObject.
      * @return the {@link PdfName} of the newly added resource
      */
     public PdfName addForm(PdfFormXObject form, PdfName name) {
         if (getResourceNames(PdfName.XObject).contains(name)) {
-           name = addResource(form, formNamesGen);
+            name = addResource(form, formNamesGen);
         } else {
-           addResource(form.getPdfObject(), PdfName.XObject, name);
+            addResource(form.getPdfObject(), PdfName.XObject, name);
         }
 
         return name;
@@ -222,12 +226,19 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 //        return fonts;
 //    }
 
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
 
     protected PdfName addResource(PdfObjectWrapper resource, ResourceNameGenerator nameGen) {
         return addResource(resource.getPdfObject(), nameGen);
     }
 
     protected void addResource(PdfObject resource, PdfName resType, PdfName resName) {
+        if (resType.equals(PdfName.XObject)) {
+            checkAndResolveCircularReferences(resource);
+        }
         if (readOnly) {
             setPdfObject(new PdfDictionary(getPdfObject()));
             buildResources(getPdfObject());
@@ -324,6 +335,20 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 //        }
 //    }
 
+    private void checkAndResolveCircularReferences(PdfObject pdfObject) {
+        if (pdfObject instanceof PdfDictionary) {
+            PdfDictionary pdfXObject = (PdfDictionary) pdfObject;
+            PdfObject pdfXObjectResources = pdfXObject.get(PdfName.Resources);
+            if (pdfXObjectResources != null && pdfXObjectResources.getIndirectReference() != null) {
+                if (pdfXObjectResources.getIndirectReference().equals(getPdfObject().getIndirectReference())) {
+                    PdfObject cloneResources = getPdfObject().clone();
+                    cloneResources.makeIndirect(getPdfObject().getIndirectReference().getDocument());
+                    pdfXObject.put(PdfName.Resources, cloneResources.getIndirectReference());
+                }
+            }
+        }
+    }
+
     /**
      * Represents a resource name generator. The generator takes into account
      * the names of already existing resources thus providing us a unique name.
@@ -337,10 +362,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
         /**
          * Constructs an instance of {@link ResourceNameGenerator} class.
+         *
          * @param resourceType Type of resource ({@link PdfName#XObject}, {@link PdfName#Font} etc).
-         * @param prefix Prefix used for generating names.
-         * @param seed Seed for the value which is appended to the number each time
-         *             new name is generated.
+         * @param prefix       Prefix used for generating names.
+         * @param seed         Seed for the value which is appended to the number each time
+         *                     new name is generated.
          */
         public ResourceNameGenerator(PdfName resourceType, String prefix, int seed) {
             this.prefix = prefix;
@@ -350,8 +376,9 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
         /**
          * Constructs an instance of {@link ResourceNameGenerator} class.
+         *
          * @param resourceType Type of resource ({@link PdfName#XObject}, {@link PdfName#Font} etc).
-         * @param prefix Prefix used for generating names.
+         * @param prefix       Prefix used for generating names.
          */
         public ResourceNameGenerator(PdfName resourceType, String prefix) {
             this(resourceType, prefix, 1);
@@ -363,6 +390,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
         /**
          * Generates new (unique) resource name.
+         *
          * @return New (unique) resource name.
          */
         public PdfName generate() {

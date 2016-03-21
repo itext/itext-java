@@ -1,5 +1,7 @@
 package com.itextpdf.kernel.parser;
 
+import com.itextpdf.kernel.geom.LineSegment;
+import com.itextpdf.kernel.geom.Vector;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -63,7 +65,7 @@ public class SimpleTextExtractionStrategy implements TextExtractionStrategy {
 
     @Override
     public Set<EventType> getSupportedEvents() {
-        return new LinkedHashSet<>(Collections.singletonList(EventType.RENDER_TEXT));
+        return Collections.unmodifiableSet(new LinkedHashSet<>(Collections.singletonList(EventType.RENDER_TEXT)));
     }
 
     /**

@@ -67,19 +67,6 @@ public class TrueTypeFont extends FontProgram {
         initializeFontProperties();
     }
 
-    public GlyphLine createGlyphLine(char[] glyphs, Integer length) {
-        List<Glyph> glyphLine = new ArrayList<>(length);
-        for (int k = 0; k < length; k++) {
-            int index = glyphs[k];
-            Glyph glyph = getGlyphByCode(index);
-            if (glyph == null) {
-                glyph = getGlyphByCode(0);
-            }
-            glyphLine.add(glyph);
-        }
-        return new GlyphLine(glyphLine);
-    }
-
     @Override
     public boolean hasKernPairs() {
         return kerning.size() > 0;
@@ -291,7 +278,7 @@ public class TrueTypeFont extends FontProgram {
             codeToGlyph.put(index, glyph);
             avgWidth += glyph.getWidth();
         }
-
+        fixSpaceIssue();
         for (int index = 0; index < glyphWidths.length; index++) {
             if (codeToGlyph.containsKey(index)) {
                 continue;

@@ -54,4 +54,9 @@ public class PdfVisibilityExpression extends PdfObjectWrapper<PdfArray> {
         getPdfObject().setModified();
     }
 
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
+
 }

@@ -1,6 +1,6 @@
 %PDF-1.7
 %‚„œ”
-6 0 obj
+5 0 obj
 <</Length 100>>stream
 q
 BT
@@ -14,40 +14,40 @@ f
 
 endstream
 endobj
-5 0 obj
-<</Contents 6 0 R/MediaBox [0 0 595 842]/Parent 2 0 R/Resources <</Font <</F1 4 0 R>>>>/TrimBox [0 0 595 842]/Type /Page>>
+4 0 obj
+<</Contents 5 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</Font<</F1 6 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
 endobj
 1 0 obj
-<</Pages 2 0 R/Type /Catalog>>
+<</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</Author (Alexander Chingarev)/CreationDate (D:20151229062353-03'00')/Creator (iText 6)/ModDate (D:20151229062353-03'00')/Producer (iTextÆ 6.0.0-SNAPSHOT ©2000-2014 iText Group NV \(AGPL-version\))/Title (Type3 test)>>
+<</Author(Alexander Chingarev)/CreationDate(D:20160218100809-03'00')/Creator(iText 6)/ModDate(D:20160218100809-03'00')/Producer(iTextÆ 7.0.0-SNAPSHOT ©2000-2016 iText Group NV \(AGPL-version\))/Title(Type 0 test)>>
 endobj
-7 0 obj
-<</Ascent 880/CapHeight 880/Descent -120/Flags 6/FontBBox [-195 -272 1110 1075]/FontName /KozMinPro-Regular/ItalicAngle 0/StemV 93/Style <</Panose (\001\005\002\002\004\000\000\000\000\000\000\000)>>/Type /FontDescriptor>>
-endobj
-8 0 obj
-<</BaseFont /KozMinPro-Regular/CIDSystemInfo <</Ordering (Japan1)/Registry (Adobe)/Supplement 4>>/DW 1000/FontDescriptor 7 0 R/Subtype /CIDFontType0/Type /Font/W [1[278]41[738]56[990]69[565 503]77[276]80[550]83[410]]>>
+6 0 obj
+<</BaseFont/KozMinPro-Regular-UniJIS-UCS2-H/DescendantFonts[7 0 R]/Encoding/UniJIS-UCS2-H/Subtype/Type0/Type/Font>>
 endobj
 2 0 obj
-<</Count 1/Kids [5 0 R]/Type /Pages>>
+<</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
-4 0 obj
-<</BaseFont /KozMinPro-Regular-UniJIS-UCS2-H/DescendantFonts [8 0 R]/Encoding /UniJIS-UCS2-H/Subtype /Type0/Type /Font>>
+7 0 obj
+<</BaseFont/KozMinPro-Regular/CIDSystemInfo<</Ordering(Japan1)/Registry(Adobe)/Supplement 4>>/DW 1000/FontDescriptor 8 0 R/Subtype/CIDFontType0/Type/Font/W [1[278]41[738]56[990]69[565 503]77[276]80[550]83[410]]>>
+endobj
+8 0 obj
+<</Ascent 880/CapHeight 880/Descent -120/Flags 6/FontBBox[-195 -272 1110 1075]/FontName/KozMinPro-Regular/ItalicAngle 0/StemV 93/Style<</Panose<010502020400000000000000>>>/Type/FontDescriptor>>
 endobj
 xref
 0 9
 0000000000 65535 f 
-0000000301 00000 n 
-0000001054 00000 n 
-0000000347 00000 n 
-0000001107 00000 n 
+0000000296 00000 n 
+0000000702 00000 n 
+0000000341 00000 n 
 0000000163 00000 n 
 0000000015 00000 n 
-0000000582 00000 n 
-0000000820 00000 n 
+0000000571 00000 n 
+0000000753 00000 n 
+0000000981 00000 n 
 trailer
-<</ID [<b0481b4a1fdbbdd69174fb77e7fd1831><b0481b4a1fdbbdd69174fb77e7fd1831>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<ed4359323643ae42d8c1efb4f4bd420b><ed4359323643ae42d8c1efb4f4bd420b>]/Info 3 0 R/Root 1 0 R/Size 9>>
 startxref
-1243
+1190
 %%EOF

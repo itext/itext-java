@@ -182,12 +182,121 @@ public class PdfTagStructure {
     }
 
     public PdfTagStructure addAnnotationTag(PdfAnnotation annotation) {
+        throwExceptionIfCurrentPageIsNotInited();
+
         PdfObjRef kid = new PdfObjRef(annotation, currentStructElem);
-        if (!ensureElementPageEqualsCurrentOne(currentStructElem)) {
+        if (!ensureElementPageEqualsKidPage(currentStructElem, currentPage.getPdfObject())) {
             ((PdfDictionary)kid.getPdfObject()).put(PdfName.Pg, currentPage.getPdfObject());
         }
         currentStructElem.addKid(kid);
         return this;
+    }
+
+    /**
+     * Removes annotation content item from the tag structure.
+     * If annotation is not added to the document or is not tagged, nothing will happen.
+     */
+    public PdfTagStructure removeAnnotationTag(PdfAnnotation annotation) {
+        return removeAnnotationTag(annotation, false);
+    }
+
+    /**
+     * Removes annotation content item from the tag structure.
+     * If annotation is not added to the document or is not tagged, nothing will happen.
+     * @param moveToAnnotTagParent if true, this PdfTagStructure instance will point at annotation tag parent
+     *                             after method call. Could be used to remove annotation parent tag, or add
+     *                             something new to it.
+     */
+    public PdfTagStructure removeAnnotationTag(PdfAnnotation annotation, boolean moveToAnnotTagParent) {
+        PdfStructElem structElem = document.getStructTreeRoot().removeAnnotationObjectReference(annotation.getPdfObject());
+        if (moveToAnnotTagParent && structElem != null) {
+            currentStructElem = structElem;
+        }
+        return this;
+    }
+
+    /**
+     * Removes the current tag. If it has kids, they will become kids of the current tag parent.
+     * TODO need to test this method thoroughly
+     */
+    public PdfTagStructure removeTag() {
+        if (document.getStructTreeRoot().isStructTreeIsPartialFlushed()) {
+            throw new PdfException(PdfException.CannotRemoveTagStructureElementsIfTagStructureWasPartiallyFlushed);
+        }
+
+        List<IPdfStructElem> kids = currentStructElem.getKids();
+        PdfDictionary tagPage = currentStructElem.getPdfObject().getAsDictionary(PdfName.Pg);
+        IPdfStructElem parentElem = currentStructElem.getParent();
+        if (parentElem instanceof PdfStructTreeRoot) {
+            throw new PdfException(""); //TODO don't know what to do in this case yet
+        }
+
+        PdfStructElem parent = (PdfStructElem) parentElem;
+
+        removeKidFromParent(currentStructElem.getPdfObject(), parent.getPdfObject());
+        currentStructElem.getPdfObject().getIndirectReference().setFree();
+
+        for (IPdfStructElem kid : kids) {
+            if (kid instanceof PdfStructElem) {
+                PdfStructElem structElem = (PdfStructElem) kid;
+                structElem.getPdfObject().put(PdfName.P, parent.getPdfObject()); // TODO it seems it is not needed, as it is set in addKid
+                parent.addKid(structElem);
+            } else {
+                PdfMcr mcr = (PdfMcr) kid;
+                document.getStructTreeRoot().unregisterMcr(mcr);
+                if (mcr instanceof PdfMcrNumber || !((PdfDictionary)mcr.getPdfObject()).containsKey(PdfName.Pg)) {
+                    if (!ensureElementPageEqualsKidPage(parent, tagPage)) {
+                        if (mcr instanceof PdfMcrNumber) {
+                            PdfDictionary mcrDict = new PdfDictionary();
+                            mcrDict.put(PdfName.Type, PdfName.MCR);
+                            mcrDict.put(PdfName.Pg, tagPage);
+                            mcrDict.put(PdfName.MCID, mcr.getPdfObject());
+                            mcr = new PdfMcrDictionary(mcrDict, parent);
+                        } else {
+                            PdfDictionary mcrDict = (PdfDictionary) mcr.getPdfObject();
+                            mcrDict.put(PdfName.Pg, tagPage);
+                        }
+                    }
+                }
+                parent.addKid(mcr);
+            }
+        }
+        currentStructElem = parent;
+        return this;
+    }
+
+    /**
+     * Removes all tags that belong only to this page. For the method which defines if tag belongs to the page see
+     * {@link #flushPageTags(PdfPage)}.
+     * @param page page that defines which tags are to be removed
+     * @return current tag structure instance.
+     */
+    public PdfTagStructure removePageTags(PdfPage page) {
+        if (document.getStructTreeRoot().isStructTreeIsPartialFlushed()) {
+            throw new PdfException(PdfException.CannotRemoveTagStructureElementsIfTagStructureWasPartiallyFlushed);
+        }
+
+        PdfStructTreeRoot structTreeRoot = document.getStructTreeRoot();
+        List<PdfMcr> pageMcrs = structTreeRoot.getPageMarkedContentReferences(page);
+        if (pageMcrs != null) {
+            int mcrsCount = pageMcrs.size();
+            PdfMcr mcr;
+            // it's crucial to run this cycle backwards, because at each iteration we remove mcr
+            for (int i = mcrsCount - 1; i >= 0; --i) {
+                mcr = pageMcrs.get(i);
+                removePageTagFromParent(mcr.getPdfObject(), mcr.getParent());
+                document.getStructTreeRoot().unregisterMcr(mcr);
+            }
+        }
+        if (currentStructElem.getPdfObject().getIndirectReference() == null) { // currentStructElem element was removed
+            moveToRoot();
+        }
+        return this;
+    }
+
+    //TODO when method to get an accessible element (optionally connected to the tag) will be implemented, remove this method
+    public PdfName getRole() {
+        return currentStructElem.getRole();
     }
 
     /**
@@ -351,7 +460,7 @@ public class PdfTagStructure {
      * <br><br>
      * If some of the page's tags are still connected to the accessible elements, in this case these tags are considered
      * as not yet finished ones, and they won't be flushed immediately, but they will be flushed, when the connection
-     * is removed.
+     * is removed. TODO well, actually they won't.
      * @param page a page which tags will be flushed.
      */
     public void flushPageTags(PdfPage page) {
@@ -389,8 +498,10 @@ public class PdfTagStructure {
     }
 
     protected int createNextMcidForStructElem(PdfStructElem elem, int index) {
+        throwExceptionIfCurrentPageIsNotInited();
+
         PdfMcr mcr;
-        if (!markedContentNotInPageStream() && ensureElementPageEqualsCurrentOne(elem)) {
+        if (!markedContentNotInPageStream() && ensureElementPageEqualsKidPage(elem, currentPage.getPdfObject())) {
             mcr = new PdfMcrNumber(currentPage, elem);
         } else {
             mcr = new PdfMcrDictionary(currentPage, elem);
@@ -412,6 +523,31 @@ public class PdfTagStructure {
         }
     }
 
+    private void removeKidFromParent(PdfObject kid, PdfDictionary parent) {
+        PdfObject parentK = parent.get(PdfName.K);
+        if (parentK.isArray()) {
+            removeObjectFromArray((PdfArray) parentK, kid);
+        }
+
+        if (parentK.isDictionary() || parentK.isArray() && ((PdfArray)parentK).isEmpty()) {
+            parent.remove(PdfName.K);
+        }
+    }
+
+    private void removePageTagFromParent(PdfObject pageTagObject, IPdfStructElem parent) {
+        if (parent instanceof PdfStructElem) {
+            PdfDictionary parentObject = ((PdfStructElem) parent).getPdfObject();
+            removeKidFromParent(pageTagObject, parentObject);
+            if (!connectedStructToModel.containsKey(parentObject) && parent.getKids().isEmpty()
+                    && parentObject != documentElem.getPdfObject()) { // TODO this could not solve the problems if there is several root elements under StructTreeRoot
+                removePageTagFromParent(parentObject, parent.getParent());
+                parentObject.getIndirectReference().setFree();
+            }
+        } else { // it is StructTreeRoot
+            // TODO don't know what to do here. remove from its kids or there should be some root tag like Document which I don't want to remove
+        }
+    }
+
     private void flushParentIfBelongsToPage(PdfStructElem parent, PdfPage currentPage) {
         if (parent.isFlushed() || connectedStructToModel.containsKey(parent.getPdfObject())) {
             return;
@@ -427,6 +563,8 @@ public class PdfTagStructure {
                     break;
                 }
             } else if (kid instanceof PdfStructElem) {
+                // if kid is structElem and was already flushed then in kids list there will be null for it instead of
+                // PdfStructElem
                 allKidsBelongToPage = false;
                 break;
             }
@@ -461,17 +599,14 @@ public class PdfTagStructure {
         return contentStream != null;
     }
 
-    private boolean ensureElementPageEqualsCurrentOne(PdfStructElem elem) {
-        if (currentPage == null) {
-            throw new PdfException(PdfException.PageIsNotSetForThePdfTagStructure);
-        }
+    private boolean ensureElementPageEqualsKidPage(PdfStructElem elem, PdfDictionary kidPage) {
         PdfObject pageObject = elem.getPdfObject().get(PdfName.Pg);
         if (pageObject == null) {
-            pageObject = currentPage.getPdfObject();
-            elem.getPdfObject().put(PdfName.Pg, pageObject);
+            pageObject = kidPage;
+            elem.getPdfObject().put(PdfName.Pg, kidPage);
         }
 
-        return currentPage.getPdfObject().equals(pageObject);
+        return kidPage.equals(pageObject);
     }
 
     private void ensureDocumentTagIsOpen() {
@@ -566,5 +701,19 @@ public class PdfTagStructure {
         if (PdfStructElem.identifyType(document, role) == PdfStructElem.Unknown) {
             throw new PdfException(PdfException.RoleIsNotMappedWithAnyStandardRole);
         }
+    }
+
+    private void throwExceptionIfCurrentPageIsNotInited() {
+        if (currentPage == null) {
+            throw new PdfException(PdfException.PageIsNotSetForThePdfTagStructure);
+        }
+    }
+
+    private boolean removeObjectFromArray(PdfArray array, PdfObject toRemove) {
+        boolean removed;
+        if (!(removed = array.remove(toRemove))) {
+            removed = array.remove(toRemove.getIndirectReference());
+        }
+        return removed;
     }
 }

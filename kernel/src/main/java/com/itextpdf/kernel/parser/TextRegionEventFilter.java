@@ -1,6 +1,8 @@
 package com.itextpdf.kernel.parser;
 
+import com.itextpdf.kernel.geom.LineSegment;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.geom.Vector;
 
 /**
  * This {@link EventFilter} implementation only accepts text render events within the specified

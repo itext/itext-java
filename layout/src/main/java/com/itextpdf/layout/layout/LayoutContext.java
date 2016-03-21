@@ -11,4 +11,9 @@ public class LayoutContext {
     public LayoutArea getArea() {
         return area;
     }
+
+    @Override
+    public String toString() {
+        return area.toString();
+    }
 }

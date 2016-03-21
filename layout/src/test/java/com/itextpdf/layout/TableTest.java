@@ -34,6 +34,14 @@ public class TableTest extends ExtendedITextTest{
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/TableTest/";
     static final public String destinationFolder = "./target/test/com/itextpdf/layout/TableTest/";
 
+    static final String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
+            "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
+            "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
+    static final String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
+    static final String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
+            "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
+
+
     @BeforeClass
     static public void beforeClass() {
        createDestinationFolder(destinationFolder);
@@ -530,6 +538,172 @@ public class TableTest extends ExtendedITextTest{
                 .addCell(new Cell().add(new Paragraph("cell 1, 2\n" + middleTextContent)).setBorder(new SolidBorder(Color.RED, 2)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + middleTextContent + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + longTextContent)));
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+    })
+    public void simpleTableTest17() throws IOException, InterruptedException {
+        String testName = "tableTest17.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(new float[]{50, 50, 50})
+                .addCell(new Cell().add(new Paragraph("cell 1, 1")))
+                .addCell(new Cell().add(new Paragraph("cell 1, 2")))
+                .addCell(new Cell().add(new Paragraph("cell 1, 3")));
+
+        String longText = "Long text, very long text. ";
+        for (int i = 0; i < 4; i++) {
+            longText += longText;
+        }
+        table.addCell(new Cell().add(new Paragraph("cell 2.1\n" + longText).setKeepTogether(true)));
+        table.addCell("cell 2.2\nShort text.");
+        table.addCell(new Cell().add(new Paragraph("cell 2.3\n" + longText)));
+
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+    })
+    public void simpleTableTest18() throws IOException, InterruptedException {
+        String testName = "tableTest18.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        doc.add(new Paragraph(textContent));
+
+        Table table = new Table(new float[]{50, 50, 50})
+                .addCell(new Cell().add(new Paragraph("cell 1, 1")))
+                .addCell(new Cell().add(new Paragraph("cell 1, 2")))
+                .addCell(new Cell().add(new Paragraph("cell 1, 3")));
+
+        String longText = "Long text, very long text. ";
+        for (int i = 0; i < 4; i++) {
+            longText += longText;
+        }
+        table.addCell(new Cell().add(new Paragraph("cell 2.1\n" + longText).setKeepTogether(true)));
+        table.addCell("cell 2.2\nShort text.");
+        table.addCell(new Cell().add(new Paragraph("cell 2.3\n" + longText)));
+
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+    })
+    public void simpleTableTest19() throws IOException, InterruptedException {
+        String testName = "tableTest19.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(new float[]{130, 130, 260})
+                .addCell(new Cell(3, 2).add(new Paragraph("cell 1:2, 1:3\n" + textContent + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 3\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + textContent)))
+                .addCell(new Cell().add(new Image(ImageFactory.getImage(sourceFolder + "red.png"))))
+                .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + shortTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 2\n" + shortTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 3\n" + middleTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 6, 1\n" + middleTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 6, 2\n" + middleTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + middleTextContent)));
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+    })
+    public void simpleTableTest20() throws IOException, InterruptedException {
+        String testName = "tableTest20.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(new float[]{130, 130, 260})
+                .addCell(new Cell().add(new Image(ImageFactory.getImage(sourceFolder + "red.png"))))
+                .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + shortTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 2\n" + shortTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 3\n" + middleTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 6, 1\n" + middleTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 6, 2\n" + middleTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + middleTextContent)));
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+    })
+    public void simpleTableTest21() throws IOException, InterruptedException {
+        String testName = "tableTest21.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
+                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
+                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
+        String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
+        String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
+                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
+
+        doc.add(new Paragraph(textContent));
+
+        Table table = new Table(new float[]{130, 130, 260})
+                .addCell(new Cell().add(new Image(ImageFactory.getImage(sourceFolder + "red.png"))))
+                .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + shortTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 2\n" + shortTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 3\n" + middleTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 6, 1\n" + middleTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 6, 2\n" + middleTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + middleTextContent)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));

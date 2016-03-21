@@ -54,4 +54,9 @@ public class PdfSignatureBuildProperties extends PdfObjectWrapper<PdfDictionary>
 
         return new PdfSignatureAppDictionary(appPropDic);
     }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
 }

@@ -2,10 +2,20 @@ package com.itextpdf.layout.element;
 
 import com.itextpdf.layout.Document;
 
+/**
+ * A {@link ILargeElement} is a layout element which may get added to
+ * indefinitely, making the object prohibitively large.
+ * In order to avoid consuming and holding on to undesirable amounts of
+ * resources, the contents of a {@link ILargeElement} can be flushed regularly
+ * by client code, e.g. at page boundaries or after a certain amount of additions.
+ * 
+ * @param <Type> the type of the implementation
+ */
 public interface ILargeElement<Type extends ILargeElement> extends IElement<Type> {
 
     /**
      * Checks whether an element has already been marked as complete.
+     * @return the completion marker boolean
      */
     boolean isComplete();
 
@@ -29,6 +39,7 @@ public interface ILargeElement<Type extends ILargeElement> extends IElement<Type
      * Sets the document this element is bound to.
      * We cannot write a large element into several documents simultaneously because we would need
      * more bulky interfaces for this feature. For now we went for simplicity.
+     * @param document the document
      */
     void setDocument(Document document);
 }

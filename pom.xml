@@ -4,7 +4,7 @@
 
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.0.0-RC.20160201</version>
+    <version>7.0.0-RC.20160321</version>
     <packaging>pom</packaging>
     <name>iText 7</name>
     <url>http://itextpdf.com/</url>
@@ -30,7 +30,6 @@
         <module>parsing</module>
         <module>pdfa</module>
         <module>pdftest</module>
-        
         
         <module>sign</module>
         

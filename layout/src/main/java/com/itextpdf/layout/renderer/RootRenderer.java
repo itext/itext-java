@@ -122,6 +122,13 @@ public abstract class RootRenderer extends AbstractRenderer {
         throw new IllegalStateException("Layout is not supported for root renderers.");
     }
 
+    public LayoutArea getCurrentArea() {
+        if (currentArea == null) {
+            updateCurrentArea(null);
+        }
+        return currentArea;
+    }
+
     protected abstract void flushSingleRenderer(IRenderer resultRenderer);
 
     protected abstract LayoutArea updateCurrentArea(LayoutResult overflowResult);

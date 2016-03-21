@@ -2,6 +2,7 @@ package com.itextpdf.kernel.pdf.tagging;
 
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 
 public class PdfObjRef extends PdfMcr<PdfDictionary> {
@@ -12,9 +13,12 @@ public class PdfObjRef extends PdfMcr<PdfDictionary> {
 
     public PdfObjRef(PdfAnnotation annot, PdfStructElem parent) {
         super(new PdfDictionary(), parent);
+        PdfDictionary parentObject = parent.getPdfObject();
+        ensureObjectIsAddedToDocument(parentObject);
+
         PdfDictionary dict = (PdfDictionary) getPdfObject();
         dict.put(PdfName.Type, PdfName.OBJR);
-        dict.put(PdfName.Obj, annot.tag(parent.getDocument()).getPdfObject());
+        dict.put(PdfName.Obj, annot.tag(parentObject.getIndirectReference().getDocument()).getPdfObject());
     }
 
     @Override
@@ -28,6 +32,10 @@ public class PdfObjRef extends PdfMcr<PdfDictionary> {
         if (page == null)
             page = parent.getPdfObject().getAsDictionary(PdfName.Pg);
         return page;
+    }
+
+    public PdfObject getReferencedObject() {
+        return ((PdfDictionary) getPdfObject()).get(PdfName.Obj);
     }
 
 }

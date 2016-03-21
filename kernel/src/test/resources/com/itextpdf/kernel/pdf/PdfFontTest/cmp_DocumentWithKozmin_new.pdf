@@ -1,18 +1,12 @@
 %PDF-1.7
 %‚„œ”
-6 0 obj
-<</Ascent 880/CapHeight 880/Descent 880/Flags 6/FontBBox [-195 -272 915 803]/FontName /KozMinPro-Regular/ItalicAngle 0/StemV 93/Style <</Panose (\001\005\002\002\004\000\000\000\000\000\000\000)>>/Type /FontDescriptor>>
-endobj
-5 0 obj
-<</BaseFont /KozMinPro-Regular/CIDSystemInfo <</Ordering (Japan1)/Registry (Adobe)/Supplement 4>>/DW 1000/FontDescriptor 6 0 R/Subtype /CIDFontType0/Type /Font/W [1 [278] 41 [738] 56 [990] 69 [565 503] 77 [276] 80 [550] 83 [410]]>>
-endobj
 8 0 obj
-<</Length 131>>stream
+<</Length 116>>stream
 q
 BT
 36 700 Td
 /F1 72 Tf
-(\000N\000e\000w\000 \000H\000e\000l\000l\000o\000 \000w\000o\000r\000l\000d)Tj
+<004e00650077002000480065006c006c006f00200077006f0072006c0064>Tj
 ET
 Q
 100 500 100 100 re
@@ -21,33 +15,39 @@ f
 endstream
 endobj
 7 0 obj
-<</Contents 8 0 R/MediaBox [0 0 595 842]/Parent 2 0 R/Resources <</Font <</F1 4 0 R>>>>/Type /Page>>
+<</Contents 8 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</Font<</F1 4 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
 endobj
 1 0 obj
-<</Pages 2 0 R/Type /Catalog>>
+<</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</Author (Dmitry Trusevich)/CreationDate (D:20150623061732-03'00')/Creator (iText 6)/Title (Type0 font iText 6 Document)>>
+<</Author(Alexander Chingarev)/CreationDate(D:20160217085148-03'00')/Creator(iText 6)/ModDate(D:20160217085148-03'00')/Producer(iTextÆ 7.0.0-SNAPSHOT ©2000-2016 iText Group NV \(AGPL-version\))/Title(Type0 font iText 6 Document)>>
 endobj
 4 0 obj
-<</BaseFont /KozMinPro-Regular-UniJIS-UCS2-H/DescendantFonts [5 0 R]/Encoding /UniJIS-UCS2-H/Subtype /Type0/Type /Font>>
+<</BaseFont/KozMinPro-Regular-UniJIS-UCS2-H/DescendantFonts[5 0 R]/Encoding/UniJIS-UCS2-H/Subtype/Type0/Type/Font>>
 endobj
 2 0 obj
-<</Count 1/Kids [7 0 R]/Type /Pages>>
+<</Count 1/Kids[7 0 R]/Type/Pages>>
+endobj
+5 0 obj
+<</BaseFont/KozMinPro-Regular/CIDSystemInfo<</Ordering(Japan1)/Registry(Adobe)/Supplement 4>>/DW 1000/FontDescriptor 6 0 R/Subtype/CIDFontType0/Type/Font/W[1 [278] 41 [738] 56 [990] 69 [565 503] 77 [276] 80 [550] 83 [410]]>>
+endobj
+6 0 obj
+<</Ascent 880/CapHeight 880/Descent -120/Flags 6/FontBBox[-195 -272 915 803]/FontName/KozMinPro-Regular/ItalicAngle 0/StemV 93/Style<</Panose(\001\005\002\002\004\000\000\000\000\000\000\000)>>/Type/FontDescriptor>>
 endobj
 xref
 0 9
 0000000000 65535 f 
-0000000792 00000 n 
-0000001113 00000 n 
-0000000838 00000 n 
-0000000977 00000 n 
-0000000250 00000 n 
+0000000312 00000 n 
+0000000734 00000 n 
+0000000357 00000 n 
+0000000603 00000 n 
+0000000785 00000 n 
+0000001025 00000 n 
+0000000179 00000 n 
 0000000015 00000 n 
-0000000676 00000 n 
-0000000497 00000 n 
 trailer
-<</ID [<2c47e0e1714cd23d3b393083dc3d0da4><2c47e0e1714cd23d3b393083dc3d0da4>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<fa863a07a1b56620c59593ff3c159421><fa863a07a1b56620c59593ff3c159421>]/Info 3 0 R/Root 1 0 R/Size 9>>
 startxref
-1166
+1256
 %%EOF

@@ -23,6 +23,11 @@ public class LogMessageConstant {
     /**
      * Log message.
      */
+    public static final String FORBID_RELEASE_IS_SET = "ForbidRelease flag is set and release is called. Releasing will not be performed.";
+
+    /**
+     * Log message.
+     */
     public static final String IMAGE_HAS_AMBIGUOUS_SCALE = "The image cannot be auto scaled and scaled by a certain parameter simultaneously";
 
     /**
@@ -53,7 +58,17 @@ public class LogMessageConstant {
     /**
      * Log message.
      */
+    public static final String MAKE_COPY_OF_CATALOG_DICTIONARY_IS_FORBIDDEN = "Make copy of Catalog dictionary is forbidden.";
+
+    /**
+     * Log message.
+     */
     public static final String ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE = "Only one of artbox or trimbox can exist on the page. The trimbox will be deleted";
+
+    /**
+     * Log message.
+     */
+    public static final String RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES = "The {0} rectangle has negative or zero sizes. It will not be displayed.";
 
     /**
      * Log message.
@@ -69,6 +84,11 @@ public class LogMessageConstant {
      * Log message.
      */
     public static final String START_MARKER_MISSING_IN_PFB_FILE = "Start marker is missing in the pfb file";
+
+    /**
+     * Log message.
+     */
+    public static final String UNKNOWN_CMAP = "Unknown CMap {0}";
 
     /**
      * Log message.

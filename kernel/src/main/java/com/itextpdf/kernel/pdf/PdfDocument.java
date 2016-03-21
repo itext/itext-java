@@ -10,8 +10,10 @@ import com.itextpdf.kernel.events.IEventDispatcher;
 import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
@@ -26,7 +28,9 @@ import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.XMPUtils;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
+import com.itextpdf.kernel.numbering.RomanNumbering;
 
+import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,7 +42,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class PdfDocument implements IEventDispatcher {
+public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Currently active page.
@@ -103,6 +107,7 @@ public class PdfDocument implements IEventDispatcher {
     protected PdfStructTreeRoot structTreeRoot;
 
     protected Integer structParentIndex = null;
+    protected boolean userProperties;
 
     protected boolean closeReader = true;
     protected boolean closeWriter = true;
@@ -110,6 +115,8 @@ public class PdfDocument implements IEventDispatcher {
     protected boolean isClosing = false;
 
     protected boolean closed = false;
+
+
 
     /**
     * flag determines whether to write unused objects to result document
@@ -452,25 +459,47 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
-     * Removes page from the document.
+     * Removes the first occurrence of the specified page from this document,
+     * if it is present. Returns <tt>true</tt> if this document
+     * contained the specified element (or equivalently, if this document
+     * changed as a result of the call).
      *
-     * @param page a page to remove.
+     * @param page page to be removed from this document, if present
+     * @return <tt>true</tt> if this document contained the specified page
      */
     public boolean removePage(PdfPage page) {
         checkClosingStatus();
-        boolean result = catalog.removePage(page);
-        dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.REMOVE_PAGE, page));
-        return result;
+        int pageNum = getPageNumber(page);
+        if (pageNum < 1)
+            return false;
+        return removePage(pageNum) != null;
     }
 
     /**
      * Removes page from the document by page number.
      *
-     * @param pageNum a number of page to remove.
+     * @param pageNum the one-based index of the PdfPage to be removed
+     * @return the page that was removed from the list
      */
     public PdfPage removePage(int pageNum) {
         checkClosingStatus();
-        return catalog.removePage(pageNum);
+        PdfPage removedPage = catalog.removePage(pageNum);
+
+        if (removedPage != null) {
+            catalog.removeOutlines(removedPage);
+            removeUnusedWidgetsFromFields(removedPage);
+            if (isTagged()) {
+                getTagStructure().removePageTags(removedPage);
+            }
+
+            if (!removedPage.getPdfObject().isFlushed()) {
+                removedPage.getPdfObject().remove(PdfName.Parent);
+            }
+            removedPage.getPdfObject().getIndirectReference().setFree();
+
+            dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.REMOVE_PAGE, removedPage));
+        }
+        return removedPage;
     }
 
     /**
@@ -478,7 +507,7 @@ public class PdfDocument implements IEventDispatcher {
      *
      * @return document information dictionary.
      */
-    public PdfDocumentInfo getInfo() {
+    public PdfDocumentInfo getDocumentInfo() {
         checkClosingStatus();
         return info;
     }
@@ -591,20 +620,12 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
-     * Gets PDF document info.
-     *
-     * @return PDF document info.
-     */
-    public PdfDocumentInfo getDocumentInfo() {
-        checkClosingStatus();
-        return info;
-    }
-
-    /**
      * Close PDF document.
      */
     public void close() {
-        checkClosingStatus();
+        if (closed) {
+            return;
+        }
         isClosing = true;
         try {
             if (writer != null) {
@@ -632,23 +653,20 @@ public class PdfDocument implements IEventDispatcher {
                     if (catalog.isOCPropertiesMayHaveChanged() && catalog.getOCProperties(false).getPdfObject().isModified()) {
                         catalog.getOCProperties(false).flush();
                     }
+                    if (catalog.pageLabels != null) {
+                        catalog.put(PdfName.PageLabels, catalog.pageLabels.buildTree());
+                    }
+
                     PdfObject pageRoot = catalog.pageTree.generateTree();
                     if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
                         catalog.getPdfObject().put(PdfName.Pages, pageRoot);
                         catalog.getPdfObject().flush(false);
                     }
 
-                    if (catalog.destinationTree != null) {
-                        PdfObject destinationRoot = catalog.destinationTree.generateTree();
-
-                        if (catalog.getPdfObject().isModified() || destinationRoot.isModified()) {
-                            PdfDictionary names = catalog.getPdfObject().getAsDictionary(PdfName.Names);
-                            if (names == null) {
-                                names = new PdfDictionary();
-                                names.makeIndirect(this);
-                                names.put(PdfName.Dests, destinationRoot);
-                                catalog.getPdfObject().put(PdfName.Names, names);
-                            }
+                    for (Map.Entry<PdfName, PdfNameTree> entry : catalog.nameTrees.entrySet()) {
+                        PdfNameTree tree = entry.getValue();
+                        if (tree.isModified()) {
+                            ensureTreeRootAddedToNames(tree.buildTree().makeIndirect(this), entry.getKey());
                         }
                     }
 
@@ -659,8 +677,8 @@ public class PdfDocument implements IEventDispatcher {
 
                     writer.flushModifiedWaitingObjects();
                     if (writer.crypto != null) {
-                        assert reader.getCryptoRef() != null : "Conflict with source encryption";
-                        crypto = reader.getCryptoRef();
+                        assert reader.getCryptoDict() == writer.crypto.getPdfObject() : "Conflict with source encryption";
+                        crypto = reader.getCryptoDict();
                     }
                 } else {
                     if (structTreeRoot != null) {
@@ -670,18 +688,16 @@ public class PdfDocument implements IEventDispatcher {
                         catalog.getPdfObject().put(PdfName.OCProperties, catalog.getOCProperties(false).getPdfObject());
                         catalog.getOCProperties(false).flush();
                     }
+                    if (catalog.pageLabels != null) {
+                        catalog.put(PdfName.PageLabels, catalog.pageLabels.buildTree());
+                    }
+
                     catalog.getPdfObject().put(PdfName.Pages, catalog.pageTree.generateTree());
 
-                    if (catalog.destinationTree != null) {
-                        PdfObject destinationRoot = catalog.destinationTree.generateTree();
-                        if (destinationRoot != null) {
-                            PdfDictionary names = catalog.getPdfObject().getAsDictionary(PdfName.Names);
-                            if (names == null) {
-                                names = new PdfDictionary();
-                                names.makeIndirect(this);
-                                names.put(PdfName.Dests, destinationRoot);
-                                catalog.getPdfObject().put(PdfName.Names, names);
-                            }
+                    for (Map.Entry<PdfName, PdfNameTree> entry : catalog.nameTrees.entrySet()) {
+                        PdfNameTree tree = entry.getValue();
+                        if (tree.isModified()) {
+                            ensureTreeRootAddedToNames(tree.buildTree().makeIndirect(this), entry.getKey());
                         }
                     }
 
@@ -707,8 +723,8 @@ public class PdfDocument implements IEventDispatcher {
 
                 byte[] originalFileID = null;
                 if (crypto == null && writer.crypto != null) {
-                    originalFileID = writer.crypto.documentID;
-                    crypto = writer.crypto.getEncryptionDictionary();
+                    originalFileID = writer.crypto.getDocumentId();
+                    crypto = writer.crypto.getPdfObject();
                     crypto.makeIndirect(this);
                     // To avoid encryption of XrefStream and Encryption dictionary remove crypto.
                     // NOTE. No need in reverting, because it is the last operation with the document.
@@ -724,7 +740,7 @@ public class PdfDocument implements IEventDispatcher {
                         isModified = true;
                     }
                     if (originalFileID == null) {
-                        originalFileID = PdfEncryption.createDocumentId();
+                        originalFileID = PdfEncryption.generateNewDocumentId();
                     }
                 }
                 // if originalFIleID comes from crypto, it means that no need in checking modified state.
@@ -769,6 +785,9 @@ public class PdfDocument implements IEventDispatcher {
             catalog.getPdfObject().put(PdfName.StructTreeRoot, structTreeRoot.getPdfObject());
             catalog.getPdfObject().put(PdfName.MarkInfo, new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
                 put(PdfName.Marked, PdfBoolean.PdfTrue);
+                if (userProperties) {
+                    put(PdfName.UserProperties, new PdfBoolean(true));
+                }
             }}));
             structParentIndex = 0;
         }
@@ -808,8 +827,8 @@ public class PdfDocument implements IEventDispatcher {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage) {
-        return copyPages(pageFrom, pageTo, toDocument, insertBeforePage, null);
+    public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage) {
+        return copyPagesTo(pageFrom, pageTo, toDocument, insertBeforePage, null);
     }
 
     /**
@@ -825,12 +844,12 @@ public class PdfDocument implements IEventDispatcher {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
+    public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
         Set<Integer> pages = new TreeSet<>();
         for (int i = pageFrom; i <= pageTo; i++) {
             pages.add(i);
         }
-        return copyPages(pages, toDocument, insertBeforePage, copier);
+        return copyPagesTo(pages, toDocument, insertBeforePage, copier);
     }
 
     /**
@@ -844,8 +863,8 @@ public class PdfDocument implements IEventDispatcher {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument) {
-        return copyPages(pageFrom, pageTo, toDocument, null);
+    public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument) {
+        return copyPagesTo(pageFrom, pageTo, toDocument, null);
     }
 
     /**
@@ -856,12 +875,12 @@ public class PdfDocument implements IEventDispatcher {
      * @param pageFrom
      * @param pageTo
      * @param toDocument
-     * @param copier     a copier which bears a special copy logic. May be NULL
+     * @param copier a copier which bears a special copy logic. May be NULL
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(int pageFrom, int pageTo, PdfDocument toDocument, IPdfPageExtraCopier copier) {
-        return copyPages(pageFrom, pageTo, toDocument, toDocument.getNumberOfPages() + 1, copier);
+    public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, IPdfPageExtraCopier copier) {
+        return copyPagesTo(pageFrom, pageTo, toDocument, toDocument.getNumberOfPages() + 1, copier);
     }
 
     /**
@@ -875,8 +894,8 @@ public class PdfDocument implements IEventDispatcher {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(Set<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage) {
-        return copyPages(pagesToCopy, toDocument, insertBeforePage, null);
+    public List<PdfPage> copyPagesTo(Set<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage) {
+        return copyPagesTo(pagesToCopy, toDocument, insertBeforePage, null);
     }
 
     /**
@@ -891,7 +910,7 @@ public class PdfDocument implements IEventDispatcher {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(Set<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
+    public List<PdfPage> copyPagesTo(Set<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
         checkClosingStatus();
         List<PdfPage> copiedPages = new ArrayList<>();
         Map<PdfPage, PdfPage> page2page = new LinkedHashMap<>();
@@ -899,7 +918,7 @@ public class PdfDocument implements IEventDispatcher {
         Set<PdfOutline> outlinesToCopy = new HashSet<>();
         for (Integer pageNum : pagesToCopy) {
             PdfPage page = getPage(pageNum);
-            PdfPage newPage = page.copy(toDocument, copier);
+            PdfPage newPage = page.copyTo(toDocument, copier);
             copiedPages.add(newPage);
             page2page.put(page, newPage);
             if (insertBeforePage < toDocument.getNumberOfPages() + 1) {
@@ -915,19 +934,20 @@ public class PdfDocument implements IEventDispatcher {
                 page2Outlines.put(newPage, pageOutlines);
             }
         }
+
+        copyLinkAnnotations(toDocument, page2page);
+
+        // It's important to copy tag structure after link annotations were copied, because object content items in tag
+        // structure are not copied in case if their's OBJ key is annotation and doesn't contain /P entry.
         if (toDocument.isTagged()) {
             if (insertBeforePage > toDocument.getNumberOfPages())
-                getStructTreeRoot().copyToDocument(toDocument, page2page);
+                getStructTreeRoot().copyTo(toDocument, page2page);
             else
-                getStructTreeRoot().copyToDocument(toDocument, insertBeforePage, page2page);
+                getStructTreeRoot().copyTo(toDocument, insertBeforePage, page2page);
         }
-
-        copyAnnotations(toDocument, page2page);
-
         if (catalog.isOutlineMode()) {
             copyOutlines(outlinesToCopy, toDocument, page2Outlines);
         }
-
         return copiedPages;
     }
 
@@ -941,8 +961,8 @@ public class PdfDocument implements IEventDispatcher {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(Set<Integer> pagesToCopy, PdfDocument toDocument) {
-        return copyPages(pagesToCopy, toDocument, null);
+    public List<PdfPage> copyPagesTo(Set<Integer> pagesToCopy, PdfDocument toDocument) {
+        return copyPagesTo(pagesToCopy, toDocument, null);
     }
 
     /**
@@ -956,9 +976,8 @@ public class PdfDocument implements IEventDispatcher {
      * @return list of copied pages
      * @throws PdfException
      */
-    public List<PdfPage> copyPages(Set<Integer> pagesToCopy, PdfDocument toDocument, IPdfPageExtraCopier copier) {
-
-        return copyPages(pagesToCopy, toDocument, toDocument.getNumberOfPages() + 1, copier);
+    public List<PdfPage> copyPagesTo(Set<Integer> pagesToCopy, PdfDocument toDocument, IPdfPageExtraCopier copier) {
+        return copyPagesTo(pagesToCopy, toDocument, toDocument.getNumberOfPages() + 1, copier);
     }
 
     public boolean isCloseReader() {
@@ -995,12 +1014,13 @@ public class PdfDocument implements IEventDispatcher {
      * This methods adds new name in the Dests NameTree. It throws an exception, if the name already exists.
      *
      * @param key   Name of the destination.
-     * @param value An object destination refers to.
+     * @param value An object destination refers to. Must be an array or a dictionary with key /D and array.
+     *              See PdfSpec 12.3.2.3 for more info.
      * @throws PdfException
      */
-    public void addNewName(PdfObject key, PdfObject value) {
+    public void addNameDestination(String key, PdfObject value) {
         checkClosingStatus();
-        catalog.addNewDestinationName(key, value);
+        catalog.addNamedDestination(key, value);
     }
 
     public List<PdfIndirectReference> listIndirectReferences() {
@@ -1041,30 +1061,109 @@ public class PdfDocument implements IEventDispatcher {
     public void checkIsoConformance(Object obj, IsoKey key) {
     }
 
-    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, int gStateIndex) {
+    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources) {
     }
 
-    public void checkShowTextIsoConformance(Object gState, PdfResources resources, int gStateIndex) {
+    public void checkShowTextIsoConformance(Object gState, PdfResources resources) {
     }
 
-    public void addFileAttachment(String description, byte[] fileStore, String fileDisplay, String mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue) {
+    public void addFileAttachment(String description, byte[] fileStore, String fileDisplay, PdfName mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue) {
         addFileAttachment(description, PdfFileSpec.createEmbeddedFileSpec(this, fileStore, description, fileDisplay, mimeType, fileParameter, afRelationshipValue, true));
     }
 
-    public void addFileAttachment(String description, String file, String fileDisplay, String mimeType, PdfName afRelationshipValue) throws FileNotFoundException {
+    public void addFileAttachment(String description, String file, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue) throws FileNotFoundException {
         addFileAttachment(description, PdfFileSpec.createEmbeddedFileSpec(this, file, description, fileDisplay, mimeType, afRelationshipValue, true));
     }
 
     public void addFileAttachment(String description, PdfFileSpec fs) {
         checkClosingStatus();
-        PdfNameTree fileAttachmentTree = new PdfNameTree(catalog, PdfName.EmbeddedFiles);
-        fileAttachmentTree.addNewName(new PdfString(description), fs.getPdfObject());
-        PdfDictionary names = catalog.getPdfObject().getAsDictionary(PdfName.Names);
-        if (names == null) {
-            names = new PdfDictionary();
-            catalog.put(PdfName.Names, names);
+        catalog.addNameToNameTree(description, fs.getPdfObject(), PdfName.EmbeddedFiles);
+
+        PdfArray afArray = catalog.getPdfObject().getAsArray(PdfName.AF);
+        if (afArray == null) {
+            afArray = new PdfArray().makeIndirect(this);
+            catalog.put(PdfName.AF, afArray);
         }
-        names.put(PdfName.EmbeddedFiles, fileAttachmentTree.getRoot().getPdfObject());
+        afArray.add(fs.getPdfObject());
+    }
+
+    /**
+     * This method retrieves the page labels from a document as an array of String objects.
+     * @return {@link String} list of page labels if they were found, or {@code null} otherwise
+     */
+    public String[] getPageLabels() {
+        if (catalog.getPageLabelsTree(false) == null) {
+            return null;
+        }
+        Map<Integer, PdfObject> pageLabels = catalog.getPageLabelsTree(false).getNumbers();
+        if (pageLabels.size() == 0) {
+            return null;
+        }
+        String[] labelStrings = new String[getNumberOfPages()];
+        int pageCount = 1;
+        String prefix = "";
+        String type = "D";
+        for (int i = 0; i < getNumberOfPages(); i++) {
+            if (pageLabels.containsKey(i)) {
+                PdfDictionary labelDictionary = (PdfDictionary) pageLabels.get(i);
+                PdfNumber pageRange = labelDictionary.getAsNumber(PdfName.St);
+                if (pageRange != null) {
+                    pageCount = pageRange.getIntValue();
+                } else {
+                    pageCount = 1;
+                }
+                PdfString p = labelDictionary.getAsString(PdfName.P);
+                if (p != null) {
+                    prefix = p.toUnicodeString();
+                } else {
+                    prefix = "";
+                }
+                PdfName t = labelDictionary.getAsName(PdfName.S);
+                if (t != null) {
+                    type = t.getValue();
+                } else {
+                    type = "e";
+                }
+            }
+            switch (type) {
+                case "R":
+                    labelStrings[i] = prefix + RomanNumbering.toRomanUpperCase(pageCount);
+                    break;
+                case "r":
+                    labelStrings[i] = prefix + RomanNumbering.toRomanLowerCase(pageCount);
+                    break;
+                case "A":
+                    labelStrings[i] = prefix + EnglishAlphabetNumbering.toLatinAlphabetNumberUpperCase(pageCount);
+                    break;
+                case "a":
+                    labelStrings[i] = prefix + EnglishAlphabetNumbering.toLatinAlphabetNumberLowerCase(pageCount);
+                    break;
+                case "e":
+                    labelStrings[i] = prefix;
+                    break;
+                default:
+                    labelStrings[i] = prefix + pageCount;
+                    break;
+            }
+            pageCount++;
+        }
+        return labelStrings;
+    }
+
+    /**
+     * Indicates if the document has any outlines
+     * @return {@code true}, if there are outlines and {@code false} otherwise.
+     */
+    public boolean hasOutlines() {
+        return catalog.hasOutlines();
+    }
+
+    /**
+     * Sets the flag indicating the presence of structure elements that contain user properties attributes.
+     * @param userProperties the user properties flag
+     */
+    public void setUserProperties(boolean userProperties) {
+        this.userProperties = userProperties;
     }
 
     protected void storeLinkAnnotations(PdfPage page, PdfLinkAnnotation annotation) {
@@ -1080,7 +1179,7 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     protected void markObjectAsMustBeFlushed(PdfObject pdfObject){
-        if (pdfObject.getIndirectReference() != null) {
+        if (pdfObject.isIndirect()) {
             pdfObject.getIndirectReference().setState(PdfObject.MustBeFlushed);
         }
     }
@@ -1146,7 +1245,7 @@ public class PdfDocument implements IEventDispatcher {
                 reader.readPdf();
                 pdfVersion = reader.pdfVersion;
                 trailer = new PdfDictionary(reader.trailer);
-                catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true), this);
+                catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true));
 
                 PdfObject infoDict = trailer.get(PdfName.Info, true);
                 info = new PdfDocumentInfo(infoDict instanceof PdfDictionary ?
@@ -1154,7 +1253,7 @@ public class PdfDocument implements IEventDispatcher {
 
                 PdfDictionary str = catalog.getPdfObject().getAsDictionary(PdfName.StructTreeRoot);
                 if (str != null) {
-                    structTreeRoot = new PdfStructTreeRoot(str, this);
+                    structTreeRoot = new PdfStructTreeRoot(str);
                     structParentIndex = getStructTreeRoot().getStructParentIndex() + 1;
                 }
                 if (appendMode && (reader.hasRebuiltXref() || reader.hasFixedXref()))
@@ -1162,7 +1261,7 @@ public class PdfDocument implements IEventDispatcher {
             }
             if (writer != null) {
                 if (reader != null && !reader.isOpenedWithFullPermission()) {
-                    throw new BadPasswordException("pdfreader.not.opened.with.owner.password");
+                    throw new BadPasswordException(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);
                 }
                 writer.document = this;
                 if (reader == null) {
@@ -1174,8 +1273,8 @@ public class PdfDocument implements IEventDispatcher {
                     info.addModDate();
                 }
                 trailer = new PdfDictionary();
-                trailer.put(PdfName.Root, catalog.getPdfObject());
-                trailer.put(PdfName.Info, info.getPdfObject());
+                trailer.put(PdfName.Root, catalog.getPdfObject().getIndirectReference());
+                trailer.put(PdfName.Info, info.getPdfObject().getIndirectReference());
             }
             if (appendMode) {       // Due to constructor reader and writer not null.
                 assert reader != null;
@@ -1189,6 +1288,11 @@ public class PdfDocument implements IEventDispatcher {
                 writer.write((byte) '\n');
                 //TODO log if full compression differs
                 writer.setFullCompression(reader.hasXrefStm());
+
+                if (writer.crypto != null) {
+                    // TODO log that writer crypto will be ignored
+                }
+                writer.crypto = reader.decrypt;
             } else if (writer != null) {
                 if (newPdfVersion != null) {
                     pdfVersion = newPdfVersion;
@@ -1234,65 +1338,61 @@ public class PdfDocument implements IEventDispatcher {
     }
 
     /**
-     * Replaces form fields with by simple content and removes them from the document
-     */
-    protected void flatFields() {
-        if (appendMode) {
-
-        }
-        PdfDictionary acroForm = catalog.getPdfObject().getAsDictionary(PdfName.AcroForm);
-        PdfArray fields = new PdfArray();
-        if (acroForm != null) {
-            fields = acroForm.getAsArray(PdfName.Fields);
-        }
-
-    }
-
-    /**
      * checks whether a method is invoked at the closed document
      * @throws PdfException
      */
-    protected void checkClosingStatus(){
-        if(closed){
-            throw  new PdfException(PdfException.DocumentClosedImpossibleExecuteAction);
+    protected void checkClosingStatus() {
+        if (closed) {
+            throw new PdfException(PdfException.DocumentClosedImpossibleExecuteAction);
         }
     }
 
-    private void copyAnnotations(PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
+    /**
+     * This method removes all annotation entries from form fields associated with a given page.
+     * @param page
+     */
+    private void removeUnusedWidgetsFromFields(PdfPage page){
+        if (page.isFlushed()) {
+            return;
+        }
+        List<PdfAnnotation> annots = page.getAnnotations();
+        for (PdfAnnotation annot : annots) {
+            if (annot.getSubtype().equals(PdfName.Widget)) {
+                ((PdfWidgetAnnotation)annot).releaseFormFieldFromWidgetAnnotation();
+            }
+        }
+    }
+
+    private void copyLinkAnnotations(PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
         List<PdfName> excludedKeys = new ArrayList<>();
         excludedKeys.add(PdfName.Dest);
+        // It's important not to copy P key, as if the annotation won't be added to the page, P key could be used to identify this case
+        excludedKeys.add(PdfName.P);
         for (Map.Entry<PdfPage, List<PdfLinkAnnotation>> entry : linkAnnotations.entrySet()) {
             for (PdfLinkAnnotation annot : entry.getValue()) {
                 PdfDestination d = null;
-                PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument, excludedKeys, false));
+
                 PdfObject dest = annot.getDestinationObject();
                 if (dest != null) {
-                    if (dest.isArray()) {
-                        PdfObject pageObject = ((PdfArray)dest).get(0);
-                        for (PdfPage oldPage : page2page.keySet()) {
-                            if (oldPage.getPdfObject() == pageObject) {
-                                PdfArray array = new PdfArray((PdfArray)dest);
-                                array.set(0, page2page.get(oldPage).getPdfObject());
-                                d = new PdfExplicitDestination(array);
-                                newAnnot.setDestination(d);
-                            }
-                        }
-                    } else if (dest.isString()) {
-                        PdfArray array = (PdfArray) getCatalog().getNamedDestinations().get(((PdfString) dest).toUnicodeString());
-                        if (array != null) {
-                            PdfObject pageObject = array.get(0);
-                            for (PdfPage oldPage : page2page.keySet()) {
-                                if (oldPage.getPdfObject() == pageObject) {
-                                    array.set(0, page2page.get(oldPage).getPdfObject());
-                                    d = new PdfExplicitDestination(array);
-                                    newAnnot.setDestination(d);
-                                }
-                            }
-                        }
-                    }
+                    d = getCatalog().copyDestination(dest, page2page, toDocument);
                 }
-                if (newAnnot.getPdfObject().containsKey(PdfName.Dest) || newAnnot.getPdfObject().containsKey(PdfName.A)) {
-                    page2page.get(entry.getKey()).addAnnotation(newAnnot);
+
+                boolean hasGoToAction = false;
+                PdfDictionary a = annot.getAction();
+                if (a != null && PdfName.GoTo.equals(a.get(PdfName.S))) {
+                    if (d == null) {
+                        d = getCatalog().copyDestination(a.get(PdfName.D), page2page, toDocument);
+                    }
+                    hasGoToAction = true;
+                }
+
+                if (d != null ||  a != null && !hasGoToAction) {
+                    PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(toDocument, excludedKeys, false));
+                    newAnnot.setDestination(d);
+                    if (hasGoToAction) {
+                        newAnnot.remove(PdfName.A);
+                    }
+                    page2page.get(entry.getKey()).addAnnotation(-1, newAnnot, false);
                 }
             }
         }
@@ -1355,7 +1455,6 @@ public class PdfDocument implements IEventDispatcher {
      * @throws PdfException
      */
     private void cloneOutlines(Set<PdfOutline> outlinesToCopy, PdfOutline newParent, PdfOutline oldParent) {
-
         for (PdfOutline outline : oldParent.getAllChildren()) {
             if (outlinesToCopy.contains(outline)) {
                 PdfOutline child = newParent.addOutline(outline.getTitle());
@@ -1365,4 +1464,13 @@ public class PdfDocument implements IEventDispatcher {
         }
     }
 
+    private void ensureTreeRootAddedToNames(PdfObject treeRoot, PdfName treeType) {
+        PdfDictionary names = catalog.getPdfObject().getAsDictionary(PdfName.Names);
+        if (names == null) {
+            names = new PdfDictionary();
+            catalog.getPdfObject().put(PdfName.Names, names);
+            names.makeIndirect(this);
+        }
+        names.put(treeType, treeRoot);
+    }
 }

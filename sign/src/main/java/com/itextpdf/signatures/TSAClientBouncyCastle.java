@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
  * Created by Aiken Sam, 2006-11-15, refactored by Martin Brunecky, 07/15/2007
  * for ease of subclassing.
  * </p>
- * @since	2.1.6
  */
 public class TSAClientBouncyCastle implements TSAClient {
 

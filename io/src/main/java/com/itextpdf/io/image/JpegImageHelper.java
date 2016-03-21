@@ -79,23 +79,23 @@ public class JpegImageHelper {
     public static void processImage(Image image, ByteArrayOutputStream stream) {
         if (image.getOriginalType() != Image.JPEG)
             throw new IllegalArgumentException("JPEG image expected");
-        InputStream is = null;
+        InputStream jpegStream = null;
         try {
             String errorID;
             if (image.getData() == null) {
-                is = image.getUrl().openStream();
+                jpegStream = image.getUrl().openStream();
                 errorID = image.getUrl().toString();
             } else {
-                is = new java.io.ByteArrayInputStream(image.getData());
+                jpegStream = new java.io.ByteArrayInputStream(image.getData());
                 errorID = "Byte array";
             }
-            processParameters(is, errorID, image);
+            processParameters(jpegStream, errorID, image);
         } catch (java.io.IOException e) {
             throw new IOException(IOException.JpegImageException, e);
         } finally {
-            if (is != null) {
+            if (jpegStream != null) {
                 try {
-                    is.close();
+                    jpegStream.close();
                 } catch (java.io.IOException ignore) { }
             }
         }
@@ -120,16 +120,16 @@ public class JpegImageHelper {
             byte[] imgBytes = image.getData();
             stream.assignBytes(imgBytes, imgBytes.length);
         } else {
-            InputStream is = null;
+            InputStream jpegStream = null;
             try {
-                is = image.getUrl().openStream();
-                Utilities.transferBytes(is, stream);
+                jpegStream = image.getUrl().openStream();
+                Utilities.transferBytes(jpegStream, stream);
             } catch (java.io.IOException e) {
                 throw new IOException(IOException.JpegImageException, e);
             } finally {
-                if (is != null) {
+                if (jpegStream != null) {
                     try {
-                        is.close();
+                        jpegStream.close();
                     } catch (java.io.IOException ignored) { }
                 }
             }
@@ -143,28 +143,28 @@ public class JpegImageHelper {
      * @throws IOException
      * @throws java.io.IOException
      */
-    private static void processParameters(InputStream is, String errorID, Image image) throws java.io.IOException {
+    private static void processParameters(InputStream jpegStream, String errorID, Image image) throws java.io.IOException {
         byte[][] icc = null;
-        if (is.read() != 0xFF || is.read() != 0xD8) {
+        if (jpegStream.read() != 0xFF || jpegStream.read() != 0xD8) {
             throw new IOException(IOException._1IsNotAValidJpegFile).setMessageParams(errorID);
         }
         boolean firstPass = true;
         int len;
         while (true) {
-            int v = is.read();
+            int v = jpegStream.read();
             if (v < 0)
                 throw new IOException(IOException.PrematureEofWhileReadingJpg);
             if (v == 0xFF) {
-                int marker = is.read();
+                int marker = jpegStream.read();
                 if (firstPass && marker == M_APP0) {
                     firstPass = false;
-                    len = getShort(is);
+                    len = getShort(jpegStream);
                     if (len < 16) {
-                        Utilities.skip(is, len - 2);
+                        Utilities.skip(jpegStream, len - 2);
                         continue;
                     }
                     byte bcomp[] = new byte[JFIF_ID.length];
-                    int r = is.read(bcomp);
+                    int r = jpegStream.read(bcomp);
                     if (r != bcomp.length)
                         throw new IOException(IOException._1CorruptedJfifMarker).setMessageParams(errorID);
                     boolean found = true;
@@ -175,26 +175,26 @@ public class JpegImageHelper {
                         }
                     }
                     if (!found) {
-                        Utilities.skip(is, len - 2 - bcomp.length);
+                        Utilities.skip(jpegStream, len - 2 - bcomp.length);
                         continue;
                     }
-                    Utilities.skip(is, 2);
-                    int units = is.read();
-                    int dx = getShort(is);
-                    int dy = getShort(is);
+                    Utilities.skip(jpegStream, 2);
+                    int units = jpegStream.read();
+                    int dx = getShort(jpegStream);
+                    int dy = getShort(jpegStream);
                     if (units == 1) {
                         image.setDpi(dx, dy);
                     } else if (units == 2) {
                         image.setDpi((int) (dx * 2.54f + 0.5f), (int) (dy * 2.54f + 0.5f));
                     }
-                    Utilities.skip(is, len - 2 - bcomp.length - 7);
+                    Utilities.skip(jpegStream, len - 2 - bcomp.length - 7);
                     continue;
                 }
                 if (marker == M_APPE) {
-                    len = getShort(is) - 2;
+                    len = getShort(jpegStream) - 2;
                     byte[] byteappe = new byte[len];
                     for (int k = 0; k < len; ++k) {
-                        byteappe[k] = (byte) is.read();
+                        byteappe[k] = (byte) jpegStream.read();
                     }
                     if (byteappe.length >= 12) {
                         String appe = new String(byteappe, 0, 5, "ISO-8859-1");
@@ -205,10 +205,10 @@ public class JpegImageHelper {
                     continue;
                 }
                 if (marker == M_APP2) {
-                    len = getShort(is) - 2;
+                    len = getShort(jpegStream) - 2;
                     byte[] byteapp2 = new byte[len];
                     for (int k = 0; k < len; ++k) {
-                        byteapp2[k] = (byte) is.read();
+                        byteapp2[k] = (byte) jpegStream.read();
                     }
                     if (byteapp2.length >= 14) {
                         String app2 = new String(byteapp2, 0, 11, "ISO-8859-1");
@@ -228,10 +228,10 @@ public class JpegImageHelper {
                     continue;
                 }
                 if (marker == M_APPD) {
-                    len = getShort(is) - 2;
+                    len = getShort(jpegStream) - 2;
                     byte[] byteappd = new byte[len];
                     for (int k = 0; k < len; k++) {
-                        byteappd[k] = (byte) is.read();
+                        byteappd[k] = (byte) jpegStream.read();
                     }
                     // search for '8BIM Resolution' marker
                     int k;
@@ -308,19 +308,19 @@ public class JpegImageHelper {
                 firstPass = false;
                 int markertype = marker(marker);
                 if (markertype == VALID_MARKER) {
-                    Utilities.skip(is, 2);
-                    if (is.read() != 0x08) {
+                    Utilities.skip(jpegStream, 2);
+                    if (jpegStream.read() != 0x08) {
                         throw new IOException(IOException._1MustHave8BitsPerComponent).setMessageParams(errorID);
                     }
-                    image.setHeight(getShort(is));
-                    image.setWidth(getShort(is));
-                    image.setColorSpace(is.read());
+                    image.setHeight(getShort(jpegStream));
+                    image.setWidth(getShort(jpegStream));
+                    image.setColorSpace(jpegStream.read());
                     image.setBpc(8);
                     break;
                 } else if (markertype == UNSUPPORTED_MARKER) {
                     throw new IOException(IOException._1UnsupportedJpegMarker2).setMessageParams(errorID, String.valueOf(marker));
                 } else if (markertype != NOPARAM_MARKER) {
-                    Utilities.skip(is, getShort(is) - 2);
+                    Utilities.skip(jpegStream, getShort(jpegStream) - 2);
                 }
             }
         }
@@ -350,12 +350,12 @@ public class JpegImageHelper {
     /**
      * Reads a short from the <CODE>InputStream</CODE>.
      *
-     * @param is the <CODE>InputStream</CODE>
+     * @param jpegStream the <CODE>InputStream</CODE>
      * @return an int
      * @throws java.io.IOException
      */
-    private static int getShort(InputStream is) throws java.io.IOException {
-        return (is.read() << 8) + is.read();
+    private static int getShort(InputStream jpegStream) throws java.io.IOException {
+        return (jpegStream.read() << 8) + jpegStream.read();
     }
 
     /**

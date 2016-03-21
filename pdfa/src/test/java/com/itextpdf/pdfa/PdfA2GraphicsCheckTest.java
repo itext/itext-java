@@ -16,24 +16,36 @@ import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.kernel.xmp.XMPException;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
+import static org.junit.Assert.fail;
+
 @Category(IntegrationTest.class)
 public class PdfA2GraphicsCheckTest {
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
+    static final public String cmpFolder = sourceFolder + "cmp/PdfA2GraphicsCheckTest/";
+    static final public String destinationFolder = "./target/test/PdfA2GraphicsCheckTest/";
+
+    @BeforeClass
+    static public void beforeClass() {
+        new File(destinationFolder).mkdirs();
+    }
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -53,7 +65,7 @@ public class PdfA2GraphicsCheckTest {
         float[] whitePoint = {0.9505f, 1f, 1.089f};
         float[] gamma = {2.2f, 2.2f, 2.2f};
         float[] matrix = {0.4124f, 0.2126f, 0.0193f, 0.3576f, 0.7152f, 0.1192f, 0.1805f, 0.0722f, 0.9505f};
-        PdfCieBasedCs.CalRgb calRgb = new PdfCieBasedCs.CalRgb(doc, whitePoint, null, gamma, matrix);
+        PdfCieBasedCs.CalRgb calRgb = new PdfCieBasedCs.CalRgb(whitePoint, null, gamma, matrix);
 
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
 
@@ -69,9 +81,10 @@ public class PdfA2GraphicsCheckTest {
     }
 
     @Test
-    public void colorCheckTest2() throws IOException, XMPException {
-
-        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+    public void colorCheckTest2() throws IOException, XMPException, InterruptedException {
+        String outPdf = destinationFolder + "pdfA2b_colorCheckTest2.pdf";
+        String cmpPdf = cmpFolder + "cmp_pdfA2b_colorCheckTest2.pdf";
+        PdfWriter writer = new PdfWriter(outPdf);
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, null);
         doc.setXmpMetadata();
 
@@ -79,9 +92,9 @@ public class PdfA2GraphicsCheckTest {
         float[] whitePoint = {0.9505f, 1f, 1.089f};
         float[] gamma = {2.2f, 2.2f, 2.2f};
         float[] matrix = {0.4124f, 0.2126f, 0.0193f, 0.3576f, 0.7152f, 0.1192f, 0.1805f, 0.0722f, 0.9505f};
-        PdfCieBasedCs.CalRgb calRgb = new PdfCieBasedCs.CalRgb(doc, whitePoint, null, gamma, matrix);
+        PdfCieBasedCs.CalRgb calRgb = new PdfCieBasedCs.CalRgb(whitePoint, null, gamma, matrix);
 
-        PdfCieBasedCs.CalGray calGray = new PdfCieBasedCs.CalGray(doc, whitePoint, null, 2.2f);
+        PdfCieBasedCs.CalGray calGray = new PdfCieBasedCs.CalGray(whitePoint, null, 2.2f);
 
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
 
@@ -96,6 +109,7 @@ public class PdfA2GraphicsCheckTest {
         canvas.setFillColor(DeviceGray.GRAY).beginText().showText(shortText).endText();
 
         doc.close();
+        compareResult(outPdf, cmpPdf);
     }
 
     @Test
@@ -121,9 +135,10 @@ public class PdfA2GraphicsCheckTest {
     }
 
     @Test
-    public void colorCheckTest4() throws IOException, XMPException {
-
-        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+    public void colorCheckTest4() throws IOException, XMPException, InterruptedException {
+        String outPdf = destinationFolder + "pdfA2b_colorCheckTest4.pdf";
+        String cmpPdf = cmpFolder + "cmp_pdfA2b_colorCheckTest4.pdf";
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, outputIntent);
@@ -145,6 +160,7 @@ public class PdfA2GraphicsCheckTest {
         canvas.fill();
 
         doc.close();
+        compareResult(outPdf, cmpPdf);
     }
 
     @Test
@@ -177,9 +193,10 @@ public class PdfA2GraphicsCheckTest {
     }
 
     @Test
-    public void colorCheckTest6() throws IOException, XMPException {
-
-        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+    public void colorCheckTest6() throws IOException, XMPException, InterruptedException {
+        String outPdf = destinationFolder + "pdfA2b_colorCheckTest6.pdf";
+        String cmpPdf = cmpFolder + "cmp_pdfA2b_colorCheckTest6.pdf";
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, outputIntent);
@@ -198,12 +215,14 @@ public class PdfA2GraphicsCheckTest {
         canvas.setFillColor(DeviceGray.GRAY).beginText().showText(shortText).endText();
 
         doc.close();
+        compareResult(outPdf, cmpPdf);
     }
 
     @Test
-    public void colorCheckTest7() throws IOException, XMPException {
-
-        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+    public void colorCheckTest7() throws IOException, XMPException, InterruptedException {
+        String outPdf = destinationFolder + "pdfA2b_colorCheckTest7.pdf";
+        String cmpPdf = cmpFolder + "cmp_pdfA2b_colorCheckTest7.pdf";
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, outputIntent);
@@ -225,6 +244,7 @@ public class PdfA2GraphicsCheckTest {
         canvas.setFillColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f)).beginText().showText(shortText).endText();
 
         doc.close();
+        compareResult(outPdf, cmpPdf);
     }
 
     @Test
@@ -330,10 +350,19 @@ public class PdfA2GraphicsCheckTest {
         doc.close();
     }
 
-    @Test
-    public void imageCheckTest4() throws FileNotFoundException, XMPException, MalformedURLException {
 
-        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+    /**
+     * NOTE: resultant file of this test fails acrobat's preflight check,
+     * but it seems to me that preflight fails to check jpeg2000 file.
+     * This file also fails check on http://www.pdf-tools.com/pdf/validate-pdfa-online.aspx,
+     * but there it's stated that "The key ColorSpace is required but missing" but according to spec, jpeg2000 images
+     * can omit ColorSpace entry if color space is defined implicitly in the image itself.
+     */
+    @Test
+    public void imageCheckTest4() throws IOException, XMPException, InterruptedException {
+        String outPdf = destinationFolder + "pdfA2b_imageCheckTest4.pdf";
+        String cmpPdf = cmpFolder + "cmp_pdfA2b_imageCheckTest4.pdf";
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, outputIntent);
@@ -353,6 +382,7 @@ public class PdfA2GraphicsCheckTest {
         }
 
         doc.close();
+        compareResult(outPdf, cmpPdf);
     }
 
     @Test
@@ -382,9 +412,10 @@ public class PdfA2GraphicsCheckTest {
     }
 
     @Test
-    public void transparencyCheckTest2() throws FileNotFoundException, XMPException {
-
-        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+    public void transparencyCheckTest2() throws IOException, XMPException, InterruptedException {
+        String outPdf = destinationFolder + "pdfA2b_transparencyCheckTest2.pdf";
+        String cmpPdf = cmpFolder + "cmp_pdfA2b_transparencyCheckTest2.pdf";
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, outputIntent);
@@ -405,6 +436,7 @@ public class PdfA2GraphicsCheckTest {
         canvas.restoreState();
 
         doc.close();
+        compareResult(outPdf, cmpPdf);
     }
 
     @Test
@@ -435,5 +467,10 @@ public class PdfA2GraphicsCheckTest {
         doc.close();
     }
 
-
+    private void compareResult(String outPdf, String cmpPdf) throws IOException, InterruptedException {
+        String result = new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (result != null) {
+            fail(result);
+        }
+    }
 }

@@ -73,7 +73,12 @@ public class ListItemRenderer extends BlockRenderer {
                         symbolRenderer.getOccupiedArea().getBBox().getHeight() - symbolRenderer.getOccupiedArea().getBBox().getY());
             }
 
-            symbolRenderer.move(x + symbolAreaWidth - symbolRenderer.getOccupiedArea().getBBox().getWidth() - symbolRenderer.getOccupiedArea().getBBox().getX(), 0);
+            Property.ListSymbolAlignment listSymbolAlignment = parent.getProperty(Property.LIST_SYMBOL_ALIGNMENT);
+            float xPosition = x - symbolRenderer.getOccupiedArea().getBBox().getX();
+            if (listSymbolAlignment == null || listSymbolAlignment == Property.ListSymbolAlignment.RIGHT) {
+                xPosition += symbolAreaWidth - symbolRenderer.getOccupiedArea().getBBox().getWidth();
+            }
+            symbolRenderer.move(xPosition, 0);
 
             if (isTagged) {
                 tagStructure.addTag(0, PdfName.Lbl);

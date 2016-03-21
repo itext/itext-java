@@ -1,5 +1,8 @@
 package com.itextpdf.kernel.parser;
 
+import com.itextpdf.kernel.geom.LineSegment;
+import com.itextpdf.kernel.geom.Matrix;
+import com.itextpdf.kernel.geom.Vector;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +23,8 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     private final TextChunkLocationStrategy tclStrat;
 
     private boolean useActualText = false;
+
+    private TextRenderInfo lastTextRenderInfo;
 
     /**
      * Creates a new text extraction renderer.
@@ -73,9 +78,32 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
                 Matrix riseOffsetTransform = new Matrix(0, -renderInfo.getRise());
                 segment = segment.transformBy(riseOffsetTransform);
             }
-            TextChunk tc = new TextChunk(useActualText && renderInfo.getActualText() != null ? renderInfo.getActualText() : renderInfo.getText(),
-                    tclStrat.createLocation(renderInfo, segment));
-            locationalResult.add(tc);
+
+            if (useActualText) {
+                MarkedContentInfo lastMCSpan = lastTextRenderInfo != null ? lastTextRenderInfo.getMCSpan() : null;
+                if (lastMCSpan != null && lastMCSpan == renderInfo.getMCSpan() && lastMCSpan.getActualText() != null) {
+                    // Merge two text pieces, assume they will be in the same line
+                    TextChunk lastTextChunk = locationalResult.get(locationalResult.size() - 1);
+                    Vector mergedStart = new Vector(Math.min(lastTextChunk.getLocation().getStartLocation().get(0), segment.getStartPoint().get(0)),
+                            Math.min(lastTextChunk.getLocation().getStartLocation().get(1), segment.getStartPoint().get(1)),
+                            Math.min(lastTextChunk.getLocation().getStartLocation().get(2), segment.getStartPoint().get(2)));
+                    Vector mergedEnd = new Vector(Math.max(lastTextChunk.getLocation().getEndLocation().get(0), segment.getEndPoint().get(0)),
+                            Math.max(lastTextChunk.getLocation().getEndLocation().get(1), segment.getEndPoint().get(1)),
+                            Math.max(lastTextChunk.getLocation().getEndLocation().get(2), segment.getEndPoint().get(2)));
+                    TextChunk merged = new TextChunk(lastTextChunk.getText(), tclStrat.createLocation(renderInfo,
+                            new LineSegment(mergedStart, mergedEnd)));
+                    locationalResult.set(locationalResult.size() - 1, merged);
+                } else {
+                    TextChunk tc = new TextChunk(renderInfo.getActualText() != null ? renderInfo.getActualText() : renderInfo.getText(),
+                            tclStrat.createLocation(renderInfo, segment));
+                    locationalResult.add(tc);
+                }
+            } else {
+                TextChunk tc = new TextChunk(renderInfo.getText(), tclStrat.createLocation(renderInfo, segment));
+                locationalResult.add(tc);
+            }
+
+            lastTextRenderInfo = renderInfo;
         }
     }
 
@@ -100,8 +128,9 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             } else {
                 if (chunk.sameLine(lastChunk)) {
                     // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
-                    if (isChunkAtWordBoundary(chunk, lastChunk) && !startsWithSpace(chunk.text) && !endsWithSpace(lastChunk.text))
+                    if (isChunkAtWordBoundary(chunk, lastChunk) && !startsWithSpace(chunk.text) && !endsWithSpace(lastChunk.text)) {
                         sb.append(' ');
+                    }
 
                     sb.append(chunk.text);
                 } else {
@@ -233,7 +262,6 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     }
 
     private static class TextChunkLocationDefaultImp implements TextChunkLocation {
-
         /** the starting location of the chunk */
         private final Vector startLocation;
         /** the ending location of the chunk */
@@ -320,11 +348,10 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
          * @return the number of spaces between the end of 'other' and the beginning of this chunk
          */
         public float distanceFromEndOf(TextChunkLocation other){
-            float distance = distParallelStart() - other.distParallelEnd();
-            return distance;
+            return distParallelStart() - other.distParallelEnd();
         }
 
-        public boolean isAtWordBoundary(TextChunkLocation previous){
+        public boolean isAtWordBoundary(TextChunkLocation previous) {
             /**
              * Here we handle a very specific case which in PDF may look like:
              * -.232 Tc [( P)-226.2(r)-231.8(e)-230.8(f)-238(a)-238.9(c)-228.9(e)]TJ
@@ -333,24 +360,40 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
              * In this case every chunk is considered as a word boundary and space is added.
              * We should consider charSpaceWidth equal (or close) to zero as a no-space.
              */
-            if (getCharSpaceWidth() < 0.1f)
+            if (getCharSpaceWidth() < 0.1f) {
                 return false;
+            }
+
+            // In case a text chunk is of zero length, this probably means this is a mark character,
+            // and we do not actually want to insert a space in such case
+            float curLength = endLocation.subtract(startLocation).length();
+            float previousLength = previous.getEndLocation().subtract(previous.getStartLocation()).length();
+            if (Math.abs(curLength) < .01f || Math.abs(previousLength) < .01f) {
+                return false;
+            }
 
             float dist = distanceFromEndOf(previous);
 
-            return dist < -getCharSpaceWidth() || dist > getCharSpaceWidth()/2.0f;
+            return dist < -getCharSpaceWidth() || dist > getCharSpaceWidth() / 2.0f;
         }
 
         @Override
         public int compareTo(TextChunkLocation other) {
             if (this == other) return 0; // not really needed, but just in case
 
-            int rslt;
-            rslt = Integer.compare(orientationMagnitude(), other.orientationMagnitude());
-            if (rslt != 0) return rslt;
+            LineSegment mySegment = new LineSegment(startLocation, endLocation);
+            LineSegment otherSegment = new LineSegment(other.getStartLocation(), other.getEndLocation());
+            if (otherSegment.getLength() == 0 && mySegment.containsSegment(otherSegment) || mySegment.getLength() == 0 && otherSegment.containsSegment(mySegment)) {
+                // Return 0 to save order due to stable sort. This handles situation of mark glyphs that have zero width
+                return 0;
+            }
 
-            rslt = Integer.compare(distPerpendicular(), other.distPerpendicular());
-            if (rslt != 0) return rslt;
+            int result;
+            result = Integer.compare(orientationMagnitude(), other.orientationMagnitude());
+            if (result != 0) return result;
+
+            result = Integer.compare(distPerpendicular(), other.distPerpendicular());
+            if (result != 0) return result;
 
             return Float.compare(distParallelStart(), other.distParallelStart());
         }

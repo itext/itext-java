@@ -1,5 +1,7 @@
 package com.itextpdf.kernel.geom;
 
+import com.itextpdf.io.util.HashCode;
+
 public class Rectangle implements Cloneable {
 
     protected float x;
@@ -184,6 +186,13 @@ public class Rectangle implements Cloneable {
     }
 
     @Override
+    public String toString() {
+        return "Rectangle: " + getWidth() +
+                'x' +
+                getHeight();
+    }
+
+    @Override
     public Rectangle clone() {
         return new Rectangle(x, y, width, height);
     }
@@ -196,8 +205,18 @@ public class Rectangle implements Cloneable {
         return x == that.x && y == that.y && width == that.width && height == that.height;
     }
 
+    @Override
+    public int hashCode() {
+        HashCode hashCode = new HashCode();
+        hashCode.append(x).
+            append(y).
+            append(width).
+            append(height);
+        return hashCode.hashCode();
+    }
+
     private static boolean linesIntersect(double x1, double y1, double x2,
-                                         double y2, double x3, double y3, double x4, double y4)
+                                          double y2, double x3, double y3, double x4, double y4)
     {
         /*
          * A = (x2-x1, y2-y1) B = (x3-x1, y3-y1) C = (x4-x1, y4-y1) D = (x4-x3,

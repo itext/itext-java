@@ -7,7 +7,6 @@ import com.itextpdf.kernel.pdf.PdfString;
 
 /**
  * Represents a Marked Content block in a PDF
- * @since 5.0.2
  */
 public class MarkedContentInfo {
     private final PdfName tag;

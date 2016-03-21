@@ -1,5 +1,9 @@
 package com.itextpdf.kernel.pdf.annot;
 
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.DeviceCmyk;
+import com.itextpdf.kernel.color.DeviceGray;
+import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -68,6 +72,7 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
 
     public <T extends PdfMarkupAnnotation> T setPopup(PdfPopupAnnotation popup) {
         this.popup = popup;
+        popup.put(PdfName.Parent, getPdfObject());
         return put(PdfName.Popup, popup);
     }
 
@@ -127,8 +132,21 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return put(PdfName.BE, borderEffect);
     }
 
-    public PdfArray getInteriorColor() {
-        return getPdfObject().getAsArray(PdfName.IC);
+    public Color getInteriorColor() {
+        PdfArray color = getPdfObject().getAsArray(PdfName.IC);
+        if (color == null) {
+            return null;
+        }
+        switch (color.size()) {
+            case 1:
+                return new DeviceGray(color.getAsFloat(0));
+            case 3:
+                return new DeviceRgb(color.getAsFloat(0), color.getAsFloat(1), color.getAsFloat(2));
+            case 4:
+                return new DeviceCmyk(color.getAsFloat(0), color.getAsFloat(1), color.getAsFloat(2), color.getAsFloat(3));
+            default:
+                return null;
+        }
     }
 
     public <T extends PdfMarkupAnnotation> T setInteriorColor(PdfArray interiorColor) {
@@ -148,11 +166,11 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return put(PdfName.Name, name);
     }
 
-    public <T extends PdfMarkupAnnotation> T setDrawnAfter(PdfString appearanceString) {
+    public <T extends PdfMarkupAnnotation> T setDefaultAppearance(PdfString appearanceString) {
         return put(PdfName.DA, appearanceString);
     }
 
-    public PdfString getDrawnAfter() {
+    public PdfString getDefaultAppearance() {
         return getPdfObject().getAsString(PdfName.DA);
     }
 

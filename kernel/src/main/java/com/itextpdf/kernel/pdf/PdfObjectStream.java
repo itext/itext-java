@@ -38,7 +38,7 @@ class PdfObjectStream extends PdfStream {
      * @param prev previous PdfObjectStream.
      */
     PdfObjectStream(PdfObjectStream prev) {
-        this(prev.getDocument());
+        this(prev.getIndirectReference().getDocument());
         ByteArrayOutputStream prevOutputStream = (ByteArrayOutputStream) prev.getOutputStream().getOutputStream();
         prevOutputStream.reset();
         initOutputStream(prevOutputStream);

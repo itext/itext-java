@@ -95,6 +95,7 @@ public class Glyph {
         this.width = width;
         this.unicode = unicode;
         this.isMark = IsMark;
+        this.chars = chars;
         if (chars == null && unicode != null && Character.isValidCodePoint(unicode)) {
             this.chars = Utilities.convertFromUtf32(unicode);
         }
@@ -120,9 +121,9 @@ public class Glyph {
     public Glyph(Glyph glyph, Integer unicode) {
         this.code = glyph.code;
         this.width = glyph.width;
+        this.isMark = glyph.isMark;
         this.chars = unicode != null ? Utilities.convertFromUtf32(unicode) : null;
         this.unicode = unicode;
-        this.isMark = glyph.isMark;
     }
 
     public int getCode() {
@@ -243,7 +244,7 @@ public class Glyph {
 
     private static Integer codePoint(char[] a) {
         if (a != null) {
-            if (a.length == 1 && Character.isISOControl(a[0])) {
+            if (a.length == 1 && Character.isValidCodePoint(a[0])) {
                 return (int) a[0];
             } else if (a.length == 2 && Character.isHighSurrogate(a[0]) && Character.isLowSurrogate(a[1])) {
                 return Character.toCodePoint(a[0], a[1]);

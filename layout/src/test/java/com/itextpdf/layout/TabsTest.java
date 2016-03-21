@@ -5,7 +5,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.canvas.draw.DashedLine;
 import com.itextpdf.kernel.pdf.canvas.draw.DottedLine;
-import com.itextpdf.kernel.pdf.canvas.draw.Drawable;
+import com.itextpdf.kernel.pdf.canvas.draw.LineDrawer;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -96,7 +96,7 @@ public class TabsTest extends ExtendedITextTest {
         //left alignments
         Float[] positions1 = {tabInterval * 2, tabInterval * 4, tabInterval * 5};
         Property.TabAlignment[] alignments1 = {Property.TabAlignment.LEFT, Property.TabAlignment.LEFT, Property.TabAlignment.LEFT};
-        Drawable[] leaders1 = {null, null, null};
+        LineDrawer[] leaders1 = {null, null, null};
         Character[] anchors1 = {null, null, null};
 
         Paragraph p = new Paragraph();
@@ -109,7 +109,7 @@ public class TabsTest extends ExtendedITextTest {
         //right alignments
         Float[] positions2 = {tabInterval * 3, tabInterval * 4, tabInterval * 6};
         Property.TabAlignment[] alignments2 = {Property.TabAlignment.RIGHT, Property.TabAlignment.RIGHT, Property.TabAlignment.RIGHT};
-        Drawable[] leaders2 = {null, null, null};
+        LineDrawer[] leaders2 = {null, null, null};
         Character[] anchors2 = {null, null, null};
 
         p = new Paragraph();
@@ -122,7 +122,7 @@ public class TabsTest extends ExtendedITextTest {
         //center alignments
         Float[] positions3 = {tabInterval * 3, tabInterval * 4, tabInterval * 6};
         Property.TabAlignment[] alignments3 = {Property.TabAlignment.CENTER, Property.TabAlignment.CENTER, Property.TabAlignment.CENTER};
-        Drawable[] leaders3 = {null, null, null};
+        LineDrawer[] leaders3 = {null, null, null};
         Character[] anchors3 = {null, null, null};
 
         p = new Paragraph();
@@ -153,7 +153,7 @@ public class TabsTest extends ExtendedITextTest {
         Float[] positions1 = {tabInterval * 2, tabInterval * 3, tabInterval * 4, tabInterval * 5, tabInterval * 6};
         Property.TabAlignment[] alignments1 = {Property.TabAlignment.ANCHOR, Property.TabAlignment.CENTER, Property.TabAlignment.ANCHOR,
                 Property.TabAlignment.RIGHT, Property.TabAlignment.ANCHOR};
-        Drawable[] leaders1 = {new DottedLine(), null, new DashedLine(), null, new SolidLine()};
+        LineDrawer[] leaders1 = {new DottedLine(), null, new DashedLine(.5f), null, new SolidLine(.5f)};
         Character[] anchors1 = {' ', null, '\\', null, '.'};
 
         Paragraph p = new Paragraph();
@@ -181,7 +181,7 @@ public class TabsTest extends ExtendedITextTest {
         Float[] positions = {tabInterval * 2, tabInterval * 4, tabInterval * 6};
         Property.TabAlignment[] alignments = {Property.TabAlignment.RIGHT, Property.TabAlignment.CENTER, Property.TabAlignment.CENTER};
 //        Drawable[] leaders = {null, null, null};
-        Drawable[] leaders = {new DottedLine(), new DashedLine(), new SolidLine()};
+        LineDrawer[] leaders = {new DottedLine(), new DashedLine(.5f), new SolidLine(.5f)};
 
         Paragraph p = new Paragraph();
         p.setFontSize(8);
@@ -223,7 +223,7 @@ public class TabsTest extends ExtendedITextTest {
         doc.add(p);
 
         p = new Paragraph();
-        p.addTabStops(new TabStop(1000, Property.TabAlignment.LEFT, new DashedLine()));
+        p.addTabStops(new TabStop(1000, Property.TabAlignment.LEFT, new DashedLine(.5f)));
         p.add("text").add(new Tab()).add("some interesting text after left-tabstop");
         doc.add(p);
 
@@ -233,7 +233,7 @@ public class TabsTest extends ExtendedITextTest {
         doc.add(p);
 
         p = new Paragraph();
-        p.addTabStops(new TabStop(1000, Property.TabAlignment.RIGHT, new DashedLine()));
+        p.addTabStops(new TabStop(1000, Property.TabAlignment.RIGHT, new DashedLine(.5f)));
         p.add("text").add(new Tab()).add("some interesting text after right-tabstop");
         doc.add(p);
 
@@ -244,7 +244,7 @@ public class TabsTest extends ExtendedITextTest {
         doc.add(p);
 
         p = new Paragraph();
-        p.addTabStops(new TabStop(450, Property.TabAlignment.LEFT, new DashedLine()));
+        p.addTabStops(new TabStop(450, Property.TabAlignment.LEFT, new DashedLine(.5f)));
         p.add("text").add(new Tab()).add("some interesting text after left-tabstop\n");
         p.add("text").add(new Tab()).add("someinterestingtextafterleft-tabstop");
         doc.add(p);
@@ -255,7 +255,7 @@ public class TabsTest extends ExtendedITextTest {
         doc.add(p);
 
         p = new Paragraph();
-        p.addTabStops(new TabStop(450, Property.TabAlignment.RIGHT, new DashedLine()));
+        p.addTabStops(new TabStop(450, Property.TabAlignment.RIGHT, new DashedLine(.5f)));
         p.add("teeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeext")
                 .add(new Tab()).add("some interesting text after right-tabstop\n");
         p.add("teeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeext")
@@ -297,7 +297,7 @@ public class TabsTest extends ExtendedITextTest {
     }
 
     private void addTabbedTextToParagraph(Paragraph p, String text, Float[] positions, Property.TabAlignment[] alignments,
-                                          Drawable[] tabLeadings, Character[] tabAnchorCharacters) {
+                                          LineDrawer[] tabLeadings, Character[] tabAnchorCharacters) {
         java.util.List<TabStop> tabStops = new ArrayList<>();
         for (int i = 0; i < positions.length; ++i) {
             TabStop tabStop = new TabStop(positions[i], alignments[i], tabLeadings[i]);

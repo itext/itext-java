@@ -1,6 +1,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.font.PdfFont;
+import java.util.Collection;
 
 /**
  * <CODE>PdfTextArray</CODE> defines an array with displacements and <CODE>PdfString</CODE>-objects.
@@ -28,6 +29,16 @@ public class PdfTextArray extends PdfArray {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends PdfObject> c) {
+        boolean changed = false;
+        for (PdfObject obj : c) {
+            changed |= add(obj);
+        }
+
+        return changed;
     }
 
     public boolean add(float number) {

@@ -79,14 +79,14 @@ class DocFontEncoding extends FontEncoding {
                         fontEncoding.codeToUnicode[currentNumber] = unicode;
                         fontEncoding.unicodeToCode.put(unicode, currentNumber);
                         fontEncoding.differences[currentNumber] = glyphName;
-                        fontEncoding.unicodeDifferences.put(currentNumber, unicode);
+                        fontEncoding.unicodeDifferences.put(unicode, unicode);
                     } else {
                         if (byte2uni.contains(currentNumber)) {
                             unicode = byte2uni.get(currentNumber);
                             fontEncoding.codeToUnicode[currentNumber] = unicode;
                             fontEncoding.unicodeToCode.put(unicode, currentNumber);
                             fontEncoding.differences[currentNumber] = glyphName;
-                            fontEncoding.unicodeDifferences.put(currentNumber, unicode);
+                            fontEncoding.unicodeDifferences.put(unicode, unicode);
                         }
                     }
                     currentNumber++;

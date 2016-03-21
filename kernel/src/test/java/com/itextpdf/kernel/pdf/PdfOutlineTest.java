@@ -105,8 +105,6 @@ public class PdfOutlineTest extends ExtendedITextTest{
         FileOutputStream fos = new FileOutputStream(destinationFolder+"removePagesWithOutlinesResult.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
-
-        PdfOutline outlines = pdfDoc.getOutlines(false);
         pdfDoc.removePage(102);
 
         pdfDoc.close();
@@ -180,8 +178,6 @@ public class PdfOutlineTest extends ExtendedITextTest{
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument pdfDoc = new PdfDocument(reader);
 
-        PdfOutline outlines = pdfDoc.getOutlines(false);
-
         List<PdfOutline> pageOutlines = pdfDoc.getPage(102).getOutlines(true);
         Assert.assertEquals(5, pageOutlines.size());
     }
@@ -197,9 +193,7 @@ public class PdfOutlineTest extends ExtendedITextTest{
         PdfPage firstPage = pdfDoc.addNewPage();
         PdfPage secondPage = pdfDoc.addNewPage();
 
-        PdfOutline outlines = pdfDoc.getOutlines(false);
-
-        PdfOutline rootOutline = new PdfOutline(pdfDoc);
+        PdfOutline rootOutline = pdfDoc.getOutlines(false);
         PdfOutline firstOutline = rootOutline.addOutline("First Page");
         PdfOutline secondOutline = rootOutline.addOutline("Second Page");
         firstOutline.addDestination(PdfExplicitDestination.createFit(firstPage));
@@ -241,8 +235,8 @@ public class PdfOutlineTest extends ExtendedITextTest{
         pages.add(5);
         pages.add(52);
         pages.add(102);
-        PdfOutline outlines = pdfDoc.getOutlines(false);
-        pdfDoc.copyPages(pages, pdfDoc1);
+        pdfDoc.getOutlines(false);
+        pdfDoc.copyPagesTo(pages, pdfDoc1);
         pdfDoc.close();
 
         Assert.assertEquals(6, pdfDoc1.getNumberOfPages());
@@ -280,13 +274,11 @@ public class PdfOutlineTest extends ExtendedITextTest{
         array3.add(new PdfNumber(806));
         array3.add(new PdfNumber(1));
 
-        pdfDoc.addNewName(new PdfString("test1"), array2);
-        pdfDoc.addNewName(new PdfString("test2"), array3);
-        pdfDoc.addNewName(new PdfString("test3"), array1);
+        pdfDoc.addNameDestination("test1", array2);
+        pdfDoc.addNameDestination("test2", array3);
+        pdfDoc.addNameDestination("test3", array1);
 
         PdfOutline root = pdfDoc.getOutlines(false);
-        if (root == null)
-            root = new PdfOutline(pdfDoc);
 
         PdfOutline firstOutline = root.addOutline("Test1");
         firstOutline.addDestination(PdfDestination.makeDestination(new PdfString("test1")));
@@ -332,13 +324,11 @@ public class PdfOutlineTest extends ExtendedITextTest{
         array3.add(new PdfNumber(806));
         array3.add(new PdfNumber(1));
 
-        pdfDoc.addNewName(new PdfString("page1"), array2);
-        pdfDoc.addNewName(new PdfString("page2"), array3);
-        pdfDoc.addNewName(new PdfString("page3"), array1);
+        pdfDoc.addNameDestination("page1", array2);
+        pdfDoc.addNameDestination("page2", array3);
+        pdfDoc.addNameDestination("page3", array1);
 
         PdfOutline root = pdfDoc.getOutlines(false);
-        if (root == null)
-            root = new PdfOutline(pdfDoc);
         PdfOutline firstOutline = root.addOutline("Test1");
         firstOutline.addDestination(PdfDestination.makeDestination(new PdfString("page1")));
         PdfOutline secondOutline = root.addOutline("Test2");

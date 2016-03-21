@@ -6,7 +6,7 @@ q
 BT
 /F1 12 Tf
 50 800 Td
-(AAAAAA EEEE ~ é \001)Tj
+(!!!!!!"####"$"%"\001)Tj
 ET
 
 endstream
@@ -18,17 +18,17 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</Author(Alexander Chingarev)/CreationDate(D:20160126091615-03'00')/Creator(iText 6)/ModDate(D:20160126091615-03'00')/Producer(iText® 6.0.0-SNAPSHOT ©2000-2014 iText Group NV \(AGPL-version\))/Title(Type3 font iText 6 Document)>>
+<</Author(Alexander Chingarev)/CreationDate(D:20160204110334-03'00')/Creator(iText 6)/ModDate(D:20160204110334-03'00')/Producer(iText® 7.0.0-SNAPSHOT ©2000-2016 iText Group NV \(AGPL-version\))/Title(Type3 font iText 6 Document)>>
 endobj
 4 0 obj
-<</CharProcs<</A 5 0 R/E 6 0 R/asciitilde 7 0 R/eacute 8 0 R/odieresis 10 0 R/space 9 0 R>>/Encoding<</Differences[1 /odieresis 32 /space 65 /A 69 /E 126 /asciitilde 233 /eacute]/Type/Encoding>>/FirstChar 1/FontBBox[0 0 1000 700]/FontMatrix[0.001 0 0 0.001 0 0]/LastChar 233/Subtype/Type3/Type/Font/Widths[600 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 600 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 600 0 0 0 600 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 600 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 600]>>
+<</CharProcs<</A 5 0 R/E 6 0 R/asciitilde 7 0 R/eacute 8 0 R/odieresis 10 0 R/space 9 0 R>>/Encoding<</Differences[1 /odieresis 33 /A /space /E /asciitilde /eacute]/Type/Encoding>>/FirstChar 1/FontBBox[0 0 600 700]/FontMatrix[0.001 0 0 0.001 0 0]/LastChar 37/Subtype/Type3/Type/Font/Widths[600 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 600 600 600 600 600]>>
 endobj
 2 0 obj
 <</Count 1/Kids[11 0 R]/Type/Pages>>
 endobj
 5 0 obj
 <</Length 53>>stream
-600 0 0 0 900 700 d1
+600 0 0 0 600 700 d1
 100 w
 5 5 m
 300 695 l
@@ -71,8 +71,8 @@ S
 endstream
 endobj
 9 0 obj
-<</Length 29>>stream
-600 0 0 0 1000 700 d1
+<</Length 28>>stream
+600 0 0 0 600 700 d1
 10 w
 b
 
@@ -92,19 +92,19 @@ xref
 0 13
 0000000000 65535 f 
 0000000251 00000 n 
-0000001344 00000 n 
+0000000936 00000 n 
 0000000296 00000 n 
 0000000542 00000 n 
-0000001396 00000 n 
-0000001496 00000 n 
-0000001614 00000 n 
-0000001704 00000 n 
-0000001796 00000 n 
-0000001872 00000 n 
+0000000988 00000 n 
+0000001088 00000 n 
+0000001206 00000 n 
+0000001296 00000 n 
+0000001388 00000 n 
+0000001463 00000 n 
 0000000116 00000 n 
 0000000015 00000 n 
 trailer
-<</ID [<8d8cb41bc42292391c8ec3e88cd8e9b5><8d8cb41bc42292391c8ec3e88cd8e9b5>]/Info 3 0 R/Root 1 0 R/Size 13>>
+<</ID [<eb756804aa1a44880c1864736a67f615><eb756804aa1a44880c1864736a67f615>]/Info 3 0 R/Root 1 0 R/Size 13>>
 startxref
-1965
+1556
 %%EOF

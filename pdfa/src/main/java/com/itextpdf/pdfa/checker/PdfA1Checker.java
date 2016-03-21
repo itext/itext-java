@@ -175,7 +175,7 @@ public class PdfA1Checker extends PdfAChecker {
         }
         PdfObject colorSpaceObj = image.get(PdfName.ColorSpace);
         if (colorSpaceObj != null) {
-            colorSpace = PdfColorSpace.makeColorSpace(colorSpaceObj, null);
+            colorSpace = PdfColorSpace.makeColorSpace(colorSpaceObj);
             checkColorSpace(colorSpace, currentColorSpaces, true, null);
             checkedObjectsColorspace.put(image, colorSpace);
         }
@@ -229,7 +229,7 @@ public class PdfA1Checker extends PdfAChecker {
                 throw new PdfAConformanceException(PdfAConformanceException.CatalogShallIncludeMarkInfoDictionaryWithMarkedTrueValue);
             }
             if (!catalog.containsKey(PdfName.Lang)) {
-                throw new PdfAConformanceException(PdfAConformanceException.CatalogShallContainLangEntry);
+                LOGGER.warning(PdfAConformanceException.CatalogShallContainLangEntry);
             }
         }
     }
@@ -398,7 +398,7 @@ public class PdfA1Checker extends PdfAChecker {
 
         PdfName s = action.getAsName(PdfName.S);
         if (getForbiddenActions().contains(s)) {
-            throw new PdfAConformanceException(PdfAConformanceException._1ActionsIsNotAllowed).setMessageParams(s.getValue());
+            throw new PdfAConformanceException(PdfAConformanceException._1ActionsAreNotAllowed).setMessageParams(s.getValue());
         }
         if (s.equals(PdfName.Named)) {
             PdfName n = action.getAsName(PdfName.N);

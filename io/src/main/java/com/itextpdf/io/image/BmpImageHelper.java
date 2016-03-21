@@ -75,23 +75,23 @@ public final class BmpImageHelper {
         }
         BmpParameters bmp = new BmpParameters();
         bmp.image = (BmpImage)image;
-        InputStream is = null;
+        InputStream bmpStream = null;
         try {
             if (bmp.image.getUrl() != null) {
-                is = bmp.image.getUrl().openStream();
+                bmpStream = bmp.image.getUrl().openStream();
                 int read;
                 byte[] bytes = new byte[4096];
-                while ((read = is.read(bytes)) != -1) {
+                while ((read = bmpStream.read(bytes)) != -1) {
                     stream.write(bytes, 0, read);
                 }
                 image.imageSize = stream.toByteArray().length;
-                is.close();
-                is = new ByteArrayInputStream(stream.toByteArray());
+                bmpStream.close();
+                bmpStream = new ByteArrayInputStream(stream.toByteArray());
             } else {
-                is = new ByteArrayInputStream(bmp.image.getData());
+                bmpStream = new ByteArrayInputStream(bmp.image.getData());
                 image.imageSize = image.getData().length;
             }
-            process(bmp, is);
+            process(bmp, bmpStream);
             if (getImage(bmp)) {
                 image.setWidth(bmp.width);
                 image.setHeight(bmp.height);
@@ -100,16 +100,13 @@ public final class BmpImageHelper {
         } catch (java.io.IOException e){
             throw new IOException(IOException.BmpImageException, e);
         } finally {
-            if (is != null) {
+            if (bmpStream != null) {
                 try {
-                    is.close();
+                    bmpStream.close();
                 } catch (java.io.IOException ignored) { }
             }
         }
-
-        if (stream != null) {
-            updateStream(bmp, stream);
-        }
+        updateStream(bmp, stream);
     }
 
     public static void updateStream(BmpParameters bmp, ByteArrayOutputStream stream) {

@@ -39,9 +39,10 @@ public final class Type3Glyph extends PdfCanvas {
      * Creates a Type3Glyph canvas with a non-empty Content Stream.
      *
      * @param pdfStream {@code PdfStream} from existed document.
+     * @param document document to which {@code PdfStream} belongs.
      */
-    Type3Glyph(PdfStream pdfStream) {
-        super(pdfStream, null, pdfStream.getDocument());
+    Type3Glyph(PdfStream pdfStream, PdfDocument document) {
+        super(pdfStream, null, document);
         if (pdfStream.getBytes() != null) {
             fillBBFromBytes(pdfStream.getBytes());
         }

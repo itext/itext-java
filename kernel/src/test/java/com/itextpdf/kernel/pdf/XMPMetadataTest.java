@@ -39,10 +39,10 @@ public class XMPMetadataTest extends ExtendedITextTest{
         FileOutputStream fos = new FileOutputStream(destinationFolder +filename);
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor("Alexander Chingarev").
+        pdfDoc.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
-        pdfDoc.getInfo().getPdfObject().remove(PdfName.CreationDate);
+        pdfDoc.getDocumentInfo().getPdfObject().remove(PdfName.CreationDate);
         PdfPage page = pdfDoc.addNewPage();
         page.flush();
         pdfDoc.setXmpMetadata();
@@ -62,10 +62,10 @@ public class XMPMetadataTest extends ExtendedITextTest{
         ByteArrayOutputStream fos = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getInfo().setAuthor("Alexander Chingarev").
+        pdfDoc.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
-        pdfDoc.getInfo().getPdfObject().remove(PdfName.CreationDate);
+        pdfDoc.getDocumentInfo().getPdfObject().remove(PdfName.CreationDate);
         PdfPage page = pdfDoc.addNewPage();
         page.flush();
         pdfDoc.setXmpMetadata("abc".getBytes());

@@ -157,10 +157,6 @@ public class FontConstants {
 
     public static final String TIMES = "Times";
 
-    public static final String V_SYMBOL = "V";
-
-    public static final String H_SYMBOL = "H";
-
     //-Font Descriptor--------------------------------------------------------------------------------------------------
 
     /**

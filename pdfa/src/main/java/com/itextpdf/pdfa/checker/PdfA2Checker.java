@@ -89,9 +89,11 @@ public class PdfA2Checker extends PdfA1Checker{
             if (pattern instanceof PdfPattern.Shading) {
                 PdfDictionary shadingDictionary = ((PdfPattern.Shading) pattern).getShading();
                 PdfObject colorSpace = shadingDictionary.get(PdfName.ColorSpace);
-                checkColorSpace(PdfColorSpace.makeColorSpace(colorSpace, null), currentColorSpaces, true, true);
-                PdfDictionary extGStateDict = ((PdfDictionary) pattern.getPdfObject()).getAsDictionary(PdfName.ExtGState);
-                CanvasGraphicsState gState = new CanvasGraphicsState(new PdfExtGState(extGStateDict));
+                checkColorSpace(PdfColorSpace.makeColorSpace(colorSpace), currentColorSpaces, true, true);
+                final PdfDictionary extGStateDict = ((PdfDictionary) pattern.getPdfObject()).getAsDictionary(PdfName.ExtGState);
+                CanvasGraphicsState gState = new CanvasGraphicsState() {
+                    { updateFromExtGState(new PdfExtGState(extGStateDict));}
+                };
                 checkExtGState(gState);
             }
         }
@@ -209,10 +211,10 @@ public class PdfA2Checker extends PdfA1Checker{
         if (extGState.getSoftMask() != null && extGState.getSoftMask() instanceof PdfDictionary) {
             transparencyIsUsed = true;
         }
-        if (extGState.getStrokeOpacity() != null && extGState.getStrokeOpacity() < 1) {
+        if (extGState.getStrokeOpacity() < 1) {
             transparencyIsUsed = true;
         }
-        if (extGState.getFillOpacity() != null && extGState.getFillOpacity() < 1) {
+        if (extGState.getFillOpacity() < 1) {
             transparencyIsUsed = true;
         }
 
@@ -330,7 +332,7 @@ public class PdfA2Checker extends PdfA1Checker{
             if (needAppearances != null && needAppearances.getValue()) {
                 throw new PdfAConformanceException(PdfAConformanceException.NeedAppearancesFlagOfTheInteractiveFormDictionaryShallEitherNotBePresentedOrShallBeFalse);
             }
-            if (checkStructure(conformanceLevel) && form.containsKey(PdfName.XFA)) {
+            if (form.containsKey(PdfName.XFA)) {
                 throw new PdfAConformanceException(PdfAConformanceException.TheInteractiveFormDictionaryShallNotContainTheXfaKey);
             }
         }
@@ -516,7 +518,7 @@ public class PdfA2Checker extends PdfA1Checker{
             PdfObject cs = pageDict.getAsDictionary(PdfName.Group).get(PdfName.CS);
             if (cs != null) {
                 PdfDictionary currentColorSpaces = pageResources.getAsDictionary(PdfName.ColorSpace);
-                checkColorSpace(PdfColorSpace.makeColorSpace(cs, null), currentColorSpaces, true, null);
+                checkColorSpace(PdfColorSpace.makeColorSpace(cs), currentColorSpaces, true, null);
             }
         }
     }
@@ -595,7 +597,7 @@ public class PdfA2Checker extends PdfA1Checker{
 
         PdfObject colorSpaceObj = image.get(PdfName.ColorSpace);
         if (colorSpaceObj != null) {
-            colorSpace = PdfColorSpace.makeColorSpace(colorSpaceObj, null);
+            colorSpace = PdfColorSpace.makeColorSpace(colorSpaceObj);
             checkColorSpace(colorSpace, currentColorSpaces, true, null);
             checkedObjectsColorspace.put(image, colorSpace);
         }
@@ -721,7 +723,7 @@ public class PdfA2Checker extends PdfA1Checker{
             PdfDictionary resources = form.getAsDictionary(PdfName.Resources);
             if (cs != null && resources != null) {
                 PdfDictionary currentColorSpaces = resources.getAsDictionary(PdfName.ColorSpace);
-                checkColorSpace(PdfColorSpace.makeColorSpace(cs, null), currentColorSpaces, true, null);
+                checkColorSpace(PdfColorSpace.makeColorSpace(cs), currentColorSpaces, true, null);
             }
         }
     }
@@ -787,7 +789,7 @@ public class PdfA2Checker extends PdfA1Checker{
             return false;
 
         PdfObject defaultCsObj = currentColorSpaces.get(defaultCsName);
-        PdfColorSpace defaultCs = PdfColorSpace.makeColorSpace(defaultCsObj, null);
+        PdfColorSpace defaultCs = PdfColorSpace.makeColorSpace(defaultCsObj);
         if (defaultCs instanceof PdfDeviceCs)
             throw new PdfAConformanceException(PdfAConformanceException.ColorSpace1ShallBeDeviceIndependent).setMessageParams(defaultCsName.toString());
 

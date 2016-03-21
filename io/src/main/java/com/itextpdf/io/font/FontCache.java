@@ -134,11 +134,10 @@ public class FontCache {
     }
 
     private static void loadRegistry() throws java.io.IOException {
-        InputStream is = Utilities.getResourceStream(CMAP_RESOURCE_PATH + CJK_REGISTRY_FILENAME);
-
+        InputStream resource = Utilities.getResourceStream(CMAP_RESOURCE_PATH + CJK_REGISTRY_FILENAME);
         try {
             Properties p = new Properties();
-            p.load(is);
+            p.load(resource);
 
             for (Map.Entry<Object, Object> entry : p.entrySet()) {
                 String value = (String) entry.getValue();
@@ -154,18 +153,18 @@ public class FontCache {
                 registryNames.put((String) entry.getKey(), set);
             }
         } finally {
-            if (is != null) {
-                is.close();
+            if (resource != null) {
+                resource.close();
             }
         }
     }
 
     private static Map<String, Object> readFontProperties(String name) throws java.io.IOException {
-        InputStream is = Utilities.getResourceStream(CMAP_RESOURCE_PATH + name + ".properties");
+        InputStream resource = Utilities.getResourceStream(CMAP_RESOURCE_PATH + name + ".properties");
 
         try {
             Properties p = new Properties();
-            p.load(is);
+            p.load(resource);
 
             Map<String, Object> fontProperties = new HashMap<>((Map) p);
             fontProperties.put(W_PROP, createMetric((String) fontProperties.get(W_PROP)));
@@ -173,8 +172,8 @@ public class FontCache {
 
             return fontProperties;
         } finally {
-            if (is != null) {
-                is.close();
+            if (resource != null) {
+                resource.close();
             }
         }
     }

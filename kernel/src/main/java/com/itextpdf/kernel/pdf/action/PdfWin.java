@@ -5,9 +5,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 
-/**
-* Created by chin on 2/23/2015.
-*/
 public class PdfWin extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfWin(PdfDictionary pdfObject) {
@@ -24,5 +21,10 @@ public class PdfWin extends PdfObjectWrapper<PdfDictionary> {
         put(PdfName.F, f).put(PdfName.D, d).put(PdfName.O, o).put(PdfName.P, p);
     }
 
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
 
 }

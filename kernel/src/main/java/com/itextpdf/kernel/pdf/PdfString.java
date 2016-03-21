@@ -76,7 +76,7 @@ public class PdfString extends PdfPrimitiveObject {
     }
 
     @Override
-    public int getType() {
+    public byte getType() {
         return String;
     }
 
@@ -183,8 +183,8 @@ public class PdfString extends PdfPrimitiveObject {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfString copyToDocument(PdfDocument document) {
-        return super.copyToDocument(document, true);
+    public PdfString copyTo(PdfDocument document) {
+        return super.copyTo(document, true);
     }
 
     /**
@@ -199,8 +199,8 @@ public class PdfString extends PdfPrimitiveObject {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfString copyToDocument(PdfDocument document, boolean allowDuplicating) {
-        return super.copyToDocument(document, allowDuplicating);
+    public PdfString copyTo(PdfDocument document, boolean allowDuplicating) {
+        return super.copyTo(document, allowDuplicating);
     }
 
     @Override
@@ -210,15 +210,6 @@ public class PdfString extends PdfPrimitiveObject {
         } else {
             return getValue();
         }
-    }
-
-    /**
-     * Gets bytes of String-value without considering encoding.
-     *
-     * @return byte array
-     */
-    protected byte[] getIsoBytes() {
-        return com.itextpdf.io.source.OutputStream.getIsoBytes(getValue());
     }
 
     protected void generateValue() {
@@ -239,7 +230,7 @@ public class PdfString extends PdfPrimitiveObject {
             assert content != null : "No byte content to decrypt value";
             byte[] decodedContent = PdfTokenizer.decodeStringContent(content, hexWriting);
             content = null;
-            decrypt.setHashKey(decryptInfoNum, decryptInfoGen);
+            decrypt.setHashKeyForNextObject(decryptInfoNum, decryptInfoGen);
             value = new String(decrypt.decryptByteArray(decodedContent), Charset.forName(defaultCharset));
         }
         return this;

@@ -10,6 +10,7 @@ import com.itextpdf.kernel.color.Color;
 public enum Property {
 
     ACTION,
+    AREA_BREAK_TYPE,
     AUTO_SCALE,
     AUTO_SCALE_HEIGHT,
     AUTO_SCALE_WIDTH,
@@ -26,11 +27,13 @@ public enum Property {
     COLSPAN,
     DESTINATION,
     FIRST_LINE_INDENT(true),
+    FLUSH_ON_DRAW,
     FONT(true),
     FONT_COLOR(true),
     FONT_KERNING(true),
     FONT_SCRIPT(true),
     FONT_SIZE(true),
+    FULL,
     FORCED_PLACEMENT(true),
     HEIGHT,
     HORIZONTAL_ALIGNMENT,
@@ -43,8 +46,10 @@ public enum Property {
     KEEP_TOGETHER(true),
     LEADING,
     LEFT,
+    LINE_DRAWER,
     LIST_START,
-    LIST_SYMBOL,
+    LIST_SYMBOL(true),
+    LIST_SYMBOL_ALIGNMENT,
     LIST_SYMBOL_INDENT,
     MARGIN_BOTTOM,
     MARGIN_LEFT,
@@ -67,6 +72,7 @@ public enum Property {
     SPLIT_CHARACTERS(true),
     STROKE_COLOR(true),
     STROKE_WIDTH(true),
+    SKEW,
     TAB_ANCHOR,
     TAB_DEFAULT,
     TAB_LEADER,
@@ -143,6 +149,20 @@ public enum Property {
         JUSTIFIED_ALL
     }
 
+    /**
+     * A specialized enum containing alignment properties for list symbols.
+     * {@link ListSymbolAlignment#LEFT} means that the items will be aligned as follows:
+     * 9.  Item 9
+     * 10. Item 10
+     *
+     * Whereas {@link ListSymbolAlignment#RIGHT} means the items will be aligned as follows:
+     *  9. Item 9
+     * 10. Item 10
+     */
+    public enum ListSymbolAlignment {
+        RIGHT,
+        LEFT
+    }
 
     /**
      * A specialized class holding configurable properties related to an {@link
@@ -229,7 +249,7 @@ public enum Property {
      * A specialized class that specifies the leading, "the vertical distance between
      * the baselines of adjacent lines of text" (ISO-32000-1, section 9.3.5).
      * Allows to use either an absolute (constant) leading value, or one
-     * determined by font size.
+     * determined by font size. Pronounce as 'ledding' (cfr. Led Zeppelin).
      * 
      * This class is meant to be used as the value for the
      * {@link Property#LEADING} key in an {@link IPropertyContainer}.
@@ -451,6 +471,12 @@ public enum Property {
         DEFAULT_BIDI,
         LEFT_TO_RIGHT,
         RIGHT_TO_LEFT
+    }
+
+    public enum AreaBreakType {
+        NEW_AREA,
+        NEW_PAGE,
+        LAST_PAGE
     }
 
 }

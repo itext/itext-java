@@ -16,15 +16,16 @@ import com.itextpdf.kernel.xmp.XMPException;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
+
+import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
 public class PdfAFontTest {
@@ -37,9 +38,14 @@ public class PdfAFontTest {
         new File(outputDir).mkdirs();
     }
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Test
-    public void fontCheckPdfA1_01() throws IOException, XMPException {
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outputDir + "fontCheckPdfA1_01.pdf"));
+    public void fontCheckPdfA1_01() throws IOException, XMPException, InterruptedException {
+        String outPdf = outputDir + "pdfA1b_fontCheckPdfA1_01.pdf";
+        String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA1b_fontCheckPdfA1_01.pdf";
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setXmpMetadata();
@@ -55,10 +61,14 @@ public class PdfAFontTest {
                 .endText()
                 .restoreState();
         doc.close();
+        compareResult(outPdf, cmpPdf);
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void fontCheckPdfA1_02() throws IOException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -78,8 +88,10 @@ public class PdfAFontTest {
     }
 
     @Test
-    public void fontCheckPdfA1_03() throws IOException, XMPException {
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outputDir + "fontCheckPdfA1_03.pdf"));
+    public void fontCheckPdfA1_03() throws IOException, XMPException, InterruptedException {
+        String outPdf = outputDir + "pdfA1b_fontCheckPdfA1_03.pdf";
+        String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA1b_fontCheckPdfA1_03.pdf";
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setXmpMetadata();
@@ -96,10 +108,14 @@ public class PdfAFontTest {
                 .endText()
                 .restoreState();
         doc.close();
+        compareResult(outPdf, cmpPdf);
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void fontCheckPdfA1_04() throws IOException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -119,8 +135,10 @@ public class PdfAFontTest {
     }
 
     @Test
-    public void fontCheckPdfA1_05() throws IOException, XMPException {
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outputDir + "fontCheckPdfA1_05.pdf"));
+    public void fontCheckPdfA1_05() throws IOException, XMPException, InterruptedException {
+        String outPdf = outputDir + "pdfA1b_fontCheckPdfA1_05.pdf";
+        String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA1b_fontCheckPdfA1_05.pdf";
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setXmpMetadata();
@@ -138,11 +156,14 @@ public class PdfAFontTest {
                 .restoreState();
 
         doc.close();
+        compareResult(outPdf, cmpPdf);
     }
 
     @Test
-    public void fontCheckPdfA2_01() throws IOException, XMPException {
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outputDir + "fontCheckPdfA2_01.pdf"));
+    public void fontCheckPdfA2_01() throws IOException, XMPException, InterruptedException {
+        String outPdf = outputDir + "pdfA2b_fontCheckPdfA2_01.pdf";
+        String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA2b_fontCheckPdfA2_01.pdf";
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setXmpMetadata();
@@ -160,11 +181,14 @@ public class PdfAFontTest {
                 .restoreState();
 
         doc.close();
+        compareResult(outPdf, cmpPdf);
     }
 
     @Test
-    public void fontCheckPdfA3_01() throws IOException, XMPException {
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outputDir + "fontCheckPdfA3_01.pdf"));
+    public void fontCheckPdfA3_01() throws IOException, XMPException, InterruptedException {
+        String outPdf = outputDir + "pdfA3b_fontCheckPdfA3_01.pdf";
+        String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA3b_fontCheckPdfA3_01.pdf";
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setXmpMetadata();
@@ -182,12 +206,14 @@ public class PdfAFontTest {
                 .restoreState();
 
         doc.close();
+        compareResult(outPdf, cmpPdf);
     }
 
     @Test
     public void cidFontCheckTest1() throws  XMPException,IOException, InterruptedException {
-        String outPdf = outputDir + "cidFontCheckTest1.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outPdf));
+        String outPdf = outputDir + "pdfA2b_cidFontCheckTest1.pdf";
+        String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA2b_cidFontCheckTest1.pdf";
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setXmpMetadata();
@@ -206,13 +232,14 @@ public class PdfAFontTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, sourceFolder + "cidset/cmp_cidFontCheckTest1.pdf", outputDir, "diff_"));
+        compareResult(outPdf, cmpPdf);
     }
 
     @Test
     public void cidFontCheckTest2() throws XMPException, IOException, InterruptedException {
-        String outPdf = outputDir + "cidFontCheckTest2.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outPdf));
+        String outPdf = outputDir + "pdfA2b_cidFontCheckTest2.pdf";
+        String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA2b_cidFontCheckTest2.pdf";
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setXmpMetadata();
@@ -231,13 +258,14 @@ public class PdfAFontTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, sourceFolder + "cidset/cmp_cidFontCheckTest2.pdf", outputDir, "diff_"));
+        compareResult(outPdf, cmpPdf);
     }
 
     @Test
     public void cidFontCheckTest3() throws XMPException, IOException, InterruptedException {
-        String outPdf = outputDir + "cidFontCheckTest3.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outPdf));
+        String outPdf = outputDir + "pdfA2b_cidFontCheckTest3.pdf";
+        String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA2b_cidFontCheckTest3.pdf";
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setXmpMetadata();
@@ -256,6 +284,13 @@ public class PdfAFontTest {
 
         doc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, sourceFolder + "cidset/cmp_cidFontCheckTest3.pdf", outputDir, "diff_"));
+        compareResult(outPdf, cmpPdf);
+    }
+
+    private void compareResult(String outPdf, String cmpPdf) throws IOException, InterruptedException {
+        String result = new CompareTool().compareByContent(outPdf, cmpPdf, outputDir, "diff_");
+        if (result != null) {
+            fail(result);
+        }
     }
 }

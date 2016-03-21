@@ -4,6 +4,11 @@ import com.itextpdf.kernel.pdf.PdfName;
 
 abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {
 
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
+
 
     public PdfDeviceCs(PdfName pdfObject) {
         super(pdfObject);

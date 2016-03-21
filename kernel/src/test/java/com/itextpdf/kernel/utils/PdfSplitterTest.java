@@ -90,7 +90,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
             public void documentReady(PdfDocument pdfDocument, PdfSplitter.PageRange pageRange) {
                 try {
                     if (new PdfSplitter.PageRange("61-120").equals(pageRange)) {
-                        pdfDocument.getInfo().setAuthor("Modified Author");
+                        pdfDocument.getDocumentInfo().setAuthor("Modified Author");
                     }
 
                     pdfDocument.close();

@@ -5,6 +5,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.renderer.CanvasRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
 
@@ -40,6 +41,20 @@ public class Canvas extends RootElement<Canvas> {
     }
 
     /**
+     * Creates a new Canvas to manipulate a specific document and page.
+     *
+     * @param pdfCanvas the low-level content stream writer
+     * @param pdfDocument the document that the resulting content stream will be written to
+     * @param rootArea the maximum area that the Canvas may write upon
+     */
+    public Canvas(PdfCanvas pdfCanvas, PdfDocument pdfDocument, Rectangle rootArea, boolean immediateFlush) {
+        this.pdfDocument = pdfDocument;
+        this.pdfCanvas = pdfCanvas;
+        this.rootArea = rootArea;
+        this.immediateFlush = immediateFlush;
+    }
+
+    /**
      * Creates a new Canvas to manipulate a specific {@link PdfFormXObject}.
      * 
      * @param formXObject the form
@@ -51,14 +66,26 @@ public class Canvas extends RootElement<Canvas> {
         this.rootArea = formXObject.getBBox().toRectangle();
     }
 
+    /**
+     * Gets the {@link PdfDocument} for this canvas.
+     * @return the document that the resulting content stream will be written to
+     */
     public PdfDocument getPdfDocument() {
         return pdfDocument;
     }
 
+    /**
+     * Gets the root area rectangle.
+     * @return the maximum area that the Canvas may write upon
+     */
     public Rectangle getRootArea() {
         return rootArea;
     }
 
+    /**
+     * Gets the {@link PdfCanvas}.
+     * @return the low-level content stream writer
+     */
     public PdfCanvas getPdfCanvas() {
         return pdfCanvas;
     }
@@ -93,6 +120,18 @@ public class Canvas extends RootElement<Canvas> {
      */
     public boolean isAutoTaggingEnabled() {
         return page != null;
+    }
+
+    public void relayout() {
+        if (immediateFlush) {
+            throw new IllegalStateException("Operation not supported with immediate flush");
+        }
+
+        rootRenderer = new CanvasRenderer(this, immediateFlush);
+
+        for (IElement element : childElements) {
+            rootRenderer.addChild(element.createRendererSubTree());
+        }
     }
 
     @Override

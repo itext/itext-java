@@ -11,6 +11,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         if (pdfDocument.getWriter() != null) {
             getPdfObject().makeIndirect(pdfDocument);
         }
+        setForbidRelease();
         this.from = from;
         this.count = new PdfNumber(0);
         this.kids = new PdfArray();
@@ -26,6 +27,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfPages(int from, int maxCount, PdfDictionary pdfObject, PdfPages parent) {
         super(pdfObject);
+        setForbidRelease();
         this.from = from;
         this.count = pdfObject.getAsNumber(PdfName.Count);
         this.parent = parent;
@@ -125,5 +127,8 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         return 0;
     }
 
-
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
 }

@@ -1,6 +1,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 
@@ -9,25 +10,15 @@ import java.util.List;
 
 public class PdfOutline {
 
+    public static int FLAG_ITALIC = 1;
+    public static int FLAG_BOLD = 2;
+
     private List<PdfOutline> children = new ArrayList<>();
     private String title;
     private PdfDictionary content;
     private PdfDestination destination;
     private PdfOutline parent;
     private PdfDocument pdfDoc;
-
-    /**
-     * This constructor creates root outline in the document.
-     * @param doc
-     * @throws PdfException
-     */
-    public PdfOutline(PdfDocument doc) {
-        content = new PdfDictionary();
-        content.put(PdfName.Type, PdfName.Outlines);
-        this.pdfDoc = doc;
-        content.makeIndirect(doc);
-        doc.getCatalog().addRootOutline(this);
-    }
 
     public PdfOutline(String title, PdfDictionary content, PdfDocument pdfDocument){
         this.title = title;
@@ -43,6 +34,19 @@ public class PdfOutline {
         content.makeIndirect(parent.pdfDoc);
     }
 
+    /**
+     * This constructor creates root outline in the document.
+     * @param doc
+     * @throws PdfException
+     */
+    protected PdfOutline(PdfDocument doc) {
+        content = new PdfDictionary();
+        content.put(PdfName.Type, PdfName.Outlines);
+        this.pdfDoc = doc;
+        content.makeIndirect(doc);
+        doc.getCatalog().addRootOutline(this);
+    }
+
     public String getTitle() {
         return title;
     }
@@ -50,6 +54,16 @@ public class PdfOutline {
     public void setTitle(String title){
         this.title = title;
         this.content.put(PdfName.Title, new PdfString(title));
+    }
+
+    public void setColor(Color color) {
+        content.put(PdfName.C, new PdfArray(color.getColorValue()));
+    }
+
+    public void setStyle(int style) {
+        if (style == FLAG_BOLD || style == FLAG_ITALIC ) {
+            content.put(PdfName.F, new PdfNumber(style));
+        }
     }
 
     public PdfDictionary getContent() {
@@ -152,6 +166,11 @@ public class PdfOutline {
       * @throws PdfException
      */
     void removeOutline() {
+        PdfName type = content.getAsName(PdfName.Type);
+        if (type != null && type.equals(PdfName.Outlines)) {
+            pdfDoc.getCatalog().remove(PdfName.Outlines);
+            return;
+        }
         PdfOutline parent = this.parent;
         List<PdfOutline> children = parent.children;
         children.remove(this);
@@ -159,6 +178,9 @@ public class PdfOutline {
         if (!children.isEmpty()){
             parentContent.put(PdfName.First, children.get(0).content);
             parentContent.put(PdfName.Last, children.get(children.size()-1).content);
+        } else {
+            parent.removeOutline();
+            return;
         }
 
         PdfDictionary next = content.getAsDictionary(PdfName.Next);

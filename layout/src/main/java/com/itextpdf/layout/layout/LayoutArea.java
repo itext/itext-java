@@ -1,5 +1,6 @@
 package com.itextpdf.layout.layout;
 
+import com.itextpdf.io.util.HashCode;
 import com.itextpdf.kernel.geom.Rectangle;
 
 public class LayoutArea implements Cloneable {
@@ -46,5 +47,19 @@ public class LayoutArea implements Cloneable {
             return false;
         LayoutArea that = (LayoutArea) obj;
         return pageNumber == that.pageNumber && bBox.equals(that.bBox);
+    }
+
+    @Override
+    public int hashCode() {
+        HashCode hashCode = new HashCode();
+        hashCode.append(pageNumber).
+                append(bBox.hashCode()).
+                append(emptyArea);
+        return hashCode.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s, page %s", bBox.toString(), pageNumber);
     }
 }

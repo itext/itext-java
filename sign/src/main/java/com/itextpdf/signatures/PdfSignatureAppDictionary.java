@@ -36,4 +36,9 @@ public class PdfSignatureAppDictionary extends PdfObjectWrapper<PdfDictionary> {
     public void setSignatureCreator(String name) {
         put(PdfName.Name, new PdfString(name, PdfEncodings.UnicodeBig));
     }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
+    }
 }

@@ -1,18 +1,17 @@
 package com.itextpdf.kernel.pdf.canvas;
 
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.util.Utilities;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
-import com.itextpdf.kernel.geom.AffineTransform;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.io.image.Image;
 import com.itextpdf.io.source.OutputStream;
-import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageHelper;
+import com.itextpdf.io.util.Utilities;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.PatternColor;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -25,6 +24,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageHelper;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
@@ -136,6 +136,7 @@ public class PdfCanvas {
     protected PdfStream contentStream;
     /**
      * the resources for the page that this canvas belongs to.
+     *
      * @see PdfResources
      */
     protected PdfResources resources;
@@ -148,20 +149,17 @@ public class PdfCanvas {
      */
     protected int mcDepth;
 
-    /** The list where we save/restore the layer depth. */
-    protected List<Integer> layerDepth;
-
     /**
-     * Used to identify if gState has changed since last pdf/a check.
+     * The list where we save/restore the layer depth.
      */
-    private int gStateIndex = 0;
+    protected List<Integer> layerDepth;
 
     /**
      * Creates PdfCanvas from content stream of page, form XObject, pattern etc.
      *
      * @param contentStream @see PdfStream.
-     * @param resources the resources, a specialized dictionary that can be used by PDF instructions in the content stream
-     * @param document the document that the resulting content stream will be written to
+     * @param resources     the resources, a specialized dictionary that can be used by PDF instructions in the content stream
+     * @param document      the document that the resulting content stream will be written to
      */
     public PdfCanvas(PdfStream contentStream, PdfResources resources, PdfDocument document) {
         this.contentStream = contentStream;
@@ -182,7 +180,7 @@ public class PdfCanvas {
     /**
      * Convenience method for fast PdfCanvas creation by a certain page.
      *
-     * @param page page to create canvas from.
+     * @param page           page to create canvas from.
      * @param wrapOldContent true to wrap all old content streams into q/Q operators so that the state of old
      *                       content streams would not affect the new one
      */
@@ -192,13 +190,34 @@ public class PdfCanvas {
             // Wrap old content in q/Q in order not to get unexpected results because of the CTM
             page.newContentStreamBefore().getOutputStream().writeBytes(OutputStream.getIsoBytes("q\n"));
             contentStream.getOutputStream().writeBytes(OutputStream.getIsoBytes("Q\n"));
+            if (page.getRotation() != 0 && !page.isIgnoreContentRotation()) {
+                applyRotation(page);
+            }
+        }
+
+
+    }
+
+    private void applyRotation(PdfPage page) {
+        Rectangle rectagle = page.getPageSizeWithRotation();
+        int rotation = page.getRotation();
+        switch (rotation) {
+            case 90:
+                concatMatrix(0, 1, -1, 0, rectagle.getTop(), 0);
+                break;
+            case 180:
+                concatMatrix(-1, 0, 0, -1, rectagle.getRight(), rectagle.getTop());
+                break;
+            case 270:
+                concatMatrix(0, -1, 1, 0, 0, rectagle.getRight());
+                break;
         }
     }
 
     /**
      * Creates a PdfCanvas from a PdfFormXObject.
      *
-     * @param xObj the PdfFormXObject used to create the PdfCanvas
+     * @param xObj     the PdfFormXObject used to create the PdfCanvas
      * @param document the document to which the resulting content stream will be written
      */
     public PdfCanvas(PdfFormXObject xObj, PdfDocument document) {
@@ -233,9 +252,10 @@ public class PdfCanvas {
     public void attachContentStream(PdfStream contentStream) {
         this.contentStream = contentStream;
     }
-    
+
     /**
      * Gets current {@link CanvasGraphicsState}.
+     *
      * @return container containing properties for the current state of the canvas.
      */
     public CanvasGraphicsState getGraphicsState() {
@@ -272,7 +292,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas restoreState() {
-        ++gStateIndex;
         document.checkIsoConformance('Q', IsoKey.CANVAS_STACK);
         currentGs = gsStack.pop();
         contentStream.getOutputStream().writeBytes(Q);
@@ -283,6 +302,7 @@ public class PdfCanvas {
      * Concatenates the 2x3 affine transformation matrix to the current matrix
      * in the content stream managed by this Canvas.
      * Contrast with {@see PdfCanvas#setTextMatrix}
+     *
      * @param a operand 1,1 in the matrix.
      * @param b operand 1,2 in the matrix.
      * @param c operand 2,1 in the matrix.
@@ -292,6 +312,7 @@ public class PdfCanvas {
      * @return current canvas
      */
     public PdfCanvas concatMatrix(float a, float b, float c, float d, float e, float f) {
+        currentGs.updateCtm(a, b, c, d, e, f);
         contentStream.getOutputStream().writeFloat(a).writeSpace().
                 writeFloat(b).writeSpace().
                 writeFloat(c).writeSpace().
@@ -305,6 +326,7 @@ public class PdfCanvas {
      * Concatenates the affine transformation matrix to the current matrix
      * in the content stream managed by this Canvas.
      * See also {@link #concatMatrix(float, float, float, float, float, float)}
+     *
      * @return current canvas
      */
     public PdfCanvas concatMatrix(AffineTransform transform) {
@@ -359,7 +381,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setFontAndSize(PdfFont font, float size) {
-        ++gStateIndex;
         if (size < 0.0001f && size > -0.0001f)
             throw new PdfException(PdfException.FontSizeTooSmall, size);
         currentGs.setFontSize(size);
@@ -400,7 +421,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setLeading(final float leading) {
-        ++gStateIndex;
         currentGs.setLeading(leading);
         contentStream.getOutputStream()
                 .writeFloat(leading)
@@ -420,7 +440,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas moveTextWithLeading(final float x, final float y) {
-        ++gStateIndex;
         currentGs.setLeading(-y);
         contentStream.getOutputStream()
                 .writeFloat(x)
@@ -449,7 +468,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas newlineShowText(final String text) {
-        document.checkShowTextIsoConformance(currentGs, resources, gStateIndex);
+        document.checkShowTextIsoConformance(currentGs, resources);
         showTextInt(text);
         contentStream.getOutputStream()
                 .writeByte((byte) '\'')
@@ -466,7 +485,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas newlineShowText(final float wordSpacing, final float charSpacing, final String text) {
-        document.checkShowTextIsoConformance(currentGs, resources, gStateIndex);
+        document.checkShowTextIsoConformance(currentGs, resources);
         contentStream.getOutputStream()
                 .writeFloat(wordSpacing)
                 .writeSpace()
@@ -479,7 +498,6 @@ public class PdfCanvas {
         // (cfr PDF reference v1.6, table 5.6)
         currentGs.setCharSpacing(charSpacing);
         currentGs.setWordSpacing(wordSpacing);
-        ++gStateIndex;
         return this;
     }
 
@@ -490,7 +508,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setTextRenderingMode(int textRenderingMode) {
-        ++gStateIndex;
         currentGs.setTextRenderingMode(textRenderingMode);
         contentStream.getOutputStream()
                 .writeInteger(textRenderingMode).writeSpace()
@@ -507,7 +524,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setTextRise(float textRise) {
-        ++gStateIndex;
         currentGs.setTextRise(textRise);
         contentStream.getOutputStream()
                 .writeFloat(textRise).writeSpace()
@@ -522,7 +538,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setWordSpacing(float wordSpacing) {
-        ++gStateIndex;
         currentGs.setWordSpacing(wordSpacing);
         contentStream.getOutputStream()
                 .writeFloat(wordSpacing).writeSpace()
@@ -537,7 +552,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setCharacterSpacing(float charSpacing) {
-        ++gStateIndex;
         currentGs.setCharSpacing(charSpacing);
         contentStream.getOutputStream()
                 .writeFloat(charSpacing).writeSpace()
@@ -552,7 +566,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setHorizontalScaling(float scale) {
-        ++gStateIndex;
         currentGs.setHorizontalScaling(scale);
         contentStream.getOutputStream()
                 .writeFloat(scale)
@@ -607,7 +620,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas showText(String text) {
-        document.checkShowTextIsoConformance(currentGs, resources, gStateIndex);
+        document.checkShowTextIsoConformance(currentGs, resources);
         showTextInt(text);
         contentStream.getOutputStream().writeBytes(Tj);
         return this;
@@ -620,14 +633,14 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas showText(GlyphLine text) {
-        document.checkShowTextIsoConformance(currentGs, resources, gStateIndex);
+        document.checkShowTextIsoConformance(currentGs, resources);
         PdfFont font;
         if ((font = currentGs.getFont()) == null) {
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         }
         float fontSize = currentGs.getFontSize() / 1000f;
-        float charSpacing = currentGs.getCharSpacing() != null ? currentGs.getCharSpacing() : 0;
-        float scaling = (currentGs.getHorizontalScaling() != null ? currentGs.getHorizontalScaling() : 100) / 100f;
+        float charSpacing = currentGs.getCharSpacing();
+        float scaling = currentGs.getHorizontalScaling() / 100f;
         for (Iterator<GlyphLine.GlyphLinePart> iterator = text.iterator(); iterator.hasNext(); ) {
             GlyphLine.GlyphLinePart glyphLinePart = iterator.next();
             if (glyphLinePart.actualText != null) {
@@ -691,12 +704,12 @@ public class PdfCanvas {
                 endMarkedContent();
             }
             if (glyphLinePart.end > sub && iterator.hasNext()) {
-                    contentStream.getOutputStream()
-                            .writeFloat(getSubrangeWidth(text, sub, glyphLinePart.end - 1), true)
-                            .writeSpace()
-                            .writeFloat(0)
-                            .writeSpace()
-                            .writeBytes(Td);
+                contentStream.getOutputStream()
+                        .writeFloat(getSubrangeWidth(text, sub, glyphLinePart.end - 1), true)
+                        .writeSpace()
+                        .writeFloat(0)
+                        .writeSpace()
+                        .writeBytes(Td);
             }
         }
         return this;
@@ -704,9 +717,9 @@ public class PdfCanvas {
 
     private float getSubrangeWidth(GlyphLine text, int from, int to) {
         float fontSize = currentGs.getFontSize() / 1000f;
-        float charSpacing = currentGs.getCharSpacing() != null ? currentGs.getCharSpacing() : 0;
-        float wordSpacing = currentGs.getCharSpacing() != null ? currentGs.getCharSpacing() : 0;
-        float scaling = (currentGs.getHorizontalScaling() != null ? currentGs.getHorizontalScaling() : 100) / 100f;
+        float charSpacing = currentGs.getCharSpacing();
+        float wordSpacing = currentGs.getCharSpacing();
+        float scaling = currentGs.getHorizontalScaling() / 100f;
         float width = 0;
         for (int iter = from; iter <= to; iter++) {
             Glyph glyph = text.get(iter);
@@ -728,7 +741,7 @@ public class PdfCanvas {
     public PdfCanvas showText(PdfArray textArray) {
         if (currentGs.getFont() == null)
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
-        document.checkShowTextIsoConformance(currentGs, resources, gStateIndex);
+        document.checkShowTextIsoConformance(currentGs, resources);
         contentStream.getOutputStream().writeBytes(PdfOutputStream.getIsoBytes("["));
         for (PdfObject obj : textArray) {
             if (obj.isString()) {
@@ -1059,7 +1072,8 @@ public class PdfCanvas {
 
     /**
      * Paints a shading object and adds it to the resources of this canvas
-     * @param shading 
+     *
+     * @param shading
      * @return current canvas.
      */
     public PdfCanvas paintShading(PdfShading shading) {
@@ -1086,7 +1100,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas closePathEoFillStroke() {
-        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL_STROKE, resources, gStateIndex);
+        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL_STROKE, resources);
         contentStream.getOutputStream().writeBytes(bStar);
         return this;
     }
@@ -1097,7 +1111,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas closePathFillStroke() {
-        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL_STROKE, resources, gStateIndex);
+        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL_STROKE, resources);
         contentStream.getOutputStream().writeBytes(b);
         return this;
     }
@@ -1118,7 +1132,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas stroke() {
-        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_STROKE, resources, gStateIndex);
+        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_STROKE, resources);
         contentStream.getOutputStream().writeBytes(S);
         return this;
     }
@@ -1161,7 +1175,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas fill() {
-        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL, resources, gStateIndex);
+        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL, resources);
         contentStream.getOutputStream().writeBytes(f);
         return this;
     }
@@ -1172,7 +1186,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas fillStroke() {
-        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL_STROKE, resources, gStateIndex);
+        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL_STROKE, resources);
         contentStream.getOutputStream().writeBytes(B);
         return this;
     }
@@ -1183,7 +1197,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas eoFill() {
-        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL, resources, gStateIndex);
+        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL, resources);
         contentStream.getOutputStream().writeBytes(fStar);
         return this;
     }
@@ -1194,7 +1208,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas eoFillStroke() {
-        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL_STROKE, resources, gStateIndex);
+        document.checkIsoConformance(currentGs, IsoKey.DRAWMODE_FILL_STROKE, resources);
         contentStream.getOutputStream().writeBytes(BStar);
         return this;
     }
@@ -1206,10 +1220,9 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setLineWidth(float lineWidth) {
-        if (floatsAreEqual(currentGs.getLineWidth(), lineWidth)) {
+        if (currentGs.getLineWidth() == lineWidth) {
             return this;
         }
-        ++gStateIndex;
         currentGs.setLineWidth(lineWidth);
         contentStream.getOutputStream()
                 .writeFloat(lineWidth).writeSpace()
@@ -1226,9 +1239,8 @@ public class PdfCanvas {
      * @see PdfCanvasConstants.LineCapStyle for possible values.
      */
     public PdfCanvas setLineCapStyle(int lineCapStyle) {
-        if (integersAreEqual(currentGs.getLineCapStyle(), lineCapStyle))
+        if (currentGs.getLineCapStyle() == lineCapStyle)
             return this;
-        ++gStateIndex;
         currentGs.setLineCapStyle(lineCapStyle);
         contentStream.getOutputStream()
                 .writeInteger(lineCapStyle).writeSpace()
@@ -1245,9 +1257,8 @@ public class PdfCanvas {
      * @see PdfCanvasConstants.LineJoinStyle for possible values.
      */
     public PdfCanvas setLineJoinStyle(int lineJoinStyle) {
-        if (integersAreEqual(currentGs.getLineJoinStyle(), lineJoinStyle))
+        if (currentGs.getLineJoinStyle() == lineJoinStyle)
             return this;
-        ++gStateIndex;
         currentGs.setLineJoinStyle(lineJoinStyle);
         contentStream.getOutputStream()
                 .writeInteger(lineJoinStyle).writeSpace()
@@ -1263,9 +1274,8 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setMiterLimit(float miterLimit) {
-        if (floatsAreEqual(currentGs.getMiterLimit(), miterLimit))
+        if (currentGs.getMiterLimit() == miterLimit)
             return this;
-        ++gStateIndex;
         currentGs.setMiterLimit(miterLimit);
         contentStream.getOutputStream()
                 .writeFloat(miterLimit).writeSpace()
@@ -1285,7 +1295,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setLineDash(final float phase) {
-        ++gStateIndex;
         currentGs.setDashPattern(getDashPatternArray(phase));
         contentStream.getOutputStream().writeByte((byte) '[').writeByte((byte) ']').writeSpace()
                 .writeFloat(phase).writeSpace()
@@ -1306,7 +1315,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setLineDash(final float unitsOn, final float phase) {
-        ++gStateIndex;
         currentGs.setDashPattern(getDashPatternArray(new float[]{unitsOn}, phase));
         contentStream.getOutputStream().writeByte((byte) '[').writeFloat(unitsOn).writeByte((byte) ']').writeSpace()
                 .writeFloat(phase).writeSpace()
@@ -1329,7 +1337,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setLineDash(final float unitsOn, final float unitsOff, final float phase) {
-        ++gStateIndex;
         currentGs.setDashPattern(getDashPatternArray(new float[]{unitsOn, unitsOff}, phase));
         contentStream.getOutputStream().writeByte((byte) '[').writeFloat(unitsOn).writeSpace()
                 .writeFloat(unitsOff).writeByte((byte) ']').writeSpace()
@@ -1351,7 +1358,6 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public final PdfCanvas setLineDash(final float[] array, final float phase) {
-        ++gStateIndex;
         currentGs.setDashPattern(getDashPatternArray(array, phase));
         PdfOutputStream out = contentStream.getOutputStream();
         out.writeByte((byte) '[');
@@ -1367,6 +1373,7 @@ public class PdfCanvas {
     /**
      * Set the rendering intent. possible values are: PdfName.AbsoluteColorimetric,
      * PdfName.RelativeColorimetric, PdfName.Saturation, PdfName.Perceptual.
+     *
      * @param renderingIntent a PdfName containing a color metric
      * @return current canvas.
      */
@@ -1374,7 +1381,6 @@ public class PdfCanvas {
         document.checkIsoConformance(renderingIntent, IsoKey.RENDERING_INTENT);
         if (renderingIntent.equals(currentGs.getRenderingIntent()))
             return this;
-        ++gStateIndex;
         currentGs.setRenderingIntent(renderingIntent);
         contentStream.getOutputStream()
                 .write(renderingIntent).writeSpace()
@@ -1392,9 +1398,8 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setFlatnessTolerance(float flatnessTolerance) {
-        if (floatsAreEqual(currentGs.getFlatnessTolerance(), flatnessTolerance))
+        if (currentGs.getFlatnessTolerance() == flatnessTolerance)
             return this;
-        ++gStateIndex;
         currentGs.setFlatnessTolerance(flatnessTolerance);
         contentStream.getOutputStream()
                 .writeFloat(flatnessTolerance).writeSpace()
@@ -1426,7 +1431,7 @@ public class PdfCanvas {
      * Changes the current color for paths.
      *
      * @param color the new color.
-     * @param fill set fill color (<code>true</code>) or stroke color (<code>false</code>)
+     * @param fill  set fill color (<code>true</code>) or stroke color (<code>false</code>)
      * @return current canvas.
      */
     public PdfCanvas setColor(Color color, boolean fill) {
@@ -1436,13 +1441,13 @@ public class PdfCanvas {
             return setColor(color.getColorSpace(), color.getColorValue(), fill);
         }
     }
-    
+
     /**
      * Changes the current color for paths.
      *
      * @param colorSpace the color space of the new color
      * @param colorValue a list of numerical values with a length corresponding to the specs of the color space. Values should be in the range [0,1]
-     * @param fill set fill color (<code>true</code>) or stroke color (<code>false</code>)
+     * @param fill       set fill color (<code>true</code>) or stroke color (<code>false</code>)
      * @return current canvas.
      */
     public PdfCanvas setColor(PdfColorSpace colorSpace, float[] colorValue, boolean fill) {
@@ -1454,8 +1459,8 @@ public class PdfCanvas {
      *
      * @param colorSpace the color space of the new color
      * @param colorValue a list of numerical values with a length corresponding to the specs of the color space. Values should be in the range [0,1]
-     * @param pattern a pattern for the colored line or area
-     * @param fill set fill color (<code>true</code>) or stroke color (<code>false</code>)
+     * @param pattern    a pattern for the colored line or area
+     * @param fill       set fill color (<code>true</code>) or stroke color (<code>false</code>)
      * @return current canvas.
      */
     public PdfCanvas setColor(PdfColorSpace colorSpace, float[] colorValue, PdfPattern pattern, boolean fill) {
@@ -1471,11 +1476,7 @@ public class PdfCanvas {
             }
             setColorValueOnly = true;
         } else {
-            ++gStateIndex;
-            if (fill)
-                currentGs.setFillColor(newColor);
-            else
-                currentGs.setStrokeColor(newColor);
+            updateGStateColorFields(fill, newColor);
         }
         if (colorSpace instanceof PdfDeviceCs.Gray)
             contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? g : G);
@@ -1489,7 +1490,7 @@ public class PdfCanvas {
         else if (colorSpace instanceof PdfSpecialCs.Pattern)
             contentStream.getOutputStream().write(PdfName.Pattern).writeSpace().writeBytes(fill ? cs : CS).
                     writeNewLine().write(resources.addPattern(pattern)).writeSpace().writeBytes(fill ? scn : SCN);
-        else if (colorSpace.getPdfObject().getIndirectReference() != null) {
+        else if (colorSpace.getPdfObject().isIndirect()) {
             if (!setColorValueOnly) {
                 PdfName name = resources.addColorSpace(colorSpace);
                 contentStream.getOutputStream().write(name).writeSpace().writeBytes(fill ? cs : CS);
@@ -1501,7 +1502,7 @@ public class PdfCanvas {
 
     /**
      * Changes the current color for filling paths to a grayscale value.
-     * 
+     *
      * @param g a grayscale value in the range [0,1]
      * @return current canvas.
      */
@@ -1511,7 +1512,7 @@ public class PdfCanvas {
 
     /**
      * Changes the current color for stroking paths to a grayscale value.
-     * 
+     *
      * @param g a grayscale value in the range [0,1]
      * @return current canvas.
      */
@@ -1560,6 +1561,7 @@ public class PdfCanvas {
     public PdfCanvas setStrokeColorRgb(float r, float g, float b) {
         return setColor(rgb, new float[]{r, g, b}, false);
     }
+
     /**
      * Adds or changes the shading of the current fill color path.
      *
@@ -1724,7 +1726,7 @@ public class PdfCanvas {
      * @return created Image XObject or null in case of in-line image (asInline = true).
      */
     public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f, boolean asInline) {
-        document.checkIsoConformance(currentGs, IsoKey.GRAPHIC_STATE_ONLY, null, gStateIndex);
+        document.checkIsoConformance(currentGs, IsoKey.GRAPHIC_STATE_ONLY, null);
         if (image.getOriginalType() == Image.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
@@ -1934,22 +1936,21 @@ public class PdfCanvas {
 
     /**
      * Sets the ExtGState dictionary for the current graphics state
-     * 
+     *
      * @param extGState a dictionary that maps resource names to graphics state parameter dictionaries
      * @return current canvas.
      */
     public PdfCanvas setExtGState(PdfExtGState extGState) {
-        ++gStateIndex;
         if (!extGState.isFlushed())
             currentGs.updateFromExtGState(extGState);
         PdfName name = resources.addExtGState(extGState);
         contentStream.getOutputStream().write(name).writeSpace().writeBytes(gs);
         return this;
     }
-    
+
     /**
      * Sets the ExtGState dictionary for the current graphics state
-     * 
+     *
      * @param extGState a dictionary that maps resource names to graphics state parameter dictionaries
      * @return current canvas.
      */
@@ -1961,6 +1962,7 @@ public class PdfCanvas {
 
     /**
      * Manually start a Marked Content sequence. Used primarily for Tagged PDF
+     *
      * @param tag the type of content contained
      * @return current canvas
      */
@@ -1970,7 +1972,8 @@ public class PdfCanvas {
 
     /**
      * Manually start a Marked Content sequence with properties. Used primarily for Tagged PDF
-     * @param tag the type of content that will be contained
+     *
+     * @param tag        the type of content that will be contained
      * @param properties the properties of the content, including Marked Content ID. If null, the PDF marker is BMC, else it is BDC
      * @return current canvas
      */
@@ -1985,9 +1988,10 @@ public class PdfCanvas {
         }
         return this;
     }
-    
+
     /**
      * Manually end a Marked Content sequence. Used primarily for Tagged PDF
+     *
      * @return current canvas
      */
     public PdfCanvas endMarkedContent() {
@@ -1999,6 +2003,7 @@ public class PdfCanvas {
 
     /**
      * Manually open a canvas tag, beginning a Marked Content sequence. Used primarily for Tagged PDF
+     *
      * @param tag the type of content that will be contained
      * @return current canvas
      */
@@ -2016,6 +2021,7 @@ public class PdfCanvas {
      * <br>
      * CanvasTag will be automatically created with assigned mcid(Marked Content id) to it. Mcid serves as a reference
      * between Marked Content sequence and logical structure element.
+     *
      * @param tagReference reference to the tag from the document logical structure
      * @return current canvas
      */
@@ -2029,6 +2035,7 @@ public class PdfCanvas {
 
     /**
      * Manually close a tag, ending a Marked Content sequence. Used primarily for Tagged PDF
+     *
      * @return current canvas
      */
     public PdfCanvas closeTag() {
@@ -2071,6 +2078,7 @@ public class PdfCanvas {
     /**
      * Please, use this method with caution and only if you know what you are doing.
      * Manipulating with underlying stream object of canvas could lead to corruption of it's data.
+     *
      * @return the content stream to which this canvas object writes.
      */
     public PdfStream getContentStream() {
@@ -2090,7 +2098,7 @@ public class PdfCanvas {
      * @on error
      */
     protected void addInlineImage(PdfImageXObject imageXObject, float a, float b, float c, float d, float e, float f) {
-        document.checkIsoConformance(imageXObject.getPdfObject(), IsoKey.INLINE_IMAGE, resources, gStateIndex);
+        document.checkIsoConformance(imageXObject.getPdfObject(), IsoKey.INLINE_IMAGE, resources);
         saveState();
         concatMatrix(a, b, c, d, e, f);
         PdfOutputStream os = contentStream.getOutputStream();
@@ -2278,27 +2286,25 @@ public class PdfCanvas {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y);
     }
 
-    private static boolean floatsAreEqual(Float f1, Float f2) {
-        if (f1 == null && f2 == null)
-            return true;
-        else if (f1 == null || f2 == null)
-            return false;
-        else
-            return Float.compare(f1, f2) == 0;
-    }
-
-    private static boolean integersAreEqual(Integer i1, Integer i2) {
-        if (i1 == null && i2 == null)
-            return true;
-        else if (i1 == null || i2 == null)
-            return false;
-        else
-            return Integer.compare(i1, i2) == 0;
+    private void updateGStateColorFields(boolean fill, Color newColor) {
+        if (fill) {
+            currentGs.setFillColor(newColor);
+            PdfObject colorSpaceObject = newColor.getColorSpace().getPdfObject();
+            if (colorSpaceObject instanceof PdfName) { // see CanvasGraphicState Fill/StrokeColorSpace field comments
+                currentGs.setFillColorSpace((PdfName) colorSpaceObject);
+            }
+        } else {
+            currentGs.setStrokeColor(newColor);
+            PdfObject colorSpaceObject = newColor.getColorSpace().getPdfObject();
+            if (colorSpaceObject instanceof PdfName) { // see CanvasGraphicState Fill/StrokeColorSpace field comments
+                currentGs.setStrokeColorSpace((PdfName) colorSpaceObject);
+            }
+        }
     }
 
     private static PdfStream getPageStream(PdfPage page) {
         PdfStream stream = page.getContentStream(page.getContentStreamCount() - 1);
-        return stream == null || stream.getOutputStream() == null ? page.newContentStreamAfter() : stream;
+        return stream == null || stream.getOutputStream() == null || stream.containsKey(PdfName.Filter) ? page.newContentStreamAfter() : stream;
     }
 
     /**

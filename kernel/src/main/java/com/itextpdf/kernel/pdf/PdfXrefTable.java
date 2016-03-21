@@ -255,7 +255,6 @@ class PdfXrefTable {
                 trailer.put(PdfName.Prev, lastXref);
             }
             writer.write(document.getTrailer());
-
         }
 
         writer.writeString("\nstartxref\n").

@@ -29,7 +29,7 @@ public class PdfBoolean extends PdfPrimitiveObject {
         return value;
     }
 
-    public int getType() {
+    public byte getType() {
         return Boolean;
     }
 
@@ -66,8 +66,8 @@ public class PdfBoolean extends PdfPrimitiveObject {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfBoolean copyToDocument(PdfDocument document) {
-        return super.copyToDocument(document, true);
+    public PdfBoolean copyTo(PdfDocument document) {
+        return super.copyTo(document, true);
     }
 
     /**
@@ -82,8 +82,8 @@ public class PdfBoolean extends PdfPrimitiveObject {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public PdfBoolean copyToDocument(PdfDocument document, boolean allowDuplicating) {
-        return super.copyToDocument(document, allowDuplicating);
+    public PdfBoolean copyTo(PdfDocument document, boolean allowDuplicating) {
+        return super.copyTo(document, allowDuplicating);
     }
 
     @Override

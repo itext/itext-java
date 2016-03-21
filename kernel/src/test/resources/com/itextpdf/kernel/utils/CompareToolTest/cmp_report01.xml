@@ -2,10 +2,10 @@
 <report>
 <errors count="4">
 <error>
-<message>PdfStream. The bytes differ at index 1715. Expected: 3 ( 502 196.13 16 reS). Found: 5 ( 502 196.15 16 reS)</message>
+<message>PdfStream. Bytes are different.
+First bytes difference is encountered at index 1715. Expected: 3 ( 502 196.13 16 re S ). Found: 5 ( 502 196.15 16 re S ). Total number of different bytes: 1</message>
 <path>
 <base cmp="3 0 obj" out="3 0 obj"/>
-<offset>1715</offset>
 </path>
 </error>
 <error>

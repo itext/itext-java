@@ -15,15 +15,23 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfA1ActionCheckTest {
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
 
-    @Test(expected = PdfAConformanceException.class)
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
     public void actionCheck01() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException._1ActionsAreNotAllowed);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -36,8 +44,11 @@ public class PdfA1ActionCheckTest {
         doc.close();
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void actionCheck02() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException._1ActionsAreNotAllowed);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -50,8 +61,11 @@ public class PdfA1ActionCheckTest {
         doc.close();
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void actionCheck03() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException._1ActionsAreNotAllowed);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -64,8 +78,11 @@ public class PdfA1ActionCheckTest {
         doc.close();
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void actionCheck04() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException._1ActionsAreNotAllowed);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -78,8 +95,11 @@ public class PdfA1ActionCheckTest {
         doc.close();
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void actionCheck05() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException._1ActionsAreNotAllowed);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -92,8 +112,11 @@ public class PdfA1ActionCheckTest {
         doc.close();
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void actionCheck06() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException._1ActionsAreNotAllowed);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -106,8 +129,11 @@ public class PdfA1ActionCheckTest {
         doc.close();
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void actionCheck07() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException._1ActionsAreNotAllowed);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -120,8 +146,11 @@ public class PdfA1ActionCheckTest {
         doc.close();
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void actionCheck08() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException.NamedActionType1IsNotAllowed);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -135,8 +164,11 @@ public class PdfA1ActionCheckTest {
         doc.close();
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void actionCheck09() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException._1ActionsAreNotAllowed);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -147,8 +179,11 @@ public class PdfA1ActionCheckTest {
         doc.close();
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void actionCheck10() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException.DeprecatedSetStateAndNoOpActionsAreNotAllowed);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -161,8 +196,11 @@ public class PdfA1ActionCheckTest {
         doc.close();
     }
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void actionCheck11() throws FileNotFoundException, XMPException {
+        thrown.expect(PdfAConformanceException.class);
+        thrown.expectMessage(PdfAConformanceException.CatalogDictionaryShallNotContainAAEntry);
+
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));

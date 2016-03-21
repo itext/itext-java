@@ -11,6 +11,7 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
         if (pdfDocument.getWriter() != null) {
             this.getPdfObject().makeIndirect(pdfDocument);
         }
+        setForbidRelease();
     }
 
     public PdfDocumentInfo(PdfDictionary pdfObject) {
@@ -107,6 +108,11 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
     @Override
     public void flush() {
         getPdfObject().flush(false);
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
     }
 
     private String getStringValue(PdfName name) {

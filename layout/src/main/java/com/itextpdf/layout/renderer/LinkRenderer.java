@@ -47,6 +47,6 @@ public class LinkRenderer extends TextRenderer {
 
     @Override
     public LinkRenderer getNextRenderer() {
-        return null;
+        return new LinkRenderer((Link) modelElement, null);
     }
 }

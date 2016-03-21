@@ -2,6 +2,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
 import com.itextpdf.layout.Canvas;
+import com.itextpdf.layout.Property;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
 
@@ -29,14 +30,18 @@ public class CanvasRenderer extends RootRenderer {
                 tagStructure.setContentStream(canvas.getPdfCanvas().getContentStream());
             }
             resultRenderer.draw(new DrawContext(canvas.getPdfDocument(), canvas.getPdfCanvas(), toTag));
+            if (toTag) {
+                canvas.getPdfDocument().getTagStructure().setContentStream(null);
+            }
         }
     }
 
     @Override
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
         if (currentArea == null) {
-            currentArea = new LayoutArea(0, canvas.getRootArea());
+            currentArea = new LayoutArea(0, canvas.getRootArea().clone());
         } else {
+            setProperty(Property.FULL, true);
             currentArea = null;
         }
         return currentArea;

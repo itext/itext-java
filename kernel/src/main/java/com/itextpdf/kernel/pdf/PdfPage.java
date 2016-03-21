@@ -9,6 +9,7 @@ import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.tagging.*;
+import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
@@ -38,15 +39,19 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             // TODO This key contains reference to all articles, while this articles could reference to lots of pages.
             // See DEVSIX-191
             PdfName.B));
+    /**
+     * Automatically rotate new content if the page has a rotation ( is disabled by default )
+     */
+    private boolean ignoreContentRotation = true;
 
-    protected PdfPage(PdfDictionary pdfObject, PdfDocument pdfDocument) {
+    protected PdfPage(PdfDictionary pdfObject) {
         super(pdfObject);
-        makeIndirect(pdfDocument);
+        setForbidRelease();
+        ensureObjectIsAddedToDocument(pdfObject);
     }
 
     protected PdfPage(PdfDocument pdfDocument, PageSize pageSize) {
-        super(new PdfDictionary());
-        makeIndirect(pdfDocument);
+        this(new PdfDictionary().makeIndirect(pdfDocument));
         PdfStream contentStream = new PdfStream().makeIndirect(pdfDocument);
         getPdfObject().put(PdfName.Contents, contentStream);
         getPdfObject().put(PdfName.Type, PdfName.Page);
@@ -75,6 +80,21 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             throw new IllegalArgumentException("MediaBox");
         }
         return new Rectangle(Math.min(llx, urx), Math.min(lly, ury), Math.abs(urx - llx), Math.abs(ury - lly));
+    }
+
+    /**
+     * Gets the rotated page.
+     *
+     * @return the rotated rectangle
+     */
+    public Rectangle getPageSizeWithRotation() {
+        PageSize rect = new PageSize(getPageSize());
+        int rotation = getRotation();
+        while (rotation > 0) {
+            rect = rect.rotate();
+            rotation -= 90;
+        }
+        return rect;
     }
 
     public int getRotation() {
@@ -147,12 +167,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             boolean readOnly = false;
             PdfDictionary resources = getPdfObject().getAsDictionary(PdfName.Resources);
             if (resources == null) {
-                if (parentPages == null) {
-                    PdfPagesTree pageTree = getDocument().getCatalog().pageTree;
-                    parentPages = pageTree.findPageParent(this);
-                }
-
-                resources = (PdfDictionary) getParentValue(parentPages, PdfName.Resources);
+                initParentPages();
+                resources = (PdfDictionary) getParentValue(this.parentPages, PdfName.Resources);
                 if (resources != null) {
                     readOnly = true;
                 }
@@ -164,7 +180,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             this.resources = new PdfResources(resources);
             this.resources.setReadOnly(readOnly);
         }
-        return resources;
+        return this.resources;
+    }
+
+    public void setResources(PdfResources pdfResources) {
+        getPdfObject().put(PdfName.Resources, pdfResources.getPdfObject());
+        this.resources = pdfResources;
     }
 
 
@@ -192,9 +213,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         setXmpMetadata(xmpMeta, serializeOptions);
     }
 
-    public void setCropBox(){
-
-    }
 
     public PdfStream getXmpMetadata() throws XMPException {
         return getPdfObject().getAsStream(PdfName.Metadata);
@@ -206,26 +224,26 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @param toDocument a document to copy page to.
      * @return copied page.
      */
-    @Override
-    public PdfPage copy(PdfDocument toDocument) {
-        return copy(toDocument, null);
+    public PdfPage copyTo(PdfDocument toDocument) {
+        return copyTo(toDocument, null);
     }
 
     /**
      * Copies page to the specified document.
      *
      * @param toDocument a document to copy page to.
-     * @param copier a copier which bears a specific copy logic. May be NULL
+     * @param copier     a copier which bears a specific copy logic. May be NULL
      * @return copied page.
      */
-    public PdfPage copy(PdfDocument toDocument, IPdfPageExtraCopier copier) {
-        PdfDictionary dictionary = getPdfObject().copyToDocument(toDocument, excludedKeys, true);
-        PdfPage page = new PdfPage(dictionary, toDocument);
+    public PdfPage copyTo(PdfDocument toDocument, IPdfPageExtraCopier copier) {
+        PdfDictionary dictionary = getPdfObject().copyTo(toDocument, excludedKeys, true);
+        PdfPage page = new PdfPage(dictionary);
+        copyInheritedProperties(page, toDocument);
         for (PdfAnnotation annot : getAnnotations()) {
             if (annot.getSubtype().equals(PdfName.Link)) {
                 getDocument().storeLinkAnnotations(this, (PdfLinkAnnotation) annot);
             } else {
-                page.addAnnotation(PdfAnnotation.makeAnnotation(annot.getPdfObject().copyToDocument(toDocument, false)));
+                page.addAnnotation(-1, PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(toDocument, false)), false);
             }
         }
         if (toDocument.isTagged()) {
@@ -249,6 +267,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Copies page as FormXObject to the specified document.
+     *
      * @param toDocument a document to copy to.
      * @return resultant XObject.
      */
@@ -258,7 +277,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 PdfName.CropBox,
                 PdfName.Contents));
         excludedKeys.addAll(this.excludedKeys);
-        PdfDictionary dictionary = getPdfObject().copyToDocument(toDocument, excludedKeys, true);
+        PdfDictionary dictionary = getPdfObject().copyTo(toDocument, excludedKeys, true);
 
         xObject.getPdfObject().getOutputStream().write(getContentBytes());
         xObject.getPdfObject().mergeDifferent(dictionary);
@@ -266,7 +285,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return xObject;
     }
 
-
+    public PdfDocument getDocument() {
+        if (getPdfObject().getIndirectReference() != null)
+            return getPdfObject().getIndirectReference().getDocument();
+        return null;
+    }
 
     /**
      * Flushes page and it's content stream.
@@ -285,13 +308,14 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Flushes page and it's content stream. If <code>flushXObjects</code> is true the images and FormXObjects
+     * Flushes page and its content stream. If <code>flushXObjects</code> is true the images and FormXObjects
      * associated with this page will also be flushed.
      * <br>
      * For notes about tag structure flushing see {@link PdfPage#flush() PdfPage#flush() method}.
      * <br>
      * <br>
      * If <code>PdfADocument</code> is used, flushing will be applied only if <code>flushXObjects</code> is true.
+     *
      * @param flushXObjects if true the images and FormXObjects associated with this page will also be flushed.
      */
     public void flush(boolean flushXObjects) {
@@ -331,6 +355,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public Rectangle getMediaBox() {
+        initParentPages();
         PdfArray mediaBox = getPdfObject().getAsArray(PdfName.MediaBox);
         if (mediaBox == null) {
             mediaBox = (PdfArray) getParentValue(parentPages, PdfName.MediaBox);
@@ -338,12 +363,13 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return mediaBox.toRectangle();
     }
 
-    public void setMediaBox(Rectangle rectangle){
+    public void setMediaBox(Rectangle rectangle) {
         getPdfObject().put(PdfName.MediaBox, new PdfArray(rectangle));
     }
 
 
     public Rectangle getCropBox() {
+        initParentPages();
         PdfArray cropBox = getPdfObject().getAsArray(PdfName.CropBox);
         if (cropBox == null) {
             cropBox = (PdfArray) getParentValue(parentPages, PdfName.CropBox);
@@ -354,7 +380,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return cropBox.toRectangle();
     }
 
-    public void setCropBox(Rectangle rectangle){
+    public void setCropBox(Rectangle rectangle) {
         getPdfObject().put(PdfName.CropBox, new PdfArray(rectangle));
     }
 
@@ -367,7 +393,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.ArtBox, new PdfArray(rectangle));
     }
 
-    public Rectangle getArtBox(){
+    public Rectangle getArtBox() {
         return getPdfObject().getAsRectangle(PdfName.ArtBox);
     }
 
@@ -380,7 +406,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.TrimBox, new PdfArray(rectangle));
     }
 
-    public Rectangle getTrimBox(){
+    public Rectangle getTrimBox() {
         return getPdfObject().getAsRectangle(PdfName.TrimBox);
     }
 
@@ -461,6 +487,15 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return annotations;
     }
 
+    public boolean containsAnnotation(PdfAnnotation annotation) {
+        for (PdfAnnotation a : getAnnotations()) {
+            if (a.getPdfObject().equals(annotation.getPdfObject())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public PdfPage addAnnotation(PdfAnnotation annotation) {
         return addAnnotation(-1, annotation, true);
     }
@@ -479,6 +514,44 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             annots.add(annotation.setPage(this).getPdfObject());
         } else {
             annots.add(index, annotation.setPage(this).getPdfObject());
+        }
+
+        if (annots.getIndirectReference() == null) {
+            setModified();
+        }
+
+        return this;
+    }
+
+    /**
+     * Removes an annotation from the page.
+     * <br><br>
+     * NOTE: If document is tagged, PdfDocument's PdfTagStructure instance will point at annotation tag parent after method call.
+     *
+     * @param annotation an annotation to be removed.
+     * @return this PdfPage instance.
+     */
+    public PdfPage removeAnnotation(PdfAnnotation annotation) {
+        PdfArray annots = getAnnots(false);
+        if (annots != null) {
+            if (!annots.remove(annotation.getPdfObject())) {
+                annots.remove(annotation.getPdfObject().getIndirectReference());
+            }
+
+            if (annots.isEmpty()) {
+                getPdfObject().remove(PdfName.Annots);
+            }
+        }
+
+        if (getDocument().isTagged()) {
+            PdfTagStructure tagStructure = getDocument().getTagStructure();
+            tagStructure.removeAnnotationTag(annotation, true);
+
+            boolean standardAnnotTagRole = tagStructure.getRole().equals(PdfName.Annot)
+                    || tagStructure.getRole().equals(PdfName.Form);
+            if (tagStructure.getListOfKidsRoles().isEmpty() && standardAnnotTagRole) {
+                tagStructure.removeTag();
+            }
         }
         return this;
     }
@@ -499,7 +572,86 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public List<PdfOutline> getOutlines(boolean updateOutlines) {
         getDocument().getOutlines(updateOutlines);
-        return getDocument().getCatalog().getPagesWithOutlines().get(getPdfObject().getIndirectReference());
+        return getDocument().getCatalog().getPagesWithOutlines().get(getPdfObject());
+    }
+
+    /**
+     * @return true - if in case the page has a rotation, then new content will be automatically rotated in the
+     * opposite direction. On the rotated page this would look like if new content ignores page rotation.
+     */
+    public boolean isIgnoreContentRotation() {
+        return ignoreContentRotation;
+    }
+
+    /**
+     * If true - defines that in case the page has a rotation, then new content will be automatically rotated in the
+     * opposite direction. On the rotated page this would look like if new content ignores page rotation.
+     * Default value - {@code false}.
+     * @param ignoreContentRotation - true to ignore rotation of the new content on the rotated page.
+     */
+    public void setIgnoreContentRotation(boolean ignoreContentRotation) {
+        this.ignoreContentRotation = ignoreContentRotation;
+    }
+
+    /**
+     * This method adds or replaces a page label.
+     * @param numberingStyle The numbering style that shall be used for the numeric portion of each page label.
+     *                       May be NULL
+     * @param labelPrefix The label prefix for page labels in this range. May be NULL
+     * @return
+     */
+    public PdfPage setPageLabel(PageLabelNumberingStyleConstants numberingStyle, String labelPrefix) {
+        return setPageLabel(numberingStyle, labelPrefix, 1);
+    }
+
+    /**
+     * This method adds or replaces a page label.
+     * @param numberingStyle The numbering style that shall be used for the numeric portion of each page label.
+     *                       May be NULL
+     * @param labelPrefix The label prefix for page labels in this range. May be NULL
+     * @param firstPage The value of the numeric portion for the first page label in the range. Must be greater or
+     *                  equal 1.
+     * @return
+     */
+    public PdfPage setPageLabel(PageLabelNumberingStyleConstants numberingStyle, String labelPrefix, int firstPage) {
+        if (firstPage < 1)
+            throw new PdfException(PdfException.InAPageLabelThePageNumbersMustBeGreaterOrEqualTo1);
+        PdfDictionary pageLabel = new PdfDictionary();
+        if (numberingStyle != null) {
+            switch (numberingStyle) {
+                case DECIMAL_ARABIC_NUMERALS:
+                    pageLabel.put(PdfName.S, PdfName.D);
+                    break;
+                case UPPERCASE_ROMAN_NUMERALS:
+                    pageLabel.put(PdfName.S, PdfName.R);
+                    break;
+                case LOWERCASE_ROMAN_NUMERALS:
+                    pageLabel.put(PdfName.S, PdfName.r);
+                    break;
+                case UPPERCASE_LETTERS:
+                    pageLabel.put(PdfName.S, PdfName.A);
+                    break;
+                case LOWERCASE_LETTERS:
+                    pageLabel.put(PdfName.S, PdfName.a);
+                    break;
+                default:
+            }
+        }
+        if (labelPrefix != null) {
+            pageLabel.put(PdfName.P, new PdfString(labelPrefix));
+        }
+
+        if (firstPage != 1) {
+            pageLabel.put(PdfName.St, new PdfNumber(firstPage));
+        }
+        getDocument().getCatalog().getPageLabelsTree(true).addEntry(getDocument().getPageNumber(this) - 1, pageLabel);
+
+        return this;
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
     }
 
     private PdfArray getAnnots(boolean create) {
@@ -507,6 +659,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (annots == null && create) {
             annots = new PdfArray();
             put(PdfName.Annots, annots);
+            setModified();
         }
         return annots;
     }
@@ -518,7 +671,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (value != null) {
                 return value;
             } else {
-                getParentValue(parentPages.getParent(), pdfName);
+                return getParentValue(parentPages.getParent(), pdfName);
             }
         }
         return null;
@@ -531,16 +684,22 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             array = new PdfArray();
             array.add(contents);
             getPdfObject().put(PdfName.Contents, array);
+            setModified();
         } else if (contents instanceof PdfArray) {
             array = (PdfArray) contents;
         } else {
             throw new PdfException(PdfException.PdfPageShallHaveContent);
         }
-        PdfStream contentStream = new PdfStream().makeIndirect(getPdfObject().getDocument());
+        PdfStream contentStream = new PdfStream().makeIndirect(getDocument());
         if (before) {
             array.add(0, contentStream);
         } else {
             array.add(contentStream);
+        }
+        if (null != array.getIndirectReference()) {
+            array.setModified();
+        } else {
+            setModified();
         }
         return contentStream;
     }
@@ -572,6 +731,33 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             obj.flush();
             if (innerXObjects != null) {
                 flushXObjects(innerXObjects);
+            }
+        }
+    }
+
+    /*
+    * initialization <code>parentPages</code> if needed
+    */
+    private void initParentPages() {
+        if (this.parentPages == null) {
+            PdfPagesTree pageTree = getDocument().getCatalog().pageTree;
+            this.parentPages = pageTree.findPageParent(this);
+        }
+    }
+
+    private void copyInheritedProperties(PdfPage copyPdfPage, PdfDocument pdfDocument) {
+        if (copyPdfPage.getPdfObject().get(PdfName.Resources) == null) {
+            PdfObject copyResource = pdfDocument.getWriter().copyObject(getResources().getPdfObject(), pdfDocument, false);
+            copyPdfPage.getPdfObject().put(PdfName.Resources, copyResource);
+        }
+        if (copyPdfPage.getPdfObject().get(PdfName.MediaBox) == null) {
+            copyPdfPage.setMediaBox(getMediaBox());
+        }
+        if (copyPdfPage.getPdfObject().get(PdfName.CropBox) == null) {
+            initParentPages();
+            PdfArray cropBox = (PdfArray) getParentValue(parentPages, PdfName.CropBox);
+            if (cropBox != null) {
+                copyPdfPage.setCropBox(cropBox.toRectangle());
             }
         }
     }

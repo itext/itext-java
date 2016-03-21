@@ -14,25 +14,25 @@ public class AdobeGlyphList {
     private static Map<String, Integer> names2unicode = new HashMap<>();
 
     static {
-        InputStream is = null;
+        InputStream resource = null;
         try {
-            is = Utilities.getResourceStream(FontsResourceAnchor.ResourcePath + "AdobeGlyphList.txt", FontsResourceAnchor.class.getClassLoader());
-            if (is == null) {
+            resource = Utilities.getResourceStream(FontsResourceAnchor.ResourcePath + "AdobeGlyphList.txt", FontsResourceAnchor.class.getClassLoader());
+            if (resource == null) {
                 String msg = "AdobeGlyphList.txt not found as resource. (It must exist as resource in the package com.itextpdf.text.pdf.fonts)";
                 throw new Exception(msg);
             }
             byte[] buf = new byte[1024];
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
             while (true) {
-                int size = is.read(buf);
+                int size = resource.read(buf);
                 if (size < 0) {
                     break;
                 }
-                out.write(buf, 0, size);
+                stream.write(buf, 0, size);
             }
-            is.close();
-            is = null;
-            String s = PdfEncodings.convertToString(out.toByteArray(), null);
+            resource.close();
+            resource = null;
+            String s = PdfEncodings.convertToString(stream.toByteArray(), null);
             StringTokenizer tk = new StringTokenizer(s, "\r\n");
             while (tk.hasMoreTokens()) {
                 String line = tk.nextToken();
@@ -62,9 +62,9 @@ public class AdobeGlyphList {
         } catch (Exception e) {
             System.err.println("AdobeGlyphList.txt loading error: " + e.getMessage());
         } finally {
-            if (is != null) {
+            if (resource != null) {
                 try {
-                    is.close();
+                    resource.close();
                 } catch (Exception e) {
                     // empty on purpose
                 }

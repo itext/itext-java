@@ -31,10 +31,15 @@ public class PdfA3Checker extends PdfA2Checker{
                 throw new PdfAConformanceException(PdfAConformanceException.FileSpecificationDictionaryShallContainFKeyUFKeyAndDescKey);
             }
 
+
             PdfDictionary ef = fileSpec.getAsDictionary(PdfName.EF);
             PdfStream embeddedFile = ef.getAsStream(PdfName.F);
             if (embeddedFile == null) {
                 throw new PdfAConformanceException(PdfAConformanceException.EFKeyOfFileSpecificationDictionaryShallContainDictionaryWithValidFKey);
+            }
+
+            if (!embeddedFile.containsKey(PdfName.Subtype)) {
+                throw new PdfAConformanceException(PdfAConformanceException.MimeTypeShallBeSpecifiedUsingTheSubtypeKeyOfTheFileSpecificationStreamDictionary);
             }
 
             PdfDictionary params = embeddedFile.getAsDictionary(PdfName.Params);

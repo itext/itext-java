@@ -43,7 +43,6 @@ public class XfaForm {
     private Xml2SomDatasets datasetsSom;
     private Node datasetsNode;
     private AcroFieldsSearch acroFieldsSom;
-    private PdfDocument pdfDocument;
     private boolean xfaPresent = false;
     private org.w3c.dom.Document domDocument;
     private boolean changed = false;
@@ -63,13 +62,11 @@ public class XfaForm {
      * necessary for correct initialization, that the dictionary is actually a
      * {@link PdfAcroForm}. An entry in the dictionary with the <code>XFA</code>
      * key must contain correct XFA syntax. If the <code>XFA</code> key is
-     * absent, then the constructor only tries to assign a document to this
-     * {@link XfaForm}
+     * absent, then the constructor essentially does nothing.
      * 
      * @param acroFormDictionary the dictionary object to initialize from
      */
     public XfaForm(PdfDictionary acroFormDictionary) {
-        this.pdfDocument = acroFormDictionary.getDocument();
         PdfObject xfa = acroFormDictionary.get(PdfName.XFA);
         if (xfa != null) {
             try {
@@ -87,7 +84,6 @@ public class XfaForm {
      * @param pdfDocument the PdfDocument instance
      */
     public XfaForm(PdfDocument pdfDocument) {
-        this.pdfDocument = pdfDocument;
         PdfObject xfa = getXfaObject(pdfDocument);
         if (xfa != null) {
             try {
@@ -104,7 +100,6 @@ public class XfaForm {
      *
      * @param pdfDocument a PdfDocument instance
      * @return the XFA object
-     * @since 2.1.3
      */
     public static PdfObject getXfaObject(PdfDocument pdfDocument) {
         PdfDictionary af = pdfDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
@@ -344,15 +339,6 @@ public class XfaForm {
     }
 
     /**
-     * Gets the <CODE>PdfReader</CODE> used by this instance.
-     *
-     * @return the <CODE>PdfReader</CODE> used by this instance
-     */
-    public PdfReader getReader() {
-        return pdfDocument.getReader();
-    }
-
-    /**
      * Checks if this XFA form was changed.
      *
      * @return <CODE>true</CODE> if this XFA form was changed
@@ -589,8 +575,6 @@ public class XfaForm {
 
     /**
      * Extracts the nodes from the domDocument.
-     *
-     * @since 2.1.5
      */
     private void extractNodes() {
         Map<String, Node> xfaNodes = extractXFANodes(domDocument);

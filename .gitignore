@@ -151,6 +151,6 @@ nbactions*.xml
 .pmdruleset.xml
 
 # Ignore generated files
-samples/src/test/resources/db/filmfestival.log
+filmfestival.log
 
 .vagrant/

@@ -651,15 +651,18 @@ public class CFFFontSubset extends CFFFont {
                 break;
                 case "hintmask":
                 case "cntrmask":
+                    // if stack is not empty the reason is vstem implicit definition
+                    // See Adobe Technical Note #5177, page 25, hintmask usage example.
+                    NumOfHints += NumOfArgs/2;
                     // Compute the size of the mask
                     int SizeOfMask = NumOfHints/8;
                     if (NumOfHints%8 != 0 || SizeOfMask == 0)
                         SizeOfMask++;
                     // Continue the pointer in SizeOfMask steps
-                for (int i=0;i<SizeOfMask;i++) {
-                    getCard8();
-                }
-                break;
+                    for (int i=0;i<SizeOfMask;i++) {
+                        getCard8();
+                    }
+                    break;
             }
         }
     }

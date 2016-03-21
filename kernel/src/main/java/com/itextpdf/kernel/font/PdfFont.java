@@ -49,14 +49,24 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     protected PdfFont() {
         super(new PdfDictionary());
-        mustBeIndirect();
+        markObjectAsIndirect(getPdfObject());
         getPdfObject().put(PdfName.Type, PdfName.Font);
     }
 
     public abstract Glyph getGlyph(int unicode);
 
     public boolean containsGlyph(char unicode) {
-        return getGlyph(unicode) != null;
+        Glyph glyph = getGlyph(unicode);
+        if (glyph != null) {
+            if (getFontProgram() != null && getFontProgram().isFontSpecific()) {
+                //if current is symbolic, zero code is valid value
+                return glyph.getCode() > -1;
+            } else {
+                return glyph.getCode() > 0;
+            }
+        } else {
+            return false;
+        }
     }
 
     public abstract GlyphLine createGlyphLine(String content);
@@ -97,7 +107,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param unicode a certain character.
      * @return a width in Text Space.
      */
-    //TODO handle DW key
     public int getWidth(int unicode) {
         Glyph glyph = getGlyph(unicode);
         return glyph != null ? glyph.getWidth() : 0;
@@ -290,12 +299,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         subsetRanges.add(range);
     }
 
-    @Override
-    public PdfFont copy(PdfDocument document) {
-        throw new RuntimeException("Not implemented");
-        //return new PdfFont(document, (PdfDictionary) getPdfObject().copyToDocument(document));
-    }
-
     public List<String> splitString(String text, int fontSize, float maxWidth) {
         List<String> resultString = new ArrayList<>();
         int lastWhiteSpace = 0;
@@ -321,11 +324,15 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
                     i=i+1;
                 }
             }
-
         }
 
         resultString.add(text.substring(startPos));
         return resultString;
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
     }
 
     protected boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType) {
@@ -372,7 +379,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         if (fontStreamBytes == null) {
             throw new PdfException(PdfException.FontEmbeddingIssue);
         }
-        PdfStream fontStream = new PdfStream(fontStreamBytes).makeIndirect(getDocument());
+        PdfStream fontStream = new PdfStream(fontStreamBytes);
         for (int k = 0; k < fontStreamLengths.length; ++k) {
             fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
         }

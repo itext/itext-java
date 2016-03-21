@@ -497,14 +497,10 @@ public class TIFFConstants {
     public static final int TIFFTAG_PREDICTOR = 317;
     /**
      * no predictor
-     *
-     * @since 5.0.3
      */
     public static final int PREDICTOR_NONE = 1;
     /**
      * horizontal differencing
-     *
-     * @since 5.0.3
      */
     public static final int PREDICTOR_HORIZONTAL_DIFFERENCING = 2;
     /**

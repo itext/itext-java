@@ -1,14 +1,8 @@
 package com.itextpdf.io.font;
 
-import com.itextpdf.io.IOException;
-import com.itextpdf.io.util.Utilities;
-import com.itextpdf.io.font.cmap.CMapByteCid;
+import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.font.cmap.CMapCidByte;
 import com.itextpdf.io.font.cmap.CMapCidUni;
-import com.itextpdf.io.font.cmap.CMapUniCid;
-
-import java.io.ByteArrayOutputStream;
-
 
 public class CMapEncoding {
 
@@ -18,15 +12,10 @@ public class CMapEncoding {
     // true if CMap is Identity-H/V
     private boolean isDirect;
 
-    private boolean directTextToBytes;
-
     private CMapCidUni cid2Uni;
-    private CMapUniCid uni2Cid;
-    private CMapCidByte cid2Byte;
+    private CMapCidByte cid2Code;
 
-    private CMapByteCid byte2Cid;
-
-    private final byte[] EMPTY = {};
+    private IntHashtable code2Cid;
 
     /**
      *
@@ -51,13 +40,9 @@ public class CMapEncoding {
             cid2Uni = FontCache.getCid2UniCmap(uniMap);
             isDirect = true;
         } else {
-            cid2Byte = FontCache.getCid2Byte(cmap);
-            uni2Cid = FontCache.getUni2CidCmap(uniMap);
+            cid2Code = FontCache.getCid2Byte(cmap);
+            code2Cid = cid2Code.getReversMap();
         }
-    }
-
-    public CMapEncoding(byte[] cmap) {
-        throw new UnsupportedOperationException("Reserved for document font.");
     }
 
     public boolean isDirect() {
@@ -70,25 +55,25 @@ public class CMapEncoding {
 
     public String getRegistry() {
         if (isDirect()) {
-            return  cid2Uni.getRegistry();
+            return "Adobe";
         } else {
-            return cid2Byte.getRegistry();
+            return cid2Code.getRegistry();
         }
     }
 
     public String getOrdering() {
         if (isDirect()) {
-            return  cid2Uni.getOrdering();
+            return "Identity";
         } else {
-            return cid2Byte.getOrdering();
+            return cid2Code.getOrdering();
         }
     }
 
     public int getSupplement() {
         if (isDirect()) {
-            return  cid2Uni.getSupplement();
+            return 0;
         } else {
-            return cid2Byte.getSupplement();
+            return cid2Code.getSupplement();
         }
     }
 
@@ -100,73 +85,28 @@ public class CMapEncoding {
         return cmap;
     }
 
-    public int getCidCode(int c) {
+    public int getCmapCode(int cid) {
         if (isDirect) {
-            return c;
+            return cid;
         } else {
-            return uni2Cid.lookup(c);
+            return toInteger(cid2Code.lookup(cid));
         }
     }
 
-    public byte[] convertToBytes(String text) {
+    public int getCidCode(int cmapCode) {
         if (isDirect) {
-            if (directTextToBytes) {
-                return PdfEncodings.convertToBytes(text, null);
-            } else {
-                return PdfEncodings.convertToBytes(text, PdfEncodings.UnicodeBigUnmarked);
-            }
-        }
-        try {
-            if (text.length() == 1)
-                return convertToBytes((int)text.charAt(0));
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            for (int k = 0; k < text.length(); ++k) {
-                int val;
-                if (Utilities.isSurrogatePair(text, k)) {
-                    val = Utilities.convertToUtf32(text, k);
-                    k++;
-                } else {
-                    val = text.charAt(k);
-                }
-                bout.write(convertToBytes(val));
-            }
-            return bout.toByteArray();
-        }
-        catch (Exception ex) {
-            throw new IOException("CMapEncoding", ex);
+            return cmapCode;
+        } else {
+            return code2Cid.get(cmapCode);
         }
     }
 
-    /**
-     * Converts a <CODE>char</CODE> to a </CODE>byte</CODE> array according
-     * to the font's encoding.
-     * @param ch the <CODE>char</CODE> to be converted
-     * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
-     */
-    public byte[] convertToBytes(int ch) {
-        if (isDirect) {
-            if (directTextToBytes) {
-                return PdfEncodings.convertToBytes((char)ch, null);
-            } else {
-                return PdfEncodings.convertToBytes((char)ch, PdfEncodings.UnicodeBigUnmarked);
-            }
+    private static int toInteger(byte[] bytes) {
+        int result = 0;
+        for (byte b : bytes) {
+            result <<= 8;
+            result += b & 0xff;
         }
-        return cid2Byte.lookup(uni2Cid.lookup(ch));
-    }
-
-    public CMapCidUni getCid2Uni() {
-        return cid2Uni;
-    }
-
-    public CMapUniCid getUni2Cid() {
-        return uni2Cid;
-    }
-
-    public CMapCidByte getCid2Byte() {
-        return cid2Byte;
-    }
-
-    public CMapByteCid getByte2Cid() {
-        return byte2Cid;
+        return result;
     }
 }

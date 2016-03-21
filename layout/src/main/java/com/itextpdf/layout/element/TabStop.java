@@ -1,6 +1,6 @@
 package com.itextpdf.layout.element;
 
-import com.itextpdf.kernel.pdf.canvas.draw.Drawable;
+import com.itextpdf.kernel.pdf.canvas.draw.LineDrawer;
 import com.itextpdf.layout.Property;
 
 public class TabStop {
@@ -8,7 +8,7 @@ public class TabStop {
     private float tabPosition;
     private Property.TabAlignment tabAlignment;
     private Character tabAnchor;
-    private Drawable tabLeader;
+    private LineDrawer tabLeader;
 
     public TabStop(float tabPosition) {
         this(tabPosition, Property.TabAlignment.LEFT);
@@ -18,7 +18,7 @@ public class TabStop {
         this(tabPosition, tabAlignment, null);
     }
 
-    public TabStop(float tabPosition, Property.TabAlignment tabAlignment, Drawable tabLeader) {
+    public TabStop(float tabPosition, Property.TabAlignment tabAlignment, LineDrawer tabLeader) {
         this.tabPosition = tabPosition;
         this.tabAlignment = tabAlignment;
         this.tabLeader = tabLeader;
@@ -46,10 +46,10 @@ public class TabStop {
         this.tabAnchor = tabAnchor;
     }
 
-    public Drawable getTabLeader() {
+    public LineDrawer getTabLeader() {
         return tabLeader;
     }
-    public void setTabLeader(Drawable tabLeader) {
+    public void setTabLeader(LineDrawer tabLeader) {
         this.tabLeader = tabLeader;
     }
 }

@@ -68,10 +68,10 @@ public class CidFontProperties {
     }
 
     private static void loadRegistry() throws java.io.IOException {
-        InputStream is = Utilities.getResourceStream(RESOURCE_PATH_CMAP + "cjk_registry.properties");
+        InputStream resource = Utilities.getResourceStream(RESOURCE_PATH_CMAP + "cjk_registry.properties");
         Properties p = new Properties();
-        p.load(is);
-        is.close();
+        p.load(resource);
+        resource.close();
         for (Object key : p.keySet()) {
             String value = p.getProperty((String)key);
             String[] sp = value.split(" ");
@@ -86,10 +86,10 @@ public class CidFontProperties {
 
     private static Map<String, Object> readFontProperties(String name) throws java.io.IOException {
         name += ".properties";
-        InputStream is = Utilities.getResourceStream(RESOURCE_PATH_CMAP + name);
+        InputStream resource = Utilities.getResourceStream(RESOURCE_PATH_CMAP + name);
         Properties p = new Properties();
-        p.load(is);
-        is.close();
+        p.load(resource);
+        resource.close();
         IntHashtable W = createMetric(p.getProperty("W"));
         p.remove("W");
         IntHashtable W2 = createMetric(p.getProperty("W2"));

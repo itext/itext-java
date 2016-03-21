@@ -17,6 +17,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfOutputStream;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
@@ -49,18 +50,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Takes care of the cryptographic options and appearances that form a signature.
  */
 public class PdfSigner {
-
-    /**
-     * The Logger instance.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PdfSigner.class);
 
     /**
      * Enum containing the Cryptographic Standards. Possible values are "CMS" and "CADES".
@@ -184,24 +177,24 @@ public class PdfSigner {
      * Creates a PdfSigner instance. Uses a {@link java.io.ByteArrayOutputStream} instead of a temporary file.
      *
      * @param reader PdfReader that reads the PDF file
-     * @param writer PdfWriter to write the signed PDF file
+     * @param outputStream OutputStream to write the signed PDF file
      * @param append boolean to indicate whether the signing should happen in append mode or not
      * @throws IOException
      */
-    public PdfSigner(PdfReader reader, PdfWriter writer, boolean append) throws IOException {
-        this(reader, writer, null, append);
+    public PdfSigner(PdfReader reader, OutputStream outputStream, boolean append) throws IOException {
+        this(reader, outputStream, null, append);
     }
 
     /**
      * Creates a PdfSigner instance. Uses a {@link java.io.ByteArrayOutputStream} instead of a temporary file.
      *
      * @param reader PdfReader that reads the PDF file
-     * @param writer PdfWriter to write the signed PDF file
+     * @param outputStream OutputStream to write the signed PDF file
      * @param tempFile File to which the output is temporarily written
      * @param append boolean to indicate whether the signing should happen in append mode or not
      * @throws IOException
      */
-    public PdfSigner(PdfReader reader, PdfWriter writer, File tempFile, boolean append) throws IOException {
+    public PdfSigner(PdfReader reader, OutputStream outputStream, File tempFile, boolean append) throws IOException {
         if (tempFile == null) {
             temporaryOS = new ByteArrayOutputStream();
             document = new PdfDocument(reader, new PdfWriter(temporaryOS), append);
@@ -215,7 +208,7 @@ public class PdfSigner {
             document = new PdfDocument(reader, new PdfWriter(os), append);
         }
 
-        originalOS = writer == null ? null : writer.getOutputStream();
+        originalOS = outputStream;
         signDate = new GregorianCalendar();
         fieldName = getNewSigFieldName();
         appearance = new PdfSignatureAppearance(document, new Rectangle(0, 0), 1);
@@ -478,7 +471,7 @@ public class PdfSigner {
         cryptoDictionary = dic;
 
         Map<PdfName, Integer> exc = new HashMap<>();
-        exc.put(PdfName.Contents, new Integer(estimatedSize * 2 + 2));
+        exc.put(PdfName.Contents, estimatedSize * 2 + 2);
         preClose(exc);
 
         String hashAlgorithm = externalSignature.getHashAlgorithm();
@@ -535,8 +528,8 @@ public class PdfSigner {
         externalSignatureContainer.modifySigningDictionary(dic.getPdfObject());
         cryptoDictionary = dic;
 
-        Map<PdfName, Integer> exc = new HashMap<PdfName, Integer>();
-        exc.put(PdfName.Contents, new Integer(estimatedSize * 2 + 2));
+        Map<PdfName, Integer> exc = new HashMap<>();
+        exc.put(PdfName.Contents, estimatedSize * 2 + 2);
         preClose(exc);
 
         InputStream data = getRangeStream();
@@ -581,7 +574,7 @@ public class PdfSigner {
         cryptoDictionary = dic;
 
         Map<PdfName,Integer> exc = new HashMap<>();
-        exc.put(PdfName.Contents, new Integer(contentEstimated * 2 + 2));
+        exc.put(PdfName.Contents, contentEstimated * 2 + 2);
         preClose(exc);
         InputStream data = getRangeStream();
         MessageDigest messageDigest = tsa.getMessageDigest();
@@ -626,11 +619,9 @@ public class PdfSigner {
     public static void signDeferred(PdfDocument document, String fieldName, OutputStream outs, ExternalSignatureContainer externalSignatureContainer) throws IOException, GeneralSecurityException {
         SignatureUtil signatureUtil = new SignatureUtil(document);
         PdfDictionary v = signatureUtil.getSignatureDictionary(fieldName);
-
         if (v == null) {
-            new PdfException(PdfException.ThereIsNoFieldInTheDocumentWithSuchName1).setMessageParams(fieldName);
+            throw new PdfException(PdfException.ThereIsNoFieldInTheDocumentWithSuchName1).setMessageParams(fieldName);
         }
-
         if (!signatureUtil.signatureCoversWholeDocument(fieldName)) {
             new PdfException(PdfException.SignatureWithName1IsNotTheLastItDoesntCoverWholeDocument).setMessageParams(fieldName);
         }
@@ -801,13 +792,13 @@ public class PdfSigner {
         cryptoDictionary.put(PdfName.ByteRange, lit);
         for (Map.Entry<PdfName, Integer> entry: exclusionSizes.entrySet()) {
             PdfName key = entry.getKey();
-            Integer v = entry.getValue();
-            lit = new PdfLiteral(v.intValue());
+            lit = new PdfLiteral(entry.getValue());
             exclusionLocations.put(key, lit);
             cryptoDictionary.put(key, lit);
         }
-        if (certificationLevel > 0)
+        if (certificationLevel > 0) {
             addDocMDP(cryptoDictionary);
+        }
         if (fieldLock != null)
             addFieldMDP(cryptoDictionary, fieldLock);
         if (signatureEvent != null)
@@ -870,7 +861,7 @@ public class PdfSigner {
     /**
      * Gets the document bytes that are hashable when using external signatures.
      * The general sequence is:
-     * {@link #preClose(HashMap)}, {@link #getRangeStream()} and {@link #close(PdfDictionary)}.
+     * {@link #preClose(Map)}, {@link #getRangeStream()} and {@link #close(PdfDictionary)}.
      *
      * @return The {@link InputStream} of bytes to be signed.
      */
@@ -884,9 +875,9 @@ public class PdfSigner {
      * preClose(), getDocumentBytes() and close().
      * <p>
      * update is a PdfDictionary that must have exactly the
-     * same keys as the ones provided in {@link #preClose(HashMap)}.
+     * same keys as the ones provided in {@link #preClose(Map)}.
      * @param update a PdfDictionary with the key/value that will fill the holes defined
-     * in {@link #preClose(HashMap)}
+     * in {@link #preClose(Map)}
      * @throws IOException on error
      */
     protected void close(PdfDictionary update) throws IOException {
@@ -943,7 +934,7 @@ public class PdfSigner {
             if (originalOS != null) {
                 try {
                     originalOS.close();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -1045,16 +1036,12 @@ public class PdfSigner {
         if (pageDict != null) {
             pageNumber = document.getCatalog().getPageNumber(pageDict);
         } else {
-            for (int i = 1; i <= document.getNumberOfPages() && pageNumber == 0; ++i) {
-                PdfArray annots = document.getPage(i).getPdfObject().getAsArray(PdfName.Annots);
-                if (annots == null) continue;
-
-                for (PdfObject obj : annots) {
-                    if (obj.isIndirectReference()) {
-                        if (widget.getPdfObject().getIndirectReference().equals(obj)) {
-                            pageNumber = i;
-                            break;
-                        }
+            for (int i = 1; i <= document.getNumberOfPages(); i++) {
+                PdfPage page = document.getPage(i);
+                if (!page.isFlushed()) {
+                    if (page.containsAnnotation(widget)){
+                        pageNumber = i;
+                        break;
                     }
                 }
             }

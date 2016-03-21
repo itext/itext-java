@@ -5,8 +5,8 @@ import com.itextpdf.io.source.RandomAccessFileOrArray;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,12 +18,9 @@ import java.util.Set;
  */
 class TrueTypeFontSubset {
 
-    static final String tableNamesSimple[] = {"cvt ", "fpgm", "glyf", "head",
-            "hhea", "hmtx", "loca", "maxp", "prep"};
-    static final String tableNamesCmap[] = {"cmap", "cvt ", "fpgm", "glyf", "head",
-            "hhea", "hmtx", "loca", "maxp", "prep"};
-    static final String tableNamesExtra[] = {"OS/2", "cmap", "cvt ", "fpgm", "glyf", "head",
-            "hhea", "hmtx", "loca", "maxp", "name, prep"};
+    static final String[] tableNamesSimple = {"cvt ", "fpgm", "glyf", "head", "hhea", "hmtx", "loca", "maxp", "prep"};
+    static final String[] tableNamesCmap = {"cmap", "OS/2"};
+    static final String[] tableNamesExtra = {"cmap", "OS/2", "name"};
     static final int entrySelectors[] = {0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,4,4,4,4,4};
     static final int TABLE_CHECKSUM = 0;
     static final int TABLE_OFFSET = 1;
@@ -106,15 +103,12 @@ class TrueTypeFontSubset {
     protected void assembleFont() throws java.io.IOException {
         int[] tableLocation;
         int fullFontSize = 0;
-        String[] tableNames;
+        List<String> tableNames = new ArrayList<>();
+        Collections.addAll(tableNames, tableNamesSimple);
         if (includeExtras) {
-            tableNames = tableNamesExtra;
-        } else {
-            if (includeCmap) {
-                tableNames = tableNamesCmap;
-            } else {
-                tableNames = tableNamesSimple;
-            }
+            Collections.addAll(tableNames, tableNamesExtra);
+        } else if (includeCmap) {
+            Collections.addAll(tableNames, tableNamesCmap);
         }
         int tablesUsed = 2;
         for (String name : tableNames) {
@@ -130,8 +124,8 @@ class TrueTypeFontSubset {
         }
         fullFontSize += newLocaTableOut.length;
         fullFontSize += newGlyfTable.length;
-        int ref = 16 * tablesUsed + 12;
-        fullFontSize += ref;
+        int reference = 16 * tablesUsed + 12;
+        fullFontSize += reference;
         outFont = new byte[fullFontSize];
         fontPtr = 0;
         writeFontInt(0x00010000);
@@ -161,9 +155,9 @@ class TrueTypeFontSubset {
                     len = tableLocation[TABLE_LENGTH];
                     break;
             }
-            writeFontInt(ref);
+            writeFontInt(reference);
             writeFontInt(len);
-            ref += len + 3 & ~3;
+            reference += len + 3 & ~3;
         }
         for (String name : tableNames) {
             tableLocation = tableDirectory.get(name);

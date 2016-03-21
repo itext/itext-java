@@ -160,8 +160,11 @@ public class ImageRenderer extends AbstractRenderer {
             canvas.openTag(new CanvasArtifact());
         }
 
-        canvas.addXObject(((Image) (getModelElement())).getXObject(), matrix[0], matrix[1], matrix[2], matrix[3],
-                fixedXPosition + deltaX, fixedYPosition);
+        PdfXObject xObject = ((Image) (getModelElement())).getXObject();
+        canvas.addXObject(xObject, matrix[0], matrix[1], matrix[2], matrix[3], fixedXPosition + deltaX, fixedYPosition);
+        if (Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.FLUSH_ON_DRAW))) {
+            xObject.flush();
+        }
 
         if (isTagged || isArtifact) {
             canvas.closeTag();

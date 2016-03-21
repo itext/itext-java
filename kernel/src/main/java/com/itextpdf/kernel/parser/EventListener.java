@@ -3,7 +3,7 @@ package com.itextpdf.kernel.parser;
 import java.util.Set;
 
 /**
- * A callback interface that receives notifications from the {@link PdfContentStreamProcessor}
+ * A callback interface that receives notifications from the {@link PdfCanvasProcessor}
  * as various events occur (see {@link EventType}).
  */
 public interface EventListener {

@@ -17,19 +17,23 @@ public class PdfStringDestination extends PdfDestination<PdfString> {
     }
 
     @Override
-    public PdfObject getDestinationPage(Map<Object, PdfObject> names) {
+    public PdfObject getDestinationPage(Map<String, PdfObject> names) {
         PdfArray array = (PdfArray) names.get(getPdfObject().toUnicodeString());
 
-        return array != null ? array.get(0, false) : null;
+        return array != null ? array.get(0) : null;
     }
 
     @Override
     public PdfDestination replaceNamedDestination(final Map<Object, PdfObject> names) {
-
         PdfArray array = (PdfArray) names.get(getPdfObject().toUnicodeString());
         if (array != null){
             return PdfDestination.makeDestination(array);
         }
         return null;
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
     }
 }
