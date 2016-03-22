@@ -377,28 +377,11 @@ public class CFFFont {
         }
         @Override
         public void emit(byte[] buffer) {
-            int i=0;
-            switch (size) {
-                case 4:
-                    buffer[myOffset+i] = (byte) (value >>> 24 & 0xff);
-                    i++;
-                case 3:
-                    buffer[myOffset+i] = (byte) (value >>> 16 & 0xff);
-                    i++;
-                case 2:
-                    buffer[myOffset+i] = (byte) (value >>>  8 & 0xff);
-                    i++;
-                case 1:
-                    buffer[myOffset+i] = (byte) (value >>>  0 & 0xff);
-                    i++;
+            if (size >= 1 && size <= 4) {
+                for (int i = 0; i < size; i++) {
+                    buffer[myOffset + i] = (byte) (value >>> ((size - 1 - i) << 3) & 0xFF);
+                }
             }
-            /*
-            int mask = 0xff;
-            for (int i=size-1; i>=0; i--) {
-                buffer[myOffset+i] = (byte) (value & mask);
-                mask <<= 8;
-            }
-             */
         }
     }
 

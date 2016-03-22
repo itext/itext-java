@@ -565,24 +565,26 @@ public final class BmpImageHelper {
                 switch ((int) bmp.compression) {
                     case BI_RGB:
                         read4Bit(4, bmp);
-                        return true;
+                        break;
                     case BI_RLE4:
                         readRLE4(bmp);
-                        return true;
+                        break;
                     default:
                         throw new IOException(IOException.InvalidBmpFileCompression);
                 }
+                return true;
             case VERSION_3_8_BIT:
                 switch ((int) bmp.compression) {
                     case BI_RGB:
                         read8Bit(4, bmp);
-                        return true;
+                        break;
                     case BI_RLE8:
                         readRLE8(bmp);
-                        return true;
+                        break;
                     default:
                         throw new IOException(IOException.InvalidBmpFileCompression);
                 }
+                return true;
             case VERSION_3_24_BIT:
                 // 24-bit images are not compressed
                 bdata = new byte[bmp.width * bmp.height * 3];
@@ -602,24 +604,26 @@ public final class BmpImageHelper {
                 switch ((int) bmp.compression) {
                     case BI_RGB:
                         read4Bit(4, bmp);
-                        return true;
+                        break;
                     case BI_RLE4:
                         readRLE4(bmp);
-                        return true;
+                        break;
                     default:
                         throw new IOException(IOException.InvalidBmpFileCompression);
                 }
+                return true;
             case VERSION_4_8_BIT:
                 switch ((int) bmp.compression) {
                     case BI_RGB:
                         read8Bit(4, bmp);
-                        return true;
+                        break;
                     case BI_RLE8:
                         readRLE8(bmp);
-                        return true;
+                        break;
                     default:
                         throw new IOException(IOException.InvalidBmpFileCompression);
                 }
+                return true;
             case VERSION_4_16_BIT:
                 read1632Bit(false, bmp);
                 return true;

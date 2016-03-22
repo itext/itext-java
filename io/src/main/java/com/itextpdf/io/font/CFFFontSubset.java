@@ -973,10 +973,15 @@ public class CFFFontSubset extends CFFFont {
         int Size = NewOffsets[NewOffsets.length-1];
         // Calc the Offsize
         byte Offsize;
-        if (Size <= 0xff) Offsize = 1;
-        else if (Size <= 0xffff) Offsize = 2;
-        else if (Size <= 0xffffff) Offsize = 3;
-        else Offsize = 4;
+        if (Size <= 0xff) {
+            Offsize = 1;
+        } else if (Size <= 0xffff) {
+            Offsize = 2;
+        } else if (Size <= 0xffffff) {
+            Offsize = 3;
+        } else {
+            Offsize = 4;
+        }
         // The byte array for the new index. The size is calc by
         // Count=2, Offsize=1, OffsetArray = Offsize*(Count+1), The object array
         byte[] NewIndex = new byte[2+1+Offsize*(Count+1)+NewObjects.length];
@@ -992,15 +997,8 @@ public class CFFFontSubset extends CFFFont {
             // The value to be written
             int Num = newOffset-NewOffsets[0]+1;
             // Write in bytes according to the offsize
-            switch (Offsize) {
-                case 4:
-                    NewIndex[Place++] = (byte) (Num >>> 24 & 0xff);
-                case 3:
-                    NewIndex[Place++] = (byte) (Num >>> 16 & 0xff);
-                case 2:
-                    NewIndex[Place++] = (byte) (Num >>>  8 & 0xff);
-                case 1:
-                    NewIndex[Place++] = (byte) (Num >>>  0 & 0xff);
+            for (int i = Offsize; i > 0; i--) {
+                NewIndex[Place++] = (byte) (Num >>> ((i - 1) << 3) & 0xff);
             }
         }
         // Write the new object array one by one

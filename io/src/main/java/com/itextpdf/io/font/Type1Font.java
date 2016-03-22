@@ -192,8 +192,7 @@ public class Type1Font extends FontProgram {
         RandomAccessFileOrArray raf = fontParser.getMetricsFile();
         String line;
         boolean startKernPairs = false;
-        label:
-        while ((line = raf.readLine()) != null) {
+        while (!startKernPairs && (line = raf.readLine()) != null) {
             StringTokenizer tok = new StringTokenizer(line, " ,\n\r\t\f");
             if (!tok.hasMoreTokens())
                 continue;
@@ -258,7 +257,7 @@ public class Type1Font extends FontProgram {
                     break;
                 case "StartCharMetrics":
                     startKernPairs = true;
-                    break label;
+                    break;
             }
         }
         if (!startKernPairs) {
