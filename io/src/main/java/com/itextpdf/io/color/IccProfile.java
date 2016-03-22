@@ -45,6 +45,9 @@
 package com.itextpdf.io.color;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSource;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -84,7 +87,7 @@ public class IccProfile {
         return getInstance(data, numComponents);
     }
 
-    public static IccProfile getInstance(InputStream file) {
+    public static IccProfile getInstance(RandomAccessFileOrArray file) {
         try {
             byte[] head = new byte[128];
             int remain = head.length;
@@ -118,20 +121,26 @@ public class IccProfile {
         }
     }
 
-    public static IccProfile getInstance(String filename) {
-        FileInputStream fs = null;
+    public static IccProfile getInstance(InputStream stream) {
+        RandomAccessFileOrArray raf;
         try {
-            fs = new FileInputStream(filename);
-            return getInstance(fs);
-        } catch (Exception ex) {
-            throw new IOException(IOException.InvalidIccProfile, ex);
-        } finally {
-            try {
-                if (fs != null)
-                    fs.close();
-            } catch (Exception x) {
-            }
+            raf = new RandomAccessFileOrArray(
+                    new RandomAccessSourceFactory().createSource(stream));
+        } catch (java.io.IOException e) {
+            throw new IOException(IOException.InvalidIccProfile, e);
         }
+        return getInstance(raf);
+    }
+
+    public static IccProfile getInstance(String filename) {
+        RandomAccessFileOrArray raf;
+        try {
+            raf = new RandomAccessFileOrArray(
+                    new RandomAccessSourceFactory().createBestSource(filename));
+        } catch (java.io.IOException e) {
+            throw new IOException(IOException.InvalidIccProfile, e);
+        }
+        return getInstance(raf);
     }
 
     public static String getIccColorSpaceName(byte[] data) {
