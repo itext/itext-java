@@ -77,7 +77,7 @@ public class TrueTypeCollection {
         TTCSize = raf.readInt();
     }
 
-    protected  void checkFilePath(String path){
+    protected void checkFilePath(String path){
         if(path != null) {
             File f = new File(path);
             if ((!f.exists() || !f.isFile())) {

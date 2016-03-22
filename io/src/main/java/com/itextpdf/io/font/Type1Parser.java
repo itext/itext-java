@@ -19,7 +19,6 @@ class Type1Parser {
     private byte[] afmData;
     private boolean isBuiltInFont;
 
-    private static FontsResourceAnchor resourceAnchor;
     private RandomAccessSourceFactory sourceFactory = new RandomAccessSourceFactory();
 
     /**
@@ -44,11 +43,8 @@ class Type1Parser {
             byte[] buf = new byte[1024];
             InputStream resource = null;
             try {
-                if (resourceAnchor == null) {
-                    resourceAnchor = new FontsResourceAnchor();
-                }
                 String resourcePath = FontConstants.RESOURCE_PATH + "afm/" + afmPath + ".afm";
-                resource = Utilities.getResourceStream(resourcePath, resourceAnchor.getClass().getClassLoader());
+                resource = Utilities.getResourceStream(resourcePath);
                 if (resource == null) {
                     throw new IOException("1.not.found.as.resource").setMessageParams(resourcePath);
                 }
