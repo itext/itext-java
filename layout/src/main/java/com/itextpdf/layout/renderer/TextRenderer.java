@@ -130,6 +130,11 @@ public class TextRenderer extends AbstractRenderer {
 
         TextLayoutResult result = null;
 
+        // true in situations like "\nHello World"
+        boolean isSplitForcedByImmediateNewLine = false;
+        // true in situations like "Hello\nWorld"
+        boolean isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol = false;
+
         while (currentTextPos < text.end) {
             if (noPrint(text.glyphs.get(currentTextPos))) {
                 currentTextPos++;
@@ -146,7 +151,13 @@ public class TextRenderer extends AbstractRenderer {
 
             for (int ind = currentTextPos; ind < text.end; ind++) {
                 if (isNewLine(text, ind)) {
+                    isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol = true;
                     firstCharacterWhichExceedsAllowedWidth = ind + 1;
+                    if (text.start == currentTextPos) {
+                        isSplitForcedByImmediateNewLine = true;
+                        // Notice that in that case we do not need to ignore the new line symbol ('\n')
+                        isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol = false;
+                    }
                     break;
                 }
 
@@ -254,20 +265,28 @@ public class TextRenderer extends AbstractRenderer {
                         }
                     }
 
-                    if (nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) {
+                    if ((nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) || (isSplitForcedByImmediateNewLine)) {
                         // if the word is too long for a single line we will have to split it
                         wordSplit = true;
                         if (line.start == -1) {
                             line.start = currentTextPos;
                         }
-                        line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth);
-                        currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
-                        currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
-                        currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
-                        currentLineWidth += nonBreakablePartWidthWhichDoesNotExceedAllowedWidth;
                         currentTextPos = firstCharacterWhichExceedsAllowedWidth;
-                    }
+                        line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth);
+                        if (nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) {
+                            currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
+                            currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
+                            currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
+                            currentLineWidth += nonBreakablePartWidthWhichDoesNotExceedAllowedWidth;
 
+                        } else {
+                            // process empty line (e.g. '\n')
+                            currentLineAscender = ascender;
+                            currentLineDescender = descender;
+                            currentLineHeight = (currentLineAscender - currentLineDescender) * fontSize / TEXT_SPACE_COEFF + textRise;
+                            currentLineWidth += getCharWidth(line.get(0), fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
+                        }
+                    }
                     if (line.end <= 0) {
                         result = new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
                     } else {
@@ -301,11 +320,22 @@ public class TextRenderer extends AbstractRenderer {
             applyMargins(occupiedArea.getBBox(), true);
 
             if (result != null) {
-                TextRenderer[] split = split(currentTextPos);
-                if (split[1].length() > 0 && split[1].charAt(0) != null && split[1].charAt(0) == '\n')
+                TextRenderer[] split;
+                if (isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol) {
+                    // ignore '\n'
+                    split = split(currentTextPos+1);
+                } else {
+                    split = split(currentTextPos);
+                }
+                // if (split[1].length() > 0 && split[1].charAt(0) != null && split[1].charAt(0) == '\n') {
+                if (isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol) {
                     result.setSplitForcedByNewline(true);
+                }
                 result.setSplitRenderer(split[0]);
-                result.setOverflowRenderer(split[1]);
+                // no sense to process empty renderer
+                if (split[1].text.start != split[1].text.end) {
+                    result.setOverflowRenderer(split[1]);
+                }
             } else {
                 result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
             }
@@ -538,7 +568,7 @@ public class TextRenderer extends AbstractRenderer {
 
         if (text != null) {
             Glyph glyph;
-            while (text.start < text.end && (glyph = text.glyphs.get(text.start)).getUnicode() != null && Character.isWhitespace(glyph.getUnicode())) {
+            while (text.start < text.end && (glyph = text.glyphs.get(text.start)).getUnicode() != null && Character.isWhitespace(glyph.getUnicode()) && !isNewLine(text, text.start)) {
                 text.start++;
             }
         }
@@ -587,7 +617,7 @@ public class TextRenderer extends AbstractRenderer {
     public float getAscent() {
         return yLineOffset;
     }
-    
+
     /**
      * Gets the maximum offset below the base line that this Text extends to.
      * @return the downwards vertical offset of this {@link Text}
@@ -628,7 +658,7 @@ public class TextRenderer extends AbstractRenderer {
     /**
      * Manually sets a GlyphLine to be rendered with a specific start and end
      * point.
-     * 
+     *
      * @param text a {@link GlyphLine}
      * @param leftPos the leftmost end of the GlyphLine
      * @param rightPos the rightmost end of the GlyphLine
@@ -655,8 +685,7 @@ public class TextRenderer extends AbstractRenderer {
 
     @Override
     public String toString() {
-        convertWaitingStringToGlyphLine();
-        return line != null ? line.toUnicodeString(line.start, line.end) : text.toUnicodeString(text.start, text.end);
+        return line != null ? line.toUnicodeString(line.start, line.end) : strToBeConverted;
     }
 
     /**

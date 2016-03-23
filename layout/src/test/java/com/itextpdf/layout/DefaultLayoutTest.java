@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -96,7 +95,6 @@ public class DefaultLayoutTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore
     public void emptyParagraphsTest02() throws IOException,  InterruptedException {
         String outFileName = destinationFolder + "emptyParagraphsTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_emptyParagraphsTest02.pdf";
@@ -104,29 +102,11 @@ public class DefaultLayoutTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        document.add(new Paragraph("\n\n\n"));
-        document.add(new Paragraph("a\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nb\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nc\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nd\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ne"));
+        document.add(new Paragraph("Hello, i'm the text of the first paragraph on the first line. Let's break me and meet on the next line!\nSee? I'm on the second line. Now let's create some empty lines,\n for example one\n\nor two\n\n\nor three\n\n\n\nNow let's do something else"));
+        document.add(new Paragraph("\n\n\nLook, i'm the the text of the second paragraph. But before me and the first one there are three empty lines!"));
 
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
-
-    @Test
-    @Ignore
-    public void emptyParagraphsTest03() throws IOException,  InterruptedException {
-        String outFileName = destinationFolder + "emptyParagraphsTest03.pdf";
-//         String cmpFileName = sourceFolder + "cmp_emptyParagraphsTest03.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
-
-        Document document = new Document(pdfDocument);
-
-        document.add(new Paragraph("c\nb"));
-//        document.add(new Paragraph("a a\nb"));
-
-        document.close();
-
-//        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
-    }
-
 }

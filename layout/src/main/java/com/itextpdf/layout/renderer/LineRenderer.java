@@ -156,8 +156,14 @@ public class LineRenderer extends AbstractRenderer {
                         ((ImageRenderer)childResult.getOverflowRenderer()).autoScale(layoutContext.getArea());
                     }
 
-                    split[1].childRenderers.add(childResult.getOverflowRenderer());
+                    if (null != childResult.getOverflowRenderer()) {
+                        split[1].childRenderers.add(childResult.getOverflowRenderer());
+                    }
                     split[1].childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
+                    // no sense to process empty renderer
+                    if (split[1].childRenderers.size() == 0) {
+                        split[1] = null;
+                    }
                 }
 
                 result = new LineLayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
