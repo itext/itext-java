@@ -943,10 +943,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         if (toDocument.isTagged()) {
             if (insertBeforePage > toDocument.getNumberOfPages()) {
                 getStructTreeRoot().copyTo(toDocument, page2page);
-                // TODO getTagStructureContext().reinitialize(); ??
+                toDocument.getTagStructureContext().reinitialize();
             } else {
                 getStructTreeRoot().copyTo(toDocument, insertBeforePage, page2page);
-                getTagStructureContext().reinitialize();
+                toDocument.getTagStructureContext().reinitialize();
             }
         }
         if (catalog.isOutlineMode()) {

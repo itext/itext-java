@@ -323,11 +323,18 @@ public class TagStructureContext {
             for (IPdfStructElem elem : rootKids) {
                 // StructTreeRoot kids are always PdfStructElem, so we are save here to cast it
                 PdfStructElem kid = (PdfStructElem) elem;
-                if (PdfName.Document.equals(kid.getRole())) {
-                    kid.put(PdfName.S, PdfName.Part);
-                }
                 rootTagElement.addKid(kid);
+                if (PdfName.Document.equals(kid.getRole())) {
+                    removeOldRoot(kid);
+                }
             }
         }
+    }
+
+    private void removeOldRoot(PdfStructElem oldRoot) {
+        TagTreePointer tagPointer = new TagTreePointer(document);
+        tagPointer
+                .setCurrentStructElem(oldRoot)
+                .removeTag();
     }
 }

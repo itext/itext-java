@@ -470,6 +470,42 @@ public class PdfTaggingTest extends ExtendedITextTest {
         compareResult("taggingTest12.pdf", "cmp_taggingTest12.pdf", "diff12_");
     }
 
+    @Test
+    public void taggingTest13() throws Exception {
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox.pdf"));
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest13.pdf"));
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+        PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, com.itextpdf.kernel.pdf.PdfName.Document));
+
+        PdfPage page1 = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1);
+        canvas.beginText();
+        canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 24);
+        canvas.setTextMatrix(1, 0, 0, 1, 32, 512);
+        PdfStructElem paragraph = doc.addKid(new PdfStructElem(document, com.itextpdf.kernel.pdf.PdfName.P));
+        PdfStructElem span1 = paragraph.addKid(new PdfStructElem(document, com.itextpdf.kernel.pdf.PdfName.Span, page1));
+
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(page1, span1))));
+        canvas.showText("Hello ");
+        canvas.closeTag();
+        canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrDictionary(page1, span1))));
+        canvas.showText("World");
+        canvas.closeTag();
+        canvas.endText();
+        canvas.release();
+
+        document.getStructTreeRoot().getPageMarkedContentReferences(page1);
+
+        PdfDocument document1 = new PdfDocument(reader);
+        document1.copyPagesTo(1, 1, document);
+
+        document.close();
+        document1.close();
+
+        compareResult("taggingTest13.pdf", "cmp_taggingTest13.pdf", "diff13_");
+    }
+
     private void compareResult(String outFileName, String cmpFileName, String diffNamePrefix)
             throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         CompareTool compareTool = new CompareTool();
