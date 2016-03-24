@@ -15,9 +15,6 @@ public class List extends BlockElement<List> {
 
     public static final String DEFAULT_LIST_SYMBOL = "- ";
 
-    protected String preSymbolText = "";
-    protected String postSymbolText = ". ";
-
     protected PdfName role = PdfName.L;
     protected AccessibleElementProperties tagProperties;
 
@@ -36,6 +33,18 @@ public class List extends BlockElement<List> {
     public List(Property.ListNumberingType listNumberingType) {
         super();
         setListSymbol(listNumberingType);
+    }
+
+    @Override
+    public <T> T getDefaultProperty(Property property) {
+        switch (property) {
+            case LIST_SYMBOL_PRE_TEXT:
+                return (T) "";
+            case LIST_SYMBOL_POST_TEXT:
+                return (T) ". ";
+            default:
+                return super.getDefaultProperty(property);
+        }
     }
 
     /**
@@ -106,7 +115,7 @@ public class List extends BlockElement<List> {
         // Do not draw any points after ZapfDingbats special number symbol
         if (listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_1 || listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_2 ||
                 listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_3 || listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_4) {
-            postSymbolText = " ";
+            setPostSymbolText(" ");
         }
         return setProperty(Property.LIST_SYMBOL, listNumberingType);
     }
@@ -149,7 +158,7 @@ public class List extends BlockElement<List> {
      * @return the post symbol text
      */
     public String getPostSymbolText() {
-        return postSymbolText;
+        return getProperty(Property.LIST_SYMBOL_POST_TEXT);
     }
 
     /**
@@ -157,7 +166,7 @@ public class List extends BlockElement<List> {
      * @param postSymbolText the post symbol text
      */
     public void setPostSymbolText(String postSymbolText) {
-        this.postSymbolText = postSymbolText;
+        setProperty(Property.LIST_SYMBOL_POST_TEXT, postSymbolText);
     }
 
     /**
@@ -165,7 +174,7 @@ public class List extends BlockElement<List> {
      * @return the pre symbol text
      */
     public String getPreSymbolText() {
-        return preSymbolText;
+        return getProperty(Property.LIST_SYMBOL_PRE_TEXT);
     }
 
     /**
@@ -173,7 +182,7 @@ public class List extends BlockElement<List> {
      * @param preSymbolText the pre symbol text
      */
     public void setPreSymbolText(String preSymbolText) {
-        this.preSymbolText = preSymbolText;
+        setProperty(Property.LIST_SYMBOL_PRE_TEXT, preSymbolText);
     }
 
     @Override

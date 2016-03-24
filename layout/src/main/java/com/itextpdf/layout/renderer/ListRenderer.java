@@ -104,7 +104,7 @@ public class ListRenderer extends BlockRenderer {
                 default:
                     throw new IllegalStateException();
             }
-            Text textElement = new Text(listModelElement.getPreSymbolText() + numberText + listModelElement.getPostSymbolText());
+            Text textElement = new Text(renderer.getProperty(Property.LIST_SYMBOL_PRE_TEXT) + numberText + renderer.getProperty(Property.LIST_SYMBOL_POST_TEXT));
             IRenderer textRenderer;
             // Be careful. There is a workaround here. For Greek symbols we first set a dummy font with document=null
             // in order for the metrics to be taken into account correctly during layout.

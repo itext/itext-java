@@ -51,6 +51,8 @@ public enum Property {
     LIST_SYMBOL(true),
     LIST_SYMBOL_ALIGNMENT,
     LIST_SYMBOL_INDENT,
+    LIST_SYMBOL_PRE_TEXT(true),
+    LIST_SYMBOL_POST_TEXT(true),
     MARGIN_BOTTOM,
     MARGIN_LEFT,
     MARGIN_RIGHT,

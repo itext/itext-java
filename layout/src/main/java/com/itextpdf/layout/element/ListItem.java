@@ -74,6 +74,7 @@ public class ListItem extends Div {
         // Do not draw any points after ZapfDingbats special number symbol
         if (listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_1 || listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_2 ||
                 listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_3 || listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_4) {
+            setProperty(Property.LIST_SYMBOL_POST_TEXT, " ");
         }
         return setProperty(Property.LIST_SYMBOL, listNumberingType);
     }
