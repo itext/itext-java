@@ -205,8 +205,11 @@ public class LineRenderer extends AbstractRenderer {
                     }
                 }
                 byte[] lineLevels = new byte[lineGlyphs.size()];
-                System.arraycopy(levels, 0, lineLevels, 0, lineGlyphs.size());
-                List<RendererGlyph> reorderedLine = TypographyUtils.reoderLine(lineGlyphs, lineLevels, levels);
+                if (levels != null) {
+                    System.arraycopy(levels, 0, lineLevels, 0, lineGlyphs.size());
+                }
+
+                List<RendererGlyph> reorderedLine = TypographyUtils.reorderLine(lineGlyphs, lineLevels, levels);
 
                 if (reorderedLine != null) {
                     children.clear();
@@ -235,8 +238,10 @@ public class LineRenderer extends AbstractRenderer {
 
                 if (result.getStatus() == LayoutResult.PARTIAL) {
                     LineRenderer overflow = (LineRenderer) result.getOverflowRenderer();
-                    overflow.levels = new byte[levels.length - lineLevels.length];
-                    System.arraycopy(levels, lineLevels.length, overflow.levels, 0, overflow.levels.length);
+                    if (levels != null) {
+                        overflow.levels = new byte[levels.length - lineLevels.length];
+                        System.arraycopy(levels, lineLevels.length, overflow.levels, 0, overflow.levels.length);
+                    }
                 }
             }
         }
