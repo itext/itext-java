@@ -59,7 +59,7 @@ public interface IPropertyContainer<Type extends IPropertyContainer> {
     <T extends Type> T setProperty(Property property, Object value);
 
     /**
-     * Deleted the own property of this entity.
+     * Deletes the own property of this entity.
      * @param property the property to be deleted
      */
     void deleteOwnProperty(Property property);
