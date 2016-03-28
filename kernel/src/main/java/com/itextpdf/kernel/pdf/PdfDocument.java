@@ -298,6 +298,9 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 }
             }
         }
+        if (isTagged()) {
+            xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, PdfAXMPUtil.PART, 1, new PropertyOptions(PropertyOptions.SEPARATE_NODE));
+        }
         if (conformanceLevel != null) {
             addRdfDescription(xmpMeta, conformanceLevel);
         }
