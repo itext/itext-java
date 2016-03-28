@@ -1,9 +1,9 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Property;
@@ -483,7 +483,7 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
 
-        drawBorders(drawContext.getCanvas());
+        drawBorders(drawContext);
 
         if (footerRenderer != null) {
             footerRenderer.isLastRendererForModelElement = isTheVeryLast;
@@ -566,7 +566,11 @@ public class TableRenderer extends AbstractRenderer {
         return (T) overflowRenderer;
     }
 
-    protected void drawBorders(PdfCanvas canvas) {
+    protected void drawBorders(DrawContext drawContext) {
+        if (occupiedArea.getBBox().getHeight() < EPS) {
+            return;
+        }
+
         float startX = getOccupiedArea().getBBox().getX();
         float startY = getOccupiedArea().getBBox().getY() + getOccupiedArea().getBBox().getHeight();
 
@@ -577,6 +581,11 @@ public class TableRenderer extends AbstractRenderer {
                 startY = cell.getOccupiedArea().getBBox().getY() + cell.getOccupiedArea().getBBox().getHeight();
                 break;
             }
+        }
+
+        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
+        if (isTagged) {
+            drawContext.getCanvas().openTag(new CanvasArtifact());
         }
 
         float y1 = startY;
@@ -607,7 +616,7 @@ public class TableRenderer extends AbstractRenderer {
                 Border curBorder = borders[j];
                 if (prevBorder != null) {
                     if (!prevBorder.equals(curBorder)) {
-                        prevBorder.drawCellBorder(canvas, x1, y1, x2, y1);
+                        prevBorder.drawCellBorder(drawContext.getCanvas(), x1, y1, x2, y1);
                         x1 = x2;
                     }
                 } else {
@@ -624,7 +633,7 @@ public class TableRenderer extends AbstractRenderer {
                 if (i == 0 || i == horizontalBorders.length - 1) {
                     x2 += lastBorder.getWidth() / 2;
                 }
-                lastBorder.drawCellBorder(canvas, x1, y1, x2, y1);
+                lastBorder.drawCellBorder(drawContext.getCanvas(), x1, y1, x2, y1);
             }
             if (i < heights.size()) {
                 y1 -= heights.get(i);
@@ -644,7 +653,7 @@ public class TableRenderer extends AbstractRenderer {
                 Border curBorder = borders[j];
                 if (prevBorder != null) {
                     if (!prevBorder.equals(curBorder)) {
-                        prevBorder.drawCellBorder(canvas, x1, y1, x1, y2);
+                        prevBorder.drawCellBorder(drawContext.getCanvas(), x1, y1, x1, y2);
                         y1 = y2;
                     }
                 } else {
@@ -660,11 +669,15 @@ public class TableRenderer extends AbstractRenderer {
             }
             Border lastBorder = borders[j - 1];
             if (lastBorder != null) {
-                lastBorder.drawCellBorder(canvas, x1, y1, x1, y2);
+                lastBorder.drawCellBorder(drawContext.getCanvas(), x1, y1, x1, y2);
             }
             if (i < columnWidths.length) {
                 x1 += columnWidths[i];
             }
+        }
+
+        if (isTagged) {
+            drawContext.getCanvas().closeTag();
         }
     }
 

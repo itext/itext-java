@@ -93,10 +93,10 @@ public class DashedBorder extends Border {
 
         canvas.
                 saveState().
-                moveTo(x1, y1).
                 setStrokeColor(color).
                 setLineDash(dash, adjustedGap, dash + adjustedGap / 2).
                 setLineWidth(width).
+                moveTo(x1, y1).
                 lineTo(x2, y2).
                 stroke().
                 restoreState();

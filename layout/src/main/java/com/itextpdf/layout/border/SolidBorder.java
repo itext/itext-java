@@ -73,9 +73,9 @@ public class SolidBorder extends Border {
     public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
         canvas.
                 saveState().
-                moveTo(x1, y1).
                 setStrokeColor(color).
                 setLineWidth(width).
+                moveTo(x1, y1).
                 lineTo(x2, y2).
                 stroke().
                 restoreState();
