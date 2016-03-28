@@ -2291,13 +2291,13 @@ public class PdfCanvas {
             currentGs.setFillColor(newColor);
             PdfObject colorSpaceObject = newColor.getColorSpace().getPdfObject();
             if (colorSpaceObject instanceof PdfName) { // see CanvasGraphicState Fill/StrokeColorSpace field comments
-                currentGs.setFillColorSpace((PdfName) colorSpaceObject);
+                currentGs.setFillColorSpace(newColor.getColorSpace());
             }
         } else {
             currentGs.setStrokeColor(newColor);
             PdfObject colorSpaceObject = newColor.getColorSpace().getPdfObject();
             if (colorSpaceObject instanceof PdfName) { // see CanvasGraphicState Fill/StrokeColorSpace field comments
-                currentGs.setStrokeColorSpace((PdfName) colorSpaceObject);
+                currentGs.setStrokeColorSpace(newColor.getColorSpace());
             }
         }
     }

@@ -4,16 +4,24 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.kernel.color.CalGray;
+import com.itextpdf.kernel.color.CalRgb;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceCmyk;
 import com.itextpdf.kernel.color.DeviceGray;
+import com.itextpdf.kernel.color.DeviceN;
 import com.itextpdf.kernel.color.DeviceRgb;
+import com.itextpdf.kernel.color.IccBased;
+import com.itextpdf.kernel.color.Indexed;
+import com.itextpdf.kernel.color.Lab;
+import com.itextpdf.kernel.color.Separation;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Path;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfLiteral;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
@@ -23,6 +31,10 @@ import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -217,6 +229,7 @@ public class PdfCanvasProcessor {
     /**
      * Accessor method for the {@link EventListener} object maintained in this class.
      * Necessary for implementing custom ContentOperator implementations.
+     *
      * @return the renderListener
      */
     public EventListener getEventListener() {
@@ -406,7 +419,6 @@ public class PdfCanvasProcessor {
 
     /**
      * Remove the latest marked content from the stack.  Keeps track of the BMC, BDC and EMC operators.
-     *
      */
     private void endMarkedContent() {
         markedContentStack.pop();
@@ -428,6 +440,7 @@ public class PdfCanvasProcessor {
 
     /**
      * This is a proxy to pass only those events to the event listener which are supported by it.
+     *
      * @param data event data
      * @param type event type
      */
@@ -784,19 +797,44 @@ public class PdfCanvasProcessor {
     }
 
     /**
-     * Gets a color based on a list of operands.
+     * Gets a color based on a list of operands and Color space.
      */
-    private static Color getColor(PdfName colorSpace, List<PdfObject> operands) {
-        if (PdfName.DeviceGray.equals(colorSpace)) {
-            return getColor(1, operands);
+    private static Color getColor(PdfColorSpace pdfColorSpace, List<PdfObject> operands) {
+        PdfObject pdfObject;
+        float[] c = getColorants(operands);
+        if (pdfColorSpace.getPdfObject().isIndirectReference()) {
+            pdfObject = ((PdfIndirectReference) pdfColorSpace.getPdfObject()).getRefersTo();
+        } else {
+            pdfObject = pdfColorSpace.getPdfObject();
         }
-        if (PdfName.DeviceRGB.equals(colorSpace)) {
-            return getColor(3, operands);
-        }
-        if (PdfName.DeviceCMYK.equals(colorSpace)) {
-            return getColor(4, operands);
+        if (pdfObject.isName()) {
+            if (PdfName.DeviceGray.equals(pdfColorSpace))
+                return new DeviceGray(getColorants(operands)[0]);
+            else if (PdfName.DeviceRGB.equals(pdfObject)) {
+                return new DeviceRgb(c[0], c[1], c[2]);
+            } else if (PdfName.DeviceCMYK.equals(pdfObject)) {
+                return new DeviceCmyk(c[0], c[1], c[2], c[3]);
+            }
+        } else if (pdfObject.isArray()) {
+            PdfArray array = (PdfArray) pdfObject;
+            PdfName csType = array.getAsName(0);
+            if (PdfName.CalGray.equals(csType))
+                return new CalGray((PdfCieBasedCs.CalGray) pdfColorSpace, c[0]);
+            else if (PdfName.CalRGB.equals(csType))
+                return new CalRgb((PdfCieBasedCs.CalRgb) pdfColorSpace, c);
+            else if (PdfName.Lab.equals(csType))
+                return new Lab((PdfCieBasedCs.Lab) pdfColorSpace, c);
+            else if (PdfName.ICCBased.equals(csType))
+                return new IccBased((PdfCieBasedCs.IccBased) pdfColorSpace, c);
+            else if (PdfName.Indexed.equals(csType))
+                return new Indexed(pdfColorSpace, (int) c[0]);
+            else if (PdfName.Separation.equals(csType))
+                return new Separation((PdfSpecialCs.Separation) pdfColorSpace, c[0]);
+            else if (PdfName.DeviceN.equals(csType))
+                return new DeviceN((PdfSpecialCs.DeviceN) pdfColorSpace, c);
         }
         return null;
+
     }
 
     /**
@@ -807,6 +845,7 @@ public class PdfCanvasProcessor {
         for (int i = 0; i < nOperands; i++) {
             c[i] = ((PdfNumber) operands.get(i)).getFloatValue();
         }
+
         switch (nOperands) {
             case 1:
                 return new DeviceGray(c[0]);
@@ -818,10 +857,18 @@ public class PdfCanvasProcessor {
         return null;
     }
 
+    private static float[] getColorants(List<PdfObject> operands) {
+        float[] c = new float[operands.size() - 1];
+        for (int i = 0; i < operands.size() - 1; i++) {
+            c[i] = ((PdfNumber) operands.get(i)).getFloatValue();
+        }
+        return c;
+    }
+
     /**
      * A content operator implementation (Q).
      */
-    protected static class PopGraphicsState implements ContentOperator{
+    protected static class PopGraphicsState implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.gsStack.pop();
             ParserGraphicsState gs = processor.getGraphicsState();
@@ -885,21 +932,39 @@ public class PdfCanvasProcessor {
 
     /**
      * A content operator implementation (CS).
-     * TODO PdfContentStreamProcessor doesn't support color spaces other than DeviceRgb, DeviceCMYK and DeviceGray, which could be PdfArray object
+     *
      */
     private static class SetColorSpaceFill implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            processor.getGraphicsState().setFillColorSpace((PdfName) operands.get(0));
+            PdfColorSpace pdfColorSpace = determineColorSpace((PdfName) operands.get(0), processor);
+            processor.getGraphicsState().setFillColorSpace(pdfColorSpace);
+            processor.getGraphicsState().setFillColor(new Color(pdfColorSpace, pdfColorSpace.getDefaultColorants()));
+        }
+
+        private static PdfColorSpace determineColorSpace(PdfName colorSpace, PdfCanvasProcessor processor) {
+            PdfColorSpace pdfColorSpace = null;
+            if (PdfColorSpace.directColorSpaces.contains(colorSpace)) {
+                pdfColorSpace = PdfColorSpace.makeColorSpace(colorSpace);
+            } else {
+                PdfResources pdfResources = processor.resourcesStack.peek();
+                PdfDictionary resourceColorSpace = pdfResources.getPdfObject().getAsDictionary(PdfName.ColorSpace);
+                pdfColorSpace = PdfColorSpace.makeColorSpace(resourceColorSpace.get(colorSpace));
+            }
+
+            return pdfColorSpace;
         }
     }
 
+
     /**
      * A content operator implementation (cs).
-     * TODO PdfContentStreamProcessor doesn't support color spaces other than DeviceRgb, DeviceCMYK and DeviceGray, which could be PdfArray object
+     *
      */
     private static class SetColorSpaceStroke implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            processor.getGraphicsState().setStrokeColorSpace((PdfName) operands.get(0));
+            PdfColorSpace pdfColorSpace = SetColorSpaceFill.determineColorSpace((PdfName) operands.get(0), processor);
+            processor.getGraphicsState().setStrokeColorSpace(pdfColorSpace);
+            processor.getGraphicsState().setStrokeColor(new Color(pdfColorSpace, pdfColorSpace.getDefaultColorants()));
         }
     }
 
@@ -945,7 +1010,6 @@ public class PdfCanvasProcessor {
 
     /**
      * A content operator implementation (BMC).
-     *
      */
     private static class BeginMarkedContent implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor,

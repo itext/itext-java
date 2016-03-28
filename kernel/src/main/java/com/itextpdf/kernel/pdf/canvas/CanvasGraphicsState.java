@@ -10,6 +10,8 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import java.util.Arrays;
 
@@ -32,8 +34,8 @@ public class CanvasGraphicsState {
      * other than device color spaces (RGB, CMYK, GRAY). Therefore for simplicity, if current color space is not a device color space
      * it will have a {@code null} value.
      */
-    private PdfName strokeColorSpace = PdfName.DeviceGray;
-    private PdfName fillColorSpace = PdfName.DeviceGray;
+    private PdfColorSpace strokeColorSpace = new PdfDeviceCs.Gray();
+    private PdfColorSpace fillColorSpace = new PdfDeviceCs.Gray();
 
     // color
     private Color strokeColor = DeviceGray.BLACK;
@@ -137,19 +139,19 @@ public class CanvasGraphicsState {
         ctm = newCtm.multiply(ctm);
     }
 
-    public PdfName getStrokeColorSpace() {
+    public PdfColorSpace getStrokeColorSpace() {
         return strokeColorSpace;
     }
 
-    public void setStrokeColorSpace(PdfName strokeColorSpace) {
+    public void setStrokeColorSpace(PdfColorSpace strokeColorSpace) {
         this.strokeColorSpace = strokeColorSpace;
     }
 
-    public PdfName getFillColorSpace() {
+    public PdfColorSpace getFillColorSpace() {
         return fillColorSpace;
     }
 
-    public void setFillColorSpace(PdfName fillColorSpace) {
+    public void setFillColorSpace(PdfColorSpace fillColorSpace) {
         this.fillColorSpace = fillColorSpace;
     }
 
