@@ -1,6 +1,6 @@
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.source.OutputStream;
+import com.itextpdf.io.source.ByteUtils;
 
 public class PdfNumber extends PdfPrimitiveObject {
 
@@ -131,9 +131,9 @@ public class PdfNumber extends PdfPrimitiveObject {
         if (content != null)
             return new String(content);
         else if (valueType == Int)
-            return new String(OutputStream.getIsoBytes(getIntValue()));
+            return new String(ByteUtils.getIsoBytes(getIntValue()));
         else
-            return new String(OutputStream.getIsoBytes(getValue()));
+            return new String(ByteUtils.getIsoBytes(getValue()));
     }
 
     @Override
@@ -149,10 +149,10 @@ public class PdfNumber extends PdfPrimitiveObject {
     protected void generateContent() {
         switch (valueType) {
             case Int:
-                content = OutputStream.getIsoBytes((int) value);
+                content = ByteUtils.getIsoBytes((int) value);
                 break;
             case Double:
-                content = OutputStream.getIsoBytes(value);
+                content = ByteUtils.getIsoBytes(value);
                 break;
             default:
                 content = new byte[0];

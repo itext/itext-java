@@ -4,7 +4,7 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.image.Image;
-import com.itextpdf.io.source.OutputStream;
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.Utilities;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.color.Color;
@@ -54,68 +54,68 @@ import java.util.Stack;
  */
 public class PdfCanvas {
 
-    static final private byte[] B = OutputStream.getIsoBytes("B\n");
-    static final private byte[] b = OutputStream.getIsoBytes("b\n");
-    static final private byte[] BDC = OutputStream.getIsoBytes("BDC\n");
-    static final private byte[] BI = OutputStream.getIsoBytes("BI\n");
-    static final private byte[] BMC = OutputStream.getIsoBytes("BMC\n");
-    static final private byte[] BStar = OutputStream.getIsoBytes("B*\n");
-    static final private byte[] bStar = OutputStream.getIsoBytes("b*\n");
-    static final private byte[] BT = OutputStream.getIsoBytes("BT\n");
-    static final private byte[] c = OutputStream.getIsoBytes("c\n");
-    static final private byte[] cm = OutputStream.getIsoBytes("cm\n");
-    static final private byte[] cs = OutputStream.getIsoBytes("cs\n");
-    static final private byte[] CS = OutputStream.getIsoBytes("CS\n");
-    static final private byte[] d = OutputStream.getIsoBytes("d\n");
-    static final private byte[] Do = OutputStream.getIsoBytes("Do\n");
-    static final private byte[] EI = OutputStream.getIsoBytes("EI\n");
-    static final private byte[] EMC = OutputStream.getIsoBytes("EMC\n");
-    static final private byte[] ET = OutputStream.getIsoBytes("ET\n");
-    static final private byte[] f = OutputStream.getIsoBytes("f\n");
-    static final private byte[] fStar = OutputStream.getIsoBytes("f*\n");
-    static final private byte[] G = OutputStream.getIsoBytes("G\n");
-    static final private byte[] g = OutputStream.getIsoBytes("g\n");
-    static final private byte[] gs = OutputStream.getIsoBytes("gs\n");
-    static final private byte[] h = OutputStream.getIsoBytes("h\n");
-    static final private byte[] i = OutputStream.getIsoBytes("i\n");
-    static final private byte[] ID = OutputStream.getIsoBytes("ID\n");
-    static final private byte[] j = OutputStream.getIsoBytes("j\n");
-    static final private byte[] J = OutputStream.getIsoBytes("J\n");
-    static final private byte[] K = OutputStream.getIsoBytes("K\n");
-    static final private byte[] k = OutputStream.getIsoBytes("k\n");
-    static final private byte[] l = OutputStream.getIsoBytes("l\n");
-    static final private byte[] m = OutputStream.getIsoBytes("m\n");
-    static final private byte[] M = OutputStream.getIsoBytes("M\n");
-    static final private byte[] n = OutputStream.getIsoBytes("n\n");
-    static final private byte[] q = OutputStream.getIsoBytes("q\n");
-    static final private byte[] Q = OutputStream.getIsoBytes("Q\n");
-    static final private byte[] re = OutputStream.getIsoBytes("re\n");
-    static final private byte[] rg = OutputStream.getIsoBytes("rg\n");
-    static final private byte[] RG = OutputStream.getIsoBytes("RG\n");
-    static final private byte[] ri = OutputStream.getIsoBytes("ri\n");
-    static final private byte[] S = OutputStream.getIsoBytes("S\n");
-    static final private byte[] s = OutputStream.getIsoBytes("s\n");
-    static final private byte[] scn = OutputStream.getIsoBytes("scn\n");
-    static final private byte[] SCN = OutputStream.getIsoBytes("SCN\n");
-    static final private byte[] sh = OutputStream.getIsoBytes("sh\n");
-    static final private byte[] Tc = OutputStream.getIsoBytes("Tc\n");
-    static final private byte[] Td = OutputStream.getIsoBytes("Td\n");
-    static final private byte[] TD = OutputStream.getIsoBytes("TD\n");
-    static final private byte[] Tf = OutputStream.getIsoBytes("Tf\n");
-    static final private byte[] TJ = OutputStream.getIsoBytes("TJ\n");
-    static final private byte[] Tj = OutputStream.getIsoBytes("Tj\n");
-    static final private byte[] TL = OutputStream.getIsoBytes("TL\n");
-    static final private byte[] Tm = OutputStream.getIsoBytes("Tm\n");
-    static final private byte[] Tr = OutputStream.getIsoBytes("Tr\n");
-    static final private byte[] Ts = OutputStream.getIsoBytes("Ts\n");
-    static final private byte[] TStar = OutputStream.getIsoBytes("T*\n");
-    static final private byte[] Tw = OutputStream.getIsoBytes("Tw\n");
-    static final private byte[] Tz = OutputStream.getIsoBytes("Tz\n");
-    static final private byte[] v = OutputStream.getIsoBytes("v\n");
-    static final private byte[] W = OutputStream.getIsoBytes("W\n");
-    static final private byte[] w = OutputStream.getIsoBytes("w\n");
-    static final private byte[] WStar = OutputStream.getIsoBytes("W*\n");
-    static final private byte[] y = OutputStream.getIsoBytes("y\n");
+    static final private byte[] B = ByteUtils.getIsoBytes("B\n");
+    static final private byte[] b = ByteUtils.getIsoBytes("b\n");
+    static final private byte[] BDC = ByteUtils.getIsoBytes("BDC\n");
+    static final private byte[] BI = ByteUtils.getIsoBytes("BI\n");
+    static final private byte[] BMC = ByteUtils.getIsoBytes("BMC\n");
+    static final private byte[] BStar = ByteUtils.getIsoBytes("B*\n");
+    static final private byte[] bStar = ByteUtils.getIsoBytes("b*\n");
+    static final private byte[] BT = ByteUtils.getIsoBytes("BT\n");
+    static final private byte[] c = ByteUtils.getIsoBytes("c\n");
+    static final private byte[] cm = ByteUtils.getIsoBytes("cm\n");
+    static final private byte[] cs = ByteUtils.getIsoBytes("cs\n");
+    static final private byte[] CS = ByteUtils.getIsoBytes("CS\n");
+    static final private byte[] d = ByteUtils.getIsoBytes("d\n");
+    static final private byte[] Do = ByteUtils.getIsoBytes("Do\n");
+    static final private byte[] EI = ByteUtils.getIsoBytes("EI\n");
+    static final private byte[] EMC = ByteUtils.getIsoBytes("EMC\n");
+    static final private byte[] ET = ByteUtils.getIsoBytes("ET\n");
+    static final private byte[] f = ByteUtils.getIsoBytes("f\n");
+    static final private byte[] fStar = ByteUtils.getIsoBytes("f*\n");
+    static final private byte[] G = ByteUtils.getIsoBytes("G\n");
+    static final private byte[] g = ByteUtils.getIsoBytes("g\n");
+    static final private byte[] gs = ByteUtils.getIsoBytes("gs\n");
+    static final private byte[] h = ByteUtils.getIsoBytes("h\n");
+    static final private byte[] i = ByteUtils.getIsoBytes("i\n");
+    static final private byte[] ID = ByteUtils.getIsoBytes("ID\n");
+    static final private byte[] j = ByteUtils.getIsoBytes("j\n");
+    static final private byte[] J = ByteUtils.getIsoBytes("J\n");
+    static final private byte[] K = ByteUtils.getIsoBytes("K\n");
+    static final private byte[] k = ByteUtils.getIsoBytes("k\n");
+    static final private byte[] l = ByteUtils.getIsoBytes("l\n");
+    static final private byte[] m = ByteUtils.getIsoBytes("m\n");
+    static final private byte[] M = ByteUtils.getIsoBytes("M\n");
+    static final private byte[] n = ByteUtils.getIsoBytes("n\n");
+    static final private byte[] q = ByteUtils.getIsoBytes("q\n");
+    static final private byte[] Q = ByteUtils.getIsoBytes("Q\n");
+    static final private byte[] re = ByteUtils.getIsoBytes("re\n");
+    static final private byte[] rg = ByteUtils.getIsoBytes("rg\n");
+    static final private byte[] RG = ByteUtils.getIsoBytes("RG\n");
+    static final private byte[] ri = ByteUtils.getIsoBytes("ri\n");
+    static final private byte[] S = ByteUtils.getIsoBytes("S\n");
+    static final private byte[] s = ByteUtils.getIsoBytes("s\n");
+    static final private byte[] scn = ByteUtils.getIsoBytes("scn\n");
+    static final private byte[] SCN = ByteUtils.getIsoBytes("SCN\n");
+    static final private byte[] sh = ByteUtils.getIsoBytes("sh\n");
+    static final private byte[] Tc = ByteUtils.getIsoBytes("Tc\n");
+    static final private byte[] Td = ByteUtils.getIsoBytes("Td\n");
+    static final private byte[] TD = ByteUtils.getIsoBytes("TD\n");
+    static final private byte[] Tf = ByteUtils.getIsoBytes("Tf\n");
+    static final private byte[] TJ = ByteUtils.getIsoBytes("TJ\n");
+    static final private byte[] Tj = ByteUtils.getIsoBytes("Tj\n");
+    static final private byte[] TL = ByteUtils.getIsoBytes("TL\n");
+    static final private byte[] Tm = ByteUtils.getIsoBytes("Tm\n");
+    static final private byte[] Tr = ByteUtils.getIsoBytes("Tr\n");
+    static final private byte[] Ts = ByteUtils.getIsoBytes("Ts\n");
+    static final private byte[] TStar = ByteUtils.getIsoBytes("T*\n");
+    static final private byte[] Tw = ByteUtils.getIsoBytes("Tw\n");
+    static final private byte[] Tz = ByteUtils.getIsoBytes("Tz\n");
+    static final private byte[] v = ByteUtils.getIsoBytes("v\n");
+    static final private byte[] W = ByteUtils.getIsoBytes("W\n");
+    static final private byte[] w = ByteUtils.getIsoBytes("w\n");
+    static final private byte[] WStar = ByteUtils.getIsoBytes("W*\n");
+    static final private byte[] y = ByteUtils.getIsoBytes("y\n");
 
     static private final PdfDeviceCs.Gray gray = new PdfDeviceCs.Gray();
     static private final PdfDeviceCs.Rgb rgb = new PdfDeviceCs.Rgb();
@@ -188,8 +188,8 @@ public class PdfCanvas {
         this(getPageStream(page), page.getResources(), page.getDocument());
         if (wrapOldContent) {
             // Wrap old content in q/Q in order not to get unexpected results because of the CTM
-            page.newContentStreamBefore().getOutputStream().writeBytes(OutputStream.getIsoBytes("q\n"));
-            contentStream.getOutputStream().writeBytes(OutputStream.getIsoBytes("Q\n"));
+            page.newContentStreamBefore().getOutputStream().writeBytes(ByteUtils.getIsoBytes("q\n"));
+            contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("Q\n"));
             if (page.getRotation() != 0 && !page.isIgnoreContentRotation()) {
                 applyRotation(page);
             }
@@ -471,7 +471,7 @@ public class PdfCanvas {
         document.checkShowTextIsoConformance(currentGs, resources);
         showTextInt(text);
         contentStream.getOutputStream()
-                .writeByte((byte) '\'')
+                .writeByte('\'')
                 .writeNewLine();
         return this;
     }
@@ -492,7 +492,7 @@ public class PdfCanvas {
                 .writeFloat(charSpacing);
         showTextInt(text);
         contentStream.getOutputStream()
-                .writeByte((byte) '"')
+                .writeByte('"')
                 .writeNewLine();
         // The " operator sets charSpace and wordSpace into graphics state
         // (cfr PDF reference v1.6, table 5.6)
@@ -742,7 +742,7 @@ public class PdfCanvas {
         if (currentGs.getFont() == null)
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         document.checkShowTextIsoConformance(currentGs, resources);
-        contentStream.getOutputStream().writeBytes(PdfOutputStream.getIsoBytes("["));
+        contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("["));
         for (PdfObject obj : textArray) {
             if (obj.isString()) {
                 Utilities.writeEscapedString(contentStream.getOutputStream(), ((PdfString) obj).getValueBytes());
@@ -750,7 +750,7 @@ public class PdfCanvas {
                 contentStream.getOutputStream().writeFloat(((PdfNumber) obj).getFloatValue());
             }
         }
-        contentStream.getOutputStream().writeBytes(PdfOutputStream.getIsoBytes("]"));
+        contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("]"));
         contentStream.getOutputStream().writeBytes(TJ);
         return this;
     }
@@ -1296,7 +1296,7 @@ public class PdfCanvas {
      */
     public PdfCanvas setLineDash(final float phase) {
         currentGs.setDashPattern(getDashPatternArray(phase));
-        contentStream.getOutputStream().writeByte((byte) '[').writeByte((byte) ']').writeSpace()
+        contentStream.getOutputStream().writeByte('[').writeByte(']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
         return this;
@@ -1316,7 +1316,7 @@ public class PdfCanvas {
      */
     public PdfCanvas setLineDash(final float unitsOn, final float phase) {
         currentGs.setDashPattern(getDashPatternArray(new float[]{unitsOn}, phase));
-        contentStream.getOutputStream().writeByte((byte) '[').writeFloat(unitsOn).writeByte((byte) ']').writeSpace()
+        contentStream.getOutputStream().writeByte('[').writeFloat(unitsOn).writeByte(']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
 
@@ -1338,8 +1338,8 @@ public class PdfCanvas {
      */
     public PdfCanvas setLineDash(final float unitsOn, final float unitsOff, final float phase) {
         currentGs.setDashPattern(getDashPatternArray(new float[]{unitsOn, unitsOff}, phase));
-        contentStream.getOutputStream().writeByte((byte) '[').writeFloat(unitsOn).writeSpace()
-                .writeFloat(unitsOff).writeByte((byte) ']').writeSpace()
+        contentStream.getOutputStream().writeByte('[').writeFloat(unitsOn).writeSpace()
+                .writeFloat(unitsOff).writeByte(']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
         return this;
@@ -1360,13 +1360,13 @@ public class PdfCanvas {
     public final PdfCanvas setLineDash(final float[] array, final float phase) {
         currentGs.setDashPattern(getDashPatternArray(array, phase));
         PdfOutputStream out = contentStream.getOutputStream();
-        out.writeByte((byte) '[');
+        out.writeByte('[');
         for (int iter = 0; iter < array.length; iter++) {
             out.writeFloat(array[iter]);
             if (iter < array.length - 1)
                 out.writeSpace();
         }
-        out.writeByte((byte) ']').writeSpace().writeFloat(phase).writeSpace().writeBytes(d);
+        out.writeByte(']').writeSpace().writeFloat(phase).writeSpace().writeBytes(d);
         return this;
     }
 

@@ -52,17 +52,17 @@ public class PdfTokenizer implements Closeable {
             false, false, false, false, false, false, false};
 
 
-    public static final byte[] Obj = OutputStream.getIsoBytes("obj");
-    public static final byte[] R = OutputStream.getIsoBytes("R");
-    public static final byte[] Xref = OutputStream.getIsoBytes("xref");
-    public static final byte[] Startxref = OutputStream.getIsoBytes("startxref");
-    public static final byte[] Stream = OutputStream.getIsoBytes("stream");
-    public static final byte[] Trailer = OutputStream.getIsoBytes("trailer");
-    public static final byte[] N = OutputStream.getIsoBytes("n");
-    public static final byte[] F = OutputStream.getIsoBytes("f");
-    public static final byte[] Null = OutputStream.getIsoBytes("null");
-    public static final byte[] True = OutputStream.getIsoBytes("true");
-    public static final byte[] False = OutputStream.getIsoBytes("false");
+    public static final byte[] Obj = ByteUtils.getIsoBytes("obj");
+    public static final byte[] R = ByteUtils.getIsoBytes("R");
+    public static final byte[] Xref = ByteUtils.getIsoBytes("xref");
+    public static final byte[] Startxref = ByteUtils.getIsoBytes("startxref");
+    public static final byte[] Stream = ByteUtils.getIsoBytes("stream");
+    public static final byte[] Trailer = ByteUtils.getIsoBytes("trailer");
+    public static final byte[] N = ByteUtils.getIsoBytes("n");
+    public static final byte[] F = ByteUtils.getIsoBytes("f");
+    public static final byte[] Null = ByteUtils.getIsoBytes("null");
+    public static final byte[] True = ByteUtils.getIsoBytes("true");
+    public static final byte[] False = ByteUtils.getIsoBytes("false");
 
     protected TokenType type;
     protected int reference;

@@ -1,6 +1,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -95,7 +96,7 @@ public class PdfCopyTest extends ExtendedITextTest {
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
         for (int i = 0; i < 10; i++) {
             PdfPage page1 = pdfDoc1.addNewPage();
-            page1.getContentStream(0).getOutputStream().write(PdfWriter.getIsoBytes("%page " + String.valueOf(i + 1) + "\n"));
+            page1.getContentStream(0).getOutputStream().write(ByteUtils.getIsoBytes("%page " + String.valueOf(i + 1) + "\n"));
             page1.flush();
         }
         pdfDoc1.close();

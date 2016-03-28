@@ -1,7 +1,7 @@
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.source.OutputStream;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 
@@ -366,7 +366,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
         PdfStream stream = (PdfStream)catalog.getAsStream(new PdfName("stream"));
         byte[] bytes = stream.getBytes();
-        Assert.assertArrayEquals(OutputStream.getIsoBytes("[1 2 3]"), bytes);
+        Assert.assertArrayEquals(ByteUtils.getIsoBytes("[1 2 3]"), bytes);
         reader.close();
     }
 
@@ -382,7 +382,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         PdfWriter writer1 = new PdfWriter(fos1);
         final PdfDocument pdfDoc1 = new PdfDocument(writer1);
         PdfPage page1 = pdfDoc1.addNewPage();
-        page1.getContentStream(0).getOutputStream().write(PdfOutputStream.getIsoBytes("%Page_1"));
+        page1.getContentStream(0).getOutputStream().write(ByteUtils.getIsoBytes("%Page_1"));
         page1.flush();
         pdfDoc1.close();
 
@@ -396,7 +396,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         pdfDoc2.addPage(page2);
         page2.flush();
         page2 = pdfDoc2.addNewPage();
-        page2.getContentStream(0).getOutputStream().write(PdfOutputStream.getIsoBytes("%Page_2"));
+        page2.getContentStream(0).getOutputStream().write(ByteUtils.getIsoBytes("%Page_2"));
 
         page2.flush();
         pdfDoc1R.close();
@@ -407,9 +407,9 @@ public class PdfWriterTest extends ExtendedITextTest {
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         Assert.assertEquals(8, reader.trailer.getAsNumber(PdfName.Size).getIntValue());
         byte[] bytes = pdfDocument.getPage(1).getContentBytes();
-        Assert.assertArrayEquals(PdfOutputStream.getIsoBytes("%Page_1"), bytes);
+        Assert.assertArrayEquals(ByteUtils.getIsoBytes("%Page_1"), bytes);
         bytes = pdfDocument.getPage(2).getContentBytes();
-        Assert.assertArrayEquals(PdfOutputStream.getIsoBytes("%Page_2"), bytes);
+        Assert.assertArrayEquals(ByteUtils.getIsoBytes("%Page_2"), bytes);
         reader.close();
     }
 

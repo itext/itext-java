@@ -2,7 +2,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.io.source.OutputStream;
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
@@ -102,7 +102,7 @@ public class PdfReaderTest extends ExtendedITextTest{
         object = pdfDoc.getPdfObject(5);
         Assert.assertEquals(PdfObject.Stream, object.getType());
         String content = "100 100 100 100 re\nf\n";
-        Assert.assertArrayEquals(OutputStream.getIsoBytes(content), ((PdfStream)object).getBytes());
+        Assert.assertArrayEquals(ByteUtils.getIsoBytes(content), ((PdfStream)object).getBytes());
 
         Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();

@@ -1,8 +1,8 @@
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.image.Image;
-import com.itextpdf.io.source.OutputStream;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfStream;
@@ -15,8 +15,8 @@ public final class Type3Glyph extends PdfCanvas {
 
     private static final String d0Str = "d0\n";
     private static final String d1Str = "d1\n";
-    private static final byte[] d0 = OutputStream.getIsoBytes(d0Str);
-    private static final byte[] d1 = OutputStream.getIsoBytes(d1Str);
+    private static final byte[] d0 = ByteUtils.getIsoBytes(d0Str);
+    private static final byte[] d1 = ByteUtils.getIsoBytes(d1Str);
 
     private float wx;
     private float llx;

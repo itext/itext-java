@@ -1,6 +1,7 @@
 package com.itextpdf.io.util;
 
 import com.itextpdf.io.source.ByteBuffer;
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.OutputStream;
 import com.itextpdf.io.source.RandomAccessSource;
 
@@ -19,11 +20,11 @@ import java.util.zip.InflaterInputStream;
 public class Utilities {
 
     private static final int transferSize = 64 * 1024;
-    private static final byte[] escR = OutputStream.getIsoBytes("\\r");
-    private static final byte[] escN = OutputStream.getIsoBytes("\\n");
-    private static final byte[] escT = OutputStream.getIsoBytes("\\t");
-    private static final byte[] escB = OutputStream.getIsoBytes("\\b");
-    private static final byte[] escF = OutputStream.getIsoBytes("\\f");
+    private static final byte[] escR = ByteUtils.getIsoBytes("\\r");
+    private static final byte[] escN = ByteUtils.getIsoBytes("\\n");
+    private static final byte[] escT = ByteUtils.getIsoBytes("\\t");
+    private static final byte[] escB = ByteUtils.getIsoBytes("\\b");
+    private static final byte[] escF = ByteUtils.getIsoBytes("\\f");
 
     /**
      * This method is an alternative for the {@code InputStream.skip()}

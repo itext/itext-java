@@ -1,5 +1,6 @@
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.OutputStream;
@@ -108,12 +109,12 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
      */
     public static final int BEST_COMPRESSION = Deflater.BEST_COMPRESSION;
 
-    private static final byte[] stream = getIsoBytes("stream\n");
-    private static final byte[] endstream = getIsoBytes("\nendstream");
-    private static final byte[] openDict = getIsoBytes("<<");
-    private static final byte[] closeDict = getIsoBytes(">>");
-    private static final byte[] endIndirect = getIsoBytes(" R");
-    private static final byte[] endIndirectWithZeroGenNr = getIsoBytes(" 0 R");
+    private static final byte[] stream = ByteUtils.getIsoBytes("stream\n");
+    private static final byte[] endstream = ByteUtils.getIsoBytes("\nendstream");
+    private static final byte[] openDict = ByteUtils.getIsoBytes("<<");
+    private static final byte[] closeDict = ByteUtils.getIsoBytes(">>");
+    private static final byte[] endIndirect = ByteUtils.getIsoBytes(" R");
+    private static final byte[] endIndirectWithZeroGenNr = ByteUtils.getIsoBytes(" 0 R");
 
     /**
      * Document associated with PdfOutputStream.
@@ -217,7 +218,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     }
 
     protected void write(PdfArray pdfArray) {
-        writeByte((byte) '[');
+        writeByte('[');
         for (int i = 0; i < pdfArray.size(); i++) {
             PdfObject value = pdfArray.get(i, false);
             PdfIndirectReference indirectReference;
@@ -229,7 +230,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             if (i < pdfArray.size() - 1)
                 writeSpace();
         }
-        writeByte((byte) ']');
+        writeByte(']');
     }
 
     protected void write(PdfDictionary pdfDictionary) {
@@ -290,19 +291,19 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     protected void write(PdfString pdfString) {
         pdfString.encrypt(crypto);
         if (pdfString.isHexWriting()) {
-            writeByte((byte) '<');
+            writeByte('<');
             writeBytes(pdfString.getInternalContent());
-            writeByte((byte) '>');
+            writeByte('>');
         } else {
-            writeByte((byte) '(');
+            writeByte('(');
             writeBytes(pdfString.getInternalContent());
-            writeByte((byte) ')');
+            writeByte(')');
         }
     }
 
 
     protected void write(PdfName name) {
-        writeByte((byte) '/');
+        writeByte('/');
         writeBytes(name.getInternalContent());
     }
 

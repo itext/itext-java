@@ -1,5 +1,6 @@
 package com.itextpdf.kernel.crypto.securityhandler;
 
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.Utilities;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfEncryption;
@@ -44,6 +45,6 @@ public abstract class StandardSecurityHandler extends SecurityHandler {
      * @return byte array
      */
     protected byte[] getIsoBytes(PdfString string) {
-        return com.itextpdf.io.source.OutputStream.getIsoBytes(string.getValue());
+        return ByteUtils.getIsoBytes(string.getValue());
     }
 }

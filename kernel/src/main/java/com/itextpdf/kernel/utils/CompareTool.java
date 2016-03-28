@@ -1,6 +1,7 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -392,10 +393,10 @@ public class CompareTool {
                 differentPagesFail = " Page is different!";
                 diffPages.add(i + 1);
                 if (compareExecIsOk) {
-                String compareParams = this.compareParams.replace("<image1>", imageFiles[i].getAbsolutePath())
+                String currCompareParams = compareParams.replace("<image1>", imageFiles[i].getAbsolutePath())
                             .replace("<image2>", cmpImageFiles[i].getAbsolutePath())
                             .replace("<difference>", outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png");
-                    if (runProcessAndWait(compareExec, compareParams))
+                    if (runProcessAndWait(compareExec, currCompareParams))
                         differentPagesFail += "\nPlease, examine " + outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png for more details.";
                 }
                 System.out.println(differentPagesFail);
@@ -433,24 +434,24 @@ public class CompareTool {
                 PdfStream outStream = getPageContentStream(pdfOutDoc.getPage(pageNumber));
                 PdfStream cmpStream = getPageContentStream(pdfCmpDoc.getPage(pageNumber));
 
-                outStream.getOutputStream().writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("q\n"));
-                outStream.getOutputStream().writeFloats(new float[]{0.0f, 0.0f, 0.0f}).writeSpace().writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("rg\n"));
-                cmpStream.getOutputStream().writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("q\n"));
-                cmpStream.getOutputStream().writeFloats(new float[]{0.0f, 0.0f, 0.0f}).writeSpace().writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("rg\n"));
+                outStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("q\n"));
+                outStream.getOutputStream().writeFloats(new float[]{0.0f, 0.0f, 0.0f}).writeSpace().writeBytes(ByteUtils.getIsoBytes("rg\n"));
+                cmpStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("q\n"));
+                cmpStream.getOutputStream().writeFloats(new float[]{0.0f, 0.0f, 0.0f}).writeSpace().writeBytes(ByteUtils.getIsoBytes("rg\n"));
 
                 for (Rectangle rect : rectangles) {
                     outStream.getOutputStream().writeFloats(new float[]{rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight()}).
                             writeSpace().
-                            writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("re\n")).
-                            writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("f\n"));
+                            writeBytes(ByteUtils.getIsoBytes("re\n")).
+                            writeBytes(ByteUtils.getIsoBytes("f\n"));
 
                     cmpStream.getOutputStream().writeFloats(new float[]{rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight()}).
                             writeSpace().
-                            writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("re\n")).
-                            writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("f\n"));
+                            writeBytes(ByteUtils.getIsoBytes("re\n")).
+                            writeBytes(ByteUtils.getIsoBytes("f\n"));
                 }
-                outStream.getOutputStream().writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("Q\n"));
-                cmpStream.getOutputStream().writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("Q\n"));
+                outStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("Q\n"));
+                cmpStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("Q\n"));
             }
         }
 
@@ -504,12 +505,12 @@ public class CompareTool {
             return cannotOpenOutputDirectory.replace("<filename>", outPdf);
         }
 
-        String gsParams = this.gsParams.replace("<outputfile>", outPath + cmpImage).replace("<inputfile>", cmpPdf);
-        if (!runProcessAndWait(gsExec, gsParams)) {
+        String currGsParams = gsParams.replace("<outputfile>", outPath + cmpImage).replace("<inputfile>", cmpPdf);
+        if (!runProcessAndWait(gsExec, currGsParams)) {
             return gsFailed.replace("<filename>", cmpPdf);
         }
-        gsParams = this.gsParams.replace("<outputfile>", outPath + outImage).replace("<inputfile>", outPdf);
-        if (!runProcessAndWait(gsExec, gsParams)) {
+        currGsParams = gsParams.replace("<outputfile>", outPath + outImage).replace("<inputfile>", outPdf);
+        if (!runProcessAndWait(gsExec, currGsParams)) {
             return gsFailed.replace("<filename>", outPdf);
         }
         return null;

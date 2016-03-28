@@ -1,14 +1,14 @@
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.source.OutputStream;
+import com.itextpdf.io.source.ByteUtils;
 
 public class PdfBoolean extends PdfPrimitiveObject {
 
     public static final PdfBoolean PdfTrue = new PdfBoolean(true, true);
     public static final PdfBoolean PdfFalse = new PdfBoolean(false, true);
 
-    private static final byte[] True = OutputStream.getIsoBytes("true");
-    private static final byte[] False = OutputStream.getIsoBytes("false");
+    private static final byte[] True = ByteUtils.getIsoBytes("true");
+    private static final byte[] False = ByteUtils.getIsoBytes("false");
 
     private boolean value;
 

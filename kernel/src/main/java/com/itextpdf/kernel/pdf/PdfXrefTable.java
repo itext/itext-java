@@ -1,7 +1,7 @@
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.source.OutputStream;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -16,8 +16,8 @@ class PdfXrefTable {
 
     static private final DecimalFormat objectOffsetFormatter = new DecimalFormat("0000000000");
     static private final DecimalFormat objectGenerationFormatter = new DecimalFormat("00000");
-    static private final byte[] freeXRefEntry = OutputStream.getIsoBytes("f \n");
-    static private final byte[] inUseXRefEntry = OutputStream.getIsoBytes("n \n");
+    static private final byte[] freeXRefEntry = ByteUtils.getIsoBytes("f \n");
+    static private final byte[] inUseXRefEntry = ByteUtils.getIsoBytes("n \n");
 
     private PdfIndirectReference[] xref;
     private int count = 0;

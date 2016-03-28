@@ -2,6 +2,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteBuffer;
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSource;
@@ -58,8 +59,8 @@ public class PdfReader implements Closeable {
     private static final String endstream2 = "\nendstream";
     private static final String endstream3 = "\r\nendstream";
     private static final String endstream4 = "\rendstream";
-    private static final byte[] endstream = PdfOutputStream.getIsoBytes("endstream");
-    private static final byte[] endobj = PdfOutputStream.getIsoBytes("endobj");
+    private static final byte[] endstream = ByteUtils.getIsoBytes("endstream");
+    private static final byte[] endobj = ByteUtils.getIsoBytes("endobj");
 
     /**
      * Constructs a new PdfReader. This is the master constructor.
@@ -949,7 +950,7 @@ public class PdfReader implements Closeable {
     public byte[] getOriginalFileId() {
         PdfArray id = trailer.getAsArray(PdfName.ID);
         if (id != null) {
-            return PdfOutputStream.getIsoBytes(id.getAsString(0).getValue());
+            return ByteUtils.getIsoBytes(id.getAsString(0).getValue());
         } else {
             return PdfEncryption.generateNewDocumentId();
         }

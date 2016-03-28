@@ -1,6 +1,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.PdfException;
 
 import java.io.BufferedOutputStream;
@@ -17,8 +18,8 @@ import org.slf4j.LoggerFactory;
 
 public class PdfWriter extends PdfOutputStream {
 
-    private static final byte[] obj = getIsoBytes(" obj\n");
-    private static final byte[] endobj = getIsoBytes("\nendobj\n");
+    private static final byte[] obj = ByteUtils.getIsoBytes(" obj\n");
+    private static final byte[] endobj = ByteUtils.getIsoBytes("\nendobj\n");
     private HashMap<ByteStore, PdfIndirectReference> streamMap = new HashMap<>();
     private final HashMap<Integer, Integer> serialized = new HashMap<>();
 
@@ -269,7 +270,7 @@ public class PdfWriter extends PdfOutputStream {
      * @throws PdfException
      */
     protected void writeHeader() {
-        writeByte((byte) '%').
+        writeByte('%').
                 writeString(document.getPdfVersion().toString()).
                 writeString("\n%\u00e2\u00e3\u00cf\u00d3\n");
     }

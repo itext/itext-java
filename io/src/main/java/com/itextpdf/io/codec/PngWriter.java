@@ -1,5 +1,7 @@
 package com.itextpdf.io.codec;
 
+import com.itextpdf.io.source.ByteUtils;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,11 +14,11 @@ public class PngWriter {
 
     private static final byte[] PNG_SIGNTURE = {(byte) 137, 80, 78, 71, 13, 10, 26, 10};
 
-    private static final byte[] IHDR = com.itextpdf.io.source.OutputStream.getIsoBytes("IHDR");
-    private static final byte[] PLTE = com.itextpdf.io.source.OutputStream.getIsoBytes("PLTE");
-    private static final byte[] IDAT = com.itextpdf.io.source.OutputStream.getIsoBytes("IDAT");
-    private static final byte[] IEND = com.itextpdf.io.source.OutputStream.getIsoBytes("IEND");
-    private static final byte[] iCCP = com.itextpdf.io.source.OutputStream.getIsoBytes("iCCP");
+    private static final byte[] IHDR = ByteUtils.getIsoBytes("IHDR");
+    private static final byte[] PLTE = ByteUtils.getIsoBytes("PLTE");
+    private static final byte[] IDAT = ByteUtils.getIsoBytes("IDAT");
+    private static final byte[] IEND = ByteUtils.getIsoBytes("IEND");
+    private static final byte[] iCCP = ByteUtils.getIsoBytes("iCCP");
 
     private static int[] crc_table;
 

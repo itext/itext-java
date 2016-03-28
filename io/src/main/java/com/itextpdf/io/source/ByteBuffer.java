@@ -63,7 +63,7 @@ public class ByteBuffer {
     }
 
     public ByteBuffer append(String str) {
-        return append(OutputStream.getIsoBytes(str));
+        return append(ByteUtils.getIsoBytes(str));
     }
 
     public ByteBuffer appendHex(byte b) {
@@ -117,5 +117,29 @@ public class ByteBuffer {
                 return false;
         }
         return true;
+    }
+
+    /**
+     * Fill {@code ByteBuffer} from the end.
+     * Set byte at {@code capacity() - size() - 1} position.
+     * @param b {@code byte}.
+     * @return {@code ByteBuffer}.
+     */
+    ByteBuffer prepend(byte b) {
+        buffer[buffer.length - count - 1] = b;
+        count++;
+        return this;
+    }
+
+    /**
+     * Fill {@code ByteBuffer} from the end.
+     * Set bytes from {@code capacity() - size() - b.length} position.
+     * @param b {@code byte}.
+     * @return {@code ByteBuffer}.
+     */
+    ByteBuffer prepend(byte[] b) {
+        System.arraycopy(b, 0, buffer, buffer.length - count - b.length, b.length);
+        count += b.length;
+        return this;
     }
 }
