@@ -1,6 +1,8 @@
 package com.itextpdf.io.codec;
 
 import com.itextpdf.io.source.RandomAccessFileOrArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
@@ -378,7 +380,8 @@ public class Jbig2SegmentReader {
             }
             os.close();
         } catch (java.io.IOException e) {
-            e.printStackTrace();
+            Logger logger = LoggerFactory.getLogger(Jbig2SegmentReader.class);
+            logger.debug(e.getMessage());
         }
         if (os.size() <= 0) {
             return null;

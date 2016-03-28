@@ -1,5 +1,8 @@
 package com.itextpdf.io.source;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Method;
 import java.nio.BufferUnderflowException;
 import java.security.AccessController;
@@ -101,7 +104,8 @@ class ByteBufferRandomAccessSource implements RandomAccessSource {
                     success = Boolean.TRUE;
                 } catch (Exception e) {
                     // This really is a show stopper on windows
-                    //e.printStackTrace();
+                    Logger logger = LoggerFactory.getLogger(ByteBufferRandomAccessSource.class);
+                    logger.debug(e.getMessage());
                 }
                 return success;
             }
