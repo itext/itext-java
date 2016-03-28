@@ -32,7 +32,7 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Indicates if to use full compression (using object streams).
      */
-    protected boolean fullCompression = false;
+    protected Boolean fullCompression;
 
     protected int compressionLevel = DEFAULT_COMPRESSION;
 
@@ -61,7 +61,7 @@ public class PdfWriter extends PdfOutputStream {
      * @return true if to use full compression, false otherwise.
      */
     public boolean isFullCompression() {
-        return fullCompression;
+        return fullCompression != null ? fullCompression : false;
     }
 
     /**
@@ -117,7 +117,7 @@ public class PdfWriter extends PdfOutputStream {
      * @throws PdfException
      */
     protected PdfObjectStream getObjectStream() throws IOException {
-        if (!fullCompression)
+        if (!isFullCompression())
             return null;
         if (objectStream == null) {
             objectStream = new PdfObjectStream(document);
@@ -138,7 +138,7 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
         PdfIndirectReference indirectReference = pdfObject.getIndirectReference();
-        if (fullCompression && canBeInObjStm) {
+        if (isFullCompression() && canBeInObjStm) {
             PdfObjectStream objectStream = getObjectStream();
             objectStream.addObject(pdfObject);
         } else {

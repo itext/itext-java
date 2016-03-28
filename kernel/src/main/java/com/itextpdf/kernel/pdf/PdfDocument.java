@@ -631,6 +631,9 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         isClosing = true;
         try {
             if (writer != null) {
+                if (reader != null && reader.xrefStm && writer.fullCompression == null) {
+                    writer.setFullCompression(true);
+                }
                 if (catalog.isFlushed())
                     throw new PdfException(PdfException.CannotCloseDocumentWithAlreadyFlushedPdfCatalog);
                 if (xmpMetadata != null) {

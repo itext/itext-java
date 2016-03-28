@@ -1,10 +1,12 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -1298,6 +1300,25 @@ public class PdfStampingTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
         pdfDoc.close();
+    }
+
+    @Test
+    public void stampingTestWithFullCompression01() throws IOException, InterruptedException {
+        PdfReader reader = new PdfReader(sourceFolder + "fullCompressedDocument.pdf");
+        PdfDocument pdfDoc = new PdfDocument(reader, new PdfWriter(destinationFolder + "stampingTestWithFullCompression01.pdf"));
+
+        pdfDoc.close();
+        assertEquals(new File(destinationFolder + "stampingTestWithFullCompression01.pdf").length(), new File(sourceFolder + "cmp_stampingTestWithFullCompression01.pdf").length());
+    }
+
+    @Test
+    public void stampingTestWithFullCompression02() throws IOException, InterruptedException {
+        PdfReader reader = new PdfReader(sourceFolder + "fullCompressedDocument.pdf");
+        PdfDocument pdfDoc = new PdfDocument(reader, new PdfWriter(destinationFolder + "stampingTestWithFullCompression02.pdf"));
+        pdfDoc.getWriter().setFullCompression(false);
+
+        pdfDoc.close();
+        assertEquals(new File(destinationFolder + "stampingTestWithFullCompression02.pdf").length(), new File(sourceFolder + "cmp_stampingTestWithFullCompression02.pdf").length());
     }
 
     static void verifyPdfPagesCount(PdfObject root) {
