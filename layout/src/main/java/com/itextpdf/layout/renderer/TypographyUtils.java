@@ -83,6 +83,9 @@ class TypographyUtils {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
             logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
         } else {
+            if (levels == null) {
+                return null;
+            }
             int[] reorder = (int[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiAlgorithm", "computeReordering", new Class[]{byte[].class},
                     lineLevels);
             //int[] reorder = BidiAlgorithm.computeReordering(lineLevels);

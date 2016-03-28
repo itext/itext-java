@@ -1,5 +1,7 @@
 package com.itextpdf.kernel;
 
+import java.lang.reflect.Method;
+
 /**
  * This class contains version information about iText.
  * DO NOT CHANGE THE VERSION INFORMATION WITHOUT PERMISSION OF THE COPYRIGHT HOLDERS OF ITEXT.
@@ -27,7 +29,7 @@ public final class Version {
      * iText Group requests that you retain the iText producer line
      * in every PDF that is created or manipulated using iText.
      */
-    private String iTextVersion = iText + " " + release + " \u00a92000-2016 iText Group NV (AGPL-version)";
+    private String iTextVersion = iText + " " + release + " \u00a92000-2016 iText Group NV";
     /**
      * The license key.
      */
@@ -41,6 +43,48 @@ public final class Version {
     public static Version getInstance() {
         if (version == null) {
             version = new Version();
+            synchronized ( version ) {
+                try {
+                    Class<?> klass = Class.forName("com.itextpdf.licensekey.LicenseKey");
+                    Method m = klass.getMethod("getLicenseeInfo");
+                    String[] info = (String[])m.invoke(klass.newInstance());
+                    if (info[3] != null && info[3].trim().length() > 0) {
+                        version.key = info[3];
+                    } else {
+                        version.key = "Trial version";
+                        if (info[5] == null) {
+                            version.key += "unauthorised";
+                        } else {
+                            version.key += info[5];
+                        }
+                    }
+
+                    if (info[4] != null && info[4].trim().length() > 0) {
+                        version.iTextVersion = info[4];
+                    }  else if (info[2] != null && info[2].trim().length() > 0) {
+                        version.iTextVersion += " (" + info[2];
+                        if (!version.key.toLowerCase().startsWith("trial")) {
+                            version.iTextVersion += "; licensed version)";
+                        } else {
+                            version.iTextVersion += "; " + version.key + ")";
+                        }
+                    } else if (info[0] != null && info[0].trim().length() > 0) {
+                        // fall back to contact name, if company name is unavailable
+                        version.iTextVersion += " (" + info[0];
+                        if (!version.key.toLowerCase().startsWith("trial")) {
+                            // we shouldn't have a licensed version without company name,
+                            // but let's account for it anyway
+                            version.iTextVersion += "; licensed version)";
+                        } else {
+                            version.iTextVersion += "; " + version.key + ")";
+                        }
+                    } else {
+                        throw new Exception();
+                    }
+                } catch (Exception e) {
+                    version.iTextVersion += "; AGPL";
+                }
+            }
         }
         return version;
     }
