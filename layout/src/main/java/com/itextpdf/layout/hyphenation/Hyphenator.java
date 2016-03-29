@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.itextpdf.io.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -206,7 +207,7 @@ public final class Hyphenator {
 
         if (hTree == null) {
             // get from the default directory
-            InputStream defaultHyphenationResourceStream = ClassLoader.getSystemResourceAsStream(HYPHENATION_DEFAULT_RESOURCE + key + ".xml");
+            InputStream defaultHyphenationResourceStream = Utilities.getResourceStream(HYPHENATION_DEFAULT_RESOURCE + key + ".xml");
             if (defaultHyphenationResourceStream != null) {
                 hTree = getHyphenationTree(defaultHyphenationResourceStream, key);
             }
