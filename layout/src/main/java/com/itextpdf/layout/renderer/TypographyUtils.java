@@ -144,8 +144,8 @@ class TypographyUtils {
             logger.warn(String.format("Cannot find method %s for class %s", methodName, className));
         } catch (ClassNotFoundException e) {
             logger.warn(String.format("Cannot find class %s", className));
-        } catch (Exception ignored) {
-            logger.error(ignored.toString());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return null;
     }
@@ -159,8 +159,8 @@ class TypographyUtils {
             logger.warn(String.format("Cannot find constructor for class %s", className));
         } catch (ClassNotFoundException e) {
             logger.warn(String.format("Cannot find class %s", className));
-        } catch (Exception ignored) {
-            logger.error(ignored.toString());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return null;
     }
