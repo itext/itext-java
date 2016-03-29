@@ -15,14 +15,14 @@ public class TiffImage extends RawImage {
     private boolean direct;
 
     protected TiffImage(URL url, boolean recoverFromImageError, int page, boolean direct) {
-        super(url, TIFF);
+        super(url, ImageType.TIFF);
         this.recoverFromImageError = recoverFromImageError;
         this.page = page;
         this.direct = direct;
     }
 
     protected TiffImage(byte[] bytes, boolean recoverFromImageError, int page, boolean direct) {
-        super(bytes, TIFF);
+        super(bytes, ImageType.TIFF);
         this.recoverFromImageError = recoverFromImageError;
         this.page = page;
         this.direct = direct;
@@ -70,7 +70,7 @@ public class TiffImage extends RawImage {
         return direct;
     }
 
-    public void setOriginalType(int originalType) {
+    public void setOriginalType(ImageType originalType) {
         this.originalType = originalType;
     }
 }

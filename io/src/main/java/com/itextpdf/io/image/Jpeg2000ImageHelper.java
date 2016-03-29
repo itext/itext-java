@@ -35,7 +35,7 @@ public final class Jpeg2000ImageHelper {
     private static final int JPX_JPXB = 0x6a707862;
 
     public static void processImage(Image image, ByteArrayOutputStream stream) {
-        if (image.getOriginalType() != Image.JPEG2000)
+        if (image.getOriginalType() != ImageType.JPEG2000)
             throw new IllegalArgumentException("JPEG2000 image expected");
         Jpeg2000Image.Parameters jp2 = new Jpeg2000Image.Parameters();
         Jpeg2000Image jpeg2000Image = (Jpeg2000Image)image;

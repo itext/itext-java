@@ -4,6 +4,7 @@ import com.itextpdf.io.codec.PngWriter;
 import com.itextpdf.io.codec.TIFFConstants;
 import com.itextpdf.io.codec.TiffWriter;
 import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.image.RawImage;
 import com.itextpdf.io.image.RawImageHelper;
 import com.itextpdf.io.source.ByteArrayOutputStream;
@@ -125,7 +126,7 @@ public class PdfImageXObject extends PdfXObject {
 
     protected static PdfStream createPdfStream(Image image, PdfImageXObject imageMask) {
         PdfStream stream;
-        if (image.getOriginalType() == Image.RAW) {
+        if (image.getOriginalType() == ImageType.RAW) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             RawImageHelper.updateImageAttributes((RawImage) image, null, baos);
             stream = new PdfStream(baos.toByteArray());

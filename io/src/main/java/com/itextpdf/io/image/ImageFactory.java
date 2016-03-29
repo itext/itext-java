@@ -63,7 +63,7 @@ public final class ImageFactory {
             throw new IOException(IOException.CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d);
         if (reverseBits)
             TIFFFaxDecoder.reverseBits(data);
-        RawImage image = new RawImage(data, Image.RAW);
+        RawImage image = new RawImage(data, ImageType.RAW);
         image.setTypeCcitt(typeCCITT);
         image.height = height;
         image.width = width;
@@ -80,7 +80,7 @@ public final class ImageFactory {
             byte g4[] = CCITTG4Encoder.compress(data, width, height);
             return ImageFactory.getImage(width, height, false, RawImage.CCITTG4, RawImage.CCITT_BLACKIS1, g4, transparency);
         }
-        RawImage image = new RawImage(data, Image.RAW);
+        RawImage image = new RawImage(data, ImageType.RAW);
         image.height = height;
         image.width = width;
         if (components != 1 && components != 3 && components != 4)
@@ -526,7 +526,7 @@ public final class ImageFactory {
     }
 
     public static Image getRawImage(byte[] bytes) {
-        return new RawImage(bytes, Image.RAW);
+        return new RawImage(bytes, ImageType.RAW);
     }
 
     private static Image getImageInstance(URL source, boolean recoverImage) {

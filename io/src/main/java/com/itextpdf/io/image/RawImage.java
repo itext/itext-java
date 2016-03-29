@@ -48,11 +48,11 @@ public class RawImage extends Image {
     protected int typeCcitt;
 
 
-    protected RawImage(URL url, int type) {
+    protected RawImage(URL url, ImageType type) {
         super(url, type);
     }
 
-    protected RawImage(byte[] bytes, int type) {
+    protected RawImage(byte[] bytes, ImageType type) {
         super(bytes, type);
     }
 

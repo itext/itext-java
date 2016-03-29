@@ -32,7 +32,7 @@ public class Jbig2ImageHelper {
     }
 
     public static void processImage(Image jbig2, ByteArrayOutputStream stream) {
-        if (jbig2.getOriginalType() != Image.JBIG2)
+        if (jbig2.getOriginalType() != ImageType.JBIG2)
             throw new IllegalArgumentException("JBIG2 image expected");
         Jbig2Image image = (Jbig2Image)jbig2;
 

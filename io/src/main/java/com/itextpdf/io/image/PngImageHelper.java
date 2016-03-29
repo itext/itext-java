@@ -116,7 +116,7 @@ public class PngImageHelper {
             "/RelativeColorimetric", "/Saturation", "/AbsoluteColorimetric"};
 
     public static void processImage(Image image, ByteArrayOutputStream stream) {
-        if (image.getOriginalType() != Image.PNG)
+        if (image.getOriginalType() != ImageType.PNG)
             throw new IllegalArgumentException("PNG image expected");
         PngParameters png = new PngParameters();
         png.image = (PngImage) image;

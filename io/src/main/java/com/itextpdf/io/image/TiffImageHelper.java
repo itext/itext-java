@@ -31,7 +31,7 @@ public class TiffImageHelper {
     }
 
     public static void processImage(Image image, ByteArrayOutputStream stream) {
-        if (image.getOriginalType() != Image.TIFF)
+        if (image.getOriginalType() != ImageType.TIFF)
             throw new IllegalArgumentException("TIFF image expected");
         if (stream == null) {
             stream = new ByteArrayOutputStream();
@@ -398,7 +398,7 @@ public class TiffImageHelper {
                 s.seek(posFilePointer);
                 s.readFully(jpeg);
                 tiff.image.data = jpeg;
-                tiff.image.setOriginalType(Image.JPEG);
+                tiff.image.setOriginalType(ImageType.JPEG);
                 JpegImageHelper.processImage(tiff.image, tiff.stream);
                 tiff.jpegProcessing = true;
             } else if (compression == TIFFConstants.COMPRESSION_JPEG) {
@@ -432,7 +432,7 @@ public class TiffImageHelper {
                     jpeg = jpegwithtables;
                 }
                 tiff.image.data = jpeg;
-                tiff.image.setOriginalType(Image.JPEG);
+                tiff.image.setOriginalType(ImageType.JPEG);
                 JpegImageHelper.processImage(tiff.image, tiff.stream);
                 tiff.jpegProcessing = true;
                 if (photometric == TIFFConstants.PHOTOMETRIC_RGB) {

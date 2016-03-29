@@ -8,13 +8,13 @@ public class BmpImage extends RawImage {
     private boolean noHeader;
 
     protected BmpImage(URL url, boolean noHeader, int size) {
-        super(url, BMP);
+        super(url, ImageType.BMP);
         this.noHeader = noHeader;
         this.size = size;
     }
 
     protected BmpImage(byte[] bytes, boolean noHeader, int size) {
-        super(bytes, BMP);
+        super(bytes, ImageType.BMP);
         this.noHeader = noHeader;
         this.size = size;
     }

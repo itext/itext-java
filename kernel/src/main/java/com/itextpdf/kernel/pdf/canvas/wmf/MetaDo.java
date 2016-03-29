@@ -1,5 +1,6 @@
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
+import com.itextpdf.io.image.ImageType;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -697,7 +698,7 @@ public class MetaDo {
      * @throws IOException
      */
     public static byte[] wrapBMP(Image image) throws IOException {
-        if (image.getOriginalType() != Image.BMP) {
+        if (image.getOriginalType() != ImageType.BMP) {
             throw new PdfException(PdfException.OnlyBmpCanBeWrappedInWmf);
         }
         InputStream imgIn;

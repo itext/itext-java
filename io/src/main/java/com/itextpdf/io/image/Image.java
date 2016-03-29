@@ -12,22 +12,11 @@ import org.slf4j.LoggerFactory;
 
 public abstract class Image {
 
-    public static final int JPEG = 1;
-    public static final int PNG = 2;
-    public static final int GIF = 3;
-    public static final int BMP = 4;
-    public static final int TIFF = 5;
-    public static final int WMF = 6;
-    public static final int PS = 7;
-    public static final int JPEG2000 = 8;
-    public static final int JBIG2 = 9;
-    public static final int RAW = 10;
-
     protected URL url;
 
     protected int[] transparency;
 
-    protected int originalType;
+    protected ImageType originalType;
 
     protected float width;
 
@@ -73,12 +62,12 @@ public abstract class Image {
 
     protected Long mySerialId = getSerialId();
 
-    protected Image(URL url, int type) {
+    protected Image(URL url, ImageType type) {
         this.url = url;
         this.originalType = type;
     }
 
-    protected Image(byte[] bytes, int type) {
+    protected Image(byte[] bytes, ImageType type) {
         this.data = bytes;
         this.originalType = type;
     }
@@ -156,7 +145,7 @@ public abstract class Image {
         this.deflated = deflated;
     }
 
-    public int getOriginalType() {
+    public ImageType getOriginalType() {
         return originalType;
     }
 

@@ -68,7 +68,7 @@ public final class BmpImageHelper {
     private static final int BI_BITFIELDS = 3;
 
     public static void processImage(Image image, ByteArrayOutputStream stream) {
-        if (image.getOriginalType() != Image.BMP)
+        if (image.getOriginalType() != ImageType.BMP)
             throw new IllegalArgumentException("BMP image expected");
         if (stream == null) {
             stream = new ByteArrayOutputStream();

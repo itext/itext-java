@@ -5,10 +5,10 @@ import java.net.URL;
 public class PngImage extends RawImage {
 
     protected PngImage(byte[] bytes) {
-        super(bytes, PNG);
+        super(bytes, ImageType.PNG);
     }
 
     protected PngImage(URL url) {
-        super(url, PNG);
+        super(url, ImageType.PNG);
     }
 }

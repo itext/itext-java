@@ -17,12 +17,12 @@ public class Jbig2Image extends Image {
     private int page;
 
     protected Jbig2Image(URL url, int page) {
-        super(url, JBIG2);
+        super(url, ImageType.JBIG2);
         this.page = page;
     }
 
     protected Jbig2Image(byte[] bytes, int page) {
-        super(bytes, JBIG2);
+        super(bytes, ImageType.JBIG2);
         this.page = page;
     }
 

@@ -77,7 +77,7 @@ public class JpegImageHelper {
     private static final byte[] PS_8BIM_RESO = {0x38, 0x42, 0x49, 0x4d, 0x03, (byte) 0xed};
 
     public static void processImage(Image image, ByteArrayOutputStream stream) {
-        if (image.getOriginalType() != Image.JPEG)
+        if (image.getOriginalType() != ImageType.JPEG)
             throw new IllegalArgumentException("JPEG image expected");
         InputStream jpegStream = null;
         try {

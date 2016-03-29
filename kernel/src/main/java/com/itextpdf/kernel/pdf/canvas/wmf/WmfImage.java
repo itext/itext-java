@@ -1,5 +1,6 @@
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
+import com.itextpdf.io.image.ImageType;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.util.Utilities;
 import com.itextpdf.io.image.Image;
@@ -33,7 +34,7 @@ public class WmfImage extends Image {
      * @param url URL to the file
      */
     public WmfImage(URL url) {
-        super(url, WMF);
+        super(url, ImageType.WMF);
         byte[] imageType = readImageType(url);
         if (!imageTypeIs(imageType, wmf)) {
             throw new PdfException(PdfException.IsNotWmfImage);
@@ -45,7 +46,7 @@ public class WmfImage extends Image {
      * @param bytes the image bytes
      */
     public WmfImage(byte[] bytes) {
-        super(bytes, WMF);
+        super(bytes, ImageType.WMF);
         byte[] imageType = readImageType(url);
         if (!imageTypeIs(imageType, wmf)) {
             throw new PdfException(PdfException.IsNotWmfImage);

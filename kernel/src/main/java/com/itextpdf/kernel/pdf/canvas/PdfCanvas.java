@@ -4,6 +4,7 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.Utilities;
 import com.itextpdf.kernel.PdfException;
@@ -1727,7 +1728,7 @@ public class PdfCanvas {
      */
     public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f, boolean asInline) {
         document.checkIsoConformance(currentGs, IsoKey.GRAPHIC_STATE_ONLY, null);
-        if (image.getOriginalType() == Image.WMF) {
+        if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
             PdfXObject xObject = wmf.createPdfForm(document);
@@ -1769,7 +1770,7 @@ public class PdfCanvas {
      * @throws PdfException
      */
     public PdfXObject addImage(Image image, float x, float y, boolean asInline) {
-        if (image.getOriginalType() == Image.WMF) {
+        if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
             PdfXObject xObject = wmf.createPdfForm(document);
@@ -1799,7 +1800,7 @@ public class PdfCanvas {
      * @on error.
      */
     public PdfXObject addImage(Image image, float x, float y, float width, boolean asInline) {
-        if (image.getOriginalType() == Image.WMF) {
+        if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
             PdfXObject xObject = wmf.createPdfForm(document);

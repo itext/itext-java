@@ -1,5 +1,6 @@
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
+import com.itextpdf.io.image.ImageType;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.io.image.Image;
@@ -31,7 +32,7 @@ public class WmfImageHelper {
      * @param wmf the {@link com.itextpdf.kernel.pdf.canvas.wmf.WmfImage} object
      */
     public WmfImageHelper(Image wmf) {
-        if (wmf.getOriginalType() != Image.WMF)
+        if (wmf.getOriginalType() != ImageType.WMF)
             throw new IllegalArgumentException("WMF image expected");
         this.wmf = (WmfImage)wmf;
         processParameters();
