@@ -114,7 +114,7 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
 
     public T writeByte(int value) {
         try {
-            write((byte) value);
+            write(value);
             return (T) this;
         } catch (java.io.IOException e) {
             throw new IOException(IOException.CannotWriteByte, e);

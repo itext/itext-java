@@ -1,6 +1,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -342,7 +343,7 @@ class FontRegisterProvider {
             File file = new File(dir);
             if (!file.exists() || !file.isDirectory())
                 return 0;
-            String files[] = file.list();
+            String[] files = file.list();
             if (files == null)
                 return 0;
             for (int k = 0; k < files.length; ++k) {
@@ -385,18 +386,26 @@ class FontRegisterProvider {
      */
     public int registerSystemDirectories() {
         int count = 0;
-        String winDir = System.getenv("windir");
-        String fileSeparator = System.getProperty("file.separator");
-        if (winDir != null && fileSeparator != null) {
-            count += registerDirectory(winDir + fileSeparator + "fonts");
+        String[] withSubDirs = {
+                Utilities.getFontsDir(),
+                "/usr/share/X11/fonts",
+                "/usr/X/lib/X11/fonts",
+                "/usr/openwin/lib/X11/fonts",
+                "/usr/share/fonts",
+                "/usr/X11R6/lib/X11/fonts"
+        };
+        for (String directory : withSubDirs) {
+            count += registerDirectory(directory, true);
         }
-        count += registerDirectory("/usr/share/X11/fonts", true);
-        count += registerDirectory("/usr/X/lib/X11/fonts", true);
-        count += registerDirectory("/usr/openwin/lib/X11/fonts", true);
-        count += registerDirectory("/usr/share/fonts", true);
-        count += registerDirectory("/usr/X11R6/lib/X11/fonts", true);
-        count += registerDirectory("/Library/Fonts");
-        count += registerDirectory("/System/Library/Fonts");
+
+        String[] withoutSubDirs = {
+                "/Library/Fonts",
+                "/System/Library/Fonts"
+        };
+        for (String directory : withoutSubDirs) {
+            count += registerDirectory(directory, false);
+        }
+
         return count;
     }
 

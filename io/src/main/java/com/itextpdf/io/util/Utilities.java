@@ -460,4 +460,10 @@ public class Utilities {
         }
         return src;
     }
+
+    public static String getFontsDir() {
+        String winDir = System.getenv("windir");
+        String fileSeparator = System.getProperty("file.separator");
+        return winDir + fileSeparator + "fonts";
+    }
 }
