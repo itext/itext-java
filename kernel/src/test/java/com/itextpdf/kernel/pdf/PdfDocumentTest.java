@@ -7,10 +7,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
@@ -296,5 +293,20 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.getPage(1).getResources().addForm(pdfObject);
         pdfDocument.close();
         assertNull(new CompareTool().compareByContent(destinationFolder + "datasheet_mode.pdf", sourceFolder + "cmp_datasheet_mode.pdf", "d:/", "diff_"));
+    }
+
+    @Test
+    public void readEncryptedDocumentWithFullCompression() throws IOException {
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "source.pdf"), "123".getBytes());
+        PdfDocument pdfDocument = new PdfDocument(reader);
+
+        PdfDictionary form = pdfDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
+
+        PdfDictionary field = form.getAsArray(PdfName.Fields).getAsDictionary(0);
+
+        assertEquals("ch", field.getAsString(PdfName.T).toUnicodeString());
+        assertEquals("SomeStringValueInDictionary", field.getAsDictionary(new PdfName("TestDic")).getAsString(new PdfName("TestString")).toUnicodeString());
+        assertEquals("SomeStringValueInArray", field.getAsArray(new PdfName("TestArray")).getAsString(0).toUnicodeString());
+        pdfDocument.close();
     }
 }

@@ -631,9 +631,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         isClosing = true;
         try {
             if (writer != null) {
-                if (reader != null && reader.xrefStm && writer.fullCompression == null) {
-                    writer.setFullCompression(true);
-                }
                 if (catalog.isFlushed())
                     throw new PdfException(PdfException.CannotCloseDocumentWithAlreadyFlushedPdfCatalog);
                 if (xmpMetadata != null) {
@@ -1270,6 +1267,9 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     throw new PdfException(PdfException.AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible);
             }
             if (writer != null) {
+                if (reader != null && reader.xrefStm && writer.fullCompression == null) {
+                    writer.setFullCompression(true);
+                }
                 if (reader != null && !reader.isOpenedWithFullPermission()) {
                     throw new BadPasswordException(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);
                 }

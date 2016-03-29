@@ -492,7 +492,7 @@ public class PdfReader implements Closeable {
                     obj = new PdfNumber(tokens.getByteContent());
                 } else {
                     tokens.seek(address[k]);
-                    obj = readObject(false);
+                    obj = readObject(false, true);
                 }
                 PdfIndirectReference reference = pdfDocument.getXref().get(objNumber[k]);
                 // Check if this object has no incremental updates (e.g. no append mode)
@@ -512,11 +512,15 @@ public class PdfReader implements Closeable {
     }
 
     protected PdfObject readObject(boolean readAsDirect) throws IOException {
+        return readObject(readAsDirect, false);
+    }
+
+    protected PdfObject readObject(boolean readAsDirect, boolean objStm) throws IOException {
         tokens.nextValidToken();
         PdfTokenizer.TokenType type = tokens.getTokenType();
         switch (type) {
             case StartDic: {
-                PdfDictionary dict = readDictionary();
+                PdfDictionary dict = readDictionary(objStm);
                 long pos = tokens.getPosition();
                 // be careful in the trailer. May not be a "next" token.
                 boolean hasNext;
@@ -541,7 +545,7 @@ public class PdfReader implements Closeable {
                 }
             }
             case StartArray:
-                return readArray();
+                return readArray(objStm);
             case Number:
                 return new PdfNumber(tokens.getByteContent());
             case String: {
@@ -550,7 +554,7 @@ public class PdfReader implements Closeable {
                     pdfString.setDecryptInfoNum(currentIndirectReference.getObjNumber());
                     pdfString.setDecryptInfoGen(currentIndirectReference.getGenNumber());
                 }
-                return password == null ? pdfString : pdfString.decrypt(decrypt);
+                return password == null || objStm ? pdfString : pdfString.decrypt(decrypt);
             }
             case Name:
                 return readPdfName(readAsDirect);
@@ -614,7 +618,7 @@ public class PdfReader implements Closeable {
         return new PdfName(tokens.getByteContent());
     }
 
-    protected PdfDictionary readDictionary() throws IOException {
+    protected PdfDictionary readDictionary(boolean objStm) throws IOException {
         PdfDictionary dic = new PdfDictionary();
         while (true) {
             tokens.nextValidToken();
@@ -623,7 +627,7 @@ public class PdfReader implements Closeable {
             if (tokens.getTokenType() != PdfTokenizer.TokenType.Name)
                 tokens.throwError(PdfException.DictionaryKey1IsNotAName, tokens.getStringValue());
             PdfName name = readPdfName(true);
-            PdfObject obj = readObject(true);
+            PdfObject obj = readObject(true, objStm);
             if (obj == null) {
                 if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
                     tokens.throwError(PdfException.UnexpectedGtGt);
@@ -635,10 +639,10 @@ public class PdfReader implements Closeable {
         return dic;
     }
 
-    protected PdfArray readArray() throws IOException {
+    protected PdfArray readArray(boolean objStm) throws IOException {
         PdfArray array = new PdfArray();
         while (true) {
-            PdfObject obj = readObject(true);
+            PdfObject obj = readObject(true, objStm);
              if (obj == null) {
                 if (tokens.getTokenType() == PdfTokenizer.TokenType.EndArray)
                     break;
