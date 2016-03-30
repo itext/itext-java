@@ -1,14 +1,12 @@
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.OutputStream;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.pdf.filters.FlateDecodeFilter;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.cert.Certificate;
@@ -130,7 +128,10 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
      */
     protected PdfEncryption crypto;
 
-    protected PdfOutputStream() {
+    /**
+     * Do not use this constructor. This is only for internal usage.
+     */
+    private PdfOutputStream() {
         super();
     }
 

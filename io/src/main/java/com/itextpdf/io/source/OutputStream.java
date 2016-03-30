@@ -24,6 +24,14 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
         this.outputStream = outputStream;
     }
 
+    /**
+     * Do not use this constructor. This is only for internal usage.
+     */
+    protected OutputStream() {
+        super();
+        this.outputStream = new ByteArrayOutputStream();
+    }
+
     @Override
     public void write(int b) throws java.io.IOException {
         outputStream.write(b);

@@ -524,22 +524,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return defaultPageSize;
     }
 
-    public byte[] getSerializedBytes() {
-        try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = null;
-            oos = new ObjectOutputStream(bos);
-            oos.writeObject(this);
-            oos.flush();
-            oos.close();
-            bos.close();
-            return bos.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     /**
      * Sets default page size.
      *
@@ -1499,5 +1483,19 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             names.makeIndirect(this);
         }
         names.put(treeType, treeRoot);
+    }
+
+    private byte[] getSerializedBytes() {
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeObject(this);
+            oos.flush();
+            oos.close();
+            bos.close();
+            return bos.toByteArray();
+        } catch (IOException e) {
+            throw new PdfException(e);
+        }
     }
 }

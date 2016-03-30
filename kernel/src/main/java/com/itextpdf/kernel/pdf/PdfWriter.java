@@ -4,9 +4,12 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.PdfException;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -375,9 +378,10 @@ public class PdfWriter extends PdfOutputStream implements Serializable{
         return result;
     }
 
-    //method invoking while deserialization
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException {
+    /**
+     * This method is invoked while deserialization
+     */
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
         in.defaultReadObject();
         this.outputStream = new BufferedOutputStream(new ByteArrayOutputStream());
         content = new PdfOutputStream(new ByteArrayOutputStream());
@@ -406,9 +410,10 @@ public class PdfWriter extends PdfOutputStream implements Serializable{
         return null;
     }
 
-    //method invoking while serialization
-    private void writeObject(java.io.ObjectOutputStream out)
-            throws java.io.IOException {
+    /**
+     * This method is invoked while serialization
+     */
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
         content.flush();
         buffer = getByteArrayOutputStream().toByteArray();
         out.defaultWriteObject();
