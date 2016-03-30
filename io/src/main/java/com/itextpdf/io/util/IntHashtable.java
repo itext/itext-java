@@ -1,5 +1,6 @@
 package com.itextpdf.io.util;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -17,7 +18,9 @@ import java.util.NoSuchElementException;
  * @author Bruno Lowagie (change Objects as keys into int values)
  * @author Paulo Soares (added extra methods)
  */
-public class IntHashtable implements Cloneable {
+public class IntHashtable implements Cloneable, Serializable {
+
+    private static final long serialVersionUID = 7354463962269093965L;
 
     /***
      * The hash table data.

@@ -3,9 +3,12 @@ package com.itextpdf.io.font;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.util.Utilities;
 
+import java.io.Serializable;
 import java.util.StringTokenizer;
 
-public class FontEncoding {
+public class FontEncoding implements Serializable {
+
+    private static final long serialVersionUID = -684967385759439083L;
 
     private static final byte[] emptyBytes = new byte[0];
 

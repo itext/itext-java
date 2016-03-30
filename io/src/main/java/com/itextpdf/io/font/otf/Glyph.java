@@ -46,9 +46,12 @@ package com.itextpdf.io.font.otf;
 
 import com.itextpdf.io.util.Utilities;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class Glyph {
+public class Glyph implements Serializable {
+
+    private static final long serialVersionUID = 1627806639423114471L;
 
     // The <i>code</i> or <i>id</i> by which this is represented in the Font File.
     private final int code;

@@ -1,9 +1,12 @@
 package com.itextpdf.io.font;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class FontNames {
+public class FontNames implements Serializable {
+
+    private static final long serialVersionUID = 1005168842463622025L;
 
     //macStyle bits
     // Bit 0: Bold (if set to 1);

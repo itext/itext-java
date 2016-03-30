@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 
 public class Type1Font extends FontProgram {
 
+    private static final long serialVersionUID = -1078208220942939920L;
+
     private Type1Parser fontParser;
 
     private String characterSet;

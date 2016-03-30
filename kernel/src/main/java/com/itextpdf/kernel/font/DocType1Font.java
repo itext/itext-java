@@ -12,6 +12,8 @@ import com.itextpdf.kernel.pdf.PdfString;
 
 class DocType1Font extends Type1Font implements DocFontProgram {
 
+    private static final long serialVersionUID = 6260280563455951912L;
+
     private PdfStream fontFile;
     private PdfName fontFileName;
     private PdfName subtype;

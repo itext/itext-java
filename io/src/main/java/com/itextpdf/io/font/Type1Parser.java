@@ -8,8 +8,11 @@ import com.itextpdf.io.source.RandomAccessSourceFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.InputStream;
+import java.io.Serializable;
 
-class Type1Parser {
+class Type1Parser implements Serializable {
+
+    private static final long serialVersionUID = -8484541242371901414L;
 
     private static final String AfmHeader = "StartFontMetrics";
 

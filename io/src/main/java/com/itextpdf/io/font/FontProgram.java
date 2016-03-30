@@ -4,10 +4,13 @@ import com.itextpdf.io.IOException;
 import com.itextpdf.io.font.otf.Glyph;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class FontProgram {
+public abstract class FontProgram implements Serializable {
+
+    private static final long serialVersionUID = -3488910249070253659L;
 
     public static final int DEFAULT_WIDTH = 1000;
     public static final int UNITS_NORMALIZATION = 1000;

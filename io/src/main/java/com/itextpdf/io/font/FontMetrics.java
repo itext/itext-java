@@ -1,6 +1,10 @@
 package com.itextpdf.io.font;
 
-public class FontMetrics {
+import java.io.Serializable;
+
+public class FontMetrics implements Serializable {
+
+    private static final long serialVersionUID = -7113134666493365588L;
 
     protected float normalizationCoef = 1f;
 
