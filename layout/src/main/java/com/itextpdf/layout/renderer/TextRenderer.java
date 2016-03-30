@@ -136,7 +136,7 @@ public class TextRenderer extends AbstractRenderer {
         boolean isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol = false;
 
         while (currentTextPos < text.end) {
-            if (noPrint(text.glyphs.get(currentTextPos))) {
+            if (noPrint(text.get(currentTextPos))) {
                 currentTextPos++;
                 continue;
             }
@@ -161,17 +161,17 @@ public class TextRenderer extends AbstractRenderer {
                     break;
                 }
 
-                Glyph currentGlyph = text.glyphs.get(ind);
+                Glyph currentGlyph = text.get(ind);
                 if (noPrint(currentGlyph))
                     continue;
 
-                if (tabAnchorCharacter != null && tabAnchorCharacter == text.glyphs.get(ind).getUnicode().intValue()) {
+                if (tabAnchorCharacter != null && tabAnchorCharacter == text.get(ind).getUnicode().intValue()) {
                     tabAnchorCharacterPosition = currentLineWidth + nonBreakablePartFullWidth;
                     tabAnchorCharacter = null;
                 }
 
                 float glyphWidth = getCharWidth(currentGlyph, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
-                float xAdvance = previousCharPos != -1 ? scaleXAdvance(text.glyphs.get(previousCharPos).getXAdvance(), fontSize, hScale) / TEXT_SPACE_COEFF : 0;
+                float xAdvance = previousCharPos != -1 ? scaleXAdvance(text.get(previousCharPos).getXAdvance(), fontSize, hScale) / TEXT_SPACE_COEFF : 0;
                 if ((nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition) > layoutBox.getWidth() - currentLineWidth && firstCharacterWhichExceedsAllowedWidth == -1) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
                 }
@@ -194,7 +194,7 @@ public class TextRenderer extends AbstractRenderer {
 
                 if (splitCharacters.isSplitCharacter(text, ind) || ind + 1 == text.end ||
                         splitCharacters.isSplitCharacter(text, ind + 1) &&
-                                (Character.isWhitespace(text.glyphs.get(ind + 1).getUnicode()) || Character.isSpaceChar(text.glyphs.get(ind + 1).getUnicode()))) {
+                                (Character.isWhitespace(text.get(ind + 1).getUnicode()) || Character.isSpaceChar(text.get(ind + 1).getUnicode()))) {
                     nonBreakablePartEnd = ind;
                     break;
                 }
@@ -246,7 +246,7 @@ public class TextRenderer extends AbstractRenderer {
                                         }
                                         line.end = Math.max(line.end, currentTextPos + pre.length());
                                         GlyphLine lineCopy = line.copy(line.start, line.end);
-                                        lineCopy.glyphs.add(font.getGlyph(hyphenationConfig.getHyphenSymbol()));
+                                        lineCopy.add(font.getGlyph(hyphenationConfig.getHyphenSymbol()));
                                         lineCopy.end++;
                                         line = lineCopy;
 
@@ -568,7 +568,7 @@ public class TextRenderer extends AbstractRenderer {
 
         if (text != null) {
             Glyph glyph;
-            while (text.start < text.end && (glyph = text.glyphs.get(text.start)).getUnicode() != null && Character.isWhitespace(glyph.getUnicode()) && !isNewLine(text, text.start)) {
+            while (text.start < text.end && (glyph = text.get(text.start)).getUnicode() != null && Character.isWhitespace(glyph.getUnicode()) && !isNewLine(text, text.start)) {
                 text.start++;
             }
         }
@@ -592,13 +592,13 @@ public class TextRenderer extends AbstractRenderer {
 
         int firstNonSpaceCharIndex = line.end - 1;
         while (firstNonSpaceCharIndex >= line.start) {
-            Glyph currentGlyph = line.glyphs.get(firstNonSpaceCharIndex);
+            Glyph currentGlyph = line.get(firstNonSpaceCharIndex);
             if (currentGlyph.getUnicode() == null || !Character.isWhitespace(currentGlyph.getUnicode())) {
                 break;
             }
 
             float currentCharWidth = getCharWidth(currentGlyph, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
-            float xAdvance = firstNonSpaceCharIndex > line.start ? scaleXAdvance(line.glyphs.get(firstNonSpaceCharIndex - 1).getXAdvance(), fontSize, hScale) / TEXT_SPACE_COEFF : 0;
+            float xAdvance = firstNonSpaceCharIndex > line.start ? scaleXAdvance(line.get(firstNonSpaceCharIndex - 1).getXAdvance(), fontSize, hScale) / TEXT_SPACE_COEFF : 0;
             trimmedSpace += currentCharWidth - xAdvance;
             occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() - currentCharWidth);
 
@@ -695,7 +695,7 @@ public class TextRenderer extends AbstractRenderer {
      * @return Unicode char code
      */
     public Integer charAt(int pos) {
-        return text.glyphs.get(pos + text.start).getUnicode();
+        return text.get(pos + text.start).getUnicode();
     }
 
     public float getTabAnchorCharacterPosition() {
@@ -708,7 +708,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private boolean isNewLine(GlyphLine text, int ind) {
-        return text.glyphs.get(ind).getUnicode() != null && text.glyphs.get(ind).getUnicode() == '\n';
+        return text.get(ind).getUnicode() != null && text.get(ind).getUnicode() == '\n';
     }
 
     private GlyphLine convertToGlyphLine(String text) {
@@ -837,9 +837,9 @@ public class TextRenderer extends AbstractRenderer {
     private float getGlyphLineWidth(GlyphLine glyphLine, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {
         float width = 0;
         for (int i = glyphLine.start; i < glyphLine.end; i++) {
-            float charWidth = getCharWidth(glyphLine.glyphs.get(i), fontSize, hScale, characterSpacing, wordSpacing);
+            float charWidth = getCharWidth(glyphLine.get(i), fontSize, hScale, characterSpacing, wordSpacing);
             width += charWidth;
-            float xAdvance = (i != glyphLine.start) ? scaleXAdvance(glyphLine.glyphs.get(i - 1).getXAdvance(), fontSize, hScale) : 0;
+            float xAdvance = (i != glyphLine.start) ? scaleXAdvance(glyphLine.get(i - 1).getXAdvance(), fontSize, hScale) : 0;
             width += xAdvance;
         }
         return width / TEXT_SPACE_COEFF;

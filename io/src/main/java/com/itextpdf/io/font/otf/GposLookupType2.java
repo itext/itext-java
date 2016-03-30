@@ -24,7 +24,7 @@ public class GposLookupType2 extends OpenTableLookup {
     public boolean transformOne(GlyphLine line) {
         if (line.idx >= line.end)
             return false;
-        if (openReader.isSkip(line.glyphs.get(line.idx).getCode(), lookupFlag)) {
+        if (openReader.isSkip(line.get(line.idx).getCode(), lookupFlag)) {
             line.idx++;
             return false;
         }
@@ -66,7 +66,7 @@ public class GposLookupType2 extends OpenTableLookup {
             if (line.idx >= line.end || line.idx < line.start)
                 return false;
             boolean changed = false;
-            Glyph g1 = line.glyphs.get(line.idx);
+            Glyph g1 = line.get(line.idx);
             Map<Integer,PairValueFormat> m = gposMap.get(g1.getCode());
             if (m != null) {
                 GlyphIndexer gi = new GlyphIndexer();
@@ -77,8 +77,8 @@ public class GposLookupType2 extends OpenTableLookup {
                     PairValueFormat pv = m.get(gi.glyph.getCode());
                     if (pv != null) {
                         Glyph g2 = gi.glyph;
-                        line.glyphs.set(line.idx, new Glyph(g1, 0, 0, pv.first.XAdvance, pv.first.YAdvance, 0));
-                        line.glyphs.set(gi.idx, new Glyph(g2, 0, 0, pv.second.XAdvance, pv.second.YAdvance, 0));
+                        line.set(line.idx, new Glyph(g1, 0, 0, pv.first.XAdvance, pv.first.YAdvance, 0));
+                        line.set(gi.idx, new Glyph(g2, 0, 0, pv.second.XAdvance, pv.second.YAdvance, 0));
                         line.idx = gi.idx;
                         changed = true;
                     }
@@ -129,7 +129,7 @@ public class GposLookupType2 extends OpenTableLookup {
         public boolean transformOne(GlyphLine line) {
             if (line.idx >= line.end || line.idx < line.start)
                 return false;
-            Glyph g1 = line.glyphs.get(line.idx);
+            Glyph g1 = line.get(line.idx);
             if (!coverageSet.contains(g1.getCode()))
                 return false;
             int c1 = classDef1.getOtfClass(g1.getCode());
@@ -147,8 +147,8 @@ public class GposLookupType2 extends OpenTableLookup {
             if (c2 >= pvs.length)
                 return false;
             PairValueFormat pv = pvs[c2];
-            line.glyphs.set(line.idx, new Glyph(g1, 0, 0, pv.first.XAdvance, pv.first.YAdvance, 0));
-            line.glyphs.set(gi.idx, new Glyph(g2, 0, 0, pv.second.XAdvance, pv.second.YAdvance, 0));
+            line.set(line.idx, new Glyph(g1, 0, 0, pv.first.XAdvance, pv.first.YAdvance, 0));
+            line.set(gi.idx, new Glyph(g2, 0, 0, pv.second.XAdvance, pv.second.YAdvance, 0));
             line.idx = gi.idx;
             return true;
         }

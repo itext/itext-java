@@ -51,10 +51,10 @@ public class LineRenderer extends AbstractRenderer {
                 if (child instanceof TextRenderer) {
                     GlyphLine text = ((TextRenderer) child).getText();
                     for (int i = text.start; i < text.end; i++) {
-                        assert text.glyphs.get(i).getChars().length > 0;
+                        assert text.get(i).getChars().length > 0;
                         // we assume all the chars will have the same bidi group
                         // we also assume pairing symbols won't get merged with other ones
-                        int unicode = text.glyphs.get(i).getChars()[0];
+                        int unicode = text.get(i).getChars()[0];
                         unicodeIdsLst.add(unicode);
                     }
                 }
@@ -219,13 +219,12 @@ public class LineRenderer extends AbstractRenderer {
                         children.add(new TextRenderer((TextRenderer) renderer));
                         ((TextRenderer) children.get(children.size() - 1)).line = new GlyphLine(((TextRenderer) children.get(children.size() - 1)).line);
                         GlyphLine gl = ((TextRenderer) children.get(children.size() - 1)).line;
-                        gl.glyphs = new ArrayList<>();
-                        gl.end = gl.start = 0;
+                        List<Glyph> replacementGlyphs = new ArrayList<>();
                         while (pos < reorderedLine.size() && reorderedLine.get(pos).renderer == renderer) {
-                            gl.add(reorderedLine.get(pos).glyph);
-                            gl.end++;
+                            replacementGlyphs.add(reorderedLine.get(pos).glyph);
                             pos++;
                         }
+                        gl.setGlyphs(replacementGlyphs);
                     }
 
                     float currentXPos = layoutContext.getArea().getBBox().getLeft();

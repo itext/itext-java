@@ -79,13 +79,13 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             byte[] bytes = new byte[glyphLine.size()];
             int ptr = 0;
             if (fontEncoding.isFontSpecific()) {
-                for (Glyph glyph : glyphLine.glyphs) {
-                    bytes[ptr++] = (byte) glyph.getCode();
+                for (int i = 0; i < glyphLine.size(); i++) {
+                    bytes[ptr++] = (byte) glyphLine.get(i).getCode();
                 }
             } else {
-                for (Glyph glyph : glyphLine.glyphs) {
-                    if (fontEncoding.canEncode(glyph.getUnicode())) {
-                        bytes[ptr++] = (byte) fontEncoding.convertToByte(glyph.getUnicode());
+                for (int i = 0; i < glyphLine.size(); i++) {
+                    if (fontEncoding.canEncode(glyphLine.get(i).getUnicode())) {
+                        bytes[ptr++] = (byte) fontEncoding.convertToByte(glyphLine.get(i).getUnicode());
                     }
                 }
             }

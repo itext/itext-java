@@ -22,7 +22,7 @@ public class GsubLookupType2 extends OpenTableLookup {
         if (line.idx >= line.end) {
             return false;
         }
-        Glyph g = line.glyphs.get(line.idx);
+        Glyph g = line.get(line.idx);
         boolean changed = false;
         if (!openReader.isSkip(g.getCode(), lookupFlag)) {
             int[] substSequence = substMap.get(g.getCode());

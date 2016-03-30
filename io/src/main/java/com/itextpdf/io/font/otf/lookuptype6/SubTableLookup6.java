@@ -19,7 +19,7 @@ public abstract class SubTableLookup6 extends ContextualSubTable {
         if (line.idx >= line.end)
             return null;
 
-        Glyph g = line.glyphs.get(line.idx);
+        Glyph g = line.get(line.idx);
         List<ContextualSubstRule> rules = getSetOfRulesForStartGlyph(g.getCode());
         for (ContextualSubstRule rule : rules) {
             int lastGlyphIndex = checkIfContextMatch(line, rule);

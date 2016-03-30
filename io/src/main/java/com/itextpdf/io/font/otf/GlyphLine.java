@@ -8,8 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 
 public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
-    public List<Glyph> glyphs;
-    public List<ActualText> actualText;
+    protected List<Glyph> glyphs;
+    protected List<ActualText> actualText;
     public int start;
     public int end;
     public int idx;
@@ -41,6 +41,16 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
         this.start = other.start;
         this.end = other.end;
         this.idx = other.idx;
+    }
+
+    public GlyphLine(GlyphLine other, int start, int end) {
+        this.glyphs = other.glyphs.subList(start, end);
+        if (other.actualText != null) {
+            this.actualText = other.actualText.subList(start, end);
+        }
+        this.start = 0;
+        this.end = end - start;
+        this.idx = other.idx - start;
     }
 
     public String toUnicodeString(int start, int end) {
@@ -85,6 +95,36 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
         if (actualText != null) {
             actualText.add(null);
         }
+    }
+
+    public void add(int index, Glyph glyph) {
+        glyphs.add(index, glyph);
+        if (actualText != null) {
+            actualText.add(index, null);
+        }
+    }
+
+    public void setGlyphs(List<Glyph> replacementGlyphs) {
+        glyphs = new ArrayList<>(replacementGlyphs);
+        start = 0;
+        end = replacementGlyphs.size();
+        actualText = null;
+    }
+
+    public void replaceContent(GlyphLine other) {
+        glyphs.clear();
+        glyphs.addAll(other.glyphs);
+        if (actualText != null) {
+            actualText.clear();
+        }
+        if (other.actualText != null) {
+            if (actualText == null) {
+                actualText = new ArrayList<>();
+            }
+            actualText.addAll(other.actualText);
+        }
+        start = other.start;
+        end = other.end;
     }
 
     public int size() {

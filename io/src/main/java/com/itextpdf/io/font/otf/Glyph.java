@@ -107,6 +107,12 @@ public class Glyph {
         this.chars = glyph.chars;
         this.unicode = glyph.unicode;
         this.isMark = glyph.isMark;
+
+        this.xPlacement = glyph.xPlacement;
+        this.yPlacement = glyph.yPlacement;
+        this.xAdvance = glyph.xAdvance;
+        this.yAdvance = glyph.yAdvance;
+        this.anchorDelta = glyph.anchorDelta;
     }
 
     public Glyph(Glyph glyph, int xPlacement, int yPlacement, int xAdvance, int yAdvance, int anchorDelta) {

@@ -9,10 +9,10 @@ public class DefaultSplitCharacters implements ISplitCharacters {
 
     @Override
     public boolean isSplitCharacter(GlyphLine text, int glyphPos) {
-        if (text.glyphs.get(glyphPos).getUnicode() == null) {
+        if (text.get(glyphPos).getUnicode() == null) {
             return false;
         }
-        int charCode = text.glyphs.get(glyphPos).getUnicode();
+        int charCode = text.get(glyphPos).getUnicode();
         return (charCode <= ' ' || charCode == '-' || charCode == '\u2010'
                 || (charCode >= 0x2002 && charCode <= 0x200b)
                 || (charCode >= 0x2e80 && charCode < 0xd7a0)

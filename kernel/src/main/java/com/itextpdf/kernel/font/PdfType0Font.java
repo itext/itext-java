@@ -2,13 +2,20 @@ package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.NotImplementedException;
-import com.itextpdf.io.font.*;
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.font.CFFFontSubset;
+import com.itextpdf.io.font.CMapEncoding;
+import com.itextpdf.io.font.CidFont;
+import com.itextpdf.io.font.CidFontProperties;
+import com.itextpdf.io.font.FontFactory;
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.cmap.CMapContentParser;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.util.Utilities;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfLiteral;
@@ -18,8 +25,6 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfOutputStream;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -31,6 +36,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
@@ -219,9 +227,9 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     @Override
     public byte[] convertToBytes(GlyphLine glyphLine) {
         if (glyphLine != null) {
-            char[] glyphs = new char[glyphLine.glyphs.size()];
-            for (int i = 0; i < glyphLine.glyphs.size(); i++) {
-                Glyph glyph = glyphLine.glyphs.get(i);
+            char[] glyphs = new char[glyphLine.size()];
+            for (int i = 0; i < glyphLine.size(); i++) {
+                Glyph glyph = glyphLine.get(i);
                 glyphs[i] = (char)cmapEncoding.getCmapCode(glyph.getCode());
                 int code = glyph.getCode();
                 if (longTag.get(code) == null) {

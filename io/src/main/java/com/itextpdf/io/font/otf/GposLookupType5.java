@@ -27,7 +27,7 @@ public class GposLookupType5 extends OpenTableLookup {
         // Place the mark symbol in the first available place for now.
         if (line.idx >= line.end)
             return false;
-        if (openReader.isSkip(line.glyphs.get(line.idx).getCode(), lookupFlag)) {
+        if (openReader.isSkip(line.get(line.idx).getCode(), lookupFlag)) {
             line.idx++;
             return false;
         }
@@ -35,7 +35,7 @@ public class GposLookupType5 extends OpenTableLookup {
         boolean changed = false;
         GlyphIndexer gi = null;
         for (MarkToLigature mb : marksligatures) {
-            OtfMarkRecord omr = mb.marks.get(line.glyphs.get(line.idx).getCode());
+            OtfMarkRecord omr = mb.marks.get(line.get(line.idx).getCode());
             if (omr == null)
                 continue;
             if (gi == null) {
@@ -61,7 +61,7 @@ public class GposLookupType5 extends OpenTableLookup {
                 if (gpas.get(component)[markClass] != null) {
                     GposAnchor baseAnchor = gpas.get(component)[markClass];
                     GposAnchor markAnchor = omr.anchor;
-            line.glyphs.add(line.idx, new Glyph(line.glyphs.get(line.idx),
+            line.add(line.idx, new Glyph(line.get(line.idx),
                     markAnchor.XCoordinate - baseAnchor.XCoordinate,
                     markAnchor.YCoordinate - baseAnchor.YCoordinate,
                     0, 0, gi.idx - line.idx));
