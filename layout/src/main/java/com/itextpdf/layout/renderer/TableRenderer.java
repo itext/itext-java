@@ -13,14 +13,13 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Table}
@@ -272,7 +271,7 @@ public class TableRenderer extends AbstractRenderer {
                     }
                 }
                 currChildRenderers.add(cell);
-                if (!currentCellHasBigRowspan && cellResult.getStatus() != LayoutResult.NOTHING) {
+                if (cellResult.getStatus() != LayoutResult.NOTHING) {
                     rowHeight = Math.max(rowHeight, cell.getOccupiedArea().getBBox().getHeight() - rowspanOffset);
                 }
             }
