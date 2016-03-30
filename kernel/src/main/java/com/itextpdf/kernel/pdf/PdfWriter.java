@@ -1,7 +1,6 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.PdfException;
 
 import java.io.BufferedOutputStream;
@@ -18,21 +17,22 @@ import java.util.Hashtable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PdfWriter extends PdfOutputStream implements Serializable{
+import static com.itextpdf.io.source.ByteUtils.getIsoBytes;
 
-<<<<<<< HEAD
-    private static final byte[] obj = ByteUtils.getIsoBytes(" obj\n");
-    private static final byte[] endobj = ByteUtils.getIsoBytes("\nendobj\n");
-=======
+public class PdfWriter extends PdfOutputStream implements Serializable {
+
+    private static final long serialVersionUID = -6875544505477707103L;
+
     private static final byte[] obj = getIsoBytes(" obj\n");
     private static final byte[] endobj = getIsoBytes("\nendobj\n");
-    private static final long serialVersionUID = -6875544505477707103L;
->>>>>>> Added serialVersionUID field in Serializable objects of module kernel.
+
     private HashMap<ByteStore, PdfIndirectReference> streamMap = new HashMap<>();
     private final HashMap<Integer, Integer> serialized = new HashMap<>();
 
-    private PdfOutputStream content = null;
-    private byte[] buffer = null;
+    // For internal usage only
+    private PdfOutputStream duplicateStream = null;
+    // For internal usage only
+    private byte[] duplicateContentBuffer = null;
 
     /**
      * Indicates if the writer copy objects in a smart mode. If so PdfDictionary and PdfStream will be hashed
@@ -60,7 +60,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable{
 
     public PdfWriter(java.io.OutputStream os) {
         super(new BufferedOutputStream(os));
-        content = new PdfOutputStream(new ByteArrayOutputStream());
     }
 
     public PdfWriter(String filename) throws FileNotFoundException {
@@ -96,10 +95,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable{
         return compressionLevel;
     }
 
-    public ByteArrayOutputStream getByteArrayOutputStream() {
-        return (ByteArrayOutputStream)content.getOutputStream();
-    }
-
     /**
      * Sets default compression level for @see PdfStream.
      * For more details @see {@link java.util.zip.Deflater}.
@@ -128,19 +123,47 @@ public class PdfWriter extends PdfOutputStream implements Serializable{
     @Override
     public void write(int b) throws java.io.IOException {
         super.write(b);
-        content.write(b);
+        if (duplicateStream != null) {
+            duplicateStream.write(b);
+        }
     }
 
     @Override
     public void write(byte[] b) throws java.io.IOException {
         super.write(b);
-        content.write(b);
+        if (duplicateStream != null) {
+            duplicateStream.write(b);
+        }
     }
 
     @Override
     public void write(byte[] b, int off, int len) throws java.io.IOException {
         super.write(b, off, len);
-        content.write(b, off, len);
+        if (duplicateStream != null) {
+            duplicateStream.write(b, off, len);
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        super.close();
+        if (duplicateStream != null) {
+            duplicateStream.close();
+        }
+    }
+
+    /**
+     * This method activates debug mode with pdfDebug tool.
+     * It causes additional overhead of duplicating document bytes into memory, so use it careful.
+     * NEVER use it in production or in any other cases except pdfDebug.
+     *
+     * NOTE that this method MUST be called right after the constructor and before passing the {@link PdfWriter}
+     * instance to the document for correct debugging.
+     * @return this {@link PdfWriter}
+     */
+    public PdfWriter setDebugMode() {
+        duplicateStream = new PdfOutputStream(new ByteArrayOutputStream());
+        return this;
     }
 
     /**
@@ -384,9 +407,9 @@ public class PdfWriter extends PdfOutputStream implements Serializable{
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
         in.defaultReadObject();
         this.outputStream = new BufferedOutputStream(new ByteArrayOutputStream());
-        content = new PdfOutputStream(new ByteArrayOutputStream());
-        write(buffer);
-        buffer = null;
+        duplicateStream = new PdfOutputStream(new ByteArrayOutputStream());
+        write(duplicateContentBuffer);
+        duplicateContentBuffer = null;
     }
 
     private PdfObject smartCopyObject(PdfObject object) {
@@ -414,9 +437,17 @@ public class PdfWriter extends PdfOutputStream implements Serializable{
      * This method is invoked while serialization
      */
     private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-        content.flush();
-        buffer = getByteArrayOutputStream().toByteArray();
+        duplicateContentBuffer = getDebugBytes();
         out.defaultWriteObject();
+    }
+
+    private byte[] getDebugBytes() throws IOException {
+        if (duplicateStream != null) {
+            duplicateStream.flush();
+            return ((ByteArrayOutputStream)(duplicateStream.getOutputStream())).toByteArray();
+        } else {
+            return null;
+        }
     }
 
     private static boolean checkTypeOfPdfDictionary(PdfObject dictionary, PdfName expectedType) {
