@@ -870,10 +870,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             kids = new PdfArray();
         }
         kids.add(kid.getPdfObject());
-        PdfString kidName = kid.getFieldName();
-        if (kidName != null) {
-            kid.setFieldName(getFieldName().toUnicodeString() + "." + kidName.toUnicodeString());
-        }
 
         return put(PdfName.Kids, kids);
     }
@@ -913,12 +909,20 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the current field name, as a {@link PdfString}
      */
     public PdfString getFieldName() {
-        PdfString fieldName = getPdfObject().getAsString(PdfName.T);
-//        if (fieldName == null) {
-//            PdfFormField parentField = PdfFormField.makeFormField(getParent(), getDocument());
-//            fieldName = parentField.getFieldName();
-//        }
-        return fieldName;
+        String parentName = "";
+        PdfDictionary parent = getParent();
+        if (parent != null) {
+            PdfFormField parentField = PdfFormField.makeFormField(getParent(), getDocument());
+            PdfString pName = parentField.getFieldName();
+            if (pName != null) {
+                parentName = pName.toUnicodeString() + ".";
+            }
+        }
+        PdfString name = getPdfObject().getAsString(PdfName.T);
+        if (name != null) {
+            name = new PdfString(parentName + name.toUnicodeString());
+        }
+        return name;
     }
 
     /**
