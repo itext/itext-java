@@ -25,7 +25,7 @@
         <module>kernel</module>
         <module>forms</module>
         <module>hyph</module>
-        
+        <module>font-asian</module>
         <module>layout</module>
         <module>parsing</module>
         <module>pdfa</module>

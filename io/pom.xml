@@ -33,19 +33,19 @@
                     <include>**/*.properties</include>
                 </includes>
             </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>com/itextpdf/io/font/cmap/**</include>
-                    <include>**/cmap_info.txt</include>
-                </includes>
-            </resource>
         </resources>
         <testResources>
             <testResource>
                 <directory>src/test/resources</directory>
                 <includes>
                     <include>**/*.*</include>
+                </includes>
+            </testResource>
+            <testResource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>com/itextpdf/io/font/cmap/**</include>
+                    <include>**/cmap_info.txt</include>
                 </includes>
             </testResource>
         </testResources>
