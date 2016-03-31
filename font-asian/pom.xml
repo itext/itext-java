@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>font-asian</artifactId>
-    <name>iText 7 - hyph</name>
+    <name>iText 7 - asian fonts</name>
     <description>iTextAsian fonts for use in conjunction with iText, a free Java-PDF library</description>
     <url>http://itextpdf.com/</url>
     <licenses>
