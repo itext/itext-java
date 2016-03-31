@@ -14,7 +14,7 @@ public class GetBufferedRandomAccessSource implements RandomAccessSource {
      */
     public GetBufferedRandomAccessSource(RandomAccessSource source) {
         this.source = source;
-        this.getBuffer = new byte[(int)Math.min(Math.max(source.length()/4, 1), (long)4096)];
+        this.getBuffer = new byte[(int)Math.min(Math.max(source.length()/4, 1), 4096)];
         this.getBufferStart = -1;
         this.getBufferEnd = -1;
     }

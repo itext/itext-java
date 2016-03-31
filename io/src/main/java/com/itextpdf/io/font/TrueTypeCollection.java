@@ -3,8 +3,7 @@ package com.itextpdf.io.font;
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-
-import java.io.File;
+import com.itextpdf.io.util.FileUtils;
 
 /**
  * Use this class for working with true type collection font (*.ttc)
@@ -26,7 +25,9 @@ public class TrueTypeCollection {
     }
 
     public TrueTypeCollection(String ttcPath, String encoding) throws java.io.IOException {
-        checkFilePath(ttcPath);
+        if (!FileUtils.fileExists(ttcPath)) {
+            throw new IOException(IOException.FontFile1NotFound).setMessageParams(ttcPath);
+        }
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(ttcPath));
         this.ttcPath = ttcPath;
         this.encoding = encoding;
@@ -75,14 +76,5 @@ public class TrueTypeCollection {
         }
         raf.skipBytes(4);
         TTCSize = raf.readInt();
-    }
-
-    protected void checkFilePath(String path){
-        if(path != null) {
-            File f = new File(path);
-            if ((!f.exists() || !f.isFile())) {
-                throw new IOException(IOException.FontFile1NotFound).setMessageParams(path);
-            }
-        }
     }
 }

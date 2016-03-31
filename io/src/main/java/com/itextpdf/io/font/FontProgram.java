@@ -2,8 +2,8 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.util.FileUtils;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -234,11 +234,8 @@ public abstract class FontProgram implements Serializable {
     }
 
     protected void checkFilePath(String path) {
-        if (path != null) {
-            File f = new File(path);
-            if (!FontConstants.BUILTIN_FONTS_14.contains(path) && (!f.exists() || !f.isFile())) {
-                throw new IOException(IOException.FontFile1NotFound).setMessageParams(path);
-            }
+        if (path != null && !FontConstants.BUILTIN_FONTS_14.contains(path) && !FileUtils.fileExists(path)) {
+            throw new IOException(IOException.FontFile1NotFound).setMessageParams(path);
         }
     }
 

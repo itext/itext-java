@@ -3,9 +3,9 @@ package com.itextpdf.io.font;
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.util.FileUtils;
 import com.itextpdf.io.util.IntHashtable;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -204,8 +204,7 @@ class OpenTypeParser {
             if (names != null && names.size() > 0) {
                 fontName = names.get(0)[3];
             } else {
-                File file = new File(fileName);
-                fontName = file.getName().replace(' ', '-');
+                fontName = FileUtils.getFileName(fileName).replace(' ', '-');
             }
         }
         return fontName;

@@ -1,7 +1,7 @@
 package com.itextpdf.signatures;
 
+import com.itextpdf.io.util.Utilities;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.source.StreamUtil;
 import com.itextpdf.kernel.pdf.PdfEncryption;
 
 import java.io.BufferedOutputStream;
@@ -103,7 +103,7 @@ public class OcspClientBouncyCastle implements OcspClient {
         }
         //Get Response
         InputStream in = (InputStream) con.getContent();
-        return new OCSPResp(StreamUtil.inputStreamToArray(in));
+        return new OCSPResp(Utilities.inputStreamToArray(in));
     }
 
     /**

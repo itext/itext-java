@@ -1,17 +1,16 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.util.FileUtils;
 import com.itextpdf.io.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 
 /**
  * If you are using True Type fonts, you can declare the paths of the different ttf- and ttc-files
@@ -340,31 +339,26 @@ class FontRegisterProvider {
         }
         int count = 0;
         try {
-            File file = new File(dir);
-            if (!file.exists() || !file.isDirectory())
-                return 0;
-            String[] files = file.list();
+            String[] files = FileUtils.getDirectoryList(dir);
             if (files == null)
                 return 0;
-            for (int k = 0; k < files.length; ++k) {
+            for (String file : files) {
                 try {
-                    file = new File(dir, files[k]);
-                    if (file.isDirectory()) {
+                    if (FileUtils.isDirectory(file)) {
                         if (scanSubdirectories) {
-                            count += registerDirectory(file.getAbsolutePath(), true);
+                            count += registerDirectory(file, true);
                         }
                     } else {
-                        String name = file.getPath();
-                        String suffix = name.length() < 4 ? null : name.substring(name.length() - 4).toLowerCase();
+                        String suffix = file.length() < 4 ? null : file.substring(file.length() - 4).toLowerCase();
                         if (".afm".equals(suffix) || ".pfm".equals(suffix)) {
                             /* Only register Type 1 fonts with matching .pfb files */
-                            File pfb = new File(name.substring(0, name.length() - 4) + ".pfb");
-                            if (pfb.exists()) {
-                                register(name, null);
+                            String pfb = file.substring(0, file.length() - 4) + ".pfb";
+                            if (FileUtils.fileExists(pfb)) {
+                                register(file, null);
                                 ++count;
                             }
                         } else if (".ttf".equals(suffix) || ".otf".equals(suffix) || ".ttc".equals(suffix)) {
-                            register(name, null);
+                            register(file, null);
                             ++count;
                         }
                     }
@@ -387,7 +381,7 @@ class FontRegisterProvider {
     public int registerSystemDirectories() {
         int count = 0;
         String[] withSubDirs = {
-                Utilities.getFontsDir(),
+                FileUtils.getFontsDir(),
                 "/usr/share/X11/fonts",
                 "/usr/X/lib/X11/fonts",
                 "/usr/openwin/lib/X11/fonts",

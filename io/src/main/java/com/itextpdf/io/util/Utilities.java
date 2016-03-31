@@ -39,8 +39,9 @@ public class Utilities {
         long n;
         while (size > 0) {
             n = stream.skip(size);
-            if (n <= 0)
+            if (n <= 0) {
                 break;
+            }
             size -= n;
         }
     }
@@ -67,8 +68,9 @@ public class Utilities {
 
     public static boolean equalsArray(byte ar1[], byte ar2[], int size) {
         for (int k = 0; k < size; ++k) {
-            if (ar1[k] != ar2[k])
+            if (ar1[k] != ar2[k]) {
                 return false;
+            }
         }
         return true;
     }
@@ -170,9 +172,7 @@ public class Utilities {
             output.close();
             return output.toByteArray();
         } catch (Exception e) {
-            if (strict)
-                return null;
-            return output.toByteArray();
+            return strict ? null : output.toByteArray();
         }
     }
 
@@ -193,10 +193,11 @@ public class Utilities {
         byte[] buffer = new byte[transferSize];
         for (; ; ) {
             int len = input.read(buffer, 0, transferSize);
-            if (len > 0)
+            if (len > 0) {
                 output.write(buffer, 0, len);
-            else
+            } else {
                 break;
+            }
         }
     }
 
@@ -212,8 +213,9 @@ public class Utilities {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         while (true) {
             int read = stream.read(b);
-            if (read < 1)
+            if (read < 1) {
                 break;
+            }
             output.write(b, 0, read);
         }
         output.close();
@@ -230,12 +232,13 @@ public class Utilities {
      * @throws java.io.IOException on error.
      */
     public static void copyBytes(RandomAccessSource source, long start, long length, java.io.OutputStream output) throws java.io.IOException {
-        if (length <= 0)
+        if (length <= 0) {
             return;
+        }
         long idx = start;
         byte[] buf = new byte[8192];
         while (length > 0) {
-            long n = source.get(idx, buf, 0, (int) Math.min((long) buf.length, length));
+            long n = source.get(idx, buf,0, (int) Math.min((long) buf.length, length));
             if (n <= 0) {
                 throw new EOFException();
             }
@@ -263,8 +266,9 @@ public class Utilities {
      * @return the {@code InputStream} to get the resource or {@code null} if not found.
      */
     public static InputStream getResourceStream(String key, ClassLoader loader) {
-        if (key.startsWith("/"))
+        if (key.startsWith("/")) {
             key = key.substring(1);
+        }
         InputStream stream = null;
         if (loader != null) {
             stream = loader.getResourceAsStream(key);
@@ -459,11 +463,5 @@ public class Utilities {
             return shortened;
         }
         return src;
-    }
-
-    public static String getFontsDir() {
-        String winDir = System.getenv("windir");
-        String fileSeparator = System.getProperty("file.separator");
-        return winDir + fileSeparator + "fonts";
     }
 }

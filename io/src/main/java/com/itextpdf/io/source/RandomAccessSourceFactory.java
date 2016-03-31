@@ -1,6 +1,7 @@
 package com.itextpdf.io.source;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.util.Utilities;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -103,7 +104,7 @@ public final class RandomAccessSourceFactory implements Serializable {
      */
     public RandomAccessSource createSource(InputStream inputStream) throws java.io.IOException{
         try {
-            return createSource(StreamUtil.inputStreamToArray(inputStream));
+            return createSource(Utilities.inputStreamToArray(inputStream));
         }
         finally {
             try {
@@ -124,7 +125,7 @@ public final class RandomAccessSourceFactory implements Serializable {
      */
     public RandomAccessSource createBestSource(String filename) throws java.io.IOException{
         File file = new File(filename);
-        if (!file.canRead()){
+        if (!file.canRead()) {
             if (filename.startsWith("file:/")
                     || filename.startsWith("http://")
                     || filename.startsWith("https://")
@@ -202,7 +203,7 @@ public final class RandomAccessSourceFactory implements Serializable {
      * @throws java.io.IOException if reading the underling file or stream fails
      */
     private RandomAccessSource createByReadingToMemory(String filename) throws java.io.IOException {
-        InputStream stream = StreamUtil.getResourceStream(filename);
+        InputStream stream = Utilities.getResourceStream(filename);
         if (stream == null) {
             throw new java.io.IOException(MessageFormat.format(IOException._1NotFoundAsFileOrResource, filename));
         }
@@ -217,7 +218,7 @@ public final class RandomAccessSourceFactory implements Serializable {
      */
     private RandomAccessSource createByReadingToMemory(InputStream stream) throws java.io.IOException {
         try {
-            return new ArrayRandomAccessSource(StreamUtil.inputStreamToArray(stream));
+            return new ArrayRandomAccessSource(Utilities.inputStreamToArray(stream));
         }
         finally {
             try {
