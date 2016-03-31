@@ -10,7 +10,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccessibleElementProperties {
+public class AccessibilityProperties {
     protected String language;
     protected String actualText;
     protected String alternateDescription;
@@ -21,7 +21,7 @@ public class AccessibleElementProperties {
         return language;
     }
 
-    public AccessibleElementProperties setLanguage(String language) {
+    public AccessibilityProperties setLanguage(String language) {
         this.language = language;
         return this;
     }
@@ -30,7 +30,7 @@ public class AccessibleElementProperties {
         return actualText;
     }
 
-    public AccessibleElementProperties setActualText(String actualText) {
+    public AccessibilityProperties setActualText(String actualText) {
         this.actualText = actualText;
         return this;
     }
@@ -39,7 +39,7 @@ public class AccessibleElementProperties {
         return alternateDescription;
     }
 
-    public AccessibleElementProperties setAlternateDescription(String alternateDescription) {
+    public AccessibilityProperties setAlternateDescription(String alternateDescription) {
         this.alternateDescription = alternateDescription;
         return this;
     }
@@ -48,18 +48,18 @@ public class AccessibleElementProperties {
         return expansion;
     }
 
-    public AccessibleElementProperties setExpansion(String expansion) {
+    public AccessibilityProperties setExpansion(String expansion) {
         this.expansion = expansion;
         return this;
     }
 
-    public AccessibleElementProperties addAttributes(PdfDictionary attributes) {
+    public AccessibilityProperties addAttributes(PdfDictionary attributes) {
         attributesList.add(attributes);
 
         return this;
     }
 
-    public AccessibleElementProperties clearAttributes() {
+    public AccessibilityProperties clearAttributes() {
         attributesList.clear();
 
         return this;
@@ -92,7 +92,7 @@ public class AccessibleElementProperties {
         }
     }
 
-    private PdfObject combineAttributesList(PdfObject attributesObject, List<PdfDictionary> newAttributesList, PdfNumber revision) {
+    protected PdfObject combineAttributesList(PdfObject attributesObject, List<PdfDictionary> newAttributesList, PdfNumber revision) {
         PdfObject combinedAttributes;
 
         if (attributesObject instanceof PdfDictionary) {
@@ -116,7 +116,7 @@ public class AccessibleElementProperties {
         return combinedAttributes;
     }
 
-    private void addNewAttributesToAttributesArray(List<PdfDictionary> newAttributesList, PdfNumber revision, PdfArray attributesArray) {
+    protected void addNewAttributesToAttributesArray(List<PdfDictionary> newAttributesList, PdfNumber revision, PdfArray attributesArray) {
         if (revision != null) {
             for (PdfDictionary attributes : newAttributesList) {
                 attributesArray.add(attributes);

@@ -35,7 +35,7 @@ import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.layer.PdfLayerMembership;
 import com.itextpdf.kernel.pdf.layer.PdfOCG;
-import com.itextpdf.kernel.pdf.tagutils.PdfTagReference;
+import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
@@ -2026,7 +2026,7 @@ public class PdfCanvas {
      * @param tagReference reference to the tag from the document logical structure
      * @return current canvas
      */
-    public PdfCanvas openTag(PdfTagReference tagReference) {
+    public PdfCanvas openTag(TagReference tagReference) {
         if (tagReference.getRole() == null)
             return this;
         CanvasTag tag = new CanvasTag(tagReference.getRole(), tagReference.createNextMcid());

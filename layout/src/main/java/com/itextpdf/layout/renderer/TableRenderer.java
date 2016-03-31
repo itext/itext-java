@@ -396,7 +396,7 @@ public class TableRenderer extends AbstractRenderer {
             TagTreePointer tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
 
             IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
-            if (!document.getTagStructureContext().isConnectedToTag(accessibleElement)) {
+            if (!document.getTagStructureContext().isElementConnectedToTag(accessibleElement)) {
                 AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
             }
 
@@ -422,7 +422,7 @@ public class TableRenderer extends AbstractRenderer {
 
             tagPointer.moveToParent();
             if (toRemoveConnectionsWithTags) {
-                tagPointer.removeConnectionToTag(accessibleElement);
+                tagPointer.removeElementConnectionToTag(accessibleElement);
             }
         } else {
             super.draw(drawContext);
@@ -447,7 +447,7 @@ public class TableRenderer extends AbstractRenderer {
                 tagPointer = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
 
                 if (modelElement.getHeader() != null || modelElement.getFooter() != null) {
-                    if (tagPointer.getListOfKidsRoles().contains(PdfName.TBody)) {
+                    if (tagPointer.getKidsRoles().contains(PdfName.TBody)) {
                         tagPointer.moveToKid(PdfName.TBody);
                     } else {
                         tagPointer.addTag(PdfName.TBody);
@@ -461,7 +461,7 @@ public class TableRenderer extends AbstractRenderer {
         for (IRenderer child : childRenderers) {
             if (isTagged) {
                 int cellRow = ((Cell) child.getModelElement()).getRow();
-                int rowsNum = tagPointer.getListOfKidsRoles().size();
+                int rowsNum = tagPointer.getKidsRoles().size();
                 if (cellRow < rowsNum) {
                     tagPointer.moveToKid(cellRow);
                 } else {
@@ -493,6 +493,17 @@ public class TableRenderer extends AbstractRenderer {
     @Override
     public TableRenderer getNextRenderer() {
         return new TableRenderer((Table) modelElement);
+    }
+
+    @Override
+    public void move(float dxRight, float dyUp) {
+        super.move(dxRight, dyUp);
+        if (headerRenderer != null) {
+            headerRenderer.move(dxRight, dyUp);
+        }
+        if (footerRenderer != null) {
+            footerRenderer.move(dxRight, dyUp);
+        }
     }
 
     protected float[] calculateScaledColumnWidths(Table tableModel, float tableWidth) {

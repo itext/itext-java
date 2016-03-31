@@ -1,7 +1,7 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.tagutils.AccessibleElementProperties;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.Property;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
@@ -18,7 +18,7 @@ import java.util.TreeMap;
 public class Paragraph extends BlockElement<Paragraph> {
 
     protected PdfName role = PdfName.P;
-    protected AccessibleElementProperties tagProperties;
+    protected AccessibilityProperties tagProperties;
 
     /**
      * Creates a Paragraph.
@@ -204,9 +204,9 @@ public class Paragraph extends BlockElement<Paragraph> {
     }
 
     @Override
-    public AccessibleElementProperties getAccessibilityProperties() {
+    public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
-            tagProperties = new AccessibleElementProperties();
+            tagProperties = new AccessibilityProperties();
         }
         return tagProperties;
     }

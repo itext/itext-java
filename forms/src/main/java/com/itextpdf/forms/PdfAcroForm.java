@@ -16,7 +16,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
-import com.itextpdf.kernel.pdf.tagutils.PdfTagReference;
+import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.forms.fields.PdfFormField;
@@ -617,8 +617,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                     }
 
                     if (tagPointer != null) {
-                        tagPointer.setPage(page);
-                        PdfTagReference tagRef = tagPointer.getTagReference();
+                        tagPointer.setPageForTagging(page);
+                        TagReference tagRef = tagPointer.getTagReference();
                         canvas.openTag(tagRef);
                     }
                     canvas.addXObject(xObject, box.getX(), box.getY());

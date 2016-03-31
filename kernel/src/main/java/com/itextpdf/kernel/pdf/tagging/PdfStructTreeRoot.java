@@ -239,6 +239,9 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     /**
      * Copies structure to a {@code destDocument}.
+     * <br/><br/>
+     * NOTE: Works only for {@code PdfStructTreeRoot} that is read from the document opened in reading mode,
+     * otherwise an exception is thrown.
      *
      * @param destDocument document to copy structure to. Shall not be current document.
      * @param page2page  association between original page and copied page.
@@ -253,7 +256,10 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }
 
     /**
-     * Copies structure to a {@code destDocument} and insert it in a specified position in the document..
+     * Copies structure to a {@code destDocument} and insert it in a specified position in the document.
+     * <br/><br/>
+     * NOTE: Works only for {@code PdfStructTreeRoot} that is read from the document opened in reading mode,
+     * otherwise an exception is thrown.
      *
      * @param destDocument       document to copy structure to.
      * @param insertBeforePage indicates where the structure to be inserted.

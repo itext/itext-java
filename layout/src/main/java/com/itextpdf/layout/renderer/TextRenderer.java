@@ -408,7 +408,7 @@ public class TextRenderer extends AbstractRenderer {
             PdfName role = accessibleElement.getRole();
             if (role != null && !PdfName.Artifact.equals(role)) {
                 tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
-                if (!tagPointer.isConnectedToTag(accessibleElement)) {
+                if (!tagPointer.isElementConnectedToTag(accessibleElement)) {
                     AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
                 }
                 tagPointer.addTag(accessibleElement, true);
@@ -521,7 +521,7 @@ public class TextRenderer extends AbstractRenderer {
         if (isTagged) {
             tagPointer.moveToParent();
             if (isLastRendererForModelElement) {
-                tagPointer.removeConnectionToTag(accessibleElement);
+                tagPointer.removeElementConnectionToTag(accessibleElement);
             }
         }
     }

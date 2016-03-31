@@ -27,12 +27,12 @@ public class CanvasRenderer extends RootRenderer {
             TagTreePointer tagPointer = null;
             if (toTag) {
                 tagPointer = canvas.getPdfDocument().getTagStructureContext().getAutoTaggingPointer();
-                tagPointer.setPage(canvas.getPage());
-                tagPointer.setContentStream(canvas.getPdfCanvas().getContentStream());
+                tagPointer.setPageForTagging(canvas.getPage());
+                tagPointer.setContentStreamForTagging(canvas.getPdfCanvas().getContentStream());
             }
             resultRenderer.draw(new DrawContext(canvas.getPdfDocument(), canvas.getPdfCanvas(), toTag));
             if (toTag) {
-                tagPointer.setContentStream(null);
+                tagPointer.setContentStreamForTagging(null);
             }
         }
     }

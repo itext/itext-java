@@ -5,7 +5,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 /**
  * A layout element which can have a <em>role</em>. The name of the role will be
  * used to tag the element if it is added to a Tagged PDF document. It can also
- * have {@link AccessibleElementProperties}, metadata for the tag dictionary.
+ * have {@link AccessibilityProperties}, metadata for the tag dictionary.
  */
 public interface IAccessibleElement {
 
@@ -22,8 +22,8 @@ public interface IAccessibleElement {
     void setRole(PdfName role);
 
     /**
-     * Gets the {@link AccessibleElementProperties accessibility properties}.
+     * Gets the {@link AccessibilityProperties accessibility properties}.
      * @return a properties wrapper object specific to a tagged element in Tagged PDF
      */
-    AccessibleElementProperties getAccessibilityProperties();
+    AccessibilityProperties getAccessibilityProperties();
 }

@@ -40,10 +40,10 @@ import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
 
 @Category(IntegrationTest.class)
-public class PdfTaggingTest extends ExtendedITextTest {
+public class PdfStructElemTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfTaggingTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfTaggingTest/";
+    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfStructElemTest/";
+    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfStructElemTest/";
 
     @BeforeClass
     static public void beforeClass() {
@@ -51,8 +51,8 @@ public class PdfTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    public void taggingTest01() throws Exception {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "taggingTest01.pdf");
+    public void structElemTest01() throws Exception {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "structElemTest01.pdf");
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
@@ -98,12 +98,12 @@ public class PdfTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        compareResult("taggingTest01.pdf", "cmp_taggingTest01.pdf", "diff01_");
+        compareResult("structElemTest01.pdf", "cmp_structElemTest01.pdf", "diff_structElem_01_");
     }
 
     @Test
-    public void taggingTest02() throws Exception {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "taggingTest02.pdf");
+    public void structElemTest02() throws Exception {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "structElemTest02.pdf");
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
@@ -131,12 +131,12 @@ public class PdfTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        compareResult("taggingTest02.pdf", "cmp_taggingTest02.pdf", "diff02_");
+        compareResult("structElemTest02.pdf", "cmp_structElemTest02.pdf", "diff_structElem_02_");
     }
 
     @Test
-    public void taggingTest03() throws Exception {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "taggingTest03.pdf");
+    public void structElemTest03() throws Exception {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "structElemTest03.pdf");
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
@@ -182,7 +182,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        com.itextpdf.kernel.pdf.PdfReader reader = new com.itextpdf.kernel.pdf.PdfReader(new FileInputStream(destinationFolder + "taggingTest03.pdf"));
+        com.itextpdf.kernel.pdf.PdfReader reader = new com.itextpdf.kernel.pdf.PdfReader(new FileInputStream(destinationFolder + "structElemTest03.pdf"));
         document = new PdfDocument(reader);
         Assert.assertEquals(2, document.getNextStructParentIndex().intValue());
         PdfPage page = document.getPage(1);
@@ -192,7 +192,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    public void taggingTest04() throws Exception {
+    public void structElemTest04() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(baos);
         writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
@@ -223,7 +223,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         byte[] bytes = baos.toByteArray();
 
         com.itextpdf.kernel.pdf.PdfReader reader = new com.itextpdf.kernel.pdf.PdfReader(new ByteArrayInputStream(bytes));
-        writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest04.pdf"));
+        writer = new PdfWriter(new FileOutputStream(destinationFolder + "structElemTest04.pdf"));
         writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
         document = new PdfDocument(reader, writer);
 
@@ -256,152 +256,12 @@ public class PdfTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        compareResult("taggingTest04.pdf", "cmp_taggingTest04.pdf", "diff04_");
+        compareResult("structElemTest04.pdf", "cmp_structElemTest04.pdf", "diff_structElem_04_");
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
-    })
-    public void taggingTest05() throws Exception {
-        FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
-        PdfReader reader = new PdfReader(fis);
-        PdfDocument source = new PdfDocument(reader);
-
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest05.pdf"));
-        PdfDocument destination = new PdfDocument(writer);
-        destination.setTagged();
-
-        source.copyPagesTo(new TreeSet<Integer>() {{
-            add(3);
-            add(4);
-            add(10);
-            add(11);
-        }}, destination);
-        source.copyPagesTo(50, 52, destination);
-
-
-        destination.close();
-        source.close();
-
-        compareResult("taggingTest05.pdf", "cmp_taggingTest05.pdf", "diff05_");
-    }
-
-    @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
-    })
-    public void taggingTest06() throws Exception {
-        FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
-        PdfReader reader = new PdfReader(fis);
-        PdfDocument source = new PdfDocument(reader);
-
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest06.pdf"));
-        PdfDocument destination = new PdfDocument(writer);
-        destination.setTagged();
-
-        source.copyPagesTo(6, source.getNumberOfPages(), destination);
-        source.copyPagesTo(1, 5, destination);
-
-        destination.close();
-        source.close();
-
-        compareResult("taggingTest06.pdf", "cmp_taggingTest06.pdf", "diff06_");
-    }
-
-    @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
-    })
-    public void taggingTest07() throws Exception {
-        FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
-        PdfReader reader = new PdfReader(fis);
-        PdfDocument source = new PdfDocument(reader);
-
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest07.pdf"));
-        PdfDocument destination = new PdfDocument(writer);
-
-
-        source.copyPagesTo(6, source.getNumberOfPages(), destination);
-        source.copyPagesTo(1, 5, destination);
-
-        destination.close();
-        source.close();
-
-        String errorMessage = new CompareTool().compareByContent(destinationFolder + "taggingTest07.pdf", sourceFolder + "cmp_taggingTest07.pdf", destinationFolder, "diff_");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
-    }
-
-    @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
-    })
-    public void taggingTest08() throws Exception {
-        FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
-        PdfReader reader = new PdfReader(fis);
-        PdfDocument source = new PdfDocument(reader);
-
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest08.pdf"));
-        PdfDocument destination = new PdfDocument(writer);
-        destination.setTagged();
-
-        for (int i = 1; i <= source.getNumberOfPages(); i++)
-            source.copyPagesTo(i, i, destination);
-
-        destination.close();
-        source.close();
-
-        compareResult("taggingTest08.pdf", "cmp_taggingTest08.pdf", "diff08_");
-    }
-
-    @Test
-    public void taggingTest09() throws Exception {
-        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "iphone_user_guide.pdf"));
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest09.pdf"));
-        PdfDocument document = new PdfDocument(reader, writer);
-
-        PdfReader reader1 = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox.pdf"));
-        PdfDocument document1 = new PdfDocument(reader1);
-        document1.copyPagesTo(1, 1, document, 2);
-
-        PdfReader reader2 = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox-table.pdf"));
-        PdfDocument document2 = new PdfDocument(reader2);
-        document2.copyPagesTo(1, 3, document, 4);
-
-
-        document.close();
-        document1.close();
-        document2.close();
-
-        compareResult("taggingTest09.pdf", "cmp_taggingTest09.pdf", "diff09_");
-    }
-
-    @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
-    })
-    public void taggingTest10() throws Exception {
-        FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
-        PdfReader reader = new PdfReader(fis);
-        PdfDocument source = new PdfDocument(reader);
-
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest10.pdf"));
-        PdfDocument destination = new PdfDocument(writer);
-        destination.setTagged();
-
-        source.copyPagesTo(1, source.getNumberOfPages(), destination);
-
-        destination.close();
-        source.close();
-
-        compareResult("taggingTest10.pdf", "cmp_taggingTest10.pdf", "diff10_");
-    }
-
-    @Test
-    public void taggingTest11() throws Exception {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "taggingTest11.pdf");
+    public void structElemTest05() throws Exception {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "structElemTest05.pdf");
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
@@ -437,12 +297,12 @@ public class PdfTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        compareResult("taggingTest11.pdf", "cmp_taggingTest11.pdf", "diff11_");
+        compareResult("structElemTest05.pdf", "cmp_structElemTest05.pdf", "diff_structElem_05_");
     }
 
     @Test
-    public void taggingTest12() throws Exception {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "taggingTest12.pdf");
+    public void structElemTest06() throws Exception {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "structElemTest06.pdf");
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
@@ -467,13 +327,154 @@ public class PdfTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        compareResult("taggingTest12.pdf", "cmp_taggingTest12.pdf", "diff12_");
+        compareResult("structElemTest06.pdf", "cmp_structElemTest06.pdf", "diff_structElem_06_");
     }
 
     @Test
-    public void taggingTest13() throws Exception {
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
+    public void structTreeCopyingTest01() throws Exception {
+        FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument source = new PdfDocument(reader);
+
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "structTreeCopyingTest01.pdf"));
+        PdfDocument destination = new PdfDocument(writer);
+        destination.setTagged();
+
+        source.copyPagesTo(new TreeSet<Integer>() {{
+            add(3);
+            add(4);
+            add(10);
+            add(11);
+        }}, destination);
+        source.copyPagesTo(50, 52, destination);
+
+
+        destination.close();
+        source.close();
+
+        compareResult("structTreeCopyingTest01.pdf", "cmp_structTreeCopyingTest01.pdf", "diff_copying_01_");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
+    public void structTreeCopyingTest02() throws Exception {
+        FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument source = new PdfDocument(reader);
+
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "structTreeCopyingTest02.pdf"));
+        PdfDocument destination = new PdfDocument(writer);
+        destination.setTagged();
+
+        source.copyPagesTo(6, source.getNumberOfPages(), destination);
+        source.copyPagesTo(1, 5, destination);
+
+        destination.close();
+        source.close();
+
+        compareResult("structTreeCopyingTest02.pdf", "cmp_structTreeCopyingTest02.pdf", "diff_copying_02_");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
+    public void structTreeCopyingTest03() throws Exception {
+        FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument source = new PdfDocument(reader);
+
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "structTreeCopyingTest03.pdf"));
+        PdfDocument destination = new PdfDocument(writer);
+
+
+        source.copyPagesTo(6, source.getNumberOfPages(), destination);
+        source.copyPagesTo(1, 5, destination);
+
+        destination.close();
+        source.close();
+
+        // we don't compare tag structures, because resultant document is not tagged
+        Assert.assertNull(new CompareTool()
+                .compareByContent(destinationFolder + "structTreeCopyingTest03.pdf",
+                        sourceFolder + "cmp_structTreeCopyingTest03.pdf",
+                        destinationFolder, "diff_copying_03_"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
+    public void structTreeCopyingTest04() throws Exception {
+        FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument source = new PdfDocument(reader);
+
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "structTreeCopyingTest04.pdf"));
+        PdfDocument destination = new PdfDocument(writer);
+        destination.setTagged();
+
+        for (int i = 1; i <= source.getNumberOfPages(); i++)
+            source.copyPagesTo(i, i, destination);
+
+        destination.close();
+        source.close();
+
+        compareResult("structTreeCopyingTest04.pdf", "cmp_structTreeCopyingTest04.pdf", "diff_copying_04_");
+    }
+
+    @Test
+    public void structTreeCopyingTest05() throws Exception {
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "iphone_user_guide.pdf"));
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "structTreeCopyingTest05.pdf"));
+        PdfDocument document = new PdfDocument(reader, writer);
+
+        PdfReader reader1 = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox.pdf"));
+        PdfDocument document1 = new PdfDocument(reader1);
+        document1.copyPagesTo(1, 1, document, 2);
+
+        PdfReader reader2 = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox-table.pdf"));
+        PdfDocument document2 = new PdfDocument(reader2);
+        document2.copyPagesTo(1, 3, document, 4);
+
+
+        document.close();
+        document1.close();
+        document2.close();
+
+        compareResult("structTreeCopyingTest05.pdf", "cmp_structTreeCopyingTest05.pdf", "diff_copying_05_");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+    })
+    public void structTreeCopyingTest06() throws Exception {
+        FileInputStream fis = new FileInputStream(sourceFolder + "iphone_user_guide.pdf");
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument source = new PdfDocument(reader);
+
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "structTreeCopyingTest06.pdf"));
+        PdfDocument destination = new PdfDocument(writer);
+        destination.setTagged();
+
+        source.copyPagesTo(1, source.getNumberOfPages(), destination);
+
+        destination.close();
+        source.close();
+
+        compareResult("structTreeCopyingTest06.pdf", "cmp_structTreeCopyingTest06.pdf", "diff_copying_06_");
+    }
+
+    @Test
+    public void structTreeCopyingTest07() throws Exception {
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox.pdf"));
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "taggingTest13.pdf"));
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "structTreeCopyingTest07.pdf"));
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
         PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, com.itextpdf.kernel.pdf.PdfName.Document));
@@ -503,7 +504,7 @@ public class PdfTaggingTest extends ExtendedITextTest {
         document.close();
         document1.close();
 
-        compareResult("taggingTest13.pdf", "cmp_taggingTest13.pdf", "diff13_");
+        compareResult("structTreeCopyingTest07.pdf", "cmp_structTreeCopyingTest07.pdf", "diff_copying_07_");
     }
 
     private void compareResult(String outFileName, String cmpFileName, String diffNamePrefix)

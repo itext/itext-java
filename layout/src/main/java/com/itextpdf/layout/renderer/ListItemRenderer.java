@@ -40,7 +40,7 @@ public class ListItemRenderer extends BlockRenderer {
             IAccessibleElement modelElement = (IAccessibleElement) getModelElement();
             PdfName role = modelElement.getRole();
             if (role != null && !PdfName.Artifact.equals(role)) {
-                boolean lBodyTagIsCreated = tagPointer.isConnectedToTag(modelElement);
+                boolean lBodyTagIsCreated = tagPointer.isElementConnectedToTag(modelElement);
                 if (!lBodyTagIsCreated) {
                     tagPointer.addTag(PdfName.LI);
                 } else {

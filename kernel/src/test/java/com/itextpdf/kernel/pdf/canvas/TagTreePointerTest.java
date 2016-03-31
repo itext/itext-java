@@ -14,7 +14,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
-import com.itextpdf.kernel.pdf.tagutils.AccessibleElementProperties;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
@@ -33,10 +33,10 @@ import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
 @Category(IntegrationTest.class)
-public class PdfTagStructureTest extends ExtendedITextTest {
+public class TagTreePointerTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfTagStructureTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfTagStructureTest/";
+    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/TagTreePointerTest/";
+    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/TagTreePointerTest/";
 
     @BeforeClass
     static public void beforeClass() {
@@ -44,31 +44,28 @@ public class PdfTagStructureTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tagStructureTest01() throws Exception {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "tagStructureTest01.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+    public void tagTreePointerTest01() throws Exception {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "tagTreePointerTest01.pdf");
+        PdfWriter writer = new PdfWriter(fos).setCompressionLevel(PdfWriter.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
 
         PdfPage page1 = document.addNewPage();
         TagTreePointer tagPointer = new TagTreePointer(document);
-        tagPointer.setPage(page1);
+        tagPointer.setPageForTagging(page1);
 
         PdfCanvas canvas = new PdfCanvas(page1);
 
-        tagPointer.addTag(PdfName.P);
         PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
         canvas.beginText()
               .setFontAndSize(standardFont, 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
 
-        tagPointer.addTag(PdfName.Span);
+        tagPointer.addTag(PdfName.P).addTag(PdfName.Span);
 
         canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
               .closeTag();
-
         canvas.setFontAndSize(standardFont, 30)
               .openTag(tagPointer.getTagReference())
               .showText("World")
@@ -80,14 +77,14 @@ public class PdfTagStructureTest extends ExtendedITextTest {
               .release();
 
         PdfPage page2 = document.addNewPage();
-        tagPointer.setPage(page2);
+        tagPointer.setPageForTagging(page2);
         canvas = new PdfCanvas(page2);
 
-        tagPointer.addTag(PdfName.P);
         canvas.beginText()
               .setFontAndSize(PdfFontFactory.createFont(FontConstants.HELVETICA), 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
-        tagPointer.addTag(PdfName.Span);
+
+        tagPointer.addTag(PdfName.P).addTag(PdfName.Span);
 
         canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
@@ -105,11 +102,13 @@ public class PdfTagStructureTest extends ExtendedITextTest {
         page2.flush();
 
         document.close();
+
+        compareResult("tagTreePointerTest01.pdf", "cmp_tagTreePointerTest01.pdf", "diff01_");
     }
 
     @Test
-    public void tagStructureTest02() throws Exception {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "tagStructureTest01.pdf");
+    public void tagTreePointerTest02() throws Exception {
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "tagTreePointerTest02.pdf");
         PdfWriter writer = new PdfWriter(fos);
         writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
@@ -117,25 +116,23 @@ public class PdfTagStructureTest extends ExtendedITextTest {
 
         PdfPage page = document.addNewPage();
         TagTreePointer tagPointer = new TagTreePointer(document);
-        tagPointer.setPage(page);
+        tagPointer.setPageForTagging(page);
 
         PdfCanvas canvas = new PdfCanvas(page);
 
-        tagPointer.addTag(PdfName.P);
         canvas.beginText();
         PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
         canvas.setFontAndSize(standardFont, 24)
               .setTextMatrix(1, 0, 0, 1, 32, 512);
 
-        AccessibleElementProperties properties = new AccessibleElementProperties();
         PdfDictionary attributes = new PdfDictionary();
         attributes.put(PdfName.O, new PdfString("random attributes"));
         attributes.put(new PdfName("hello"), new PdfString("world"));
 
-        properties.setActualText("Actual text for span is: Hello World")
+        tagPointer.addTag(PdfName.P).addTag(PdfName.Span).getProperties()
+                .setActualText("Actual text for span is: Hello World")
                 .setLanguage("en-GB")
                 .addAttributes(attributes);
-        tagPointer.addTag(PdfName.Span).setProperties(properties);
 
         canvas.openTag(tagPointer.getTagReference())
               .showText("Hello ")
@@ -152,7 +149,126 @@ public class PdfTagStructureTest extends ExtendedITextTest {
 
         document.close();
 
-        compareResult("tagStructureTest01.pdf", "cmp_tagStructureTest01.pdf", "diff01_");
+        compareResult("tagTreePointerTest02.pdf", "cmp_tagTreePointerTest02.pdf", "diff02_");
+    }
+
+    @Test
+    public void tagTreePointerTest03() throws Exception {
+        PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
+        PdfWriter writer = new PdfWriter(destinationFolder + "tagTreePointerTest03.pdf");
+        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(reader, writer);
+
+        TagTreePointer tagPointer = new TagTreePointer(document);
+        tagPointer.moveToKid(PdfName.Table).moveToKid(2, PdfName.TR);
+        TagTreePointer tagPointerCopy = new TagTreePointer(tagPointer);
+        tagPointer.removeTag();
+
+        // tagPointerCopy now points at removed tag
+
+        String exceptionMessage = null;
+        try {
+            tagPointerCopy.addTag(PdfName.Span);
+        } catch (PdfException e) {
+            exceptionMessage = e.getMessage();
+        }
+        assertEquals(PdfException.TagTreePointerIsInInvalidStateItPointsAtRemovedElementUseMoveToRoot, exceptionMessage);
+
+        tagPointerCopy.moveToRoot().moveToKid(PdfName.Table);
+
+        tagPointerCopy.moveToKid(PdfName.TR);
+        TagTreePointer tagPointerCopyCopy = new TagTreePointer(tagPointerCopy);
+        tagPointerCopy.flushTag();
+
+        // tagPointerCopyCopy now points at flushed tag
+
+        try {
+            tagPointerCopyCopy.addTag(PdfName.Span);
+        } catch (PdfException e) {
+            exceptionMessage = e.getMessage();
+        }
+        assertEquals(PdfException.TagTreePointerIsInInvalidStateItPointsAtFlushedElementUseMoveToRoot, exceptionMessage);
+
+        try {
+            tagPointerCopy.moveToKid(0);
+        } catch (PdfException e) {
+            exceptionMessage = e.getMessage();
+        }
+        assertEquals(PdfException.CannotMoveToFlushedKid, exceptionMessage);
+
+        document.close();
+    }
+
+    @Test
+    public void tagTreePointerTest04() throws Exception {
+        PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
+        PdfWriter writer = new PdfWriter(destinationFolder + "tagTreePointerTest04.pdf").setCompressionLevel(PdfWriter.NO_COMPRESSION);
+            PdfDocument document = new PdfDocument(reader, writer);
+
+        TagTreePointer tagPointer = new TagTreePointer(document);
+        tagPointer.moveToKid(PdfName.Table).moveToKid(2, PdfName.TR);
+        tagPointer.removeTag();
+
+        tagPointer.moveToKid(PdfName.TR).moveToKid(PdfName.TD)
+                .moveToKid(PdfName.P).moveToKid(PdfName.Span);
+        tagPointer.removeTag()
+                .removeTag();
+
+        document.close();
+
+        compareResult("tagTreePointerTest04.pdf", "cmp_tagTreePointerTest04.pdf", "diff04_");
+    }
+
+    @Test
+    public void tagTreePointerTest05() throws Exception {
+        PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
+        PdfWriter writer = new PdfWriter(destinationFolder + "tagTreePointerTest05.pdf");
+        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(reader, writer);
+
+        TagTreePointer tagPointer1 = new TagTreePointer(document);
+        tagPointer1.moveToKid(PdfName.Table).moveToKid(2, PdfName.TR);
+
+        TagTreePointer tagPointer2 = new TagTreePointer(document);
+        tagPointer2.moveToKid(PdfName.Table).moveToKid(0, PdfName.TR);
+        tagPointer1.relocateKid(0, tagPointer2);
+
+        tagPointer1.moveToParent().moveToKid(5, PdfName.TR).moveToKid(2, PdfName.TD).moveToKid(PdfName.P).moveToKid(PdfName.Span);
+        tagPointer2.moveToKid(PdfName.TD).moveToKid(PdfName.P).moveToKid(PdfName.Span);
+        tagPointer2.setNextNewKidIndex(3);
+        tagPointer1.relocateKid(4, tagPointer2);
+
+        document.close();
+
+        compareResult("tagTreePointerTest05.pdf", "cmp_tagTreePointerTest05.pdf", "diff05_");
+    }
+
+    @Test
+    public void tagTreePointerTest06() throws Exception {
+        PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
+        PdfWriter writer = new PdfWriter(destinationFolder + "tagTreePointerTest06.pdf");
+        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(reader, writer);
+
+        TagTreePointer tagPointer = new TagTreePointer(document);
+        tagPointer.setRole(PdfName.Part);
+        assertEquals(tagPointer.getRole().getValue(), "Part");
+        tagPointer.moveToKid(PdfName.Table).getProperties().setLanguage("en-US");
+        tagPointer.moveToKid(PdfName.TR).moveToKid(PdfName.TD).moveToKid(PdfName.P);
+        String actualText1 = "Some looong latin text";
+        tagPointer.getProperties().setActualText(actualText1);
+
+        assertNull(tagPointer.getConnectedElement(false));
+        IAccessibleElement connectedElement = tagPointer.getConnectedElement(true);
+
+        tagPointer.moveToRoot().moveToKid(PdfName.Table).moveToKid(1, PdfName.TR).getProperties().setActualText("More latin text");
+        connectedElement.setRole(PdfName.Div);
+        connectedElement.getAccessibilityProperties().setLanguage("en-Us");
+        assertEquals(connectedElement.getAccessibilityProperties().getActualText(), actualText1);
+
+        document.close();
+
+        compareResult("tagTreePointerTest06.pdf", "cmp_tagTreePointerTest06.pdf", "diff06_");
     }
 
     @Test
@@ -253,29 +369,14 @@ public class PdfTagStructureTest extends ExtendedITextTest {
 
         PdfPage page1 = document.addNewPage();
         TagTreePointer tagPointer = new TagTreePointer(document);
-        tagPointer.setPage(page1);
+        tagPointer.setPageForTagging(page1);
 
         PdfCanvas canvas = new PdfCanvas(page1);
 
         tagPointer.addTag(PdfName.Div);
 
-        //TODO refactor after the implementation of getting IAccessibleElement from current tag in TagStructure
-        IAccessibleElement paragraphElement = new IAccessibleElement() {
-            @Override
-            public PdfName getRole() {
-                return PdfName.P;
-            }
-
-            @Override
-            public void setRole(PdfName role) {
-            }
-
-            @Override
-            public AccessibleElementProperties getAccessibilityProperties() {
-                return null;
-            }
-        };
-        tagPointer.addTag(paragraphElement, true);
+        tagPointer.addTag(PdfName.P);
+        IAccessibleElement paragraphElement = tagPointer.getConnectedElement(true);
         canvas.beginText();
         PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
         canvas.setFontAndSize(standardFont, 24)
@@ -311,14 +412,14 @@ public class PdfTagStructureTest extends ExtendedITextTest {
               .showText("again")
               .closeTag();
 
-        tagPointer.removeConnectionToTag(paragraphElement);
+        tagPointer.removeElementConnectionToTag(paragraphElement);
         tagPointer.moveToRoot();
 
         canvas.endText()
               .release();
 
         PdfPage page2 = document.addNewPage();
-        tagPointer.setPage(page2);
+        tagPointer.setPageForTagging(page2);
         canvas = new PdfCanvas(page2);
 
         tagPointer.addTag(PdfName.P);
@@ -373,7 +474,7 @@ public class PdfTagStructureTest extends ExtendedITextTest {
 
         PdfPage page = document.addNewPage();
         TagTreePointer tagPointer = new TagTreePointer(document);
-        tagPointer.setPage(page);
+        tagPointer.setPageForTagging(page);
 
         PdfCanvas canvas = new PdfCanvas(page);
 
@@ -409,28 +510,13 @@ public class PdfTagStructureTest extends ExtendedITextTest {
 
         PdfPage page = document.addNewPage();
         TagTreePointer tagPointer = new TagTreePointer(document);
-        tagPointer.setPage(page);
+        tagPointer.setPageForTagging(page);
 
         PdfCanvas canvas = new PdfCanvas(page);
 
-        //TODO refactor after the implementation of getting IAccessibleElement from current tag in TagStructure
-        IAccessibleElement paragraphElement = new IAccessibleElement() {
-            @Override
-            public PdfName getRole() {
-                return PdfName.P;
-            }
+        tagPointer.addTag(PdfName.P);
+        IAccessibleElement paragraphElement = tagPointer.getConnectedElement(true);
 
-            @Override
-            public void setRole(PdfName role) {
-            }
-
-            @Override
-            public AccessibleElementProperties getAccessibilityProperties() {
-                return null;
-            }
-        };
-
-        tagPointer.addTag(paragraphElement, true);
         PdfFont standardFont = PdfFontFactory.createFont(FontConstants.COURIER);
         canvas.beginText()
               .setFontAndSize(standardFont, 24)
@@ -454,7 +540,7 @@ public class PdfTagStructureTest extends ExtendedITextTest {
 
         PdfPage newPage = document.addNewPage();
         canvas = new PdfCanvas(newPage);
-        tagPointer.setPage(newPage);
+        tagPointer.setPageForTagging(newPage);
 
         tagPointer.moveToTag(paragraphElement).addTag(PdfName.Span);
 

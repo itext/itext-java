@@ -114,7 +114,7 @@ import java.util.Set;
         } else if (kid instanceof PdfMcr) {
             parseTag((PdfMcr) kid);
         } else {
-            out.print(" </flushedKid> ");
+            out.print(" <flushedKid/> ");
         }
     }
 

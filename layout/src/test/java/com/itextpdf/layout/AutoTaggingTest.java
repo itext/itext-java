@@ -45,9 +45,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     @Test
     public void textInParagraphTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        String outFileName = destinationFolder + "textInParagraphTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_textInParagraphTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "textInParagraphTest01.pdf")));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -61,15 +59,12 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        new CompareTool().compareTagStructures(outFileName, cmpFileName);
-        assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        compareResult("textInParagraphTest01.pdf", "cmp_textInParagraphTest01.pdf");
     }
 
     @Test
     public void imageTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        String outFileName = destinationFolder + "imageTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_imageTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "imageTest01.pdf")));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -79,15 +74,12 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        new CompareTool().compareTagStructures(outFileName, cmpFileName);
-        assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        compareResult("imageTest01.pdf", "cmp_imageTest01.pdf");
     }
 
     @Test
     public void divTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        String outFileName = destinationFolder + "divTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_divTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "divTest01.pdf")));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -106,15 +98,12 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        new CompareTool().compareTagStructures(outFileName, cmpFileName);
-        assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        compareResult("divTest01.pdf", "cmp_divTest01.pdf");
     }
 
     @Test
     public void tableTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        String outFileName = destinationFolder + "tableTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_tableTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "tableTest01.pdf")));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -137,15 +126,12 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        new CompareTool().compareTagStructures(outFileName, cmpFileName);
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        compareResult("tableTest01.pdf", "cmp_tableTest01.pdf");
     }
 
     @Test
     public void tableTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        String outFileName = destinationFolder + "tableTest02.pdf";
-        String cmpFileName = sourceFolder + "cmp_tableTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "tableTest02.pdf")));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -161,15 +147,12 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        new CompareTool().compareTagStructures(outFileName, cmpFileName);
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        compareResult("tableTest02.pdf", "cmp_tableTest02.pdf");
     }
 
     @Test
     public void tableTest03() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        String outFileName = destinationFolder + "tableTest03.pdf";
-        String cmpFileName = sourceFolder + "cmp_tableTest03.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "tableTest03.pdf")));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -194,15 +177,12 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        new CompareTool().compareTagStructures(outFileName, cmpFileName);
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        compareResult("tableTest03.pdf", "cmp_tableTest03.pdf");
     }
 
     @Test
     public void tableTest04() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        String outFileName = destinationFolder + "tableTest04.pdf";
-        String cmpFileName = sourceFolder + "cmp_tableTest04.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "tableTest04.pdf")));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -226,15 +206,15 @@ public class AutoTaggingTest extends ExtendedITextTest {
         table.complete();
 
         doc.close();
-        new CompareTool().compareTagStructures(outFileName, cmpFileName);
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+
+        compareResult("tableTest04.pdf", "cmp_tableTest04.pdf");
     }
 
     @Test
     public void tableTest05() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String outFileName = destinationFolder + "tableTest05.pdf";
         String cmpFileName = sourceFolder + "cmp_tableTest05.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "tableTest05.pdf")));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -260,15 +240,13 @@ public class AutoTaggingTest extends ExtendedITextTest {
         table.complete();
 
         doc.close();
-        new CompareTool().compareTagStructures(outFileName, cmpFileName);
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+
+        compareResult("tableTest05.pdf", "cmp_tableTest05.pdf");
     }
 
     @Test
     public void tableTest06() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        String outFileName = destinationFolder + "tableTest06.pdf";
-        String cmpFileName = sourceFolder + "cmp_tableTest06.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "tableTest06.pdf")));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -300,15 +278,12 @@ public class AutoTaggingTest extends ExtendedITextTest {
         doc.add(table);
         doc.close();
 
-        new CompareTool().compareTagStructures(outFileName, cmpFileName);
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        compareResult("tableTest06.pdf", "cmp_tableTest06.pdf");
     }
 
     @Test
     public void listTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        String outFileName = destinationFolder + "listTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_listTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "listTest01.pdf")));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -321,15 +296,12 @@ public class AutoTaggingTest extends ExtendedITextTest {
         doc.add(list);
         doc.close();
 
-        new CompareTool().compareTagStructures(outFileName, cmpFileName);
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        compareResult("listTest01.pdf", "cmp_listTest01.pdf");
     }
 
     @Test
     public void artifactTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        String outFileName = destinationFolder + "artifactTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_artifactTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "artifactTest01.pdf")));
         pdfDocument.setTagged();
         Document document = new Document(pdfDocument);
 
@@ -346,15 +318,12 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        new CompareTool().compareTagStructures(outFileName, cmpFileName);
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        compareResult("artifactTest01.pdf", "cmp_artifactTest01.pdf");
     }
 
     @Test
     public void artifactTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        String outFileName = destinationFolder + "artifactTest02.pdf";
-        String cmpFileName = sourceFolder + "cmp_artifactTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "artifactTest02.pdf")));
         pdfDocument.setTagged();
         Document document = new Document(pdfDocument);
 
@@ -369,8 +338,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        new CompareTool().compareTagStructures(outFileName, cmpFileName);
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        compareResult("artifactTest02.pdf", "cmp_artifactTest02.pdf");
     }
 
     /**
@@ -379,9 +347,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
      */
     @Test
     public void flushingTest01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-        String outFileName = destinationFolder + "flushingTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_flushingTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "flushingTest01.pdf")));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -399,8 +365,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         document.close();
 
-        new CompareTool().compareTagStructures(outFileName, cmpFileName);
-        assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        compareResult("flushingTest01.pdf", "cmp_flushingTest01.pdf");
     }
 
     /**
@@ -409,9 +374,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
      */
     @Test
     public void flushingTest02() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-        String outFileName = destinationFolder + "flushingTest02.pdf";
-        String cmpFileName = sourceFolder + "cmp_flushingTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "flushingTest02.pdf")));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -442,8 +405,8 @@ public class AutoTaggingTest extends ExtendedITextTest {
         table.complete();
 
         doc.close();
-        new CompareTool().compareTagStructures(outFileName, cmpFileName);
-        assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+
+        compareResult("flushingTest02.pdf", "cmp_flushingTest02.pdf");
     }
 
     /**
@@ -452,9 +415,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
      */
     @Test
     public void flushingTest03() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-        String outFileName = destinationFolder + "flushingTest03.pdf";
-        String cmpFileName = sourceFolder + "cmp_tableTest04.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "flushingTest03.pdf")));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -480,8 +441,8 @@ public class AutoTaggingTest extends ExtendedITextTest {
         table.complete();
 
         doc.close();
-        new CompareTool().compareTagStructures(outFileName, cmpFileName);
-        assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+
+        compareResult("flushingTest03.pdf", "cmp_tableTest04.pdf");
     }
 
     private Paragraph createParagraph1() throws IOException {
@@ -503,5 +464,25 @@ public class AutoTaggingTest extends ExtendedITextTest {
         String longText = longTextBuilder.toString();
         p = new Paragraph(longText);
         return p;
+    }
+
+
+
+    private void compareResult(String outFileName, String cmpFileName)
+            throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        CompareTool compareTool = new CompareTool();
+        String outPdf = destinationFolder + outFileName;
+        String cmpPdf = sourceFolder + cmpFileName;
+
+        String contentDifferences = compareTool.compareByContent(outPdf,
+                cmpPdf, destinationFolder, "diff");
+        String taggedStructureDifferences = compareTool.compareTagStructures(outPdf, cmpPdf);
+
+        String errorMessage = "";
+        errorMessage += taggedStructureDifferences == null ? "" : taggedStructureDifferences + "\n";
+        errorMessage += contentDifferences == null ? "" : contentDifferences;
+        if (!errorMessage.isEmpty()) {
+            Assert.fail(errorMessage);
+        }
     }
 }

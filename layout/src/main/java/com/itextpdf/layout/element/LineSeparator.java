@@ -2,7 +2,7 @@ package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.draw.LineDrawer;
-import com.itextpdf.kernel.pdf.tagutils.AccessibleElementProperties;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.Property;
 import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.LineSeparatorRenderer;
@@ -15,7 +15,7 @@ import com.itextpdf.layout.renderer.LineSeparatorRenderer;
 public class LineSeparator extends BlockElement<LineSeparator> {
 
     protected PdfName role = PdfName.Artifact;
-    protected AccessibleElementProperties tagProperties;
+    protected AccessibilityProperties tagProperties;
 
     /**
      * Creates a custom line separator with line style defined by custom {@link LineDrawer} interface instance
@@ -41,9 +41,9 @@ public class LineSeparator extends BlockElement<LineSeparator> {
     }
 
     @Override
-    public AccessibleElementProperties getAccessibilityProperties() {
+    public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
-            tagProperties = new AccessibleElementProperties();
+            tagProperties = new AccessibilityProperties();
         }
         return tagProperties;
     }

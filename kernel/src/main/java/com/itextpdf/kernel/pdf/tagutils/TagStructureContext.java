@@ -19,6 +19,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * {@code TagStructureContext} class is used to track necessary information of document's tag structure.
+ * It is also used to make some global modifications of the tag tree like removing or flushing page tags, however
+ * these two methods and also others are called automatically and are for the most part for internal usage.
+ * <br/><br/>
+ * There shall be only one instance of this class per {@code PdfDocument}. To obtain instance of this class use
+ * {@link PdfDocument#getTagStructureContext()}.
+ */
 public class TagStructureContext {
     private static final Set<PdfName> allowedRootTagRoles = new HashSet<PdfName>() {{
         add(PdfName.Book);
@@ -33,11 +41,26 @@ public class TagStructureContext {
     private PdfStructElem rootTagElement;
     protected TagTreePointer autoTaggingPointer;
 
-    // TODO describe thoroughly
+    /**
+     * These two fields define the connections between tags ({@code PdfStructElem}) and
+     * layout model elements ({@code IAccessibleElement}). This connection is used as
+     * a sign that tag is not yet finished and therefore should not be flushed or removed
+     * if page tags are flushed or removed. Also, any {@code TagTreePointer} could be
+     * immediately moved to the tag with connection via it's connected element {@link TagTreePointer#moveToTag}.
+     *
+     * When connection is removed, accessible element role and properties are set to the structure element.
+     */
     private Map<IAccessibleElement, PdfStructElem> connectedModelToStruct;
     private Map<PdfDictionary, IAccessibleElement> connectedStructToModel;
 
-    // TODO shall be one per document
+    /**
+     * Do not use this constructor, instead use {@link PdfDocument#getTagStructureContext()}
+     * method.
+     * <br/><br/>
+     * Creates {@code TagStructureContext} for document. There shall be only one instance of this
+     * class per {@code PdfDocument}.
+     * @param document the document which tag structure will be manipulated with this class.
+     */
     public TagStructureContext(PdfDocument document) {
         this.document = document;
         if (!document.isTagged()) {
@@ -49,6 +72,13 @@ public class TagStructureContext {
         normalizeDocumentRootTag();
     }
 
+    /**
+     * All document auto tagging logic uses {@link TagTreePointer} returned by this method to manipulate tag structure.
+     * Typically it points at the root tag. This pointer also could be used to tweak auto tagging process
+     * (e.g. move this pointer to the Sect tag, which would result in placing all automatically tagged content
+     * under Sect tag).
+     * @return the {@code TagTreePointer} which is used for all auto tagging of the document.
+     */
     public TagTreePointer getAutoTaggingPointer() {
         if (autoTaggingPointer == null) {
             autoTaggingPointer = new TagTreePointer(document);
@@ -57,19 +87,20 @@ public class TagStructureContext {
     }
 
     /**
+     * Checks if given {@code IAccessibleElement} is connected to some tag.
      * @param element element to check if it has a connected tag.
      * @return true, if there is a tag which retains the connection to the given accessible element.
      */
-    public boolean isConnectedToTag(IAccessibleElement element) {
+    public boolean isElementConnectedToTag(IAccessibleElement element) {
         return connectedModelToStruct.containsKey(element);
     }
 
     /**
-     * Destroys the connection between the given accessible element and the tag to which this element is connected.
-     * @param element
+     * Destroys the connection between the given accessible element and the tag to which this element is connected to.
+     * @param element {@code IAccessibleElement} which connection to the tag (if there is one) will be removed.
      * @return current {@link TagStructureContext} instance.
      */
-    public TagStructureContext removeConnectionToTag(IAccessibleElement element) {
+    public TagStructureContext removeElementConnectionToTag(IAccessibleElement element) {
         PdfStructElem structElem = connectedModelToStruct.remove(element);
         removeStructToModelConnection(structElem);
         return this;
@@ -90,13 +121,15 @@ public class TagStructureContext {
     }
 
     /**
-     * Removes all tags that belong only to this page. For the method which defines if tag belongs to the page see
-     * {@link #flushPageTags(PdfPage)}.
+     * Removes all tags that belong only to this page. The logic which defines if tag belongs to the page is described
+     * at {@link #flushPageTags(PdfPage)}.
      * @param page page that defines which tags are to be removed
      * @return current {@link TagStructureContext} instance.
      */
     public TagStructureContext removePageTags(PdfPage page) {
         if (document.getStructTreeRoot().isStructTreeIsPartialFlushed()) {
+            // some page tags could already be flushed in this case, and we won't be able even to find parents of these
+            // flushed tags to remove them from tag structure
             throw new PdfException(PdfException.CannotRemoveTagStructureElementsIfTagStructureWasPartiallyFlushed);
         }
 
@@ -116,9 +149,10 @@ public class TagStructureContext {
     }
 
     /**
-     * Sets a tag which is connected with the given accessible element as a current tag for given {@link TagTreePointer}.
+     * Sets the tag, which is connected with the given accessible element, as a current tag for the given
+     * {@link TagTreePointer}. An exception will be thrown, if given accessible element is not connected to any tag.
      * @param element an element which has a connection with some tag.
-     * @param tagPointer {@link TagTreePointer} which will be moved to the tag connected to the given accessible element
+     * @param tagPointer {@link TagTreePointer} which will be moved to the tag connected to the given accessible element.
      * @return current {@link TagStructureContext} instance.
      */
     public TagStructureContext moveTagPointerToTag(IAccessibleElement element, TagTreePointer tagPointer) {
@@ -168,7 +202,18 @@ public class TagStructureContext {
         return this;
     }
 
-    //TODO consider the name and document it
+    /**
+     * If document tag structure was modified on the low (PdfObjects) level, the {@code TagStructureContext} should be
+     * reinitialized. If iText does some of these low level modifications, this method is called automatically
+     * (e.g. when tagged page is copied to the current document).
+     * This method essentially does three things:
+     *  <ul>
+     *      <li>removes all connections between model elements and tags;</li>
+     *      <li>normalizes document root tag (if there is more than one root tags, combines them under the single root tag);</li>
+     *      <li>moves auto tagging pointer to the root tag.</li>
+     *  </ul>
+     * @return current {@link TagStructureContext} instance.
+     */
     public TagStructureContext reinitialize() {
         removeAllConnectionsToTags();
         normalizeDocumentRootTag();
@@ -185,6 +230,10 @@ public class TagStructureContext {
 
     PdfStructElem getStructConnectedToModel(IAccessibleElement element) {
         return connectedModelToStruct.get(element);
+    }
+
+    IAccessibleElement getModelConnectedToStruct(PdfStructElem struct) {
+        return connectedStructToModel.get(struct);
     }
 
     void saveConnectionBetweenStructAndModel(IAccessibleElement element, PdfStructElem structElem) {
@@ -206,28 +255,38 @@ public class TagStructureContext {
         return parent;
     }
 
-    static void removeKidFromParent(PdfObject kid, PdfDictionary parent) {
+    // returns index of the removed kid
+    static int removeKidFromParent(PdfObject kid, PdfDictionary parent) {
         PdfObject parentK = parent.get(PdfName.K);
+        int removedKidIndex = -1;
         if (parentK.isArray()) {
-            removeObjectFromArray((PdfArray) parentK, kid);
+            removedKidIndex = removeObjectFromArray((PdfArray) parentK, kid);
         }
 
         if (parentK.isDictionary() || parentK.isArray() && ((PdfArray)parentK).isEmpty()) {
             parent.remove(PdfName.K);
+            removedKidIndex = 0;
         }
+
+        return removedKidIndex;
     }
 
-    static boolean removeObjectFromArray(PdfArray array, PdfObject toRemove) {
-        boolean removed;
-        if (!(removed = array.remove(toRemove))) {
-            removed = array.remove(toRemove.getIndirectReference());
+    static int removeObjectFromArray(PdfArray array, PdfObject toRemove) {
+        int i;
+        for (i = 0; i < array.size(); ++i) {
+            PdfObject obj = array.get(i);
+            if (obj == toRemove || obj == toRemove.getIndirectReference()) {
+                array.remove(i);
+                break;
+            }
         }
-        return removed;
+        return i;
     }
 
     private void removeStructToModelConnection(PdfStructElem structElem) {
         if (structElem != null) {
             IAccessibleElement element = connectedStructToModel.remove(structElem.getPdfObject());
+            structElem.setRole(element.getRole());
             if (element.getAccessibilityProperties() != null) {
                 element.getAccessibilityProperties().setToStructElem(structElem);
             }

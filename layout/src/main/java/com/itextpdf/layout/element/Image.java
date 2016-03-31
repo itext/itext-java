@@ -4,7 +4,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImage;
-import com.itextpdf.kernel.pdf.tagutils.AccessibleElementProperties;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -24,7 +24,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
 
     protected PdfXObject xObject;
     protected PdfName role = PdfName.Figure;
-    protected AccessibleElementProperties tagProperties;
+    protected AccessibilityProperties tagProperties;
 
     /**
      * Creates an {@link Image} from an image XObject, the representation of an
@@ -399,9 +399,9 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
     }
 
     @Override
-    public AccessibleElementProperties getAccessibilityProperties() {
+    public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
-            tagProperties = new AccessibleElementProperties();
+            tagProperties = new AccessibilityProperties();
         }
         return tagProperties;
     }

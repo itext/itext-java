@@ -4,6 +4,7 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -126,9 +127,12 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         }}).makeIndirect(document));
     }
 
+    /**
+     * Method to to distinguish struct elements from other elements of the logical tree (like mcr or struct tree root).
+     */
     static public boolean isStructElem(PdfDictionary dictionary) {
         return (PdfName.StructElem.equals(dictionary.getAsName(PdfName.Type)) ||
-                (dictionary.containsKey(PdfName.K) && dictionary.containsKey(PdfName.S)));
+                dictionary.containsKey(PdfName.S)); // required key of the struct elem
     }
 
     /**
@@ -191,6 +195,10 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         return getPdfObject().getAsName(PdfName.S);
     }
 
+    public void setRole(PdfName role) {
+        getPdfObject().put(PdfName.S, role);
+    }
+
     public PdfStructElem addKid(PdfStructElem kid) {
         return addKid(-1, kid);
     }
@@ -211,6 +219,25 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         getDocument().getStructTreeRoot().registerMcr(kid);
         addKidObject(index, kid.getPdfObject());
         return kid;
+    }
+
+    public IPdfStructElem removeKid(int index) {
+        PdfObject k = getK();
+        if (k == null || !k.isArray() && index != 0) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        if (k.isArray()) {
+            PdfArray kidsArray = (PdfArray) k;
+            k = kidsArray.remove(index);
+            if (kidsArray.isEmpty()) {
+                remove(PdfName.K);
+            }
+        } else {
+            remove(PdfName.K);
+        }
+
+        return convertPdfObjectToIPdfStructElem(k);
     }
 
     /**
@@ -295,26 +322,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
             return;
         }
 
-        switch (k.getType()) {
-            case PdfObject.Dictionary:
-                PdfDictionary d = (PdfDictionary) k;
-                if (isStructElem(d))
-                    list.add(new PdfStructElem(d));
-                else if (PdfName.MCR.equals(d.getAsName(PdfName.Type)))
-                    list.add(new PdfMcrDictionary(d, this));
-                else if (PdfName.OBJR.equals(d.getAsName(PdfName.Type)))
-                    list.add(new PdfObjRef(d, this));
-                break;
-            case PdfObject.Number:
-                list.add(new PdfMcrNumber((PdfNumber) k, this));
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void addKidObject(PdfObject kid) {
-        addKidObject(-1, kid);
+        list.add(convertPdfObjectToIPdfStructElem(k));
     }
 
     private void addKidObject(int index, PdfObject kid) {
@@ -344,5 +352,31 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         }
         if (kid instanceof PdfDictionary && isStructElem((PdfDictionary) kid))
             ((PdfDictionary) kid).put(PdfName.P, pdfObject);
+    }
+
+    private IPdfStructElem convertPdfObjectToIPdfStructElem(PdfObject obj) {
+        if (obj.isIndirectReference()) {
+            obj = ((PdfIndirectReference)obj).getRefersTo();
+        }
+
+        IPdfStructElem elem = null;
+        switch (obj.getType()) {
+            case PdfObject.Dictionary:
+                PdfDictionary d = (PdfDictionary) obj;
+                if (isStructElem(d))
+                    elem = new PdfStructElem(d);
+                else if (PdfName.MCR.equals(d.getAsName(PdfName.Type)))
+                    elem = new PdfMcrDictionary(d, this);
+                else if (PdfName.OBJR.equals(d.getAsName(PdfName.Type)))
+                    elem = new PdfObjRef(d, this);
+                break;
+            case PdfObject.Number:
+                elem = new PdfMcrNumber((PdfNumber) obj, this);
+                break;
+            default:
+                break;
+        }
+
+        return elem;
     }
 }

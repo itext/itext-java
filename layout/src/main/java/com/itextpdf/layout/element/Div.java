@@ -1,7 +1,7 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.tagutils.AccessibleElementProperties;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 
 /**
  * A {@link Div} is a container object that defines a section in a document,
@@ -13,7 +13,7 @@ import com.itextpdf.kernel.pdf.tagutils.AccessibleElementProperties;
 public class Div extends BlockElement<Div> {
 
     protected PdfName role = PdfName.Div;
-    protected AccessibleElementProperties tagProperties;
+    protected AccessibilityProperties tagProperties;
 
     /**
      * Adds any block element to the div's contents.
@@ -53,9 +53,9 @@ public class Div extends BlockElement<Div> {
     }
 
     @Override
-    public AccessibleElementProperties getAccessibilityProperties() {
+    public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
-            tagProperties = new AccessibleElementProperties();
+            tagProperties = new AccessibilityProperties();
         }
         return tagProperties;
     }

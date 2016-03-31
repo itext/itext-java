@@ -1,7 +1,7 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.tagutils.AccessibleElementProperties;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.Property;
 import com.itextpdf.layout.renderer.TextRenderer;
@@ -14,7 +14,7 @@ public class Text extends AbstractElement<Text> implements ILeafElement<Text>, I
 
     protected String text;
     protected PdfName role = PdfName.Span;
-    protected AccessibleElementProperties tagProperties;
+    protected AccessibilityProperties tagProperties;
 
     /**
      * Constructs a Text with its role initialized.
@@ -107,9 +107,9 @@ public class Text extends AbstractElement<Text> implements ILeafElement<Text>, I
     }
 
     @Override
-    public AccessibleElementProperties getAccessibilityProperties() {
+    public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
-            tagProperties = new AccessibleElementProperties();
+            tagProperties = new AccessibilityProperties();
         }
         return tagProperties;
     }

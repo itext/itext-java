@@ -1,7 +1,7 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.tagutils.AccessibleElementProperties;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.Property;
 import com.itextpdf.layout.border.Border;
@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public class Table extends BlockElement<Table> implements ILargeElement<Table> {
 
     protected PdfName role = PdfName.Table;
-    protected AccessibleElementProperties tagProperties;
+    protected AccessibilityProperties tagProperties;
 
     private List<Cell[]> rows;
 
@@ -554,9 +554,9 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     }
 
     @Override
-    public AccessibleElementProperties getAccessibilityProperties() {
+    public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
-            tagProperties = new AccessibleElementProperties();
+            tagProperties = new AccessibilityProperties();
         }
         return tagProperties;
     }

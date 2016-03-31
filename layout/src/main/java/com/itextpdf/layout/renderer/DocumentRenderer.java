@@ -69,7 +69,7 @@ public class DocumentRenderer extends RootRenderer {
             wrappedContentPage.add(pageNum);
 
             if (pdfDocument.isTagged()) {
-                pdfDocument.getTagStructureContext().getAutoTaggingPointer().setPage(correspondingPage);
+                pdfDocument.getTagStructureContext().getAutoTaggingPointer().setPageForTagging(correspondingPage);
             }
             resultRenderer.draw(new DrawContext(pdfDocument, new PdfCanvas(correspondingPage, wrapOldContent), pdfDocument.isTagged()));
         }

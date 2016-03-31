@@ -157,6 +157,9 @@ public class PdfException extends RuntimeException {
     public static final String SignatureWithName1IsNotTheLastItDoesntCoverWholeDocument = "signature.with.name.1.is.not.the.last.it.doesnt.cover.whole.document";
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";
     public static final String StructureElementShallContainParentObject = "structure.element.shall.contain.parent.object";
+    public static final String TagCannotBeMovedToTheAnotherDocumentsTagStructure = "tag.cannot.be.moved.to.the.another.documents.tag.structure";
+    public static final String TagTreePointerIsInInvalidStateItPointsAtFlushedElementUseMoveToRoot = "tagtreepointer.is.in.invalid.state.it.points.at.flushed.element.use.movetoroot";
+    public static final String TagTreePointerIsInInvalidStateItPointsAtRemovedElementUseMoveToRoot = "tagtreepointer.is.in.invalid.state.it.points.at.removed.element.use.movetoroot";
     public static final String TextCannotBeNull = "text.cannot.be.null";
     public static final String TextIsTooBig = "text.is.too.big";
     public static final String TextMustBeEven = "the.text.length.must.be.even";

@@ -1,7 +1,7 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.tagutils.AccessibleElementProperties;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.border.SolidBorder;
@@ -33,7 +33,7 @@ public class Cell extends BlockElement<Cell> {
     private int colspan;
 
     protected PdfName role = PdfName.TD;
-    protected AccessibleElementProperties tagProperties;
+    protected AccessibilityProperties tagProperties;
 
     /**
      * Creates a cell which takes a custom amount of cell spaces in the table.
@@ -182,9 +182,9 @@ public class Cell extends BlockElement<Cell> {
     }
 
     @Override
-    public AccessibleElementProperties getAccessibilityProperties() {
+    public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
-            tagProperties = new AccessibleElementProperties();
+            tagProperties = new AccessibilityProperties();
         }
         return tagProperties;
     }

@@ -806,6 +806,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return structParentIndex++;
     }
 
+    /**
+     * Gets document {@code TagStructureContext}.
+     * The document must be tagged, otherwise an exception will be thrown.
+     * @return document {@code TagStructureContext}.
+     */
     public TagStructureContext getTagStructureContext() {
         checkClosingStatus();
         if (tagStructureContext != null) {
@@ -945,13 +950,15 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         // It's important to copy tag structure after link annotations were copied, because object content items in tag
         // structure are not copied in case if their's OBJ key is annotation and doesn't contain /P entry.
         if (toDocument.isTagged()) {
+            if (tagStructureContext != null) {
+                tagStructureContext.removeAllConnectionsToTags();
+            }
             if (insertBeforePage > toDocument.getNumberOfPages()) {
                 getStructTreeRoot().copyTo(toDocument, page2page);
-                toDocument.getTagStructureContext().reinitialize();
             } else {
                 getStructTreeRoot().copyTo(toDocument, insertBeforePage, page2page);
-                toDocument.getTagStructureContext().reinitialize();
             }
+            toDocument.getTagStructureContext().reinitialize();
         }
         if (catalog.isOutlineMode()) {
             copyOutlines(outlinesToCopy, toDocument, page2Outlines);

@@ -221,6 +221,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Copies page to the specified document.
+     * <br/><br/>
+     * NOTE: Works only for pages from the document opened in reading mode, otherwise an exception is thrown.
      *
      * @param toDocument a document to copy page to.
      * @return copied page.
@@ -231,6 +233,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Copies page to the specified document.
+     * <br/><br/>
+     * NOTE: Works only for pages from the document opened in reading mode, otherwise an exception is thrown.
      *
      * @param toDocument a document to copy page to.
      * @param copier     a copier which bears a specific copy logic. May be NULL
@@ -504,10 +508,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public PdfPage addAnnotation(int index, PdfAnnotation annotation, boolean tagAnnotation) {
         if (getDocument().isTagged() && tagAnnotation) {
             TagTreePointer tagPointer = getDocument().getTagStructureContext().getAutoTaggingPointer();
-            PdfPage prevPage = tagPointer.getCurrentPage();
-            tagPointer.setPage(this).addAnnotationTag(annotation);
+            PdfPage prevPage = tagPointer.getCurrentPage(); // TODO what about if current tagging stream is set
+            tagPointer.setPageForTagging(this).addAnnotationTag(annotation);
             if (prevPage != null) {
-                tagPointer.setPage(prevPage);
+                tagPointer.setPageForTagging(prevPage);
             }
         }
 
@@ -550,7 +554,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (tagPointer != null) {
                 boolean standardAnnotTagRole = tagPointer.getRole().equals(PdfName.Annot)
                         || tagPointer.getRole().equals(PdfName.Form);
-                if (tagPointer.getListOfKidsRoles().isEmpty() && standardAnnotTagRole) {
+                if (tagPointer.getKidsRoles().isEmpty() && standardAnnotTagRole) {
                     tagPointer.removeTag();
                 }
             }

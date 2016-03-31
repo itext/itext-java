@@ -5,7 +5,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 
-public class PdfTagReference {
+public class TagReference {
     protected TagTreePointer tagPointer;
     protected int insertIndex;
     protected PdfStructElem referencedTag;
@@ -13,7 +13,7 @@ public class PdfTagReference {
     protected PdfName role;
     protected PdfDictionary properties;
 
-    protected PdfTagReference(PdfStructElem referencedTag, TagTreePointer tagPointer, int insertIndex) {
+    protected TagReference(PdfStructElem referencedTag, TagTreePointer tagPointer, int insertIndex) {
         this.role = referencedTag.getRole();
         this.referencedTag = referencedTag;
         this.tagPointer = tagPointer;
@@ -28,7 +28,7 @@ public class PdfTagReference {
         return tagPointer.createNextMcidForStructElem(referencedTag, insertIndex);
     }
 
-    public PdfTagReference addProperty(PdfName name, PdfObject value) {
+    public TagReference addProperty(PdfName name, PdfObject value) {
         if (properties == null) {
             properties = new PdfDictionary();
         }
@@ -37,7 +37,7 @@ public class PdfTagReference {
         return this;
     }
 
-    public PdfTagReference removeProperty(PdfName name) {
+    public TagReference removeProperty(PdfName name) {
         if (properties != null) {
             properties.remove(name);
         }
