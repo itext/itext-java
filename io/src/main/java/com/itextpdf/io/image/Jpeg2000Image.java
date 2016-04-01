@@ -20,7 +20,10 @@ public class Jpeg2000Image extends Image {
     }
 
     public static class ColorSpecBox extends ArrayList<Integer> {
-        private byte[] colorProfile;
+        
+		private static final long serialVersionUID = -6008490897027025733L;
+		
+		private byte[] colorProfile;
 
         public int getMeth() {
             return get(0);

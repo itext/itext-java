@@ -11,7 +11,9 @@ import java.util.StringTokenizer;
 
 public class CidFont extends FontProgram {
 
-    private int pdfFontFlags;
+    private static final long serialVersionUID = 5444988003799502179L;
+    
+	private int pdfFontFlags;
     private Set<String> compatibleCmaps;
 
     CidFont(String fontName, Set<String> cmaps) {

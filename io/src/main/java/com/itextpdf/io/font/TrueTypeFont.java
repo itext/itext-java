@@ -21,7 +21,9 @@ import org.slf4j.LoggerFactory;
 
 public class TrueTypeFont extends FontProgram {
 
-    private OpenTypeParser fontParser;
+    private static final long serialVersionUID = -2232044646577669268L;
+
+	private OpenTypeParser fontParser;
 
     protected int[][] bBoxes;
 
