@@ -27,7 +27,10 @@ import java.security.cert.Certificate;
  * @author Kazuya Ujihara
  */
 public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
-    private static final int StandardEncryption40 = 2;
+	
+	private static final long serialVersionUID = -6864863940808467156L;
+	
+	private static final int StandardEncryption40 = 2;
     private static final int StandardEncryption128 = 3;
     private static final int Aes128 = 4;
     private static final int Aes256 = 5;

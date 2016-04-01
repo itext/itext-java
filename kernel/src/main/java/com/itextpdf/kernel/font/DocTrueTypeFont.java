@@ -14,7 +14,9 @@ import com.itextpdf.kernel.pdf.PdfString;
 
 class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
 
-    private PdfStream fontFile;
+    private static final long serialVersionUID = 4611535787920619829L;
+    
+	private PdfStream fontFile;
     private PdfName fontFileName;
     private PdfName subtype;
 
