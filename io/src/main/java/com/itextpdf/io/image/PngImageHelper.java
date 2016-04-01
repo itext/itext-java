@@ -1,7 +1,8 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.FilterUtil;
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.color.IccProfile;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
@@ -375,7 +376,7 @@ public class PngImageHelper {
                         }
                         break;
                 }
-                Utilities.skip(pngStream, len);
+                StreamUtil.skip(pngStream, len);
             } else if (IHDR.equals(marker)) {
                 png.width = getInt(pngStream);
                 png.height = getInt(pngStream);
@@ -399,7 +400,7 @@ public class PngImageHelper {
                     colorspace[3] = PdfEncodings.convertToString(png.colorTable, null);
                     png.additional.put("ColorSpace", colorspace);
                 } else {
-                    Utilities.skip(pngStream, len);
+                    StreamUtil.skip(pngStream, len);
                 }
             } else if (pHYs.equals(marker)) {
                 int dx = getInt(pngStream);
@@ -466,7 +467,7 @@ public class PngImageHelper {
                     p += r;
                     len -= r;
                 }
-                byte iccp[] = Utilities.flateDecode(icccom, true);
+                byte iccp[] = FilterUtil.flateDecode(icccom, true);
                 icccom = null;
                 try {
                     png.iccProfile = IccProfile.getInstance(iccp);
@@ -476,9 +477,9 @@ public class PngImageHelper {
             } else if (IEND.equals(marker)) {
                 break;
             } else {
-                Utilities.skip(pngStream, len);
+                StreamUtil.skip(pngStream, len);
             }
-            Utilities.skip(pngStream, 4);
+            StreamUtil.skip(pngStream, 4);
         }
     }
 

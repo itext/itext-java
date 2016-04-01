@@ -1,13 +1,12 @@
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.FontProgram;
-import com.itextpdf.io.util.Utilities;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
@@ -135,8 +134,8 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         int total = 0;
         for (int i = 0; i < text.length(); i++) {
             int ch;
-            if (Utilities.isSurrogatePair(text, i)) {
-                ch = Utilities.convertToUtf32(text, i);
+            if (TextUtil.isSurrogatePair(text, i)) {
+                ch = TextUtil.convertToUtf32(text, i);
                 i++;
             } else {
                 ch = text.charAt(i);
@@ -172,8 +171,8 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         int min = 0;
         for (int k = 0; k < text.length(); ++k) {
             int ch;
-            if (Utilities.isSurrogatePair(text, k)) {
-                ch = Utilities.convertToUtf32(text, k);
+            if (TextUtil.isSurrogatePair(text, k)) {
+                ch = TextUtil.convertToUtf32(text, k);
                 k++;
             } else {
                 ch = text.charAt(k);
@@ -220,8 +219,8 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         int max = 0;
         for (int k = 0; k < text.length(); ++k) {
             int ch;
-            if (Utilities.isSurrogatePair(text, k)) {
-                ch = Utilities.convertToUtf32(text, k);
+            if (TextUtil.isSurrogatePair(text, k)) {
+                ch = TextUtil.convertToUtf32(text, k);
                 k++;
             } else {
                 ch = text.charAt(k);

@@ -1,6 +1,6 @@
 package com.itextpdf.kernel.crypto.securityhandler;
 
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -285,7 +285,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         for (int i = 0; i < recipients.size(); i++) {
             try {
                 cms = getEncodedRecipient(i);
-                EncodedRecipients.add(new PdfLiteral(Utilities.createEscapedString(cms)));
+                EncodedRecipients.add(new PdfLiteral(StreamUtil.createEscapedString(cms)));
             } catch (GeneralSecurityException e) {
                 EncodedRecipients = null;
                 // break was added while porting to itext7

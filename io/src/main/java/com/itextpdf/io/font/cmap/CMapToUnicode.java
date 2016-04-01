@@ -2,7 +2,7 @@ package com.itextpdf.io.font.cmap;
 
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.TextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ public class CMapToUnicode extends AbstractCMap {
     public static CMapToUnicode getIdentity() {
         CMapToUnicode uni = new CMapToUnicode();
         for (int i = 0; i < 65537; i++) {
-            uni.addChar(i, Utilities.convertFromUtf32(i));
+            uni.addChar(i, TextUtil.convertFromUtf32(i));
         }
         return uni;
     }

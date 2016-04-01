@@ -1,6 +1,6 @@
 package com.itextpdf.signatures;
 
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.io.source.ByteBuffer;
@@ -644,7 +644,7 @@ public class PdfSigner {
         if (spaceAvailable < signedContent.length) {
             throw new PdfException(PdfException.AvailableSpaceIsNotEnoughForSignature);
         }
-        Utilities.copyBytes(readerSource, 0, gaps[1] + 1, outs);
+        StreamUtil.copyBytes(readerSource, 0, gaps[1] + 1, outs);
         ByteBuffer bb = new ByteBuffer(spaceAvailable * 2);
         for (byte bi : signedContent) {
             bb.appendHex(bi);
@@ -655,7 +655,7 @@ public class PdfSigner {
         }
         byte[] bbArr = bb.toByteArray();
         outs.write(bbArr);
-        Utilities.copyBytes(readerSource, gaps[2] - 1, gaps[3] + 1, outs);
+        StreamUtil.copyBytes(readerSource, gaps[2] - 1, gaps[3] + 1, outs);
     }
 
     /**

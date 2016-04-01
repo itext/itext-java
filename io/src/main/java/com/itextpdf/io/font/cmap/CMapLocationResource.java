@@ -5,7 +5,7 @@ import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.ResourceUtil;
 
 import java.io.InputStream;
 
@@ -16,7 +16,7 @@ public class CMapLocationResource implements CMapLocation{
 
     public PdfTokenizer getLocation(String location) throws java.io.IOException {
         String fullName = FontConstants.RESOURCE_PATH + "cmap/" + location;
-        InputStream inp = Utilities.getResourceStream(fullName);
+        InputStream inp = ResourceUtil.getResourceStream(fullName);
         if (inp == null) {
             throw new IOException("the.cmap.1.was.not.found").setMessageParams(fullName);
         }

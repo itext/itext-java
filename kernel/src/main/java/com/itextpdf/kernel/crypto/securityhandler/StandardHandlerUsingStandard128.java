@@ -1,6 +1,5 @@
 package com.itextpdf.kernel.crypto.securityhandler;
 
-import com.itextpdf.io.util.Utilities;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -121,6 +120,6 @@ public class StandardHandlerUsingStandard128 extends StandardHandlerUsingStandar
 
     @Override
     protected boolean isValidPassword(byte[] uValue, byte[] userKey) {
-        return !Utilities.equalsArray(uValue, userKey, 16);
+        return !equalsArray(uValue, userKey, 16);
     }
 }

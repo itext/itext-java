@@ -1,7 +1,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.util.IntHashtable;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.ResourceUtil;
 
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -68,7 +68,7 @@ public class CidFontProperties {
     }
 
     private static void loadRegistry() throws java.io.IOException {
-        InputStream resource = Utilities.getResourceStream(RESOURCE_PATH_CMAP + "cjk_registry.properties");
+        InputStream resource = ResourceUtil.getResourceStream(RESOURCE_PATH_CMAP + "cjk_registry.properties");
         Properties p = new Properties();
         p.load(resource);
         resource.close();
@@ -86,7 +86,7 @@ public class CidFontProperties {
 
     private static Map<String, Object> readFontProperties(String name) throws java.io.IOException {
         name += ".properties";
-        InputStream resource = Utilities.getResourceStream(RESOURCE_PATH_CMAP + name);
+        InputStream resource = ResourceUtil.getResourceStream(RESOURCE_PATH_CMAP + name);
         Properties p = new Properties();
         p.load(resource);
         resource.close();

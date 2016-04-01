@@ -1,8 +1,8 @@
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
 import com.itextpdf.io.image.ImageType;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.util.Utilities;
 import com.itextpdf.io.image.Image;
 
 import java.io.ByteArrayInputStream;
@@ -25,7 +25,7 @@ public class WmfImage extends Image {
      * @throws MalformedURLException
      */
     public WmfImage(String fileName) throws MalformedURLException {
-        this(Utilities.toURL(fileName));
+        this(UrlUtil.toURL(fileName));
     }
 
     /**

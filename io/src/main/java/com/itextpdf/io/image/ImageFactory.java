@@ -1,7 +1,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.io.codec.CCITTG4Encoder;
 import com.itextpdf.io.codec.TIFFFaxDecoder;
 import com.itextpdf.io.source.ByteArrayOutputStream;
@@ -47,7 +47,7 @@ public final class ImageFactory {
     }
 
     public static Image getImage(String filename, boolean recoverImage) throws MalformedURLException {
-        return getImage(Utilities.toURL(filename), recoverImage);
+        return getImage(UrlUtil.toURL(filename), recoverImage);
     }
 
     public static Image getImage(String filename) throws MalformedURLException {

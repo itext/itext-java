@@ -1,6 +1,6 @@
 package com.itextpdf.io.source;
 
-import com.itextpdf.io.util.DecimalFormatUtils;
+import com.itextpdf.io.util.DecimalFormatUtil;
 
 public class ByteUtils {
 
@@ -81,7 +81,7 @@ public class ByteUtils {
 
     static byte[] getIsoBytes(double d, ByteBuffer buffer, boolean highPrecision) {
         if (highPrecision) {
-            byte[] result = DecimalFormatUtils.formatNumber(d, "0.######").getBytes();
+            byte[] result = DecimalFormatUtil.formatNumber(d, "0.######").getBytes();
             if (buffer != null) {
                 buffer.prepend(result);
                 return null;

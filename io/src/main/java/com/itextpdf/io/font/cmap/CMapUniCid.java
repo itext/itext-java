@@ -1,7 +1,7 @@
 package com.itextpdf.io.font.cmap;
 
 import com.itextpdf.io.util.IntHashtable;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.TextUtil;
 
 /**
  * @author psoares
@@ -15,8 +15,8 @@ public class CMapUniCid extends AbstractCMap {
         if (code.isNumber()) {
             int codePoint;
             String s = toUnicodeString(mark, true);
-            if (Utilities.isSurrogatePair(s, 0)) {
-                codePoint = Utilities.convertToUtf32(s, 0);
+            if (TextUtil.isSurrogatePair(s, 0)) {
+                codePoint = TextUtil.convertToUtf32(s, 0);
             } else {
                 codePoint = (int) s.charAt(0);
             }
@@ -32,11 +32,11 @@ public class CMapUniCid extends AbstractCMap {
         CMapToUnicode uni = new CMapToUnicode();
         int[] keys = map.toOrderedKeys();
         for (int key : keys) {
-            uni.addChar(map.get(key), Utilities.convertFromUtf32(key));
+            uni.addChar(map.get(key), TextUtil.convertFromUtf32(key));
         }
         int spaceCid = lookup(32);
         if (spaceCid != 0) {
-            uni.addChar(spaceCid, Utilities.convertFromUtf32(32));
+            uni.addChar(spaceCid, TextUtil.convertFromUtf32(32));
         }
         return uni;
     }

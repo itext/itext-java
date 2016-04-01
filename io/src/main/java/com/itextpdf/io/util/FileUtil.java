@@ -2,7 +2,10 @@ package com.itextpdf.io.util;
 
 import java.io.File;
 
-public class FileUtils {
+public final class FileUtil {
+
+    private FileUtil() {
+    }
 
     public static String getFontsDir() {
         String winDir = System.getenv("windir");

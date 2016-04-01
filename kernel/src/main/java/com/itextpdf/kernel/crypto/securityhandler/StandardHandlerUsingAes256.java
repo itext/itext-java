@@ -1,6 +1,6 @@
 package com.itextpdf.kernel.crypto.securityhandler;
 
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.AESCipherCBCnoPad;
 import com.itextpdf.kernel.crypto.AesDecryptor;
@@ -42,7 +42,6 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
     @Override
     public void setHashKeyForNextObject(int objNumber, int objGeneration) {
         // in AES256 we don't recalculate nextObjectKey
-        return;
     }
 
     @Override
@@ -134,10 +133,9 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
     private void setAES256DicEntries(PdfDictionary encryptionDictionary, byte[] oeKey, byte[] ueKey, byte[] aes256Perms,
                                      boolean encryptMetadata, boolean embeddedFilesOnly) {
         int aes256Revision = 5;
-
-        encryptionDictionary.put(PdfName.OE, new PdfLiteral(Utilities.createEscapedString(oeKey)));
-        encryptionDictionary.put(PdfName.UE, new PdfLiteral(Utilities.createEscapedString(ueKey)));
-        encryptionDictionary.put(PdfName.Perms, new PdfLiteral(Utilities.createEscapedString(aes256Perms)));
+        encryptionDictionary.put(PdfName.OE, new PdfLiteral(StreamUtil.createEscapedString(oeKey)));
+        encryptionDictionary.put(PdfName.UE, new PdfLiteral(StreamUtil.createEscapedString(ueKey)));
+        encryptionDictionary.put(PdfName.Perms, new PdfLiteral(StreamUtil.createEscapedString(aes256Perms)));
         encryptionDictionary.put(PdfName.R, new PdfNumber(aes256Revision));
         encryptionDictionary.put(PdfName.V, new PdfNumber(aes256Revision));
         PdfDictionary stdcf = new PdfDictionary();

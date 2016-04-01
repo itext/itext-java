@@ -1,6 +1,6 @@
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceRgb;
 
@@ -86,7 +86,7 @@ public class InputMeta {
      */
     public void skip(int len) throws IOException{
         length += len;
-        Utilities.skip(in, len);
+        StreamUtil.skip(in, len);
     }
 
     /**

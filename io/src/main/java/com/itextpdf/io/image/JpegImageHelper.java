@@ -1,7 +1,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.color.IccProfile;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 
@@ -123,7 +123,7 @@ public class JpegImageHelper {
             InputStream jpegStream = null;
             try {
                 jpegStream = image.getUrl().openStream();
-                Utilities.transferBytes(jpegStream, stream);
+                StreamUtil.transferBytes(jpegStream, stream);
             } catch (java.io.IOException e) {
                 throw new IOException(IOException.JpegImageException, e);
             } finally {
@@ -160,7 +160,7 @@ public class JpegImageHelper {
                     firstPass = false;
                     len = getShort(jpegStream);
                     if (len < 16) {
-                        Utilities.skip(jpegStream, len - 2);
+                        StreamUtil.skip(jpegStream, len - 2);
                         continue;
                     }
                     byte bcomp[] = new byte[JFIF_ID.length];
@@ -175,10 +175,10 @@ public class JpegImageHelper {
                         }
                     }
                     if (!found) {
-                        Utilities.skip(jpegStream, len - 2 - bcomp.length);
+                        StreamUtil.skip(jpegStream, len - 2 - bcomp.length);
                         continue;
                     }
-                    Utilities.skip(jpegStream, 2);
+                    StreamUtil.skip(jpegStream, 2);
                     int units = jpegStream.read();
                     int dx = getShort(jpegStream);
                     int dy = getShort(jpegStream);
@@ -187,7 +187,7 @@ public class JpegImageHelper {
                     } else if (units == 2) {
                         image.setDpi((int) (dx * 2.54f + 0.5f), (int) (dy * 2.54f + 0.5f));
                     }
-                    Utilities.skip(jpegStream, len - 2 - bcomp.length - 7);
+                    StreamUtil.skip(jpegStream, len - 2 - bcomp.length - 7);
                     continue;
                 }
                 if (marker == M_APPE) {
@@ -308,7 +308,7 @@ public class JpegImageHelper {
                 firstPass = false;
                 int markertype = marker(marker);
                 if (markertype == VALID_MARKER) {
-                    Utilities.skip(jpegStream, 2);
+                    StreamUtil.skip(jpegStream, 2);
                     if (jpegStream.read() != 0x08) {
                         throw new IOException(IOException._1MustHave8BitsPerComponent).setMessageParams(errorID);
                     }
@@ -320,7 +320,7 @@ public class JpegImageHelper {
                 } else if (markertype == UNSUPPORTED_MARKER) {
                     throw new IOException(IOException._1UnsupportedJpegMarker2).setMessageParams(errorID, String.valueOf(marker));
                 } else if (markertype != NOPARAM_MARKER) {
-                    Utilities.skip(jpegStream, getShort(jpegStream) - 2);
+                    StreamUtil.skip(jpegStream, getShort(jpegStream) - 2);
                 }
             }
         }

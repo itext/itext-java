@@ -1,7 +1,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 
@@ -47,7 +47,7 @@ class Type1Parser implements Serializable {
             InputStream resource = null;
             try {
                 String resourcePath = FontConstants.RESOURCE_PATH + "afm/" + afmPath + ".afm";
-                resource = Utilities.getResourceStream(resourcePath);
+                resource = ResourceUtil.getResourceStream(resourcePath);
                 if (resource == null) {
                     throw new IOException("1.not.found.as.resource").setMessageParams(resourcePath);
                 }

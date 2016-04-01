@@ -2,7 +2,7 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.util.IntHashtable;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.io.font.cmap.AbstractCMap;
 import com.itextpdf.io.font.cmap.CMapByteCid;
 import com.itextpdf.io.font.cmap.CMapCidByte;
@@ -134,7 +134,7 @@ public class FontCache {
     }
 
     private static void loadRegistry() throws java.io.IOException {
-        InputStream resource = Utilities.getResourceStream(CMAP_RESOURCE_PATH + CJK_REGISTRY_FILENAME);
+        InputStream resource = ResourceUtil.getResourceStream(CMAP_RESOURCE_PATH + CJK_REGISTRY_FILENAME);
         try {
             Properties p = new Properties();
             p.load(resource);
@@ -160,7 +160,7 @@ public class FontCache {
     }
 
     private static Map<String, Object> readFontProperties(String name) throws java.io.IOException {
-        InputStream resource = Utilities.getResourceStream(CMAP_RESOURCE_PATH + name + ".properties");
+        InputStream resource = ResourceUtil.getResourceStream(CMAP_RESOURCE_PATH + name + ".properties");
 
         try {
             Properties p = new Properties();

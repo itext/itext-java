@@ -1,8 +1,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.util.FileUtils;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -339,12 +338,12 @@ class FontRegisterProvider {
         }
         int count = 0;
         try {
-            String[] files = FileUtils.getDirectoryList(dir);
+            String[] files = FileUtil.getDirectoryList(dir);
             if (files == null)
                 return 0;
             for (String file : files) {
                 try {
-                    if (FileUtils.isDirectory(file)) {
+                    if (FileUtil.isDirectory(file)) {
                         if (scanSubdirectories) {
                             count += registerDirectory(file, true);
                         }
@@ -353,7 +352,7 @@ class FontRegisterProvider {
                         if (".afm".equals(suffix) || ".pfm".equals(suffix)) {
                             /* Only register Type 1 fonts with matching .pfb files */
                             String pfb = file.substring(0, file.length() - 4) + ".pfb";
-                            if (FileUtils.fileExists(pfb)) {
+                            if (FileUtil.fileExists(pfb)) {
                                 register(file, null);
                                 ++count;
                             }
@@ -381,7 +380,7 @@ class FontRegisterProvider {
     public int registerSystemDirectories() {
         int count = 0;
         String[] withSubDirs = {
-                FileUtils.getFontsDir(),
+                FileUtil.getFontsDir(),
                 "/usr/share/X11/fonts",
                 "/usr/X/lib/X11/fonts",
                 "/usr/openwin/lib/X11/fonts",

@@ -1,6 +1,5 @@
 package com.itextpdf.kernel.crypto.securityhandler;
 
-import com.itextpdf.io.util.Utilities;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.ARCFOUREncryption;
 import com.itextpdf.kernel.crypto.BadPasswordException;
@@ -120,7 +119,7 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
 
 
     protected boolean isValidPassword(byte[] uValue, byte[] userKey) {
-        return !Utilities.equalsArray(uValue, userKey, 32);
+        return !equalsArray(uValue, userKey, 32);
     }
 
     private void initKeyAndFillDictionary(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,

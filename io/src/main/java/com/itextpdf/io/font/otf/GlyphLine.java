@@ -1,6 +1,6 @@
 package com.itextpdf.io.font.otf;
 
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.TextUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,7 +65,7 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
                     if (glyphs.get(i).getChars() != null) {
                         str.append(glyphs.get(i).getChars());
                     } else if (glyphs.get(i).getUnicode() != null) {
-                        str.append(Utilities.convertFromUtf32(glyphs.get(i).getUnicode()));
+                        str.append(TextUtil.convertFromUtf32(glyphs.get(i).getUnicode()));
                     }
                 }
             }
@@ -141,7 +141,7 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
         if (currentGlyph.getChars() != null) {
             chars.append(currentGlyph.getChars());
         } else if (currentGlyph.getUnicode() != null) {
-            chars.append(Utilities.convertFromUtf32(currentGlyph.getUnicode()));
+            chars.append(TextUtil.convertFromUtf32(currentGlyph.getUnicode()));
         }
 
         for (int j = 0; j < rightPartLen; ++j) {
@@ -150,7 +150,7 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
             if (currentGlyph.getChars() != null) {
                 chars.append(currentGlyph.getChars());
             } else if (currentGlyph.getUnicode() != null) {
-                chars.append(Utilities.convertFromUtf32(currentGlyph.getUnicode()));
+                chars.append(TextUtil.convertFromUtf32(currentGlyph.getUnicode()));
             }
             removeGlyph(gidx.idx--);
         }
@@ -168,9 +168,9 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
         if (oldGlyph.getChars() != null) {
             newGlyph.setChars(oldGlyph.getChars());
         } else if (newGlyph.getUnicode() != null) {
-            newGlyph.setChars(Utilities.convertFromUtf32(newGlyph.getUnicode()));
+            newGlyph.setChars(TextUtil.convertFromUtf32(newGlyph.getUnicode()));
         } else if (oldGlyph.getUnicode() != null) {
-            newGlyph.setChars(Utilities.convertFromUtf32(oldGlyph.getUnicode()));
+            newGlyph.setChars(TextUtil.convertFromUtf32(oldGlyph.getUnicode()));
         }
         glyphs.set(idx, newGlyph);
     }
@@ -345,10 +345,8 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
                     needsActualText = true;
                     break;
                 }
-
                 // TODO zero glyph is a special case. Unicode might be special
-
-                toUnicodeMapResult.append(Utilities.convertFromUtf32(currentGlyph.getUnicode()));
+                toUnicodeMapResult.append(TextUtil.convertFromUtf32(currentGlyph.getUnicode()));
             }
 
             return needsActualText || !toUnicodeMapResult.toString().equals(glyphLinePart.actualText);

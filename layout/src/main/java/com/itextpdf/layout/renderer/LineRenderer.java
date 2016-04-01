@@ -2,7 +2,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.Property;
 import com.itextpdf.layout.element.TabStop;
@@ -59,7 +59,7 @@ public class LineRenderer extends AbstractRenderer {
                     }
                 }
             }
-            levels = TypographyUtils.getBidiLevels(baseDirection, Utilities.toArray(unicodeIdsLst));
+            levels = TypographyUtils.getBidiLevels(baseDirection, ArrayUtil.toArray(unicodeIdsLst));
         }
 
         boolean anythingPlaced = false;

@@ -1,7 +1,8 @@
 package com.itextpdf.io.source;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.ResourceUtil;
+import com.itextpdf.io.util.StreamUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -104,7 +105,7 @@ public final class RandomAccessSourceFactory implements Serializable {
      */
     public RandomAccessSource createSource(InputStream inputStream) throws java.io.IOException{
         try {
-            return createSource(Utilities.inputStreamToArray(inputStream));
+            return createSource(StreamUtil.inputStreamToArray(inputStream));
         }
         finally {
             try {
@@ -203,7 +204,7 @@ public final class RandomAccessSourceFactory implements Serializable {
      * @throws java.io.IOException if reading the underling file or stream fails
      */
     private RandomAccessSource createByReadingToMemory(String filename) throws java.io.IOException {
-        InputStream stream = Utilities.getResourceStream(filename);
+        InputStream stream = ResourceUtil.getResourceStream(filename);
         if (stream == null) {
             throw new java.io.IOException(MessageFormat.format(IOException._1NotFoundAsFileOrResource, filename));
         }
@@ -218,7 +219,7 @@ public final class RandomAccessSourceFactory implements Serializable {
      */
     private RandomAccessSource createByReadingToMemory(InputStream stream) throws java.io.IOException {
         try {
-            return new ArrayRandomAccessSource(Utilities.inputStreamToArray(stream));
+            return new ArrayRandomAccessSource(StreamUtil.inputStreamToArray(stream));
         }
         finally {
             try {

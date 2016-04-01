@@ -305,7 +305,9 @@ public class IntHashtable implements Cloneable, Serializable {
     public int remove(int key) {
         Entry[] tab = table;
         int index = (key & 0x7FFFFFFF) % tab.length;
-        for (Entry e = tab[index], prev = null; e != null; prev = e, e = e.next) {
+        Entry e;
+        Entry prev;
+        for (e = tab[index], prev = null; e != null; prev = e, e = e.next) {
             if (e.key == key) {
                 if (prev != null) {
                     prev.next = e.next;

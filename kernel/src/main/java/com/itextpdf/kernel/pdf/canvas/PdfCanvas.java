@@ -6,7 +6,7 @@ import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.image.Image;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.PatternColor;
@@ -746,7 +746,7 @@ public class PdfCanvas {
         contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("["));
         for (PdfObject obj : textArray) {
             if (obj.isString()) {
-                Utilities.writeEscapedString(contentStream.getOutputStream(), ((PdfString) obj).getValueBytes());
+                StreamUtil.writeEscapedString(contentStream.getOutputStream(), ((PdfString) obj).getValueBytes());
             } else if (obj.isNumber()) {
                 contentStream.getOutputStream().writeFloat(((PdfNumber) obj).getFloatValue());
             }

@@ -1,6 +1,5 @@
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.util.Utilities;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontMetrics;
@@ -9,6 +8,8 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.util.ArrayUtil;
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -91,7 +92,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                     }
                 }
             }
-            bytes = Utilities.shortenArray(bytes, ptr);
+            bytes = ArrayUtil.shortenArray(bytes, ptr);
             for (byte b : bytes) {
                 shortTag[b & 0xff] = 1;
             }
@@ -133,16 +134,16 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 }
             }
         }
-        bytes = Utilities.shortenArray(bytes, ptr);
+        bytes = ArrayUtil.shortenArray(bytes, ptr);
         for (byte b : bytes) {
             shortTag[b & 0xff] = 1;
         }
-        Utilities.writeEscapedString(stream, bytes);
+        StreamUtil.writeEscapedString(stream, bytes);
     }
 
     @Override
     public void writeText(String text, PdfOutputStream stream) {
-        Utilities.writeEscapedString(stream, convertToBytes(text));
+        StreamUtil.writeEscapedString(stream, convertToBytes(text));
     }
 
     @Override

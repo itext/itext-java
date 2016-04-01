@@ -1,9 +1,9 @@
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.util.Utilities;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.PdfTokenizer;
+import com.itextpdf.io.util.StreamUtil;
 
 import java.nio.charset.Charset;
 
@@ -269,7 +269,7 @@ public class PdfString extends PdfPrimitiveObject {
             }
             return buf.getInternalBuffer();
         } else {
-            ByteBuffer buf = Utilities.createBufferedEscapedString(bytes);
+            ByteBuffer buf = StreamUtil.createBufferedEscapedString(bytes);
             return buf.toByteArray(1, buf.size() - 2);
         }
     }

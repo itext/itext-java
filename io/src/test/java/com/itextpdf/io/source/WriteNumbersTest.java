@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Random;
 
-import com.itextpdf.io.util.DecimalFormatUtils;
+import com.itextpdf.io.util.DecimalFormatUtil;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class WriteNumbersTest {
                 continue;
             }
             byte[] actuals = ByteUtils.getIsoBytes(d);
-            byte[] expecteds = DecimalFormatUtils.formatNumber(d, "0.##").getBytes();
+            byte[] expecteds = DecimalFormatUtil.formatNumber(d, "0.##").getBytes();
             String message = "Expects: " + new String(expecteds) + ", actual: " + new String(actuals) + " \\\\ "+ d;
             Assert.assertArrayEquals(message, expecteds, actuals);
         }
@@ -45,7 +45,7 @@ public class WriteNumbersTest {
             d = round(d, 5);
             if (Math.abs(d) < 0.000015) continue;
             byte[] actuals = ByteUtils.getIsoBytes(d);
-            byte[] expecteds = DecimalFormatUtils.formatNumber(d, "0.#####").getBytes();
+            byte[] expecteds = DecimalFormatUtil.formatNumber(d, "0.#####").getBytes();
             String message = "Expects: " + new String(expecteds) + ", actual: " + new String(actuals) + " \\\\ " + d;
             Assert.assertArrayEquals(message, expecteds, actuals);
         }
@@ -58,7 +58,7 @@ public class WriteNumbersTest {
             double d = rnd.nextDouble(); if (d < 32700) d*= 100000;
             d = round(d, 0);
             byte[] actuals = ByteUtils.getIsoBytes(d);
-            byte[] expecteds = DecimalFormatUtils.formatNumber(d, "0").getBytes();
+            byte[] expecteds = DecimalFormatUtil.formatNumber(d, "0").getBytes();
             String message = "Expects: " + new String(expecteds) + ", actual: " + new String(actuals) + " \\\\ "+ d;
             Assert.assertArrayEquals(message, expecteds, actuals);
         }

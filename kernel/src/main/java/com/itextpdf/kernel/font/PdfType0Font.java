@@ -14,7 +14,8 @@ import com.itextpdf.io.font.cmap.CMapContentParser;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -199,8 +200,8 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         } else {
             for (int k = 0; k < len; ++k) {
                 int val;
-                if (Utilities.isSurrogatePair(text, k)) {
-                    val = Utilities.convertToUtf32(text, k);
+                if (TextUtil.isSurrogatePair(text, k)) {
+                    val = TextUtil.convertToUtf32(text, k);
                     k++;
                 } else {
                     val = text.charAt(k);
@@ -278,7 +279,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         }
         //TODO improve converting chars to hexed string
         try {
-            Utilities.writeHexedString(stream, bytes.toString().getBytes(PdfEncodings.UnicodeBigUnmarked));
+            StreamUtil.writeHexedString(stream, bytes.toString().getBytes(PdfEncodings.UnicodeBigUnmarked));
         } catch (UnsupportedEncodingException e) {
             throw new PdfException("PdfType0Font", e);
         }
@@ -286,7 +287,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
     @Override
     public void writeText(String text, PdfOutputStream stream) {
-        Utilities.writeHexedString(stream, convertToBytes(text));
+        StreamUtil.writeHexedString(stream, convertToBytes(text));
     }
 
     @Override
@@ -305,8 +306,8 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             } else {
                 for (int k = 0; k < len; ++k) {
                     int ch;
-                    if (Utilities.isSurrogatePair(content, k)) {
-                        ch = Utilities.convertToUtf32(content, k);
+                    if (TextUtil.isSurrogatePair(content, k)) {
+                        ch = TextUtil.convertToUtf32(content, k);
                         k++;
                     } else {
                         ch = content.charAt(k);
@@ -330,8 +331,8 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             } else {
                 for (int k = 0; k < len; ++k) {
                     int val;
-                    if (Utilities.isSurrogatePair(content, k)) {
-                        val = Utilities.convertToUtf32(content, k);
+                    if (TextUtil.isSurrogatePair(content, k)) {
+                        val = TextUtil.convertToUtf32(content, k);
                         k++;
                     } else {
                         val = content.charAt(k);

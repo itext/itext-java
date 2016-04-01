@@ -44,7 +44,7 @@
  */
 package com.itextpdf.io.font.otf;
 
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.TextUtil;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -90,7 +90,7 @@ public class Glyph implements Serializable {
     }
 
     public Glyph(int width, Integer unicode) {
-        this(-1, width, unicode, unicode != null ? Utilities.convertFromUtf32(unicode) : null, false);
+        this(-1, width, unicode, unicode != null ? TextUtil.convertFromUtf32(unicode) : null, false);
     }
 
     public Glyph(int code, int width, Integer unicode, char[] chars, boolean IsMark) {
@@ -100,7 +100,7 @@ public class Glyph implements Serializable {
         this.isMark = IsMark;
         this.chars = chars;
         if (chars == null && unicode != null && Character.isValidCodePoint(unicode)) {
-            this.chars = Utilities.convertFromUtf32(unicode);
+            this.chars = TextUtil.convertFromUtf32(unicode);
         }
     }
 
@@ -131,7 +131,7 @@ public class Glyph implements Serializable {
         this.code = glyph.code;
         this.width = glyph.width;
         this.isMark = glyph.isMark;
-        this.chars = unicode != null ? Utilities.convertFromUtf32(unicode) : null;
+        this.chars = unicode != null ? TextUtil.convertFromUtf32(unicode) : null;
         this.unicode = unicode;
     }
 
@@ -153,7 +153,7 @@ public class Glyph implements Serializable {
 
     public void setUnicode(Integer unicode) {
         this.unicode = unicode;
-        this.chars = unicode != null ? Utilities.convertFromUtf32(unicode) : null;
+        this.chars = unicode != null ? TextUtil.convertFromUtf32(unicode) : null;
     }
 
     public char[] getChars() {

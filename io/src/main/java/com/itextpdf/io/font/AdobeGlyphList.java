@@ -1,6 +1,6 @@
 package com.itextpdf.io.font;
 
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.ResourceUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -16,7 +16,7 @@ public class AdobeGlyphList {
     static {
         InputStream resource = null;
         try {
-            resource = Utilities.getResourceStream(FontConstants.RESOURCE_PATH + "AdobeGlyphList.txt");
+            resource = ResourceUtil.getResourceStream(FontConstants.RESOURCE_PATH + "AdobeGlyphList.txt");
             if (resource == null) {
                 String msg = "AdobeGlyphList.txt not found as resource. (It must exist as resource in the package com.itextpdf.text.pdf.fonts)";
                 throw new Exception(msg);

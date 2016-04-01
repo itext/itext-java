@@ -1,7 +1,7 @@
 package com.itextpdf.io.font;
 
+import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.IntHashtable;
-import com.itextpdf.io.util.Utilities;
 
 import java.io.Serializable;
 import java.util.StringTokenizer;
@@ -140,7 +140,7 @@ public class FontEncoding implements Serializable {
                 bytes[ptr++] = (byte)convertToByte(text.charAt(i));
             }
         }
-        return Utilities.shortenArray(bytes, ptr);
+        return ArrayUtil.shortenArray(bytes, ptr);
     }
 
     /**
