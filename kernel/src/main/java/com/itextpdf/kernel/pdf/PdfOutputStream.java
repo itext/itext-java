@@ -2,6 +2,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.io.source.OutputStream;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
@@ -11,8 +12,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.security.cert.Certificate;
 import java.util.Map;
-import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
 
 public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Serializable{
 
@@ -98,19 +97,19 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
     /**
      * A possible compression level.
      */
-    public static final int DEFAULT_COMPRESSION = Deflater.DEFAULT_COMPRESSION;
+    public static final int DEFAULT_COMPRESSION = java.util.zip.Deflater.DEFAULT_COMPRESSION;
     /**
      * A possible compression level.
      */
-    public static final int NO_COMPRESSION = Deflater.NO_COMPRESSION;
+    public static final int NO_COMPRESSION = java.util.zip.Deflater.NO_COMPRESSION;
     /**
      * A possible compression level.
      */
-    public static final int BEST_SPEED = Deflater.BEST_SPEED;
+    public static final int BEST_SPEED = java.util.zip.Deflater.BEST_SPEED;
     /**
      * A possible compression level.
      */
-    public static final int BEST_COMPRESSION = Deflater.BEST_COMPRESSION;
+    public static final int BEST_COMPRESSION = java.util.zip.Deflater.BEST_COMPRESSION;
 
     private static final byte[] stream = ByteUtils.getIsoBytes("stream\n");
     private static final byte[] endstream = ByteUtils.getIsoBytes("\nendstream");
@@ -352,11 +351,9 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
                 if (crypto != null && !crypto.isEmbeddedFilesOnly()) {
                     fout = ose = crypto.getEncryptionStream(fout);
                 }
-                Deflater deflater = null;
                 if (toCompress && (allowCompression || userDefinedCompression)) {
                     updateCompressionFilter(pdfStream);
-                    deflater = new Deflater(pdfStream.getCompressionLevel());
-                    fout = def = new DeflaterOutputStream(fout, deflater, 0x8000);
+                    fout = def = new DeflaterOutputStream(fout, pdfStream.getCompressionLevel(), 0x8000);
                 }
                 write((PdfDictionary) pdfStream);
                 writeBytes(PdfOutputStream.stream);
@@ -370,7 +367,6 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
                 }
                 if (def != null) {
                     def.finish();
-                    deflater.end();
                 }
                 if (ose != null) {
                     ose.finish();
@@ -398,8 +394,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
                     if (toCompress && !containsFlateFilter(pdfStream) && (allowCompression || userDefinedCompression)) { // compress
                         updateCompressionFilter(pdfStream);
                         byteArrayStream = new ByteArrayOutputStream();
-                        Deflater deflater = new Deflater(pdfStream.getCompressionLevel());
-                        DeflaterOutputStream zip = new DeflaterOutputStream(byteArrayStream, deflater);
+                        DeflaterOutputStream zip = new DeflaterOutputStream(byteArrayStream, pdfStream.getCompressionLevel());
                         if (pdfStream instanceof PdfObjectStream) {
                             PdfObjectStream objectStream = (PdfObjectStream) pdfStream;
                             ((ByteArrayOutputStream) objectStream.getIndexStream().getOutputStream()).writeTo(zip);
@@ -410,7 +405,6 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
                         }
 
                         zip.close();
-                        deflater.end();
                     } else {
                         if (pdfStream instanceof PdfObjectStream) {
                             PdfObjectStream objectStream = (PdfObjectStream) pdfStream;

@@ -1,15 +1,16 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.image.ImageFactory;
+import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 
-
-import java.io.*;
-import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -252,29 +253,26 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     public void testImageCompressLevel() throws IOException {
-        byte[] b = ImageFactory.getImage(sourceFolder+"berlin2013.jpg").getData();
+        byte[] b = ImageFactory.getImage(sourceFolder + "berlin2013.jpg").getData();
         com.itextpdf.io.source.ByteArrayOutputStream image =  new com.itextpdf.io.source.ByteArrayOutputStream();
         image.assignBytes(b, b.length);
 
         ByteArrayOutputStream byteArrayStream1 = new com.itextpdf.io.source.ByteArrayOutputStream();
-        Deflater deflater = new Deflater(9);
-        DeflaterOutputStream zip = new DeflaterOutputStream(byteArrayStream1, deflater);
+        DeflaterOutputStream zip = new DeflaterOutputStream(byteArrayStream1, 9);
         image.writeTo(zip);
         zip.close();
 
         ByteArrayOutputStream byteArrayStream2 = new com.itextpdf.io.source.ByteArrayOutputStream();
-        Deflater deflater2 = new Deflater(-1);
-        DeflaterOutputStream zip2 = new DeflaterOutputStream(byteArrayStream2, deflater2);
+        DeflaterOutputStream zip2 = new DeflaterOutputStream(byteArrayStream2, -1);
         image.writeTo(zip2);
         zip2.close();
-        deflater2.end();
 
         Assert.assertTrue(byteArrayStream1.size() == byteArrayStream2.size());
     }
 
     @Test
     public void testFreeReference() throws IOException, InterruptedException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder+ "baseFreeReference.pdf"), new PdfWriter(destinationFolder + "freeReference.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "baseFreeReference.pdf"), new PdfWriter(destinationFolder + "freeReference.pdf"));
         pdfDocument.getWriter().setFullCompression(false);
         pdfDocument.getPage(1).getResources().getPdfObject().getAsArray(new PdfName("d")).get(0).getIndirectReference().setFree();
         PdfStream pdfStream = new PdfStream();

@@ -10,16 +10,15 @@ import com.itextpdf.io.codec.TIFFLZWDecoder;
 import com.itextpdf.io.color.IccProfile;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.util.FilterUtil;
 
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.DataFormatException;
-import java.util.zip.DeflaterOutputStream;
-import java.util.zip.Inflater;
 
 public class TiffImageHelper {
 
@@ -452,7 +451,7 @@ public class TiffImageHelper {
                     switch (compression) {
                         case TIFFConstants.COMPRESSION_DEFLATE:
                         case TIFFConstants.COMPRESSION_ADOBE_DEFLATE:
-                            inflate(im, outBuf);
+                            FilterUtil.inflateData(im, outBuf);
                             applyPredictor(outBuf, predictor, w, height, samplePerPixel);
                             break;
                         case TIFFConstants.COMPRESSION_NONE:
@@ -630,16 +629,6 @@ public class TiffImageHelper {
             }
         } catch (Exception e) {
             // do nothing
-        }
-    }
-
-    private static void inflate(byte[] deflated, byte[] inflated) {
-        Inflater inflater = new Inflater();
-        inflater.setInput(deflated);
-        try {
-            inflater.inflate(inflated);
-        } catch (DataFormatException dfe) {
-            throw new IOException(IOException.CannotInflateTiffImage);
         }
     }
 

@@ -1,7 +1,13 @@
 package com.itextpdf.io.util;
 
+import com.itextpdf.io.IOException;
+import com.itextpdf.io.codec.Base64;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.zip.DataFormatException;
+import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 public final class FilterUtil {
@@ -46,5 +52,25 @@ public final class FilterUtil {
         if (b == null)
             return flateDecode(input, false);
         return b;
+    }
+
+    /**
+     * This method provides support for general purpose decompression using the
+     * popular ZLIB compression library.
+     * @param deflated the input data bytes
+     * @param inflated the buffer for the uncompressed data
+     */
+    public static void inflateData(byte[] deflated, byte[] inflated) {
+        Inflater inflater = new Inflater();
+        inflater.setInput(deflated);
+        try {
+            inflater.inflate(inflated);
+        } catch (DataFormatException dfe) {
+            throw new IOException(IOException.CannotInflateTiffImage);
+        }
+    }
+
+    public static InputStream getInflaterInputStream(InputStream input) {
+        return new InflaterInputStream(input, new Inflater());
     }
 }

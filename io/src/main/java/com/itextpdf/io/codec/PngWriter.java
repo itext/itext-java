@@ -1,11 +1,11 @@
 package com.itextpdf.io.codec;
 
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.io.source.DeflaterOutputStream;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.zip.DeflaterOutputStream;
 
 /**
  * Writes a PNG image.

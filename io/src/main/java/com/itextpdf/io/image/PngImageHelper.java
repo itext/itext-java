@@ -13,8 +13,6 @@ import java.io.DataInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
 public class PngImageHelper {
 
@@ -529,8 +527,7 @@ public class PngImageHelper {
         else if (png.genBWMask)
             png.smask = new byte[(png.width + 7) / 8 * png.height];
         ByteArrayInputStream bai = new ByteArrayInputStream(png.idat.getBuf(), 0, png.idat.size());
-        InputStream infStream = new InflaterInputStream(bai, new Inflater());
-        png.dataStream = new DataInputStream(infStream);
+        png.dataStream = new DataInputStream(FilterUtil.getInflaterInputStream(bai));
 
         if (png.interlaceMethod != 1) {
             decodePass(0, 0, 1, 1, png.width, png.height, png);
