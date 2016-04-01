@@ -230,7 +230,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         page = document.getPage(1);
         canvas = new PdfCanvas(page);
 
-        List<PdfMcr> elems = document.getStructTreeRoot().getPageMarkedContentReferences(page);
+        List<PdfMcr> elems = document.getStructTreeRoot().getMcrManager().getPageMarkedContentReferences(page); // TODO remove it
 
         canvas.beginText();
         canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 24);
@@ -496,7 +496,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         canvas.endText();
         canvas.release();
 
-        document.getStructTreeRoot().getPageMarkedContentReferences(page1);
+        document.getStructTreeRoot().getMcrManager().getPageMarkedContentReferences(page1);
 
         PdfDocument document1 = new PdfDocument(reader);
         document1.copyPagesTo(1, 1, document);

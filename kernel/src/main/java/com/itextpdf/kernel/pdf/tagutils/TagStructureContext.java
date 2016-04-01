@@ -134,7 +134,7 @@ public class TagStructureContext {
         }
 
         PdfStructTreeRoot structTreeRoot = document.getStructTreeRoot();
-        List<PdfMcr> pageMcrs = structTreeRoot.getPageMarkedContentReferences(page);
+        List<PdfMcr> pageMcrs = structTreeRoot.getMcrManager().getPageMarkedContentReferences(page);
         if (pageMcrs != null) {
             int mcrsCount = pageMcrs.size();
             PdfMcr mcr;
@@ -142,7 +142,7 @@ public class TagStructureContext {
             for (int i = mcrsCount - 1; i >= 0; --i) {
                 mcr = pageMcrs.get(i);
                 removePageTagFromParent(mcr.getPdfObject(), mcr.getParent());
-                document.getStructTreeRoot().unregisterMcr(mcr);
+                document.getStructTreeRoot().getMcrManager().unregisterMcr(mcr);
             }
         }
         return this;
@@ -191,7 +191,7 @@ public class TagStructureContext {
      */
     public TagStructureContext flushPageTags(PdfPage page) {
         PdfStructTreeRoot structTreeRoot = document.getStructTreeRoot();
-        List<PdfMcr> pageMcrs = structTreeRoot.getPageMarkedContentReferences(page);
+        List<PdfMcr> pageMcrs = structTreeRoot.getMcrManager().getPageMarkedContentReferences(page);
         if (pageMcrs != null) {
             for (PdfMcr mcr : pageMcrs) {
                 PdfStructElem parent = (PdfStructElem) mcr.getParent();

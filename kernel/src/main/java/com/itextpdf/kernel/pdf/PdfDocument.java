@@ -1269,7 +1269,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 PdfDictionary str = catalog.getPdfObject().getAsDictionary(PdfName.StructTreeRoot);
                 if (str != null) {
                     structTreeRoot = new PdfStructTreeRoot(str);
-                    structParentIndex = getStructTreeRoot().getStructParentIndex() + 1;
+                    structParentIndex = getStructTreeRoot().getMcrManager().getStructParentIndex() + 1; // TODO review it again
                 }
                 if (appendMode && (reader.hasRebuiltXref() || reader.hasFixedXref()))
                     throw new PdfException(PdfException.AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible);

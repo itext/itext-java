@@ -637,7 +637,7 @@ public class TagTreePointer {
     }
 
     private PdfMcr prepareMcrForMovingToNewParent(PdfMcr mcrKid, PdfStructElem newParent) {
-        getDocument().getStructTreeRoot().unregisterMcr(mcrKid);
+        getDocument().getStructTreeRoot().getMcrManager().unregisterMcr(mcrKid);
 
         PdfObject mcrObject = mcrKid.getPdfObject();
         PdfDictionary mcrPage = mcrKid.getPageObject();

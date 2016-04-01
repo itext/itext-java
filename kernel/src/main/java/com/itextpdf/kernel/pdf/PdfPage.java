@@ -330,7 +330,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
         if (getDocument().isTagged() && !getDocument().getStructTreeRoot().isFlushed()) {
             getDocument().getTagStructureContext().flushPageTags(this);
-            getDocument().getStructTreeRoot().createParentTreeEntryForPage(this);
+            getDocument().getStructTreeRoot().getMcrManager().createParentTreeEntryForPage(this);
         }
         getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_PAGE, this));
         if (flushXObjects) {
@@ -457,7 +457,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
         if (mcid == null) {
             PdfStructTreeRoot structTreeRoot = getDocument().getStructTreeRoot();
-            List<PdfMcr> mcrs = structTreeRoot.getPageMarkedContentReferences(this);
+            List<PdfMcr> mcrs = structTreeRoot.getMcrManager().getPageMarkedContentReferences(this);
             mcid = getMcid(mcrs);
         }
         return mcid++;

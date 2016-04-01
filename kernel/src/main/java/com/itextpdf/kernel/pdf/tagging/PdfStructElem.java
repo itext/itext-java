@@ -216,7 +216,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public PdfMcr addKid(int index, PdfMcr kid) {
-        getDocument().getStructTreeRoot().registerMcr(kid);
+        getDocument().getStructTreeRoot().getMcrManager().registerMcr(kid);
         addKidObject(index, kid.getPdfObject());
         return kid;
     }
