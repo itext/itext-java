@@ -1,7 +1,6 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -46,7 +45,7 @@ public class PdfA1CanvasCheckTest {
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, outputIntent);
-        pdfDocument.setXmpMetadata();
+        pdfDocument.createXmpMetadata();
 
         pdfDocument.addNewPage();
         PdfCanvas canvas = new PdfCanvas(pdfDocument.getLastPage());
@@ -71,7 +70,7 @@ public class PdfA1CanvasCheckTest {
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, outputIntent);
-        pdfDocument.setXmpMetadata();
+        pdfDocument.createXmpMetadata();
 
         pdfDocument.addNewPage();
         PdfCanvas canvas = new PdfCanvas(pdfDocument.getLastPage());
@@ -101,7 +100,7 @@ public class PdfA1CanvasCheckTest {
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, outputIntent);
-        pdfDocument.setXmpMetadata();
+        pdfDocument.createXmpMetadata();
 
         pdfDocument.addNewPage();
         PdfCanvas canvas = new PdfCanvas(pdfDocument.getLastPage());

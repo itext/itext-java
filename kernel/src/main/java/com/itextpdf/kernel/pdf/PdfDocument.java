@@ -1,8 +1,8 @@
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.crypto.BadPasswordException;
 import com.itextpdf.kernel.events.EventDispatcher;
@@ -10,7 +10,9 @@ import com.itextpdf.kernel.events.IEventDispatcher;
 import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
+import com.itextpdf.kernel.numbering.RomanNumbering;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
@@ -19,26 +21,12 @@ import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
-import com.itextpdf.kernel.xmp.PdfAXMPUtil;
-import com.itextpdf.kernel.xmp.PdfConst;
-import com.itextpdf.kernel.xmp.XMPConst;
-import com.itextpdf.kernel.xmp.XMPException;
-import com.itextpdf.kernel.xmp.XMPMeta;
-import com.itextpdf.kernel.xmp.XMPMetaFactory;
-import com.itextpdf.kernel.xmp.XMPUtils;
+import com.itextpdf.kernel.xmp.*;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
-import com.itextpdf.kernel.numbering.RomanNumbering;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
@@ -250,11 +238,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         setXmpMetadata(xmpMeta, serializeOptions);
     }
 
-    public void setXmpMetadata() throws XMPException {
-        setXmpMetadata((PdfAConformanceLevel) null);
-    }
-
-    public void setXmpMetadata(PdfAConformanceLevel conformanceLevel) throws XMPException {
+    public void createXmpMetadata() throws XMPException {
         checkClosingStatus();
         XMPMeta xmpMeta = XMPMetaFactory.create();
         xmpMeta.setObjectName(XMPConst.TAG_XMPMETA);
@@ -300,17 +284,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             }
         }
         if (isTagged()) {
-            xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, PdfAXMPUtil.PART, 1, new PropertyOptions(PropertyOptions.SEPARATE_NODE));
-        }
-        if (conformanceLevel != null) {
-            addRdfDescription(xmpMeta, conformanceLevel);
+            xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART, 1, new PropertyOptions(PropertyOptions.SEPARATE_NODE));
         }
         setXmpMetadata(xmpMeta);
     }
 
-    public PdfStream getXmpMetadata() {
-        checkClosingStatus();
-        return getCatalog().getPdfObject().getAsStream(PdfName.Metadata);
+    public byte[] getXmpMetadata() {
+        return xmpMetadata;
     }
 
     public PdfObject getPdfObject(final int objNum) {
@@ -1199,49 +1179,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
     }
 
-    protected void addRdfDescription(XMPMeta xmpMeta, PdfAConformanceLevel conformanceLevel) throws XMPException {
-        switch (conformanceLevel) {
-            case PDF_A_1A:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "1");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
-                break;
-            case PDF_A_1B:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "1");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
-                break;
-            case PDF_A_2A:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "2");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
-                break;
-            case PDF_A_2B:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "2");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
-                break;
-            case PDF_A_2U:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "2");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "U");
-                break;
-            case PDF_A_3A:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "3");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
-                break;
-            case PDF_A_3B:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "3");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
-                break;
-            case PDF_A_3U:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART, "3");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "U");
-                break;
-            default:
-                break;
-        }
-        if (this.isTagged()) {
-            XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
-            XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
-        }
-    }
-
     protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
         writer.flushObject(pdfObject, canBeInObjStm);
     }
@@ -1261,7 +1198,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 pdfVersion = reader.pdfVersion;
                 trailer = new PdfDictionary(reader.trailer);
                 catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true));
-
+                if (catalog.getPdfObject().containsKey(PdfName.Metadata) && null != catalog.getPdfObject().get(PdfName.Metadata)) {
+                    xmpMetadata = catalog.getPdfObject().getAsStream(PdfName.Metadata).getBytes();
+                }
                 PdfObject infoDict = trailer.get(PdfName.Info, true);
                 info = new PdfDocumentInfo(infoDict instanceof PdfDictionary ?
                         (PdfDictionary) infoDict : new PdfDictionary(), this);

@@ -507,6 +507,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Outlines = createDirectName("Outlines");
     public static final PdfName OutputCondition = createDirectName("OutputCondition");
     public static final PdfName OutputConditionIdentifier = createDirectName("OutputConditionIdentifier");
+    public static final PdfName OutputIntent = createDirectName("OutputIntent");
     public static final PdfName OutputIntents = createDirectName("OutputIntents");
     public static final PdfName Outset = createDirectName("Outset");
     public static final PdfName Overlay = createDirectName("Overlay");

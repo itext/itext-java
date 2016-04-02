@@ -1,10 +1,14 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,11 +16,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.*;
 
@@ -765,7 +764,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         writer2.setFullCompression(false);
         PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
         pdfDoc2.getDocumentInfo().setAuthor("Alexander Chingarev");
-        pdfDoc2.setXmpMetadata();
+        pdfDoc2.createXmpMetadata();
         pdfDoc2.close();
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
@@ -773,7 +772,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
-        assertNotNull("XmpMetadata not found", pdfDoc3.getXmpMetadata());
+        assertNotNull("XmpMetadata not found", XMPMetaFactory.parseFromBuffer(pdfDoc3.getXmpMetadata()));
         assertEquals("Number of pages", pageCount, pdfDoc3.getNumberOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());
@@ -813,7 +812,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
         pdfDoc2.getDocumentInfo().setAuthor("Alexander Chingarev");
         pdfDoc2.getDocumentInfo().setAuthor("Alexander Chingarev");
-        pdfDoc2.setXmpMetadata();
+        pdfDoc2.createXmpMetadata();
         pdfDoc2.close();
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
@@ -821,7 +820,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         for (int i = 0; i < pdfDoc3.getNumberOfPages(); i++) {
             pdfDoc3.getPage(i + 1);
         }
-        assertNotNull("XmpMetadata not found", pdfDoc3.getXmpMetadata());
+        assertNotNull("XmpMetadata not found",  XMPMetaFactory.parseFromBuffer(pdfDoc3.getXmpMetadata()));
         assertEquals("Number of pages", pageCount, pdfDoc3.getNumberOfPages());
         assertEquals("Rebuilt", false, reader3.hasRebuiltXref());
         assertEquals("Fixed", false, reader3.hasFixedXref());

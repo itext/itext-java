@@ -39,7 +39,7 @@ public class PdfA3EmbeddedFilesCheckTest {
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, outputIntent);
-        pdfDocument.setXmpMetadata();
+        pdfDocument.createXmpMetadata();
 
         PdfPage page = pdfDocument.addNewPage();
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
@@ -70,7 +70,7 @@ public class PdfA3EmbeddedFilesCheckTest {
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, outputIntent);
-        pdfDocument.setXmpMetadata();
+        pdfDocument.createXmpMetadata();
 
         PdfPage page = pdfDocument.addNewPage();
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
@@ -101,7 +101,7 @@ public class PdfA3EmbeddedFilesCheckTest {
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, outputIntent);
-        pdfDocument.setXmpMetadata();
+        pdfDocument.createXmpMetadata();
 
         PdfPage page = pdfDocument.addNewPage();
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);
@@ -131,7 +131,7 @@ public class PdfA3EmbeddedFilesCheckTest {
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, outputIntent);
-        pdfDocument.setXmpMetadata();
+        pdfDocument.createXmpMetadata();
 
         PdfPage page = pdfDocument.addNewPage();
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", "WinAnsi", true);

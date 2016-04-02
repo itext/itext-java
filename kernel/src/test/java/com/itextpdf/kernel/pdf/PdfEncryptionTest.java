@@ -105,7 +105,7 @@ public class PdfEncryptionTest extends ExtendedITextTest{
         PdfDocument document = new PdfDocument(writer);
         document.getDocumentInfo().setAuthor(author).
                 setCreator(creator);
-        document.setXmpMetadata();
+        document.createXmpMetadata();
         PdfPage page = document.addNewPage();
         page.getFirstContentStream().getOutputStream().writeBytes(("q\n" +
                 "BT\n" +

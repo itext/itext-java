@@ -42,17 +42,14 @@
  * For more information, please contact iText Software Corp. at this
  * address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.xmp;
+package com.itextpdf.pdfa;
 
 /**
  * Utilities to construct an XMP for a PDF/A file.
  */
 public class PdfAXMPUtil {
-    /**
-     * Part, always 1.
-     */
-    public static final String PART = "part";
-    /**
+
+     /**
      * Conformance, A, B, or U.
      */
     public static final String CONFORMANCE = "conformance";

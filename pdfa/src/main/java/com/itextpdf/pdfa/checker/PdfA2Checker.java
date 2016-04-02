@@ -24,7 +24,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.pdfa.PdfAConformanceException;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.pdfa.PdfAConformanceLevel;
 
 import java.util.ArrayList;
 import java.util.Arrays;

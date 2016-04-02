@@ -21,6 +21,9 @@ public class Text extends AbstractElement<Text> implements ILeafElement<Text>, I
      * @param text the contents, as a {@link String}
      */
     public Text(String text) {
+        if (null == text) {
+            throw new IllegalArgumentException();
+        }
         this.text = text;
     }
 

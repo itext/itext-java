@@ -205,4 +205,10 @@ public interface XMPConst
 	String TAG_XMPMETA = "xmpmeta";
 	/** XMP meta tag version old */
 	String TAG_XAPMETA = "xapmeta";
+
+
+	/**
+     * Part, always 1.
+     */
+	String PART = "part";
 }
