@@ -49,6 +49,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -825,7 +826,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             canvas.beginText();
             canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 12);
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
-            canvas.showText(String.format("Page_%d", i + 1));
+            canvas.showText(MessageFormat.format("Page_{0}", i + 1));
             canvas.endText();
             canvas.release();
             page1.flush();
@@ -934,7 +935,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             canvas.beginText();
             canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 12);
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
-            canvas.showText(String.format("Page_%d", i + 1));
+            canvas.showText(MessageFormat.format("Page_{0}", i + 1));
             canvas.endText();
             canvas.release();
         }
@@ -943,7 +944,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         pdfDoc1 = new PdfDocument(new PdfReader(new FileInputStream(file1)));
 
         for (int i = 0; i < 5; i++) {
-            FileOutputStream fos2 = new FileOutputStream(destinationFolder + String.format("copyPages4_%d.pdf", i + 2));
+            FileOutputStream fos2 = new FileOutputStream(destinationFolder + MessageFormat.format("copyPages4_{0}.pdf", i + 2));
             PdfWriter writer2 = new PdfWriter(fos2);
             PdfDocument pdfDoc2 = new PdfDocument(writer2);
             PdfPage page2 = pdfDoc1.getPage(i + 1).copyTo(pdfDoc2);
@@ -961,7 +962,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         for (int i = 0; i < 5; i++) {
             PdfDictionary page1 = doc1.getPage(i + 1).getPdfObject();
-            PdfDocument doc2 = new PdfDocument(new PdfReader(destinationFolder + String.format("copyPages4_%d.pdf", i + 2)));
+            PdfDocument doc2 = new PdfDocument(new PdfReader(destinationFolder + MessageFormat.format("copyPages4_{0}.pdf", i + 2)));
             PdfDictionary page = doc2.getPage(1).getPdfObject();
             Assert.assertTrue(cmpTool.compareDictionaries(page1, page));
             doc2.close();
@@ -977,7 +978,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         int documentCount = 3;
 
         for (int i = 0; i < documentCount; i++) {
-            FileOutputStream fos1 = new FileOutputStream(destinationFolder + String.format("copyPages5_%d.pdf", i + 1));
+            FileOutputStream fos1 = new FileOutputStream(destinationFolder + MessageFormat.format("copyPages5_{0}.pdf", i + 1));
             PdfWriter writer1 = new PdfWriter(fos1);
             PdfDocument pdfDoc1 = new PdfDocument(writer1);
             PdfPage page1 = pdfDoc1.addNewPage();
@@ -987,7 +988,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             canvas.beginText();
             canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 12);
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
-            canvas.showText(String.format("Page_%d", i + 1));
+            canvas.showText(MessageFormat.format("Page_%d", i + 1));
             canvas.endText();
             canvas.release();
             pdfDoc1.close();
@@ -995,7 +996,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         List<PdfDocument> docs = new ArrayList<PdfDocument>();
         for (int i = 0; i < documentCount; i++) {
-            FileInputStream fos1 = new FileInputStream(destinationFolder + String.format("copyPages5_%d.pdf", i + 1));
+            FileInputStream fos1 = new FileInputStream(destinationFolder + MessageFormat.format("copyPages5_{0}.pdf", i + 1));
             PdfDocument pdfDoc1 = new PdfDocument(new PdfReader(fos1));
             docs.add(pdfDoc1);
         }
@@ -1013,7 +1014,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         CompareTool cmpTool = new CompareTool();
         for (int i = 0; i < 3; i++) {
-            PdfReader reader1 = new PdfReader(destinationFolder + String.format("copyPages5_%d.pdf", i + 1));
+            PdfReader reader1 = new PdfReader(destinationFolder + MessageFormat.format("copyPages5_{0}.pdf", i + 1));
             PdfDocument doc1 = new PdfDocument(reader1);
             Assert.assertEquals("Rebuilt", false, reader1.hasRebuiltXref());
             PdfReader reader2 = new PdfReader(destinationFolder + "copyPages5_4.pdf");

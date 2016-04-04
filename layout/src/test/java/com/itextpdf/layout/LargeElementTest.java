@@ -12,6 +12,7 @@ import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -45,7 +46,7 @@ public class LargeElementTest extends ExtendedITextTest {
         doc.add(table);
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 5; j++) {
-                table.addCell(new Cell().add(new Paragraph(String.format("Cell %s, %s", i + 1, j + 1))));
+                table.addCell(new Cell().add(new Paragraph(MessageFormat.format("Cell {0}, {1}", i + 1, j + 1))));
             }
 
             if (i % 10 == 0) {
@@ -78,7 +79,7 @@ public class LargeElementTest extends ExtendedITextTest {
 
         doc.add(table);
         for (int i = 0; i < 100; i++) {
-            table.addCell(new Cell().add(new Paragraph(String.format("Cell %s", i + 1))));
+            table.addCell(new Cell().add(new Paragraph(MessageFormat.format("Cell {0}", i + 1))));
 
             if (i % 7 == 0) {
                 table.flush();

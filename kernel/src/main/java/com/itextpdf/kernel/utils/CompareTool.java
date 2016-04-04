@@ -23,6 +23,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.*;
 
 public class CompareTool {
@@ -236,12 +237,12 @@ public class CompareTool {
             List<PdfLinkAnnotation> cmpLinks = getLinkAnnotations(i + 1, cmpDocument);
 
             if (cmpLinks.size() != outLinks.size()) {
-                message = String.format("Different number of links on page %d.", i + 1);
+                message = MessageFormat.format("Different number of links on page {0}.", i + 1);
                 break;
             }
             for (int j = 0; j < cmpLinks.size(); j++) {
                 if (!compareLinkAnnotations(cmpLinks.get(j), outLinks.get(j), cmpDocument, outDocument)) {
-                    message = String.format("Different links on page %d.\n%s\n%s", i + 1, cmpLinks.get(j).toString(), outLinks.get(j).toString());
+                    message = MessageFormat.format("Different links on page {0}.\n{1}\n{2}", i + 1, cmpLinks.get(j).toString(), outLinks.get(j).toString());
                     break;
                 }
             }
@@ -653,14 +654,14 @@ public class CompareTool {
                     PdfObject outObj = outDict.get(key);
                     if (!outObj.isName() || outObj.toString().indexOf('+') == -1) {
                         if (compareResult != null && currentPath != null)
-                            compareResult.addError(currentPath, String.format("PdfDictionary %s entry: Expected: %s. Found: %s", key.toString(), cmpObj.toString(), outObj.toString()));
+                            compareResult.addError(currentPath, MessageFormat.format("PdfDictionary {0} entry: Expected: {1}. Found: {2}", key.toString(), cmpObj.toString(), outObj.toString()));
                         dictsAreSame = false;
                     } else {
                         String cmpName = cmpObj.toString().substring(cmpObj.toString().indexOf('+'));
                         String outName = outObj.toString().substring(outObj.toString().indexOf('+'));
                         if (!cmpName.equals(outName)) {
                             if (compareResult != null && currentPath != null)
-                                compareResult.addError(currentPath, String.format("PdfDictionary %s entry: Expected: %s. Found: %s", key.toString(), cmpObj.toString(), outObj.toString()));
+                                compareResult.addError(currentPath, MessageFormat.format("PdfDictionary {0} entry: Expected: {1}. Found: {2}", key.toString(), cmpObj.toString(), outObj.toString()));
                             dictsAreSame = false;
                         }
                     }
@@ -696,7 +697,7 @@ public class CompareTool {
             compareResult.addError(currentPath, "Found object which was not expected to be found.");
             return false;
         } else if (cmpDirectObj.getType() != outDirectObj.getType()) {
-            compareResult.addError(currentPath, String.format("Types do not match. Expected: %s. Found: %s.", cmpDirectObj.getClass().getSimpleName(), outDirectObj.getClass().getSimpleName()));
+            compareResult.addError(currentPath, MessageFormat.format("Types do not match. Expected: {0}. Found: {1}.", cmpDirectObj.getClass().getSimpleName(), outDirectObj.getClass().getSimpleName()));
             return false;
         } else if (cmpObj.isIndirectReference() && !outObj.isIndirectReference()) {
             compareResult.addError(currentPath, "Expected indirect object.");
@@ -715,7 +716,7 @@ public class CompareTool {
         if (cmpDirectObj.isDictionary() && PdfName.Page.equals(((PdfDictionary) cmpDirectObj).getAsName(PdfName.Type))) {
             if (!outDirectObj.isDictionary() || !PdfName.Page.equals(((PdfDictionary)outDirectObj).getAsName(PdfName.Type))) {
                 if (compareResult != null && currentPath != null)
-                    compareResult.addError(currentPath, String.format("Expected a page. Found not a page."));
+                    compareResult.addError(currentPath, "Expected a page. Found not a page.");
                 return false;
             }
             PdfIndirectReference cmpRefKey = cmpObj.isIndirectReference() ? (PdfIndirectReference) cmpObj : cmpObj.getIndirectReference();
@@ -736,7 +737,7 @@ public class CompareTool {
             if (cmpPagesRef.contains(cmpRefKey) && cmpPagesRef.indexOf(cmpRefKey) == outPagesRef.indexOf(outRefKey))
                 return true;
             if (compareResult != null && currentPath != null)
-                compareResult.addError(currentPath, String.format("The dictionaries refer to different pages. Expected page number: %s. Found: %s",
+                compareResult.addError(currentPath, MessageFormat.format("The dictionaries refer to different pages. Expected page number: {0}. Found: {1}",
                         cmpPagesRef.indexOf(cmpRefKey), outPagesRef.indexOf(outRefKey)));
             return false;
         }
@@ -778,7 +779,7 @@ public class CompareTool {
         } else {
             String errorMessage = "";
             if (cmpStreamBytes.length != outStreamBytes.length) {
-                errorMessage += String.format("PdfStream. Lengths are different. Expected: %s. Found: %s", cmpStreamBytes.length, outStreamBytes.length) + "\n";
+                errorMessage += MessageFormat.format("PdfStream. Lengths are different. Expected: {0}. Found: {1}", cmpStreamBytes.length, outStreamBytes.length) + "\n";
             } else {
                 errorMessage += "PdfStream. Bytes are different.\n";
             }
@@ -818,10 +819,10 @@ public class CompareTool {
             String cmpByteNeighbours = new String(cmpStreamBytes, l, r - l).replaceAll("\\r|\\n", " ");
             String outByte = new String(new byte[]{outStreamBytes[firstDifferenceOffset]});
             String outBytesNeighbours = new String(outStreamBytes, l, r - l).replaceAll("\\r|\\n", " ");
-            errorMessage = String.format("First bytes difference is encountered at index %s. Expected: %s (%s). Found: %s (%s). Total number of different bytes: %s",
-                    firstDifferenceOffset, cmpByte, cmpByteNeighbours, outByte, outBytesNeighbours, numberOfDifferentBytes);
+            errorMessage = MessageFormat.format("First bytes difference is encountered at index {0}. Expected: {1} ({2}). Found: {3} ({4}). Total number of different bytes: {5}",
+                    Integer.valueOf(firstDifferenceOffset).toString(), cmpByte, cmpByteNeighbours, outByte, outBytesNeighbours, numberOfDifferentBytes);
         } else { // lengths are different
-            errorMessage = String.format("Bytes of the shorter array are the same as the first %s bytes of the longer one.", minLength);
+            errorMessage = MessageFormat.format("Bytes of the shorter array are the same as the first {0} bytes of the longer one.", minLength);
         }
 
         return errorMessage;
@@ -834,7 +835,7 @@ public class CompareTool {
             return false;
         } else if (outArray.size() != cmpArray.size()) {
             if (compareResult != null && currentPath != null)
-                compareResult.addError(currentPath, String.format("PdfArrays. Lengths are different. Expected: %s. Found: %s.", cmpArray.size(), outArray.size()));
+                compareResult.addError(currentPath, MessageFormat.format("PdfArrays. Lengths are different. Expected: {0}. Found: {1}.", cmpArray.size(), outArray.size()));
             return false;
         }
         boolean arraysAreEqual = true;
@@ -856,7 +857,7 @@ public class CompareTool {
             return true;
         } else {
             if (compareResult != null && currentPath != null)
-                compareResult.addError(currentPath, String.format("PdfName. Expected: %s. Found: %s", cmpName.toString(), outName.toString()));
+                compareResult.addError(currentPath, MessageFormat.format("PdfName. Expected: {0}. Found: {1}", cmpName.toString(), outName.toString()));
             return false;
         }
     }
@@ -866,7 +867,7 @@ public class CompareTool {
             return true;
         } else {
             if (compareResult != null && currentPath != null)
-                compareResult.addError(currentPath, String.format("PdfNumber. Expected: %s. Found: %s", cmpNumber, outNumber));
+                compareResult.addError(currentPath, MessageFormat.format("PdfNumber. Expected: {0}. Found: {1}", cmpNumber, outNumber));
             return false;
         }
     }
@@ -879,7 +880,7 @@ public class CompareTool {
             String outStr = outString.toUnicodeString();
             if (cmpStr.length() != outStr.length()) {
                 if (compareResult != null && currentPath != null)
-                    compareResult.addError(currentPath, String.format("PdfString. Lengths are different. Expected: %s. Found: %s", cmpStr.length(), outStr.length()));
+                    compareResult.addError(currentPath, MessageFormat.format("PdfString. Lengths are different. Expected: {0}. Found: {1}", cmpStr.length(), outStr.length()));
             } else {
                 for (int i = 0; i < cmpStr.length(); i++) {
                     if (cmpStr.charAt(i) != outStr.charAt(i)) {
@@ -887,7 +888,7 @@ public class CompareTool {
                         int r = Math.min(cmpStr.length(), i + 10);
                         if (compareResult != null && currentPath != null) {
                             currentPath.pushOffsetToPath(i);
-                            compareResult.addError(currentPath, String.format("PdfString. Characters differ at position %s. Expected: %s (%s). Found: %s (%s).",
+                            compareResult.addError(currentPath, MessageFormat.format("PdfString. Characters differ at position {0}. Expected: {1} ({2}). Found: {3} ({4}).",
                                     i, Character.toString(cmpStr.charAt(i)), cmpStr.substring(l, r).replace("\n", "\\n"),
                                     Character.toString(outStr.charAt(i)), outStr.substring(l, r).replace("\n", "\\n")));
                             currentPath.pop();
@@ -916,7 +917,7 @@ public class CompareTool {
             return true;
         } else {
             if (compareResult != null && currentPath != null)
-                compareResult.addError(currentPath, String.format("PdfBoolean. Expected: %s. Found: %s.", cmpBoolean.getValue(), outBoolean.getValue()));
+                compareResult.addError(currentPath, MessageFormat.format("PdfBoolean. Expected: {0}. Found: {1}.", cmpBoolean.getValue(), outBoolean.getValue()));
             return false;
         }
     }
@@ -1209,8 +1210,8 @@ public class CompareTool {
         public Node toXmlNode(Document document) {
             Element element = document.createElement("path");
             Element baseNode = document.createElement("base");
-            baseNode.setAttribute("cmp", String.format("%s %s obj", baseCmpObject.getObjNumber(), baseCmpObject.getGenNumber()));
-            baseNode.setAttribute("out", String.format("%s %s obj", baseOutObject.getObjNumber(), baseOutObject.getGenNumber()));
+            baseNode.setAttribute("cmp", MessageFormat.format("{0} {1} obj", baseCmpObject.getObjNumber(), baseCmpObject.getGenNumber()));
+            baseNode.setAttribute("out", MessageFormat.format("{0} {1} obj", baseOutObject.getObjNumber(), baseOutObject.getGenNumber()));
             element.appendChild(baseNode);
             for (PathItem pathItem : path) {
                 element.appendChild(pathItem.toXmlNode(document));
@@ -1221,7 +1222,7 @@ public class CompareTool {
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append(String.format("Base cmp object: %s obj. Base out object: %s obj", baseCmpObject, baseOutObject));
+            sb.append(MessageFormat.format("Base cmp object: {0} obj. Base out object: {1} obj", baseCmpObject, baseOutObject));
             for (PathItem pathItem : path) {
                 sb.append("\n");
                 sb.append(pathItem.toString());

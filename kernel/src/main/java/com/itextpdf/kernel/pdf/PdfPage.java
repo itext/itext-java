@@ -18,6 +18,7 @@ import com.itextpdf.kernel.xmp.options.SerializeOptions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -117,7 +118,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public PdfStream getContentStream(int index) {
         int count = getContentStreamCount();
         if (index >= count)
-            throw new IndexOutOfBoundsException(String.format("Index: %d, Size: %d", index, count));
+            throw new IndexOutOfBoundsException(MessageFormat.format("Index: {0}, Size: {1}", index, count));
         PdfObject contents = getPdfObject().get(PdfName.Contents);
         if (contents instanceof PdfStream)
             return (PdfStream) contents;

@@ -1,6 +1,7 @@
 package com.itextpdf.io.source;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 
 public class ByteBuffer implements Serializable{
 
@@ -77,7 +78,7 @@ public class ByteBuffer implements Serializable{
 
     public byte get(int index) {
         if (index >= count) {
-            throw new IndexOutOfBoundsException(String.format("Index: %d, Size: %d", index, count));
+            throw new IndexOutOfBoundsException(MessageFormat.format("Index: {0}, Size: {1}", index, count));
         }
         return buffer[index];
     }

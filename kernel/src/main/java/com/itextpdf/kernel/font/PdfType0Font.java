@@ -147,7 +147,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 }
             }
             if (fontProgram == null) {
-                throw new PdfException(String.format("Cannot recognise document font %s with %s encoding", cidFontName, cmap));
+                throw new PdfException(MessageFormat.format("Cannot recognise document font {0} with {1} encoding", cidFontName, cmap));
             }
             cidFontType = CidFontType0;
         }
@@ -429,7 +429,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             if (style.length() > 0) {
                 name += "-" + style;
             }
-            getPdfObject().put(PdfName.BaseFont, new PdfName(String.format("%s-%s", name, cmapEncoding.getCmapName())));
+            getPdfObject().put(PdfName.BaseFont, new PdfName(MessageFormat.format("{0}-{1}", name, cmapEncoding.getCmapName())));
             getPdfObject().put(PdfName.Encoding, new PdfName(cmapEncoding.getCmapName()));
             PdfDictionary fontDescriptor = getFontDescriptor(name);
             int[][] metrics = longTag.values().toArray(new int[0][]);
@@ -459,7 +459,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 fontStream.put(PdfName.Subtype, new PdfName("CIDFontType0C"));
                 // The PDF Reference manual advises to add -cmap in case CIDFontType0
                 getPdfObject().put(PdfName.BaseFont,
-                        new PdfName(String.format("%s-%s", fontName, cmapEncoding.getCmapName())));
+                        new PdfName(MessageFormat.format("{0}-{1}", fontName, cmapEncoding.getCmapName())));
                 fontDescriptor.put(PdfName.FontFile3, fontStream);
             } else {
                 byte[] ttfBytes;

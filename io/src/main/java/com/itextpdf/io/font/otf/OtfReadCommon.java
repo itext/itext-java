@@ -2,6 +2,7 @@ package com.itextpdf.io.font.otf;
 
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -48,7 +49,7 @@ public class OtfReadCommon {
 			}
 
 		} else {
-			throw new UnsupportedOperationException(String.format("Invalid coverage format: %d", coverageFormat));
+			throw new UnsupportedOperationException(MessageFormat.format("Invalid coverage format: {0}", coverageFormat));
 		}
 
 		return Collections.unmodifiableList(glyphIds);

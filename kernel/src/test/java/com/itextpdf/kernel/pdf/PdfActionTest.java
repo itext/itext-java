@@ -5,6 +5,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.FileOutputStream;
+import java.text.MessageFormat;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,7 +31,7 @@ public class PdfActionTest  extends ExtendedITextTest {
 
         document.close();
 
-        System.out.println(String.format("Please open document %s and make sure that you're automatically redirected to %s site.", destinationFolder + "actionTest01.pdf", "http://itextpdf.com"));
+        System.out.println(MessageFormat.format("Please open document {0} and make sure that you're automatically redirected to {1} site.", destinationFolder + "actionTest01.pdf", "http://itextpdf.com"));
     }
 
     @Test
@@ -43,7 +44,7 @@ public class PdfActionTest  extends ExtendedITextTest {
 
         document.close();
 
-        System.out.println(String.format("Please open document %s at page 2 and make sure that you're automatically redirected to %s site.", destinationFolder + "actionTest02.pdf", "http://itextpdf.com"));
+        System.out.println(MessageFormat.format("Please open document {0} at page 2 and make sure that you're automatically redirected to {1} site.", destinationFolder + "actionTest02.pdf", "http://itextpdf.com"));
 
     }
 

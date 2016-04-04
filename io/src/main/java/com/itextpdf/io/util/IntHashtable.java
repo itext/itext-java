@@ -1,6 +1,7 @@
 package com.itextpdf.io.util;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -79,10 +80,10 @@ public class IntHashtable implements Cloneable, Serializable {
     public IntHashtable(int initialCapacity, float loadFactor) {
         super();
         if (initialCapacity < 0) {
-            throw new IllegalArgumentException(String.format("Illegal Capacity: %d", initialCapacity));
+            throw new IllegalArgumentException(MessageFormat.format("Illegal Capacity: {0}", initialCapacity));
         }
         if (loadFactor <= 0) {
-            throw new IllegalArgumentException(String.format("Illegal Load: %f", loadFactor));
+            throw new IllegalArgumentException(MessageFormat.format("Illegal Load: {0}", loadFactor));
         }
         if (initialCapacity == 0) {
             initialCapacity = 1;

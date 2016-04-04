@@ -6,6 +6,8 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 
+import java.text.MessageFormat;
+
 public class PdfMediaClipData extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -7030377585169961523L;
@@ -21,7 +23,7 @@ public class PdfMediaClipData extends PdfObjectWrapper<PdfDictionary> {
         markObjectAsIndirect(dic);
         dic.put(PdfName.TF, TEMPACCESS);
         put(PdfName.Type, PdfName.MediaClip).put(PdfName.S, PdfName.MCD).
-                put(PdfName.N, new PdfString(String.format("Media clip for %s", file))).
+                put(PdfName.N, new PdfString(MessageFormat.format("Media clip for {0}", file))).
                 put(PdfName.CT, new PdfString(mimeType)).
                 put(PdfName.P, dic).
                 put(PdfName.D, fs.getPdfObject());

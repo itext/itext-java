@@ -17,6 +17,7 @@ import com.itextpdf.kernel.security.ExternalDecryptionProcess;
 import java.io.*;
 import java.security.Key;
 import java.security.cert.Certificate;
+import java.text.MessageFormat;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -568,7 +569,7 @@ public class PdfReader implements Closeable, Serializable {
                     if (reference.getGenNumber() != tokens.getGenNr()) {
                         if (fixedXref) {
                             Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                            logger.warn(String.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE + " %d %d R", tokens.getObjNr(), tokens.getGenNr()));
+                            logger.warn(MessageFormat.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE + " {0} {1} R", tokens.getObjNr(), tokens.getGenNr()));
                             return new PdfNull();
                         } else {
                             throw new PdfException(PdfException.InvalidIndirectReference1);

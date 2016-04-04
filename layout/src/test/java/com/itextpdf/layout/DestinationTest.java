@@ -9,6 +9,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -33,7 +34,7 @@ public class DestinationTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
-        Text text = new Text(String.format("Page %d", 10));
+        Text text = new Text(MessageFormat.format("Page {0}", 10));
         text.setProperty(Property.DESTINATION, "p10");
         doc.add(new Paragraph(text).setFixedPosition(1, 549, 742, 40));
         doc.close();

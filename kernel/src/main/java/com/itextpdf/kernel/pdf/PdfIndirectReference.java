@@ -1,5 +1,7 @@
 package com.itextpdf.kernel.pdf;
 
+import java.text.MessageFormat;
+
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
 
     private static final long serialVersionUID = -8293603068792908601L;
@@ -203,7 +205,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         if (checkState(ReadOnly)) {
             states.append("ReadOnly; ");
         }
-        return java.lang.String.format("%d %d R%s", getObjNumber(), getGenNumber(), states.substring(0, states.length() - 1));
+        return MessageFormat.format("{0} {1} R{2}", getObjNumber(), getGenNumber(), states.substring(0, states.length() - 1));
     }
 
     protected void setObjStreamNumber(int objectStreamNumber) {

@@ -8,6 +8,7 @@ import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -165,7 +166,7 @@ public class Cell extends BlockElement<Cell> {
 
     @Override
     public String toString() {
-        return String.format("Cell{row=%d, col=%d, rowspan=%d, colspan=%d}", row, col, rowspan, colspan);
+        return MessageFormat.format("Cell{row={0}, col={1}, rowspan={2}, colspan={3}}", row, col, rowspan, colspan);
     }
 
     @Override

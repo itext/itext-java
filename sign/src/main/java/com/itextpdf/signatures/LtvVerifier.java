@@ -16,6 +16,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -67,7 +68,7 @@ public class LtvVerifier extends RootStoreVerifier {
         signatureName = names.get(names.size() - 1);
         this.signDate = new Date();
         pkcs7 = coversWholeDocument();
-        LOGGER.info(String.format("Checking %ssignature %s", pkcs7.isTsp() ? "document-level timestamp " : "", signatureName));
+        LOGGER.info(MessageFormat.format("Checking {0}signature {1}", pkcs7.isTsp() ? "document-level timestamp " : "", signatureName));
     }
 
     /**
@@ -250,7 +251,7 @@ public class LtvVerifier extends RootStoreVerifier {
             names = sgnUtil.getSignatureNames();
             signatureName = names.get(names.size() - 1);
             pkcs7 = coversWholeDocument();
-            LOGGER.info(String.format("Checking %ssignature %s", pkcs7.isTsp() ? "document-level timestamp " : "", signatureName));
+            LOGGER.info(MessageFormat.format("Checking {0}signature {1}", pkcs7.isTsp() ? "document-level timestamp " : "", signatureName));
         }
         else {
             LOGGER.info("No signatures in revision");

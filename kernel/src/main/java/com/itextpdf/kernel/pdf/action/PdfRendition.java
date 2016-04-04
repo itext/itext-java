@@ -6,6 +6,8 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 
+import java.text.MessageFormat;
+
 public class PdfRendition extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -726500192326824100L;
@@ -17,7 +19,7 @@ public class PdfRendition extends PdfObjectWrapper<PdfDictionary> {
     public PdfRendition(String file, PdfFileSpec fs, String mimeType) {
         this(new PdfDictionary());
         getPdfObject().put(PdfName.S, PdfName.MR);
-        getPdfObject().put(PdfName.N, new PdfString(String.format("Rendition for %s", file)));
+        getPdfObject().put(PdfName.N, new PdfString(MessageFormat.format("Rendition for {0}", file)));
         getPdfObject().put(PdfName.C, new PdfMediaClipData(file, fs, mimeType).getPdfObject());
     }
 

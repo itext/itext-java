@@ -2,6 +2,7 @@ package com.itextpdf.kernel.parser;
 
 import com.itextpdf.kernel.geom.Rectangle;
 
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -24,7 +25,7 @@ public class TextMarginFinder implements EventListener {
             }
             textRectangle = Rectangle.getCommonRectangle(textRectangle, info.getAscentLine().getBoundingRectange());
         } else {
-            throw new IllegalStateException(String.format("Event type not supported: %s", type));
+            throw new IllegalStateException(MessageFormat.format("Event type not supported: {0}", type));
         }
     }
 

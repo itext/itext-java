@@ -8,6 +8,7 @@ import com.itextpdf.layout.Property;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -141,9 +142,9 @@ class TypographyUtils {
             Method method = Class.forName(className).getMethod(methodName, parameterTypes);
             return method.invoke(target, args);
         } catch (NoSuchMethodException e) {
-            logger.warn(String.format("Cannot find method %s for class %s", methodName, className));
+            logger.warn(MessageFormat.format("Cannot find method {0} for class {1}", methodName, className));
         } catch (ClassNotFoundException e) {
-            logger.warn(String.format("Cannot find class %s", className));
+            logger.warn(MessageFormat.format("Cannot find class {0}", className));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -156,9 +157,9 @@ class TypographyUtils {
             constructor = Class.forName(className).getConstructor(parameterTypes);
             return constructor.newInstance(args);
         } catch (NoSuchMethodException e) {
-            logger.warn(String.format("Cannot find constructor for class %s", className));
+            logger.warn(MessageFormat.format("Cannot find constructor for class {0}", className));
         } catch (ClassNotFoundException e) {
-            logger.warn(String.format("Cannot find class %s", className));
+            logger.warn(MessageFormat.format("Cannot find class {0}", className));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

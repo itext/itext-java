@@ -3,6 +3,8 @@ package com.itextpdf.layout.layout;
 import com.itextpdf.io.util.HashCode;
 import com.itextpdf.kernel.geom.Rectangle;
 
+import java.text.MessageFormat;
+
 public class LayoutArea implements Cloneable {
 
     protected int pageNumber;
@@ -60,6 +62,6 @@ public class LayoutArea implements Cloneable {
 
     @Override
     public String toString() {
-        return String.format("%s, page %s", bBox.toString(), pageNumber);
+        return MessageFormat.format("{0}, page {1}", bBox.toString(), pageNumber);
     }
 }

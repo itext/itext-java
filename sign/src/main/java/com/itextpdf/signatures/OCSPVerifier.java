@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -119,10 +120,10 @@ public class OCSPVerifier extends RootStoreVerifier {
             Date nextUpdate = resp[i].getNextUpdate();
             if (nextUpdate == null) {
                 nextUpdate = new Date(resp[i].getThisUpdate().getTime() + 180000l);
-                LOGGER.info(String.format("No 'next update' for OCSP Response; assuming %s", nextUpdate));
+                LOGGER.info(MessageFormat.format("No 'next update' for OCSP Response; assuming {0}", nextUpdate));
             }
             if (signDate.after(nextUpdate)) {
-                LOGGER.info(String.format("OCSP no longer valid: %s after %s", signDate, nextUpdate));
+                LOGGER.info(MessageFormat.format("OCSP no longer valid: {0} after {1}", signDate, nextUpdate));
                 continue;
             }
             // check the status of the certificate
