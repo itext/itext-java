@@ -4,7 +4,7 @@ import com.itextpdf.io.font.otf.ContextualSubstRule;
 import com.itextpdf.io.font.otf.OpenTypeFontTableReader;
 import com.itextpdf.io.font.otf.SubstLookupRecord;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -23,9 +23,13 @@ public class SubTableLookup6Format3 extends SubTableLookup6 {
     protected List<ContextualSubstRule> getSetOfRulesForStartGlyph(int startId) {
         SubstRuleFormat3 ruleFormat3 = (SubstRuleFormat3) this.substitutionRule;
         if (ruleFormat3.inputCoverages.get(0).contains(startId) && !openReader.isSkip(startId, lookupFlag)) {
-            return Collections.singletonList(this.substitutionRule);
+            //return Collections.singletonList(this.substitutionRule);
+            List<ContextualSubstRule> rules = new ArrayList<>(1);
+            rules.add(this.substitutionRule);
+            return rules;
         }
-        return Collections.emptyList();
+        //return Collections.emptyList();
+        return new ArrayList<>(0);
     }
 
     public static class SubstRuleFormat3 extends ContextualSubstRule {

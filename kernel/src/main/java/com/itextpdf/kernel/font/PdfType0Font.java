@@ -111,12 +111,12 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         String cmap = fontDictionary.getAsName(PdfName.Encoding).getValue();
         if (PdfEncodings.IDENTITY_H.equals(cmap) || PdfEncodings.IDENTITY_V.equals(cmap)) {
             PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
-            CMapToUnicode toUnicodeCMap = FontUtils.processToUnicode(toUnicode);
+            CMapToUnicode toUnicodeCMap = FontUtil.processToUnicode(toUnicode);
             if (toUnicodeCMap == null) {
                 String uniMap = getUniMapFromOrdering(getOrdering(cidFont));
-                toUnicodeCMap = FontUtils.getToUnicodeFromUniMap(uniMap);
+                toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(uniMap);
                 if (toUnicodeCMap == null) {
-                    toUnicodeCMap = FontUtils.getToUnicodeFromUniMap(PdfEncodings.IDENTITY_H);
+                    toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(PdfEncodings.IDENTITY_H);
                     Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
                     logger.error(MessageFormat.format(LogMessageConstant.UNKNOWN_CMAP, uniMap));
                 }
@@ -140,7 +140,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                     cmapEncoding = null;
                 }
             } else {
-                CMapToUnicode toUnicodeCMap = FontUtils.getToUnicodeFromUniMap(uniMap);
+                CMapToUnicode toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(uniMap);
                 if (toUnicodeCMap != null) {
                     fontProgram = DocTrueTypeFont.createFontProgram(cidFont, toUnicodeCMap);
                     cmapEncoding = new CMapEncoding(cmap, uniMap);

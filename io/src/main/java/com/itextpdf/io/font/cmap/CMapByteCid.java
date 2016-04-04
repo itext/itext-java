@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class CMapByteCid extends AbstractCMap {
 
-    private static class Cursor {
+    protected static class Cursor {
 
         public int offset;
         public int length;

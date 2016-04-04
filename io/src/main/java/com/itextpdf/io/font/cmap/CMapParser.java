@@ -52,7 +52,7 @@ public class CMapParser {
                         break;
                     continue;
                 }
-                if (list.isEmpty())
+                if (list.size() == 0)
                     break;
                 String last = list.get(list.size() - 1).toString();
                 if (level == 0 && list.size() == 3 && last.equals(Def)) {

@@ -226,21 +226,21 @@ public class CFFFont {
             char b0 = getCard8();
             if (b0 == 29) {
                 int item = getInt();
-                args[arg_count] = Integer.valueOf(item);
+                args[arg_count] = item;
                 arg_count++;
                 //System.err.println(item+" ");
                 continue;
             }
             if (b0 == 28) {
                 short item = getShort();
-                args[arg_count] = Integer.valueOf(item);
+                args[arg_count] = (int) item;
                 arg_count++;
                 //System.err.println(item+" ");
                 continue;
             }
             if (b0 >= 32 && b0 <= 246) {
                 byte item = (byte) (b0-139);
-                args[arg_count] = Integer.valueOf(item);
+                args[arg_count] = (int) item;
                 arg_count++;
                 //System.err.println(item+" ");
                 continue;
@@ -248,7 +248,7 @@ public class CFFFont {
             if (b0 >= 247 && b0 <= 250) {
                 char b1 = getCard8();
                 short item = (short) ((b0-247)*256+b1+108);
-                args[arg_count] = Integer.valueOf(item);
+                args[arg_count] = (int) item;
                 arg_count++;
                 //System.err.println(item+" ");
                 continue;
@@ -256,7 +256,7 @@ public class CFFFont {
             if (b0 >= 251 && b0 <= 254) {
                 char b1 = getCard8();
                 short item = (short) (-(b0-251)*256-b1-108);
-                args[arg_count] = Integer.valueOf(item);
+                args[arg_count] = (int) item;
                 arg_count++;
                 //System.err.println(item+" ");
                 continue;
@@ -264,7 +264,7 @@ public class CFFFont {
             if (b0 == 30) {
                 StringBuilder item = new StringBuilder("");
                 boolean done = false;
-                char buffer = 0;
+                char buffer = (char) 0;
                 byte avail = 0;
                 int  nibble = 0;
                 while (!done) {
@@ -280,7 +280,7 @@ public class CFFFont {
                         case 0xf: done=true   ; break;
                         default:
                             if (nibble >= 0 && nibble <= 9)
-                                item.append(String.valueOf(nibble));
+                                item.append(nibble);
                             else {
                                 item.append("<NIBBLE ERROR: ").append(nibble).append('>');
                                 done = true;
@@ -494,7 +494,7 @@ public class CFFFont {
 
     static protected final class UInt16Item extends Item {
         public char value;
-        public UInt16Item(char value) {this.value=value;}
+        public UInt16Item(char value) {this.value = value;}
 
         @Override
         public void increment(int[] currentOffset) {
@@ -504,8 +504,11 @@ public class CFFFont {
         // this is incomplete!
         @Override
         public void emit(byte[] buffer) {
-            buffer[myOffset+0] = (byte) (value >>> 8 & 0xff);
-            buffer[myOffset+1] = (byte) (value >>> 0 & 0xff);
+//            Simplify from: there is no sense in >>> for unsigned char.
+//            buffer[myOffset+0] = (byte) (value >>> 8 & 0xff);
+//            buffer[myOffset+1] = (byte) (value >>> 0 & 0xff);
+            buffer[myOffset+0] = (byte) (value >> 8 & 0xff);
+            buffer[myOffset+1] = (byte) (value >> 0 & 0xff);
         }
     }
 
@@ -524,7 +527,8 @@ public class CFFFont {
         // this is incomplete!
         @Override
         public void emit(byte[] buffer) {
-            buffer[myOffset+0] = (byte) (value >>> 0 & 0xff);
+            //buffer[myOffset+0] = (byte) (value >>> 0 & 0xff);
+            buffer[myOffset+0] = (byte) (value & 0xff);
         }
     }
 
@@ -718,16 +722,16 @@ public class CFFFont {
             int p1 = getPosition();
             getDictItem();
             int p2 = getPosition();
-            if (key=="Encoding"
-                    || key=="Private"
-                    || key=="FDSelect"
-                    || key=="FDArray"
-                    || key=="charset"
-                    || key=="CharStrings"
+            if ("Encoding".equals(key)
+                    || "Private".equals(key)
+                    || "FDSelect".equals(key)
+                    || "FDArray".equals(key)
+                    || "charset".equals(key)
+                    || "CharStrings".equals(key)
                     ) {
                 // just drop them
             } else {
-                l.add(new RangeItem(buf,p1,p2-p1));
+                l.addLast(new RangeItem(buf,p1,p2-p1));
             }
         }
 

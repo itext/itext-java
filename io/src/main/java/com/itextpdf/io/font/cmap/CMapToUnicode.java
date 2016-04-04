@@ -6,7 +6,6 @@ import com.itextpdf.io.util.TextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -18,13 +17,13 @@ import java.util.Set;
  */
 public class CMapToUnicode extends AbstractCMap {
 
-    public static CMapToUnicode EmptyCMapToUnicodeMap = new CMapToUnicode(true);
+//    public static CMapToUnicode EmptyCMapToUnicodeMap = new CMapToUnicode(true);
 
     private Map<Integer, char[]> byteMappings;
 
-    private CMapToUnicode(boolean emptyCMap) {
-        byteMappings = Collections.emptyMap();
-    }
+//    private CMapToUnicode(boolean emptyCMap) {
+//        byteMappings = Collections.emptyMap();
+//    }
 
     /**
      * Creates a new instance of CMap.
@@ -47,7 +46,7 @@ public class CMapToUnicode extends AbstractCMap {
      * @return true If there are any two byte mappings, false otherwise.
      */
     public boolean hasByteMappings() {
-        return !byteMappings.isEmpty();
+        return byteMappings.size() != 0;
     }
 
     /**

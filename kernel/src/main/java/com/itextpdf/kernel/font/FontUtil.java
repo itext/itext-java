@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
-class FontUtils {
+class FontUtil {
 
     private static final HashMap<String, CMapToUnicode> uniMaps = new HashMap<>();
 
@@ -34,7 +34,8 @@ class FontUtils {
             } catch (Exception e) {
                 Logger logger = LoggerFactory.getLogger(CMapToUnicode.class);
                 logger.error(LogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP);
-                cMapToUnicode = CMapToUnicode.EmptyCMapToUnicodeMap;
+//                cMapToUnicode = CMapToUnicode.EmptyCMapToUnicodeMap;
+                cMapToUnicode = new CMapToUnicode();
             }
         } else if (PdfName.IdentityH.equals(toUnicode)) {
             cMapToUnicode = CMapToUnicode.getIdentity();

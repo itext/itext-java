@@ -5,6 +5,7 @@ import com.itextpdf.io.font.otf.ContextualSubTable;
 import com.itextpdf.io.font.otf.OpenTypeFontTableReader;
 import com.itextpdf.io.font.otf.SubstLookupRecord;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,8 @@ public class SubTableLookup5Format1 extends ContextualSubTable {
         if (substMap.containsKey(startGlyphId) && !openReader.isSkip(startGlyphId, lookupFlag)) {
             return substMap.get(startGlyphId);
         }
-        return Collections.emptyList();
+//        return Collections.emptyList();
+        return new ArrayList<>(0);
     }
 
     public static class SubstRuleFormat1 extends ContextualSubstRule {

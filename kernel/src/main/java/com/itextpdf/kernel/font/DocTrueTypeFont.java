@@ -26,7 +26,7 @@ class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
         if (baseFontName != null) {
             getFontNames().setFontName(baseFontName.getValue());
         } else {
-            getFontNames().setFontName(FontUtils.createRandomFontName());
+            getFontNames().setFontName(FontUtil.createRandomFontName());
         }
         subtype = fontDictionary.getAsName(PdfName.Subtype);
     }
@@ -37,7 +37,7 @@ class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
 
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
         int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.getIntValue(), 0) : 0;
-        int[] widths = FontUtils.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
+        int[] widths = FontUtil.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
         fontProgram.avgWidth = 0;
         int glyphsWithWidths = 0;
         for (int i = 0; i < 256; i++) {
@@ -64,7 +64,7 @@ class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
         int dw = fontDescriptor != null && fontDescriptor.containsKey(PdfName.DW)
                 ? fontDescriptor.getAsInt(PdfName.DW) : 1000;
         if (toUnicode != null) {
-            IntHashtable widths = FontUtils.convertCompositeWidthsArray(fontDictionary.getAsArray(PdfName.W));
+            IntHashtable widths = FontUtil.convertCompositeWidthsArray(fontDictionary.getAsArray(PdfName.W));
             fontProgram.avgWidth = 0;
             for (int cid : toUnicode.getCodes()) {
                 int width = widths.containsKey(cid) ? widths.get(cid) : dw;

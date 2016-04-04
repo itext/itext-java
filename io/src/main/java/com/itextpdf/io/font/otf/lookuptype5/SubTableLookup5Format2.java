@@ -6,7 +6,7 @@ import com.itextpdf.io.font.otf.OpenTypeFontTableReader;
 import com.itextpdf.io.font.otf.OtfClass;
 import com.itextpdf.io.font.otf.SubstLookupRecord;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -35,7 +35,8 @@ public class SubTableLookup5Format2 extends ContextualSubTable {
             int gClass = classDefinition.getOtfClass(startId);
             return subClassSets.get(gClass);
         }
-        return Collections.emptyList();
+        //return Collections.emptyList();
+        return new ArrayList<>(0);
     }
 
     public class SubstRuleFormat2 extends ContextualSubstRule {
