@@ -87,7 +87,7 @@ public class PngWriter {
             int c = n;
             for (int k = 0; k < 8; k++) {
                 if ((c & 1) != 0)
-                    c = 0xedb88320 ^ (c >>> 1);
+                    c = (int)(0xedb88320 ^ (c >>> 1));
                 else
                     c = c >>> 1;
             }
@@ -108,11 +108,11 @@ public class PngWriter {
     }
 
     private static int crc(byte[] buf, int offset, int len) {
-        return update_crc(0xffffffff, buf, offset, len) ^ 0xffffffff;
+        return ~update_crc(-1, buf, offset, len);
     }
 
     private static int crc(byte[] buf) {
-        return update_crc(0xffffffff, buf, 0, buf.length) ^ 0xffffffff;
+        return ~update_crc(-1, buf, 0, buf.length);
     }
 
     public void outputInt(int n) throws IOException {
@@ -130,8 +130,8 @@ public class PngWriter {
         outputInt(data.length);
         outp.write(chunkType, 0, 4);
         outp.write(data);
-        int c = update_crc(0xffffffff, chunkType, 0, chunkType.length);
-        c = update_crc(c, data, 0, data.length) ^ 0xffffffff;
+        int c = update_crc(-1, chunkType, 0, chunkType.length);
+        c = ~update_crc(c, data, 0, data.length);
         outputInt(c);
     }
 

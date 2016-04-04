@@ -17,8 +17,10 @@ public class LZWStringTable {
      */
     private final static int RES_CODES = 2;
 
-    private final static short HASH_FREE = (short) 0xFFFF;
-    private final static short NEXT_FIRST = (short) 0xFFFF;
+    //0xFFFF
+    private final static short HASH_FREE = -1;
+    //0xFFFF
+    private final static short NEXT_FIRST = -1;
 
     private final static int MAXBITS = 12;
     private final static int MAXSTR = (1 << MAXBITS);
@@ -99,7 +101,8 @@ public class LZWStringTable {
             hshidx = (hshidx + HASHSTEP) % HASHSIZE;
         }
 
-        return (short) 0xFFFF;
+        //return (short) 0xFFFF;
+        return -1;
     }
 
     /**
@@ -113,12 +116,14 @@ public class LZWStringTable {
             strHsh_[q] = HASH_FREE;
 
         int w = (1 << codesize) + RES_CODES;
-        for (int q = 0; q < w; q++)
-            AddCharString((short) 0xFFFF, (byte) q);    // init with no prefix
+        for (int q = 0; q < w; q++) {
+            //AddCharString((short) 0xFFFF, (byte) q);    // init with no prefix
+            AddCharString((short)-1, (byte) q);    // init with no prefix
+        }
     }
 
     static public int Hash(short index, byte lastbyte) {
-        return ((int) ((short) (lastbyte << 8) ^ index) & 0xFFFF) % HASHSIZE;
+        return (((short) (lastbyte << 8) ^ index) & 0xFFFF) % HASHSIZE;
     }
 
     /**
@@ -145,7 +150,8 @@ public class LZWStringTable {
         if (offset == -2) {
             if (skipHead == 1) skipHead = 0;
         }
-        if (code == (short) 0xFFFF ||                // just in case
+        //-1 ~ 0xFFFF
+        if (code == -1 ||                // just in case
                 skipHead == strLen_[code])                // DONE no more unpacked
             return 0;
 
@@ -163,7 +169,7 @@ public class LZWStringTable {
 
         // NOTE: data unpacks in reverse direction and we are placing the
         // unpacked data directly into the array in the correct location.
-        while ((idx > offset) && (code != (short) 0xFFFF)) {
+        while ((idx > offset) && (code != -1)) {
             if (--skipTail < 0)                    // skip required of expanded data
             {
                 buf[--idx] = strChr_[code];

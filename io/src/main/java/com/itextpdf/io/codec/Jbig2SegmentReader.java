@@ -207,7 +207,7 @@ public class Jbig2SegmentReader {
             int page_bitmap_width = ra.readInt();
             int page_bitmap_height = ra.readInt();
             ra.seek(last);
-            Jbig2Page p = pages.get(Integer.valueOf(s.page));
+            Jbig2Page p = pages.get(s.page);
             if (p == null) {
                 throw new IllegalStateException("referring.to.widht.height.of.page.we.havent.seen.yet.1");
                         //TODO, s.page);

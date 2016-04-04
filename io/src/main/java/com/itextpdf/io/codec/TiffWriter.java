@@ -58,7 +58,7 @@ public class TiffWriter {
         }
 
         public int getValueSize() {
-            return (data.length + 1) & 0xfffffffe;
+            return (int) ((data.length + 1) & 0xfffffffe);
         }
 
         public int getTag() {

@@ -68,12 +68,12 @@ class BitFile {
             {
                 if (blocks) // GIF
                 {
-                    buffer[index] |= (bits & ((1 << numbits) - 1)) << (8 - bitsLeft);
+                    buffer[index] |= (byte) ((bits & ((1 << numbits) - 1)) << (8 - bitsLeft));
                     bitsWritten += numbits;
                     bitsLeft -= numbits;
                     numbits = 0;
                 } else {
-                    buffer[index] |= (bits & ((1 << numbits) - 1)) << (bitsLeft - numbits);
+                    buffer[index] |= (byte) ((bits & ((1 << numbits) - 1)) << (bitsLeft - numbits));
                     bitsWritten += numbits;
                     bitsLeft -= numbits;
                     numbits = 0;
@@ -85,7 +85,7 @@ class BitFile {
                 {
                     // if bits  > space left in current byte then the lowest order bits
                     // of code are taken and put in current byte and rest put in next.
-                    buffer[index] |= (bits & ((1 << bitsLeft) - 1)) << (8 - bitsLeft);
+                    buffer[index] |= (byte) ((bits & ((1 << bitsLeft) - 1)) << (8 - bitsLeft));
                     bitsWritten += bitsLeft;
                     bits >>= bitsLeft;
                     numbits -= bitsLeft;
@@ -96,7 +96,7 @@ class BitFile {
                     // of code are taken and put in current byte and rest put in next.
                     // at highest order bit location !!
                     int topbits = (bits >>> (numbits - bitsLeft)) & ((1 << bitsLeft) - 1);
-                    buffer[index] |= topbits;
+                    buffer[index] |= (byte) topbits;
                     numbits -= bitsLeft;    // ok this many bits gone off the top
                     bitsWritten += bitsLeft;
                     buffer[++index] = 0;    // next index
