@@ -906,17 +906,19 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         Map<PdfPage, PdfPage> page2page = new LinkedHashMap<>();
         Map<PdfPage, List<PdfOutline>> page2Outlines = new HashMap<>();
         Set<PdfOutline> outlinesToCopy = new HashSet<>();
+        int insertBefore = insertBeforePage;
+        int numberOfPagesBeforeCopying = toDocument.getNumberOfPages();
         for (Integer pageNum : pagesToCopy) {
             PdfPage page = getPage(pageNum);
             PdfPage newPage = page.copyTo(toDocument, copier);
             copiedPages.add(newPage);
             page2page.put(page, newPage);
-            if (insertBeforePage < toDocument.getNumberOfPages() + 1) {
-                toDocument.addPage(insertBeforePage, newPage);
+            if (insertBefore < toDocument.getNumberOfPages() + 1) {
+                toDocument.addPage(insertBefore, newPage);
             } else {
                 toDocument.addPage(newPage);
             }
-            insertBeforePage++;
+            insertBefore++;
             if (catalog.isOutlineMode()) {
                 List<PdfOutline> pageOutlines = page.getOutlines(false);
                 if (pageOutlines != null)
@@ -933,7 +935,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             if (tagStructureContext != null) {
                 tagStructureContext.removeAllConnectionsToTags();
             }
-            if (insertBeforePage > toDocument.getNumberOfPages()) {
+            if (insertBeforePage > numberOfPagesBeforeCopying) {
                 getStructTreeRoot().copyTo(toDocument, page2page);
             } else {
                 getStructTreeRoot().copyTo(toDocument, insertBeforePage, page2page);

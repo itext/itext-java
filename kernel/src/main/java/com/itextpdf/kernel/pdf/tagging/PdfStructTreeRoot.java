@@ -258,6 +258,15 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         addKidObject(-1, structElem);
     }
 
+    void addKidObject(int index, PdfDictionary structElem) {
+        if (index == -1)
+            getKidsObject().add(structElem);
+        else
+            getKidsObject().add(index, structElem);
+        if (PdfStructElem.isStructElem(structElem))
+            structElem.put(PdfName.P, getPdfObject());
+    }
+
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;
@@ -271,15 +280,6 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
                 ((PdfStructElem) kid).flush();
             }
         }
-    }
-
-    private void addKidObject(int index, PdfDictionary structElem) {
-        if (index == -1)
-            getKidsObject().add(structElem);
-        else
-            getKidsObject().add(index, structElem);
-        if (PdfStructElem.isStructElem(structElem))
-            structElem.put(PdfName.P, getPdfObject());
     }
 
     private void ifKidIsStructElementAddToList(PdfObject kid, List<IPdfStructElem> kids) {

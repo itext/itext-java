@@ -507,6 +507,60 @@ public class PdfStructElemTest extends ExtendedITextTest {
         compareResult("structTreeCopyingTest07.pdf", "cmp_structTreeCopyingTest07.pdf", "diff_copying_07_");
     }
 
+    @Test
+    public void structTreeCopyingTest08() throws Exception {
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox-table.pdf"));
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "structTreeCopyingTest08.pdf"));
+        PdfDocument document = new PdfDocument(reader, writer);
+
+        PdfReader reader1 = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox.pdf"));
+        PdfDocument document1 = new PdfDocument(reader1);
+        document1.copyPagesTo(1, 1, document, 2);
+
+        document.close();
+        document1.close();
+
+        compareResult("structTreeCopyingTest08.pdf", "cmp_structTreeCopyingTest08.pdf", "diff_copying_08_");
+    }
+
+    @Test
+    public void structTreeCopyingTest09() throws Exception {
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox-table.pdf"));
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "structTreeCopyingTest09.pdf"));
+        PdfDocument document = new PdfDocument(reader, writer);
+
+        PdfReader reader1 = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox.pdf"));
+        PdfDocument document1 = new PdfDocument(reader1);
+        document1.copyPagesTo(1, 1, document, 2);
+        document1.copyPagesTo(1, 1, document, 4);
+
+        document.close();
+        document1.close();
+
+        compareResult("structTreeCopyingTest09.pdf", "cmp_structTreeCopyingTest09.pdf", "diff_copying_09_");
+    }
+
+    @Test
+    public void structTreeCopyingTest10() throws Exception {
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "88th_Academy_Awards.pdf"));
+        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "structTreeCopyingTest10.pdf"));
+        PdfDocument document = new PdfDocument(reader, writer);
+
+        PdfReader reader1 = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox-table.pdf"));
+        PdfDocument document1 = new PdfDocument(reader1);
+        document1.copyPagesTo(1, 3, document, 2);
+
+        PdfReader reader2 = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox.pdf"));
+        PdfDocument document2 = new PdfDocument(reader2);
+        document2.copyPagesTo(1, 1, document, 4);
+
+        document.close();
+        document1.close();
+        document2.close();
+
+        compareResult("structTreeCopyingTest10.pdf", "cmp_structTreeCopyingTest10.pdf", "diff_copying_10_");
+    }
+
     private void compareResult(String outFileName, String cmpFileName, String diffNamePrefix)
             throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         CompareTool compareTool = new CompareTool();

@@ -23,6 +23,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotCloseDocumentWithAlreadyFlushedPdfCatalog = "cannot.close.document.with.already.flushed.pdf.catalog";
     public static final String CannotConvertPdfArrayToRectanle = "cannot.convert.pdfarray.to.rectangle";
     public static final String CannotCopyFlushedObject = "cannot.copy.flushed.object";
+    public static final String CannotCopyFlushedTag = "cannot.copy.flushed.tag";
     public static final String CannotCopyObjectContent = "cannot.copy.object.content";
     public static final String CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten = "cannot.copy.indirect.object.from.the.document.that.is.being.written";
     public static final String CannotCopyToDocumentOpenedInReadingMode = "cannot.copy.to.document.opened.in.reading.mode";
@@ -158,6 +159,7 @@ public class PdfException extends RuntimeException {
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";
     public static final String StructureElementShallContainParentObject = "structure.element.shall.contain.parent.object";
     public static final String TagCannotBeMovedToTheAnotherDocumentsTagStructure = "tag.cannot.be.moved.to.the.another.documents.tag.structure";
+    public static final String TagFromTheExistingTagStructureIsFlushedCannotAddCopiedPageTags = "tag.from.the.existing.tag.structure.is.flushed.cannot.add.copied.page.tags";
     public static final String TagTreePointerIsInInvalidStateItPointsAtFlushedElementUseMoveToRoot = "tagtreepointer.is.in.invalid.state.it.points.at.flushed.element.use.movetoroot";
     public static final String TagTreePointerIsInInvalidStateItPointsAtRemovedElementUseMoveToRoot = "tagtreepointer.is.in.invalid.state.it.points.at.removed.element.use.movetoroot";
     public static final String TextCannotBeNull = "text.cannot.be.null";
