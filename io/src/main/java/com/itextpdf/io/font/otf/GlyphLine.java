@@ -30,7 +30,7 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
         this.end = end;
     }
 
-    public GlyphLine(List<Glyph> glyphs, List<ActualText> actualText, int start, int end) {
+    protected GlyphLine(List<Glyph> glyphs, List<ActualText> actualText, int start, int end) {
         this(glyphs, start, end);
         this.actualText = actualText;
     }
@@ -217,8 +217,8 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
     public void setActualText(int left, int right, String text) {
         if (this.actualText == null) {
             this.actualText = new ArrayList<>(glyphs.size());
-            List<ActualText> actualText = Collections.nCopies(glyphs.size(), null);
-            this.actualText.addAll(actualText);
+            for (int i = 0; i < glyphs.size(); i++)
+                this.actualText.add(null);
         }
         ActualText actualText = new ActualText(text);
         for (int i = left; i < right; i++) {
@@ -241,8 +241,9 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
     private void addAllGlyphs(int index, List<Glyph> additionalGlyphs) {
         glyphs.addAll(index, additionalGlyphs);
         if (actualText != null) {
-            List<ActualText> actualTexts = Collections.nCopies(additionalGlyphs.size(), null);
-            actualText.addAll(index, actualTexts);
+            for (int i = 0; i < additionalGlyphs.size(); i++) {
+                this.actualText.add(index, null);
+            }
         }
     }
 
