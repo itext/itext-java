@@ -1,9 +1,7 @@
 package com.itextpdf.signatures;
 
-
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -29,8 +27,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-
 
 //TODO: add some validation of results in future
 @Category(IntegrationTest.class)
@@ -77,7 +73,7 @@ public class SigningTest {
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_",
                 new HashMap<Integer, List<Rectangle>>() {{
-                    put(1, Arrays.asList(new Rectangle(67, 690, 148, 15)));
+                    put(1, Arrays.asList(new Rectangle(67, 690, 155, 15)));
                 }}));
     }
 
@@ -94,7 +90,7 @@ public class SigningTest {
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_",
                 new HashMap<Integer, List<Rectangle>>() {{
-                    put(1, Arrays.asList(new Rectangle(67, 725, 148, 15)));
+                    put(1, Arrays.asList(new Rectangle(67, 725, 155, 15)));
                 }}));
     }
 
@@ -111,7 +107,7 @@ public class SigningTest {
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_",
                 new HashMap<Integer, List<Rectangle>>() {{
-                    put(1, Arrays.asList(new Rectangle(67, 725, 148, 15)));
+                    put(1, Arrays.asList(new Rectangle(67, 725, 155, 15)));
                 }}));
     }
 
