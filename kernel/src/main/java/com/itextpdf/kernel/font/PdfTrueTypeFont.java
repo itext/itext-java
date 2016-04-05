@@ -148,8 +148,8 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                 Set<Integer> glyphs = new HashSet<>();
                 for (int k = 0; k < shortTag.length; k++) {
                     if (shortTag[k] != 0) {
-                        Integer uni = fontEncoding.getUnicode(k);
-                        Glyph glyph = uni != null ? fontProgram.getGlyph(uni) : fontProgram.getGlyphByCode(k);
+                        int uni = fontEncoding.getUnicode(k);
+                        Glyph glyph = uni > -1 ? fontProgram.getGlyph(uni) : fontProgram.getGlyphByCode(k);
                         if (glyph != null) {
                             glyphs.add(glyph.getCode());
                         }

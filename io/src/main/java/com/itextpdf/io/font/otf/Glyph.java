@@ -60,8 +60,8 @@ public class Glyph implements Serializable {
     private final int width;
     // The normalized bbox of this Glyph.
     private int[] bbox = null;
-    // utf-32 representation of glyph if appears. Zer
-    private Integer unicode;
+    // utf-32 representation of glyph if appears. Correct value is > -1
+    private int unicode;
     // The Unicode text represented by this Glyph
     private char[] chars;
     // ture, if this Glyph is Mark
@@ -77,7 +77,7 @@ public class Glyph implements Serializable {
     // Index delta to base glyph. If after a glyph there are several anchored glyphs we should know we to find base glyph.
     byte anchorDelta = 0;
 
-    public Glyph(int code, int width, Integer unicode) {
+    public Glyph(int code, int width, int unicode) {
         this(code, width, unicode, null, false);
     }
 
@@ -85,16 +85,16 @@ public class Glyph implements Serializable {
         this(code, width, codePoint(chars), chars, false);
     }
 
-    public Glyph(int code, int width, Integer unicode, int[] bbox) {
+    public Glyph(int code, int width, int unicode, int[] bbox) {
         this(code, width, unicode, null, false);
         this.bbox = bbox;
     }
 
-    public Glyph(int width, Integer unicode) {
+    public Glyph(int width, int unicode) {
         this(-1, width, unicode, getChars(unicode), false);
     }
 
-    public Glyph(int code, int width, Integer unicode, char[] chars, boolean IsMark) {
+    public Glyph(int code, int width, int unicode, char[] chars, boolean IsMark) {
         this.code = code;
         this.width = width;
         this.unicode = unicode;
@@ -125,7 +125,7 @@ public class Glyph implements Serializable {
         this.anchorDelta = (byte) anchorDelta;
     }
 
-    public Glyph(Glyph glyph, Integer unicode) {
+    public Glyph(Glyph glyph, int unicode) {
         this(glyph.code, glyph.width, unicode, getChars(unicode), glyph.isMark());
     }
 
@@ -141,11 +141,15 @@ public class Glyph implements Serializable {
         return bbox;
     }
 
+    public boolean hasValidUnicode() {
+        return unicode > -1;
+    }
+
     public Integer getUnicode() {
         return unicode;
     }
 
-    public void setUnicode(Integer unicode) {
+    public void setUnicode(int unicode) {
         this.unicode = unicode;
         this.chars = getChars(unicode);
     }
@@ -242,7 +246,7 @@ public class Glyph implements Serializable {
                 code, chars != null ? Arrays.toString(chars) : "null", unicode, width);
     }
 
-    private static Integer codePoint(char[] a) {
+    private static int codePoint(char[] a) {
         if (a != null) {
             if (a.length == 1 && Character.isValidCodePoint(a[0])) {
                 return (int) a[0];
@@ -250,10 +254,10 @@ public class Glyph implements Serializable {
                 return Character.toCodePoint(a[0], a[1]);
             }
         }
-        return null;
+        return -1;
     }
 
-    private static char[] getChars(Integer unicode) {
-        return unicode != null ? TextUtil.convertFromUtf32(unicode) : null;
+    private static char[] getChars(int unicode) {
+        return unicode > -1 ? TextUtil.convertFromUtf32(unicode) : null;
     }
 }

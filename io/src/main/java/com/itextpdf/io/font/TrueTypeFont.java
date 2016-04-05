@@ -285,7 +285,7 @@ public class TrueTypeFont extends FontProgram {
             if (codeToGlyph.containsKey(index)) {
                 continue;
             }
-            Glyph glyph = new Glyph(index, glyphWidths[index], (Integer) null);
+            Glyph glyph = new Glyph(index, glyphWidths[index], -1);
             codeToGlyph.put(index, glyph);
             avgWidth += glyph.getWidth();
         }

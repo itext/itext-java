@@ -151,8 +151,8 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         byte[] contentBytes = content.getValueBytes();
         StringBuilder builder = new StringBuilder(contentBytes.length);
         for (byte b : contentBytes) {
-            Integer uni = fontEncoding.getUnicode(b & 0xff);
-            if (uni != null) {
+            int uni = fontEncoding.getUnicode(b & 0xff);
+            if (uni > -1) {
                 builder.append((char) (int) uni);
             }
         }
@@ -164,8 +164,8 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         float width = 0;
         byte[] contentBytes = content.getValueBytes();
         for (byte b : contentBytes) {
-            Integer uni = fontEncoding.getUnicode(b & 0xff);
-            Glyph glyph = uni != null ? getGlyph(uni) : fontProgram.getGlyphByCode(b);
+            int uni = fontEncoding.getUnicode(b & 0xff);
+            Glyph glyph = uni > -1 ? getGlyph(uni) : fontProgram.getGlyphByCode(b);
             width += glyph != null ? glyph.getWidth() : 0;
         }
         return width;
@@ -212,7 +212,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             for (int k = 0; k < shortTag.length; ++k) {
                 // remove unsupported by encoding values in case custom encoding.
                 // save widths information in case standard pdf encodings (winansi or macroman)
-                if (fontEncoding.getUnicode(k) != null) {
+                if (fontEncoding.canDecode(k)) {
                     shortTag[k] = 1;
                 } else if (!fontEncoding.hasDifferences() && fontProgram.getGlyphByCode(k) != null) {
                     shortTag[k] = 1;
@@ -268,8 +268,8 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                     wd.add(new PdfNumber(0));
                 } else {
                     //prevent lost of widths info
-                    Integer uni = fontEncoding.getUnicode(k);
-                    Glyph glyph = uni != null ? getGlyph(uni) : fontProgram.getGlyphByCode(k);
+                    int uni = fontEncoding.getUnicode(k);
+                    Glyph glyph = uni > -1 ? getGlyph(uni) : fontProgram.getGlyphByCode(k);
                     wd.add(new PdfNumber(glyph != null ? glyph.getWidth() : 0));
                 }
             }

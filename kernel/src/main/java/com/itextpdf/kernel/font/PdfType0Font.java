@@ -193,7 +193,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 Glyph glyph = fontProgram.getGlyph(b[k] & 0xff);
                 if (glyph != null && !longTag.containsKey(glyph.getCode())) {
                     longTag.put(glyph.getCode(), new int[]{glyph.getCode(), glyph.getWidth(),
-                            glyph.getUnicode() != null ? glyph.getUnicode() : 0});
+                            glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
                     glyphs[i++] = (char)cmapEncoding.getCmapCode(glyph.getCode());
                 }
             }
@@ -212,7 +212,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 }
                 if (!longTag.containsKey(glyph.getCode())) {
                     longTag.put(glyph.getCode(), new int[]{glyph.getCode(), glyph.getWidth(),
-                            glyph.getUnicode() != null ? glyph.getUnicode() : 0});
+                            glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
                 }
                 glyphs[i++] = (char)cmapEncoding.getCmapCode(glyph.getCode());
             }
@@ -236,8 +236,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 glyphs[i] = (char)cmapEncoding.getCmapCode(glyph.getCode());
                 int code = glyph.getCode();
                 if (longTag.get(code) == null) {
-                    Integer uniChar = glyph.getUnicode();
-                    longTag.put(code, new int[]{code, glyph.getWidth(), uniChar != null ? uniChar : 0});
+                    longTag.put(code, new int[]{code, glyph.getWidth(), glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
                 }
             }
 
@@ -256,7 +255,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     public byte[] convertToBytes(Glyph glyph) {
         int code = glyph.getCode();
         if (longTag.get(code) == null) {
-            longTag.put(code, new int[]{code, glyph.getWidth(), glyph.getUnicode() != null ? glyph.getUnicode() : 0});
+            longTag.put(code, new int[]{code, glyph.getWidth(), glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
         }
         String s = new String(new char[]{(char) glyph.getCode()}, 0, 1);
         try {
@@ -274,7 +273,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             int code = glyph.getCode();
             bytes.append((char)cmapEncoding.getCmapCode(glyph.getCode()));
             if (longTag.get(code) == null) {
-                longTag.put(code, new int[]{code, glyph.getWidth(), glyph.getUnicode() != null ? glyph.getUnicode() : 0});
+                longTag.put(code, new int[]{code, glyph.getWidth(), glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
             }
         }
         //TODO improve converting chars to hexed string

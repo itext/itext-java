@@ -75,7 +75,7 @@ public class ActualTextIterator implements Iterator<GlyphLine.GlyphLinePart> {
         StringBuilder toUnicodeMapResult = new StringBuilder();
         for (int i = glyphLinePart.start; i < glyphLinePart.end; i++) {
             Glyph currentGlyph = glyphLine.glyphs.get(i);
-            if (currentGlyph.getUnicode() == null) {
+            if (!currentGlyph.hasValidUnicode()) {
                 needsActualText = true;
                 break;
             }

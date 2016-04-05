@@ -96,7 +96,7 @@ class TypographyUtils {
 
                 // Mirror RTL glyphs
                 if (levels[reorder[i]] % 2 == 1) {
-                    if (reorderedLine.get(i).glyph.getUnicode() != null) {
+                    if (reorderedLine.get(i).glyph.hasValidUnicode()) {
                         int pairedBracket = (int) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiBracketMap", "getPairedBracket", new Class[]{int.class},
                                 reorderedLine.get(i).glyph.getUnicode());
                         PdfFont font = reorderedLine.get(i).renderer.getPropertyAsFont(Property.FONT);

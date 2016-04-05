@@ -56,7 +56,7 @@ class DocType1Font extends Type1Font implements DocFontProgram {
         for (int i = 0; i < 256; i++) {
             Glyph glyph = new Glyph(i, widths[i], fontEncoding.getUnicode(i));
             fontProgram.codeToGlyph.put(i, glyph);
-            if (glyph.getUnicode() != null) {
+            if (glyph.hasValidUnicode()) {
                 fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
             }
             if (widths[i] > 0) {

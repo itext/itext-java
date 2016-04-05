@@ -93,7 +93,7 @@ public class Type1Font extends FontProgram {
 
     @Override
     public int getKerning(Glyph first, Glyph second) {
-        if (first.getUnicode() != null && second.getUnicode() != null) {
+        if (first.hasValidUnicode() && second.hasValidUnicode()) {
             Long record = ((long)first.getUnicode() << 32) + second.getUnicode();
             if (kernPairs.containsKey(record)) {
                 return kernPairs.get(record);
@@ -314,7 +314,7 @@ public class Type1Font extends FontProgram {
                 }
             }
             Integer unicode = AdobeGlyphList.nameToUnicode(N);
-            Glyph glyph = new Glyph(C, WX, unicode, B);
+            Glyph glyph = new Glyph(C, WX, unicode != null ? unicode : -1, B);
             if (C >= 0) {
                 codeToGlyph.put(C, glyph);
             }

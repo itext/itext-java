@@ -43,7 +43,7 @@ class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
         for (int i = 0; i < 256; i++) {
             Glyph glyph = new Glyph(i, widths[i], fontEncoding.getUnicode(i));
             fontProgram.codeToGlyph.put(i, glyph);
-            if (glyph.getUnicode() != null) {
+            if (glyph.hasValidUnicode()) {
                 fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
             }
             if (widths[i] > 0) {
@@ -69,8 +69,10 @@ class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
             for (int cid : toUnicode.getCodes()) {
                 int width = widths.containsKey(cid) ? widths.get(cid) : dw;
                 Glyph glyph = new Glyph(cid, width, toUnicode.lookup(cid));
+                if (glyph.hasValidUnicode()) {
+                    fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
+                }
                 fontProgram.codeToGlyph.put(cid, glyph);
-                fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
                 fontProgram.avgWidth += width;
             }
             if (fontProgram.codeToGlyph.size() != 0) {
@@ -79,7 +81,7 @@ class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
         }
 
         if (fontProgram.codeToGlyph.get(0) == null) {
-            fontProgram.codeToGlyph.put(0, new Glyph(0, dw, (Integer) null));
+            fontProgram.codeToGlyph.put(0, new Glyph(0, dw, -1));
         }
         return fontProgram;
     }

@@ -9,7 +9,7 @@ public class DefaultSplitCharacters implements ISplitCharacters {
 
     @Override
     public boolean isSplitCharacter(GlyphLine text, int glyphPos) {
-        if (text.get(glyphPos).getUnicode() == null) {
+        if (!text.get(glyphPos).hasValidUnicode()) {
             return false;
         }
         int charCode = text.get(glyphPos).getUnicode();

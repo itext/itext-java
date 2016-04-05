@@ -63,7 +63,7 @@ public class GlyphLine {
                 for (int i = part.start; i < part.end; i++) {
                     if (glyphs.get(i).getChars() != null) {
                         str.append(glyphs.get(i).getChars());
-                    } else if (glyphs.get(i).getUnicode() != null) {
+                    } else if (glyphs.get(i).hasValidUnicode()) {
                         str.append(TextUtil.convertFromUtf32(glyphs.get(i).getUnicode()));
                     }
                 }
@@ -139,7 +139,7 @@ public class GlyphLine {
         Glyph currentGlyph = glyphs.get(idx);
         if (currentGlyph.getChars() != null) {
             chars.append(currentGlyph.getChars());
-        } else if (currentGlyph.getUnicode() != null) {
+        } else if (currentGlyph.hasValidUnicode()) {
             chars.append(TextUtil.convertFromUtf32(currentGlyph.getUnicode()));
         }
 
@@ -148,7 +148,7 @@ public class GlyphLine {
             currentGlyph = glyphs.get(gidx.idx);
             if (currentGlyph.getChars() != null) {
                 chars.append(currentGlyph.getChars());
-            } else if (currentGlyph.getUnicode() != null) {
+            } else if (currentGlyph.hasValidUnicode()) {
                 chars.append(TextUtil.convertFromUtf32(currentGlyph.getUnicode()));
             }
             removeGlyph(gidx.idx--);
@@ -166,9 +166,9 @@ public class GlyphLine {
         Glyph newGlyph = tableReader.getGlyph(substitutionGlyphIndex);
         if (oldGlyph.getChars() != null) {
             newGlyph.setChars(oldGlyph.getChars());
-        } else if (newGlyph.getUnicode() != null) {
+        } else if (newGlyph.hasValidUnicode()) {
             newGlyph.setChars(TextUtil.convertFromUtf32(newGlyph.getUnicode()));
-        } else if (oldGlyph.getUnicode() != null) {
+        } else if (oldGlyph.hasValidUnicode()) {
             newGlyph.setChars(TextUtil.convertFromUtf32(oldGlyph.getUnicode()));
         }
         glyphs.set(idx, newGlyph);

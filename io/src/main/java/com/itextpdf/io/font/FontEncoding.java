@@ -28,7 +28,7 @@ public class FontEncoding implements Serializable {
      */
     protected IntHashtable unicodeToCode;
 
-    protected Integer[] codeToUnicode;
+    protected int[] codeToUnicode;
 
     /**
      * Encoding names.
@@ -41,7 +41,8 @@ public class FontEncoding implements Serializable {
 
     protected FontEncoding() {
         unicodeToCode = new IntHashtable(256);
-        codeToUnicode = new Integer[256];
+        codeToUnicode = new int[256];
+        ArrayUtil.fillWithValue(codeToUnicode, -1);
         unicodeDifferences = new IntHashtable(256);
         fontSpecific = false;
     }
@@ -106,7 +107,12 @@ public class FontEncoding implements Serializable {
         }
     }
 
-    public Integer getUnicode(int index) {
+    /**
+     * Gets unicode value for corresponding font's char code.
+     * @param index font's char code
+     * @return -1, if the char code unsupported or valid unicode.
+     */
+    public int getUnicode(int index) {
         return codeToUnicode[index];
     }
 
@@ -173,7 +179,7 @@ public class FontEncoding implements Serializable {
      * @return {@code true} if {@code code} could be decoded.
      */
     public boolean canDecode(int code) {
-        return codeToUnicode[code] != null;
+        return codeToUnicode[code] > -1;
     }
 
     protected void fillCustomEncoding() {
@@ -261,7 +267,7 @@ public class FontEncoding implements Serializable {
                 name = FontConstants.notdef;
             } else {
                 unicodeToCode.put(uni, ch);
-                codeToUnicode[ch] = (int) uni;
+                codeToUnicode[ch] = uni;
                 unicodeDifferences.put(uni, uni);
             }
             if (differences != null) {

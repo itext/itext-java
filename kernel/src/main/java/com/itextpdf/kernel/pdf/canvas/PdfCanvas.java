@@ -724,7 +724,7 @@ public class PdfCanvas {
         float width = 0;
         for (int iter = from; iter <= to; iter++) {
             Glyph glyph = text.get(iter);
-            width += (glyph.getWidth() * fontSize + (glyph.getUnicode() != null && glyph.getUnicode() == ' ' ? wordSpacing : charSpacing)) * scaling;
+            width += (glyph.getWidth() * fontSize + (glyph.hasValidUnicode() && glyph.getUnicode() == ' ' ? wordSpacing : charSpacing)) * scaling;
         }
         return width;
     }

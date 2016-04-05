@@ -355,8 +355,8 @@ public class TextRenderer extends AbstractRenderer {
                 Collection<Character.UnicodeScript> supportedScripts = TypographyUtils.getSupportedScripts();
                 Map<Character.UnicodeScript, Integer> scriptFrequency = new EnumMap<>(Character.UnicodeScript.class);
                 for (int i = text.start; i < text.end; i++) {
-                    Integer unicode = text.get(i).getUnicode();
-                    Character.UnicodeScript glyphScript = unicode != null ? Character.UnicodeScript.of(unicode) : null;
+                    int unicode = text.get(i).getUnicode();
+                    Character.UnicodeScript glyphScript = unicode > -1 ? Character.UnicodeScript.of(unicode) : null;
                     if (glyphScript != null) {
                         if (scriptFrequency.containsKey(glyphScript)) {
                             scriptFrequency.put(glyphScript, scriptFrequency.get(glyphScript) + 1);
@@ -568,7 +568,7 @@ public class TextRenderer extends AbstractRenderer {
 
         if (text != null) {
             Glyph glyph;
-            while (text.start < text.end && (glyph = text.get(text.start)).getUnicode() != null && Character.isWhitespace(glyph.getUnicode()) && !isNewLine(text, text.start)) {
+            while (text.start < text.end && (glyph = text.get(text.start)).hasValidUnicode() && Character.isWhitespace(glyph.getUnicode()) && !isNewLine(text, text.start)) {
                 text.start++;
             }
         }
@@ -593,7 +593,7 @@ public class TextRenderer extends AbstractRenderer {
         int firstNonSpaceCharIndex = line.end - 1;
         while (firstNonSpaceCharIndex >= line.start) {
             Glyph currentGlyph = line.get(firstNonSpaceCharIndex);
-            if (currentGlyph.getUnicode() == null || !Character.isWhitespace(currentGlyph.getUnicode())) {
+            if (!currentGlyph.hasValidUnicode() || !Character.isWhitespace(currentGlyph.getUnicode())) {
                 break;
             }
 
@@ -694,7 +694,7 @@ public class TextRenderer extends AbstractRenderer {
      * @param pos the position in range [0; length())
      * @return Unicode char code
      */
-    public Integer charAt(int pos) {
+    public int charAt(int pos) {
         return text.get(pos + text.start).getUnicode();
     }
 
@@ -708,7 +708,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private boolean isNewLine(GlyphLine text, int ind) {
-        return text.get(ind).getUnicode() != null && text.get(ind).getUnicode() == '\n';
+        return text.get(ind).hasValidUnicode() && text.get(ind).getUnicode() == '\n';
     }
 
     private GlyphLine convertToGlyphLine(String text) {
@@ -749,7 +749,7 @@ public class TextRenderer extends AbstractRenderer {
         int spaces = 0;
         for (int i = line.start; i < line.end; i++) {
             Glyph currentGlyph = line.get(i);
-            if (currentGlyph.getUnicode() != null && currentGlyph.getUnicode() == ' ') {
+            if (currentGlyph.hasValidUnicode() && currentGlyph.getUnicode() == ' ') {
                 spaces++;
             }
         }
@@ -809,7 +809,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private static boolean noPrint(Glyph g) {
-        if (g.getUnicode() == null) {
+        if (!g.hasValidUnicode()) {
             return false;
         }
         int c = g.getUnicode();
@@ -824,7 +824,7 @@ public class TextRenderer extends AbstractRenderer {
         if (characterSpacing != null) {
             resultWidth += characterSpacing * hScale * TEXT_SPACE_COEFF;
         }
-        if (wordSpacing != null && g.getUnicode() != null && g.getUnicode() == ' ') {
+        if (wordSpacing != null && g.hasValidUnicode() && g.getUnicode() == ' ') {
             resultWidth += wordSpacing * hScale * TEXT_SPACE_COEFF;
         }
         return resultWidth;
@@ -865,12 +865,12 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private boolean isGlyphPartOfWordForHyphenation(Glyph g) {
-        return g.getUnicode() != null && (Character.isLetter(g.getUnicode()) ||
+        return g.hasValidUnicode() && (Character.isLetter(g.getUnicode()) ||
                 Character.isDigit(g.getUnicode()) || '\u00ad' == g.getUnicode());
     }
 
     private boolean isWhitespaceGlyph(Glyph g) {
-        return g.getUnicode() != null && g.getUnicode() == ' ';
+        return g.hasValidUnicode() && g.getUnicode() == ' ';
     }
 
     private void convertWaitingStringToGlyphLine() {
