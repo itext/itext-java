@@ -144,8 +144,6 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             acroForm.xfaForm = new XfaForm(document);
         }
 
-
-
         return acroForm;
     }
 

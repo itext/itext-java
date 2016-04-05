@@ -1,7 +1,6 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.io.codec.Base64;
-import com.itextpdf.io.image.Image;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -10,7 +9,6 @@ import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 

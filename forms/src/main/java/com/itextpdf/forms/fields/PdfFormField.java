@@ -552,7 +552,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfButtonFormField checkbox}
      */
     public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String name, String value) {
-        return createCheckBox(doc, rect, name, value, PdfButtonFormField.TYPE_CROSS);
+        return createCheckBox(doc, rect, name, value, TYPE_CROSS);
     }
 
     /**
@@ -572,10 +572,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         check.setFieldName(name);
         check.setValue(value);
         annot.setAppearanceState(new PdfName(value));
-        if (value.equals("Off")) {
-            value = "Yes";
-        }
-        check.drawCheckAppearance(rect.getWidth(), rect.getHeight(), value);
+        check.drawCheckAppearance(rect.getWidth(), rect.getHeight(), value.equals("Off") ? "Yes": value);
 
         return (PdfButtonFormField) check;
     }
@@ -2175,12 +2172,19 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
         xObjectOn.getResources().addFont(getDocument(), getFont());
-        widget.setNormalAppearance(new PdfDictionary());
-        widget.getNormalAppearanceObject().put(new PdfName(value), xObjectOn.getPdfObject());
+        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize == 0 ? DEFAULT_FONT_SIZE : fontSize, xObjectOn.getResources()));
 
         xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
         xObjectOff.getResources().addFont(getDocument(), getFont());
-        widget.getNormalAppearanceObject().put(new PdfName("Off"), xObjectOff.getPdfObject());
+
+        PdfDictionary normalAppearance = new PdfDictionary();
+        normalAppearance.put(new PdfName(value), xObjectOn.getPdfObject());
+        normalAppearance.put(new PdfName("Off"), xObjectOff.getPdfObject());
+
+        PdfDictionary mk = new PdfDictionary();
+        mk.put(PdfName.CA, new PdfString(text));
+        widget.put(PdfName.MK, mk);
+        widget.setNormalAppearance(normalAppearance);
     }
 
     /**
@@ -2253,6 +2257,17 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     protected void drawCheckBox(PdfCanvas canvas, float width, float height, int fontSize, boolean on) {
         if (!on) {
+            return;
+        }
+
+        if (checkType == TYPE_CROSS) {
+            float offset = borderWidth * 2;
+            canvas.
+                    moveTo((width - height) / 2 + offset, height - offset).
+                    lineTo((width + height) / 2 - offset, offset).
+                    moveTo((width + height) / 2 - offset, height - offset).
+                    lineTo((width - height) / 2 + offset, offset).
+                    stroke();
             return;
         }
         PdfFont ufont = getFont();
