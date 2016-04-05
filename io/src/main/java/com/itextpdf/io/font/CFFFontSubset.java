@@ -2,6 +2,7 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.util.GenericArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,11 +69,11 @@ public class CFFFontSubset extends CFFFont {
     /**
      * A Maps array for keeping the subroutines used in each FontDict
      */
-    Map<Integer, int[]>[] hSubrsUsed;
+    GenericArray<HashMap<Integer, int[]>> hSubrsUsed;
     /**
      * The SubroutinesUsed Maps as lists
      */
-    List<Integer>[] lSubrsUsed;
+    GenericArray<List<Integer>> lSubrsUsed;
     /**
      * A Map for keeping the Global subroutines used in the font
      */
@@ -390,8 +391,8 @@ public class CFFFontSubset extends CFFFont {
         if (fonts[Font].isCID) {
             // Init the Map-array and the list-array to hold the subrs used
             // in each private dict.
-            hSubrsUsed = new HashMap[fonts[Font].fdprivateOffsets.length];
-            lSubrsUsed = new ArrayList[fonts[Font].fdprivateOffsets.length];
+            hSubrsUsed = new GenericArray<>(fonts[Font].fdprivateOffsets.length);
+            lSubrsUsed = new GenericArray<>(fonts[Font].fdprivateOffsets.length);
             // A [][] which will store the byte array for each new FD Array lsubs index
             NewLSubrsIndex = new byte[fonts[Font].fdprivateOffsets.length][];
             // An array to hold the offset for each Lsubr index
@@ -405,8 +406,8 @@ public class CFFFontSubset extends CFFFont {
             for (int j = 0; j < FDInList.size(); j++) {
                 // The FDArray index,  Map, List to work on
                 int FD = FDInList.get(j);
-                hSubrsUsed[FD] = new HashMap<>();
-                lSubrsUsed[FD] = new ArrayList<>();
+                hSubrsUsed.set(FD, new HashMap<Integer, int[]>());
+                lSubrsUsed.set(FD, new ArrayList<Integer>());
                 //Reads the private dicts looking for the subr operator and
                 // store both the offset for the index and its offset array
                 BuildFDSubrsOffsets(Font, FD);
@@ -414,9 +415,9 @@ public class CFFFontSubset extends CFFFont {
                 if (fonts[Font].PrivateSubrsOffset[FD] >= 0) {
                     //Scans the Charstring data storing the used Local and Global subroutines
                     // by the glyphs. Scans the Subrs recursively.
-                    BuildSubrUsed(Font, FD, fonts[Font].PrivateSubrsOffset[FD], fonts[Font].PrivateSubrsOffsetsArray[FD], hSubrsUsed[FD], lSubrsUsed[FD]);
+                    BuildSubrUsed(Font, FD, fonts[Font].PrivateSubrsOffset[FD], fonts[Font].PrivateSubrsOffsetsArray[FD], hSubrsUsed.get(FD), lSubrsUsed.get(FD));
                     // Builds the New Local Subrs index
-                    NewLSubrsIndex[FD] = BuildNewIndex(fonts[Font].PrivateSubrsOffsetsArray[FD], hSubrsUsed[FD], RETURN_OP);
+                    NewLSubrsIndex[FD] = BuildNewIndex(fonts[Font].PrivateSubrsOffsetsArray[FD], hSubrsUsed.get(FD), RETURN_OP);
                 }
             }
         }
@@ -614,7 +615,7 @@ public class CFFFontSubset extends CFFFont {
                             // If the subr isn't in the Map -> Put in
                             if (!hGSubrsUsed.containsKey(Subr)) {
                                 hGSubrsUsed.put(Subr, null);
-                                boolean add = lGSubrsUsed.add(Integer.valueOf(Subr));
+                                lGSubrsUsed.add(Subr);
                             }
                             CalcHints(gsubrOffsets[Subr], gsubrOffsets[Subr + 1], LBias, GBias, LSubrsOffsets);
                             seek(pos);
@@ -949,8 +950,10 @@ public class CFFFontSubset extends CFFFont {
         // The counter for writing
         int Place = 0;
         // Write the count field
-        NewIndex[Place++] = (byte) (Count >>> 8 & 0xff);
-        NewIndex[Place++] = (byte) (Count >>> 0 & 0xff);
+        // There is no sense in >>> for char
+        // NewIndex[Place++] = (byte) (Count >>> 8 & 0xff);
+        NewIndex[Place++] = (byte) (Count >> 8 & 0xff);
+        NewIndex[Place++] = (byte) (Count & 0xff);
         // Write the offsize field
         NewIndex[Place++] = Offsize;
         // Write the offset array according to the offsize
@@ -1036,7 +1039,7 @@ public class CFFFontSubset extends CFFFont {
                     ) {
             } else {
                 //OtherWise copy key "as is" to the output list
-                OutputList.add(new RangeItem(buf, p1, p2 - p1));
+                OutputList.addLast(new RangeItem(buf, p1, p2 - p1));
             }
         }
         // Create the FDArray, FDSelect, Charset and CharStrings Keys
