@@ -42,7 +42,7 @@ public class SubTableLookup6Format2 extends SubTableLookup6 {
         return new ArrayList<>(0);
     }
 
-    public class SubstRuleFormat2 extends ContextualSubstRule {
+    public static class SubstRuleFormat2 extends ContextualSubstRule {
         // inputClassIds array omits the first class in the sequence,
         // the first class is defined by corresponding index of subClassSet array
         private int[] backtrackClassIds;
@@ -51,7 +51,11 @@ public class SubTableLookup6Format2 extends SubTableLookup6 {
 
         private SubstLookupRecord[] substLookupRecords;
 
-        public SubstRuleFormat2(int[] backtrackClassIds, int[] inputClassIds, int[] lookAheadClassIds, SubstLookupRecord[] substLookupRecords) {
+        private SubTableLookup6Format2 subTable;
+
+        public SubstRuleFormat2(SubTableLookup6Format2 subTable, int[] backtrackClassIds, int[] inputClassIds,
+                                int[] lookAheadClassIds, SubstLookupRecord[] substLookupRecords) {
+            this.subTable = subTable;
             this.backtrackClassIds = backtrackClassIds;
             this.inputClassIds = inputClassIds;
             this.lookAheadClassIds = lookAheadClassIds;
@@ -78,15 +82,15 @@ public class SubTableLookup6Format2 extends SubTableLookup6 {
 
         @Override
         public boolean isGlyphMatchesInput(int glyphId, int atIdx) {
-            return inputClassDefinition.getOtfClass(glyphId) == inputClassIds[atIdx - 1];
+            return subTable.inputClassDefinition.getOtfClass(glyphId) == inputClassIds[atIdx - 1];
         }
         @Override
         public boolean isGlyphMatchesLookahead(int glyphId, int atIdx) {
-            return lookaheadClassDefinition.getOtfClass(glyphId) == lookAheadClassIds[atIdx];
+            return subTable.lookaheadClassDefinition.getOtfClass(glyphId) == lookAheadClassIds[atIdx];
         }
         @Override
         public boolean isGlyphMatchesBacktrack(int glyphId, int atIdx) {
-            return backtrackClassDefinition.getOtfClass(glyphId) == backtrackClassIds[atIdx];
+            return subTable.backtrackClassDefinition.getOtfClass(glyphId) == backtrackClassIds[atIdx];
         }
     }
 }

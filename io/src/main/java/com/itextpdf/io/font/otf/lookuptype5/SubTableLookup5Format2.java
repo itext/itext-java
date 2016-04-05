@@ -39,15 +39,17 @@ public class SubTableLookup5Format2 extends ContextualSubTable {
         return new ArrayList<>(0);
     }
 
-    public class SubstRuleFormat2 extends ContextualSubstRule {
+    public static class SubstRuleFormat2 extends ContextualSubstRule {
         // inputClassIds array omits the first class in the sequence,
         // the first class is defined by corresponding index of subClassSet array
         private int[] inputClassIds;
         private SubstLookupRecord[] substLookupRecords;
+        private OtfClass classDefinition;
 
-        public SubstRuleFormat2(int[] inputClassIds, SubstLookupRecord[] substLookupRecords) {
+        public SubstRuleFormat2(SubTableLookup5Format2 subTable, int[] inputClassIds, SubstLookupRecord[] substLookupRecords) {
             this.inputClassIds = inputClassIds;
             this.substLookupRecords = substLookupRecords;
+            this.classDefinition = subTable.classDefinition;
         }
 
         @Override
@@ -64,6 +66,5 @@ public class SubTableLookup5Format2 extends ContextualSubTable {
         public boolean isGlyphMatchesInput(int glyphId, int atIdx) {
             return classDefinition.getOtfClass(glyphId) == inputClassIds[atIdx - 1];
         }
-
     }
 }

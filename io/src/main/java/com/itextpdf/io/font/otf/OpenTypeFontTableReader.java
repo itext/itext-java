@@ -48,7 +48,6 @@ import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -158,7 +157,10 @@ public abstract class OpenTypeFontTableReader {
             return features;
         }
         Set<String> hs = new HashSet<String>();
-        Collections.addAll(hs, specific);
+        //noinspection ManualArrayToCollectionCopy
+        for (String s : specific) {
+            hs.add(s);
+        }
         List<FeatureRecord> recs = new ArrayList<FeatureRecord>();
         for (FeatureRecord rec : features) {
             if (hs.contains(rec.tag)) {

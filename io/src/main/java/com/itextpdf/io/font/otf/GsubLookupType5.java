@@ -137,7 +137,7 @@ public class GsubLookupType5 extends OpenTableLookup {
                     int[] inputClassIds = openReader.readUShortArray(glyphCount - 1);
                     SubstLookupRecord[] substLookupRecords = openReader.readSubstLookupRecords(substCount);
 
-                    rule = t.new SubstRuleFormat2(inputClassIds, substLookupRecords);
+                    rule = new SubTableLookup5Format2.SubstRuleFormat2(t, inputClassIds, substLookupRecords);
                     subClassSet.add(rule);
                 }
             }

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
 
 /**
  * Lookup Type 2:
@@ -118,7 +118,7 @@ public class GposLookupType2 extends OpenTableLookup {
     private static class PairPosAdjustmentFormat2 extends OpenTableLookup {
         private OtfClass classDef1;
         private OtfClass classDef2;
-        private Set<Integer> coverageSet;
+        private HashSet<Integer> coverageSet;
         private Map<Integer,PairValueFormat[]> posSubs = new HashMap<>();
 
         public PairPosAdjustmentFormat2(OpenTypeFontTableReader openReader, int lookupFlag, int subtableLocation) throws java.io.IOException {

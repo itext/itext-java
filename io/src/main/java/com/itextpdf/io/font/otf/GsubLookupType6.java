@@ -92,7 +92,7 @@ public class GsubLookupType6 extends GsubLookupType5 {
                     int substCount = openReader.rf.readUnsignedShort();
                     SubstLookupRecord[] substLookupRecords = openReader.readSubstLookupRecords(substCount);
 
-                    rule = t.new SubstRuleFormat2(backtrackClassIds, inputClassIds, lookAheadClassIds, substLookupRecords);
+                    rule = new SubTableLookup6Format2.SubstRuleFormat2(t, backtrackClassIds, inputClassIds, lookAheadClassIds, substLookupRecords);
                     subClassSet.add(rule);
                 }
             }
