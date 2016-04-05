@@ -95,8 +95,7 @@ public class CidFontProperties {
         IntHashtable W2 = createMetric(p.getProperty("W2"));
         p.remove("W2");
         Map<String, Object> map = new HashMap<String, Object>();
-        for (Enumeration<Object> e = p.keys(); e.hasMoreElements();) {
-            Object obj = e.nextElement();
+        for (Object obj : p.keySet()) {
             map.put((String)obj, p.getProperty((String)obj));
         }
         map.put("W", W);

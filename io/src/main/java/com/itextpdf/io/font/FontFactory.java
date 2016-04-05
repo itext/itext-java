@@ -1,8 +1,9 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.util.ArrayUtil;
 
-import java.util.Arrays;
+import java.text.MessageFormat;
 import java.util.Set;
 
 /**
@@ -437,14 +438,14 @@ public class FontFactory {
     // TODO should we cache fonts based on byte array?
     static FontProgram createFont(byte[] ttc, int ttcIndex, boolean cached) throws java.io.IOException {
         if (cached) {
-            String ttcNameKey = String.valueOf(Arrays.deepHashCode(new Object[]{ttc})) + ttcIndex;
+            String ttcNameKey = MessageFormat.format("{0}{1}", ArrayUtil.hashCode(ttc), ttcIndex);
             FontProgram fontFound = FontCache.getFont(ttcNameKey);
             if (fontFound != null) {
                 return fontFound;
             }
         }
         FontProgram fontBuilt = new TrueTypeFont(ttc, ttcIndex);
-        String ttcNameKey = String.valueOf(Arrays.deepHashCode(new Object[]{ttc})) + ttcIndex;
+        String ttcNameKey = MessageFormat.format("{0}{1}", ArrayUtil.hashCode(ttc), ttcIndex);
         return cached ? FontCache.saveFont(fontBuilt, ttcNameKey) : fontBuilt;
     }
 

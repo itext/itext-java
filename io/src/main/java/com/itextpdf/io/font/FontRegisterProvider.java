@@ -5,7 +5,6 @@ import com.itextpdf.io.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,29 +67,29 @@ class FontRegisterProvider {
         trueTypeFonts.put(FontConstants.ZAPFDINGBATS.toLowerCase(), FontConstants.ZAPFDINGBATS);
 
         List<String> tmp;
-        tmp = new ArrayList();
+        tmp = new ArrayList<>();
         tmp.add(FontConstants.COURIER);
         tmp.add(FontConstants.COURIER_BOLD);
         tmp.add(FontConstants.COURIER_OBLIQUE);
         tmp.add(FontConstants.COURIER_BOLDOBLIQUE);
         fontFamilies.put(FontConstants.COURIER.toLowerCase(), tmp);
-        tmp = new ArrayList();
+        tmp = new ArrayList<>();
         tmp.add(FontConstants.HELVETICA);
         tmp.add(FontConstants.HELVETICA_BOLD);
         tmp.add(FontConstants.HELVETICA_OBLIQUE);
         tmp.add(FontConstants.HELVETICA_BOLDOBLIQUE);
         fontFamilies.put(FontConstants.HELVETICA.toLowerCase(), tmp);
-        tmp = new ArrayList();
+        tmp = new ArrayList<>();
         tmp.add(FontConstants.SYMBOL);
         fontFamilies.put(FontConstants.SYMBOL.toLowerCase(), tmp);
-        tmp = new ArrayList();
+        tmp = new ArrayList<>();
         tmp.add(FontConstants.TIMES_ROMAN);
         tmp.add(FontConstants.TIMES_BOLD);
         tmp.add(FontConstants.TIMES_ITALIC);
         tmp.add(FontConstants.TIMES_BOLDITALIC);
         fontFamilies.put(FontConstants.TIMES.toLowerCase(), tmp);
         fontFamilies.put(FontConstants.TIMES_ROMAN.toLowerCase(), tmp);
-        tmp = new ArrayList();
+        tmp = new ArrayList<>();
         tmp.add(FontConstants.ZAPFDINGBATS);
         fontFamilies.put(FontConstants.ZAPFDINGBATS.toLowerCase(), tmp);
     }
@@ -181,7 +180,7 @@ class FontRegisterProvider {
         synchronized (fontFamilies) {
             tmp = fontFamilies.get(familyName);
             if (tmp == null) {
-                tmp = new ArrayList();
+                tmp = new ArrayList<>();
                 fontFamilies.put(familyName, tmp);
             }
         }
@@ -296,9 +295,7 @@ class FontRegisterProvider {
                 trueTypeFonts.put(psName, path);
                 trueTypeFonts.put(fullName, path);
             }
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace(MessageFormat.format("Registered {0}", path));
-            }
+            LOGGER.trace(MessageFormat.format("Registered {0}", path));
         } catch (java.io.IOException e){
             throw new IOException(e);
         }
@@ -335,9 +332,7 @@ class FontRegisterProvider {
      * @return the number of fonts registered
      */
     public int registerDirectory(final String dir, final boolean scanSubdirectories) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(MessageFormat.format("Registering directory {0}, looking for fonts", dir));
-        }
+        LOGGER.debug(MessageFormat.format("Registering directory {0}, looking for fonts", dir));
         int count = 0;
         try {
             String[] files = FileUtil.getDirectoryList(dir);

@@ -320,10 +320,10 @@ class OpenTypeParser {
             if (dirIdx >= dirCount) {
                 if (fileName != null) {
                     throw new IOException("the.font.index.for.1.must.be.between.0.and.2.it.was.3")
-                            .setMessageParams(fileName, String.valueOf(dirCount - 1), String.valueOf(dirIdx));
+                            .setMessageParams(fileName, dirCount - 1, dirIdx);
                 } else {
                     throw new IOException("the.font.index.must.be.between.0.and.1.it.was.2")
-                            .setMessageParams(String.valueOf(dirCount - 1), String.valueOf(dirIdx));
+                            .setMessageParams(dirCount - 1, dirIdx);
                 }
             }
             raf.skipBytes(dirIdx * 4);
@@ -568,9 +568,9 @@ class OpenTypeParser {
                 name = readStandardString(length);
             }
             names.add(new String[]{
-                    String.valueOf(platformID),
-                    String.valueOf(platformEncodingID),
-                    String.valueOf(languageID),
+                    Integer.toString(platformID),
+                    Integer.toString(platformEncodingID),
+                    Integer.toString(languageID),
                     name
             });
             raf.seek(pos);

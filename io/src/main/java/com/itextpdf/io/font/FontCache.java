@@ -145,7 +145,7 @@ public class FontCache {
                 Set<String> set = new HashSet<>();
 
                 for (String s : splitValue) {
-                    if (!s.isEmpty()) {
+                    if (s.length() != 0) {
                         set.add(s);
                     }
                 }
@@ -166,7 +166,10 @@ public class FontCache {
             Properties p = new Properties();
             p.load(resource);
 
-            Map<String, Object> fontProperties = new HashMap<>((Map) p);
+            Map<String, Object> fontProperties = new HashMap<>();
+            for (Map.Entry<Object, Object> entry : p.entrySet()) {
+                fontProperties.put((String) entry.getKey(), entry.getValue());
+            }
             fontProperties.put(W_PROP, createMetric((String) fontProperties.get(W_PROP)));
             fontProperties.put(W2_PROP, createMetric((String) fontProperties.get(W2_PROP)));
 
