@@ -91,7 +91,7 @@ public class Glyph implements Serializable {
     }
 
     public Glyph(int width, Integer unicode) {
-        this(-1, width, unicode, unicode != null ? TextUtil.convertFromUtf32(unicode) : null, false);
+        this(-1, width, unicode, getChars(unicode), false);
     }
 
     public Glyph(int code, int width, Integer unicode, char[] chars, boolean IsMark) {
@@ -99,10 +99,7 @@ public class Glyph implements Serializable {
         this.width = width;
         this.unicode = unicode;
         this.isMark = IsMark;
-        this.chars = chars;
-        if (chars == null && unicode != null && Character.isValidCodePoint(unicode)) {
-            this.chars = TextUtil.convertFromUtf32(unicode);
-        }
+        this.chars = chars != null ? chars : getChars(unicode);
     }
 
     public Glyph(Glyph glyph) {
@@ -129,11 +126,7 @@ public class Glyph implements Serializable {
     }
 
     public Glyph(Glyph glyph, Integer unicode) {
-        this.code = glyph.code;
-        this.width = glyph.width;
-        this.isMark = glyph.isMark;
-        this.chars = unicode != null ? TextUtil.convertFromUtf32(unicode) : null;
-        this.unicode = unicode;
+        this(glyph.code, glyph.width, unicode, getChars(unicode), glyph.isMark());
     }
 
     public int getCode() {
@@ -154,7 +147,7 @@ public class Glyph implements Serializable {
 
     public void setUnicode(Integer unicode) {
         this.unicode = unicode;
-        this.chars = unicode != null ? TextUtil.convertFromUtf32(unicode) : null;
+        this.chars = getChars(unicode);
     }
 
     public char[] getChars() {
@@ -258,5 +251,9 @@ public class Glyph implements Serializable {
             }
         }
         return null;
+    }
+
+    private static char[] getChars(Integer unicode) {
+        return unicode != null ? TextUtil.convertFromUtf32(unicode) : null;
     }
 }
