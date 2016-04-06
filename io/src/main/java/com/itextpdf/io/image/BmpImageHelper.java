@@ -113,24 +113,17 @@ final class BmpImageHelper {
     private static final int BI_RLE4 = 2;
     private static final int BI_BITFIELDS = 3;
 
-    public static void processImage(Image image, ByteArrayOutputStream stream) {
+    public static void processImage(Image image) {
         if (image.getOriginalType() != ImageType.BMP)
             throw new IllegalArgumentException("BMP image expected");
-        if (stream == null) {
-            stream = new ByteArrayOutputStream();
-        }
         BmpParameters bmp;
         InputStream bmpStream;
         try {
-            if (image.getUrl() != null) {
-                byte[] data = image.loadData();
-                bmpStream = new ByteArrayInputStream(data);
-                image.imageSize = data.length;
-            } else {
-                bmpStream = new ByteArrayInputStream(image.getData());
-                image.imageSize = image.getData().length;
+            if (image.getData() == null) {
+                image.loadData();
             }
-
+            bmpStream = new ByteArrayInputStream(image.getData());
+            image.imageSize = image.getData().length;
             bmp = new BmpParameters((BmpImage)image);
             process(bmp, bmpStream);
             if (getImage(bmp)) {
@@ -141,12 +134,7 @@ final class BmpImageHelper {
         } catch (java.io.IOException e){
             throw new IOException(IOException.BmpImageException, e);
         }
-        updateStream(bmp, stream);
-    }
-
-    private static void updateStream(BmpParameters bmp, ByteArrayOutputStream stream) {
-        RawImageHelper.updateImageAttributes(bmp.image, bmp.additional, stream);
-        bmp.image.data = stream.toByteArray();
+        RawImageHelper.updateImageAttributes(bmp.image, bmp.additional);
     }
 
     private static void process(BmpParameters bmp, InputStream stream) throws java.io.IOException {

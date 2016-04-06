@@ -106,11 +106,11 @@ public class GifImage {
      * Note, this method doesn't check if data or url is null.
      * @throws java.io.IOException
      */
-    byte[] loadData() throws java.io.IOException {
+    void loadData() throws java.io.IOException {
         RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(url));
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         StreamUtil.transferBytes(raf, stream);
         raf.close();
-        return stream.toByteArray();
+        data = stream.toByteArray();
     }
 }

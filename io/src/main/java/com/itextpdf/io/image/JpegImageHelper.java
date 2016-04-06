@@ -127,7 +127,7 @@ class JpegImageHelper {
         try {
             String errorID;
             if (image.getData() == null) {
-                image.data = image.loadData();
+                image.loadData();
                 errorID = image.getUrl().toString();
             } else {
                 errorID = "Byte array";
@@ -144,10 +144,10 @@ class JpegImageHelper {
                 } catch (java.io.IOException ignore) { }
             }
         }
-        updateStream(image);
+        updateAttributes(image);
     }
 
-    private static void updateStream(Image image) {
+    private static void updateAttributes(Image image) {
         image.filter = "DCTDecode";
         if (image.getColorTransform() == 0) {
             Map<String, Object> decodeParms = new HashMap<>();

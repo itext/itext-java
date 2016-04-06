@@ -75,25 +75,16 @@ class Jbig2ImageHelper {
         }
     }
 
-    public static void processImage(Image jbig2, ByteArrayOutputStream stream) {
+    public static void processImage(Image jbig2) {
         if (jbig2.getOriginalType() != ImageType.JBIG2)
             throw new IllegalArgumentException("JBIG2 image expected");
         Jbig2Image image = (Jbig2Image)jbig2;
-
-        if (stream != null) {
-            updateStream(stream, image);
-        }
-    }
-
-
-    private static void updateStream(ByteArrayOutputStream stream, Jbig2Image image) {
         try {
             RandomAccessSource ras;
-            if (image.getUrl() != null) {
-                ras = new RandomAccessSourceFactory().createSource(image.loadData());
-            } else {
-                ras = new RandomAccessSourceFactory().createSource(image.getData());
+            if (image.getData() == null) {
+                image.loadData();
             }
+            ras = new RandomAccessSourceFactory().createSource(image.getData());
             RandomAccessFileOrArray raf = new RandomAccessFileOrArray(ras);
             Jbig2SegmentReader sr = new Jbig2SegmentReader(raf);
             sr.read();
@@ -122,7 +113,7 @@ class Jbig2ImageHelper {
             image.setFilter("JBIG2Decode");
             image.setColorSpace(1);
             image.setBpc(1);
-            stream.write(p.getData(true));
+            image.data = p.getData(true);
         } catch (java.io.IOException e) {
             throw new IOException(IOException.Jbig2ImageException, e);
         }

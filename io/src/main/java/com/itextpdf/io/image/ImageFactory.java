@@ -48,7 +48,6 @@ import com.itextpdf.io.IOException;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.io.codec.CCITTG4Encoder;
 import com.itextpdf.io.codec.TIFFFaxDecoder;
-import com.itextpdf.io.source.ByteArrayOutputStream;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
@@ -307,8 +306,7 @@ public final class ImageFactory {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, bmp)) {
             Image image = new BmpImage(url, noHeader, size);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            BmpImageHelper.processImage(image, baos);
+            BmpImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("BMP image expected.");
@@ -318,8 +316,7 @@ public final class ImageFactory {
         byte[] imageType = readImageType(bytes);
         if (noHeader || imageTypeIs(imageType, bmp)) {
             Image image = new BmpImage(bytes, noHeader, size);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            BmpImageHelper.processImage(image, baos);
+            BmpImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("BMP image expected.");
@@ -450,9 +447,7 @@ public final class ImageFactory {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, jbig2)) {
             Image image = new Jbig2Image(url, page);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Jbig2ImageHelper.processImage(image, baos);
-            image.data = baos.toByteArray();
+            Jbig2ImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("JBIG2 image expected.");
@@ -464,9 +459,7 @@ public final class ImageFactory {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, jbig2)) {
             Image image = new Jbig2Image(bytes, page);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Jbig2ImageHelper.processImage(image, baos);
-            image.data = baos.toByteArray();
+            Jbig2ImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("JBIG2 image expected.");
@@ -498,9 +491,7 @@ public final class ImageFactory {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
             Image image = new Jpeg2000Image(url);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Jpeg2000ImageHelper.processImage(image, baos);
-            image.data = baos.toByteArray();
+            Jpeg2000ImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("JPEG2000 image expected.");
@@ -510,9 +501,7 @@ public final class ImageFactory {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
             Image image = new Jpeg2000Image(bytes);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Jpeg2000ImageHelper.processImage(image, baos);
-            image.data = baos.toByteArray();
+            Jpeg2000ImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("JPEG2000 image expected.");
@@ -523,9 +512,7 @@ public final class ImageFactory {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, png)) {
             Image image = new PngImage(url);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PngImageHelper.processImage(image, baos);
-            image.data = baos.toByteArray();
+            PngImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("PNG image expected.");
@@ -535,9 +522,7 @@ public final class ImageFactory {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, png)) {
             Image image = new PngImage(bytes);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PngImageHelper.processImage(image, baos);
-            image.data = baos.toByteArray();
+            PngImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("PNG image expected.");
@@ -579,20 +564,15 @@ public final class ImageFactory {
             return image;
         } else if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
             Image image = new Jpeg2000Image(source);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Jpeg2000ImageHelper.processImage(image, baos);
-            image.data = baos.toByteArray();
+            Jpeg2000ImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, png)) {
             Image image = new PngImage(source);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PngImageHelper.processImage(image, baos);
-            image.data = baos.toByteArray();
+            PngImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, bmp)) {
             Image image = new BmpImage(source, false, 0);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            BmpImageHelper.processImage(image, baos);
+            BmpImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
             Image image = new TiffImage(source, recoverImage, 1, false);
@@ -600,9 +580,7 @@ public final class ImageFactory {
             return image;
         } else if (imageTypeIs(imageType, jbig2)) {
             Image image = new Jbig2Image(source, 1);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Jbig2ImageHelper.processImage(image, baos);
-            image.data = baos.toByteArray();
+            Jbig2ImageHelper.processImage(image);
             return image;
         }
         throw new IOException(IOException.ImageFormatCannotBeRecognized);
@@ -620,20 +598,15 @@ public final class ImageFactory {
             return image;
         } else if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
             Image image = new Jpeg2000Image(bytes);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Jpeg2000ImageHelper.processImage(image, baos);
-            image.data = baos.toByteArray();
+            Jpeg2000ImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, png)) {
             Image image = new PngImage(bytes);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PngImageHelper.processImage(image, baos);
-            image.data = baos.toByteArray();
+            PngImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, bmp)) {
             Image image = new BmpImage(bytes, false, 0);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            BmpImageHelper.processImage(image, baos);
+            BmpImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
             Image image = new TiffImage(bytes, recoverImage, 1, false);
@@ -641,9 +614,7 @@ public final class ImageFactory {
             return image;
         } else if (imageTypeIs(imageType, jbig2)) {
             Image image = new Jbig2Image(bytes, 1);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Jbig2ImageHelper.processImage(image, baos);
-            image.data = baos.toByteArray();
+            Jbig2ImageHelper.processImage(image);
             return image;
         }
         throw new IOException(IOException.ImageFormatCannotBeRecognized);
@@ -657,16 +628,13 @@ public final class ImageFactory {
         return true;
     }
 
-    private static <T> byte[] readImageType(T source) {
+    private static byte[] readImageType(URL source) {
         InputStream stream = null;
         try {
-            if (source instanceof URL) {
-                stream = ((URL) source).openStream();
-            } else {
-                stream = new ByteArrayInputStream((byte[])source);
-            }
+            stream = UrlUtil.openStream(source);
             byte[] bytes = new byte[8];
-            stream.read(bytes);
+            int n = stream.read(bytes);
+            assert n == 8;
             return bytes;
         } catch (java.io.IOException e) {
             throw new IOException(IOException.IoException, e);
@@ -676,6 +644,18 @@ public final class ImageFactory {
                     stream.close();
                 } catch (java.io.IOException ignored) { }
             }
+        }
+    }
+
+    private static byte[] readImageType(byte[] source) {
+        try {
+            InputStream stream = new ByteArrayInputStream(source);
+            byte[] bytes = new byte[8];
+            int n = stream.read(bytes);
+            assert n == 8;
+            return bytes;
+        } catch (java.io.IOException e) {
+            return null;
         }
     }
 }

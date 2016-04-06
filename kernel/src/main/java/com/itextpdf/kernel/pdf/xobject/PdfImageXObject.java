@@ -51,7 +51,6 @@ import com.itextpdf.io.image.Image;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.image.RawImage;
 import com.itextpdf.io.image.RawImageHelper;
-import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -173,12 +172,9 @@ public class PdfImageXObject extends PdfXObject {
     protected static PdfStream createPdfStream(Image image, PdfImageXObject imageMask) {
         PdfStream stream;
         if (image.getOriginalType() == ImageType.RAW) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            RawImageHelper.updateImageAttributes((RawImage) image, null, baos);
-            stream = new PdfStream(baos.toByteArray());
-        } else {
-            stream = new PdfStream(image.getData());
+            RawImageHelper.updateImageAttributes((RawImage) image, null);
         }
+        stream = new PdfStream(image.getData());
         String filter = image.getFilter();
         if (filter != null && filter.equals("JPXDecode") && image.getColorSpace() <= 0) {
             stream.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
@@ -318,7 +314,7 @@ public class PdfImageXObject extends PdfXObject {
             } else if (object instanceof Integer) {
                 array.add(new PdfNumber((Integer) object));
             } else if (object instanceof Float) {
-                array.add(new PdfNumber((Double) object));
+                array.add(new PdfNumber((Float) object));
             } else if (object instanceof Map) {
                 array.add(createDictionaryFromMap(stream, (Map<String, Object>) object));
             }

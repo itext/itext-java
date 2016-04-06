@@ -47,20 +47,17 @@ package com.itextpdf.io.image;
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.codec.CCITTG4Encoder;
 import com.itextpdf.io.codec.TIFFFaxDecoder;
-import com.itextpdf.io.source.ByteArrayOutputStream;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public final class RawImageHelper {
 
-    public static void updateImageAttributes(RawImage image, Map<String, Object> additional, ByteArrayOutputStream baos) {
+    public static void updateImageAttributes(RawImage image, Map<String, Object> additional) {
         if (!image.isRawImage())
             throw new IllegalArgumentException("Raw image expected.");
         // will also have the CCITT parameters
         int colorSpace = image.getColorSpace();
-        byte[] imgBytes = image.getData();
-        baos.assignBytes(imgBytes, imgBytes.length);
         int typeCCITT = image.getTypeCcitt();
         if (typeCCITT > 0xff) {
             if (!image.isMask())

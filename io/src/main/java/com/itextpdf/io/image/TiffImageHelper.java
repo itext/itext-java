@@ -81,20 +81,17 @@ class TiffImageHelper {
             throw new IllegalArgumentException("TIFF image expected");
         try {
             RandomAccessSource ras;
-            if (image.getUrl() != null) {
-                ras = new RandomAccessSourceFactory().createSource(image.loadData());
-            } else {
-                ras = new RandomAccessSourceFactory().createSource(image.getData());
+            if (image.getData() == null) {
+                image.loadData();
             }
+            ras = new RandomAccessSourceFactory().createSource(image.getData());
             RandomAccessFileOrArray raf = new RandomAccessFileOrArray(ras);
             TiffParameters tiff = new TiffParameters((TiffImage)image);
             processTiffImage(raf, tiff);
             raf.close();
 
             if (!tiff.jpegProcessing) {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                RawImageHelper.updateImageAttributes(tiff.image, tiff.additional, baos);
-                tiff.image.data = baos.toByteArray();
+                RawImageHelper.updateImageAttributes(tiff.image, tiff.additional);
             }
         } catch (java.io.IOException e) {
             throw new IOException(IOException.TiffImageException, e);

@@ -123,13 +123,12 @@ public final class GifImageHelper {
      */
     public static void processImage(GifImage image, int lastFrameNumber) {
         GifParameters gif = new GifParameters(image);
-        InputStream gifStream = null;
+        InputStream gifStream;
         try {
-            if (image.getUrl() != null) {
-                gifStream = new ByteArrayInputStream(image.loadData());
-            } else {
-                gifStream = new ByteArrayInputStream(image.getData());
+            if (image.getData() == null) {
+                image.loadData();
             }
+            gifStream = new ByteArrayInputStream(image.getData());
             process(gifStream, gif, lastFrameNumber);
         } catch (java.io.IOException e) {
             throw new IOException(IOException.GifImageException, e);
@@ -137,7 +136,7 @@ public final class GifImageHelper {
     }
 
     private static void process(InputStream stream, GifParameters gif, int lastFrameNumber) throws java.io.IOException {
-        gif.input = new DataInputStream(new BufferedInputStream(stream));
+        gif.input = new DataInputStream(stream);
         readHeader(gif);
         readContents(gif, lastFrameNumber);
         if (gif.currentFrame <= lastFrameNumber)
@@ -309,7 +308,7 @@ public final class GifImageHelper {
             ad.put("ColorSpace", colorspace);
             RawImage img = new RawImage(gif.m_out, ImageType.NONE);
             RawImageHelper.updateRawImageParameters(img, gif.iw, gif.ih, 1, gif.m_bpc, gif.m_out);
-            RawImageHelper.updateImageAttributes(img, ad, new ByteArrayOutputStream());
+            RawImageHelper.updateImageAttributes(img, ad);
             gif.image.addFrame(img);
             if (gif.transparency) {
                 img.setTransparency(new int[]{gif.transIndex, gif.transIndex});

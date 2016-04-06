@@ -163,18 +163,17 @@ class PngImageHelper {
     private static final String intents[] = {"/Perceptual",
             "/RelativeColorimetric", "/Saturation", "/AbsoluteColorimetric"};
 
-    public static void processImage(Image image, ByteArrayOutputStream stream) {
+    public static void processImage(Image image) {
         if (image.getOriginalType() != ImageType.PNG)
             throw new IllegalArgumentException("PNG image expected");
         PngParameters png;
         InputStream pngStream = null;
         try {
-            if (image.getUrl() != null) {
-                pngStream = new ByteArrayInputStream(image.loadData());
-            } else {
-                pngStream = new ByteArrayInputStream(image.getData());
+            if (image.getData() == null) {
+                image.loadData();
             }
-            image.imageSize = stream.size();
+            pngStream = new ByteArrayInputStream(image.getData());
+            image.imageSize = image.getData().length;
             png = new PngParameters((PngImage) image);
             processPng(pngStream, png);
         } catch (java.io.IOException e) {
@@ -187,14 +186,7 @@ class PngImageHelper {
                 }
             }
         }
-
-        if (stream != null) {
-            updateStream(stream, png);
-        }
-    }
-
-    private static void updateStream(ByteArrayOutputStream stream, PngParameters png) {
-        RawImageHelper.updateImageAttributes(png.image, png.additional, stream);
+        RawImageHelper.updateImageAttributes(png.image, png.additional);
     }
 
     private static void processPng(InputStream pngStream, PngParameters png) throws java.io.IOException {
