@@ -477,9 +477,7 @@ public final class ImageFactory {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, jpeg)) {
             Image image = new JpegImage(url);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            JpegImageHelper.processImage(image, baos);
-            image.data = baos.toByteArray();
+            JpegImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("JPEG image expected.");
@@ -489,9 +487,7 @@ public final class ImageFactory {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, jpeg)) {
             Image image = new JpegImage(bytes);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            JpegImageHelper.processImage(image, baos);
-            image.data = baos.toByteArray();
+            JpegImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("JPEG image expected.");
@@ -551,8 +547,7 @@ public final class ImageFactory {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
             Image image = new TiffImage(url, recoverFromImageError, page, direct);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            TiffImageHelper.processImage(image, baos);
+            TiffImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("TIFF image expected.");
@@ -562,8 +557,7 @@ public final class ImageFactory {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
             Image image = new TiffImage(bytes, recoverFromImageError, page, direct);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            TiffImageHelper.processImage(image, baos);
+            TiffImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("TIFF image expected.");
@@ -581,9 +575,7 @@ public final class ImageFactory {
             return image.getFrames().get(0);
         } else if (imageTypeIs(imageType, jpeg)) {
             Image image = new JpegImage(source);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            JpegImageHelper.processImage(image, baos);
-            image.data = baos.toByteArray();
+            JpegImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
             Image image = new Jpeg2000Image(source);
@@ -604,8 +596,7 @@ public final class ImageFactory {
             return image;
         } else if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
             Image image = new TiffImage(source, recoverImage, 1, false);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            TiffImageHelper.processImage(image, baos);
+            TiffImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, jbig2)) {
             Image image = new Jbig2Image(source, 1);
@@ -625,9 +616,7 @@ public final class ImageFactory {
             return image.getFrames().get(0);
         } else if (imageTypeIs(imageType, jpeg)) {
             Image image = new JpegImage(bytes);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            JpegImageHelper.processImage(image, baos);
-            image.data = baos.toByteArray();
+            JpegImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
             Image image = new Jpeg2000Image(bytes);
@@ -648,8 +637,7 @@ public final class ImageFactory {
             return image;
         } else if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
             Image image = new TiffImage(bytes, recoverImage, 1, false);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            TiffImageHelper.processImage(image, baos);
+            TiffImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, jbig2)) {
             Image image = new Jbig2Image(bytes, 1);

@@ -64,57 +64,40 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TiffImageHelper {
+class TiffImageHelper {
 
     private static class TiffParameters {
+        TiffParameters(TiffImage image) {
+            this.image = image;
+        }
         TiffImage image;
-        ByteArrayOutputStream stream;
+        //ByteArrayOutputStream stream;
         boolean jpegProcessing;
         Map<String, Object> additional;
     }
 
-    public static void processImage(Image image, ByteArrayOutputStream stream) {
+    public static void processImage(Image image) {
         if (image.getOriginalType() != ImageType.TIFF)
             throw new IllegalArgumentException("TIFF image expected");
-        if (stream == null) {
-            stream = new ByteArrayOutputStream();
-        }
-        TiffParameters tiff = new TiffParameters();
-        tiff.image = (TiffImage)image;
-        tiff.stream = stream;
-        byte[] data;
-        if (tiff.image.getUrl() != null) {
-            InputStream tiffStream = null;
-            try {
-                tiffStream = tiff.image.getUrl().openStream();
-                int read;
-                byte[] bytes = new byte[4096];
-                while ((read = tiffStream.read(bytes)) != -1) {
-                    stream.write(bytes, 0, read);
-                }
-                tiffStream.close();
-                data = stream.toByteArray();
-            } catch (java.io.IOException e) {
-                throw new IOException(IOException.TiffImageException, e);
-            } finally {
-                if (tiffStream != null) {
-                    try {
-                        tiffStream.close();
-                    } catch (java.io.IOException ignored) { }
-                }
+        try {
+            RandomAccessSource ras;
+            if (image.getUrl() != null) {
+                ras = new RandomAccessSourceFactory().createSource(image.loadData());
+            } else {
+                ras = new RandomAccessSourceFactory().createSource(image.getData());
             }
-        } else {
-            data = tiff.image.getData();
-        }
-        RandomAccessSource ras = new RandomAccessSourceFactory().createSource(data);
-        RandomAccessFileOrArray raf = new RandomAccessFileOrArray(ras);
+            RandomAccessFileOrArray raf = new RandomAccessFileOrArray(ras);
+            TiffParameters tiff = new TiffParameters((TiffImage)image);
+            processTiffImage(raf, tiff);
+            raf.close();
 
-        processTiffImage(raf, tiff);
-
-        if (stream != null && !tiff.jpegProcessing) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            RawImageHelper.updateImageAttributes(tiff.image, tiff.additional, baos);
-            tiff.image.data = baos.toByteArray();
+            if (!tiff.jpegProcessing) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                RawImageHelper.updateImageAttributes(tiff.image, tiff.additional, baos);
+                tiff.image.data = baos.toByteArray();
+            }
+        } catch (java.io.IOException e) {
+            throw new IOException(IOException.TiffImageException, e);
         }
     }
 
@@ -442,7 +425,7 @@ public class TiffImageHelper {
                 s.readFully(jpeg);
                 tiff.image.data = jpeg;
                 tiff.image.setOriginalType(ImageType.JPEG);
-                JpegImageHelper.processImage(tiff.image, tiff.stream);
+                JpegImageHelper.processImage(tiff.image);
                 tiff.jpegProcessing = true;
             } else if (compression == TIFFConstants.COMPRESSION_JPEG) {
                 if (size.length > 1)
@@ -476,7 +459,7 @@ public class TiffImageHelper {
                 }
                 tiff.image.data = jpeg;
                 tiff.image.setOriginalType(ImageType.JPEG);
-                JpegImageHelper.processImage(tiff.image, tiff.stream);
+                JpegImageHelper.processImage(tiff.image);
                 tiff.jpegProcessing = true;
                 if (photometric == TIFFConstants.PHOTOMETRIC_RGB) {
                     tiff.image.setColorTransform(0);

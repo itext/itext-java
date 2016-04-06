@@ -47,11 +47,12 @@ package com.itextpdf.io.image;
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.util.UrlUtil;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 
-public final class Jpeg2000ImageHelper {
+final class Jpeg2000ImageHelper {
 
     private static class Jpeg2000Box {
 
@@ -119,7 +120,7 @@ public final class Jpeg2000ImageHelper {
         InputStream jpeg2000Stream = null;
         try {
             if (image.getData() == null) {
-                jpeg2000Stream = image.getUrl().openStream();
+                jpeg2000Stream = UrlUtil.openStream(image.getUrl());
             } else {
                 jpeg2000Stream = new java.io.ByteArrayInputStream(image.getData());
             }

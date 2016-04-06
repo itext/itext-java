@@ -47,17 +47,12 @@ package com.itextpdf.io.image;
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.io.util.StreamUtil;
-
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class BmpImageHelper {
+final class BmpImageHelper {
 
     private static class BmpParameters {
         public BmpParameters(BmpImage image) {
@@ -124,19 +119,19 @@ public final class BmpImageHelper {
         if (stream == null) {
             stream = new ByteArrayOutputStream();
         }
-        BmpParameters bmp = new BmpParameters((BmpImage)image);
+        BmpParameters bmp;
         InputStream bmpStream;
         try {
-            if (bmp.image.getUrl() != null) {
-                RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(bmp.image.getUrl()));
-                StreamUtil.transferBytes(raf, stream);
-                raf.close();
-                image.imageSize = stream.toByteArray().length;
-                bmpStream = new ByteArrayInputStream(stream.toByteArray());
+            if (image.getUrl() != null) {
+                byte[] data = image.loadData();
+                bmpStream = new ByteArrayInputStream(data);
+                image.imageSize = data.length;
             } else {
-                bmpStream = new ByteArrayInputStream(bmp.image.getData());
+                bmpStream = new ByteArrayInputStream(image.getData());
                 image.imageSize = image.getData().length;
             }
+
+            bmp = new BmpParameters((BmpImage)image);
             process(bmp, bmpStream);
             if (getImage(bmp)) {
                 image.setWidth(bmp.width);
@@ -149,18 +144,13 @@ public final class BmpImageHelper {
         updateStream(bmp, stream);
     }
 
-    public static void updateStream(BmpParameters bmp, ByteArrayOutputStream stream) {
+    private static void updateStream(BmpParameters bmp, ByteArrayOutputStream stream) {
         RawImageHelper.updateImageAttributes(bmp.image, bmp.additional, stream);
         bmp.image.data = stream.toByteArray();
     }
 
-    protected static void process(BmpParameters bmp, InputStream stream) throws java.io.IOException {
-
-        if (bmp.image.isNoHeader() || stream instanceof BufferedInputStream) {
-            bmp.inputStream = stream;
-        } else {
-            bmp.inputStream = new BufferedInputStream(stream);
-        }
+    private static void process(BmpParameters bmp, InputStream stream) throws java.io.IOException {
+        bmp.inputStream = stream;
         if (!bmp.image.isNoHeader()) {
             // Start File Header
             if (!(readUnsignedByte(bmp.inputStream) == 'B' &&
@@ -270,6 +260,7 @@ public final class BmpImageHelper {
             bmp.properties.put("colors_important", colorsImportant);
 
             if (size == 40 || size == 52 || size == 56) {
+                int sizeOfPalette;
                 // Windows 3.x and Windows NT
                 switch ((int) bmp.compression) {
 
@@ -320,7 +311,7 @@ public final class BmpImageHelper {
 
                         // Read in the palette
                         int numberOfEntries = (int) ((bmp.bitmapOffset - 14 - size) / 4);
-                        int sizeOfPalette = numberOfEntries * 4;
+                        sizeOfPalette = numberOfEntries * 4;
                         if (bmp.bitmapOffset == size) {
                             switch (bmp.imageType) {
                                 case VERSION_3_1_BIT:

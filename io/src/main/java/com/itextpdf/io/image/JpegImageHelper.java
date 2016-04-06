@@ -47,7 +47,6 @@ package com.itextpdf.io.image;
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.color.IccProfile;
-import com.itextpdf.io.source.ByteArrayOutputStream;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -57,7 +56,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JpegImageHelper {
+class JpegImageHelper {
 
     /**
      * This is a type of marker.
@@ -121,19 +120,20 @@ public class JpegImageHelper {
      */
     private static final byte[] PS_8BIM_RESO = {0x38, 0x42, 0x49, 0x4d, 0x03, (byte) 0xed};
 
-    public static void processImage(Image image, ByteArrayOutputStream stream) {
+    public static void processImage(Image image) {
         if (image.getOriginalType() != ImageType.JPEG)
             throw new IllegalArgumentException("JPEG image expected");
         InputStream jpegStream = null;
         try {
             String errorID;
             if (image.getData() == null) {
-                jpegStream = image.getUrl().openStream();
+                image.data = image.loadData();
                 errorID = image.getUrl().toString();
             } else {
-                jpegStream = new java.io.ByteArrayInputStream(image.getData());
                 errorID = "Byte array";
             }
+            jpegStream = new java.io.ByteArrayInputStream(image.getData());
+            image.imageSize = image.getData().length;
             processParameters(jpegStream, errorID, image);
         } catch (java.io.IOException e) {
             throw new IOException(IOException.JpegImageException, e);
@@ -144,13 +144,10 @@ public class JpegImageHelper {
                 } catch (java.io.IOException ignore) { }
             }
         }
-
-        if (stream != null) {
-            updateStream(stream, image);
-        }
+        updateStream(image);
     }
 
-    private static void updateStream(ByteArrayOutputStream stream, Image image) {
+    private static void updateStream(Image image) {
         image.filter = "DCTDecode";
         if (image.getColorTransform() == 0) {
             Map<String, Object> decodeParms = new HashMap<>();
@@ -160,26 +157,6 @@ public class JpegImageHelper {
         if (image.getColorSpace() != 1 && image.getColorSpace() != 3 && image.isInverted()) {
             image.decode = new float[]{1, 0, 1, 0, 1, 0, 1, 0};
         }
-
-        if (image.getData() != null) {
-            byte[] imgBytes = image.getData();
-            stream.assignBytes(imgBytes, imgBytes.length);
-        } else {
-            InputStream jpegStream = null;
-            try {
-                jpegStream = image.getUrl().openStream();
-                StreamUtil.transferBytes(jpegStream, stream);
-            } catch (java.io.IOException e) {
-                throw new IOException(IOException.JpegImageException, e);
-            } finally {
-                if (jpegStream != null) {
-                    try {
-                        jpegStream.close();
-                    } catch (java.io.IOException ignored) { }
-                }
-            }
-        }
-        image.imageSize = stream.toByteArray().length;
     }
 
     /**

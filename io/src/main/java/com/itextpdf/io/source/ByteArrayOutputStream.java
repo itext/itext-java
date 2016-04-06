@@ -54,9 +54,16 @@ public class ByteArrayOutputStream extends java.io.ByteArrayOutputStream {
         super(size);
     }
 
-    public void assignBytes(byte[] bytes, int count) {
+    public ByteArrayOutputStream assignBytes(byte[] bytes, int count) {
         buf = bytes;
         this.count = count;
+        return this;
+    }
+
+    public ByteArrayOutputStream assignBytes(byte[] bytes) {
+        buf = bytes;
+        this.count = bytes.length;
+        return this;
     }
 
 }

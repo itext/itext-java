@@ -44,6 +44,11 @@
  */
 package com.itextpdf.io.image;
 
+import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.util.StreamUtil;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,15 +58,15 @@ public class GifImage {
     private float logicalHeight;
     private float logicalWidth;
     private List<Image> frames = new ArrayList<>();
-    private byte[] bytes;
+    private byte[] data;
     private URL url;
 
     protected GifImage(URL url) {
         this.url = url;
     }
 
-    protected GifImage(byte[] bytes) {
-        this.bytes = bytes;
+    protected GifImage(byte[] data) {
+        this.data = data;
     }
 
     public float getLogicalHeight() {
@@ -84,8 +89,8 @@ public class GifImage {
         return frames;
     }
 
-    protected byte[] getBytes() {
-        return bytes;
+    protected byte[] getData() {
+        return data;
     }
 
     protected URL getUrl() {
@@ -94,5 +99,18 @@ public class GifImage {
 
     protected void addFrame(Image frame) {
         frames.add(frame);
+    }
+
+    /**
+     * Load data by URL. url must be not null.
+     * Note, this method doesn't check if data or url is null.
+     * @throws java.io.IOException
+     */
+    byte[] loadData() throws java.io.IOException {
+        RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(url));
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        StreamUtil.transferBytes(raf, stream);
+        raf.close();
+        return stream.toByteArray();
     }
 }

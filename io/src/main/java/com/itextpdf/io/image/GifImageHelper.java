@@ -61,6 +61,11 @@ public final class GifImageHelper {
     static final int MaxStackSize = 4096;   // max decoder pixel stack size
 
     private static class GifParameters {
+
+        public GifParameters(GifImage image) {
+            this.image = image;
+        }
+
         DataInputStream input;
         boolean gctFlag;      // global color table used
 
@@ -117,37 +122,17 @@ public final class GifImageHelper {
      * @param lastFrameNumber the last frame of the gif image should be read
      */
     public static void processImage(GifImage image, int lastFrameNumber) {
-        GifParameters gif = new GifParameters();
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-
-        gif.image = image;
-
+        GifParameters gif = new GifParameters(image);
         InputStream gifStream = null;
         try {
-            if (gif.image.getUrl() != null) {
-                gifStream = gif.image.getUrl().openStream();
-
-                int read;
-                byte[] bytes = new byte[4096];
-                while ((read = gifStream.read(bytes)) != -1) {
-                    stream.write(bytes, 0, read);
-                }
-                gifStream.close();
-                gifStream = new ByteArrayInputStream(stream.toByteArray());
+            if (image.getUrl() != null) {
+                gifStream = new ByteArrayInputStream(image.loadData());
             } else {
-                gifStream = new ByteArrayInputStream(gif.image.getBytes());
+                gifStream = new ByteArrayInputStream(image.getData());
             }
             process(gifStream, gif, lastFrameNumber);
         } catch (java.io.IOException e) {
             throw new IOException(IOException.GifImageException, e);
-        } finally {
-            if (gifStream != null) {
-                try {
-                    gifStream.close();
-                } catch (java.io.IOException ignore) {
-
-                }
-            }
         }
     }
 

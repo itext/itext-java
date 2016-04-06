@@ -59,9 +59,13 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PngImageHelper {
+class PngImageHelper {
 
     private static class PngParameters {
+        PngParameters(PngImage image) {
+            this.image = image;
+        }
+
         PngImage image;
 
         DataInputStream dataStream;
@@ -162,24 +166,16 @@ public class PngImageHelper {
     public static void processImage(Image image, ByteArrayOutputStream stream) {
         if (image.getOriginalType() != ImageType.PNG)
             throw new IllegalArgumentException("PNG image expected");
-        PngParameters png = new PngParameters();
-        png.image = (PngImage) image;
+        PngParameters png;
         InputStream pngStream = null;
         try {
-            if (png.image.getUrl() != null) {
-                pngStream = png.image.getUrl().openStream();
-                int read;
-                byte[] bytes = new byte[4096];
-                while ((read = pngStream.read(bytes)) != -1) {
-                    stream.write(bytes, 0, read);
-                }
-                image.imageSize = stream.toByteArray().length;
-                pngStream.close();
-                pngStream = new ByteArrayInputStream(stream.toByteArray());
+            if (image.getUrl() != null) {
+                pngStream = new ByteArrayInputStream(image.loadData());
             } else {
-                pngStream = new ByteArrayInputStream(png.image.getData());
-                image.imageSize = image.getData().length;
+                pngStream = new ByteArrayInputStream(image.getData());
             }
+            image.imageSize = stream.size();
+            png = new PngParameters((PngImage) image);
             processPng(pngStream, png);
         } catch (java.io.IOException e) {
             throw new IOException(IOException.PngImageException, e);

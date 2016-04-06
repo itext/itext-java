@@ -51,6 +51,10 @@ import com.itextpdf.io.color.IccProfile;
 import java.net.URL;
 import java.util.Map;
 
+import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.util.StreamUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -321,9 +325,22 @@ public abstract class Image {
             logger.warn(LogMessageConstant.IMAGE_HAS_MASK);
             return false;
         }
-
         return true;
     }
+
+    /**
+     * Load data from URL. url must be not null.
+     * Note, this method doesn't check if data or url is null.
+     * @throws java.io.IOException
+     */
+    byte[] loadData() throws java.io.IOException {
+        RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(url));
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        StreamUtil.transferBytes(raf, stream);
+        raf.close();
+        return stream.toByteArray();
+    }
+
 
     /** a static that is used for attributing a unique id to each image. */
     private static long serialId = 0;

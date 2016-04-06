@@ -55,7 +55,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Jbig2ImageHelper {
+class Jbig2ImageHelper {
 
     private byte[] globals;
 
@@ -87,35 +87,13 @@ public class Jbig2ImageHelper {
 
 
     private static void updateStream(ByteArrayOutputStream stream, Jbig2Image image) {
-        byte[] data;
-        if (image.getUrl() != null) {
-            InputStream jbig2Stream = null;
-            try {
-                jbig2Stream = image.getUrl().openStream();
-                int read;
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                byte[] bytes = new byte[4096];
-                while ((read = jbig2Stream.read(bytes)) != -1) {
-                    baos.write(bytes, 0, read);
-                }
-                jbig2Stream.close();
-                data = baos.toByteArray();
-                baos.flush();
-                baos.close();
-            } catch (java.io.IOException e) {
-                throw new IOException(IOException.Jbig2ImageException, e);
-            } finally {
-                if (jbig2Stream != null) {
-                    try {
-                        jbig2Stream.close();
-                    } catch (java.io.IOException ignored) { }
-                }
-            }
-        } else {
-            data = image.getData();
-        }
         try {
-            RandomAccessSource ras = new RandomAccessSourceFactory().createSource(data);
+            RandomAccessSource ras;
+            if (image.getUrl() != null) {
+                ras = new RandomAccessSourceFactory().createSource(image.loadData());
+            } else {
+                ras = new RandomAccessSourceFactory().createSource(image.getData());
+            }
             RandomAccessFileOrArray raf = new RandomAccessFileOrArray(ras);
             Jbig2SegmentReader sr = new Jbig2SegmentReader(raf);
             sr.read();
@@ -128,7 +106,6 @@ public class Jbig2ImageHelper {
             image.setColorSpace(1);
             //TODO JBIG2 globals caching
             byte[] globals = sr.getGlobal(true);
-
 
             //TODO due to the fact, that streams now may be transformed to indirect objects only on writing,
             //pdfStream.getDocument() cannot longer be the sign of inline/indirect images
@@ -145,7 +122,6 @@ public class Jbig2ImageHelper {
             image.setFilter("JBIG2Decode");
             image.setColorSpace(1);
             image.setBpc(1);
-
             stream.write(p.getData(true));
         } catch (java.io.IOException e) {
             throw new IOException(IOException.Jbig2ImageException, e);
