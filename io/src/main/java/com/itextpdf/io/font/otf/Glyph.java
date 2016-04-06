@@ -231,14 +231,7 @@ public class Glyph implements Serializable {
             return false;
         }
         Glyph other = (Glyph) obj;
-        if (chars == null) {
-            if (other.chars != null) {
-                return false;
-            }
-        } else if (!Arrays.equals(chars, other.chars)) {
-            return false;
-        }
-        return code == other.code && width == other.width;
+        return Arrays.equals(chars, other.chars) && code == other.code && width == other.width;
     }
 
     public String toString() {
@@ -249,7 +242,7 @@ public class Glyph implements Serializable {
     private static int codePoint(char[] a) {
         if (a != null) {
             if (a.length == 1 && Character.isValidCodePoint(a[0])) {
-                return (int) a[0];
+                return a[0];
             } else if (a.length == 2 && Character.isHighSurrogate(a[0]) && Character.isLowSurrogate(a[1])) {
                 return Character.toCodePoint(a[0], a[1]);
             }

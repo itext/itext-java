@@ -47,6 +47,9 @@ package com.itextpdf.io.image;
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.util.StreamUtil;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -57,6 +60,10 @@ import java.util.Map;
 public final class BmpImageHelper {
 
     private static class BmpParameters {
+        public BmpParameters(BmpImage image) {
+            this.image = image;
+        }
+
         BmpImage image;
         int width;
         int height;
@@ -117,19 +124,14 @@ public final class BmpImageHelper {
         if (stream == null) {
             stream = new ByteArrayOutputStream();
         }
-        BmpParameters bmp = new BmpParameters();
-        bmp.image = (BmpImage)image;
-        InputStream bmpStream = null;
+        BmpParameters bmp = new BmpParameters((BmpImage)image);
+        InputStream bmpStream;
         try {
             if (bmp.image.getUrl() != null) {
-                bmpStream = bmp.image.getUrl().openStream();
-                int read;
-                byte[] bytes = new byte[4096];
-                while ((read = bmpStream.read(bytes)) != -1) {
-                    stream.write(bytes, 0, read);
-                }
+                RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(bmp.image.getUrl()));
+                StreamUtil.transferBytes(raf, stream);
+                raf.close();
                 image.imageSize = stream.toByteArray().length;
-                bmpStream.close();
                 bmpStream = new ByteArrayInputStream(stream.toByteArray());
             } else {
                 bmpStream = new ByteArrayInputStream(bmp.image.getData());
@@ -143,12 +145,6 @@ public final class BmpImageHelper {
             }
         } catch (java.io.IOException e){
             throw new IOException(IOException.BmpImageException, e);
-        } finally {
-            if (bmpStream != null) {
-                try {
-                    bmpStream.close();
-                } catch (java.io.IOException ignored) { }
-            }
         }
         updateStream(bmp, stream);
     }

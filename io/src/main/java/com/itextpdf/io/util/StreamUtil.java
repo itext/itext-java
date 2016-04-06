@@ -47,6 +47,7 @@ package com.itextpdf.io.util;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.OutputStream;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSource;
 
 import java.io.ByteArrayOutputStream;
@@ -162,6 +163,18 @@ public final class StreamUtil {
     }
 
     public static void transferBytes(InputStream input, java.io.OutputStream output) throws java.io.IOException {
+        byte[] buffer = new byte[transferSize];
+        for (; ; ) {
+            int len = input.read(buffer, 0, transferSize);
+            if (len > 0) {
+                output.write(buffer, 0, len);
+            } else {
+                break;
+            }
+        }
+    }
+
+    public static void transferBytes(RandomAccessFileOrArray input, java.io.OutputStream output) throws java.io.IOException {
         byte[] buffer = new byte[transferSize];
         for (; ; ) {
             int len = input.read(buffer, 0, transferSize);

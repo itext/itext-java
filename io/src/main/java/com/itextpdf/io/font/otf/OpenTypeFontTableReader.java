@@ -88,10 +88,10 @@ public abstract class OpenTypeFontTableReader {
         }
     }
     
-    public Integer getGlyphToCharacter(int index) {
+    public int getGlyphToCharacter(int index) {
         Glyph glyph = indexGlyphMap.get(index);
         if (glyph == null) {
-            return null;
+            return -1;
         } else {
             return glyph.getUnicode();
         }

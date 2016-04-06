@@ -132,7 +132,7 @@ public class Type1Font extends FontProgram {
      */
     @Override
     public boolean hasKernPairs() {
-        return !kernPairs.isEmpty();
+        return kernPairs.size() > 0;
     }
 
     @Override
