@@ -99,7 +99,6 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      */
     public Image(com.itextpdf.io.image.Image img) {
         this(new PdfImageXObject(checkImageType(img)));
-        setProperty(Property.FLUSH_ON_DRAW, true);
     }
 
     /**
