@@ -1,7 +1,52 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.FilterUtil;
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.color.IccProfile;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
@@ -10,10 +55,9 @@ import com.itextpdf.io.source.ByteBuffer;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
 public class PngImageHelper {
 
@@ -116,7 +160,7 @@ public class PngImageHelper {
             "/RelativeColorimetric", "/Saturation", "/AbsoluteColorimetric"};
 
     public static void processImage(Image image, ByteArrayOutputStream stream) {
-        if (image.getOriginalType() != Image.PNG)
+        if (image.getOriginalType() != ImageType.PNG)
             throw new IllegalArgumentException("PNG image expected");
         PngParameters png = new PngParameters();
         png.image = (PngImage) image;
@@ -180,7 +224,7 @@ public class PngImageHelper {
                 png.palShades = true;
             png.genBWMask = (!png.palShades && (pal0 > 1 || png.transRedGray >= 0));
             if (!png.palShades && !png.genBWMask && pal0 == 1) {
-                png.additional.put("Mask", String.format("[%d %d]", palIdx, palIdx));
+                png.additional.put("Mask", MessageFormat.format("[{0} {1}]", palIdx, palIdx));
             }
             boolean needDecode = (png.interlaceMethod == 1) || (png.bitDepth == 16) || ((png.colorType & 4) != 0) || png.palShades || png.genBWMask;
             switch (png.colorType) {
@@ -349,7 +393,7 @@ public class PngImageHelper {
                             if (png.bitDepth == 16)
                                 png.transRedGray = gray;
                             else
-                                png.additional.put("Mask", String.format("[%d %d]", gray, gray));
+                                png.additional.put("Mask", MessageFormat.format("[{0} {1}]", gray, gray));
                         }
                         break;
                     case 2:
@@ -363,7 +407,7 @@ public class PngImageHelper {
                                 png.transGreen = green;
                                 png.transBlue = blue;
                             } else
-                                png.additional.put("Mask", String.format("[%d %d %d %d %d %d]", red, red, green, green, blue, blue));
+                                png.additional.put("Mask", MessageFormat.format("[{0} {1} {2} {3} {4} {5}]", red, red, green, green, blue, blue));
                         }
                         break;
                     case 3:
@@ -375,7 +419,7 @@ public class PngImageHelper {
                         }
                         break;
                 }
-                Utilities.skip(pngStream, len);
+                StreamUtil.skip(pngStream, len);
             } else if (IHDR.equals(marker)) {
                 png.width = getInt(pngStream);
                 png.height = getInt(pngStream);
@@ -399,7 +443,7 @@ public class PngImageHelper {
                     colorspace[3] = PdfEncodings.convertToString(png.colorTable, null);
                     png.additional.put("ColorSpace", colorspace);
                 } else {
-                    Utilities.skip(pngStream, len);
+                    StreamUtil.skip(pngStream, len);
                 }
             } else if (pHYs.equals(marker)) {
                 int dx = getInt(pngStream);
@@ -466,7 +510,7 @@ public class PngImageHelper {
                     p += r;
                     len -= r;
                 }
-                byte iccp[] = Utilities.flateDecode(icccom, true);
+                byte iccp[] = FilterUtil.flateDecode(icccom, true);
                 icccom = null;
                 try {
                     png.iccProfile = IccProfile.getInstance(iccp);
@@ -476,9 +520,9 @@ public class PngImageHelper {
             } else if (IEND.equals(marker)) {
                 break;
             } else {
-                Utilities.skip(pngStream, len);
+                StreamUtil.skip(pngStream, len);
             }
-            Utilities.skip(pngStream, 4);
+            StreamUtil.skip(pngStream, 4);
         }
     }
 
@@ -528,8 +572,7 @@ public class PngImageHelper {
         else if (png.genBWMask)
             png.smask = new byte[(png.width + 7) / 8 * png.height];
         ByteArrayInputStream bai = new ByteArrayInputStream(png.idat.getBuf(), 0, png.idat.size());
-        InputStream infStream = new InflaterInputStream(bai, new Inflater());
-        png.dataStream = new DataInputStream(infStream);
+        png.dataStream = new DataInputStream(FilterUtil.getInflaterInputStream(bai));
 
         if (png.interlaceMethod != 1) {
             decodePass(0, 0, 1, 1, png.width, png.height, png);

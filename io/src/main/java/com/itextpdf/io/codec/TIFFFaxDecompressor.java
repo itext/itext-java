@@ -1,3 +1,47 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.io.codec;
 
 import com.itextpdf.io.IOException;
@@ -70,38 +114,39 @@ public class TIFFFaxDecompressor {
     };
     // Table to be used when fillOrder = 2, for flipping bytes.
     static byte flipTable[] = {
-            0, -128, 64, -64, 32, -96, 96, -32,
-            16, -112, 80, -48, 48, -80, 112, -16,
-            8, -120, 72, -56, 40, -88, 104, -24,
-            24, -104, 88, -40, 56, -72, 120, -8,
-            4, -124, 68, -60, 36, -92, 100, -28,
-            20, -108, 84, -44, 52, -76, 116, -12,
-            12, -116, 76, -52, 44, -84, 108, -20,
-            28, -100, 92, -36, 60, -68, 124, -4,
-            2, -126, 66, -62, 34, -94, 98, -30,
-            18, -110, 82, -46, 50, -78, 114, -14,
-            10, -118, 74, -54, 42, -86, 106, -22,
-            26, -102, 90, -38, 58, -70, 122, -6,
-            6, -122, 70, -58, 38, -90, 102, -26,
-            22, -106, 86, -42, 54, -74, 118, -10,
-            14, -114, 78, -50, 46, -82, 110, -18,
-            30, -98, 94, -34, 62, -66, 126, -2,
-            1, -127, 65, -63, 33, -95, 97, -31,
-            17, -111, 81, -47, 49, -79, 113, -15,
-            9, -119, 73, -55, 41, -87, 105, -23,
-            25, -103, 89, -39, 57, -71, 121, -7,
-            5, -123, 69, -59, 37, -91, 101, -27,
-            21, -107, 85, -43, 53, -75, 117, -11,
-            13, -115, 77, -51, 45, -83, 109, -19,
-            29, -99, 93, -35, 61, -67, 125, -3,
-            3, -125, 67, -61, 35, -93, 99, -29,
-            19, -109, 83, -45, 51, -77, 115, -13,
-            11, -117, 75, -53, 43, -85, 107, -21,
-            27, -101, 91, -37, 59, -69, 123, -5,
-            7, -121, 71, -57, 39, -89, 103, -25,
-            23, -105, 87, -41, 55, -73, 119, -9,
-            15, -113, 79, -49, 47, -81, 111, -17,
-            31, -97, 95, -33, 63, -65, 127, -1,};
+            (byte) 0, (byte) -128, (byte) 64, (byte) -64, (byte) 32, (byte) -96, (byte) 96, (byte) -32,
+            (byte) 16, (byte) -112, (byte) 80, (byte) -48, (byte) 48, (byte) -80, (byte) 112, (byte) -16,
+            (byte) 8, (byte) -120, (byte) 72, (byte) -56, (byte) 40, (byte) -88, (byte) 104, (byte) -24,
+            (byte) 24, (byte) -104, (byte) 88, (byte) -40, (byte) 56, (byte) -72, (byte) 120, (byte) -8,
+            (byte) 4, (byte) -124, (byte) 68, (byte) -60, (byte) 36, (byte) -92, (byte) 100, (byte) -28,
+            (byte) 20, (byte) -108, (byte) 84, (byte) -44, (byte) 52, (byte) -76, (byte) 116, (byte) -12,
+            (byte) 12, (byte) -116, (byte) 76, (byte) -52, (byte) 44, (byte) -84, (byte) 108, (byte) -20,
+            (byte) 28, (byte) -100, (byte) 92, (byte) -36, (byte) 60, (byte) -68, (byte) 124, (byte) -4,
+            (byte) 2, (byte) -126, (byte) 66, (byte) -62, (byte) 34, (byte) -94, (byte) 98, (byte) -30,
+            (byte) 18, (byte) -110, (byte) 82, (byte) -46, (byte) 50, (byte) -78, (byte) 114, (byte) -14,
+            (byte) 10, (byte) -118, (byte) 74, (byte) -54, (byte) 42, (byte) -86, (byte) 106, (byte) -22,
+            (byte) 26, (byte) -102, (byte) 90, (byte) -38, (byte) 58, (byte) -70, (byte) 122, (byte) -6,
+            (byte) 6, (byte) -122, (byte) 70, (byte) -58, (byte) 38, (byte) -90, (byte) 102, (byte) -26,
+            (byte) 22, (byte) -106, (byte) 86, (byte) -42, (byte) 54, (byte) -74, (byte) 118, (byte) -10,
+            (byte) 14, (byte) -114, (byte) 78, (byte) -50, (byte) 46, (byte) -82, (byte) 110, (byte) -18,
+            (byte) 30, (byte) -98, (byte) 94, (byte) -34, (byte) 62, (byte) -66, (byte) 126, (byte) -2,
+            (byte) 1, (byte) -127, (byte) 65, (byte) -63, (byte) 33, (byte) -95, (byte) 97, (byte) -31,
+            (byte) 17, (byte) -111, (byte) 81, (byte) -47, (byte) 49, (byte) -79, (byte) 113, (byte) -15,
+            (byte) 9, (byte) -119, (byte) 73, (byte) -55, (byte) 41, (byte) -87, (byte) 105, (byte) -23,
+            (byte) 25, (byte) -103, (byte) 89, (byte) -39, (byte) 57, (byte) -71, (byte) 121, (byte) -7,
+            (byte) 5, (byte) -123, (byte) 69, (byte) -59, (byte) 37, (byte) -91, (byte) 101, (byte) -27,
+            (byte) 21, (byte) -107, (byte) 85, (byte) -43, (byte) 53, (byte) -75, (byte) 117, (byte) -11,
+            (byte) 13, (byte) -115, (byte) 77, (byte) -51, (byte) 45, (byte) -83, (byte) 109, (byte) -19,
+            (byte) 29, (byte) -99, (byte) 93, (byte) -35, (byte) 61, (byte) -67, (byte) 125, (byte) -3,
+            (byte) 3, (byte) -125, (byte) 67, (byte) -61, (byte) 35, (byte) -93, (byte) 99, (byte) -29,
+            (byte) 19, (byte) -109, (byte) 83, (byte) -45, (byte) 51, (byte) -77, (byte) 115, (byte) -13,
+            (byte) 11, (byte) -117, (byte) 75, (byte) -53, (byte) 43, (byte) -85, (byte) 107, (byte) -21,
+            (byte) 27, (byte) -101, (byte) 91, (byte) -37, (byte) 59, (byte) -69, (byte) 123, (byte) -5,
+            (byte) 7, (byte) -121, (byte) 71, (byte) -57, (byte) 39, (byte) -89, (byte) 103, (byte) -25,
+            (byte) 23, (byte) -105, (byte) 87, (byte) -41, (byte) 55, (byte) -73, (byte) 119, (byte) -9,
+            (byte) 15, (byte) -113, (byte) 79, (byte) -49, (byte) 47, (byte) -81, (byte) 111, (byte) -17,
+            (byte) 31, (byte) -97, (byte) 95, (byte) -33, (byte) 63, (byte) -65, (byte) 127, (byte) -1,
+    };
     // The main 10 bit white runs lookup table
     static short white[] = {
             // 0 - 7
@@ -361,12 +406,20 @@ public class TIFFFaxDecompressor {
             // 1016 - 1023
             232, 232, 232, 232, 232, 232, 232, 232,};
     // Additional make up codes for both White and Black runs
-    static short additionalMakeup[] = {
-            28679, 28679, 31752, (short) 32777,
-            (short) 33801, (short) 34825, (short) 35849, (short) 36873,
-            (short) 29703, (short) 29703, (short) 30727, (short) 30727,
-            (short) 37897, (short) 38921, (short) 39945, (short) 40969
+//    static short additionalMakeup[] = {
+//        28679,  28679,  31752,  (short)32777,
+//        (short)33801,  (short)34825,  (short)35849,  (short)36873,
+//        (short)29703,  (short)29703,  (short)30727,  (short)30727,
+//        (short)37897,  (short)38921,  (short)39945,  (short)40969
+//    };
+    //replace with constants without overload
+    static public short additionalMakeup[] = {
+            28679,  28679,  31752,  -32759,
+            -31735,  -30711,  -29687, -28663,
+            29703,  29703, 30727, 30727,
+            -27639,  -26615,  -25591, -24567
     };
+
     // Initial black run look up table, uses the first 4 bits of a code
     static short initBlack[] = {
             // 0 - 7
@@ -1160,7 +1213,7 @@ public class TIFFFaxDecompressor {
             int maskVal = 1 << (7 - shift);
             byte val = buffer[byteNum];
             while (maskVal > 0 && bitNum < lastBit) {
-                val |= maskVal;
+                val |= (byte) maskVal;
                 maskVal >>= 1;
                 ++bitNum;
             }
@@ -1177,7 +1230,7 @@ public class TIFFFaxDecompressor {
         // Fill in remaining bits
         while (bitNum < lastBit) {
             byteNum = bitNum >> 3;
-            buffer[byteNum] |= 1 << (7 - (bitNum & 0x7));
+            buffer[byteNum] |= (byte) (1 << (7 - (bitNum & 0x7)));
             ++bitNum;
         }
     }

@@ -1,3 +1,47 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.kernel;
 
 import java.text.MessageFormat;
@@ -23,6 +67,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotCloseDocumentWithAlreadyFlushedPdfCatalog = "cannot.close.document.with.already.flushed.pdf.catalog";
     public static final String CannotConvertPdfArrayToRectanle = "cannot.convert.pdfarray.to.rectangle";
     public static final String CannotCopyFlushedObject = "cannot.copy.flushed.object";
+    public static final String CannotCopyFlushedTag = "cannot.copy.flushed.tag";
     public static final String CannotCopyObjectContent = "cannot.copy.object.content";
     public static final String CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten = "cannot.copy.indirect.object.from.the.document.that.is.being.written";
     public static final String CannotCopyToDocumentOpenedInReadingMode = "cannot.copy.to.document.opened.in.reading.mode";
@@ -32,6 +77,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotGetContentBytes = "cannot.get.content.bytes";
     public static final String CannotGetPdfStreamBytes = "cannot.get.pdfstream.bytes";
     public static final String CannotFindImageDataOrEI = "cannot.find.image.data.or.EI";
+    public static final String CannotFlushDocumentRootTagBeforeDocumentIsClosed = "cannot.flush.document.root.tag.before.document.is.closed";
     public static final String CannotFlushObject = "cannot.flush.object";
     public static final String CannotMoveToFlushedKid = "cannot.move.to.flushed.kid";
     public static final String CannotMoveToMarkedContentReference = "cannot.move.to.marked.content.reference";
@@ -40,7 +86,8 @@ public class PdfException extends RuntimeException {
     public static final String CannotParseContentStream = "could.not.parse.content.stream";
     public static final String CannotReadAStreamInOrderToAppendNewBytes = "cannot.read.a.stream.in.order.to.append.new.bytes.reason {0}";
     public static final String CannotReadPdfObject = "cannot.read.pdf.object";
-    public static final String CannotRebuildTagStructureWhenItWasPartlyFlushed = "cannot.rebuild.tag.structure.when.it.was.partly.flushed";
+    public static final String CannotModifyTagStructureWhenItWasPartlyFlushed = "cannot.modify.tag.structure.when.it.was.partly.flushed";
+    public static final String CannotRemoveDocumentRootTag = "cannot.remove.document.root.tag";
     public static final String CannotRemoveTagStructureElementsIfTagStructureWasPartiallyFlushed = "cannot.remove.tag.structure.elements.if.tag.structure.was.partially.flushed";
     public static final String CannotSetDataToPdfstreamWhichWasCreatedByInputstream = "cannot.set.data.to.pdfstream.which.was.created.by.inputstream";
     public static final String CannotSplitDocumentThatIsBeingWritten = "cannot.split.document.that.is.being.written";
@@ -155,6 +202,10 @@ public class PdfException extends RuntimeException {
     public static final String SignatureWithName1IsNotTheLastItDoesntCoverWholeDocument = "signature.with.name.1.is.not.the.last.it.doesnt.cover.whole.document";
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";
     public static final String StructureElementShallContainParentObject = "structure.element.shall.contain.parent.object";
+    public static final String TagCannotBeMovedToTheAnotherDocumentsTagStructure = "tag.cannot.be.moved.to.the.another.documents.tag.structure";
+    public static final String TagFromTheExistingTagStructureIsFlushedCannotAddCopiedPageTags = "tag.from.the.existing.tag.structure.is.flushed.cannot.add.copied.page.tags";
+    public static final String TagTreePointerIsInInvalidStateItPointsAtFlushedElementUseMoveToRoot = "tagtreepointer.is.in.invalid.state.it.points.at.flushed.element.use.movetoroot";
+    public static final String TagTreePointerIsInInvalidStateItPointsAtRemovedElementUseMoveToRoot = "tagtreepointer.is.in.invalid.state.it.points.at.removed.element.use.movetoroot";
     public static final String TextCannotBeNull = "text.cannot.be.null";
     public static final String TextIsTooBig = "text.is.too.big";
     public static final String TextMustBeEven = "the.text.length.must.be.even";

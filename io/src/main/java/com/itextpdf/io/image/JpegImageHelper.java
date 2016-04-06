@@ -1,11 +1,56 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.color.IccProfile;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,7 +122,7 @@ public class JpegImageHelper {
     private static final byte[] PS_8BIM_RESO = {0x38, 0x42, 0x49, 0x4d, 0x03, (byte) 0xed};
 
     public static void processImage(Image image, ByteArrayOutputStream stream) {
-        if (image.getOriginalType() != Image.JPEG)
+        if (image.getOriginalType() != ImageType.JPEG)
             throw new IllegalArgumentException("JPEG image expected");
         InputStream jpegStream = null;
         try {
@@ -123,7 +168,7 @@ public class JpegImageHelper {
             InputStream jpegStream = null;
             try {
                 jpegStream = image.getUrl().openStream();
-                Utilities.transferBytes(jpegStream, stream);
+                StreamUtil.transferBytes(jpegStream, stream);
             } catch (java.io.IOException e) {
                 throw new IOException(IOException.JpegImageException, e);
             } finally {
@@ -160,7 +205,7 @@ public class JpegImageHelper {
                     firstPass = false;
                     len = getShort(jpegStream);
                     if (len < 16) {
-                        Utilities.skip(jpegStream, len - 2);
+                        StreamUtil.skip(jpegStream, len - 2);
                         continue;
                     }
                     byte bcomp[] = new byte[JFIF_ID.length];
@@ -175,10 +220,10 @@ public class JpegImageHelper {
                         }
                     }
                     if (!found) {
-                        Utilities.skip(jpegStream, len - 2 - bcomp.length);
+                        StreamUtil.skip(jpegStream, len - 2 - bcomp.length);
                         continue;
                     }
-                    Utilities.skip(jpegStream, 2);
+                    StreamUtil.skip(jpegStream, 2);
                     int units = jpegStream.read();
                     int dx = getShort(jpegStream);
                     int dy = getShort(jpegStream);
@@ -187,7 +232,7 @@ public class JpegImageHelper {
                     } else if (units == 2) {
                         image.setDpi((int) (dx * 2.54f + 0.5f), (int) (dy * 2.54f + 0.5f));
                     }
-                    Utilities.skip(jpegStream, len - 2 - bcomp.length - 7);
+                    StreamUtil.skip(jpegStream, len - 2 - bcomp.length - 7);
                     continue;
                 }
                 if (marker == M_APPE) {
@@ -287,7 +332,7 @@ public class JpegImageHelper {
                             // make sure this is consistent with JFIF data
                             if (image.getDpiX() != 0 && image.getDpiX() != dx) {
                                 Logger logger = LoggerFactory.getLogger(JpegImageHelper.class);
-                                logger.debug(String.format("Inconsistent metadata (dpiX: %d vs %d)", image.getDpiX(), dx));
+                                logger.debug(MessageFormat.format("Inconsistent metadata (dpiX: {0} vs {1})", image.getDpiX(), dx));
                             } else {
                                 image.setDpi(dx, image.getDpiY());
                             }
@@ -297,7 +342,7 @@ public class JpegImageHelper {
                             // make sure this is consistent with JFIF data
                             if (image.getDpiY() != 0 && image.getDpiY() != dy) {
                                 Logger logger = LoggerFactory.getLogger(JpegImageHelper.class);
-                                logger.debug(String.format("Inconsistent metadata (dpiY: %d vs %d)", image.getDpiY(), dy));
+                                logger.debug(MessageFormat.format("Inconsistent metadata (dpiY: {0} vs {1})", image.getDpiY(), dy));
                             } else {
                                 image.setDpi(image.getDpiX(), dx);
                             }
@@ -308,7 +353,7 @@ public class JpegImageHelper {
                 firstPass = false;
                 int markertype = marker(marker);
                 if (markertype == VALID_MARKER) {
-                    Utilities.skip(jpegStream, 2);
+                    StreamUtil.skip(jpegStream, 2);
                     if (jpegStream.read() != 0x08) {
                         throw new IOException(IOException._1MustHave8BitsPerComponent).setMessageParams(errorID);
                     }
@@ -320,7 +365,7 @@ public class JpegImageHelper {
                 } else if (markertype == UNSUPPORTED_MARKER) {
                     throw new IOException(IOException._1UnsupportedJpegMarker2).setMessageParams(errorID, String.valueOf(marker));
                 } else if (markertype != NOPARAM_MARKER) {
-                    Utilities.skip(jpegStream, getShort(jpegStream) - 2);
+                    StreamUtil.skip(jpegStream, getShort(jpegStream) - 2);
                 }
             }
         }

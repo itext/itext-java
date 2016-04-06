@@ -2,7 +2,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.io.source.OutputStream;
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -102,7 +103,7 @@ public class PdfReaderTest extends ExtendedITextTest{
         object = pdfDoc.getPdfObject(5);
         Assert.assertEquals(PdfObject.Stream, object.getType());
         String content = "100 100 100 100 re\nf\n";
-        Assert.assertArrayEquals(OutputStream.getIsoBytes(content), ((PdfStream)object).getBytes());
+        Assert.assertArrayEquals(ByteUtils.getIsoBytes(content), ((PdfStream)object).getBytes());
 
         Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         reader.close();
@@ -121,7 +122,7 @@ public class PdfReaderTest extends ExtendedITextTest{
                 "BT\n" +
                 "36 700 Td\n" +
                 "/F1 72 Tf\n" +
-                "(%d)Tj\n" +
+                "({0})Tj\n" +
                 "ET\n" +
                 "Q\n" +
                 "100 500 100 100 re\n" +
@@ -130,7 +131,7 @@ public class PdfReaderTest extends ExtendedITextTest{
         for (int i = 1; i <= document.getNumberOfPages(); i++) {
             PdfPage page = document.getPage(i);
             byte[] content = page.getFirstContentStream().getBytes();
-            Assert.assertEquals("Page content " + i, String.format(contentTemplate, i), new String(content));
+            Assert.assertEquals("Page content " + i, MessageFormat.format(contentTemplate, i), new String(content));
         }
 
         Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());

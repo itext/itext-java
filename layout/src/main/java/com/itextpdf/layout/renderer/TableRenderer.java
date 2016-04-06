@@ -1,11 +1,55 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
@@ -272,7 +316,7 @@ public class TableRenderer extends AbstractRenderer {
                     }
                 }
                 currChildRenderers.add(cell);
-                if (!currentCellHasBigRowspan && cellResult.getStatus() != LayoutResult.NOTHING) {
+                if (cellResult.getStatus() != LayoutResult.NOTHING) {
                     rowHeight = Math.max(rowHeight, cell.getOccupiedArea().getBBox().getHeight() - rowspanOffset);
                 }
             }
@@ -394,10 +438,10 @@ public class TableRenderer extends AbstractRenderer {
         if (isTagged
                 && ((IAccessibleElement) getModelElement()).getRole() != null
                 && !((IAccessibleElement) getModelElement()).getRole().equals(PdfName.Artifact)) {
-            PdfTagStructure tagStructure = document.getTagStructure();
+            TagTreePointer tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
 
             IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
-            if (!document.getTagStructure().isConnectedToTag(accessibleElement)) {
+            if (!document.getTagStructureContext().isElementConnectedToTag(accessibleElement)) {
                 AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
             }
 
@@ -414,16 +458,16 @@ public class TableRenderer extends AbstractRenderer {
 
             //footer/header tags order processing
             if (accessibleElement.getRole().equals(PdfName.THead)) {
-                tagStructure.addTag(0, accessibleElement, true);
+                tagPointer.addTag(0, accessibleElement, true);
             } else {
-                tagStructure.addTag(accessibleElement, true);
+                tagPointer.addTag(accessibleElement, true);
             }
 
             super.draw(drawContext);
 
-            tagStructure.moveToParent();
+            tagPointer.moveToParent();
             if (toRemoveConnectionsWithTags) {
-                tagStructure.removeConnectionToTag(accessibleElement);
+                tagPointer.removeElementConnectionToTag(accessibleElement);
             }
         } else {
             super.draw(drawContext);
@@ -441,17 +485,17 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement && !childRenderers.isEmpty();
-        PdfTagStructure tagStructure = null;
+        TagTreePointer tagPointer = null;
         if (isTagged) {
             PdfName role = modelElement.getRole();
             if (role != null && !PdfName.Artifact.equals(role)) {
-                tagStructure = drawContext.getDocument().getTagStructure();
+                tagPointer = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
 
                 if (modelElement.getHeader() != null || modelElement.getFooter() != null) {
-                    if (tagStructure.getListOfKidsRoles().contains(PdfName.TBody)) {
-                        tagStructure.moveToKid(PdfName.TBody);
+                    if (tagPointer.getKidsRoles().contains(PdfName.TBody)) {
+                        tagPointer.moveToKid(PdfName.TBody);
                     } else {
-                        tagStructure.addTag(PdfName.TBody);
+                        tagPointer.addTag(PdfName.TBody);
                     }
                 }
             } else {
@@ -462,28 +506,28 @@ public class TableRenderer extends AbstractRenderer {
         for (IRenderer child : childRenderers) {
             if (isTagged) {
                 int cellRow = ((Cell) child.getModelElement()).getRow();
-                int rowsNum = tagStructure.getListOfKidsRoles().size();
+                int rowsNum = tagPointer.getKidsRoles().size();
                 if (cellRow < rowsNum) {
-                    tagStructure.moveToKid(cellRow);
+                    tagPointer.moveToKid(cellRow);
                 } else {
-                    tagStructure.addTag(PdfName.TR);
+                    tagPointer.addTag(PdfName.TR);
                 }
             }
 
             child.draw(drawContext);
 
             if (isTagged) {
-                tagStructure.moveToParent();
+                tagPointer.moveToParent();
             }
         }
 
         if (isTagged) {
             if (modelElement.getHeader() != null || modelElement.getFooter() != null) {
-                tagStructure.moveToParent();
+                tagPointer.moveToParent();
             }
         }
 
-        drawBorders(drawContext.getCanvas());
+        drawBorders(drawContext);
 
         if (footerRenderer != null) {
             footerRenderer.isLastRendererForModelElement = isTheVeryLast;
@@ -494,6 +538,17 @@ public class TableRenderer extends AbstractRenderer {
     @Override
     public TableRenderer getNextRenderer() {
         return new TableRenderer((Table) modelElement);
+    }
+
+    @Override
+    public void move(float dxRight, float dyUp) {
+        super.move(dxRight, dyUp);
+        if (headerRenderer != null) {
+            headerRenderer.move(dxRight, dyUp);
+        }
+        if (footerRenderer != null) {
+            footerRenderer.move(dxRight, dyUp);
+        }
     }
 
     protected float[] calculateScaledColumnWidths(Table tableModel, float tableWidth) {
@@ -543,7 +598,7 @@ public class TableRenderer extends AbstractRenderer {
 
     protected <T extends TableRenderer> T createSplitRenderer(Table.RowRange rowRange) {
         TableRenderer splitRenderer = getNextRenderer();
-        splitRenderer.setRowRange(rowRange);
+        splitRenderer.rowRange = rowRange;
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         // TODO childRenderers will be populated twice during the relayout.
@@ -558,7 +613,7 @@ public class TableRenderer extends AbstractRenderer {
 
     protected <T extends TableRenderer> T createOverflowRenderer(Table.RowRange rowRange) {
         TableRenderer overflowRenderer = getNextRenderer();
-        overflowRenderer.setRowRange(rowRange);
+        overflowRenderer.rowRange = rowRange;
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());
@@ -566,7 +621,11 @@ public class TableRenderer extends AbstractRenderer {
         return (T) overflowRenderer;
     }
 
-    protected void drawBorders(PdfCanvas canvas) {
+    protected void drawBorders(DrawContext drawContext) {
+        if (occupiedArea.getBBox().getHeight() < EPS) {
+            return;
+        }
+
         float startX = getOccupiedArea().getBBox().getX();
         float startY = getOccupiedArea().getBBox().getY() + getOccupiedArea().getBBox().getHeight();
 
@@ -577,6 +636,11 @@ public class TableRenderer extends AbstractRenderer {
                 startY = cell.getOccupiedArea().getBBox().getY() + cell.getOccupiedArea().getBBox().getHeight();
                 break;
             }
+        }
+
+        boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
+        if (isTagged) {
+            drawContext.getCanvas().openTag(new CanvasArtifact());
         }
 
         float y1 = startY;
@@ -607,7 +671,7 @@ public class TableRenderer extends AbstractRenderer {
                 Border curBorder = borders[j];
                 if (prevBorder != null) {
                     if (!prevBorder.equals(curBorder)) {
-                        prevBorder.drawCellBorder(canvas, x1, y1, x2, y1);
+                        prevBorder.drawCellBorder(drawContext.getCanvas(), x1, y1, x2, y1);
                         x1 = x2;
                     }
                 } else {
@@ -624,7 +688,7 @@ public class TableRenderer extends AbstractRenderer {
                 if (i == 0 || i == horizontalBorders.length - 1) {
                     x2 += lastBorder.getWidth() / 2;
                 }
-                lastBorder.drawCellBorder(canvas, x1, y1, x2, y1);
+                lastBorder.drawCellBorder(drawContext.getCanvas(), x1, y1, x2, y1);
             }
             if (i < heights.size()) {
                 y1 -= heights.get(i);
@@ -644,7 +708,7 @@ public class TableRenderer extends AbstractRenderer {
                 Border curBorder = borders[j];
                 if (prevBorder != null) {
                     if (!prevBorder.equals(curBorder)) {
-                        prevBorder.drawCellBorder(canvas, x1, y1, x1, y2);
+                        prevBorder.drawCellBorder(drawContext.getCanvas(), x1, y1, x1, y2);
                         y1 = y2;
                     }
                 } else {
@@ -660,11 +724,15 @@ public class TableRenderer extends AbstractRenderer {
             }
             Border lastBorder = borders[j - 1];
             if (lastBorder != null) {
-                lastBorder.drawCellBorder(canvas, x1, y1, x1, y2);
+                lastBorder.drawCellBorder(drawContext.getCanvas(), x1, y1, x1, y2);
             }
             if (i < columnWidths.length) {
                 x1 += columnWidths[i];
             }
+        }
+
+        if (isTagged) {
+            drawContext.getCanvas().closeTag();
         }
     }
 

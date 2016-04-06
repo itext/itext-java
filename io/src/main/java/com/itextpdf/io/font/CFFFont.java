@@ -1,3 +1,47 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
@@ -226,21 +270,21 @@ public class CFFFont {
             char b0 = getCard8();
             if (b0 == 29) {
                 int item = getInt();
-                args[arg_count] = Integer.valueOf(item);
+                args[arg_count] = item;
                 arg_count++;
                 //System.err.println(item+" ");
                 continue;
             }
             if (b0 == 28) {
                 short item = getShort();
-                args[arg_count] = Integer.valueOf(item);
+                args[arg_count] = (int) item;
                 arg_count++;
                 //System.err.println(item+" ");
                 continue;
             }
             if (b0 >= 32 && b0 <= 246) {
                 byte item = (byte) (b0-139);
-                args[arg_count] = Integer.valueOf(item);
+                args[arg_count] = (int) item;
                 arg_count++;
                 //System.err.println(item+" ");
                 continue;
@@ -248,7 +292,7 @@ public class CFFFont {
             if (b0 >= 247 && b0 <= 250) {
                 char b1 = getCard8();
                 short item = (short) ((b0-247)*256+b1+108);
-                args[arg_count] = Integer.valueOf(item);
+                args[arg_count] = (int) item;
                 arg_count++;
                 //System.err.println(item+" ");
                 continue;
@@ -256,7 +300,7 @@ public class CFFFont {
             if (b0 >= 251 && b0 <= 254) {
                 char b1 = getCard8();
                 short item = (short) (-(b0-251)*256-b1-108);
-                args[arg_count] = Integer.valueOf(item);
+                args[arg_count] = (int) item;
                 arg_count++;
                 //System.err.println(item+" ");
                 continue;
@@ -264,7 +308,7 @@ public class CFFFont {
             if (b0 == 30) {
                 StringBuilder item = new StringBuilder("");
                 boolean done = false;
-                char buffer = 0;
+                char buffer = (char) 0;
                 byte avail = 0;
                 int  nibble = 0;
                 while (!done) {
@@ -280,7 +324,7 @@ public class CFFFont {
                         case 0xf: done=true   ; break;
                         default:
                             if (nibble >= 0 && nibble <= 9)
-                                item.append(String.valueOf(nibble));
+                                item.append(nibble);
                             else {
                                 item.append("<NIBBLE ERROR: ").append(nibble).append('>');
                                 done = true;
@@ -377,28 +421,11 @@ public class CFFFont {
         }
         @Override
         public void emit(byte[] buffer) {
-            int i=0;
-            switch (size) {
-                case 4:
-                    buffer[myOffset+i] = (byte) (value >>> 24 & 0xff);
-                    i++;
-                case 3:
-                    buffer[myOffset+i] = (byte) (value >>> 16 & 0xff);
-                    i++;
-                case 2:
-                    buffer[myOffset+i] = (byte) (value >>>  8 & 0xff);
-                    i++;
-                case 1:
-                    buffer[myOffset+i] = (byte) (value >>>  0 & 0xff);
-                    i++;
+            if (size >= 1 && size <= 4) {
+                for (int i = 0; i < size; i++) {
+                    buffer[myOffset + i] = (byte) (value >>> ((size - 1 - i) << 3) & 0xFF);
+                }
             }
-            /*
-            int mask = 0xff;
-            for (int i=size-1; i>=0; i--) {
-                buffer[myOffset+i] = (byte) (value & mask);
-                mask <<= 8;
-            }
-             */
         }
     }
 
@@ -511,7 +538,7 @@ public class CFFFont {
 
     static protected final class UInt16Item extends Item {
         public char value;
-        public UInt16Item(char value) {this.value=value;}
+        public UInt16Item(char value) {this.value = value;}
 
         @Override
         public void increment(int[] currentOffset) {
@@ -521,8 +548,11 @@ public class CFFFont {
         // this is incomplete!
         @Override
         public void emit(byte[] buffer) {
-            buffer[myOffset+0] = (byte) (value >>> 8 & 0xff);
-            buffer[myOffset+1] = (byte) (value >>> 0 & 0xff);
+//            Simplify from: there is no sense in >>> for unsigned char.
+//            buffer[myOffset+0] = (byte) (value >>> 8 & 0xff);
+//            buffer[myOffset+1] = (byte) (value >>> 0 & 0xff);
+            buffer[myOffset+0] = (byte) (value >> 8 & 0xff);
+            buffer[myOffset+1] = (byte) (value >> 0 & 0xff);
         }
     }
 
@@ -541,7 +571,8 @@ public class CFFFont {
         // this is incomplete!
         @Override
         public void emit(byte[] buffer) {
-            buffer[myOffset+0] = (byte) (value >>> 0 & 0xff);
+            //buffer[myOffset+0] = (byte) (value >>> 0 & 0xff);
+            buffer[myOffset+0] = (byte) (value & 0xff);
         }
     }
 
@@ -735,16 +766,16 @@ public class CFFFont {
             int p1 = getPosition();
             getDictItem();
             int p2 = getPosition();
-            if (key=="Encoding"
-                    || key=="Private"
-                    || key=="FDSelect"
-                    || key=="FDArray"
-                    || key=="charset"
-                    || key=="CharStrings"
+            if ("Encoding".equals(key)
+                    || "Private".equals(key)
+                    || "FDSelect".equals(key)
+                    || "FDArray".equals(key)
+                    || "charset".equals(key)
+                    || "CharStrings".equals(key)
                     ) {
                 // just drop them
             } else {
-                l.add(new RangeItem(buf,p1,p2-p1));
+                l.addLast(new RangeItem(buf,p1,p2-p1));
             }
         }
 

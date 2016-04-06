@@ -1,11 +1,56 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.kernel.pdf.canvas;
 
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.image.Image;
-import com.itextpdf.io.source.OutputStream;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.image.ImageType;
+import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.PatternColor;
@@ -34,7 +79,7 @@ import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.layer.PdfLayerMembership;
 import com.itextpdf.kernel.pdf.layer.PdfOCG;
-import com.itextpdf.kernel.pdf.tagutils.PdfTagReference;
+import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
@@ -54,68 +99,68 @@ import java.util.Stack;
  */
 public class PdfCanvas {
 
-    static final private byte[] B = OutputStream.getIsoBytes("B\n");
-    static final private byte[] b = OutputStream.getIsoBytes("b\n");
-    static final private byte[] BDC = OutputStream.getIsoBytes("BDC\n");
-    static final private byte[] BI = OutputStream.getIsoBytes("BI\n");
-    static final private byte[] BMC = OutputStream.getIsoBytes("BMC\n");
-    static final private byte[] BStar = OutputStream.getIsoBytes("B*\n");
-    static final private byte[] bStar = OutputStream.getIsoBytes("b*\n");
-    static final private byte[] BT = OutputStream.getIsoBytes("BT\n");
-    static final private byte[] c = OutputStream.getIsoBytes("c\n");
-    static final private byte[] cm = OutputStream.getIsoBytes("cm\n");
-    static final private byte[] cs = OutputStream.getIsoBytes("cs\n");
-    static final private byte[] CS = OutputStream.getIsoBytes("CS\n");
-    static final private byte[] d = OutputStream.getIsoBytes("d\n");
-    static final private byte[] Do = OutputStream.getIsoBytes("Do\n");
-    static final private byte[] EI = OutputStream.getIsoBytes("EI\n");
-    static final private byte[] EMC = OutputStream.getIsoBytes("EMC\n");
-    static final private byte[] ET = OutputStream.getIsoBytes("ET\n");
-    static final private byte[] f = OutputStream.getIsoBytes("f\n");
-    static final private byte[] fStar = OutputStream.getIsoBytes("f*\n");
-    static final private byte[] G = OutputStream.getIsoBytes("G\n");
-    static final private byte[] g = OutputStream.getIsoBytes("g\n");
-    static final private byte[] gs = OutputStream.getIsoBytes("gs\n");
-    static final private byte[] h = OutputStream.getIsoBytes("h\n");
-    static final private byte[] i = OutputStream.getIsoBytes("i\n");
-    static final private byte[] ID = OutputStream.getIsoBytes("ID\n");
-    static final private byte[] j = OutputStream.getIsoBytes("j\n");
-    static final private byte[] J = OutputStream.getIsoBytes("J\n");
-    static final private byte[] K = OutputStream.getIsoBytes("K\n");
-    static final private byte[] k = OutputStream.getIsoBytes("k\n");
-    static final private byte[] l = OutputStream.getIsoBytes("l\n");
-    static final private byte[] m = OutputStream.getIsoBytes("m\n");
-    static final private byte[] M = OutputStream.getIsoBytes("M\n");
-    static final private byte[] n = OutputStream.getIsoBytes("n\n");
-    static final private byte[] q = OutputStream.getIsoBytes("q\n");
-    static final private byte[] Q = OutputStream.getIsoBytes("Q\n");
-    static final private byte[] re = OutputStream.getIsoBytes("re\n");
-    static final private byte[] rg = OutputStream.getIsoBytes("rg\n");
-    static final private byte[] RG = OutputStream.getIsoBytes("RG\n");
-    static final private byte[] ri = OutputStream.getIsoBytes("ri\n");
-    static final private byte[] S = OutputStream.getIsoBytes("S\n");
-    static final private byte[] s = OutputStream.getIsoBytes("s\n");
-    static final private byte[] scn = OutputStream.getIsoBytes("scn\n");
-    static final private byte[] SCN = OutputStream.getIsoBytes("SCN\n");
-    static final private byte[] sh = OutputStream.getIsoBytes("sh\n");
-    static final private byte[] Tc = OutputStream.getIsoBytes("Tc\n");
-    static final private byte[] Td = OutputStream.getIsoBytes("Td\n");
-    static final private byte[] TD = OutputStream.getIsoBytes("TD\n");
-    static final private byte[] Tf = OutputStream.getIsoBytes("Tf\n");
-    static final private byte[] TJ = OutputStream.getIsoBytes("TJ\n");
-    static final private byte[] Tj = OutputStream.getIsoBytes("Tj\n");
-    static final private byte[] TL = OutputStream.getIsoBytes("TL\n");
-    static final private byte[] Tm = OutputStream.getIsoBytes("Tm\n");
-    static final private byte[] Tr = OutputStream.getIsoBytes("Tr\n");
-    static final private byte[] Ts = OutputStream.getIsoBytes("Ts\n");
-    static final private byte[] TStar = OutputStream.getIsoBytes("T*\n");
-    static final private byte[] Tw = OutputStream.getIsoBytes("Tw\n");
-    static final private byte[] Tz = OutputStream.getIsoBytes("Tz\n");
-    static final private byte[] v = OutputStream.getIsoBytes("v\n");
-    static final private byte[] W = OutputStream.getIsoBytes("W\n");
-    static final private byte[] w = OutputStream.getIsoBytes("w\n");
-    static final private byte[] WStar = OutputStream.getIsoBytes("W*\n");
-    static final private byte[] y = OutputStream.getIsoBytes("y\n");
+    static final private byte[] B = ByteUtils.getIsoBytes("B\n");
+    static final private byte[] b = ByteUtils.getIsoBytes("b\n");
+    static final private byte[] BDC = ByteUtils.getIsoBytes("BDC\n");
+    static final private byte[] BI = ByteUtils.getIsoBytes("BI\n");
+    static final private byte[] BMC = ByteUtils.getIsoBytes("BMC\n");
+    static final private byte[] BStar = ByteUtils.getIsoBytes("B*\n");
+    static final private byte[] bStar = ByteUtils.getIsoBytes("b*\n");
+    static final private byte[] BT = ByteUtils.getIsoBytes("BT\n");
+    static final private byte[] c = ByteUtils.getIsoBytes("c\n");
+    static final private byte[] cm = ByteUtils.getIsoBytes("cm\n");
+    static final private byte[] cs = ByteUtils.getIsoBytes("cs\n");
+    static final private byte[] CS = ByteUtils.getIsoBytes("CS\n");
+    static final private byte[] d = ByteUtils.getIsoBytes("d\n");
+    static final private byte[] Do = ByteUtils.getIsoBytes("Do\n");
+    static final private byte[] EI = ByteUtils.getIsoBytes("EI\n");
+    static final private byte[] EMC = ByteUtils.getIsoBytes("EMC\n");
+    static final private byte[] ET = ByteUtils.getIsoBytes("ET\n");
+    static final private byte[] f = ByteUtils.getIsoBytes("f\n");
+    static final private byte[] fStar = ByteUtils.getIsoBytes("f*\n");
+    static final private byte[] G = ByteUtils.getIsoBytes("G\n");
+    static final private byte[] g = ByteUtils.getIsoBytes("g\n");
+    static final private byte[] gs = ByteUtils.getIsoBytes("gs\n");
+    static final private byte[] h = ByteUtils.getIsoBytes("h\n");
+    static final private byte[] i = ByteUtils.getIsoBytes("i\n");
+    static final private byte[] ID = ByteUtils.getIsoBytes("ID\n");
+    static final private byte[] j = ByteUtils.getIsoBytes("j\n");
+    static final private byte[] J = ByteUtils.getIsoBytes("J\n");
+    static final private byte[] K = ByteUtils.getIsoBytes("K\n");
+    static final private byte[] k = ByteUtils.getIsoBytes("k\n");
+    static final private byte[] l = ByteUtils.getIsoBytes("l\n");
+    static final private byte[] m = ByteUtils.getIsoBytes("m\n");
+    static final private byte[] M = ByteUtils.getIsoBytes("M\n");
+    static final private byte[] n = ByteUtils.getIsoBytes("n\n");
+    static final private byte[] q = ByteUtils.getIsoBytes("q\n");
+    static final private byte[] Q = ByteUtils.getIsoBytes("Q\n");
+    static final private byte[] re = ByteUtils.getIsoBytes("re\n");
+    static final private byte[] rg = ByteUtils.getIsoBytes("rg\n");
+    static final private byte[] RG = ByteUtils.getIsoBytes("RG\n");
+    static final private byte[] ri = ByteUtils.getIsoBytes("ri\n");
+    static final private byte[] S = ByteUtils.getIsoBytes("S\n");
+    static final private byte[] s = ByteUtils.getIsoBytes("s\n");
+    static final private byte[] scn = ByteUtils.getIsoBytes("scn\n");
+    static final private byte[] SCN = ByteUtils.getIsoBytes("SCN\n");
+    static final private byte[] sh = ByteUtils.getIsoBytes("sh\n");
+    static final private byte[] Tc = ByteUtils.getIsoBytes("Tc\n");
+    static final private byte[] Td = ByteUtils.getIsoBytes("Td\n");
+    static final private byte[] TD = ByteUtils.getIsoBytes("TD\n");
+    static final private byte[] Tf = ByteUtils.getIsoBytes("Tf\n");
+    static final private byte[] TJ = ByteUtils.getIsoBytes("TJ\n");
+    static final private byte[] Tj = ByteUtils.getIsoBytes("Tj\n");
+    static final private byte[] TL = ByteUtils.getIsoBytes("TL\n");
+    static final private byte[] Tm = ByteUtils.getIsoBytes("Tm\n");
+    static final private byte[] Tr = ByteUtils.getIsoBytes("Tr\n");
+    static final private byte[] Ts = ByteUtils.getIsoBytes("Ts\n");
+    static final private byte[] TStar = ByteUtils.getIsoBytes("T*\n");
+    static final private byte[] Tw = ByteUtils.getIsoBytes("Tw\n");
+    static final private byte[] Tz = ByteUtils.getIsoBytes("Tz\n");
+    static final private byte[] v = ByteUtils.getIsoBytes("v\n");
+    static final private byte[] W = ByteUtils.getIsoBytes("W\n");
+    static final private byte[] w = ByteUtils.getIsoBytes("w\n");
+    static final private byte[] WStar = ByteUtils.getIsoBytes("W*\n");
+    static final private byte[] y = ByteUtils.getIsoBytes("y\n");
 
     static private final PdfDeviceCs.Gray gray = new PdfDeviceCs.Gray();
     static private final PdfDeviceCs.Rgb rgb = new PdfDeviceCs.Rgb();
@@ -188,8 +233,8 @@ public class PdfCanvas {
         this(getPageStream(page), page.getResources(), page.getDocument());
         if (wrapOldContent) {
             // Wrap old content in q/Q in order not to get unexpected results because of the CTM
-            page.newContentStreamBefore().getOutputStream().writeBytes(OutputStream.getIsoBytes("q\n"));
-            contentStream.getOutputStream().writeBytes(OutputStream.getIsoBytes("Q\n"));
+            page.newContentStreamBefore().getOutputStream().writeBytes(ByteUtils.getIsoBytes("q\n"));
+            contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("Q\n"));
             if (page.getRotation() != 0 && !page.isIgnoreContentRotation()) {
                 applyRotation(page);
             }
@@ -471,7 +516,7 @@ public class PdfCanvas {
         document.checkShowTextIsoConformance(currentGs, resources);
         showTextInt(text);
         contentStream.getOutputStream()
-                .writeByte((byte) '\'')
+                .writeByte('\'')
                 .writeNewLine();
         return this;
     }
@@ -492,7 +537,7 @@ public class PdfCanvas {
                 .writeFloat(charSpacing);
         showTextInt(text);
         contentStream.getOutputStream()
-                .writeByte((byte) '"')
+                .writeByte('"')
                 .writeNewLine();
         // The " operator sets charSpace and wordSpace into graphics state
         // (cfr PDF reference v1.6, table 5.6)
@@ -723,7 +768,7 @@ public class PdfCanvas {
         float width = 0;
         for (int iter = from; iter <= to; iter++) {
             Glyph glyph = text.get(iter);
-            width += (glyph.getWidth() * fontSize + (glyph.getUnicode() != null && glyph.getUnicode() == ' ' ? wordSpacing : charSpacing)) * scaling;
+            width += (glyph.getWidth() * fontSize + (glyph.hasValidUnicode() && glyph.getUnicode() == ' ' ? wordSpacing : charSpacing)) * scaling;
         }
         return width;
     }
@@ -742,15 +787,15 @@ public class PdfCanvas {
         if (currentGs.getFont() == null)
             throw new PdfException(PdfException.FontAndSizeMustBeSetBeforeWritingAnyText, currentGs);
         document.checkShowTextIsoConformance(currentGs, resources);
-        contentStream.getOutputStream().writeBytes(PdfOutputStream.getIsoBytes("["));
+        contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("["));
         for (PdfObject obj : textArray) {
             if (obj.isString()) {
-                Utilities.writeEscapedString(contentStream.getOutputStream(), ((PdfString) obj).getValueBytes());
+                StreamUtil.writeEscapedString(contentStream.getOutputStream(), ((PdfString) obj).getValueBytes());
             } else if (obj.isNumber()) {
                 contentStream.getOutputStream().writeFloat(((PdfNumber) obj).getFloatValue());
             }
         }
-        contentStream.getOutputStream().writeBytes(PdfOutputStream.getIsoBytes("]"));
+        contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("]"));
         contentStream.getOutputStream().writeBytes(TJ);
         return this;
     }
@@ -818,7 +863,7 @@ public class PdfCanvas {
     }
 
     /**
-     * Appends a Bézier curve to the path, starting from the current point.
+     * Appends a B??zier curve to the path, starting from the current point.
      *
      * @param x2 x coordinate of the second control point.
      * @param y2 y coordinate of the second control point.
@@ -840,7 +885,7 @@ public class PdfCanvas {
     }
 
     /**
-     * Appends a Bézier curve to the path, starting from the current point.
+     * Appends a B??zier curve to the path, starting from the current point.
      *
      * @param x1 x coordinate of the first control point.
      * @param y1 y coordinate of the first control point.
@@ -1296,7 +1341,7 @@ public class PdfCanvas {
      */
     public PdfCanvas setLineDash(final float phase) {
         currentGs.setDashPattern(getDashPatternArray(phase));
-        contentStream.getOutputStream().writeByte((byte) '[').writeByte((byte) ']').writeSpace()
+        contentStream.getOutputStream().writeByte('[').writeByte(']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
         return this;
@@ -1316,7 +1361,7 @@ public class PdfCanvas {
      */
     public PdfCanvas setLineDash(final float unitsOn, final float phase) {
         currentGs.setDashPattern(getDashPatternArray(new float[]{unitsOn}, phase));
-        contentStream.getOutputStream().writeByte((byte) '[').writeFloat(unitsOn).writeByte((byte) ']').writeSpace()
+        contentStream.getOutputStream().writeByte('[').writeFloat(unitsOn).writeByte(']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
 
@@ -1338,8 +1383,8 @@ public class PdfCanvas {
      */
     public PdfCanvas setLineDash(final float unitsOn, final float unitsOff, final float phase) {
         currentGs.setDashPattern(getDashPatternArray(new float[]{unitsOn, unitsOff}, phase));
-        contentStream.getOutputStream().writeByte((byte) '[').writeFloat(unitsOn).writeSpace()
-                .writeFloat(unitsOff).writeByte((byte) ']').writeSpace()
+        contentStream.getOutputStream().writeByte('[').writeFloat(unitsOn).writeSpace()
+                .writeFloat(unitsOff).writeByte(']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
         return this;
@@ -1360,13 +1405,13 @@ public class PdfCanvas {
     public final PdfCanvas setLineDash(final float[] array, final float phase) {
         currentGs.setDashPattern(getDashPatternArray(array, phase));
         PdfOutputStream out = contentStream.getOutputStream();
-        out.writeByte((byte) '[');
+        out.writeByte('[');
         for (int iter = 0; iter < array.length; iter++) {
             out.writeFloat(array[iter]);
             if (iter < array.length - 1)
                 out.writeSpace();
         }
-        out.writeByte((byte) ']').writeSpace().writeFloat(phase).writeSpace().writeBytes(d);
+        out.writeByte(']').writeSpace().writeFloat(phase).writeSpace().writeBytes(d);
         return this;
     }
 
@@ -1727,7 +1772,7 @@ public class PdfCanvas {
      */
     public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f, boolean asInline) {
         document.checkIsoConformance(currentGs, IsoKey.GRAPHIC_STATE_ONLY, null);
-        if (image.getOriginalType() == Image.WMF) {
+        if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
             PdfXObject xObject = wmf.createPdfForm(document);
@@ -1769,7 +1814,7 @@ public class PdfCanvas {
      * @throws PdfException
      */
     public PdfXObject addImage(Image image, float x, float y, boolean asInline) {
-        if (image.getOriginalType() == Image.WMF) {
+        if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
             PdfXObject xObject = wmf.createPdfForm(document);
@@ -1799,7 +1844,7 @@ public class PdfCanvas {
      * @on error.
      */
     public PdfXObject addImage(Image image, float x, float y, float width, boolean asInline) {
-        if (image.getOriginalType() == Image.WMF) {
+        if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
             PdfXObject xObject = wmf.createPdfForm(document);
@@ -2025,7 +2070,7 @@ public class PdfCanvas {
      * @param tagReference reference to the tag from the document logical structure
      * @return current canvas
      */
-    public PdfCanvas openTag(PdfTagReference tagReference) {
+    public PdfCanvas openTag(TagReference tagReference) {
         if (tagReference.getRole() == null)
             return this;
         CanvasTag tag = new CanvasTag(tagReference.getRole(), tagReference.createNextMcid());
@@ -2291,13 +2336,13 @@ public class PdfCanvas {
             currentGs.setFillColor(newColor);
             PdfObject colorSpaceObject = newColor.getColorSpace().getPdfObject();
             if (colorSpaceObject instanceof PdfName) { // see CanvasGraphicState Fill/StrokeColorSpace field comments
-                currentGs.setFillColorSpace((PdfName) colorSpaceObject);
+                currentGs.setFillColorSpace(newColor.getColorSpace());
             }
         } else {
             currentGs.setStrokeColor(newColor);
             PdfObject colorSpaceObject = newColor.getColorSpace().getPdfObject();
             if (colorSpaceObject instanceof PdfName) { // see CanvasGraphicState Fill/StrokeColorSpace field comments
-                currentGs.setStrokeColorSpace((PdfName) colorSpaceObject);
+                currentGs.setStrokeColorSpace(newColor.getColorSpace());
             }
         }
     }

@@ -1,3 +1,47 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.kernel.PdfException;
@@ -552,7 +596,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfButtonFormField checkbox}
      */
     public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String name, String value) {
-        return createCheckBox(doc, rect, name, value, PdfButtonFormField.TYPE_CROSS);
+        return createCheckBox(doc, rect, name, value, TYPE_CROSS);
     }
 
     /**
@@ -572,10 +616,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         check.setFieldName(name);
         check.setValue(value);
         annot.setAppearanceState(new PdfName(value));
-        if (value.equals("Off")) {
-            value = "Yes";
-        }
-        check.drawCheckAppearance(rect.getWidth(), rect.getHeight(), value);
+        check.drawCheckAppearance(rect.getWidth(), rect.getHeight(), value.equals("Off") ? "Yes": value);
 
         return (PdfButtonFormField) check;
     }
@@ -870,10 +911,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             kids = new PdfArray();
         }
         kids.add(kid.getPdfObject());
-        PdfString kidName = kid.getFieldName();
-        if (kidName != null) {
-            kid.setFieldName(getFieldName().toUnicodeString() + "." + kidName.toUnicodeString());
-        }
 
         return put(PdfName.Kids, kids);
     }
@@ -913,12 +950,20 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the current field name, as a {@link PdfString}
      */
     public PdfString getFieldName() {
-        PdfString fieldName = getPdfObject().getAsString(PdfName.T);
-//        if (fieldName == null) {
-//            PdfFormField parentField = PdfFormField.makeFormField(getParent(), getDocument());
-//            fieldName = parentField.getFieldName();
-//        }
-        return fieldName;
+        String parentName = "";
+        PdfDictionary parent = getParent();
+        if (parent != null) {
+            PdfFormField parentField = PdfFormField.makeFormField(getParent(), getDocument());
+            PdfString pName = parentField.getFieldName();
+            if (pName != null) {
+                parentName = pName.toUnicodeString() + ".";
+            }
+        }
+        PdfString name = getPdfObject().getAsString(PdfName.T);
+        if (name != null) {
+            name = new PdfString(parentName + name.toUnicodeString());
+        }
+        return name;
     }
 
     /**
@@ -1016,7 +1061,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * If true, the field can contain multiple lines of text; if false, the field’s text is restricted to a single line.
+     * If true, the field can contain multiple lines of text; if false, the field???s text is restricted to a single line.
      *
      * @return whether the field can span over multiple lines.
      */
@@ -1191,7 +1236,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets default appearance string containing a sequence of valid page-content graphics or text state operators that
-     * define such properties as the field’s text size and color.
+     * define such properties as the field???s text size and color.
      *
      * @return the default appearance graphics, as a {@link PdfString}
      */
@@ -1201,7 +1246,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets default appearance string containing a sequence of valid page-content graphics or text state operators that
-     * define such properties as the field’s text size and color.
+     * define such properties as the field???s text size and color.
      *
      * @param <T>               an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param defaultAppearance a valid sequence of PDF content stream syntax
@@ -2171,12 +2216,19 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
         xObjectOn.getResources().addFont(getDocument(), getFont());
-        widget.setNormalAppearance(new PdfDictionary());
-        widget.getNormalAppearanceObject().put(new PdfName(value), xObjectOn.getPdfObject());
+        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize == 0 ? DEFAULT_FONT_SIZE : fontSize, xObjectOn.getResources()));
 
         xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
         xObjectOff.getResources().addFont(getDocument(), getFont());
-        widget.getNormalAppearanceObject().put(new PdfName("Off"), xObjectOff.getPdfObject());
+
+        PdfDictionary normalAppearance = new PdfDictionary();
+        normalAppearance.put(new PdfName(value), xObjectOn.getPdfObject());
+        normalAppearance.put(new PdfName("Off"), xObjectOff.getPdfObject());
+
+        PdfDictionary mk = new PdfDictionary();
+        mk.put(PdfName.CA, new PdfString(text));
+        widget.put(PdfName.MK, mk);
+        widget.setNormalAppearance(normalAppearance);
     }
 
     /**
@@ -2249,6 +2301,17 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     protected void drawCheckBox(PdfCanvas canvas, float width, float height, int fontSize, boolean on) {
         if (!on) {
+            return;
+        }
+
+        if (checkType == TYPE_CROSS) {
+            float offset = borderWidth * 2;
+            canvas.
+                    moveTo((width - height) / 2 + offset, height - offset).
+                    lineTo((width + height) / 2 - offset, offset).
+                    moveTo((width + height) / 2 - offset, height - offset).
+                    lineTo((width - height) / 2 + offset, offset).
+                    stroke();
             return;
         }
         PdfFont ufont = getFont();

@@ -1,14 +1,66 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.NotImplementedException;
-import com.itextpdf.io.font.*;
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.font.CFFFontSubset;
+import com.itextpdf.io.font.CMapEncoding;
+import com.itextpdf.io.font.CidFont;
+import com.itextpdf.io.font.CidFontProperties;
+import com.itextpdf.io.font.FontFactory;
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.cmap.CMapContentParser;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.io.util.TextUtil;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfLiteral;
@@ -18,8 +70,6 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfOutputStream;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -32,9 +82,14 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
-    private static final byte[] rotbits = {(byte) 0x80, (byte) 0x40, (byte) 0x20, (byte) 0x10, (byte) 0x08, (byte) 0x04, (byte) 0x02, (byte) 0x01};
+    private static final long serialVersionUID = -8033620300884193397L;
+
+	private static final byte[] rotbits = {(byte) 0x80, (byte) 0x40, (byte) 0x20, (byte) 0x10, (byte) 0x08, (byte) 0x04, (byte) 0x02, (byte) 0x01};
 
     protected static final int CidFontType0 = 0;
     protected static final int CidFontType2 = 2;
@@ -100,12 +155,12 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         String cmap = fontDictionary.getAsName(PdfName.Encoding).getValue();
         if (PdfEncodings.IDENTITY_H.equals(cmap) || PdfEncodings.IDENTITY_V.equals(cmap)) {
             PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
-            CMapToUnicode toUnicodeCMap = FontUtils.processToUnicode(toUnicode);
+            CMapToUnicode toUnicodeCMap = FontUtil.processToUnicode(toUnicode);
             if (toUnicodeCMap == null) {
                 String uniMap = getUniMapFromOrdering(getOrdering(cidFont));
-                toUnicodeCMap = FontUtils.getToUnicodeFromUniMap(uniMap);
+                toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(uniMap);
                 if (toUnicodeCMap == null) {
-                    toUnicodeCMap = FontUtils.getToUnicodeFromUniMap(PdfEncodings.IDENTITY_H);
+                    toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(PdfEncodings.IDENTITY_H);
                     Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
                     logger.error(MessageFormat.format(LogMessageConstant.UNKNOWN_CMAP, uniMap));
                 }
@@ -129,14 +184,14 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                     cmapEncoding = null;
                 }
             } else {
-                CMapToUnicode toUnicodeCMap = FontUtils.getToUnicodeFromUniMap(uniMap);
+                CMapToUnicode toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(uniMap);
                 if (toUnicodeCMap != null) {
                     fontProgram = DocTrueTypeFont.createFontProgram(cidFont, toUnicodeCMap);
                     cmapEncoding = new CMapEncoding(cmap, uniMap);
                 }
             }
             if (fontProgram == null) {
-                throw new PdfException(String.format("Cannot recognise document font %s with %s encoding", cidFontName, cmap));
+                throw new PdfException(MessageFormat.format("Cannot recognise document font {0} with {1} encoding", cidFontName, cmap));
             }
             cidFontType = CidFontType0;
         }
@@ -182,15 +237,15 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 Glyph glyph = fontProgram.getGlyph(b[k] & 0xff);
                 if (glyph != null && !longTag.containsKey(glyph.getCode())) {
                     longTag.put(glyph.getCode(), new int[]{glyph.getCode(), glyph.getWidth(),
-                            glyph.getUnicode() != null ? glyph.getUnicode() : 0});
+                            glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
                     glyphs[i++] = (char)cmapEncoding.getCmapCode(glyph.getCode());
                 }
             }
         } else {
             for (int k = 0; k < len; ++k) {
                 int val;
-                if (Utilities.isSurrogatePair(text, k)) {
-                    val = Utilities.convertToUtf32(text, k);
+                if (TextUtil.isSurrogatePair(text, k)) {
+                    val = TextUtil.convertToUtf32(text, k);
                     k++;
                 } else {
                     val = text.charAt(k);
@@ -201,7 +256,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 }
                 if (!longTag.containsKey(glyph.getCode())) {
                     longTag.put(glyph.getCode(), new int[]{glyph.getCode(), glyph.getWidth(),
-                            glyph.getUnicode() != null ? glyph.getUnicode() : 0});
+                            glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
                 }
                 glyphs[i++] = (char)cmapEncoding.getCmapCode(glyph.getCode());
             }
@@ -219,14 +274,13 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     @Override
     public byte[] convertToBytes(GlyphLine glyphLine) {
         if (glyphLine != null) {
-            char[] glyphs = new char[glyphLine.glyphs.size()];
-            for (int i = 0; i < glyphLine.glyphs.size(); i++) {
-                Glyph glyph = glyphLine.glyphs.get(i);
+            char[] glyphs = new char[glyphLine.size()];
+            for (int i = 0; i < glyphLine.size(); i++) {
+                Glyph glyph = glyphLine.get(i);
                 glyphs[i] = (char)cmapEncoding.getCmapCode(glyph.getCode());
                 int code = glyph.getCode();
                 if (longTag.get(code) == null) {
-                    Integer uniChar = glyph.getUnicode();
-                    longTag.put(code, new int[]{code, glyph.getWidth(), uniChar != null ? uniChar : 0});
+                    longTag.put(code, new int[]{code, glyph.getWidth(), glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
                 }
             }
 
@@ -245,7 +299,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     public byte[] convertToBytes(Glyph glyph) {
         int code = glyph.getCode();
         if (longTag.get(code) == null) {
-            longTag.put(code, new int[]{code, glyph.getWidth(), glyph.getUnicode() != null ? glyph.getUnicode() : 0});
+            longTag.put(code, new int[]{code, glyph.getWidth(), glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
         }
         String s = new String(new char[]{(char) glyph.getCode()}, 0, 1);
         try {
@@ -263,12 +317,12 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             int code = glyph.getCode();
             bytes.append((char)cmapEncoding.getCmapCode(glyph.getCode()));
             if (longTag.get(code) == null) {
-                longTag.put(code, new int[]{code, glyph.getWidth(), glyph.getUnicode() != null ? glyph.getUnicode() : 0});
+                longTag.put(code, new int[]{code, glyph.getWidth(), glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
             }
         }
         //TODO improve converting chars to hexed string
         try {
-            Utilities.writeHexedString(stream, bytes.toString().getBytes(PdfEncodings.UnicodeBigUnmarked));
+            StreamUtil.writeHexedString(stream, bytes.toString().getBytes(PdfEncodings.UnicodeBigUnmarked));
         } catch (UnsupportedEncodingException e) {
             throw new PdfException("PdfType0Font", e);
         }
@@ -276,7 +330,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
     @Override
     public void writeText(String text, PdfOutputStream stream) {
-        Utilities.writeHexedString(stream, convertToBytes(text));
+        StreamUtil.writeHexedString(stream, convertToBytes(text));
     }
 
     @Override
@@ -295,8 +349,8 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             } else {
                 for (int k = 0; k < len; ++k) {
                     int ch;
-                    if (Utilities.isSurrogatePair(content, k)) {
-                        ch = Utilities.convertToUtf32(content, k);
+                    if (TextUtil.isSurrogatePair(content, k)) {
+                        ch = TextUtil.convertToUtf32(content, k);
                         k++;
                     } else {
                         ch = content.charAt(k);
@@ -320,8 +374,8 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             } else {
                 for (int k = 0; k < len; ++k) {
                     int val;
-                    if (Utilities.isSurrogatePair(content, k)) {
-                        val = Utilities.convertToUtf32(content, k);
+                    if (TextUtil.isSurrogatePair(content, k)) {
+                        val = TextUtil.convertToUtf32(content, k);
                         k++;
                     } else {
                         val = content.charAt(k);
@@ -418,7 +472,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             if (style.length() > 0) {
                 name += "-" + style;
             }
-            getPdfObject().put(PdfName.BaseFont, new PdfName(String.format("%s-%s", name, cmapEncoding.getCmapName())));
+            getPdfObject().put(PdfName.BaseFont, new PdfName(MessageFormat.format("{0}-{1}", name, cmapEncoding.getCmapName())));
             getPdfObject().put(PdfName.Encoding, new PdfName(cmapEncoding.getCmapName()));
             PdfDictionary fontDescriptor = getFontDescriptor(name);
             int[][] metrics = longTag.values().toArray(new int[0][]);
@@ -448,7 +502,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 fontStream.put(PdfName.Subtype, new PdfName("CIDFontType0C"));
                 // The PDF Reference manual advises to add -cmap in case CIDFontType0
                 getPdfObject().put(PdfName.BaseFont,
-                        new PdfName(String.format("%s-%s", fontName, cmapEncoding.getCmapName())));
+                        new PdfName(MessageFormat.format("{0}-{1}", fontName, cmapEncoding.getCmapName())));
                 fontDescriptor.put(PdfName.FontFile3, fontStream);
             } else {
                 byte[] ttfBytes;

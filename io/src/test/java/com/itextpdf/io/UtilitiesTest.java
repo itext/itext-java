@@ -1,6 +1,6 @@
 package com.itextpdf.io;
 
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -12,7 +12,7 @@ public class UtilitiesTest {
     public void testShortener() {
         byte[] src = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         byte[] dest = new byte[]{1, 2, 3, 4, 5};
-        byte[] test = Utilities.shortenArray(src, 5);
+        byte[] test = ArrayUtil.shortenArray(src, 5);
 
         Assert.assertArrayEquals(dest, test);
     }

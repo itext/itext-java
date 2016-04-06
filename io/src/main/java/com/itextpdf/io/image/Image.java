@@ -1,3 +1,47 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
@@ -12,22 +56,11 @@ import org.slf4j.LoggerFactory;
 
 public abstract class Image {
 
-    public static final int JPEG = 1;
-    public static final int PNG = 2;
-    public static final int GIF = 3;
-    public static final int BMP = 4;
-    public static final int TIFF = 5;
-    public static final int WMF = 6;
-    public static final int PS = 7;
-    public static final int JPEG2000 = 8;
-    public static final int JBIG2 = 9;
-    public static final int RAW = 10;
-
     protected URL url;
 
     protected int[] transparency;
 
-    protected int originalType;
+    protected ImageType originalType;
 
     protected float width;
 
@@ -73,12 +106,12 @@ public abstract class Image {
 
     protected Long mySerialId = getSerialId();
 
-    protected Image(URL url, int type) {
+    protected Image(URL url, ImageType type) {
         this.url = url;
         this.originalType = type;
     }
 
-    protected Image(byte[] bytes, int type) {
+    protected Image(byte[] bytes, ImageType type) {
         this.data = bytes;
         this.originalType = type;
     }
@@ -156,7 +189,7 @@ public abstract class Image {
         this.deflated = deflated;
     }
 
-    public int getOriginalType() {
+    public ImageType getOriginalType() {
         return originalType;
     }
 

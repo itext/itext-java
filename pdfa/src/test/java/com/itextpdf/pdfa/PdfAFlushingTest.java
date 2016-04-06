@@ -2,11 +2,9 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.io.image.ImageFactory;
-import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -50,7 +48,7 @@ public class PdfAFlushingTest extends ITextTest{
         PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.setXmpMetadata();
+        doc.createXmpMetadata();
 
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         PdfImageXObject imageXObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
@@ -75,7 +73,7 @@ public class PdfAFlushingTest extends ITextTest{
         PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.setXmpMetadata();
+        doc.createXmpMetadata();
 
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         PdfImageXObject imageXObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
@@ -101,7 +99,7 @@ public class PdfAFlushingTest extends ITextTest{
         PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.setXmpMetadata();
+        doc.createXmpMetadata();
 
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         PdfImageXObject imageXObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
@@ -127,7 +125,7 @@ public class PdfAFlushingTest extends ITextTest{
 
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        pdfDocument.setXmpMetadata();
+        pdfDocument.createXmpMetadata();
         pdfDocument.addNewPage();
 
         PdfDictionary unusedDictionary = new PdfDictionary();

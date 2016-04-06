@@ -1,12 +1,58 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,12 +61,22 @@ import java.util.Hashtable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PdfWriter extends PdfOutputStream {
+import static com.itextpdf.io.source.ByteUtils.getIsoBytes;
+
+public class PdfWriter extends PdfOutputStream implements Serializable {
+
+    private static final long serialVersionUID = -6875544505477707103L;
 
     private static final byte[] obj = getIsoBytes(" obj\n");
     private static final byte[] endobj = getIsoBytes("\nendobj\n");
+
     private HashMap<ByteStore, PdfIndirectReference> streamMap = new HashMap<>();
     private final HashMap<Integer, Integer> serialized = new HashMap<>();
+
+    // For internal usage only
+    private PdfOutputStream duplicateStream = null;
+    // For internal usage only
+    private byte[] duplicateContentBuffer = null;
 
     /**
      * Indicates if the writer copy objects in a smart mode. If so PdfDictionary and PdfStream will be hashed
@@ -31,7 +87,7 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Indicates if to use full compression (using object streams).
      */
-    protected boolean fullCompression = false;
+    protected Boolean fullCompression;
 
     protected int compressionLevel = DEFAULT_COMPRESSION;
 
@@ -60,7 +116,7 @@ public class PdfWriter extends PdfOutputStream {
      * @return true if to use full compression, false otherwise.
      */
     public boolean isFullCompression() {
-        return fullCompression;
+        return fullCompression != null ? fullCompression : false;
     }
 
     /**
@@ -108,6 +164,52 @@ public class PdfWriter extends PdfOutputStream {
         return this;
     }
 
+    @Override
+    public void write(int b) throws java.io.IOException {
+        super.write(b);
+        if (duplicateStream != null) {
+            duplicateStream.write(b);
+        }
+    }
+
+    @Override
+    public void write(byte[] b) throws java.io.IOException {
+        super.write(b);
+        if (duplicateStream != null) {
+            duplicateStream.write(b);
+        }
+    }
+
+    @Override
+    public void write(byte[] b, int off, int len) throws java.io.IOException {
+        super.write(b, off, len);
+        if (duplicateStream != null) {
+            duplicateStream.write(b, off, len);
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        super.close();
+        if (duplicateStream != null) {
+            duplicateStream.close();
+        }
+    }
+
+    /**
+     * This method activates debug mode with pdfDebug tool.
+     * It causes additional overhead of duplicating document bytes into memory, so use it careful.
+     * NEVER use it in production or in any other cases except pdfDebug.
+     *
+     * NOTE that this method MUST be called right after the constructor and before passing the {@link PdfWriter}
+     * instance to the document for correct debugging.
+     * @return this {@link PdfWriter}
+     */
+    public PdfWriter setDebugMode() {
+        duplicateStream = new PdfOutputStream(new ByteArrayOutputStream());
+        return this;
+    }
+
     /**
      * Gets the current object stream.
      *
@@ -116,7 +218,7 @@ public class PdfWriter extends PdfOutputStream {
      * @throws PdfException
      */
     protected PdfObjectStream getObjectStream() throws IOException {
-        if (!fullCompression)
+        if (!isFullCompression())
             return null;
         if (objectStream == null) {
             objectStream = new PdfObjectStream(document);
@@ -137,7 +239,7 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
         PdfIndirectReference indirectReference = pdfObject.getIndirectReference();
-        if (fullCompression && canBeInObjStm) {
+        if (isFullCompression() && canBeInObjStm) {
             PdfObjectStream objectStream = getObjectStream();
             objectStream.addObject(pdfObject);
         } else {
@@ -269,7 +371,7 @@ public class PdfWriter extends PdfOutputStream {
      * @throws PdfException
      */
     protected void writeHeader() {
-        writeByte((byte) '%').
+        writeByte('%').
                 writeString(document.getPdfVersion().toString()).
                 writeString("\n%\u00e2\u00e3\u00cf\u00d3\n");
     }
@@ -343,6 +445,17 @@ public class PdfWriter extends PdfOutputStream {
         return result;
     }
 
+    /**
+     * This method is invoked while deserialization
+     */
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.outputStream = new BufferedOutputStream(new ByteArrayOutputStream());
+        duplicateStream = new PdfOutputStream(new ByteArrayOutputStream());
+        write(duplicateContentBuffer);
+        duplicateContentBuffer = null;
+    }
+
     private PdfObject smartCopyObject(PdfObject object) {
         ByteStore streamKey;
         if (object.isStream()) {
@@ -362,6 +475,23 @@ public class PdfWriter extends PdfOutputStream {
         }
 
         return null;
+    }
+
+    /**
+     * This method is invoked while serialization
+     */
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+        duplicateContentBuffer = getDebugBytes();
+        out.defaultWriteObject();
+    }
+
+    private byte[] getDebugBytes() throws IOException {
+        if (duplicateStream != null) {
+            duplicateStream.flush();
+            return ((ByteArrayOutputStream)(duplicateStream.getOutputStream())).toByteArray();
+        } else {
+            return null;
+        }
     }
 
     private static boolean checkTypeOfPdfDictionary(PdfObject dictionary, PdfName expectedType) {

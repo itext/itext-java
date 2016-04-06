@@ -1,8 +1,55 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.util.StreamUtil;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -13,6 +60,10 @@ import java.util.Map;
 public final class BmpImageHelper {
 
     private static class BmpParameters {
+        public BmpParameters(BmpImage image) {
+            this.image = image;
+        }
+
         BmpImage image;
         int width;
         int height;
@@ -68,24 +119,19 @@ public final class BmpImageHelper {
     private static final int BI_BITFIELDS = 3;
 
     public static void processImage(Image image, ByteArrayOutputStream stream) {
-        if (image.getOriginalType() != Image.BMP)
+        if (image.getOriginalType() != ImageType.BMP)
             throw new IllegalArgumentException("BMP image expected");
         if (stream == null) {
             stream = new ByteArrayOutputStream();
         }
-        BmpParameters bmp = new BmpParameters();
-        bmp.image = (BmpImage)image;
-        InputStream bmpStream = null;
+        BmpParameters bmp = new BmpParameters((BmpImage)image);
+        InputStream bmpStream;
         try {
             if (bmp.image.getUrl() != null) {
-                bmpStream = bmp.image.getUrl().openStream();
-                int read;
-                byte[] bytes = new byte[4096];
-                while ((read = bmpStream.read(bytes)) != -1) {
-                    stream.write(bytes, 0, read);
-                }
+                RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(bmp.image.getUrl()));
+                StreamUtil.transferBytes(raf, stream);
+                raf.close();
                 image.imageSize = stream.toByteArray().length;
-                bmpStream.close();
                 bmpStream = new ByteArrayInputStream(stream.toByteArray());
             } else {
                 bmpStream = new ByteArrayInputStream(bmp.image.getData());
@@ -99,12 +145,6 @@ public final class BmpImageHelper {
             }
         } catch (java.io.IOException e){
             throw new IOException(IOException.BmpImageException, e);
-        } finally {
-            if (bmpStream != null) {
-                try {
-                    bmpStream.close();
-                } catch (java.io.IOException ignored) { }
-            }
         }
         updateStream(bmp, stream);
     }
@@ -565,24 +605,26 @@ public final class BmpImageHelper {
                 switch ((int) bmp.compression) {
                     case BI_RGB:
                         read4Bit(4, bmp);
-                        return true;
+                        break;
                     case BI_RLE4:
                         readRLE4(bmp);
-                        return true;
+                        break;
                     default:
                         throw new IOException(IOException.InvalidBmpFileCompression);
                 }
+                return true;
             case VERSION_3_8_BIT:
                 switch ((int) bmp.compression) {
                     case BI_RGB:
                         read8Bit(4, bmp);
-                        return true;
+                        break;
                     case BI_RLE8:
                         readRLE8(bmp);
-                        return true;
+                        break;
                     default:
                         throw new IOException(IOException.InvalidBmpFileCompression);
                 }
+                return true;
             case VERSION_3_24_BIT:
                 // 24-bit images are not compressed
                 bdata = new byte[bmp.width * bmp.height * 3];
@@ -602,24 +644,26 @@ public final class BmpImageHelper {
                 switch ((int) bmp.compression) {
                     case BI_RGB:
                         read4Bit(4, bmp);
-                        return true;
+                        break;
                     case BI_RLE4:
                         readRLE4(bmp);
-                        return true;
+                        break;
                     default:
                         throw new IOException(IOException.InvalidBmpFileCompression);
                 }
+                return true;
             case VERSION_4_8_BIT:
                 switch ((int) bmp.compression) {
                     case BI_RGB:
                         read8Bit(4, bmp);
-                        return true;
+                        break;
                     case BI_RLE8:
                         readRLE8(bmp);
-                        return true;
+                        break;
                     default:
                         throw new IOException(IOException.InvalidBmpFileCompression);
                 }
+                return true;
             case VERSION_4_16_BIT:
                 read1632Bit(false, bmp);
                 return true;

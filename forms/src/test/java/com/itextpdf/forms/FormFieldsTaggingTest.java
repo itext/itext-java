@@ -7,7 +7,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -174,8 +174,8 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
 
         PdfButtonFormField pushButton = PdfFormField.createPushButton(pdfDoc, new Rectangle(36, 650, 40, 20), "push", "Capcha");
 
-        PdfTagStructure tagStructure = pdfDoc.getTagStructure();
-        tagStructure.moveToKid(PdfName.Div);
+        TagTreePointer tagPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+        tagPointer.moveToKid(PdfName.Div);
         acroForm.addField(pushButton);
 
         pdfDoc.close();

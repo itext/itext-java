@@ -1,18 +1,65 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.io.source.OutputStream;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.pdf.filters.FlateDecodeFilter;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.security.cert.Certificate;
 import java.util.Map;
-import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
 
-public class PdfOutputStream extends OutputStream<PdfOutputStream> {
+public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Serializable{
+
+    private static final long serialVersionUID = -548180479472231600L;
 
     //TODO review location and use of the constants
     /**
@@ -94,26 +141,26 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     /**
      * A possible compression level.
      */
-    public static final int DEFAULT_COMPRESSION = Deflater.DEFAULT_COMPRESSION;
+    public static final int DEFAULT_COMPRESSION = java.util.zip.Deflater.DEFAULT_COMPRESSION;
     /**
      * A possible compression level.
      */
-    public static final int NO_COMPRESSION = Deflater.NO_COMPRESSION;
+    public static final int NO_COMPRESSION = java.util.zip.Deflater.NO_COMPRESSION;
     /**
      * A possible compression level.
      */
-    public static final int BEST_SPEED = Deflater.BEST_SPEED;
+    public static final int BEST_SPEED = java.util.zip.Deflater.BEST_SPEED;
     /**
      * A possible compression level.
      */
-    public static final int BEST_COMPRESSION = Deflater.BEST_COMPRESSION;
+    public static final int BEST_COMPRESSION = java.util.zip.Deflater.BEST_COMPRESSION;
 
-    private static final byte[] stream = getIsoBytes("stream\n");
-    private static final byte[] endstream = getIsoBytes("\nendstream");
-    private static final byte[] openDict = getIsoBytes("<<");
-    private static final byte[] closeDict = getIsoBytes(">>");
-    private static final byte[] endIndirect = getIsoBytes(" R");
-    private static final byte[] endIndirectWithZeroGenNr = getIsoBytes(" 0 R");
+    private static final byte[] stream = ByteUtils.getIsoBytes("stream\n");
+    private static final byte[] endstream = ByteUtils.getIsoBytes("\nendstream");
+    private static final byte[] openDict = ByteUtils.getIsoBytes("<<");
+    private static final byte[] closeDict = ByteUtils.getIsoBytes(">>");
+    private static final byte[] endIndirect = ByteUtils.getIsoBytes(" R");
+    private static final byte[] endIndirectWithZeroGenNr = ByteUtils.getIsoBytes(" 0 R");
 
     /**
      * Document associated with PdfOutputStream.
@@ -123,6 +170,13 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
      * Contains the business logic for cryptography.
      */
     protected PdfEncryption crypto;
+
+    /**
+     * Do not use this constructor. This is only for internal usage.
+     */
+    private PdfOutputStream() {
+        super();
+    }
 
     public PdfOutputStream(java.io.OutputStream outputStream) {
         super(outputStream);
@@ -217,7 +271,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     }
 
     protected void write(PdfArray pdfArray) {
-        writeByte((byte) '[');
+        writeByte('[');
         for (int i = 0; i < pdfArray.size(); i++) {
             PdfObject value = pdfArray.get(i, false);
             PdfIndirectReference indirectReference;
@@ -229,7 +283,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             if (i < pdfArray.size() - 1)
                 writeSpace();
         }
-        writeByte((byte) ']');
+        writeByte(']');
     }
 
     protected void write(PdfDictionary pdfDictionary) {
@@ -290,19 +344,19 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     protected void write(PdfString pdfString) {
         pdfString.encrypt(crypto);
         if (pdfString.isHexWriting()) {
-            writeByte((byte) '<');
+            writeByte('<');
             writeBytes(pdfString.getInternalContent());
-            writeByte((byte) '>');
+            writeByte('>');
         } else {
-            writeByte((byte) '(');
+            writeByte('(');
             writeBytes(pdfString.getInternalContent());
-            writeByte((byte) ')');
+            writeByte(')');
         }
     }
 
 
     protected void write(PdfName name) {
-        writeByte((byte) '/');
+        writeByte('/');
         writeBytes(name.getInternalContent());
     }
 
@@ -341,11 +395,9 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 if (crypto != null && !crypto.isEmbeddedFilesOnly()) {
                     fout = ose = crypto.getEncryptionStream(fout);
                 }
-                Deflater deflater = null;
                 if (toCompress && (allowCompression || userDefinedCompression)) {
                     updateCompressionFilter(pdfStream);
-                    deflater = new Deflater(pdfStream.getCompressionLevel());
-                    fout = def = new DeflaterOutputStream(fout, deflater, 0x8000);
+                    fout = def = new DeflaterOutputStream(fout, pdfStream.getCompressionLevel(), 0x8000);
                 }
                 write((PdfDictionary) pdfStream);
                 writeBytes(PdfOutputStream.stream);
@@ -359,7 +411,6 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 }
                 if (def != null) {
                     def.finish();
-                    deflater.end();
                 }
                 if (ose != null) {
                     ose.finish();
@@ -387,8 +438,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                     if (toCompress && !containsFlateFilter(pdfStream) && (allowCompression || userDefinedCompression)) { // compress
                         updateCompressionFilter(pdfStream);
                         byteArrayStream = new ByteArrayOutputStream();
-                        Deflater deflater = new Deflater(pdfStream.getCompressionLevel());
-                        DeflaterOutputStream zip = new DeflaterOutputStream(byteArrayStream, deflater);
+                        DeflaterOutputStream zip = new DeflaterOutputStream(byteArrayStream, pdfStream.getCompressionLevel());
                         if (pdfStream instanceof PdfObjectStream) {
                             PdfObjectStream objectStream = (PdfObjectStream) pdfStream;
                             ((ByteArrayOutputStream) objectStream.getIndexStream().getOutputStream()).writeTo(zip);
@@ -399,7 +449,6 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                         }
 
                         zip.close();
-                        deflater.end();
                     } else {
                         if (pdfStream instanceof PdfObjectStream) {
                             PdfObjectStream objectStream = (PdfObjectStream) pdfStream;

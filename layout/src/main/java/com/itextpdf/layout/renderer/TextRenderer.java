@@ -1,3 +1,47 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.font.FontMetrics;
@@ -15,7 +59,7 @@ import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Property;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.hyphenation.Hyphenation;
@@ -29,13 +73,12 @@ import com.itextpdf.layout.splitting.ISplitCharacters;
 
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
- * object. It will draw the glyphs of the textual content on the {@link DrawingContext}.
+ * object. It will draw the glyphs of the textual content on the {@link DrawContext}.
  */
 public class TextRenderer extends AbstractRenderer {
 
@@ -131,8 +174,13 @@ public class TextRenderer extends AbstractRenderer {
 
         TextLayoutResult result = null;
 
+        // true in situations like "\nHello World"
+        boolean isSplitForcedByImmediateNewLine = false;
+        // true in situations like "Hello\nWorld"
+        boolean isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol = false;
+
         while (currentTextPos < text.end) {
-            if (noPrint(text.glyphs.get(currentTextPos))) {
+            if (noPrint(text.get(currentTextPos))) {
                 currentTextPos++;
                 continue;
             }
@@ -147,21 +195,27 @@ public class TextRenderer extends AbstractRenderer {
 
             for (int ind = currentTextPos; ind < text.end; ind++) {
                 if (isNewLine(text, ind)) {
+                    isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol = true;
                     firstCharacterWhichExceedsAllowedWidth = ind + 1;
+                    if (text.start == currentTextPos) {
+                        isSplitForcedByImmediateNewLine = true;
+                        // Notice that in that case we do not need to ignore the new line symbol ('\n')
+                        isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol = false;
+                    }
                     break;
                 }
 
-                Glyph currentGlyph = text.glyphs.get(ind);
+                Glyph currentGlyph = text.get(ind);
                 if (noPrint(currentGlyph))
                     continue;
 
-                if (tabAnchorCharacter != null && tabAnchorCharacter == text.glyphs.get(ind).getUnicode().intValue()) {
+                if (tabAnchorCharacter != null && tabAnchorCharacter == text.get(ind).getUnicode().intValue()) {
                     tabAnchorCharacterPosition = currentLineWidth + nonBreakablePartFullWidth;
                     tabAnchorCharacter = null;
                 }
 
                 float glyphWidth = getCharWidth(currentGlyph, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
-                float xAdvance = previousCharPos != -1 ? scaleXAdvance(text.glyphs.get(previousCharPos).getXAdvance(), fontSize, hScale) / TEXT_SPACE_COEFF : 0;
+                float xAdvance = previousCharPos != -1 ? scaleXAdvance(text.get(previousCharPos).getXAdvance(), fontSize, hScale) / TEXT_SPACE_COEFF : 0;
                 if ((nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition) > layoutBox.getWidth() - currentLineWidth && firstCharacterWhichExceedsAllowedWidth == -1) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
                 }
@@ -184,7 +238,7 @@ public class TextRenderer extends AbstractRenderer {
 
                 if (splitCharacters.isSplitCharacter(text, ind) || ind + 1 == text.end ||
                         splitCharacters.isSplitCharacter(text, ind + 1) &&
-                                (Character.isWhitespace(text.glyphs.get(ind + 1).getUnicode()) || Character.isSpaceChar(text.glyphs.get(ind + 1).getUnicode()))) {
+                                (Character.isWhitespace(text.get(ind + 1).getUnicode()) || Character.isSpaceChar(text.get(ind + 1).getUnicode()))) {
                     nonBreakablePartEnd = ind;
                     break;
                 }
@@ -236,7 +290,7 @@ public class TextRenderer extends AbstractRenderer {
                                         }
                                         line.end = Math.max(line.end, currentTextPos + pre.length());
                                         GlyphLine lineCopy = line.copy(line.start, line.end);
-                                        lineCopy.glyphs.add(font.getGlyph(hyphenationConfig.getHyphenSymbol()));
+                                        lineCopy.add(font.getGlyph(hyphenationConfig.getHyphenSymbol()));
                                         lineCopy.end++;
                                         line = lineCopy;
 
@@ -255,20 +309,28 @@ public class TextRenderer extends AbstractRenderer {
                         }
                     }
 
-                    if (nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) {
+                    if ((nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) || (isSplitForcedByImmediateNewLine)) {
                         // if the word is too long for a single line we will have to split it
                         wordSplit = true;
                         if (line.start == -1) {
                             line.start = currentTextPos;
                         }
-                        line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth);
-                        currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
-                        currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
-                        currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
-                        currentLineWidth += nonBreakablePartWidthWhichDoesNotExceedAllowedWidth;
                         currentTextPos = firstCharacterWhichExceedsAllowedWidth;
-                    }
+                        line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth);
+                        if (nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) {
+                            currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
+                            currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
+                            currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
+                            currentLineWidth += nonBreakablePartWidthWhichDoesNotExceedAllowedWidth;
 
+                        } else {
+                            // process empty line (e.g. '\n')
+                            currentLineAscender = ascender;
+                            currentLineDescender = descender;
+                            currentLineHeight = (currentLineAscender - currentLineDescender) * fontSize / TEXT_SPACE_COEFF + textRise;
+                            currentLineWidth += getCharWidth(line.get(0), fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
+                        }
+                    }
                     if (line.end <= 0) {
                         result = new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
                     } else {
@@ -302,11 +364,22 @@ public class TextRenderer extends AbstractRenderer {
             applyMargins(occupiedArea.getBBox(), true);
 
             if (result != null) {
-                TextRenderer[] split = split(currentTextPos);
-                if (split[1].length() > 0 && split[1].charAt(0) != null && split[1].charAt(0) == '\n')
+                TextRenderer[] split;
+                if (isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol) {
+                    // ignore '\n'
+                    split = split(currentTextPos+1);
+                } else {
+                    split = split(currentTextPos);
+                }
+                // if (split[1].length() > 0 && split[1].charAt(0) != null && split[1].charAt(0) == '\n') {
+                if (isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol) {
                     result.setSplitForcedByNewline(true);
+                }
                 result.setSplitRenderer(split[0]);
-                result.setOverflowRenderer(split[1]);
+                // no sense to process empty renderer
+                if (split[1].text.start != split[1].text.end) {
+                    result.setOverflowRenderer(split[1]);
+                }
             } else {
                 result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
             }
@@ -326,8 +399,8 @@ public class TextRenderer extends AbstractRenderer {
                 Collection<Character.UnicodeScript> supportedScripts = TypographyUtils.getSupportedScripts();
                 Map<Character.UnicodeScript, Integer> scriptFrequency = new EnumMap<>(Character.UnicodeScript.class);
                 for (int i = text.start; i < text.end; i++) {
-                    Integer unicode = text.get(i).getUnicode();
-                    Character.UnicodeScript glyphScript = unicode != null ? Character.UnicodeScript.of(unicode) : null;
+                    int unicode = text.get(i).getUnicode();
+                    Character.UnicodeScript glyphScript = unicode > -1 ? Character.UnicodeScript.of(unicode) : null;
                     if (glyphScript != null) {
                         if (scriptFrequency.containsKey(glyphScript)) {
                             scriptFrequency.put(glyphScript, scriptFrequency.get(glyphScript) + 1);
@@ -372,17 +445,17 @@ public class TextRenderer extends AbstractRenderer {
         PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
         boolean isArtifact = false;
-        PdfTagStructure tagStructure = null;
+        TagTreePointer tagPointer = null;
         IAccessibleElement accessibleElement = null;
         if (isTagged) {
             accessibleElement = (IAccessibleElement) getModelElement();
             PdfName role = accessibleElement.getRole();
             if (role != null && !PdfName.Artifact.equals(role)) {
-                tagStructure = document.getTagStructure();
-                if (!document.getTagStructure().isConnectedToTag(accessibleElement)) {
+                tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
+                if (!tagPointer.isElementConnectedToTag(accessibleElement)) {
                     AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
                 }
-                tagStructure.addTag(accessibleElement, true);
+                tagPointer.addTag(accessibleElement, true);
             } else {
                 isTagged = false;
                 if (PdfName.Artifact.equals(role)) {
@@ -419,7 +492,7 @@ public class TextRenderer extends AbstractRenderer {
 
             PdfCanvas canvas = drawContext.getCanvas();
             if (isTagged) {
-                canvas.openTag(tagStructure.getTagReference());
+                canvas.openTag(tagPointer.getTagReference());
             } else if (isArtifact) {
                 canvas.openTag(new CanvasArtifact());
             }
@@ -490,9 +563,9 @@ public class TextRenderer extends AbstractRenderer {
         }
 
         if (isTagged) {
-            tagStructure.moveToParent();
+            tagPointer.moveToParent();
             if (isLastRendererForModelElement) {
-                tagStructure.removeConnectionToTag(accessibleElement);
+                tagPointer.removeElementConnectionToTag(accessibleElement);
             }
         }
     }
@@ -531,7 +604,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     /**
-     * Trims any whitespace characters from the start of the {@link Glyphline}
+     * Trims any whitespace characters from the start of the {@link GlyphLine}
      * to be rendered.
      */
     public void trimFirst() {
@@ -539,14 +612,14 @@ public class TextRenderer extends AbstractRenderer {
 
         if (text != null) {
             Glyph glyph;
-            while (text.start < text.end && (glyph = text.glyphs.get(text.start)).getUnicode() != null && Character.isWhitespace(glyph.getUnicode())) {
+            while (text.start < text.end && (glyph = text.get(text.start)).hasValidUnicode() && Character.isWhitespace(glyph.getUnicode()) && !isNewLine(text, text.start)) {
                 text.start++;
             }
         }
     }
 
     /**
-     * Trims any whitespace characters from the end of the {@link Glyphline} to
+     * Trims any whitespace characters from the end of the {@link GlyphLine} to
      * be rendered.
      * @return the amount of space in points which the text was trimmed by
      */
@@ -563,13 +636,13 @@ public class TextRenderer extends AbstractRenderer {
 
         int firstNonSpaceCharIndex = line.end - 1;
         while (firstNonSpaceCharIndex >= line.start) {
-            Glyph currentGlyph = line.glyphs.get(firstNonSpaceCharIndex);
-            if (currentGlyph.getUnicode() == null || !Character.isWhitespace(currentGlyph.getUnicode())) {
+            Glyph currentGlyph = line.get(firstNonSpaceCharIndex);
+            if (!currentGlyph.hasValidUnicode() || !Character.isWhitespace(currentGlyph.getUnicode())) {
                 break;
             }
 
             float currentCharWidth = getCharWidth(currentGlyph, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
-            float xAdvance = firstNonSpaceCharIndex > line.start ? scaleXAdvance(line.glyphs.get(firstNonSpaceCharIndex - 1).getXAdvance(), fontSize, hScale) / TEXT_SPACE_COEFF : 0;
+            float xAdvance = firstNonSpaceCharIndex > line.start ? scaleXAdvance(line.get(firstNonSpaceCharIndex - 1).getXAdvance(), fontSize, hScale) / TEXT_SPACE_COEFF : 0;
             trimmedSpace += currentCharWidth - xAdvance;
             occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() - currentCharWidth);
 
@@ -588,7 +661,7 @@ public class TextRenderer extends AbstractRenderer {
     public float getAscent() {
         return yLineOffset;
     }
-    
+
     /**
      * Gets the maximum offset below the base line that this Text extends to.
      * @return the downwards vertical offset of this {@link Text}
@@ -600,7 +673,7 @@ public class TextRenderer extends AbstractRenderer {
     /**
      * Gets the position on the canvas of the imaginary horizontal line upon which
      * the {@link Text}'s contents will be written.
-     * @return the y position of this text on the {@link DrawingContext}
+     * @return the y position of this text on the {@link DrawContext}
      */
     public float getYLine() {
         return occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - yLineOffset - getPropertyAsFloat(Property.TEXT_RISE);
@@ -629,7 +702,7 @@ public class TextRenderer extends AbstractRenderer {
     /**
      * Manually sets a GlyphLine to be rendered with a specific start and end
      * point.
-     * 
+     *
      * @param text a {@link GlyphLine}
      * @param leftPos the leftmost end of the GlyphLine
      * @param rightPos the rightmost end of the GlyphLine
@@ -656,8 +729,7 @@ public class TextRenderer extends AbstractRenderer {
 
     @Override
     public String toString() {
-        convertWaitingStringToGlyphLine();
-        return line != null ? line.toUnicodeString(line.start, line.end) : text.toUnicodeString(text.start, text.end);
+        return line != null ? line.toUnicodeString(line.start, line.end) : strToBeConverted;
     }
 
     /**
@@ -666,8 +738,8 @@ public class TextRenderer extends AbstractRenderer {
      * @param pos the position in range [0; length())
      * @return Unicode char code
      */
-    public Integer charAt(int pos) {
-        return text.glyphs.get(pos + text.start).getUnicode();
+    public int charAt(int pos) {
+        return text.get(pos + text.start).getUnicode();
     }
 
     public float getTabAnchorCharacterPosition() {
@@ -680,7 +752,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private boolean isNewLine(GlyphLine text, int ind) {
-        return text.glyphs.get(ind).getUnicode() != null && text.glyphs.get(ind).getUnicode() == '\n';
+        return text.get(ind).hasValidUnicode() && text.get(ind).getUnicode() == '\n';
     }
 
     private GlyphLine convertToGlyphLine(String text) {
@@ -721,7 +793,7 @@ public class TextRenderer extends AbstractRenderer {
         int spaces = 0;
         for (int i = line.start; i < line.end; i++) {
             Glyph currentGlyph = line.get(i);
-            if (currentGlyph.getUnicode() != null && currentGlyph.getUnicode() == ' ') {
+            if (currentGlyph.hasValidUnicode() && currentGlyph.getUnicode() == ' ') {
                 spaces++;
             }
         }
@@ -781,7 +853,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private static boolean noPrint(Glyph g) {
-        if (g.getUnicode() == null) {
+        if (!g.hasValidUnicode()) {
             return false;
         }
         int c = g.getUnicode();
@@ -796,7 +868,7 @@ public class TextRenderer extends AbstractRenderer {
         if (characterSpacing != null) {
             resultWidth += characterSpacing * hScale * TEXT_SPACE_COEFF;
         }
-        if (wordSpacing != null && g.getUnicode() != null && g.getUnicode() == ' ') {
+        if (wordSpacing != null && g.hasValidUnicode() && g.getUnicode() == ' ') {
             resultWidth += wordSpacing * hScale * TEXT_SPACE_COEFF;
         }
         return resultWidth;
@@ -809,9 +881,9 @@ public class TextRenderer extends AbstractRenderer {
     private float getGlyphLineWidth(GlyphLine glyphLine, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {
         float width = 0;
         for (int i = glyphLine.start; i < glyphLine.end; i++) {
-            float charWidth = getCharWidth(glyphLine.glyphs.get(i), fontSize, hScale, characterSpacing, wordSpacing);
+            float charWidth = getCharWidth(glyphLine.get(i), fontSize, hScale, characterSpacing, wordSpacing);
             width += charWidth;
-            float xAdvance = (i != glyphLine.start) ? scaleXAdvance(glyphLine.glyphs.get(i - 1).getXAdvance(), fontSize, hScale) : 0;
+            float xAdvance = (i != glyphLine.start) ? scaleXAdvance(glyphLine.get(i - 1).getXAdvance(), fontSize, hScale) : 0;
             width += xAdvance;
         }
         return width / TEXT_SPACE_COEFF;
@@ -837,12 +909,12 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private boolean isGlyphPartOfWordForHyphenation(Glyph g) {
-        return g.getUnicode() != null && (Character.isLetter(g.getUnicode()) ||
+        return g.hasValidUnicode() && (Character.isLetter(g.getUnicode()) ||
                 Character.isDigit(g.getUnicode()) || '\u00ad' == g.getUnicode());
     }
 
     private boolean isWhitespaceGlyph(Glyph g) {
-        return g.getUnicode() != null && g.getUnicode() == ' ';
+        return g.hasValidUnicode() && g.getUnicode() == ' ';
     }
 
     private void convertWaitingStringToGlyphLine() {

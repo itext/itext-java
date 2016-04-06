@@ -1,52 +1,62 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfBoolean;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfDocumentInfo;
-import com.itextpdf.kernel.pdf.PdfIndirectReference;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
-import com.itextpdf.kernel.xmp.PdfConst;
-import com.itextpdf.kernel.xmp.XMPConst;
-import com.itextpdf.kernel.xmp.XMPException;
-import com.itextpdf.kernel.xmp.XMPMeta;
-import com.itextpdf.kernel.xmp.XMPMetaFactory;
-import com.itextpdf.kernel.xmp.XMPUtils;
+import com.itextpdf.kernel.xmp.*;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -56,11 +66,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
+import java.io.*;
+import java.text.MessageFormat;
+import java.util.*;
 
 public class CompareTool {
     private static final String cannotOpenOutputDirectory = "Cannot open output directory for <filename>.";
@@ -186,7 +194,7 @@ public class CompareTool {
         try {
             cmpDocument = new PdfDocument(new PdfReader(this.cmpPdf));
             outDocument = new PdfDocument(new PdfReader(this.outPdf));
-            byte[] cmpBytes = cmpDocument.getXmpMetadata().getBytes(), outBytes = outDocument.getXmpMetadata().getBytes();
+            byte[] cmpBytes = cmpDocument.getXmpMetadata(), outBytes = outDocument.getXmpMetadata();
             if (ignoreDateAndProducerProperties) {
                 XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(cmpBytes);
 
@@ -273,12 +281,12 @@ public class CompareTool {
             List<PdfLinkAnnotation> cmpLinks = getLinkAnnotations(i + 1, cmpDocument);
 
             if (cmpLinks.size() != outLinks.size()) {
-                message = String.format("Different number of links on page %d.", i + 1);
+                message = MessageFormat.format("Different number of links on page {0}.", i + 1);
                 break;
             }
             for (int j = 0; j < cmpLinks.size(); j++) {
                 if (!compareLinkAnnotations(cmpLinks.get(j), outLinks.get(j), cmpDocument, outDocument)) {
-                    message = String.format("Different links on page %d.\n%s\n%s", i + 1, cmpLinks.get(j).toString(), outLinks.get(j).toString());
+                    message = MessageFormat.format("Different links on page {0}.\n{1}\n{2}", i + 1, cmpLinks.get(j).toString(), outLinks.get(j).toString());
                     break;
                 }
             }
@@ -392,10 +400,10 @@ public class CompareTool {
                 differentPagesFail = " Page is different!";
                 diffPages.add(i + 1);
                 if (compareExecIsOk) {
-                String compareParams = this.compareParams.replace("<image1>", imageFiles[i].getAbsolutePath())
+                String currCompareParams = compareParams.replace("<image1>", imageFiles[i].getAbsolutePath())
                             .replace("<image2>", cmpImageFiles[i].getAbsolutePath())
                             .replace("<difference>", outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png");
-                    if (runProcessAndWait(compareExec, compareParams))
+                    if (runProcessAndWait(compareExec, currCompareParams))
                         differentPagesFail += "\nPlease, examine " + outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png for more details.";
                 }
                 System.out.println(differentPagesFail);
@@ -433,24 +441,24 @@ public class CompareTool {
                 PdfStream outStream = getPageContentStream(pdfOutDoc.getPage(pageNumber));
                 PdfStream cmpStream = getPageContentStream(pdfCmpDoc.getPage(pageNumber));
 
-                outStream.getOutputStream().writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("q\n"));
-                outStream.getOutputStream().writeFloats(new float[]{0.0f, 0.0f, 0.0f}).writeSpace().writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("rg\n"));
-                cmpStream.getOutputStream().writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("q\n"));
-                cmpStream.getOutputStream().writeFloats(new float[]{0.0f, 0.0f, 0.0f}).writeSpace().writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("rg\n"));
+                outStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("q\n"));
+                outStream.getOutputStream().writeFloats(new float[]{0.0f, 0.0f, 0.0f}).writeSpace().writeBytes(ByteUtils.getIsoBytes("rg\n"));
+                cmpStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("q\n"));
+                cmpStream.getOutputStream().writeFloats(new float[]{0.0f, 0.0f, 0.0f}).writeSpace().writeBytes(ByteUtils.getIsoBytes("rg\n"));
 
                 for (Rectangle rect : rectangles) {
                     outStream.getOutputStream().writeFloats(new float[]{rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight()}).
                             writeSpace().
-                            writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("re\n")).
-                            writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("f\n"));
+                            writeBytes(ByteUtils.getIsoBytes("re\n")).
+                            writeBytes(ByteUtils.getIsoBytes("f\n"));
 
                     cmpStream.getOutputStream().writeFloats(new float[]{rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight()}).
                             writeSpace().
-                            writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("re\n")).
-                            writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("f\n"));
+                            writeBytes(ByteUtils.getIsoBytes("re\n")).
+                            writeBytes(ByteUtils.getIsoBytes("f\n"));
                 }
-                outStream.getOutputStream().writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("Q\n"));
-                cmpStream.getOutputStream().writeBytes(com.itextpdf.io.source.OutputStream.getIsoBytes("Q\n"));
+                outStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("Q\n"));
+                cmpStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("Q\n"));
             }
         }
 
@@ -504,12 +512,12 @@ public class CompareTool {
             return cannotOpenOutputDirectory.replace("<filename>", outPdf);
         }
 
-        String gsParams = this.gsParams.replace("<outputfile>", outPath + cmpImage).replace("<inputfile>", cmpPdf);
-        if (!runProcessAndWait(gsExec, gsParams)) {
+        String currGsParams = gsParams.replace("<outputfile>", outPath + cmpImage).replace("<inputfile>", cmpPdf);
+        if (!runProcessAndWait(gsExec, currGsParams)) {
             return gsFailed.replace("<filename>", cmpPdf);
         }
-        gsParams = this.gsParams.replace("<outputfile>", outPath + outImage).replace("<inputfile>", outPdf);
-        if (!runProcessAndWait(gsExec, gsParams)) {
+        currGsParams = gsParams.replace("<outputfile>", outPath + outImage).replace("<inputfile>", outPdf);
+        if (!runProcessAndWait(gsExec, currGsParams)) {
             return gsFailed.replace("<filename>", outPdf);
         }
         return null;
@@ -690,14 +698,14 @@ public class CompareTool {
                     PdfObject outObj = outDict.get(key);
                     if (!outObj.isName() || outObj.toString().indexOf('+') == -1) {
                         if (compareResult != null && currentPath != null)
-                            compareResult.addError(currentPath, String.format("PdfDictionary %s entry: Expected: %s. Found: %s", key.toString(), cmpObj.toString(), outObj.toString()));
+                            compareResult.addError(currentPath, MessageFormat.format("PdfDictionary {0} entry: Expected: {1}. Found: {2}", key.toString(), cmpObj.toString(), outObj.toString()));
                         dictsAreSame = false;
                     } else {
                         String cmpName = cmpObj.toString().substring(cmpObj.toString().indexOf('+'));
                         String outName = outObj.toString().substring(outObj.toString().indexOf('+'));
                         if (!cmpName.equals(outName)) {
                             if (compareResult != null && currentPath != null)
-                                compareResult.addError(currentPath, String.format("PdfDictionary %s entry: Expected: %s. Found: %s", key.toString(), cmpObj.toString(), outObj.toString()));
+                                compareResult.addError(currentPath, MessageFormat.format("PdfDictionary {0} entry: Expected: {1}. Found: {2}", key.toString(), cmpObj.toString(), outObj.toString()));
                             dictsAreSame = false;
                         }
                     }
@@ -733,7 +741,7 @@ public class CompareTool {
             compareResult.addError(currentPath, "Found object which was not expected to be found.");
             return false;
         } else if (cmpDirectObj.getType() != outDirectObj.getType()) {
-            compareResult.addError(currentPath, String.format("Types do not match. Expected: %s. Found: %s.", cmpDirectObj.getClass().getSimpleName(), outDirectObj.getClass().getSimpleName()));
+            compareResult.addError(currentPath, MessageFormat.format("Types do not match. Expected: {0}. Found: {1}.", cmpDirectObj.getClass().getSimpleName(), outDirectObj.getClass().getSimpleName()));
             return false;
         } else if (cmpObj.isIndirectReference() && !outObj.isIndirectReference()) {
             compareResult.addError(currentPath, "Expected indirect object.");
@@ -752,7 +760,7 @@ public class CompareTool {
         if (cmpDirectObj.isDictionary() && PdfName.Page.equals(((PdfDictionary) cmpDirectObj).getAsName(PdfName.Type))) {
             if (!outDirectObj.isDictionary() || !PdfName.Page.equals(((PdfDictionary)outDirectObj).getAsName(PdfName.Type))) {
                 if (compareResult != null && currentPath != null)
-                    compareResult.addError(currentPath, String.format("Expected a page. Found not a page."));
+                    compareResult.addError(currentPath, "Expected a page. Found not a page.");
                 return false;
             }
             PdfIndirectReference cmpRefKey = cmpObj.isIndirectReference() ? (PdfIndirectReference) cmpObj : cmpObj.getIndirectReference();
@@ -773,7 +781,7 @@ public class CompareTool {
             if (cmpPagesRef.contains(cmpRefKey) && cmpPagesRef.indexOf(cmpRefKey) == outPagesRef.indexOf(outRefKey))
                 return true;
             if (compareResult != null && currentPath != null)
-                compareResult.addError(currentPath, String.format("The dictionaries refer to different pages. Expected page number: %s. Found: %s",
+                compareResult.addError(currentPath, MessageFormat.format("The dictionaries refer to different pages. Expected page number: {0}. Found: {1}",
                         cmpPagesRef.indexOf(cmpRefKey), outPagesRef.indexOf(outRefKey)));
             return false;
         }
@@ -815,7 +823,7 @@ public class CompareTool {
         } else {
             String errorMessage = "";
             if (cmpStreamBytes.length != outStreamBytes.length) {
-                errorMessage += String.format("PdfStream. Lengths are different. Expected: %s. Found: %s", cmpStreamBytes.length, outStreamBytes.length) + "\n";
+                errorMessage += MessageFormat.format("PdfStream. Lengths are different. Expected: {0}. Found: {1}", cmpStreamBytes.length, outStreamBytes.length) + "\n";
             } else {
                 errorMessage += "PdfStream. Bytes are different.\n";
             }
@@ -855,10 +863,10 @@ public class CompareTool {
             String cmpByteNeighbours = new String(cmpStreamBytes, l, r - l).replaceAll("\\r|\\n", " ");
             String outByte = new String(new byte[]{outStreamBytes[firstDifferenceOffset]});
             String outBytesNeighbours = new String(outStreamBytes, l, r - l).replaceAll("\\r|\\n", " ");
-            errorMessage = String.format("First bytes difference is encountered at index %s. Expected: %s (%s). Found: %s (%s). Total number of different bytes: %s",
-                    firstDifferenceOffset, cmpByte, cmpByteNeighbours, outByte, outBytesNeighbours, numberOfDifferentBytes);
+            errorMessage = MessageFormat.format("First bytes difference is encountered at index {0}. Expected: {1} ({2}). Found: {3} ({4}). Total number of different bytes: {5}",
+                    Integer.valueOf(firstDifferenceOffset).toString(), cmpByte, cmpByteNeighbours, outByte, outBytesNeighbours, numberOfDifferentBytes);
         } else { // lengths are different
-            errorMessage = String.format("Bytes of the shorter array are the same as the first %s bytes of the longer one.", minLength);
+            errorMessage = MessageFormat.format("Bytes of the shorter array are the same as the first {0} bytes of the longer one.", minLength);
         }
 
         return errorMessage;
@@ -871,7 +879,7 @@ public class CompareTool {
             return false;
         } else if (outArray.size() != cmpArray.size()) {
             if (compareResult != null && currentPath != null)
-                compareResult.addError(currentPath, String.format("PdfArrays. Lengths are different. Expected: %s. Found: %s.", cmpArray.size(), outArray.size()));
+                compareResult.addError(currentPath, MessageFormat.format("PdfArrays. Lengths are different. Expected: {0}. Found: {1}.", cmpArray.size(), outArray.size()));
             return false;
         }
         boolean arraysAreEqual = true;
@@ -893,7 +901,7 @@ public class CompareTool {
             return true;
         } else {
             if (compareResult != null && currentPath != null)
-                compareResult.addError(currentPath, String.format("PdfName. Expected: %s. Found: %s", cmpName.toString(), outName.toString()));
+                compareResult.addError(currentPath, MessageFormat.format("PdfName. Expected: {0}. Found: {1}", cmpName.toString(), outName.toString()));
             return false;
         }
     }
@@ -903,7 +911,7 @@ public class CompareTool {
             return true;
         } else {
             if (compareResult != null && currentPath != null)
-                compareResult.addError(currentPath, String.format("PdfNumber. Expected: %s. Found: %s", cmpNumber, outNumber));
+                compareResult.addError(currentPath, MessageFormat.format("PdfNumber. Expected: {0}. Found: {1}", cmpNumber, outNumber));
             return false;
         }
     }
@@ -916,7 +924,7 @@ public class CompareTool {
             String outStr = outString.toUnicodeString();
             if (cmpStr.length() != outStr.length()) {
                 if (compareResult != null && currentPath != null)
-                    compareResult.addError(currentPath, String.format("PdfString. Lengths are different. Expected: %s. Found: %s", cmpStr.length(), outStr.length()));
+                    compareResult.addError(currentPath, MessageFormat.format("PdfString. Lengths are different. Expected: {0}. Found: {1}", cmpStr.length(), outStr.length()));
             } else {
                 for (int i = 0; i < cmpStr.length(); i++) {
                     if (cmpStr.charAt(i) != outStr.charAt(i)) {
@@ -924,7 +932,7 @@ public class CompareTool {
                         int r = Math.min(cmpStr.length(), i + 10);
                         if (compareResult != null && currentPath != null) {
                             currentPath.pushOffsetToPath(i);
-                            compareResult.addError(currentPath, String.format("PdfString. Characters differ at position %s. Expected: %s (%s). Found: %s (%s).",
+                            compareResult.addError(currentPath, MessageFormat.format("PdfString. Characters differ at position {0}. Expected: {1} ({2}). Found: {3} ({4}).",
                                     i, Character.toString(cmpStr.charAt(i)), cmpStr.substring(l, r).replace("\n", "\\n"),
                                     Character.toString(outStr.charAt(i)), outStr.substring(l, r).replace("\n", "\\n")));
                             currentPath.pop();
@@ -953,7 +961,7 @@ public class CompareTool {
             return true;
         } else {
             if (compareResult != null && currentPath != null)
-                compareResult.addError(currentPath, String.format("PdfBoolean. Expected: %s. Found: %s.", cmpBoolean.getValue(), outBoolean.getValue()));
+                compareResult.addError(currentPath, MessageFormat.format("PdfBoolean. Expected: {0}. Found: {1}.", cmpBoolean.getValue(), outBoolean.getValue()));
             return false;
         }
     }
@@ -1246,8 +1254,8 @@ public class CompareTool {
         public Node toXmlNode(Document document) {
             Element element = document.createElement("path");
             Element baseNode = document.createElement("base");
-            baseNode.setAttribute("cmp", String.format("%s %s obj", baseCmpObject.getObjNumber(), baseCmpObject.getGenNumber()));
-            baseNode.setAttribute("out", String.format("%s %s obj", baseOutObject.getObjNumber(), baseOutObject.getGenNumber()));
+            baseNode.setAttribute("cmp", MessageFormat.format("{0} {1} obj", baseCmpObject.getObjNumber(), baseCmpObject.getGenNumber()));
+            baseNode.setAttribute("out", MessageFormat.format("{0} {1} obj", baseOutObject.getObjNumber(), baseOutObject.getGenNumber()));
             element.appendChild(baseNode);
             for (PathItem pathItem : path) {
                 element.appendChild(pathItem.toXmlNode(document));
@@ -1258,7 +1266,7 @@ public class CompareTool {
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append(String.format("Base cmp object: %s obj. Base out object: %s obj", baseCmpObject, baseOutObject));
+            sb.append(MessageFormat.format("Base cmp object: {0} obj. Base out object: {1} obj", baseCmpObject, baseOutObject));
             for (PathItem pathItem : path) {
                 sb.append("\n");
                 sb.append(pathItem.toString());

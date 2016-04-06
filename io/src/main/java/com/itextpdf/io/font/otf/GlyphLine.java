@@ -1,15 +1,58 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.io.font.otf;
 
-import com.itextpdf.io.util.Utilities;
+import com.itextpdf.io.util.TextUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
-    public List<Glyph> glyphs;
-    public List<ActualText> actualText;
+public class GlyphLine {
+    protected List<Glyph> glyphs;
+    protected List<ActualText> actualText;
     public int start;
     public int end;
     public int idx;
@@ -30,7 +73,7 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
         this.end = end;
     }
 
-    public GlyphLine(List<Glyph> glyphs, List<ActualText> actualText, int start, int end) {
+    protected GlyphLine(List<Glyph> glyphs, List<ActualText> actualText, int start, int end) {
         this(glyphs, start, end);
         this.actualText = actualText;
     }
@@ -43,8 +86,18 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
         this.idx = other.idx;
     }
 
+    public GlyphLine(GlyphLine other, int start, int end) {
+        this.glyphs = other.glyphs.subList(start, end);
+        if (other.actualText != null) {
+            this.actualText = other.actualText.subList(start, end);
+        }
+        this.start = 0;
+        this.end = end - start;
+        this.idx = other.idx - start;
+    }
+
     public String toUnicodeString(int start, int end) {
-        Iterator<GlyphLinePart> iter = new GlyphLinePartIterator(this, start, end);
+        Iterator<GlyphLinePart> iter = new ActualTextIterator(this, start, end);
         StringBuilder str = new StringBuilder();
         while (iter.hasNext()) {
             GlyphLinePart part = iter.next();
@@ -54,8 +107,8 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
                 for (int i = part.start; i < part.end; i++) {
                     if (glyphs.get(i).getChars() != null) {
                         str.append(glyphs.get(i).getChars());
-                    } else if (glyphs.get(i).getUnicode() != null) {
-                        str.append(Utilities.convertFromUtf32(glyphs.get(i).getUnicode()));
+                    } else if (glyphs.get(i).hasValidUnicode()) {
+                        str.append(TextUtil.convertFromUtf32(glyphs.get(i).getUnicode()));
                     }
                 }
             }
@@ -87,6 +140,36 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
         }
     }
 
+    public void add(int index, Glyph glyph) {
+        glyphs.add(index, glyph);
+        if (actualText != null) {
+            actualText.add(index, null);
+        }
+    }
+
+    public void setGlyphs(List<Glyph> replacementGlyphs) {
+        glyphs = new ArrayList<>(replacementGlyphs);
+        start = 0;
+        end = replacementGlyphs.size();
+        actualText = null;
+    }
+
+    public void replaceContent(GlyphLine other) {
+        glyphs.clear();
+        glyphs.addAll(other.glyphs);
+        if (actualText != null) {
+            actualText.clear();
+        }
+        if (other.actualText != null) {
+            if (actualText == null) {
+                actualText = new ArrayList<>();
+            }
+            actualText.addAll(other.actualText);
+        }
+        start = other.start;
+        end = other.end;
+    }
+
     public int size() {
         return glyphs.size();
     }
@@ -100,8 +183,8 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
         Glyph currentGlyph = glyphs.get(idx);
         if (currentGlyph.getChars() != null) {
             chars.append(currentGlyph.getChars());
-        } else if (currentGlyph.getUnicode() != null) {
-            chars.append(Utilities.convertFromUtf32(currentGlyph.getUnicode()));
+        } else if (currentGlyph.hasValidUnicode()) {
+            chars.append(TextUtil.convertFromUtf32(currentGlyph.getUnicode()));
         }
 
         for (int j = 0; j < rightPartLen; ++j) {
@@ -109,8 +192,8 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
             currentGlyph = glyphs.get(gidx.idx);
             if (currentGlyph.getChars() != null) {
                 chars.append(currentGlyph.getChars());
-            } else if (currentGlyph.getUnicode() != null) {
-                chars.append(Utilities.convertFromUtf32(currentGlyph.getUnicode()));
+            } else if (currentGlyph.hasValidUnicode()) {
+                chars.append(TextUtil.convertFromUtf32(currentGlyph.getUnicode()));
             }
             removeGlyph(gidx.idx--);
         }
@@ -127,10 +210,10 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
         Glyph newGlyph = tableReader.getGlyph(substitutionGlyphIndex);
         if (oldGlyph.getChars() != null) {
             newGlyph.setChars(oldGlyph.getChars());
-        } else if (newGlyph.getUnicode() != null) {
-            newGlyph.setChars(Utilities.convertFromUtf32(newGlyph.getUnicode()));
-        } else if (oldGlyph.getUnicode() != null) {
-            newGlyph.setChars(Utilities.convertFromUtf32(oldGlyph.getUnicode()));
+        } else if (newGlyph.hasValidUnicode()) {
+            newGlyph.setChars(TextUtil.convertFromUtf32(newGlyph.getUnicode()));
+        } else if (oldGlyph.hasValidUnicode()) {
+            newGlyph.setChars(TextUtil.convertFromUtf32(oldGlyph.getUnicode()));
         }
         glyphs.set(idx, newGlyph);
     }
@@ -177,8 +260,8 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
     public void setActualText(int left, int right, String text) {
         if (this.actualText == null) {
             this.actualText = new ArrayList<>(glyphs.size());
-            List<ActualText> actualText = Collections.nCopies(glyphs.size(), null);
-            this.actualText.addAll(actualText);
+            for (int i = 0; i < glyphs.size(); i++)
+                this.actualText.add(null);
         }
         ActualText actualText = new ActualText(text);
         for (int i = left; i < right; i++) {
@@ -186,9 +269,8 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
         }
     }
 
-    @Override
     public Iterator<GlyphLinePart> iterator() {
-        return new GlyphLinePartIterator(this);
+        return new ActualTextIterator(this);
     }
 
     private void removeGlyph(int index) {
@@ -201,8 +283,9 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
     private void addAllGlyphs(int index, List<Glyph> additionalGlyphs) {
         glyphs.addAll(index, additionalGlyphs);
         if (actualText != null) {
-            List<ActualText> actualTexts = Collections.nCopies(additionalGlyphs.size(), null);
-            actualText.addAll(index, actualTexts);
+            for (int i = 0; i < additionalGlyphs.size(); i++) {
+                this.actualText.add(index, null);
+            }
         }
     }
 
@@ -228,90 +311,5 @@ public class GlyphLine implements Iterable<GlyphLine.GlyphLinePart> {
         }
 
         public String value;
-    }
-
-    private static class GlyphLinePartIterator implements Iterator<GlyphLinePart> {
-
-        private GlyphLine glyphLine;
-
-        public GlyphLinePartIterator(GlyphLine glyphLine) {
-            this.glyphLine = glyphLine;
-            this.pos = glyphLine.start;
-        }
-
-        public GlyphLinePartIterator(GlyphLine glyphLine, int start, int end) {
-            this(new GlyphLine(glyphLine.glyphs, glyphLine.actualText, start, end));
-        }
-
-        private int pos;
-
-        @Override
-        public boolean hasNext() {
-            return pos < glyphLine.end;
-        }
-
-        @Override
-        public GlyphLinePart next() {
-            if (glyphLine.actualText == null) {
-                GlyphLinePart result = new GlyphLinePart(pos, glyphLine.end, null);
-                pos = glyphLine.end;
-                return result;
-            } else {
-                GlyphLinePart currentResult = nextGlyphLinePart(pos);
-                if (currentResult == null) {
-                    return null;
-                }
-                pos = currentResult.end;
-                while (pos < glyphLine.end && !glyphLinePartNeedsActualText(currentResult)) {
-                    currentResult.actualText = null;
-                    GlyphLinePart nextResult = nextGlyphLinePart(pos);
-                    if (nextResult != null && !glyphLinePartNeedsActualText(nextResult)) {
-                        currentResult.end = nextResult.end;
-                        pos = nextResult.end;
-                    } else {
-                        break;
-                    }
-                }
-                return currentResult;
-            }
-        }
-
-        @Override
-        public void remove() {
-            throw new IllegalStateException("Operation not supported");
-        }
-
-        private GlyphLinePart nextGlyphLinePart(int pos) {
-            if (pos >= glyphLine.end) {
-                return null;
-            }
-            int startPos = pos;
-            ActualText startActualText = glyphLine.actualText.get(pos);
-            while (pos < glyphLine.end && glyphLine.actualText.get(pos) == startActualText) {
-                pos++;
-            }
-            return new GlyphLinePart(startPos, pos, startActualText != null ? startActualText.value : null);
-        }
-
-        private boolean glyphLinePartNeedsActualText(GlyphLinePart glyphLinePart) {
-            if (glyphLinePart.actualText == null) {
-                return false;
-            }
-            boolean needsActualText = false;
-            StringBuilder toUnicodeMapResult = new StringBuilder();
-            for (int i = glyphLinePart.start; i < glyphLinePart.end; i++) {
-                Glyph currentGlyph = glyphLine.glyphs.get(i);
-                if (currentGlyph.getUnicode() == null) {
-                    needsActualText = true;
-                    break;
-                }
-
-                // TODO zero glyph is a special case. Unicode might be special
-
-                toUnicodeMapResult.append(Utilities.convertFromUtf32(currentGlyph.getUnicode()));
-            }
-
-            return needsActualText || !toUnicodeMapResult.toString().equals(glyphLinePart.actualText);
-        }
     }
 }

@@ -1,3 +1,47 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.io.font.otf;
 
 import java.util.ArrayList;
@@ -5,7 +49,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
 
 /**
  * Lookup Type 2:
@@ -24,7 +68,7 @@ public class GposLookupType2 extends OpenTableLookup {
     public boolean transformOne(GlyphLine line) {
         if (line.idx >= line.end)
             return false;
-        if (openReader.isSkip(line.glyphs.get(line.idx).getCode(), lookupFlag)) {
+        if (openReader.isSkip(line.get(line.idx).getCode(), lookupFlag)) {
             line.idx++;
             return false;
         }
@@ -66,7 +110,7 @@ public class GposLookupType2 extends OpenTableLookup {
             if (line.idx >= line.end || line.idx < line.start)
                 return false;
             boolean changed = false;
-            Glyph g1 = line.glyphs.get(line.idx);
+            Glyph g1 = line.get(line.idx);
             Map<Integer,PairValueFormat> m = gposMap.get(g1.getCode());
             if (m != null) {
                 GlyphIndexer gi = new GlyphIndexer();
@@ -77,8 +121,8 @@ public class GposLookupType2 extends OpenTableLookup {
                     PairValueFormat pv = m.get(gi.glyph.getCode());
                     if (pv != null) {
                         Glyph g2 = gi.glyph;
-                        line.glyphs.set(line.idx, new Glyph(g1, 0, 0, pv.first.XAdvance, pv.first.YAdvance, 0));
-                        line.glyphs.set(gi.idx, new Glyph(g2, 0, 0, pv.second.XAdvance, pv.second.YAdvance, 0));
+                        line.set(line.idx, new Glyph(g1, 0, 0, pv.first.XAdvance, pv.first.YAdvance, 0));
+                        line.set(gi.idx, new Glyph(g2, 0, 0, pv.second.XAdvance, pv.second.YAdvance, 0));
                         line.idx = gi.idx;
                         changed = true;
                     }
@@ -118,7 +162,7 @@ public class GposLookupType2 extends OpenTableLookup {
     private static class PairPosAdjustmentFormat2 extends OpenTableLookup {
         private OtfClass classDef1;
         private OtfClass classDef2;
-        private Set<Integer> coverageSet;
+        private HashSet<Integer> coverageSet;
         private Map<Integer,PairValueFormat[]> posSubs = new HashMap<>();
 
         public PairPosAdjustmentFormat2(OpenTypeFontTableReader openReader, int lookupFlag, int subtableLocation) throws java.io.IOException {
@@ -129,7 +173,7 @@ public class GposLookupType2 extends OpenTableLookup {
         public boolean transformOne(GlyphLine line) {
             if (line.idx >= line.end || line.idx < line.start)
                 return false;
-            Glyph g1 = line.glyphs.get(line.idx);
+            Glyph g1 = line.get(line.idx);
             if (!coverageSet.contains(g1.getCode()))
                 return false;
             int c1 = classDef1.getOtfClass(g1.getCode());
@@ -147,8 +191,8 @@ public class GposLookupType2 extends OpenTableLookup {
             if (c2 >= pvs.length)
                 return false;
             PairValueFormat pv = pvs[c2];
-            line.glyphs.set(line.idx, new Glyph(g1, 0, 0, pv.first.XAdvance, pv.first.YAdvance, 0));
-            line.glyphs.set(gi.idx, new Glyph(g2, 0, 0, pv.second.XAdvance, pv.second.YAdvance, 0));
+            line.set(line.idx, new Glyph(g1, 0, 0, pv.first.XAdvance, pv.first.YAdvance, 0));
+            line.set(gi.idx, new Glyph(g2, 0, 0, pv.second.XAdvance, pv.second.YAdvance, 0));
             line.idx = gi.idx;
             return true;
         }

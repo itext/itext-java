@@ -1,16 +1,60 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 
 /**
  * If you are using True Type fonts, you can declare the paths of the different ttf- and ttc-files
@@ -67,29 +111,29 @@ class FontRegisterProvider {
         trueTypeFonts.put(FontConstants.ZAPFDINGBATS.toLowerCase(), FontConstants.ZAPFDINGBATS);
 
         List<String> tmp;
-        tmp = new ArrayList();
+        tmp = new ArrayList<>();
         tmp.add(FontConstants.COURIER);
         tmp.add(FontConstants.COURIER_BOLD);
         tmp.add(FontConstants.COURIER_OBLIQUE);
         tmp.add(FontConstants.COURIER_BOLDOBLIQUE);
         fontFamilies.put(FontConstants.COURIER.toLowerCase(), tmp);
-        tmp = new ArrayList();
+        tmp = new ArrayList<>();
         tmp.add(FontConstants.HELVETICA);
         tmp.add(FontConstants.HELVETICA_BOLD);
         tmp.add(FontConstants.HELVETICA_OBLIQUE);
         tmp.add(FontConstants.HELVETICA_BOLDOBLIQUE);
         fontFamilies.put(FontConstants.HELVETICA.toLowerCase(), tmp);
-        tmp = new ArrayList();
+        tmp = new ArrayList<>();
         tmp.add(FontConstants.SYMBOL);
         fontFamilies.put(FontConstants.SYMBOL.toLowerCase(), tmp);
-        tmp = new ArrayList();
+        tmp = new ArrayList<>();
         tmp.add(FontConstants.TIMES_ROMAN);
         tmp.add(FontConstants.TIMES_BOLD);
         tmp.add(FontConstants.TIMES_ITALIC);
         tmp.add(FontConstants.TIMES_BOLDITALIC);
         fontFamilies.put(FontConstants.TIMES.toLowerCase(), tmp);
         fontFamilies.put(FontConstants.TIMES_ROMAN.toLowerCase(), tmp);
-        tmp = new ArrayList();
+        tmp = new ArrayList<>();
         tmp.add(FontConstants.ZAPFDINGBATS);
         fontFamilies.put(FontConstants.ZAPFDINGBATS.toLowerCase(), tmp);
     }
@@ -180,7 +224,7 @@ class FontRegisterProvider {
         synchronized (fontFamilies) {
             tmp = fontFamilies.get(familyName);
             if (tmp == null) {
-                tmp = new ArrayList();
+                tmp = new ArrayList<>();
                 fontFamilies.put(familyName, tmp);
             }
         }
@@ -295,9 +339,7 @@ class FontRegisterProvider {
                 trueTypeFonts.put(psName, path);
                 trueTypeFonts.put(fullName, path);
             }
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace(String.format("Registered %s", path));
-            }
+            LOGGER.trace(MessageFormat.format("Registered {0}", path));
         } catch (java.io.IOException e){
             throw new IOException(e);
         }
@@ -334,36 +376,29 @@ class FontRegisterProvider {
      * @return the number of fonts registered
      */
     public int registerDirectory(final String dir, final boolean scanSubdirectories) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("Registering directory %s, looking for fonts", dir));
-        }
+        LOGGER.debug(MessageFormat.format("Registering directory {0}, looking for fonts", dir));
         int count = 0;
         try {
-            File file = new File(dir);
-            if (!file.exists() || !file.isDirectory())
-                return 0;
-            String files[] = file.list();
+            String[] files = FileUtil.getDirectoryList(dir);
             if (files == null)
                 return 0;
-            for (int k = 0; k < files.length; ++k) {
+            for (String file : files) {
                 try {
-                    file = new File(dir, files[k]);
-                    if (file.isDirectory()) {
+                    if (FileUtil.isDirectory(file)) {
                         if (scanSubdirectories) {
-                            count += registerDirectory(file.getAbsolutePath(), true);
+                            count += registerDirectory(file, true);
                         }
                     } else {
-                        String name = file.getPath();
-                        String suffix = name.length() < 4 ? null : name.substring(name.length() - 4).toLowerCase();
+                        String suffix = file.length() < 4 ? null : file.substring(file.length() - 4).toLowerCase();
                         if (".afm".equals(suffix) || ".pfm".equals(suffix)) {
                             /* Only register Type 1 fonts with matching .pfb files */
-                            File pfb = new File(name.substring(0, name.length() - 4) + ".pfb");
-                            if (pfb.exists()) {
-                                register(name, null);
+                            String pfb = file.substring(0, file.length() - 4) + ".pfb";
+                            if (FileUtil.fileExists(pfb)) {
+                                register(file, null);
                                 ++count;
                             }
                         } else if (".ttf".equals(suffix) || ".otf".equals(suffix) || ".ttc".equals(suffix)) {
-                            register(name, null);
+                            register(file, null);
                             ++count;
                         }
                     }
@@ -385,18 +420,26 @@ class FontRegisterProvider {
      */
     public int registerSystemDirectories() {
         int count = 0;
-        String winDir = System.getenv("windir");
-        String fileSeparator = System.getProperty("file.separator");
-        if (winDir != null && fileSeparator != null) {
-            count += registerDirectory(winDir + fileSeparator + "fonts");
+        String[] withSubDirs = {
+                FileUtil.getFontsDir(),
+                "/usr/share/X11/fonts",
+                "/usr/X/lib/X11/fonts",
+                "/usr/openwin/lib/X11/fonts",
+                "/usr/share/fonts",
+                "/usr/X11R6/lib/X11/fonts"
+        };
+        for (String directory : withSubDirs) {
+            count += registerDirectory(directory, true);
         }
-        count += registerDirectory("/usr/share/X11/fonts", true);
-        count += registerDirectory("/usr/X/lib/X11/fonts", true);
-        count += registerDirectory("/usr/openwin/lib/X11/fonts", true);
-        count += registerDirectory("/usr/share/fonts", true);
-        count += registerDirectory("/usr/X11R6/lib/X11/fonts", true);
-        count += registerDirectory("/Library/Fonts");
-        count += registerDirectory("/System/Library/Fonts");
+
+        String[] withoutSubDirs = {
+                "/Library/Fonts",
+                "/System/Library/Fonts"
+        };
+        for (String directory : withoutSubDirs) {
+            count += registerDirectory(directory, false);
+        }
+
         return count;
     }
 

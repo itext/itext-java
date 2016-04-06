@@ -511,6 +511,6 @@ public class RotationTest extends ExtendedITextTest{
     }
 
     private void drawLine(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
-        canvas.saveState().moveTo(x1, y1).lineTo(x2,y2).setLineWidth(0.5f).setLineDash(3).stroke().restoreState();
+        canvas.saveState().setLineWidth(0.5f).setLineDash(3).moveTo(x1, y1).lineTo(x2,y2).stroke().restoreState();
     }
 }

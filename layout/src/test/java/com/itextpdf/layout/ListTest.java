@@ -6,7 +6,6 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
@@ -14,6 +13,7 @@ import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -242,6 +242,23 @@ public class ListTest extends ExtendedITextTest{
 
         document.add(list);
 
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void listItemTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listItemTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_listItemTest01.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+        List list = new List();
+        list.add(new ListItem("The quick brown").setListSymbol(Property.ListNumberingType.ZAPF_DINGBATS_1))
+                .add(new ListItem("fox").setListSymbol(Property.ListNumberingType.ZAPF_DINGBATS_2))
+                .add(new ListItem("jumps over the lazy").setListSymbol(Property.ListNumberingType.ZAPF_DINGBATS_3))
+                .add(new ListItem("dog").setListSymbol(Property.ListNumberingType.ZAPF_DINGBATS_4));
+        document.add(list);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));

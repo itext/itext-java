@@ -1,6 +1,49 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.util.Utilities;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontMetrics;
@@ -9,6 +52,8 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.util.ArrayUtil;
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -21,7 +66,9 @@ import java.util.List;
 
 public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
-    protected T fontProgram;
+    private static final long serialVersionUID = -4942318223894676176L;
+
+	protected T fontProgram;
 
     protected FontEncoding fontEncoding;
 
@@ -79,17 +126,17 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             byte[] bytes = new byte[glyphLine.size()];
             int ptr = 0;
             if (fontEncoding.isFontSpecific()) {
-                for (Glyph glyph : glyphLine.glyphs) {
-                    bytes[ptr++] = (byte) glyph.getCode();
+                for (int i = 0; i < glyphLine.size(); i++) {
+                    bytes[ptr++] = (byte) glyphLine.get(i).getCode();
                 }
             } else {
-                for (Glyph glyph : glyphLine.glyphs) {
-                    if (fontEncoding.canEncode(glyph.getUnicode())) {
-                        bytes[ptr++] = (byte) fontEncoding.convertToByte(glyph.getUnicode());
+                for (int i = 0; i < glyphLine.size(); i++) {
+                    if (fontEncoding.canEncode(glyphLine.get(i).getUnicode())) {
+                        bytes[ptr++] = (byte) fontEncoding.convertToByte(glyphLine.get(i).getUnicode());
                     }
                 }
             }
-            bytes = Utilities.shortenArray(bytes, ptr);
+            bytes = ArrayUtil.shortenArray(bytes, ptr);
             for (byte b : bytes) {
                 shortTag[b & 0xff] = 1;
             }
@@ -131,16 +178,16 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 }
             }
         }
-        bytes = Utilities.shortenArray(bytes, ptr);
+        bytes = ArrayUtil.shortenArray(bytes, ptr);
         for (byte b : bytes) {
             shortTag[b & 0xff] = 1;
         }
-        Utilities.writeEscapedString(stream, bytes);
+        StreamUtil.writeEscapedString(stream, bytes);
     }
 
     @Override
     public void writeText(String text, PdfOutputStream stream) {
-        Utilities.writeEscapedString(stream, convertToBytes(text));
+        StreamUtil.writeEscapedString(stream, convertToBytes(text));
     }
 
     @Override
@@ -148,8 +195,8 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         byte[] contentBytes = content.getValueBytes();
         StringBuilder builder = new StringBuilder(contentBytes.length);
         for (byte b : contentBytes) {
-            Integer uni = fontEncoding.getUnicode(b & 0xff);
-            if (uni != null) {
+            int uni = fontEncoding.getUnicode(b & 0xff);
+            if (uni > -1) {
                 builder.append((char) (int) uni);
             }
         }
@@ -161,8 +208,8 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         float width = 0;
         byte[] contentBytes = content.getValueBytes();
         for (byte b : contentBytes) {
-            Integer uni = fontEncoding.getUnicode(b & 0xff);
-            Glyph glyph = uni != null ? getGlyph(uni) : fontProgram.getGlyphByCode(b);
+            int uni = fontEncoding.getUnicode(b & 0xff);
+            Glyph glyph = uni > -1 ? getGlyph(uni) : fontProgram.getGlyphByCode(b);
             width += glyph != null ? glyph.getWidth() : 0;
         }
         return width;
@@ -209,7 +256,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             for (int k = 0; k < shortTag.length; ++k) {
                 // remove unsupported by encoding values in case custom encoding.
                 // save widths information in case standard pdf encodings (winansi or macroman)
-                if (fontEncoding.getUnicode(k) != null) {
+                if (fontEncoding.canDecode(k)) {
                     shortTag[k] = 1;
                 } else if (!fontEncoding.hasDifferences() && fontProgram.getGlyphByCode(k) != null) {
                     shortTag[k] = 1;
@@ -265,8 +312,8 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                     wd.add(new PdfNumber(0));
                 } else {
                     //prevent lost of widths info
-                    Integer uni = fontEncoding.getUnicode(k);
-                    Glyph glyph = uni != null ? getGlyph(uni) : fontProgram.getGlyphByCode(k);
+                    int uni = fontEncoding.getUnicode(k);
+                    Glyph glyph = uni > -1 ? getGlyph(uni) : fontProgram.getGlyphByCode(k);
                     wd.add(new PdfNumber(glyph != null ? glyph.getWidth() : 0));
                 }
             }

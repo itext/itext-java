@@ -6,19 +6,21 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -238,7 +240,6 @@ public class ImageTest extends ExtendedITextTest{
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void imageTest08() throws IOException, InterruptedException {
-
         String outFileName = destinationFolder + "imageTest08.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest08.pdf";
 
@@ -256,6 +257,34 @@ public class ImageTest extends ExtendedITextTest{
         doc.add(div);
 
         doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    /**
+     * Image can be reused in layout, so flushing it on the very first draw is a bad thing.
+     */
+    @Test
+    public void flushOnDrawTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "flushOnDrawTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_flushOnDrawTest.pdf";
+
+        int rowCount = 60;
+        FileOutputStream fos = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
+        Image img = new Image(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        Table table = new Table(8);
+        table.setWidthPercent(100);
+        for (int k = 0; k < rowCount; k++) {
+            for (int j = 0; j < 7; j++)
+            { table.addCell("Hello"); }
+            Cell c = new Cell().add(img.setWidthPercent(50));
+            table.addCell(c);
+        }
+        document.add(table);
+        document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }

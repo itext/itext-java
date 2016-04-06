@@ -1,25 +1,56 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.kernel.Version;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.pdf.IsoKey;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfOutputIntent;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfResources;
-import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.xmp.PdfAXMPUtil;
-import com.itextpdf.kernel.xmp.XMPConst;
-import com.itextpdf.kernel.xmp.XMPException;
-import com.itextpdf.kernel.xmp.XMPMeta;
-import com.itextpdf.kernel.xmp.XMPMetaFactory;
+import com.itextpdf.kernel.xmp.*;
+import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.properties.XMPProperty;
 import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.checker.PdfA2Checker;
@@ -29,7 +60,7 @@ import com.itextpdf.pdfa.checker.PdfAChecker;
 import java.io.IOException;
 
 public class PdfADocument extends PdfDocument {
-    private PdfAChecker checker;
+    protected PdfAChecker checker;
 
     public PdfADocument(PdfWriter writer, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {
         super(writer);
@@ -40,16 +71,17 @@ public class PdfADocument extends PdfDocument {
     public PdfADocument(PdfReader reader, PdfWriter writer) throws XMPException {
         this(reader, writer, false);
     }
+
     public PdfADocument(PdfReader reader, PdfWriter writer, boolean append) throws XMPException {
         super(reader, writer, append);
 
-        PdfStream existingXmpMetadata = getXmpMetadata();
+        byte[] existingXmpMetadata = getXmpMetadata();
         if (existingXmpMetadata == null) {
             throw new PdfAConformanceException(PdfAConformanceException.DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata);
         }
-        XMPMeta meta = XMPMetaFactory.parseFromBuffer(existingXmpMetadata.getBytes());
+        XMPMeta meta = XMPMetaFactory.parseFromBuffer(existingXmpMetadata);
         XMPProperty conformanceXmpProperty = meta.getProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE);
-        XMPProperty partXmpProperty = meta.getProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.PART);
+        XMPProperty partXmpProperty = meta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.PART);
         if (conformanceXmpProperty == null || partXmpProperty == null) {
             throw new PdfAConformanceException(PdfAConformanceException.DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata);
         }
@@ -151,8 +183,8 @@ public class PdfADocument extends PdfDocument {
     }
 
     @Override
-    public void setXmpMetadata() throws XMPException {
-        setXmpMetadata(checker.getConformanceLevel());
+    public void createXmpMetadata() throws XMPException {
+        createXmpMetadata(checker.getConformanceLevel());
     }
 
         @Override
@@ -182,7 +214,7 @@ public class PdfADocument extends PdfDocument {
         super.flushFonts();
     }
 
-    private void setChecker(PdfAConformanceLevel conformanceLevel) {
+    protected void setChecker(PdfAConformanceLevel conformanceLevel) {
         switch (conformanceLevel) {
             case PDF_A_1A:
             case PDF_A_1B:
@@ -199,6 +231,103 @@ public class PdfADocument extends PdfDocument {
                 checker = new PdfA3Checker(conformanceLevel);
                 break;
         }
+    }
+
+    protected void addRdfDescription(XMPMeta xmpMeta, PdfAConformanceLevel conformanceLevel) throws XMPException {
+        switch (conformanceLevel) {
+            case PDF_A_1A:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "1");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
+                break;
+            case PDF_A_1B:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "1");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
+                break;
+            case PDF_A_2A:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "2");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
+                break;
+            case PDF_A_2B:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "2");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
+                break;
+            case PDF_A_2U:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "2");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "U");
+                break;
+            case PDF_A_3A:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "3");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
+                break;
+            case PDF_A_3B:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "3");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
+                break;
+            case PDF_A_3U:
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "3");
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "U");
+                break;
+            default:
+                break;
+        }
+        if (this.isTagged()) {
+            XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
+            XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
+        }
+    }
+
+    public void createXmpMetadata(PdfAConformanceLevel conformanceLevel) throws XMPException {
+        checkClosingStatus();
+        XMPMeta xmpMeta = XMPMetaFactory.create();
+        xmpMeta.setObjectName(XMPConst.TAG_XMPMETA);
+        xmpMeta.setObjectName("");
+        try {
+            xmpMeta.setProperty(XMPConst.NS_DC, PdfConst.Format, "application/pdf");
+            xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, Version.getInstance().getVersion());
+        } catch (XMPException ignored) {
+        }
+        PdfDictionary docInfo = info.getPdfObject();
+        if (docInfo != null) {
+            PdfName key;
+            PdfObject obj;
+            String value;
+            for (PdfName pdfName : docInfo.keySet()) {
+                key = pdfName;
+                obj = docInfo.get(key);
+                if (obj == null)
+                    continue;
+                if (obj.getType() != PdfObject.String)
+                    continue;
+                value = ((PdfString) obj).toUnicodeString();
+                if (PdfName.Title.equals(key)) {
+                    xmpMeta.setLocalizedText(XMPConst.NS_DC, PdfConst.Title, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
+                } else if (PdfName.Author.equals(key)) {
+                    xmpMeta.appendArrayItem(XMPConst.NS_DC, PdfConst.Creator, new PropertyOptions(PropertyOptions.ARRAY_ORDERED), value, null);
+                } else if (PdfName.Subject.equals(key)) {
+                    xmpMeta.setLocalizedText(XMPConst.NS_DC, PdfConst.Description, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
+                } else if (PdfName.Keywords.equals(key)) {
+                    for (String v : value.split(",|;"))
+                        if (v.trim().length() > 0)
+                            xmpMeta.appendArrayItem(XMPConst.NS_DC, PdfConst.Subject, new PropertyOptions(PropertyOptions.ARRAY), v.trim(), null);
+                    xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Keywords, value);
+                } else if (PdfName.Producer.equals(key)) {
+                    xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, value);
+                } else if (PdfName.Creator.equals(key)) {
+                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.CreatorTool, value);
+                } else if (PdfName.CreationDate.equals(key)) {
+                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.CreateDate, PdfDate.getW3CDate(value));
+                } else if (PdfName.ModDate.equals(key)) {
+                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.ModifyDate, PdfDate.getW3CDate(value));
+                }
+            }
+        }
+        if (isTagged()) {
+            xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART, 1, new PropertyOptions(PropertyOptions.SEPARATE_NODE));
+        }
+        if (conformanceLevel != null) {
+            addRdfDescription(xmpMeta, conformanceLevel);
+        }
+        setXmpMetadata(xmpMeta);
     }
 
     private PdfAConformanceLevel getConformanceLevel(String conformance, String part) {

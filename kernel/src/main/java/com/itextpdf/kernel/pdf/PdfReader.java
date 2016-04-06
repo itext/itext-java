@@ -1,7 +1,52 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteBuffer;
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSource;
@@ -13,18 +58,18 @@ import com.itextpdf.kernel.pdf.filters.FilterHandler;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.security.ExternalDecryptionProcess;
 
-import java.io.ByteArrayInputStream;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.Key;
 import java.security.cert.Certificate;
+import java.text.MessageFormat;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PdfReader implements Closeable {
+public class PdfReader implements Closeable, Serializable {
+
+    private static final long serialVersionUID = -3584187443691964939L;
 
     protected static boolean correctStreamLength = true;
 
@@ -58,8 +103,8 @@ public class PdfReader implements Closeable {
     private static final String endstream2 = "\nendstream";
     private static final String endstream3 = "\r\nendstream";
     private static final String endstream4 = "\rendstream";
-    private static final byte[] endstream = PdfOutputStream.getIsoBytes("endstream");
-    private static final byte[] endobj = PdfOutputStream.getIsoBytes("endobj");
+    private static final byte[] endstream = ByteUtils.getIsoBytes("endstream");
+    private static final byte[] endobj = ByteUtils.getIsoBytes("endobj");
 
     /**
      * Constructs a new PdfReader. This is the master constructor.
@@ -491,7 +536,7 @@ public class PdfReader implements Closeable {
                     obj = new PdfNumber(tokens.getByteContent());
                 } else {
                     tokens.seek(address[k]);
-                    obj = readObject(false);
+                    obj = readObject(false, true);
                 }
                 PdfIndirectReference reference = pdfDocument.getXref().get(objNumber[k]);
                 // Check if this object has no incremental updates (e.g. no append mode)
@@ -511,11 +556,15 @@ public class PdfReader implements Closeable {
     }
 
     protected PdfObject readObject(boolean readAsDirect) throws IOException {
+        return readObject(readAsDirect, false);
+    }
+
+    protected PdfObject readObject(boolean readAsDirect, boolean objStm) throws IOException {
         tokens.nextValidToken();
         PdfTokenizer.TokenType type = tokens.getTokenType();
         switch (type) {
             case StartDic: {
-                PdfDictionary dict = readDictionary();
+                PdfDictionary dict = readDictionary(objStm);
                 long pos = tokens.getPosition();
                 // be careful in the trailer. May not be a "next" token.
                 boolean hasNext;
@@ -540,7 +589,7 @@ public class PdfReader implements Closeable {
                 }
             }
             case StartArray:
-                return readArray();
+                return readArray(objStm);
             case Number:
                 return new PdfNumber(tokens.getByteContent());
             case String: {
@@ -549,7 +598,7 @@ public class PdfReader implements Closeable {
                     pdfString.setDecryptInfoNum(currentIndirectReference.getObjNumber());
                     pdfString.setDecryptInfoGen(currentIndirectReference.getGenNumber());
                 }
-                return password == null ? pdfString : pdfString.decrypt(decrypt);
+                return password == null || objStm ? pdfString : pdfString.decrypt(decrypt);
             }
             case Name:
                 return readPdfName(readAsDirect);
@@ -564,7 +613,7 @@ public class PdfReader implements Closeable {
                     if (reference.getGenNumber() != tokens.getGenNr()) {
                         if (fixedXref) {
                             Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                            logger.warn(String.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE + " %d %d R", tokens.getObjNr(), tokens.getGenNr()));
+                            logger.warn(MessageFormat.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE + " {0} {1} R", tokens.getObjNr(), tokens.getGenNr()));
                             return new PdfNull();
                         } else {
                             throw new PdfException(PdfException.InvalidIndirectReference1);
@@ -613,7 +662,7 @@ public class PdfReader implements Closeable {
         return new PdfName(tokens.getByteContent());
     }
 
-    protected PdfDictionary readDictionary() throws IOException {
+    protected PdfDictionary readDictionary(boolean objStm) throws IOException {
         PdfDictionary dic = new PdfDictionary();
         while (true) {
             tokens.nextValidToken();
@@ -622,7 +671,7 @@ public class PdfReader implements Closeable {
             if (tokens.getTokenType() != PdfTokenizer.TokenType.Name)
                 tokens.throwError(PdfException.DictionaryKey1IsNotAName, tokens.getStringValue());
             PdfName name = readPdfName(true);
-            PdfObject obj = readObject(true);
+            PdfObject obj = readObject(true, objStm);
             if (obj == null) {
                 if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
                     tokens.throwError(PdfException.UnexpectedGtGt);
@@ -634,10 +683,10 @@ public class PdfReader implements Closeable {
         return dic;
     }
 
-    protected PdfArray readArray() throws IOException {
+    protected PdfArray readArray(boolean objStm) throws IOException {
         PdfArray array = new PdfArray();
         while (true) {
-            PdfObject obj = readObject(true);
+            PdfObject obj = readObject(true, objStm);
              if (obj == null) {
                 if (tokens.getTokenType() == PdfTokenizer.TokenType.EndArray)
                     break;
@@ -949,7 +998,7 @@ public class PdfReader implements Closeable {
     public byte[] getOriginalFileId() {
         PdfArray id = trailer.getAsArray(PdfName.ID);
         if (id != null) {
-            return PdfOutputStream.getIsoBytes(id.getAsString(0).getValue());
+            return ByteUtils.getIsoBytes(id.getAsString(0).getValue());
         } else {
             return PdfEncryption.generateNewDocumentId();
         }

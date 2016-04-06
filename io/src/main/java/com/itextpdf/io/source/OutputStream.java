@@ -1,278 +1,79 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.io.source;
 
 import com.itextpdf.io.IOException;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
+public class OutputStream<T extends java.io.OutputStream> extends java.io.OutputStream {
 
-public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
-
-    private static class ByteUtils {
-        protected int count;
-        private byte buffer[];
-
-        public ByteUtils(int size) {
-            buffer = new byte[size];
-        }
-
-        public ByteUtils prepend(byte b) {
-            buffer[buffer.length - count - 1] = b;
-            count++;
-            return this;
-        }
-
-        public ByteUtils prepend(byte b[]) {
-            System.arraycopy(b, 0, buffer, buffer.length - b.length, b.length);
-            count += b.length;
-            return this;
-        }
-
-        public ByteUtils reset() {
-            count = 0;
-            return this;
-        }
-
-        public byte[] toByteArray() {
-            byte newBuf[] = new byte[count];
-            System.arraycopy(buffer, startPos(), newBuf, 0, count);
-            return newBuf;
-        }
-
-        public byte[] getBuffer() {
-            return buffer;
-        }
-
-        public int size() {
-            return count;
-        }
-
-        public int startPos() {
-            return buffer.length - count;
-        }
-    }
-
-    public static boolean HighPrecision = false;
-
-    private static final DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.US);
-    private static final byte[] bytes = new byte[]{48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102};
-    private static final byte[] zero = new byte[]{48};
-    private static final byte[] one = new byte[]{49};
-    private static final byte[] negOne = new byte[]{'-', 49};
     //long=19 + max frac=6 => 26 => round to 32.
-    private final ByteUtils numBuffer = new ByteUtils(32);
-
+    private final ByteBuffer numBuffer = new ByteBuffer(32);
 
     protected java.io.OutputStream outputStream = null;
     protected long currentPos = 0;
     protected boolean closeStream = true;
 
-    public static byte[] getIsoBytes(String text) {
-        if (text == null)
-            return null;
-        int len = text.length();
-        byte b[] = new byte[len];
-        for (int k = 0; k < len; ++k)
-            b[k] = (byte) text.charAt(k);
-        return b;
+    public static boolean getHighPrecision() {
+        return ByteUtils.HighPrecision;
     }
 
-    public static byte[] getIsoBytes(byte pre, String text) {
-        return getIsoBytes(pre, text, (byte) 0);
+    public static void setHighPrecision(boolean value) {
+        ByteUtils.HighPrecision = value;
     }
-
-    public static byte[] getIsoBytes(byte pre, String text, byte post) {
-        if (text == null)
-            return null;
-        int len = text.length();
-        int start = 0;
-        if (pre != 0) {
-            len++;
-            start = 1;
-        }
-        if (post != 0) {
-            len++;
-        }
-        byte b[] = new byte[len];
-        if (pre != 0) {
-            b[0] = pre;
-        }
-        if (post != 0) {
-            b[len - 1] = post;
-        }
-        for (int k = 0; k < text.length(); ++k)
-            b[k + start] = (byte) text.charAt(k);
-        return b;
-    }
-
-    public static byte[] getIsoBytes(int n) {
-        return getIsoBytes(n, null);
-    }
-
-    public static byte[] getIsoBytes(double d) {
-        return getIsoBytes(d, null);
-    }
-
-    protected static byte[] getIsoBytes(int n, ByteUtils buffer) {
-        boolean negative = false;
-        if (n < 0) {
-            negative = true;
-            n = -n;
-        }
-        int intLen = intSize(n);
-        ByteUtils buf = buffer == null ? new ByteUtils(intLen + (negative ? 1 : 0)) : buffer;
-        for (int i = 0; i < intLen; i++) {
-            buf.prepend(bytes[n % 10]);
-            n /= 10;
-        }
-        if (negative)
-            buf.prepend((byte) '-');
-
-        return buffer == null ? buf.buffer : null;
-    }
-
-    protected static byte[] getIsoBytes(double d, ByteUtils buffer) {
-        return getIsoBytes(d, buffer, HighPrecision);
-    }
-
-    protected static byte[] getIsoBytes(double d, ByteUtils buffer, boolean highPrecision) {
-        if (highPrecision) {
-            DecimalFormat dn = new DecimalFormat("0.######", dfs);
-            byte[] result = dn.format(d).getBytes();
-            if (buffer != null) {
-                buffer.prepend(result);
-                return null;
-            } else {
-                return result;
-            }
-        }
-        boolean negative = false;
-        if (Math.abs(d) < 0.000015) {
-            if (buffer != null) {
-                buffer.prepend(zero);
-                return null;
-            } else {
-                return zero;
-            }
-        }
-        ByteUtils buf;
-        if (d < 0) {
-            negative = true;
-            d = -d;
-        }
-        if (d < 1.0) {
-            d += 0.000005;
-            if (d >= 1) {
-                byte[] result;
-                if (negative) {
-                    result = negOne;
-                } else {
-                    result = one;
-                }
-                if (buffer != null) {
-                    buffer.prepend(result);
-                    return null;
-                } else {
-                    return result;
-                }
-            }
-            int v = (int) (d * 100000);
-            int len = 5;
-            for (; len > 0; len--) {
-                if (v % 10 != 0) break;
-                v /= 10;
-            }
-            buf = buffer != null ? buffer : new ByteUtils(negative ? len + 3 : len + 2);
-            for (int i = 0; i < len; i++) {
-                buf.prepend(bytes[v % 10]);
-                v /= 10;
-            }
-            buf.prepend((byte) '.').prepend((byte) '0');
-            if (negative) {
-                buf.prepend((byte) '-');
-            }
-        } else if (d <= 32767) {
-            d += 0.005;
-            int v = (int) (d * 100);
-            int intLen;
-            if (v >= 1000000) {
-                intLen = 5;
-            } else if (v >= 100000) {
-                intLen = 4;
-            } else if (v >= 10000) {
-                intLen = 3;
-            } else if (v >= 1000) {
-                intLen = 2;
-            } else {
-                intLen = 1;
-            }
-            int fracLen = 0;
-            if (v % 100 != 0) {
-                fracLen = 2;                             //fracLen include '.'
-                if (v % 10 != 0) {
-                    fracLen++;
-                } else {
-                    v /= 10;
-                }
-            } else {
-                v /= 100;
-            }
-            buf = buffer != null ? buffer : new ByteUtils(intLen + fracLen + (negative ? 1 : 0));
-            for (int i = 0; i < fracLen - 1; i++) {     //-1 because fracLen include '.'
-                buf.prepend(bytes[v % 10]);
-                v /= 10;
-            }
-            if (fracLen > 0) {
-                buf.prepend((byte) '.');
-            }
-            for (int i = 0; i < intLen; i++) {
-                buf.prepend(bytes[v % 10]);
-                v /= 10;
-            }
-            if (negative) {
-                buf.prepend((byte) '-');
-            }
-        } else {
-            d += 0.5;
-            long v = (long) d;
-            int intLen = longSize(v);
-            buf = buffer == null ? new ByteUtils(intLen + (negative ? 1 : 0)) : buffer;
-            for (int i = 0; i < intLen; i++) {
-                buf.prepend(bytes[(int) (v % 10)]);
-                v /= 10;
-            }
-            if (negative) {
-                buf.prepend((byte) '-');
-            }
-        }
-
-        return buffer == null ? buf.buffer : null;
-    }
-
-    static int longSize(long l) {
-        long m = 10;
-        for (int i = 1; i < 19; i++) {
-            if (l < m)
-                return i;
-            m *= 10;
-        }
-        return 19;
-    }
-
-    static int intSize(int l) {
-        long m = 10;
-        for (int i = 1; i < 10; i++) {
-            if (l < m)
-                return i;
-            m *= 10;
-        }
-        return 10;
-    }
-
 
     public OutputStream(java.io.OutputStream outputStream) {
         super();
         this.outputStream = outputStream;
+    }
+
+    /**
+     * Do not use this constructor. This is only for internal usage.
+     */
+    protected OutputStream() {
+        super();
+        this.outputStream = new ByteArrayOutputStream();
     }
 
     @Override
@@ -293,6 +94,14 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
         currentPos += len;
     }
 
+    public void writeByte(byte value) {
+        try {
+            write(value);
+        } catch (java.io.IOException e) {
+            throw new IOException(IOException.CannotWriteByte, e);
+        }
+    }
+
     @Override
     public void flush() throws java.io.IOException {
         outputStream.flush();
@@ -306,8 +115,8 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
 
     public T writeLong(long value) {
         try {
-            getIsoBytes(value, numBuffer.reset());
-            write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
+            ByteUtils.getIsoBytes(value, numBuffer.reset());
+            write(numBuffer.getInternalBuffer(), numBuffer.capacity() - numBuffer.size(), numBuffer.size());
             return (T) this;
         } catch (java.io.IOException e) {
             throw new IOException(IOException.CannotWriteIntNumber, e);
@@ -316,8 +125,8 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
 
     public T writeInteger(int value) {
         try {
-            getIsoBytes(value, numBuffer.reset());
-            write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
+            ByteUtils.getIsoBytes(value, numBuffer.reset());
+            write(numBuffer.getInternalBuffer(), numBuffer.capacity() - numBuffer.size(), numBuffer.size());
             return (T) this;
         } catch (java.io.IOException e) {
             throw new IOException(IOException.CannotWriteIntNumber, e);
@@ -325,7 +134,7 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
     }
 
     public T writeFloat(float value) {
-        return writeFloat(value, HighPrecision);
+        return writeFloat(value, ByteUtils.HighPrecision);
     }
 
     public T writeFloat(float value, boolean highPrecision) {
@@ -342,20 +151,20 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
     }
 
     public T writeDouble(double value) {
-        return writeDouble(value, HighPrecision);
+        return writeDouble(value, ByteUtils.HighPrecision);
     }
 
     public T writeDouble(double value, boolean highPrecision) {
         try {
-            getIsoBytes(value, numBuffer.reset(), highPrecision);
-            write(numBuffer.getBuffer(), numBuffer.startPos(), numBuffer.size());
+            ByteUtils.getIsoBytes(value, numBuffer.reset(), highPrecision);
+            write(numBuffer.getInternalBuffer(), numBuffer.capacity() - numBuffer.size(), numBuffer.size());
             return (T) this;
         } catch (java.io.IOException e) {
             throw new IOException(IOException.CannotWriteFloatNumber, e);
         }
     }
 
-    public T writeByte(byte value) {
+    public T writeByte(int value) {
         try {
             write(value);
             return (T) this;
@@ -365,15 +174,15 @@ public class OutputStream<T extends OutputStream> extends java.io.OutputStream {
     }
 
     public T writeSpace() {
-        return writeByte((byte) ' ');
+        return writeByte(' ');
     }
 
     public T writeNewLine() {
-        return writeByte((byte) '\n');
+        return writeByte('\n');
     }
 
     public T writeString(String value) {
-        return writeBytes(getIsoBytes(value));
+        return writeBytes(ByteUtils.getIsoBytes(value));
     }
 
     public T writeBytes(byte[] b) {

@@ -1,3 +1,47 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
@@ -10,16 +54,15 @@ import com.itextpdf.io.codec.TIFFLZWDecoder;
 import com.itextpdf.io.color.IccProfile;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.util.FilterUtil;
 
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.DataFormatException;
-import java.util.zip.DeflaterOutputStream;
-import java.util.zip.Inflater;
 
 public class TiffImageHelper {
 
@@ -31,7 +74,7 @@ public class TiffImageHelper {
     }
 
     public static void processImage(Image image, ByteArrayOutputStream stream) {
-        if (image.getOriginalType() != Image.TIFF)
+        if (image.getOriginalType() != ImageType.TIFF)
             throw new IllegalArgumentException("TIFF image expected");
         if (stream == null) {
             stream = new ByteArrayOutputStream();
@@ -398,7 +441,7 @@ public class TiffImageHelper {
                 s.seek(posFilePointer);
                 s.readFully(jpeg);
                 tiff.image.data = jpeg;
-                tiff.image.setOriginalType(Image.JPEG);
+                tiff.image.setOriginalType(ImageType.JPEG);
                 JpegImageHelper.processImage(tiff.image, tiff.stream);
                 tiff.jpegProcessing = true;
             } else if (compression == TIFFConstants.COMPRESSION_JPEG) {
@@ -432,7 +475,7 @@ public class TiffImageHelper {
                     jpeg = jpegwithtables;
                 }
                 tiff.image.data = jpeg;
-                tiff.image.setOriginalType(Image.JPEG);
+                tiff.image.setOriginalType(ImageType.JPEG);
                 JpegImageHelper.processImage(tiff.image, tiff.stream);
                 tiff.jpegProcessing = true;
                 if (photometric == TIFFConstants.PHOTOMETRIC_RGB) {
@@ -452,7 +495,7 @@ public class TiffImageHelper {
                     switch (compression) {
                         case TIFFConstants.COMPRESSION_DEFLATE:
                         case TIFFConstants.COMPRESSION_ADOBE_DEFLATE:
-                            inflate(im, outBuf);
+                            FilterUtil.inflateData(im, outBuf);
                             applyPredictor(outBuf, predictor, w, height, samplePerPixel);
                             break;
                         case TIFFConstants.COMPRESSION_NONE:
@@ -630,16 +673,6 @@ public class TiffImageHelper {
             }
         } catch (Exception e) {
             // do nothing
-        }
-    }
-
-    private static void inflate(byte[] deflated, byte[] inflated) {
-        Inflater inflater = new Inflater();
-        inflater.setInput(deflated);
-        try {
-            inflater.inflate(inflated);
-        } catch (DataFormatException dfe) {
-            throw new IOException(IOException.CannotInflateTiffImage);
         }
     }
 

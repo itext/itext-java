@@ -1,3 +1,47 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
@@ -9,7 +53,7 @@ import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.tagging.*;
-import com.itextpdf.kernel.pdf.tagutils.PdfTagStructure;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
@@ -18,6 +62,7 @@ import com.itextpdf.kernel.xmp.options.SerializeOptions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,7 +73,8 @@ import org.slf4j.LoggerFactory;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
-    private PdfResources resources = null;
+    private static final long serialVersionUID = -952395541908379500L;
+	private PdfResources resources = null;
     private Integer mcid = null;
     private Integer structParents = null;
     PdfPages parentPages;
@@ -116,7 +162,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public PdfStream getContentStream(int index) {
         int count = getContentStreamCount();
         if (index >= count)
-            throw new IndexOutOfBoundsException(String.format("Index: %d, Size: %d", index, count));
+            throw new IndexOutOfBoundsException(MessageFormat.format("Index: {0}, Size: {1}", index, count));
         PdfObject contents = getPdfObject().get(PdfName.Contents);
         if (contents instanceof PdfStream)
             return (PdfStream) contents;
@@ -220,6 +266,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Copies page to the specified document.
+     * <br/><br/>
+     * NOTE: Works only for pages from the document opened in reading mode, otherwise an exception is thrown.
      *
      * @param toDocument a document to copy page to.
      * @return copied page.
@@ -230,6 +278,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Copies page to the specified document.
+     * <br/><br/>
+     * NOTE: Works only for pages from the document opened in reading mode, otherwise an exception is thrown.
      *
      * @param toDocument a document to copy page to.
      * @param copier     a copier which bears a specific copy logic. May be NULL
@@ -324,8 +374,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             return;
         }
         if (getDocument().isTagged() && !getDocument().getStructTreeRoot().isFlushed()) {
-            getDocument().getTagStructure().flushPageTags(this);
-            getDocument().getStructTreeRoot().createParentTreeEntryForPage(this);
+            getDocument().getTagStructureContext().flushPageTags(this);
+            getDocument().getStructTreeRoot().getMcrManager().createParentTreeEntryForPage(this);
         }
         getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_PAGE, this));
         if (flushXObjects) {
@@ -452,7 +502,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
         if (mcid == null) {
             PdfStructTreeRoot structTreeRoot = getDocument().getStructTreeRoot();
-            List<PdfMcr> mcrs = structTreeRoot.getPageMarkedContentReferences(this);
+            List<PdfMcr> mcrs = structTreeRoot.getMcrManager().getPageMarkedContentReferences(this);
             mcid = getMcid(mcrs);
         }
         return mcid++;
@@ -502,10 +552,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfPage addAnnotation(int index, PdfAnnotation annotation, boolean tagAnnotation) {
         if (getDocument().isTagged() && tagAnnotation) {
-            PdfPage prevPage = getDocument().getTagStructure().getCurrentPage();
-            getDocument().getTagStructure().setPage(this).addAnnotationTag(annotation);
+            TagTreePointer tagPointer = getDocument().getTagStructureContext().getAutoTaggingPointer();
+            PdfPage prevPage = tagPointer.getCurrentPage(); // TODO what about if current tagging stream is set
+            tagPointer.setPageForTagging(this).addAnnotationTag(annotation);
             if (prevPage != null) {
-                getDocument().getTagStructure().setPage(prevPage);
+                tagPointer.setPageForTagging(prevPage);
             }
         }
 
@@ -544,13 +595,13 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
 
         if (getDocument().isTagged()) {
-            PdfTagStructure tagStructure = getDocument().getTagStructure();
-            tagStructure.removeAnnotationTag(annotation, true);
-
-            boolean standardAnnotTagRole = tagStructure.getRole().equals(PdfName.Annot)
-                    || tagStructure.getRole().equals(PdfName.Form);
-            if (tagStructure.getListOfKidsRoles().isEmpty() && standardAnnotTagRole) {
-                tagStructure.removeTag();
+            TagTreePointer tagPointer = getDocument().getTagStructureContext().removeAnnotationTag(annotation);
+            if (tagPointer != null) {
+                boolean standardAnnotTagRole = tagPointer.getRole().equals(PdfName.Annot)
+                        || tagPointer.getRole().equals(PdfName.Form);
+                if (tagPointer.getKidsRoles().isEmpty() && standardAnnotTagRole) {
+                    tagPointer.removeTag();
+                }
             }
         }
         return this;

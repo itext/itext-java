@@ -1,26 +1,18 @@
 package com.itextpdf.pdfa;
 
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfOutputIntent;
-import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfA1EmbeddedFilesCheckTest {
@@ -38,7 +30,7 @@ public class PdfA1EmbeddedFilesCheckTest {
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, outputIntent);
-        pdfDocument.setXmpMetadata();
+        pdfDocument.createXmpMetadata();
 
         PdfDictionary fileNames = new PdfDictionary();
         pdfDocument.getCatalog().getPdfObject().put(PdfName.Names, fileNames);
@@ -67,7 +59,7 @@ public class PdfA1EmbeddedFilesCheckTest {
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, outputIntent);
-        pdfDocument.setXmpMetadata();
+        pdfDocument.createXmpMetadata();
 
         PdfStream stream = new PdfStream();
         pdfDocument.getCatalog().getPdfObject().put(new PdfName("testStream"), stream);
@@ -89,7 +81,7 @@ public class PdfA1EmbeddedFilesCheckTest {
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, outputIntent);
-        pdfDocument.setXmpMetadata();
+        pdfDocument.createXmpMetadata();
 
         PdfStream stream = new PdfStream();
         pdfDocument.getCatalog().getPdfObject().put(new PdfName("testStream"), stream);

@@ -2,7 +2,7 @@
  * $Id$
  *
  * This file is part of the iText (R) project.
- * Copyright (c) 1998-2014 iText Group NV
+    Copyright (c) 1998-2016 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,6 @@ import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -89,10 +88,10 @@ public abstract class OpenTypeFontTableReader {
         }
     }
     
-    public Integer getGlyphToCharacter(int index) {
+    public int getGlyphToCharacter(int index) {
         Glyph glyph = indexGlyphMap.get(index);
         if (glyph == null) {
-            return null;
+            return -1;
         } else {
             return glyph.getUnicode();
         }
@@ -158,7 +157,10 @@ public abstract class OpenTypeFontTableReader {
             return features;
         }
         Set<String> hs = new HashSet<String>();
-        Collections.addAll(hs, specific);
+        //noinspection ManualArrayToCollectionCopy
+        for (String s : specific) {
+            hs.add(s);
+        }
         List<FeatureRecord> recs = new ArrayList<FeatureRecord>();
         for (FeatureRecord rec : features) {
             if (hs.contains(rec.tag)) {

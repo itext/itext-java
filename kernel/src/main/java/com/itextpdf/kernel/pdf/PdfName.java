@@ -1,7 +1,51 @@
+/*
+    $Id$
+
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2016 iText Group NV
+    Authors: Bruno Lowagie, Paulo Soares, et al.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteBuffer;
-import com.itextpdf.io.source.OutputStream;
+import com.itextpdf.io.source.ByteUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -10,18 +54,20 @@ import java.util.Map;
 
 public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
-    private static final byte[] space = OutputStream.getIsoBytes("#20");                //  ' '
-    private static final byte[] percent = OutputStream.getIsoBytes("#25");              //  '%'
-    private static final byte[] leftParenthesis = OutputStream.getIsoBytes("#28");      //  '('
-    private static final byte[] rightParenthesis = OutputStream.getIsoBytes("#29");     //  ')'
-    private static final byte[] lessThan = OutputStream.getIsoBytes("#3c");             //  '<'
-    private static final byte[] greaterThan = OutputStream.getIsoBytes("#3e");          //  '>'
-    private static final byte[] leftSquare = OutputStream.getIsoBytes("#5b");           //  '['
-    private static final byte[] rightSquare = OutputStream.getIsoBytes("#5d");          //  ']'
-    private static final byte[] leftCurlyBracket = OutputStream.getIsoBytes("#7b");     //  '{'
-    private static final byte[] rightCurlyBracket = OutputStream.getIsoBytes("#7d");    //  '}'
-    private static final byte[] solidus = OutputStream.getIsoBytes("#2f");              //  '/'
-    private static final byte[] numberSign = OutputStream.getIsoBytes("#23");           //  '#'
+    private static final long serialVersionUID = 7493154668111961953L;
+    
+	private static final byte[] space = ByteUtils.getIsoBytes("#20");                //  ' '
+    private static final byte[] percent = ByteUtils.getIsoBytes("#25");              //  '%'
+    private static final byte[] leftParenthesis = ByteUtils.getIsoBytes("#28");      //  '('
+    private static final byte[] rightParenthesis = ByteUtils.getIsoBytes("#29");     //  ')'
+    private static final byte[] lessThan = ByteUtils.getIsoBytes("#3c");             //  '<'
+    private static final byte[] greaterThan = ByteUtils.getIsoBytes("#3e");          //  '>'
+    private static final byte[] leftSquare = ByteUtils.getIsoBytes("#5b");           //  '['
+    private static final byte[] rightSquare = ByteUtils.getIsoBytes("#5d");          //  ']'
+    private static final byte[] leftCurlyBracket = ByteUtils.getIsoBytes("#7b");     //  '{'
+    private static final byte[] rightCurlyBracket = ByteUtils.getIsoBytes("#7d");    //  '}'
+    private static final byte[] solidus = ByteUtils.getIsoBytes("#2f");              //  '/'
+    private static final byte[] numberSign = ByteUtils.getIsoBytes("#23");           //  '#'
 
     public static final PdfName _3D = createDirectName("3D");
     public static final PdfName _3DA = createDirectName("3DA");
@@ -112,6 +158,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName BlockAlign = createDirectName("BlockAlign");
     public static final PdfName BlockQuote = createDirectName("BlockQuote");
     public static final PdfName BM = createDirectName("BM");
+    public static final PdfName Book = createDirectName("Book");
     public static final PdfName Border = createDirectName("Border");
     public static final PdfName BorderColor = createDirectName("BorderColor");
     public static final PdfName BorderStyle = createDirectName("BorderStyle");
@@ -504,6 +551,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Outlines = createDirectName("Outlines");
     public static final PdfName OutputCondition = createDirectName("OutputCondition");
     public static final PdfName OutputConditionIdentifier = createDirectName("OutputConditionIdentifier");
+    public static final PdfName OutputIntent = createDirectName("OutputIntent");
     public static final PdfName OutputIntents = createDirectName("OutputIntents");
     public static final PdfName Outset = createDirectName("Outset");
     public static final PdfName Overlay = createDirectName("Overlay");
