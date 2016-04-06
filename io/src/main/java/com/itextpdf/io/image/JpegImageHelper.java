@@ -340,7 +340,7 @@ class JpegImageHelper {
                     image.setBpc(8);
                     break;
                 } else if (markertype == UNSUPPORTED_MARKER) {
-                    throw new IOException(IOException._1UnsupportedJpegMarker2).setMessageParams(errorID, String.valueOf(marker));
+                    throw new IOException(IOException._1UnsupportedJpegMarker2).setMessageParams(errorID, Integer.toString(marker));
                 } else if (markertype != NOPARAM_MARKER) {
                     StreamUtil.skip(jpegStream, getShort(jpegStream) - 2);
                 }

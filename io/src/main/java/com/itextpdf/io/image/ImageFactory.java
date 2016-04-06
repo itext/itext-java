@@ -633,8 +633,7 @@ public final class ImageFactory {
         try {
             stream = UrlUtil.openStream(source);
             byte[] bytes = new byte[8];
-            int n = stream.read(bytes);
-            assert n == 8;
+            stream.read(bytes);
             return bytes;
         } catch (java.io.IOException e) {
             throw new IOException(IOException.IoException, e);
@@ -651,8 +650,7 @@ public final class ImageFactory {
         try {
             InputStream stream = new ByteArrayInputStream(source);
             byte[] bytes = new byte[8];
-            int n = stream.read(bytes);
-            assert n == 8;
+            stream.read(bytes);
             return bytes;
         } catch (java.io.IOException e) {
             return null;

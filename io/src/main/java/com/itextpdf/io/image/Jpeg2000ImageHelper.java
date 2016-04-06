@@ -58,8 +58,8 @@ final class Jpeg2000ImageHelper {
 
     private static class Jpeg2000Box {
 
-        private int length;
-        private int type;
+        int length;
+        int type;
     }
     private static class ZeroBoxSizeException extends java.io.IOException {
 

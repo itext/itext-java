@@ -527,9 +527,10 @@ class TiffImageHelper {
                     int gColor = rgb.length / 3;
                     int bColor = gColor * 2;
                     for (int k = 0; k < gColor; ++k) {
-                        palette[k * 3] = (byte) (rgb[k] >>> 8);
-                        palette[k * 3 + 1] = (byte) (rgb[k + gColor] >>> 8);
-                        palette[k * 3 + 2] = (byte) (rgb[k + bColor] >>> 8);
+                        //there is no sense in >>> for unsigned char
+                        palette[k * 3] = (byte) (rgb[k] >> 8);
+                        palette[k * 3 + 1] = (byte) (rgb[k + gColor] >> 8);
+                        palette[k * 3 + 2] = (byte) (rgb[k + bColor] >> 8);
                     }
                     // Colormap components are supposed to go from 0 to 655535 but,
                     // as usually, some tiff producers just put values from 0 to 255.
