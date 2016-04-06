@@ -57,13 +57,14 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Table}
@@ -597,7 +598,7 @@ public class TableRenderer extends AbstractRenderer {
 
     protected <T extends TableRenderer> T createSplitRenderer(Table.RowRange rowRange) {
         TableRenderer splitRenderer = getNextRenderer();
-        splitRenderer.setRowRange(rowRange);
+        splitRenderer.rowRange = rowRange;
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         // TODO childRenderers will be populated twice during the relayout.
@@ -612,7 +613,7 @@ public class TableRenderer extends AbstractRenderer {
 
     protected <T extends TableRenderer> T createOverflowRenderer(Table.RowRange rowRange) {
         TableRenderer overflowRenderer = getNextRenderer();
-        overflowRenderer.setRowRange(rowRange);
+        overflowRenderer.rowRange = rowRange;
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());
