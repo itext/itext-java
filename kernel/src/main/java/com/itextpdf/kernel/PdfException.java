@@ -54,7 +54,6 @@ public class PdfException extends RuntimeException {
     public static final String _1IsAnUnknownGraphicsStateDictionary = "{0} is.an.unknown.graphics.state.dictionary";
     public static final String _1IsNotAValidPlaceableWindowsMetafile = "{0} is.not.a.valid.placeable.windows.metafile";
 
-    public static final String AnnotationHasInvalidStructParentValue = "annotation.has.invalid.struct.parent.value";
     public static final String AnnotShallHaveReferenceToPage = "annot.shall.have.reference.to.page";
     public static final String AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible = "append.mode.requires.a.document.without.errors.even.if.recovery.was.possible";
     public static final String AuthenticatedAttributeIsMissingTheDigest = "authenticated.attribute.is.missing.the.digest";
@@ -86,9 +85,9 @@ public class PdfException extends RuntimeException {
     public static final String CannotParseContentStream = "could.not.parse.content.stream";
     public static final String CannotReadAStreamInOrderToAppendNewBytes = "cannot.read.a.stream.in.order.to.append.new.bytes.reason {0}";
     public static final String CannotReadPdfObject = "cannot.read.pdf.object";
-    public static final String CannotModifyTagStructureWhenItWasPartlyFlushed = "cannot.modify.tag.structure.when.it.was.partly.flushed";
     public static final String CannotRemoveDocumentRootTag = "cannot.remove.document.root.tag";
-    public static final String CannotRemoveTagStructureElementsIfTagStructureWasPartiallyFlushed = "cannot.remove.tag.structure.elements.if.tag.structure.was.partially.flushed";
+    public static final String CannotRemoveMarkedContentReferenceBecauseItsPageWasAlreadyFlushed = "cannot.remove.marked.content.reference.because.its.page.was.already.flushed";
+    public static final String CannotRemoveTagBecauseItsParentIsFlushed = "cannot.remove.tag.because.its.parent.is.flushed";
     public static final String CannotSetDataToPdfstreamWhichWasCreatedByInputstream = "cannot.set.data.to.pdfstream.which.was.created.by.inputstream";
     public static final String CannotSplitDocumentThatIsBeingWritten = "cannot.split.document.that.is.being.written";
     public static final String CannotWritePdfStream = "cannot.write.pdf.stream";
@@ -201,6 +200,7 @@ public class PdfException extends RuntimeException {
     public static final String RoleIsNotMappedWithAnyStandardRole = "role.is.not.mapped.with.any.standard.role";
     public static final String SignatureWithName1IsNotTheLastItDoesntCoverWholeDocument = "signature.with.name.1.is.not.the.last.it.doesnt.cover.whole.document";
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";
+    public static final String StructParentIndexNotFoundInTaggedObject = "struct.parent.index.not.found.in.tagged.object";
     public static final String StructureElementShallContainParentObject = "structure.element.shall.contain.parent.object";
     public static final String TagCannotBeMovedToTheAnotherDocumentsTagStructure = "tag.cannot.be.moved.to.the.another.documents.tag.structure";
     public static final String TagFromTheExistingTagStructureIsFlushedCannotAddCopiedPageTags = "tag.from.the.existing.tag.structure.is.flushed.cannot.add.copied.page.tags";
@@ -232,6 +232,7 @@ public class PdfException extends RuntimeException {
     public static final String UnknownKeyAlgorithm1 = "unknown.key.algorithm {0}";
     public static final String UnknownColorFormatMustBeRGBorRRGGBB = "unknown.color.format.must.be.rgb.or.rrggbb";
     public static final String VerificationAlreadyOutput = "verification.already.output";
+    public static final String WhenAddingObjectReferenceToTheTagTreeItMustBeConnectedToNotFlushedObject = "when.adding.object.reference.to.the.tag.tree.it.must.be.connected.to.not.flushed.object";
     public static final String WhitePointIsIncorrectlySpecified = "white.point.is.incorrectly.specified";
     public static final String WmfImageException = "wmf.image.exception";
     public static final String WrongFormFieldAddAnnotationToTheField = "wrong.form.field.add.annotation.to.the.field";

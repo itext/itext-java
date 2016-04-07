@@ -55,6 +55,9 @@ import java.util.Collections;
 import java.util.List;
 
 class BackedAccessibleProperties extends AccessibilityProperties {
+
+    private static final long serialVersionUID = 4080083623525383278L;
+
     private PdfStructElem backingElem;
 
     BackedAccessibleProperties(PdfStructElem backingElem) {

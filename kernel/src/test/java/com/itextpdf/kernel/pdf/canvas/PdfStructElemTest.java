@@ -230,21 +230,20 @@ public class PdfStructElemTest extends ExtendedITextTest {
         page = document.getPage(1);
         canvas = new PdfCanvas(page);
 
-        List<PdfMcr> elems = document.getStructTreeRoot().getMcrManager().getPageMarkedContentReferences(page); // TODO remove it
+        PdfStructElem p = (PdfStructElem) document.getStructTreeRoot().getKids().get(0).getKids().get(0);
 
         canvas.beginText();
         canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 24);
         canvas.setTextMatrix(1, 0, 0, 1, 32, 490);
 
         //Inserting span between of 2 existing ones.
-        span1 = ((PdfStructElem) elems.get(0).getParent().getParent()).addKid(1, new PdfStructElem(document, com.itextpdf.kernel.pdf.PdfName.Span, page));
+        span1 = p.addKid(1, new PdfStructElem(document, com.itextpdf.kernel.pdf.PdfName.Span, page));
         canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(page, span1))));
         canvas.showText("text1");
         canvas.closeTag();
 
         //Inserting span at the end.
-        PdfMcr elem = elems.get(elems.size() - 1);
-        span1 = ((PdfStructElem) elem.getParent().getParent()).addKid(new PdfStructElem(document, com.itextpdf.kernel.pdf.PdfName.Span, page));
+        span1 = p.addKid(new PdfStructElem(document, com.itextpdf.kernel.pdf.PdfName.Span, page));
         canvas.openTag(new CanvasTag(span1.addKid(new PdfMcrNumber(page, span1))));
         canvas.showText("text2");
         canvas.closeTag();
@@ -495,8 +494,6 @@ public class PdfStructElemTest extends ExtendedITextTest {
         canvas.closeTag();
         canvas.endText();
         canvas.release();
-
-        document.getStructTreeRoot().getMcrManager().getPageMarkedContentReferences(page1);
 
         PdfDocument document1 = new PdfDocument(reader);
         document1.copyPagesTo(1, 1, document);

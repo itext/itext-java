@@ -375,7 +375,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
         if (getDocument().isTagged() && !getDocument().getStructTreeRoot().isFlushed()) {
             getDocument().getTagStructureContext().flushPageTags(this);
-            getDocument().getStructTreeRoot().getMcrManager().createParentTreeEntryForPage(this);
+            getDocument().getStructTreeRoot().createParentTreeEntryForPage(this);
         }
         getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_PAGE, this));
         if (flushXObjects) {
@@ -502,8 +502,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
         if (mcid == null) {
             PdfStructTreeRoot structTreeRoot = getDocument().getStructTreeRoot();
-            List<PdfMcr> mcrs = structTreeRoot.getMcrManager().getPageMarkedContentReferences(this);
-            mcid = getMcid(mcrs);
+            mcid = structTreeRoot.getNextMcidForPage(this);
         }
         return mcid++;
     }
@@ -514,7 +513,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (n != null) {
                 structParents = n.getIntValue();
             } else {
-                structParents = 0;
+                structParents = getDocument().getNextStructParentIndex();
             }
         }
         return structParents;
@@ -753,19 +752,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             setModified();
         }
         return contentStream;
-    }
-
-    private Integer getMcid(List<PdfMcr> mcrs) {
-        Integer maxMcid = null;
-        if (mcrs == null)
-            return 0;
-
-        for (PdfMcr mcr : mcrs) {
-            Integer mcid = mcr.getMcid();
-            if (maxMcid == null || (mcid != null && mcid > maxMcid))
-                maxMcid = mcid;
-        }
-        return maxMcid == null ? 0 : maxMcid + 1;
     }
 
     private void flushXObjects(Collection<PdfObject> xObjects) {

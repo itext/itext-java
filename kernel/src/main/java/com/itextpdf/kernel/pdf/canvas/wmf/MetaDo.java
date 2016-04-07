@@ -44,9 +44,12 @@
  */
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
+import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.io.image.Image;
 import com.itextpdf.io.image.ImageFactory;
@@ -656,9 +659,7 @@ public class MetaDo {
         textColor = state.getCurrentTextColor();
         cb.setFillColor(textColor);
         cb.beginText();
-        //TODO Actually here must be used the font which is default for the OS
-        //TODO Uncomment it after PdfDocument will be removed from PdfFont constructors
-        //cb.setFontAndSize(PdfFont.createFont(null, state.getCurrentFont().getFont(), null, true), fontSize);
+        cb.setFontAndSize(PdfFontFactory.createFont(state.getCurrentFont().getFont(), PdfEncodings.CP1252, true), fontSize);
         cb.setTextMatrix(tx, ty);
         cb.showText(text);
         cb.endText();

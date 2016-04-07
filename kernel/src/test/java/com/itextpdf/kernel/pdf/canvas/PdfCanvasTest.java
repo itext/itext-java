@@ -1431,7 +1431,6 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
 
     @Test
-    @Ignore("Failing is caused by commenting of 581 line in MetaDo class. Should be unignored, when issues in MetaDo will be resolved.")
     public void wmfImageTest03() throws IOException, InterruptedException {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest03.pdf");
         PdfWriter writer = new PdfWriter(fos);
@@ -1448,7 +1447,6 @@ public class PdfCanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Failing is caused by commenting of 581 line in MetaDo class. Should be unignored, when issues in MetaDo will be resolved.")
     public void wmfImageTest04() throws IOException, InterruptedException {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest04.pdf");
         PdfWriter writer = new PdfWriter(fos);

@@ -984,7 +984,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             } else {
                 getStructTreeRoot().copyTo(toDocument, insertBeforePage, page2page);
             }
-            toDocument.getTagStructureContext().reinitialize();
+            toDocument.getTagStructureContext().normalizeDocumentRootTag();
         }
         if (catalog.isOutlineMode()) {
             copyOutlines(outlinesToCopy, toDocument, page2Outlines);
@@ -1254,7 +1254,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 PdfDictionary str = catalog.getPdfObject().getAsDictionary(PdfName.StructTreeRoot);
                 if (str != null) {
                     structTreeRoot = new PdfStructTreeRoot(str);
-                    structParentIndex = getStructTreeRoot().getMcrManager().getStructParentIndex() + 1; // TODO review it again
+                    structParentIndex = getStructTreeRoot().getParentTreeNextKey();
                 }
                 if (appendMode && (reader.hasRebuiltXref() || reader.hasFixedXref()))
                     throw new PdfException(PdfException.AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible);

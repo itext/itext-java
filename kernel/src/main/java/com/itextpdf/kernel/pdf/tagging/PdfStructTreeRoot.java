@@ -48,9 +48,10 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Marker;
 
 /**
  * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
@@ -60,14 +61,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     private static final long serialVersionUID = 2168384302241193868L;
 
-    private MarkedContentReferencesManager mcrManager;
-
-    /**
-     * Indicates if any structure element was already flushed.
-     * It is needed to prevent structure tree rebuilding (i.e. when new pages were copied and
-     * inserted between other pages) in case something was already flushed.
-     */
-    private boolean flushOccurred = false;
+    private ParentTreeHandler parentTreeHandler;
 
     public PdfStructTreeRoot(PdfDocument document) {
         this(new PdfDictionary().makeIndirect(document));
@@ -81,8 +75,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         super(pdfObject);
         ensureObjectIsAddedToDocument(pdfObject);
         setForbidRelease();
-        // TODO possible to try to init with parent tree here
-        mcrManager = new MarkedContentReferencesManager(this);
+        parentTreeHandler = new ParentTreeHandler(this);
+        getRoleMap();
     }
 
     public PdfStructElem addKid(PdfStructElem structElem) {
@@ -122,7 +116,6 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return kids;
     }
 
-    // TODO make internal
     public PdfArray getKidsObject() {
         PdfArray k = null;
         PdfObject kObj = getPdfObject().get(PdfName.K);
@@ -148,16 +141,33 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return roleMap;
     }
 
-    // TODO make internal
-    public PdfDictionary getParentTreeObject() {
-        PdfDictionary parentTree = getPdfObject().getAsDictionary(PdfName.ParentTree);
-        if (parentTree == null) {
-            parentTree = new PdfDictionary();
-            if (getDocument().getWriter() != null)
-                parentTree.makeIndirect(getDocument());
-            getPdfObject().put(PdfName.ParentTree, parentTree);
-        }
-        return parentTree;
+    /**
+     * Creates and flushes parent tree entry for the page.
+     * Effectively this means that new content mustn't be added to the page.
+     * @param page {@link PdfPage} for which to create parent tree entry. Typically this page is flushed after this call.
+     */
+    public void createParentTreeEntryForPage(PdfPage page) {
+        getParentTreeHandler().createParentTreeEntryForPage(page);
+    }
+
+    /**
+     * Gets an unmodifiable collection of marked content references on page.
+     * <br/><br/>
+     * NOTE: Do not remove tags when iterating over returned collection, this could
+     * lead to the ConcurrentModificationException, because returned collection is backed by the internal list of the
+     * actual page tags.
+     */
+    public Collection<PdfMcr> getPageMarkedContentReferences(PdfPage page) {
+        Map<Integer, PdfMcr> pageMcrs = getParentTreeHandler().getPageMarkedContentReferences(page);
+        return pageMcrs != null ? Collections.unmodifiableCollection(pageMcrs.values()) : null;
+    }
+
+    public PdfMcr findMcrByMcid(PdfDictionary pageDict, int mcid) {
+        return getParentTreeHandler().findMcrByMcid(pageDict, mcid);
+    }
+
+    public PdfObjRef findObjRefByStructParentIndex(PdfDictionary pageDict, int structParentIndex) {
+        return getParentTreeHandler().findObjRefByStructParentIndex(pageDict, structParentIndex);
     }
 
     @Override
@@ -165,29 +175,15 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return null;
     }
 
-    public MarkedContentReferencesManager getMcrManager() {
-        return mcrManager;
-    }
-
     @Override
     public void flush() {
         for (int i = 0; i < getDocument().getNumberOfPages(); ++i) {
-            mcrManager.createParentTreeEntryForPage(getDocument().getPage(i + 1));
+            createParentTreeEntryForPage(getDocument().getPage(i + 1));
         }
-        put(PdfName.ParentTree, mcrManager.buildParentTree());
+        put(PdfName.ParentTree, getParentTreeHandler().buildParentTree());
+        put(PdfName.ParentTreeNextKey, new PdfNumber(getDocument().getNextStructParentIndex()));
         flushAllKids(this);
         super.flush();
-    }
-
-    public boolean isStructTreeIsPartialFlushed() {
-        return flushOccurred;
-    }
-
-    public void flushStructElement(PdfStructElem structElem) {
-        // TODO i think i don't really need this, because i can create initial mcrsToPages using parent tree
-        mcrManager.registerAllMcrsIfNotRegistered();
-        structElem.getPdfObject().flush();
-        flushOccurred = true;
     }
 
     /**
@@ -219,87 +215,21 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         StructureTreeCopier.copyTo(destDocument, insertBeforePage, page2page, getDocument());
     }
 
-    /**
-     * TODO this method is tremendously slow. Consider some improvements.
-     *
-     * TODO probably remove it at all from here. using getMcr by struct parent index do this logic in TagStructureContext
-     *
-     * For the given annotation removes it's object reference dictionary from the document logical structure.
-     * Be careful with this method, cause it might be slow. If document is opened in stamping mode and
-     * annotation already existed in it, obj ref will be found quickly. Otherwise the whole structure tree will be
-     * traversed.
-     * If annotation is not added to the document or is not tagged, nothing will happen.
-     * @param annotDic dictionary object which represents the annotation to remove from logical structure
-     * @return structure element which was the parent of the removed object reference dictionary
-     */
-    public PdfStructElem removeAnnotationObjectReference(PdfDictionary annotDic) {
-        if (isStructTreeIsPartialFlushed()) {
-            throw new PdfException(PdfException.CannotRemoveTagStructureElementsIfTagStructureWasPartiallyFlushed);
-        }
+    public int getParentTreeNextKey() {
+        // /ParentTreeNextKey entry is always inited on MaredContentReferencesManager initialization
+        return getPdfObject().getAsNumber(PdfName.ParentTreeNextKey).getIntValue();
+    }
 
-        PdfNumber structParentIndex = (PdfNumber) annotDic.remove(PdfName.StructParent);
-        if (structParentIndex == null) {
-            return null;
-        }
-
-        PdfStructElem parentElem = null;
-        PdfObjRef objRef = null;
-
-        PdfDictionary parentTree = getParentTreeObject();
-        PdfObject elem = findAnnotParentElemInParentTree(parentTree, structParentIndex.getIntValue());
-        if (elem != null) {
-            if (elem.isArray()) {
-                throw new PdfException(PdfException.AnnotationHasInvalidStructParentValue);
-            }
-            parentElem = new PdfStructElem((PdfDictionary) elem);
-            for (IPdfStructElem kid : parentElem.getKids()) {
-                if (kid instanceof PdfObjRef) {
-                    PdfDictionary kidObject = (PdfDictionary) ((PdfObjRef) kid).getPdfObject();
-                    if (kidObject.get(PdfName.Obj) == annotDic) {
-                        objRef = new PdfObjRef(kidObject, parentElem);
-                    }
-                }
-            }
-        }
-
-
-        // parentTree doesn't contain given structParent index (which means that probably it's
-        // a new annotation in the document) or logical structure somehow changed and parentElem doesn't contain
-        // objRef to the given annotation anymore. In this case we will traverse the logical structure tree
-        // to try to find the obj reference.
-        if (parentElem == null || objRef == null) {
-            objRef = findAnnotObjRefInStructTree(this, annotDic);
-            if (objRef != null) {
-                parentElem = (PdfStructElem) objRef.getParent();
-            }
-        }
-
-        if (parentElem != null && objRef != null) {
-            PdfObject k = parentElem.getK();
-            // TODO improve removing: what if it was the last element in array, what if it is an indRef in array instead of object itself
-            if (k.isArray()) {
-                ((PdfArray) k).remove(objRef.getPdfObject());
-            } else {
-                parentElem.getPdfObject().remove(PdfName.K);
-            }
-
-            mcrManager.unregisterMcr(objRef);
-
-            // We don't remove the parent tree entry with given struct parent index here,
-            // because parent tree is fully rebuilt at document closing.
-
-            return parentElem;
-        }
-
-        return null;
+    public int getNextMcidForPage(PdfPage page) {
+        return getParentTreeHandler().getNextMcidForPage(page);
     }
 
     public PdfDocument getDocument() {
         return getPdfObject().getIndirectReference().getDocument();
     }
 
-    void addKidObject(PdfDictionary structElem) {
-        addKidObject(-1, structElem);
+    ParentTreeHandler getParentTreeHandler() {
+        return parentTreeHandler;
     }
 
     void addKidObject(int index, PdfDictionary structElem) {
@@ -316,7 +246,6 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return true;
     }
 
-    // TODO revise and write here why do we do this here manually
     private void flushAllKids(IPdfStructElem elem) {
         for (IPdfStructElem kid : elem.getKids()) {
             if (kid instanceof PdfStructElem) {
@@ -332,74 +261,5 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         } else if (kid.getType() == PdfObject.Dictionary && PdfStructElem.isStructElem((PdfDictionary) kid)) {
             kids.add(new PdfStructElem((PdfDictionary) kid));
         }
-    }
-
-    private PdfObject findAnnotParentElemInParentTree(PdfDictionary parentTreeNode, int structParentIndex) {
-        if (parentTreeNode.containsKey(PdfName.Limits)) {
-            PdfArray limits = parentTreeNode.getAsArray(PdfName.Limits);
-            if (structParentIndex < limits.getAsNumber(0).getIntValue()
-                    || structParentIndex > limits.getAsNumber(0).getIntValue()) {
-                return null;
-            }
-        }
-        if (parentTreeNode.containsKey(PdfName.Kids)) {
-            PdfArray kids = parentTreeNode.getAsArray(PdfName.Kids);
-            for (int i = 0; i < kids.size(); ++i) {
-                PdfDictionary kid = kids.getAsDictionary(i);
-                PdfObject parentElem = findAnnotParentElemInParentTree(kid, structParentIndex);
-                if (parentElem != null) {
-                    return parentElem;
-                }
-            }
-
-            return null;
-        }
-
-        PdfArray nums = parentTreeNode.getAsArray(PdfName.Nums);
-        if (nums != null) {
-            return findElemInNumsArray(nums, 0, nums.size(), structParentIndex);
-        }
-
-        return null;
-    }
-
-    private PdfObject findElemInNumsArray(PdfArray numsArray, int startIndex, int endIndex, int structParentIndex) {
-        int length = endIndex - startIndex; // a power of two
-        if (length == 2) {
-            if (numsArray.getAsNumber(startIndex).getIntValue() == structParentIndex) {
-                return numsArray.get(startIndex + 1);
-            } else {
-                return null;
-            }
-        }
-
-        int leastInSecondHalf = numsArray.getAsNumber(startIndex + (length / 2)).getIntValue();
-        if (leastInSecondHalf > structParentIndex) {
-            return findElemInNumsArray(numsArray, startIndex, startIndex + length / 2, structParentIndex);
-        } else {
-            return findElemInNumsArray(numsArray, startIndex + length / 2, endIndex, structParentIndex);
-        }
-    }
-
-    private PdfObjRef findAnnotObjRefInStructTree(IPdfStructElem structElem, PdfDictionary annotDic) {
-        if (structElem instanceof PdfObjRef) {
-            if (((PdfDictionary) ((PdfObjRef) structElem).getPdfObject()).get(PdfName.Obj) == annotDic) {
-                return (PdfObjRef) structElem;
-            } else {
-                return null;
-            }
-        }
-
-        List<IPdfStructElem> kids = structElem.getKids();
-        if (kids != null) {
-            for (IPdfStructElem kid : kids) {
-                PdfObjRef objRef = findAnnotObjRefInStructTree(kid, annotDic);
-                if (objRef != null) {
-                    return objRef;
-                }
-            }
-        }
-
-        return null;
     }
 }

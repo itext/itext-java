@@ -148,8 +148,6 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         super(pdfObject);
         ensureObjectIsAddedToDocument(pdfObject);
         setForbidRelease();
-        PdfName role = getPdfObject().getAsName(PdfName.S);
-        type = identifyType(getDocument(), role);
     }
 
     public PdfStructElem(PdfDocument document, PdfName role, PdfPage page) {
@@ -248,7 +246,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public PdfStructElem addKid(int index, PdfStructElem kid) {
-        if (type == InlineLevel || type == Illustration) {
+        if (getType() == InlineLevel || getType() == Illustration) {
             throw new PdfException(PdfException.InlineLevelOrIllustrationElementCannotContainKids, getPdfObject());
         }
         addKidObject(getPdfObject(), index, kid.getPdfObject());
@@ -260,7 +258,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public PdfMcr addKid(int index, PdfMcr kid) {
-        getDocument().getStructTreeRoot().getMcrManager().registerMcr(kid);
+        getDocument().getStructTreeRoot().getParentTreeHandler().registerMcr(kid);
         addKidObject(getPdfObject(), index, kid.getPdfObject());
         return kid;
     }
@@ -281,7 +279,22 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
             remove(PdfName.K);
         }
 
-        return convertPdfObjectToIPdfStructElem(k);
+        IPdfStructElem removedKid = convertPdfObjectToIPdfStructElem(k);
+        if (removedKid instanceof PdfMcr) {
+            getDocument().getStructTreeRoot().getParentTreeHandler().unregisterMcr((PdfMcr) removedKid);
+        }
+        return removedKid;
+    }
+
+    public int removeKid(IPdfStructElem kid) {
+        if (kid instanceof PdfMcr) {
+            PdfMcr mcr = (PdfMcr) kid;
+            getDocument().getStructTreeRoot().getParentTreeHandler().unregisterMcr(mcr);
+            return removeKidObject(mcr.getPdfObject());
+        } else if (kid instanceof PdfStructElem){
+            return removeKidObject(((PdfStructElem) kid).getPdfObject());
+        }
+        return -1;
     }
 
     /**
@@ -349,6 +362,14 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     public void flush() {
         //TODO log that to prevent undefined behaviour, use StructTreeRoot#flushStructElem method
         super.flush();
+    }
+
+    protected int getType() {
+        if (type == Unknown) {
+            PdfName role = getPdfObject().getAsName(PdfName.S);
+            type = identifyType(getDocument(), role);
+        }
+        return type;
     }
 
     static void addKidObject(PdfDictionary parent, int index, PdfObject kid) {
@@ -421,5 +442,40 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         }
 
         return elem;
+    }
+
+    private int removeKidObject(PdfObject kid) {
+        PdfObject k = getK();
+        if (k == null || !k.isArray()
+                && k != kid && k != kid.getIndirectReference()) {
+            return -1;
+        }
+
+        int removedIndex = -1;
+        if (k.isArray()) {
+            PdfArray kidsArray = (PdfArray) k;
+            removedIndex = removeObjectFromArray(kidsArray, kid);
+            if (kidsArray.isEmpty()) {
+                remove(PdfName.K);
+            }
+        }
+        if (!k.isArray()|| k.isArray() && ((PdfArray)k).isEmpty()) {
+            remove(PdfName.K);
+            removedIndex = 0;
+        }
+
+        return removedIndex;
+    }
+
+    static int removeObjectFromArray(PdfArray array, PdfObject toRemove) {
+        int i;
+        for (i = 0; i < array.size(); ++i) {
+            PdfObject obj = array.get(i);
+            if (obj == toRemove || obj == toRemove.getIndirectReference()) {
+                array.remove(i);
+                break;
+            }
+        }
+        return i;
     }
 }

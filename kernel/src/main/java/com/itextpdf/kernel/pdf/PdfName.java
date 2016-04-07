@@ -571,6 +571,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Params = createDirectName("Params");
     public static final PdfName Parent = createDirectName("Parent");
     public static final PdfName ParentTree = createDirectName("ParentTree");
+    public static final PdfName ParentTreeNextKey = createDirectName("ParentTreeNextKey");
     public static final PdfName Part = createDirectName("Part");
     public static final PdfName Pattern = createDirectName("Pattern");
     public static final PdfName PatternType = createDirectName("PatternType");
