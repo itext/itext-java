@@ -44,7 +44,7 @@
  */
 package com.itextpdf.io.util;
 
-import java.io.File;
+import java.io.*;
 
 public final class FileUtil {
 
@@ -98,4 +98,9 @@ public final class FileUtil {
         }
         return null;
     }
+
+    public static PrintWriter createPrintWriter(OutputStream output, String encoding) throws UnsupportedEncodingException {
+        return new PrintWriter(new OutputStreamWriter(output, encoding));
+    }
+
 }

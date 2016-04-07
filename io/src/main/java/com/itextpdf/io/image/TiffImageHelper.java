@@ -60,7 +60,6 @@ import com.itextpdf.io.source.RandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.FilterUtil;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -53,7 +53,6 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteBuffer;
 
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -68,7 +67,7 @@ class PngImageHelper {
 
         PngImage image;
 
-        DataInputStream dataStream;
+        InputStream dataStream;
         int width;
         int height;
         int bitDepth;
@@ -80,7 +79,7 @@ class PngImageHelper {
         byte[] imageData;
         byte[] smask;
         byte[] trans;
-        NewByteArrayOutputStream idat = new NewByteArrayOutputStream();
+        ByteArrayOutputStream idat = new ByteArrayOutputStream();
         int dpiX;
         int dpiY;
         float XYRatio;
@@ -559,8 +558,8 @@ class PngImageHelper {
             png.smask = new byte[png.width * png.height];
         else if (png.genBWMask)
             png.smask = new byte[(png.width + 7) / 8 * png.height];
-        ByteArrayInputStream bai = new ByteArrayInputStream(png.idat.getBuf(), 0, png.idat.size());
-        png.dataStream = new DataInputStream(FilterUtil.getInflaterInputStream(bai));
+        ByteArrayInputStream bai = new ByteArrayInputStream(png.idat.toByteArray());
+        png.dataStream = FilterUtil.getInflaterInputStream(bai);
 
         if (png.interlaceMethod != 1) {
             decodePass(0, 0, 1, 1, png.width, png.height, png);
@@ -595,7 +594,7 @@ class PngImageHelper {
             int filter = 0;
             try {
                 filter = png.dataStream.read();
-                png.dataStream.readFully(curr, 0, bytesPerRow);
+                StreamUtil.readFully(png.dataStream, curr, 0, bytesPerRow);
             } catch (Exception e) {
                 // empty on purpose
             }
@@ -745,7 +744,7 @@ class PngImageHelper {
         } else {
             int pos = bytesPerRow * y + x / (8 / bitDepth);
             int v = data[offset] << (8 - bitDepth * (x % (8 / bitDepth)) - bitDepth);
-            image[pos] |= v;
+            image[pos] |= (byte) v;
         }
     }
 
@@ -843,12 +842,6 @@ class PngImageHelper {
             curr[i] = (byte) (raw + paethPredictor(priorPixel,
                     priorRow,
                     priorRowPixel));
-        }
-    }
-
-    static class NewByteArrayOutputStream extends ByteArrayOutputStream {
-        public byte[] getBuf() {
-            return buf;
         }
     }
 

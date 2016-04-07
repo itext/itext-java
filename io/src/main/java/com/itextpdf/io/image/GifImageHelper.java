@@ -46,11 +46,9 @@ package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.util.StreamUtil;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
@@ -66,7 +64,7 @@ public final class GifImageHelper {
             this.image = image;
         }
 
-        DataInputStream input;
+        InputStream input;
         boolean gctFlag;      // global color table used
 
         int bgIndex;          // background color index
@@ -136,7 +134,7 @@ public final class GifImageHelper {
     }
 
     private static void process(InputStream stream, GifParameters gif, int lastFrameNumber) throws java.io.IOException {
-        gif.input = new DataInputStream(stream);
+        gif.input = stream;
         readHeader(gif);
         readContents(gif, lastFrameNumber);
         if (gif.currentFrame <= lastFrameNumber)
@@ -205,7 +203,7 @@ public final class GifImageHelper {
         int nbytes = 3*ncolors;
         bpc = newBpc(bpc);
         byte table[] = new byte[(1 << bpc) * 3];
-        gif.input.readFully(table, 0, nbytes);
+        StreamUtil.readFully(gif.input, table, 0, nbytes);
         return table;
     }
 
@@ -304,7 +302,7 @@ public final class GifImageHelper {
             int len = gif.m_curr_table.length;
             colorspace[2] = len / 3 - 1;
             colorspace[3] = PdfEncodings.convertToString(gif.m_curr_table, null);
-            Map ad = new HashMap();
+            Map<String, Object> ad = new HashMap<>();
             ad.put("ColorSpace", colorspace);
             RawImage img = new RawImage(gif.m_out, ImageType.NONE);
             RawImageHelper.updateRawImageParameters(img, gif.iw, gif.ih, 1, gif.m_bpc, gif.m_out);
@@ -478,7 +476,7 @@ public final class GifImageHelper {
         else {
             int pos = gif.m_line_stride * y + x / (8 / gif.m_bpc);
             int vout = v << 8 - gif.m_bpc * (x % (8 / gif.m_bpc))- gif.m_bpc;
-            gif.m_out[pos] |= vout;
+            gif.m_out[pos] |= (byte) vout;
         }
     }
 

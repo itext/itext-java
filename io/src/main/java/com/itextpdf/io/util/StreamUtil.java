@@ -44,15 +44,13 @@
  */
 package com.itextpdf.io.util;
 
+import com.itextpdf.io.codec.Base64;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.io.source.OutputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSource;
 
-import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
-import java.io.InputStream;
+import java.io.*;
 
 public final class StreamUtil {
 
@@ -76,7 +74,7 @@ public final class StreamUtil {
      * @param size the number of bytes to skip
      * @throws java.io.IOException
      */
-    public static void skip(InputStream stream, int size) throws java.io.IOException {
+    public static void skip(InputStream stream, long size) throws java.io.IOException {
         long n;
         while (size > 0) {
             n = stream.skip(size);
@@ -105,12 +103,20 @@ public final class StreamUtil {
      */
     public static void writeEscapedString(OutputStream outputStream, byte[] bytes) {
         ByteBuffer buf = createBufferedEscapedString(bytes);
-        outputStream.writeBytes(buf.getInternalBuffer(), 0, buf.size());
+        try {
+            outputStream.write(buf.getInternalBuffer(), 0, buf.size());
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.CannotWriteBytes, e);
+        }
     }
 
     public static void writeHexedString(OutputStream outputStream, byte[] bytes) {
         ByteBuffer buf = createBufferedHexedString(bytes);
-        outputStream.writeBytes(buf.getInternalBuffer(), 0, buf.size());
+        try {
+            outputStream.write(buf.getInternalBuffer(), 0, buf.size());
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.CannotWriteBytes, e);
+        }
     }
 
     public static ByteBuffer createBufferedEscapedString(byte[] bytes) {
@@ -230,6 +236,29 @@ public final class StreamUtil {
             output.write(buf, 0, (int) n);
             idx += n;
             length -= n;
+        }
+    }
+
+    /**
+     *
+     * Reads {@code len}  bytes from an input stream.
+     *
+     * @param b the buffer into which the data is read.
+     * @param off an int specifying the offset into the data.
+     * @param len an int specifying the number of bytes to read.
+     * @exception EOFException  if this stream reaches the end before reading all the bytes.
+     * @exception IOException   if an I/O error occurs.
+     */
+    public static void readFully(InputStream input, byte[] b, int off, int len) throws IOException {
+        if (len < 0)
+            throw new IndexOutOfBoundsException();
+        int n = 0;
+        while (n < len) {
+            int count = input.read(b, off + n, len - n);
+            if (count < 0) {
+                throw new EOFException();
+            }
+            n += count;
         }
     }
 }
