@@ -115,11 +115,13 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         return getRefersTo(true);
     }
 
-    // Gets direct object and try to resolve indirects chain.
-    // <p>
-    // Note: If chain of references has length of more than 32,
-    // this method return 31st reference in chain.
-    // </p>
+    /**
+     * Gets direct object and try to resolve indirects chain.
+     * <p>
+     * Note: If chain of references has length of more than 32,
+     * this method return 31st reference in chain.
+     * </p>
+     */
     public PdfObject getRefersTo(boolean recursively) {
         if (!recursively) {
             if (refersTo == null && !checkState(Flushed) && !checkState(Modified) && getReader() != null) {

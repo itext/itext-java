@@ -47,6 +47,7 @@ package com.itextpdf.kernel.pdf.tagging;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNull;
 import com.itextpdf.kernel.pdf.PdfNumTree;
@@ -81,7 +82,7 @@ class ParentTreeHandler implements Serializable {
      * removing mcr, register/unregister calls must be made (this is done automatically if addKid or removeKid methods
      * of PdfStructElem are used).
      *
-     * Keys in this map are page dictionaries, values - a map which contains all mcrs that belong to the given page.
+     * Keys in this map are page references, values - a map which contains all mcrs that belong to the given page.
      * This inner map of mcrs is of following structure:
      *      * for McrDictionary and McrNumber values the keys are their MCIDs;
      *      * for ObjRef values the keys are struct parent indexes, but with one trick. Struct parent indexes and MCIDs have the
@@ -89,7 +90,7 @@ class ParentTreeHandler implements Serializable {
      *        struct parent indexes simple transformation is applied via {@code #structParentIndexIntoKey}
      *        and {@code #keyIntoStructParentIndex}. With this we simply store struct parent indexes as negative numbers.
      */
-    private Map<PdfDictionary, TreeMap<Integer, PdfMcr>> pageToPageMcrs;
+    private Map<PdfIndirectReference, TreeMap<Integer, PdfMcr>> pageToPageMcrs;
 
     /**
      * Init ParentTreeHandler. On init the parent tree is read and stored in this instance.
@@ -104,21 +105,21 @@ class ParentTreeHandler implements Serializable {
      * Gets a list of marked content references on page.
      */
     public Map<Integer, PdfMcr> getPageMarkedContentReferences(PdfPage page) {
-        return pageToPageMcrs.get(page.getPdfObject());
+        return pageToPageMcrs.get(page.getPdfObject().getIndirectReference());
     }
 
     public PdfMcr findMcrByMcid(PdfDictionary pageDict, int mcid) {
-        Map<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(pageDict);
+        Map<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(pageDict.getIndirectReference());
         return pageMcrs != null ? pageMcrs.get(mcid) : null;
     }
 
     public PdfObjRef findObjRefByStructParentIndex(PdfDictionary pageDict, int structParentIndex) {
-        Map<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(pageDict);
+        Map<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(pageDict.getIndirectReference());
         return pageMcrs != null ? (PdfObjRef) pageMcrs.get(structParentIndexIntoKey(structParentIndex)) : null;
     }
 
     public int getNextMcidForPage(PdfPage page) {
-        TreeMap<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(page.getPdfObject());
+        TreeMap<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(page.getPdfObject().getIndirectReference());
         if (pageMcrs == null || pageMcrs.isEmpty()) {
             return 0;
         } else {
@@ -141,7 +142,7 @@ class ParentTreeHandler implements Serializable {
         if (mcrs == null) {
             return;
         }
-        pageToPageMcrs.remove(page.getPdfObject());
+        pageToPageMcrs.remove(page.getPdfObject().getIndirectReference());
         updateStructParentTreeEntries(page.getStructParentIndex(), mcrs);
     }
 
@@ -150,10 +151,10 @@ class ParentTreeHandler implements Serializable {
     }
 
     public void registerMcr(PdfMcr mcr) {
-        TreeMap<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(mcr.getPageObject());
+        TreeMap<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(mcr.getPageObject().getIndirectReference());
         if (pageMcrs == null) {
             pageMcrs = new TreeMap<>();
-            pageToPageMcrs.put(mcr.getPageObject(), pageMcrs);
+            pageToPageMcrs.put(mcr.getPageObject().getIndirectReference(), pageMcrs);
         }
         if (mcr instanceof PdfObjRef) {
             PdfDictionary obj = ((PdfDictionary) mcr.getPdfObject()).getAsDictionary(PdfName.Obj);
@@ -176,7 +177,7 @@ class ParentTreeHandler implements Serializable {
         if (pageDict.isFlushed()) {
             throw new PdfException(PdfException.CannotRemoveMarkedContentReferenceBecauseItsPageWasAlreadyFlushed);
         }
-        Map<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(pageDict);
+        Map<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(pageDict.getIndirectReference());
         if (pageMcrs != null) {
             if (mcrToUnregister instanceof PdfObjRef) {
 
