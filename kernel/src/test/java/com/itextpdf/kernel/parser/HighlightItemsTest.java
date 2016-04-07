@@ -1,7 +1,7 @@
 package com.itextpdf.kernel.parser;
 
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -87,6 +86,15 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "HeaderFooter.pdf";
         String output = outputPath + "HeaderFooter_characters.pdf";
         String cmp = sourceFolder + "cmp_HeaderFooter_characters.pdf";
+        parseAndHighlight(input, output, true);
+        Assert.assertEquals(null, new CompareTool().compareByContent(output, cmp, outputPath, "diff"));
+    }
+
+    @Test
+    public void highlightReferencePage2Test() throws IOException, InterruptedException {
+        String input = sourceFolder + "reference_page2.pdf";
+        String output = outputPath + "reference_page2_characters.pdf";
+        String cmp = sourceFolder + "cmp_reference_page2_characters.pdf";
         parseAndHighlight(input, output, true);
         Assert.assertEquals(null, new CompareTool().compareByContent(output, cmp, outputPath, "diff"));
     }
