@@ -143,6 +143,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      */
     public Image(com.itextpdf.io.image.Image img) {
         this(new PdfImageXObject(checkImageType(img)));
+        setProperty(Property.FLUSH_ON_DRAW, true);
     }
 
     /**
@@ -154,6 +155,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      */
     public Image(com.itextpdf.io.image.Image img, float x, float y) {
         this(new PdfImageXObject(checkImageType(img)), x, y);
+        setProperty(Property.FLUSH_ON_DRAW, true);
     }
 
     /**
@@ -166,6 +168,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      */
     public Image(com.itextpdf.io.image.Image img, float x, float y, float width) {
         this(new PdfImageXObject(checkImageType(img)), x, y, width);
+        setProperty(Property.FLUSH_ON_DRAW, true);
     }
 
     /**

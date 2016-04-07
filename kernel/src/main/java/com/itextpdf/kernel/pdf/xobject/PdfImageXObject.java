@@ -123,9 +123,11 @@ public class PdfImageXObject extends PdfXObject {
 
     @Override
     public void flush() {
-        width = getPdfObject().getAsNumber(PdfName.Width).getFloatValue();
-        height = getPdfObject().getAsNumber(PdfName.Height).getFloatValue();
-        super.flush();
+        if (!isFlushed()) {
+            width = getPdfObject().getAsNumber(PdfName.Width).getFloatValue();
+            height = getPdfObject().getAsNumber(PdfName.Height).getFloatValue();
+            super.flush();
+        }
     }
 
     // TODO probably remove it. or may be not. images copying sounds not so bad.
