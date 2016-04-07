@@ -45,14 +45,13 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.parser.EventData;
-import com.itextpdf.kernel.parser.EventListener;
-import com.itextpdf.kernel.parser.EventType;
-import com.itextpdf.kernel.parser.LocationTextExtractionStrategy;
-import com.itextpdf.kernel.parser.PdfCanvasProcessor;
-import com.itextpdf.kernel.parser.SimpleTextExtractionStrategy;
-import com.itextpdf.kernel.parser.TextExtractionStrategy;
-import com.itextpdf.kernel.parser.TextRenderInfo;
+import com.itextpdf.kernel.pdf.canvas.parser.data.EventData;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.EventListener;
+import com.itextpdf.kernel.pdf.canvas.parser.EventType;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.TextExtractionStrategy;
+import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
