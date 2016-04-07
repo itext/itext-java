@@ -379,28 +379,22 @@ class FontRegisterProvider {
         LOGGER.debug(MessageFormat.format("Registering directory {0}, looking for fonts", dir));
         int count = 0;
         try {
-            String[] files = FileUtil.getDirectoryList(dir);
+            String[] files = FileUtil.listFilesInDirectory(dir, scanSubdirectories);
             if (files == null)
                 return 0;
             for (String file : files) {
                 try {
-                    if (FileUtil.isDirectory(file)) {
-                        if (scanSubdirectories) {
-                            count += registerDirectory(file, true);
-                        }
-                    } else {
-                        String suffix = file.length() < 4 ? null : file.substring(file.length() - 4).toLowerCase();
-                        if (".afm".equals(suffix) || ".pfm".equals(suffix)) {
-                            /* Only register Type 1 fonts with matching .pfb files */
-                            String pfb = file.substring(0, file.length() - 4) + ".pfb";
-                            if (FileUtil.fileExists(pfb)) {
-                                register(file, null);
-                                ++count;
-                            }
-                        } else if (".ttf".equals(suffix) || ".otf".equals(suffix) || ".ttc".equals(suffix)) {
+                    String suffix = file.length() < 4 ? null : file.substring(file.length() - 4).toLowerCase();
+                    if (".afm".equals(suffix) || ".pfm".equals(suffix)) {
+                        /* Only register Type 1 fonts with matching .pfb files */
+                        String pfb = file.substring(0, file.length() - 4) + ".pfb";
+                        if (FileUtil.fileExists(pfb)) {
                             register(file, null);
                             ++count;
                         }
+                    } else if (".ttf".equals(suffix) || ".otf".equals(suffix) || ".ttc".equals(suffix)) {
+                        register(file, null);
+                        ++count;
                     }
                 } catch (Exception e) {
                     //empty on purpose

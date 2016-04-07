@@ -45,6 +45,8 @@
 package com.itextpdf.io.util;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class FileUtil {
 
@@ -77,26 +79,38 @@ public final class FileUtil {
         return false;
     }
 
-    public static boolean isDirectory(String path) {
-        return new File(path).isDirectory();
-    }
-
-    public static String[] getDirectoryList(String path) {
+    public static String[] listFilesInDirectory(String path, boolean recursive) {
         if (path != null) {
-            File f = new File(path);
-            if (f.exists() && f.isDirectory()) {
-                File[] files = f.listFiles();
-                if (files == null || files.length == 0) {
-                    return null;
+            File root = new File(path);
+            if (root.exists() && root.isDirectory()) {
+                File[] files = root.listFiles();
+                if (files != null) {
+                    List<String> list = new ArrayList<>();
+                    for (File file : files) {
+                        if (file.isDirectory() && recursive) {
+                            listAllFiles(file.getAbsolutePath(), list);
+                        } else {
+                            list.add(file.getAbsolutePath());
+                        }
+                    }
+                    return (String[]) list.toArray();
                 }
-                String[] list = new String[files.length];
-                for (int i = 0; i < files.length; i++) {
-                    list[i] = files[i].getAbsolutePath();
-                }
-                return list;
             }
         }
         return null;
+    }
+
+    private static void listAllFiles(String dir, List<String> list) {
+        File[] files = new File(dir).listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    listAllFiles(file.getAbsolutePath(), list);
+                } else {
+                    list.add(file.getAbsolutePath());
+                }
+            }
+        }
     }
 
     public static PrintWriter createPrintWriter(OutputStream output, String encoding) throws UnsupportedEncodingException {
