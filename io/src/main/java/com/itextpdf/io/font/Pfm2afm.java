@@ -138,6 +138,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.util.FileUtil;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -153,7 +154,7 @@ public final class Pfm2afm {
     /** Creates a new instance of Pfm2afm */
     private Pfm2afm(RandomAccessFileOrArray input, OutputStream output) throws java.io.IOException {
         this.input = input;
-        this.output = new PrintWriter(new OutputStreamWriter(output, "ISO-8859-1"));
+        this.output = FileUtil.createPrintWriter(output, "ISO-8859-1");
     }
     
     /**
