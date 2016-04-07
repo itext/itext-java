@@ -49,9 +49,6 @@ import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.io.codec.CCITTG4Encoder;
 import com.itextpdf.io.codec.TIFFFaxDecoder;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
-import java.awt.image.PixelGrabber;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -97,9 +94,9 @@ public final class ImageFactory {
         return getImage(filename, false);
     }
 
-    public static Image getImage(final int width, final int height, final boolean reverseBits,
-                                    final int typeCCITT, final int parameters, final byte[] data,
-                                    final int[] transparency) {
+    public static Image getImage(int width, int height, boolean reverseBits,
+                                 int typeCCITT, int parameters, byte[] data,
+                                 int[] transparency) {
         if (transparency != null && transparency.length != 2)
             throw new IOException(IOException.TransparencyLengthMustBeEqualTo2WithCcittImages);
         if (typeCCITT != RawImage.CCITTG4 && typeCCITT != RawImage.CCITTG3_1D && typeCCITT != RawImage.CCITTG3_2D)
@@ -115,8 +112,8 @@ public final class ImageFactory {
         return image;
     }
 
-    public static Image getImage(final int width, final int height, final int components,
-                                    final int bpc, final byte[] data, final int[] transparency) {
+    public static Image getImage(int width, int height, int components,
+                                 int bpc, byte[] data, int[] transparency) {
         if (transparency != null && transparency.length != components * 2)
             throw new IOException(IOException.TransparencyLengthMustBeEqualTo2WithCcittImages);
         if (components == 1 && bpc == 1) {
@@ -139,167 +136,25 @@ public final class ImageFactory {
 
     /**
      * Gets an instance of an Image from a java.awt.Image
+     *
      * @param image the java.awt.Image to convert
      * @param color if different from <CODE>null</CODE> the transparency pixels are replaced by this color
      * @return RawImage
      */
-    public static Image getImage(final java.awt.Image image, final java.awt.Color color) throws java.io.IOException {
+    public static Image getImage(java.awt.Image image, java.awt.Color color) throws java.io.IOException {
         return ImageFactory.getImage(image, color, false);
     }
 
     /**
      * Gets an instance of an Image from a java.awt.Image.
-     * @param image the <CODE>java.awt.Image</CODE> to convert
-     * @param color if different from <CODE>null</CODE> the transparency pixels are replaced by this color
+     *
+     * @param image   the <CODE>java.awt.Image</CODE> to convert
+     * @param color   if different from <CODE>null</CODE> the transparency pixels are replaced by this color
      * @param forceBW if <CODE>true</CODE> the image is treated as black and white
      * @return RawImage
      */
-    public static Image getImage(final java.awt.Image image, final java.awt.Color color, boolean forceBW) throws java.io.IOException {
-        if (image instanceof BufferedImage) {
-            BufferedImage bi = (BufferedImage) image;
-            if (bi.getType() == BufferedImage.TYPE_BYTE_BINARY && bi.getColorModel().getPixelSize() == 1) {
-                forceBW = true;
-            }
-        }
-
-        PixelGrabber pg = new PixelGrabber(image, 0, 0, -1, -1, true);
-        try {
-            pg.grabPixels();
-        } catch (InterruptedException e) {
-            throw new java.io.IOException("Java.awt.image was interrupted. Waiting for pixels");
-        }
-        if ((pg.getStatus() & ImageObserver.ABORT) != 0) {
-            throw new java.io.IOException("Java.awt.image fetch aborted or errored");
-        }
-        int w = pg.getWidth();
-        int h = pg.getHeight();
-        int[] pixels = (int[]) pg.getPixels();
-        if (forceBW) {
-            int byteWidth = w / 8 + ((w & 7) != 0 ? 1 : 0);
-            byte[] pixelsByte = new byte[byteWidth * h];
-
-            int index = 0;
-            int size = h * w;
-            int transColor = 1;
-            if (color != null) {
-                transColor = color.getRed() + color.getGreen()
-                        + color.getBlue() < 384 ? 0 : 1;
-            }
-            int transparency[] = null;
-            int cbyte = 0x80;
-            int wMarker = 0;
-            int currByte = 0;
-            if (color != null) {
-                for (int j = 0; j < size; j++) {
-                    int alpha = pixels[j] >> 24 & 0xff;
-                    if (alpha < 250) {
-                        if (transColor == 1)
-                            currByte |= cbyte;
-                    } else {
-                        if ((pixels[j] & 0x888) != 0)
-                            currByte |= cbyte;
-                    }
-                    cbyte >>= 1;
-                    if (cbyte == 0 || wMarker + 1 >= w) {
-                        pixelsByte[index++] = (byte) currByte;
-                        cbyte = 0x80;
-                        currByte = 0;
-                    }
-                    ++wMarker;
-                    if (wMarker >= w)
-                        wMarker = 0;
-                }
-            } else {
-                for (int j = 0; j < size; j++) {
-                    if (transparency == null) {
-                        int alpha = pixels[j] >> 24 & 0xff;
-                        if (alpha == 0) {
-                            transparency = new int[2];
-							/* bugfix by M.P. Liston, ASC, was: ... ? 1: 0; */
-                            transparency[0] = transparency[1] = (pixels[j] & 0x888) != 0 ? 0xff : 0;
-                        }
-                    }
-                    if ((pixels[j] & 0x888) != 0)
-                        currByte |= cbyte;
-                    cbyte >>= 1;
-                    if (cbyte == 0 || wMarker + 1 >= w) {
-                        pixelsByte[index++] = (byte) currByte;
-                        cbyte = 0x80;
-                        currByte = 0;
-                    }
-                    ++wMarker;
-                    if (wMarker >= w)
-                        wMarker = 0;
-                }
-            }
-            return ImageFactory.getImage(w, h, 1, 1, pixelsByte, transparency);
-        } else {
-            byte[] pixelsByte = new byte[w * h * 3];
-            byte[] smask = null;
-
-            int index = 0;
-            int size = h * w;
-            int red = 255;
-            int green = 255;
-            int blue = 255;
-            if (color != null) {
-                red = color.getRed();
-                green = color.getGreen();
-                blue = color.getBlue();
-            }
-            int transparency[] = null;
-            if (color != null) {
-                for (int j = 0; j < size; j++) {
-                    int alpha = pixels[j] >> 24 & 0xff;
-                    if (alpha < 250) {
-                        pixelsByte[index++] = (byte) red;
-                        pixelsByte[index++] = (byte) green;
-                        pixelsByte[index++] = (byte) blue;
-                    } else {
-                        pixelsByte[index++] = (byte) (pixels[j] >> 16 & 0xff);
-                        pixelsByte[index++] = (byte) (pixels[j] >> 8 & 0xff);
-                        pixelsByte[index++] = (byte) (pixels[j] & 0xff);
-                    }
-                }
-            } else {
-                int transparentPixel = 0;
-                smask = new byte[w * h];
-                boolean shades = false;
-                for (int j = 0; j < size; j++) {
-                    byte alpha = smask[j] = (byte) (pixels[j] >> 24 & 0xff);
-					/* bugfix by Chris Nokleberg */
-                    if (!shades) {
-                        if (alpha != 0 && alpha != -1) {
-                            shades = true;
-                        } else if (transparency == null) {
-                            if (alpha == 0) {
-                                transparentPixel = pixels[j] & 0xffffff;
-                                transparency = new int[6];
-                                transparency[0] = transparency[1] = transparentPixel >> 16 & 0xff;
-                                transparency[2] = transparency[3] = transparentPixel >> 8 & 0xff;
-                                transparency[4] = transparency[5] = transparentPixel & 0xff;
-                            }
-                        } else if ((pixels[j] & 0xffffff) != transparentPixel) {
-                            shades = true;
-                        }
-                    }
-                    pixelsByte[index++] = (byte) (pixels[j] >> 16 & 0xff);
-                    pixelsByte[index++] = (byte) (pixels[j] >> 8 & 0xff);
-                    pixelsByte[index++] = (byte) (pixels[j] & 0xff);
-                }
-                if (shades)
-                    transparency = null;
-                else
-                    smask = null;
-            }
-            Image img = ImageFactory.getImage(w, h, 3, 8, pixelsByte, transparency);
-            if (smask != null) {
-                Image sm = ImageFactory.getImage(w, h, 1, 8, smask, null);
-                sm.makeMask();
-                img.setImageMask(sm);
-            }
-            return img;
-        }
+    public static Image getImage(java.awt.Image image, java.awt.Color color, boolean forceBW) throws java.io.IOException {
+        return AwtImageFactory.getImage(image, color, forceBW);
     }
 
     public static Image getBmpImage(URL url, boolean noHeader, int size) {
@@ -324,6 +179,7 @@ public final class ImageFactory {
 
     /**
      * Return a GifImage object. This object cannot be added to a document
+     *
      * @param bytes
      * @return
      */
@@ -339,7 +195,8 @@ public final class ImageFactory {
 
     /**
      * Returns a specified frame of the gif image
-     * @param url url of gif image
+     *
+     * @param url   url of gif image
      * @param frame number of frame to be returned
      * @return
      */
@@ -355,6 +212,7 @@ public final class ImageFactory {
 
     /**
      * Returns a specified frame of the gif image
+     *
      * @param bytes byte array of gif image
      * @param frame number of frame to be returned
      * @return
@@ -371,7 +229,8 @@ public final class ImageFactory {
 
     /**
      * Returns <CODE>List</CODE> of gif image frames
-     * @param bytes byte array of gif image
+     *
+     * @param bytes        byte array of gif image
      * @param frameNumbers array of frame numbers of gif image
      * @return
      */
@@ -392,7 +251,8 @@ public final class ImageFactory {
 
     /**
      * Returns <CODE>List</CODE> of gif image frames
-     * @param url url of gif image
+     *
+     * @param url          url of gif image
      * @param frameNumbers array of frame numbers of gif image
      * @return
      */
@@ -413,6 +273,7 @@ public final class ImageFactory {
 
     /**
      * Returns <CODE>List</CODE> of gif image frames
+     *
      * @param bytes byte array of gif image
      * @return all frames of gif image
      */
@@ -428,6 +289,7 @@ public final class ImageFactory {
 
     /**
      * Returns <CODE>List</CODE> of gif image frames
+     *
      * @param url url of gif image
      * @return all frames of gif image
      */
@@ -641,7 +503,8 @@ public final class ImageFactory {
             if (stream != null) {
                 try {
                     stream.close();
-                } catch (java.io.IOException ignored) { }
+                } catch (java.io.IOException ignored) {
+                }
             }
         }
     }
