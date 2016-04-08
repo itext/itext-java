@@ -63,9 +63,9 @@ abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapp
 
     public static PdfPattern getPatternInstance(PdfDictionary pdfObject) {
         PdfNumber type = pdfObject.getAsNumber(PdfName.PatternType);
-        if (new PdfNumber(1).equals(type) && pdfObject instanceof PdfStream)
+        if (type.getIntValue() == 1 && pdfObject instanceof PdfStream)
             return new Tiling((PdfStream)pdfObject);
-        else if (new PdfNumber(2).equals(type))
+        else if (type.getIntValue() == 2)
             return new Shading(pdfObject);
         throw new IllegalArgumentException("pdfObject");
     }

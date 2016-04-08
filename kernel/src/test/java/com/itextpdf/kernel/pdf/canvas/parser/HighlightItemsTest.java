@@ -3,15 +3,13 @@ package com.itextpdf.kernel.pdf.canvas.parser;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
-import com.itextpdf.kernel.pdf.canvas.parser.EventType;
-import com.itextpdf.kernel.pdf.canvas.parser.PdfDocumentContentParser;
-import com.itextpdf.kernel.pdf.canvas.parser.data.EventData;
-import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.EventListener;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.canvas.parser.data.EventData;
+import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.EventListener;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -100,6 +98,15 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "reference_page2.pdf";
         String output = outputPath + "reference_page2_characters.pdf";
         String cmp = sourceFolder + "cmp_reference_page2_characters.pdf";
+        parseAndHighlight(input, output, true);
+        Assert.assertEquals(null, new CompareTool().compareByContent(output, cmp, outputPath, "diff"));
+    }
+
+    @Test
+    public void highlightReferencePage832Test() throws IOException, InterruptedException {
+        String input = sourceFolder + "reference_page832.pdf";
+        String output = outputPath + "reference_page832_characters.pdf";
+        String cmp = sourceFolder + "cmp_reference_page832_characters.pdf";
         parseAndHighlight(input, output, true);
         Assert.assertEquals(null, new CompareTool().compareByContent(output, cmp, outputPath, "diff"));
     }

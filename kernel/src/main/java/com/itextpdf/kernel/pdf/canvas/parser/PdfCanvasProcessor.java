@@ -44,10 +44,10 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.color.CalGray;
 import com.itextpdf.kernel.color.CalRgb;
 import com.itextpdf.kernel.color.Color;
@@ -58,6 +58,7 @@ import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.color.IccBased;
 import com.itextpdf.kernel.color.Indexed;
 import com.itextpdf.kernel.color.Lab;
+import com.itextpdf.kernel.color.PatternColor;
 import com.itextpdf.kernel.color.Separation;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -85,6 +86,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 
 import java.io.IOException;
@@ -850,42 +852,51 @@ public class PdfCanvasProcessor {
     /**
      * Gets a color based on a list of operands and Color space.
      */
-    private static Color getColor(PdfColorSpace pdfColorSpace, List<PdfObject> operands) {
+    private static Color getColor(PdfColorSpace pdfColorSpace, List<PdfObject> operands, PdfResources resources) {
         PdfObject pdfObject;
-        float[] c = getColorants(operands);
         if (pdfColorSpace.getPdfObject().isIndirectReference()) {
             pdfObject = ((PdfIndirectReference) pdfColorSpace.getPdfObject()).getRefersTo();
         } else {
             pdfObject = pdfColorSpace.getPdfObject();
         }
+
         if (pdfObject.isName()) {
-            if (PdfName.DeviceGray.equals(pdfColorSpace))
+            if (PdfName.DeviceGray.equals(pdfObject)) {
                 return new DeviceGray(getColorants(operands)[0]);
-            else if (PdfName.DeviceRGB.equals(pdfObject)) {
+            } else if (PdfName.Pattern.equals(pdfObject)) {
+                PdfDictionary patterns = resources.getResource(PdfName.Pattern);
+                if (patterns != null && operands.get(0) instanceof PdfName) {
+                    PdfObject pattern = patterns.get((PdfName) operands.get(0));
+                    if (pattern instanceof PdfDictionary) {
+                        return new PatternColor(PdfPattern.getPatternInstance((PdfDictionary) pattern));
+                    }
+                }
+            } if (PdfName.DeviceRGB.equals(pdfObject)) {
+                float[] c = getColorants(operands);
                 return new DeviceRgb(c[0], c[1], c[2]);
             } else if (PdfName.DeviceCMYK.equals(pdfObject)) {
+                float[] c = getColorants(operands);
                 return new DeviceCmyk(c[0], c[1], c[2], c[3]);
             }
         } else if (pdfObject.isArray()) {
             PdfArray array = (PdfArray) pdfObject;
             PdfName csType = array.getAsName(0);
             if (PdfName.CalGray.equals(csType))
-                return new CalGray((PdfCieBasedCs.CalGray) pdfColorSpace, c[0]);
+                return new CalGray((PdfCieBasedCs.CalGray) pdfColorSpace, getColorants(operands)[0]);
             else if (PdfName.CalRGB.equals(csType))
-                return new CalRgb((PdfCieBasedCs.CalRgb) pdfColorSpace, c);
+                return new CalRgb((PdfCieBasedCs.CalRgb) pdfColorSpace, getColorants(operands));
             else if (PdfName.Lab.equals(csType))
-                return new Lab((PdfCieBasedCs.Lab) pdfColorSpace, c);
+                return new Lab((PdfCieBasedCs.Lab) pdfColorSpace, getColorants(operands));
             else if (PdfName.ICCBased.equals(csType))
-                return new IccBased((PdfCieBasedCs.IccBased) pdfColorSpace, c);
+                return new IccBased((PdfCieBasedCs.IccBased) pdfColorSpace, getColorants(operands));
             else if (PdfName.Indexed.equals(csType))
-                return new Indexed(pdfColorSpace, (int) c[0]);
+                return new Indexed(pdfColorSpace, (int) getColorants(operands)[0]);
             else if (PdfName.Separation.equals(csType))
-                return new Separation((PdfSpecialCs.Separation) pdfColorSpace, c[0]);
+                return new Separation((PdfSpecialCs.Separation) pdfColorSpace, getColorants(operands)[0]);
             else if (PdfName.DeviceN.equals(csType))
-                return new DeviceN((PdfSpecialCs.DeviceN) pdfColorSpace, c);
+                return new DeviceN((PdfSpecialCs.DeviceN) pdfColorSpace, getColorants(operands));
         }
         return null;
-
     }
 
     /**
@@ -1024,7 +1035,7 @@ public class PdfCanvasProcessor {
      */
     private static class SetColorFill implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            processor.getGraphicsState().setFillColor(getColor(processor.getGraphicsState().getFillColorSpace(), operands));
+            processor.getGraphicsState().setFillColor(getColor(processor.getGraphicsState().getFillColorSpace(), operands, processor.resourcesStack.peek()));
         }
     }
 
@@ -1033,7 +1044,7 @@ public class PdfCanvasProcessor {
      */
     private static class SetColorStroke implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            processor.getGraphicsState().setStrokeColor(getColor(processor.getGraphicsState().getStrokeColorSpace(), operands));
+            processor.getGraphicsState().setStrokeColor(getColor(processor.getGraphicsState().getStrokeColorSpace(), operands, processor.resourcesStack.peek()));
         }
     }
 
