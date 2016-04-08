@@ -203,6 +203,15 @@ class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
                 bbox[3] = t;
             }
             font.setBbox(bbox);
+
+            // If ascender or descender in font descriptor are zero, we still want to get more or less correct valuee for
+            // text extraction, stamping etc. Thus we rely on font bbox in this case
+            if (font.getFontMetrics().getTypoAscender() == 0 && font.getFontMetrics().getTypoDescender() == 0) {
+                float maxAscent = Math.max(bbox[3], font.getFontMetrics().getTypoAscender());
+                float minDescent = Math.min(bbox[1], font.getFontMetrics().getTypoDescender());
+                font.setTypoAscender((int) (maxAscent * 1000 / (maxAscent - minDescent)));
+                font.setTypoDescender((int) (minDescent * 1000 / (maxAscent - minDescent)));
+            }
         }
 
         PdfString fontFamily = fontDesc.getAsString(PdfName.FontFamily);

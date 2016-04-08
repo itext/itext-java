@@ -111,6 +111,15 @@ public class HighlightItemsTest extends ExtendedITextTest {
         Assert.assertEquals(null, new CompareTool().compareByContent(output, cmp, outputPath, "diff"));
     }
 
+    @Test
+    public void highlightReferencePage604Test() throws IOException, InterruptedException {
+        String input = sourceFolder + "reference_page604.pdf";
+        String output = outputPath + "reference_page604_characters.pdf";
+        String cmp = sourceFolder + "cmp_reference_page604_characters.pdf";
+        parseAndHighlight(input, output, true);
+        Assert.assertEquals(null, new CompareTool().compareByContent(output, cmp, outputPath, "diff"));
+    }
+
     private void parseAndHighlight(String input, String output, boolean singleCharacters) throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(input), new PdfWriter(output));
 
