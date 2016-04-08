@@ -167,7 +167,7 @@ public class CMapToUnicode extends AbstractCMap {
     void addChar(String mark, CMapObject code) {
         try {
             if (mark.length() == 1) {
-                char[] dest = createCharsFromSingleBytes((byte[]) code.getValue());
+                char[] dest = createCharsFromDoubleBytes((byte[]) code.getValue());
                 byteMappings.put((int) mark.charAt(0), dest);
             } else if (mark.length() == 2) {
                 char[] dest = createCharsFromDoubleBytes((byte[]) code.getValue());
