@@ -198,6 +198,11 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             int uni = fontEncoding.getUnicode(b & 0xff);
             if (uni > -1) {
                 builder.append((char) (int) uni);
+            } else {
+                Glyph glyph = fontProgram.getGlyphByCode(b & 0xff);
+                if (glyph != null && glyph.getChars() != null) {
+                    builder.append(glyph.getChars());
+                }
             }
         }
         return builder.toString();

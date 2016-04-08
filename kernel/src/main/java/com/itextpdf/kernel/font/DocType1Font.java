@@ -46,6 +46,7 @@ package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.Type1Font;
+import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -66,7 +67,7 @@ class DocType1Font extends Type1Font implements DocFontProgram {
         super(fontName);
     }
 
-    static Type1Font createFontProgram(PdfDictionary fontDictionary, FontEncoding fontEncoding) {
+    static Type1Font createFontProgram(PdfDictionary fontDictionary, FontEncoding fontEncoding, CMapToUnicode toUnicode) {
         PdfName baseFontName = fontDictionary.getAsName(PdfName.BaseFont);
         String baseFont;
         if (baseFontName != null) {
@@ -105,6 +106,8 @@ class DocType1Font extends Type1Font implements DocFontProgram {
                 if (!fontProgram.unicodeToGlyph.containsKey(glyph.getUnicode()) || glyph.getWidth() != 0) {
                     fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
                 }
+            } else if (toUnicode != null) {
+                glyph.setChars(toUnicode.lookup(i));
             }
             if (widths[i] > 0) {
                 glyphsWithWidths++;

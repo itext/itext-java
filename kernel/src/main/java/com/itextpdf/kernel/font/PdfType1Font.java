@@ -81,7 +81,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         checkFontDictionary(fontDictionary, PdfName.Type1);
         CMapToUnicode toUni = FontUtil.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
         fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
-        fontProgram = DocType1Font.createFontProgram(fontDictionary, fontEncoding);
+        fontProgram = DocType1Font.createFontProgram(fontDictionary, fontEncoding, toUni);
 
         if (fontProgram instanceof DocFontProgram) {
             embedded = ((DocFontProgram) fontProgram).getFontFile() != null;

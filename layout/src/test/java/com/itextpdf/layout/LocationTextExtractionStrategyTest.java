@@ -1,14 +1,11 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.TextExtractionStrategy;
-import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -16,6 +13,9 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfTextArray;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.TextExtractionStrategy;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Image;
@@ -25,6 +25,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,6 +33,8 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStrategyTest {
+
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/LocationTextExtractionStrategyTest/";
 
     @Override
     public TextExtractionStrategy createRenderListenerForTest() {
@@ -138,6 +141,20 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(content)));
         String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
         Assert.assertEquals("Hello", text);
+    }
+
+    @Test
+    public void test01() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "test01.pdf"));
+        String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), new LocationTextExtractionStrategy());
+        pdfDocument.close();
+        String expectedText = "        We asked each candidate company to distribute to 225 \n" +
+                "randomly selected employees the Great Place to Work \n" +
+                "Trust Index. This employee survey was designed by the \n" +
+                "Great Place to Work Institute of San Francisco to evaluate \n" +
+                "trust in management, pride in work/company, and \n" +
+                "camaraderie. Responses were returned directly to us. ";
+        Assert.assertEquals(expectedText, text);
     }
 
     private byte[] createPdfWithNegativeCharSpacing(String str1, float charSpacing, String str2) throws Exception {
