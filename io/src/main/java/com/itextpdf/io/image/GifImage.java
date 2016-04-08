@@ -45,10 +45,10 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.io.util.UrlUtil;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,10 +107,18 @@ public class GifImage {
      * @throws java.io.IOException
      */
     void loadData() throws java.io.IOException {
-        RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(url));
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        StreamUtil.transferBytes(raf, stream);
-        raf.close();
-        data = stream.toByteArray();
+        InputStream input = null;
+        try {
+            input = UrlUtil.openStream(url);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            StreamUtil.transferBytes(UrlUtil.openStream(url), stream);
+            data = stream.toByteArray();
+        } finally {
+            if (input != null) {
+                input.close();
+            }
+        }
+
+
     }
 }

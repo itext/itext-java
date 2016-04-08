@@ -47,8 +47,6 @@ package com.itextpdf.io.util;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
  * <p>A hash map that uses primitive ints for the key rather than objects.</p>
@@ -383,7 +381,7 @@ public class IntHashtable implements Cloneable, Serializable {
      * <p>Innerclass that acts as a datastructure to create a new entry in the
      * table.</p>
      */
-    static class Entry {
+    public static class Entry {
         int key;
         int value;
         //ArrayList<Integer> values = new ArrayList<Integer>();
@@ -396,7 +394,7 @@ public class IntHashtable implements Cloneable, Serializable {
          * @param value The value for this key
          * @param next A reference to the next entry in the table
          */
-        protected Entry(int key, int value, Entry next) {
+        Entry(int key, int value, Entry next) {
             this.key = key;
             this.value = value;
             this.next = next;
@@ -416,50 +414,6 @@ public class IntHashtable implements Cloneable, Serializable {
         protected Object clone() throws CloneNotSupportedException {
             return new Entry(key, value, next != null ? (Entry)next.clone() : null);
         }
-    }
-
-    // extra inner class by Paulo
-    static class IntHashtableIterator implements Iterator<Entry> {
-        int index;
-        Entry table[];
-        Entry entry;
-
-        IntHashtableIterator(Entry table[]) {
-            this.table = table;
-            this.index = table.length;
-        }
-        public boolean hasNext() {
-            if (entry != null) {
-                return true;
-            }
-            while (index-- > 0) {
-                if ((entry = table[index]) != null) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public Entry next() {
-            if (entry == null) {
-                while (index-- > 0 && (entry = table[index]) == null);
-            }
-            if (entry != null) {
-                Entry e = entry;
-                entry = e.next;
-                return e;
-            }
-            throw new NoSuchElementException("IntHashtableIterator");
-        }
-        public void remove() {
-            throw new UnsupportedOperationException("remove() not supported.");
-        }
-    }
-
-// extra methods by Paulo Soares:
-
-    public Iterator<Entry> getEntryIterator() {
-        return new IntHashtableIterator(table);
     }
 
     public int[] toOrderedKeys() {

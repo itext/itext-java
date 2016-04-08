@@ -148,14 +148,7 @@ public final class RandomAccessSourceFactory implements Serializable {
      * @return the newly created {@link RandomAccessSource}
      */
     public RandomAccessSource createSource(InputStream inputStream) throws java.io.IOException{
-        try {
-            return createSource(StreamUtil.inputStreamToArray(inputStream));
-        }
-        finally {
-            try {
-                inputStream.close();
-            } catch(java.io.IOException ignored) { }
-        }
+        return createSource(StreamUtil.inputStreamToArray(inputStream));
     }
 
     /**

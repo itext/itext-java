@@ -494,11 +494,6 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
     public String readString(int length, String encoding) throws java.io.IOException {
         byte buf[] = new byte[length];
         readFully(buf);
-        try {
-            return new String(buf, encoding);
-        }
-        catch (Exception e) {
-            throw new java.io.IOException(e);
-        }
+        return new String(buf, encoding);
     }
 }
