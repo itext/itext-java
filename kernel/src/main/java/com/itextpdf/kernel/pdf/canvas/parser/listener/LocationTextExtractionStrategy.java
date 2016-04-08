@@ -167,12 +167,12 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     public String getResultantText() {
         if (DUMP_STATE) dumpState();
 
-        List<TextChunk> filteredTextChunks = new ArrayList<>(locationalResult);
-        Collections.sort(filteredTextChunks);
+        List<TextChunk> textChunks = locationalResult;
+        Collections.sort(textChunks);
 
         StringBuilder sb = new StringBuilder();
         TextChunk lastChunk = null;
-        for (TextChunk chunk : filteredTextChunks) {
+        for (TextChunk chunk : textChunks) {
 
             if (lastChunk == null) {
                 sb.append(chunk.text);
@@ -428,9 +428,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
 
             // In case a text chunk is of zero length, this probably means this is a mark character,
             // and we do not actually want to insert a space in such case
-            float curLength = endLocation.subtract(startLocation).length();
-            float previousLength = previous.getEndLocation().subtract(previous.getStartLocation()).length();
-            if (Math.abs(curLength) < .01f || Math.abs(previousLength) < .01f) {
+            if (startLocation.equals(endLocation) || previous.getEndLocation().equals(previous.getStartLocation())) {
                 return false;
             }
 
@@ -445,7 +443,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
 
             LineSegment mySegment = new LineSegment(startLocation, endLocation);
             LineSegment otherSegment = new LineSegment(other.getStartLocation(), other.getEndLocation());
-            if (otherSegment.getLength() == 0 && mySegment.containsSegment(otherSegment) || mySegment.getLength() == 0 && otherSegment.containsSegment(mySegment)) {
+            if (other.getStartLocation().equals(other.getEndLocation()) && mySegment.containsSegment(otherSegment) || startLocation.equals(endLocation) && otherSegment.containsSegment(mySegment)) {
                 // Return 0 to save order due to stable sort. This handles situation of mark glyphs that have zero width
                 return 0;
             }
