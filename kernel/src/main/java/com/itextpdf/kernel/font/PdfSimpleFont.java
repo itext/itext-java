@@ -208,8 +208,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         float width = 0;
         byte[] contentBytes = content.getValueBytes();
         for (byte b : contentBytes) {
-            int uni = fontEncoding.getUnicode(b & 0xff);
-            Glyph glyph = uni > -1 ? getGlyph(uni) : fontProgram.getGlyphByCode(b);
+            Glyph glyph = fontProgram.getGlyphByCode(b & 0xff);
             width += glyph != null ? glyph.getWidth() : 0;
         }
         return width;
