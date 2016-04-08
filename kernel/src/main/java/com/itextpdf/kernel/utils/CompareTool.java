@@ -100,12 +100,32 @@ public class CompareTool {
 
     private boolean encryptionCompareEnabled = false;
 
+    private boolean specialCompareLogicForPageEnabled = true;
 
     public CompareTool() {
         gsExec = System.getProperty("gsExec");
         compareExec = System.getProperty("compareExec");
     }
 
+    public CompareResult compareByCatalog(PdfDocument outDocument, PdfDocument cmpDocument) {
+        CompareResult compareResult = null;
+        try {
+            compareResult = new CompareResult(compareByContentErrorsLimit);
+            ObjectPath catalogPath = new ObjectPath(cmpDocument.getCatalog().getPdfObject().getIndirectReference(),
+                    outDocument.getCatalog().getPdfObject().getIndirectReference());
+            Set<PdfName> ignoredCatalogEntries = new LinkedHashSet<>(Arrays.asList(PdfName.Metadata, PdfName.AcroForm));
+            compareDictionariesExtended(outDocument.getCatalog().getPdfObject(), cmpDocument.getCatalog().getPdfObject(),
+                    catalogPath, compareResult, ignoredCatalogEntries);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return compareResult;
+    }
+
+    public CompareTool disableSpecialPagesCompareLogic () {
+        this.specialCompareLogicForPageEnabled = false;
+        return this;
+    }
 
     /**
      * Sets the maximum errors count which will be returned as the result of the comparison.
@@ -757,7 +777,8 @@ public class CompareTool {
             currentPath = currentPath.resetDirectPath((PdfIndirectReference) cmpObj,(PdfIndirectReference) outObj);
         }
 
-        if (cmpDirectObj.isDictionary() && PdfName.Page.equals(((PdfDictionary) cmpDirectObj).getAsName(PdfName.Type))) {
+        if (cmpDirectObj.isDictionary() && PdfName.Page.equals(((PdfDictionary) cmpDirectObj).getAsName(PdfName.Type))
+                && specialCompareLogicForPageEnabled) {
             if (!outDirectObj.isDictionary() || !PdfName.Page.equals(((PdfDictionary)outDirectObj).getAsName(PdfName.Type))) {
                 if (compareResult != null && currentPath != null)
                     compareResult.addError(currentPath, "Expected a page. Found not a page.");
@@ -1137,7 +1158,7 @@ public class CompareTool {
         }
     }
 
-    private class CompareResult {
+    public class CompareResult {
         // LinkedHashMap to retain order. HashMap has different order in Java6/7 and Java8
         protected Map<ObjectPath, String> differences = new LinkedHashMap<>();
         protected int messageLimit = 1;
