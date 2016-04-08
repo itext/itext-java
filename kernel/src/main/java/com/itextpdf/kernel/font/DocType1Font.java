@@ -101,7 +101,10 @@ class DocType1Font extends Type1Font implements DocFontProgram {
             Glyph glyph = new Glyph(i, widths[i], fontEncoding.getUnicode(i));
             fontProgram.codeToGlyph.put(i, glyph);
             if (glyph.hasValidUnicode()) {
-                fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
+                // Workaround for fonts for embedded Document fonts with differences without base encoding
+                if (!fontProgram.unicodeToGlyph.containsKey(glyph.getUnicode()) || glyph.getWidth() != 0) {
+                    fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
+                }
             }
             if (widths[i] > 0) {
                 glyphsWithWidths++;

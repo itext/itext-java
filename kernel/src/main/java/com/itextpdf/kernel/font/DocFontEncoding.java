@@ -105,6 +105,8 @@ class DocFontEncoding extends FontEncoding {
             }
             fontEncoding.baseEncoding = enc;
             fontEncoding.fillNamedEncoding();
+        } else {
+            fontEncoding.fillStandardEncoding();
         }
     }
 
