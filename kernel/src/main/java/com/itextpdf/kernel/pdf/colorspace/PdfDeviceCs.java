@@ -46,7 +46,7 @@ package com.itextpdf.kernel.pdf.colorspace;
 
 import com.itextpdf.kernel.pdf.PdfName;
 
-abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {
+abstract public class PdfDeviceCs extends PdfColorSpace {
 
     private static final long serialVersionUID = 6884911248656287064L;
 
@@ -116,6 +116,4 @@ abstract public class PdfDeviceCs extends PdfColorSpace<PdfName> {
             return new float[]{0, 0, 0, 1};
         }
     }
-
-
 }

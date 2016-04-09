@@ -56,7 +56,7 @@ import com.itextpdf.kernel.pdf.function.PdfFunction;
 import java.util.Arrays;
 import java.util.List;
 
-abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
+abstract public class PdfSpecialCs extends PdfColorSpace {
 
     private static final long serialVersionUID = -2725455900398492836L;
 
@@ -92,7 +92,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
         }
 
         public PdfColorSpace getBaseCs() {
-            return makeColorSpace(getPdfObject().get(1));
+            return makeColorSpace(((PdfArray)getPdfObject()).get(1));
         }
 
         static private PdfArray getIndexedCsArray(PdfObject base, int hival, PdfString lookup) {
@@ -136,11 +136,11 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
         }
 
         public PdfColorSpace getBaseCs() {
-            return makeColorSpace((getPdfObject()).get(2));
+            return makeColorSpace(((PdfArray)getPdfObject()).get(2));
         }
 
         public PdfName getName() {
-            return (getPdfObject()).getAsName(1);
+            return ((PdfArray)getPdfObject()).getAsName(1);
         }
 
         static private PdfArray getSeparationCsArray(PdfName name, PdfObject alternateSpace, PdfObject tintTransform) {
@@ -191,11 +191,11 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
         }
 
         public PdfColorSpace getBaseCs() {
-            return makeColorSpace(getPdfObject().get(2));
+            return makeColorSpace(((PdfArray)getPdfObject()).get(2));
         }
 
         public PdfArray getNames() {
-            return getPdfObject().getAsArray(1);
+            return ((PdfArray)getPdfObject()).getAsArray(1);
         }
 
         static protected PdfArray getDeviceNCsArray(PdfArray names, PdfObject alternateSpace, PdfObject tintTransform) {
@@ -236,7 +236,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
     }
 
-    static public class Pattern extends PdfColorSpace<PdfObject> {
+    static public class Pattern extends PdfColorSpace {
 
         private static final long serialVersionUID = 8057478102447278706L;
 

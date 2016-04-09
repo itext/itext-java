@@ -56,7 +56,7 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
+abstract public class PdfCieBasedCs extends PdfColorSpace {
 
     private static final long serialVersionUID = 7803780450619297557L;
 
@@ -69,7 +69,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
         super(pdfObject);
     }
 
-    static public class CalGray extends PdfCieBasedCs {
+    public static class CalGray extends PdfCieBasedCs {
         
     	private static final long serialVersionUID = -3974274460820215173L;
 
@@ -84,13 +84,13 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
             }}));
             if (whitePoint == null || whitePoint.length != 3)
                 throw new PdfException(PdfException.WhitePointIsIncorrectlySpecified, this);
-            PdfDictionary d = (getPdfObject()).getAsDictionary(1);
+            PdfDictionary d = ((PdfArray)getPdfObject()).getAsDictionary(1);
             d.put(PdfName.WhitePoint, new PdfArray(whitePoint));
         }
 
         public CalGray(float[] whitePoint, float[] blackPoint, float gamma) {
             this(whitePoint);
-            PdfDictionary d = (getPdfObject()).getAsDictionary(1);
+            PdfDictionary d = ((PdfArray)getPdfObject()).getAsDictionary(1);
             if (blackPoint != null)
                 d.put(PdfName.BlackPoint, new PdfArray(blackPoint));
             if (gamma != Float.NaN)
@@ -108,7 +108,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
         }
     }
 
-    static public class CalRgb extends PdfCieBasedCs {
+    public static class CalRgb extends PdfCieBasedCs {
         
     	private static final long serialVersionUID = -2926074370411556426L;
 
@@ -123,13 +123,13 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
             }}));
             if (whitePoint == null || whitePoint.length != 3)
                 throw new PdfException(PdfException.WhitePointIsIncorrectlySpecified, this);
-            PdfDictionary d = (getPdfObject()).getAsDictionary(1);
+            PdfDictionary d = ((PdfArray)getPdfObject()).getAsDictionary(1);
             d.put(PdfName.WhitePoint, new PdfArray(whitePoint));
         }
 
         public CalRgb(float[] whitePoint, float[] blackPoint, float[] gamma, float[] matrix) {
             this(whitePoint);
-            PdfDictionary d = (getPdfObject()).getAsDictionary(1);
+            PdfDictionary d = ((PdfArray)getPdfObject()).getAsDictionary(1);
             if (blackPoint != null)
                 d.put(PdfName.BlackPoint, new PdfArray(blackPoint));
             if (gamma != null)
@@ -149,7 +149,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
         }
     }
 
-    static public class Lab extends PdfCieBasedCs {
+    public static class Lab extends PdfCieBasedCs {
         
     	private static final long serialVersionUID = 7067722970343880433L;
 
@@ -164,13 +164,13 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
             }}));
             if (whitePoint == null || whitePoint.length != 3)
                 throw new PdfException(PdfException.WhitePointIsIncorrectlySpecified, this);
-            PdfDictionary d = (getPdfObject()).getAsDictionary(1);
+            PdfDictionary d = ((PdfArray)getPdfObject()).getAsDictionary(1);
             d.put(PdfName.WhitePoint, new PdfArray(whitePoint));
         }
 
         public Lab(float[] whitePoint, float[] blackPoint, float[] range) {
             this(whitePoint);
-            PdfDictionary d = (getPdfObject()).getAsDictionary(1);
+            PdfDictionary d = ((PdfArray)getPdfObject()).getAsDictionary(1);
             if (blackPoint != null)
                 d.put(PdfName.BlackPoint, new PdfArray(blackPoint));
             if (range != null)
@@ -212,7 +212,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace<PdfArray> {
 
         @Override
         public int getNumberOfComponents() {
-            return (getPdfObject()).getAsStream(1).getAsInt(PdfName.Action.N);
+            return ((PdfArray)getPdfObject()).getAsStream(1).getAsInt(PdfName.N);
         }
 
         @Override
