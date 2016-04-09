@@ -136,8 +136,11 @@ public class Color {
             return false;
         }
         Color color = (Color) o;
-        return colorSpace != null ? colorSpace.equals(color.colorSpace) : color.colorSpace == null
-                && Arrays.equals(colorValue, color.colorValue);
+        //noinspection SimplifiableIfStatement
+        if (colorSpace != null ? !colorSpace.equals(color.colorSpace) : color.colorSpace != null) {
+            return false;
+        }
+        return Arrays.equals(colorValue, color.colorValue);
 
     }
 
