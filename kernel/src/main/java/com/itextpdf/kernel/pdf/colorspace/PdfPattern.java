@@ -53,11 +53,11 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 
-abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapper<T> {
+public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -6771280634868639993L;
 
-	public PdfPattern(T pdfObject) {
+	public PdfPattern(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
@@ -84,7 +84,7 @@ abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapp
         return true;
     }
 
-    public static class Tiling extends PdfPattern<PdfStream> {
+    public static class Tiling extends PdfPattern {
 
         private static final long serialVersionUID = 1450379837955897673L;
 		
@@ -213,7 +213,7 @@ abstract public class PdfPattern<T extends PdfDictionary> extends PdfObjectWrapp
         }
     }
 
-    public static class Shading extends PdfPattern<PdfDictionary> {
+    public static class Shading extends PdfPattern {
 
         private static final long serialVersionUID = -4289411438737403786L;
 
