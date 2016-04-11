@@ -175,7 +175,7 @@ public class PdfMerger {
                         PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(pdfDocument, excludedKeys, false));
                         newAnnot.setDestination(d);
                         if (hasGoToAction) {
-                            newAnnot.remove(PdfName.A);
+                            newAnnot.getPdfObject().remove(PdfName.A);
                         }
                         page2page.get(entry.getKey()).addAnnotation(-1, newAnnot, false);
                     }

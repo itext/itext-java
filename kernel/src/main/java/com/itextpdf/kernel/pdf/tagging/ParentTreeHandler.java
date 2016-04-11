@@ -238,7 +238,7 @@ class ParentTreeHandler implements Serializable {
                 }
             }
         }
-        structTreeRoot.put(PdfName.ParentTreeNextKey, new PdfNumber(maxStructParentIndex + 1));
+        structTreeRoot.getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber(maxStructParentIndex + 1));
 
         for (PdfStructElem mcrParent : mcrParents) {
             for (IPdfStructElem kid : mcrParent.getKids()) {

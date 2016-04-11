@@ -64,19 +64,23 @@ public class PdfFixedPrint extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfFixedPrint setMatrix(PdfArray matrix){
-        return put(PdfName.Matrix, matrix);
+        getPdfObject().put(PdfName.Matrix, matrix);
+        return this;
     }
 
     public PdfFixedPrint setMatrix(float[] matrix) {
-        return put(PdfName.Matrix, new PdfArray(matrix));
+        getPdfObject().put(PdfName.Matrix, new PdfArray(matrix));
+        return this;
     }
 
     public PdfFixedPrint setHorizontalTranslation(float horizontal){
-        return put(PdfName.H, new PdfNumber(horizontal));
+        getPdfObject().put(PdfName.H, new PdfNumber(horizontal));
+        return this;
     }
 
     public PdfFixedPrint setVerticalTranslation(float vertical){
-        return put(PdfName.V, new PdfNumber(vertical));
+        getPdfObject().put(PdfName.V, new PdfNumber(vertical));
+        return this;
     }
 
     public PdfArray getMatrix() {

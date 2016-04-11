@@ -113,13 +113,13 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
 
     public <T extends PdfMarkupAnnotation> T setInReplyTo(PdfAnnotation inReplyTo) {
         this.inReplyTo = inReplyTo;
-        return put(PdfName.IRT, inReplyTo);
+        return put(PdfName.IRT, inReplyTo.getPdfObject());
     }
 
     public <T extends PdfMarkupAnnotation> T setPopup(PdfPopupAnnotation popup) {
         this.popup = popup;
         popup.put(PdfName.Parent, getPdfObject());
-        return put(PdfName.Popup, popup);
+        return put(PdfName.Popup, popup.getPdfObject());
     }
 
     public PdfDictionary getPopupObject() {

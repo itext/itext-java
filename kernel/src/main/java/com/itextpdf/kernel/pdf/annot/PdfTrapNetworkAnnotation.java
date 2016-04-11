@@ -78,7 +78,7 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
     }
 
     public PdfTrapNetworkAnnotation setLastModified(PdfDate lastModified) {
-        return put(PdfName.LastModified, lastModified);
+        return put(PdfName.LastModified, lastModified.getPdfObject());
     }
 
     public PdfString getLastModified() {

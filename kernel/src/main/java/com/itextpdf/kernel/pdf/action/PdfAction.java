@@ -135,7 +135,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfAction createGoTo(PdfDestination destination) {
-        return new PdfAction().put(PdfName.S, PdfName.GoTo).put(PdfName.D, destination);
+        return new PdfAction().put(PdfName.S, PdfName.GoTo).put(PdfName.D, destination.getPdfObject());
     }
 
     public static PdfAction createGoTo(String destination) {
@@ -143,13 +143,13 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfAction createGoToR(PdfFileSpec fileSpec, PdfDestination destination, boolean newWindow) {
-        return new PdfAction().put(PdfName.S, PdfName.GoToR).put(PdfName.F, fileSpec).
-                put(PdfName.D, destination).put(PdfName.NewWindow, new PdfBoolean(newWindow));
+        return new PdfAction().put(PdfName.S, PdfName.GoToR).put(PdfName.F, fileSpec.getPdfObject()).
+                put(PdfName.D, destination.getPdfObject()).put(PdfName.NewWindow, new PdfBoolean(newWindow));
     }
 
     public static PdfAction createGoToR(PdfFileSpec fileSpec, PdfDestination destination) {
-        return new PdfAction().put(PdfName.S, PdfName.GoToR).put(PdfName.F, fileSpec).
-                put(PdfName.D, destination);
+        return new PdfAction().put(PdfName.S, PdfName.GoToR).put(PdfName.F, fileSpec.getPdfObject()).
+                put(PdfName.D, destination.getPdfObject());
     }
 
     public static PdfAction createGoToR(String filename, int pageNum) {
@@ -173,8 +173,8 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfAction createGoToE(PdfFileSpec fileSpec, PdfDestination destination, boolean newWindow, PdfTargetDictionary targetDictionary) {
-        return new PdfAction().put(PdfName.S, PdfName.GoToE).put(PdfName.F, fileSpec).put(PdfName.D, destination).
-                put(PdfName.NewWindow, new PdfBoolean(newWindow)).put(PdfName.T, targetDictionary);
+        return new PdfAction().put(PdfName.S, PdfName.GoToE).put(PdfName.F, fileSpec.getPdfObject()).put(PdfName.D, destination.getPdfObject()).
+                put(PdfName.NewWindow, new PdfBoolean(newWindow)).put(PdfName.T, targetDictionary.getPdfObject());
     }
 
     public static PdfAction createLaunch(PdfFileSpec fileSpec, boolean newWindow) {
@@ -182,16 +182,16 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfAction createLaunch(PdfFileSpec fileSpec) {
-        return new PdfAction().put(PdfName.S, PdfName.Launch).put(PdfName.F, fileSpec);
+        return new PdfAction().put(PdfName.S, PdfName.Launch).put(PdfName.F, fileSpec.getPdfObject());
     }
 
     public static PdfAction createLaunch(PdfFileSpec fileSpec, PdfWin win, boolean newWindow) {
-        return new PdfAction().put(PdfName.S, PdfName.Launch).put(PdfName.F, fileSpec).put(PdfName.Win, win).
+        return new PdfAction().put(PdfName.S, PdfName.Launch).put(PdfName.F, fileSpec.getPdfObject()).put(PdfName.Win, win.getPdfObject()).
                 put(PdfName.NewWindow, new PdfBoolean(newWindow));
     }
 
     public static PdfAction createThread(PdfFileSpec fileSpec, PdfObject destinationThread, PdfObject bead) {
-        return new PdfAction().put(PdfName.S, PdfName.Launch).put(PdfName.F, fileSpec).
+        return new PdfAction().put(PdfName.S, PdfName.Launch).put(PdfName.F, fileSpec.getPdfObject()).
                 put(PdfName.D, destinationThread).put(PdfName.B, bead);
     }
 
@@ -218,12 +218,12 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfAction createMovie(PdfAnnotation annotation, String title, PdfName operation) {
-        return new PdfAction().put(PdfName.S, PdfName.Movie).put(PdfName.Annotation, annotation).
+        return new PdfAction().put(PdfName.S, PdfName.Movie).put(PdfName.Annotation, annotation.getPdfObject()).
                 put(PdfName.T, new PdfString(title)).put(PdfName.Operation, operation);
     }
 
     public static PdfAction createHide(PdfAnnotation annotation, boolean hidden) {
-        return new PdfAction().put(PdfName.S, PdfName.Hide).put(PdfName.T, annotation).
+        return new PdfAction().put(PdfName.S, PdfName.Hide).put(PdfName.T, annotation.getPdfObject()).
                 put(PdfName.H, new PdfBoolean(hidden));
     }
 
@@ -259,8 +259,8 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
 
     public static PdfAction createRendition(String file, PdfFileSpec fs, String mimeType, PdfAnnotation screenAnnotation) {
         return new PdfAction().put(PdfName.S, PdfName.Rendition).
-                put(PdfName.OP, new PdfNumber(0)).put(PdfName.AN, screenAnnotation).
-                put(PdfName.R, new PdfRendition(file, fs, mimeType));
+                put(PdfName.OP, new PdfNumber(0)).put(PdfName.AN, screenAnnotation.getPdfObject()).
+                put(PdfName.R, new PdfRendition(file, fs, mimeType).getPdfObject());
     }
 
     public static PdfAction createJavaScript(String javaScript) {
@@ -299,7 +299,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         else
             dic = new PdfDictionary();
         dic.put(key, action.getPdfObject());
-        wrapper.put(PdfName.AA, dic);
+        wrapper.getPdfObject().put(PdfName.AA, dic);
     }
 
 
@@ -310,15 +310,20 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      */
     public void next(PdfAction na) {
         PdfObject nextAction = getPdfObject().get(PdfName.Next);
-        if (nextAction == null)
-            put(PdfName.Next, na);
-        else if (nextAction.isDictionary()) {
+        if (nextAction == null) {
+            put(PdfName.Next, na.getPdfObject());
+        } else if (nextAction.isDictionary()) {
             PdfArray array = new PdfArray(nextAction);
             array.add(na.getPdfObject());
             put(PdfName.Next, array);
         } else {
             ((PdfArray) nextAction).add(na.getPdfObject());
         }
+    }
+
+    public PdfAction put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return this;
     }
 
     @Override

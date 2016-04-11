@@ -299,7 +299,7 @@ public class TagStructureContext implements Serializable {
             rootTagElement = (PdfStructElem) rootKids.get(0);
         } else {
             PdfStructElem prevRootTag = rootTagElement;
-            document.getStructTreeRoot().remove(PdfName.K);
+            document.getStructTreeRoot().getPdfObject().remove(PdfName.K);
             if (prevRootTag == null) {
                 rootTagElement = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
             } else {

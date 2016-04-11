@@ -50,6 +50,7 @@ import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 
@@ -121,7 +122,7 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      * @param date time of signing
      */
     public void setDate(PdfDate date) {
-        put(PdfName.M, date);
+        put(PdfName.M, date.getPdfObject());
     }
 
     /**
@@ -161,6 +162,11 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      */
     public void setContact(String contactInfo) {
         put(PdfName.ContactInfo, new PdfString(contactInfo, PdfEncodings.UnicodeBig));
+    }
+
+    protected PdfSignature put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return this;
     }
 
     @Override

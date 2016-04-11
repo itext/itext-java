@@ -65,11 +65,13 @@ public class PdfAnnotationAppearance extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfAnnotationAppearance setState(PdfName stateName, PdfFormXObject state) {
-        return put(stateName, state);
+        getPdfObject().put(stateName, state.getPdfObject());
+        return this;
     }
 
     public PdfAnnotationAppearance setStateObject(PdfName stateName, PdfStream state) {
-        return put(stateName, state);
+        getPdfObject().put(stateName, state);
+        return this;
     }
 
     public PdfStream getStateObject(PdfName stateName) {

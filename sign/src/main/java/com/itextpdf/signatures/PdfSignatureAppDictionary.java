@@ -78,7 +78,7 @@ public class PdfSignatureAppDictionary extends PdfObjectWrapper<PdfDictionary> {
      * @param name String name of the application creating the signature
      */
     public void setSignatureCreator(String name) {
-        put(PdfName.Name, new PdfString(name, PdfEncodings.UnicodeBig));
+        getPdfObject().put(PdfName.Name, new PdfString(name, PdfEncodings.UnicodeBig));
     }
 
     @Override

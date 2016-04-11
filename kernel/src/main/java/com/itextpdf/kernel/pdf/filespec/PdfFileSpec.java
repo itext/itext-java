@@ -63,14 +63,11 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
 
     public static PdfFileSpec createExternalFileSpec(PdfDocument doc, String filePath, boolean isUnicodeFileName) {
         PdfDictionary dict = new PdfDictionary();
-
         dict.put(PdfName.Type, PdfName.Filespec);
         dict.put(PdfName.F, new PdfString(filePath));
-        dict.put(PdfName.UF, new PdfString(filePath, isUnicodeFileName ? PdfEncodings.UnicodeBig : PdfEncodings.PdfDocEncoding));
-
-        PdfFileSpec fileSpec = new PdfFileSpec(dict).makeIndirect(doc);
-
-        return fileSpec;
+        dict.put(PdfName.UF, new PdfString(filePath, isUnicodeFileName
+                ? PdfEncodings.UnicodeBig : PdfEncodings.PdfDocEncoding));
+        return new PdfFileSpec(dict).makeIndirect(doc);
     }
 
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String description, String fileDisplay, PdfName mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue, boolean isUnicodeFileName) {
@@ -147,7 +144,12 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
     }
 
     public PdfFileSpec setCollectionItem(PdfCollectionItem item) {
-        return put(PdfName.CI, item);
+        return put(PdfName.CI, item.getPdfObject());
+    }
+
+    public PdfFileSpec put(PdfName key, PdfObject value) {
+        ((PdfDictionary)getPdfObject()).put(key, value);
+        return this;
     }
 
     @Override

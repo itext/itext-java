@@ -274,6 +274,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     public PdfObject getBlendMode() {
         return getPdfObject().get(PdfName.BM);
     }
+
     public PdfExtGState setBlendMode(PdfObject blendMode) {
         return put(PdfName.BM, blendMode);
     }
@@ -321,6 +322,11 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfExtGState setTextKnockoutFlag(boolean textKnockoutFlag) {
         return put(PdfName.TK, new PdfBoolean(textKnockoutFlag));
+    }
+
+    public PdfExtGState put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return this;
     }
 
     @Override

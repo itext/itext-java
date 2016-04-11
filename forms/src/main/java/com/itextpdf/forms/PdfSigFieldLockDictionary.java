@@ -72,7 +72,7 @@ public class PdfSigFieldLockDictionary extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfSigFieldLockDictionary(PdfDictionary dict) {
         super(dict);
-        put(PdfName.Type, PdfName.SigFieldLock);
+        getPdfObject().put(PdfName.Type, PdfName.SigFieldLock);
     }
 
     /**
@@ -83,7 +83,7 @@ public class PdfSigFieldLockDictionary extends PdfObjectWrapper<PdfDictionary> {
      * @return This {@link PdfSigFieldLockDictionary} object.
      */
     public PdfSigFieldLockDictionary setDocumentPermissions(LockPermissions permissions) {
-        put(PdfName.P, permissions.getValue());
+        getPdfObject().put(PdfName.P, permissions.getValue());
         return this;
     }
 
@@ -96,14 +96,11 @@ public class PdfSigFieldLockDictionary extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfSigFieldLockDictionary setFieldLock(LockAction action, String... fields) {
         PdfArray fieldsArray = new PdfArray();
-
         for (String field : fields) {
             fieldsArray.add(new PdfString(field));
         }
-
-        put(PdfName.Action, action.getValue());
-        put(PdfName.Fields, fieldsArray);
-
+        getPdfObject().put(PdfName.Action, action.getValue());
+        getPdfObject().put(PdfName.Fields, fieldsArray);
         return this;
     }
 

@@ -70,7 +70,8 @@ public class PdfCollectionSchema extends PdfObjectWrapper<PdfDictionary>{
      * @return
      */
     public PdfCollectionSchema addField(String name, PdfCollectionField field) {
-        return put(new PdfName(name), field);
+        getPdfObject().put(new PdfName(name), field.getPdfObject());
+        return this;
     }
 
     public PdfCollectionField getField(String name) {

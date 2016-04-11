@@ -875,7 +875,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the edited field
      */
     public <T extends PdfFormField> T setParent(PdfFormField parent) {
-        return put(PdfName.Parent, parent);
+        return put(PdfName.Parent, parent.getPdfObject());
     }
 
     /**
@@ -1833,6 +1833,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return (T) this;
     }
 
+    public <T extends PdfFormField> T put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return (T) this;
+    }
+
     /**
      * Releases underlying pdf object and other pdf entities used by wrapper.
      * This method should be called instead of direct call to {@link PdfObject#release()} if the wrapper is used.
@@ -2227,7 +2232,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         PdfDictionary mk = new PdfDictionary();
         mk.put(PdfName.CA, new PdfString(text));
-        widget.put(PdfName.MK, mk);
+        widget.getPdfObject().put(PdfName.MK, mk);
         widget.setNormalAppearance(normalAppearance);
     }
 

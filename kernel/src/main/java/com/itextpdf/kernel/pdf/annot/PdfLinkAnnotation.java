@@ -84,7 +84,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     }
 
     public PdfLinkAnnotation setDestination(PdfDestination destination) {
-        return put(PdfName.Dest, destination);
+        return put(PdfName.Dest, destination.getPdfObject());
     }
 
     public PdfDictionary getActionObject() {
@@ -96,7 +96,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     }
 
     public PdfLinkAnnotation setAction(PdfAction action) {
-        return put(PdfName.A, action);
+        return put(PdfName.A, action.getPdfObject());
     }
 
     public PdfName getHighlightMode() {
@@ -116,9 +116,6 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     }
 
     public PdfLinkAnnotation setUriAction(PdfAction action) {
-        return put(PdfName.PA, action);
+        return put(PdfName.PA, action.getPdfObject());
     }
-
-
-
 }

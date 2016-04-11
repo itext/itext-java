@@ -44,7 +44,12 @@
  */
 package com.itextpdf.kernel.pdf.action;
 
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfObjectWrapper;
+import com.itextpdf.kernel.pdf.PdfString;
 
 public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
 
@@ -63,7 +68,7 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
         this(new PdfDictionary());
         put(PdfName.R, r).put(PdfName.N, n).
                 put(PdfName.P, p).
-                put(PdfName.A, a).put(PdfName.T, t);
+                put(PdfName.A, a).put(PdfName.T, t.getPdfObject());
     }
 
     /**
@@ -137,11 +142,16 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
      * @return
      */
     public PdfTargetDictionary setTarget(PdfTargetDictionary target) {
-        return put(PdfName.T, target);
+        return put(PdfName.T, target.getPdfObject());
     }
 
     public PdfTargetDictionary getTarget() {
         return new PdfTargetDictionary(getPdfObject().getAsDictionary(PdfName.T));
+    }
+
+    public PdfTargetDictionary put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return this;
     }
 
     @Override

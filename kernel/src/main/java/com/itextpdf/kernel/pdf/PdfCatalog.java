@@ -174,11 +174,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfCatalog setOpenAction(PdfDestination destination) {
-        return put(PdfName.OpenAction, destination);
+        return put(PdfName.OpenAction, destination.getPdfObject());
     }
 
     public PdfCatalog setOpenAction(PdfAction action) {
-        return put(PdfName.OpenAction, action);
+        return put(PdfName.OpenAction, action.getPdfObject());
     }
 
     public PdfCatalog setAdditionalAction(PdfName key, PdfAction action) {
@@ -247,7 +247,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @return
      */
     public PdfCatalog setViewerPreferences(PdfViewerPreferences preferences) {
-        return put(PdfName.ViewerPreferences, preferences);
+        return put(PdfName.ViewerPreferences, preferences.getPdfObject());
     }
 
     public PdfViewerPreferences getViewerPreferences() {
@@ -328,7 +328,13 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @return
      */
     public PdfCatalog setCollection(PdfCollection collection) {
-        return put(PdfName.Collection, collection);
+        getPdfObject().put(PdfName.Collection, collection.getPdfObject());
+        return this;
+    }
+
+    public PdfCatalog put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return this;
     }
 
     @Override
