@@ -45,7 +45,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.AffineTransform;
-import com.itextpdf.kernel.geom.Point2D;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -253,10 +253,10 @@ public class ImageRenderer extends AbstractRenderer {
     private float adjustPositionAfterRotation(float angle, float maxWidth, float maxHeight) {
         if (angle != 0) {
             AffineTransform t = AffineTransform.getRotateInstance(angle);
-            Point2D p00 = t.transform(new Point2D.Float(0, 0), new Point2D.Float());
-            Point2D p01 = t.transform(new Point2D.Float(0, height), new Point2D.Float());
-            Point2D p10 = t.transform(new Point2D.Float(width, 0), new Point2D.Float());
-            Point2D p11 = t.transform(new Point2D.Float(width, height), new Point2D.Float());
+            Point p00 = t.transform(new Point(0, 0), new Point());
+            Point p01 = t.transform(new Point(0, height), new Point());
+            Point p10 = t.transform(new Point(width, 0), new Point());
+            Point p11 = t.transform(new Point(width, height), new Point());
 
             double[] xValues = {p01.getX(), p10.getX(), p11.getX()};
             double[] yValues = {p01.getY(), p10.getY(), p11.getY()};

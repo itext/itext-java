@@ -45,7 +45,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.AffineTransform;
-import com.itextpdf.kernel.geom.Point2D;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.*;
@@ -362,16 +362,16 @@ public class BlockRenderer extends AbstractRenderer {
 
 
         if (!isPositioned()) {
-            List<Point2D.Float> rotatedPoints = new ArrayList<>();
+            List<Point> rotatedPoints = new ArrayList<>();
             getLayoutShiftAndRotatedPoints(rotatedPoints, rotationPointX, rotationPointY);
 
-            Point2D clipLineBeg = new Point2D.Float(layoutBox.getRight(), layoutBox.getTop());
-            Point2D clipLineEnd = new Point2D.Float(layoutBox.getRight(), layoutBox.getBottom());
-            List<Point2D> newOccupiedBox = clipBBox(rotatedPoints, clipLineBeg, clipLineEnd);
+            Point clipLineBeg = new Point(layoutBox.getRight(), layoutBox.getTop());
+            Point clipLineEnd = new Point(layoutBox.getRight(), layoutBox.getBottom());
+            List<Point> newOccupiedBox = clipBBox(rotatedPoints, clipLineBeg, clipLineEnd);
 
             double maxX = -Double.MAX_VALUE;
             double minY = Double.MAX_VALUE;
-            for (Point2D point : newOccupiedBox) {
+            for (Point point : newOccupiedBox) {
                 if (point.getX() > maxX)  maxX = point.getX();
                 if (point.getY() < minY)  minY = point.getY();
             }
@@ -389,7 +389,7 @@ public class BlockRenderer extends AbstractRenderer {
     protected float[] applyRotation() {
         float dx = 0, dy = 0;
         if (!isPositioned()) {
-            Point2D shift = getLayoutShiftAndRotatedPoints(new ArrayList<Point2D.Float>(), 0, 0);
+            Point shift = getLayoutShiftAndRotatedPoints(new ArrayList<Point>(), 0, 0);
 
             dy = (float) shift.getY();
             dx = (float) shift.getX();
@@ -406,7 +406,7 @@ public class BlockRenderer extends AbstractRenderer {
         return ctm;
     }
 
-    private Point2D.Float getLayoutShiftAndRotatedPoints(List<Point2D.Float> rotatedPoints, float shiftX, float shiftY) {
+    private Point getLayoutShiftAndRotatedPoints(List<Point> rotatedPoints, float shiftX, float shiftY) {
         float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
         float width = getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH);
         float height = getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT);
@@ -423,7 +423,7 @@ public class BlockRenderer extends AbstractRenderer {
 
         double minX = Double.MAX_VALUE;
         double maxY = -Double.MAX_VALUE;
-        for (Point2D point : rotatedPoints) {
+        for (Point point : rotatedPoints) {
             if (point.getX() < minX)  minX = point.getX();
             if (point.getY() > maxY)  maxY = point.getY();
         }
@@ -431,11 +431,11 @@ public class BlockRenderer extends AbstractRenderer {
         float dx = (float) (left - minX);
         float dy = (float) (top - maxY);
 
-        for (Point2D point : rotatedPoints) {
+        for (Point point : rotatedPoints) {
             point.setLocation(point.getX() + dx + shiftX, point.getY() + dy + shiftY);
         }
 
-        return new Point2D.Float(dx, dy);
+        return new Point(dx, dy);
     }
 
 
@@ -467,28 +467,28 @@ public class BlockRenderer extends AbstractRenderer {
         }
     }
 
-    private List<Point2D.Float> transformBBox(float left, float bottom, float right, float top, AffineTransform transform, List<Point2D.Float> bBoxPoints) {
-        bBoxPoints.addAll(Arrays.asList(new Point2D.Float(left, bottom), new Point2D.Float(right, bottom),
-                new Point2D.Float(right, top), new Point2D.Float(left, top)));
+    private List<Point> transformBBox(float left, float bottom, float right, float top, AffineTransform transform, List<Point> bBoxPoints) {
+        bBoxPoints.addAll(Arrays.asList(new Point(left, bottom), new Point(right, bottom),
+                new Point(right, top), new Point(left, top)));
 
-        for (Point2D.Float point : bBoxPoints) {
+        for (Point point : bBoxPoints) {
             transform.transform(point, point);
         }
 
         return bBoxPoints;
     }
 
-    private List<Point2D> clipBBox(List<Point2D.Float> points, Point2D clipLineBeg, Point2D clipLineEnd) {
-        List<Point2D> filteredPoints = new ArrayList<>();
+    private List<Point> clipBBox(List<Point> points, Point clipLineBeg, Point clipLineEnd) {
+        List<Point> filteredPoints = new ArrayList<>();
 
         boolean prevOnRightSide = false;
-        Point2D filteringPoint = points.get(0);
+        Point filteringPoint = points.get(0);
         if (checkPointSide(filteringPoint, clipLineBeg, clipLineEnd) >= 0) {
             filteredPoints.add(filteringPoint);
             prevOnRightSide = true;
         }
 
-        Point2D prevPoint = filteringPoint;
+        Point prevPoint = filteringPoint;
         for (int i = 1; i < points.size() + 1; ++i) {
             filteringPoint = points.get(i % points.size());
             if (checkPointSide(filteringPoint, clipLineBeg, clipLineEnd) >= 0) {
@@ -507,7 +507,7 @@ public class BlockRenderer extends AbstractRenderer {
         return filteredPoints;
     }
 
-    private int checkPointSide(Point2D filteredPoint, Point2D clipLineBeg, Point2D clipLineEnd) {
+    private int checkPointSide(Point filteredPoint, Point clipLineBeg, Point clipLineEnd) {
         double x1, x2, y1, y2;
         x1 = filteredPoint.getX() - clipLineBeg.getX();
         y2 = clipLineEnd.getY() - clipLineBeg.getY();
@@ -524,7 +524,7 @@ public class BlockRenderer extends AbstractRenderer {
         return 0;
     }
 
-    private Point2D getIntersectionPoint(Point2D lineBeg, Point2D lineEnd, Point2D clipLineBeg, Point2D clipLineEnd) {
+    private Point getIntersectionPoint(Point lineBeg, Point lineEnd, Point clipLineBeg, Point clipLineEnd) {
         double A1 = lineBeg.getY() - lineEnd.getY(), A2 = clipLineBeg.getY() - clipLineEnd.getY();
         double B1 = lineEnd.getX() - lineBeg.getX(), B2 = clipLineEnd.getX() - clipLineBeg.getX();
         double C1 = lineBeg.getX() * lineEnd.getY() - lineBeg.getY() * lineEnd.getX();
@@ -532,6 +532,6 @@ public class BlockRenderer extends AbstractRenderer {
 
         double M = B1 * A2 - B2 * A1;
 
-        return new Point2D.Double((B2 * C1 - B1 * C2) / M, (C2 * A1 - C1 * A2) / M);
+        return new Point((B2 * C1 - B1 * C2) / M, (C2 * A1 - C1 * A2) / M);
     }
 }
