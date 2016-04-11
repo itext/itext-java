@@ -139,7 +139,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     protected PdfStructTreeRoot structTreeRoot;
 
-    protected Integer structParentIndex = null;
+    protected int structParentIndex = -1;
     protected boolean userProperties;
 
     protected boolean closeReader = true;
