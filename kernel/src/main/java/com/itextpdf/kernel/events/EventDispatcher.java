@@ -98,7 +98,7 @@ public class EventDispatcher implements IEventDispatcher, Serializable {
         if (handlers == null)
             return;
         handlers.remove(handler);
-        if (handlers.isEmpty())
+        if (handlers.size() == 0)
             eventHandlers.remove(type);
     }
 

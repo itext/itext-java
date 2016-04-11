@@ -91,4 +91,8 @@ public final class ArrayUtil {
             a[i] = value;
         }
     }
+
+    public static int[] cloneArray(int[] src) {
+        return src.clone();
+    }
 }
