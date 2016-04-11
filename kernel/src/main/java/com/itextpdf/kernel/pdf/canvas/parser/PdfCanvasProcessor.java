@@ -434,7 +434,7 @@ public class PdfCanvasProcessor {
         return xobjects.getAsStream(xobjectName);
     }
 
-    private void populateXObjectDoHandlers() {
+    protected void populateXObjectDoHandlers() {
         registerXObjectDoHandler(PdfName.Default, new IgnoreXObjectDoHandler());
         registerXObjectDoHandler(PdfName.Form, new FormXObjectDoHandler());
 
@@ -450,7 +450,7 @@ public class PdfCanvasProcessor {
      * @param fontDict
      * @return the font
      */
-    private PdfFont getFont(PdfDictionary fontDict) {
+    protected PdfFont getFont(PdfDictionary fontDict) {
         Integer n = fontDict.getIndirectReference().getObjNumber();
         PdfFont font = cachedFonts.get(n);
         if (font == null) {
@@ -466,14 +466,14 @@ public class PdfCanvasProcessor {
      * @param tag  the tag of the marked content
      * @param dict the PdfDictionary associated with the marked content
      */
-    private void beginMarkedContent(PdfName tag, PdfDictionary dict) {
+    protected void beginMarkedContent(PdfName tag, PdfDictionary dict) {
         markedContentStack.push(new CanvasTag(tag).addProperties(dict));
     }
 
     /**
      * Remove the latest marked content from the stack.  Keeps track of the BMC, BDC and EMC operators.
      */
-    private void endMarkedContent() {
+    protected void endMarkedContent() {
         markedContentStack.pop();
     }
 

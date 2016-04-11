@@ -185,6 +185,26 @@ public class TagStructureContext implements Serializable {
     }
 
     /**
+     * Removes content item from the tag structure.
+     * <br/>
+     * Nothing happens if there is no such mcid on given page.
+     * @param page page, which contains this content item
+     * @param mcid marked content id of this content item
+     * @return {@code TagTreePointer} which points at the parent of the removed content item, or null if there is no
+     * such mcid on given page.
+     */
+    public TagTreePointer removeContentItem(PdfPage page, int mcid) {
+        PdfMcr mcr = document.getStructTreeRoot().findMcrByMcid(page.getPdfObject(), mcid);
+        if (mcr == null) {
+            return null;
+        }
+
+        PdfStructElem parent = (PdfStructElem) mcr.getParent();
+        parent.removeKid(mcr);
+        return new TagTreePointer(document).setCurrentStructElem(parent);
+    }
+
+    /**
      * Removes all tags that belong only to this page. The logic which defines if tag belongs to the page is described
      * at {@link #flushPageTags(PdfPage)}.
      * @param page page that defines which tags are to be removed

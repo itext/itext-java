@@ -121,7 +121,10 @@ public class CanvasTag {
      * @throws IllegalStateException if there is no MCID
      */
     public Integer getMcid() {
-        Integer mcid = properties.getAsInt(PdfName.MCID);
+        Integer mcid = null;
+        if (properties != null) {
+           mcid = properties.getAsInt(PdfName.MCID);
+        }
         if (mcid == null) {
             throw new IllegalStateException("CanvasTag has no MCID");
         }
@@ -133,7 +136,7 @@ public class CanvasTag {
      * @return true if the MCID is available, false otherwise
      */
     public boolean hasMcid(){
-        return properties.containsKey(PdfName.MCID);
+        return properties != null && properties.containsKey(PdfName.MCID);
     }
 
     /**
