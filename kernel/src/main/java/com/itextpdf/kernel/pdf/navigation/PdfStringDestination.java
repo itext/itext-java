@@ -50,7 +50,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 
 import java.util.Map;
 
-public class PdfStringDestination extends PdfDestination<PdfString> {
+public class PdfStringDestination extends PdfDestination {
 
     private static final long serialVersionUID = -5949596673571485743L;
 
@@ -64,14 +64,14 @@ public class PdfStringDestination extends PdfDestination<PdfString> {
 
     @Override
     public PdfObject getDestinationPage(Map<String, PdfObject> names) {
-        PdfArray array = (PdfArray) names.get(getPdfObject().toUnicodeString());
+        PdfArray array = (PdfArray) names.get(((PdfString)getPdfObject()).toUnicodeString());
 
         return array != null ? array.get(0) : null;
     }
 
     @Override
     public PdfDestination replaceNamedDestination(final Map<Object, PdfObject> names) {
-        PdfArray array = (PdfArray) names.get(getPdfObject().toUnicodeString());
+        PdfArray array = (PdfArray) names.get(((PdfString)getPdfObject()).toUnicodeString());
         if (array != null){
             return PdfDestination.makeDestination(array);
         }
