@@ -54,13 +54,13 @@ import java.util.List;
 /**
  * Represents Marked Content Reference (MCR) object wrapper.
  */
-abstract public class PdfMcr<T extends PdfObject> extends PdfObjectWrapper implements IPdfStructElem {
+public abstract class PdfMcr extends PdfObjectWrapper<PdfObject> implements IPdfStructElem {
 
     private static final long serialVersionUID = -6453225665665080940L;
 	
     protected PdfStructElem parent;
 
-    public PdfMcr(T pdfObject, PdfStructElem parent) {
+    protected PdfMcr(PdfObject pdfObject, PdfStructElem parent) {
         super(pdfObject);
         this.parent = parent;
     }
