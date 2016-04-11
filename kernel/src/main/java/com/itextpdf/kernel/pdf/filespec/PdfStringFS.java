@@ -46,7 +46,7 @@ package com.itextpdf.kernel.pdf.filespec;
 
 import com.itextpdf.kernel.pdf.PdfString;
 
-public class PdfStringFS extends PdfFileSpec<PdfString> {
+public class PdfStringFS extends PdfFileSpec {
 
     private static final long serialVersionUID = 3440302276954369264L;
 
@@ -62,5 +62,4 @@ public class PdfStringFS extends PdfFileSpec<PdfString> {
     protected boolean isWrappedObjectMustBeIndirect() {
         return false;
     }
-
 }

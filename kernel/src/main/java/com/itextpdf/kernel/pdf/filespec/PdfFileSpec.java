@@ -53,11 +53,11 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 
-public class PdfFileSpec<T extends PdfObject> extends PdfObjectWrapper<T>  {
+public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
 
     private static final long serialVersionUID = 126861971006090239L;
 
-	public PdfFileSpec(T pdfObject) {
+	protected PdfFileSpec(PdfObject pdfObject) {
         super(pdfObject);
     }
 
@@ -68,7 +68,7 @@ public class PdfFileSpec<T extends PdfObject> extends PdfObjectWrapper<T>  {
         dict.put(PdfName.F, new PdfString(filePath));
         dict.put(PdfName.UF, new PdfString(filePath, isUnicodeFileName ? PdfEncodings.UnicodeBig : PdfEncodings.PdfDocEncoding));
 
-        PdfFileSpec fileSpec = new PdfFileSpec<>(dict).makeIndirect(doc);
+        PdfFileSpec fileSpec = new PdfFileSpec(dict).makeIndirect(doc);
 
         return fileSpec;
     }
@@ -127,7 +127,7 @@ public class PdfFileSpec<T extends PdfObject> extends PdfObjectWrapper<T>  {
         ef.put(PdfName.UF, stream);
         dict.put(PdfName.EF, ef);
 
-        return new PdfFileSpec<>(dict).makeIndirect(doc);
+        return new PdfFileSpec(dict).makeIndirect(doc);
     }
 
     public PdfFileSpec setFileIdentifier(PdfArray fileIdentifier){
