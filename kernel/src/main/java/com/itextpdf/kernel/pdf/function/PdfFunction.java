@@ -55,7 +55,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 
 import java.util.List;
 
-public class PdfFunction<T extends PdfObject> extends PdfObjectWrapper {
+public class PdfFunction extends PdfObjectWrapper<PdfObject> {
 
     private static final long serialVersionUID = -4689848231547125520L;
 
@@ -85,7 +85,7 @@ public class PdfFunction<T extends PdfObject> extends PdfObjectWrapper {
         return true;
     }
 
-    static public class Type0 extends PdfFunction<PdfStream> {
+    public static class Type0 extends PdfFunction {
 
         private static final long serialVersionUID = 72188160295017639L;
 
@@ -123,7 +123,7 @@ public class PdfFunction<T extends PdfObject> extends PdfObjectWrapper {
         }
     }
 
-    static public class Type2 extends PdfFunction<PdfDictionary> {
+    public static class Type2 extends PdfFunction {
 
        private static final long serialVersionUID = -4680660755798263091L;
 
@@ -154,7 +154,7 @@ public class PdfFunction<T extends PdfObject> extends PdfObjectWrapper {
         }
     }
 
-    static public class Type3 extends PdfFunction<PdfDictionary> {
+    public static class Type3 extends PdfFunction {
 
 		private static final long serialVersionUID = 3257795209767645155L;
 
@@ -189,7 +189,7 @@ public class PdfFunction<T extends PdfObject> extends PdfObjectWrapper {
         }
     }
 
-    static public class Type4 extends PdfFunction<PdfStream> {
+    public static class Type4 extends PdfFunction {
 
         private static final long serialVersionUID = -5415624427845744618L;
 		

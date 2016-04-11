@@ -78,7 +78,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class PdfA2Checker extends PdfA1Checker{
+public class PdfA2Checker extends PdfA1Checker {
 
     protected static final Set<PdfName> forbiddenAnnotations = new HashSet<>(Arrays.asList(PdfName._3D, PdfName.Sound, PdfName.Screen, PdfName.Movie));
     protected static final Set<PdfName> forbiddenActions = new HashSet<>(Arrays.asList(PdfName.Launch, PdfName.Sound, PdfName.Movie,
@@ -158,7 +158,7 @@ public class PdfA2Checker extends PdfA1Checker{
         if (colorSpace instanceof PdfSpecialCs.Separation) {
 
             PdfSpecialCs.Separation separation = (PdfSpecialCs.Separation) colorSpace;
-            checkSeparationCS(separation.getPdfObject());
+            checkSeparationCS((PdfArray) separation.getPdfObject());
             if (checkAlternate) {
                 checkColorSpace(separation.getBaseCs(), currentColorSpaces, false, fill);
             }
@@ -166,12 +166,12 @@ public class PdfA2Checker extends PdfA1Checker{
         } else if (colorSpace instanceof PdfSpecialCs.DeviceN) {
 
             PdfSpecialCs.DeviceN deviceN = (PdfSpecialCs.DeviceN) colorSpace;
-            PdfDictionary attributes = deviceN.getPdfObject().getAsDictionary(4);
+            PdfDictionary attributes = ((PdfArray)deviceN.getPdfObject()).getAsDictionary(4);
             PdfDictionary colorants = attributes.getAsDictionary(PdfName.Colorants);
             if (colorants != null) {
                 for (Map.Entry<PdfName, PdfObject> entry : colorants.entrySet()) {
                     PdfArray separation = (PdfArray) entry.getValue();
-                    checkSeparationInsideDeviceN(separation, deviceN.getPdfObject().get(2), deviceN.getPdfObject().get(3).getIndirectReference());
+                    checkSeparationInsideDeviceN(separation, ((PdfArray)deviceN.getPdfObject()).get(2), ((PdfArray)deviceN.getPdfObject()).get(3).getIndirectReference());
                 }
             }
             if (checkAlternate) {
@@ -204,7 +204,7 @@ public class PdfA2Checker extends PdfA1Checker{
         }
 
         if (fill != null && colorSpace instanceof PdfCieBasedCs.IccBased) {
-            byte[] iccBytes = ((PdfCieBasedCs.IccBased) colorSpace).getPdfObject().getAsStream(1).getBytes();
+            byte[] iccBytes = ((PdfArray)colorSpace.getPdfObject()).getAsStream(1).getBytes();
             if (ICC_COLOR_SPACE_CMYK.equals(IccProfile.getIccColorSpaceName(iccBytes))) {
                 if (fill) {
                     currentFillCsIsIccBasedCMYK = true;

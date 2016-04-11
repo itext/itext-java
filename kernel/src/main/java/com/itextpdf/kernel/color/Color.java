@@ -129,18 +129,15 @@ public class Color {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o){
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()){
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         Color color = (Color) o;
-        if (colorSpace != null ? !colorSpace.equals(color.colorSpace) : color.colorSpace != null) {
-            return false;
-        }
-        return Arrays.equals(colorValue, color.colorValue);
-
+        return (colorSpace != null ? colorSpace.equals(color.colorSpace) : color.colorSpace == null)
+                && Arrays.equals(colorValue, color.colorValue);
     }
 
     @Override

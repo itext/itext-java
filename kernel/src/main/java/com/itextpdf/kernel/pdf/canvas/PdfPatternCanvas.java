@@ -76,7 +76,7 @@ public class PdfPatternCanvas extends PdfCanvas {
      * @param document the document that the resulting content stream will be written to 
      */
     public PdfPatternCanvas(PdfPattern.Tiling pattern, PdfDocument document) {
-        super(pattern.getPdfObject(), pattern.getResources(), document);
+        super((PdfStream) pattern.getPdfObject(), pattern.getResources(), document);
         this.tilingPattern = pattern;
     }
 
@@ -91,5 +91,4 @@ public class PdfPatternCanvas extends PdfCanvas {
             throw new PdfException(PdfException.ContentStreamMustNotInvokeOperatorsThatSpecifyColorsOrOtherColorRelatedParameters);
         }
     }
-
 }

@@ -349,7 +349,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         fontDescriptor.put(PdfName.Ascent, new PdfNumber(fontMetrics.getTypoAscender()));
         fontDescriptor.put(PdfName.CapHeight, new PdfNumber(fontMetrics.getCapHeight()));
         fontDescriptor.put(PdfName.Descent, new PdfNumber(fontMetrics.getTypoDescender()));
-        fontDescriptor.put(PdfName.FontBBox, new PdfArray(fontMetrics.getBbox().clone()));
+        fontDescriptor.put(PdfName.FontBBox, new PdfArray(ArrayUtil.cloneArray(fontMetrics.getBbox())));
         fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(fontMetrics.getItalicAngle()));
         fontDescriptor.put(PdfName.StemV, new PdfNumber(fontMetrics.getStemV()));
         if (fontMetrics.getXHeight() > 0) {

@@ -50,7 +50,7 @@ import com.itextpdf.kernel.geom.Line;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Path;
-import com.itextpdf.kernel.geom.Point2D;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Shape;
 import com.itextpdf.kernel.geom.Subpath;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.Clipper;
@@ -175,8 +175,8 @@ public class ParserGraphicsState extends CanvasGraphicsState {
 
     private Shape transformSegment(Shape segment, Matrix newCtm) {
         Shape newSegment;
-        List<Point2D> segBasePts = segment.getBasePoints();
-        Point2D[] transformedPoints = transformPoints(newCtm, segBasePts.toArray(new Point2D[segBasePts.size()]));
+        List<Point> segBasePts = segment.getBasePoints();
+        Point[] transformedPoints = transformPoints(newCtm, segBasePts.toArray(new Point[segBasePts.size()]));
 
         if (segment instanceof BezierCurve) {
             newSegment = new BezierCurve(Arrays.asList(transformedPoints));
@@ -187,7 +187,7 @@ public class ParserGraphicsState extends CanvasGraphicsState {
         return newSegment;
     }
 
-    private Point2D[] transformPoints(Matrix transformationMatrix, Point2D... points) {
+    private Point[] transformPoints(Matrix transformationMatrix, Point... points) {
         try {
 
             AffineTransform t = new AffineTransform(
@@ -197,7 +197,7 @@ public class ParserGraphicsState extends CanvasGraphicsState {
             );
             t = t.createInverse();
 
-            Point2D[] transformed = new Point2D[points.length];
+            Point[] transformed = new Point[points.length];
             t.transform(points, 0, transformed, 0, points.length);
             return transformed;
 

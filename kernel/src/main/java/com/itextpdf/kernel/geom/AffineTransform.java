@@ -402,13 +402,9 @@ public class AffineTransform implements Cloneable, Serializable{
         );
     }
 
-    public Point2D transform(Point2D src, Point2D dst) {
+    public Point transform(Point src, Point dst) {
         if (dst == null) {
-            if (src instanceof Point2D.Double) {
-                dst = new Point2D.Double();
-            } else {
-                dst = new Point2D.Float();
-            }
+            dst = new Point();
         }
 
         double x = src.getX();
@@ -418,18 +414,14 @@ public class AffineTransform implements Cloneable, Serializable{
         return dst;
     }
 
-    public void transform(Point2D[] src, int srcOff, Point2D[] dst, int dstOff, int length) {
+    public void transform(Point[] src, int srcOff, Point[] dst, int dstOff, int length) {
         while (--length >= 0) {
-            Point2D srcPoint = src[srcOff++];
+            Point srcPoint = src[srcOff++];
             double x = srcPoint.getX();
             double y = srcPoint.getY();
-            Point2D dstPoint = dst[dstOff];
+            Point dstPoint = dst[dstOff];
             if (dstPoint == null) {
-                if (srcPoint instanceof Point2D.Double) {
-                    dstPoint = new Point2D.Double();
-                } else {
-                    dstPoint = new Point2D.Float();
-                }
+                dstPoint = new Point();
             }
             dstPoint.setLocation(x * m00 + y * m01 + m02, x * m10 + y * m11 + m12);
             dst[dstOff++] = dstPoint;
@@ -488,13 +480,9 @@ public class AffineTransform implements Cloneable, Serializable{
         }
     }
 
-    public Point2D deltaTransform(Point2D src, Point2D dst) {
+    public Point deltaTransform(Point src, Point dst) {
         if (dst == null) {
-            if (src instanceof Point2D.Double) {
-                dst = new Point2D.Double();
-            } else {
-                dst = new Point2D.Float();
-            }
+            dst = new Point();
         }
 
         double x = src.getX();
@@ -513,7 +501,7 @@ public class AffineTransform implements Cloneable, Serializable{
         }
     }
 
-    public Point2D inverseTransform(Point2D src, Point2D dst) throws NoninvertibleTransformException {
+    public Point inverseTransform(Point src, Point dst) throws NoninvertibleTransformException {
         double det = getDeterminant();
         if (Math.abs(det) < ZERO) {
             // awt.204=Determinant is zero
@@ -521,11 +509,7 @@ public class AffineTransform implements Cloneable, Serializable{
         }
 
         if (dst == null) {
-            if (src instanceof Point2D.Double) {
-                dst = new Point2D.Double();
-            } else {
-                dst = new Point2D.Float();
-            }
+            dst = new Point();
         }
 
         double x = src.getX() - m02;

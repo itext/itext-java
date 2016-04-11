@@ -89,11 +89,11 @@ public class PatternColor extends Color {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass() || !super.equals(o)){
+        if (!super.equals(o)) {
             return false;
         }
-        return pattern.equals(((PatternColor)o).pattern) && Objects.equals(underlyingColor, ((PatternColor)o).underlyingColor)
-                && Objects.equals(colorValue, ((PatternColor)o).colorValue);
+        PatternColor color = (PatternColor)o;
+        return pattern.equals(color.pattern) &&
+                underlyingColor != null ? underlyingColor.equals(color.underlyingColor) : color.underlyingColor == null;
     }
 }
