@@ -132,16 +132,12 @@ public class Color {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Color)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         Color color = (Color) o;
-        //noinspection SimplifiableIfStatement
-        if (colorSpace != null ? !colorSpace.equals(color.colorSpace) : color.colorSpace != null) {
-            return false;
-        }
-        return Arrays.equals(colorValue, color.colorValue);
-
+        return (colorSpace != null ? colorSpace.equals(color.colorSpace) : color.colorSpace == null)
+                && Arrays.equals(colorValue, color.colorValue);
     }
 
     @Override

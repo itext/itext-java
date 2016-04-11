@@ -263,7 +263,7 @@ public class WebColors extends HashMap<String, int[]> {
             final String delim = "rgb(), \t\r\n\f";
             StringTokenizer tok = new StringTokenizer(colorName, delim);
             for (int k = 0; k < 3; ++k) {
-                if (tok.hasMoreElements()) {
+                if (tok.hasMoreTokens()) {
                     color[k] = getRGBChannelValue(tok.nextToken());
                     color[k] = Math.max(0, color[k]);
                     color[k] = Math.min(255, color[k]);
@@ -276,7 +276,7 @@ public class WebColors extends HashMap<String, int[]> {
             final String delim = "rgba(), \t\r\n\f";
             StringTokenizer tok = new StringTokenizer(colorName, delim);
             for (int k = 0; k < 3; ++k) {
-                if (tok.hasMoreElements()) {
+                if (tok.hasMoreTokens()) {
                     color[k] = getRGBChannelValue(tok.nextToken());
                     color[k] = Math.max(0, color[k]);
                     color[k] = Math.min(255, color[k]);
