@@ -44,7 +44,6 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.clipper;
 
-import com.itextpdf.kernel.geom.Point2D;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.geom.Subpath;
 
@@ -60,8 +59,8 @@ import java.util.List;
  * For example:
  * <ul>
  *     <li>{@link PolyTree} to {@link com.itextpdf.kernel.geom.Path}</li>
- *     <li>{@link Point2D} to {@link Point.LongPoint}</li>
- *     <li>{@link Point.LongPoint} to {@link Point2D}</li>
+ *     <li>{@link com.itextpdf.kernel.geom.Point} to {@link Point.LongPoint}</li>
+ *     <li>{@link Point.LongPoint} to {@link com.itextpdf.kernel.geom.Point}</li>
  * </ul>
  * </p>
  */
@@ -99,7 +98,7 @@ public class ClipperBridge {
     public static void addPath(Clipper clipper, com.itextpdf.kernel.geom.Path path, Clipper.PolyType polyType) {
         for (Subpath subpath : path.getSubpaths()) {
             if (!subpath.isSinglePointClosed() && !subpath.isSinglePointOpen()) {
-                List<Point2D> linearApproxPoints = subpath.getPiecewiseLinearApproximation();
+                List<com.itextpdf.kernel.geom.Point> linearApproxPoints = subpath.getPiecewiseLinearApproximation();
                 clipper.addPath(new Path(convertToLongPoints(linearApproxPoints)), polyType, subpath.isClosed());
             }
         }
@@ -130,7 +129,7 @@ public class ClipperBridge {
                     et = endType;
                 }
 
-                List<Point2D> linearApproxPoints = subpath.getPiecewiseLinearApproximation();
+                List<com.itextpdf.kernel.geom.Point> linearApproxPoints = subpath.getPiecewiseLinearApproximation();
                 offset.addPath(new Path(convertToLongPoints(linearApproxPoints)), joinType, et);
             }
         }
@@ -140,15 +139,15 @@ public class ClipperBridge {
 
     /**
      * Converts list of {@link Point.LongPoint} objects into list of
-     * {@link Point2D} objects.
+     * {@link com.itextpdf.kernel.geom.Point} objects.
      */
-    public static List<Point2D> convertToFloatPoints(List<Point.LongPoint> points) {
-        List<Point2D> convertedPoints = new ArrayList<>(points.size());
+    public static List<com.itextpdf.kernel.geom.Point> convertToFloatPoints(List<Point.LongPoint> points) {
+        List<com.itextpdf.kernel.geom.Point> convertedPoints = new ArrayList<>(points.size());
 
         for (Point.LongPoint point : points) {
-            convertedPoints.add(new Point2D.Float(
-                    (float) (point.getX() / floatMultiplier),
-                    (float) (point.getY() / floatMultiplier)
+            convertedPoints.add(new com.itextpdf.kernel.geom.Point(
+                    point.getX() / floatMultiplier,
+                    point.getY() / floatMultiplier
             ));
         }
 
@@ -156,13 +155,13 @@ public class ClipperBridge {
     }
 
     /**
-     * Converts list of {@link Point2D} objects into list of
+     * Converts list of {@link com.itextpdf.kernel.geom.Point} objects into list of
      * {@link Point.LongPoint} objects.
      */
-    public static List<Point.LongPoint> convertToLongPoints(List<Point2D> points) {
+    public static List<Point.LongPoint> convertToLongPoints(List<com.itextpdf.kernel.geom.Point> points) {
         List<Point.LongPoint> convertedPoints = new ArrayList<>(points.size());
 
-        for (Point2D point : points) {
+        for (com.itextpdf.kernel.geom.Point point : points) {
             convertedPoints.add(new Point.LongPoint(
                     floatMultiplier * point.getX(),
                     floatMultiplier * point.getY()
@@ -226,10 +225,10 @@ public class ClipperBridge {
     }
 
     public static void addContour(com.itextpdf.kernel.geom.Path path, List<Point.LongPoint> contour, Boolean close) {
-        List<Point2D> floatContour = convertToFloatPoints(contour);
-        Iterator<Point2D> iter = floatContour.iterator();
+        List<com.itextpdf.kernel.geom.Point> floatContour = convertToFloatPoints(contour);
+        Iterator<com.itextpdf.kernel.geom.Point> iter = floatContour.iterator();
 
-        Point2D point = iter.next();
+        com.itextpdf.kernel.geom.Point point = iter.next();
         path.moveTo((float) point.getX(), (float) point.getY());
 
         while (iter.hasNext()) {
@@ -242,7 +241,7 @@ public class ClipperBridge {
         }
     }
 
-    public static void addRectToClipper(Clipper clipper, Point2D[] rectVertices, Clipper.PolyType polyType) {
+    public static void addRectToClipper(Clipper clipper, com.itextpdf.kernel.geom.Point[] rectVertices, Clipper.PolyType polyType) {
         clipper.addPath(new Path(convertToLongPoints(new ArrayList<>(Arrays.asList(rectVertices)))), polyType, true);
     }
 }

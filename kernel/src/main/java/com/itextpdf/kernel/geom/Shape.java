@@ -44,8 +44,6 @@
  */
 package com.itextpdf.kernel.geom;
 
-import com.itextpdf.kernel.geom.Point2D;
-
 import java.util.List;
 
 /**
@@ -60,5 +58,5 @@ public interface Shape {
      *
      * @return Ordered {@link java.util.List} consisting of shape's base points.
      */
-    List<Point2D> getBasePoints();
+    List<Point> getBasePoints();
 }
