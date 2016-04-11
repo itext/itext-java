@@ -1,47 +1,48 @@
 /*
-    $Id$
-
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
-
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
- */
+* Copyright 2003-2012 by Paulo Soares.
+*
+* This code was originally released in 2001 by SUN (see class
+* com.sun.media.imageioimpl.plugins.tiff.TIFFFaxDecompressor.java)
+* using the BSD license in a specific wording. In a mail dating from
+* January 23, 2008, Brian Burkhalter (@sun.com) gave us permission
+* to use the code under the following version of the BSD license:
+*
+* Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions
+* are met:
+*
+* - Redistribution of source code must retain the above copyright
+*   notice, this  list of conditions and the following disclaimer.
+*
+* - Redistribution in binary form must reproduce the above copyright
+*   notice, this list of conditions and the following disclaimer in
+*   the documentation and/or other materials provided with the
+*   distribution.
+*
+* Neither the name of Sun Microsystems, Inc. or the names of
+* contributors may be used to endorse or promote products derived
+* from this software without specific prior written permission.
+*
+* This software is provided "AS IS," without a warranty of any
+* kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+* WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
+* EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+* NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
+* USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
+* DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
+* ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
+* CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
+* REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
+* INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGES.
+*
+* You acknowledge that this software is not designed or intended for
+* use in the design, construction, operation or maintenance of any
+* nuclear facility.
+*/
 package com.itextpdf.io.codec;
 
 import com.itextpdf.io.IOException;
