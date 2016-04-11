@@ -44,19 +44,14 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.util.TextUtil;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfObjectWrapper;
-import com.itextpdf.kernel.pdf.PdfOutputStream;
-import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.io.util.TextUtil;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -301,6 +296,8 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public abstract FontProgram getFontProgram();
+
+    public abstract FontEncoding getFontEncoding();
 
     public boolean isEmbedded() {
         return embedded;

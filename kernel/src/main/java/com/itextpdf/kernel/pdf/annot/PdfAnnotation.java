@@ -63,7 +63,7 @@ import com.itextpdf.kernel.pdf.layer.PdfOCG;
 public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -6555705164241587799L;
-	
+
     /**
      * Annotation flags.
      */
@@ -88,21 +88,31 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     public static final PdfName HIGHLIGHT_TOGGLE = PdfName.T;
 
     /**
+     * Annotation highlighting modes.
+     */
+    public static final PdfName STYLE_SOLID = PdfName.S;
+    public static final PdfName STYLE_DASHED = PdfName.D;
+    public static final PdfName STYLE_BEVELED = PdfName.B;
+    public static final PdfName STYLE_INSET = PdfName.I;
+    public static final PdfName STYLE_UNDERLINE = PdfName.U;
+
+
+    /**
      * Annotation states.
      */
-    static public final PdfString Marked = new PdfString("Marked");
-    static public final PdfString Unmarked = new PdfString("Unmarked");
-    static public final PdfString Accepted = new PdfString("Accepted");
-    static public final PdfString Rejected = new PdfString("Rejected");
-    static public final PdfString Canceled = new PdfString("Cancelled");
-    static public final PdfString Completed = new PdfString("Completed");
-    static public final PdfString None = new PdfString("None");
+    public static final PdfString Marked = new PdfString("Marked");
+    public static final PdfString Unmarked = new PdfString("Unmarked");
+    public static final PdfString Accepted = new PdfString("Accepted");
+    public static final PdfString Rejected = new PdfString("Rejected");
+    public static final PdfString Canceled = new PdfString("Cancelled");
+    public static final PdfString Completed = new PdfString("Completed");
+    public static final PdfString None = new PdfString("None");
 
     /**
      * Annotation state models.
      */
-    static public final PdfString MarkedModel = new PdfString("Marked");
-    static public final PdfString ReviewModel = new PdfString("Review");
+    public static final PdfString MarkedModel = new PdfString("Marked");
+    public static final PdfString ReviewModel = new PdfString("Review");
 
     protected PdfPage page;
 
@@ -334,6 +344,36 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.BS, borderStyle);
     }
 
+    /**
+     * Setter for the annotation's border style. Possible values are
+     * <ul>
+     *     <li>{@link PdfAnnotation#STYLE_SOLID} - A solid rectangle surrounding the annotation.</li>
+     *     <li>{@link PdfAnnotation#STYLE_DASHED} - A dashed rectangle surrounding the annotation.</li>
+     *     <li>{@link PdfAnnotation#STYLE_BEVELED} - A simulated embossed rectangle that appears to be raised above the surface of the page.</li>
+     *     <li>{@link PdfAnnotation#STYLE_INSET} - A simulated engraved rectangle that appears to be recessed below the surface of the page.</li>
+     *     <li>{@link PdfAnnotation#STYLE_UNDERLINE} - A single line along the bottom of the annotation rectangle.</li>
+     * </ul>
+     * @param style The new value for the annotation's border style.
+     * @return The annotation which this method was called on.
+     */
+    public <T extends PdfAnnotation> T setBorderStyle(PdfName style) {
+        PdfDictionary styleDict = getBorderStyle();
+        if (null == styleDict) {
+            styleDict = new PdfDictionary();
+        }
+        styleDict.put(PdfName.S, style);
+        return setBorderStyle(styleDict);
+    }
+
+    public <T extends PdfAnnotation> T setDashPattern(PdfArray dashPattern) {
+        PdfDictionary styleDict = getBorderStyle();
+        if (null == styleDict) {
+            styleDict = new PdfDictionary();
+        }
+        styleDict.put(PdfName.D, dashPattern);
+        return setBorderStyle(styleDict);
+    }
+
     public PdfDictionary getBorderStyle() {
         return getPdfObject().getAsDictionary(PdfName.BS);
     }
@@ -349,7 +389,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.StructParent, new PdfNumber(pdfDocument.getNextStructParentIndex()));
     }
 
-    static public <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject) {
+    public static <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject) {
         return makeAnnotation(pdfObject, null);
     }
 

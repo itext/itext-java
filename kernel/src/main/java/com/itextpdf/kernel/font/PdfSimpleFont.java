@@ -112,6 +112,11 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     }
 
     @Override
+    public FontEncoding getFontEncoding() {
+        return fontEncoding;
+    }
+
+    @Override
     public byte[] convertToBytes(String text) {
         byte[] bytes = fontEncoding.convertToBytes(text);
         for (byte b : bytes) {
