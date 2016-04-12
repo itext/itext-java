@@ -218,32 +218,6 @@ public class TableRenderer extends AbstractRenderer {
                         buildBordersArrays(nextCell, row + 1, nextCell.getModelElement().getRowspan(), nextCell.getModelElement().getColspan(), true);
                     }
                 }
-//                for (int i = row; i <= row + 1; i++) {
-//                    if (i == rows.size()) {
-//                        break;
-//                    }
-//                    CellRenderer cell1 = rows.get(i)[col];
-////                    CellRenderer cell1 = wrkRow[k];
-//                    if (cell1 != null) {
-//                        buildBordersArrays(cell1, i, cell1.getModelElement().getRowspan(), cell1.getModelElement().getColspan(), true);
-//                    }
-////                    CellRenderer[] wrkRow = rows.get(i);
-////                    for (int k = 0; k < wrkRow.length; k++) {
-////                        CellRenderer cell1 = wrkRow[k];
-////                        if (cell1 != null) {
-////                            buildBordersArrays(cell1, i, cell1.getModelElement().getRowspan(), cell1.getModelElement().getColspan(), true);
-////                        }
-////                    }
-//                }
-//                for (int i = 0; i < currentRow.length; i++) {
-//                    CellRenderer cell1 = currentRow[i];
-//                    if (cell1 != null) {
-//                        buildBordersArrays(cell1, row, cell1.getModelElement().getRowspan(), cell1.getModelElement().getColspan(), true);
-//                    }
-//                }
-//                if (cell != null) {
-//                    buildBordersArrays(cell, row, cell.getModelElement().getRowspan(), cell.getModelElement().getColspan(), true);
-//                }
                 targetOverflowRowIndex[col] = currentCellInfo.finishRowInd;
                 // This cell came from the future (split occurred and we need to place cell with big rowpsan into the current area)
                 boolean currentCellHasBigRowspan = (row != currentCellInfo.finishRowInd);
@@ -355,12 +329,6 @@ public class TableRenderer extends AbstractRenderer {
                         splits[col] = cellResult;
                     }
                 }
-//                for (int i = 0; i < currentRow.length; i++) {
-//                    CellRenderer cell1 = currentRow[i];
-//                    if (cell1 != null) {
-//                        buildBordersArrays(cell1, row, cell1.getModelElement().getRowspan(), cell1.getModelElement().getColspan(), true);
-//                    }
-//                }
                 currChildRenderers.add(cell);
                 if (cellResult.getStatus() != LayoutResult.NOTHING) {
                     rowHeight = Math.max(rowHeight, cell.getOccupiedArea().getBBox().getHeight() - rowspanOffset);
