@@ -26,7 +26,7 @@ public class LargeElementTest extends ExtendedITextTest {
     static final public String destinationFolder = "./target/test/com/itextpdf/layout/LargeElementTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 

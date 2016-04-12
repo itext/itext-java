@@ -60,7 +60,7 @@ abstract public class PdfDeviceCs extends PdfColorSpace {
         super(pdfObject);
     }
 
-    static public class Gray extends PdfDeviceCs {
+    public static class Gray extends PdfDeviceCs {
 
         private static final long serialVersionUID = 2722906212276665191L;
 
@@ -79,7 +79,7 @@ abstract public class PdfDeviceCs extends PdfColorSpace {
         }
     }
 
-    static public class Rgb extends PdfDeviceCs {
+    public static class Rgb extends PdfDeviceCs {
 
         private static final long serialVersionUID = -1605044540582561428L;
 
@@ -98,7 +98,7 @@ abstract public class PdfDeviceCs extends PdfColorSpace {
         }
     }
 
-    static public class Cmyk extends PdfDeviceCs {
+    public static class Cmyk extends PdfDeviceCs {
 
         private static final long serialVersionUID = 2615036909699704719L;
 

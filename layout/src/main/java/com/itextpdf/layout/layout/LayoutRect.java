@@ -64,7 +64,7 @@ public class LayoutRect implements Cloneable {
      * @param rectangles list of input rectangles.
      * @return common rectangle.
      */
-    static public LayoutRect getCommonRectangle(LayoutRect... rectangles) {
+    public static LayoutRect getCommonRectangle(LayoutRect... rectangles) {
         Float ury = -Float.MAX_VALUE;
         Float llx = Float.MAX_VALUE;
         Float lly = Float.MAX_VALUE;

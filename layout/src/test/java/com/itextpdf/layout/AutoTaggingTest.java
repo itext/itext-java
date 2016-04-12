@@ -40,7 +40,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
     static final public String imageName = "Desert.jpg";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 

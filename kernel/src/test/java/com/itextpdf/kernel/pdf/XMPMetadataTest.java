@@ -24,7 +24,7 @@ public class XMPMetadataTest extends ExtendedITextTest{
     static  public TimeZone CURRENT_USER_TIME_ZONE;
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
         CURRENT_USER_TIME_ZONE = TimeZone.getDefault();
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Brussels"));

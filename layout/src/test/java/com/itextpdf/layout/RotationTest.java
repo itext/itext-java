@@ -47,7 +47,7 @@ public class RotationTest extends ExtendedITextTest{
             " Little Italy of the Lower East Side. They were often in conflict with the Jewish Eastmans of the same area.";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 

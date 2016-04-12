@@ -44,7 +44,7 @@ public class PdfA2AnnotationCheckTest {
     static final public String destinationFolder = "./target/test/PdfA2AnnotationCheckTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         new File(destinationFolder).mkdirs();
     }
 

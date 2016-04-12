@@ -43,7 +43,7 @@ public class BorderTest extends ExtendedITextTest {
     String cmpFileName;
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
        createDestinationFolder(destinationFolder);
     }
 

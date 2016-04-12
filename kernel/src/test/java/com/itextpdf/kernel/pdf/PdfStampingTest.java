@@ -26,7 +26,7 @@ public class PdfStampingTest extends ExtendedITextTest {
     static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfStampingTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 

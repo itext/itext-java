@@ -31,7 +31,7 @@ public class BarcodeQRCodeTest {
     static final public String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodeQRCode/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         File dir = new File(destinationFolder);
         dir.mkdirs();
         for (File file : dir.listFiles())

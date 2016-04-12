@@ -29,7 +29,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     static final public String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 

@@ -32,7 +32,7 @@ public class PdfA2CatalogCheckTest {
     static final public String destinationFolder = "./target/test/PdfA2CatalogCheckTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         new File(destinationFolder).mkdirs();
     }
 

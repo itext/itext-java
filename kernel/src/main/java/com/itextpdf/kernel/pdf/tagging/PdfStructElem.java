@@ -71,13 +71,13 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     private static final long serialVersionUID = 7204356181229674005L;
 	
-    static public int Unknown = 0;
-    static public int Grouping = 1;
-    static public int BlockLevel = 2;
-    static public int InlineLevel = 3;
-    static public int Illustration = 4;
+    public static int Unknown = 0;
+    public static int Grouping = 1;
+    public static int BlockLevel = 2;
+    public static int InlineLevel = 3;
+    public static int Illustration = 4;
 
-    static public Set<PdfName> groupingRoles = new HashSet<PdfName>() {{
+    public static Set<PdfName> groupingRoles = new HashSet<PdfName>() {{
         add(PdfName.Document);
         add(PdfName.Part);
         add(PdfName.Art);
@@ -93,7 +93,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         add(PdfName.Private);
     }};
 
-    static public Set<PdfName> blockLevelRoles = new HashSet<PdfName>() {{
+    public static Set<PdfName> blockLevelRoles = new HashSet<PdfName>() {{
         add(PdfName.P);
         add(PdfName.H1);
         add(PdfName.H2);
@@ -115,7 +115,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         add(PdfName.TFoot);
     }};
 
-    static public Set<PdfName> inlineLevelRoles = new HashSet<PdfName>() {{
+    public static Set<PdfName> inlineLevelRoles = new HashSet<PdfName>() {{
         add(PdfName.Span);
         add(PdfName.Quote);
         add(PdfName.Note);
@@ -133,7 +133,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         add(PdfName.WP);
     }};
 
-    static public Set<PdfName> illustrationRoles = new HashSet<PdfName>() {{
+    public static Set<PdfName> illustrationRoles = new HashSet<PdfName>() {{
         add(PdfName.Figure);
         add(PdfName.Formula);
         add(PdfName.Form);
@@ -172,7 +172,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     /**
      * Method to to distinguish struct elements from other elements of the logical tree (like mcr or struct tree root).
      */
-    static public boolean isStructElem(PdfDictionary dictionary) {
+    public static boolean isStructElem(PdfDictionary dictionary) {
         return (PdfName.StructElem.equals(dictionary.getAsName(PdfName.Type)) ||
                 dictionary.containsKey(PdfName.S)); // required key of the struct elem
     }

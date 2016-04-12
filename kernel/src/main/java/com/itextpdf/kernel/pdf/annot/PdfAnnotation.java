@@ -67,16 +67,16 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Annotation flags.
      */
-    static public final int Invisible = 1;
-    static public final int Hidden = 2;
-    static public final int Print = 4;
-    static public final int NoZoom = 8;
-    static public final int NoRotate = 16;
-    static public final int NoView = 32;
-    static public final int ReadOnly = 64;
-    static public final int Locked = 128;
-    static public final int ToggleNoView = 256;
-    static public final int LockedContents = 512;
+    public static final int Invisible = 1;
+    public static final int Hidden = 2;
+    public static final int Print = 4;
+    public static final int NoZoom = 8;
+    public static final int NoRotate = 16;
+    public static final int NoView = 32;
+    public static final int ReadOnly = 64;
+    public static final int Locked = 128;
+    public static final int ToggleNoView = 256;
+    public static final int LockedContents = 512;
 
     /**
      * Annotation highlighting modes.

@@ -835,7 +835,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static Map<String, PdfName> staticNames;
 
     /**
-     * Use reflection to cache all the static public final names so
+     * Use reflection to cache all the public static final names so
      * future <code>PdfName</code> additions don't have to be "added twice".
      * A bit less efficient (around 50ms spent here on a 2.2ghz machine),
      *  but Much Less error prone.

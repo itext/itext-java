@@ -35,7 +35,7 @@ public class PdfA1GraphicsTest {
     static final public String destinationFolder = "./target/test/PdfA1GraphicsTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         new File(destinationFolder).mkdirs();
     }
 

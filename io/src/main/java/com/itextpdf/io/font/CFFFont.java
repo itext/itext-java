@@ -409,7 +409,7 @@ public class CFFFont {
      * and a negative value means that this is a dict item that uses a
      * variable-size representation.
      */
-    static protected final class IndexOffsetItem extends OffsetItem {
+    protected static final class IndexOffsetItem extends OffsetItem {
         public final int size;
         public IndexOffsetItem(int size, int value) {this.size=size; this.value=value;}
         public IndexOffsetItem(int size) {this.size=size; }
@@ -429,11 +429,11 @@ public class CFFFont {
         }
     }
 
-    static protected final class IndexBaseItem extends Item {
+    protected static final class IndexBaseItem extends Item {
         public IndexBaseItem() {}
     }
 
-    static protected final class IndexMarkerItem extends Item {
+    protected static final class IndexMarkerItem extends Item {
         private OffsetItem offItem;
         private IndexBaseItem indexBase;
         public IndexMarkerItem(OffsetItem offItem, IndexBaseItem indexBase) {
@@ -450,7 +450,7 @@ public class CFFFont {
      * TODO To change the template for this generated type comment go to
      * Window - Preferences - Java - Code Generation - Code and Comments
      */
-    static protected final class SubrMarkerItem extends Item {
+    protected static final class SubrMarkerItem extends Item {
         private OffsetItem offItem;
         private IndexBaseItem indexBase;
         public SubrMarkerItem(OffsetItem offItem, IndexBaseItem indexBase) {
@@ -468,7 +468,7 @@ public class CFFFont {
     /** an unknown offset in a dictionary for the list.
      * We will fix up the offset later; for now, assume it's large.
      */
-    static protected final class DictOffsetItem extends OffsetItem {
+    protected static final class DictOffsetItem extends OffsetItem {
         public final int size;
         public DictOffsetItem() {this.size=5; }
 
@@ -493,7 +493,7 @@ public class CFFFont {
     /** Card24 item.
      */
 
-    static protected final class UInt24Item extends Item {
+    protected static final class UInt24Item extends Item {
         public int value;
         public UInt24Item(int value) {this.value=value;}
 
@@ -514,7 +514,7 @@ public class CFFFont {
     /** Card32 item.
      */
 
-    static protected final class UInt32Item extends Item {
+    protected static final class UInt32Item extends Item {
         public int value;
         public UInt32Item(int value) {this.value=value;}
 
@@ -536,7 +536,7 @@ public class CFFFont {
     /** A SID or Card16 item.
      */
 
-    static protected final class UInt16Item extends Item {
+    protected static final class UInt16Item extends Item {
         public char value;
         public UInt16Item(char value) {this.value = value;}
 
@@ -559,7 +559,7 @@ public class CFFFont {
     /** A Card8 item.
      */
 
-    static protected final class UInt8Item extends Item {
+    protected static final class UInt8Item extends Item {
         public char value;
         public UInt8Item(char value) {this.value=value;}
 
@@ -576,7 +576,7 @@ public class CFFFont {
         }
     }
 
-    static protected final class StringItem extends Item {
+    protected static final class StringItem extends Item {
         public String s;
         public StringItem(String s) {this.s=s;}
 
@@ -598,7 +598,7 @@ public class CFFFont {
      * representation.
      */
 
-    static protected final class DictNumberItem extends Item {
+    protected static final class DictNumberItem extends Item {
         public final int value;
         public int size = 5;
         public DictNumberItem(int value) {this.value=value;}
@@ -624,7 +624,7 @@ public class CFFFont {
      * It is used to mark an offset and to set the offset list item.
      */
 
-    static protected final class MarkerItem extends Item {
+    protected static final class MarkerItem extends Item {
         OffsetItem p;
         public MarkerItem(OffsetItem pointerToMarker) {p=pointerToMarker;}
         @Override

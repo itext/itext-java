@@ -36,7 +36,7 @@ public class PdfReaderTest extends ExtendedITextTest{
     static final String title = "Empty iText 6 Document";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 

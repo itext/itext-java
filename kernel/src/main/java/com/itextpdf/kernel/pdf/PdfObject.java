@@ -59,16 +59,16 @@ abstract public class PdfObject implements Serializable{
     private static final long serialVersionUID = -3852543867469424720L;
 
 
-    static public final byte Array = 1;
-    static public final byte Boolean = 2;
-    static public final byte Dictionary = 3;
-    static public final byte Literal = 4;
-    static public final byte IndirectReference = 5;
-    static public final byte Name = 6;
-    static public final byte Null = 7;
-    static public final byte Number = 8;
-    static public final byte Stream = 9;
-    static public final byte String = 10;
+    public static final byte Array = 1;
+    public static final byte Boolean = 2;
+    public static final byte Dictionary = 3;
+    public static final byte Literal = 4;
+    public static final byte IndirectReference = 5;
+    public static final byte Name = 6;
+    public static final byte Null = 7;
+    public static final byte Number = 8;
+    public static final byte Stream = 9;
+    public static final byte String = 10;
 
     /**
      * If object is flushed the indirect reference is kept here.

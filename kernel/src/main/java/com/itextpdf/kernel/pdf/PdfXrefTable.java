@@ -62,10 +62,10 @@ class PdfXrefTable implements Serializable{
     private static final int InitialCapacity = 32;
     private static final int MaxGeneration = 65535;
 
-    static private final DecimalFormat objectOffsetFormatter = new DecimalFormat("0000000000");
-    static private final DecimalFormat objectGenerationFormatter = new DecimalFormat("00000");
-    static private final byte[] freeXRefEntry = ByteUtils.getIsoBytes("f \n");
-    static private final byte[] inUseXRefEntry = ByteUtils.getIsoBytes("n \n");
+    private static final DecimalFormat objectOffsetFormatter = new DecimalFormat("0000000000");
+    private static final DecimalFormat objectGenerationFormatter = new DecimalFormat("00000");
+    private static final byte[] freeXRefEntry = ByteUtils.getIsoBytes("f \n");
+    private static final byte[] inUseXRefEntry = ByteUtils.getIsoBytes("n \n");
 
     private PdfIndirectReference[] xref;
     private int count = 0;

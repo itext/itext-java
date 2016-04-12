@@ -26,7 +26,7 @@ public class BarcodePDF417Test {
     static final public String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodePDF417/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         new File(destinationFolder).mkdirs();
     }
 

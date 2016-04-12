@@ -65,7 +65,7 @@ public abstract class PdfAChecker {
     public static final String ICC_DEVICE_CLASS_OUTPUT_PROFILE = "prtr";
     public static final String ICC_DEVICE_CLASS_MONITOR_PROFILE = "mntr";
 
-    static public final int maxGsStackDepth = 28;
+    public static final int maxGsStackDepth = 28;
 
     protected PdfAConformanceLevel conformanceLevel;
     protected String pdfAOutputIntentColorSpace;

@@ -31,7 +31,7 @@ public class PdfA1AcroFormCheckTest {
     static final public String destinationFolder = "./target/test/PdfA1AcroFormCheckTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         new File(destinationFolder).mkdirs();
     }
 

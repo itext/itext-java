@@ -27,7 +27,7 @@ public class BarcodePostnetTest {
 
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         new File(destinationFolder).mkdirs();
     }
 

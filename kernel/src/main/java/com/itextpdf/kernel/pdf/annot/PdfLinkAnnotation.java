@@ -58,10 +58,10 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     /**
      * Highlight modes.
      */
-    static public final PdfName None = PdfName.N;
-    static public final PdfName Invert = PdfName.I;
-    static public final PdfName Outline = PdfName.O;
-    static public final PdfName Push = PdfName.P;
+    public static final PdfName None = PdfName.N;
+    public static final PdfName Invert = PdfName.I;
+    public static final PdfName Outline = PdfName.O;
+    public static final PdfName Push = PdfName.P;
 
     public PdfLinkAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);

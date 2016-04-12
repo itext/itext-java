@@ -48,7 +48,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfStructElemTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
