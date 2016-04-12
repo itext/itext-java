@@ -53,7 +53,7 @@ import com.itextpdf.kernel.color.Color;
  */
 public class DottedBorder extends Border {
 
-    private static final float gapModifier = 1.5f;
+    private static final float GAP_MODIFIER = 1.5f;
 
     /**
      * Creates a DottedBorder instance with the specified width. The color is set to the default: black.
@@ -80,7 +80,7 @@ public class DottedBorder extends Border {
 
     @Override
     public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
-        float initialGap = width * gapModifier;
+        float initialGap = width * GAP_MODIFIER;
         float dx = x2 - x1;
         float dy = y2 - y1;
         double borderLength = Math.sqrt(dx * dx + dy * dy);
@@ -122,7 +122,7 @@ public class DottedBorder extends Border {
 
     @Override
     public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
-        float initialGap = width * gapModifier;
+        float initialGap = width * GAP_MODIFIER;
         float dx = x2 - x1;
         float dy = y2 - y1;
         double borderLength = Math.sqrt(dx * dx + dy * dy);

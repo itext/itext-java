@@ -322,7 +322,7 @@ class PdfPagesTree implements Serializable{
             }
             PdfObject pageKids = page.get(PdfName.Kids);
             if (pageKids != null) {
-                if (pageKids.getType() == PdfObject.Array) {
+                if (pageKids.getType() == PdfObject.ARRAY) {
                     findPdfPages = true;
                 } else {                                                    // kids must be of type array
                     throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum+1);

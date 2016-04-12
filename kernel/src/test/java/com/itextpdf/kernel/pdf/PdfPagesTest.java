@@ -5,7 +5,6 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -235,7 +234,7 @@ public class PdfPagesTest extends ExtendedITextTest{
         }
 
         Assert.assertEquals("Remove last page", true, pdfDoc.removePage(pdfDoc.getPage(pageCount)));
-        Assert.assertEquals("Free reference", true, pdfDoc.getXref().get(removedPageObjectNumber).checkState(PdfObject.Free));
+        Assert.assertEquals("Free reference", true, pdfDoc.getXref().get(removedPageObjectNumber).checkState(PdfObject.FREE));
 
         pdfDoc.close();
         verifyPagesOrder(destinationFolder + filename, pageCount - 1);

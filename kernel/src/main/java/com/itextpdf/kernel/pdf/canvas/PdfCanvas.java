@@ -690,7 +690,7 @@ public class PdfCanvas {
             GlyphLine.GlyphLinePart glyphLinePart = iterator.next();
             if (glyphLinePart.actualText != null) {
                 PdfDictionary properties = new PdfDictionary();
-                properties.put(PdfName.ActualText, new PdfString(glyphLinePart.actualText, PdfEncodings.UnicodeBig).setHexWriting(true));
+                properties.put(PdfName.ActualText, new PdfString(glyphLinePart.actualText, PdfEncodings.UNICODE_BIG).setHexWriting(true));
                 beginMarkedContent(PdfName.Span, properties);
             }
             int sub = glyphLinePart.start;

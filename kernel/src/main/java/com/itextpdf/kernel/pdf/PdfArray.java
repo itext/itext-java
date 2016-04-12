@@ -357,7 +357,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
 
     @Override
     public byte getType() {
-        return Array;
+        return ARRAY;
     }
 
     /**
@@ -433,7 +433,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
             return list.get(index);
         else {
             PdfObject obj = list.get(index);
-            if (obj.getType() == IndirectReference)
+            if (obj.getType() == INDIRECT_REFERENCE)
                 return ((PdfIndirectReference) obj).getRefersTo(true);
             else
                 return obj;
@@ -448,7 +448,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     public PdfArray getAsArray(int index) {
         PdfObject direct = get(index, true);
-        if (direct != null && direct.getType() == PdfObject.Array)
+        if (direct != null && direct.getType() == PdfObject.ARRAY)
             return (PdfArray) direct;
         return null;
     }
@@ -462,7 +462,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     public PdfDictionary getAsDictionary(int index) {
         PdfObject direct = get(index, true);
-        if (direct != null && direct.getType() == PdfObject.Dictionary)
+        if (direct != null && direct.getType() == PdfObject.DICTIONARY)
             return (PdfDictionary) direct;
         return null;
     }
@@ -476,7 +476,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     public PdfStream getAsStream(int index) {
         PdfObject direct = get(index, true);
-        if (direct != null && direct.getType() == PdfObject.Stream)
+        if (direct != null && direct.getType() == PdfObject.STREAM)
             return (PdfStream) direct;
         return null;
     }
@@ -490,7 +490,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     public PdfNumber getAsNumber(int index) {
         PdfObject direct = get(index, true);
-        if (direct != null && direct.getType() == PdfObject.Number)
+        if (direct != null && direct.getType() == PdfObject.NUMBER)
             return (PdfNumber) direct;
         return null;
     }
@@ -504,7 +504,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     public PdfName getAsName(int index) {
         PdfObject direct = get(index, true);
-        if (direct != null && direct.getType() == PdfObject.Name)
+        if (direct != null && direct.getType() == PdfObject.NAME)
             return (PdfName) direct;
         return null;
     }
@@ -518,7 +518,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     public PdfString getAsString(int index) {
         PdfObject direct = get(index, true);
-        if (direct != null && direct.getType() == PdfObject.String)
+        if (direct != null && direct.getType() == PdfObject.STRING)
             return (PdfString) direct;
         return null;
     }
@@ -531,7 +531,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     public PdfBoolean getAsBoolean(int index) {
         PdfObject direct = get(index, true);
-        if (direct != null && direct.getType() == PdfObject.Boolean)
+        if (direct != null && direct.getType() == PdfObject.BOOLEAN)
             return (PdfBoolean) direct;
         return null;
     }

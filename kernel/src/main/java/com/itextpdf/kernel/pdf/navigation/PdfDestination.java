@@ -67,11 +67,11 @@ public abstract class PdfDestination<T extends PdfObject> extends PdfObjectWrapp
 
     public static PdfDestination makeDestination(PdfObject pdfObject) {
 
-        if (pdfObject.getType() == PdfObject.String)
+        if (pdfObject.getType() == PdfObject.STRING)
             return  new PdfStringDestination((PdfString) pdfObject);
-        else if (pdfObject.getType() == PdfObject.Name)
+        else if (pdfObject.getType() == PdfObject.NAME)
             return new PdfNamedDestination((PdfName) pdfObject);
-        else if (pdfObject.getType() == PdfObject.Array)
+        else if (pdfObject.getType() == PdfObject.ARRAY)
             return new PdfExplicitDestination((PdfArray) pdfObject);
         else
             throw new UnsupportedOperationException();

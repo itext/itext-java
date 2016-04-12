@@ -57,7 +57,7 @@ import java.io.OutputStream;
 
 public final class StreamUtil {
 
-    private static final int transferSize = 64 * 1024;
+    private static final int TRANSFER_SIZE = 64 * 1024;
 
     private static final byte[] escR = ByteUtils.getIsoBytes("\\r");
     private static final byte[] escN = ByteUtils.getIsoBytes("\\n");
@@ -172,9 +172,9 @@ public final class StreamUtil {
     }
 
     public static void transferBytes(InputStream input, java.io.OutputStream output) throws java.io.IOException {
-        byte[] buffer = new byte[transferSize];
+        byte[] buffer = new byte[TRANSFER_SIZE];
         for (; ; ) {
-            int len = input.read(buffer, 0, transferSize);
+            int len = input.read(buffer, 0, TRANSFER_SIZE);
             if (len > 0) {
                 output.write(buffer, 0, len);
             } else {
@@ -184,9 +184,9 @@ public final class StreamUtil {
     }
 
     public static void transferBytes(RandomAccessFileOrArray input, java.io.OutputStream output) throws java.io.IOException {
-        byte[] buffer = new byte[transferSize];
+        byte[] buffer = new byte[TRANSFER_SIZE];
         for (; ; ) {
-            int len = input.read(buffer, 0, transferSize);
+            int len = input.read(buffer, 0, TRANSFER_SIZE);
             if (len > 0) {
                 output.write(buffer, 0, len);
             } else {

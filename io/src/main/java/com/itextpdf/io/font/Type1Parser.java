@@ -58,7 +58,7 @@ class Type1Parser implements Serializable {
 
     private static final long serialVersionUID = -8484541242371901414L;
 
-    private static final String AfmHeader = "StartFontMetrics";
+    private static final String AFM_HEADER = "StartFontMetrics";
 
     private String afmPath;
     private String pfbPath;
@@ -161,8 +161,8 @@ class Type1Parser implements Serializable {
     }
 
     private boolean isAfmFile(RandomAccessFileOrArray raf) throws java.io.IOException {
-        StringBuilder builder = new StringBuilder(AfmHeader.length());
-        for (int i = 0; i < AfmHeader.length(); i++) {
+        StringBuilder builder = new StringBuilder(AFM_HEADER.length());
+        for (int i = 0; i < AFM_HEADER.length(); i++) {
             try {
                 builder.append((char)raf.readByte());
             } catch (EOFException e) {
@@ -171,6 +171,6 @@ class Type1Parser implements Serializable {
             }
         }
         raf.seek(0);
-        return AfmHeader.equals(builder.toString());
+        return AFM_HEADER.equals(builder.toString());
     }
 }

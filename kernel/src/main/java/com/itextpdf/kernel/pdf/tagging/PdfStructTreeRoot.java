@@ -258,7 +258,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     private void ifKidIsStructElementAddToList(PdfObject kid, List<IPdfStructElem> kids) {
         if (kid.isFlushed()) {
             kids.add(null);
-        } else if (kid.getType() == PdfObject.Dictionary && PdfStructElem.isStructElem((PdfDictionary) kid)) {
+        } else if (kid.getType() == PdfObject.DICTIONARY && PdfStructElem.isStructElem((PdfDictionary) kid)) {
             kids.add(new PdfStructElem((PdfDictionary) kid));
         }
     }

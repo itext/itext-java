@@ -114,19 +114,19 @@ public abstract class PdfAChecker {
 
     public void checkPdfObject(PdfObject obj) {
         switch (obj.getType()) {
-            case PdfObject.Number:
+            case PdfObject.NUMBER:
                 checkPdfNumber((PdfNumber) obj);
                 break;
-            case PdfObject.Stream:
+            case PdfObject.STREAM:
                 PdfStream stream = (PdfStream) obj;
                 //form xObjects, annotation appearance streams, patterns and type3 glyphs may have their own resources dictionary
                 checkResources(stream.getAsDictionary(PdfName.Resources));
                 checkPdfStream(stream);
                 break;
-            case PdfObject.String:
+            case PdfObject.STRING:
                 checkPdfString((PdfString) obj);
                 break;
-            case PdfObject.Dictionary:
+            case PdfObject.DICTIONARY:
                 PdfDictionary dict = (PdfDictionary) obj;
                 PdfName type = dict.getAsName(PdfName.Type);
                 if (PdfName.Filespec.equals(type)) {

@@ -70,7 +70,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Cell extends BlockElement<Cell> {
 
-    private static final Border defaultBorder = new SolidBorder(new com.itextpdf.kernel.color.DeviceRgb(160, 160, 160), 0.5f);
+    private static final Border DEFAULT_BORDER = new SolidBorder(new com.itextpdf.kernel.color.DeviceRgb(160, 160, 160), 0.5f);
 
     private int row;
     private int col;
@@ -202,7 +202,7 @@ public class Cell extends BlockElement<Cell> {
     public <T> T getDefaultProperty(Property property) {
         switch (property) {
             case BORDER:
-                return (T) defaultBorder;
+                return (T) DEFAULT_BORDER;
             default:
                 return super.getDefaultProperty(property);
         }

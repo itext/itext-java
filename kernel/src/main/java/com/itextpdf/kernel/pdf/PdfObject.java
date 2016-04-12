@@ -58,51 +58,50 @@ abstract public class PdfObject implements Serializable{
 
     private static final long serialVersionUID = -3852543867469424720L;
 
+    public static final byte ARRAY = 1;
+    public static final byte BOOLEAN = 2;
+    public static final byte DICTIONARY = 3;
+    public static final byte LITERAL = 4;
+    public static final byte INDIRECT_REFERENCE = 5;
+    public static final byte NAME = 6;
+    public static final byte NULL = 7;
+    public static final byte NUMBER = 8;
+    public static final byte STREAM = 9;
+    public static final byte STRING = 10;
 
-    public static final byte Array = 1;
-    public static final byte Boolean = 2;
-    public static final byte Dictionary = 3;
-    public static final byte Literal = 4;
-    public static final byte IndirectReference = 5;
-    public static final byte Name = 6;
-    public static final byte Null = 7;
-    public static final byte Number = 8;
-    public static final byte Stream = 9;
-    public static final byte String = 10;
+    // Indicates if the object has been flushed.
+    protected static final short FLUSHED = 1;
+    // Indicates that the indirect reference of the object could be reused or have to be marked as free.
+    protected static final short FREE = 2;
+    // Indicates that definition of the indirect reference of the object still not found (e.g. keys in XRefStm).
+    protected static final short READING = 4;
+    // Indicates that object changed (using in stamp mode).
+    protected static final short MODIFIED = 8;
+    // Indicates that the indirect reference of the object represents ObjectStream from original document.
+    // When PdfReader read ObjectStream reference marked as OriginalObjectStream
+    // to avoid further reusing.
+    protected static final short ORIGINAL_OBJECT_STREAM = 16;
+    // For internal usage only. Marks objects that shall be written to the output document.
+    // Option is needed to build the correct PDF objects tree when closing the document.
+    // As a result it avoids writing unused (removed) objects.
+    protected static final short MUST_BE_FLUSHED = 32;
+    // Indicates that the object shall be indirect when it is written to the document.
+    // It is used to postpone the creation of indirect reference for the objects that shall be indirect,
+    // so it is possible to create such objects without PdfDocument instance.
+    protected static final short MUST_BE_INDIRECT = 64;
+    // Indicates that the object is highly sensitive and we do not want to release it even if release() is called.
+    // This flag can be set in stamping mode in object wrapper constructors and is automatically set when setModified
+    // flag is set (we do not want to release changed objects).
+    // The flag is set automatically for some wrappers that need document even in reader mode (FormFields etc).
+    protected static final short FORBID_RELEASE = 128;
+    // Indicates that we do not want this object to be ever written into the resultant document
+    // (because of multiple objects read from the same reference inconsistency).
+    protected static final short READ_ONLY = 256;
 
     /**
      * If object is flushed the indirect reference is kept here.
      */
     protected PdfIndirectReference indirectReference = null;
-
-    // Indicates if the object has been flushed.
-    protected static final short Flushed = 1;
-    // Indicates that the indirect reference of the object could be reused or have to be marked as free.
-    protected static final short Free = 2;
-    // Indicates that definition of the indirect reference of the object still not found (e.g. keys in XRefStm).
-    protected static final short Reading = 4;
-    // Indicates that object changed (using in stamp mode).
-    protected static final short Modified = 8;
-    // Indicates that the indirect reference of the object represents ObjectStream from original document.
-    // When PdfReader read ObjectStream reference marked as OriginalObjectStream
-    // to avoid further reusing.
-    protected static final short OriginalObjectStream = 16;
-    // For internal usage only. Marks objects that shall be written to the output document.
-    // Option is needed to build the correct PDF objects tree when closing the document.
-    // As a result it avoids writing unused (removed) objects.
-    protected static final short MustBeFlushed = 32;
-    // Indicates that the object shall be indirect when it is written to the document.
-    // It is used to postpone the creation of indirect reference for the objects that shall be indirect,
-    // so it is possible to create such objects without PdfDocument instance.
-    protected static final short MustBeIndirect = 64;
-    // Indicates that the object is highly sensitive and we do not want to release it even if release() is called.
-    // This flag can be set in stamping mode in object wrapper constructors and is automatically set when setModified
-    // flag is set (we do not want to release changed objects).
-    // The flag is set automatically for some wrappers that need document even in reader mode (FormFields etc).
-    protected static final short ForbidRelease = 128;
-    // Indicates that we do not want this object to be ever written into the resultant document
-    // (because of multiple objects read from the same reference inconsistency).
-    protected static final short ReadOnly = 256;
 
     /**
      * Indicate same special states of PdfIndirectObject or PdfObject like @see Free, @see Reading, @see Modified.
@@ -145,8 +144,8 @@ abstract public class PdfObject implements Serializable{
             PdfDocument document = getIndirectReference().getDocument();
             if (document != null) {
                 document.checkIsoConformance(this, IsoKey.PDF_OBJECT);
-                document.flushObject(this, canBeInObjStm && getType() != Stream
-                        && getType() != IndirectReference && getIndirectReference().getGenNumber() == 0);
+                document.flushObject(this, canBeInObjStm && getType() != STREAM
+                        && getType() != INDIRECT_REFERENCE && getIndirectReference().getGenNumber() == 0);
             }
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotFlushObject, e, this);
@@ -176,7 +175,7 @@ abstract public class PdfObject implements Serializable{
      * @return returns {@code true} if object is indirect or is to be indirect in the resultant document.
      */
     public boolean isIndirect() {
-        return indirectReference != null || checkState(PdfObject.MustBeIndirect);
+        return indirectReference != null || checkState(PdfObject.MUST_BE_INDIRECT);
     }
 
     /**
@@ -197,7 +196,7 @@ abstract public class PdfObject implements Serializable{
             indirectReference = reference;
             indirectReference.setRefersTo(this);
         }
-        clearState(MustBeIndirect);
+        clearState(MUST_BE_INDIRECT);
         return (T) this;
     }
 
@@ -245,7 +244,7 @@ abstract public class PdfObject implements Serializable{
      */
     public boolean isFlushed() {
         PdfIndirectReference indirectReference = getIndirectReference();
-        return (indirectReference != null && indirectReference.checkState(Flushed));
+        return (indirectReference != null && indirectReference.checkState(FLUSHED));
     }
 
     /**
@@ -255,7 +254,7 @@ abstract public class PdfObject implements Serializable{
      */
     public boolean isModified() {
         PdfIndirectReference indirectReference = getIndirectReference();
-        return (indirectReference != null && indirectReference.checkState(Modified));
+        return (indirectReference != null && indirectReference.checkState(MODIFIED));
     }
 
     /**
@@ -267,8 +266,8 @@ abstract public class PdfObject implements Serializable{
     @Override
     public PdfObject clone() {
         PdfObject newObject = newInstance();
-        if (indirectReference != null || checkState(MustBeIndirect)) {
-            newObject.setState(MustBeIndirect);
+        if (indirectReference != null || checkState(MUST_BE_INDIRECT)) {
+            newObject.setState(MUST_BE_INDIRECT);
         }
         newObject.copyContent(this, null);
         return newObject;
@@ -302,7 +301,7 @@ abstract public class PdfObject implements Serializable{
             throw new PdfException(PdfException.DocumentToCopyToCannotBeNull);
 
         if (indirectReference != null) {
-            if (indirectReference.getWriter() != null || checkState(MustBeIndirect)) {
+            if (indirectReference.getWriter() != null || checkState(MUST_BE_INDIRECT)) {
                 throw new PdfException(PdfException.CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten);
             }
             if (!indirectReference.getReader().isOpenedWithFullPermission()) {
@@ -359,22 +358,22 @@ abstract public class PdfObject implements Serializable{
     //TODO comment! Add note about flush, modified flag and xref.
     public void setModified() {
         if (indirectReference != null) {
-            indirectReference.setState(Modified);
-            setState(ForbidRelease);
+            indirectReference.setState(MODIFIED);
+            setState(FORBID_RELEASE);
         }
     }
 
     public void release() {
         // In case ForbidRelease flag is set, release will not be performed.
-        if (checkState(ForbidRelease)) {
+        if (checkState(FORBID_RELEASE)) {
             Logger logger = LoggerFactory.getLogger(PdfObject.class);
             logger.warn(LogMessageConstant.FORBID_RELEASE_IS_SET);
         } else {
             if (indirectReference != null && indirectReference.getReader() != null
-                    && !indirectReference.checkState(Flushed)) {
+                    && !indirectReference.checkState(FLUSHED)) {
                 indirectReference.refersTo = null;
                 indirectReference = null;
-                setState(ReadOnly);
+                setState(READ_ONLY);
             }
             //TODO log reasonless call of method
         }
@@ -387,7 +386,7 @@ abstract public class PdfObject implements Serializable{
      * @return <CODE>true</CODE> or <CODE>false</CODE>
      */
     public boolean isNull() {
-        return getType() == Null;
+        return getType() == NULL;
     }
 
     /**
@@ -397,7 +396,7 @@ abstract public class PdfObject implements Serializable{
      * @return <CODE>true</CODE> or <CODE>false</CODE>
      */
     public boolean isBoolean() {
-        return getType() == Boolean;
+        return getType() == BOOLEAN;
     }
 
     /**
@@ -407,7 +406,7 @@ abstract public class PdfObject implements Serializable{
      * @return <CODE>true</CODE> or <CODE>false</CODE>
      */
     public boolean isNumber() {
-        return getType() == Number;
+        return getType() == NUMBER;
     }
 
     /**
@@ -417,7 +416,7 @@ abstract public class PdfObject implements Serializable{
      * @return <CODE>true</CODE> or <CODE>false</CODE>
      */
     public boolean isString() {
-        return getType() == String;
+        return getType() == STRING;
     }
 
     /**
@@ -427,7 +426,7 @@ abstract public class PdfObject implements Serializable{
      * @return <CODE>true</CODE> or <CODE>false</CODE>
      */
     public boolean isName() {
-        return getType() == Name;
+        return getType() == NAME;
     }
 
     /**
@@ -437,7 +436,7 @@ abstract public class PdfObject implements Serializable{
      * @return <CODE>true</CODE> or <CODE>false</CODE>
      */
     public boolean isArray() {
-        return getType() == Array;
+        return getType() == ARRAY;
     }
 
     /**
@@ -447,7 +446,7 @@ abstract public class PdfObject implements Serializable{
      * @return <CODE>true</CODE> or <CODE>false</CODE>
      */
     public boolean isDictionary() {
-        return getType() == Dictionary;
+        return getType() == DICTIONARY;
     }
 
     /**
@@ -457,7 +456,7 @@ abstract public class PdfObject implements Serializable{
      * @return <CODE>true</CODE> or <CODE>false</CODE>
      */
     public boolean isStream() {
-        return getType() == Stream;
+        return getType() == STREAM;
     }
 
     /**
@@ -468,7 +467,7 @@ abstract public class PdfObject implements Serializable{
      *   otherwise <CODE>false</CODE>
      */
     public boolean isIndirectReference() {
-        return getType() == IndirectReference;
+        return getType() == INDIRECT_REFERENCE;
     }
 
     /**
@@ -479,7 +478,7 @@ abstract public class PdfObject implements Serializable{
      *   otherwise <CODE>false</CODE>
      */
     public boolean isLiteral() {
-        return getType() == Literal;
+        return getType() == LITERAL;
     }
 
     /**

@@ -112,7 +112,7 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      * @param name name of the person signing the document
      */
     public void setName(String name) {
-        put(PdfName.Name, new PdfString(name, PdfEncodings.UnicodeBig));
+        put(PdfName.Name, new PdfString(name, PdfEncodings.UNICODE_BIG));
     }
 
     /**
@@ -130,7 +130,7 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      * @param location physical location of signing
      */
     public void setLocation(String location) {
-        put(PdfName.Location, new PdfString(location, PdfEncodings.UnicodeBig));
+        put(PdfName.Location, new PdfString(location, PdfEncodings.UNICODE_BIG));
     }
 
     /**
@@ -139,7 +139,7 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      * @param reason reason for signing
      */
     public void setReason(String reason) {
-        put(PdfName.Reason, new PdfString(reason, PdfEncodings.UnicodeBig));
+        put(PdfName.Reason, new PdfString(reason, PdfEncodings.UNICODE_BIG));
     }
 
     /**
@@ -160,7 +160,7 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      * @param contactInfo information to contact the person who signed this document
      */
     public void setContact(String contactInfo) {
-        put(PdfName.ContactInfo, new PdfString(contactInfo, PdfEncodings.UnicodeBig));
+        put(PdfName.ContactInfo, new PdfString(contactInfo, PdfEncodings.UNICODE_BIG));
     }
 
     @Override

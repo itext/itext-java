@@ -1321,7 +1321,7 @@ public class PdfStampingTest extends ExtendedITextTest {
     }
 
     static void verifyPdfPagesCount(PdfObject root) {
-        if (root.getType() == PdfObject.IndirectReference)
+        if (root.getType() == PdfObject.INDIRECT_REFERENCE)
             root = ((PdfIndirectReference) root).getRefersTo();
         PdfDictionary pages = (PdfDictionary) root;
         if (!pages.containsKey(PdfName.Kids)) return;
@@ -1330,7 +1330,7 @@ public class PdfStampingTest extends ExtendedITextTest {
             assertTrue("PdfPages with zero count", count.getIntValue() > 0);
         }
         PdfObject kids = pages.get(PdfName.Kids);
-        if (kids.getType() == PdfObject.Array) {
+        if (kids.getType() == PdfObject.ARRAY) {
             for (PdfObject kid : (PdfArray) kids) {
                 verifyPdfPagesCount(kid);
             }

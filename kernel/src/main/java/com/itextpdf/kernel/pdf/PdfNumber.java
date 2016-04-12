@@ -49,8 +49,8 @@ import com.itextpdf.io.source.ByteUtils;
 public class PdfNumber extends PdfPrimitiveObject {
 
     private static final long serialVersionUID = -250799718574024246L;
-	protected static final byte Int = 1;
-    protected static final byte Double = 2;
+	protected static final byte INT = 1;
+    protected static final byte DOUDBLE = 2;
 
     private double value;
     private byte valueType;
@@ -67,7 +67,7 @@ public class PdfNumber extends PdfPrimitiveObject {
 
     public PdfNumber(byte[] content) {
         super(content);
-        this.valueType = Double;
+        this.valueType = DOUDBLE;
         this.value = java.lang.Double.NaN;
     }
 
@@ -77,7 +77,7 @@ public class PdfNumber extends PdfPrimitiveObject {
 
     @Override
     public byte getType() {
-        return Number;
+        return NUMBER;
     }
 
     public double getValue() {
@@ -100,13 +100,13 @@ public class PdfNumber extends PdfPrimitiveObject {
 
     public void setValue(int value) {
         this.value = value;
-        this.valueType = Int;
+        this.valueType = INT;
         this.content = null;
     }
 
     public void setValue(double value) {
         this.value = value;
-        this.valueType = Double;
+        this.valueType = DOUDBLE;
         this.content = null;
     }
 
@@ -175,7 +175,7 @@ public class PdfNumber extends PdfPrimitiveObject {
     public String toString() {
         if (content != null)
             return new String(content);
-        else if (valueType == Int)
+        else if (valueType == INT)
             return new String(ByteUtils.getIsoBytes(getIntValue()));
         else
             return new String(ByteUtils.getIsoBytes(getValue()));
@@ -193,10 +193,10 @@ public class PdfNumber extends PdfPrimitiveObject {
     @Override
     protected void generateContent() {
         switch (valueType) {
-            case Int:
+            case INT:
                 content = ByteUtils.getIsoBytes((int) value);
                 break;
-            case Double:
+            case DOUDBLE:
                 content = ByteUtils.getIsoBytes(value);
                 break;
             default:
@@ -210,7 +210,7 @@ public class PdfNumber extends PdfPrimitiveObject {
         } catch (NumberFormatException e) {
             value = java.lang.Double.NaN;
         }
-        valueType = Double;
+        valueType = DOUDBLE;
     }
 
     @Override

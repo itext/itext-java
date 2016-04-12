@@ -194,19 +194,19 @@ public abstract class PdfObjectWrapper<T extends PdfObject> implements Serializa
 
     protected void setForbidRelease() {
         if (pdfObject != null) {
-            pdfObject.setState(PdfObject.ForbidRelease);
+            pdfObject.setState(PdfObject.FORBID_RELEASE);
         }
     }
 
     protected void unsetForbidRelease() {
         if (pdfObject != null) {
-            pdfObject.clearState(PdfObject.ForbidRelease);
+            pdfObject.clearState(PdfObject.FORBID_RELEASE);
         }
     }
 
     protected static void markObjectAsIndirect(PdfObject pdfObject) {
         if (pdfObject.getIndirectReference() == null) {
-            pdfObject.setState(PdfObject.MustBeIndirect);
+            pdfObject.setState(PdfObject.MUST_BE_INDIRECT);
         }
     }
 

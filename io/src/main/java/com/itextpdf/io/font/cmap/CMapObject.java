@@ -46,18 +46,17 @@ package com.itextpdf.io.font.cmap;
 
 public class CMapObject {
 
-    protected static final int String = 1;
-    protected static final int HexString = 2;
-    protected static final int Name = 3;
-    protected static final int Number = 4;
-    protected static final int Literal = 5;
-    protected static final int Array = 6;
-    protected static final int Dictionary = 7;
-    protected static final int Token = 8;
+    protected static final int STRING = 1;
+    protected static final int HEX_STRING = 2;
+    protected static final int NAME = 3;
+    protected static final int NUMBER = 4;
+    protected static final int LITERAL = 5;
+    protected static final int ARRAY = 6;
+    protected static final int DICTIONARY = 7;
+    protected static final int TOKEN = 8;
 
     private int type;
     private Object value;
-
 
     public CMapObject(int objectType, Object value) {
         this.type = objectType;
@@ -77,35 +76,35 @@ public class CMapObject {
     }
 
     public boolean isString() {
-        return type == String || type == HexString;
+        return type == STRING || type == HEX_STRING;
     }
 
     public boolean isHexString() {
-        return type == HexString;
+        return type == HEX_STRING;
     }
 
     public boolean isName() {
-        return type == Name;
+        return type == NAME;
     }
 
     public boolean isNumber() {
-        return type == Number;
+        return type == NUMBER;
     }
 
     public boolean isLiteral() {
-        return type == Literal;
+        return type == LITERAL;
     }
 
     public boolean isArray() {
-        return type == Array;
+        return type == ARRAY;
     }
 
     public boolean isDictionary() {
-        return type == Dictionary;
+        return type == DICTIONARY;
     }
 
     public boolean isToken() {
-        return type == Token;
+        return type == TOKEN;
     }
 
     /**
@@ -113,7 +112,7 @@ public class CMapObject {
      */
     @Override
     public String toString() {
-        if (type == String || type == HexString) {
+        if (type == STRING || type == HEX_STRING) {
             byte[] content = (byte[]) value;
             StringBuilder str = new StringBuilder(content.length);
             for (byte b: content) {

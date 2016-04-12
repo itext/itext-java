@@ -56,7 +56,7 @@ import java.util.Map;
 
 public final class GifImageHelper {
 
-    static final int MaxStackSize = 4096;   // max decoder pixel stack size
+    static final int MAX_STACK_SIZE = 4096;   // max decoder pixel stack size
 
     private static class GifParameters {
 
@@ -324,11 +324,11 @@ public final class GifImageHelper {
         boolean skipZero = false;
 
         if (gif.prefix == null)
-            gif.prefix = new short[MaxStackSize];
+            gif.prefix = new short[MAX_STACK_SIZE];
         if (gif.suffix == null)
-            gif.suffix = new byte[MaxStackSize];
+            gif.suffix = new byte[MAX_STACK_SIZE];
         if (gif.pixelStack == null)
-            gif.pixelStack = new byte[MaxStackSize+1];
+            gif.pixelStack = new byte[MAX_STACK_SIZE +1];
 
         gif.m_line_stride = (gif.iw * gif.m_bpc + 7) / 8;
         gif.m_out = new byte[gif.m_line_stride * gif.ih];
@@ -412,13 +412,13 @@ public final class GifImageHelper {
 
                 //  Add a new string to the string table,
 
-                if (available >= MaxStackSize)
+                if (available >= MAX_STACK_SIZE)
                     break;
                 gif.pixelStack[top++] = (byte) first;
                 gif.prefix[available] = (short) old_code;
                 gif.suffix[available] = (byte) first;
                 available++;
-                if ((available & code_mask) == 0 && available < MaxStackSize) {
+                if ((available & code_mask) == 0 && available < MAX_STACK_SIZE) {
                     code_size++;
                     code_mask += available;
                 }

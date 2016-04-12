@@ -242,7 +242,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
         String s = new String(glyphs, 0, i);
         try {
-            return s.getBytes(PdfEncodings.UnicodeBigUnmarked);
+            return s.getBytes(PdfEncodings.UNICODE_BIG_UNMARKED);
         } catch (UnsupportedEncodingException e) {
             throw new PdfException("TrueTypeFont", e);
         }
@@ -264,7 +264,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
             String s = new String(glyphs, 0, glyphs.length);
             try {
-                return s.getBytes(PdfEncodings.UnicodeBigUnmarked);
+                return s.getBytes(PdfEncodings.UNICODE_BIG_UNMARKED);
             } catch (UnsupportedEncodingException e) {
                 throw new PdfException("TrueTypeFont", e);
             }
@@ -281,7 +281,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         }
         String s = new String(new char[]{(char) glyph.getCode()}, 0, 1);
         try {
-            return s.getBytes(PdfEncodings.UnicodeBigUnmarked);
+            return s.getBytes(PdfEncodings.UNICODE_BIG_UNMARKED);
         } catch (UnsupportedEncodingException e) {
             throw new PdfException("PdfType0Font", e);
         }
@@ -300,7 +300,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         }
         //TODO improve converting chars to hexed string
         try {
-            StreamUtil.writeHexedString(stream, bytes.toString().getBytes(PdfEncodings.UnicodeBigUnmarked));
+            StreamUtil.writeHexedString(stream, bytes.toString().getBytes(PdfEncodings.UNICODE_BIG_UNMARKED));
         } catch (UnsupportedEncodingException e) {
             throw new PdfException("PdfType0Font", e);
         }

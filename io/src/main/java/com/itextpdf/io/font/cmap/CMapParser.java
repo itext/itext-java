@@ -46,42 +46,35 @@ package com.itextpdf.io.font.cmap;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.PdfTokenizer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class CMapParser {
 
-    public static final int Cid2UniType = 1;
-    public static final int Uni2CidType = 2;
-    public static final int Byte2CidType = 3;
-    public static final int Cid2ByteType = 4;
-    public static final int ToUnicodeType = 5;
-
-
-    private static final String Def = "def";
-    private static final String EndCidRange = "endcidrange";
-    private static final String EndCidChar = "endcidchar";
-    private static final String EndBfRange = "endbfrange";
-    private static final String EndBfChar = "endbfchar";
-    private static final String UseCmap = "usecmap";
-
+    private static final String def = "def";
+    private static final String endcidrange = "endcidrange";
+    private static final String endcidchar = "endcidchar";
+    private static final String endbfrange = "endbfrange";
+    private static final String endbfchar = "endbfchar";
+    private static final String usecmap = "usecmap";
 
     private static final String Registry = "Registry";
     private static final String Ordering = "Ordering";
     private static final String Supplement = "Supplement";
     private static final String CMapName = "CMapName";
 
-    private static final int MaxLevel = 10;
+    private static final int MAX_LEVEL = 10;
 
     public static void parseCid(String cmapName, AbstractCMap cmap, CMapLocation location) throws java.io.IOException {
         parseCid(cmapName, cmap, location, 0);
     }
 
     private static void parseCid(String cmapName, AbstractCMap cmap, CMapLocation location, int level) throws java.io.IOException {
-        if (level >= MaxLevel)
+        if (level >= MAX_LEVEL)
             return;
         PdfTokenizer inp = location.getLocation(cmapName);
         try {
@@ -99,7 +92,7 @@ public class CMapParser {
                 if (list.size() == 0)
                     break;
                 String last = list.get(list.size() - 1).toString();
-                if (level == 0 && list.size() == 3 && last.equals(Def)) {
+                if (level == 0 && list.size() == 3 && last.equals(def)) {
                     CMapObject cmapObject = list.get(0);
                     if (Registry.equals(cmapObject.toString())) {
                         cmap.setRegistry(list.get(1).toString());
@@ -113,21 +106,21 @@ public class CMapParser {
                         } catch (Exception ignored) {
                         }
                     }
-                } else if ((last.equals(EndCidChar) || last.equals(EndBfChar)) && list.size() >= 3) {
+                } else if ((last.equals(endcidchar) || last.equals(endbfchar)) && list.size() >= 3) {
                     int lMax = list.size() - 2;
                     for (int k = 0; k < lMax; k += 2) {
                         if (list.get(k).isString()) {
                             cmap.addChar(list.get(k).toString(), list.get(k + 1));
                         }
                     }
-                } else if ((last.equals(EndCidRange) || last.equals(EndBfRange)) && list.size() >= 4) {
+                } else if ((last.equals(endcidrange) || last.equals(endbfrange)) && list.size() >= 4) {
                     int lMax = list.size() - 3;
                     for (int k = 0; k < lMax; k += 3) {
                         if (list.get(k).isString() && list.get(k + 1).isString()) {
                             cmap.addRange(list.get(k).toString(), list.get(k + 1).toString(), list.get(k + 2));
                         }
                     }
-                } else if (last.equals(UseCmap) && list.size() == 2 && list.get(0).isName()) {
+                } else if (last.equals(usecmap) && list.size() == 2 && list.get(0).isName()) {
                     parseCid(list.get(0).toString(), cmap, location, level + 1);
                 }
             }

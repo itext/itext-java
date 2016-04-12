@@ -882,7 +882,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     @Override
     public byte getType() {
-        return PdfObject.Name;
+        return PdfObject.NAME;
     }
 
     public String getValue() {

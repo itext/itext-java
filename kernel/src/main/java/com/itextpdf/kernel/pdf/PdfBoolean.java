@@ -76,7 +76,7 @@ public class PdfBoolean extends PdfPrimitiveObject {
     }
 
     public byte getType() {
-        return Boolean;
+        return BOOLEAN;
     }
 
     /**

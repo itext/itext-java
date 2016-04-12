@@ -244,7 +244,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
             return;
         PdfArray kids = new PdfArray();
         if (layer.getTitle() != null)
-            kids.add(new PdfString(layer.getTitle(), PdfEncodings.UnicodeBig));
+            kids.add(new PdfString(layer.getTitle(), PdfEncodings.UNICODE_BIG));
         for (PdfLayer child : children) {
             getOCGOrder(kids, child);
         }
@@ -334,23 +334,23 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
     private void readOrderFromDictionary(PdfLayer parent, PdfArray orderArray, Map<PdfIndirectReference, PdfLayer> layerMap) {
         for (int i = 0; i < orderArray.size(); i++) {
             PdfObject item = orderArray.get(i);
-            if (item.getType() == PdfObject.Dictionary) {
+            if (item.getType() == PdfObject.DICTIONARY) {
                 PdfLayer layer = layerMap.get(item.getIndirectReference());
                 if (layer != null) {
                     layers.add(layer);
                     layer.onPanel = true;
                     if (parent != null)
                         parent.addChild(layer);
-                    if (i + 1 < orderArray.size() && orderArray.get(i + 1).getType() == PdfObject.Array) {
+                    if (i + 1 < orderArray.size() && orderArray.get(i + 1).getType() == PdfObject.ARRAY) {
                         readOrderFromDictionary(layer, orderArray.getAsArray(i + 1), layerMap);
                         i++;
                     }
                 }
-            } else if (item.getType() == PdfObject.Array) {
+            } else if (item.getType() == PdfObject.ARRAY) {
                 PdfArray subArray = (PdfArray)item;
                 if (subArray.isEmpty()) continue;
                 PdfObject firstObj = subArray.get(0);
-                if (firstObj.getType() == PdfObject.String) {
+                if (firstObj.getType() == PdfObject.STRING) {
                     PdfLayer titleLayer = PdfLayer.createTitleSilent(((PdfString)firstObj).toUnicodeString(), getDocument());
                     titleLayer.onPanel = true;
                     layers.add(titleLayer);

@@ -46,7 +46,7 @@ package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.source.ByteArrayOutputStream;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -104,7 +104,7 @@ final class BmpImageHelper {
 
     // Color space types
     private static final int LCS_CALIBRATED_RGB = 0;
-    private static final int LCS_sRGB = 1;
+    private static final int LCS_SRGB = 1;
     private static final int LCS_CMYK = 2;
 
     // Compression Types
@@ -451,7 +451,7 @@ final class BmpImageHelper {
                         bmp.properties.put("gamma_blue", gammaBlue);
                         throw new RuntimeException("Not implemented yet.");
 
-                    case LCS_sRGB:
+                    case LCS_SRGB:
                         // Default Windows color space
                         bmp.properties.put("color_space", "LCS_sRGB");
                         break;

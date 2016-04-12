@@ -425,7 +425,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
         IPdfStructElem elem = null;
         switch (obj.getType()) {
-            case PdfObject.Dictionary:
+            case PdfObject.DICTIONARY:
                 PdfDictionary d = (PdfDictionary) obj;
                 if (isStructElem(d))
                     elem = new PdfStructElem(d);
@@ -434,7 +434,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
                 else if (PdfName.OBJR.equals(d.getAsName(PdfName.Type)))
                     elem = new PdfObjRef(d, this);
                 break;
-            case PdfObject.Number:
+            case PdfObject.NUMBER:
                 elem = new PdfMcrNumber((PdfNumber) obj, this);
                 break;
             default:

@@ -302,7 +302,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 obj = docInfo.get(key);
                 if (obj == null)
                     continue;
-                if (obj.getType() != PdfObject.String)
+                if (obj.getType() != PdfObject.STRING)
                     continue;
                 value = ((PdfString) obj).toUnicodeString();
                 if (PdfName.Title.equals(key)) {
@@ -741,7 +741,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     if (flushUnusedObjects) {
                         for (int i = 0; i < xref.size(); i++) {
                             PdfIndirectReference indirectReference = xref.get(i);
-                            if (!indirectReference.isFree() && !indirectReference.checkState(PdfObject.Flushed)) {
+                            if (!indirectReference.isFree() && !indirectReference.checkState(PdfObject.FLUSHED)) {
                                 PdfObject object = indirectReference.getRefersTo();
                                 object.flush();
                             }
@@ -1221,7 +1221,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     protected void markObjectAsMustBeFlushed(PdfObject pdfObject){
         if (pdfObject.isIndirect()) {
-            pdfObject.getIndirectReference().setState(PdfObject.MustBeFlushed);
+            pdfObject.getIndirectReference().setState(PdfObject.MUST_BE_FLUSHED);
         }
     }
 
@@ -1329,7 +1329,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     protected void flushFonts() {
         if (appendMode) {
             for (PdfFont font : getDocumentFonts()) {
-                if (font.getPdfObject().getIndirectReference().checkState(PdfObject.Modified)) {
+                if (font.getPdfObject().getIndirectReference().checkState(PdfObject.MODIFIED)) {
                     font.flush();
                 }
             }

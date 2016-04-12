@@ -949,8 +949,8 @@ public class CompareTool {
         byte[] bytes;
         String value = pdfString.getValue();
         String encoding = pdfString.getEncoding();
-        if (encoding != null && encoding.equals(PdfEncodings.UnicodeBig) && PdfEncodings.isPdfDocEncoding(value))
-            bytes = PdfEncodings.convertToBytes(value, PdfEncodings.PdfDocEncoding);
+        if (encoding != null && encoding.equals(PdfEncodings.UNICODE_BIG) && PdfEncodings.isPdfDocEncoding(value))
+            bytes = PdfEncodings.convertToBytes(value, PdfEncodings.PDF_DOC_ENCODING);
         else
             bytes = PdfEncodings.convertToBytes(value, encoding);
         return bytes;
@@ -1008,15 +1008,15 @@ public class CompareTool {
                 Map<String, PdfObject> cmpNamedDestinations = cmpDocument.getCatalog().getNameTree(PdfName.Dests).getNames();
                 Map<String, PdfObject> outNamedDestinations = outDocument.getCatalog().getNameTree(PdfName.Dests).getNames();
                 switch (cmpDestObject.getType()) {
-                    case PdfObject.Array:
+                    case PdfObject.ARRAY:
                         explicitCmpDest = (PdfArray) cmpDestObject;
                         explicitOutDest = (PdfArray) outDestObject;
                         break;
-                    case PdfObject.Name:
+                    case PdfObject.NAME:
                         explicitCmpDest = (PdfArray) cmpNamedDestinations.get(cmpDestObject);
                         explicitOutDest = (PdfArray) outNamedDestinations.get(outDestObject);
                         break;
-                    case PdfObject.String:
+                    case PdfObject.STRING:
                         explicitCmpDest = (PdfArray) cmpNamedDestinations.get(((PdfString) cmpDestObject).toUnicodeString());
                         explicitOutDest = (PdfArray) outNamedDestinations.get(((PdfString) outDestObject).toUnicodeString());
                         break;
@@ -1053,11 +1053,11 @@ public class CompareTool {
                 return false;
 
             switch (cmpObj.getType()) {
-                case PdfObject.Null:
-                case PdfObject.Boolean:
-                case PdfObject.Number:
-                case PdfObject.String:
-                case PdfObject.Name:
+                case PdfObject.NULL:
+                case PdfObject.BOOLEAN:
+                case PdfObject.NUMBER:
+                case PdfObject.STRING:
+                case PdfObject.NAME:
                     if (!cmpObj.toString().equals(outObj.toString()))
                         return false;
                     break;
