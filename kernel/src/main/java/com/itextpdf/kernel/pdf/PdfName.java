@@ -635,6 +635,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName ResetForm = createDirectName("ResetForm");
     public static final PdfName Requirements = createDirectName("Requirements");
     public static final PdfName Resources = createDirectName("Resources");
+    public static final PdfName ReversedChars = createDirectName("ReversedChars");
     public static final PdfName RI = createDirectName("RI");
     public static final PdfName RichMedia = createDirectName("RichMedia");
     public static final PdfName Ridge = createDirectName("Ridge");
