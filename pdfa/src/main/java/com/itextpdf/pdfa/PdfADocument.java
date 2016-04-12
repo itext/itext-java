@@ -44,13 +44,11 @@
  */
 package com.itextpdf.pdfa;
 
-import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.xmp.*;
-import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.properties.XMPProperty;
 import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.checker.PdfA2Checker;
@@ -277,53 +275,8 @@ public class PdfADocument extends PdfDocument {
     }
 
     public void createXmpMetadata(PdfAConformanceLevel conformanceLevel) throws XMPException {
-        checkClosingStatus();
-        XMPMeta xmpMeta = XMPMetaFactory.create();
-        xmpMeta.setObjectName(XMPConst.TAG_XMPMETA);
-        xmpMeta.setObjectName("");
-        try {
-            xmpMeta.setProperty(XMPConst.NS_DC, PdfConst.Format, "application/pdf");
-            xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, Version.getInstance().getVersion());
-        } catch (XMPException ignored) {
-        }
-        PdfDictionary docInfo = info.getPdfObject();
-        if (docInfo != null) {
-            PdfName key;
-            PdfObject obj;
-            String value;
-            for (PdfName pdfName : docInfo.keySet()) {
-                key = pdfName;
-                obj = docInfo.get(key);
-                if (obj == null)
-                    continue;
-                if (obj.getType() != PdfObject.String)
-                    continue;
-                value = ((PdfString) obj).toUnicodeString();
-                if (PdfName.Title.equals(key)) {
-                    xmpMeta.setLocalizedText(XMPConst.NS_DC, PdfConst.Title, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
-                } else if (PdfName.Author.equals(key)) {
-                    xmpMeta.appendArrayItem(XMPConst.NS_DC, PdfConst.Creator, new PropertyOptions(PropertyOptions.ARRAY_ORDERED), value, null);
-                } else if (PdfName.Subject.equals(key)) {
-                    xmpMeta.setLocalizedText(XMPConst.NS_DC, PdfConst.Description, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
-                } else if (PdfName.Keywords.equals(key)) {
-                    for (String v : value.split(",|;"))
-                        if (v.trim().length() > 0)
-                            xmpMeta.appendArrayItem(XMPConst.NS_DC, PdfConst.Subject, new PropertyOptions(PropertyOptions.ARRAY), v.trim(), null);
-                    xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Keywords, value);
-                } else if (PdfName.Producer.equals(key)) {
-                    xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, value);
-                } else if (PdfName.Creator.equals(key)) {
-                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.CreatorTool, value);
-                } else if (PdfName.CreationDate.equals(key)) {
-                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.CreateDate, PdfDate.getW3CDate(value));
-                } else if (PdfName.ModDate.equals(key)) {
-                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.ModifyDate, PdfDate.getW3CDate(value));
-                }
-            }
-        }
-        if (isTagged()) {
-            xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART, 1, new PropertyOptions(PropertyOptions.SEPARATE_NODE));
-        }
+        super.createXmpMetadata();
+        XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(getXmpMetadata());
         if (conformanceLevel != null) {
             addRdfDescription(xmpMeta, conformanceLevel);
         }
