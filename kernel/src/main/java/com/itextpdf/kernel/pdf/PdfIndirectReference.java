@@ -50,7 +50,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
 
     private static final long serialVersionUID = -8293603068792908601L;
 
-	private static final int LengthOfIndirectsChain = 31;
+	private static final int LENGTH_OF_INDIRECTS_CHAIN = 31;
 
     /**
      * Object number.
@@ -130,7 +130,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
             return refersTo;
         } else {
             PdfObject currentRefersTo = getRefersTo(false);
-            for (int i = 0; i < LengthOfIndirectsChain; i++) {
+            for (int i = 0; i < LENGTH_OF_INDIRECTS_CHAIN; i++) {
                 if (currentRefersTo instanceof PdfIndirectReference)
                     currentRefersTo = ((PdfIndirectReference) currentRefersTo).getRefersTo(false);
                 else
@@ -295,7 +295,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
 
     @Override
     protected PdfObject newInstance() {
-        return PdfNull.PdfNull;
+        return PdfNull.PDF_NULL;
     }
 
     @Override

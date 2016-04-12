@@ -608,7 +608,7 @@ public class PdfReader implements Closeable, Serializable {
                 PdfIndirectReference reference = table.get(num);
                 if (reference != null) {
                     if (reference.isFree()) {
-                        return PdfNull.PdfNull;
+                        return PdfNull.PDF_NULL;
                     }
                     if (reference.getGenNumber() != tokens.getGenNr()) {
                         if (fixedXref) {
@@ -631,19 +631,19 @@ public class PdfReader implements Closeable, Serializable {
             default:
                 if (tokens.tokenValueEqualsTo(PdfTokenizer.Null)) {
                     if (readAsDirect) {
-                        return PdfNull.PdfNull;
+                        return PdfNull.PDF_NULL;
                     } else {
                         return new PdfNull();
                     }
                 } else if (tokens.tokenValueEqualsTo(PdfTokenizer.True)) {
                     if (readAsDirect) {
-                        return PdfBoolean.PdfTrue;
+                        return PdfBoolean.TRUE;
                     } else {
                         return new PdfBoolean(true);
                     }
                 } else if (tokens.tokenValueEqualsTo(PdfTokenizer.False)) {
                     if (readAsDirect) {
-                        return PdfBoolean.PdfFalse;
+                        return PdfBoolean.FALSE;
                     } else {
                         return new PdfBoolean(false);
                     }

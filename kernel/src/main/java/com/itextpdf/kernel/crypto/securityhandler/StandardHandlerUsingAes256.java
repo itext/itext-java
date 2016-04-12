@@ -101,8 +101,8 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
     private void initKeyAndFillDictionary(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,
                                           int permissions, boolean encryptMetadata, boolean embeddedFilesOnly) {
         ownerPassword = generateOwnerPasswordIfNullOrEmpty(ownerPassword);
-        permissions |= permsMask1ForRevision3OrGreater;
-        permissions &= permsMask2;
+        permissions |= PERMS_MASK_1_FOR_REVISION_3_OR_GREATER;
+        permissions &= PERMS_MASK_2;
 
         try {
             byte[] userKey;
@@ -185,7 +185,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
         PdfDictionary stdcf = new PdfDictionary();
         stdcf.put(PdfName.Length, new PdfNumber(32));
         if (!encryptMetadata) {
-            encryptionDictionary.put(PdfName.EncryptMetadata, PdfBoolean.PdfFalse);
+            encryptionDictionary.put(PdfName.EncryptMetadata, PdfBoolean.FALSE);
         }
         if (embeddedFilesOnly) {
             stdcf.put(PdfName.AuthEvent, PdfName.EFOpen);

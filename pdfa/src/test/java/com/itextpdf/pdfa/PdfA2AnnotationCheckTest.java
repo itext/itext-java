@@ -99,7 +99,7 @@ public class PdfA2AnnotationCheckTest {
         Rectangle rect = new Rectangle(100, 100, 0, 0);
         PdfAnnotation annot = new PdfWidgetAnnotation(rect);
         annot.setContents(new PdfString(""));
-        annot.setFlag(PdfAnnotation.Print);
+        annot.setFlag(PdfAnnotation.PRINT);
 
         page.addAnnotation(annot);
         doc.close();
@@ -120,7 +120,7 @@ public class PdfA2AnnotationCheckTest {
         Rectangle rect = new Rectangle(100, 650, 400, 100);
         PdfAnnotation annot = new PdfWidgetAnnotation(rect);
         annot.setContents(new PdfString(""));
-        annot.setFlag(PdfAnnotation.Print);
+        annot.setFlag(PdfAnnotation.PRINT);
 
         page.addAnnotation(annot);
         doc.close();
@@ -158,7 +158,7 @@ public class PdfA2AnnotationCheckTest {
 
         Rectangle rect = new Rectangle(100, 650, 400, 100);
         PdfAnnotation annot = new PdfTextAnnotation(rect);
-        annot.setFlags(PdfAnnotation.Print | PdfAnnotation.Invisible);
+        annot.setFlags(PdfAnnotation.PRINT | PdfAnnotation.INVISIBLE);
 
         page.addAnnotation(annot);
         doc.close();
@@ -179,7 +179,7 @@ public class PdfA2AnnotationCheckTest {
         Rectangle formRect = new Rectangle(400, 100);
         PdfAnnotation annot = new PdfWidgetAnnotation(rect);
         annot.setContents(new PdfString(""));
-        annot.setFlags(PdfAnnotation.Print);
+        annot.setFlags(PdfAnnotation.PRINT);
 
         annot.setDownAppearance(new PdfDictionary());
         annot.setNormalAppearance(createAppearance(doc, formRect));
@@ -203,7 +203,7 @@ public class PdfA2AnnotationCheckTest {
         Rectangle formRect = new Rectangle(400, 100);
         PdfAnnotation annot = new PdfWidgetAnnotation(rect);
         annot.setContents(new PdfString(""));
-        annot.setFlags(PdfAnnotation.Print);
+        annot.setFlags(PdfAnnotation.PRINT);
         annot.getPdfObject().put(PdfName.FT, PdfName.Btn);
 
         annot.setNormalAppearance(createAppearance(doc, formRect));
@@ -226,7 +226,7 @@ public class PdfA2AnnotationCheckTest {
         Rectangle rect = new Rectangle(100, 650, 400, 100);
         PdfAnnotation annot = new PdfWidgetAnnotation(rect);
         annot.setContents(new PdfString(""));
-        annot.setFlags(PdfAnnotation.Print);
+        annot.setFlags(PdfAnnotation.PRINT);
 
         annot.setNormalAppearance(new PdfDictionary());
 
@@ -248,7 +248,7 @@ public class PdfA2AnnotationCheckTest {
         Rectangle formRect = new Rectangle(400, 100);
         PdfAnnotation annot = new PdfWidgetAnnotation(rect);
         annot.setContents(new PdfString(""));
-        annot.setFlags(PdfAnnotation.Print);
+        annot.setFlags(PdfAnnotation.PRINT);
 
         annot.setNormalAppearance(createAppearance(doc, formRect));
 
@@ -272,7 +272,7 @@ public class PdfA2AnnotationCheckTest {
         Rectangle formRect = new Rectangle(400, 100);
         PdfAnnotation annot = new PdfTextAnnotation(rect);
         annot.setContents(new PdfString(""));
-        annot.setFlags(PdfAnnotation.Print |PdfAnnotation.NoZoom | PdfAnnotation.NoRotate);
+        annot.setFlags(PdfAnnotation.PRINT |PdfAnnotation.NO_ZOOM | PdfAnnotation.NO_ROTATE);
 
         annot.setNormalAppearance(createAppearance(doc, formRect));
 
@@ -296,7 +296,7 @@ public class PdfA2AnnotationCheckTest {
 
         Rectangle rect = new Rectangle(100, 650, 400, 100);
         PdfAnnotation annot = new PdfStampAnnotation(rect);
-        annot.setFlags(PdfAnnotation.Print);
+        annot.setFlags(PdfAnnotation.PRINT);
 
         page.addAnnotation(annot);
         doc.close();
@@ -317,7 +317,7 @@ public class PdfA2AnnotationCheckTest {
 
         Rectangle rect = new Rectangle(100, 650, 400, 100);
         PdfAnnotation annot = new PdfStampAnnotation(rect);
-        annot.setFlags(PdfAnnotation.Print);
+        annot.setFlags(PdfAnnotation.PRINT);
         annot.setContents("Hello world");
 
         page.addAnnotation(annot);
@@ -340,7 +340,7 @@ public class PdfA2AnnotationCheckTest {
         Rectangle annotRect = new Rectangle(100, 650, 400, 100);
         Rectangle formRect = new Rectangle(400, 100);
         PdfAnnotation annot = new PdfStampAnnotation(annotRect);
-        annot.setFlags(PdfAnnotation.Print);
+        annot.setFlags(PdfAnnotation.PRINT);
         annot.setContents("Hello World");
 
         annot.setNormalAppearance(createAppearance(doc, formRect));

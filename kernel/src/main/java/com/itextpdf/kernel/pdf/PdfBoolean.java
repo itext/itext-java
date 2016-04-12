@@ -50,8 +50,8 @@ public class PdfBoolean extends PdfPrimitiveObject {
 
     private static final long serialVersionUID = -1363839858135046832L;
 	
-    public static final PdfBoolean PdfTrue = new PdfBoolean(true, true);
-    public static final PdfBoolean PdfFalse = new PdfBoolean(false, true);
+    public static final PdfBoolean TRUE = new PdfBoolean(true, true);
+    public static final PdfBoolean FALSE = new PdfBoolean(false, true);
 
     private static final byte[] True = ByteUtils.getIsoBytes("true");
     private static final byte[] False = ByteUtils.getIsoBytes("false");

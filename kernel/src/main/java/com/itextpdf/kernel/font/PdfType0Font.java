@@ -46,7 +46,14 @@ package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.NotImplementedException;
-import com.itextpdf.io.font.*;
+import com.itextpdf.io.font.CFFFontSubset;
+import com.itextpdf.io.font.CMapEncoding;
+import com.itextpdf.io.font.CidFont;
+import com.itextpdf.io.font.CidFontProperties;
+import com.itextpdf.io.font.FontFactory;
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.cmap.CMapContentParser;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.otf.Glyph;
@@ -54,14 +61,29 @@ import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfLiteral;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfOutputStream;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
@@ -69,8 +91,8 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
 	private static final byte[] rotbits = {(byte) 0x80, (byte) 0x40, (byte) 0x20, (byte) 0x10, (byte) 0x08, (byte) 0x04, (byte) 0x02, (byte) 0x01};
 
-    protected static final int CidFontType0 = 0;
-    protected static final int CidFontType2 = 2;
+    protected static final int CID_FONT_TYPE_0 = 0;
+    protected static final int CID_FONT_TYPE_2 = 2;
 
     protected boolean vertical;
     protected CMapEncoding cmapEncoding;
@@ -94,7 +116,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         vertical = cmap.endsWith("V");
         cmapEncoding = new CMapEncoding(cmap);
         longTag = new LinkedHashMap<>();
-        cidFontType = CidFontType2;
+        cidFontType = CID_FONT_TYPE_2;
         if (ttf.isFontSpecific()) {
             specificUnicodeDifferences = new char[256];
             byte[] bytes = new byte[1];
@@ -122,7 +144,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         String uniMap = getCompatibleUniMap(fontProgram.getRegistry());
         cmapEncoding = new CMapEncoding(cmap, uniMap);
         longTag = new LinkedHashMap<>();
-        cidFontType = CidFontType0;
+        cidFontType = CID_FONT_TYPE_0;
     }
 
     PdfType0Font(PdfDictionary fontDictionary) {
@@ -147,7 +169,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             cmapEncoding = new CMapEncoding(cmap);
             assert fontProgram instanceof DocFontProgram;
             embedded = ((DocFontProgram) fontProgram).getFontFile() != null;
-            cidFontType = CidFontType2;
+            cidFontType = CID_FONT_TYPE_2;
         } else {
             String cidFontName = cidFont.getAsName(PdfName.BaseFont).getValue();
             String uniMap = getUniMapFromOrdering(getOrdering(cidFont));
@@ -171,7 +193,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             if (fontProgram == null) {
                 throw new PdfException(MessageFormat.format("Cannot recognise document font {0} with {1} encoding", cidFontName, cmap));
             }
-            cidFontType = CidFontType0;
+            cidFontType = CID_FONT_TYPE_0;
         }
         longTag = new LinkedHashMap<>();
         subset = false;
@@ -315,7 +337,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     public GlyphLine createGlyphLine(String content) {
         List<Glyph> glyphs = new ArrayList<>();
         //TODO different with type0 and type2 could be removed after simplifying longTag
-        if (cidFontType == CidFontType0) {
+        if (cidFontType == CID_FONT_TYPE_0) {
             int len = content.length();
             if (cmapEncoding.isDirect()) {
                 for (int k = 0; k < len; ++k) {
@@ -336,7 +358,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                     glyphs.add(getGlyph(ch));
                 }
             }
-        } else if (cidFontType == CidFontType2) {
+        } else if (cidFontType == CID_FONT_TYPE_2) {
             TrueTypeFont ttf = (TrueTypeFont) fontProgram;
             int len = content.length();
 
@@ -446,7 +468,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     }
 
     private void flushFontData() {
-        if (cidFontType == CidFontType0) {
+        if (cidFontType == CID_FONT_TYPE_0) {
             getPdfObject().put(PdfName.Type, PdfName.Font);
             getPdfObject().put(PdfName.Subtype, PdfName.Type0);
             String name = fontProgram.getFontNames().getFontName();
@@ -463,7 +485,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             getPdfObject().put(PdfName.DescendantFonts, new PdfArray(cidFont));
             fontDescriptor.flush();
             cidFont.flush();
-        } else if (cidFontType == CidFontType2) {
+        } else if (cidFontType == CID_FONT_TYPE_2) {
             TrueTypeFont ttf = (TrueTypeFont) getFontProgram();
             addRangeUni(ttf, longTag, true);
             int[][] metrics = longTag.values().toArray(new int[0][]);

@@ -48,10 +48,10 @@ import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 
 public class DeviceCmyk extends Color {
 
-    public static final DeviceCmyk Cyan = new DeviceCmyk(100, 0, 0, 0);
-    public static final DeviceCmyk Magenta = new DeviceCmyk(0, 100, 0, 0);
-    public static final DeviceCmyk Yellow = new DeviceCmyk(0, 0, 100, 0);
-    public static final DeviceCmyk Black = new DeviceCmyk(0, 0, 0, 100);
+    public static final DeviceCmyk CYAN = new DeviceCmyk(100, 0, 0, 0);
+    public static final DeviceCmyk MAGENTA = new DeviceCmyk(0, 100, 0, 0);
+    public static final DeviceCmyk YELLOW = new DeviceCmyk(0, 0, 100, 0);
+    public static final DeviceCmyk BLACK = new DeviceCmyk(0, 0, 0, 100);
 
     public DeviceCmyk(int c, int m, int y, int k) {
         this(c / 100f, m / 100f, y / 100f, k / 100f);

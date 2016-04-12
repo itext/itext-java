@@ -222,7 +222,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             return null;
         if (objectStream == null) {
             objectStream = new PdfObjectStream(document);
-        } else if (objectStream.getSize() == PdfObjectStream.maxObjStreamSize) {
+        } else if (objectStream.getSize() == PdfObjectStream.MAX_OBJ_STREAM_SIZE) {
             objectStream.flush();
             objectStream = new PdfObjectStream(objectStream);
         }
@@ -309,12 +309,12 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         if (object instanceof PdfIndirectReference)
             object = ((PdfIndirectReference) object).getRefersTo();
         if (object == null) {
-            object = PdfNull.PdfNull;
+            object = PdfNull.PDF_NULL;
         }
         if (checkTypeOfPdfDictionary(object, PdfName.Catalog)) {
             Logger logger = LoggerFactory.getLogger(PdfReader.class);
             logger.warn(LogMessageConstant.MAKE_COPY_OF_CATALOG_DICTIONARY_IS_FORBIDDEN);
-            object = PdfNull.PdfNull;
+            object = PdfNull.PDF_NULL;
         }
 
         PdfIndirectReference indirectReference = object.getIndirectReference();

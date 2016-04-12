@@ -58,9 +58,8 @@ class PdfXrefTable implements Serializable{
 
     private static final long serialVersionUID = 4171655392492002944L;
 
-
-    private static final int InitialCapacity = 32;
-    private static final int MaxGeneration = 65535;
+    private static final int INITIAL_CAPACITY = 32;
+    private static final int MAX_GENERATION = 65535;
 
     private static final DecimalFormat objectOffsetFormatter = new DecimalFormat("0000000000");
     private static final DecimalFormat objectGenerationFormatter = new DecimalFormat("00000");
@@ -73,15 +72,15 @@ class PdfXrefTable implements Serializable{
     private final TreeSet<Integer> freeReferences;
 
     public PdfXrefTable() {
-        this(InitialCapacity);
+        this(INITIAL_CAPACITY);
     }
 
     public PdfXrefTable(int capacity) {
         if (capacity < 1)
-            capacity = InitialCapacity;
+            capacity = INITIAL_CAPACITY;
         xref = new PdfIndirectReference[capacity];
         freeReferences = new TreeSet<>();
-        add(new PdfIndirectReference(null, 0, MaxGeneration, 0).<PdfIndirectReference>setState(PdfObject.FREE));
+        add(new PdfIndirectReference(null, 0, MAX_GENERATION, 0).<PdfIndirectReference>setState(PdfObject.FREE));
     }
 
     /**
@@ -142,7 +141,7 @@ class PdfXrefTable implements Serializable{
                 indirectReference.refersTo.setState(PdfObject.MUST_BE_INDIRECT);
                 indirectReference.refersTo = null;
             }
-            if (indirectReference.getGenNumber() < MaxGeneration) {
+            if (indirectReference.getGenNumber() < MAX_GENERATION) {
                 freeReferences.add(indirectReference.getObjNumber());
                 xref[indirectReference.getObjNumber()] = null;
             }

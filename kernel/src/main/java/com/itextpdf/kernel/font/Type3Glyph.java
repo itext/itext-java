@@ -57,10 +57,10 @@ import com.itextpdf.kernel.pdf.xobject.PdfXObject;
  */
 public final class Type3Glyph extends PdfCanvas {
 
-    private static final String d0Str = "d0\n";
-    private static final String d1Str = "d1\n";
-    private static final byte[] d0 = ByteUtils.getIsoBytes(d0Str);
-    private static final byte[] d1 = ByteUtils.getIsoBytes(d1Str);
+    private static final String D_0_STR = "d0\n";
+    private static final String D_1_STR = "d1\n";
+    private static final byte[] d0 = ByteUtils.getIsoBytes(D_0_STR);
+    private static final byte[] d1 = ByteUtils.getIsoBytes(D_1_STR);
 
     private float wx;
     private float llx;
@@ -194,8 +194,8 @@ public final class Type3Glyph extends PdfCanvas {
 
     private void fillBBFromBytes(byte[] bytes) {
         String str = new String(bytes);
-        int d0Pos = str.indexOf(d0Str);
-        int d1Pos = str.indexOf(d1Str);
+        int d0Pos = str.indexOf(D_0_STR);
+        int d1Pos = str.indexOf(D_1_STR);
         if (d0Pos != -1) {
             isColor = true;
             String[] bbArray = str.substring(0, d0Pos - 1).split(" ");

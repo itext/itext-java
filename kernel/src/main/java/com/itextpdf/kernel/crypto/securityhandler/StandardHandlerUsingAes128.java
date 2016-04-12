@@ -97,7 +97,7 @@ public class StandardHandlerUsingAes128 extends StandardHandlerUsingStandard128 
     @Override
     protected void setSpecificHandlerDicEntries(PdfDictionary encryptionDictionary, boolean encryptMetadata, boolean embeddedFilesOnly) {
         if (!encryptMetadata) {
-            encryptionDictionary.put(PdfName.EncryptMetadata, PdfBoolean.PdfFalse);
+            encryptionDictionary.put(PdfName.EncryptMetadata, PdfBoolean.FALSE);
         }
         encryptionDictionary.put(PdfName.R, new PdfNumber(4));
         encryptionDictionary.put(PdfName.V, new PdfNumber(4));

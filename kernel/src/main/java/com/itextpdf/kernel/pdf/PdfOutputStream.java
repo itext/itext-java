@@ -320,7 +320,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
             throw new PdfException(PdfException.PdfInderectObjectBelongToOtherPdfDocument);
         }
         if (indirectReference.getRefersTo() == null) {
-            write(PdfNull.PdfNull);
+            write(PdfNull.PDF_NULL);
         } else if (indirectReference.getGenNumber() == 0) {
             writeInteger(indirectReference.getObjNumber()).
                     writeBytes(endIndirectWithZeroGenNr);

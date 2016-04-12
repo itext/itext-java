@@ -309,15 +309,15 @@ public class PdfA2Checker extends PdfA1Checker {
                 throw new PdfAConformanceException(PdfAConformanceException.AnAnnotationDictionaryShallContainTheFKey);
             }
             int flags = f.getIntValue();
-            if (!checkFlag(flags, PdfAnnotation.Print)
-                    || checkFlag(flags, PdfAnnotation.Hidden)
-                    || checkFlag(flags, PdfAnnotation.Invisible)
-                    || checkFlag(flags, PdfAnnotation.NoView)
-                    || checkFlag(flags, PdfAnnotation.ToggleNoView)) {
+            if (!checkFlag(flags, PdfAnnotation.PRINT)
+                    || checkFlag(flags, PdfAnnotation.HIDDEN)
+                    || checkFlag(flags, PdfAnnotation.INVISIBLE)
+                    || checkFlag(flags, PdfAnnotation.NO_VIEW)
+                    || checkFlag(flags, PdfAnnotation.TOGGLE_NO_VIEW)) {
                 throw new PdfAConformanceException(PdfAConformanceException.TheFKeysPrintFlagBitShallBeSetTo1AndItsHiddenInvisibleNoviewAndTogglenoviewFlagBitsShallBeSetTo0);
             }
             if (subtype.equals(PdfName.Text)) {
-                if (!checkFlag(flags, PdfAnnotation.NoZoom) || !checkFlag(flags, PdfAnnotation.NoRotate)) {
+                if (!checkFlag(flags, PdfAnnotation.NO_ZOOM) || !checkFlag(flags, PdfAnnotation.NO_ROTATE)) {
                     throw new PdfAConformanceException(PdfAConformanceException.TextAnnotationsShouldSetTheNozoomAndNorotateFlagBitsOfTheFKeyTo1);
                 }
             }

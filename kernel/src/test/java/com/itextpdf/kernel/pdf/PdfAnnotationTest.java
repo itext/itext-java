@@ -5,17 +5,6 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfOutputStream;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfCaretAnnotation;
@@ -1060,7 +1049,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         canvas.release();
 
         watermark.setNormalAppearance(form.getPdfObject());
-        watermark.setFlags(PdfAnnotation.Print);
+        watermark.setFlags(PdfAnnotation.PRINT);
 
         page1.addAnnotation(watermark);
         page1.flush();

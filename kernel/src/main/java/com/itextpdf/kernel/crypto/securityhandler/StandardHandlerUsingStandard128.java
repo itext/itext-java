@@ -62,8 +62,8 @@ public class StandardHandlerUsingStandard128 extends StandardHandlerUsingStandar
 
     @Override
     protected void calculatePermissions(int permissions) {
-        permissions |= permsMask1ForRevision3OrGreater;
-        permissions &= permsMask2;
+        permissions |= PERMS_MASK_1_FOR_REVISION_3_OR_GREATER;
+        permissions &= PERMS_MASK_2;
         this.permissions = permissions;
     }
 
@@ -140,7 +140,7 @@ public class StandardHandlerUsingStandard128 extends StandardHandlerUsingStandar
             encryptionDictionary.put(PdfName.R, new PdfNumber(3));
             encryptionDictionary.put(PdfName.V, new PdfNumber(2));
         } else {
-            encryptionDictionary.put(PdfName.EncryptMetadata, PdfBoolean.PdfFalse);
+            encryptionDictionary.put(PdfName.EncryptMetadata, PdfBoolean.FALSE);
             encryptionDictionary.put(PdfName.R, new PdfNumber(4));
             encryptionDictionary.put(PdfName.V, new PdfNumber(4));
             PdfDictionary stdcf = new PdfDictionary();

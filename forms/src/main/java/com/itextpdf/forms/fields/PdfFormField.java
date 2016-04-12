@@ -1456,15 +1456,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public <T extends PdfFormField> T setVisibility(int visibility) {
         switch (visibility) {
             case HIDDEN:
-                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.Print | PdfAnnotation.Hidden));
+                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT | PdfAnnotation.HIDDEN));
                 break;
             case VISIBLE_BUT_DOES_NOT_PRINT:
                 break;
             case HIDDEN_BUT_PRINTABLE:
-                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.Print | PdfAnnotation.NoView));
+                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT | PdfAnnotation.NO_VIEW));
                 break;
             default:
-                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.Print));
+                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT));
                 break;
         }
         return (T) this;

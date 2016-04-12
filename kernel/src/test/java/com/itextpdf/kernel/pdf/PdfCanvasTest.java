@@ -21,17 +21,6 @@ import com.itextpdf.kernel.color.Separation;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImage;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfResources;
-import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
@@ -57,7 +46,6 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -1184,10 +1172,10 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.setFillColor(DeviceRgb.GREEN).rectangle(150, 500, 50, 50).fill();
         canvas.setFillColor(DeviceRgb.BLUE).rectangle(250, 500, 50, 50).fill();
         canvas.setLineWidth(5);
-        canvas.setStrokeColor(DeviceCmyk.Cyan).rectangle(50, 400, 50, 50).stroke();
-        canvas.setStrokeColor(DeviceCmyk.Magenta).rectangle(150, 400, 50, 50).stroke();
-        canvas.setStrokeColor(DeviceCmyk.Yellow).rectangle(250, 400, 50, 50).stroke();
-        canvas.setStrokeColor(DeviceCmyk.Black).rectangle(350, 400, 50, 50).stroke();
+        canvas.setStrokeColor(DeviceCmyk.CYAN).rectangle(50, 400, 50, 50).stroke();
+        canvas.setStrokeColor(DeviceCmyk.MAGENTA).rectangle(150, 400, 50, 50).stroke();
+        canvas.setStrokeColor(DeviceCmyk.YELLOW).rectangle(250, 400, 50, 50).stroke();
+        canvas.setStrokeColor(DeviceCmyk.BLACK).rectangle(350, 400, 50, 50).stroke();
 
         canvas.release();
         document.close();

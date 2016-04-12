@@ -112,8 +112,8 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
     }
 
     protected void calculatePermissions(int permissions) {
-        permissions |= permsMask1ForRevision2;
-        permissions &= permsMask2;
+        permissions |= PERMS_MASK_1_FOR_REVISION_2;
+        permissions &= PERMS_MASK_2;
         this.permissions = permissions;
     }
 

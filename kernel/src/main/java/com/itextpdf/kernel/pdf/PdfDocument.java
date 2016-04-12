@@ -813,7 +813,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             structTreeRoot = new PdfStructTreeRoot(this);
             catalog.getPdfObject().put(PdfName.StructTreeRoot, structTreeRoot.getPdfObject());
             catalog.getPdfObject().put(PdfName.MarkInfo, new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
-                put(PdfName.Marked, PdfBoolean.PdfTrue);
+                put(PdfName.Marked, PdfBoolean.TRUE);
                 if (userProperties) {
                     put(PdfName.UserProperties, new PdfBoolean(true));
                 }
