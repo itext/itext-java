@@ -1369,33 +1369,49 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     private void copyLinkAnnotations(PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
         List<PdfName> excludedKeys = new ArrayList<>();
         excludedKeys.add(PdfName.Dest);
-        // It's important not to copy P key, as if the annotation won't be added to the page, P key could be used to identify this case
-        excludedKeys.add(PdfName.P);
+        excludedKeys.add(PdfName.A);
         for (Map.Entry<PdfPage, List<PdfLinkAnnotation>> entry : linkAnnotations.entrySet()) {
+            // We don't want to copy those link annotations, which reference to not copied pages.
             for (PdfLinkAnnotation annot : entry.getValue()) {
-                PdfDestination d = null;
+                boolean toCopyAnnot = true;
+                PdfDestination copiedDest = null;
+                PdfDictionary copiedAction = null;
 
                 PdfObject dest = annot.getDestinationObject();
                 if (dest != null) {
-                    d = getCatalog().copyDestination(dest, page2page, toDocument);
-                }
-
-                boolean hasGoToAction = false;
-                PdfDictionary a = annot.getAction();
-                if (a != null && PdfName.GoTo.equals(a.get(PdfName.S))) {
-                    if (d == null) {
-                        d = getCatalog().copyDestination(a.get(PdfName.D), page2page, toDocument);
+                    // If link annotation has destination object, we try to copy this destination.
+                    // Destination is not copied if it points to the not copied page, and therefore the whole
+                    // link annotation is not copied.
+                    copiedDest = getCatalog().copyDestination(dest, page2page, toDocument);
+                    toCopyAnnot = copiedDest != null;
+                } else {
+                    // Link annotation may have associated action. If it is GoTo type, we try to copy it's destination.
+                    // GoToR and GoToE also contain destinations, but they point not to pages of the current document,
+                    // so we just copy them as is. If it is action of any other type, it is also just copied as is.
+                    PdfDictionary action = annot.getAction();
+                    if (action != null) {
+                        if (PdfName.GoTo.equals(action.get(PdfName.S))) {
+                            copiedAction = action.copyTo(toDocument, Arrays.asList(PdfName.D), false);
+                            PdfDestination goToDest = getCatalog().copyDestination(action.get(PdfName.D), page2page, toDocument);
+                            if (goToDest != null) {
+                                copiedAction.put(PdfName.D, goToDest.getPdfObject());
+                            } else {
+                                toCopyAnnot = false;
+                            }
+                        } else {
+                            copiedAction = action.copyTo(toDocument, false);
+                        }
                     }
-                    hasGoToAction = true;
+
                 }
 
-                if (d != null ||  a != null && !hasGoToAction) {
+                if (toCopyAnnot) {
                     PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(toDocument, excludedKeys, false));
-                    if (d != null) {
-                        newAnnot.setDestination(d);
+                    if (copiedDest != null) {
+                        newAnnot.setDestination(copiedDest);
                     }
-                    if (hasGoToAction) {
-                        newAnnot.getPdfObject().remove(PdfName.A);
+                    if (copiedAction != null) {
+                        newAnnot.setAction(copiedAction);
                     }
                     page2page.get(entry.getKey()).addAnnotation(-1, newAnnot, false);
                 }

@@ -87,14 +87,11 @@ public class PdfLinkAnnotation extends PdfAnnotation {
         return put(PdfName.Dest, destination.getPdfObject());
     }
 
-    public PdfDictionary getActionObject() {
-        return getPdfObject().getAsDictionary(PdfName.A);
-    }
-
     public PdfLinkAnnotation setAction(PdfDictionary action) {
         return put(PdfName.A, action);
     }
 
+    @Override
     public PdfLinkAnnotation setAction(PdfAction action) {
         return put(PdfName.A, action.getPdfObject());
     }
