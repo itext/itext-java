@@ -88,7 +88,11 @@ public class PdfTextMarkupAnnotation extends PdfMarkupAnnotation {
 
     @Override
     public PdfName getSubtype() {
-        return getPdfObject().getAsName(PdfName.Subtype);
+        PdfName subType = getPdfObject().getAsName(PdfName.Subtype);
+        if (subType == null) {
+            subType = PdfName.Underline;
+        }
+        return subType;
     }
 
     private void setSubtype(PdfName subtype) {
