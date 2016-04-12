@@ -253,13 +253,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (writer == null) {
             throw new NullPointerException("writer");
         }
-        if (append && newPdfVersion != null) {
-            // pdf version cannot be altered in append mode
-            newPdfVersion = null;
-        }
         this.reader = reader;
         this.writer = writer;
         this.appendMode = append;
+
         open(newPdfVersion);
     }
 
@@ -1244,6 +1241,14 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 pdfVersion = reader.pdfVersion;
                 trailer = new PdfDictionary(reader.trailer);
                 catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true));
+                if (catalog.getPdfObject().containsKey(PdfName.Version)) {
+                    // The version of the PDF specification to which the document conforms (for example, 1.4)
+                    // if later than the version specified in the file's header
+                    PdfVersion catalogVersion = PdfVersion.fromPdfName(catalog.getPdfObject().getAsName(PdfName.Version));
+                    if (catalogVersion.compareTo(pdfVersion) > 0) {
+                        pdfVersion = catalogVersion;
+                    }
+                }
                 if (catalog.getPdfObject().containsKey(PdfName.Metadata) && null != catalog.getPdfObject().get(PdfName.Metadata)) {
                     xmpMetadata = catalog.getPdfObject().getAsStream(PdfName.Metadata).getBytes();
                 }
@@ -1296,6 +1301,25 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     // TODO log that writer crypto will be ignored
                 }
                 writer.crypto = reader.decrypt;
+
+                if (newPdfVersion != null) {
+                    // In PDF 1.4, a PDF version can also be specified in the Version entry of the document catalog,
+                    // essentially updating the version associated with the file by overriding the one specified in the file header
+                    if (pdfVersion.compareTo(PdfVersion.PDF_1_4) >= 0) {
+                        // If the header specifies a later version, or if this entry is absent, the document conforms to the
+                        // version specified in the header.
+
+                        // So only update the version if it is older than the one in the header
+                        if (newPdfVersion.compareTo(reader.pdfVersion) > 0) {
+                            catalog.put(PdfName.Version, newPdfVersion.toPdfName());
+                            catalog.setModified();
+                            pdfVersion = newPdfVersion;
+                        }
+                    } else {
+                        // Formally we cannot update version in the catalog as it is not supported for the
+                        // PDF version of the original document
+                    }
+                }
             } else if (writer != null) {
                 if (newPdfVersion != null) {
                     pdfVersion = newPdfVersion;

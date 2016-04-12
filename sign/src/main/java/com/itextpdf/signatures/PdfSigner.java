@@ -1010,7 +1010,7 @@ public class PdfSigner {
         reference.put(PdfName.TransformMethod, PdfName.DocMDP);
         reference.put(PdfName.Type, PdfName.SigRef);
         reference.put(PdfName.TransformParams, transformParams);
-        if (document.getPdfVersion().compareTo(PdfVersion.PDF_1_6) < 0) { // TODO: refactor
+        if (document.getPdfVersion().compareTo(PdfVersion.PDF_1_6) < 0) {
             reference.put(new PdfName("DigestValue"), new PdfString("aa"));
             PdfArray loc = new PdfArray();
             loc.add(new PdfNumber(0));
