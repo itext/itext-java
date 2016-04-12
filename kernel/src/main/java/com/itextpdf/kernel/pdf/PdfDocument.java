@@ -1391,7 +1391,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
                 if (d != null ||  a != null && !hasGoToAction) {
                     PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(toDocument, excludedKeys, false));
-                    newAnnot.setDestination(d);
+                    if (d != null) {
+                        newAnnot.setDestination(d);
+                    }
                     if (hasGoToAction) {
                         newAnnot.getPdfObject().remove(PdfName.A);
                     }
