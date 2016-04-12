@@ -152,9 +152,10 @@ public final class InlineImageParsingUtils {
      * @throws InlineImageParseException if parsing of the inline image failed due to issues specific to inline image processing
      */
     public static PdfStream parse(PdfCanvasParser ps, PdfDictionary colorSpaceDic) throws IOException {
-        PdfStream inlineImageAsStreamObject = parseDictionary(ps);
-        byte[] samples = parseSamples(inlineImageAsStreamObject, colorSpaceDic, ps);
-        inlineImageAsStreamObject.setData(samples);
+        PdfDictionary inlineImageDict = parseDictionary(ps);
+        byte[] samples = parseSamples(inlineImageDict, colorSpaceDic, ps);
+        PdfStream inlineImageAsStreamObject = new PdfStream(samples);
+        inlineImageAsStreamObject.putAll(inlineImageDict);
         return inlineImageAsStreamObject;
     }
 
@@ -165,9 +166,9 @@ public final class InlineImageParsingUtils {
      * @return the dictionary for the inline image, with any abbreviations converted to regular image dictionary keys and values
      * @throws IOException if the parse fails
      */
-    private static PdfStream parseDictionary(PdfCanvasParser ps) throws IOException {
+    private static PdfDictionary parseDictionary(PdfCanvasParser ps) throws IOException {
         // by the time we get to here, we have already parsed the BI operator
-        PdfStream streamObject = new PdfStream();
+        PdfDictionary dict = new PdfDictionary();
 
         for(PdfObject key = ps.readObject(); key != null && !"ID".equals(key.toString()); key = ps.readObject()){
             PdfObject value = ps.readObject();
@@ -176,14 +177,14 @@ public final class InlineImageParsingUtils {
             if (resolvedKey == null)
                 resolvedKey = (PdfName)key;
 
-            streamObject.put(resolvedKey, getAlternateValue(resolvedKey, value));
+            dict.put(resolvedKey, getAlternateValue(resolvedKey, value));
         }
 
         int ch = ps.getTokeniser().read();
         if (!PdfTokenizer.isWhitespace(ch))
             throw new InlineImageParseException(PdfException.UnexpectedCharacter1FoundAfterIDInInlineImage).setMessageParams(ch);
 
-        return streamObject;
+        return dict;
     }
 
     /**

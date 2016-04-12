@@ -312,10 +312,10 @@ public class ImageRenderer extends AbstractRenderer {
         t.translate(xDistance, yDistance);
         t.getMatrix(matrix);
         if (fixedXPosition != null) {
-            fixedXPosition += t.getTranslateX();
+            fixedXPosition += (float)t.getTranslateX();
         }
         if (fixedYPosition != null) {
-            fixedYPosition += t.getTranslateY();
+            fixedYPosition += (float)t.getTranslateY();
         }
     }
 }
