@@ -183,7 +183,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     protected PdfFormField(PdfDocument pdfDocument) {
         this(new PdfDictionary().makeIndirect(pdfDocument));
-        put(PdfName.FT, getFormType());
+        PdfName formType = getFormType();
+        if (formType != null) {
+            put(PdfName.FT, formType);
+        }
     }
 
     /**
