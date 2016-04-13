@@ -2081,6 +2081,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 break;
             }
             Paragraph paragraph = new Paragraph(strings.get(index)).setFont(font).setFontSize(fontSize).setMargins(0, 0, 0, 0).setMultipliedLeading(1);
+            paragraph.setProperty(Property.FORCED_PLACEMENT, true);
+
             if (color != null) {
                 paragraph.setFontColor(color);
             }

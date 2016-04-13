@@ -210,6 +210,8 @@ public class ParagraphRenderer extends BlockRenderer {
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]);
                         } else {
                             if (getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                                parent.setProperty(Property.FULL, true);
+                                lines.add(currentRenderer);
                                 return new LayoutResult(LayoutResult.FULL, occupiedArea, null, this);
                             } else {
                                 return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);

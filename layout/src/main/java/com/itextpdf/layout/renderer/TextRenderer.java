@@ -343,7 +343,7 @@ public class TextRenderer extends AbstractRenderer {
         if (result != null && result.getStatus() == LayoutResult.NOTHING) {
             return result;
         } else {
-            if (currentLineHeight > layoutBox.getHeight()) {
+            if (currentLineHeight > layoutBox.getHeight() && !getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
                 applyBorderBox(occupiedArea.getBBox(), true);
                 applyMargins(occupiedArea.getBBox(), true);
                 return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
