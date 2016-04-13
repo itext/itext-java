@@ -50,7 +50,7 @@ public class Rectangle implements Cloneable, Serializable {
 
     private static final long serialVersionUID = 8025677415569233446L;
 
-    private static float EPS = 1e-5f;
+    private static float EPS = 1e-4f;
 
     protected float x;
     protected float y;
