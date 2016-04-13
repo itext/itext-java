@@ -53,7 +53,7 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.function.PdfFunction;
 
-public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapper<T> {
+public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = 4781809723744243508L;
 
@@ -67,11 +67,11 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
         public static final int TENSOR_PRODUCT_PATCH_MESH = 7;
     }
 
-    public PdfShading(T pdfObject) {
+    public PdfShading(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
-    public PdfShading(T pdfObject, int type, PdfObject colorSpace) {
+    public PdfShading(PdfDictionary pdfObject, int type, PdfObject colorSpace) {
         super(pdfObject);
 
         getPdfObject().put(PdfName.ShadingType, new PdfNumber(type));
@@ -109,7 +109,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
         return true;
     }
 
-    public static class FunctionBased extends PdfShading<PdfDictionary> {
+    public static class FunctionBased extends PdfShading {
 
         private static final long serialVersionUID = -4459197498902558052L;
 
@@ -161,7 +161,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
         }
     }
 
-    public static class Axial extends PdfShading<PdfDictionary> {
+    public static class Axial extends PdfShading {
 
         private static final long serialVersionUID = 5504688740677023792L;
 
@@ -233,7 +233,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
 
     }
 
-    public static class Radial extends PdfShading<PdfDictionary> {
+    public static class Radial extends PdfShading {
 
         private static final long serialVersionUID = -5012819396006804845L;
 
@@ -301,7 +301,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
         }
     }
 
-    public static class FreeFormGouraudShadedTriangleMesh extends PdfShading<PdfStream> {
+    public static class FreeFormGouraudShadedTriangleMesh extends PdfShading {
         
     	private static final long serialVersionUID = -2690557760051875972L;
 
@@ -362,7 +362,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
         }
     }
 
-    public static class LatticeFormGouraudShadedTriangleMesh extends PdfShading<PdfStream> {
+    public static class LatticeFormGouraudShadedTriangleMesh extends PdfShading {
         
     	private static final long serialVersionUID = -8776232978423888214L;
 
@@ -423,7 +423,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
         }
     }
 
-    public static class CoonsPatchMesh extends PdfShading<PdfStream> {
+    public static class CoonsPatchMesh extends PdfShading {
         
     	private static final long serialVersionUID = 7296891352801419708L;
 
@@ -483,7 +483,7 @@ public abstract class PdfShading<T extends PdfDictionary> extends PdfObjectWrapp
         }
     }
 
-    public static class TensorProductPatchMesh extends PdfShading<PdfStream> {
+    public static class TensorProductPatchMesh extends PdfShading {
        
     	private static final long serialVersionUID = -2750695839303504742L;
 
