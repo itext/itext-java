@@ -26,7 +26,7 @@ public class PdfA2EmbeddedFilesCheckTest {
     static final public String destinationFolder = "./target/test/PdfA2EmbeddedFilesCheckTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         new File(destinationFolder).mkdirs();
     }
 

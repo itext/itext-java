@@ -55,7 +55,7 @@ public final class WriterException extends Exception {
     /**
      * A serial version UID.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -7600391573888999764L;
 
     /**
      * Creates a WriterException.

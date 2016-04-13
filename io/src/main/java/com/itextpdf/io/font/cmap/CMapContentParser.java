@@ -121,7 +121,7 @@ public class CMapContentParser {
             }
             dic.put(name, obj);
         }
-        return new CMapObject(CMapObject.Dictionary, dic);
+        return new CMapObject(CMapObject.DICTIONARY, dic);
     }
 
     /**
@@ -143,7 +143,7 @@ public class CMapContentParser {
             }
             array.add(obj);
         }
-        return new CMapObject(CMapObject.Array, array);
+        return new CMapObject(CMapObject.ARRAY, array);
     }
 
     /**
@@ -163,15 +163,15 @@ public class CMapContentParser {
             case String:
                 CMapObject obj;
                 if (tokeniser.isHexString()) {
-                    obj = new CMapObject(CMapObject.HexString, PdfTokenizer.decodeStringContent(tokeniser.getByteContent(), true));
+                    obj = new CMapObject(CMapObject.HEX_STRING, PdfTokenizer.decodeStringContent(tokeniser.getByteContent(), true));
                 } else {
-                    obj = new CMapObject(CMapObject.String, PdfTokenizer.decodeStringContent(tokeniser.getByteContent(), false));
+                    obj = new CMapObject(CMapObject.STRING, PdfTokenizer.decodeStringContent(tokeniser.getByteContent(), false));
                 }
                 return obj;
             case Name:
-                return new CMapObject(CMapObject.Name, decodeName(tokeniser.getByteContent()));
+                return new CMapObject(CMapObject.NAME, decodeName(tokeniser.getByteContent()));
             case Number:
-                CMapObject numObject = new CMapObject(CMapObject.Number, null);
+                CMapObject numObject = new CMapObject(CMapObject.NUMBER, null);
                 try {
                     numObject.setValue((int)java.lang.Double.parseDouble(tokeniser.getStringValue()));
                 } catch (NumberFormatException e) {
@@ -179,11 +179,11 @@ public class CMapContentParser {
                 }
                 return numObject;
             case Other:
-                return new CMapObject(CMapObject.Literal, tokeniser.getStringValue());
+                return new CMapObject(CMapObject.LITERAL, tokeniser.getStringValue());
             case EndArray:
-                return new CMapObject(CMapObject.Token, "]");
+                return new CMapObject(CMapObject.TOKEN, "]");
             case EndDic:
-                return new CMapObject(CMapObject.Token, ">>");
+                return new CMapObject(CMapObject.TOKEN, ">>");
             default:
                 return new CMapObject(0, "");
         }
@@ -245,7 +245,7 @@ public class CMapContentParser {
 
     public static String decodeCMapObject(CMapObject cMapObject) {
         if (cMapObject.isHexString()) {
-            return PdfEncodings.convertToString(((String) cMapObject.getValue()).getBytes(), PdfEncodings.UnicodeBigUnmarked);
+            return PdfEncodings.convertToString(((String) cMapObject.getValue()).getBytes(), PdfEncodings.UNICODE_BIG_UNMARKED);
         } else {
             return (String) cMapObject.getValue();
         }

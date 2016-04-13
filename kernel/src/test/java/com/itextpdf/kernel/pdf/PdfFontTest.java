@@ -55,7 +55,7 @@ public class PdfFontTest extends ExtendedITextTest {
             "but it now while sayingly ABEFGHJKNOPQRSTUWYZ?";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 

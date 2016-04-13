@@ -26,7 +26,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
     static final public String destinationFolder = "./target/test/com/itextpdf/forms/FormFieldsTaggingTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 

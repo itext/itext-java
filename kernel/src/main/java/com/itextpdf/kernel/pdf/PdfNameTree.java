@@ -50,7 +50,7 @@ import java.util.*;
 
 public class PdfNameTree {
 
-    private static final int NodeSize = 40;
+    private static final int NODE_SIZE = 40;
 
     private PdfCatalog catalog;
     private Map<String, PdfObject> items = new HashMap<>();
@@ -124,7 +124,7 @@ public class PdfNameTree {
         String[] names = new String[items.size()];
         names = items.keySet().toArray(names);
         Arrays.sort(names);
-        if (names.length <= NodeSize) {
+        if (names.length <= NODE_SIZE) {
             PdfDictionary dic = new PdfDictionary();
             PdfArray ar = new PdfArray();
             for (int k = 0; k < names.length; ++k) {
@@ -134,11 +134,11 @@ public class PdfNameTree {
             dic.put(PdfName.Names, ar);
             return dic;
         }
-        int skip = NodeSize;
-        PdfDictionary[] kids = new PdfDictionary[(names.length + NodeSize - 1) / NodeSize];
+        int skip = NODE_SIZE;
+        PdfDictionary[] kids = new PdfDictionary[(names.length + NODE_SIZE - 1) / NODE_SIZE];
         for (int k = 0; k < kids.length; ++k) {
-            int offset = k * NodeSize;
-            int end = Math.min(offset + NodeSize, names.length);
+            int offset = k * NODE_SIZE;
+            int end = Math.min(offset + NODE_SIZE, names.length);
             PdfDictionary dic = new PdfDictionary();
             PdfArray arr = new PdfArray();
             arr.add(new PdfString(names[offset], null));
@@ -155,7 +155,7 @@ public class PdfNameTree {
         }
         int top = kids.length;
         while (true) {
-            if (top <= NodeSize) {
+            if (top <= NODE_SIZE) {
                 PdfArray arr = new PdfArray();
                 for (int k = 0; k < top; ++k)
                     arr.add(kids[k]);
@@ -163,11 +163,11 @@ public class PdfNameTree {
                 dic.put(PdfName.Kids, arr);
                 return dic;
             }
-            skip *= NodeSize;
+            skip *= NODE_SIZE;
             int tt = (names.length + skip - 1 )/ skip;
             for (int k = 0; k < tt; ++k) {
-                int offset = k * NodeSize;
-                int end = Math.min(offset + NodeSize, top);
+                int offset = k * NODE_SIZE;
+                int end = Math.min(offset + NODE_SIZE, top);
                 PdfDictionary dic = new PdfDictionary().makeIndirect(catalog.getDocument());
                 PdfArray arr = new PdfArray();
                 arr.add(new PdfString(names[k * skip], null));

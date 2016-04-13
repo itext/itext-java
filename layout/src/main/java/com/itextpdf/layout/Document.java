@@ -252,16 +252,6 @@ public class Document extends RootElement<Document> {
     }
 
     /**
-     * Rotates PageSize clockwise with all the margins, i.e. the margins are rotated as well.
-     * @param pageSize the current page size
-     * @return the same page size, after clockwise rotation
-     */
-    public PageSize rotatePage(PageSize pageSize) {
-        setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
-        return pageSize.rotate();
-    }
-
-    /**
      * checks whether a method is invoked at the closed document
      * @throws PdfException
      */

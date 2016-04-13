@@ -77,16 +77,16 @@ public class PdfEncodings {
     /** A possible encoding. */
     public static final String ZAPFDINGBATS = "ZapfDingbats";
     /** This is the encoding to be used to output text in Unicode. */
-    public static final String UnicodeBig = "UnicodeBig";
+    public static final String UNICODE_BIG = "UnicodeBig";
     /** This is the encoding to be used to output text for Identity-H/V CMaps. */
-    public static final String UnicodeBigUnmarked = "UnicodeBigUnmarked";
+    public static final String UNICODE_BIG_UNMARKED = "UnicodeBigUnmarked";
     /** This is the default encoding to be used for converting Strings into
-     * bytes and vice versa. The default encoding is PdfDocEncoding. */
-    public static final String PdfDocEncoding = "PDF";
+     * bytes and vice versa. The default encoding is PDF_DOC_ENCODING. */
+    public static final String PDF_DOC_ENCODING = "PDF";
 
-    public static final String EmptyString = "";
+    private static final String EMPTY_STRING = "";
 
-    public static final char[] winansiByteToChar = {
+    private static final char[] winansiByteToChar = {
             (char) 0, (char) 1, (char) 2, (char) 3, (char) 4, (char) 5, (char) 6, (char) 7, (char) 8, (char) 9, (char) 10, (char) 11, (char) 12, (char) 13, (char) 14, (char) 15,
             (char) 16, (char) 17, (char) 18, (char) 19, (char) 20, (char) 21, (char) 22, (char) 23, (char) 24, (char) 25, (char) 26, (char) 27, (char) 28, (char) 29, (char) 30, (char) 31,
             (char) 32, (char) 33, (char) 34, (char) 35, (char) 36, (char) 37, (char) 38, (char) 39, (char) 40, (char) 41, (char) 42, (char) 43, (char) 44, (char) 45, (char) 46, (char) 47,
@@ -105,7 +105,7 @@ public class PdfEncodings {
             (char) 240, (char) 241, (char) 242, (char) 243, (char) 244, (char) 245, (char) 246, (char) 247, (char) 248, (char) 249, (char) 250, (char) 251, (char) 252, (char) 253, (char) 254, (char) 255
     };
 
-    public static final char[] pdfEncodingByteToChar = {
+    private static final char[] pdfEncodingByteToChar = {
             (char) 0, (char) 1, (char) 2, (char) 3, (char) 4, (char) 5, (char) 6, (char) 7, (char) 8, (char) 9, (char) 10, (char) 11, (char) 12, (char) 13, (char) 14, (char) 15,
             (char) 16, (char) 17, (char) 18, (char) 19, (char) 20, (char) 21, (char) 22, (char) 23, (char) 24, (char) 25, (char) 26, (char) 27, (char) 28, (char) 29, (char) 30, (char) 31,
             (char) 32, (char) 33, (char) 34, (char) 35, (char) 36, (char) 37, (char) 38, (char) 39, (char) 40, (char) 41, (char) 42, (char) 43, (char) 44, (char) 45, (char) 46, (char) 47,
@@ -123,7 +123,7 @@ public class PdfEncodings {
             (char) 224, (char) 225, (char) 226, (char) 227, (char) 228, (char) 229, (char) 230, (char) 231, (char) 232, (char) 233, (char) 234, (char) 235, (char) 236, (char) 237, (char) 238, (char) 239,
             (char) 240, (char) 241, (char) 242, (char) 243, (char) 244, (char) 245, (char) 246, (char) 247, (char) 248, (char) 249, (char) 250, (char) 251, (char) 252, (char) 253, (char) 254, (char) 255 };
 
-    public static final int[] standardEncoding = {
+    static final int[] standardEncoding = {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             32, 33, 34, 35, 36, 37, 38, 8217, 40, 41, 42, 43, 44, 45, 46, 47,
@@ -142,9 +142,9 @@ public class PdfEncodings {
             0, 230, 0, 0, 0, 305, 0, 0, 322, 248, 339, 223, 0, 0, 0, 0
     };
 
-    public static final IntHashtable winansi = new IntHashtable();
+    private static final IntHashtable winansi = new IntHashtable();
 
-    public static final IntHashtable pdfEncoding = new IntHashtable();
+    private static final IntHashtable pdfEncoding = new IntHashtable();
 
     private static final Map<String, ExtraEncoding> extraEncodings = new HashMap<>();
 
@@ -197,7 +197,7 @@ public class PdfEncodings {
         IntHashtable hash = null;
         if (encoding.equals(WINANSI)) {
             hash = winansi;
-        } else if (encoding.equals(PdfDocEncoding)) {
+        } else if (encoding.equals(PDF_DOC_ENCODING)) {
             hash = pdfEncoding;
         }
         if (hash != null) {
@@ -244,7 +244,7 @@ public class PdfEncodings {
         IntHashtable hash = null;
         if (encoding.equals(WINANSI))
             hash = winansi;
-        else if (encoding.equals(PdfDocEncoding))
+        else if (encoding.equals(PDF_DOC_ENCODING))
             hash = pdfEncoding;
         if (hash != null) {
             int c;
@@ -276,7 +276,7 @@ public class PdfEncodings {
      */
     public static String convertToString(byte[] bytes, String encoding) {
         if (bytes == null)
-            return EmptyString;
+            return EMPTY_STRING;
         if (encoding == null || encoding.length() == 0) {
             char[] c = new char[bytes.length];
             for (int k = 0; k < bytes.length; ++k) {
@@ -294,7 +294,7 @@ public class PdfEncodings {
         char[] ch = null;
         if (encoding.equals(WINANSI))
             ch = winansiByteToChar;
-        else if (encoding.equals(PdfDocEncoding))
+        else if (encoding.equals(PDF_DOC_ENCODING))
             ch = pdfEncodingByteToChar;
         if (ch != null) {
             int len = bytes.length;
@@ -312,10 +312,10 @@ public class PdfEncodings {
     }
 
     /**
-     * Checks is {@code text} only has PdfDocEncoding characters.
+     * Checks is {@code text} only has PDF_DOC_ENCODING characters.
      *
      * @param text the {@code String} to test
-     * @return {@code true} if only PdfDocEncoding characters are present
+     * @return {@code true} if only PDF_DOC_ENCODING characters are present
      */
     public static boolean isPdfDocEncoding(String text) {
         if (text == null)

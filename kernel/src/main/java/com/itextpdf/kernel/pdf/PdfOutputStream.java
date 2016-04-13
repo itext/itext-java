@@ -183,40 +183,40 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
     }
 
     public PdfOutputStream write(PdfObject pdfObject) {
-        if (pdfObject.checkState(PdfObject.MustBeIndirect) && document != null) {
+        if (pdfObject.checkState(PdfObject.MUST_BE_INDIRECT) && document != null) {
             pdfObject.makeIndirect(document);
             pdfObject = pdfObject.getIndirectReference();
         }
-        if (pdfObject.checkState(PdfObject.ReadOnly)) {
+        if (pdfObject.checkState(PdfObject.READ_ONLY)) {
             throw new PdfException(PdfException.CannotWriteObjectAfterItWasReleased);
         }
         switch (pdfObject.getType()) {
-            case PdfObject.Array:
+            case PdfObject.ARRAY:
                 write((PdfArray) pdfObject);
                 break;
-            case PdfObject.Dictionary:
+            case PdfObject.DICTIONARY:
                 write((PdfDictionary) pdfObject);
                 break;
-            case PdfObject.IndirectReference:
+            case PdfObject.INDIRECT_REFERENCE:
                 write((PdfIndirectReference) pdfObject);
                 break;
-            case PdfObject.Name:
+            case PdfObject.NAME:
                 write((PdfName) pdfObject);
                 break;
-            case PdfObject.Null:
-            case PdfObject.Boolean:
+            case PdfObject.NULL:
+            case PdfObject.BOOLEAN:
                 write((PdfPrimitiveObject) pdfObject);
                 break;
-            case PdfObject.Literal:
+            case PdfObject.LITERAL:
                 write((PdfLiteral) pdfObject);
                 break;
-            case PdfObject.String:
+            case PdfObject.STRING:
                 write((PdfString) pdfObject);
                 break;
-            case PdfObject.Number:
+            case PdfObject.NUMBER:
                 write((PdfNumber) pdfObject);
                 break;
-            case PdfObject.Stream:
+            case PdfObject.STREAM:
                 write((PdfStream) pdfObject);
                 break;
             default:
@@ -292,12 +292,12 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
             boolean isAlreadyWriteSpace = false;
             write(entry.getKey());
             PdfObject value = entry.getValue();
-            if ((value.getType() == PdfObject.Number
-                    || value.getType() == PdfObject.Literal
-                    || value.getType() == PdfObject.Boolean
-                    || value.getType() == PdfObject.Null
-                    || value.getType() == PdfObject.IndirectReference
-                    || value.checkState(PdfObject.MustBeIndirect))) {
+            if ((value.getType() == PdfObject.NUMBER
+                    || value.getType() == PdfObject.LITERAL
+                    || value.getType() == PdfObject.BOOLEAN
+                    || value.getType() == PdfObject.NULL
+                    || value.getType() == PdfObject.INDIRECT_REFERENCE
+                    || value.checkState(PdfObject.MUST_BE_INDIRECT))) {
                 isAlreadyWriteSpace = true;
                 writeSpace();
             }
@@ -320,7 +320,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
             throw new PdfException(PdfException.PdfInderectObjectBelongToOtherPdfDocument);
         }
         if (indirectReference.getRefersTo() == null) {
-            write(PdfNull.PdfNull);
+            write(PdfNull.PDF_NULL);
         } else if (indirectReference.getGenNumber() == 0) {
             writeInteger(indirectReference.getObjNumber()).
                     writeBytes(endIndirectWithZeroGenNr);
@@ -363,7 +363,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
     protected void write(PdfNumber pdfNumber) {
         if (pdfNumber.hasContent()) {
             writeBytes(pdfNumber.getInternalContent());
-        } else if (pdfNumber.getValueType() == PdfNumber.Int) {
+        } else if (pdfNumber.getValueType() == PdfNumber.INT) {
             writeInteger(pdfNumber.getIntValue());
         } else {
             writeDouble(pdfNumber.getValue());
@@ -490,7 +490,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
             if (filter != null) {
                 if (PdfName.Crypt.equals(filter)) {
                     return false;
-                } else if (filter.getType() == PdfObject.Array) {
+                } else if (filter.getType() == PdfObject.ARRAY) {
                     PdfArray filters = (PdfArray) filter;
                     if (!filters.isEmpty() && PdfName.Crypt.equals(filters.get(0, true))) {
                         return false;
@@ -504,11 +504,11 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
     protected boolean containsFlateFilter(PdfStream pdfStream) {
         PdfObject filter = pdfStream.get(PdfName.Filter);
         if (filter != null) {
-            if (filter.getType() == PdfObject.Name) {
+            if (filter.getType() == PdfObject.NAME) {
                 if (PdfName.FlateDecode.equals(filter)) {
                     return true;
                 }
-            } else if (filter.getType() == PdfObject.Array) {
+            } else if (filter.getType() == PdfObject.ARRAY) {
                 if (((PdfArray) filter).contains(PdfName.FlateDecode))
                     return true;
             } else {
@@ -574,9 +574,9 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
         PdfObject decodeParamsObject = stream.get(PdfName.DecodeParms);
         if (decodeParamsObject == null) {
             decodeParams = null;
-        } else if (decodeParamsObject.getType() == PdfObject.Dictionary) {
+        } else if (decodeParamsObject.getType() == PdfObject.DICTIONARY) {
             decodeParams = (PdfDictionary) decodeParamsObject;
-        } else if (decodeParamsObject.getType() == PdfObject.Array) {
+        } else if (decodeParamsObject.getType() == PdfObject.ARRAY) {
             decodeParamsArray = (PdfArray) decodeParamsObject;
             decodeParams = decodeParamsArray.getAsDictionary(0);
         } else {
@@ -604,7 +604,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
         decodeParamsObject = null;
         if (decodeParamsArray != null) {
             decodeParamsArray.remove(0);
-            if (decodeParamsArray.size() == 1 && decodeParamsArray.get(0).getType() != PdfObject.Null) {
+            if (decodeParamsArray.size() == 1 && decodeParamsArray.get(0).getType() != PdfObject.NULL) {
                 decodeParamsObject = decodeParamsArray.get(0);
             } else if (!decodeParamsArray.isEmpty()) {
                 decodeParamsObject = decodeParamsArray;

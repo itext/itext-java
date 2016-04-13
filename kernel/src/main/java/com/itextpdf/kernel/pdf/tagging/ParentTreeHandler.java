@@ -263,7 +263,7 @@ class ParentTreeHandler implements Serializable {
                 // if for some reason some mcr where not registered or don't exist, we ensure that the rest
                 // of the parent objects were placed at correct index
                 while (currentMcid++ < mcr.getMcid()) {
-                    parentsOfPageMcrs.add(PdfNull.PdfNull);
+                    parentsOfPageMcrs.add(PdfNull.PDF_NULL);
                 }
                 parentsOfPageMcrs.add(((PdfStructElem) mcr.getParent()).getPdfObject());
             }

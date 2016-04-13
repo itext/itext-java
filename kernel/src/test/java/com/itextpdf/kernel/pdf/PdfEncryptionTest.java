@@ -35,7 +35,7 @@ public class PdfEncryptionTest extends ExtendedITextTest{
     static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfEncryptionTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
         Security.addProvider(new BouncyCastleProvider());
     }

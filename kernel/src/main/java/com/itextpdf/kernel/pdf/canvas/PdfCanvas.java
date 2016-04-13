@@ -162,10 +162,10 @@ public class PdfCanvas {
     static final private byte[] WStar = ByteUtils.getIsoBytes("W*\n");
     static final private byte[] y = ByteUtils.getIsoBytes("y\n");
 
-    static private final PdfDeviceCs.Gray gray = new PdfDeviceCs.Gray();
-    static private final PdfDeviceCs.Rgb rgb = new PdfDeviceCs.Rgb();
-    static private final PdfDeviceCs.Cmyk cmyk = new PdfDeviceCs.Cmyk();
-    static private final PdfSpecialCs.Pattern pattern = new PdfSpecialCs.Pattern();
+    private static final PdfDeviceCs.Gray gray = new PdfDeviceCs.Gray();
+    private static final PdfDeviceCs.Rgb rgb = new PdfDeviceCs.Rgb();
+    private static final PdfDeviceCs.Cmyk cmyk = new PdfDeviceCs.Cmyk();
+    private static final PdfSpecialCs.Pattern pattern = new PdfSpecialCs.Pattern();
 
     /**
      * a LIFO stack of graphics state saved states.
@@ -690,7 +690,7 @@ public class PdfCanvas {
             GlyphLine.GlyphLinePart glyphLinePart = iterator.next();
             if (glyphLinePart.actualText != null) {
                 PdfDictionary properties = new PdfDictionary();
-                properties.put(PdfName.ActualText, new PdfString(glyphLinePart.actualText, PdfEncodings.UnicodeBig).setHexWriting(true));
+                properties.put(PdfName.ActualText, new PdfString(glyphLinePart.actualText, PdfEncodings.UNICODE_BIG).setHexWriting(true));
                 beginMarkedContent(PdfName.Span, properties);
             }
             int sub = glyphLinePart.start;

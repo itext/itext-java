@@ -43,7 +43,7 @@ public class TableTest extends ExtendedITextTest{
 
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
        createDestinationFolder(destinationFolder);
     }
 

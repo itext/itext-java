@@ -62,7 +62,7 @@ public class PdfXObject extends PdfObjectWrapper<PdfStream> {
         super(pdfObject);
     }
 
-    static public PdfXObject makeXObject(PdfStream stream) {
+    public static PdfXObject makeXObject(PdfStream stream) {
         if (PdfName.Form.equals(stream.getAsName(PdfName.Subtype)) || stream.containsKey(PdfName.BBox))
             return new PdfFormXObject(stream);
         else

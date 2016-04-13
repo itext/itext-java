@@ -104,26 +104,26 @@ public class FlateDecodeFilter implements FilterHandler{
      * @return a byte array
      */
     public static byte[] decodePredictor(final byte[] in, final PdfObject decodeParams) {
-        if (decodeParams == null || decodeParams.getType() != PdfObject.Dictionary)
+        if (decodeParams == null || decodeParams.getType() != PdfObject.DICTIONARY)
             return in;
         PdfDictionary dic = (PdfDictionary)decodeParams;
         PdfObject obj = dic.get(PdfName.Predictor);
-        if (obj == null || obj.getType() != PdfObject.Number)
+        if (obj == null || obj.getType() != PdfObject.NUMBER)
             return in;
         int predictor = ((PdfNumber)obj).getIntValue();
         if (predictor < 10 && predictor != 2)
             return in;
         int width = 1;
         obj = dic.get(PdfName.Columns);
-        if (obj != null && obj.getType() == PdfObject.Number)
+        if (obj != null && obj.getType() == PdfObject.NUMBER)
             width = ((PdfNumber)obj).getIntValue();
         int colors = 1;
         obj = dic.get(PdfName.Colors);
-        if (obj != null && obj.getType() == PdfObject.Number)
+        if (obj != null && obj.getType() == PdfObject.NUMBER)
             colors = ((PdfNumber)obj).getIntValue();
         int bpc = 8;
         obj = dic.get(PdfName.BitsPerComponent);
-        if (obj != null && obj.getType() == PdfObject.Number)
+        if (obj != null && obj.getType() == PdfObject.NUMBER)
             bpc = ((PdfNumber)obj).getIntValue();
         DataInputStream dataStream = new DataInputStream(new ByteArrayInputStream(in));
         ByteArrayOutputStream fout = new ByteArrayOutputStream(in.length);

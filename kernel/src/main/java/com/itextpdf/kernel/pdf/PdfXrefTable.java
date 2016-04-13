@@ -58,14 +58,13 @@ class PdfXrefTable implements Serializable{
 
     private static final long serialVersionUID = 4171655392492002944L;
 
+    private static final int INITIAL_CAPACITY = 32;
+    private static final int MAX_GENERATION = 65535;
 
-    private static final int InitialCapacity = 32;
-    private static final int MaxGeneration = 65535;
-
-    static private final DecimalFormat objectOffsetFormatter = new DecimalFormat("0000000000");
-    static private final DecimalFormat objectGenerationFormatter = new DecimalFormat("00000");
-    static private final byte[] freeXRefEntry = ByteUtils.getIsoBytes("f \n");
-    static private final byte[] inUseXRefEntry = ByteUtils.getIsoBytes("n \n");
+    private static final DecimalFormat objectOffsetFormatter = new DecimalFormat("0000000000");
+    private static final DecimalFormat objectGenerationFormatter = new DecimalFormat("00000");
+    private static final byte[] freeXRefEntry = ByteUtils.getIsoBytes("f \n");
+    private static final byte[] inUseXRefEntry = ByteUtils.getIsoBytes("n \n");
 
     private PdfIndirectReference[] xref;
     private int count = 0;
@@ -73,15 +72,15 @@ class PdfXrefTable implements Serializable{
     private final TreeSet<Integer> freeReferences;
 
     public PdfXrefTable() {
-        this(InitialCapacity);
+        this(INITIAL_CAPACITY);
     }
 
     public PdfXrefTable(int capacity) {
         if (capacity < 1)
-            capacity = InitialCapacity;
+            capacity = INITIAL_CAPACITY;
         xref = new PdfIndirectReference[capacity];
         freeReferences = new TreeSet<>();
-        add(new PdfIndirectReference(null, 0, MaxGeneration, 0).<PdfIndirectReference>setState(PdfObject.Free));
+        add(new PdfIndirectReference(null, 0, MAX_GENERATION, 0).<PdfIndirectReference>setState(PdfObject.FREE));
     }
 
     /**
@@ -125,24 +124,24 @@ class PdfXrefTable implements Serializable{
                 xref[num] = indirectReference;
             }
             indirectReference.setOffset(0);
-            indirectReference.clearState(PdfObject.Free);
+            indirectReference.clearState(PdfObject.FREE);
         } else {
             indirectReference = new PdfIndirectReference(document, ++count);
             add(indirectReference);
         }
-        return indirectReference.setState(PdfObject.Modified);
+        return indirectReference.setState(PdfObject.MODIFIED);
     }
 
     protected void freeReference(PdfIndirectReference indirectReference) {
         indirectReference.setOffset(0);
-        indirectReference.setState(PdfObject.Free);
-        if (!indirectReference.checkState(PdfObject.Flushed)) {
+        indirectReference.setState(PdfObject.FREE);
+        if (!indirectReference.checkState(PdfObject.FLUSHED)) {
             if (indirectReference.refersTo != null) {
                 indirectReference.refersTo.setIndirectReference(null);
-                indirectReference.refersTo.setState(PdfObject.MustBeIndirect);
+                indirectReference.refersTo.setState(PdfObject.MUST_BE_INDIRECT);
                 indirectReference.refersTo = null;
             }
-            if (indirectReference.getGenNumber() < MaxGeneration) {
+            if (indirectReference.getGenNumber() < MAX_GENERATION) {
                 freeReferences.add(indirectReference.getObjNumber());
                 xref[indirectReference.getObjNumber()] = null;
             }
@@ -186,9 +185,9 @@ class PdfXrefTable implements Serializable{
         for (int i = 1; i < size(); i++) {
             PdfIndirectReference indirectReference = xref[i];
             if (indirectReference != null) {
-                if ((document.appendMode && !indirectReference.checkState(PdfObject.Modified)) ||
+                if ((document.appendMode && !indirectReference.checkState(PdfObject.MODIFIED)) ||
                         (indirectReference.isFree() && indirectReference.getGenNumber() == 0) ||
-                        (!indirectReference.checkState(PdfObject.Flushed))) {
+                        (!indirectReference.checkState(PdfObject.FLUSHED))) {
                     indirectReference = null;
                 }
             }

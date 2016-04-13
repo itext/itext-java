@@ -91,8 +91,8 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
 	private static final byte[] rotbits = {(byte) 0x80, (byte) 0x40, (byte) 0x20, (byte) 0x10, (byte) 0x08, (byte) 0x04, (byte) 0x02, (byte) 0x01};
 
-    protected static final int CidFontType0 = 0;
-    protected static final int CidFontType2 = 2;
+    protected static final int CID_FONT_TYPE_0 = 0;
+    protected static final int CID_FONT_TYPE_2 = 2;
 
     protected boolean vertical;
     protected CMapEncoding cmapEncoding;
@@ -116,7 +116,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         vertical = cmap.endsWith("V");
         cmapEncoding = new CMapEncoding(cmap);
         longTag = new LinkedHashMap<>();
-        cidFontType = CidFontType2;
+        cidFontType = CID_FONT_TYPE_2;
         if (ttf.isFontSpecific()) {
             specificUnicodeDifferences = new char[256];
             byte[] bytes = new byte[1];
@@ -144,7 +144,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         String uniMap = getCompatibleUniMap(fontProgram.getRegistry());
         cmapEncoding = new CMapEncoding(cmap, uniMap);
         longTag = new LinkedHashMap<>();
-        cidFontType = CidFontType0;
+        cidFontType = CID_FONT_TYPE_0;
     }
 
     PdfType0Font(PdfDictionary fontDictionary) {
@@ -169,7 +169,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             cmapEncoding = new CMapEncoding(cmap);
             assert fontProgram instanceof DocFontProgram;
             embedded = ((DocFontProgram) fontProgram).getFontFile() != null;
-            cidFontType = CidFontType2;
+            cidFontType = CID_FONT_TYPE_2;
         } else {
             String cidFontName = cidFont.getAsName(PdfName.BaseFont).getValue();
             String uniMap = getUniMapFromOrdering(getOrdering(cidFont));
@@ -193,7 +193,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             if (fontProgram == null) {
                 throw new PdfException(MessageFormat.format("Cannot recognise document font {0} with {1} encoding", cidFontName, cmap));
             }
-            cidFontType = CidFontType0;
+            cidFontType = CID_FONT_TYPE_0;
         }
         longTag = new LinkedHashMap<>();
         subset = false;
@@ -264,7 +264,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
         String s = new String(glyphs, 0, i);
         try {
-            return s.getBytes(PdfEncodings.UnicodeBigUnmarked);
+            return s.getBytes(PdfEncodings.UNICODE_BIG_UNMARKED);
         } catch (UnsupportedEncodingException e) {
             throw new PdfException("TrueTypeFont", e);
         }
@@ -286,7 +286,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
             String s = new String(glyphs, 0, glyphs.length);
             try {
-                return s.getBytes(PdfEncodings.UnicodeBigUnmarked);
+                return s.getBytes(PdfEncodings.UNICODE_BIG_UNMARKED);
             } catch (UnsupportedEncodingException e) {
                 throw new PdfException("TrueTypeFont", e);
             }
@@ -303,7 +303,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         }
         String s = new String(new char[]{(char) glyph.getCode()}, 0, 1);
         try {
-            return s.getBytes(PdfEncodings.UnicodeBigUnmarked);
+            return s.getBytes(PdfEncodings.UNICODE_BIG_UNMARKED);
         } catch (UnsupportedEncodingException e) {
             throw new PdfException("PdfType0Font", e);
         }
@@ -322,7 +322,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         }
         //TODO improve converting chars to hexed string
         try {
-            StreamUtil.writeHexedString(stream, bytes.toString().getBytes(PdfEncodings.UnicodeBigUnmarked));
+            StreamUtil.writeHexedString(stream, bytes.toString().getBytes(PdfEncodings.UNICODE_BIG_UNMARKED));
         } catch (UnsupportedEncodingException e) {
             throw new PdfException("PdfType0Font", e);
         }
@@ -337,7 +337,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     public GlyphLine createGlyphLine(String content) {
         List<Glyph> glyphs = new ArrayList<>();
         //TODO different with type0 and type2 could be removed after simplifying longTag
-        if (cidFontType == CidFontType0) {
+        if (cidFontType == CID_FONT_TYPE_0) {
             int len = content.length();
             if (cmapEncoding.isDirect()) {
                 for (int k = 0; k < len; ++k) {
@@ -358,7 +358,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                     glyphs.add(getGlyph(ch));
                 }
             }
-        } else if (cidFontType == CidFontType2) {
+        } else if (cidFontType == CID_FONT_TYPE_2) {
             TrueTypeFont ttf = (TrueTypeFont) fontProgram;
             int len = content.length();
 
@@ -451,6 +451,10 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         return fontDescriptor;
     }
 
+    public CMapEncoding getCmapEncoding() {
+        return cmapEncoding;
+    }
+
     @Override
     public void flush() {
         if (newFont) {
@@ -464,7 +468,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     }
 
     private void flushFontData() {
-        if (cidFontType == CidFontType0) {
+        if (cidFontType == CID_FONT_TYPE_0) {
             getPdfObject().put(PdfName.Type, PdfName.Font);
             getPdfObject().put(PdfName.Subtype, PdfName.Type0);
             String name = fontProgram.getFontNames().getFontName();
@@ -481,7 +485,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             getPdfObject().put(PdfName.DescendantFonts, new PdfArray(cidFont));
             fontDescriptor.flush();
             cidFont.flush();
-        } else if (cidFontType == CidFontType2) {
+        } else if (cidFontType == CID_FONT_TYPE_2) {
             TrueTypeFont ttf = (TrueTypeFont) getFontProgram();
             addRangeUni(ttf, longTag, true);
             int[][] metrics = longTag.values().toArray(new int[0][]);

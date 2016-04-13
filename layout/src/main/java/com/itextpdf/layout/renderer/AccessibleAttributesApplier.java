@@ -374,14 +374,14 @@ public class AccessibleAttributesApplier {
                         borderColors.add(new PdfArray(borders[i].getColor().getColorValue()));
                         atLeastOneRgb = true;
                     } else {
-                        borderColors.add(PdfNull.PdfNull);
+                        borderColors.add(PdfNull.PDF_NULL);
                     }
                     borderTypes.add(transformBorderTypeToName(borders[i].getType()));
                     borderWidths.add(new PdfNumber(borders[i].getWidth()));
                 } else {
-                    borderColors.add(PdfNull.PdfNull);
+                    borderColors.add(PdfNull.PDF_NULL);
                     borderTypes.add(PdfName.None);
-                    borderWidths.add(PdfNull.PdfNull);
+                    borderWidths.add(PdfNull.PDF_NULL);
                 }
             }
 

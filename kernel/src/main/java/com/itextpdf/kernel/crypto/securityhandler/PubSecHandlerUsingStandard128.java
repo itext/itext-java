@@ -81,7 +81,7 @@ public class PubSecHandlerUsingStandard128 extends PubSecHandlerUsingStandard40 
 
             PdfDictionary stdcf = new PdfDictionary();
             stdcf.put(PdfName.Recipients, recipients);
-            stdcf.put(PdfName.EncryptMetadata, PdfBoolean.PdfFalse);
+            stdcf.put(PdfName.EncryptMetadata, PdfBoolean.FALSE);
             stdcf.put(PdfName.CFM, PdfName.V2);
 
             PdfDictionary cf = new PdfDictionary();

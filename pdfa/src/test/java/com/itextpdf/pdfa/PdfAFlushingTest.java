@@ -36,7 +36,7 @@ public class PdfAFlushingTest extends ITextTest{
     static final public String destinationFolder = "./target/test/PdfAFlushingTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 

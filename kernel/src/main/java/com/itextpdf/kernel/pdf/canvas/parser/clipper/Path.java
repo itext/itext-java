@@ -260,7 +260,7 @@ public class Path extends ArrayList<Point.LongPoint> {
         }
     }
 
-    static protected class Maxima
+    protected static class Maxima
     {
         protected long X;
         protected Maxima Next;

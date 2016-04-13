@@ -231,7 +231,7 @@ public class PdfImageXObject extends PdfXObject {
 
 
         if (image.isMask() && (image.getBpc() == 1 || image.getBpc() > 0xff))
-            stream.put(PdfName.ImageMask, PdfBoolean.PdfTrue);
+            stream.put(PdfName.ImageMask, PdfBoolean.TRUE);
 
         if (imageMask != null) {
             if (imageMask.softMask)
@@ -254,7 +254,7 @@ public class PdfImageXObject extends PdfXObject {
         if (image.isMask() && image.isInverted())
             stream.put(PdfName.Decode, new PdfArray(new float[]{1, 0}));
         if (image.isInterpolation())
-            stream.put(PdfName.Interpolate, PdfBoolean.PdfTrue);
+            stream.put(PdfName.Interpolate, PdfBoolean.TRUE);
         // deal with transparency
         int[] transparency = image.getTransparency();
         if (transparency != null && !image.isMask() && imageMask == null) {

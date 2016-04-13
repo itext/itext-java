@@ -31,7 +31,7 @@ public class BarcodeDataMatrixTest {
 
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         File dir = new File(destinationFolder);
         dir.mkdirs();
         for (File file : dir.listFiles())

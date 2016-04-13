@@ -222,7 +222,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             return null;
         if (objectStream == null) {
             objectStream = new PdfObjectStream(document);
-        } else if (objectStream.getSize() == PdfObjectStream.maxObjStreamSize) {
+        } else if (objectStream.getSize() == PdfObjectStream.MAX_OBJ_STREAM_SIZE) {
             objectStream.flush();
             objectStream = new PdfObjectStream(objectStream);
         }
@@ -246,28 +246,28 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             indirectReference.setOffset(getCurrentPos());
             writeToBody(pdfObject);
         }
-        indirectReference.setState(PdfObject.Flushed);
-        indirectReference.clearState(PdfObject.MustBeFlushed);
+        indirectReference.setState(PdfObject.FLUSHED);
+        indirectReference.clearState(PdfObject.MUST_BE_FLUSHED);
         switch (pdfObject.getType()) {
-            case PdfObject.Boolean:
-            case PdfObject.Name:
-            case PdfObject.Null:
-            case PdfObject.Number:
-            case PdfObject.String:
+            case PdfObject.BOOLEAN:
+            case PdfObject.NAME:
+            case PdfObject.NULL:
+            case PdfObject.NUMBER:
+            case PdfObject.STRING:
                 ((PdfPrimitiveObject) pdfObject).content = null;
                 break;
-            case PdfObject.Array:
+            case PdfObject.ARRAY:
                 PdfArray array = ((PdfArray) pdfObject);
                 markArrayContentToFlush(array);
                 array.releaseContent();
                 break;
-            case PdfObject.Stream:
-            case PdfObject.Dictionary:
+            case PdfObject.STREAM:
+            case PdfObject.DICTIONARY:
                 PdfDictionary dictionary = ((PdfDictionary) pdfObject);
                 markDictionaryContentToFlush(dictionary);
                 dictionary.releaseContent();
                 break;
-            case PdfObject.IndirectReference:
+            case PdfObject.INDIRECT_REFERENCE:
                 markObjectToFlush(((PdfIndirectReference) pdfObject).getRefersTo(false));
         }
     }
@@ -288,17 +288,17 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         if (pdfObject != null) {
             PdfIndirectReference indirectReference = pdfObject.getIndirectReference();
             if (indirectReference != null) {
-                if (!indirectReference.checkState(PdfObject.Flushed)) {
-                    indirectReference.setState(PdfObject.MustBeFlushed);
+                if (!indirectReference.checkState(PdfObject.FLUSHED)) {
+                    indirectReference.setState(PdfObject.MUST_BE_FLUSHED);
                 }
             } else {
-                if (pdfObject.getType() == PdfObject.IndirectReference) {
-                    if (!pdfObject.checkState(PdfObject.Flushed)) {
-                        pdfObject.setState(PdfObject.MustBeFlushed);
+                if (pdfObject.getType() == PdfObject.INDIRECT_REFERENCE) {
+                    if (!pdfObject.checkState(PdfObject.FLUSHED)) {
+                        pdfObject.setState(PdfObject.MUST_BE_FLUSHED);
                     }
-                } else if (pdfObject.getType() == PdfObject.Array) {
+                } else if (pdfObject.getType() == PdfObject.ARRAY) {
                     markArrayContentToFlush((PdfArray) pdfObject);
-                } else if (pdfObject.getType() == PdfObject.Dictionary) {
+                } else if (pdfObject.getType() == PdfObject.DICTIONARY) {
                     markDictionaryContentToFlush((PdfDictionary) pdfObject);
                 }
             }
@@ -309,12 +309,12 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         if (object instanceof PdfIndirectReference)
             object = ((PdfIndirectReference) object).getRefersTo();
         if (object == null) {
-            object = PdfNull.PdfNull;
+            object = PdfNull.PDF_NULL;
         }
         if (checkTypeOfPdfDictionary(object, PdfName.Catalog)) {
             Logger logger = LoggerFactory.getLogger(PdfReader.class);
             logger.warn(LogMessageConstant.MAKE_COPY_OF_CATALOG_DICTIONARY_IS_FORBIDDEN);
-            object = PdfNull.PdfNull;
+            object = PdfNull.PDF_NULL;
         }
 
         PdfIndirectReference indirectReference = object.getIndirectReference();
@@ -389,7 +389,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             for (int i = 1; i < xref.size(); i++) {
                 PdfIndirectReference indirectReference = xref.get(i);
                 if (indirectReference != null
-                        && indirectReference.checkState(PdfObject.MustBeFlushed)) {
+                        && indirectReference.checkState(PdfObject.MUST_BE_FLUSHED)) {
                     PdfObject object = indirectReference.getRefersTo(false);
                     if (object != null) {
                         object.flush();

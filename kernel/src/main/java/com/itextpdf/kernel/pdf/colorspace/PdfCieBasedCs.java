@@ -188,7 +188,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace {
         }
     }
 
-    static public class IccBased extends PdfCieBasedCs {
+    public static class IccBased extends PdfCieBasedCs {
         
     	private static final long serialVersionUID = 3265273715107224067L;
 
@@ -220,7 +220,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace {
             return new float[getNumberOfComponents()];
         }
 
-        static public PdfStream getIccProfileStream(InputStream iccStream) {
+        public static PdfStream getIccProfileStream(InputStream iccStream) {
             IccProfile iccProfile = IccProfile.getInstance(iccStream);
             PdfStream stream = new PdfStream(iccProfile.getData());
             stream.put(PdfName.N, new PdfNumber(iccProfile.getNumComponents()));
@@ -240,7 +240,7 @@ abstract public class PdfCieBasedCs extends PdfColorSpace {
             return stream;
         }
 
-        static public PdfStream getIccProfileStream(InputStream iccStream, float[] range) {
+        public static PdfStream getIccProfileStream(InputStream iccStream, float[] range) {
             PdfStream stream = getIccProfileStream(iccStream);
             stream.put(PdfName.Range, new PdfArray(range));
             return stream;

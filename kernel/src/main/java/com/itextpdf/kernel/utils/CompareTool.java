@@ -100,12 +100,32 @@ public class CompareTool {
 
     private boolean encryptionCompareEnabled = false;
 
+    private boolean useCachedPagesForComparison = true;
 
     public CompareTool() {
         gsExec = System.getProperty("gsExec");
         compareExec = System.getProperty("compareExec");
     }
 
+    public CompareResult compareByCatalog(PdfDocument outDocument, PdfDocument cmpDocument) {
+        CompareResult compareResult = null;
+        try {
+            compareResult = new CompareResult(compareByContentErrorsLimit);
+            ObjectPath catalogPath = new ObjectPath(cmpDocument.getCatalog().getPdfObject().getIndirectReference(),
+                    outDocument.getCatalog().getPdfObject().getIndirectReference());
+            Set<PdfName> ignoredCatalogEntries = new LinkedHashSet<>(Arrays.asList(PdfName.Metadata, PdfName.AcroForm));
+            compareDictionariesExtended(outDocument.getCatalog().getPdfObject(), cmpDocument.getCatalog().getPdfObject(),
+                    catalogPath, compareResult, ignoredCatalogEntries);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return compareResult;
+    }
+
+    public CompareTool disableCachedPagesComparison() {
+        this.useCachedPagesForComparison = false;
+        return this;
+    }
 
     /**
      * Sets the maximum errors count which will be returned as the result of the comparison.
@@ -713,7 +733,7 @@ public class CompareTool {
                 }
             }
             if (currentPath != null)
-                currentPath.pushDictItemToPath(key.toString());
+                currentPath.pushDictItemToPath(key);
             dictsAreSame = compareObjects(outDict.get(key, false), cmpDict.get(key, false), currentPath, compareResult) && dictsAreSame;
             if (currentPath != null)
                 currentPath.pop();
@@ -757,7 +777,8 @@ public class CompareTool {
             currentPath = currentPath.resetDirectPath((PdfIndirectReference) cmpObj,(PdfIndirectReference) outObj);
         }
 
-        if (cmpDirectObj.isDictionary() && PdfName.Page.equals(((PdfDictionary) cmpDirectObj).getAsName(PdfName.Type))) {
+        if (cmpDirectObj.isDictionary() && PdfName.Page.equals(((PdfDictionary) cmpDirectObj).getAsName(PdfName.Type))
+                && useCachedPagesForComparison) {
             if (!outDirectObj.isDictionary() || !PdfName.Page.equals(((PdfDictionary)outDirectObj).getAsName(PdfName.Type))) {
                 if (compareResult != null && currentPath != null)
                     compareResult.addError(currentPath, "Expected a page. Found not a page.");
@@ -949,8 +970,8 @@ public class CompareTool {
         byte[] bytes;
         String value = pdfString.getValue();
         String encoding = pdfString.getEncoding();
-        if (encoding != null && encoding.equals(PdfEncodings.UnicodeBig) && PdfEncodings.isPdfDocEncoding(value))
-            bytes = PdfEncodings.convertToBytes(value, PdfEncodings.PdfDocEncoding);
+        if (encoding != null && encoding.equals(PdfEncodings.UNICODE_BIG) && PdfEncodings.isPdfDocEncoding(value))
+            bytes = PdfEncodings.convertToBytes(value, PdfEncodings.PDF_DOC_ENCODING);
         else
             bytes = PdfEncodings.convertToBytes(value, encoding);
         return bytes;
@@ -1008,15 +1029,15 @@ public class CompareTool {
                 Map<String, PdfObject> cmpNamedDestinations = cmpDocument.getCatalog().getNameTree(PdfName.Dests).getNames();
                 Map<String, PdfObject> outNamedDestinations = outDocument.getCatalog().getNameTree(PdfName.Dests).getNames();
                 switch (cmpDestObject.getType()) {
-                    case PdfObject.Array:
+                    case PdfObject.ARRAY:
                         explicitCmpDest = (PdfArray) cmpDestObject;
                         explicitOutDest = (PdfArray) outDestObject;
                         break;
-                    case PdfObject.Name:
+                    case PdfObject.NAME:
                         explicitCmpDest = (PdfArray) cmpNamedDestinations.get(cmpDestObject);
                         explicitOutDest = (PdfArray) outNamedDestinations.get(outDestObject);
                         break;
-                    case PdfObject.String:
+                    case PdfObject.STRING:
                         explicitCmpDest = (PdfArray) cmpNamedDestinations.get(((PdfString) cmpDestObject).toUnicodeString());
                         explicitOutDest = (PdfArray) outNamedDestinations.get(((PdfString) outDestObject).toUnicodeString());
                         break;
@@ -1053,11 +1074,11 @@ public class CompareTool {
                 return false;
 
             switch (cmpObj.getType()) {
-                case PdfObject.Null:
-                case PdfObject.Boolean:
-                case PdfObject.Number:
-                case PdfObject.String:
-                case PdfObject.Name:
+                case PdfObject.NULL:
+                case PdfObject.BOOLEAN:
+                case PdfObject.NUMBER:
+                case PdfObject.STRING:
+                case PdfObject.NAME:
                     if (!cmpObj.toString().equals(outObj.toString()))
                         return false;
                     break;
@@ -1137,7 +1158,7 @@ public class CompareTool {
         }
     }
 
-    private class CompareResult {
+    public class CompareResult {
         // LinkedHashMap to retain order. HashMap has different order in Java6/7 and Java8
         protected Map<ObjectPath, String> differences = new LinkedHashMap<>();
         protected int messageLimit = 1;
@@ -1165,6 +1186,10 @@ public class CompareTool {
                 firstEntry = false;
             }
             return sb.toString();
+        }
+
+        public Map<ObjectPath, String> getDifferences() {
+            return differences;
         }
 
         public void writeReportToXml(OutputStream stream) throws ParserConfigurationException, TransformerException {
@@ -1203,7 +1228,7 @@ public class CompareTool {
         }
     }
 
-    private class ObjectPath {
+    public class ObjectPath {
         protected PdfIndirectReference baseCmpObject;
         protected PdfIndirectReference baseOutObject;
         protected Stack<PathItem> path = new Stack<PathItem>();
@@ -1239,7 +1264,7 @@ public class CompareTool {
             path.add(new ArrayPathItem(index));
         }
 
-        public void pushDictItemToPath(String key) {
+        public void pushDictItemToPath(PdfName key) {
             path.add(new DictPathItem(key));
         }
 
@@ -1249,6 +1274,18 @@ public class CompareTool {
 
         public void pop() {
             path.pop();
+        }
+
+        public Stack<PathItem> getPath() {
+            return path;
+        }
+
+        public PdfIndirectReference getBaseCmpObject() {
+            return baseCmpObject;
+        }
+
+        public PdfIndirectReference getBaseOutObject() {
+            return baseOutObject;
         }
 
         public Node toXmlNode(Document document) {
@@ -1315,13 +1352,13 @@ public class CompareTool {
             }
         }
 
-        protected abstract class PathItem {
+        public abstract class PathItem {
             protected abstract Node toXmlNode(Document document);
         }
 
-        private class DictPathItem extends PathItem {
-            String key;
-            public DictPathItem(String key) {
+        public class DictPathItem extends PathItem {
+            PdfName key;
+            public DictPathItem(PdfName key) {
                 this.key = key;
             }
 
@@ -1343,12 +1380,16 @@ public class CompareTool {
             @Override
             protected Node toXmlNode(Document document) {
                 Node element = document.createElement("dictKey");
-                element.appendChild(document.createTextNode(key));
+                element.appendChild(document.createTextNode(key.toString()));
                 return element;
+            }
+
+            public PdfName getKey() {
+                return key;
             }
         }
 
-        private class ArrayPathItem extends PathItem {
+        public class ArrayPathItem extends PathItem {
             int index;
             public ArrayPathItem(int index) {
                 this.index = index;
@@ -1374,6 +1415,10 @@ public class CompareTool {
                 Node element = document.createElement("arrayIndex");
                 element.appendChild(document.createTextNode(String.valueOf(index)));
                 return element;
+            }
+
+            public int getIndex() {
+                return index;
             }
         }
 

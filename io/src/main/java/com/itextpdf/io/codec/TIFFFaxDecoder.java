@@ -101,7 +101,7 @@ public class TIFFFaxDecoder {
     };
 
     // Table to be used when fillOrder = 2, for flipping bytes.
-    static public byte flipTable[] = {
+    public static byte flipTable[] = {
             (byte) 0, (byte) -128, (byte) 64, (byte) -64, (byte) 32, (byte) -96, (byte) 96, (byte) -32,
             (byte) 16, (byte) -112, (byte) 80, (byte) -48, (byte) 48, (byte) -80, (byte) 112, (byte) -16,
             (byte) 8, (byte) -120, (byte) 72, (byte) -56, (byte) 40, (byte) -88, (byte) 104, (byte) -24,
@@ -404,7 +404,7 @@ public class TIFFFaxDecoder {
 //        (short)37897,  (short)38921,  (short)39945,  (short)40969
 //    };
     //replace with constants without overload
-    static public short additionalMakeup[] = {
+    public static short additionalMakeup[] = {
             28679,  28679,  31752,  -32759,
             -31735,  -30711,  -29687, -28663,
             29703,  29703, 30727, 30727,

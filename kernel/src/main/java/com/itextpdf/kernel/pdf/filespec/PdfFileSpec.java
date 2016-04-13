@@ -66,7 +66,7 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
         dict.put(PdfName.Type, PdfName.Filespec);
         dict.put(PdfName.F, new PdfString(filePath));
         dict.put(PdfName.UF, new PdfString(filePath, isUnicodeFileName
-                ? PdfEncodings.UnicodeBig : PdfEncodings.PdfDocEncoding));
+                ? PdfEncodings.UNICODE_BIG : PdfEncodings.PDF_DOC_ENCODING));
         return new PdfFileSpec(dict).makeIndirect(doc);
     }
 
@@ -117,7 +117,7 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
         }
         dict.put(PdfName.Type, PdfName.Filespec);
         dict.put(PdfName.F, new PdfString(fileDisplay));
-        dict.put(PdfName.UF, new PdfString(fileDisplay, isUnicodeFileName ? PdfEncodings.UnicodeBig : PdfEncodings.PdfDocEncoding));
+        dict.put(PdfName.UF, new PdfString(fileDisplay, isUnicodeFileName ? PdfEncodings.UNICODE_BIG : PdfEncodings.PDF_DOC_ENCODING));
 
         PdfDictionary ef = new PdfDictionary();
         ef.put(PdfName.F, stream);

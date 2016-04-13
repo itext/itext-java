@@ -33,7 +33,7 @@ public class PdfAFontTest {
     static final String outputDir = "./target/test/PdfAFontTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         new File(outputDir).mkdirs();
     }
 

@@ -56,11 +56,7 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.LineLayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
+import java.util.*;
 
 public class LineRenderer extends AbstractRenderer {
 
@@ -253,22 +249,67 @@ public class LineRenderer extends AbstractRenderer {
                     System.arraycopy(levels, 0, lineLevels, 0, lineGlyphs.size());
                 }
 
-                List<RendererGlyph> reorderedLine = TypographyUtils.reorderLine(lineGlyphs, lineLevels, levels);
+                int[] reorder = TypographyUtils.reorderLine(lineGlyphs, lineLevels, levels);
 
-                if (reorderedLine != null) {
+                if (reorder != null) {
                     children.clear();
                     int pos = 0;
-                    while (pos < reorderedLine.size()) {
-                        IRenderer renderer = reorderedLine.get(pos).renderer;
-                        children.add(new TextRenderer((TextRenderer) renderer));
+                    List<int[]> reversedRanges = new ArrayList<>();
+                    int initialPos = 0;
+                    boolean reversed = false;
+                    int offset = 0;
+                    while (pos < lineGlyphs.size()) {
+                        IRenderer renderer = lineGlyphs.get(pos).renderer;
+                        TextRenderer newRenderer = new TextRenderer((TextRenderer) renderer);
+                        newRenderer.deleteOwnProperty(Property.REVERSED);
+                        children.add(newRenderer);
                         ((TextRenderer) children.get(children.size() - 1)).line = new GlyphLine(((TextRenderer) children.get(children.size() - 1)).line);
                         GlyphLine gl = ((TextRenderer) children.get(children.size() - 1)).line;
                         List<Glyph> replacementGlyphs = new ArrayList<>();
-                        while (pos < reorderedLine.size() && reorderedLine.get(pos).renderer == renderer) {
-                            replacementGlyphs.add(reorderedLine.get(pos).glyph);
+                        while (pos < lineGlyphs.size() && lineGlyphs.get(pos).renderer == renderer) {
+                            if (pos < lineGlyphs.size() - 1) {
+                                if (reorder[pos] == reorder[pos + 1] + 1) {
+                                    reversed = true;
+                                } else {
+                                    if (reversed) {
+                                        List<int[]> reversedRange = new ArrayList<>();
+                                        reversedRange.add(new int[]{initialPos - offset, pos - offset});
+                                        newRenderer.setProperty(Property.REVERSED, reversedRange);
+                                        reversedRanges.add(new int[]{initialPos - offset, pos - offset});
+                                        reversed = false;
+                                    }
+                                    initialPos = pos + 1;
+                                }
+                            }
+
+                            replacementGlyphs.add(lineGlyphs.get(pos).glyph);
                             pos++;
                         }
+
+                        if (reversed) {
+                            List<int[]> reversedRange = new ArrayList<>();
+                            reversedRange.add(new int[]{initialPos - offset, pos - 1 - offset});
+                            newRenderer.setProperty(Property.REVERSED, reversedRange);
+                            reversedRanges.add(new int[]{initialPos - offset, pos - 1 - offset});
+                            reversed = false;
+                            initialPos = pos;
+                        }
+                        offset = initialPos;
                         gl.setGlyphs(replacementGlyphs);
+                    }
+                    if (reversed) {
+                        if (children.size() == 1) {
+                            offset = 0;
+                        }
+                        List<int[]> reversedRange = new ArrayList<>();
+                        reversedRange.add(new int[]{initialPos - offset, pos - offset - 1});
+                        lineGlyphs.get(pos - 1).renderer.setProperty(Property.REVERSED, reversedRange);
+                        reversedRanges.add(new int[]{initialPos - offset, pos - 1 - offset});
+                    }
+                    if (!reversedRanges.isEmpty()) {
+                        if (children.size() == 1) {
+                            lineGlyphs.get(0).renderer.setProperty(Property.REVERSED, reversedRanges);
+                        }
                     }
 
                     float currentXPos = layoutContext.getArea().getBBox().getLeft();

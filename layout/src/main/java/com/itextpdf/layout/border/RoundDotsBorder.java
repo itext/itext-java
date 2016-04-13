@@ -52,7 +52,7 @@ import com.itextpdf.kernel.color.Color;
  * Draws a border with rounded dots aroudn the element it's been set to. For square dots see {@link com.itextpdf.layout.border.DottedBorder}.
  */
 public class RoundDotsBorder extends Border {
-    private static final float gapModifier = 2.5f;
+    private static final float GAP_MODIFIER = 2.5f;
 
     /**
      * Creates a RoundDotsBorder with the specified wit?dth and sets the color to black.
@@ -80,7 +80,7 @@ public class RoundDotsBorder extends Border {
 
     @Override
     public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
-        float initialGap = width * gapModifier;
+        float initialGap = width * GAP_MODIFIER;
         float dx = x2 - x1;
         float dy = y2 - y1;
         double borderLength = Math.sqrt(dx * dx + dy * dy);
@@ -119,7 +119,7 @@ public class RoundDotsBorder extends Border {
 
     @Override
     public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
-        float initialGap = width * gapModifier;
+        float initialGap = width * GAP_MODIFIER;
         float dx = x2 - x1;
         float dy = y2 - y1;
         double borderLength = Math.sqrt(dx * dx + dy * dy);

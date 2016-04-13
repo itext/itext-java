@@ -5,10 +5,6 @@ import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,6 +12,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.*;
 
@@ -26,7 +27,7 @@ public class PdfStampingTest extends ExtendedITextTest {
     static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfStampingTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
@@ -1288,6 +1289,24 @@ public class PdfStampingTest extends ExtendedITextTest {
         assertPdfDoc.close();
     }
 
+    @Test
+    public void stampingAppendVersionTest01() throws IOException {
+        // There is a possibility to override version in stamping mode
+        String in = sourceFolder + "hello.pdf";
+        String out = destinationFolder + "stampingAppendVersionTest01.pdf";
+
+        FileInputStream fis = new FileInputStream(in);
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument pdfDoc = new PdfDocument(reader, new PdfWriter(out), true, PdfVersion.PDF_2_0);
+
+        assertEquals(PdfVersion.PDF_2_0, pdfDoc.getPdfVersion());
+
+        pdfDoc.close();
+
+        PdfDocument assertPdfDoc = new PdfDocument(new PdfReader(out));
+        assertEquals(PdfVersion.PDF_2_0, assertPdfDoc.getPdfVersion());
+        assertPdfDoc.close();
+    }
 
     @Test
     public void stampingTestWithTaggedStructure() throws IOException {
@@ -1321,7 +1340,7 @@ public class PdfStampingTest extends ExtendedITextTest {
     }
 
     static void verifyPdfPagesCount(PdfObject root) {
-        if (root.getType() == PdfObject.IndirectReference)
+        if (root.getType() == PdfObject.INDIRECT_REFERENCE)
             root = ((PdfIndirectReference) root).getRefersTo();
         PdfDictionary pages = (PdfDictionary) root;
         if (!pages.containsKey(PdfName.Kids)) return;
@@ -1330,7 +1349,7 @@ public class PdfStampingTest extends ExtendedITextTest {
             assertTrue("PdfPages with zero count", count.getIntValue() > 0);
         }
         PdfObject kids = pages.get(PdfName.Kids);
-        if (kids.getType() == PdfObject.Array) {
+        if (kids.getType() == PdfObject.ARRAY) {
             for (PdfObject kid : (PdfArray) kids) {
                 verifyPdfPagesCount(kid);
             }

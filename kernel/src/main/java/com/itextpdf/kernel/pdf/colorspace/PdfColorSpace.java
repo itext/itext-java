@@ -78,7 +78,7 @@ abstract public class PdfColorSpace extends PdfObjectWrapper<PdfObject> {
         }
     }
 
-    static public PdfColorSpace makeColorSpace(PdfObject pdfObject) {
+    public static PdfColorSpace makeColorSpace(PdfObject pdfObject) {
         if (pdfObject.isIndirectReference())
             pdfObject = ((PdfIndirectReference) pdfObject).getRefersTo();
         if (PdfName.DeviceGray.equals(pdfObject))

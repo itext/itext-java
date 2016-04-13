@@ -53,8 +53,9 @@ import com.itextpdf.kernel.color.DeviceRgb;
 /**
  * Represents a border that is displayed using a 3D effect.
  */
-public abstract class Border3D extends Border{
-    public static final DeviceRgb gray = new DeviceRgb(212, 208, 200);
+public abstract class Border3D extends Border {
+
+    private static final DeviceRgb GRAY = new DeviceRgb(212, 208, 200);
 
     /**
      * Creates a Border3D instance with the specified width. Also sets the color to gray.
@@ -62,7 +63,7 @@ public abstract class Border3D extends Border{
      * @param width with of the border
      */
     public Border3D(float width) {
-        this(gray, width);
+        this(GRAY, width);
     }
 
     /**
@@ -179,11 +180,11 @@ public abstract class Border3D extends Border{
 
     protected Color getDarkerColor() {
         if (color instanceof DeviceRgb)
-            return DeviceRgb.makeDarker((DeviceRgb)color);
+            return DeviceRgb.makeDarker((DeviceRgb) color);
         else if (color instanceof DeviceCmyk)
-            return DeviceCmyk.makeDarker((DeviceCmyk)color);
+            return DeviceCmyk.makeDarker((DeviceCmyk) color);
         else if (color instanceof DeviceGray)
-            return DeviceGray.makeDarker((DeviceGray)color);
+            return DeviceGray.makeDarker((DeviceGray) color);
 
         return color;
     }

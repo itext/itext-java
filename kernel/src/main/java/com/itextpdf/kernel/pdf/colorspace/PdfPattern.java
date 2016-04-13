@@ -91,14 +91,14 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         private PdfResources resources = null;
 
         public static class PaintType {
-            public static final int Colored = 1;
-            public static final int Uncolored = 2;
+            public static final int COLORED = 1;
+            public static final int UNCOLORED = 2;
         }
 
         public static class TilingType {
-            public static final int ConstantSpacing = 1;
-            public static final int NoDistortion = 2;
-            public static final int ConstantSpacingAndFasterTiling = 3;
+            public static final int CONSTANT_SPACING = 1;
+            public static final int NO_DISTORTION = 2;
+            public static final int CONSTANT_SPACING_AND_FASTER_TILING = 3;
         }
 
         public Tiling(PdfStream pdfObject) {
@@ -137,8 +137,8 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
             super(new PdfStream());
             getPdfObject().put(PdfName.Type, PdfName.Pattern);
             getPdfObject().put(PdfName.PatternType, new PdfNumber(1));
-            getPdfObject().put(PdfName.PaintType, new PdfNumber(colored ? PaintType.Colored : PaintType.Uncolored));
-            getPdfObject().put(PdfName.TilingType, new PdfNumber(TilingType.ConstantSpacing));
+            getPdfObject().put(PdfName.PaintType, new PdfNumber(colored ? PaintType.COLORED : PaintType.UNCOLORED));
+            getPdfObject().put(PdfName.TilingType, new PdfNumber(TilingType.CONSTANT_SPACING));
             getPdfObject().put(PdfName.BBox, new PdfArray(bbox));
             getPdfObject().put(PdfName.XStep, new PdfNumber(xStep));
             getPdfObject().put(PdfName.YStep, new PdfNumber(yStep));
@@ -147,11 +147,11 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public boolean isColored() {
-            return getPdfObject().getAsNumber(PdfName.PaintType).getIntValue() == PaintType.Colored;
+            return getPdfObject().getAsNumber(PdfName.PaintType).getIntValue() == PaintType.COLORED;
         }
 
         public void setColored(boolean colored) {
-            getPdfObject().put(PdfName.PaintType, new PdfNumber(colored ? PaintType.Colored : PaintType.Uncolored));
+            getPdfObject().put(PdfName.PaintType, new PdfNumber(colored ? PaintType.COLORED : PaintType.UNCOLORED));
             setModified();
         }
 
@@ -160,8 +160,8 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public void setTilingType(int tilingType) {
-            if (tilingType != TilingType.ConstantSpacing && tilingType != TilingType.NoDistortion &&
-                    tilingType != TilingType.ConstantSpacingAndFasterTiling)
+            if (tilingType != TilingType.CONSTANT_SPACING && tilingType != TilingType.NO_DISTORTION &&
+                    tilingType != TilingType.CONSTANT_SPACING_AND_FASTER_TILING)
                 throw new IllegalArgumentException("tilingType");
             getPdfObject().put(PdfName.TilingType, new PdfNumber(tilingType));
             setModified();

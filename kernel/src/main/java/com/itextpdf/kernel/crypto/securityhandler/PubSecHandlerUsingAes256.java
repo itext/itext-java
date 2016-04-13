@@ -84,7 +84,7 @@ public class PubSecHandlerUsingAes256 extends PubSecHandlerUsingAes128 {
         PdfDictionary stdcf = new PdfDictionary();
         stdcf.put(PdfName.Recipients, recipients);
         if (!encryptMetadata)
-            stdcf.put(PdfName.EncryptMetadata, PdfBoolean.PdfFalse);
+            stdcf.put(PdfName.EncryptMetadata, PdfBoolean.FALSE);
         stdcf.put(PdfName.CFM, PdfName.AESV3);
         PdfDictionary cf = new PdfDictionary();
         cf.put(PdfName.DefaultCryptFilter, stdcf);

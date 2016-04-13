@@ -234,6 +234,11 @@ public class ImageRenderer extends AbstractRenderer {
         if (width > area.getBBox().getWidth()) {
             setProperty(Property.HEIGHT, area.getBBox().getWidth() / width * imageHeight);
             setProperty(Property.WIDTH, Property.UnitValue.createPointValue(area.getBBox().getWidth()));
+            // if still image is not scaled properly
+            if (getPropertyAsFloat(Property.HEIGHT) > area.getBBox().getHeight()) {
+                setProperty(Property.WIDTH, Property.UnitValue.createPointValue(area.getBBox().getHeight() / getPropertyAsFloat(Property.HEIGHT) * ((Property.UnitValue)getProperty(Property.WIDTH)).getValue()));
+                setProperty(Property.HEIGHT, Property.UnitValue.createPointValue(area.getBBox().getHeight()));
+            }
         }
 
         return this;
@@ -307,10 +312,10 @@ public class ImageRenderer extends AbstractRenderer {
         t.translate(xDistance, yDistance);
         t.getMatrix(matrix);
         if (fixedXPosition != null) {
-            fixedXPosition += t.getTranslateX();
+            fixedXPosition += (float)t.getTranslateX();
         }
         if (fixedYPosition != null) {
-            fixedYPosition += t.getTranslateY();
+            fixedYPosition += (float)t.getTranslateY();
         }
     }
 }

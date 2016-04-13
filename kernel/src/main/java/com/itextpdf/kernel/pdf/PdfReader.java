@@ -305,7 +305,7 @@ public class PdfReader implements Closeable, Serializable {
                 if (filter != null) {
                     if (PdfName.Crypt.equals(filter)) {
                         skip = true;
-                    } else if (filter.getType() == PdfObject.Array) {
+                    } else if (filter.getType() == PdfObject.ARRAY) {
                         PdfArray filters = (PdfArray) filter;
                         for (int k = 0; k < filters.size(); k++) {
                             if (!filters.isEmpty() && PdfName.Crypt.equals(filters.get(k, true))) {
@@ -372,22 +372,22 @@ public class PdfReader implements Closeable, Serializable {
         PdfObject filter = streamDictionary.get(PdfName.Filter);
         PdfArray filters = new PdfArray();
         if (filter != null) {
-            if (filter.getType() == PdfObject.Name) {
+            if (filter.getType() == PdfObject.NAME) {
                 filters.add(filter);
-            } else if (filter.getType() == PdfObject.Array) {
+            } else if (filter.getType() == PdfObject.ARRAY) {
                 filters = ((PdfArray) filter);
             }
         }
         PdfArray dp = new PdfArray();
         PdfObject dpo = streamDictionary.get(PdfName.DecodeParms);
-        if (dpo == null || (dpo.getType() != PdfObject.Dictionary && dpo.getType() != PdfObject.Array)) {
+        if (dpo == null || (dpo.getType() != PdfObject.DICTIONARY && dpo.getType() != PdfObject.ARRAY)) {
             if (dpo != null) dpo.release();
             dpo = streamDictionary.get(PdfName.DP);
         }
         if (dpo != null) {
-            if (dpo.getType() == PdfObject.Dictionary) {
+            if (dpo.getType() == PdfObject.DICTIONARY) {
                 dp.add(dpo);
-            } else if (dpo.getType() == PdfObject.Array) {
+            } else if (dpo.getType() == PdfObject.ARRAY) {
                 dp = ((PdfArray) dpo);
             }
             dpo.release();
@@ -402,9 +402,9 @@ public class PdfReader implements Closeable, Serializable {
             PdfDictionary decodeParams;
             if (j < dp.size()) {
                 PdfObject dpEntry = dp.get(j, true);
-                if (dpEntry == null || dpEntry.getType() == PdfObject.Null) {
+                if (dpEntry == null || dpEntry.getType() == PdfObject.NULL) {
                     decodeParams = null;
-                } else if (dpEntry.getType() == PdfObject.Dictionary) {
+                } else if (dpEntry.getType() == PdfObject.DICTIONARY) {
                     decodeParams = (PdfDictionary) dpEntry;
                 } else {
                     throw new PdfException(PdfException.DecodeParameterType1IsNotSupported).setMessageParams(dpEntry.getClass().toString()); //TODO replace with some kind of UnsupportedException
@@ -545,7 +545,7 @@ public class PdfReader implements Closeable, Serializable {
                     obj.setIndirectReference(reference);
                 }
             }
-            objectStream.getIndirectReference().setState(PdfObject.OriginalObjectStream);
+            objectStream.getIndirectReference().setState(PdfObject.ORIGINAL_OBJECT_STREAM);
         } finally {
             tokens = saveTokens;
         }
@@ -608,7 +608,7 @@ public class PdfReader implements Closeable, Serializable {
                 PdfIndirectReference reference = table.get(num);
                 if (reference != null) {
                     if (reference.isFree()) {
-                        return PdfNull.PdfNull;
+                        return PdfNull.PDF_NULL;
                     }
                     if (reference.getGenNumber() != tokens.getGenNr()) {
                         if (fixedXref) {
@@ -622,7 +622,7 @@ public class PdfReader implements Closeable, Serializable {
                     return reference;
                 } else {
                     PdfIndirectReference ref = new PdfIndirectReference(pdfDocument,
-                            num, tokens.getGenNr(), 0).setState(PdfObject.Reading);
+                            num, tokens.getGenNr(), 0).setState(PdfObject.READING);
                     table.add(ref);
                     return ref;
                 }
@@ -631,19 +631,19 @@ public class PdfReader implements Closeable, Serializable {
             default:
                 if (tokens.tokenValueEqualsTo(PdfTokenizer.Null)) {
                     if (readAsDirect) {
-                        return PdfNull.PdfNull;
+                        return PdfNull.PDF_NULL;
                     } else {
                         return new PdfNull();
                     }
                 } else if (tokens.tokenValueEqualsTo(PdfTokenizer.True)) {
                     if (readAsDirect) {
-                        return PdfBoolean.PdfTrue;
+                        return PdfBoolean.TRUE;
                     } else {
                         return new PdfBoolean(true);
                     }
                 } else if (tokens.tokenValueEqualsTo(PdfTokenizer.False)) {
                     if (readAsDirect) {
-                        return PdfBoolean.PdfFalse;
+                        return PdfBoolean.FALSE;
                     } else {
                         return new PdfBoolean(false);
                     }
@@ -768,9 +768,9 @@ public class PdfReader implements Closeable, Serializable {
                 PdfIndirectReference reference = xref.get(num);
                 if (reference == null) {
                     reference = new PdfIndirectReference(pdfDocument, num, gen, pos);
-                } else if (reference.checkState(PdfObject.Reading) && reference.getGenNumber() == gen) {
+                } else if (reference.checkState(PdfObject.READING) && reference.getGenNumber() == gen) {
                     reference.setOffset(pos);
-                    reference.clearState(PdfObject.Reading);
+                    reference.clearState(PdfObject.READING);
                 } else {
                     continue;
                 }
@@ -796,7 +796,7 @@ public class PdfReader implements Closeable, Serializable {
         }
 
         PdfObject xrs = trailer.get(PdfName.XRefStm);
-        if (xrs != null && xrs.getType() == PdfObject.Number) {
+        if (xrs != null && xrs.getType() == PdfObject.NUMBER) {
             int loc = ((PdfNumber) xrs).getIntValue();
             try {
                 readXrefStream(loc);
@@ -827,7 +827,7 @@ public class PdfReader implements Closeable, Serializable {
         PdfXrefTable xref = pdfDocument.getXref();
         PdfObject object = readObject(false);
         PdfStream xrefStream;
-        if (object.getType() == PdfObject.Stream) {
+        if (object.getType() == PdfObject.STREAM) {
             xrefStream = (PdfStream) object;
             if (!PdfName.XRef.equals(xrefStream.get(PdfName.Type))) {
                 return false;
@@ -911,13 +911,13 @@ public class PdfReader implements Closeable, Serializable {
                 }
                 if (xref.get(base) == null) {
                     xref.add(newReference);
-                } else if (xref.get(base).checkState(PdfObject.Reading)
+                } else if (xref.get(base).checkState(PdfObject.READING)
                         && xref.get(base).getObjNumber() == newReference.getObjNumber()
                         && xref.get(base).getGenNumber() == newReference.getGenNumber()) {
                     PdfIndirectReference reference = xref.get(base);
                     reference.setOffset(newReference.getOffset());
                     reference.setObjStreamNumber(newReference.getObjStreamNumber());
-                    reference.clearState(PdfObject.Reading);
+                    reference.clearState(PdfObject.READING);
                 }
                 ++start;
             }

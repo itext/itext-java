@@ -766,7 +766,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public <T extends PdfFormField> T setValue(String value, boolean generateAppearance) {
         PdfName formType = getFormType();
         if (PdfName.Tx.equals(formType) || PdfName.Ch.equals(formType)) {
-            put(PdfName.V, new PdfString(value, PdfEncodings.UnicodeBig));
+            put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
         } else if (PdfName.Btn.equals(formType)) {
             if ((getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
                 try {
@@ -784,7 +784,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
         } else {
-            put(PdfName.V, new PdfString(value, PdfEncodings.UnicodeBig));
+            put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
         }
 
         if (PdfName.Btn.equals(formType) && (getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) == 0) {
@@ -833,7 +833,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         appearance.getResources().addFont(getDocument(), font);
         PdfDictionary ap = new PdfDictionary();
         ap.put(PdfName.N, appearance.getPdfObject());
-        getPdfObject().put(PdfName.V, new PdfString(value, PdfEncodings.UnicodeBig));
+        getPdfObject().put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
 
         return put(PdfName.AP, ap);
     }
@@ -855,7 +855,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         setValue(display, true);
         PdfName formType = getFormType();
         if (PdfName.Tx.equals(formType) || PdfName.Ch.equals(formType)) {
-            put(PdfName.V, new PdfString(value, PdfEncodings.UnicodeBig));
+            put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
         } else if (PdfName.Btn.equals(formType)) {
             if ((getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
                 text = value;
@@ -863,7 +863,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 put(PdfName.V, new PdfName(value));
             }
         } else {
-            put(PdfName.V, new PdfString(value, PdfEncodings.UnicodeBig));
+            put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
         }
 
         return (T) this;
@@ -1458,15 +1458,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public <T extends PdfFormField> T setVisibility(int visibility) {
         switch (visibility) {
             case HIDDEN:
-                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.Print | PdfAnnotation.Hidden));
+                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT | PdfAnnotation.HIDDEN));
                 break;
             case VISIBLE_BUT_DOES_NOT_PRINT:
                 break;
             case HIDDEN_BUT_PRINTABLE:
-                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.Print | PdfAnnotation.NoView));
+                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT | PdfAnnotation.NO_VIEW));
                 break;
             default:
-                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.Print));
+                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT));
                 break;
         }
         return (T) this;

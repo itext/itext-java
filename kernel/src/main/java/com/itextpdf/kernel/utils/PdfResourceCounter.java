@@ -101,7 +101,7 @@ public class PdfResourceCounter {
      */
     protected final void loopOver(PdfObject obj) {
         switch (obj.getType()) {
-            case PdfObject.Array:
+            case PdfObject.ARRAY:
                 PdfArray array = (PdfArray) obj;
 
                 for (int i = 0; i < array.size(); i++) {
@@ -109,8 +109,8 @@ public class PdfResourceCounter {
                 }
 
                 break;
-            case PdfObject.Dictionary:
-            case PdfObject.Stream:
+            case PdfObject.DICTIONARY:
+            case PdfObject.STREAM:
                 PdfDictionary dict = (PdfDictionary) obj;
 
                 if (PdfName.Pages.equals(dict.get(PdfName.Type))) {

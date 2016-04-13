@@ -75,7 +75,7 @@ public class PdfStream extends PdfDictionary {
      */
     public PdfStream(byte[] bytes, int compressionLevel) {
         super();
-        setState(MustBeIndirect);
+        setState(MUST_BE_INDIRECT);
         this.compressionLevel = compressionLevel;
         if (bytes != null && bytes.length > 0) {
             this.outputStream = new PdfOutputStream(new ByteArrayOutputStream(bytes.length));
@@ -206,7 +206,7 @@ public class PdfStream extends PdfDictionary {
 
     @Override
     public byte getType() {
-        return Stream;
+        return STREAM;
     }
 
     public int getLength() {

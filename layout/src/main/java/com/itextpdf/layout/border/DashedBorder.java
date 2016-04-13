@@ -52,8 +52,8 @@ import com.itextpdf.kernel.color.Color;
  */
 public class DashedBorder extends Border {
 
-    private static final float dashModifier = 5f;
-    private static final float gapModifier = 3.5f;
+    private static final float DASH_MODIFIER = 5f;
+    private static final float GAP_MODIFIER = 3.5f;
 
     /**
      * Creates a DashedBorder with the specified width and sets the color to black.
@@ -81,8 +81,8 @@ public class DashedBorder extends Border {
 
     @Override
     public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
-        float initialGap = width * gapModifier;
-        float dash = width * dashModifier;
+        float initialGap = width * GAP_MODIFIER;
+        float dash = width * DASH_MODIFIER;
         float dx = x2 - x1;
         float dy = y2 - y1;
         double borderLength = Math.sqrt(dx * dx + dy * dy);
@@ -124,8 +124,8 @@ public class DashedBorder extends Border {
 
     @Override
     public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
-        float initialGap = width * gapModifier;
-        float dash = width * dashModifier;
+        float initialGap = width * GAP_MODIFIER;
+        float dash = width * DASH_MODIFIER;
         float dx = x2 - x1;
         float dy = y2 - y1;
         double borderLength = Math.sqrt(dx * dx + dy * dy);

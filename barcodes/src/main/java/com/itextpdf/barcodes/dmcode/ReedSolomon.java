@@ -218,7 +218,7 @@ final public  class ReedSolomon {
         }
     }
 
-    static public void generateECC(byte[] wd, int nd, int datablock, int nc) {
+    public static void generateECC(byte[] wd, int nd, int datablock, int nc) {
         int blocks = (nd + 2) / datablock;
         int b;
         byte[] buf = new byte[256];

@@ -29,7 +29,7 @@ public class PdfA1CanvasCheckTest {
     static final public String destinationFolder = "./target/test/PdfA1CanvasCheckTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         new File(destinationFolder).mkdirs();
     }
 

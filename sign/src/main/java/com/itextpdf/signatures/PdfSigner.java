@@ -794,7 +794,7 @@ public class PdfSigner {
                 flags = ((PdfNumber) obj).getIntValue();
             }
 
-            flags |= PdfAnnotation.Locked;
+            flags |= PdfAnnotation.LOCKED;
             sigField.put(PdfName.F, new PdfNumber(flags));
             PdfDictionary ap = new PdfDictionary();
             ap.put(PdfName.N, appearance.getAppearance().getPdfObject());
@@ -802,7 +802,7 @@ public class PdfSigner {
             sigField.setModified();
         } else {
             PdfWidgetAnnotation widget = new PdfWidgetAnnotation(appearance.getPageRect());
-            widget.setFlags(PdfAnnotation.Print | PdfAnnotation.Locked);
+            widget.setFlags(PdfAnnotation.PRINT | PdfAnnotation.LOCKED);
 
             PdfSignatureFormField sigField = PdfFormField.createSignature(document);
             sigField.setFieldName(name);
@@ -1012,7 +1012,7 @@ public class PdfSigner {
         reference.put(PdfName.TransformMethod, PdfName.DocMDP);
         reference.put(PdfName.Type, PdfName.SigRef);
         reference.put(PdfName.TransformParams, transformParams);
-        if (document.getPdfVersion().compareTo(PdfVersion.PDF_1_6) < 0) { // TODO: refactor
+        if (document.getPdfVersion().compareTo(PdfVersion.PDF_1_6) < 0) {
             reference.put(new PdfName("DigestValue"), new PdfString("aa"));
             PdfArray loc = new PdfArray();
             loc.add(new PdfNumber(0));

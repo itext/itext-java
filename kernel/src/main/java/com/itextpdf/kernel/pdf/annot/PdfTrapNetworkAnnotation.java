@@ -66,7 +66,7 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
             throw new PdfException("Process color model must be set in appearance stream for Trap Network annotation!");
         }
         setNormalAppearance(appearanceStream.getPdfObject());
-        setFlags(PdfAnnotation.Print | PdfAnnotation.ReadOnly);
+        setFlags(PdfAnnotation.PRINT | PdfAnnotation.READ_ONLY);
     }
 
     public PdfTrapNetworkAnnotation(PdfDictionary pdfObject) {

@@ -107,6 +107,7 @@ public enum Property {
     PADDING_TOP,
     PAGE_NUMBER,
     POSITION,
+    REVERSED,
     RIGHT,
     ROTATION_ANGLE,
     ROTATION_INITIAL_HEIGHT,

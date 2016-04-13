@@ -66,7 +66,7 @@ public class PdfTransparencyGroup extends PdfObjectWrapper<PdfDictionary> {
      */
     public void setIsolated(boolean isolated) {
         if (isolated) {
-            getPdfObject().put(PdfName.I, PdfBoolean.PdfTrue);
+            getPdfObject().put(PdfName.I, PdfBoolean.TRUE);
         } else {
             getPdfObject().remove(PdfName.I);
         }
@@ -78,7 +78,7 @@ public class PdfTransparencyGroup extends PdfObjectWrapper<PdfDictionary> {
      */
     public void setKnockout(boolean knockout) {
         if (knockout) {
-            getPdfObject().put(PdfName.K, PdfBoolean.PdfTrue);
+            getPdfObject().put(PdfName.K, PdfBoolean.TRUE);
         } else {
             getPdfObject().remove(PdfName.K);
         }

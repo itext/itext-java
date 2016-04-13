@@ -50,7 +50,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
 
     private static final long serialVersionUID = -8293603068792908601L;
 
-	private static final int LengthOfIndirectsChain = 31;
+	private static final int LENGTH_OF_INDIRECTS_CHAIN = 31;
 
     /**
      * Object number.
@@ -124,13 +124,13 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      */
     public PdfObject getRefersTo(boolean recursively) {
         if (!recursively) {
-            if (refersTo == null && !checkState(Flushed) && !checkState(Modified) && getReader() != null) {
+            if (refersTo == null && !checkState(FLUSHED) && !checkState(MODIFIED) && getReader() != null) {
                 refersTo = getReader().readObject(this);
             }
             return refersTo;
         } else {
             PdfObject currentRefersTo = getRefersTo(false);
-            for (int i = 0; i < LengthOfIndirectsChain; i++) {
+            for (int i = 0; i < LENGTH_OF_INDIRECTS_CHAIN; i++) {
                 if (currentRefersTo instanceof PdfIndirectReference)
                     currentRefersTo = ((PdfIndirectReference) currentRefersTo).getRefersTo(false);
                 else
@@ -195,7 +195,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
 
     @Override
     public byte getType() {
-        return IndirectReference;
+        return INDIRECT_REFERENCE;
     }
 
     public PdfDocument getDocument() {
@@ -227,28 +227,28 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     @Override
     public String toString() {
         StringBuilder states = new StringBuilder(" ");
-        if (checkState(Free)) {
+        if (checkState(FREE)) {
             states.append("Free; ");
         }
-        if (checkState(Modified)) {
+        if (checkState(MODIFIED)) {
             states.append("Modified; ");
         }
-        if (checkState(MustBeFlushed)) {
+        if (checkState(MUST_BE_FLUSHED)) {
             states.append("MustBeFlushed; ");
         }
-        if (checkState(Reading)) {
+        if (checkState(READING)) {
             states.append("Reading; ");
         }
-        if (checkState(Flushed)) {
+        if (checkState(FLUSHED)) {
             states.append("Flushed; ");
         }
-        if (checkState(OriginalObjectStream)) {
+        if (checkState(ORIGINAL_OBJECT_STREAM)) {
             states.append("OriginalObjectStream; ");
         }
-        if (checkState(ForbidRelease)) {
+        if (checkState(FORBID_RELEASE)) {
             states.append("ForbidRelease; ");
         }
-        if (checkState(ReadOnly)) {
+        if (checkState(READ_ONLY)) {
             states.append("ReadOnly; ");
         }
         return MessageFormat.format("{0} {1} R{2}", getObjNumber(), getGenNumber(), states.substring(0, states.length() - 1));
@@ -278,7 +278,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     // so information about this reference would not be added to the new Cross-Reference table.
     // In stamp mode without append the reference will be free.
     protected boolean isFree() {
-        return checkState(Free) || checkState(OriginalObjectStream);
+        return checkState(FREE) || checkState(ORIGINAL_OBJECT_STREAM);
     }
 
     /**
@@ -295,7 +295,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
 
     @Override
     protected PdfObject newInstance() {
-        return PdfNull.PdfNull;
+        return PdfNull.PDF_NULL;
     }
 
     @Override

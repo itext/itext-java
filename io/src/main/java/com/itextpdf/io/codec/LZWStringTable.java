@@ -166,7 +166,7 @@ public class LZWStringTable {
         }
     }
 
-    static public int Hash(short index, byte lastbyte) {
+    public static int Hash(short index, byte lastbyte) {
         return (((short) (lastbyte << 8) ^ index) & 0xFFFF) % HASHSIZE;
     }
 

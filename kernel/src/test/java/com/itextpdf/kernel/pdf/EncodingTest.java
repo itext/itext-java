@@ -25,7 +25,7 @@ public class EncodingTest {
     static final public String outputFolder = "./target/test/com/itextpdf/kernel/pdf/EncodingTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         new File(outputFolder).mkdirs();
     }
 

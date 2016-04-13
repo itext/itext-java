@@ -414,7 +414,7 @@ public class TIFFFaxDecompressor {
 //        (short)37897,  (short)38921,  (short)39945,  (short)40969
 //    };
     //replace with constants without overload
-    static public short additionalMakeup[] = {
+    public static short additionalMakeup[] = {
             28679,  28679,  31752,  -32759,
             -31735,  -30711,  -29687, -28663,
             29703,  29703, 30727, 30727,

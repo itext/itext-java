@@ -123,7 +123,7 @@ public class PdfString extends PdfPrimitiveObject {
 
     @Override
     public byte getType() {
-        return String;
+        return STRING;
     }
 
     public boolean isHexWriting() {
@@ -175,9 +175,9 @@ public class PdfString extends PdfPrimitiveObject {
 
         byte[] b = PdfTokenizer.decodeStringContent(content, hexWriting);
         if (b.length >= 2 && b[0] == -2 && b[1] == -1) {
-            return PdfEncodings.convertToString(b, PdfEncodings.UnicodeBig);
+            return PdfEncodings.convertToString(b, PdfEncodings.UNICODE_BIG);
         } else {
-            return PdfEncodings.convertToString(b, PdfEncodings.PdfDocEncoding);
+            return PdfEncodings.convertToString(b, PdfEncodings.PDF_DOC_ENCODING);
         }
     }
 
@@ -190,8 +190,8 @@ public class PdfString extends PdfPrimitiveObject {
     public byte[] getValueBytes() {
         if (value == null)
             generateValue();
-        if (encoding != null && encoding.equals(PdfEncodings.UnicodeBig) && PdfEncodings.isPdfDocEncoding(value))
-            return PdfEncodings.convertToBytes(value, PdfEncodings.PdfDocEncoding);
+        if (encoding != null && encoding.equals(PdfEncodings.UNICODE_BIG) && PdfEncodings.isPdfDocEncoding(value))
+            return PdfEncodings.convertToBytes(value, PdfEncodings.PDF_DOC_ENCODING);
         else
             return PdfEncodings.convertToBytes(value, encoding);
     }

@@ -56,7 +56,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfAnnotationTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
@@ -1053,7 +1053,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         canvas.release();
 
         watermark.setNormalAppearance(form.getPdfObject());
-        watermark.setFlags(PdfAnnotation.Print);
+        watermark.setFlags(PdfAnnotation.PRINT);
 
         page1.addAnnotation(watermark);
         page1.flush();

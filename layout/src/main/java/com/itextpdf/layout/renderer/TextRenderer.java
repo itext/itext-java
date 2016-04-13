@@ -56,6 +56,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
+import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
@@ -71,10 +72,7 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
@@ -533,14 +531,25 @@ public class TextRenderer extends AbstractRenderer {
             if (horizontalScaling != null && horizontalScaling != 1)
                 canvas.setHorizontalScaling(horizontalScaling * 100);
 
-            GlyphLine output = line.filter(new GlyphLine.GlyphLineFilter() {
-                @Override
-                public boolean accept(Glyph glyph) {
-                    return !noPrint(glyph);
-                }
-            });
+            //We should mark a RTL written text
+            Map<GlyphLine, Boolean> outputs = getOutputChunks();
 
-            canvas.showText(output);
+            for (Map.Entry<GlyphLine, Boolean> output : outputs.entrySet()) {
+                GlyphLine o = output.getKey().filter(new GlyphLine.GlyphLineFilter() {
+                    @Override
+                    public boolean accept(Glyph glyph) {
+                        return !noPrint(glyph);
+                    }
+                });
+
+                if (output.getValue()) {
+                    canvas.openTag(new CanvasTag(PdfName.ReversedChars));
+                }
+                canvas.showText(o);
+                if (output.getValue()) {
+                    canvas.closeTag();
+                }
+            }
             canvas.endText().restoreState();
             if (isTagged || isArtifact) {
                 canvas.closeTag();
@@ -850,6 +859,36 @@ public class TextRenderer extends AbstractRenderer {
     protected float calculateLineWidth() {
         return getGlyphLineWidth(line, getPropertyAsFloat(Property.FONT_SIZE), getPropertyAsFloat(Property.HORIZONTAL_SCALING),
                 getPropertyAsFloat(Property.CHARACTER_SPACING), getPropertyAsFloat(Property.WORD_SPACING));
+    }
+
+    /**
+     * This method return a LinkedHashMap with glyphlines as its keys. Values are boolean flags indicating if a
+     * glyphline is written in a reversed order (right to left text).
+     * @return
+     */
+    private Map<GlyphLine, Boolean> getOutputChunks() {
+        List<int[]> reversedRange = getProperty(Property.REVERSED);
+        Map<GlyphLine, Boolean> outputs = new LinkedHashMap<>();
+        if (reversedRange != null) {
+            if (reversedRange.get(0)[0] > 0) {
+                outputs.put(line.copy(0, reversedRange.get(0)[0]), false);
+            }
+            for(int i = 0; i < reversedRange.size(); i++) {
+                int[] range = reversedRange.get(i);
+                outputs.put(line.copy(range[0], range[1] + 1), true);
+                if (i != reversedRange.size() - 1) {
+                    outputs.put(line.copy(range[1] + 1, reversedRange.get(i + 1)[0]), false);
+                }
+            }
+            int lastIndex = reversedRange.get(reversedRange.size() - 1)[1];
+            if (lastIndex < line.size()) {
+                outputs.put(line.copy(lastIndex + 1, line.size()), false);
+            }
+        } else {
+            outputs.put(line, false);
+        }
+
+        return outputs;
     }
 
     private static boolean noPrint(Glyph g) {

@@ -185,15 +185,6 @@ public class TableRenderer extends AbstractRenderer {
         int[] targetOverflowRowIndex = new int[tableModel.getNumberOfColumns()];
 
         horizontalBorders[0] = tableModel.getLastRowBottomBorder();
-        for (int row = 0; row < rows.size(); row++) {
-            CellRenderer[] currentRow = rows.get(row);
-            for (int col = 0; col < currentRow.length; col++) {
-                CellRenderer cell = currentRow[col];
-                if (cell != null) {
-                    buildBordersArrays(cell, row, cell.getModelElement().getRowspan(), cell.getModelElement().getColspan(), true);
-                }
-            }
-        }
 
         for (int row = 0; row < rows.size(); row++) {
             Property.VerticalAlignment verticalAlignment = null;
@@ -218,6 +209,15 @@ public class TableRenderer extends AbstractRenderer {
                 CellRendererInfo currentCellInfo = cellProcessingQueue.poll();
                 int col = currentCellInfo.column;
                 CellRenderer cell = currentCellInfo.cellRenderer;
+                if (cell != null) {
+                    buildBordersArrays(cell, row, cell.getModelElement().getRowspan(), cell.getModelElement().getColspan(), true);
+                }
+                if (row + 1 < rows.size()) {
+                    CellRenderer nextCell = rows.get(row + 1)[col];
+                    if (nextCell != null) {
+                        buildBordersArrays(nextCell, row + 1, nextCell.getModelElement().getRowspan(), nextCell.getModelElement().getColspan(), true);
+                    }
+                }
                 targetOverflowRowIndex[col] = currentCellInfo.finishRowInd;
                 // This cell came from the future (split occurred and we need to place cell with big rowpsan into the current area)
                 boolean currentCellHasBigRowspan = (row != currentCellInfo.finishRowInd);
@@ -297,6 +297,20 @@ public class TableRenderer extends AbstractRenderer {
                                                     cellWithBigRowspanAdded = true;
                                                 } else {
                                                     horizontalBorders[row + 1][addCol] = addRenderer.getBorders()[2];
+                                                    Border missedBorder = null;
+                                                    if (addCol == 0) {
+                                                        for (int i = row; i >=0; i--) {
+                                                            if (!checkAndReplaceBorderInArray(verticalBorders, addCol, i, addRenderer.getBorders()[3])) {
+                                                                break;
+                                                            }
+                                                        }
+                                                    } else if (addCol == numberOfColumns - 1) {
+                                                        for (int i = row; i >=0; i--) {
+                                                            if (!checkAndReplaceBorderInArray(verticalBorders, addCol+1, i, addRenderer.getBorders()[1])) {
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             } else if (row + addRenderer.getPropertyAsInteger(Property.ROWSPAN) - 1 >= addRow) {
                                                 cellProcessingQueue.add(new CellRendererInfo(addRenderer, addCol, addRow));
@@ -370,7 +384,9 @@ public class TableRenderer extends AbstractRenderer {
                         }
                         if (hasContent || cellWithBigRowspanAdded || splits[col].getStatus() == LayoutResult.NOTHING) {
                             currentRow[col] = null;
-                            rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) splits[col].getOverflowRenderer().setParent(splitResult[1]);
+                            CellRenderer cellOverflow = (CellRenderer) splits[col].getOverflowRenderer();
+                            cellOverflow.setBorders(cellOverflow.getBorders()[2], 0);
+                            rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) cellOverflow.setParent(splitResult[1]);
                         } else {
                             rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) currentRow[col].setParent(splitResult[1]);
                         }
@@ -810,14 +826,14 @@ public class TableRenderer extends AbstractRenderer {
                     }
                 } else {
                     if (cell != null) {
-                        cell.setBorders(horizontalBorders[row + 1 - rowspan][i], 0);
+                        cell.setBorders(horizontalBorders[row + 1 - rowspan][colN + i], 0);
                     }
                 }
             }
         } else {
             for (int i = 0; i < colspan; i++) {
                 if (!checkAndReplaceBorderInArray(horizontalBorders, 0, colN + i, cellBorders[0])) {
-                    cell.setBorders(horizontalBorders[0][i], 0);
+                    cell.setBorders(horizontalBorders[0][colN + i], 0);
                 }
             }
         }

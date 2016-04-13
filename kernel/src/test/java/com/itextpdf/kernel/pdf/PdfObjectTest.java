@@ -96,44 +96,44 @@ public class PdfObjectTest {
     @Test
     public void pdfIndirectReferenceFlags(){
         PdfIndirectReference reference = new PdfIndirectReference(null, 1);
-        reference.setState(PdfObject.Free);
-        reference.setState(PdfObject.Reading);
-        reference.setState(PdfObject.Modified);
+        reference.setState(PdfObject.FREE);
+        reference.setState(PdfObject.READING);
+        reference.setState(PdfObject.MODIFIED);
 
-        Assert.assertEquals("Free", true, reference.checkState(PdfObject.Free));
-        Assert.assertEquals("Reading", true, reference.checkState(PdfObject.Reading));
-        Assert.assertEquals("Modified", true, reference.checkState(PdfObject.Modified));
+        Assert.assertEquals("Free", true, reference.checkState(PdfObject.FREE));
+        Assert.assertEquals("Reading", true, reference.checkState(PdfObject.READING));
+        Assert.assertEquals("Modified", true, reference.checkState(PdfObject.MODIFIED));
         Assert.assertEquals("Free|Reading|Modified", true,
-                reference.checkState((byte)(PdfObject.Free|PdfObject.Modified |PdfObject.Reading)));
+                reference.checkState((byte)(PdfObject.FREE |PdfObject.MODIFIED |PdfObject.READING)));
 
-        reference.clearState(PdfObject.Free);
+        reference.clearState(PdfObject.FREE);
 
-        Assert.assertEquals("Free", false, reference.checkState(PdfObject.Free));
-        Assert.assertEquals("Reading", true, reference.checkState(PdfObject.Reading));
-        Assert.assertEquals("Modified", true, reference.checkState(PdfObject.Modified));
+        Assert.assertEquals("Free", false, reference.checkState(PdfObject.FREE));
+        Assert.assertEquals("Reading", true, reference.checkState(PdfObject.READING));
+        Assert.assertEquals("Modified", true, reference.checkState(PdfObject.MODIFIED));
         Assert.assertEquals("Reading|Modified", true,
-                reference.checkState((byte)(PdfObject.Reading|PdfObject.Modified)));
+                reference.checkState((byte)(PdfObject.READING |PdfObject.MODIFIED)));
         Assert.assertEquals("Free|Reading|Modified", false,
-                reference.checkState((byte)(PdfObject.Free|PdfObject.Reading|PdfObject.Modified)));
+                reference.checkState((byte)(PdfObject.FREE |PdfObject.READING |PdfObject.MODIFIED)));
 
-        reference.clearState(PdfObject.Reading);
+        reference.clearState(PdfObject.READING);
 
-        Assert.assertEquals("Free", false, reference.checkState(PdfObject.Free));
-        Assert.assertEquals("Reading", false, reference.checkState(PdfObject.Reading));
-        Assert.assertEquals("Modified", true, reference.checkState(PdfObject.Modified));
+        Assert.assertEquals("Free", false, reference.checkState(PdfObject.FREE));
+        Assert.assertEquals("Reading", false, reference.checkState(PdfObject.READING));
+        Assert.assertEquals("Modified", true, reference.checkState(PdfObject.MODIFIED));
         Assert.assertEquals("Free|Reading", false,
-                reference.checkState((byte) (PdfObject.Free | PdfObject.Reading)));
+                reference.checkState((byte) (PdfObject.FREE | PdfObject.READING)));
 
-        reference.clearState(PdfObject.Modified);
+        reference.clearState(PdfObject.MODIFIED);
 
-        Assert.assertEquals("Free", false, reference.checkState(PdfObject.Free));
-        Assert.assertEquals("Reading", false, reference.checkState(PdfObject.Reading));
-        Assert.assertEquals("Modified", false, reference.checkState(PdfObject.Modified));
+        Assert.assertEquals("Free", false, reference.checkState(PdfObject.FREE));
+        Assert.assertEquals("Reading", false, reference.checkState(PdfObject.READING));
+        Assert.assertEquals("Modified", false, reference.checkState(PdfObject.MODIFIED));
 
 
         Assert.assertEquals("Is InUse", true, !reference.isFree());
 
-        reference.setState(PdfObject.Free);
+        reference.setState(PdfObject.FREE);
 
         Assert.assertEquals("Not IsInUse", false, !reference.isFree());
     }
