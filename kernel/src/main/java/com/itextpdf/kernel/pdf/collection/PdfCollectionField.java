@@ -108,32 +108,32 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfCollectionField(String name, int subType) {
         super(new PdfDictionary());
-        put(PdfName.N, new PdfString(name));
+        getPdfObject().put(PdfName.N, new PdfString(name));
         this.subType = subType;
         switch (subType) {
             default:
-                put(PdfName.Subtype, PdfName.S);
+                getPdfObject().put(PdfName.Subtype, PdfName.S);
                 break;
             case DATE:
-                put(PdfName.Subtype, PdfName.D);
+                getPdfObject().put(PdfName.Subtype, PdfName.D);
                 break;
             case NUMBER:
-                put(PdfName.Subtype, PdfName.N);
+                getPdfObject().put(PdfName.Subtype, PdfName.N);
                 break;
             case FILENAME:
-                put(PdfName.Subtype, PdfName.F);
+                getPdfObject().put(PdfName.Subtype, PdfName.F);
                 break;
             case DESC:
-                put(PdfName.Subtype, PdfName.Desc);
+                getPdfObject().put(PdfName.Subtype, PdfName.Desc);
                 break;
             case MODDATE:
-                put(PdfName.Subtype, PdfName.ModDate);
+                getPdfObject().put(PdfName.Subtype, PdfName.ModDate);
                 break;
             case CREATIONDATE:
-                put(PdfName.Subtype, PdfName.CreationDate);
+                getPdfObject().put(PdfName.Subtype, PdfName.CreationDate);
                 break;
             case SIZE:
-                put(PdfName.Subtype, PdfName.Size);
+                getPdfObject().put(PdfName.Subtype, PdfName.Size);
                 break;
         }
     }
@@ -144,7 +144,8 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
      * @return
      */
     public PdfCollectionField setOrder(int order) {
-        return put(PdfName.O, new PdfNumber(order));
+        getPdfObject().put(PdfName.O, new PdfNumber(order));
+        return this;
     }
 
     public PdfNumber getOrder() {
@@ -157,7 +158,8 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
      * @return
      */
     public PdfCollectionField setVisibility(boolean visible) {
-        return put(PdfName.V, new PdfBoolean(visible));
+        getPdfObject().put(PdfName.V, new PdfBoolean(visible));
+        return this;
     }
 
     public PdfBoolean getVisibility() {
@@ -170,7 +172,8 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
      * @return
      */
     public PdfCollectionField setEditable(boolean editable) {
-        return put(PdfName.E, new PdfBoolean(editable));
+        getPdfObject().put(PdfName.E, new PdfBoolean(editable));
+        return this;
     }
 
     public PdfBoolean getEditable() {

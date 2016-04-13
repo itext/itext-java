@@ -298,6 +298,7 @@ public class PdfDictionary extends PdfObject {
      * @return the previous PdfObject associated with this key
      */
     public PdfObject put(PdfName key, PdfObject value) {
+        assert value != null;
         return map.put(key, value);
     }
 

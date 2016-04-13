@@ -273,10 +273,10 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
             PdfArray kidsArray = (PdfArray) k;
             k = kidsArray.remove(index);
             if (kidsArray.isEmpty()) {
-                remove(PdfName.K);
+                getPdfObject().remove(PdfName.K);
             }
         } else {
-            remove(PdfName.K);
+            getPdfObject().remove(PdfName.K);
         }
 
         IPdfStructElem removedKid = convertPdfObjectToIPdfStructElem(k);
@@ -356,6 +356,11 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
             return Illustration;
         else
             return Unknown;
+    }
+
+    public PdfStructElem put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return this;
     }
 
     @Override
@@ -456,11 +461,11 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
             PdfArray kidsArray = (PdfArray) k;
             removedIndex = removeObjectFromArray(kidsArray, kid);
             if (kidsArray.isEmpty()) {
-                remove(PdfName.K);
+                getPdfObject().remove(PdfName.K);
             }
         }
         if (!k.isArray()|| k.isArray() && ((PdfArray)k).isEmpty()) {
-            remove(PdfName.K);
+            getPdfObject().remove(PdfName.K);
             removedIndex = 0;
         }
 

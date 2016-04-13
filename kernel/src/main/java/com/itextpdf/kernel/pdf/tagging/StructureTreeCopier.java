@@ -235,8 +235,8 @@ class StructureTreeCopier {
                 // When obj.copyTo is called, and annotation was already copied, we would get this already created copy.
                 // If it was already copied and added, /P key would be set. Otherwise /P won't be set.
                 obj = obj.copyTo(toDocument, Arrays.asList(PdfName.P), false);
+                copied.put(PdfName.Obj, obj);
             }
-            copied.put(PdfName.Obj, obj);
         }
 
         PdfDictionary pg = source.getAsDictionary(PdfName.Pg);
@@ -287,7 +287,7 @@ class StructureTreeCopier {
                     if (copiedKid.containsKey(PdfName.Obj)) {
                         mcr = new PdfObjRef(copiedKid, new PdfStructElem(copiedParent));
                         PdfDictionary contentItemObject = copiedKid.getAsDictionary(PdfName.Obj);
-                        if (!PdfName.Form.equals(contentItemObject.getAsName(PdfName.Subtype))
+                        if (PdfName.Link.equals(contentItemObject.getAsName(PdfName.Subtype))
                                 && !contentItemObject.containsKey(PdfName.P)) {
                             // Some link annotations may be not copied, because their destination page is not copied.
                             return null;

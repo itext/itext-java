@@ -75,32 +75,32 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return getPdfObject().getAsString(PdfName.T);
     }
 
-    public <T extends PdfMarkupAnnotation> T setText(PdfString text) {
-        return put(PdfName.T, text);
+    public PdfMarkupAnnotation setText(PdfString text) {
+        return (PdfMarkupAnnotation) put(PdfName.T, text);
     }
 
     public PdfNumber getOpacity() {
         return getPdfObject().getAsNumber(PdfName.CA);
     }
 
-    public <T extends PdfMarkupAnnotation> T setOpacity(PdfNumber ca) {
-        return put(PdfName.CA, ca);
+    public PdfMarkupAnnotation setOpacity(PdfNumber ca) {
+        return (PdfMarkupAnnotation) put(PdfName.CA, ca);
     }
 
     public PdfObject getRichText() {
         return getPdfObject().getAsDictionary(PdfName.RC);
     }
 
-    public <T extends PdfMarkupAnnotation> T setRichText(PdfObject richText) {
-        return put(PdfName.RC, richText);
+    public PdfMarkupAnnotation setRichText(PdfObject richText) {
+        return (PdfMarkupAnnotation) put(PdfName.RC, richText);
     }
 
     public PdfString getCreationDate() {
         return getPdfObject().getAsString(PdfName.CreationDate);
     }
 
-    public <T extends PdfMarkupAnnotation> T setCreationDate(PdfString creationDate) {
-        return put(PdfName.CreationDate, creationDate);
+    public PdfMarkupAnnotation setCreationDate(PdfString creationDate) {
+        return (PdfMarkupAnnotation) put(PdfName.CreationDate, creationDate);
     }
 
     public PdfDictionary getInReplyToObject() {
@@ -111,15 +111,15 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return inReplyTo;
     }
 
-    public <T extends PdfMarkupAnnotation> T setInReplyTo(PdfAnnotation inReplyTo) {
+    public PdfMarkupAnnotation setInReplyTo(PdfAnnotation inReplyTo) {
         this.inReplyTo = inReplyTo;
-        return put(PdfName.IRT, inReplyTo);
+        return (PdfMarkupAnnotation) put(PdfName.IRT, inReplyTo.getPdfObject());
     }
 
-    public <T extends PdfMarkupAnnotation> T setPopup(PdfPopupAnnotation popup) {
+    public PdfMarkupAnnotation setPopup(PdfPopupAnnotation popup) {
         this.popup = popup;
         popup.put(PdfName.Parent, getPdfObject());
-        return put(PdfName.Popup, popup);
+        return (PdfMarkupAnnotation) put(PdfName.Popup, popup.getPdfObject());
     }
 
     public PdfDictionary getPopupObject() {
@@ -134,36 +134,36 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return getPdfObject().getAsString(PdfName.Subj);
     }
 
-    public <T extends PdfMarkupAnnotation> T setSubject(PdfString subject) {
-        return put(PdfName.Subj, subject);
+    public PdfMarkupAnnotation setSubject(PdfString subject) {
+        return (PdfMarkupAnnotation) put(PdfName.Subj, subject);
     }
 
     public PdfName getReplyType() {
         return getPdfObject().getAsName(PdfName.RT);
     }
 
-    public <T extends PdfMarkupAnnotation> T setReplyType(PdfName replyType) {
-        return put(PdfName.RT, replyType);
+    public PdfMarkupAnnotation setReplyType(PdfName replyType) {
+        return (PdfMarkupAnnotation) put(PdfName.RT, replyType);
     }
 
     public PdfName getIntent() {
         return getPdfObject().getAsName(PdfName.IT);
     }
 
-    public <T extends PdfMarkupAnnotation> T setIntent(PdfName intent) {
-        return put(PdfName.IT, intent);
+    public PdfMarkupAnnotation setIntent(PdfName intent) {
+        return (PdfMarkupAnnotation) put(PdfName.IT, intent);
     }
 
     public PdfDictionary getExternalData() {
         return getPdfObject().getAsDictionary(PdfName.ExData);
     }
 
-    public <T extends PdfMarkupAnnotation> T setExternalData(PdfName exData) {
-        return put(PdfName.ExData, exData);
+    public PdfMarkupAnnotation setExternalData(PdfName exData) {
+        return (PdfMarkupAnnotation) put(PdfName.ExData, exData);
     }
 
-    public <T extends PdfMarkupAnnotation> T setRectangleDifferences(PdfArray rect) {
-        return put(PdfName.RD, rect);
+    public PdfMarkupAnnotation setRectangleDifferences(PdfArray rect) {
+        return (PdfMarkupAnnotation) put(PdfName.RD, rect);
     }
 
     public PdfArray getRectangleDifferences() {
@@ -174,8 +174,8 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return getPdfObject().getAsDictionary(PdfName.BE);
     }
 
-    public <T extends PdfMarkupAnnotation> T setBorderEffect(PdfDictionary borderEffect) {
-        return put(PdfName.BE, borderEffect);
+    public PdfMarkupAnnotation setBorderEffect(PdfDictionary borderEffect) {
+        return (PdfMarkupAnnotation) put(PdfName.BE, borderEffect);
     }
 
     public Color getInteriorColor() {
@@ -195,11 +195,11 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         }
     }
 
-    public <T extends PdfMarkupAnnotation> T setInteriorColor(PdfArray interiorColor) {
-        return put(PdfName.IC, interiorColor);
+    public PdfMarkupAnnotation setInteriorColor(PdfArray interiorColor) {
+        return (PdfMarkupAnnotation) put(PdfName.IC, interiorColor);
     }
 
-    public <T extends PdfMarkupAnnotation> T setInteriorColor(float[] interiorColor) {
+    public PdfMarkupAnnotation setInteriorColor(float[] interiorColor) {
         return setInteriorColor(new PdfArray(interiorColor));
     }
 
@@ -208,12 +208,12 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return getPdfObject().getAsName(PdfName.Name);
     }
 
-    public <T extends PdfMarkupAnnotation> T setIconName(PdfName name) {
-        return put(PdfName.Name, name);
+    public PdfMarkupAnnotation setIconName(PdfName name) {
+        return (PdfMarkupAnnotation) put(PdfName.Name, name);
     }
 
-    public <T extends PdfMarkupAnnotation> T setDefaultAppearance(PdfString appearanceString) {
-        return put(PdfName.DA, appearanceString);
+    public PdfMarkupAnnotation setDefaultAppearance(PdfString appearanceString) {
+        return (PdfMarkupAnnotation) put(PdfName.DA, appearanceString);
     }
 
     public PdfString getDefaultAppearance() {
@@ -225,7 +225,7 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         return q == null ? 0 : q.getIntValue();
     }
 
-    public <T extends PdfMarkupAnnotation> T setJustification(int justification) {
-        return put(PdfName.Q, new PdfNumber(justification));
+    public PdfMarkupAnnotation setJustification(int justification) {
+        return (PdfMarkupAnnotation) put(PdfName.Q, new PdfNumber(justification));
     }
 }

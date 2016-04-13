@@ -44,7 +44,11 @@
  */
 package com.itextpdf.kernel.pdf.collection;
 
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObjectWrapper;
+import com.itextpdf.kernel.pdf.PdfString;
 
 public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
 
@@ -74,7 +78,8 @@ public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
      * @return
      */
     public PdfCollection setSchema(PdfCollectionSchema schema) {
-        return put(PdfName.Schema, schema);
+        getPdfObject().put(PdfName.Schema, schema.getPdfObject());
+        return this;
     }
 
     public PdfCollectionSchema getSchema(){
@@ -88,7 +93,8 @@ public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
      * @return
      */
     public PdfCollection setInitialDocument(String documentName) {
-        return put(PdfName.D, new PdfString(documentName));
+        getPdfObject().put(PdfName.D, new PdfString(documentName));
+        return this;
     }
 
     public PdfString getInitialDocument() {
@@ -103,13 +109,13 @@ public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
     public PdfCollection setView(int viewType) {
         switch (viewType) {
             default:
-                put(PdfName.View, PdfName.D);
+                getPdfObject().put(PdfName.View, PdfName.D);
                 break;
             case TILE:
-                put(PdfName.View, PdfName.T);
+                getPdfObject().put(PdfName.View, PdfName.T);
                 break;
             case HIDDEN:
-                put(PdfName.View, PdfName.H);
+                getPdfObject().put(PdfName.View, PdfName.H);
                 break;
         }
         return this;
@@ -125,13 +131,13 @@ public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
      * @return
      */
     public PdfCollection setSort(PdfCollectionSort sort){
-        return put(PdfName.Sort, sort);
+        getPdfObject().put(PdfName.Sort, sort.getPdfObject());
+        return this;
     }
 
     public PdfCollectionSort getSort() {
         return new PdfCollectionSort(getPdfObject().getAsDictionary(PdfName.Sort));
     }
-
 
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {

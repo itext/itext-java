@@ -174,8 +174,10 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfPage page = document.addNewPage();
 
-        PdfTextAnnotation textannot = new PdfTextAnnotation(new Rectangle(100, 600, 50, 40)).setText(new PdfString("Text Annotation 01")).setContents(new PdfString("Some contents..."));
-        PdfPopupAnnotation popupAnnot = new PdfPopupAnnotation(new Rectangle(150, 640, 200, 100)).setOpen(true);
+        PdfTextAnnotation textannot = new PdfTextAnnotation(new Rectangle(100, 600, 50, 40));
+        textannot.setText(new PdfString("Text Annotation 01")).setContents(new PdfString("Some contents..."));
+        PdfPopupAnnotation popupAnnot = new PdfPopupAnnotation(new Rectangle(150, 640, 200, 100));
+        popupAnnot.setOpen(true);
         textannot.setPopup(popupAnnot);
         popupAnnot.setParent(textannot);
         page.addAnnotation(textannot);
@@ -244,8 +246,8 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
 
         new PdfCanvas(page).beginText().setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 24).moveText(100, 600).showText("Annotated text").endText().release();
-        PdfFreeTextAnnotation textannot = new PdfFreeTextAnnotation(new Rectangle(300, 700, 150, 20), "").
-                setContents(new PdfString("FreeText annotation")).setColor(new float[]{1, 0, 0});
+        PdfFreeTextAnnotation textannot = new PdfFreeTextAnnotation(new Rectangle(300, 700, 150, 20), "");
+        textannot.setContents(new PdfString("FreeText annotation")).setColor(new float[]{1, 0, 0});
         textannot.setIntent(PdfName.FreeTextCallout);
         textannot.setCalloutLine(new float[]{120, 616, 180, 680, 300, 710}).setLineEndingStyle(PdfName.OpenArrow);
         page.addAnnotation(textannot);
@@ -263,9 +265,11 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfPage page = document.addNewPage();
 
-        PdfSquareAnnotation square = new PdfSquareAnnotation(new Rectangle(100, 700, 100, 100)).setInteriorColor(new float[]{1, 0, 0}).setColor(new float[]{0, 1, 0}).setContents("RED Square");
+        PdfSquareAnnotation square = new PdfSquareAnnotation(new Rectangle(100, 700, 100, 100));
+        square.setInteriorColor(new float[]{1, 0, 0}).setColor(new float[]{0, 1, 0}).setContents("RED Square");
         page.addAnnotation(square);
-        PdfCircleAnnotation circle = new PdfCircleAnnotation(new Rectangle(300, 700, 100, 100)).setInteriorColor(new float[]{0, 1, 0}).setColor(new float[]{0, 0, 1}).setContents(new PdfString("GREEN Circle"));
+        PdfCircleAnnotation circle = new PdfCircleAnnotation(new Rectangle(300, 700, 100, 100));
+        circle.setInteriorColor(new float[]{0, 1, 0}).setColor(new float[]{0, 0, 1}).setContents(new PdfString("GREEN Circle"));
         page.addAnnotation(circle);
         page.flush();
 

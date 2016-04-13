@@ -120,7 +120,7 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     @Override
     public AccessibilityProperties clearAttributes() {
-        backingElem.remove(PdfName.A);
+        backingElem.getPdfObject().remove(PdfName.A);
         return this;
     }
 

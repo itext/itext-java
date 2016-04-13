@@ -102,6 +102,11 @@ public class LogMessageConstant {
     /**
      * Log message.
      */
+    public static final String INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE = "Invalid key value: key {0} has null value.";
+
+    /**
+     * Log message.
+     */
     public static final String MAKE_COPY_OF_CATALOG_DICTIONARY_IS_FORBIDDEN = "Make copy of Catalog dictionary is forbidden.";
 
     /**

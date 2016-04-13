@@ -65,7 +65,8 @@ public class PdfCollectionItem extends PdfObjectWrapper<PdfDictionary>{
      */
     public PdfCollectionItem addItem(String key, String value) {
         PdfCollectionField field = schema.getField(key);
-        return put(new PdfName(key), field.getValue(value));
+        getPdfObject().put(new PdfName(key), field.getValue(value));
+        return this;
     }
 
     /**
@@ -75,7 +76,7 @@ public class PdfCollectionItem extends PdfObjectWrapper<PdfDictionary>{
     public void addItem(String key, PdfDate d) {
         PdfCollectionField field = schema.getField(key);
         if (field.subType == PdfCollectionField.DATE) {
-            put(new PdfName(key), d);
+            getPdfObject().put(new PdfName(key), d.getPdfObject());
         }
     }
 
@@ -86,7 +87,7 @@ public class PdfCollectionItem extends PdfObjectWrapper<PdfDictionary>{
     public void addItem(String key, PdfNumber n) {
         PdfCollectionField field = schema.getField(key);
         if (field.subType == PdfCollectionField.NUMBER) {
-            put(new PdfName(key), n);
+            getPdfObject().put(new PdfName(key), n);
         }
     }
 
@@ -106,7 +107,8 @@ public class PdfCollectionItem extends PdfObjectWrapper<PdfDictionary>{
         PdfDictionary subItem = new PdfDictionary();
         subItem.put(PdfName.D, obj);
         subItem.put(PdfName.P, new PdfString(prefix));
-        return put(fieldName, subItem);
+        getPdfObject().put(fieldName, subItem);
+        return this;
     }
 
     @Override

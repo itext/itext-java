@@ -562,7 +562,7 @@ public class PdfSigner {
             throw new PdfException(PdfException.ThisInstanceOfPdfSignerIsAlreadyClosed);
         }
 
-        PdfSignature dic = new PdfSignature(null, null);
+        PdfSignature dic = new PdfSignature();
         PdfSignatureAppearance appearance = getSignatureAppearance();
         dic.setReason(appearance.getReason());
         dic.setLocation(appearance.getLocation());
@@ -775,18 +775,18 @@ public class PdfSigner {
 
         if (fieldExist) {
             PdfSignatureFormField sigField = (PdfSignatureFormField) acroForm.getField(fieldName);
-            sigField.put(PdfName.V, cryptoDictionary);
+            sigField.put(PdfName.V, cryptoDictionary.getPdfObject());
 
             fieldLock = sigField.getSigFieldLockDictionary();
 
             if (fieldLock == null && this.fieldLock != null) {
                 this.fieldLock.getPdfObject().makeIndirect(document);
-                sigField.put(PdfName.Lock, this.fieldLock);
+                sigField.put(PdfName.Lock, this.fieldLock.getPdfObject());
                 fieldLock = this.fieldLock;
             }
 
-            sigField.put(PdfName.P, document.getPage(appearance.getPageNumber()));
-            sigField.put(PdfName.V, cryptoDictionary);
+            sigField.put(PdfName.P, document.getPage(appearance.getPageNumber()).getPdfObject());
+            sigField.put(PdfName.V, cryptoDictionary.getPdfObject());
             PdfObject obj = sigField.getPdfObject().get(PdfName.F);
             int flags = 0;
 
@@ -806,12 +806,12 @@ public class PdfSigner {
 
             PdfSignatureFormField sigField = PdfFormField.createSignature(document);
             sigField.setFieldName(name);
-            sigField.put(PdfName.V, cryptoDictionary);
+            sigField.put(PdfName.V, cryptoDictionary.getPdfObject());
             sigField.addKid(widget);
 
             if (this.fieldLock != null) {
                 this.fieldLock.getPdfObject().makeIndirect(document);
-                sigField.put(PdfName.Lock, this.fieldLock);
+                sigField.put(PdfName.Lock, this.fieldLock.getPdfObject());
                 fieldLock = this.fieldLock;
             }
 
@@ -876,8 +876,9 @@ public class PdfSigner {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PdfOutputStream os = new PdfOutputStream(bos);
             os.write('[');
-            for (int k = 0; k < range.length; ++k)
+            for (int k = 0; k < range.length; ++k) {
                 os.writeLong(range[k]).write(' ');
+            }
             os.write(']');
             System.arraycopy(bos.toByteArray(), 0, bout, (int) byteRangePosition, bos.size());
         } else {
@@ -888,15 +889,16 @@ public class PdfSigner {
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 PdfOutputStream os = new PdfOutputStream(bos);
                 os.write('[');
-                for (int k = 0; k < range.length; ++k)
+                for (int k = 0; k < range.length; ++k) {
                     os.writeLong(range[k]).write(' ');
+                }
                 os.write(']');
                 raf.seek(byteRangePosition);
                 raf.write(bos.toByteArray(), 0, bos.size());
             }
             catch (IOException e) {
-                try{raf.close();}catch(Exception ee){}
-                try{tempFile.delete();}catch(Exception ee){}
+                try { raf.close(); } catch (Exception ee) { }
+                try { tempFile.delete(); } catch (Exception ee) { }
                 throw e;
             }
         }

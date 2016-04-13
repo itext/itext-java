@@ -50,6 +50,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
@@ -179,4 +180,9 @@ public class PdfFormXObject extends PdfXObject {
 
     @Override
     public Float getHeight() { return getBBox() == null ? null : getBBox().getAsFloat(3); }
+
+    public PdfFormXObject put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return this;
+    }
 }

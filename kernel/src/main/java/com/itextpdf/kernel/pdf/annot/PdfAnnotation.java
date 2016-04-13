@@ -116,6 +116,75 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     protected PdfPage page;
 
+    public static PdfAnnotation makeAnnotation(PdfObject pdfObject, PdfAnnotation parent) {
+        PdfAnnotation annotation = null;
+        if (pdfObject.isIndirectReference())
+            pdfObject = ((PdfIndirectReference) pdfObject).getRefersTo();
+        if (pdfObject.isDictionary()) {
+            PdfDictionary dictionary = (PdfDictionary) pdfObject;
+            PdfName subtype = dictionary.getAsName(PdfName.Subtype);
+            if (PdfName.Link.equals(subtype)) {
+                annotation = new PdfLinkAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.Popup.equals(subtype)) {
+                annotation = new PdfPopupAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.Widget.equals(subtype)) {
+                annotation = new PdfWidgetAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.Screen.equals(subtype)) {
+                annotation = new PdfScreenAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName._3D.equals(subtype)) {
+                throw new UnsupportedOperationException();
+            } else if (PdfName.Highlight.equals(subtype) || PdfName.Underline.equals(subtype) || PdfName.Squiggly.equals(subtype) || PdfName.StrikeOut.equals(subtype)) {
+                annotation = new PdfTextMarkupAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.Caret.equals(subtype)) {
+                annotation = new PdfCaretAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.Text.equals(subtype)) {
+                annotation = new PdfTextAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.Sound.equals(subtype)) {
+                annotation = new PdfSoundAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.Stamp.equals(subtype)) {
+                annotation = new PdfStampAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.FileAttachment.equals(subtype)) {
+                annotation = new PdfFileAttachmentAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.Ink.equals(subtype)) {
+                annotation = new PdfInkAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.PrinterMark.equals(subtype)) {
+                annotation = new PdfPrinterMarkAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.TrapNet.equals(subtype)) {
+                annotation = new PdfTrapNetworkAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.FreeText.equals(subtype)) {
+                annotation = new PdfFreeTextAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.Square.equals(subtype)) {
+                annotation = new PdfSquareAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.Circle.equals(subtype)) {
+                annotation = new PdfCircleAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.Line.equals(subtype)) {
+                annotation = new PdfLineAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.Polygon.equals(subtype) || PdfName.PolyLine.equals(subtype)) {
+                annotation = new PdfPolyGeomAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.Redact.equals(subtype)) {
+                annotation = new PdfRedactAnnotation((PdfDictionary) pdfObject);
+            } else if (PdfName.Watermark.equals(subtype)) {
+                annotation = new PdfWatermarkAnnotation((PdfDictionary) pdfObject);
+            }
+        }
+        if (annotation instanceof PdfMarkupAnnotation) {
+            PdfMarkupAnnotation markup = (PdfMarkupAnnotation) annotation;
+            PdfDictionary inReplyTo = markup.getInReplyToObject();
+            if (inReplyTo != null)
+                markup.setInReplyTo(makeAnnotation(inReplyTo));
+            PdfDictionary popup = markup.getPopupObject();
+            if (popup != null)
+                markup.setPopup((PdfPopupAnnotation) makeAnnotation(popup, markup));
+        }
+        if (annotation instanceof PdfPopupAnnotation) {
+            PdfPopupAnnotation popup = (PdfPopupAnnotation) annotation;
+            if (parent != null)
+                popup.setParent(parent);
+        }
+
+        return annotation;
+    }
+
     public PdfAnnotation(Rectangle rect) {
         this(new PdfDictionary());
         put(PdfName.Rect, new PdfArray(rect));
@@ -127,7 +196,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         markObjectAsIndirect(getPdfObject());
     }
 
-    abstract public PdfName getSubtype();
+    public abstract PdfName getSubtype();
 
     /**
      * Sets the layer this annotation belongs to.
@@ -138,24 +207,24 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.OC, layer.getIndirectReference());
     }
 
-    public <T extends PdfAnnotation> T setAction(PdfAction action) {
-        return put(PdfName.A, action);
+    public PdfAnnotation setAction(PdfAction action) {
+        return put(PdfName.A, action.getPdfObject());
     }
 
-    public <T extends PdfAnnotation> T setAdditionalAction(PdfName key, PdfAction action) {
+    public PdfAnnotation setAdditionalAction(PdfName key, PdfAction action) {
         PdfAction.setAdditionalAction(this, key, action);
-        return (T) this;
+        return this;
     }
 
     public PdfString getContents() {
         return getPdfObject().getAsString(PdfName.Contents);
     }
 
-    public <T extends PdfAnnotation> T setContents(PdfString contents) {
+    public PdfAnnotation setContents(PdfString contents) {
         return put(PdfName.Contents, contents);
     }
 
-    public <T extends PdfAnnotation> T setContents(String contents) {
+    public PdfAnnotation setContents(String contents) {
         return setContents(new PdfString(contents));
     }
 
@@ -167,16 +236,16 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return page;
     }
 
-    public <T extends PdfAnnotation> T setPage(PdfPage page) {
+    public PdfAnnotation setPage(PdfPage page) {
         this.page = page;
-        return put(PdfName.P, page);
+        return put(PdfName.P, page.getPdfObject());
     }
 
     public PdfString getName() {
         return getPdfObject().getAsString(PdfName.NM);
     }
 
-    public <T extends PdfAnnotation> T setName(PdfString name) {
+    public PdfAnnotation setName(PdfString name) {
         return put(PdfName.NM, name);
     }
 
@@ -184,7 +253,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsString(PdfName.M);
     }
 
-    public <T extends PdfAnnotation> T setDate(PdfString date) {
+    public PdfAnnotation setDate(PdfString date) {
         return put(PdfName.M, date);
     }
 
@@ -196,17 +265,17 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
             return 0;
     }
 
-    public <T extends PdfAnnotation> T setFlags(int flags) {
+    public PdfAnnotation setFlags(int flags) {
         return put(PdfName.F, new PdfNumber(flags));
     }
 
-    public <T extends PdfAnnotation> T setFlag(int flag) {
+    public PdfAnnotation setFlag(int flag) {
         int flags = getFlags();
         flags = flags | flag;
         return setFlags(flags);
     }
 
-    public <T extends PdfAnnotation> T resetFlag(int flag) {
+    public PdfAnnotation resetFlag(int flag) {
         int flags = getFlags();
         flags = flags & (~flag & 0xff);
         return setFlags(flags);
@@ -241,41 +310,41 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return getAppearanceObject(PdfName.D);
     }
 
-    public <T extends PdfAnnotation> T setAppearance(PdfName appearanceType, PdfDictionary appearance) {
+    public PdfAnnotation setAppearance(PdfName appearanceType, PdfDictionary appearance) {
         PdfDictionary ap = getAppearanceDictionary();
         if (ap == null) {
             ap = new PdfDictionary();
             getPdfObject().put(PdfName.AP, ap);
         }
         ap.put(appearanceType, appearance);
-        return (T) this;
+        return this;
     }
 
-    public <T extends PdfAnnotation> T setNormalAppearance(PdfDictionary appearance) {
+    public PdfAnnotation setNormalAppearance(PdfDictionary appearance) {
         return setAppearance(PdfName.N, appearance);
     }
 
-    public <T extends PdfAnnotation> T setRolloverAppearance(PdfDictionary appearance) {
+    public PdfAnnotation setRolloverAppearance(PdfDictionary appearance) {
         return setAppearance(PdfName.R, appearance);
     }
 
-    public <T extends PdfAnnotation> T setDownAppearance(PdfDictionary appearance) {
+    public PdfAnnotation setDownAppearance(PdfDictionary appearance) {
         return setAppearance(PdfName.D, appearance);
     }
 
-    public <T extends PdfAnnotation> T setAppearance(PdfName appearanceType, PdfAnnotationAppearance appearance) {
+    public PdfAnnotation setAppearance(PdfName appearanceType, PdfAnnotationAppearance appearance) {
         return setAppearance(appearanceType, appearance.getPdfObject());
     }
 
-    public <T extends PdfAnnotation> T setNormalAppearance(PdfAnnotationAppearance appearance) {
+    public PdfAnnotation setNormalAppearance(PdfAnnotationAppearance appearance) {
         return setAppearance(PdfName.N, appearance);
     }
 
-    public <T extends PdfAnnotation> T setRolloverAppearance(PdfAnnotationAppearance appearance) {
+    public PdfAnnotation setRolloverAppearance(PdfAnnotationAppearance appearance) {
         return setAppearance(PdfName.R, appearance);
     }
 
-    public <T extends PdfAnnotation> T setDownAppearance(PdfAnnotationAppearance appearance) {
+    public PdfAnnotation setDownAppearance(PdfAnnotationAppearance appearance) {
         return setAppearance(PdfName.D, appearance);
     }
 
@@ -283,7 +352,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsName(PdfName.AS);
     }
 
-    public <T extends PdfAnnotation> T setAppearanceState(PdfName as) {
+    public PdfAnnotation setAppearanceState(PdfName as) {
         return put(PdfName.AS, as);
     }
 
@@ -291,7 +360,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsArray(PdfName.Border);
     }
 
-    public <T extends PdfAnnotation> T setBorder(PdfArray border) {
+    public PdfAnnotation setBorder(PdfArray border) {
         return put(PdfName.Border, border);
     }
 
@@ -299,15 +368,15 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsArray(PdfName.C);
     }
 
-    public <T extends PdfAnnotation> T setColor(PdfArray color) {
+    public PdfAnnotation setColor(PdfArray color) {
         return put(PdfName.C, color);
     }
 
-    public <T extends PdfAnnotation> T setColor(float[] color) {
+    public PdfAnnotation setColor(float[] color) {
         return setColor(new PdfArray(color));
     }
 
-    public <T extends PdfAnnotation> T setColor(Color color) {
+    public PdfAnnotation setColor(Color color) {
         return setColor(new PdfArray(color.getColorValue()));
     }
 
@@ -319,7 +388,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
             return n.getIntValue();
     }
 
-    public <T extends PdfAnnotation> T setStructParentIndex(int structParentIndex) {
+    public PdfAnnotation setStructParentIndex(int structParentIndex) {
         return put(PdfName.StructParent, new PdfNumber(structParentIndex));
     }
 
@@ -329,18 +398,18 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     public boolean getOpen() {
         PdfBoolean open = getPdfObject().getAsBoolean(PdfName.Open);
-        return open == null ? false : open.getValue();
+        return open != null && open.getValue();
     }
 
-    public <T extends PdfAnnotation> T setOpen(boolean open) {
+    public PdfAnnotation setOpen(boolean open) {
         return put(PdfName.Open, new PdfBoolean(open));
     }
 
-    public <T extends PdfAnnotation> T setQuadPoints(PdfArray quadPoints) {
+    public PdfAnnotation setQuadPoints(PdfArray quadPoints) {
         return put(PdfName.QuadPoints, quadPoints);
     }
 
-    public <T extends PdfAnnotation> T setBorderStyle(PdfDictionary borderStyle) {
+    public PdfAnnotation setBorderStyle(PdfDictionary borderStyle) {
         return put(PdfName.BS, borderStyle);
     }
 
@@ -356,7 +425,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * @param style The new value for the annotation's border style.
      * @return The annotation which this method was called on.
      */
-    public <T extends PdfAnnotation> T setBorderStyle(PdfName style) {
+    public PdfAnnotation setBorderStyle(PdfName style) {
         PdfDictionary styleDict = getBorderStyle();
         if (null == styleDict) {
             styleDict = new PdfDictionary();
@@ -365,7 +434,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return setBorderStyle(styleDict);
     }
 
-    public <T extends PdfAnnotation> T setDashPattern(PdfArray dashPattern) {
+    public PdfAnnotation setDashPattern(PdfArray dashPattern) {
         PdfDictionary styleDict = getBorderStyle();
         if (null == styleDict) {
             styleDict = new PdfDictionary();
@@ -382,18 +451,17 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * Marks annotation to be tagged.
      * Normally it shall be done for link annotations.
      *
-     * @param <T>
      * @return annotation itself.
      */
-    public <T extends PdfAnnotation> T tag(PdfDocument pdfDocument) {
+    public PdfAnnotation tag(PdfDocument pdfDocument) {
         return put(PdfName.StructParent, new PdfNumber(pdfDocument.getNextStructParentIndex()));
     }
 
-    public static <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject) {
+    public static PdfAnnotation makeAnnotation(PdfObject pdfObject) {
         return makeAnnotation(pdfObject, null);
     }
 
-    public <T extends PdfAnnotation> T setTitle(PdfString title) {
+    public PdfAnnotation setTitle(PdfString title) {
         return put(PdfName.T, title);
     }
 
@@ -401,7 +469,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsString(PdfName.T);
     }
 
-    public <T extends PdfAnnotation> T setAppearanceCharacteristics(PdfDictionary characteristics) {
+    public PdfAnnotation setAppearanceCharacteristics(PdfDictionary characteristics) {
         return put(PdfName.MK, characteristics);
     }
 
@@ -417,7 +485,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsDictionary(PdfName.AA);
     }
 
-    public <T extends PdfAnnotation> T setRectangle(PdfArray array){
+    public PdfAnnotation setRectangle(PdfArray array){
         return put(PdfName.Rect, array);
     }
 
@@ -425,72 +493,14 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsArray(PdfName.Rect);
     }
 
-    public static <T extends PdfAnnotation> T makeAnnotation(PdfObject pdfObject, PdfAnnotation parent) {
-        T annotation = null;
-        if (pdfObject.isIndirectReference())
-            pdfObject = ((PdfIndirectReference) pdfObject).getRefersTo();
-        if (pdfObject.isDictionary()) {
-            PdfDictionary dictionary = (PdfDictionary) pdfObject;
-            PdfName subtype = dictionary.getAsName(PdfName.Subtype);
-            if (PdfName.Link.equals(subtype))
-                annotation = (T) new PdfLinkAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Popup.equals(subtype))
-                annotation = (T) new PdfPopupAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Widget.equals(subtype))
-                annotation = (T) new PdfWidgetAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Screen.equals(subtype))
-                annotation = (T) new PdfScreenAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName._3D.equals(subtype))
-                throw new UnsupportedOperationException();
-            else if (PdfName.Highlight.equals(subtype) || PdfName.Underline.equals(subtype) || PdfName.Squiggly.equals(subtype) || PdfName.StrikeOut.equals(subtype))
-                annotation = (T) new PdfTextMarkupAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Caret.equals(subtype))
-                annotation = (T) new PdfCaretAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Text.equals(subtype))
-                annotation = (T) new PdfTextAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Sound.equals(subtype))
-                annotation = (T) new PdfSoundAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Stamp.equals(subtype))
-                annotation = (T) new PdfStampAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.FileAttachment.equals(subtype))
-                annotation = (T) new PdfFileAttachmentAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Ink.equals(subtype))
-                annotation = (T) new PdfInkAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.PrinterMark.equals(subtype))
-                annotation = (T) new PdfPrinterMarkAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.TrapNet.equals(subtype))
-                annotation = (T) new PdfTrapNetworkAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.FreeText.equals(subtype))
-                annotation = (T) new PdfFreeTextAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Square.equals(subtype))
-                annotation = (T) new PdfSquareAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Circle.equals(subtype))
-                annotation = (T) new PdfCircleAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Line.equals(subtype))
-                annotation = (T) new PdfLineAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Polygon.equals(subtype) || PdfName.PolyLine.equals(subtype))
-                annotation = (T) new PdfPolyGeomAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Redact.equals(subtype))
-                annotation = (T) new PdfRedactAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Watermark.equals(subtype))
-                annotation = (T) new PdfWatermarkAnnotation((PdfDictionary) pdfObject);
-        }
-        if (annotation instanceof PdfMarkupAnnotation) {
-            PdfMarkupAnnotation markup = (PdfMarkupAnnotation) annotation;
-            PdfDictionary inReplyTo = markup.getInReplyToObject();
-            if (inReplyTo != null)
-                markup.setInReplyTo(makeAnnotation(inReplyTo));
-            PdfDictionary popup = markup.getPopupObject();
-            if (popup != null)
-                markup.setPopup((PdfPopupAnnotation) makeAnnotation(popup, markup));
-        }
-        if (annotation instanceof PdfPopupAnnotation) {
-            PdfPopupAnnotation popup = (PdfPopupAnnotation) annotation;
-            if (parent != null)
-                popup.setParent(parent);
-        }
+    public PdfAnnotation put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return this;
+    }
 
-        return annotation;
+    public PdfAnnotation remove(PdfName key) {
+        getPdfObject().remove(key);
+        return this;
     }
 
     @Override

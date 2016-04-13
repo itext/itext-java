@@ -33,7 +33,7 @@ public class PdfA1EmbeddedFilesCheckTest {
         pdfDocument.createXmpMetadata();
 
         PdfDictionary fileNames = new PdfDictionary();
-        pdfDocument.getCatalog().getPdfObject().put(PdfName.Names, fileNames);
+        pdfDocument.getCatalog().put(PdfName.Names, fileNames);
 
         PdfDictionary embeddedFiles = new PdfDictionary();
         fileNames.put(PdfName.EmbeddedFiles, embeddedFiles);
@@ -62,7 +62,7 @@ public class PdfA1EmbeddedFilesCheckTest {
         pdfDocument.createXmpMetadata();
 
         PdfStream stream = new PdfStream();
-        pdfDocument.getCatalog().getPdfObject().put(new PdfName("testStream"), stream);
+        pdfDocument.getCatalog().put(new PdfName("testStream"), stream);
 
         PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", "sample", null, null,  true);
         stream.put(PdfName.F, spec.getPdfObject());
@@ -84,7 +84,7 @@ public class PdfA1EmbeddedFilesCheckTest {
         pdfDocument.createXmpMetadata();
 
         PdfStream stream = new PdfStream();
-        pdfDocument.getCatalog().getPdfObject().put(new PdfName("testStream"), stream);
+        pdfDocument.getCatalog().put(new PdfName("testStream"), stream);
 
         PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", "sample", null, null,  true);
         stream.put(new PdfName("fileData"), spec.getPdfObject());

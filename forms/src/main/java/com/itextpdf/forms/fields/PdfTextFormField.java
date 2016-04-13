@@ -90,7 +90,7 @@ public class PdfTextFormField extends PdfFormField {
      * @return current {@link PdfTextFormField}
      */
     public PdfTextFormField setMultiline(boolean multiline) {
-        return setFieldFlag(FF_MULTILINE, multiline);
+        return (PdfTextFormField) setFieldFlag(FF_MULTILINE, multiline);
     }
 
     /**
@@ -100,7 +100,7 @@ public class PdfTextFormField extends PdfFormField {
      * @return current {@link PdfTextFormField}
      */
     public PdfTextFormField setPassword(boolean password) {
-        return setFieldFlag(FF_PASSWORD, password);
+        return (PdfTextFormField) setFieldFlag(FF_PASSWORD, password);
     }
 
     /**
@@ -119,7 +119,7 @@ public class PdfTextFormField extends PdfFormField {
      * @return current {@link PdfTextFormField}
      */
     public PdfTextFormField setFileSelect(boolean fileSelect) {
-        return setFieldFlag(FF_FILE_SELECT, fileSelect);
+        return (PdfTextFormField) setFieldFlag(FF_FILE_SELECT, fileSelect);
     }
 
     /**
@@ -136,7 +136,7 @@ public class PdfTextFormField extends PdfFormField {
      * @return current {@link PdfTextFormField}
      */
     public PdfTextFormField setSpellCheck(boolean spellCheck) {
-        return setFieldFlag(FF_DO_NOT_SPELL_CHECK, !spellCheck);
+        return (PdfTextFormField) setFieldFlag(FF_DO_NOT_SPELL_CHECK, !spellCheck);
     }
 
     /**
@@ -157,7 +157,7 @@ public class PdfTextFormField extends PdfFormField {
      * @return current {@link PdfTextFormField}
      */
     public PdfTextFormField setScroll(boolean scroll) {
-        return setFieldFlag(FF_DO_NOT_SCROLL, !scroll);
+        return (PdfTextFormField) setFieldFlag(FF_DO_NOT_SCROLL, !scroll);
     }
 
     /**
@@ -180,7 +180,7 @@ public class PdfTextFormField extends PdfFormField {
      * @return current {@link PdfTextFormField}
      */
     public PdfTextFormField setComb(boolean comb) {
-        return setFieldFlag(FF_COMB, comb);
+        return (PdfTextFormField) setFieldFlag(FF_COMB, comb);
     }
 
     /**
@@ -199,7 +199,7 @@ public class PdfTextFormField extends PdfFormField {
      * @return current {@link PdfTextFormField}
      */
     public PdfTextFormField setRichText(boolean richText) {
-        return setFieldFlag(FF_RICH_TEXT, richText);
+        return (PdfTextFormField) setFieldFlag(FF_RICH_TEXT, richText);
     }
 
     /**
@@ -218,6 +218,6 @@ public class PdfTextFormField extends PdfFormField {
      * @return current
      */
     public PdfTextFormField setMaxLen(int maxLen) {
-        return put(PdfName.MaxLen, new PdfNumber(maxLen));
+        return (PdfTextFormField) put(PdfName.MaxLen, new PdfNumber(maxLen));
     }
 }

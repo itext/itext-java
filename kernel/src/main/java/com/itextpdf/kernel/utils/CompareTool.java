@@ -876,14 +876,16 @@ public class CompareTool {
         }
         String errorMessage = null;
         if (numberOfDifferentBytes > 0) {
-            int l = Math.max(0, firstDifferenceOffset - 10);
-            int r = Math.min(cmpStreamBytes.length, firstDifferenceOffset + 10);
+            int lCmp = Math.max(0, firstDifferenceOffset - 10);
+            int rCmp = Math.min(cmpStreamBytes.length, firstDifferenceOffset + 10);
+            int lOut = Math.max(0, firstDifferenceOffset - 10);
+            int rOut = Math.min(outStreamBytes.length, firstDifferenceOffset + 10);
 
 
             String cmpByte = new String(new byte[]{cmpStreamBytes[firstDifferenceOffset]});
-            String cmpByteNeighbours = new String(cmpStreamBytes, l, r - l).replaceAll("\\r|\\n", " ");
+            String cmpByteNeighbours = new String(cmpStreamBytes, lCmp, rCmp - lCmp).replaceAll("\\r|\\n", " ");
             String outByte = new String(new byte[]{outStreamBytes[firstDifferenceOffset]});
-            String outBytesNeighbours = new String(outStreamBytes, l, r - l).replaceAll("\\r|\\n", " ");
+            String outBytesNeighbours = new String(outStreamBytes, lOut, rOut - lOut).replaceAll("\\r|\\n", " ");
             errorMessage = MessageFormat.format("First bytes difference is encountered at index {0}. Expected: {1} ({2}). Found: {3} ({4}). Total number of different bytes: {5}",
                     Integer.valueOf(firstDifferenceOffset).toString(), cmpByte, cmpByteNeighbours, outByte, outBytesNeighbours, numberOfDifferentBytes);
         } else { // lengths are different

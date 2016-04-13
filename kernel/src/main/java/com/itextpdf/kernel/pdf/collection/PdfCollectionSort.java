@@ -63,7 +63,7 @@ public class PdfCollectionSort extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfCollectionSort(String key) {
         this(new PdfDictionary());
-        put(PdfName.S, new PdfName(key));
+        getPdfObject().put(PdfName.S, new PdfName(key));
     }
 
     /**
@@ -72,7 +72,7 @@ public class PdfCollectionSort extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfCollectionSort(String[] keys) {
         this(new PdfDictionary());
-        put(PdfName.S, new PdfArray(Arrays.asList(keys), true));
+        getPdfObject().put(PdfName.S, new PdfArray(Arrays.asList(keys), true));
     }
 
     /**
@@ -83,7 +83,7 @@ public class PdfCollectionSort extends PdfObjectWrapper<PdfDictionary> {
     public PdfCollectionSort setSortOrder(boolean ascending) {
         PdfObject obj = getPdfObject().get(PdfName.S);
         if (obj.isName()) {
-            put(PdfName.A, new PdfBoolean(ascending));
+            getPdfObject().put(PdfName.A, new PdfBoolean(ascending));
         } else {
             throw new PdfException(PdfException.YouHaveToDefineABooleanArrayForThisCollectionSortDictionary);
         }
@@ -101,7 +101,8 @@ public class PdfCollectionSort extends PdfObjectWrapper<PdfDictionary> {
             if (((PdfArray)obj).size() != ascending.length) {
                 throw new PdfException(PdfException.TheNumberOfBooleansInTheArrayDoesntCorrespondWithTheNumberOfFields);
             }
-            return put(PdfName.A, new PdfArray(ascending));
+            getPdfObject().put(PdfName.A, new PdfArray(ascending));
+            return this;
         } else {
             throw new PdfException(PdfException.YouNeedASingleBooleanForThisCollectionSortDictionary);
         }

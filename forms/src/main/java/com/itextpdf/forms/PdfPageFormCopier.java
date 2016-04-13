@@ -135,22 +135,27 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
 
     private PdfFormField mergeFieldsWithTheSameName(PdfFormField existingField, PdfFormField newField) {
         String fieldName = newField.getFieldName().toUnicodeString();
-        existingField.remove(PdfName.T);
+        existingField.getPdfObject().remove(PdfName.T);
         PdfFormField mergedField = formTo.getField(fieldName);
         PdfArray kids = mergedField.getKids();
         if (kids != null && !kids.isEmpty()) {
             mergedField.addKid(existingField);
             return mergedField;
         }
-        newField.remove(PdfName.T);
+        newField.getPdfObject().remove(PdfName.T);
         mergedField = PdfFormField.createEmptyField(documentTo);
         formTo.getFields().remove(newField.getPdfObject());
-        //formTo.getFormFields().remove(fieldName);
         mergedField.
                 put(PdfName.FT, existingField.getFormType()).
-                put(PdfName.T, new PdfString(fieldName)).
-                put(PdfName.Parent, existingField.getParent()).
-                put(PdfName.Kids, existingField.getKids());
+                put(PdfName.T, new PdfString(fieldName));
+        PdfDictionary parent = existingField.getParent();
+        if (parent != null) {
+            mergedField.put(PdfName.Parent, parent);
+        }
+        kids = existingField.getKids();
+        if (kids != null) {
+            mergedField.put(PdfName.Kids, kids);
+        }
 
         mergedField.addKid(existingField).addKid(newField);
 

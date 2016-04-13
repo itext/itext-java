@@ -62,7 +62,7 @@ public class PdfTextMarkupAnnotation extends PdfMarkupAnnotation {
 
     public PdfTextMarkupAnnotation(Rectangle rect, PdfName subtype, float quadPoints[]) {
         super(rect);
-        setSubtype(subtype);
+        put(PdfName.Subtype, subtype);
         setQuadPoints(new PdfArray(quadPoints));
     }
 
@@ -88,11 +88,10 @@ public class PdfTextMarkupAnnotation extends PdfMarkupAnnotation {
 
     @Override
     public PdfName getSubtype() {
-        return getPdfObject().getAsName(PdfName.Subtype);
+        PdfName subType = getPdfObject().getAsName(PdfName.Subtype);
+        if (subType == null) {
+            subType = PdfName.Underline;
+        }
+        return subType;
     }
-
-    private void setSubtype(PdfName subtype) {
-        put(PdfName.Subtype, subtype);
-    }
-
 }

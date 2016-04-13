@@ -69,7 +69,7 @@ public class PdfRedactAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfRedactAnnotation setOverlayText(PdfString text){
-        return put(PdfName.OverlayText, text);
+        return (PdfRedactAnnotation) put(PdfName.OverlayText, text);
     }
 
     public PdfString getOverlayText() {
@@ -77,7 +77,7 @@ public class PdfRedactAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfRedactAnnotation setRedactRolloverAppearance(PdfStream stream) {
-        return put(PdfName.RO, stream);
+        return (PdfRedactAnnotation) put(PdfName.RO, stream);
     }
 
     public PdfStream getRedactRolloverAppearance() {
@@ -85,7 +85,7 @@ public class PdfRedactAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfRedactAnnotation setRepeat(PdfBoolean repeat) {
-        return put(PdfName.Repeat, repeat);
+        return (PdfRedactAnnotation) put(PdfName.Repeat, repeat);
     }
 
     public PdfBoolean getRepeat() {

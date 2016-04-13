@@ -695,7 +695,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             pageLabel.put(PdfName.St, new PdfNumber(firstPage));
         }
         getDocument().getCatalog().getPageLabelsTree(true).addEntry(getDocument().getPageNumber(this) - 1, pageLabel);
+        return this;
+    }
 
+    public PdfPage put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
         return this;
     }
 

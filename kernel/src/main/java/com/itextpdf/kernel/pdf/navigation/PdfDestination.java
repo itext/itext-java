@@ -53,11 +53,11 @@ import com.itextpdf.kernel.pdf.PdfString;
 import java.util.Map;
 
 
-public abstract class PdfDestination<T extends PdfObject> extends PdfObjectWrapper<T> {
+public abstract class PdfDestination extends PdfObjectWrapper<PdfObject> {
 
     private static final long serialVersionUID = 8102903000978704308L;
 
-	public PdfDestination(T pdfObject) {
+	protected PdfDestination(PdfObject pdfObject) {
         super(pdfObject);
     }
 

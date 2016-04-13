@@ -82,12 +82,11 @@ public class PdfSignatureFormField extends PdfFormField {
     /**
      * Adds the signature to the signature field.
      * 
-     * @param <T> guaranteed to be a {@link PdfFormField} type
      * @param value the signature to be contained in the signature field, or an indirect reference to it
-     * @return 
+     * @return the edited field
      */
-    public <T extends PdfFormField> T setValue(PdfObject value) {
-        return put(PdfName.V, value);
+    public PdfSignatureFormField setValue(PdfObject value) {
+        return (PdfSignatureFormField) put(PdfName.V, value);
     }
 
     /**

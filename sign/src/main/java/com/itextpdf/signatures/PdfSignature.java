@@ -50,6 +50,7 @@ import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 
@@ -62,13 +63,19 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates new PdfSignature.
+     */
+    public PdfSignature() {
+        super(new PdfDictionary());
+        put(PdfName.Type, PdfName.Sig);
+    }
+    /**
+     * Creates new PdfSignature.
      *
      * @param filter PdfName of the signature handler to use when validating this signature
      * @param subFilter PdfName that describes the encoding of the signature
      */
     public PdfSignature(PdfName filter, PdfName subFilter) {
-        super(new PdfDictionary());
-        put(PdfName.Type, PdfName.Sig);
+        this();
         put(PdfName.Filter, filter);
         put(PdfName.SubFilter, subFilter);
     }
@@ -121,7 +128,7 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      * @param date time of signing
      */
     public void setDate(PdfDate date) {
-        put(PdfName.M, date);
+        put(PdfName.M, date.getPdfObject());
     }
 
     /**
@@ -161,6 +168,11 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      */
     public void setContact(String contactInfo) {
         put(PdfName.ContactInfo, new PdfString(contactInfo, PdfEncodings.UNICODE_BIG));
+    }
+
+    public PdfSignature put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return this;
     }
 
     @Override

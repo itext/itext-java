@@ -49,7 +49,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
 
-public class PdfMcrNumber extends PdfMcr<PdfNumber> {
+public class PdfMcrNumber extends PdfMcr {
 
     private static final long serialVersionUID = -9039654592261202430L;
 

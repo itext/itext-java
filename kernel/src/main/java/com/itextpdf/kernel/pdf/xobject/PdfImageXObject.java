@@ -171,6 +171,11 @@ public class PdfImageXObject extends PdfXObject {
         return bytes;
     }
 
+    public PdfImageXObject put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return this;
+    }
+
     protected static PdfStream createPdfStream(Image image, PdfImageXObject imageMask) {
         PdfStream stream;
         if (image.getOriginalType() == ImageType.RAW) {

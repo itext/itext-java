@@ -66,7 +66,7 @@ public class PdfStampAnnotation extends  PdfMarkupAnnotation {
     }
 
     public PdfStampAnnotation setStampName(PdfName name){
-        return put (PdfName.Name, name);
+        return (PdfStampAnnotation) put (PdfName.Name, name);
     }
 
     public PdfName getStampName() {

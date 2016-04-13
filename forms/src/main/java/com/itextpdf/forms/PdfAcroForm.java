@@ -171,7 +171,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         if (acroFormDictionary == null) {
             if (createIfNotExist) {
                 acroForm = new PdfAcroForm(new PdfArray()).makeIndirect(document);
-                document.getCatalog().put(PdfName.AcroForm, acroForm);
+                document.getCatalog().put(PdfName.AcroForm, acroForm.getPdfObject());
                 document.getCatalog().setModified();
                 acroForm.setDefaultAppearance("/Helv 0 Tf 0 g ");
             }
@@ -693,7 +693,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             getFields().clear();
         }
         if (getFields().isEmpty()) {
-            document.getCatalog().getPdfObject().remove(PdfName.AcroForm);
+            document.getCatalog().remove(PdfName.AcroForm);
         }
     }
 
@@ -1033,6 +1033,11 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             }
         }
         return null;
+    }
+
+    public PdfAcroForm put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return this;
     }
 
     /**

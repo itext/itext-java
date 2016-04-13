@@ -52,7 +52,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 
 import java.util.Map;
 
-public class PdfExplicitDestination extends PdfDestination<PdfArray> {
+public class PdfExplicitDestination extends PdfDestination {
 
     private static final long serialVersionUID = -1515785642472963298L;
 
@@ -66,7 +66,7 @@ public class PdfExplicitDestination extends PdfDestination<PdfArray> {
 
     @Override
     public PdfObject getDestinationPage(Map<String, PdfObject> names) {
-        return getPdfObject().get(0);
+        return ((PdfArray)getPdfObject()).get(0);
     }
 
     @Override
@@ -152,23 +152,24 @@ public class PdfExplicitDestination extends PdfDestination<PdfArray> {
     }
 
     private PdfExplicitDestination add(float value) {
-        if (!Float.isNaN(value))
-            getPdfObject().add(new PdfNumber(value));
+        if (!Float.isNaN(value)) {
+            ((PdfArray) getPdfObject()).add(new PdfNumber(value));
+        }
         return this;
     }
 
     private PdfExplicitDestination add(int value) {
-        getPdfObject().add(new PdfNumber(value));
+        ((PdfArray)getPdfObject()).add(new PdfNumber(value));
         return this;
     }
 
     private PdfExplicitDestination add(PdfPage page) {
-        getPdfObject().add(page.getPdfObject());
+        ((PdfArray)getPdfObject()).add(page.getPdfObject());
         return this;
     }
 
     private PdfExplicitDestination add(PdfName type) {
-        getPdfObject().add(type);
+        ((PdfArray)getPdfObject()).add(type);
         return this;
     }
 

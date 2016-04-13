@@ -172,10 +172,12 @@ public class PdfMerger {
                     }
 
                     if (d != null ||  a != null && !hasGoToAction) {
-                        PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(pdfDocument, excludedKeys, false));
-                        newAnnot.setDestination(d);
+                        PdfLinkAnnotation newAnnot = (PdfLinkAnnotation) PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(pdfDocument, excludedKeys, false));
+                        if (d != null) {
+                            newAnnot.setDestination(d);
+                        }
                         if (hasGoToAction) {
-                            newAnnot.remove(PdfName.A);
+                            newAnnot.getPdfObject().remove(PdfName.A);
                         }
                         page2page.get(entry.getKey()).addAnnotation(-1, newAnnot, false);
                     }
