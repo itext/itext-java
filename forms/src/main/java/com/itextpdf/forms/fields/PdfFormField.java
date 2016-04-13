@@ -1391,23 +1391,23 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Basic setter for the <code>rotation</code> property. Regenerates
+     * Basic setter for the <code>degRotation</code> property. Regenerates
      * the field appearance after setting the new value.
      *
-     * @param rotation the new rotation to be set
+     * @param degRotation the new degRotation to be set
      */
-    public void setRotation(int rotation) {
-        if(rotation % 90 != 0) {
-            throw new IllegalArgumentException("rotation.must.be.a.multiple.of.90");
+    public void setRotation(int degRotation) {
+        if(degRotation % 90 != 0) {
+            throw new IllegalArgumentException("degRotation.must.be.a.multiple.of.90");
         } else {
-            rotation %= 360;
-            if(rotation < 0) {
-                rotation += 360;
+            degRotation %= 360;
+            if(degRotation < 0) {
+                degRotation += 360;
             }
 
-            this.rotation = rotation;
+            this.rotation = degRotation;
         }
-        this.rotation = rotation;
+        this.rotation = degRotation;
         regenerateField();
     }
 

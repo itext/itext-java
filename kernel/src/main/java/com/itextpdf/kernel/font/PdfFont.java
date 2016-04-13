@@ -297,8 +297,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public abstract FontProgram getFontProgram();
 
-    public abstract FontEncoding getFontEncoding();
-
     public boolean isEmbedded() {
         return embedded;
     }

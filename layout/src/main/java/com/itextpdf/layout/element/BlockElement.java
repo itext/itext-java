@@ -300,13 +300,13 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
     }
 
     /**
-     * Sets the rotation angle.
+     * Sets the rotation radAngle.
      * 
-     * @param angle the new rotation angle, as a <code>float</code>
+     * @param radAngle the new rotation radAngle, as a <code>float</code>
      * @return this element
      */
-    public T setRotationAngle(float angle) {
-        setProperty(Property.ROTATION_ANGLE, angle);
+    public T setRotationAngle(float radAngle) {
+        setProperty(Property.ROTATION_ANGLE, radAngle);
         return (T) this;
     }
 

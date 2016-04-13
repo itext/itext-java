@@ -451,7 +451,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         return fontDescriptor;
     }
 
-    public CMapEncoding getCmapEncoding() {
+    public CMapEncoding getCmap() {
         return cmapEncoding;
     }
 

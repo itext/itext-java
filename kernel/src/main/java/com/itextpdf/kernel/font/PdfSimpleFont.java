@@ -111,7 +111,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         return fontProgram;
     }
 
-    @Override
     public FontEncoding getFontEncoding() {
         return fontEncoding;
     }

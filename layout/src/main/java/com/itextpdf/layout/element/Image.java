@@ -180,12 +180,12 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
     }
 
     /**
-     * Sets the rotation angle.
-     * @param angle a value in radians
+     * Sets the rotation radAngle.
+     * @param radAngle a value in radians
      * @return this element
      */
-    public Image setRotationAngle(double angle) {
-        return setProperty(Property.ROTATION_ANGLE, angle);
+    public Image setRotationAngle(double radAngle) {
+        return setProperty(Property.ROTATION_ANGLE, radAngle);
     }
 
     /**
