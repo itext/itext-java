@@ -164,7 +164,7 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
         put(PdfName.ContactInfo, new PdfString(contactInfo, PdfEncodings.UnicodeBig));
     }
 
-    protected PdfSignature put(PdfName key, PdfObject value) {
+    public PdfSignature put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
         return this;
     }
