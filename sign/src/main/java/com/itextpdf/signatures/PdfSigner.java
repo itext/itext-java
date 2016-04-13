@@ -562,7 +562,7 @@ public class PdfSigner {
             throw new PdfException(PdfException.ThisInstanceOfPdfSignerIsAlreadyClosed);
         }
 
-        PdfSignature dic = new PdfSignature(null, null);
+        PdfSignature dic = new PdfSignature();
         PdfSignatureAppearance appearance = getSignatureAppearance();
         dic.setReason(appearance.getReason());
         dic.setLocation(appearance.getLocation());

@@ -63,13 +63,19 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates new PdfSignature.
+     */
+    public PdfSignature() {
+        super(new PdfDictionary());
+        put(PdfName.Type, PdfName.Sig);
+    }
+    /**
+     * Creates new PdfSignature.
      *
      * @param filter PdfName of the signature handler to use when validating this signature
      * @param subFilter PdfName that describes the encoding of the signature
      */
     public PdfSignature(PdfName filter, PdfName subFilter) {
-        super(new PdfDictionary());
-        put(PdfName.Type, PdfName.Sig);
+        this();
         put(PdfName.Filter, filter);
         put(PdfName.SubFilter, subFilter);
     }
