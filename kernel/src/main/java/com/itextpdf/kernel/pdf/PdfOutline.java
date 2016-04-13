@@ -212,7 +212,7 @@ public class PdfOutline {
     void removeOutline() {
         PdfName type = content.getAsName(PdfName.Type);
         if (type != null && type.equals(PdfName.Outlines)) {
-            pdfDoc.getCatalog().getPdfObject().remove(PdfName.Outlines);
+            pdfDoc.getCatalog().remove(PdfName.Outlines);
             return;
         }
         PdfOutline parent = this.parent;

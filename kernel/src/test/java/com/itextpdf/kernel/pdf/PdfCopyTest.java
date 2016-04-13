@@ -62,7 +62,7 @@ public class PdfCopyTest extends ExtendedITextTest {
         pdfDoc1.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
-        pdfDoc1.getCatalog().getPdfObject().put(new PdfName("a"), new PdfName("b").makeIndirect(pdfDoc1));
+        pdfDoc1.getCatalog().put(new PdfName("a"), new PdfName("b").makeIndirect(pdfDoc1));
         PdfPage page1 = pdfDoc1.addNewPage();
         page1.flush();
         pdfDoc1.close();

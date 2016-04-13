@@ -693,7 +693,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             getFields().clear();
         }
         if (getFields().isEmpty()) {
-            document.getCatalog().getPdfObject().remove(PdfName.AcroForm);
+            document.getCatalog().remove(PdfName.AcroForm);
         }
     }
 

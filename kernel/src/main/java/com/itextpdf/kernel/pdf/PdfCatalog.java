@@ -337,6 +337,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    public PdfCatalog remove(PdfName key) {
+        getPdfObject().remove(key);
+        return this;
+    }
+
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;
