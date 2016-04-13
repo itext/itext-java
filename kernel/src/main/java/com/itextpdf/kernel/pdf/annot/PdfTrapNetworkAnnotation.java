@@ -78,7 +78,7 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
     }
 
     public PdfTrapNetworkAnnotation setLastModified(PdfDate lastModified) {
-        return put(PdfName.LastModified, lastModified.getPdfObject());
+        return (PdfTrapNetworkAnnotation) put(PdfName.LastModified, lastModified.getPdfObject());
     }
 
     public PdfString getLastModified() {
@@ -86,7 +86,7 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
     }
 
     public PdfTrapNetworkAnnotation setVersion(PdfArray version) {
-        return put(PdfName.Version, version);
+        return (PdfTrapNetworkAnnotation) put(PdfName.Version, version);
     }
 
     public PdfArray getVersion() {
@@ -94,7 +94,7 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
     }
 
     public PdfTrapNetworkAnnotation setAnnotStates(PdfArray annotStates) {
-        return put(PdfName.AnnotStates, annotStates);
+        return (PdfTrapNetworkAnnotation) put(PdfName.AnnotStates, annotStates);
     }
 
     public PdfArray getAnnotStates() {
@@ -102,7 +102,7 @@ public class PdfTrapNetworkAnnotation extends PdfAnnotation {
     }
 
     public PdfTrapNetworkAnnotation setFauxedFonts(PdfArray fauxedFonts) {
-        return put(PdfName.FontFauxing, fauxedFonts);
+        return (PdfTrapNetworkAnnotation) put(PdfName.FontFauxing, fauxedFonts);
     }
 
     public PdfTrapNetworkAnnotation setFauxedFonts(List<PdfFont> fauxedFonts) {

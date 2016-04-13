@@ -228,7 +228,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfAction createHide(PdfAnnotation[] annotations, boolean hidden) {
-        return new PdfAction().put(PdfName.S, PdfName.Hide).put(PdfName.T, getArrayFromWrappersList(annotations)).
+        return new PdfAction().put(PdfName.S, PdfName.Hide).put(PdfName.T, getPdfArrayFromAnnotationsList(annotations)).
                 put(PdfName.H, new PdfBoolean(hidden));
     }
 
@@ -331,9 +331,9 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         return true;
     }
 
-    private static PdfArray getArrayFromWrappersList(PdfObjectWrapper[] wrappers) {
+    private static PdfArray getPdfArrayFromAnnotationsList(PdfAnnotation[] wrappers) {
         PdfArray arr = new PdfArray();
-        for (PdfObjectWrapper wrapper : wrappers) {
+        for (PdfAnnotation wrapper : wrappers) {
             arr.add(wrapper.getPdfObject());
         }
         return arr;

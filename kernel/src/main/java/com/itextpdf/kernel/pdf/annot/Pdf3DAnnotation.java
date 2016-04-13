@@ -66,7 +66,7 @@ public class Pdf3DAnnotation extends PdfAnnotation {
     }
 
     public Pdf3DAnnotation setDefaultInitialView(PdfObject initialView) {
-        return put(PdfName._3DV, initialView);
+        return (Pdf3DAnnotation) put(PdfName._3DV, initialView);
     }
 
     public PdfObject getDefaultInitialView() {
@@ -74,7 +74,7 @@ public class Pdf3DAnnotation extends PdfAnnotation {
     }
 
     public Pdf3DAnnotation setActivationDictionary(PdfDictionary activationDictionary) {
-        return put(PdfName._3DA, activationDictionary);
+        return (Pdf3DAnnotation) put(PdfName._3DA, activationDictionary);
     }
 
     public PdfDictionary getActivationDictionary() {
@@ -82,7 +82,7 @@ public class Pdf3DAnnotation extends PdfAnnotation {
     }
 
     public Pdf3DAnnotation setInteractive(boolean interactive) {
-        return put(PdfName._3DI, new PdfBoolean(interactive));
+        return (Pdf3DAnnotation) put(PdfName._3DI, new PdfBoolean(interactive));
     }
 
     public PdfBoolean isInteractive() {
@@ -90,7 +90,7 @@ public class Pdf3DAnnotation extends PdfAnnotation {
     }
 
     public Pdf3DAnnotation setViewBox(Rectangle viewBox) {
-        return put(PdfName._3DB, new PdfArray(viewBox));
+        return (Pdf3DAnnotation) put(PdfName._3DB, new PdfArray(viewBox));
     }
 
     public Rectangle getViewBox() {

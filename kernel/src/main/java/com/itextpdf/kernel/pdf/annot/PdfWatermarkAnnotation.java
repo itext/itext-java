@@ -66,7 +66,7 @@ public class PdfWatermarkAnnotation extends PdfAnnotation {
     }
 
     public PdfWatermarkAnnotation setFixedPrint(PdfFixedPrint fixedPrint){
-        return put(PdfName.FixedPrint, fixedPrint.getPdfObject());
+        return (PdfWatermarkAnnotation) put(PdfName.FixedPrint, fixedPrint.getPdfObject());
     }
 
     public PdfDictionary getFixedPrint() {

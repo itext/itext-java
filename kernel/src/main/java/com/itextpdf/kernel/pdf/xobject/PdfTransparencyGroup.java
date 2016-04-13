@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 
 public class PdfTransparencyGroup extends PdfObjectWrapper<PdfDictionary> {
@@ -89,6 +90,11 @@ public class PdfTransparencyGroup extends PdfObjectWrapper<PdfDictionary> {
 
     public void setColorSpace(PdfArray colorSpace) {
         getPdfObject().put(PdfName.CS, colorSpace);
+    }
+
+    public PdfTransparencyGroup put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return this;
     }
 
     @Override

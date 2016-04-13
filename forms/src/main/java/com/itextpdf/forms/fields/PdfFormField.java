@@ -79,11 +79,13 @@ import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Property;
-import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.element.Paragraph;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm

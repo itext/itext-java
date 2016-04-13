@@ -78,7 +78,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfLineAnnotation setLineEndingStyles(PdfArray lineEndingStyles) {
-        return put(PdfName.LE, lineEndingStyles);
+        return (PdfLineAnnotation) put(PdfName.LE, lineEndingStyles);
     }
 
     public float getLeaderLine() {
@@ -87,7 +87,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfLineAnnotation setLeaderLine(float leaderLine) {
-        return put(PdfName.LE, new PdfNumber(leaderLine));
+        return (PdfLineAnnotation) put(PdfName.LE, new PdfNumber(leaderLine));
     }
 
     public float getLeaderLineExtension() {
@@ -96,7 +96,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfLineAnnotation setLeaderLineExtension(float leaderLineExtension) {
-        return put(PdfName.LLE, new PdfNumber(leaderLineExtension));
+        return (PdfLineAnnotation) put(PdfName.LLE, new PdfNumber(leaderLineExtension));
     }
 
     public float getLeaderLineOffset() {
@@ -105,7 +105,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfLineAnnotation setLeaderLineOffset(float leaderLineOffset) {
-        return put(PdfName.LLO, new PdfNumber(leaderLineOffset));
+        return (PdfLineAnnotation) put(PdfName.LLO, new PdfNumber(leaderLineOffset));
     }
 
     public boolean getContentsAsCaption() {
@@ -114,7 +114,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfLineAnnotation setContentsAsCaption(boolean contentsAsCaption) {
-        return put(PdfName.Cap, new PdfBoolean(contentsAsCaption));
+        return (PdfLineAnnotation) put(PdfName.Cap, new PdfBoolean(contentsAsCaption));
     }
 
     public PdfName getCaptionPosition() {
@@ -122,7 +122,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfLineAnnotation setCaptionPosition(PdfName captionPosition) {
-        return put(PdfName.CP, captionPosition);
+        return (PdfLineAnnotation) put(PdfName.CP, captionPosition);
     }
 
     public PdfDictionary getMeasure() {
@@ -130,18 +130,18 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfLineAnnotation setMeasure(PdfDictionary measure) {
-        return put(PdfName.Measure, measure);
+        return (PdfLineAnnotation) put(PdfName.Measure, measure);
     }
 
     public PdfArray getCaptionOffset() {
         return getPdfObject().getAsArray(PdfName.CO);
     }
 
-    public PdfLinkAnnotation setCaptionOffset(PdfArray captionOffset) {
-        return put(PdfName.CO, captionOffset);
+    public PdfLineAnnotation setCaptionOffset(PdfArray captionOffset) {
+        return (PdfLineAnnotation) put(PdfName.CO, captionOffset);
     }
 
-    public PdfLinkAnnotation setCaptionOffset(float[] captionOffset) {
+    public PdfLineAnnotation setCaptionOffset(float[] captionOffset) {
         return setCaptionOffset(new PdfArray(captionOffset));
     }
 

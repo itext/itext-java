@@ -76,7 +76,7 @@ public class PdfPopupAnnotation extends PdfAnnotation {
 
     public PdfPopupAnnotation setParent(PdfAnnotation parent) {
         this.parent = parent;
-        return put(PdfName.Parent, parent.getPdfObject());
+        return (PdfPopupAnnotation) put(PdfName.Parent, parent.getPdfObject());
     }
 
 }

@@ -358,6 +358,11 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
             return Unknown;
     }
 
+    public PdfStructElem put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return this;
+    }
+
     @Override
     public void flush() {
         //TODO log that to prevent undefined behaviour, use StructTreeRoot#flushStructElem method

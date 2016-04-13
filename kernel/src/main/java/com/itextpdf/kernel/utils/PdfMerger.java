@@ -172,7 +172,7 @@ public class PdfMerger {
                     }
 
                     if (d != null ||  a != null && !hasGoToAction) {
-                        PdfLinkAnnotation newAnnot = PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(pdfDocument, excludedKeys, false));
+                        PdfLinkAnnotation newAnnot = (PdfLinkAnnotation) PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(pdfDocument, excludedKeys, false));
                         if (d != null) {
                             newAnnot.setDestination(d);
                         }
