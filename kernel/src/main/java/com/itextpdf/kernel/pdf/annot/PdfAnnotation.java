@@ -123,48 +123,49 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         if (pdfObject.isDictionary()) {
             PdfDictionary dictionary = (PdfDictionary) pdfObject;
             PdfName subtype = dictionary.getAsName(PdfName.Subtype);
-            if (PdfName.Link.equals(subtype))
+            if (PdfName.Link.equals(subtype)) {
                 annotation = new PdfLinkAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Popup.equals(subtype))
+            } else if (PdfName.Popup.equals(subtype)) {
                 annotation = new PdfPopupAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Widget.equals(subtype))
+            } else if (PdfName.Widget.equals(subtype)) {
                 annotation = new PdfWidgetAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Screen.equals(subtype))
+            } else if (PdfName.Screen.equals(subtype)) {
                 annotation = new PdfScreenAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName._3D.equals(subtype))
+            } else if (PdfName._3D.equals(subtype)) {
                 throw new UnsupportedOperationException();
-            else if (PdfName.Highlight.equals(subtype) || PdfName.Underline.equals(subtype) || PdfName.Squiggly.equals(subtype) || PdfName.StrikeOut.equals(subtype))
+            } else if (PdfName.Highlight.equals(subtype) || PdfName.Underline.equals(subtype) || PdfName.Squiggly.equals(subtype) || PdfName.StrikeOut.equals(subtype)) {
                 annotation = new PdfTextMarkupAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Caret.equals(subtype))
+            } else if (PdfName.Caret.equals(subtype)) {
                 annotation = new PdfCaretAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Text.equals(subtype))
+            } else if (PdfName.Text.equals(subtype)) {
                 annotation = new PdfTextAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Sound.equals(subtype))
+            } else if (PdfName.Sound.equals(subtype)) {
                 annotation = new PdfSoundAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Stamp.equals(subtype))
+            } else if (PdfName.Stamp.equals(subtype)) {
                 annotation = new PdfStampAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.FileAttachment.equals(subtype))
+            } else if (PdfName.FileAttachment.equals(subtype)) {
                 annotation = new PdfFileAttachmentAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Ink.equals(subtype))
+            } else if (PdfName.Ink.equals(subtype)) {
                 annotation = new PdfInkAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.PrinterMark.equals(subtype))
+            } else if (PdfName.PrinterMark.equals(subtype)) {
                 annotation = new PdfPrinterMarkAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.TrapNet.equals(subtype))
+            } else if (PdfName.TrapNet.equals(subtype)) {
                 annotation = new PdfTrapNetworkAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.FreeText.equals(subtype))
+            } else if (PdfName.FreeText.equals(subtype)) {
                 annotation = new PdfFreeTextAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Square.equals(subtype))
+            } else if (PdfName.Square.equals(subtype)) {
                 annotation = new PdfSquareAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Circle.equals(subtype))
+            } else if (PdfName.Circle.equals(subtype)) {
                 annotation = new PdfCircleAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Line.equals(subtype))
+            } else if (PdfName.Line.equals(subtype)) {
                 annotation = new PdfLineAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Polygon.equals(subtype) || PdfName.PolyLine.equals(subtype))
+            } else if (PdfName.Polygon.equals(subtype) || PdfName.PolyLine.equals(subtype)) {
                 annotation = new PdfPolyGeomAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Redact.equals(subtype))
+            } else if (PdfName.Redact.equals(subtype)) {
                 annotation = new PdfRedactAnnotation((PdfDictionary) pdfObject);
-            else if (PdfName.Watermark.equals(subtype))
+            } else if (PdfName.Watermark.equals(subtype)) {
                 annotation = new PdfWatermarkAnnotation((PdfDictionary) pdfObject);
+            }
         }
         if (annotation instanceof PdfMarkupAnnotation) {
             PdfMarkupAnnotation markup = (PdfMarkupAnnotation) annotation;

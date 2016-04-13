@@ -689,30 +689,30 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Creates a (subtype of) {@link PdfFormField} object. The type of the object
      * depends on the <code>FT</code> entry in the <code>pdfObject</code> parameter.
      *
-     * @param <T>       an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param pdfObject assumed to be either a {@link PdfDictionary}, or a
      *                  {@link PdfIndirectReference} to a {@link PdfDictionary}
      * @param document  the {@link PdfDocument} to create the field in
      * @return a new {@link PdfFormField}, or <code>null</code> if
      * <code>pdfObject</code> does not contain a <code>FT</code> entry
      */
-    public static <T extends PdfFormField> T makeFormField(PdfObject pdfObject, PdfDocument document) {
-        T field = null;
+    public static PdfFormField makeFormField(PdfObject pdfObject, PdfDocument document) {
+        PdfFormField field = null;
         if (pdfObject.isIndirectReference())
             pdfObject = ((PdfIndirectReference) pdfObject).getRefersTo();
         if (pdfObject.isDictionary()) {
             PdfDictionary dictionary = (PdfDictionary) pdfObject;
             PdfName formType = dictionary.getAsName(PdfName.FT);
-            if (PdfName.Tx.equals(formType))
+            if (PdfName.Tx.equals(formType)) {
                 field = new PdfTextFormField(dictionary).makeIndirect(document);
-            else if (PdfName.Btn.equals(formType))
+            } else if (PdfName.Btn.equals(formType)) {
                 field = new PdfButtonFormField(dictionary).makeIndirect(document);
-            else if (PdfName.Ch.equals(formType))
+            } else if (PdfName.Ch.equals(formType)) {
                 field = new PdfChoiceFormField(dictionary).makeIndirect(document);
-            else if (PdfName.Sig.equals(formType))
+            } else if (PdfName.Sig.equals(formType)) {
                 field = new PdfSignatureFormField(dictionary).makeIndirect(document);
-            else
+            } else {
                 field = new PdfFormField(dictionary).makeIndirect(document);
+            }
         }
 
         return field;
@@ -731,11 +731,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets a value to the field and generating field appearance if needed.
      *
-     * @param <T>   an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param value of the field
      * @return the field
      */
-    public <T extends PdfFormField> T setValue(String value) {
+    public PdfFormField setValue(String value) {
         PdfName ft = getFormType();
         if (ft == null || !ft.equals(PdfName.Btn)) {
             PdfArray kids = getKids();
@@ -758,12 +757,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets a value to the field and generating field appearance if needed.
      *
-     * @param <T>                an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param value              of the field
      * @param generateAppearance set this flat to false if you want to keep the appearance of the field generated before
      * @return the field
      */
-    public <T extends PdfFormField> T setValue(String value, boolean generateAppearance) {
+    public PdfFormField setValue(String value, boolean generateAppearance) {
         PdfName formType = getFormType();
         if (PdfName.Tx.equals(formType) || PdfName.Ch.equals(formType)) {
             put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
@@ -794,19 +792,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         } else {
             regenerateField();
         }
-        return (T) this;
+        return this;
     }
 
     /**
      * Set text field value with given font and size
      *
-     * @param <T>      an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param value    text value
      * @param font     a {@link PdfFont}
      * @param fontSize a positive integer
      * @return the edited field
      */
-    public <T extends PdfFormField> T setValue(String value, PdfFont font, int fontSize) {
+    public PdfFormField setValue(String value, PdfFont font, int fontSize) {
         PdfName formType = getFormType();
         if (!formType.equals(PdfName.Tx) && !formType.equals(PdfName.Ch)) {
             return setValue(value);
@@ -842,13 +839,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Sets the field value and the display string. The display string
      * is used to build the appearance.
      *
-     * @param <T>     an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param value   the field value
      * @param display the string that is used for the appearance. If <CODE>null</CODE>
      *                the <CODE>value</CODE> parameter will be used
      * @return the edited field
      */
-    public <T extends PdfFormField> T setValue(String value, String display) {
+    public PdfFormField setValue(String value, String display) {
         if (display == null) {
             return setValue(value);
         }
@@ -865,18 +861,16 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         } else {
             put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
         }
-
-        return (T) this;
+        return this;
     }
 
     /**
      * Sets a parent {@link PdfFormField} for the current object.
      *
-     * @param <T>    an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param parent another form field that this field belongs to, usually a group field
      * @return the edited field
      */
-    public <T extends PdfFormField> T setParent(PdfFormField parent) {
+    public PdfFormField setParent(PdfFormField parent) {
         return put(PdfName.Parent, parent.getPdfObject());
     }
 
@@ -902,11 +896,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Adds a new kid to the <code>Kids</code> array property from a
      * {@link PdfFormField}. Also sets the kid's <code>Parent</code> property to this object.
      *
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param kid a new {@link PdfFormField} entry for the field's <code>Kids</code> array property
      * @return the edited field
      */
-    public <T extends PdfFormField> T addKid(PdfFormField kid) {
+    public PdfFormField addKid(PdfFormField kid) {
         kid.setParent(this);
         PdfArray kids = getKids();
         if (kids == null) {
@@ -921,11 +914,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Adds a new kid to the <code>Kids</code> array property from a
      * {@link PdfWidgetAnnotation}. Also sets the kid's <code>Parent</code> property to this object.
      *
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param kid a new {@link PdfWidgetAnnotation} entry for the field's <code>Kids</code> array property
      * @return the edited field
      */
-    public <T extends PdfFormField> T addKid(PdfWidgetAnnotation kid) {
+    public PdfFormField addKid(PdfWidgetAnnotation kid) {
         kid.setParent(getPdfObject());
         PdfArray kids = getKids();
         if (kids == null) {
@@ -938,11 +930,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Changes the name of the field to the specified value.
      *
-     * @param <T>  an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param name the new field name, as a String
      * @return the edited field
      */
-    public <T extends PdfFormField> T setFieldName(String name) {
+    public PdfFormField setFieldName(String name) {
         return put(PdfName.T, new PdfString(name));
     }
 
@@ -972,11 +963,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Changes the alternate name of the field to the specified value. The
      * alternate is a descriptive name to be used by status messages etc.
      *
-     * @param <T>  an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param name the new alternate name, as a String
      * @return the edited field
      */
-    public <T extends PdfFormField> T setAlternativeName(String name) {
+    public PdfFormField setAlternativeName(String name) {
         return put(PdfName.TU, new PdfString(name));
     }
 
@@ -994,11 +984,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Changes the mapping name of the field to the specified value. The
      * mapping name can be used when exporting the form data in the document.
      *
-     * @param <T>  an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param name the new alternate name, as a String
      * @return the edited field
      */
-    public <T extends PdfFormField> T setMappingName(String name) {
+    public PdfFormField setMappingName(String name) {
         return put(PdfName.TM, new PdfString(name));
     }
 
@@ -1030,11 +1019,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * enforced. To <em>replace</em> the current value, use
      * {@link #setFieldFlags(int)}.
      *
-     * @param <T>  an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param flag an <code>int</code> interpreted as a series of a binary flags
      * @return the edited field
      */
-    public <T extends PdfFormField> T setFieldFlag(int flag) {
+    public PdfFormField setFieldFlag(int flag) {
         return setFieldFlag(flag, true);
     }
 
@@ -1044,13 +1032,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * technically enforced. To <em>replace</em> the current value, use
      * {@link #setFieldFlags(int)}.
      *
-     * @param <T>   an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param flag  an <code>int</code> interpreted as a series of a binary flags
      * @param value if <code>true</code>, adds the flag(s). if <code>false</code>,
      *              removes the flag(s).
      * @return the edited field
      */
-    public <T extends PdfFormField> T setFieldFlag(int flag, boolean value) {
+    public PdfFormField setFieldFlag(int flag, boolean value) {
         int flags = getFieldFlags();
 
         if (value) {
@@ -1086,11 +1073,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * <em>replaces</em> the previous value. Compare with {@link #setFieldFlag(int)}
      * which <em>adds</em> a flag to the existing flags.
      *
-     * @param <T>   an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param flags an <code>int</code> interpreted as a series of a binary flags
      * @return the edited field
      */
-    public <T extends PdfFormField> T setFieldFlags(int flags) {
+    public PdfFormField setFieldFlags(int flags) {
         return put(PdfName.Ff, new PdfNumber(flags));
     }
 
@@ -1145,11 +1131,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the default fallback value for the form field.
      *
-     * @param <T>   an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param value the default value
      * @return the edited field
      */
-    public <T extends PdfFormField> T setDefaultValue(PdfObject value) {
+    public PdfFormField setDefaultValue(PdfObject value) {
         return put(PdfName.DV, value);
     }
 
@@ -1165,14 +1150,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets an additional action for the form field.
      *
-     * @param <T>    an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param key    the dictionary key to use for storing the action
      * @param action the action
      * @return the edited field
      */
-    public <T extends PdfFormField> T setAdditionalAction(PdfName key, PdfAction action) {
+    public PdfFormField setAdditionalAction(PdfName key, PdfAction action) {
         PdfAction.setAdditionalAction(this, key, action);
-        return (T) this;
+        return this;
     }
 
     /**
@@ -1187,12 +1171,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets options for the form field. Only to be used for checkboxes and radio buttons.
      *
-     * @param <T>     an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param options an array of {@link PdfString} objects that each represent
      *                the 'on' state of one of the choices.
      * @return the edited field
      */
-    public <T extends PdfFormField> T setOptions(PdfArray options) {
+    public PdfFormField setOptions(PdfArray options) {
         return put(PdfName.Opt, options);
     }
 
@@ -1250,11 +1233,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Sets default appearance string containing a sequence of valid page-content graphics or text state operators that
      * define such properties as the field???s text size and color.
      *
-     * @param <T>               an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param defaultAppearance a valid sequence of PDF content stream syntax
      * @return the edited field
      */
-    public <T extends PdfFormField> T setDefaultAppearance(String defaultAppearance) {
+    public PdfFormField setDefaultAppearance(String defaultAppearance) {
         byte[] b = defaultAppearance.getBytes();
         int len = b.length;
         for (int k = 0; k < len; ++k) {
@@ -1262,7 +1244,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 b[k] = 32;
         }
         getPdfObject().put(PdfName.DA, new PdfString(new String(b)));
-        return (T) this;
+        return this;
     }
 
     /**
@@ -1283,14 +1265,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * 1 Centered
      * 2 Right-justified
      *
-     * @param <T>           an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param justification the value to set the justification attribute to
      * @return the edited field
      */
-    public <T extends PdfFormField> T setJustification(int justification) {
+    public PdfFormField setJustification(int justification) {
         getPdfObject().put(PdfName.Q, new PdfNumber(justification));
         regenerateField();
-        return (T) this;
+        return this;
     }
 
     /**
@@ -1305,13 +1286,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets a default style string, as described in "Rich Text Strings" section of Pdf spec.
      *
-     * @param <T>                an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param defaultStyleString a new default style for the form field
      * @return the edited field
      */
-    public <T extends PdfFormField> T setDefaultStyle(PdfString defaultStyleString) {
+    public PdfFormField setDefaultStyle(PdfString defaultStyleString) {
         getPdfObject().put(PdfName.DS, defaultStyleString);
-        return (T) this;
+        return this;
     }
 
     /**
@@ -1328,13 +1308,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * Sets a rich text string, as described in "Rich Text Strings" section of Pdf spec.
      * May be either {@link PdfStream} or {@link PdfString}.
      *
-     * @param <T>      an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param richText a new rich text value
      * @return the edited field
      */
-    public <T extends PdfFormField> T setRichText(PdfObject richText) {
+    public PdfFormField setRichText(PdfObject richText) {
         getPdfObject().put(PdfName.RV, richText);
-        return (T) this;
+        return this;
     }
 
     /**
@@ -1416,18 +1395,17 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the action on all {@link PdfWidgetAnnotation widgets} of this form field.
      *
-     * @param <T>    an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param action the action
      * @return the edited field
      */
-    public <T extends PdfFormField> T setAction(PdfAction action) {
+    public PdfFormField setAction(PdfAction action) {
         List<PdfWidgetAnnotation> widgets = getWidgets();
         if (widgets != null) {
             for (PdfWidgetAnnotation widget : widgets) {
                 widget.setAction(action);
             }
         }
-        return (T) this;
+        return this;
     }
 
     /**
@@ -1451,11 +1429,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * @param <T>        an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param visibility
      * @return the edited field
      */
-    public <T extends PdfFormField> T setVisibility(int visibility) {
+    public PdfFormField setVisibility(int visibility) {
         switch (visibility) {
             case HIDDEN:
                 getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT | PdfAnnotation.HIDDEN));
@@ -1469,7 +1446,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT));
                 break;
         }
-        return (T) this;
+        return this;
     }
 
     /**
@@ -1638,36 +1615,33 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the Border Color.
      *
-     * @param <T>   an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param color the new value for the Border Color
      * @return the edited field
      */
-    public <T extends PdfFormField> T setBorderColor(Color color) {
+    public PdfFormField setBorderColor(Color color) {
         borderColor = color;
         regenerateField();
-        return (T) this;
+        return this;
     }
 
     /**
      * Sets the text color.
      * @param color the new value for the Color
-     * @param <T> an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @return the edited field
      */
-    public <T extends PdfFormField> T setColor(Color color) {
+    public PdfFormField setColor(Color color) {
         this.color = color;
         regenerateField();
-        return (T) this;
+        return this;
     }
 
     /**
      * Sets the ReadOnly flag, specifying whether or not the field can be changed.
      *
-     * @param <T>      an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param readOnly if <code>true</code>, then the field cannot be changed.
      * @return the edited field
      */
-    public <T extends PdfFormField> T setReadOnly(boolean readOnly) {
+    public PdfFormField setReadOnly(boolean readOnly) {
         return setFieldFlag(FF_READ_ONLY, readOnly);
     }
 
@@ -1683,11 +1657,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the Required flag, specifying whether or not the field must be filled in.
      *
-     * @param <T>      an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param required if <code>true</code>, then the field must be filled in.
      * @return the edited field
      */
-    public <T extends PdfFormField> T setRequired(boolean required) {
+    public PdfFormField setRequired(boolean required) {
         return setFieldFlag(FF_REQUIRED, required);
     }
 
@@ -1703,11 +1676,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the NoExport flag, specifying whether or not exporting is forbidden.
      *
-     * @param <T>      an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param noExport if <code>true</code>, then exporting is <em>forbidden</em>
      * @return the edited field
      */
-    public <T extends PdfFormField> T setNoExport(boolean noExport) {
+    public PdfFormField setNoExport(boolean noExport) {
         return setFieldFlag(FF_NO_EXPORT, noExport);
     }
 
@@ -1723,18 +1695,17 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Specifies on which page the form field's widget must be shown.
      *
-     * @param <T>     an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param pageNum the page number
      * @return the edited field
      */
-    public <T extends PdfFormField> T setPage(int pageNum) {
+    public PdfFormField setPage(int pageNum) {
         if (!getWidgets().isEmpty()) {
             PdfAnnotation annot = getWidgets().get(0);
             if (annot != null) {
                 annot.setPage(getDocument().getPage(pageNum));
             }
         }
-        return (T) this;
+        return this;
     }
 
     /**
@@ -1801,7 +1772,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets an appearance for (the widgets related to) the form field.
      *
-     * @param <T>              an internal generic parameter for the return type. Extends {@link PdfFormField}
      * @param appearanceType   the type of appearance stream to be added
      *                         <ul>
      *                         <li> PdfName.N: normal appearance</li>
@@ -1814,7 +1784,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param appearanceStream the appearance instructions, as a {@link PdfStream}
      * @return the edited field
      */
-    public <T extends PdfFormField> T setAppearance(PdfName appearanceType, String appearanceState, PdfStream appearanceStream) {
+    public PdfFormField setAppearance(PdfName appearanceType, String appearanceState, PdfStream appearanceStream) {
         PdfWidgetAnnotation widget = getWidgets().get(0);
         PdfDictionary dic;
         if (widget != null) {
@@ -1832,12 +1802,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             }
         }
 
-        return (T) this;
+        return this;
     }
 
-    public <T extends PdfFormField> T put(PdfName key, PdfObject value) {
+    public PdfFormField put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
-        return (T) this;
+        return this;
     }
 
     /**

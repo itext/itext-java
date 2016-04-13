@@ -112,13 +112,13 @@ public class PdfChoiceFormField extends PdfFormField {
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setIndices(PdfArray indices) {
-        return put(PdfName.I, indices);
+        return (PdfChoiceFormField) put(PdfName.I, indices);
     }
     /**
      * Highlights the options. If this method is used for Combo box, the first value in input array
      * will be the field value
      * @param optionValues Array of options to be highlighted
-     * @return
+     * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setListSelected(String[] optionValues) {
         PdfArray options = getOptions();
@@ -155,7 +155,7 @@ public class PdfChoiceFormField extends PdfFormField {
      * Highlights the options. Is this method is used for Combo box, the first value in input array
      * will be the field value
      * @param optionNumbers
-     * @return
+     * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setListSelected(int[] optionNumbers) {
         PdfArray indices = new PdfArray();
@@ -199,7 +199,7 @@ public class PdfChoiceFormField extends PdfFormField {
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setCombo(boolean combo) {
-        return setFieldFlag(FF_COMBO, combo);
+        return (PdfChoiceFormField) setFieldFlag(FF_COMBO, combo);
     }
 
     /**
@@ -219,7 +219,7 @@ public class PdfChoiceFormField extends PdfFormField {
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setEdit(boolean edit) {
-        return setFieldFlag(FF_EDIT, edit);
+        return (PdfChoiceFormField) setFieldFlag(FF_EDIT, edit);
     }
 
     /**
@@ -239,7 +239,7 @@ public class PdfChoiceFormField extends PdfFormField {
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setSort(boolean sort) {
-        return setFieldFlag(FF_SORT, sort);
+        return (PdfChoiceFormField) setFieldFlag(FF_SORT, sort);
     }
 
     /**
@@ -258,7 +258,7 @@ public class PdfChoiceFormField extends PdfFormField {
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setMultiSelect(boolean multiSelect) {
-        return setFieldFlag(FF_MULTI_SELECT, multiSelect);
+        return (PdfChoiceFormField) setFieldFlag(FF_MULTI_SELECT, multiSelect);
     }
 
     /**
@@ -275,7 +275,7 @@ public class PdfChoiceFormField extends PdfFormField {
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setSpellCheck(boolean spellCheck) {
-        return setFieldFlag(FF_DO_NOT_SPELL_CHECK, !spellCheck);
+        return (PdfChoiceFormField) setFieldFlag(FF_DO_NOT_SPELL_CHECK, !spellCheck);
     }
 
     /**
@@ -292,7 +292,7 @@ public class PdfChoiceFormField extends PdfFormField {
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setCommitOnSelChange(boolean commitOnSelChange) {
-        return setFieldFlag(FF_COMMIT_ON_SEL_CHANGE, commitOnSelChange);
+        return (PdfChoiceFormField) setFieldFlag(FF_COMMIT_ON_SEL_CHANGE, commitOnSelChange);
     }
 
     /**
