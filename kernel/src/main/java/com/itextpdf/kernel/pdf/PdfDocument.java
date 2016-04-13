@@ -1519,16 +1519,32 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     private byte[] getSerializedBytes() {
+        ByteArrayOutputStream bos = null;
+        ObjectOutputStream oos = null;
         try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            bos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(bos);
             oos.writeObject(this);
             oos.flush();
-            oos.close();
-            bos.close();
             return bos.toByteArray();
-        } catch (IOException e) {
-            throw new PdfException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (oos != null) {
+                try {
+                    oos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (bos != null) {
+                try {
+                    bos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
