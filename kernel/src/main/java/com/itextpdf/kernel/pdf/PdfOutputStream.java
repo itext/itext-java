@@ -44,6 +44,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.DeflaterOutputStream;
@@ -51,10 +52,13 @@ import com.itextpdf.io.source.OutputStream;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.pdf.filters.FlateDecodeFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.cert.Certificate;
+import java.text.MessageFormat;
 import java.util.Map;
 
 public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Serializable{
@@ -292,6 +296,11 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
             boolean isAlreadyWriteSpace = false;
             write(entry.getKey());
             PdfObject value = entry.getValue();
+            if (value == null) {
+                Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
+                logger.warn(MessageFormat.format(LogMessageConstant.INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE, entry.getKey()));
+                value = PdfNull.PDF_NULL;
+            }
             if ((value.getType() == PdfObject.NUMBER
                     || value.getType() == PdfObject.LITERAL
                     || value.getType() == PdfObject.BOOLEAN

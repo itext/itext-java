@@ -55,6 +55,7 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.filespec.PdfStringFS;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
@@ -173,8 +174,17 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfAction createGoToE(PdfFileSpec fileSpec, PdfDestination destination, boolean newWindow, PdfTargetDictionary targetDictionary) {
-        return new PdfAction().put(PdfName.S, PdfName.GoToE).put(PdfName.F, fileSpec.getPdfObject()).put(PdfName.D, destination.getPdfObject()).
-                put(PdfName.NewWindow, new PdfBoolean(newWindow)).put(PdfName.T, targetDictionary.getPdfObject());
+        PdfAction action = new PdfAction().put(PdfName.S, PdfName.GoToE).put(PdfName.NewWindow, new PdfBoolean(newWindow));
+        if (fileSpec != null) {
+            action.put(PdfName.F, fileSpec.getPdfObject());
+        }
+        if (destination != null) {
+            action.put(PdfName.D, destination.getPdfObject());
+        }
+        if (targetDictionary != null) {
+            action.put(PdfName.T, targetDictionary.getPdfObject());
+        }
+        return action;
     }
 
     public static PdfAction createLaunch(PdfFileSpec fileSpec, boolean newWindow) {
@@ -182,17 +192,30 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfAction createLaunch(PdfFileSpec fileSpec) {
-        return new PdfAction().put(PdfName.S, PdfName.Launch).put(PdfName.F, fileSpec.getPdfObject());
+        PdfAction action = new PdfAction().put(PdfName.S, PdfName.Launch);
+        if (fileSpec != null) {
+            action.put(PdfName.F, fileSpec.getPdfObject());
+        }
+        return action;
     }
 
     public static PdfAction createLaunch(PdfFileSpec fileSpec, PdfWin win, boolean newWindow) {
-        return new PdfAction().put(PdfName.S, PdfName.Launch).put(PdfName.F, fileSpec.getPdfObject()).put(PdfName.Win, win.getPdfObject()).
-                put(PdfName.NewWindow, new PdfBoolean(newWindow));
+        PdfAction action = new PdfAction().put(PdfName.S, PdfName.Launch).put(PdfName.NewWindow, new PdfBoolean(newWindow));
+        if (fileSpec != null) {
+            action.put(PdfName.F, fileSpec.getPdfObject());
+        }
+        if (win != null) {
+            action.put(PdfName.Win, win.getPdfObject());
+        }
+        return action;
     }
 
     public static PdfAction createThread(PdfFileSpec fileSpec, PdfObject destinationThread, PdfObject bead) {
-        return new PdfAction().put(PdfName.S, PdfName.Launch).put(PdfName.F, fileSpec.getPdfObject()).
-                put(PdfName.D, destinationThread).put(PdfName.B, bead);
+        PdfAction action = new PdfAction().put(PdfName.S, PdfName.Launch).put(PdfName.D, destinationThread).put(PdfName.B, bead);
+        if (fileSpec != null) {
+            action.put(PdfName.F, fileSpec.getPdfObject());
+        }
+        return action;
     }
 
     public static PdfAction createThread(PdfFileSpec fileSpec) {
@@ -218,8 +241,12 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static PdfAction createMovie(PdfAnnotation annotation, String title, PdfName operation) {
-        return new PdfAction().put(PdfName.S, PdfName.Movie).put(PdfName.Annotation, annotation.getPdfObject()).
-                put(PdfName.T, new PdfString(title)).put(PdfName.Operation, operation);
+        PdfAction action = new PdfAction().put(PdfName.S, PdfName.Movie).put(PdfName.T, new PdfString(title))
+                .put(PdfName.Operation, operation);
+        if (annotation != null) {
+            action.put(PdfName.Annotation, annotation.getPdfObject());
+        }
+        return action;
     }
 
     public static PdfAction createHide(PdfAnnotation annotation, boolean hidden) {
@@ -257,10 +284,10 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         return new PdfAction().put(PdfName.S, PdfName.SetOCGState).put(PdfName.State, stateArr).put(PdfName.PreserveRB, new PdfBoolean(preserveRb));
     }
 
-    public static PdfAction createRendition(String file, PdfFileSpec fs, String mimeType, PdfAnnotation screenAnnotation) {
+    public static PdfAction createRendition(String file, PdfFileSpec fileSpec, String mimeType, PdfAnnotation screenAnnotation) {
         return new PdfAction().put(PdfName.S, PdfName.Rendition).
                 put(PdfName.OP, new PdfNumber(0)).put(PdfName.AN, screenAnnotation.getPdfObject()).
-                put(PdfName.R, new PdfRendition(file, fs, mimeType).getPdfObject());
+                put(PdfName.R, new PdfRendition(file, fileSpec, mimeType).getPdfObject());
     }
 
     public static PdfAction createJavaScript(String javaScript) {
