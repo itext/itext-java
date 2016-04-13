@@ -44,8 +44,11 @@
  */
 package com.itextpdf.io.source;
 
-public class GetBufferedRandomAccessSource implements RandomAccessSource {
+import java.io.Serializable;
 
+public class GetBufferedRandomAccessSource implements RandomAccessSource, Serializable {
+
+    private static final long serialVersionUID = -8922625738755763494L;
     private final RandomAccessSource source;
 
     private final byte[] getBuffer;
