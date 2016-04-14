@@ -78,12 +78,11 @@ public class PdfTextArray extends PdfArray {
     }
 
     @Override
-    public boolean addAll(Collection<? extends PdfObject> c) {
+    public boolean addAll(Collection<PdfObject> c) {
         boolean changed = false;
         for (PdfObject obj : c) {
             changed |= add(obj);
         }
-
         return changed;
     }
 

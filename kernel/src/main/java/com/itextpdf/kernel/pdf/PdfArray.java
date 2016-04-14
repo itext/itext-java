@@ -57,7 +57,7 @@ import java.util.ListIterator;
  * A representation of an array as described in the PDF specification. A PdfArray can contain any
  * subclass of {@link com.itextpdf.kernel.pdf.PdfObject}.
  */
-public class PdfArray extends PdfObject implements Collection<PdfObject> {
+public class PdfArray extends PdfObject implements Iterable<PdfObject> {
 
     private static final long serialVersionUID = 1617495612878046869L;
 	
@@ -179,17 +179,14 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
         }
     }
 
-    @Override
     public int size() {
         return list.size();
     }
 
-    @Override
     public boolean isEmpty() {
         return list.isEmpty();
     }
 
-    @Override
     public boolean contains(Object o) {
         return list.contains(o);
     }
@@ -199,34 +196,12 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
         return list.iterator();
     }
 
-    @Override
-    public Object[] toArray() {
-        return list.toArray();
-    }
-
-    @Override
-    public <T> T[] toArray(T[] a) {
-        return list.toArray(a);
-    }
-
-    @Override
     public boolean add(PdfObject pdfObject) {
         return list.add(pdfObject);
     }
 
-    @Override
     public boolean remove(Object o) {
         return list.remove(o);
-    }
-
-    @Override
-    public boolean containsAll(Collection<?> c) {
-        return list.containsAll(c);
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends PdfObject> c) {
-        return list.addAll(c);
     }
 
     /**
@@ -237,21 +212,32 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      * @return true if the list changed because of this operation
      * @see java.util.List#addAll(int, java.util.Collection)
      */
-    public boolean addAll(int index, Collection<? extends PdfObject> c) {
+    public boolean addAll(int index, Collection<PdfObject> c) {
         return list.addAll(index, c);
     }
 
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        return list.removeAll(c);
+    /**
+     * Adds the Collection of PdfObjects.
+     *
+     * @param c the Collection of PdfObjects to be added
+     * @return true if the list changed because of this operation
+     * @see java.util.List#addAll(java.util.Collection)
+     */
+    public boolean addAll(Collection<PdfObject> c) {
+        return list.addAll(c);
     }
 
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        return list.retainAll(c);
+    /**
+     * Adds content of the {@code PdfArray}.
+     *
+     * @param a the {@code PdfArray} to be added
+     * @return true if the list changed because of this operation
+     * @see java.util.List#addAll(java.util.Collection)
+     */
+    public boolean addAll(PdfArray a) {
+        return a != null && addAll(a.list);
     }
 
-    @Override
     public void clear() {
         list.clear();
     }
@@ -416,7 +402,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     @Override
     public String toString() {
         String string = "[";
-        for (PdfObject entry : this) {
+        for (PdfObject entry : list) {
             PdfIndirectReference indirectReference = entry.getIndirectReference();
             string = string + (indirectReference == null ? entry.toString() : indirectReference.toString()) + " ";
         }
@@ -612,7 +598,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     protected void copyContent(PdfObject from, PdfDocument document) {
         super.copyContent(from, document);
         PdfArray array = (PdfArray) from;
-        for (PdfObject entry : array) {
+        for (PdfObject entry : array.list) {
             add(entry.processCopying(document, false));
         }
     }

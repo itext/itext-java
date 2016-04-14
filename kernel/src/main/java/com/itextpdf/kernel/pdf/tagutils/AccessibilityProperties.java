@@ -171,7 +171,9 @@ public class AccessibilityProperties implements Serializable {
                 attributesArray.add(revision);
             }
         } else {
-            attributesArray.addAll(newAttributesList);
+            for (PdfDictionary newAttribute : newAttributesList) {
+                attributesArray.add(newAttribute);
+            }
         }
     }
 }
