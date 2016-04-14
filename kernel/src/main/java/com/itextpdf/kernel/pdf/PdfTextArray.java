@@ -68,7 +68,7 @@ public class PdfTextArray extends PdfArray {
     @Override
     public void add(PdfObject pdfObject) {
         if (pdfObject.isNumber()) {
-            add(((PdfNumber)pdfObject).getFloatValue());
+            add(((PdfNumber)pdfObject).floatValue());
         } else if (pdfObject instanceof PdfString) {
             add(((PdfString)pdfObject).getValueBytes());
         }

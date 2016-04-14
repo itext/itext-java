@@ -399,7 +399,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         PdfNumber rValue = encDict.getAsNumber(PdfName.R);
         if (rValue == null)
             throw new PdfException(PdfException.IllegalRValue);
-        int revision  = rValue.getIntValue();
+        int revision  = rValue.intValue();
         switch (revision) {
             case 2:
                 cryptoMode = PdfWriter.STANDARD_ENCRYPTION_40;
@@ -408,7 +408,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 PdfNumber lengthValue = encDict.getAsNumber(PdfName.Length);
                 if (lengthValue == null)
                     throw new PdfException(PdfException.IllegalLengthValue);
-                length = lengthValue.getIntValue();
+                length = lengthValue.intValue();
                 if (length > 128 || length < 40 || length % 8 != 0)
                     throw new PdfException(PdfException.IllegalLengthValue);
                 cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
@@ -454,7 +454,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         PdfNumber vValue = encDict.getAsNumber(PdfName.V);
         if (vValue == null)
             throw new PdfException(PdfException.IllegalVValue);
-        int v = vValue.getIntValue();
+        int v = vValue.intValue();
         switch (v) {
             case 1:
                 cryptoMode = PdfWriter.STANDARD_ENCRYPTION_40;
@@ -464,7 +464,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 PdfNumber lengthValue = encDict.getAsNumber(PdfName.Length);
                 if (lengthValue == null)
                     throw new PdfException(PdfException.IllegalLengthValue);
-                length = lengthValue.getIntValue();
+                length = lengthValue.intValue();
                 if (length > 128 || length < 40 || length % 8 != 0)
                     throw new PdfException(PdfException.IllegalLengthValue);
                 cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;

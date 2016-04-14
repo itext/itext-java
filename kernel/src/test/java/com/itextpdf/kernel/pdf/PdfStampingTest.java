@@ -1346,7 +1346,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         if (!pages.containsKey(PdfName.Kids)) return;
         PdfNumber count = pages.getAsNumber(PdfName.Count);
         if (count != null) {
-            assertTrue("PdfPages with zero count", count.getIntValue() > 0);
+            assertTrue("PdfPages with zero count", count.intValue() > 0);
         }
         PdfObject kids = pages.get(PdfName.Kids);
         if (kids.getType() == PdfObject.ARRAY) {

@@ -63,9 +63,9 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
 
     public static PdfPattern getPatternInstance(PdfDictionary pdfObject) {
         PdfNumber type = pdfObject.getAsNumber(PdfName.PatternType);
-        if (type.getIntValue() == 1 && pdfObject instanceof PdfStream)
+        if (type.intValue() == 1 && pdfObject instanceof PdfStream)
             return new Tiling((PdfStream)pdfObject);
-        else if (type.getIntValue() == 2)
+        else if (type.intValue() == 2)
             return new Shading(pdfObject);
         throw new IllegalArgumentException("pdfObject");
     }
@@ -147,7 +147,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public boolean isColored() {
-            return getPdfObject().getAsNumber(PdfName.PaintType).getIntValue() == PaintType.COLORED;
+            return getPdfObject().getAsNumber(PdfName.PaintType).intValue() == PaintType.COLORED;
         }
 
         public void setColored(boolean colored) {
@@ -156,7 +156,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public int getTilingType() {
-            return getPdfObject().getAsNumber(PdfName.TilingType).getIntValue();
+            return getPdfObject().getAsNumber(PdfName.TilingType).intValue();
         }
 
         public void setTilingType(int tilingType) {
@@ -177,7 +177,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public float getXStep() {
-            return getPdfObject().getAsNumber(PdfName.XStep).getFloatValue();
+            return getPdfObject().getAsNumber(PdfName.XStep).floatValue();
         }
 
         public void setXStep(float xStep) {
@@ -186,7 +186,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public float getYStep() {
-            return getPdfObject().getAsNumber(PdfName.YStep).getFloatValue();
+            return getPdfObject().getAsNumber(PdfName.YStep).floatValue();
         }
 
         public void setYStep(float yStep) {

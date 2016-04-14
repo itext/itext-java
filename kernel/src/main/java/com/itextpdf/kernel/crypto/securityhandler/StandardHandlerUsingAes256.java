@@ -214,7 +214,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             byte[] perms = getIsoBytes(encryptionDictionary.getAsString(PdfName.Perms));
             PdfNumber pValue = (PdfNumber) encryptionDictionary.get(PdfName.P);
 
-            this.permissions = pValue.getLongValue();
+            this.permissions = pValue.longValue();
 
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(password, 0, Math.min(password.length, 127));

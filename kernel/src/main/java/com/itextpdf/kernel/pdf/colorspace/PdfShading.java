@@ -147,7 +147,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
                 return new float[] {1, 0, 0, 1, 0, 0};
             float[] result = new float[6];
             for (int i = 0; i < 6; i++)
-                result[i] = matrix.getAsNumber(i).getFloatValue();
+                result[i] = matrix.getAsNumber(i).floatValue();
             return result;
         }
 
@@ -211,7 +211,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
             PdfArray domain = getPdfObject().getAsArray(PdfName.Domain);
             if (domain == null)
                 return new float[] {0, 1};
-            return new float[] {domain.getAsNumber(0).getFloatValue(), domain.getAsNumber(1).getFloatValue()};
+            return new float[] {domain.getAsNumber(0).floatValue(), domain.getAsNumber(1).floatValue()};
         }
 
         public void setDomain(float t0, float t1) {
@@ -280,7 +280,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
             PdfArray domain = getPdfObject().getAsArray(PdfName.Domain);
             if (domain == null)
                 return new float[] {0, 1};
-            return new float[]{domain.getAsNumber(0).getFloatValue(), domain.getAsNumber(1).getFloatValue()};
+            return new float[]{domain.getAsNumber(0).floatValue(), domain.getAsNumber(1).floatValue()};
         }
 
         public void setDomain(float t0, float t1) {

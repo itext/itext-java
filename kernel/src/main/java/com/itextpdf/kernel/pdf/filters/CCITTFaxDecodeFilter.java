@@ -65,8 +65,8 @@ public class CCITTFaxDecodeFilter  implements FilterHandler {
         PdfNumber hn = streamDictionary.getAsNumber(PdfName.Height);
         if (wn == null || hn == null)
             throw new PdfException(PdfException.FilterCcittfaxdecodeIsOnlySupportedForImages);
-        int width = wn.getIntValue();
-        int height = hn.getIntValue();
+        int width = wn.intValue();
+        int height = hn.intValue();
 
         PdfDictionary param = decodeParams instanceof PdfDictionary ? (PdfDictionary)decodeParams : null;
         int k = 0;
@@ -75,7 +75,7 @@ public class CCITTFaxDecodeFilter  implements FilterHandler {
         if (param != null) {
             PdfNumber kn = param.getAsNumber(PdfName.K);
             if (kn != null)
-                k = kn.getIntValue();
+                k = kn.intValue();
             PdfBoolean bo = param.getAsBoolean(PdfName.BlackIs1);
             if (bo != null)
                 blackIs1 = bo.getValue();

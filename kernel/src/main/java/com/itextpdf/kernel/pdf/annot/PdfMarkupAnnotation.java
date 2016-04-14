@@ -185,11 +185,11 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         }
         switch (color.size()) {
             case 1:
-                return new DeviceGray(color.getAsNumber(0).getFloatValue());
+                return new DeviceGray(color.getAsNumber(0).floatValue());
             case 3:
-                return new DeviceRgb(color.getAsNumber(0).getFloatValue(), color.getAsNumber(1).getFloatValue(), color.getAsNumber(2).getFloatValue());
+                return new DeviceRgb(color.getAsNumber(0).floatValue(), color.getAsNumber(1).floatValue(), color.getAsNumber(2).floatValue());
             case 4:
-                return new DeviceCmyk(color.getAsNumber(0).getFloatValue(), color.getAsNumber(1).getFloatValue(), color.getAsNumber(2).getFloatValue(), color.getAsNumber(3).getFloatValue());
+                return new DeviceCmyk(color.getAsNumber(0).floatValue(), color.getAsNumber(1).floatValue(), color.getAsNumber(2).floatValue(), color.getAsNumber(3).floatValue());
             default:
                 return null;
         }
@@ -222,7 +222,7 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
 
     public int getJustification() {
         PdfNumber q = getPdfObject().getAsNumber(PdfName.Q);
-        return q == null ? 0 : q.getIntValue();
+        return q == null ? 0 : q.intValue();
     }
 
     public PdfMarkupAnnotation setJustification(int justification) {

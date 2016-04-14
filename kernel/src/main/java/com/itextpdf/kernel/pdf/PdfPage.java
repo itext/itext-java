@@ -125,10 +125,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (llx == null || lly == null || urx == null || ury == null) {
             throw new IllegalArgumentException("MediaBox");
         }
-        return new Rectangle(Math.min(llx.getFloatValue(), urx.getFloatValue()),
-                Math.min(lly.getFloatValue(), ury.getFloatValue()),
-                Math.abs(urx.getFloatValue() - llx.getFloatValue()),
-                Math.abs(ury.getFloatValue() - lly.getFloatValue()));
+        return new Rectangle(Math.min(llx.floatValue(), urx.floatValue()),
+                Math.min(lly.floatValue(), ury.floatValue()),
+                Math.abs(urx.floatValue() - llx.floatValue()),
+                Math.abs(ury.floatValue() - lly.floatValue()));
     }
 
     /**
@@ -152,7 +152,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (rotate == null) {
             return 0;
         } else {
-            int n = rotate.getIntValue();
+            int n = rotate.intValue();
             n %= 360;
             return n < 0 ? n + 360 : n;
         }
@@ -514,7 +514,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (structParents == null) {
             PdfNumber n = getPdfObject().getAsNumber(PdfName.StructParents);
             if (n != null) {
-                structParents = n.getIntValue();
+                structParents = n.intValue();
             } else {
                 structParents = getDocument().getNextStructParentIndex();
             }

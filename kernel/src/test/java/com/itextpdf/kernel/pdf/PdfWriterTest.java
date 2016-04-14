@@ -189,14 +189,14 @@ public class PdfWriterTest extends ExtendedITextTest {
         PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
         PdfArray a = (PdfArray) catalog.get(new PdfName("aDirect"));
         Assert.assertNotNull(a);
-        Assert.assertEquals(1, ((PdfNumber) ((PdfArray) a.get(0)).get(0)).getIntValue());
-        Assert.assertEquals(2, ((PdfNumber) ((PdfArray) a.get(0)).get(1)).getIntValue());
+        Assert.assertEquals(1, ((PdfNumber) ((PdfArray) a.get(0)).get(0)).intValue());
+        Assert.assertEquals(2, ((PdfNumber) ((PdfArray) a.get(0)).get(1)).intValue());
         Assert.assertEquals(true, ((PdfBoolean) a.get(1)).getValue());
-        Assert.assertEquals(1, ((PdfNumber) ((PdfDictionary) a.get(2)).get(new PdfName("one"))).getIntValue());
-        Assert.assertEquals(2, ((PdfNumber) ((PdfDictionary) a.get(2)).get(new PdfName("two"))).getIntValue());
+        Assert.assertEquals(1, ((PdfNumber) ((PdfDictionary) a.get(2)).get(new PdfName("one"))).intValue());
+        Assert.assertEquals(2, ((PdfNumber) ((PdfDictionary) a.get(2)).get(new PdfName("two"))).intValue());
         Assert.assertEquals(new PdfName("name"), a.get(3));
         Assert.assertTrue(a.get(4).isNull());
-        Assert.assertEquals(100, ((PdfNumber) a.get(5)).getIntValue());
+        Assert.assertEquals(100, ((PdfNumber) a.get(5)).intValue());
         Assert.assertEquals("string", ((PdfString) a.get(6)).toUnicodeString());
         reader.close();
 
@@ -254,15 +254,15 @@ public class PdfWriterTest extends ExtendedITextTest {
         PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
         PdfArray a = catalog.getAsArray(new PdfName("aDirect"));
         Assert.assertNotNull(a);
-        Assert.assertEquals(1, ((PdfNumber) ((PdfArray) a.get(0)).get(0)).getIntValue());
-        Assert.assertEquals(2, ((PdfArray) a.get(0)).getAsNumber(1).getIntValue());
+        Assert.assertEquals(1, ((PdfNumber) ((PdfArray) a.get(0)).get(0)).intValue());
+        Assert.assertEquals(2, ((PdfArray) a.get(0)).getAsNumber(1).intValue());
         Assert.assertEquals(true, ((PdfBoolean) a.get(1)).getValue());
-        Assert.assertEquals(1, ((PdfNumber) ((PdfDictionary) a.get(2)).get(new PdfName("one"))).getIntValue());
-        Assert.assertEquals(2, ((PdfDictionary) a.get(2)).getAsNumber(new PdfName("two")).getIntValue());
+        Assert.assertEquals(1, ((PdfNumber) ((PdfDictionary) a.get(2)).get(new PdfName("one"))).intValue());
+        Assert.assertEquals(2, ((PdfDictionary) a.get(2)).getAsNumber(new PdfName("two")).intValue());
         Assert.assertEquals(new PdfName("name"), a.get(3));
 
         Assert.assertTrue(a.get(4).isNull());
-        Assert.assertEquals(100, ((PdfNumber) a.get(5)).getIntValue());
+        Assert.assertEquals(100, ((PdfNumber) a.get(5)).intValue());
         Assert.assertEquals("string", ((PdfString) a.get(6)).toUnicodeString());
         reader.close();
     }
@@ -405,7 +405,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(destinationFolder + "copyObject5_2.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        Assert.assertEquals(8, reader.trailer.getAsNumber(PdfName.Size).getIntValue());
+        Assert.assertEquals(8, reader.trailer.getAsNumber(PdfName.Size).intValue());
         byte[] bytes = pdfDocument.getPage(1).getContentBytes();
         Assert.assertArrayEquals(ByteUtils.getIsoBytes("%Page_1"), bytes);
         bytes = pdfDocument.getPage(2).getContentBytes();

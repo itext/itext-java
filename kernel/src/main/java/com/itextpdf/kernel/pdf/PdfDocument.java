@@ -1147,7 +1147,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 PdfDictionary labelDictionary = (PdfDictionary) pageLabels.get(i);
                 PdfNumber pageRange = labelDictionary.getAsNumber(PdfName.St);
                 if (pageRange != null) {
-                    pageCount = pageRange.getIntValue();
+                    pageCount = pageRange.intValue();
                 } else {
                     pageCount = 1;
                 }

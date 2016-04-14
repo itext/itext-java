@@ -791,7 +791,7 @@ public class PdfSigner {
             int flags = 0;
 
             if (obj != null && obj.isNumber()) {
-                flags = ((PdfNumber) obj).getIntValue();
+                flags = ((PdfNumber) obj).intValue();
             }
 
             flags |= PdfAnnotation.LOCKED;

@@ -499,8 +499,8 @@ public class PdfReader implements Closeable, Serializable {
 
     protected void readObjectStream(PdfStream objectStream) throws IOException {
         int objectStreamNumber = objectStream.getIndirectReference().getObjNumber();
-        int first = objectStream.getAsNumber(PdfName.First).getIntValue();
-        int n = objectStream.getAsNumber(PdfName.N).getIntValue();
+        int first = objectStream.getAsNumber(PdfName.First).intValue();
+        int n = objectStream.getAsNumber(PdfName.N).intValue();
         byte[] bytes = readStreamBytes(objectStream, true);
         PdfTokenizer saveTokens = tokens;
         try {
@@ -731,9 +731,9 @@ public class PdfReader implements Closeable, Serializable {
             PdfNumber prev = (PdfNumber) trailer2.get(PdfName.Prev);
             if (prev == null)
                 break;
-            if (prev.getLongValue() == startxref)
+            if (prev.longValue() == startxref)
                 throw new PdfException(PdfException.TrailerPrevEntryPointsToItsOwnCrossReferenceSection);
-            startxref = prev.getLongValue();
+            startxref = prev.longValue();
             tokens.seek(startxref);
             trailer2 = readXrefSection();
         }
@@ -791,13 +791,13 @@ public class PdfReader implements Closeable, Serializable {
         }
         PdfDictionary trailer = (PdfDictionary) readObject(false);
         PdfNumber xrefSize = (PdfNumber) trailer.get(PdfName.Size);
-        if (xrefSize == null || (xrefSize.getIntValue() != end && end > 0)) {
+        if (xrefSize == null || (xrefSize.intValue() != end && end > 0)) {
             throw new PdfException(PdfException.InvalidXrefSection);
         }
 
         PdfObject xrs = trailer.get(PdfName.XRefStm);
         if (xrs != null && xrs.getType() == PdfObject.NUMBER) {
-            int loc = ((PdfNumber) xrs).getIntValue();
+            int loc = ((PdfNumber) xrs).intValue();
             try {
                 readXrefStream(loc);
                 xrefStm = true;
@@ -844,7 +844,7 @@ public class PdfReader implements Closeable, Serializable {
             trailer.remove(PdfName.Length);
         }
 
-        int size = ((PdfNumber) xrefStream.get(PdfName.Size)).getIntValue();
+        int size = ((PdfNumber) xrefStream.get(PdfName.Size)).intValue();
         PdfArray index;
         PdfObject obj = xrefStream.get(PdfName.Index);
         if (obj == null) {
@@ -858,17 +858,17 @@ public class PdfReader implements Closeable, Serializable {
         long prev = -1;
         obj = xrefStream.get(PdfName.Prev);
         if (obj != null)
-            prev = ((PdfNumber) obj).getLongValue();
+            prev = ((PdfNumber) obj).longValue();
         xref.setCapacity(size);
         byte[] b = readStreamBytes(xrefStream, true);
         int bptr = 0;
         int[] wc = new int[3];
         for (int k = 0; k < 3; ++k) {
-            wc[k] = w.getAsNumber(k).getIntValue();
+            wc[k] = w.getAsNumber(k).intValue();
         }
         for (int idx = 0; idx < index.size(); idx += 2) {
-            int start = index.getAsNumber(idx).getIntValue();
-            int length = index.getAsNumber(idx + 1).getIntValue();
+            int start = index.getAsNumber(idx).intValue();
+            int length = index.getAsNumber(idx + 1).intValue();
             xref.setCapacity(start + length);
             while (length-- > 0) {
                 int type = 1;
@@ -1079,7 +1079,7 @@ public class PdfReader implements Closeable, Serializable {
         int streamLength = 0;
         PdfNumber pdfNumber = pdfStream.getAsNumber(PdfName.Length);
         if (pdfNumber != null) {
-            streamLength = pdfNumber.getIntValue();
+            streamLength = pdfNumber.intValue();
             if (streamLength + start > fileLength - 20) {
                 calc = true;
             } else {

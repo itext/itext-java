@@ -108,7 +108,7 @@ public class PdfImageXObject extends PdfXObject {
     @Override
     public Float getWidth() {
         if (!isFlushed())
-            return getPdfObject().getAsNumber(PdfName.Width).getFloatValue();
+            return getPdfObject().getAsNumber(PdfName.Width).floatValue();
         else
             return width;
     }
@@ -116,7 +116,7 @@ public class PdfImageXObject extends PdfXObject {
     @Override
     public Float getHeight() {
         if (!isFlushed())
-            return getPdfObject().getAsNumber(PdfName.Height).getFloatValue();
+            return getPdfObject().getAsNumber(PdfName.Height).floatValue();
         else
             return height;
     }
@@ -124,8 +124,8 @@ public class PdfImageXObject extends PdfXObject {
     @Override
     public void flush() {
         if (!isFlushed()) {
-            width = getPdfObject().getAsNumber(PdfName.Width).getFloatValue();
-            height = getPdfObject().getAsNumber(PdfName.Height).getFloatValue();
+            width = getPdfObject().getAsNumber(PdfName.Width).floatValue();
+            height = getPdfObject().getAsNumber(PdfName.Height).floatValue();
             super.flush();
         }
     }
@@ -333,9 +333,9 @@ public class PdfImageXObject extends PdfXObject {
 
         pngColorType = -1;
         PdfArray decode = getPdfObject().getAsArray(PdfName.Decode);
-        width = getPdfObject().getAsNumber(PdfName.Width).getIntValue();
-        height = getPdfObject().getAsNumber(PdfName.Height).getIntValue();
-        bpc = getPdfObject().getAsNumber(PdfName.BitsPerComponent).getIntValue();
+        width = getPdfObject().getAsNumber(PdfName.Width).intValue();
+        height = getPdfObject().getAsNumber(PdfName.Height).intValue();
+        bpc = getPdfObject().getAsNumber(PdfName.BitsPerComponent).intValue();
         pngBitDepth = bpc;
         PdfObject colorspace = getPdfObject().get(PdfName.ColorSpace);
 
@@ -354,7 +354,7 @@ public class PdfImageXObject extends PdfXObject {
                 if (!PdfName.ICCBased.equals(tyca))
                     throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.ColorSpaceIsNotSupported).setMessageParams(tyca.toString());
                 PdfStream pr = (PdfStream) ca.get(1);
-                int n = pr.getAsNumber(PdfName.N).getIntValue();
+                int n = pr.getAsNumber(PdfName.N).intValue();
                 if (n != 4) {
                     throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.NValueIsNotSupported).setMessageParams(n);
                 }
@@ -393,7 +393,7 @@ public class PdfImageXObject extends PdfXObject {
             if (decode != null) {
                 if (pngBitDepth == 1) {
                     // if the decode array is 1,0, then we need to invert the image
-                    if (decode.getAsNumber(0).getIntValue() == 1 && decode.getAsNumber(1).getIntValue() == 0) {
+                    if (decode.getAsNumber(0).intValue() == 1 && decode.getAsNumber(1).intValue() == 0) {
                         int len = imageBytes.length;
                         for (int t = 0; t < len; ++t) {
                             imageBytes[t] ^= 0xff;
@@ -451,7 +451,7 @@ public class PdfImageXObject extends PdfXObject {
                 }
             } else if (PdfName.ICCBased.equals(tyca)) {
                 PdfStream pr = (PdfStream) ca.get(1);
-                int n = pr.getAsNumber(PdfName.N).getIntValue();
+                int n = pr.getAsNumber(PdfName.N).intValue();
                 if (n == 1) {
                     stride = (int) ((width * bpc + 7) / 8);
                     pngColorType = 0;

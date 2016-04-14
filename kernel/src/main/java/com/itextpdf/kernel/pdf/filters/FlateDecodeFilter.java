@@ -110,21 +110,21 @@ public class FlateDecodeFilter implements FilterHandler{
         PdfObject obj = dic.get(PdfName.Predictor);
         if (obj == null || obj.getType() != PdfObject.NUMBER)
             return in;
-        int predictor = ((PdfNumber)obj).getIntValue();
+        int predictor = ((PdfNumber)obj).intValue();
         if (predictor < 10 && predictor != 2)
             return in;
         int width = 1;
         obj = dic.get(PdfName.Columns);
         if (obj != null && obj.getType() == PdfObject.NUMBER)
-            width = ((PdfNumber)obj).getIntValue();
+            width = ((PdfNumber)obj).intValue();
         int colors = 1;
         obj = dic.get(PdfName.Colors);
         if (obj != null && obj.getType() == PdfObject.NUMBER)
-            colors = ((PdfNumber)obj).getIntValue();
+            colors = ((PdfNumber)obj).intValue();
         int bpc = 8;
         obj = dic.get(PdfName.BitsPerComponent);
         if (obj != null && obj.getType() == PdfObject.NUMBER)
-            bpc = ((PdfNumber)obj).getIntValue();
+            bpc = ((PdfNumber)obj).intValue();
         DataInputStream dataStream = new DataInputStream(new ByteArrayInputStream(in));
         ByteArrayOutputStream fout = new ByteArrayOutputStream(in.length);
         int bytesPerPixel = colors * bpc / 8;

@@ -221,7 +221,7 @@ public class SignatureUtil {
             int rangeSize = ro.size();
             if (rangeSize < 2)
                 continue;
-            int length = ro.getAsNumber(rangeSize - 1).getIntValue() + ro.getAsNumber(rangeSize - 2).getIntValue();
+            int length = ro.getAsNumber(rangeSize - 1).intValue() + ro.getAsNumber(rangeSize - 2).intValue();
             sorter.add(new Object[]{entry.getKey(), new int[]{length, 0}});
         }
         Collections.sort(sorter, new SorterComparator());
@@ -344,7 +344,7 @@ public class SignatureUtil {
         long[] rslt = new long[pdfArray.size()];
 
         for (int k = 0; k < rslt.length; ++k) {
-            rslt[k] = pdfArray.getAsNumber(k).getLongValue();
+            rslt[k] = pdfArray.getAsNumber(k).longValue();
         }
 
         return rslt;

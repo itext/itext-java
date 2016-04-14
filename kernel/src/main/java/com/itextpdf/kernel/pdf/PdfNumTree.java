@@ -178,7 +178,7 @@ public class PdfNumTree implements Serializable {
                     leftOver = null;
                 }
                 if (k < nums.size()) {
-                    items.put(number.getIntValue(), nums.get(k));
+                    items.put(number.intValue(), nums.get(k));
                 } else {
                     return number;
                 }

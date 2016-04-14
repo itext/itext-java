@@ -261,8 +261,8 @@ public final class InlineImageParsingUtils {
         PdfNumber bpcObj = imageDictionary.getAsNumber(PdfName.BitsPerComponent);
         int cpp = getComponentsPerPixel(imageDictionary.getAsName(PdfName.ColorSpace), colorSpaceDic);
 
-        int w = wObj.getIntValue();
-        int bpc = bpcObj != null ? bpcObj.getIntValue() : 1;
+        int w = wObj.intValue();
+        int bpc = bpcObj != null ? bpcObj.intValue() : 1;
 
         return (w * bpc * cpp + 7) / 8;
     }
@@ -285,7 +285,7 @@ public final class InlineImageParsingUtils {
 
         PdfNumber h = imageDictionary.getAsNumber(PdfName.Height);
 
-        int bytesToRead = computeBytesPerRow(imageDictionary, colorSpaceDic) * h.getIntValue();
+        int bytesToRead = computeBytesPerRow(imageDictionary, colorSpaceDic) * h.intValue();
         byte[] bytes = new byte[bytesToRead];
         PdfTokenizer tokeniser = ps.getTokeniser();
 

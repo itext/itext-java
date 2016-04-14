@@ -67,7 +67,7 @@ public class PdfMcrDictionary extends PdfMcr {
 
     @Override
     public Integer getMcid() {
-        return ((PdfDictionary)getPdfObject()).getAsNumber(PdfName.MCID).getIntValue();
+        return ((PdfDictionary)getPdfObject()).getAsNumber(PdfName.MCID).intValue();
     }
 
     @Override

@@ -83,7 +83,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
 
     public float getLeaderLine() {
         PdfNumber n = getPdfObject().getAsNumber(PdfName.LE);
-        return n == null ? 0 : n.getFloatValue();
+        return n == null ? 0 : n.floatValue();
     }
 
     public PdfLineAnnotation setLeaderLine(float leaderLine) {
@@ -92,7 +92,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
 
     public float getLeaderLineExtension() {
         PdfNumber n = getPdfObject().getAsNumber(PdfName.LLE);
-        return n == null ? 0 : n.getFloatValue();
+        return n == null ? 0 : n.floatValue();
     }
 
     public PdfLineAnnotation setLeaderLineExtension(float leaderLineExtension) {
@@ -101,7 +101,7 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
 
     public float getLeaderLineOffset() {
         PdfNumber n = getPdfObject().getAsNumber(PdfName.LLO);
-        return n == null ? 0 : n.getFloatValue();
+        return n == null ? 0 : n.floatValue();
     }
 
     public PdfLineAnnotation setLeaderLineOffset(float leaderLineOffset) {

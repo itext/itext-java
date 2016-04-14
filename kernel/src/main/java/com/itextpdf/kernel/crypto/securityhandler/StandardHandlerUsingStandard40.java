@@ -191,7 +191,7 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
         byte[] oValue = getIsoBytes(encryptionDictionary.getAsString(PdfName.O));
 
         PdfNumber pValue = (PdfNumber) encryptionDictionary.get(PdfName.P);
-        this.permissions = pValue.getLongValue();
+        this.permissions = pValue.longValue();
 
         this.documentId = documentId;
         keyLength = getKeyLength(encryptionDictionary);

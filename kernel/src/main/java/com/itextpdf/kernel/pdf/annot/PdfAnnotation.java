@@ -260,7 +260,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     public int getFlags() {
         PdfNumber f = getPdfObject().getAsNumber(PdfName.F);
         if (f != null)
-            return f.getIntValue();
+            return f.intValue();
         else
             return 0;
     }
@@ -385,7 +385,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         if (n == null)
             return -1;
         else
-            return n.getIntValue();
+            return n.intValue();
     }
 
     public PdfAnnotation setStructParentIndex(int structParentIndex) {

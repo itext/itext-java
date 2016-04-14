@@ -305,7 +305,7 @@ public class PdfA2Checker extends PdfA1Checker {
             if (f == null) {
                 throw new PdfAConformanceException(PdfAConformanceException.AnAnnotationDictionaryShallContainTheFKey);
             }
-            int flags = f.getIntValue();
+            int flags = f.intValue();
             if (!checkFlag(flags, PdfAnnotation.PRINT)
                     || checkFlag(flags, PdfAnnotation.HIDDEN)
                     || checkFlag(flags, PdfAnnotation.INVISIBLE)
@@ -356,7 +356,7 @@ public class PdfA2Checker extends PdfA1Checker {
                 PdfNumber index2 = rect.getAsNumber(2);
                 PdfNumber index3 = rect.getAsNumber(3);
                 if (index0 != null && index1 != null && index2 != null && index3 != null &&
-                        index0.getFloatValue() == index2.getFloatValue() && index1.getFloatValue() == index3.getFloatValue())
+                        index0.floatValue() == index2.floatValue() && index1.floatValue() == index3.floatValue())
                     isCorrectRect = true;
             }
             if (!PdfName.Popup.equals(subtype) &&

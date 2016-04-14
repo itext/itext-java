@@ -171,7 +171,7 @@ public class PdfStream extends PdfDictionary {
         if (length == null) {
             this.length = 0;
         } else {
-            this.length = length.getIntValue();
+            this.length = length.intValue();
         }
     }
 

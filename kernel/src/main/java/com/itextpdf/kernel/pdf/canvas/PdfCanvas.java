@@ -792,7 +792,7 @@ public class PdfCanvas {
             if (obj.isString()) {
                 StreamUtil.writeEscapedString(contentStream.getOutputStream(), ((PdfString) obj).getValueBytes());
             } else if (obj.isNumber()) {
-                contentStream.getOutputStream().writeFloat(((PdfNumber) obj).getFloatValue());
+                contentStream.getOutputStream().writeFloat(((PdfNumber) obj).floatValue());
             }
         }
         contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("]"));
@@ -2221,8 +2221,8 @@ public class PdfCanvas {
         PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
         if (bbox == null)
             throw new PdfException(PdfException.PdfFormXobjectHasInvalidBbox);
-        float formWidth = Math.abs(bbox.getAsNumber(2).getFloatValue() - bbox.getAsNumber(0).getFloatValue());
-        float formHeight = Math.abs(bbox.getAsNumber(3).getFloatValue() - bbox.getAsNumber(1).getFloatValue());
+        float formWidth = Math.abs(bbox.getAsNumber(2).floatValue() - bbox.getAsNumber(0).floatValue());
+        float formHeight = Math.abs(bbox.getAsNumber(3).floatValue() - bbox.getAsNumber(1).floatValue());
         return addForm(form, width, 0, 0, width / formWidth * formHeight, x, y);
     }
 
@@ -2241,8 +2241,8 @@ public class PdfCanvas {
         PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
         if (bbox == null)
             throw new PdfException(PdfException.PdfFormXobjectHasInvalidBbox);
-        float formWidth = Math.abs(bbox.getAsNumber(2).getFloatValue() - bbox.getAsNumber(0).getFloatValue());
-        float formHeight = Math.abs(bbox.getAsNumber(3).getFloatValue() - bbox.getAsNumber(1).getFloatValue());
+        float formWidth = Math.abs(bbox.getAsNumber(2).floatValue() - bbox.getAsNumber(0).floatValue());
+        float formHeight = Math.abs(bbox.getAsNumber(3).floatValue() - bbox.getAsNumber(1).floatValue());
         return addForm(form, height / formHeight * formWidth, 0, 0, height, x, y);
     }
 

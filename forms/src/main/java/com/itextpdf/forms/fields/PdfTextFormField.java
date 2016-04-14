@@ -209,7 +209,7 @@ public class PdfTextFormField extends PdfFormField {
      */
     public Integer getMaxLen() {
         PdfNumber number = getPdfObject().getAsNumber(PdfName.MaxLen);
-        return number != null ? number.getIntValue() : null;
+        return number != null ? number.intValue() : null;
     }
 
     /**

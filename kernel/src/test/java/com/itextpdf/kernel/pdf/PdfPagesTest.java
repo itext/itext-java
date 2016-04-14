@@ -158,8 +158,8 @@ public class PdfPagesTest extends ExtendedITextTest{
 
         for (int i = 1; i < pageCount; i++) {
             for (int j = i + 1; j <= pageCount; j++) {
-                int j_page = pdfDoc.getPage(j).getPdfObject().getAsNumber(PageNum).getIntValue();
-                int i_page = pdfDoc.getPage(i).getPdfObject().getAsNumber(PageNum).getIntValue();
+                int j_page = pdfDoc.getPage(j).getPdfObject().getAsNumber(PageNum).intValue();
+                int i_page = pdfDoc.getPage(i).getPdfObject().getAsNumber(PageNum).intValue();
                 if (j_page < i_page) {
                     PdfPage page = pdfDoc.removePage(j);
                     pdfDoc.addPage(i + 1, page);
@@ -249,7 +249,7 @@ public class PdfPagesTest extends ExtendedITextTest{
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
             Assert.assertNotNull(page);
             PdfNumber number = page.getAsNumber(PageNum5);
-            Assert.assertEquals("Page number", i, number.getIntValue());
+            Assert.assertEquals("Page number", i, number.intValue());
         }
 
         Assert.assertEquals("Number of pages", numOfPages, pdfDocument.getNumberOfPages());

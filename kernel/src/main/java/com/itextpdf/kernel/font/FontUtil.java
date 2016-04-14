@@ -125,7 +125,7 @@ class FontUtil {
 
         for (int i = 0; i < widthsArray.size() && first + i < 256; i++) {
             PdfNumber number = widthsArray.getAsNumber(i);
-            res[first + i] = number != null ? number.getIntValue() : 0;
+            res[first + i] = number != null ? number.intValue() : 0;
         }
         return res;
     }
@@ -137,17 +137,17 @@ class FontUtil {
         }
 
         for (int k = 0; k < widthsArray.size(); ++k) {
-            int c1 = widthsArray.getAsNumber(k).getIntValue();
+            int c1 = widthsArray.getAsNumber(k).intValue();
             PdfObject obj = widthsArray.get(++k);
             if (obj.isArray()) {
                 PdfArray subWidths = (PdfArray)obj;
                 for (int j = 0; j < subWidths.size(); ++j) {
-                    int c2 = subWidths.getAsNumber(j).getIntValue();
+                    int c2 = subWidths.getAsNumber(j).intValue();
                     res.put(c1++, c2);
                 }
             } else {
-                int c2 = ((PdfNumber)obj).getIntValue();
-                int w = widthsArray.getAsNumber(++k).getIntValue();
+                int c2 = ((PdfNumber)obj).intValue();
+                int w = widthsArray.getAsNumber(++k).intValue();
                 for (; c1 <= c2; ++c1) {
                     res.put(c1, w);
                 }

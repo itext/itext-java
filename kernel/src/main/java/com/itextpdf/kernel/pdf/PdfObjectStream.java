@@ -100,7 +100,7 @@ class PdfObjectStream extends PdfStream {
      * @throws PdfException
      */
     public void addObject(PdfObject object) {
-        if (size.getIntValue() == MAX_OBJ_STREAM_SIZE) {
+        if (size.intValue() == MAX_OBJ_STREAM_SIZE) {
             throw new PdfException(PdfException.PdfObjectStreamReachMaxSize);
         }
         PdfOutputStream outputStream = getOutputStream();
@@ -110,7 +110,7 @@ class PdfObjectStream extends PdfStream {
                 writeSpace();
         outputStream.write(object);
         object.getIndirectReference().setObjStreamNumber(getIndirectReference().getObjNumber());
-        object.getIndirectReference().setIndex(size.getIntValue());
+        object.getIndirectReference().setIndex(size.intValue());
         outputStream.writeSpace();
         size.increment();
         ((PdfNumber)get(PdfName.First)).setValue(indexStream.getCurrentPos());
@@ -122,7 +122,7 @@ class PdfObjectStream extends PdfStream {
      * @return object stream size.
      */
     public int getSize() {
-        return size.getIntValue();
+        return size.intValue();
     }
 
     public PdfOutputStream getIndexStream() {

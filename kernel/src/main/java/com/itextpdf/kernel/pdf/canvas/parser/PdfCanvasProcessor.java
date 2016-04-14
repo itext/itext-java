@@ -575,7 +575,7 @@ public class PdfCanvasProcessor {
                     processor.displayPdfString((PdfString) entryObj);
                     tj = 0;
                 } else {
-                    tj = ((PdfNumber) entryObj).getFloatValue();
+                    tj = ((PdfNumber) entryObj).floatValue();
                     processor.applyTextAdjust(tj);
                 }
             }
@@ -669,12 +669,12 @@ public class PdfCanvasProcessor {
      */
     private static class TextSetTextMatrix implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            float a = ((PdfNumber) operands.get(0)).getFloatValue();
-            float b = ((PdfNumber) operands.get(1)).getFloatValue();
-            float c = ((PdfNumber) operands.get(2)).getFloatValue();
-            float d = ((PdfNumber) operands.get(3)).getFloatValue();
-            float e = ((PdfNumber) operands.get(4)).getFloatValue();
-            float f = ((PdfNumber) operands.get(5)).getFloatValue();
+            float a = ((PdfNumber) operands.get(0)).floatValue();
+            float b = ((PdfNumber) operands.get(1)).floatValue();
+            float c = ((PdfNumber) operands.get(2)).floatValue();
+            float d = ((PdfNumber) operands.get(3)).floatValue();
+            float e = ((PdfNumber) operands.get(4)).floatValue();
+            float f = ((PdfNumber) operands.get(5)).floatValue();
 
             processor.textLineMatrix = new Matrix(a, b, c, d, e, f);
             processor.textMatrix = processor.textLineMatrix;
@@ -694,7 +694,7 @@ public class PdfCanvasProcessor {
         }
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            float ty = ((PdfNumber) operands.get(1)).getFloatValue();
+            float ty = ((PdfNumber) operands.get(1)).floatValue();
 
             List<PdfObject> tlOperands = new ArrayList<PdfObject>(1);
             tlOperands.add(0, new PdfNumber(-ty));
@@ -708,8 +708,8 @@ public class PdfCanvasProcessor {
      */
     private static class TextMoveStartNextLine implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            float tx = ((PdfNumber) operands.get(0)).getFloatValue();
-            float ty = ((PdfNumber) operands.get(1)).getFloatValue();
+            float tx = ((PdfNumber) operands.get(0)).floatValue();
+            float ty = ((PdfNumber) operands.get(1)).floatValue();
 
             Matrix translationMatrix = new Matrix(tx, ty);
             processor.textMatrix = translationMatrix.multiply(processor.textLineMatrix);
@@ -723,7 +723,7 @@ public class PdfCanvasProcessor {
     private static class SetTextFont implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfName fontResourceName = (PdfName) operands.get(0);
-            float size = ((PdfNumber) operands.get(1)).getFloatValue();
+            float size = ((PdfNumber) operands.get(1)).floatValue();
 
             PdfDictionary fontsDictionary = processor.resourcesStack.peek().getResource(PdfName.Font);
             PdfDictionary fontDict = fontsDictionary.getAsDictionary(fontResourceName);
@@ -742,7 +742,7 @@ public class PdfCanvasProcessor {
     private static class SetTextRenderMode implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber render = (PdfNumber) operands.get(0);
-            processor.getGraphicsState().setTextRenderingMode(render.getIntValue());
+            processor.getGraphicsState().setTextRenderingMode(render.intValue());
         }
     }
 
@@ -752,7 +752,7 @@ public class PdfCanvasProcessor {
     private static class SetTextRise implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber rise = (PdfNumber) operands.get(0);
-            processor.getGraphicsState().setTextRise(rise.getFloatValue());
+            processor.getGraphicsState().setTextRise(rise.floatValue());
         }
     }
 
@@ -762,7 +762,7 @@ public class PdfCanvasProcessor {
     private static class SetTextLeading implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber leading = (PdfNumber) operands.get(0);
-            processor.getGraphicsState().setLeading(leading.getFloatValue());
+            processor.getGraphicsState().setLeading(leading.floatValue());
         }
     }
 
@@ -772,7 +772,7 @@ public class PdfCanvasProcessor {
     private static class SetTextHorizontalScaling implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber scale = (PdfNumber) operands.get(0);
-            processor.getGraphicsState().setHorizontalScaling(scale.getFloatValue());
+            processor.getGraphicsState().setHorizontalScaling(scale.floatValue());
         }
     }
 
@@ -782,7 +782,7 @@ public class PdfCanvasProcessor {
     private static class SetTextCharacterSpacing implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber charSpace = (PdfNumber) operands.get(0);
-            processor.getGraphicsState().setCharSpacing(charSpace.getFloatValue());
+            processor.getGraphicsState().setCharSpacing(charSpace.floatValue());
         }
     }
 
@@ -792,7 +792,7 @@ public class PdfCanvasProcessor {
     private static class SetTextWordSpacing implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber wordSpace = (PdfNumber) operands.get(0);
-            processor.getGraphicsState().setWordSpacing(wordSpace.getFloatValue());
+            processor.getGraphicsState().setWordSpacing(wordSpace.floatValue());
         }
     }
 
@@ -814,7 +814,7 @@ public class PdfCanvasProcessor {
             PdfArray fontParameter = gsDic.getAsArray(PdfName.Font);
             if (fontParameter != null) {
                 PdfFont font = processor.getFont(fontParameter.getAsDictionary(0));
-                float size = fontParameter.getAsNumber(1).getFloatValue();
+                float size = fontParameter.getAsNumber(1).floatValue();
 
                 processor.getGraphicsState().setFont(font);
                 processor.getGraphicsState().setFontSize(size);
@@ -838,12 +838,12 @@ public class PdfCanvasProcessor {
      */
     private static class ModifyCurrentTransformationMatrix implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            float a = ((PdfNumber) operands.get(0)).getFloatValue();
-            float b = ((PdfNumber) operands.get(1)).getFloatValue();
-            float c = ((PdfNumber) operands.get(2)).getFloatValue();
-            float d = ((PdfNumber) operands.get(3)).getFloatValue();
-            float e = ((PdfNumber) operands.get(4)).getFloatValue();
-            float f = ((PdfNumber) operands.get(5)).getFloatValue();
+            float a = ((PdfNumber) operands.get(0)).floatValue();
+            float b = ((PdfNumber) operands.get(1)).floatValue();
+            float c = ((PdfNumber) operands.get(2)).floatValue();
+            float d = ((PdfNumber) operands.get(3)).floatValue();
+            float e = ((PdfNumber) operands.get(4)).floatValue();
+            float f = ((PdfNumber) operands.get(5)).floatValue();
             Matrix matrix = new Matrix(a, b, c, d, e, f);
             processor.getGraphicsState().updateCtm(matrix);
         }
@@ -905,7 +905,7 @@ public class PdfCanvasProcessor {
     private static Color getColor(int nOperands, List<PdfObject> operands) {
         float[] c = new float[nOperands];
         for (int i = 0; i < nOperands; i++) {
-            c[i] = ((PdfNumber) operands.get(i)).getFloatValue();
+            c[i] = ((PdfNumber) operands.get(i)).floatValue();
         }
 
         switch (nOperands) {
@@ -922,7 +922,7 @@ public class PdfCanvasProcessor {
     private static float[] getColorants(List<PdfObject> operands) {
         float[] c = new float[operands.size() - 1];
         for (int i = 0; i < operands.size() - 1; i++) {
-            c[i] = ((PdfNumber) operands.get(i)).getFloatValue();
+            c[i] = ((PdfNumber) operands.get(i)).floatValue();
         }
         return c;
     }
@@ -1141,7 +1141,7 @@ public class PdfCanvasProcessor {
     private static class SetLineWidth implements ContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-            float lineWidth = ((PdfNumber) operands.get(0)).getFloatValue();
+            float lineWidth = ((PdfNumber) operands.get(0)).floatValue();
             processor.getGraphicsState().setLineWidth(lineWidth);
         }
     }
@@ -1152,7 +1152,7 @@ public class PdfCanvasProcessor {
     private class SetLineCap implements ContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-            int lineCap = ((PdfNumber) operands.get(0)).getIntValue();
+            int lineCap = ((PdfNumber) operands.get(0)).intValue();
             processor.getGraphicsState().setLineCapStyle(lineCap);
         }
     }
@@ -1163,7 +1163,7 @@ public class PdfCanvasProcessor {
     private class SetLineJoin implements ContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-            int lineJoin = ((PdfNumber) operands.get(0)).getIntValue();
+            int lineJoin = ((PdfNumber) operands.get(0)).intValue();
             processor.getGraphicsState().setLineJoinStyle(lineJoin);
         }
     }
@@ -1174,7 +1174,7 @@ public class PdfCanvasProcessor {
     private class SetMiterLimit implements ContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-            float miterLimit = ((PdfNumber) operands.get(0)).getFloatValue();
+            float miterLimit = ((PdfNumber) operands.get(0)).floatValue();
             processor.getGraphicsState().setMiterLimit(miterLimit);
         }
     }
@@ -1213,12 +1213,12 @@ public class PdfCanvasProcessor {
             new PushGraphicsState().invoke(processor, null, null);
 
             if (matrix != null) {
-                float a = matrix.getAsNumber(0).getFloatValue();
-                float b = matrix.getAsNumber(1).getFloatValue();
-                float c = matrix.getAsNumber(2).getFloatValue();
-                float d = matrix.getAsNumber(3).getFloatValue();
-                float e = matrix.getAsNumber(4).getFloatValue();
-                float f = matrix.getAsNumber(5).getFloatValue();
+                float a = matrix.getAsNumber(0).floatValue();
+                float b = matrix.getAsNumber(1).floatValue();
+                float c = matrix.getAsNumber(2).floatValue();
+                float d = matrix.getAsNumber(3).floatValue();
+                float e = matrix.getAsNumber(4).floatValue();
+                float f = matrix.getAsNumber(5).floatValue();
                 Matrix formMatrix = new Matrix(a, b, c, d, e, f);
                 processor.getGraphicsState().updateCtm(formMatrix);
             }
@@ -1256,8 +1256,8 @@ public class PdfCanvasProcessor {
     private static class MoveTo implements ContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            float x = ((PdfNumber) operands.get(0)).getFloatValue();
-            float y = ((PdfNumber) operands.get(1)).getFloatValue();
+            float x = ((PdfNumber) operands.get(0)).floatValue();
+            float y = ((PdfNumber) operands.get(1)).floatValue();
             processor.currentPath.moveTo(x, y);
         }
     }
@@ -1268,8 +1268,8 @@ public class PdfCanvasProcessor {
     private static class LineTo implements ContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            float x = ((PdfNumber) operands.get(0)).getFloatValue();
-            float y = ((PdfNumber) operands.get(1)).getFloatValue();
+            float x = ((PdfNumber) operands.get(0)).floatValue();
+            float y = ((PdfNumber) operands.get(1)).floatValue();
             processor.currentPath.lineTo(x, y);
         }
     }
@@ -1280,12 +1280,12 @@ public class PdfCanvasProcessor {
     private static class Curve implements ContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            float x1 = ((PdfNumber) operands.get(0)).getFloatValue();
-            float y1 = ((PdfNumber) operands.get(1)).getFloatValue();
-            float x2 = ((PdfNumber) operands.get(2)).getFloatValue();
-            float y2 = ((PdfNumber) operands.get(3)).getFloatValue();
-            float x3 = ((PdfNumber) operands.get(4)).getFloatValue();
-            float y3 = ((PdfNumber) operands.get(5)).getFloatValue();
+            float x1 = ((PdfNumber) operands.get(0)).floatValue();
+            float y1 = ((PdfNumber) operands.get(1)).floatValue();
+            float x2 = ((PdfNumber) operands.get(2)).floatValue();
+            float y2 = ((PdfNumber) operands.get(3)).floatValue();
+            float x3 = ((PdfNumber) operands.get(4)).floatValue();
+            float y3 = ((PdfNumber) operands.get(5)).floatValue();
             processor.currentPath.curveTo(x1, y1, x2, y2, x3, y3);
         }
     }
@@ -1296,10 +1296,10 @@ public class PdfCanvasProcessor {
     private static class CurveFirstPointDuplicated implements ContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            float x2 = ((PdfNumber) operands.get(0)).getFloatValue();
-            float y2 = ((PdfNumber) operands.get(1)).getFloatValue();
-            float x3 = ((PdfNumber) operands.get(2)).getFloatValue();
-            float y3 = ((PdfNumber) operands.get(3)).getFloatValue();
+            float x2 = ((PdfNumber) operands.get(0)).floatValue();
+            float y2 = ((PdfNumber) operands.get(1)).floatValue();
+            float x3 = ((PdfNumber) operands.get(2)).floatValue();
+            float y3 = ((PdfNumber) operands.get(3)).floatValue();
             processor.currentPath.curveTo(x2, y2, x3, y3);
         }
     }
@@ -1310,10 +1310,10 @@ public class PdfCanvasProcessor {
     private static class CurveFourhPointDuplicated implements ContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            float x1 = ((PdfNumber) operands.get(0)).getFloatValue();
-            float y1 = ((PdfNumber) operands.get(1)).getFloatValue();
-            float x3 = ((PdfNumber) operands.get(2)).getFloatValue();
-            float y3 = ((PdfNumber) operands.get(3)).getFloatValue();
+            float x1 = ((PdfNumber) operands.get(0)).floatValue();
+            float y1 = ((PdfNumber) operands.get(1)).floatValue();
+            float x3 = ((PdfNumber) operands.get(2)).floatValue();
+            float y3 = ((PdfNumber) operands.get(3)).floatValue();
             processor.currentPath.curveFromTo(x1, y1, x3, y3);
         }
     }
@@ -1334,10 +1334,10 @@ public class PdfCanvasProcessor {
     private static class Rectangle implements ContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            float x = ((PdfNumber) operands.get(0)).getFloatValue();
-            float y = ((PdfNumber) operands.get(1)).getFloatValue();
-            float w = ((PdfNumber) operands.get(2)).getFloatValue();
-            float h = ((PdfNumber) operands.get(3)).getFloatValue();
+            float x = ((PdfNumber) operands.get(0)).floatValue();
+            float y = ((PdfNumber) operands.get(1)).floatValue();
+            float w = ((PdfNumber) operands.get(2)).floatValue();
+            float h = ((PdfNumber) operands.get(3)).floatValue();
             processor.currentPath.rectangle(x, y, w, h);
         }
     }

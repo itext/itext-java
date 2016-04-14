@@ -103,13 +103,13 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         PdfArray fontMatrixArray = getPdfObject().getAsArray(PdfName.FontMatrix);
         if (getPdfObject().containsKey(PdfName.FontBBox)) {
             PdfArray fontBBox = getPdfObject().getAsArray(PdfName.FontBBox);
-            fontProgram.getFontMetrics().setBbox(fontBBox.getAsNumber(0).getIntValue(), fontBBox.getAsNumber(1).getIntValue(),
-                    fontBBox.getAsNumber(2).getIntValue(), fontBBox.getAsNumber(3).getIntValue());
+            fontProgram.getFontMetrics().setBbox(fontBBox.getAsNumber(0).intValue(), fontBBox.getAsNumber(1).intValue(),
+                    fontBBox.getAsNumber(2).intValue(), fontBBox.getAsNumber(3).intValue());
         } else {
             fontProgram.getFontMetrics().setBbox(0, 0, 0, 0);
         }
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
-        int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.getIntValue(), 0) : 0;
+        int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.intValue(), 0) : 0;
         int[] widths = FontUtil.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
         double[] fontMatrix = new double[6];
         for (int i = 0; i < fontMatrixArray.size(); i++) {

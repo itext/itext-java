@@ -264,7 +264,7 @@ public class PdfDictionary extends PdfObject {
      */
     public Float getAsFloat(PdfName key) {
         PdfNumber number = getAsNumber(key);
-        return number == null ? null : number.getFloatValue();
+        return number == null ? null : number.floatValue();
     }
 
     /**
@@ -275,7 +275,7 @@ public class PdfDictionary extends PdfObject {
      */
     public Integer getAsInt(PdfName key) {
         PdfNumber number = getAsNumber(key);
-        return number == null ? null : number.getIntValue();
+        return number == null ? null : number.intValue();
     }
 
     /**

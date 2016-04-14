@@ -168,7 +168,7 @@ public class TagStructureContext implements Serializable {
 
         PdfNumber structParentIndex = (PdfNumber) annotDic.get(PdfName.StructParent);
         if (structParentIndex != null) {
-            PdfObjRef objRef = document.getStructTreeRoot().findObjRefByStructParentIndex(annotDic.getAsDictionary(PdfName.P), structParentIndex.getIntValue());
+            PdfObjRef objRef = document.getStructTreeRoot().findObjRefByStructParentIndex(annotDic.getAsDictionary(PdfName.P), structParentIndex.intValue());
 
             if (objRef != null) {
                 PdfStructElem parent = (PdfStructElem) objRef.getParent();

@@ -358,7 +358,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     public int getSignatureFlags() {
         PdfNumber f = getPdfObject().getAsNumber(PdfName.SigFlags);
         if (f != null)
-            return f.getIntValue();
+            return f.intValue();
         else
             return 0;
     }

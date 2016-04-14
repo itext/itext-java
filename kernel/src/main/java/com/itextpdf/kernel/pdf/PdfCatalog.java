@@ -310,7 +310,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             int diff = extension.getBaseVersion().compareTo(existingExtensionDict.getAsName(PdfName.BaseVersion));
             if (diff < 0)
                 return;
-            diff = extension.getExtensionLevel() - existingExtensionDict.getAsNumber(PdfName.ExtensionLevel).getIntValue();
+            diff = extension.getExtensionLevel() - existingExtensionDict.getAsNumber(PdfName.ExtensionLevel).intValue();
             if (diff <= 0)
                 return;
         }

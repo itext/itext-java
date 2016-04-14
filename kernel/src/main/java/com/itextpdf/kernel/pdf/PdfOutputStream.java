@@ -373,7 +373,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
         if (pdfNumber.hasContent()) {
             writeBytes(pdfNumber.getInternalContent());
         } else if (pdfNumber.getValueType() == PdfNumber.INT) {
-            writeInteger(pdfNumber.getIntValue());
+            writeInteger(pdfNumber.intValue());
         } else {
             writeDouble(pdfNumber.getValue());
         }
@@ -426,7 +426,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
                 }
                 PdfNumber length = pdfStream.getAsNumber(PdfName.Length);
                 length.setValue((int) (getCurrentPos() - beginStreamContent));
-                pdfStream.updateLength(length.getIntValue());
+                pdfStream.updateLength(length.intValue());
                 writeBytes(PdfOutputStream.endstream);
             } else {
                 //When document is opened in stamping mode the output stream can be uninitialized.

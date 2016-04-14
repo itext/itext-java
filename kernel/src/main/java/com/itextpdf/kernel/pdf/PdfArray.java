@@ -484,10 +484,10 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      */
     public Rectangle toRectangle() {
         try {
-            float x1 = getAsNumber(0).getFloatValue();
-            float y1 = getAsNumber(1).getFloatValue();
-            float x2 = getAsNumber(2).getFloatValue();
-            float y2 = getAsNumber(3).getFloatValue();
+            float x1 = getAsNumber(0).floatValue();
+            float y1 = getAsNumber(1).floatValue();
+            float x2 = getAsNumber(2).floatValue();
+            float y2 = getAsNumber(3).floatValue();
             return new Rectangle(x1, y1, x2 - x1, y2 - y1);
         } catch (Exception e) {
             throw new PdfException(PdfException.CannotConvertPdfArrayToRectanle, e, this);

@@ -307,7 +307,7 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     protected void checkPdfNumber(PdfNumber number) {
-        if (Math.abs(number.getLongValue()) > getMaxRealValue() && number.toString().contains(".")) {
+        if (Math.abs(number.longValue()) > getMaxRealValue() && number.toString().contains(".")) {
             throw new PdfAConformanceException(PdfAConformanceException.RealNumberIsOutOfRange);
         }
     }
@@ -368,7 +368,7 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(PdfAConformanceException.AnnotationType1IsNotPermitted).setMessageParams(subtype.getValue());
         }
         PdfNumber ca = annotDic.getAsNumber(PdfName.CA);
-        if (ca != null && ca.getFloatValue() != 1.0) {
+        if (ca != null && ca.floatValue() != 1.0) {
             throw new PdfAConformanceException(PdfAConformanceException.AnAnnotationDictionaryShallNotContainTheCaKeyWithAValueOtherThan1);
         }
         if (!annotDic.containsKey(PdfName.F)) {

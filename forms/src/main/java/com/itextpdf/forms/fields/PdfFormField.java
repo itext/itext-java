@@ -1091,7 +1091,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public int getFieldFlags() {
         PdfNumber f = getPdfObject().getAsNumber(PdfName.Ff);
         if (f != null) {
-            return f.getIntValue();
+            return f.intValue();
         } else {
             PdfDictionary parent = getParent();
             if (parent != null) {
@@ -1507,8 +1507,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         PdfNumber topIndex =((PdfChoiceFormField)this).getTopIndex();
                         PdfArray options = (PdfArray) getOptions().clone();
                         if (topIndex != null) {
-                            PdfObject object = options.get(topIndex.getIntValue());
-                            options.remove(topIndex.getIntValue());
+                            PdfObject object = options.get(topIndex.intValue());
+                            options.remove(topIndex.intValue());
                             options.add(0, object);
                         }
                         value = optionsArrayToString(options);

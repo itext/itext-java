@@ -86,19 +86,19 @@ public class PdfNumber extends PdfPrimitiveObject {
         return value;
     }
 
-    public double getDoubleValue() {
+    public double doubleValue() {
         return getValue();
     }
 
-    public float getFloatValue() {
+    public float floatValue() {
         return (float) getValue();
     }
 
-    public long getLongValue() {
+    public long longValue() {
         return (long) getValue();
     }
 
-    public int getIntValue() {
+    public int intValue() {
         return (int) getValue();
     }
 
@@ -180,7 +180,7 @@ public class PdfNumber extends PdfPrimitiveObject {
         if (content != null)
             return new String(content);
         else if (valueType == INT)
-            return new String(ByteUtils.getIsoBytes(getIntValue()));
+            return new String(ByteUtils.getIsoBytes(intValue()));
         else
             return new String(ByteUtils.getIsoBytes(getValue()));
     }

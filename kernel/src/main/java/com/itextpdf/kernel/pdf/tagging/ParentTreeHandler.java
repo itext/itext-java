@@ -163,7 +163,7 @@ class ParentTreeHandler implements Serializable {
             }
             PdfNumber n = obj.getAsNumber(PdfName.StructParent);
             if (n != null) {
-                pageMcrs.put(structParentIndexIntoKey(n.getIntValue()), mcr);
+                pageMcrs.put(structParentIndexIntoKey(n.intValue()), mcr);
             } else {
                 throw new PdfException(PdfException.StructParentIndexNotFoundInTaggedObject);
             }
@@ -185,7 +185,7 @@ class ParentTreeHandler implements Serializable {
                 if (obj != null && !obj.isFlushed()) {
                     PdfNumber n = obj.getAsNumber(PdfName.StructParent);
                     if (n != null) {
-                        pageMcrs.remove(structParentIndexIntoKey(n.getIntValue()));
+                        pageMcrs.remove(structParentIndexIntoKey(n.intValue()));
                         return;
                     }
                 }

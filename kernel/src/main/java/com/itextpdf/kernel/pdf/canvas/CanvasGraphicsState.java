@@ -451,7 +451,7 @@ public class CanvasGraphicsState {
             }
             PdfNumber fntSz = fnt.getAsNumber(1);
             if (fntSz != null)
-                this.fontSize = fntSz.getFloatValue();
+                this.fontSize = fntSz.floatValue();
         }
         PdfObject bg = extGState.getBlackGenerationFunction();
         if (bg != null)

@@ -63,7 +63,7 @@ public class PdfMcrNumber extends PdfMcr {
 
     @Override
     public Integer getMcid() {
-        return ((PdfNumber) getPdfObject()).getIntValue();
+        return ((PdfNumber) getPdfObject()).intValue();
     }
 
     @Override
