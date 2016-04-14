@@ -411,6 +411,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
         PdfDictionary outlineRoot = getPdfObject().getAsDictionary(PdfName.Outlines);
         if (outlineRoot == null) {
+            if (null == getDocument().getWriter()) {
+                return null;
+            }
             outlines = new PdfOutline(getDocument());
         } else {
             outlines = new PdfOutline(OutlineRoot, outlineRoot, getDocument());
@@ -507,6 +510,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private void getNextItem(PdfDictionary item, PdfOutline parent, Map<String, PdfObject> names) {
+        if (null == item) {
+            return;
+        }
         PdfOutline outline = new PdfOutline(item.getAsString(PdfName.Title).toUnicodeString(), item, parent);
         PdfObject dest = item.get(PdfName.Dest);
         if (dest != null) {

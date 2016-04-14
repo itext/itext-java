@@ -942,6 +942,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @throws PdfException
      */
     public List<PdfPage> copyPagesTo(Set<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
+        getOutlines(false);
         checkClosingStatus();
         List<PdfPage> copiedPages = new ArrayList<>();
         Map<PdfPage, PdfPage> page2page = new LinkedHashMap<>();
@@ -1499,6 +1500,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @throws PdfException
      */
     private void cloneOutlines(Set<PdfOutline> outlinesToCopy, PdfOutline newParent, PdfOutline oldParent) {
+        if (null == oldParent) {
+            return;
+        }
         for (PdfOutline outline : oldParent.getAllChildren()) {
             if (outlinesToCopy.contains(outline)) {
                 PdfOutline child = newParent.addOutline(outline.getTitle());
