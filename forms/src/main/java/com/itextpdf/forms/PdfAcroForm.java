@@ -1099,10 +1099,13 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private boolean removeObjectFromArray(PdfArray array, PdfObject toRemove) {
-        boolean removed;
-        if (!(removed = array.remove(toRemove))) {
-            removed = array.remove(toRemove.getIndirectReference());
+        if (array.contains(toRemove)) {
+            array.remove(toRemove);
+            return true;
+        } else if (array.contains(toRemove.getIndirectReference())) {
+            array.remove(toRemove.getIndirectReference());
+            return true;
         }
-        return removed;
+        return false;
     }
 }

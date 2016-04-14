@@ -185,11 +185,11 @@ abstract public class PdfMarkupAnnotation extends PdfAnnotation {
         }
         switch (color.size()) {
             case 1:
-                return new DeviceGray(color.getAsFloat(0));
+                return new DeviceGray(color.getAsNumber(0).getFloatValue());
             case 3:
-                return new DeviceRgb(color.getAsFloat(0), color.getAsFloat(1), color.getAsFloat(2));
+                return new DeviceRgb(color.getAsNumber(0).getFloatValue(), color.getAsNumber(1).getFloatValue(), color.getAsNumber(2).getFloatValue());
             case 4:
-                return new DeviceCmyk(color.getAsFloat(0), color.getAsFloat(1), color.getAsFloat(2), color.getAsFloat(3));
+                return new DeviceCmyk(color.getAsNumber(0).getFloatValue(), color.getAsNumber(1).getFloatValue(), color.getAsNumber(2).getFloatValue(), color.getAsNumber(3).getFloatValue());
             default:
                 return null;
         }

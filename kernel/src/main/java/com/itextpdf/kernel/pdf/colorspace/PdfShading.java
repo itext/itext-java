@@ -147,7 +147,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
                 return new float[] {1, 0, 0, 1, 0, 0};
             float[] result = new float[6];
             for (int i = 0; i < 6; i++)
-                result[i] = matrix.getAsFloat(i);
+                result[i] = matrix.getAsNumber(i).getFloatValue();
             return result;
         }
 
@@ -211,7 +211,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
             PdfArray domain = getPdfObject().getAsArray(PdfName.Domain);
             if (domain == null)
                 return new float[] {0, 1};
-            return new float[] {domain.getAsFloat(0), domain.getAsFloat(1)};
+            return new float[] {domain.getAsNumber(0).getFloatValue(), domain.getAsNumber(1).getFloatValue()};
         }
 
         public void setDomain(float t0, float t1) {
@@ -223,7 +223,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
             PdfArray extend = getPdfObject().getAsArray(PdfName.Extend);
             if (extend == null)
                 return new boolean[] {true, true};
-            return new boolean[] {extend.getAsBool(0), extend.getAsBool(1)};
+            return new boolean[] {extend.getAsBoolean(0).getValue(), extend.getAsBoolean(1).getValue()};
         }
 
         public void setExtend(boolean extendStart, boolean extendEnd) {
@@ -280,7 +280,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
             PdfArray domain = getPdfObject().getAsArray(PdfName.Domain);
             if (domain == null)
                 return new float[] {0, 1};
-            return new float[] {domain.getAsFloat(0), domain.getAsFloat(1)};
+            return new float[]{domain.getAsNumber(0).getFloatValue(), domain.getAsNumber(1).getFloatValue()};
         }
 
         public void setDomain(float t0, float t1) {
@@ -292,7 +292,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
             PdfArray extend = getPdfObject().getAsArray(PdfName.Extend);
             if (extend == null)
                 return new boolean[] {true, true};
-            return new boolean[] {extend.getAsBool(0), extend.getAsBool(1)};
+            return new boolean[] {extend.getAsBoolean(0).getValue(), extend.getAsBoolean(1).getValue()};
         }
 
         public void setExtend(boolean extendStart, boolean extendEnd) {

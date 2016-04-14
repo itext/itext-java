@@ -307,15 +307,12 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             put(PdfName.Extensions, extensions);
         } else {
             PdfDictionary existingExtensionDict = extensions.getAsDictionary(extension.getPrefix());
-
-            if (extension != null) { // TODO: refactor
-                int diff = extension.getBaseVersion().compareTo(existingExtensionDict.getAsName(PdfName.BaseVersion));
-                if (diff < 0)
-                    return;
-                diff = extension.getExtensionLevel() - existingExtensionDict.getAsNumber(PdfName.ExtensionLevel).getIntValue();
-                if (diff <= 0)
-                    return;
-            }
+            int diff = extension.getBaseVersion().compareTo(existingExtensionDict.getAsName(PdfName.BaseVersion));
+            if (diff < 0)
+                return;
+            diff = extension.getExtensionLevel() - existingExtensionDict.getAsNumber(PdfName.ExtensionLevel).getIntValue();
+            if (diff <= 0)
+                return;
         }
 
         extensions.put(extension.getPrefix(), extension.getDeveloperExtensions());

@@ -66,24 +66,37 @@ public class PdfTextArray extends PdfArray {
     private StringBuilder lastString;
 
     @Override
-    public boolean add(PdfObject pdfObject) {
+    public void add(PdfObject pdfObject) {
         if (pdfObject.isNumber()) {
             add(((PdfNumber)pdfObject).getFloatValue());
-            return true;
         } else if (pdfObject instanceof PdfString) {
             add(((PdfString)pdfObject).getValueBytes());
-            return true;
         }
-        return false;
     }
 
-    @Override
-    public boolean addAll(Collection<PdfObject> c) {
-        boolean changed = false;
-        for (PdfObject obj : c) {
-            changed |= add(obj);
+    /**
+     * Adds content of the {@code PdfArray}.
+     *
+     * @param a the {@code PdfArray} to be added
+     * @see java.util.List#addAll(java.util.Collection)
+     */
+    public void addAll(PdfArray a) {
+        if (a != null) {
+            addAll(a.list);
         }
-        return changed;
+    }
+
+    /**
+     * Adds the Collection of PdfObjects.
+     *
+     * @param c the Collection of PdfObjects to be added
+     * @see java.util.List#addAll(java.util.Collection)
+     */
+    @Override
+    public void addAll(Collection<PdfObject> c) {
+        for (PdfObject obj : c) {
+            add(obj);
+        }
     }
 
     public boolean add(float number) {

@@ -118,14 +118,17 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (box == null || box.size() != 4) {
             throw new IllegalArgumentException("MediaBox");
         }
-        Float llx = box.getAsFloat(0);
-        Float lly = box.getAsFloat(1);
-        Float urx = box.getAsFloat(2);
-        Float ury = box.getAsFloat(3);
+        PdfNumber llx = box.getAsNumber(0);
+        PdfNumber lly = box.getAsNumber(1);
+        PdfNumber urx = box.getAsNumber(2);
+        PdfNumber ury = box.getAsNumber(3);
         if (llx == null || lly == null || urx == null || ury == null) {
             throw new IllegalArgumentException("MediaBox");
         }
-        return new Rectangle(Math.min(llx, urx), Math.min(lly, ury), Math.abs(urx - llx), Math.abs(ury - lly));
+        return new Rectangle(Math.min(llx.getFloatValue(), urx.getFloatValue()),
+                Math.min(lly.getFloatValue(), ury.getFloatValue()),
+                Math.abs(urx.getFloatValue() - llx.getFloatValue()),
+                Math.abs(ury.getFloatValue() - lly.getFloatValue()));
     }
 
     /**
@@ -584,7 +587,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public PdfPage removeAnnotation(PdfAnnotation annotation) {
         PdfArray annots = getAnnots(false);
         if (annots != null) {
-            if (!annots.remove(annotation.getPdfObject())) {
+            if (annots.contains(annotation.getPdfObject())) {
+                annots.remove(annotation.getPdfObject());
+            } else {
                 annots.remove(annotation.getPdfObject().getIndirectReference());
             }
 

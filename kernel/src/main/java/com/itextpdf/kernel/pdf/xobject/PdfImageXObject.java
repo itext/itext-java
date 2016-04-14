@@ -348,8 +348,7 @@ public class PdfImageXObject extends PdfXObject {
             if (bpc != 8)
                 throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.ColorDepthIsNotSupported).setMessageParams(bpc);
 
-            if (PdfName.DeviceCMYK.equals(colorspace)) {
-            } else if (colorspace instanceof PdfArray) {
+            if (colorspace instanceof PdfArray) {
                 PdfArray ca = (PdfArray) colorspace;
                 PdfObject tyca = ca.get(0);
                 if (!PdfName.ICCBased.equals(tyca))
@@ -360,8 +359,9 @@ public class PdfImageXObject extends PdfXObject {
                     throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.NValueIsNotSupported).setMessageParams(n);
                 }
                 icc = pr.getBytes();
-            } else
+            } else if (!PdfName.DeviceCMYK.equals(colorspace)) {
                 throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.ColorSpaceIsNotSupported).setMessageParams(colorspace.toString());
+            }
             stride = (int) (4 * width);
             TiffWriter wr = new TiffWriter();
             wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_SAMPLESPERPIXEL, 4));

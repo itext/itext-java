@@ -68,7 +68,6 @@ public class PdfMcrNumber extends PdfMcr {
 
     @Override
     public PdfDictionary getPageObject() {
-        PdfDictionary page = parent.getPdfObject().getAsDictionary(PdfName.Pg);
-        return page;
+        return parent.getPdfObject().getAsDictionary(PdfName.Pg);
     }
 }

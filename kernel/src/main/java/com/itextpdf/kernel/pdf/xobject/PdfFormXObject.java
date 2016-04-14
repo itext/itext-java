@@ -176,10 +176,10 @@ public class PdfFormXObject extends PdfXObject {
     }
 
     @Override
-    public Float getWidth() { return getBBox() == null ? null : getBBox().getAsFloat(2);}
+    public Float getWidth() { return getBBox() == null ? null : getBBox().getAsNumber(2).getFloatValue();}
 
     @Override
-    public Float getHeight() { return getBBox() == null ? null : getBBox().getAsFloat(3); }
+    public Float getHeight() { return getBBox() == null ? null : getBBox().getAsNumber(3).getFloatValue(); }
 
     public PdfFormXObject put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);

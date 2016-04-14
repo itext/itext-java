@@ -1062,12 +1062,7 @@ public class PdfSigner {
      * @return Rectangle
      */
     protected Rectangle getWidgetRectangle(PdfWidgetAnnotation widget) {
-        PdfArray r = widget.getRectangle();
-        float x = r.getAsFloat(0);
-        float y = r.getAsFloat(1);
-        float width = r.getAsFloat(2) - x;
-        float height = r.getAsFloat(3) - y;
-        return new Rectangle(x, y, width, height);
+        return widget.getRectangle().toRectangle();
     }
 
     /**

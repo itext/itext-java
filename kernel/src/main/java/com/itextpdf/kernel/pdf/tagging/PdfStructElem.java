@@ -271,7 +271,8 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
         if (k.isArray()) {
             PdfArray kidsArray = (PdfArray) k;
-            k = kidsArray.remove(index);
+            k = kidsArray.get(index);
+            kidsArray.remove(index);
             if (kidsArray.isEmpty()) {
                 getPdfObject().remove(PdfName.K);
             }

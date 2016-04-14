@@ -122,7 +122,9 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
     public void removeFromParent() {
         if (parent != null) {
             assert getCount() == 0;
-            if (!parent.kids.remove(getPdfObject().getIndirectReference())) {
+            if (parent.kids.contains(getPdfObject().getIndirectReference())) {
+                parent.kids.remove(getPdfObject().getIndirectReference());
+            } else {
                 parent.kids.remove(getPdfObject());
             }
             if (parent.getCount() == 0) {

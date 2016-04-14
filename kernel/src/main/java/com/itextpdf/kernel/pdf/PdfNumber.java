@@ -86,6 +86,10 @@ public class PdfNumber extends PdfPrimitiveObject {
         return value;
     }
 
+    public double getDoubleValue() {
+        return getValue();
+    }
+
     public float getFloatValue() {
         return (float) getValue();
     }

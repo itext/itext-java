@@ -264,10 +264,7 @@ public final class InlineImageParsingUtils {
         int w = wObj.getIntValue();
         int bpc = bpcObj != null ? bpcObj.getIntValue() : 1;
 
-
-        int bytesPerRow = (w * bpc * cpp + 7) / 8;
-
-        return bytesPerRow;
+        return (w * bpc * cpp + 7) / 8;
     }
 
     /**

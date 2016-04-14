@@ -497,8 +497,6 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
             default:
                 throw new PdfException(PdfException.UnknownEncryptionTypeVEq1, vValue);
         }
-
-        int revision = setCryptoMode(cryptoMode, length);
-        return revision;
+        return setCryptoMode(cryptoMode, length);
     }
 }

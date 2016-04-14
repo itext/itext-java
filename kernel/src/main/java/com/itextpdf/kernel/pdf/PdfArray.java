@@ -51,7 +51,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * A representation of an array as described in the PDF specification. A PdfArray can contain any
@@ -61,7 +60,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
 
     private static final long serialVersionUID = 1617495612878046869L;
 	
-    private List<PdfObject> list;
+    protected List<PdfObject> list;
 
     /**
      * Create a new, empty PdfArray.
@@ -196,46 +195,32 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         return list.iterator();
     }
 
-    public boolean add(PdfObject pdfObject) {
-        return list.add(pdfObject);
+    public void add(PdfObject pdfObject) {
+        list.add(pdfObject);
     }
 
-    public boolean remove(Object o) {
-        return list.remove(o);
-    }
-
-    /**
-     * Adds the Collection of PdfObjects starting at the specified index.
-     *
-     * @param index position of the first PdfObject to be added
-     * @param c the Collection of PdfObjects to be added
-     * @return true if the list changed because of this operation
-     * @see java.util.List#addAll(int, java.util.Collection)
-     */
-    public boolean addAll(int index, Collection<PdfObject> c) {
-        return list.addAll(index, c);
+    public void remove(Object o) {
+        list.remove(o);
     }
 
     /**
      * Adds the Collection of PdfObjects.
      *
      * @param c the Collection of PdfObjects to be added
-     * @return true if the list changed because of this operation
      * @see java.util.List#addAll(java.util.Collection)
      */
-    public boolean addAll(Collection<PdfObject> c) {
-        return list.addAll(c);
+    public void addAll(Collection<PdfObject> c) {
+        list.addAll(c);
     }
 
     /**
      * Adds content of the {@code PdfArray}.
      *
      * @param a the {@code PdfArray} to be added
-     * @return true if the list changed because of this operation
      * @see java.util.List#addAll(java.util.Collection)
      */
-    public boolean addAll(PdfArray a) {
-        return a != null && addAll(a.list);
+    public void addAll(PdfArray a) {
+        if (a != null) addAll(a.list);
     }
 
     public void clear() {
@@ -282,8 +267,8 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      * @return true if the operation changes the PdfArray
      * @see java.util.List#remove(int)
      */
-    public PdfObject remove(int index) {
-        return list.remove(index);
+    public void remove(int index) {
+        list.remove(index);
     }
 
     /**
@@ -295,38 +280,6 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      */
     public int indexOf(PdfObject o) {
         return list.indexOf(o);
-    }
-
-    /**
-     * Gets the index of the last occurrence of the specified PdfObject.
-     *
-     * @param o PdfObject to find the index of
-     * @return index of the PdfObject
-     * @see java.util.List#lastIndexOf(Object)
-     */
-    public int lastIndexOf(PdfObject o) {
-        return list.lastIndexOf(o);
-    }
-
-    /**
-     * Returns a ListIterator.
-     *
-     * @return a list iterator
-     * @see java.util.List#listIterator()
-     */
-    public ListIterator<PdfObject> listIterator() {
-        return list.listIterator();
-    }
-
-    /**
-     * Returns a ListIterator, which will start at the specified index.
-     *
-     * @param index position where the iterator should start.
-     * @return ListIterator
-     * @see java.util.List#listIterator(int)
-     */
-    public ListIterator<PdfObject> listIterator(int index) {
-        return list.listIterator(index);
     }
 
     /**
@@ -520,54 +473,6 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         if (direct != null && direct.getType() == PdfObject.BOOLEAN)
             return (PdfBoolean) direct;
         return null;
-    }
-
-    /**
-     * Returns the element at the specified index as a Rectangle. The element at the index should be a PdfArray,
-     * if it isn't, null is returned.
-     *
-     * @param index position of the element to be returned
-     * @return the element at the index as a Rectangle
-     */
-    public Rectangle getAsRectangle(int index) {
-        PdfArray a = getAsArray(index);
-        return a == null ? null : a.toRectangle();
-    }
-
-    /**
-     * Returns the element at the specified index as a Float. The element at the index should be a PdfNumber,
-     * if it isn't, null is returned.
-     *
-     * @param index position of the element to be returned
-     * @return the element at the index as a Float
-     */
-    public Float getAsFloat(int index) {
-        PdfNumber number = getAsNumber(index);
-        return number == null ? null : number.getFloatValue();
-    }
-
-    /**
-     * Returns the element at the specified index as an Integer. The element at the index should be a PdfNumber,
-     * if it isn't, null is returned.
-     *
-     * @param index position of the element to be returned
-     * @return the element at the index as an Integer
-     */
-    public Integer getAsInt(int index) {
-        PdfNumber number = getAsNumber(index);
-        return number == null ? null : number.getIntValue();
-    }
-
-    /**
-     * Returns the element at the specified index as a Boolean. The element at the index should be a PdfBoolean,
-     * if it isn't, null is returned.
-     *
-     * @param index position of the element to be returned
-     * @return the element at the index as a Boolean
-     */
-    public Boolean getAsBool(int index) {
-        PdfBoolean b = getAsBoolean(index);
-        return b == null ? null : b.getValue();
     }
 
     /**

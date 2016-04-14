@@ -2221,8 +2221,8 @@ public class PdfCanvas {
         PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
         if (bbox == null)
             throw new PdfException(PdfException.PdfFormXobjectHasInvalidBbox);
-        Float formWidth = Math.abs(bbox.getAsFloat(2) - bbox.getAsFloat(0));
-        Float formHeight = Math.abs(bbox.getAsFloat(3) - bbox.getAsFloat(1));
+        float formWidth = Math.abs(bbox.getAsNumber(2).getFloatValue() - bbox.getAsNumber(0).getFloatValue());
+        float formHeight = Math.abs(bbox.getAsNumber(3).getFloatValue() - bbox.getAsNumber(1).getFloatValue());
         return addForm(form, width, 0, 0, width / formWidth * formHeight, x, y);
     }
 
@@ -2241,8 +2241,8 @@ public class PdfCanvas {
         PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
         if (bbox == null)
             throw new PdfException(PdfException.PdfFormXobjectHasInvalidBbox);
-        Float formWidth = Math.abs(bbox.getAsFloat(2) - bbox.getAsFloat(0));
-        Float formHeight = Math.abs(bbox.getAsFloat(3) - bbox.getAsFloat(1));
+        float formWidth = Math.abs(bbox.getAsNumber(2).getFloatValue() - bbox.getAsNumber(0).getFloatValue());
+        float formHeight = Math.abs(bbox.getAsNumber(3).getFloatValue() - bbox.getAsNumber(1).getFloatValue());
         return addForm(form, height / formHeight * formWidth, 0, 0, height, x, y);
     }
 

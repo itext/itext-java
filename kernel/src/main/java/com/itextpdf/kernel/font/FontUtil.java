@@ -137,17 +137,17 @@ class FontUtil {
         }
 
         for (int k = 0; k < widthsArray.size(); ++k) {
-            int c1 = widthsArray.getAsInt(k);
+            int c1 = widthsArray.getAsNumber(k).getIntValue();
             PdfObject obj = widthsArray.get(++k);
             if (obj.isArray()) {
                 PdfArray subWidths = (PdfArray)obj;
                 for (int j = 0; j < subWidths.size(); ++j) {
-                    int c2 = subWidths.getAsInt(j);
+                    int c2 = subWidths.getAsNumber(j).getIntValue();
                     res.put(c1++, c2);
                 }
             } else {
                 int c2 = ((PdfNumber)obj).getIntValue();
-                int w = widthsArray.getAsInt(++k);
+                int w = widthsArray.getAsNumber(++k).getIntValue();
                 for (; c1 <= c2; ++c1) {
                     res.put(c1, w);
                 }

@@ -103,8 +103,8 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         PdfArray fontMatrixArray = getPdfObject().getAsArray(PdfName.FontMatrix);
         if (getPdfObject().containsKey(PdfName.FontBBox)) {
             PdfArray fontBBox = getPdfObject().getAsArray(PdfName.FontBBox);
-            fontProgram.getFontMetrics().setBbox(fontBBox.getAsInt(0), fontBBox.getAsInt(1),
-                    fontBBox.getAsInt(2), fontBBox.getAsInt(3));
+            fontProgram.getFontMetrics().setBbox(fontBBox.getAsNumber(0).getIntValue(), fontBBox.getAsNumber(1).getIntValue(),
+                    fontBBox.getAsNumber(2).getIntValue(), fontBBox.getAsNumber(3).getIntValue());
         } else {
             fontProgram.getFontMetrics().setBbox(0, 0, 0, 0);
         }
