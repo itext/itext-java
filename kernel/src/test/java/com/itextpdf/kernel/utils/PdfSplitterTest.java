@@ -24,7 +24,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Ignore
 @Category(IntegrationTest.class)
 public class PdfSplitterTest extends ExtendedITextTest{
 
@@ -37,6 +36,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
     }
 
     @Test
+    @Ignore
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY, count = 3)
     })
@@ -69,6 +69,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
     }
 
     @Test
+    @Ignore
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY,count = 3)
     })
@@ -109,6 +110,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
     }
 
     @Test
+    @Ignore
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY, count = 2)
     })
