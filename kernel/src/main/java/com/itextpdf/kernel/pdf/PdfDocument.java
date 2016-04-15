@@ -63,6 +63,7 @@ import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
+import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.xmp.*;
@@ -984,7 +985,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             toDocument.getTagStructureContext().normalizeDocumentRootTag();
         }
         if (catalog.isOutlineMode()) {
-            copyOutlines(outlinesToCopy, toDocument, page2Outlines);
+            copyOutlines(outlinesToCopy, toDocument, page2page);
         }
         return copiedPages;
     }
@@ -1448,22 +1449,15 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      *
      * @param outlines      outlines to be copied
      * @param toDocument    document where outlines should be copied
-     * @param page2Outlines Map of pages to be copied and outlines associated with them. This map is used for creating destinations in target document.
      * @throws PdfException
      */
-    private void copyOutlines(Set<PdfOutline> outlines, PdfDocument toDocument, Map<PdfPage, List<PdfOutline>> page2Outlines) {
+    private void copyOutlines(Set<PdfOutline> outlines, PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
 
         Set<PdfOutline> outlinesToCopy = new HashSet<>();
         outlinesToCopy.addAll(outlines);
 
         for (PdfOutline outline : outlines) {
             getAllOutlinesToCopy(outline, outlinesToCopy);
-        }
-        for (PdfOutline outline : outlinesToCopy) {
-            for (Map.Entry<PdfPage, List<PdfOutline>> entry : page2Outlines.entrySet())
-                if (entry.getValue() != null && entry.getValue().contains(outline)) {
-                    outline.addDestination(PdfExplicitDestination.createFit(entry.getKey()));
-                }
         }
 
         PdfOutline rootOutline = toDocument.getOutlines(false);
@@ -1472,7 +1466,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             rootOutline.setTitle("Outlines");
         }
 
-        cloneOutlines(outlinesToCopy, rootOutline, getOutlines(false));
+        cloneOutlines(outlinesToCopy, rootOutline, getOutlines(false), page2page, toDocument);
     }
 
     /**
@@ -1498,15 +1492,55 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param oldParent      - old parent outline
      * @throws PdfException
      */
-    private void cloneOutlines(Set<PdfOutline> outlinesToCopy, PdfOutline newParent, PdfOutline oldParent) {
+    private void cloneOutlines(Set<PdfOutline> outlinesToCopy, PdfOutline newParent, PdfOutline oldParent, Map<PdfPage, PdfPage> page2page, PdfDocument toDocument) {
         if (null == oldParent) {
             return;
         }
+        Set<String> names = toDocument.getCatalog().getNameTree(PdfName.Dests).getNames().keySet();
+        Map<String, PdfObject> srcNamedDestinations = catalog.getNameTree(PdfName.Dests).getNames();
         for (PdfOutline outline : oldParent.getAllChildren()) {
             if (outlinesToCopy.contains(outline)) {
+                PdfDestination dest = outline.getDestination();
+                if (dest instanceof PdfStringDestination) {
+                    String name = ((PdfString)dest.getPdfObject()).toUnicodeString();
+                    if (!names.contains(name)) {
+                        PdfArray array = new PdfArray();
+                        array.addAll((PdfArray) srcNamedDestinations.get(name));
+                        PdfObject pageObject = array.get(0);
+                        if (!pageObject.isNumber()) {
+                            PdfPage oldPage = catalog.getPage((PdfDictionary)pageObject);
+                            PdfPage newPage = page2page.get(oldPage);
+                            if (oldPage == null || newPage == null) {
+                                dest = null;
+                            } else {
+                                array.set(0, newPage.getPdfObject());
+                            }
+                        }
+                        if (dest != null) {
+                            toDocument.addNameDestination(name, array.makeIndirect(toDocument));
+                        }
+                    }
+                } else {
+                    PdfArray destArray = new PdfArray();
+                    destArray.addAll((PdfArray) dest.getPdfObject());
+                    PdfObject pageObject = destArray.get(0);
+                    if (!pageObject.isNumber()) {
+                        PdfPage oldPage = catalog.getPage((PdfDictionary)pageObject);
+                        PdfPage newPage = page2page.get(oldPage);
+                        if (oldPage == null || newPage == null) {
+                            dest = null;
+                        } else {
+                            destArray.set(0, newPage.getPdfObject());
+                            dest = new PdfExplicitDestination(destArray);
+                        }
+                    }
+                }
                 PdfOutline child = newParent.addOutline(outline.getTitle());
-                child.addDestination(outline.getDestination());
-                cloneOutlines(outlinesToCopy, child, outline);
+                if (dest != null) {
+                    child.addDestination(dest);
+                }
+
+                cloneOutlines(outlinesToCopy, child, outline, page2page, toDocument);
             }
         }
     }

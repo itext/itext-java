@@ -68,7 +68,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     private static final String OutlineRoot = "Outlines";
     private PdfOutline outlines;
-    private boolean replaceNamedDestinations = true;
     //This HashMap contents all pages of the document and outlines associated to them
     private Map<PdfObject, List<PdfOutline>> pagesWithOutlines = new HashMap<>();
     //This flag determines if Outline tree of the document has been built via calling getOutlines method. If this flag is false all outline operations will be ignored
@@ -184,14 +183,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     public PdfCatalog setAdditionalAction(PdfName key, PdfAction action) {
         PdfAction.setAdditionalAction(this, key, action);
         return this;
-    }
-
-    public boolean isReplaceNamedDestinations() {
-        return replaceNamedDestinations;
-    }
-
-    public void setReplaceNamedDestinations(boolean replaceNamedDestinations) {
-        this.replaceNamedDestinations = replaceNamedDestinations;
     }
 
     /**
