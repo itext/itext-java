@@ -110,7 +110,7 @@ public class PdfString extends PdfPrimitiveObject {
     }
 
     /**
-     * Only PdfReader can use this method
+     * Only PdfReader can use this method!
      */
     protected PdfString(byte[] content, boolean hexWriting) {
         super(content);

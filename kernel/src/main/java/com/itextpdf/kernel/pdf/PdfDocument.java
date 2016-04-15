@@ -76,7 +76,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     private static final long serialVersionUID = -7041578979319799646L;
 
-
     /**
      * Currently active page.
      */
