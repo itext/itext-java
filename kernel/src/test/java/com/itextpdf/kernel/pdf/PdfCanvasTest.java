@@ -52,8 +52,8 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PdfCanvasTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfCanvasTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfCanvasTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfCanvasTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfCanvasTest/";
 
     /**
      * Paths to images.

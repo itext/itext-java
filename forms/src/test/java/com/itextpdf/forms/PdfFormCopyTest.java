@@ -24,8 +24,8 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PdfFormCopyTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldsCopyTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldsCopyTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldsCopyTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldsCopyTest/";
 
     @BeforeClass
     public static void beforeClass() {

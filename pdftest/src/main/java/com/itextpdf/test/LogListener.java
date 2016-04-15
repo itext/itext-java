@@ -68,7 +68,7 @@ import ch.qos.logback.core.read.ListAppender;
 public class LogListener extends TestWatcher {
 
 
-    private final static String ROOT_ITEXT_PACKAGE = "com.itextpdf";
+    private static final String ROOT_ITEXT_PACKAGE = "com.itextpdf";
 
     private final ListAppender<ILoggingEvent> listAppender = new CustomListAppender<ILoggingEvent>();
 

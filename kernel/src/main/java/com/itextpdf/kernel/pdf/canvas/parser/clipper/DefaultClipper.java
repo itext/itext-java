@@ -626,7 +626,7 @@ public class DefaultClipper extends ClipperBase {
 
     private final boolean strictlySimple;
 
-    private final static Logger LOGGER = Logger.getLogger(DefaultClipper.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DefaultClipper.class.getName());
 
     public DefaultClipper() {
         this( 0 );

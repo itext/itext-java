@@ -32,8 +32,8 @@ import static org.junit.Assert.assertEquals;
 
 @Category(IntegrationTest.class)
 public class PdfAFlushingTest extends ITextTest{
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    static final public String destinationFolder = "./target/test/PdfAFlushingTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
+    public static final String destinationFolder = "./target/test/PdfAFlushingTest/";
 
     @BeforeClass
     public static void beforeClass() {

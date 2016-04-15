@@ -30,20 +30,20 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class RotationTest extends ExtendedITextTest{
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/RotationTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/RotationTest/";
-    static final public String cmpPrefix = "cmp_";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/RotationTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/RotationTest/";
+    public static final String cmpPrefix = "cmp_";
 
-    static final private String para1Text = "The first published account of what would evolve into the Mafia in the United States came in the spring of 1869. " +
+    private static final String para1Text = "The first published account of what would evolve into the Mafia in the United States came in the spring of 1869. " +
             "The New Orleans Times reported that the city's Second District had become overrun by \"well-known and notorious Sicilian murderers, " +
             "counterfeiters and burglars, who, in the last month, have formed a sort of general co-partnership or stock company for the plunder " +
             "and disturbance of the city.\" Emigration from southern Italy to the Americas was primarily to Brazil and Argentina, and New Orleans " +
             "had a heavy volume of port traffic to and from both locales.";
-    static final private String para2Text = "Mafia groups in the United States first became influential in the New York City area, gradually progressing from small neighborhood" +
+    private static final String para2Text = "Mafia groups in the United States first became influential in the New York City area, gradually progressing from small neighborhood" +
             " operations in Italian ghettos to citywide and eventually national organizations. The Black Hand was a name given to an extortion method used " +
             "in Italian neighborhoods at the turn of the 20th century. It has been sometimes mistaken for the Mafia itself, which it is not. Although the Black" +
             " Hand was a criminal society, there were many small Black Hand gangs.";
-    static final private String para3Text = "From the 1890s to the 1900s (decade) in New York City, the Sicilian Mafia developed into the Five Points Gang and were very powerful in the" +
+    private static final String para3Text = "From the 1890s to the 1900s (decade) in New York City, the Sicilian Mafia developed into the Five Points Gang and were very powerful in the" +
             " Little Italy of the Lower East Side. They were often in conflict with the Jewish Eastmans of the same area.";
 
     @BeforeClass

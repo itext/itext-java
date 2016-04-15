@@ -22,7 +22,7 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PdfWriterTest extends ExtendedITextTest {
 
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfWriterTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfWriterTest/";
 
     @BeforeClass
     public static void beforeClass() {

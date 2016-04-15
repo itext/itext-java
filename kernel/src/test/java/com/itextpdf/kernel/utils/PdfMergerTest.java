@@ -27,8 +27,8 @@ import org.xml.sax.SAXException;
 @Category(IntegrationTest.class)
 public class PdfMergerTest extends ExtendedITextTest{
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/PdfMergerTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/utils/PdfMergerTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/PdfMergerTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/PdfMergerTest/";
 
     @BeforeClass
     public static void beforeClass() {

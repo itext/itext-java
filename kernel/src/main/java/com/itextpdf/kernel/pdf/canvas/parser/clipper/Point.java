@@ -251,7 +251,7 @@ public abstract class Point<T extends Number & Comparable<T>> {
         }
     }
 
-    private final static NumberComparator NUMBER_COMPARATOR = new NumberComparator();
+    private static final NumberComparator NUMBER_COMPARATOR = new NumberComparator();
 
     protected T x;
 

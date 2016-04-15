@@ -54,7 +54,7 @@ import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract public class PdfObject implements Serializable{
+public abstract class PdfObject implements Serializable{
 
     private static final long serialVersionUID = -3852543867469424720L;
 
@@ -117,14 +117,14 @@ abstract public class PdfObject implements Serializable{
      *
      * @return object type.
      */
-    abstract public byte getType();
+    public abstract byte getType();
 
     /**
      * Flushes the object to the document.
      *
      * @throws PdfException
      */
-    final public void flush() {
+    public final void flush() {
         flush(true);
     }
 
@@ -134,7 +134,7 @@ abstract public class PdfObject implements Serializable{
      * @param canBeInObjStm indicates whether object can be placed into object stream.
      * @throws PdfException
      */
-    final public void flush(boolean canBeInObjStm) {
+    public final void flush(boolean canBeInObjStm) {
         if (isFlushed() || getIndirectReference() == null) {
             //TODO log meaningless call of flush: object is direct or released
             //TODO also if object is mustBeIndirect log that flush call is premature
@@ -486,7 +486,7 @@ abstract public class PdfObject implements Serializable{
      *
      * @return new instance of object.
      */
-    abstract protected <T extends PdfObject> T newInstance();
+    protected abstract  <T extends PdfObject> T newInstance();
 
     /**
      * Copies object content from object 'from'.

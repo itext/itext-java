@@ -27,8 +27,8 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PdfOutlineTest extends ExtendedITextTest{
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfOutlineTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfOutlineTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfOutlineTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfOutlineTest/";
 
     @BeforeClass
     public static void beforeClass() {

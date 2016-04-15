@@ -105,11 +105,11 @@ public interface Clipper {
     };
 
     //InitOptions that can be passed to the constructor ...
-    public final static int REVERSE_SOLUTION = 1;
+    public static final int REVERSE_SOLUTION = 1;
 
-    public final static int STRICTLY_SIMPLE = 2;
+    public static final int STRICTLY_SIMPLE = 2;
 
-    public final static int PRESERVE_COLINEAR = 4;
+    public static final int PRESERVE_COLINEAR = 4;
 
     boolean addPath(Path pg, PolyType polyType, boolean Closed);
 

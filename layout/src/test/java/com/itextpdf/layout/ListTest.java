@@ -27,8 +27,8 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class ListTest extends ExtendedITextTest{
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/ListTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/ListTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/ListTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/ListTest/";
 
     @BeforeClass
     public static void beforeClass() {

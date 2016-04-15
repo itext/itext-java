@@ -24,9 +24,9 @@ import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
 public class PdfA1CanvasCheckTest {
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    static final public String cmpFolder = sourceFolder + "cmp/PdfA1CanvasCheckTest/";
-    static final public String destinationFolder = "./target/test/PdfA1CanvasCheckTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
+    public static final String cmpFolder = sourceFolder + "cmp/PdfA1CanvasCheckTest/";
+    public static final String destinationFolder = "./target/test/PdfA1CanvasCheckTest/";
 
     @BeforeClass
     public static void beforeClass() {

@@ -46,7 +46,7 @@ package com.itextpdf.kernel.pdf.colorspace;
 
 import com.itextpdf.kernel.pdf.PdfName;
 
-abstract public class PdfDeviceCs extends PdfColorSpace {
+public abstract class PdfDeviceCs extends PdfColorSpace {
 
     private static final long serialVersionUID = 6884911248656287064L;
 

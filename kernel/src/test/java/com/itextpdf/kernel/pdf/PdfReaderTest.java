@@ -28,8 +28,8 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PdfReaderTest extends ExtendedITextTest{
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfReaderTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfReaderTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfReaderTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfReaderTest/";
 
     static final String author = "Alexander Chingarev";
     static final String creator = "iText 6";

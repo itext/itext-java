@@ -30,16 +30,16 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class TabsTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/TabTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/TabTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TabTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/TabTest/";
 
-    static final private String text0 = "The Po\u017Eega Valley is a geographic microregion\tof Croatia, located in central" +
+    private static final String text0 = "The Po\u017Eega Valley is a geographic microregion\tof Croatia, located in central" +
             " Slavonia, enveloped by the Slavonian mountains. It consists of\tsouthern slopes of 984-metre (3,228 ft)" +
             " Psunj, 953-metre (3,127 ft) Papuk, and 792-metre (2,598 ft) The Krndija\tmountains, the northern slopes of " +
             "618-metre (2,028 ft) Po\u017Ee\u0161ka Gora and 461-metre\t(1,512 ft) the Dilj hills,\tand\tlowland is surrounded  by the " +
             "mountains and\thills, and occupying the eastern paaart\tof the Po\u017Eega-Slavonia County.";
 
-    static final private String text1 = "Sarehole Mill, Hall Green, Birmingham\t\"Inspired\" 1896\u20131900 (i. e. lived nearby)\t15 August 2002\tBirmingham Civic Society and The Tolkien Society\n" +
+    private static final String text1 = "Sarehole Mill, Hall Green, Birmingham\t\"Inspired\" 1896\u20131900 (i. e. lived nearby)\t15 August 2002\tBirmingham Civic Society and The Tolkien Society\n" +
             "1 Duchess Place, Ladywood, Birmingham\tLived near here 1902\u20131910\tUnknown\tBirmingham Civic Society\n" +
             "4 Highfield Road, Edgbaston, Birmingham\tLived here 1910\u20131911\tUnknown\tBirmingham Civic Society and The Tolkien Society\n" +
             "Plough and Harrow, Hagley Road, Birmingham\tStayed here June 1916\tJune 1997\tThe Tolkien Society\n" +
@@ -47,7 +47,7 @@ public class TabsTest extends ExtendedITextTest {
             "20 Northmoor Road, North Oxford\tLived here 1930\u20131947\t3 December 2002\tOxfordshire Blue Plaques Board\n" +
             "Hotel Miramar, East Overcliff Drive, Bournemouth\tStayed here regularly from the 1950s until 1972\t10 June 1992 by Priscilla Tolkien\tBorough of Bournemouth";
 
-    static final private String text2 = "space anchor:\t222222222222222222222222222222222222222222222222 03\tslash anchor:\t2024\\12\tdot anchor:\t20421.32\n" +
+    private static final String text2 = "space anchor:\t222222222222222222222222222222222222222222222222 03\tslash anchor:\t2024\\12\tdot anchor:\t20421.32\n" +
             "space anchor:\t2012 203\tslash anchor:\t2024\\2\tdot anchor:\t20421.333452\n" +
             "space anchor:\t201212 0423\tslash anchor:\t2067867824\\67867812\tdot anchor:\t21.32131232\n" +
             "space anchor:\t2123123012 03\tslash anchor:\t202131224\\12\tdot anchor:\t202.32323232323232323223223223223232323232323232323232\n" +

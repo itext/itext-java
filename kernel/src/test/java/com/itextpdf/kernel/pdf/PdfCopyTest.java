@@ -22,8 +22,8 @@ import static org.junit.Assert.assertNull;
 @Category(IntegrationTest.class)
 public class PdfCopyTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfCopyTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfCopyTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfCopyTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfCopyTest/";
 
     @BeforeClass
     public static void beforeClass() {

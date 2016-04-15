@@ -29,8 +29,8 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class AlignmentTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/AlignmentTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/AlignmentTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/AlignmentTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/AlignmentTest/";
 
     @BeforeClass
     public static void beforeClass() {

@@ -56,7 +56,7 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 
-abstract public class PdfMarkupAnnotation extends PdfAnnotation {
+public abstract class PdfMarkupAnnotation extends PdfAnnotation {
 
     private static final long serialVersionUID = 239280278775576458L;
 	

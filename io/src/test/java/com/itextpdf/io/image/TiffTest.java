@@ -10,7 +10,7 @@ import org.junit.experimental.categories.Category;
 @Category(UnitTest.class)
 public class TiffTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/io/image/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/io/image/";
 
     @Test
     public void openTiff1() throws IOException {

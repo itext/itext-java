@@ -30,9 +30,9 @@ import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
 public class PdfA1GraphicsTest {
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    static final public String cmpFolder = sourceFolder + "cmp/PdfA1GraphicsTest/";
-    static final public String destinationFolder = "./target/test/PdfA1GraphicsTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
+    public static final String cmpFolder = sourceFolder + "cmp/PdfA1GraphicsTest/";
+    public static final String destinationFolder = "./target/test/PdfA1GraphicsTest/";
 
     @BeforeClass
     public static void beforeClass() {

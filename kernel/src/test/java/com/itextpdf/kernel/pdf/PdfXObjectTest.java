@@ -28,10 +28,10 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PdfXObjectTest extends ExtendedITextTest{
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfXObjectTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfXObjectTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfXObjectTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfXObjectTest/";
 
-    static final public String[] images = new String[]{sourceFolder + "WP_20140410_001.bmp",
+    public static final String[] images = new String[]{sourceFolder + "WP_20140410_001.bmp",
             sourceFolder + "WP_20140410_001.JPC",
             sourceFolder + "WP_20140410_001.jpg",
             sourceFolder + "WP_20140410_001.tif"};

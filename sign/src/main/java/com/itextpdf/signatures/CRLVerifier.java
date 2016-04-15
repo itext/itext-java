@@ -65,7 +65,7 @@ import java.util.List;
 public class CRLVerifier extends RootStoreVerifier {
 
     /** The Logger instance */
-    protected final static Logger LOGGER = LoggerFactory.getLogger(CRLVerifier.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(CRLVerifier.class);
 
     /** The list of CRLs to check for revocation date. */
     List<X509CRL> crls;

@@ -44,7 +44,7 @@
  */
 package com.itextpdf.barcodes.dmcode;
 
-final public  class ReedSolomon {
+public final  class ReedSolomon {
 
     private static final int log[] = {
             0, 255, 1, 240, 2, 225, 241, 53, 3, 38, 226, 133, 242, 43, 54, 210,

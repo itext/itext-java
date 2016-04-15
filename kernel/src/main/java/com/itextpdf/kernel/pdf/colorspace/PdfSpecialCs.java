@@ -56,7 +56,7 @@ import com.itextpdf.kernel.pdf.function.PdfFunction;
 import java.util.Arrays;
 import java.util.List;
 
-abstract public class PdfSpecialCs extends PdfColorSpace {
+public abstract class PdfSpecialCs extends PdfColorSpace {
 
     private static final long serialVersionUID = -2725455900398492836L;
 

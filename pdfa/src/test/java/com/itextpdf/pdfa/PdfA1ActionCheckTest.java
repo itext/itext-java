@@ -21,7 +21,7 @@ import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class PdfA1ActionCheckTest {
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

@@ -31,8 +31,8 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class TableTest extends ExtendedITextTest{
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/TableTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/TableTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TableTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/TableTest/";
 
     static final String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
             "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +

@@ -123,7 +123,7 @@ public class BarcodeDataMatrix extends Barcode2D {
 
     private String encoding;
 
-    private final static DmParams[] dmSizes = {
+    private static final DmParams[] dmSizes = {
             new DmParams(10, 10, 10, 10, 3, 3, 5),
             new DmParams(12, 12, 12, 12, 5, 5, 7),
             new DmParams(8, 18, 8, 18, 5, 5, 7),

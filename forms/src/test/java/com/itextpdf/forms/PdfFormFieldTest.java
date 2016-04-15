@@ -25,8 +25,8 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PdfFormFieldTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldTest/";
 
     @BeforeClass
     public static void beforeClass() {

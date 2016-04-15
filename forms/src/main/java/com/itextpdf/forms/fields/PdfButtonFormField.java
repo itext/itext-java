@@ -64,10 +64,10 @@ public class PdfButtonFormField extends PdfFormField {
     /**
      * Button field flags
      */
-    public final static int FF_NO_TOGGLE_TO_OFF = makeFieldFlag(15);
-    public final static int FF_RADIO = makeFieldFlag(16);
-    public final static int FF_PUSH_BUTTON = makeFieldFlag(17);
-    public final static int FF_RADIOS_IN_UNISON = makeFieldFlag(26);
+    public static final int FF_NO_TOGGLE_TO_OFF = makeFieldFlag(15);
+    public static final int FF_RADIO = makeFieldFlag(16);
+    public static final int FF_PUSH_BUTTON = makeFieldFlag(17);
+    public static final int FF_RADIOS_IN_UNISON = makeFieldFlag(26);
 
     protected PdfButtonFormField(PdfDocument pdfDocument) {
         super(pdfDocument);

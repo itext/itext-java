@@ -74,7 +74,7 @@ import org.slf4j.LoggerFactory;
 public class OCSPVerifier extends RootStoreVerifier {
 
     /** The Logger instance */
-    protected final static Logger LOGGER = LoggerFactory.getLogger(OCSPVerifier.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(OCSPVerifier.class);
 
     /** The list of OCSP responses. */
     protected List<BasicOCSPResp> ocsps;

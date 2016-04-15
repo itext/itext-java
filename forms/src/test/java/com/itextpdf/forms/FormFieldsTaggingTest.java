@@ -22,8 +22,8 @@ import org.xml.sax.SAXException;
 @Category(IntegrationTest.class)
 public class FormFieldsTaggingTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/forms/FormFieldsTaggingTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/forms/FormFieldsTaggingTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FormFieldsTaggingTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/FormFieldsTaggingTest/";
 
     @BeforeClass
     public static void beforeClass() {

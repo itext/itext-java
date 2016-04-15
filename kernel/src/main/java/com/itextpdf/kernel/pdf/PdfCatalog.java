@@ -66,7 +66,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     protected PdfNumTree pageLabels;
     protected PdfOCProperties ocProperties;
 
-    private final static String OutlineRoot = "Outlines";
+    private static final String OutlineRoot = "Outlines";
     private PdfOutline outlines;
     private boolean replaceNamedDestinations = true;
     //This HashMap contents all pages of the document and outlines associated to them

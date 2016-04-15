@@ -134,9 +134,9 @@ public abstract class ClipperBase implements Clipper {
         return result;
     }
 
-    private final static long LOW_RANGE = 0x3FFFFFFF;
+    private static final long LOW_RANGE = 0x3FFFFFFF;
 
-    private final static long HI_RANGE = 0x3FFFFFFFFFFFFFFFL;
+    private static final long HI_RANGE = 0x3FFFFFFFFFFFFFFFL;
 
     protected LocalMinima minimaList;
 
@@ -150,7 +150,7 @@ public abstract class ClipperBase implements Clipper {
 
     protected final boolean preserveCollinear;
 
-    private final static Logger LOGGER = Logger.getLogger(Clipper.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Clipper.class.getName());
 
     protected ClipperBase( boolean preserveCollinear ) //constructor (nb: no external instantiation)
     {

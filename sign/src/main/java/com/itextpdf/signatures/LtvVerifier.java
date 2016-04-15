@@ -74,7 +74,7 @@ import java.util.ArrayList;
  */
 public class LtvVerifier extends RootStoreVerifier {
     /** The Logger instance */
-    protected final static Logger LOGGER = LoggerFactory.getLogger(LtvVerifier.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(LtvVerifier.class);
 
     /** Option to specify level of verification; signing certificate only or the entire chain. */
     protected CertificateOption option = CertificateOption.SIGNING_CERTIFICATE;

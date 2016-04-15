@@ -36,8 +36,8 @@ import static org.junit.Assert.*;
 @Category(IntegrationTest.class)
 public class TagTreePointerTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/TagTreePointerTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/TagTreePointerTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/TagTreePointerTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/TagTreePointerTest/";
 
     @BeforeClass
     public static void beforeClass() {

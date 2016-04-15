@@ -56,7 +56,7 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-abstract public class PdfCieBasedCs extends PdfColorSpace {
+public abstract class PdfCieBasedCs extends PdfColorSpace {
 
     private static final long serialVersionUID = 7803780450619297557L;
 

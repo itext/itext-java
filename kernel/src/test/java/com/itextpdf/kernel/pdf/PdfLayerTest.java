@@ -25,8 +25,8 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PdfLayerTest extends ExtendedITextTest{
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfLayerTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfLayerTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfLayerTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfLayerTest/";
 
     @BeforeClass
     public static void beforeClass() {

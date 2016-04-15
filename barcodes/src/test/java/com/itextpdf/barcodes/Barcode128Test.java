@@ -22,8 +22,8 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class Barcode128Test {
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/barcodes/Barcode128/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/Barcode128/";
 
     @BeforeClass
     public static void beforeClass() {

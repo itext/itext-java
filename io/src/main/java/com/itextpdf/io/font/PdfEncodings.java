@@ -382,7 +382,7 @@ public class PdfEncodings {
             return null;
         }
 
-        private final static byte[] table = {
+        private static final byte[] table = {
                 (byte) 0, (byte) 35, (byte) 34, (byte) 0, (byte) 0, (byte) 0, (byte) 41, (byte) 62, (byte) 81, (byte) 42,
                 (byte) 0, (byte) 0, (byte) 65, (byte) 63, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) -4,
                 (byte) 0, (byte) 0, (byte) 0, (byte) -5, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
@@ -461,7 +461,7 @@ public class PdfEncodings {
             return new String(cc, 0, ptr);
         }
 
-        private final static char[] table = {
+        private static final char[] table = {
                 '\u00C7', '\u00FC', '\u00E9', '\u00E2', '\u00E4', '\u00E0', '\u00E5', '\u00E7', '\u00EA', '\u00EB', '\u00E8', '\u00EF', '\u00EE', '\u00EC', '\u00C4', '\u00C5',
                 '\u00C9', '\u00E6', '\u00C6', '\u00F4', '\u00F6', '\u00F2', '\u00FB', '\u00F9', '\u00FF', '\u00D6', '\u00DC', '\u00A2', '\u00A3', '\u00A5', '\u20A7', '\u0192',
                 '\u00E1', '\u00ED', '\u00F3', '\u00FA', '\u00F1', '\u00D1', '\u00AA', '\u00BA', '\u00BF', '\u2310', '\u00AC', '\u00BD', '\u00BC', '\u00A1', '\u00AB', '\u00BB',
@@ -533,7 +533,7 @@ public class PdfEncodings {
             return new String(cc, 0, ptr);
         }
 
-        private final static char[] table1 = {
+        private static final char[] table1 = {
                 '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
                 '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
                 ' ','!','\u2200','#','\u2203','%','&','\u220b','(',')','*','+',',','-','.','/',
@@ -552,7 +552,7 @@ public class PdfEncodings {
                 '\0','\u232a','\u222b','\u2320','\u23ae','\u2321','\u239e','\u239f','\u23a0','\u23a4','\u23a5','\u23a6','\u23ab','\u23ac','\u23ad','\0'
         };
 
-        private final static char[] table2 = {
+        private static final char[] table2 = {
                 '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
                 '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
                 '\u0020','\u2701','\u2702','\u2703','\u2704','\u260e','\u2706','\u2707','\u2708','\u2709','\u261b','\u261e','\u270C','\u270D','\u270E','\u270F',

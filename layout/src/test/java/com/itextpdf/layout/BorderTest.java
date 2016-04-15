@@ -34,9 +34,9 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class BorderTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/BorderTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/BorderTest/";
-    static final public String cmpPrefix = "cmp_";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/BorderTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/BorderTest/";
+    public static final String cmpPrefix = "cmp_";
 
     String fileName;
     String outFileName;

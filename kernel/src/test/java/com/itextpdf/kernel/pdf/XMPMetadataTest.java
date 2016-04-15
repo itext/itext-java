@@ -18,8 +18,8 @@ import java.util.TimeZone;
 @Category(IntegrationTest.class)
 public class XMPMetadataTest extends ExtendedITextTest{
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/XmpWriterTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/XmpWriterTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/XmpWriterTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/XmpWriterTest/";
 
     static  public TimeZone CURRENT_USER_TIME_ZONE;
 

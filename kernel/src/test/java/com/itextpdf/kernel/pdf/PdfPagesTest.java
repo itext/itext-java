@@ -17,8 +17,8 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfPagesTest extends ExtendedITextTest{
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfPagesTest/";
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfPagesTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfPagesTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfPagesTest/";
     static final PdfName PageNum = new PdfName("PageNum");
     static final PdfName PageNum5 = new PdfName("PageNum");
 

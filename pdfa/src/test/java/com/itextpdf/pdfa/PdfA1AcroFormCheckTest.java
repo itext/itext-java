@@ -26,9 +26,9 @@ import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
 public class PdfA1AcroFormCheckTest {
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    static final public String cmpFolder = sourceFolder + "cmp/PdfA1AcroFormCheckTest/";
-    static final public String destinationFolder = "./target/test/PdfA1AcroFormCheckTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
+    public static final String cmpFolder = sourceFolder + "cmp/PdfA1AcroFormCheckTest/";
+    public static final String destinationFolder = "./target/test/PdfA1AcroFormCheckTest/";
 
     @BeforeClass
     public static void beforeClass() {

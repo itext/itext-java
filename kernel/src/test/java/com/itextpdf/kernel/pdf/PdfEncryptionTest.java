@@ -31,8 +31,8 @@ public class PdfEncryptionTest extends ExtendedITextTest{
     static final String author = "Alexander Chingarev";
     static final String creator = "iText 6";
 
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfEncryptionTest/";
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfEncryptionTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfEncryptionTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfEncryptionTest/";
 
     @BeforeClass
     public static void beforeClass() {

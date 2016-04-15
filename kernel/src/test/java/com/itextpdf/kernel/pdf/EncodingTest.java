@@ -21,8 +21,8 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class EncodingTest {
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/EncodingTest/";
-    static final public String outputFolder = "./target/test/com/itextpdf/kernel/pdf/EncodingTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/EncodingTest/";
+    public static final String outputFolder = "./target/test/com/itextpdf/kernel/pdf/EncodingTest/";
 
     @BeforeClass
     public static void beforeClass() {

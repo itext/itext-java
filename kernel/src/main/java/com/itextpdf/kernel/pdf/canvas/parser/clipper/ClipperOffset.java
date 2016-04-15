@@ -102,11 +102,11 @@ public class ClipperOffset {
     private final double arcTolerance;
 
     private final double miterLimit;
-    private final static double TWO_PI = Math.PI * 2;
+    private static final double TWO_PI = Math.PI * 2;
 
-    private final static double DEFAULT_ARC_TOLERANCE = 0.25;
+    private static final double DEFAULT_ARC_TOLERANCE = 0.25;
 
-    private final static double TOLERANCE = 1.0E-20;
+    private static final double TOLERANCE = 1.0E-20;
 
     public ClipperOffset() {
         this( 2, DEFAULT_ARC_TOLERANCE );

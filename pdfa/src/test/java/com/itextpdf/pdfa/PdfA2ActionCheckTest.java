@@ -28,8 +28,8 @@ import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
 public class PdfA2ActionCheckTest {
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    static final public String destinationFolder = "./target/test/PdfA2ActionCheckTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
+    public static final String destinationFolder = "./target/test/PdfA2ActionCheckTest/";
 
     @BeforeClass
     public static void beforeClass() {

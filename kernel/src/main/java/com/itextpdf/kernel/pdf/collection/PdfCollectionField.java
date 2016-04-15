@@ -52,21 +52,21 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
     private static final long serialVersionUID = 4766153544105870238L;
 	
     /** A possible type of collection field. */
-    public final static int TEXT = 0;
+    public static final int TEXT = 0;
     /** A possible type of collection field. */
-    public final static int DATE = 1;
+    public static final int DATE = 1;
     /** A possible type of collection field. */
-    public final static int NUMBER = 2;
+    public static final int NUMBER = 2;
     /** A possible type of collection field. */
-    public final static int FILENAME = 3;
+    public static final int FILENAME = 3;
     /** A possible type of collection field. */
-    public final static int DESC = 4;
+    public static final int DESC = 4;
     /** A possible type of collection field. */
-    public final static int MODDATE = 5;
+    public static final int MODDATE = 5;
     /** A possible type of collection field. */
-    public final static int CREATIONDATE = 6;
+    public static final int CREATIONDATE = 6;
     /** A possible type of collection field. */
-    public final static int SIZE = 7;
+    public static final int SIZE = 7;
 
     protected int subType;
 

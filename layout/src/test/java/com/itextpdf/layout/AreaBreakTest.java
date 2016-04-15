@@ -22,8 +22,8 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class AreaBreakTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/AreaBreakTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/AreaBreakTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/AreaBreakTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/AreaBreakTest/";
 
     @BeforeClass
     public static void beforeClass() {

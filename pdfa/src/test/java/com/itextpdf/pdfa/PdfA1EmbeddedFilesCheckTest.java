@@ -16,7 +16,7 @@ import java.io.InputStream;
 
 @Category(IntegrationTest.class)
 public class PdfA1EmbeddedFilesCheckTest {
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

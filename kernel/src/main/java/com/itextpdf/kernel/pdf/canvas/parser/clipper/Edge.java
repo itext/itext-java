@@ -157,13 +157,13 @@ class Edge {
     Edge nextInSEL;
     Edge prevInSEL;
 
-    protected final static int SKIP = -2;
+    protected static final int SKIP = -2;
 
-    protected final static int UNASSIGNED = -1;
+    protected static final int UNASSIGNED = -1;
 
-    protected final static double HORIZONTAL = -3.4E+38;
+    protected static final double HORIZONTAL = -3.4E+38;
 
-    private final static Logger LOGGER = Logger.getLogger(Edge.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Edge.class.getName());
 
     public Edge() {
         delta = new LongPoint();

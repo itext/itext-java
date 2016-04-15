@@ -30,8 +30,8 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PreLayoutTest extends ExtendedITextTest{
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/PreLayoutTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/PreLayoutTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/PreLayoutTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/PreLayoutTest/";
 
     @BeforeClass
     public static void beforeClass() {

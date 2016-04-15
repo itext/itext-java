@@ -85,7 +85,7 @@ public final class InlineImageParsingUtils {
      * Map between key abbreviations allowed in dictionary of inline images and their
      * equivalent image dictionary keys
      */
-    private final static Map<PdfName, PdfName> inlineImageEntryAbbreviationMap;
+    private static final Map<PdfName, PdfName> inlineImageEntryAbbreviationMap;
     static { // static initializer
         inlineImageEntryAbbreviationMap = new HashMap<PdfName, PdfName>();
 
