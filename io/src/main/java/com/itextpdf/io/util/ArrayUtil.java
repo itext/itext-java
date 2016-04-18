@@ -93,6 +93,6 @@ public final class ArrayUtil {
     }
 
     public static int[] cloneArray(int[] src) {
-        return src.clone();
+        return (int[]) src.clone();
     }
 }
