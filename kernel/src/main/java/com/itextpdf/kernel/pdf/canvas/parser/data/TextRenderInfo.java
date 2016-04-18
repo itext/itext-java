@@ -290,6 +290,18 @@ public class TextRenderInfo implements EventData {
         return gs.getHorizontalScaling();
     }
 
+    public float getCharSpacing() {
+        return gs.getCharSpacing();
+    }
+
+    public float getWordSpacing() {
+        return gs.getWordSpacing();
+    }
+
+    public float getLeading() {
+        return gs.getLeading();
+    }
+
     /**
      * Gets /ActualText tag entry value if this text chunk is marked content.
      * @return /ActualText value
@@ -413,7 +425,7 @@ public class TextRenderInfo implements EventData {
     private float[] getWidthAndWordSpacing(PdfString string) {
         float[] result = new float[2];
         result[0] = (float)((gs.getFont().getContentWidth(string) * fontMatrix[0]));
-        result[1] = " ".equals(string.getValue()) ? gs.getWordSpacing() : 0;
+        result[1] = " ".equals(string.getValue()) ? gs.getWordSpacing() : 0; // TODO ! what about space char?
         return result;
     }
 

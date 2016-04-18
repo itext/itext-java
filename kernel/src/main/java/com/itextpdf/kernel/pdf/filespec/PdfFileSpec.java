@@ -67,7 +67,7 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
         dict.put(PdfName.F, new PdfString(filePath));
         dict.put(PdfName.UF, new PdfString(filePath, isUnicodeFileName
                 ? PdfEncodings.UNICODE_BIG : PdfEncodings.PDF_DOC_ENCODING));
-        return new PdfFileSpec(dict).makeIndirect(doc);
+        return (PdfFileSpec) new PdfFileSpec(dict).makeIndirect(doc);
     }
 
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String description, String fileDisplay, PdfName mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue, boolean isUnicodeFileName) {
@@ -124,7 +124,7 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
         ef.put(PdfName.UF, stream);
         dict.put(PdfName.EF, ef);
 
-        return new PdfFileSpec(dict).makeIndirect(doc);
+        return (PdfFileSpec) new PdfFileSpec(dict).makeIndirect(doc);
     }
 
     public PdfFileSpec setFileIdentifier(PdfArray fileIdentifier){

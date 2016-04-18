@@ -71,9 +71,9 @@ public abstract class PdfObjectWrapper<T extends PdfObject> implements Serializa
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
-    public <T1 extends PdfObjectWrapper<T>> T1 makeIndirect(PdfDocument document, PdfIndirectReference reference) {
+    public PdfObjectWrapper<T> makeIndirect(PdfDocument document, PdfIndirectReference reference) {
         getPdfObject().makeIndirect(document, reference);
-        return (T1) this;
+        return this;
     }
 
     /**
@@ -82,7 +82,7 @@ public abstract class PdfObjectWrapper<T extends PdfObject> implements Serializa
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
-    public <T1 extends PdfObjectWrapper<T>> T1 makeIndirect(PdfDocument document) {
+    public PdfObjectWrapper<T> makeIndirect(PdfDocument document) {
         return makeIndirect(document, null);
     }
 

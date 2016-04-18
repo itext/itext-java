@@ -127,7 +127,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 //                subtype = ((DocFontProgram) fontProgram).getSubtype();
 //                fontName = fontProgram.getFontNames().getFontName();
 //            } else
-            if (fontProgram.isCff()) {
+            if (getFontProgram().isCff()) {
                 subtype = PdfName.Type1;
                 fontName = fontProgram.getFontNames().getFontName();
             } else {
@@ -176,7 +176,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
             if (fontProgram instanceof DocFontProgram) {
                 fontFileName = ((DocFontProgram) fontProgram).getFontFileName();
                 fontStream = ((DocFontProgram) fontProgram).getFontFile();
-            } else if (fontProgram.isCff()) {
+            } else if (getFontProgram().isCff()) {
                 fontFileName = PdfName.FontFile3;
                 try {
                     byte[] fontStreamBytes = getFontProgram().getFontStreamBytes();

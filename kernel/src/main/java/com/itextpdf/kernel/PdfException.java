@@ -226,6 +226,7 @@ public class PdfException extends RuntimeException {
     public static final String UnexpectedColorSpace1 = "unexpected.color.space {0}";
     public static final String UnexpectedEndOfFile = "unexpected.end.of.file";
     public static final String UnexpectedGtGt = "unexpected.gt.gt";
+    public static final String UnexpectedShadingType = "unexpected.shading.type";
     public static final String UnknownEncryptionTypeREq1 = "unknown.encryption.type.r.eq {0}";
     public static final String UnknownEncryptionTypeVEq1 = "unknown.encryption.type.v.eq {0}";
     public static final String UnknownHashAlgorithm1 = "unknown.hash.algorithm {0}";

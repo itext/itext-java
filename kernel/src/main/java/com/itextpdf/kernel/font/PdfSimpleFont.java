@@ -68,8 +68,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
     private static final long serialVersionUID = -4942318223894676176L;
 
-	protected T fontProgram;
-
     protected FontEncoding fontEncoding;
 
     /**
@@ -108,7 +106,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
     @Override
     public T getFontProgram() {
-        return fontProgram;
+        return (T) fontProgram;
     }
 
     public FontEncoding getFontEncoding() {

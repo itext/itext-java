@@ -63,9 +63,11 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -7661159455613720321L;
 
+    protected FontProgram fontProgram;
+
 	protected static final byte[] emptyBytes = new byte[0];
 
-    Map<Integer, Glyph> notdefGlyphs = new HashMap<>();
+    protected Map<Integer, Glyph> notdefGlyphs = new HashMap<>();
 
     /**
      * false, if the font comes from PdfDocument.
@@ -295,7 +297,9 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return (int) (max * fontSize / FontProgram.UNITS_NORMALIZATION);
     }
 
-    public abstract FontProgram getFontProgram();
+    public FontProgram getFontProgram() {
+        return fontProgram;
+    }
 
     public boolean isEmbedded() {
         return embedded;
@@ -369,6 +373,8 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         resultString.add(text.substring(startPos));
         return resultString;
     }
+
+    protected abstract PdfDictionary getFontDescriptor(String fontName);
 
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
