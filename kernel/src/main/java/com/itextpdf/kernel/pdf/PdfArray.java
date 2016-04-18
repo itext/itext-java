@@ -308,7 +308,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     @SuppressWarnings("unchecked")
     @Override
     public PdfArray makeIndirect(PdfDocument document) {
-        return super.makeIndirect(document);
+        return (PdfArray) super.makeIndirect(document);
     }
 
     /**
@@ -320,7 +320,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     @SuppressWarnings("unchecked")
     @Override
     public PdfArray makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return super.makeIndirect(document, reference);
+        return (PdfArray) super.makeIndirect(document, reference);
     }
 
     /**
@@ -333,7 +333,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     @SuppressWarnings("unchecked")
     @Override
     public PdfArray copyTo(PdfDocument document) {
-        return super.copyTo(document, true);
+        return (PdfArray) super.copyTo(document, true);
     }
 
     /**
@@ -349,7 +349,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     @SuppressWarnings("unchecked")
     @Override
     public PdfArray copyTo(PdfDocument document, boolean allowDuplicating) {
-        return super.copyTo(document, allowDuplicating);
+        return (PdfArray) super.copyTo(document, allowDuplicating);
     }
 
     @Override

@@ -57,7 +57,7 @@ abstract class PdfPrimitiveObject extends PdfObject {
         super();
     }
 
-    public PdfPrimitiveObject(boolean directOnly) {
+    protected PdfPrimitiveObject(boolean directOnly) {
         super();
         this.directOnly = directOnly;
     }
@@ -80,21 +80,21 @@ abstract class PdfPrimitiveObject extends PdfObject {
     protected abstract void generateContent();
 
     @Override
-    public <T extends PdfObject> T makeIndirect(PdfDocument document, PdfIndirectReference reference) {
+    public PdfObject makeIndirect(PdfDocument document, PdfIndirectReference reference) {
         //TODO log makingIndirect directOnly Objects
         if (!directOnly) {
             return super.makeIndirect(document, reference);
         }
-        return (T) this;
+        return this;
     }
 
     @Override
-    public <T extends PdfObject> T setIndirectReference(PdfIndirectReference indirectReference) {
+    public PdfObject setIndirectReference(PdfIndirectReference indirectReference) {
         //TODO log setIndirect for directOnly Objects
         if (!directOnly) {
             super.setIndirectReference(indirectReference);
         }
-        return (T) this;
+        return this;
     }
 
     @Override
@@ -112,10 +112,6 @@ abstract class PdfPrimitiveObject extends PdfObject {
             if (content[i] < o.content[i])
                 return -1;
         }
-        if (content.length > o.content.length)
-            return 1;
-        if (content.length < o.content.length)
-            return -1;
-        return 0;
+        return Integer.compare(content.length, o.content.length);
     }
 }

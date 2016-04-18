@@ -205,7 +205,7 @@ public class PdfString extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfString makeIndirect(PdfDocument document) {
-        return super.makeIndirect(document);
+        return (PdfString) super.makeIndirect(document);
     }
 
     /**
@@ -217,7 +217,7 @@ public class PdfString extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfString makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return super.makeIndirect(document, reference);
+        return (PdfString) super.makeIndirect(document, reference);
     }
 
     /**
@@ -230,7 +230,7 @@ public class PdfString extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfString copyTo(PdfDocument document) {
-        return super.copyTo(document, true);
+        return (PdfString) super.copyTo(document, true);
     }
 
     /**
@@ -246,7 +246,7 @@ public class PdfString extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfString copyTo(PdfDocument document, boolean allowDuplicating) {
-        return super.copyTo(document, allowDuplicating);
+        return (PdfString) super.copyTo(document, allowDuplicating);
     }
 
     @Override
@@ -331,27 +331,19 @@ public class PdfString extends PdfPrimitiveObject {
         hexWriting = string.hexWriting;
     }
 
+    void setDecryptInfoNum(int decryptInfoNum) {
+        this.decryptInfoNum = decryptInfoNum;
+    }
+
+    void setDecryptInfoGen(int decryptInfoGen) {
+        this.decryptInfoGen = decryptInfoGen;
+    }
+
     private String convertBytesToString(byte[] bytes) {
         StringBuilder buffer = new StringBuilder(bytes.length);
         for (byte b : bytes) {
             buffer.append((char) (b & 0xff));
         }
         return buffer.toString();
-    }
-
-    public int getDecryptInfoNum() {
-        return decryptInfoNum;
-    }
-
-    public void setDecryptInfoNum(int decryptInfoNum) {
-        this.decryptInfoNum = decryptInfoNum;
-    }
-
-    public int getDecryptInfoGen() {
-        return decryptInfoGen;
-    }
-
-    public void setDecryptInfoGen(int decryptInfoGen) {
-        this.decryptInfoGen = decryptInfoGen;
     }
 }

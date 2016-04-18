@@ -203,25 +203,15 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     }
 
     /**
-     * Gets a PdfWriter associated with the document object belongs to.
-     *
-     * @return PdfWriter.
+     * Releases indirect reference from the document. Remove link to the referenced indirect object.
+     * <p>
+     * Note: Be careful when using this method. Do not use this method for wrapper objects,
+     * it can be cause of errors.
+     * Free indirect reference could be reused for a new indirect object.
+     * </p>
      */
-    protected PdfWriter getWriter() {
-        if (getDocument() != null)
-            return getDocument().getWriter();
-        return null;
-    }
-
-    /**
-     * Gets a PdfReader associated with the document object belongs to.
-     *
-     * @return PdfReader.
-     */
-    protected PdfReader getReader() {
-        if (getDocument() != null)
-            return getDocument().getReader();
-        return null;
+    public void setFree() {
+        getDocument().getXref().freeReference(this);
     }
 
     @Override
@@ -254,24 +244,26 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         return MessageFormat.format("{0} {1} R{2}", getObjNumber(), getGenNumber(), states.substring(0, states.length() - 1));
     }
 
-    protected void setObjStreamNumber(int objectStreamNumber) {
-        this.objectStreamNumber = objectStreamNumber;
+    /**
+     * Gets a PdfWriter associated with the document object belongs to.
+     *
+     * @return PdfWriter.
+     */
+    protected PdfWriter getWriter() {
+        if (getDocument() != null)
+            return getDocument().getWriter();
+        return null;
     }
 
-    protected void setIndex(long index) {
-        this.offsetOrIndex = index;
-    }
-
-    protected void setOffset(long offset) {
-        this.offsetOrIndex = offset;
-        this.objectStreamNumber = 0;
-    }
-
-    protected void fixOffset(long offset){
-        //TODO log invalid offsets
-        if (!isFree()) {
-            this.offsetOrIndex = offset;
-        }
+    /**
+     * Gets a PdfReader associated with the document object belongs to.
+     *
+     * @return PdfReader.
+     */
+    protected PdfReader getReader() {
+        if (getDocument() != null)
+            return getDocument().getReader();
+        return null;
     }
 
     // NOTE In append mode object could be OriginalObjectStream, but not Modified,
@@ -279,18 +271,6 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     // In stamp mode without append the reference will be free.
     protected boolean isFree() {
         return checkState(FREE) || checkState(ORIGINAL_OBJECT_STREAM);
-    }
-
-    /**
-    * Releases indirect reference from the document. Remove link to the referenced indirect object.
-    * <p>
-    * Note: Be careful when using this method. Do not use this method for wrapper objects,
-    * it can be cause of errors.
-    * Free indirect reference could be reused for a new indirect object.
-    * </p>
-    */
-    public void setFree() {
-        getDocument().getXref().freeReference(this);
     }
 
     @Override
@@ -301,5 +281,33 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     @Override
     protected void copyContent(PdfObject from, PdfDocument document) {
 
+    }
+
+    /**
+     * Sets special states of current object.
+     * @param state special flag of current object
+     */
+    protected PdfIndirectReference setState(short state) {
+        return (PdfIndirectReference) super.setState(state);
+    }
+
+    void setObjStreamNumber(int objectStreamNumber) {
+        this.objectStreamNumber = objectStreamNumber;
+    }
+
+    void setIndex(long index) {
+        this.offsetOrIndex = index;
+    }
+
+    void setOffset(long offset) {
+        this.offsetOrIndex = offset;
+        this.objectStreamNumber = 0;
+    }
+
+    void fixOffset(long offset){
+        //TODO log invalid offsets
+        if (!isFree()) {
+            this.offsetOrIndex = offset;
+        }
     }
 }

@@ -372,10 +372,10 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
     protected void write(PdfNumber pdfNumber) {
         if (pdfNumber.hasContent()) {
             writeBytes(pdfNumber.getInternalContent());
-        } else if (pdfNumber.getValueType() == PdfNumber.INT) {
-            writeInteger(pdfNumber.intValue());
-        } else {
+        } else if (pdfNumber.isDoubleNumber()) {
             writeDouble(pdfNumber.getValue());
+        } else {
+            writeInteger(pdfNumber.intValue());
         }
     }
 

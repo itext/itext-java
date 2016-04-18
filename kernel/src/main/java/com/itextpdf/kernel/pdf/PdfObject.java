@@ -54,7 +54,7 @@ import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class PdfObject implements Serializable{
+public abstract class PdfObject implements Serializable {
 
     private static final long serialVersionUID = -3852543867469424720L;
 
@@ -166,7 +166,7 @@ public abstract class PdfObject implements Serializable{
      * Checks if object is indirect.
      * <br>
      * Note:
-     * Return value {@true} doesn't necessarily mean that indirect reference of this object
+     * Return value {@code true} doesn't necessarily mean that indirect reference of this object
      * is not null at the moment. Object could be marked as indirect and
      * be transformed to indirect on flushing.
      * <br>
@@ -184,8 +184,10 @@ public abstract class PdfObject implements Serializable{
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
-    public <T extends PdfObject> T makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        if (document == null || indirectReference != null) return (T) this;
+    public PdfObject makeIndirect(PdfDocument document, PdfIndirectReference reference) {
+        if (document == null || indirectReference != null) {
+            return this;
+        }
         if (document.getWriter() == null) {
             throw new PdfException(PdfException.ThereIsNoAssociatePdfWriterForMakingIndirects);
         }
@@ -197,7 +199,7 @@ public abstract class PdfObject implements Serializable{
             indirectReference.setRefersTo(this);
         }
         clearState(MUST_BE_INDIRECT);
-        return (T) this;
+        return this;
     }
 
     /**
@@ -206,35 +208,8 @@ public abstract class PdfObject implements Serializable{
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
-    public <T extends PdfObject> T makeIndirect(PdfDocument document) {
+    public PdfObject makeIndirect(PdfDocument document) {
         return makeIndirect(document, null);
-    }
-
-    /**
-     * Checks state of the flag of current object.
-     * @param state special flag to check
-     * @return true if the state was set.
-     */
-    protected boolean checkState(short state) {
-        return (this.state & state) == state;
-    }
-
-    /**
-     * Sets special states of current object.
-     * @param state special flag of current object
-     */
-    protected <T extends PdfObject> T setState(short state) {
-        this.state |= state;
-        return (T) this;
-    }
-
-    /**
-     * Clear state of the flag of current object.
-     * @param state special flag state to clear
-     */
-    protected <T extends PdfObject> T clearState(short state) {
-        this.state &= ~state;
-        return (T) this;
     }
 
     /**
@@ -263,6 +238,7 @@ public abstract class PdfObject implements Serializable{
      *
      * @return cloned object.
      */
+    @SuppressWarnings("CloneDoesntCallSuperClone")
     @Override
     public PdfObject clone() {
         PdfObject newObject = newInstance();
@@ -281,7 +257,7 @@ public abstract class PdfObject implements Serializable{
      * @param document document to copy object to.
      * @return copied object.
      */
-    public <T extends PdfObject> T copyTo(PdfDocument document) {
+    public PdfObject copyTo(PdfDocument document) {
         return copyTo(document, true);
     }
 
@@ -296,7 +272,7 @@ public abstract class PdfObject implements Serializable{
      *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
      * @return copied object.
      */
-    public  <T extends PdfObject> T copyTo(PdfDocument document, boolean allowDuplicating) {
+    public  PdfObject copyTo(PdfDocument document, boolean allowDuplicating) {
         if (document == null)
             throw new PdfException(PdfException.DocumentToCopyToCannotBeNull);
 
@@ -310,49 +286,6 @@ public abstract class PdfObject implements Serializable{
         }
 
         return processCopying(document, allowDuplicating);
-    }
-
-    /**
-     * Processes two cases of object copying:
-     * <ol>
-     * <li>copying to the other document</li>
-     * <li>cloning inside of the current document</li>
-     * </ol>
-     *
-     * This two cases are distinguished by the state of <code>document</code> parameter:
-     * the second case is processed if <code>document</code> is <code>null</code>.
-     *
-     * @param documentTo if not null: document to copy object to; otherwise indicates that object is to be cloned.
-     * @param allowDuplicating indicates if to allow copy objects which already have been copied.
-     *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
-     *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
-     * @return copied object.
-     */
-    protected <T extends PdfObject> T processCopying(PdfDocument documentTo, boolean allowDuplicating) {
-        if (documentTo != null) {
-            //copyTo case
-            PdfWriter writer = documentTo.getWriter();
-            if (writer == null)
-                throw new PdfException(PdfException.CannotCopyToDocumentOpenedInReadingMode);
-            return (T) writer.copyObject(this, documentTo, allowDuplicating);
-
-        } else {
-            //clone case
-            PdfObject obj = this;
-            if (obj.isIndirectReference()) {
-                PdfObject refTo = ((PdfIndirectReference) obj).getRefersTo();
-                obj = refTo != null ? refTo : obj;
-            }
-            if (obj.isIndirect() && !allowDuplicating) {
-                return (T) obj;
-            }
-            return (T) obj.clone();
-        }
-    }
-
-    protected <T extends PdfObject> T setIndirectReference(PdfIndirectReference indirectReference) {
-        this.indirectReference = indirectReference;
-        return (T) this;
     }
 
     //TODO comment! Add note about flush, modified flag and xref.
@@ -486,7 +419,39 @@ public abstract class PdfObject implements Serializable{
      *
      * @return new instance of object.
      */
-    protected abstract  <T extends PdfObject> T newInstance();
+    protected abstract PdfObject newInstance();
+
+    protected PdfObject setIndirectReference(PdfIndirectReference indirectReference) {
+        this.indirectReference = indirectReference;
+        return this;
+    }
+
+    /**
+     * Checks state of the flag of current object.
+     * @param state special flag to check
+     * @return true if the state was set.
+     */
+    protected boolean checkState(short state) {
+        return (this.state & state) == state;
+    }
+
+    /**
+     * Sets special states of current object.
+     * @param state special flag of current object
+     */
+    protected PdfObject setState(short state) {
+        this.state |= state;
+        return this;
+    }
+
+    /**
+     * Clear state of the flag of current object.
+     * @param state special flag state to clear
+     */
+    protected PdfObject clearState(short state) {
+        this.state &= ~state;
+        return this;
+    }
 
     /**
      * Copies object content from object 'from'.
@@ -499,5 +464,41 @@ public abstract class PdfObject implements Serializable{
             throw new PdfException(PdfException.CannotCopyFlushedObject, this);
     }
 
+    /**
+     * Processes two cases of object copying:
+     * <ol>
+     * <li>copying to the other document</li>
+     * <li>cloning inside of the current document</li>
+     * </ol>
+     *
+     * This two cases are distinguished by the state of <code>document</code> parameter:
+     * the second case is processed if <code>document</code> is <code>null</code>.
+     *
+     * @param documentTo if not null: document to copy object to; otherwise indicates that object is to be cloned.
+     * @param allowDuplicating indicates if to allow copy objects which already have been copied.
+     *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
+     *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
+     * @return copied object.
+     */
+    PdfObject processCopying(PdfDocument documentTo, boolean allowDuplicating) {
+        if (documentTo != null) {
+            //copyTo case
+            PdfWriter writer = documentTo.getWriter();
+            if (writer == null)
+                throw new PdfException(PdfException.CannotCopyToDocumentOpenedInReadingMode);
+            return writer.copyObject(this, documentTo, allowDuplicating);
 
+        } else {
+            //clone case
+            PdfObject obj = this;
+            if (obj.isIndirectReference()) {
+                PdfObject refTo = ((PdfIndirectReference) obj).getRefersTo();
+                obj = refTo != null ? refTo : obj;
+            }
+            if (obj.isIndirect() && !allowDuplicating) {
+                return obj;
+            }
+            return obj.clone();
+        }
+    }
 }

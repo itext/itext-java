@@ -910,7 +910,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     @SuppressWarnings("unchecked")
     @Override
     public PdfName makeIndirect(PdfDocument document) {
-        return super.makeIndirect(document);
+        return (PdfName) super.makeIndirect(document);
     }
 
     /**
@@ -922,7 +922,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     @SuppressWarnings("unchecked")
     @Override
     public PdfName makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return super.makeIndirect(document, reference);
+        return (PdfName) super.makeIndirect(document, reference);
     }
 
     /**
@@ -935,7 +935,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     @SuppressWarnings("unchecked")
     @Override
     public PdfName copyTo(PdfDocument document) {
-        return super.copyTo(document, true);
+        return (PdfName) super.copyTo(document, true);
     }
 
     /**
@@ -951,7 +951,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     @SuppressWarnings("unchecked")
     @Override
     public PdfName copyTo(PdfDocument document, boolean allowDuplicating) {
-        return super.copyTo(document, allowDuplicating);
+        return (PdfName) super.copyTo(document, allowDuplicating);
     }
 
     @Override

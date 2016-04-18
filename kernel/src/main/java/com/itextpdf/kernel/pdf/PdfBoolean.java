@@ -88,7 +88,7 @@ public class PdfBoolean extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfBoolean makeIndirect(PdfDocument document) {
-        return super.makeIndirect(document);
+        return (PdfBoolean) super.makeIndirect(document);
     }
 
     /**
@@ -100,7 +100,7 @@ public class PdfBoolean extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfBoolean makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return super.makeIndirect(document, reference);
+        return (PdfBoolean) super.makeIndirect(document, reference);
     }
 
     /**
@@ -113,7 +113,7 @@ public class PdfBoolean extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfBoolean copyTo(PdfDocument document) {
-        return super.copyTo(document, true);
+        return (PdfBoolean) super.copyTo(document, true);
     }
 
     /**
@@ -129,12 +129,12 @@ public class PdfBoolean extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfBoolean copyTo(PdfDocument document, boolean allowDuplicating) {
-        return super.copyTo(document, allowDuplicating);
+        return (PdfBoolean) super.copyTo(document, allowDuplicating);
     }
 
     @Override
     public String toString() {
-        return java.lang.Boolean.toString(value);
+        return value ? "true" : "false";
     }
 
     @Override

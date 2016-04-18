@@ -246,8 +246,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             indirectReference.setOffset(getCurrentPos());
             writeToBody(pdfObject);
         }
-        indirectReference.setState(PdfObject.FLUSHED);
-        indirectReference.clearState(PdfObject.MUST_BE_FLUSHED);
+        indirectReference.setState(PdfObject.FLUSHED).clearState(PdfObject.MUST_BE_FLUSHED);
         switch (pdfObject.getType()) {
             case PdfObject.BOOLEAN:
             case PdfObject.NAME:

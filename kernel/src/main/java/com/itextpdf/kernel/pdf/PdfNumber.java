@@ -49,11 +49,9 @@ import com.itextpdf.io.source.ByteUtils;
 public class PdfNumber extends PdfPrimitiveObject {
 
     private static final long serialVersionUID = -250799718574024246L;
-	protected static final byte INT = 1;
-    protected static final byte DOUDBLE = 2;
 
     private double value;
-    private byte valueType;
+    private boolean isDouble;
 
     public PdfNumber(double value) {
         super();
@@ -67,7 +65,7 @@ public class PdfNumber extends PdfPrimitiveObject {
 
     public PdfNumber(byte[] content) {
         super(content);
-        this.valueType = DOUDBLE;
+        this.isDouble = true;
         this.value = java.lang.Double.NaN;
     }
 
@@ -104,13 +102,13 @@ public class PdfNumber extends PdfPrimitiveObject {
 
     public void setValue(int value) {
         this.value = value;
-        this.valueType = INT;
+        this.isDouble = false;
         this.content = null;
     }
 
     public void setValue(double value) {
         this.value = value;
-        this.valueType = DOUDBLE;
+        this.isDouble = true;
         this.content = null;
     }
 
@@ -131,7 +129,7 @@ public class PdfNumber extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfNumber makeIndirect(PdfDocument document) {
-        return super.makeIndirect(document);
+        return (PdfNumber) super.makeIndirect(document);
     }
 
     /**
@@ -143,7 +141,7 @@ public class PdfNumber extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfNumber makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return super.makeIndirect(document, reference);
+        return (PdfNumber) super.makeIndirect(document, reference);
     }
 
     /**
@@ -156,7 +154,7 @@ public class PdfNumber extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfNumber copyTo(PdfDocument document) {
-        return super.copyTo(document, true);
+        return (PdfNumber) super.copyTo(document, true);
     }
 
     /**
@@ -172,17 +170,18 @@ public class PdfNumber extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfNumber copyTo(PdfDocument document, boolean allowDuplicating) {
-        return super.copyTo(document, allowDuplicating);
+        return (PdfNumber) super.copyTo(document, allowDuplicating);
     }
 
     @Override
     public String toString() {
-        if (content != null)
+        if (content != null) {
             return new String(content);
-        else if (valueType == INT)
-            return new String(ByteUtils.getIsoBytes(intValue()));
-        else
+        } else if (isDouble) {
             return new String(ByteUtils.getIsoBytes(getValue()));
+        } else {
+            return new String(ByteUtils.getIsoBytes(intValue()));
+        }
     }
 
     @Override
@@ -190,21 +189,16 @@ public class PdfNumber extends PdfPrimitiveObject {
         return new PdfNumber();
     }
 
-    protected byte getValueType() {
-        return valueType;
+    protected boolean isDoubleNumber() {
+        return isDouble;
     }
 
     @Override
     protected void generateContent() {
-        switch (valueType) {
-            case INT:
-                content = ByteUtils.getIsoBytes((int) value);
-                break;
-            case DOUDBLE:
-                content = ByteUtils.getIsoBytes(value);
-                break;
-            default:
-                content = new byte[0];
+        if (isDouble) {
+            content = ByteUtils.getIsoBytes(value);
+        } else {
+            content = ByteUtils.getIsoBytes((int) value);
         }
     }
 
@@ -214,7 +208,7 @@ public class PdfNumber extends PdfPrimitiveObject {
         } catch (NumberFormatException e) {
             value = java.lang.Double.NaN;
         }
-        valueType = DOUDBLE;
+        isDouble = true;
     }
 
     @Override
@@ -222,7 +216,6 @@ public class PdfNumber extends PdfPrimitiveObject {
         super.copyContent(from, document);
         PdfNumber number = (PdfNumber) from;
         value = number.value;
-        valueType = number.valueType;
+        isDouble = number.isDouble;
     }
-
 }

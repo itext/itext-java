@@ -619,13 +619,11 @@ public class PdfReader implements Closeable, Serializable {
                             throw new PdfException(PdfException.InvalidIndirectReference1);
                         }
                     }
-                    return reference;
                 } else {
-                    PdfIndirectReference ref = new PdfIndirectReference(pdfDocument,
-                            num, tokens.getGenNr(), 0).setState(PdfObject.READING);
-                    table.add(ref);
-                    return ref;
+                    reference = table.add(new PdfIndirectReference(pdfDocument,
+                            num, tokens.getGenNr(), 0).setState(PdfObject.READING));
                 }
+                return reference;
             case EndOfFile:
                 throw new PdfException(PdfException.UnexpectedEndOfFile);
             default:

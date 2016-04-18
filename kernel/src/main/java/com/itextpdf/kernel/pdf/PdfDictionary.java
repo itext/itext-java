@@ -400,7 +400,7 @@ public class PdfDictionary extends PdfObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfDictionary makeIndirect(PdfDocument document) {
-        return super.makeIndirect(document);
+        return (PdfDictionary) super.makeIndirect(document);
     }
 
     /**
@@ -412,7 +412,7 @@ public class PdfDictionary extends PdfObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfDictionary makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return super.makeIndirect(document, reference);
+        return (PdfDictionary) super.makeIndirect(document, reference);
     }
 
     /**
@@ -425,7 +425,7 @@ public class PdfDictionary extends PdfObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfDictionary copyTo(PdfDocument document) {
-        return super.copyTo(document, true);
+        return (PdfDictionary) super.copyTo(document, true);
     }
 
     /**
@@ -441,7 +441,7 @@ public class PdfDictionary extends PdfObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfDictionary copyTo(PdfDocument document, boolean allowDuplicating) {
-        return super.copyTo(document, allowDuplicating);
+        return (PdfDictionary) super.copyTo(document, allowDuplicating);
     }
 
     /**

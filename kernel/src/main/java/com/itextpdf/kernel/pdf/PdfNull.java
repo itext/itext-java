@@ -81,7 +81,7 @@ public class PdfNull extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfNull makeIndirect(PdfDocument document) {
-        return super.makeIndirect(document);
+        return (PdfNull) super.makeIndirect(document);
     }
 
     /**
@@ -93,7 +93,7 @@ public class PdfNull extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfNull makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return super.makeIndirect(document, reference);
+        return (PdfNull) super.makeIndirect(document, reference);
     }
 
     /**
@@ -106,7 +106,7 @@ public class PdfNull extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfNull copyTo(PdfDocument document) {
-        return super.copyTo(document, true);
+        return (PdfNull) super.copyTo(document, true);
     }
 
     /**
@@ -122,7 +122,7 @@ public class PdfNull extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfNull copyTo(PdfDocument document, boolean allowDuplicating) {
-        return super.copyTo(document, allowDuplicating);
+        return (PdfNull) super.copyTo(document, allowDuplicating);
     }
 
     @Override
