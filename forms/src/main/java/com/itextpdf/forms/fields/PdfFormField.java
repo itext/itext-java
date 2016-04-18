@@ -706,18 +706,20 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             PdfDictionary dictionary = (PdfDictionary) pdfObject;
             PdfName formType = dictionary.getAsName(PdfName.FT);
             if (PdfName.Tx.equals(formType)) {
-                field = new PdfTextFormField(dictionary).makeIndirect(document);
+                field = new PdfTextFormField(dictionary);
             } else if (PdfName.Btn.equals(formType)) {
-                field = new PdfButtonFormField(dictionary).makeIndirect(document);
+                field = new PdfButtonFormField(dictionary);
             } else if (PdfName.Ch.equals(formType)) {
-                field = new PdfChoiceFormField(dictionary).makeIndirect(document);
+                field = new PdfChoiceFormField(dictionary);
             } else if (PdfName.Sig.equals(formType)) {
-                field = new PdfSignatureFormField(dictionary).makeIndirect(document);
+                field = new PdfSignatureFormField(dictionary);
             } else {
-                field = new PdfFormField(dictionary).makeIndirect(document);
+                field = new PdfFormField(dictionary);
             }
         }
-
+        if (field != null) {
+            field.makeIndirect(document);
+        }
         return field;
     }
 

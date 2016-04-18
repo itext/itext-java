@@ -170,7 +170,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         PdfAcroForm acroForm = null;
         if (acroFormDictionary == null) {
             if (createIfNotExist) {
-                acroForm = new PdfAcroForm(new PdfArray()).makeIndirect(document);
+                acroForm = new PdfAcroForm(new PdfArray());
+                acroForm.makeIndirect(document);
                 document.getCatalog().put(PdfName.AcroForm, acroForm.getPdfObject());
                 document.getCatalog().setModified();
                 acroForm.setDefaultAppearance("/Helv 0 Tf 0 g ");
@@ -638,7 +639,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 } else if (normal.isDictionary()) {
                     PdfName as = fieldObject.getAsName(PdfName.AS);
                     if (((PdfDictionary)normal).getAsStream(as) != null) {
-                        xObject = new PdfFormXObject(((PdfDictionary)normal).getAsStream(as)).makeIndirect(document);
+                        xObject = new PdfFormXObject(((PdfDictionary)normal).getAsStream(as));
+                        xObject.makeIndirect(document);
                     }
                 }
 
