@@ -307,7 +307,7 @@ public class CanvasGraphicsState {
         this.wordSpacing = wordSpacing;
     }
 
-    public Float getWordSpacing() {
+    public float getWordSpacing() {
         return wordSpacing;
     }
 

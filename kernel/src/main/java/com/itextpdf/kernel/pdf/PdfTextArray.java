@@ -129,6 +129,7 @@ public class PdfTextArray extends PdfArray {
     }
 
     protected boolean add(String text) {
+        // TODO may be at least use String instead of StringBuilder?
         if (text.length() > 0) {
             if (lastString != null) {
                 lastString.append(text);

@@ -145,12 +145,10 @@ public class CanvasTag {
      * @param properties a dictionary
      * @return current {@link CanvasTag}
      */
-    public CanvasTag addProperties(PdfDictionary properties) {
-        if (properties == null) {
-            return this;
+    public CanvasTag setProperties(PdfDictionary properties) {
+        if (properties != null) {
+            this.properties = properties;
         }
-        ensurePropertiesInit();
-        this.properties.putAll(properties);
         return this;
     }
 

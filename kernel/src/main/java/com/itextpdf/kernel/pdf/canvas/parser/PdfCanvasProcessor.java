@@ -430,8 +430,12 @@ public class PdfCanvasProcessor {
     }
 
     protected PdfStream getXObjectStream(PdfName xobjectName) {
-        PdfDictionary xobjects = resourcesStack.peek().getResource(PdfName.XObject);
+        PdfDictionary xobjects = getResources().getResource(PdfName.XObject);
         return xobjects.getAsStream(xobjectName);
+    }
+
+    protected PdfResources getResources() {
+        return resourcesStack.peek();
     }
 
     protected void populateXObjectDoHandlers() {
@@ -467,7 +471,7 @@ public class PdfCanvasProcessor {
      * @param dict the PdfDictionary associated with the marked content
      */
     protected void beginMarkedContent(PdfName tag, PdfDictionary dict) {
-        markedContentStack.push(new CanvasTag(tag).addProperties(dict));
+        markedContentStack.push(new CanvasTag(tag).setProperties(dict));
     }
 
     /**
@@ -532,7 +536,7 @@ public class PdfCanvasProcessor {
     }
 
     private void displayImage(PdfStream imageStream, boolean isInline) {
-        PdfDictionary colorSpaceDic = resourcesStack.peek().getResource(PdfName.ColorSpace);
+        PdfDictionary colorSpaceDic = getResources().getResource(PdfName.ColorSpace);
         ImageRenderInfo renderInfo = new ImageRenderInfo(getGraphicsState().getCtm(), imageStream, colorSpaceDic, isInline);
         eventOccurred(renderInfo, EventType.RENDER_IMAGE);
     }
@@ -725,7 +729,7 @@ public class PdfCanvasProcessor {
             PdfName fontResourceName = (PdfName) operands.get(0);
             float size = ((PdfNumber) operands.get(1)).floatValue();
 
-            PdfDictionary fontsDictionary = processor.resourcesStack.peek().getResource(PdfName.Font);
+            PdfDictionary fontsDictionary = processor.getResources().getResource(PdfName.Font);
             PdfDictionary fontDict = fontsDictionary.getAsDictionary(fontResourceName);
             PdfFont font = null;
             font = processor.getFont(fontDict);
@@ -803,14 +807,14 @@ public class PdfCanvasProcessor {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
 
             PdfName dictionaryName = (PdfName) operands.get(0);
-            PdfDictionary extGState = processor.resourcesStack.peek().getResource(PdfName.ExtGState);
+            PdfDictionary extGState = processor.getResources().getResource(PdfName.ExtGState);
             if (extGState == null)
                 throw new PdfException(PdfException.ResourcesDoNotContainExtgstateEntryUnableToProcessOperator1).setMessageParams(operator);
             PdfDictionary gsDic = extGState.getAsDictionary(dictionaryName);
             if (gsDic == null)
                 throw new PdfException(PdfException._1IsAnUnknownGraphicsStateDictionary).setMessageParams(dictionaryName);
 
-            // at this point, all we care about is the FONT entry in the GS dictionary
+            // at this point, all we care about is the FONT entry in the GS dictionary TODO merge the whole gs dictionary
             PdfArray fontParameter = gsDic.getAsArray(PdfName.Font);
             if (fontParameter != null) {
                 PdfFont font = processor.getFont(fontParameter.getAsDictionary(0));
@@ -1008,7 +1012,7 @@ public class PdfCanvasProcessor {
             if (PdfColorSpace.directColorSpaces.contains(colorSpace)) {
                 pdfColorSpace = PdfColorSpace.makeColorSpace(colorSpace);
             } else {
-                PdfResources pdfResources = processor.resourcesStack.peek();
+                PdfResources pdfResources = processor.getResources();
                 PdfDictionary resourceColorSpace = pdfResources.getPdfObject().getAsDictionary(PdfName.ColorSpace);
                 pdfColorSpace = PdfColorSpace.makeColorSpace(resourceColorSpace.get(colorSpace));
             }
@@ -1035,7 +1039,7 @@ public class PdfCanvasProcessor {
      */
     private static class SetColorFill implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            processor.getGraphicsState().setFillColor(getColor(processor.getGraphicsState().getFillColorSpace(), operands, processor.resourcesStack.peek()));
+            processor.getGraphicsState().setFillColor(getColor(processor.getGraphicsState().getFillColorSpace(), operands, processor.getResources()));
         }
     }
 
@@ -1044,7 +1048,7 @@ public class PdfCanvasProcessor {
      */
     private static class SetColorStroke implements ContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            processor.getGraphicsState().setStrokeColor(getColor(processor.getGraphicsState().getStrokeColorSpace(), operands, processor.resourcesStack.peek()));
+            processor.getGraphicsState().setStrokeColor(getColor(processor.getGraphicsState().getStrokeColorSpace(), operands, processor.getResources()));
         }
     }
 
@@ -1091,7 +1095,7 @@ public class PdfCanvasProcessor {
 
             PdfObject properties = operands.get(1);
 
-            processor.beginMarkedContent((PdfName) operands.get(0), getPropertiesDictionary(properties, processor.resourcesStack.peek()));
+            processor.beginMarkedContent((PdfName) operands.get(0), getPropertiesDictionary(properties, processor.getResources()));
         }
 
         private PdfDictionary getPropertiesDictionary(PdfObject operand1, PdfResources resources) {
@@ -1099,7 +1103,7 @@ public class PdfCanvasProcessor {
                 return (PdfDictionary) operand1;
 
             PdfName dictionaryName = ((PdfName) operand1);
-            return resources.getResource(dictionaryName); // TODO obviously here is a mistake. should get properties dict first
+            return resources.getResource(PdfName.Properties).getAsDictionary(dictionaryName);
         }
     }
 
@@ -1198,7 +1202,7 @@ public class PdfCanvasProcessor {
             PdfDictionary resourcesDic = stream.getAsDictionary(PdfName.Resources);
             PdfResources resources;
             if (resourcesDic == null) {
-                resources = processor.resourcesStack.peek();
+                resources = processor.getResources();
             } else {
                 resources = new PdfResources(resourcesDic);
             }

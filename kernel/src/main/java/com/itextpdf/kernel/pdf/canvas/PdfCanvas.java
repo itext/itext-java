@@ -2055,8 +2055,6 @@ public class PdfCanvas {
     public PdfCanvas openTag(CanvasTag tag) {
         if (tag.getRole() == null)
             return this;
-//        if ((tag.getStructParentIndex() == null) && !(tag instanceof PdfArtifact))
-//            throw new PdfException(PdfException.StructureElementIsNotLinkedToStructParent, tag);
         return beginMarkedContent(tag.getRole(), tag.getProperties());
     }
 
@@ -2074,7 +2072,7 @@ public class PdfCanvas {
         if (tagReference.getRole() == null)
             return this;
         CanvasTag tag = new CanvasTag(tagReference.getRole(), tagReference.createNextMcid());
-        tag.addProperties(tagReference.getProperties());
+        tag.setProperties(tagReference.getProperties());
         return openTag(tag);
     }
 

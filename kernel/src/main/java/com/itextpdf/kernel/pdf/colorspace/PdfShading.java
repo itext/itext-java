@@ -44,6 +44,7 @@
  */
 package com.itextpdf.kernel.pdf.colorspace;
 
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -65,6 +66,51 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         public static final int LATTICE_FORM_GOURAUD_SHADED_TRIANGLE_MESH = 5;
         public static final int COONS_PATCH_MESH = 6;
         public static final int TENSOR_PRODUCT_PATCH_MESH = 7;
+    }
+
+    public static PdfShading makeShading(PdfDictionary shadingDictionary) {
+        if (!shadingDictionary.containsKey(PdfName.ShadingType)) {
+            throw new PdfException(PdfException.UnexpectedShadingType);
+        }
+        PdfShading shading;
+        switch (shadingDictionary.getAsNumber(PdfName.ShadingType).intValue()) {
+            case ShadingType.FUNCTION_BASED:
+                shading = new FunctionBased(shadingDictionary);
+                break;
+            case ShadingType.AXIAL:
+                shading = new Axial(shadingDictionary);
+                break;
+            case ShadingType.RADIAL:
+                shading = new Radial(shadingDictionary);
+                break;
+            case ShadingType.FREE_FORM_GOURAUD_SHADED_TRIANGLE_MESH:
+                if (!shadingDictionary.isStream()) {
+                    throw new PdfException(PdfException.UnexpectedShadingType);
+                }
+                shading = new FreeFormGouraudShadedTriangleMesh((PdfStream) shadingDictionary);
+                break;
+            case ShadingType.LATTICE_FORM_GOURAUD_SHADED_TRIANGLE_MESH:
+                if (!shadingDictionary.isStream()) {
+                    throw new PdfException(PdfException.UnexpectedShadingType);
+                }
+                shading = new LatticeFormGouraudShadedTriangleMesh((PdfStream) shadingDictionary);
+                break;
+            case ShadingType.COONS_PATCH_MESH:
+                if (!shadingDictionary.isStream()) {
+                    throw new PdfException(PdfException.UnexpectedShadingType);
+                }
+                shading = new CoonsPatchMesh((PdfStream) shadingDictionary);
+                break;
+            case ShadingType.TENSOR_PRODUCT_PATCH_MESH:
+                if (!shadingDictionary.isStream()) {
+                    throw new PdfException(PdfException.UnexpectedShadingType);
+                }
+                shading = new TensorProductPatchMesh((PdfStream) shadingDictionary);
+                break;
+            default:
+                throw new PdfException(PdfException.UnexpectedShadingType);
+        }
+        return shading;
     }
 
     public PdfShading(PdfDictionary pdfObject) {
