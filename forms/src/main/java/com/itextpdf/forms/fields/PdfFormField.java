@@ -165,6 +165,71 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected Color borderColor = Color.BLACK;
     protected int rotation = 0;
     protected PdfFormXObject form;
+    protected int pdfAVersion = 0;
+
+    protected static final String check = "0.8 0 0 0.8 0.3 0.5 cm 0 0 m\n" +
+            "0.066 -0.026 l\n" +
+            "0.137 -0.15 l\n" +
+            "0.259 0.081 0.46 0.391 0.553 0.461 c\n" +
+            "0.604 0.489 l\n" +
+            "0.703 0.492 l\n" +
+            "0.543 0.312 0.255 -0.205 0.154 -0.439 c\n" +
+            "0.069 -0.399 l\n" +
+            "0.035 -0.293 -0.039 -0.136 -0.091 -0.057 c\n" +
+            "h\n" +
+            "f\n";
+
+    protected static final String circle = "1 0 0 1 0.86 0.5 cm 0 0 m\n" +
+            "0 0.204 -0.166 0.371 -0.371 0.371 c\n" +
+            "-0.575 0.371 -0.741 0.204 -0.741 0 c\n" +
+            "-0.741 -0.204 -0.575 -0.371 -0.371 -0.371 c\n" +
+            "-0.166 -0.371 0 -0.204 0 0 c\n" +
+            "f\n";
+
+
+    protected static final String cross = "1 0 0 1 0.80 0.8 cm 0 0 m\n" +
+            "-0.172 -0.027 l\n" +
+            "-0.332 -0.184 l\n" +
+            "-0.443 -0.019 l\n" +
+            "-0.475 -0.009 l\n" +
+            "-0.568 -0.168 l\n" +
+            "-0.453 -0.324 l\n" +
+            "-0.58 -0.497 l\n" +
+            "-0.59 -0.641 l\n" +
+            "-0.549 -0.627 l\n" +
+            "-0.543 -0.612 -0.457 -0.519 -0.365 -0.419 c\n" +
+            "-0.163 -0.572 l\n" +
+            "-0.011 -0.536 l\n" +
+            "-0.004 -0.507 l\n" +
+            "-0.117 -0.441 l\n" +
+            "-0.246 -0.294 l\n" +
+            "-0.132 -0.181 l\n" +
+            "0.031 -0.04 l\n" +
+            "h\n" +
+            "f\n";
+
+    protected static final String diamond = "1 0 0 1 0.5 0.12 cm 0 0 m\n" +
+            "0.376 0.376 l\n" +
+            "0 0.751 l\n" +
+            "-0.376 0.376 l\n" +
+            "h\n" +
+            "f\n";
+
+    protected static final String square = "1 0 0 1 0.835 0.835 cm 0 0 -0.669 -0.67 re\n" +
+            "f\n";
+
+    protected static final String star = "0.95 0 0 0.95 0.85 0.6 cm 0 0 m\n" +
+            "-0.291 0 l\n" +
+            "-0.381 0.277 l\n" +
+            "-0.47 0 l\n" +
+            "-0.761 0 l\n" +
+            "-0.526 -0.171 l\n" +
+            "-0.616 -0.448 l\n" +
+            "-0.381 -0.277 l\n" +
+            "-0.145 -0.448 l\n" +
+            "-0.236 -0.171 l\n" +
+            "h\n" +
+            "f\n";
 
     /**
      * Creates a form field as a wrapper object around a {@link PdfDictionary}.
@@ -615,15 +680,45 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfButtonFormField checkbox}
      */
     public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String name, String value, int checkType) {
+        return createCheckBox(doc, rect, name, value, checkType, 0);
+    }
+
+    /**
+     * Creates a {@link PdfButtonFormField} as a checkbox.
+     *
+     * @param doc       the {@link PdfDocument} to create the radio group in
+     * @param rect      the location on the page for the field
+     * @param name      the name of the form field
+     * @param value     the initial value
+     * @param checkType the type of checkbox graphic to use.
+     * @param pdfAVersion the PdfAVersion of the document (1, 2, 3 or any other number if it's no PDF/A document
+     * @return a new {@link PdfButtonFormField checkbox}
+     */
+    public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String name, String value, int checkType, int pdfAVersion) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
-        PdfFormField check = new PdfButtonFormField(annot, doc);
+        PdfButtonFormField check = new PdfButtonFormField(annot, doc);
+        check.pdfAVersion = pdfAVersion;
+        annot.setFlag(PdfAnnotation.PRINT);
         check.setCheckType(checkType);
         check.setFieldName(name);
-        check.setValue(value);
+        check.put(PdfName.V, new PdfName(value));
         annot.setAppearanceState(new PdfName(value));
-        check.drawCheckAppearance(rect.getWidth(), rect.getHeight(), value.equals("Off") ? "Yes": value);
+        switch (pdfAVersion) {
+            case 1:
+                check.drawPdfA1CheckAppearance(rect.getWidth(), rect.getHeight(), value.equals("Off") ? "Yes" : value, checkType);
+                break;
+            case 2:
+                check.drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), value.equals("Off") ? "Yes" : value, checkType);
+                break;
+            case 3:
+                check.drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), value.equals("Off") ? "Yes" : value, checkType);
+                break;
+            default:
+                check.drawCheckAppearance(rect.getWidth(), rect.getHeight(), value.equals("Off") ? "Yes": value);
+                break;
+        }
 
-        return (PdfButtonFormField) check;
+        return check;
     }
 
     /**
@@ -1424,6 +1519,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
         this.checkType = checkType;
         text = typeChars[checkType - 1];
+        if (pdfAVersion > 0 && pdfAVersion < 4 ) {
+            return;
+        }
         try {
             font = PdfFontFactory.createFont(FontConstants.ZAPFDINGBATS);
         } catch (IOException e) {
@@ -1585,7 +1683,21 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             } else {
                 Rectangle rect = getRect(getPdfObject());
                 setCheckType(checkType);
-                drawCheckAppearance(rect.getWidth(), rect.getHeight(), value);
+
+                switch (pdfAVersion) {
+                    case 1:
+                        drawPdfA1CheckAppearance(rect.getWidth(), rect.getHeight(), value, checkType);
+                        break;
+                    case 2:
+                        drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), value, checkType);
+                        break;
+                    case 3:
+                        drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), value, checkType);
+                        break;
+                    default:
+                        drawCheckAppearance(rect.getWidth(), rect.getHeight(), value);
+                        break;
+                }
                 PdfWidgetAnnotation widget = getWidgets().get(0);
                 if (widget.getNormalAppearanceObject().containsKey(new PdfName(value))) {
                     widget.setAppearanceState(new PdfName(value));
@@ -1820,6 +1932,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public void release() {
         unsetForbidRelease();
         getPdfObject().release();
+    }
+
+    public void setPdfAVersion(int conformanceLevel) {
+        pdfAVersion = conformanceLevel;
     }
 
     @Override
@@ -2213,6 +2329,58 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         widget.setNormalAppearance(normalAppearance);
     }
 
+    protected void drawPdfA1CheckAppearance(float width, float height, String value, int checkType) {
+        PdfStream stream = new PdfStream().makeIndirect(getDocument());
+        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
+        Rectangle rect = new Rectangle(0, 0, width, height);
+        PdfFormXObject xObject = new PdfFormXObject(rect);
+
+        this.checkType = checkType;
+        drawBorder(canvas, xObject, width, height);
+        drawPdfACheckBox(canvas, width, height, true);
+
+        PdfWidgetAnnotation widget = getWidgets().get(0);
+
+        xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
+
+        PdfDictionary normalAppearance = new PdfDictionary();
+        normalAppearance.put(new PdfName(value), xObject.getPdfObject());
+
+        PdfDictionary mk = new PdfDictionary();
+        mk.put(PdfName.CA, new PdfString(text));
+        widget.put(PdfName.MK, mk);
+        widget.setNormalAppearance(xObject.getPdfObject());
+    }
+
+    protected void drawPdfA2CheckAppearance(float width, float height, String value, int checkType) {
+        PdfStream streamOn = new PdfStream().makeIndirect(getDocument());
+        PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
+        PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
+        PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
+        Rectangle rect = new Rectangle(0, 0, width, height);
+        PdfFormXObject xObjectOn = new PdfFormXObject(rect);
+        PdfFormXObject xObjectOff = new PdfFormXObject(rect);
+
+        this.checkType = checkType;
+        drawBorder(canvasOn, xObjectOn, width, height);
+        drawPdfACheckBox(canvasOn, width, height, true);
+        drawBorder(canvasOff, xObjectOff, width, height);
+
+        PdfWidgetAnnotation widget = getWidgets().get(0);
+
+        xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
+        xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
+
+        PdfDictionary normalAppearance = new PdfDictionary();
+        normalAppearance.put(new PdfName(value), xObjectOn.getPdfObject());
+        normalAppearance.put(new PdfName("Off"), xObjectOff.getPdfObject());
+
+        PdfDictionary mk = new PdfDictionary();
+        mk.put(PdfName.CA, new PdfString(text));
+        widget.put(PdfName.MK, mk);
+        widget.setNormalAppearance(normalAppearance);
+    }
+
     /**
      * Draws the appearance for a push button.
      *
@@ -2305,6 +2473,37 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 setTextMatrix((width - ufont.getWidth(text, fontSize)) / 2, (height - ufont.getAscent(text, fontSize)) / 2).
                 showText(text).
                 endText();
+    }
+
+    protected void drawPdfACheckBox(PdfCanvas canvas, float width, float height, boolean on){
+        if (!on)
+            return;
+        String appearanceString = check;
+        switch (checkType) {
+            case TYPE_CHECK:
+                appearanceString = check;
+                break;
+            case TYPE_CIRCLE:
+                appearanceString = circle;
+                break;
+            case TYPE_CROSS:
+                appearanceString = cross;
+                break;
+            case TYPE_DIAMOND:
+                appearanceString = diamond;
+                break;
+            case TYPE_SQUARE:
+                appearanceString = square;
+                break;
+            case TYPE_STAR:
+                appearanceString = star;
+                break;
+        }
+        canvas.saveState();
+        canvas.resetFillColorRgb();
+        canvas.concatMatrix(width, 0, 0, height, 0, 0);
+        canvas.getContentStream().getOutputStream().writeBytes(appearanceString.getBytes());
+        canvas.restoreState();
     }
 
     private PdfName getTypeFromParent(PdfDictionary field) {
