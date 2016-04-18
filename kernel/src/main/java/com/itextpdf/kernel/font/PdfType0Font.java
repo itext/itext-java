@@ -85,7 +85,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PdfType0Font extends PdfSimpleFont<FontProgram> {
+public class PdfType0Font extends PdfFont {
 
     private static final long serialVersionUID = -8033620300884193397L;
 
@@ -461,10 +461,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             flushFontData();
         }
         super.flush();
-    }
-
-    @Override //TODO remove
-    protected void addFontStream(PdfDictionary fontDescriptor) {
     }
 
     private void flushFontData() {

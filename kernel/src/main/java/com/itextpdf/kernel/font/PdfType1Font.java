@@ -129,7 +129,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
     @Override
     protected boolean isBuiltInFont() {
-        return fontProgram.isBuiltInFont();
+        return getFontProgram().isBuiltInFont();
     }
 
     /**
