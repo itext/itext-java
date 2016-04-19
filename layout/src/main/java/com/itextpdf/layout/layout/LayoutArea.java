@@ -50,7 +50,7 @@ import com.itextpdf.layout.renderer.AbstractRenderer;
 
 import java.text.MessageFormat;
 
-public class LayoutArea implements Cloneable {
+public class LayoutArea {
 
     protected int pageNumber;
     protected Rectangle bBox;
