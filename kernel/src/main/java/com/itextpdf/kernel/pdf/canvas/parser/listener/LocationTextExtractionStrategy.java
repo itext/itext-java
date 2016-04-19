@@ -282,8 +282,8 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
      */
     public static class TextChunk implements Comparable<TextChunk> {
         /** the text of the chunk */
-        private final String text;
-        private final TextChunkLocation location;
+        protected final String text;
+        protected final TextChunkLocation location;
 
         public TextChunk(String string, TextChunkLocation loc) {
             this.text = string;
