@@ -63,14 +63,14 @@ import org.slf4j.LoggerFactory;
  * A {@link Cell} is one piece of data in an enclosing grid, the {@link Table}.
  * This object is a {@link BlockElement}, giving it a number of visual layout
  * properties. 
- * 
+ *
  * A cell can act as a container for a number of layout elements; it can only
  * contain other {@link BlockElement} objects or images. Other types of layout
  * elements must be wrapped in a {@link BlockElement}.
  */
 public class Cell extends BlockElement<Cell> {
 
-    private static final Border DEFAULT_BORDER = new SolidBorder(new com.itextpdf.kernel.color.DeviceRgb(160, 160, 160), 0.5f);
+    private static final Border DEFAULT_BORDER = new SolidBorder(0.5f);
 
     private int row;
     private int col;
@@ -82,7 +82,7 @@ public class Cell extends BlockElement<Cell> {
 
     /**
      * Creates a cell which takes a custom amount of cell spaces in the table.
-     * 
+     *
      * @param rowspan the number of rows this cell must occupy. Negative numbers will make the argument default to 1.
      * @param colspan the number of columns this cell must occupy. Negative numbers will make the argument default to 1.
      */
@@ -139,7 +139,7 @@ public class Cell extends BlockElement<Cell> {
 
     /**
      * Adds any block element to the cell's contents.
-     * 
+     *
      * @param element a {@link BlockElement}
      * @return this Element
      */
@@ -150,7 +150,7 @@ public class Cell extends BlockElement<Cell> {
 
     /**
      * Adds an image to the cell's contents.
-     * 
+     *
      * @param element an {@link Image}
      * @return this Element
      */
@@ -161,7 +161,7 @@ public class Cell extends BlockElement<Cell> {
 
     /**
      * Adds an embedded table to the cell's contents.
-     * 
+     *
      * @param element a nested {@link Table}
      * @return this Element
      */
@@ -173,7 +173,7 @@ public class Cell extends BlockElement<Cell> {
     /**
      * Directly adds a String of text to this cell. The content is wrapped in a
      * layout element.
-     * 
+     *
      * @param content a {@link String}
      * @return this Element
      */
@@ -183,7 +183,7 @@ public class Cell extends BlockElement<Cell> {
 
     /**
      * Clones a cell with its position, properties, and optionally its contents.
-     * 
+     *
      * @param includeContent whether or not to also include the contents of the cell.
      * @return a clone of this Element
      */
@@ -203,6 +203,11 @@ public class Cell extends BlockElement<Cell> {
         switch (property) {
             case BORDER:
                 return (T) DEFAULT_BORDER;
+            case PADDING_BOTTOM:
+            case PADDING_LEFT:
+            case PADDING_RIGHT:
+            case PADDING_TOP:
+                return (T) Float.valueOf(2);
             default:
                 return super.getDefaultProperty(property);
         }

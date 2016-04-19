@@ -271,6 +271,14 @@ public class ParagraphRenderer extends BlockRenderer {
         return new ParagraphRenderer((Paragraph) modelElement);
     }
 
+    @Override
+    public <T> T getDefaultProperty(Property property) {
+        if ((property == Property.MARGIN_TOP || property == Property.MARGIN_BOTTOM) && parent instanceof CellRenderer) {
+            return (T) Float.valueOf(0);
+        }
+        return super.getDefaultProperty(property);
+    }
+
     protected ParagraphRenderer createOverflowRenderer() {
         ParagraphRenderer overflowRenderer = getNextRenderer();
         // Reset first line indent in case of overflow.
