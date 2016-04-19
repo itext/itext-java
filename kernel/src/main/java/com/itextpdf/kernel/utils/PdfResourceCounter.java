@@ -88,7 +88,10 @@ public class PdfResourceCounter {
      */
     protected final void process(PdfObject obj) {
         PdfIndirectReference ref = obj.getIndirectReference();
-        if (ref == null || !resources.containsKey(ref.getObjNumber())) {
+        if (ref == null) {
+            loopOver(obj);
+        } else if (!resources.containsKey(ref.getObjNumber())) {
+            resources.put(ref.getObjNumber(), obj);
             loopOver(obj);
         }
     }
