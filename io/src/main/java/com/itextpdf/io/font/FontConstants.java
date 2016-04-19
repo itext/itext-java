@@ -322,7 +322,7 @@ public class FontConstants {
     /**
      * The code pages possible for a True Type font.
      */
-    protected static final String TrueTypeCodePages[] = {
+    protected static final String CODE_PAGES[] = {
             "1252 Latin 1",
             "1250 Latin 2: Eastern Europe",
             "1251 Cyrillic",

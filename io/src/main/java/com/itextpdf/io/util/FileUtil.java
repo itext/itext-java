@@ -93,7 +93,7 @@ public final class FileUtil {
                             list.add(file.getAbsolutePath());
                         }
                     }
-                    return (String[]) list.toArray();
+                    return list.toArray(new String[] {});
                 }
             }
         }
