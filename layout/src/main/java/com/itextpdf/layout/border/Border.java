@@ -60,7 +60,6 @@ public abstract class Border {
     public static final int _3D_OUTSET = 7;
     public static final int _3D_RIDGE = 8;
 
-
     protected Color color;
     protected float width;
     protected int type;

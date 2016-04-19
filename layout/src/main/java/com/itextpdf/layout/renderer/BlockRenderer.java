@@ -184,14 +184,16 @@ public class BlockRenderer extends AbstractRenderer {
                             overflowRenderer.childRenderers.clear();
                             overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
                         }
-                        if (getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
-                            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
-                        }
 
                         applyPaddings(occupiedArea.getBBox(), true);
                         applyBorderBox(occupiedArea.getBBox(), true);
                         applyMargins(occupiedArea.getBBox(), true);
-                        return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer);
+
+                        if (getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+                        } else {
+                            return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer);
+                        }
                     }
                 }
             }
