@@ -212,7 +212,6 @@ public class BlockRenderer extends AbstractRenderer {
         applyPaddings(occupiedArea.getBBox(), true);
         if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
             occupiedArea.getBBox().moveDown(blockHeight - occupiedArea.getBBox().getHeight()).setHeight(blockHeight);
-            applyVerticalAlignment();
         }
         if (isPositioned()) {
             float y = getPropertyAsFloat(Property.Y);
@@ -230,6 +229,7 @@ public class BlockRenderer extends AbstractRenderer {
                 }
             }
         }
+        applyVerticalAlignment();
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
@@ -328,7 +328,7 @@ public class BlockRenderer extends AbstractRenderer {
     protected void applyVerticalAlignment() {
         Property.VerticalAlignment verticalAlignment = getProperty(Property.VERTICAL_ALIGNMENT);
         if (verticalAlignment != null && verticalAlignment != Property.VerticalAlignment.TOP && childRenderers.size() > 0) {
-            float deltaY = childRenderers.get(childRenderers.size() - 1).getOccupiedArea().getBBox().getY() - occupiedArea.getBBox().getY();
+            float deltaY = childRenderers.get(childRenderers.size() - 1).getOccupiedArea().getBBox().getY() - getInnerAreaBBox().getY();
             switch (verticalAlignment) {
                 case BOTTOM:
                     for (IRenderer child : childRenderers) {
