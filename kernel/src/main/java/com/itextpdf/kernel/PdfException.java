@@ -229,6 +229,7 @@ public class PdfException extends RuntimeException {
     public static final String UnexpectedShadingType = "unexpected.shading.type";
     public static final String UnknownEncryptionTypeREq1 = "unknown.encryption.type.r.eq {0}";
     public static final String UnknownEncryptionTypeVEq1 = "unknown.encryption.type.v.eq {0}";
+    public static final String UnknownPdfException = "unknown.pdf.exception";
     public static final String UnknownHashAlgorithm1 = "unknown.hash.algorithm {0}";
     public static final String UnknownKeyAlgorithm1 = "unknown.key.algorithm {0}";
     public static final String UnknownColorFormatMustBeRGBorRRGGBB = "unknown.color.format.must.be.rgb.or.rrggbb";
@@ -251,7 +252,7 @@ public class PdfException extends RuntimeException {
     }
 
     public PdfException(Throwable cause) {
-        super(cause);
+        this(UnknownPdfException, cause);
     }
 
     public PdfException(String message, Object object) {
@@ -270,10 +271,10 @@ public class PdfException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        if (messageParams == null || messageParams.isEmpty()) {
+        if (messageParams == null || messageParams.size() == 0) {
             return super.getMessage();
         } else {
-            return MessageFormat.format(super.getMessage(), messageParams.toArray());
+            return MessageFormat.format(super.getMessage(), getMessageParams());
         }
     }
 
@@ -281,5 +282,13 @@ public class PdfException extends RuntimeException {
         this.messageParams = new ArrayList<>();
         Collections.addAll(this.messageParams, messageParams);
         return this;
+    }
+
+    protected Object[] getMessageParams() {
+        Object[] parameters = new Object[messageParams.size()];
+        for (int i = 0; i < messageParams.size(); i++) {
+            parameters[i] = messageParams.get(i);
+        }
+        return parameters;
     }
 }

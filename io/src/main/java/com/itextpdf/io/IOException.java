@@ -180,11 +180,7 @@ public class IOException extends RuntimeException {
         if (messageParams == null || messageParams.size() == 0) {
             return super.getMessage();
         } else {
-            Object[] parameters = new Object[messageParams.size()];
-            for (int i = 0; i < messageParams.size(); i++) {
-                parameters[i] = messageParams.get(i);
-            }
-            return MessageFormat.format(super.getMessage(), parameters);
+            return MessageFormat.format(super.getMessage(), getMessageParams());
         }
     }
 
@@ -192,5 +188,13 @@ public class IOException extends RuntimeException {
         this.messageParams = new ArrayList<>();
         Collections.addAll(this.messageParams, messageParams);
         return this;
+    }
+
+    protected Object[] getMessageParams() {
+        Object[] parameters = new Object[messageParams.size()];
+        for (int i = 0; i < messageParams.size(); i++) {
+            parameters[i] = messageParams.get(i);
+        }
+        return parameters;
     }
 }
