@@ -53,7 +53,7 @@ public class DrawContext {
     private boolean taggingEnabled;
 
     public DrawContext(PdfDocument document, PdfCanvas canvas) {
-        this(document, canvas, true);
+        this(document, canvas, false);
     }
 
     public DrawContext(PdfDocument document, PdfCanvas canvas, boolean enableTagging) {
