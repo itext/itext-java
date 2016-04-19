@@ -58,6 +58,7 @@ import com.itextpdf.kernel.pdf.filters.FilterHandler;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,20 +66,20 @@ import java.util.Map;
  * Utility methods to help with processing of inline images
  */
 public final class InlineImageParsingUtils {
-    private InlineImageParsingUtils(){}
+
+    private InlineImageParsingUtils() { }
 
     /**
      * Simple class in case users need to differentiate an exception from processing
      * inline images vs other exceptions
      */
-    public static class InlineImageParseException extends PdfException {
+    public static class InlineImageParseException extends PdfException implements Serializable {
 
         private static final long serialVersionUID = 233760879000268548L;
 
         public InlineImageParseException(String message) {
             super(message);
         }
-
     }
 
     /**
@@ -86,8 +87,19 @@ public final class InlineImageParsingUtils {
      * equivalent image dictionary keys
      */
     private static final Map<PdfName, PdfName> inlineImageEntryAbbreviationMap;
+    /**
+     * Map between value abbreviations allowed in dictionary of inline images for COLORSPACE
+     */
+    private static final Map<PdfName, PdfName> inlineImageColorSpaceAbbreviationMap;
+    /**
+     * Map between value abbreviations allowed in dictionary of inline images for FILTER
+     */
+    private static final Map<PdfName, PdfName> inlineImageFilterAbbreviationMap;
+
     static { // static initializer
-        inlineImageEntryAbbreviationMap = new HashMap<PdfName, PdfName>();
+        // Map between key abbreviations allowed in dictionary of inline images and their
+        // equivalent image dictionary keys
+        inlineImageEntryAbbreviationMap = new HashMap<>();
 
         // allowed entries - just pass these through
         inlineImageEntryAbbreviationMap.put(PdfName.BitsPerComponent, PdfName.BitsPerComponent);
@@ -111,26 +123,16 @@ public final class InlineImageParsingUtils {
         inlineImageEntryAbbreviationMap.put(new PdfName("IM"), PdfName.ImageMask);
         inlineImageEntryAbbreviationMap.put(new PdfName("I"), PdfName.Interpolate);
         inlineImageEntryAbbreviationMap.put(new PdfName("W"), PdfName.Width);
-    }
 
-    /**
-     * Map between value abbreviations allowed in dictionary of inline images for COLORSPACE
-     */
-    private static final Map<PdfName, PdfName> inlineImageColorSpaceAbbreviationMap;
-    static {
-        inlineImageColorSpaceAbbreviationMap = new HashMap<PdfName, PdfName>();
+        // Map between value abbreviations allowed in dictionary of inline images for COLORSPACE
+        inlineImageColorSpaceAbbreviationMap = new HashMap<>();
 
         inlineImageColorSpaceAbbreviationMap.put(new PdfName("G"), PdfName.DeviceGray);
         inlineImageColorSpaceAbbreviationMap.put(new PdfName("RGB"), PdfName.DeviceRGB);
         inlineImageColorSpaceAbbreviationMap.put(new PdfName("CMYK"), PdfName.DeviceCMYK);
         inlineImageColorSpaceAbbreviationMap.put(new PdfName("I"), PdfName.Indexed);
-    }
 
-    /**
-     * Map between value abbreviations allowed in dictionary of inline images for FILTER
-     */
-    private static final Map<PdfName, PdfName> inlineImageFilterAbbreviationMap;
-    static {
+        // Map between value abbreviations allowed in dictionary of inline images for FILTER
         inlineImageFilterAbbreviationMap = new HashMap<PdfName, PdfName>();
 
         inlineImageFilterAbbreviationMap.put(new PdfName("AHx"), PdfName.ASCIIHexDecode);
