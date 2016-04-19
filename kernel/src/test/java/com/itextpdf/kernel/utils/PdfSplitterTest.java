@@ -39,6 +39,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
     public void splitDocumentTest01() throws IOException, InterruptedException {
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
+        inputPdfDoc.initializeOutlines();
 
         List<Integer> pageNumbers = Arrays.asList(30, 100);
 
@@ -71,6 +72,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
     public void splitDocumentTest02() throws IOException, InterruptedException {
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
+        inputPdfDoc.initializeOutlines();
 
         new PdfSplitter(inputPdfDoc) {
             int partNumber = 1;
@@ -111,6 +113,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
     public void splitDocumentTest03() throws IOException, InterruptedException {
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
+        inputPdfDoc.initializeOutlines();
 
         PdfSplitter.PageRange pageRange1 = new PdfSplitter.PageRange().addPageSequence(4, 15).addSinglePage(18).addPageSequence(1, 2);
         PdfSplitter.PageRange pageRange2 = new PdfSplitter.PageRange().addSinglePage(99).addSinglePage(98).addPageSequence(70, 99);
@@ -146,6 +149,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
 
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
+        inputPdfDoc.initializeOutlines();
         PdfSplitter splitter = new PdfSplitter(inputPdfDoc);
         List listTitles = new ArrayList();
         listTitles.add("Syncing iPod Content from Your iTunes Library");
@@ -161,6 +165,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
     public void splitDocumentBySize() throws IOException, InterruptedException {
         String inputFileName = sourceFolder + "splitBySize.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
+        inputPdfDoc.initializeOutlines();
         PdfSplitter splitter = new PdfSplitter(inputPdfDoc) {
 
             int partNumber = 1;

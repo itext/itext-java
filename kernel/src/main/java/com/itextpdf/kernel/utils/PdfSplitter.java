@@ -235,6 +235,8 @@ public class PdfSplitter {
         PdfDocument newDocument = new PdfDocument(getNextPdfWriter(currentPageRange));
         if (pdfDocument.isTagged())
             newDocument.setTagged();
+        if (pdfDocument.getCatalog().isOutlineMode())
+            newDocument.initializeOutlines();
         return newDocument;
     }
 

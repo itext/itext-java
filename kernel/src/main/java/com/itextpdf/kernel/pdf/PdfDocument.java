@@ -942,7 +942,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @throws PdfException
      */
     public List<PdfPage> copyPagesTo(Set<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
-        getOutlines(false);
         checkClosingStatus();
         List<PdfPage> copiedPages = new ArrayList<>();
         Map<PdfPage, PdfPage> page2page = new LinkedHashMap<>();
@@ -961,7 +960,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 toDocument.addPage(newPage);
             }
             insertBefore++;
-            if (catalog.isOutlineMode()) {
+            if (toDocument.getCatalog().isOutlineMode()) {
                 List<PdfOutline> pageOutlines = page.getOutlines(false);
                 if (pageOutlines != null)
                     outlinesToCopy.addAll(pageOutlines);
@@ -1047,6 +1046,14 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     public PdfOutline getOutlines(boolean updateOutlines) {
         checkClosingStatus();
         return catalog.getOutlines(updateOutlines);
+    }
+
+    /**
+     * This method initializes an outline tree of the document and sets outline mode to true.
+     */
+    public void initializeOutlines() {
+        checkClosingStatus();
+        getOutlines(false);
     }
 
     /**

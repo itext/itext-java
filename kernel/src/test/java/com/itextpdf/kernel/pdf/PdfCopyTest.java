@@ -192,6 +192,7 @@ public class PdfCopyTest extends ExtendedITextTest {
         PdfDocument sourceDoc = new PdfDocument(reader);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
+        sourceDoc.initializeOutlines();
         sourceDoc.copyPagesTo(1, sourceDoc.getNumberOfPages(), pdfDoc);
 
         pdfDoc.close();

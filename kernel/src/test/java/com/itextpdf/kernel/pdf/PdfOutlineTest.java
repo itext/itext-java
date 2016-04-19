@@ -5,11 +5,15 @@ import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -17,12 +21,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfOutlineTest extends ExtendedITextTest{
@@ -235,7 +233,7 @@ public class PdfOutlineTest extends ExtendedITextTest{
         pages.add(5);
         pages.add(52);
         pages.add(102);
-        pdfDoc.getOutlines(false);
+        pdfDoc1.initializeOutlines();
         pdfDoc.copyPagesTo(pages, pdfDoc1);
         pdfDoc.close();
 

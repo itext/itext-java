@@ -2,8 +2,8 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -12,25 +12,19 @@ import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.TreeSet;
-
-import javax.xml.parsers.ParserConfigurationException;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.util.TreeSet;
 
 @Category(IntegrationTest.class)
 public class PdfStructElemTest extends ExtendedITextTest {
@@ -335,6 +329,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "structTreeCopyingTest01.pdf"));
         PdfDocument destination = new PdfDocument(writer);
         destination.setTagged();
+        destination.initializeOutlines();
 
         source.copyPagesTo(new TreeSet<Integer>() {{
             add(3);
@@ -363,6 +358,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "structTreeCopyingTest02.pdf"));
         PdfDocument destination = new PdfDocument(writer);
         destination.setTagged();
+        destination.initializeOutlines();
 
         source.copyPagesTo(6, source.getNumberOfPages(), destination);
         source.copyPagesTo(1, 5, destination);
@@ -384,7 +380,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "structTreeCopyingTest03.pdf"));
         PdfDocument destination = new PdfDocument(writer);
-
+        destination.initializeOutlines();
 
         source.copyPagesTo(6, source.getNumberOfPages(), destination);
         source.copyPagesTo(1, 5, destination);
@@ -411,6 +407,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "structTreeCopyingTest04.pdf"));
         PdfDocument destination = new PdfDocument(writer);
         destination.setTagged();
+        destination.initializeOutlines();
 
         for (int i = 1; i <= source.getNumberOfPages(); i++)
             source.copyPagesTo(i, i, destination);
@@ -435,7 +432,6 @@ public class PdfStructElemTest extends ExtendedITextTest {
         PdfDocument document2 = new PdfDocument(reader2);
         document2.copyPagesTo(1, 3, document, 4);
 
-
         document.close();
         document1.close();
         document2.close();
@@ -455,6 +451,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "structTreeCopyingTest06.pdf"));
         PdfDocument destination = new PdfDocument(writer);
         destination.setTagged();
+        destination.initializeOutlines();
 
         source.copyPagesTo(1, source.getNumberOfPages(), destination);
 
@@ -490,6 +487,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         canvas.release();
 
         PdfDocument document1 = new PdfDocument(reader);
+        document1.initializeOutlines();
         document1.copyPagesTo(1, 1, document);
 
         document.close();
@@ -506,6 +504,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
         PdfReader reader1 = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox.pdf"));
         PdfDocument document1 = new PdfDocument(reader1);
+        document1.initializeOutlines();
         document1.copyPagesTo(1, 1, document, 2);
 
         document.close();
@@ -522,6 +521,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
         PdfReader reader1 = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox.pdf"));
         PdfDocument document1 = new PdfDocument(reader1);
+        document1.initializeOutlines();
         document1.copyPagesTo(1, 1, document, 2);
         document1.copyPagesTo(1, 1, document, 4);
 
@@ -539,10 +539,12 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
         PdfReader reader1 = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox-table.pdf"));
         PdfDocument document1 = new PdfDocument(reader1);
+        document1.initializeOutlines();
         document1.copyPagesTo(1, 3, document, 2);
 
         PdfReader reader2 = new PdfReader(new FileInputStream(sourceFolder + "quick-brown-fox.pdf"));
         PdfDocument document2 = new PdfDocument(reader2);
+        document2.initializeOutlines();
         document2.copyPagesTo(1, 1, document, 4);
 
         document.close();
