@@ -46,7 +46,7 @@ package com.itextpdf.kernel.geom;
 
 import java.io.Serializable;
 
-public class AffineTransform implements Cloneable, Serializable{
+public class AffineTransform implements Serializable {
 
     private static final long serialVersionUID = 1330973210523860834L;
 
@@ -156,8 +156,8 @@ public class AffineTransform implements Cloneable, Serializable{
      *   TYPE_GENERAL_TRANSFORM - transformation can't be inversed
      */
     public int getType() {
-        if (type != TYPE_UNKNOWN) {
-            return type;
+        if (this.type != TYPE_UNKNOWN) {
+            return this.type;
         }
 
         int type = 0;
@@ -584,5 +584,10 @@ public class AffineTransform implements Cloneable, Serializable{
             dst[dstOff++] = (float) ((x * m11 - y * m01) / det);
             dst[dstOff++] = (float) ((y * m00 - x * m10) / det);
         }
+    }
+
+    @Override
+    public AffineTransform clone() throws CloneNotSupportedException {
+        return new AffineTransform(this);
     }
 }

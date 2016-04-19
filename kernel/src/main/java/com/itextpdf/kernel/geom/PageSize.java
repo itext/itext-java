@@ -46,7 +46,7 @@ package com.itextpdf.kernel.geom;
 
 import java.io.Serializable;
 
-public class PageSize extends Rectangle {
+public class PageSize extends Rectangle implements Serializable {
 
     private static final long serialVersionUID = 485375591249386160L;
 
@@ -79,6 +79,6 @@ public class PageSize extends Rectangle {
 
     @Override
     public PageSize clone() {
-        return new PageSize(super.clone());
+        return new PageSize(this);
     }
 }

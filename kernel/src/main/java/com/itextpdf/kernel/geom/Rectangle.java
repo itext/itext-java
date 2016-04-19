@@ -46,7 +46,7 @@ package com.itextpdf.kernel.geom;
 
 import java.io.Serializable;
 
-public class Rectangle implements Cloneable, Serializable {
+public class Rectangle implements Serializable {
 
     private static final long serialVersionUID = 8025677415569233446L;
 
@@ -240,7 +240,6 @@ public class Rectangle implements Cloneable, Serializable {
                 getHeight();
     }
 
-    @Override
     public Rectangle clone() {
         return new Rectangle(x, y, width, height);
     }
