@@ -196,7 +196,11 @@ public abstract class AbstractRenderer implements IRenderer {
         if (parent != null && key.isInherited() && (property = parent.getProperty(key)) != null) {
             return (T) property;
         }
-        return modelElement != null ? (T) modelElement.getDefaultProperty(key) : (T) getDefaultProperty(key);
+        property = getDefaultProperty(key);
+        if (property != null) {
+            return (T) property;
+        }
+        return modelElement != null ? (T) modelElement.getDefaultProperty(key) : null;
     }
 
     @Override
