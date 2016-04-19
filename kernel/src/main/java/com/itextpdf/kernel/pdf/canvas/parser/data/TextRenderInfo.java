@@ -57,9 +57,9 @@ import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Provides information and calculations needed by render listeners
@@ -75,7 +75,7 @@ public class TextRenderInfo implements EventData {
     private String text = null;
     private final Matrix textToUserSpaceTransformMatrix;
     private final CanvasGraphicsState gs;
-    private Float unscaledWidth = null;
+    private float unscaledWidth = Float.NaN;
     private double[] fontMatrix = null;
 
     /**
@@ -90,7 +90,7 @@ public class TextRenderInfo implements EventData {
      * @param textMatrix the text matrix at the time of the render operation
      * @param canvasTagHierarchy the marked content tags sequence, if available
      */
-    public TextRenderInfo(PdfString string, CanvasGraphicsState gs, Matrix textMatrix, Collection<CanvasTag> canvasTagHierarchy) {
+    public TextRenderInfo(PdfString string, CanvasGraphicsState gs, Matrix textMatrix, Stack<CanvasTag> canvasTagHierarchy) {
         this.string = string;
         this.textToUserSpaceTransformMatrix = textMatrix.multiply(gs.getCtm());
         this.gs = gs;
@@ -146,7 +146,7 @@ public class TextRenderInfo implements EventData {
     public boolean hasMcid(int mcid, boolean checkTheTopmostLevelOnly) {
         if (checkTheTopmostLevelOnly) {
             if (canvasTagHierarchy != null) {
-                Integer infoMcid = getMcid();
+                int infoMcid = getMcid();
                 return infoMcid != -1 && infoMcid == mcid;
             }
         } else {
@@ -329,7 +329,7 @@ public class TextRenderInfo implements EventData {
      * @return the unscaled (i.e. in Text space) width of the text
      */
     public float getUnscaledWidth(){
-        if (unscaledWidth == null)
+        if (Float.isNaN(unscaledWidth))
             unscaledWidth = getPdfStringWidth(string, false);
         return unscaledWidth;
     }
