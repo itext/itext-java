@@ -653,6 +653,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfFormXObject xObject = field.drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), caption, font, fontSize);
         annot.setNormalAppearance(xObject.getPdfObject());
 
+        PdfDictionary mk = new PdfDictionary();
+        mk.put(PdfName.CA, new PdfString(caption));
+        mk.put(PdfName.BG, new PdfArray(field.backgroundColor.getColorValue()));
+        annot.setAppearanceCharacteristics(mk);
+
         return field;
     }
 
@@ -1468,6 +1473,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public void setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
+        PdfDictionary mk = getWidgets().get(0).getAppearanceCharacteristics();
+        if (mk == null) {
+            mk = new PdfDictionary();
+        }
+        mk.put(PdfName.BG, new PdfArray(backgroundColor.getColorValue()));
         regenerateField();
     }
 
@@ -1488,6 +1498,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
             this.rotation = degRotation;
         }
+        PdfDictionary mk = getWidgets().get(0).getAppearanceCharacteristics();
+        if (mk == null) {
+            mk = new PdfDictionary();
+        }
+        mk.put(PdfName.R, new PdfNumber(degRotation));
         this.rotation = degRotation;
         regenerateField();
     }
@@ -1737,6 +1752,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfFormField setBorderColor(Color color) {
         borderColor = color;
+        PdfDictionary mk = getWidgets().get(0).getAppearanceCharacteristics();
+        if (mk == null) {
+            mk = new PdfDictionary();
+        }
+        mk.put(PdfName.BC, new PdfArray(color.getColorValue()));
         regenerateField();
         return this;
     }
