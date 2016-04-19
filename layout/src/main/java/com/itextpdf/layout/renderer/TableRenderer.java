@@ -57,14 +57,13 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Table}
@@ -701,9 +700,14 @@ public class TableRenderer extends AbstractRenderer {
 
             Border lastBorder = borders[j - 1];
             if (lastBorder != null) {
-                if (i == 0 || i == horizontalBorders.length - 1) {
-                    x2 += lastBorder.getWidth() / 2;
+                if (verticalBorders[j].length > 0) {
+                    if (i == 0) {
+                        x2 += verticalBorders[j][i].getWidth() / 2;
+                    } else if(i == horizontalBorders.length - 1 && verticalBorders[j].length >= i - 1 && verticalBorders[j][i - 1] != null) {
+                        x2 += verticalBorders[j][i - 1].getWidth() / 2;
+                    }
                 }
+
                 lastBorder.drawCellBorder(drawContext.getCanvas(), x1, y1, x2, y1);
             }
             if (i < heights.size()) {
@@ -825,9 +829,7 @@ public class TableRenderer extends AbstractRenderer {
                         rend.setBorders(cellBorders[0], 2);
                     }
                 } else {
-                    if (cell != null) {
-                        cell.setBorders(horizontalBorders[row + 1 - rowspan][colN + i], 0);
-                    }
+                    cell.setBorders(horizontalBorders[row + 1 - rowspan][colN + i], 0);
                 }
             }
         } else {
@@ -847,11 +849,9 @@ public class TableRenderer extends AbstractRenderer {
         if (colN != 0) {
             for (int i = row - rowspan + 1; i <= row; i++) {
                 if (checkAndReplaceBorderInArray(verticalBorders, colN, i, cellBorders[3])) {
-                    if (colN != 0) {
-                        CellRenderer rend = rows.get(i)[colN - 1];
-                        if (rend != null) {
-                            rend.setBorders(cellBorders[3], 1);
-                        }
+                    CellRenderer rend = rows.get(i)[colN - 1];
+                    if (rend != null) {
+                        rend.setBorders(cellBorders[3], 1);
                     }
                 } else {
                     CellRenderer rend = rows.get(i)[colN];
