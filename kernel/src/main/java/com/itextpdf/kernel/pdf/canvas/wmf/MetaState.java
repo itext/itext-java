@@ -44,6 +44,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.color.Color;
@@ -86,7 +87,7 @@ public class MetaState {
     /**
      * Current Point.
      */
-    public MetaDo.Point currentPoint;
+    public Point currentPoint;
 
     /**
      * Current Pen.
@@ -170,7 +171,7 @@ public class MetaState {
     public MetaState() {
         savedStates = new Stack<>();
         MetaObjects = new ArrayList<>();
-        currentPoint = new MetaDo.Point(0, 0);
+        currentPoint = new Point(0, 0);
         currentPen = new MetaPen();
         currentBrush = new MetaBrush();
         currentFont = new MetaFont();
@@ -430,7 +431,7 @@ public class MetaState {
      *
      * @param p Point to set
      */
-    public void setCurrentPoint(MetaDo.Point p) {
+    public void setCurrentPoint(Point p) {
         currentPoint = p;
     }
 
@@ -439,7 +440,7 @@ public class MetaState {
      *
      * @return current Point
      */
-    public MetaDo.Point getCurrentPoint() {
+    public Point getCurrentPoint() {
         return currentPoint;
     }
 

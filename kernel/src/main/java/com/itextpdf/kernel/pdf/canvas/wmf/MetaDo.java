@@ -50,6 +50,7 @@ import com.itextpdf.io.image.ImageType;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.io.image.Image;
 import com.itextpdf.io.image.ImageFactory;
@@ -272,7 +273,7 @@ public class MetaDo {
                     int y = in.readShort();
                     int x = in.readShort();
                     Point p = state.getCurrentPoint();
-                    cb.moveTo(state.transformX(p.x), state.transformY(p.y));
+                    cb.moveTo(state.transformX((int)p.getX()), state.transformY((int)p.getY()));
                     cb.lineTo(state.transformX(x), state.transformY(y));
                     cb.stroke();
                     state.setCurrentPoint(new Point(x, y));
@@ -827,39 +828,5 @@ public class MetaDo {
     public static void writeDWord(OutputStream os, int v) throws IOException {
         writeWord(os, v & 0xffff);
         writeWord(os, v >>> 16 & 0xffff);
-    }
-
-    /**
-     * Represents a 2-dimensional point.
-     */
-    static class Point {
-
-        /**
-         * The X value of the point.
-         */
-        public int x;
-
-        /**
-         * The Y value of the point.
-         */
-        public int y;
-
-        /**
-         * Creates a point without coordinates.
-         */
-        public Point() {
-            // empty body
-        }
-
-        /**
-         * Creates a point and sets the two values as its coordinates.
-         *
-         * @param x the X value of the point
-         * @param y the Y value of the point
-         */
-        public Point(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
     }
 }
