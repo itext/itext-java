@@ -145,9 +145,9 @@ public class TextRenderInfo implements EventData {
      */
     public boolean hasMcid(int mcid, boolean checkTheTopmostLevelOnly) {
         if (checkTheTopmostLevelOnly) {
-            if (canvasTagHierarchy instanceof List) {
+            if (canvasTagHierarchy != null) {
                 Integer infoMcid = getMcid();
-                return (infoMcid != null) && infoMcid == mcid;
+                return infoMcid != -1 && infoMcid == mcid;
             }
         } else {
             for (CanvasTag tag : canvasTagHierarchy) {
@@ -162,13 +162,13 @@ public class TextRenderInfo implements EventData {
     /**
      * @return the marked content associated with the TextRenderInfo instance.
      */
-    public Integer getMcid() {
+    public int getMcid() {
         for (CanvasTag tag : canvasTagHierarchy) {
             if (tag.hasMcid()) {
                 return tag.getMcid();
             }
         }
-        return null;
+        return -1;
     }
 
     /**

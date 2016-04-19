@@ -324,8 +324,8 @@ import java.util.Set;
             switch (type) {
                 case RENDER_TEXT:
                     TextRenderInfo textInfo = (TextRenderInfo) data;
-                    Integer mcid = textInfo.getMcid();
-                    if (mcid != null) {
+                    int mcid = textInfo.getMcid();
+                    if (mcid != -1) {
                         TextExtractionStrategy textExtractionStrategy = contentByMcid.get(mcid);
                         if (textExtractionStrategy == null) {
                             textExtractionStrategy = new LocationTextExtractionStrategy();

@@ -110,7 +110,7 @@ public class CanvasGraphicsState {
      * An empty dash array (first element in the array) and zero phase (second element in the array)
      * can be used to restore the dash pattern to a solid line.
      */
-    private PdfArray dashPattern = new PdfArray(Arrays.asList(new PdfArray(), new PdfNumber(0)));
+    private PdfArray dashPattern = new PdfArray(Arrays.<PdfObject>asList(new PdfArray(), new PdfNumber(0)));
 
     private PdfName renderingIntent = PdfName.RelativeColorimetric;
     private boolean automaticStrokeAdjustment = false;

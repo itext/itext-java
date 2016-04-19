@@ -120,7 +120,7 @@ public class CanvasTag {
      * @return marked content id
      * @throws IllegalStateException if there is no MCID
      */
-    public Integer getMcid() {
+    public int getMcid() {
         Integer mcid = null;
         if (properties != null) {
            mcid = properties.getAsInt(PdfName.MCID);
