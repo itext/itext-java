@@ -80,9 +80,9 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                     .setMessageParams(fontNames.getFontName());
         }
         if ((encoding == null || encoding.length() == 0) && ttf.isFontSpecific()) {
-            encoding = FontEncoding.FontSpecific;
+            encoding = FontEncoding.FONT_SPECIFIC;
         }
-        if (encoding != null && FontEncoding.FontSpecific.toLowerCase().equals(encoding.toLowerCase())) {
+        if (encoding != null && FontEncoding.FONT_SPECIFIC.toLowerCase().equals(encoding.toLowerCase())) {
             fontEncoding = FontEncoding.createFontSpecificEncoding();
         } else {
             fontEncoding = FontEncoding.createFontEncoding(encoding);
@@ -123,10 +123,6 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         if (newFont) {
             PdfName subtype;
             String fontName;
-//            if (fontProgram instanceof DocFontProgram) {
-//                subtype = ((DocFontProgram) fontProgram).getSubtype();
-//                fontName = fontProgram.getFontNames().getFontName();
-//            } else
             if (getFontProgram().isCff()) {
                 subtype = PdfName.Type1;
                 fontName = fontProgram.getFontNames().getFontName();

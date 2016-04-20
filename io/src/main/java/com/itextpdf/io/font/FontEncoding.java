@@ -56,7 +56,7 @@ public class FontEncoding implements Serializable {
 
     private static final byte[] emptyBytes = new byte[0];
 
-    public static final String FontSpecific = "FontSpecific";
+    public static final String FONT_SPECIFIC = "FontSpecific";
     /**
      * Base font encoding.
      */

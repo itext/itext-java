@@ -62,9 +62,9 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         setFontProgram(type1Font);
         this.embedded = embedded && !type1Font.isBuiltInFont();
         if ((encoding == null || encoding.length() == 0) && type1Font.isFontSpecific()) {
-            encoding = FontEncoding.FontSpecific;
+            encoding = FontEncoding.FONT_SPECIFIC;
         }
-        if (encoding != null && FontEncoding.FontSpecific.toLowerCase().equals(encoding.toLowerCase())) {
+        if (encoding != null && FontEncoding.FONT_SPECIFIC.toLowerCase().equals(encoding.toLowerCase())) {
             fontEncoding = FontEncoding.createFontSpecificEncoding();
         } else {
             fontEncoding = FontEncoding.createFontEncoding(encoding);

@@ -75,7 +75,7 @@ public abstract class FontProgram implements Serializable {
      * The font's encoding name. This encoding is 'StandardEncoding' or 'AdobeStandardEncoding' for a font
      * that can be totally encoded according to the characters names. For all other names the font is treated as symbolic.
      */
-    protected String encodingScheme = "FontSpecific";
+    protected String encodingScheme = FontEncoding.FONT_SPECIFIC;
 
     protected String registry;
 

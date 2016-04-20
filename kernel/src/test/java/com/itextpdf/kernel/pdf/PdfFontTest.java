@@ -3,6 +3,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.CidFont;
 import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontFactory;
 import com.itextpdf.io.font.TrueTypeCollection;
 import com.itextpdf.io.font.TrueTypeFont;
@@ -17,12 +18,6 @@ import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.font.PdfType1Font;
 import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.font.Type3Glyph;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfOutputStream;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -440,7 +435,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
         PdfFont pdfType1Font = PdfFontFactory.createFont(FontFactory.createType1Font(fontsFolder + "cmr10.afm", fontsFolder + "cmr10.pfb"),
-                "FontSpecific", true);
+                FontEncoding.FONT_SPECIFIC, true);
         Assert.assertTrue("PdfType1Font expected", pdfType1Font instanceof PdfType1Font);
 
         new PdfCanvas(pdfDoc.addNewPage())
@@ -455,7 +450,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
         byte[] pfb = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
-        pdfType1Font = PdfFontFactory.createFont(FontFactory.createType1Font(afm, pfb), "FontSpecific", true);
+        pdfType1Font = PdfFontFactory.createFont(FontFactory.createType1Font(afm, pfb), FontEncoding.FONT_SPECIFIC, true);
         Assert.assertTrue("PdfType1Font expected", pdfType1Font instanceof PdfType1Font);
 
         new PdfCanvas(pdfDoc.addNewPage())
@@ -486,7 +481,7 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        PdfFont pdfType1Font = PdfFontFactory.createFont(FontFactory.createType1Font(fontsFolder + "cmr10.pfm", fontsFolder + "cmr10.pfb"), "FontSpecific", true);
+        PdfFont pdfType1Font = PdfFontFactory.createFont(FontFactory.createType1Font(fontsFolder + "cmr10.pfm", fontsFolder + "cmr10.pfb"), FontEncoding.FONT_SPECIFIC, true);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas

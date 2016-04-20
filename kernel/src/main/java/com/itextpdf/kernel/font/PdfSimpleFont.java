@@ -267,7 +267,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 } else if (!fontEncoding.hasDifferences() && fontProgram.getGlyphByCode(k) != null) {
                     shortTag[k] = 1;
                 } else {
-
                     shortTag[k] = 0;
                 }
             }
