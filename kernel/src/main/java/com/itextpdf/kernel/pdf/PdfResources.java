@@ -384,7 +384,14 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 //    }
 
     private void checkAndResolveCircularReferences(PdfObject pdfObject) {
-        if (pdfObject instanceof PdfDictionary) {
+        // TODO consider the situation when an XObject references the resources of the first page.
+        // We add this XObject to the first page, there is no need to resolve any circular references
+        // and then we flush this object and try to add it to the second page.
+        // Now there are circular references and we cannot resolve them because the object is flushed
+        // and we cannot get resources.
+        // On the other hand, this situation may occur any time when object is already flushed and we
+        // try to add it to resources and it seems difficult to overcome this without keeping /Resources key value.
+        if (pdfObject instanceof PdfDictionary && !pdfObject.isFlushed()) {
             PdfDictionary pdfXObject = (PdfDictionary) pdfObject;
             PdfObject pdfXObjectResources = pdfXObject.get(PdfName.Resources);
             if (pdfXObjectResources != null && pdfXObjectResources.getIndirectReference() != null) {

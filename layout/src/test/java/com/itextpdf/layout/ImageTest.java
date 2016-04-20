@@ -9,6 +9,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
@@ -288,4 +289,48 @@ public class ImageTest extends ExtendedITextTest{
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
+
+    /**
+     * If an image is flushed automatically on draw, we will later check it for circular references
+     * as it is an XObject. This is a test for {@link NullPointerException} that was caused by getting
+     * a value from flushed image.
+     */
+    @Test
+    public void flushOnDrawCheckCircularReferencesTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "flushOnDrawCheckCircularReferencesTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_flushOnDrawCheckCircularReferencesTest.pdf";
+
+        PdfDocument pdf = pdf = new PdfDocument(new PdfWriter(outFileName));
+        //Initialize document
+        Document document = new Document(pdf);
+
+        Image img = new Image(ImageFactory.getImage(sourceFolder + "itis.jpg"));
+        img.setAutoScale(true);
+        Table table = new Table(4);
+        table.setWidthPercent(100);
+        for (int k = 0; k < 5; k++) {
+            table.addCell("Hello World from iText7");
+
+            List list = new List().setListSymbol("-> ");
+            list.add("list item").add("list item").add("list item").add("list item").add("list item");
+            Cell cell = new Cell().add(list);
+            table.addCell(cell);
+
+            Cell c = new Cell().add(img);
+            table.addCell(c);
+
+            Table innerTable = new Table(3);
+            int j = 0;
+            while (j < 9) {
+                innerTable.addCell("Hi");
+                j++;
+            }
+            table.addCell(innerTable);
+        }
+        document.add(table);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
 }
