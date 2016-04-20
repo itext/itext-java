@@ -90,6 +90,7 @@ public class TagStructureContext implements Serializable {
     private PdfDocument document;
     private PdfStructElem rootTagElement;
     protected TagTreePointer autoTaggingPointer;
+    private boolean forbidUnknownRoles;
 
     /**
      * These two fields define the connections between tags ({@code PdfStructElem}) and
@@ -119,7 +120,21 @@ public class TagStructureContext implements Serializable {
         connectedModelToStruct = new HashMap<>();
         connectedStructToModel = new HashMap<>();
 
+        forbidUnknownRoles = true;
+
         normalizeDocumentRootTag();
+    }
+
+    /**
+     * If forbidUnknownRoles is set to true, then if you would try to add new tag which has not a standard role and
+     * it's role is not mapped through RoleMap, an exception will be raised.
+     * Default value - true.
+     * @param forbidUnknownRoles new value of the flag
+     * @return current {@link TagStructureContext} instance.
+     */
+    public TagStructureContext setForbidUnknownRoles(boolean forbidUnknownRoles) {
+        this.forbidUnknownRoles = forbidUnknownRoles;
+        return this;
     }
 
     /**
@@ -293,8 +308,11 @@ public class TagStructureContext implements Serializable {
      * may be used instead.
      */
     public void normalizeDocumentRootTag() {
-        List<IPdfStructElem> rootKids = document.getStructTreeRoot().getKids();
+        // in this method we could deal with existing document, so we don't won't to throw exceptions here
+        boolean forbid = forbidUnknownRoles;
+        forbidUnknownRoles = false;
 
+        List<IPdfStructElem> rootKids = document.getStructTreeRoot().getKids();
         if (rootKids.size() == 1 && allowedRootTagRoles.contains(rootKids.get(0).getRole())) {
             rootTagElement = (PdfStructElem) rootKids.get(0);
         } else {
@@ -332,6 +350,7 @@ public class TagStructureContext implements Serializable {
                 }
             }
         }
+        forbidUnknownRoles = forbid;
     }
 
     PdfStructElem getRootTag() {
@@ -347,6 +366,12 @@ public class TagStructureContext implements Serializable {
 
     IAccessibleElement getModelConnectedToStruct(PdfStructElem struct) {
         return connectedStructToModel.get(struct);
+    }
+
+    void throwExceptionIfRoleIsInvalid(PdfName role) {
+        if (forbidUnknownRoles && PdfStructElem.identifyType(getDocument(), role) == PdfStructElem.Unknown) {
+            throw new PdfException(PdfException.RoleIsNotMappedWithAnyStandardRole);
+        }
     }
 
     void saveConnectionBetweenStructAndModel(IAccessibleElement element, PdfStructElem structElem) {

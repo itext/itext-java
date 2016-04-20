@@ -262,7 +262,7 @@ public class TagTreePointer implements Serializable {
      * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer addTag(int index, IAccessibleElement element, boolean keepConnectedToTag) {
-        throwExceptionIfRoleIsInvalid(element.getRole());
+        tagStructureContext.throwExceptionIfRoleIsInvalid(element.getRole());
         if (!tagStructureContext.isElementConnectedToTag(element)) {
             setNextNewKidIndex(index);
             setCurrentStructElem(addNewKid(element, keepConnectedToTag));
@@ -723,12 +723,6 @@ public class TagTreePointer implements Serializable {
 
     private boolean markedContentNotInPageStream() {
         return contentStream != null;
-    }
-
-    private void throwExceptionIfRoleIsInvalid(PdfName role) {
-        if (PdfStructElem.identifyType(getDocument(), role) == PdfStructElem.Unknown) {
-            throw new PdfException(PdfException.RoleIsNotMappedWithAnyStandardRole);
-        }
     }
 
     private void throwExceptionIfCurrentPageIsNotInited() {

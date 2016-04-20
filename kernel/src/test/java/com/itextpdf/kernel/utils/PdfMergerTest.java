@@ -55,13 +55,15 @@ public class PdfMergerTest extends ExtendedITextTest{
 
         PdfMerger merger = new PdfMerger(pdfDoc3);
         merger.addPages(pdfDoc, 1, 1);
-        pdfDoc.close();
         merger.addPages(pdfDoc1, 1, 1);
-        pdfDoc1.close();
+
         merger.addPages(pdfDoc2, 1, 1);
-        pdfDoc2.close();
 
         merger.merge();
+
+        pdfDoc.close();
+        pdfDoc1.close();
+        pdfDoc2.close();
         pdfDoc3.close();
 
         CompareTool compareTool = new CompareTool();
@@ -72,7 +74,7 @@ public class PdfMergerTest extends ExtendedITextTest{
     }
 
     @Test
-     public void mergeDocumentTest02() throws IOException, InterruptedException {
+    public void mergeDocumentTest02() throws IOException, InterruptedException {
         String filename = sourceFolder + "doc1.pdf";
         String filename1 = sourceFolder + "doc2.pdf";
         String filename2 = sourceFolder + "doc3.pdf";
@@ -91,13 +93,14 @@ public class PdfMergerTest extends ExtendedITextTest{
         PdfMerger merger = new PdfMerger(pdfDoc3);
 
         merger.addPages(pdfDoc, 1, 1);
-        pdfDoc.close();
         merger.addPages(pdfDoc1, 1, 1);
-        pdfDoc1.close();
         merger.addPages(pdfDoc2, 1, 1);
-        pdfDoc2.close();
 
         merger.merge();
+
+        pdfDoc.close();
+        pdfDoc1.close();
+        pdfDoc2.close();
         pdfDoc3.close();
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergedResult02.pdf", destinationFolder, "diff_");
@@ -127,12 +130,14 @@ public class PdfMergerTest extends ExtendedITextTest{
 
         PdfMerger merger = new PdfMerger(pdfDoc3);
         merger.addPages(pdfDoc, 2, 2);
-        pdfDoc.close();
         merger.addPages(pdfDoc1, 7, 8);
-        pdfDoc1.close();
 
         merger.merge();
+
+        pdfDoc.close();
+        pdfDoc1.close();
         pdfDoc3.close();
+
         CompareTool compareTool = new CompareTool();
         String errorMessage = "";
         String contentErrorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergedResult03.pdf", destinationFolder, "diff_");
@@ -170,7 +175,6 @@ public class PdfMergerTest extends ExtendedITextTest{
         pages.add(2);
         pages.add(1);
         merger.addPages(pdfDoc, pages);
-        pdfDoc.close();
 
         List<Integer> pages1 = new ArrayList<>();
         pages1.add(5);
@@ -178,10 +182,13 @@ public class PdfMergerTest extends ExtendedITextTest{
         pages1.add(4);
         pages1.add(3);
         merger.addPages(pdfDoc1, pages1);
-        pdfDoc1.close();
 
         merger.merge();
+
+        pdfDoc.close();
+        pdfDoc1.close();
         pdfDoc3.close();
+
         CompareTool compareTool = new CompareTool();
         String errorMessage = "";
         String contentErrorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergedResult04.pdf", destinationFolder, "diff_");
