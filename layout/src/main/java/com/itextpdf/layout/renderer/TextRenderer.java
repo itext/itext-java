@@ -72,7 +72,11 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
@@ -213,7 +217,10 @@ public class TextRenderer extends AbstractRenderer {
                 }
 
                 float glyphWidth = getCharWidth(currentGlyph, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
-                float xAdvance = previousCharPos != -1 ? scaleXAdvance(text.get(previousCharPos).getXAdvance(), fontSize, hScale) / TEXT_SPACE_COEFF : 0;
+                float xAdvance = previousCharPos != -1 ? text.get(previousCharPos).getXAdvance() : 0;
+                if (xAdvance != 0) {
+                    xAdvance = scaleXAdvance(xAdvance, fontSize, hScale) / TEXT_SPACE_COEFF;
+                }
                 if ((nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition) > layoutBox.getWidth() - currentLineWidth && firstCharacterWhichExceedsAllowedWidth == -1) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
                 }
@@ -531,25 +538,32 @@ public class TextRenderer extends AbstractRenderer {
             if (horizontalScaling != null && horizontalScaling != 1)
                 canvas.setHorizontalScaling(horizontalScaling * 100);
 
-            //We should mark a RTL written text
-            Map<GlyphLine, Boolean> outputs = getOutputChunks();
+            GlyphLine.GlyphLineFilter filter = new GlyphLine.GlyphLineFilter() {
+                @Override
+                public boolean accept(Glyph glyph) {
+                    return !noPrint(glyph);
+                }
+            };
 
-            for (Map.Entry<GlyphLine, Boolean> output : outputs.entrySet()) {
-                GlyphLine o = output.getKey().filter(new GlyphLine.GlyphLineFilter() {
-                    @Override
-                    public boolean accept(Glyph glyph) {
-                        return !noPrint(glyph);
+            if (hasOwnProperty(Property.REVERSED)) {
+                //We should mark a RTL written text
+                Map<GlyphLine, Boolean> outputs = getOutputChunks();
+
+                for (Map.Entry<GlyphLine, Boolean> output : outputs.entrySet()) {
+                    GlyphLine o = output.getKey().filter(filter);
+
+                    if (output.getValue()) {
+                        canvas.openTag(new CanvasTag(PdfName.ReversedChars));
                     }
-                });
-
-                if (output.getValue()) {
-                    canvas.openTag(new CanvasTag(PdfName.ReversedChars));
+                    canvas.showText(o);
+                    if (output.getValue()) {
+                        canvas.closeTag();
+                    }
                 }
-                canvas.showText(o);
-                if (output.getValue()) {
-                    canvas.closeTag();
-                }
+            } else {
+                canvas.showText(line.filter(filter));
             }
+
             canvas.endText().restoreState();
             if (isTagged || isArtifact) {
                 canvas.closeTag();
