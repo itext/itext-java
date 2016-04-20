@@ -44,9 +44,10 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.xfa.XfaForm;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -60,12 +61,10 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.forms.fields.PdfFormField;
-import com.itextpdf.forms.xfa.XfaForm;
-import com.itextpdf.forms.xfa.Xml2Som;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -73,8 +72,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.w3c.dom.Node;
 
 /**
  * This class represents the static form technology AcroForm on a PDF file.
@@ -992,49 +989,12 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * Removes the XFA stream from the document.
      */
     public void removeXfaForm() {
-        if(hasXfaForm()) {
+        if (hasXfaForm()) {
             PdfDictionary root = document.getCatalog().getPdfObject();
             PdfDictionary acroform = root.getAsDictionary(PdfName.AcroForm);
             acroform.remove(PdfName.XFA);
-            xfaForm = new XfaForm();
+            xfaForm = null;
         }
-    }
-
-    /**
-     * Changes a field value in the XFA form.
-     * 
-     * @param name the name of the field to be changed
-     * @param value the new value
-     */
-    public void setXfaFieldValue(String name, String value) {
-        if (hasXfaForm()) {
-            name = xfaForm.findFieldName(name, this);
-            if (name != null) {
-                String shortName = Xml2Som.getShortName(name);
-                Node xn = xfaForm.findDatasetsNode(shortName);
-                if (xn == null) {
-                    xn = xfaForm.getDatasetsSom().insertNode(xfaForm.getDatasetsNode(), shortName);
-                }
-                xfaForm.setNodeText(xn, value);
-            }
-        }
-    }
-
-    /**
-     * Gets the xfa field value.
-     * @param name the fully qualified field name
-     * @return the field value
-     */
-    public String getXfaFieldValue(String name) {
-        if (xfaForm.isXfaPresent()) {
-            name = xfaForm.findFieldName(name, this);
-            if (name != null) {
-
-                name = Xml2Som.getShortName(name);
-                return XfaForm.getNodeText(xfaForm.findDatasetsNode(name));
-            }
-        }
-        return null;
     }
 
     public PdfAcroForm put(PdfName key, PdfObject value) {

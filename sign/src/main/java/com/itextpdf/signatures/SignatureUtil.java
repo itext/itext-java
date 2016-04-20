@@ -282,7 +282,7 @@ public class SignatureUtil {
 
     public String getTranslatedFieldName(String name) {
         if (acroForm.getXfaForm().isXfaPresent()) {
-            String namex = acroForm.getXfaForm().findFieldName(name, acroForm);
+            String namex = acroForm.getXfaForm().findFieldName(name);
             if (namex != null)
                 name = namex;
         }
