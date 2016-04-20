@@ -57,13 +57,14 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Table}
@@ -86,6 +87,8 @@ public class TableRenderer extends AbstractRenderer {
     private float[] columnWidths = null;
     private List<Float> heights = new ArrayList<>();
 
+    private TableRenderer() {}
+
     /**
      * Creates a TableRenderer from a {@link Table} which will partially render
      * the table.
@@ -102,7 +105,7 @@ public class TableRenderer extends AbstractRenderer {
      * @param modelElement the table to be rendered by this renderer
      */
     public TableRenderer(Table modelElement) {
-        this(modelElement, new Table.RowRange(0, modelElement.getNumberOfRows()));
+        this(modelElement, new Table.RowRange(0, modelElement.getNumberOfRows() - 1));
     }
 
     @Override
@@ -552,7 +555,9 @@ public class TableRenderer extends AbstractRenderer {
 
     @Override
     public TableRenderer getNextRenderer() {
-        return new TableRenderer((Table) modelElement);
+        TableRenderer nextTable = new TableRenderer();
+        nextTable.modelElement = modelElement;
+        return nextTable;
     }
 
     @Override
