@@ -362,13 +362,17 @@ public class PdfDictionary extends PdfObject {
 
     @Override
     public String toString() {
-        String string = "<<";
-        for (Map.Entry<PdfName, PdfObject> entry : entrySet()) {
-            PdfIndirectReference indirectReference = entry.getValue().getIndirectReference();
-            string = string + entry.getKey().toString() + " " + (indirectReference == null ? entry.getValue().toString() : indirectReference.toString()) + " ";
+        if (!isFlushed()) {
+            String string = "<<";
+            for (Map.Entry<PdfName, PdfObject> entry : entrySet()) {
+                PdfIndirectReference indirectReference = entry.getValue().getIndirectReference();
+                string = string + entry.getKey().toString() + " " + (indirectReference == null ? entry.getValue().toString() : indirectReference.toString()) + " ";
+            }
+            string += ">>";
+            return string;
+        } else {
+            return indirectReference.toString();
         }
-        string += ">>";
-        return string;
     }
 
     /**
