@@ -44,26 +44,21 @@
  */
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
-import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.io.image.Image;
-import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
-import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -388,10 +383,10 @@ public class MetaDo {
                     arc2 -= arc1;
                     if (arc2 <= 0)
                         arc2 += 360;
-                    List<float[]> ar = PdfCanvas.bezierArc(l, b, r, t, arc1, arc2);
+                    List<double[]> ar = PdfCanvas.bezierArc(l, b, r, t, arc1, arc2);
                     if (ar.isEmpty())
                         break;
-                    float pt[] = ar.get(0);
+                    double pt[] = ar.get(0);
                     cb.moveTo(cx, cy);
                     cb.lineTo(pt[0], pt[1]);
                     for (int k = 0; k < ar.size(); ++k) {
@@ -421,12 +416,12 @@ public class MetaDo {
                     arc2 -= arc1;
                     if (arc2 <= 0)
                         arc2 += 360;
-                    List<float[]> ar = PdfCanvas.bezierArc(l, b, r, t, arc1, arc2);
+                    List<double[]> ar = PdfCanvas.bezierArc(l, b, r, t, arc1, arc2);
                     if (ar.isEmpty())
                         break;
-                    float pt[] = ar.get(0);
-                    cx = pt[0];
-                    cy = pt[1];
+                    double pt[] = ar.get(0);
+                    cx = (float)pt[0];
+                    cy = (float)pt[1];
                     cb.moveTo(cx, cy);
                     for (int k = 0; k < ar.size(); ++k) {
                         pt = ar.get(k);

@@ -356,21 +356,21 @@ public class PdfCanvas {
      * @param f operand 3,2 in the matrix.
      * @return current canvas
      */
-    public PdfCanvas concatMatrix(float a, float b, float c, float d, float e, float f) {
-        currentGs.updateCtm(a, b, c, d, e, f);
-        contentStream.getOutputStream().writeFloat(a).writeSpace().
-                writeFloat(b).writeSpace().
-                writeFloat(c).writeSpace().
-                writeFloat(d).writeSpace().
-                writeFloat(e).writeSpace().
-                writeFloat(f).writeSpace().writeBytes(cm);
+    public PdfCanvas concatMatrix(double a, double b, double c, double d, double e, double f) {
+        currentGs.updateCtm((float) a, (float) b, (float) c, (float) d, (float) e, (float) f);
+        contentStream.getOutputStream().writeDouble(a).writeSpace().
+                writeDouble(b).writeSpace().
+                writeDouble(c).writeSpace().
+                writeDouble(d).writeSpace().
+                writeDouble(e).writeSpace().
+                writeDouble(f).writeSpace().writeBytes(cm);
         return this;
     }
 
     /**
      * Concatenates the affine transformation matrix to the current matrix
      * in the content stream managed by this Canvas.
-     * See also {@link #concatMatrix(float, float, float, float, float, float)}
+     * See also {@link #concatMatrix(double, double, double, double, double, double)}
      *
      * @return current canvas
      */
@@ -447,11 +447,11 @@ public class PdfCanvas {
      * @param y y coordinate.
      * @return current canvas.
      */
-    public PdfCanvas moveText(float x, float y) {
+    public PdfCanvas moveText(double x, double y) {
         contentStream.getOutputStream()
-                .writeFloat(x)
+                .writeDouble(x)
                 .writeSpace()
-                .writeFloat(y).writeSpace()
+                .writeDouble(y).writeSpace()
                 .writeBytes(Td);
         return this;
     }
@@ -807,11 +807,11 @@ public class PdfCanvas {
      * @param y y coordinate.
      * @return current canvas.
      */
-    public PdfCanvas moveTo(float x, float y) {
+    public PdfCanvas moveTo(double x, double y) {
         contentStream.getOutputStream()
-                .writeFloat(x)
+                .writeDouble(x)
                 .writeSpace()
-                .writeFloat(y).writeSpace()
+                .writeDouble(y).writeSpace()
                 .writeBytes(m);
         return this;
     }
@@ -824,11 +824,11 @@ public class PdfCanvas {
      * @param y y coordinate.
      * @return current canvas.
      */
-    public PdfCanvas lineTo(float x, float y) {
+    public PdfCanvas lineTo(double x, double y) {
         contentStream.getOutputStream()
-                .writeFloat(x)
+                .writeDouble(x)
                 .writeSpace()
-                .writeFloat(y).writeSpace()
+                .writeDouble(y).writeSpace()
                 .writeBytes(l);
         return this;
     }
@@ -844,19 +844,19 @@ public class PdfCanvas {
      * @param y3 y coordinate of the ending point.
      * @return current canvas.
      */
-    public PdfCanvas curveTo(float x1, float y1, float x2, float y2, float x3, float y3) {
+    public PdfCanvas curveTo(double x1, double y1, double x2, double y2, double x3, double y3) {
         contentStream.getOutputStream()
-                .writeFloat(x1)
+                .writeDouble(x1)
                 .writeSpace()
-                .writeFloat(y1)
+                .writeDouble(y1)
                 .writeSpace()
-                .writeFloat(x2)
+                .writeDouble(x2)
                 .writeSpace()
-                .writeFloat(y2)
+                .writeDouble(y2)
                 .writeSpace()
-                .writeFloat(x3)
+                .writeDouble(x3)
                 .writeSpace()
-                .writeFloat(y3)
+                .writeDouble(y3)
                 .writeSpace()
                 .writeBytes(c);
         return this;
@@ -871,15 +871,15 @@ public class PdfCanvas {
      * @param y3 y coordinate of the ending point.
      * @return current canvas.
      */
-    public PdfCanvas curveTo(final float x2, final float y2, final float x3, final float y3) {
+    public PdfCanvas curveTo(final double x2, final double y2, final double x3, final double y3) {
         contentStream.getOutputStream()
-                .writeFloat(x2)
+                .writeDouble(x2)
                 .writeSpace()
-                .writeFloat(y2)
+                .writeDouble(y2)
                 .writeSpace()
-                .writeFloat(x3)
+                .writeDouble(x3)
                 .writeSpace()
-                .writeFloat(y3).writeSpace()
+                .writeDouble(y3).writeSpace()
                 .writeBytes(v);
         return this;
     }
@@ -893,15 +893,15 @@ public class PdfCanvas {
      * @param y3 y coordinate of the ending point.
      * @return current canvas.
      */
-    public PdfCanvas curveFromTo(final float x1, final float y1, final float x3, final float y3) {
+    public PdfCanvas curveFromTo(final double x1, final double y1, final double x3, final double y3) {
         contentStream.getOutputStream()
-                .writeFloat(x1)
+                .writeDouble(x1)
                 .writeSpace()
-                .writeFloat(y1)
+                .writeDouble(y1)
                 .writeSpace()
-                .writeFloat(x3)
+                .writeDouble(x3)
                 .writeSpace()
-                .writeFloat(y3).writeSpace()
+                .writeDouble(y3).writeSpace()
                 .writeBytes(y);
         return this;
     }
@@ -920,12 +920,12 @@ public class PdfCanvas {
      * @param extent   angle extent in degrees.
      * @return current canvas.
      */
-    public PdfCanvas arc(final float x1, final float y1, final float x2, final float y2,
-                         final float startAng, final float extent) {
-        List<float[]> ar = bezierArc(x1, y1, x2, y2, startAng, extent);
+    public PdfCanvas arc(final double x1, final double y1, final double x2, final double y2,
+                         final double startAng, final double extent) {
+        List<double[]> ar = bezierArc(x1, y1, x2, y2, startAng, extent);
         if (ar.isEmpty())
             return this;
-        float pt[] = ar.get(0);
+        double pt[] = ar.get(0);
         moveTo(pt[0], pt[1]);
         for (int iter = 0; iter < ar.size(); ++iter) {
             pt = ar.get(iter);
@@ -944,7 +944,7 @@ public class PdfCanvas {
      * @param y2 a corner of the enclosing rectangle
      * @return current canvas.
      */
-    public PdfCanvas ellipse(final float x1, final float y1, final float x2, final float y2) {
+    public PdfCanvas ellipse(final double x1, final double y1, final double x2, final double y2) {
         return arc(x1, y1, x2, y2, 0f, 360f);
     }
 
@@ -957,7 +957,7 @@ public class PdfCanvas {
      * to startAng+extent.  i.e. startAng=0 and extent=180 yields an openside-down
      * semi-circle.
      * <p/>
-     * The resulting coordinates are of the form float[]{x1,y1,x2,y2,x3,y3, x4,y4}
+     * The resulting coordinates are of the form double[]{x1,y1,x2,y2,x3,y3, x4,y4}
      * such that the curve goes from (x1, y1) to (x4, y4) with (x2, y2) and
      * (x3, y3) as their respective Bezier control points.
      * <p/>
@@ -970,10 +970,10 @@ public class PdfCanvas {
      * @param y2       a corner of the enclosing rectangle.
      * @param startAng starting angle in degrees.
      * @param extent   angle extent in degrees.
-     * @return a list of float[] with the bezier curves.
+     * @return a list of double[] with the bezier curves.
      */
-    public static List<float[]> bezierArc(float x1, float y1, float x2, float y2, final float startAng, final float extent) {
-        float tmp;
+    public static List<double[]> bezierArc(double x1, double y1, double x2, double y2, final double startAng, final double extent) {
+        double tmp;
         if (x1 > x2) {
             tmp = x1;
             x1 = x2;
@@ -985,7 +985,7 @@ public class PdfCanvas {
             y2 = tmp;
         }
 
-        float fragAngle;
+        double fragAngle;
         int Nfrag;
         if (Math.abs(extent) <= 90f) {
             fragAngle = extent;
@@ -994,22 +994,22 @@ public class PdfCanvas {
             Nfrag = (int) Math.ceil(Math.abs(extent) / 90f);
             fragAngle = extent / Nfrag;
         }
-        float x_cen = (x1 + x2) / 2f;
-        float y_cen = (y1 + y2) / 2f;
-        float rx = (x2 - x1) / 2f;
-        float ry = (y2 - y1) / 2f;
-        float halfAng = (float) (fragAngle * Math.PI / 360.);
-        float kappa = (float) Math.abs(4. / 3. * (1. - Math.cos(halfAng)) / Math.sin(halfAng));
-        List<float[]> pointList = new ArrayList<>();
+        double x_cen = (x1 + x2) / 2f;
+        double y_cen = (y1 + y2) / 2f;
+        double rx = (x2 - x1) / 2f;
+        double ry = (y2 - y1) / 2f;
+        double halfAng = (fragAngle * Math.PI / 360.);
+        double kappa = Math.abs(4. / 3. * (1. - Math.cos(halfAng)) / Math.sin(halfAng));
+        List<double[]> pointList = new ArrayList<>();
         for (int iter = 0; iter < Nfrag; ++iter) {
-            float theta0 = (float) ((startAng + iter * fragAngle) * Math.PI / 180.);
-            float theta1 = (float) ((startAng + (iter + 1) * fragAngle) * Math.PI / 180.);
-            float cos0 = (float) Math.cos(theta0);
-            float cos1 = (float) Math.cos(theta1);
-            float sin0 = (float) Math.sin(theta0);
-            float sin1 = (float) Math.sin(theta1);
+            double theta0 =  ((startAng + iter * fragAngle) * Math.PI / 180.);
+            double theta1 =  ((startAng + (iter + 1) * fragAngle) * Math.PI / 180.);
+            double cos0 = Math.cos(theta0);
+            double cos1 = Math.cos(theta1);
+            double sin0 = Math.sin(theta0);
+            double sin1 = Math.sin(theta1);
             if (fragAngle > 0f) {
-                pointList.add(new float[]{x_cen + rx * cos0,
+                pointList.add(new double[]{x_cen + rx * cos0,
                         y_cen - ry * sin0,
                         x_cen + rx * (cos0 - kappa * sin0),
                         y_cen - ry * (sin0 + kappa * cos0),
@@ -1018,7 +1018,7 @@ public class PdfCanvas {
                         x_cen + rx * cos1,
                         y_cen - ry * sin1});
             } else {
-                pointList.add(new float[]{x_cen + rx * cos0,
+                pointList.add(new double[]{x_cen + rx * cos0,
                         y_cen - ry * sin0,
                         x_cen + rx * (cos0 + kappa * sin0),
                         y_cen - ry * (sin0 - kappa * cos0),
@@ -1040,14 +1040,14 @@ public class PdfCanvas {
      * @param height height.
      * @return current canvas.
      */
-    public PdfCanvas rectangle(float x, float y, float width, float height) {
-        contentStream.getOutputStream().writeFloat(x).
+    public PdfCanvas rectangle(double x, double y, double width, double height) {
+        contentStream.getOutputStream().writeDouble(x).
                 writeSpace().
-                writeFloat(y).
+                writeDouble(y).
                 writeSpace().
-                writeFloat(width).
+                writeDouble(width).
                 writeSpace().
-                writeFloat(height).
+                writeDouble(height).
                 writeSpace().
                 writeBytes(re);
         return this;
@@ -1073,7 +1073,7 @@ public class PdfCanvas {
      * @param radius radius of the arc corner.
      * @return current canvas.
      */
-    public PdfCanvas roundRectangle(float x, float y, float width, float height, float radius) {
+    public PdfCanvas roundRectangle(double x, double y, double width, double height, double radius) {
         if (width < 0) {
             x += width;
             width = -width;
@@ -1084,7 +1084,7 @@ public class PdfCanvas {
         }
         if (radius < 0)
             radius = -radius;
-        final float curv = 0.4477f;
+        final double curv = 0.4477f;
         moveTo(x + radius, y);
         lineTo(x + width - radius, y);
         curveTo(x + width - radius * curv, y, x + width, y + radius * curv, x + width, y + radius);
@@ -1105,8 +1105,8 @@ public class PdfCanvas {
      * @param r radius of circle.
      * @return current canvas.
      */
-    public PdfCanvas circle(final float x, final float y, final float r) {
-        final float curve = 0.5523f;
+    public PdfCanvas circle(final double x, final double y, final double r) {
+        final double curve = 0.5523f;
         moveTo(x + r, y);
         curveTo(x + r, y + r * curve, x + r * curve, y + r, x, y + r);
         curveTo(x - r * curve, y + r, x - r, y + r * curve, x - r, y);
