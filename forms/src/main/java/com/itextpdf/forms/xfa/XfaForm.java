@@ -104,7 +104,7 @@ public class XfaForm {
      * {@link PdfAcroForm}. An entry in the dictionary with the <code>XFA</code>
      * key must contain correct XFA syntax. If the <code>XFA</code> key is
      * absent, then the constructor essentially does nothing.
-     * 
+     *
      * @param acroFormDictionary the dictionary object to initialize from
      */
     public XfaForm(PdfDictionary acroFormDictionary) {
@@ -162,7 +162,7 @@ public class XfaForm {
     /**
      * Sets the XFA key from a byte array. The old XFA is erased.
      *
-     * @param form the data
+     * @param form        the data
      * @param pdfDocument pdfDocument
      * @throws java.io.IOException on IO error
      */
@@ -210,7 +210,7 @@ public class XfaForm {
     /**
      * Changes a field value in the XFA form.
      *
-     * @param name the name of the field to be changed
+     * @param name  the name of the field to be changed
      * @param value the new value
      */
     public void setXfaFieldValue(String name, String value) {
@@ -229,6 +229,7 @@ public class XfaForm {
 
     /**
      * Gets the xfa field value.
+     *
      * @param name the fully qualified field name
      * @return the field value
      */
@@ -246,9 +247,9 @@ public class XfaForm {
 
     /**
      * Extracts DOM nodes from an XFA document.
-     * 
+     *
      * @param domDocument an XFA file as a {@link org.w3c.dom.Document DOM
-     * document}
+     *                    document}
      * @return a {@link Map} of XFA packet names and their associated
      * {@link org.w3c.dom.Node DOM nodes}
      */
@@ -494,7 +495,7 @@ public class XfaForm {
      * Replaces the XFA data under datasets/data. Accepts a {@link File file
      * object} to fill this object with XFA data. The resulting DOM document may
      * be modified.
-     * 
+     *
      * @param file the {@link File}
      * @throws java.io.IOException on IO error on the {@link InputSource}
      */
@@ -505,8 +506,8 @@ public class XfaForm {
     /**
      * Replaces the XFA data under datasets/data. Accepts a {@link File file
      * object} to fill this object with XFA data.
-     * 
-     * @param file the {@link File}
+     *
+     * @param file     the {@link File}
      * @param readOnly whether or not the resulting DOM document may be modified
      * @throws java.io.IOException on IO error on the {@link InputSource}
      */
@@ -518,7 +519,7 @@ public class XfaForm {
      * Replaces the XFA data under datasets/data. Accepts an {@link InputStream}
      * to fill this object with XFA data. The resulting DOM document may be
      * modified.
-     * 
+     *
      * @param is the {@link InputStream}
      * @throws java.io.IOException on IO error on the {@link InputSource}
      */
@@ -529,8 +530,8 @@ public class XfaForm {
     /**
      * Replaces the XFA data under datasets/data. Accepts an {@link InputStream}
      * to fill this object with XFA data.
-     * 
-     * @param is the {@link InputStream}
+     *
+     * @param is       the {@link InputStream}
      * @param readOnly whether or not the resulting DOM document may be modified
      * @throws java.io.IOException on IO error on the {@link InputSource}
      */
@@ -542,7 +543,7 @@ public class XfaForm {
      * Replaces the XFA data under datasets/data. Accepts a {@link InputSource
      * SAX input source} to fill this object with XFA data. The resulting DOM
      * document may be modified.
-     * 
+     *
      * @param is the {@link InputSource SAX input source}
      * @throws java.io.IOException on IO error on the {@link InputSource}
      */
@@ -553,8 +554,8 @@ public class XfaForm {
     /**
      * Replaces the XFA data under datasets/data. Accepts a {@link InputSource
      * SAX input source} to fill this object with XFA data.
-     * 
-     * @param is the {@link InputSource SAX input source}
+     *
+     * @param is       the {@link InputSource SAX input source}
      * @param readOnly whether or not the resulting DOM document may be modified
      * @throws java.io.IOException on IO error on the {@link InputSource}
      */
@@ -574,6 +575,7 @@ public class XfaForm {
 
     /**
      * Replaces the XFA data under datasets/data.
+     *
      * @param node the input {@link org.w3c.dom.Node}
      */
     public void fillXfaForm(Node node) {
@@ -582,7 +584,8 @@ public class XfaForm {
 
     /**
      * Replaces the XFA data under datasets/data.
-     * @param node the input {@link org.w3c.dom.Node}
+     *
+     * @param node     the input {@link org.w3c.dom.Node}
      * @param readOnly whether or not the resulting DOM document may be modified
      */
     public void fillXfaForm(Node node, boolean readOnly) {

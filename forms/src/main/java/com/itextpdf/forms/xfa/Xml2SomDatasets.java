@@ -44,16 +44,17 @@
  */
 package com.itextpdf.forms.xfa;
 
-import org.w3c.dom.Node;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
+
+import org.w3c.dom.Node;
 
 /**
  * Processes the datasets section in the XFA form.
  */
-public class Xml2SomDatasets extends Xml2Som {
+class Xml2SomDatasets extends Xml2Som {
     /**
      * Creates a new instance from the datasets node. This expects
      * not the datasets but the data node that comes below.
@@ -63,7 +64,7 @@ public class Xml2SomDatasets extends Xml2Som {
     public Xml2SomDatasets(Node n) {
         order = new ArrayList<>();
         name2Node = new HashMap<>();
-        stack = new Stack2<>();
+        stack = new Stack<>();
         anform = 0;
         inverseSearch = new HashMap<>();
         processDatasetsInternal(n);
@@ -77,7 +78,7 @@ public class Xml2SomDatasets extends Xml2Som {
      * @return the new <CODE>Node</CODE> of the inserted name
      */
     public Node insertNode(Node n, String shortName) {
-        Stack2<String> localStack = splitParts(shortName);
+        Stack<String> localStack = splitParts(shortName);
         org.w3c.dom.Document doc = n.getOwnerDocument();
         Node n2 = null;
         n = n.getFirstChild();

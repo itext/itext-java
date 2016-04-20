@@ -44,16 +44,17 @@
  */
 package com.itextpdf.forms.xfa;
 
-import org.w3c.dom.Node;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
+
+import org.w3c.dom.Node;
 
 /**
  * Processes the template section in the XFA form.
  */
-public  class Xml2SomTemplate extends Xml2Som {
+class Xml2SomTemplate extends Xml2Som {
     private boolean dynamicForm;
     private int templateLevel;
 
@@ -65,7 +66,7 @@ public  class Xml2SomTemplate extends Xml2Som {
     public Xml2SomTemplate(Node n) {
         order = new ArrayList<>();
         name2Node = new HashMap<>();
-        stack = new Stack2<>();
+        stack = new Stack<>();
         anform = 0;
         templateLevel = 0;
         inverseSearch = new HashMap<>();

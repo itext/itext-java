@@ -44,15 +44,16 @@
  */
 package com.itextpdf.forms.xfa;
 
-import org.w3c.dom.Node;
-
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
+
+import org.w3c.dom.Node;
 
 /**
  * A class for some basic SOM processing.
  */
-public class Xml2Som {
+class Xml2Som {
     /**
      * The order the names appear in the XML, depth first.
      */
@@ -68,7 +69,7 @@ public class Xml2Som {
     /**
      * A stack to be used when parsing.
      */
-    protected Stack2<String> stack;
+    protected Stack<String> stack;
     /**
      * A temporary store for the repetition count.
      */
@@ -174,7 +175,7 @@ public class Xml2Som {
      * @param stack         the stack with the separated SOM parts
      * @param unstack       the full name
      */
-    public static void inverseSearchAdd(Map<String, InverseStore> inverseSearch, Stack2<String> stack, String unstack) {
+    public static void inverseSearchAdd(Map<String, InverseStore> inverseSearch, Stack<String> stack, String unstack) {
         String last = stack.peek();
         InverseStore store = inverseSearch.get(last);
         if (store == null) {
@@ -228,10 +229,10 @@ public class Xml2Som {
      * @param name the full SOM name
      * @return the split name
      */
-    public static Stack2<String> splitParts(String name) {
+    public static Stack<String> splitParts(String name) {
         while (name.startsWith("."))
             name = name.substring(1);
-        Stack2<String> parts = new Stack2<>();
+        Stack<String> parts = new Stack<>();
         int last = 0;
         int pos = 0;
         String part;
