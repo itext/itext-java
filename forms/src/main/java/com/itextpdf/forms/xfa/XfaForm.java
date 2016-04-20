@@ -45,6 +45,7 @@
 package com.itextpdf.forms.xfa;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -79,6 +80,8 @@ import org.xml.sax.SAXException;
  */
 public class XfaForm {
 
+    private static final String DEFAULT_XFA = "com/itextpdf/forms/xfa/default.xml";
+
     private Xml2SomTemplate templateSom;
     private Node templateNode;
     private Xml2SomDatasets datasetsSom;
@@ -96,6 +99,15 @@ public class XfaForm {
      * An empty constructor to build on.
      */
     public XfaForm() {
+        this(ResourceUtil.getResourceStream(DEFAULT_XFA));
+    }
+
+    public XfaForm(InputStream inputStream) {
+        try {
+            initXfaForm(inputStream);
+        } catch (Exception e) {
+            throw new PdfException(e);
+        }
     }
 
     /**
@@ -167,13 +179,9 @@ public class XfaForm {
      * @throws java.io.IOException on IO error
      */
     public static void setXfaForm(XfaForm form, PdfDocument pdfDocument) throws IOException {
-        PdfDictionary af = pdfDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
-        if (af == null) {
-            return;
-        }
+        PdfDictionary af = PdfAcroForm.getAcroForm(pdfDocument, true).getPdfObject();
         PdfObject xfa = getXfaObject(pdfDocument);
-        assert xfa != null;
-        if (xfa.isArray()) {
+        if (xfa != null && xfa.isArray()) {
             PdfArray ar = (PdfArray) xfa;
             int t = -1;
             int d = -1;
@@ -205,6 +213,7 @@ public class XfaForm {
         stream.setCompressionLevel(pdfDocument.getWriter().getCompressionLevel());
         stream.flush();
         af.put(PdfName.XFA, stream);
+        af.setModified();
     }
 
     /**
@@ -640,10 +649,14 @@ public class XfaForm {
             bout.write(b);
         }
         bout.close();
+        initXfaForm(new ByteArrayInputStream(bout.toByteArray()));
+    }
+
+    private void initXfaForm(InputStream inputStream) throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
         fact.setNamespaceAware(true);
         DocumentBuilder db = fact.newDocumentBuilder();
-        domDocument = db.parse(new ByteArrayInputStream(bout.toByteArray()));
+        domDocument = db.parse(inputStream);
         extractNodes();
     }
 
