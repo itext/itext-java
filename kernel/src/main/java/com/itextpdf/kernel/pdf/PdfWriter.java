@@ -45,13 +45,15 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.PdfException;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -75,8 +77,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     // For internal usage only
     private PdfOutputStream duplicateStream = null;
-    // For internal usage only
-    private byte[] duplicateContentBuffer = null;
 
     /**
      * Indicates if the writer copy objects in a smart mode. If so PdfDictionary and PdfStream will be hashed
@@ -449,10 +449,9 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      */
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
         in.defaultReadObject();
-        this.outputStream = new BufferedOutputStream(new ByteArrayOutputStream());
-        duplicateStream = new PdfOutputStream(new ByteArrayOutputStream());
-        write(duplicateContentBuffer);
-        duplicateContentBuffer = null;
+        if (outputStream == null) {
+            outputStream = new BufferedOutputStream(new ByteArrayOutputStream().assignBytes(getDebugBytes()));
+        }
     }
 
     private PdfObject smartCopyObject(PdfObject object) {
@@ -480,8 +479,13 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * This method is invoked while serialization
      */
     private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-        duplicateContentBuffer = getDebugBytes();
+        if (duplicateStream == null) {
+            throw new NotSerializableException(this.getClass().getName() + ": debug mode is disabled!");
+        }
+        OutputStream tempOutputStream = outputStream;
+        outputStream = null;
         out.defaultWriteObject();
+        outputStream = tempOutputStream;
     }
 
     private byte[] getDebugBytes() throws IOException {

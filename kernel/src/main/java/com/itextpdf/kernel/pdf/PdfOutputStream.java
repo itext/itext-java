@@ -166,6 +166,9 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
     private static final byte[] endIndirect = ByteUtils.getIsoBytes(" R");
     private static final byte[] endIndirectWithZeroGenNr = ByteUtils.getIsoBytes(" 0 R");
 
+    // For internal usage only
+    private byte[] duplicateContentBuffer = null;
+
     /**
      * Document associated with PdfOutputStream.
      */
@@ -174,13 +177,6 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
      * Contains the business logic for cryptography.
      */
     protected PdfEncryption crypto;
-
-    /**
-     * Do not use this constructor. This is only for internal usage.
-     */
-    private PdfOutputStream() {
-        super();
-    }
 
     public PdfOutputStream(java.io.OutputStream outputStream) {
         super(outputStream);
@@ -632,4 +628,30 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
 
         return bytes;
     }
+
+    /**
+     * This method is invoked while deserialization
+     */
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        if (outputStream == null && duplicateContentBuffer != null) {
+            outputStream = new ByteArrayOutputStream();
+            write(duplicateContentBuffer);
+            duplicateContentBuffer = null;
+        }
+    }
+
+    /**
+     * This method is invoked while serialization
+     */
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+        java.io.OutputStream tempOutputStream = outputStream;
+        if (outputStream instanceof java.io.ByteArrayOutputStream) {
+            duplicateContentBuffer = ((java.io.ByteArrayOutputStream)outputStream).toByteArray();
+        }
+        outputStream = null;
+        out.defaultWriteObject();
+        outputStream = tempOutputStream;
+    }
+
 }

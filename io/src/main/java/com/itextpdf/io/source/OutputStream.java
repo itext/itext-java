@@ -73,7 +73,6 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
      */
     protected OutputStream() {
         super();
-        this.outputStream = new ByteArrayOutputStream();
     }
 
     @Override
