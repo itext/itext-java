@@ -1233,8 +1233,8 @@ public class CompareTool {
     public class ObjectPath {
         protected PdfIndirectReference baseCmpObject;
         protected PdfIndirectReference baseOutObject;
-        protected Stack<PathItem> path = new Stack<PathItem>();
-        protected Stack<Pair<PdfIndirectReference>> indirects = new Stack<Pair<PdfIndirectReference>>();
+        protected Stack<LocalPathItem> path = new Stack<LocalPathItem>();
+        protected Stack<IndirectPathItem> indirects = new Stack<IndirectPathItem>();
 
         public ObjectPath() {
         }
@@ -1244,8 +1244,8 @@ public class CompareTool {
             this.baseOutObject = baseOutObject;
         }
 
-        private ObjectPath(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject, Stack<PathItem> path,
-                           Stack<Pair<PdfIndirectReference>> indirects) {
+        private ObjectPath(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject,
+                           Stack<LocalPathItem> path, Stack<IndirectPathItem> indirects) {
             this.baseCmpObject = baseCmpObject;
             this.baseOutObject = baseOutObject;
             this.path = path;
@@ -1255,13 +1255,13 @@ public class CompareTool {
 
         public ObjectPath resetDirectPath(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject) {
             ObjectPath newPath = new ObjectPath(baseCmpObject, baseOutObject);
-            newPath.indirects = (Stack<Pair<PdfIndirectReference>>) indirects.clone();
-            newPath.indirects.add(new Pair<>(baseCmpObject, baseOutObject));
+            newPath.indirects = (Stack<IndirectPathItem>) indirects.clone();
+            newPath.indirects.add(new IndirectPathItem(baseCmpObject, baseOutObject));
             return newPath;
         }
 
         public boolean isComparing(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject) {
-            return indirects.contains(new Pair<>(baseCmpObject, baseOutObject));
+            return indirects.contains(new IndirectPathItem(baseCmpObject, baseOutObject));
         }
 
         public void pushArrayItemToPath(int index) {
@@ -1280,8 +1280,12 @@ public class CompareTool {
             path.pop();
         }
 
-        public Stack<PathItem> getPath() {
+        public Stack<LocalPathItem> getLocalPath() {
             return path;
+        }
+
+        public Stack<IndirectPathItem> getIndirectPath() {
+            return indirects;
         }
 
         public PdfIndirectReference getBaseCmpObject() {
@@ -1298,7 +1302,7 @@ public class CompareTool {
             baseNode.setAttribute("cmp", MessageFormat.format("{0} {1} obj", baseCmpObject.getObjNumber(), baseCmpObject.getGenNumber()));
             baseNode.setAttribute("out", MessageFormat.format("{0} {1} obj", baseOutObject.getObjNumber(), baseOutObject.getGenNumber()));
             element.appendChild(baseNode);
-            for (PathItem pathItem : path) {
+            for (LocalPathItem pathItem : path) {
                 element.appendChild(pathItem.toXmlNode(document));
             }
             return element;
@@ -1308,7 +1312,7 @@ public class CompareTool {
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append(MessageFormat.format("Base cmp object: {0} obj. Base out object: {1} obj", baseCmpObject, baseOutObject));
-            for (PathItem pathItem : path) {
+            for (LocalPathItem pathItem : path) {
                 sb.append("\n");
                 sb.append(pathItem.toString());
             }
@@ -1318,7 +1322,7 @@ public class CompareTool {
         @Override
         public int hashCode() {
             int hashCode = (baseCmpObject != null ? baseCmpObject.hashCode() : 0) * 31 + (baseOutObject != null ? baseOutObject.hashCode() : 0);
-            for (PathItem pathItem : path) {
+            for (LocalPathItem pathItem : path) {
                 hashCode *= 31;
                 hashCode += pathItem.hashCode();
             }
@@ -1333,35 +1337,44 @@ public class CompareTool {
 
         @Override
         protected Object clone() {
-            return new ObjectPath(baseCmpObject, baseOutObject, (Stack<PathItem>) path.clone(),
-                    (Stack<Pair<PdfIndirectReference>>) indirects.clone());
+            return new ObjectPath(baseCmpObject, baseOutObject, (Stack<LocalPathItem>) path.clone(),
+                    (Stack<IndirectPathItem>) indirects.clone());
         }
 
-        private class Pair<T> {
-            private T first;
-            private T second;
+        public class IndirectPathItem {
+            private PdfIndirectReference cmpObject;
+            private PdfIndirectReference outObject;
 
-            public Pair(T first, T second) {
-                this.first = first;
-                this.second = second;
+            public IndirectPathItem(PdfIndirectReference cmpObject, PdfIndirectReference outObject) {
+                this.cmpObject = cmpObject;
+                this.outObject = outObject;
+            }
+
+            public PdfIndirectReference getCmpObject() {
+                return cmpObject;
+            }
+
+            public PdfIndirectReference getOutObject() {
+                return outObject;
             }
 
             @Override
             public int hashCode() {
-                return first.hashCode() * 31 + second.hashCode();
+                return cmpObject.hashCode() * 31 + outObject.hashCode();
             }
 
             @Override
             public boolean equals(Object obj) {
-                return (obj instanceof Pair && first.equals(((Pair) obj).first) && second.equals(((Pair) obj).second));
+                return (obj instanceof IndirectPathItem && cmpObject.equals(((IndirectPathItem) obj).cmpObject)
+                        && outObject.equals(((IndirectPathItem) obj).outObject));
             }
         }
 
-        public abstract class PathItem {
+        public abstract class LocalPathItem {
             protected abstract Node toXmlNode(Document document);
         }
 
-        public class DictPathItem extends PathItem {
+        public class DictPathItem extends LocalPathItem {
             PdfName key;
             public DictPathItem(PdfName key) {
                 this.key = key;
@@ -1394,7 +1407,7 @@ public class CompareTool {
             }
         }
 
-        public class ArrayPathItem extends PathItem {
+        public class ArrayPathItem extends LocalPathItem {
             int index;
             public ArrayPathItem(int index) {
                 this.index = index;
@@ -1427,10 +1440,14 @@ public class CompareTool {
             }
         }
 
-        private class OffsetPathItem extends PathItem {
+        public class OffsetPathItem extends LocalPathItem {
             int offset;
             public OffsetPathItem(int offset) {
                 this.offset = offset;
+            }
+
+            public int getOffset() {
+                return offset;
             }
 
             @Override
@@ -1467,7 +1484,7 @@ public class CompareTool {
         }
 
 
-        public TrailerPath(PdfDocument cmpDoc, PdfDocument outDoc, Stack<PathItem> path) {
+        public TrailerPath(PdfDocument cmpDoc, PdfDocument outDoc, Stack<LocalPathItem> path) {
             this.outDocument = outDoc;
             this.cmpDocument = cmpDoc;
             this.path = path;
@@ -1480,7 +1497,7 @@ public class CompareTool {
             baseNode.setAttribute("cmp", "trailer");
             baseNode.setAttribute("out", "trailer");
             element.appendChild(baseNode);
-            for (PathItem pathItem : path) {
+            for (LocalPathItem pathItem : path) {
                 element.appendChild(pathItem.toXmlNode(document));
             }
             return element;
@@ -1490,7 +1507,7 @@ public class CompareTool {
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append("Base cmp object: trailer. Base out object: trailer");
-            for (PathItem pathItem : path) {
+            for (LocalPathItem pathItem : path) {
                 sb.append("\n");
                 sb.append(pathItem.toString());
             }
@@ -1500,7 +1517,7 @@ public class CompareTool {
         @Override
         public int hashCode() {
             int hashCode = outDocument.hashCode() * 31 + cmpDocument.hashCode();
-            for (PathItem pathItem : path) {
+            for (LocalPathItem pathItem : path) {
                 hashCode *= 31;
                 hashCode += pathItem.hashCode();
             }
@@ -1517,7 +1534,7 @@ public class CompareTool {
 
         @Override
         protected Object clone() {
-            return new TrailerPath(cmpDocument, outDocument, (Stack<PathItem>) path.clone());
+            return new TrailerPath(cmpDocument, outDocument, (Stack<LocalPathItem>) path.clone());
         }
 
     }
