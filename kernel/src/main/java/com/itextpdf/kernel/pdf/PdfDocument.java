@@ -76,6 +76,9 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     private static final long serialVersionUID = -7041578979319799646L;
@@ -1570,21 +1573,20 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             oos.flush();
             return bos.toByteArray();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+            logger.warn(LogMessageConstant.DOCUMENT_SERIALIZATION_EXCEPTION_RAISED, e);
             return null;
         } finally {
             if (oos != null) {
                 try {
                     oos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException ignored) {
                 }
             }
             if (bos != null) {
                 try {
                     bos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException ignored) {
                 }
             }
         }

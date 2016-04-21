@@ -57,6 +57,11 @@ public class LogMessageConstant {
     /**
      * Log message.
      */
+    public static final String DOCUMENT_SERIALIZATION_EXCEPTION_RAISED = "Unhandled exception while serialization";
+
+    /**
+     * Log message.
+     */
     public static final String DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT = "DirectOnly object cannot be indirect";
 
     /**

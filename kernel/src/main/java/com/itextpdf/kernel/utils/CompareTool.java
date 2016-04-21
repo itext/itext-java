@@ -107,18 +107,14 @@ public class CompareTool {
         compareExec = System.getProperty("compareExec");
     }
 
-    public CompareResult compareByCatalog(PdfDocument outDocument, PdfDocument cmpDocument) {
+    public CompareResult compareByCatalog(PdfDocument outDocument, PdfDocument cmpDocument) throws IOException {
         CompareResult compareResult = null;
-        try {
-            compareResult = new CompareResult(compareByContentErrorsLimit);
-            ObjectPath catalogPath = new ObjectPath(cmpDocument.getCatalog().getPdfObject().getIndirectReference(),
-                    outDocument.getCatalog().getPdfObject().getIndirectReference());
-            Set<PdfName> ignoredCatalogEntries = new LinkedHashSet<>(Arrays.asList(PdfName.Metadata, PdfName.AcroForm));
-            compareDictionariesExtended(outDocument.getCatalog().getPdfObject(), cmpDocument.getCatalog().getPdfObject(),
-                    catalogPath, compareResult, ignoredCatalogEntries);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        compareResult = new CompareResult(compareByContentErrorsLimit);
+        ObjectPath catalogPath = new ObjectPath(cmpDocument.getCatalog().getPdfObject().getIndirectReference(),
+                outDocument.getCatalog().getPdfObject().getIndirectReference());
+        Set<PdfName> ignoredCatalogEntries = new LinkedHashSet<>(Arrays.asList(PdfName.Metadata, PdfName.AcroForm));
+        compareDictionariesExtended(outDocument.getCatalog().getPdfObject(), cmpDocument.getCatalog().getPdfObject(),
+                catalogPath, compareResult, ignoredCatalogEntries);
         return compareResult;
     }
 
