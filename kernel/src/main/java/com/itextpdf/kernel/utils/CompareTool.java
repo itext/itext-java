@@ -1244,10 +1244,12 @@ public class CompareTool {
             this.baseOutObject = baseOutObject;
         }
 
-        private ObjectPath(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject, Stack<PathItem> path) {
+        private ObjectPath(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject, Stack<PathItem> path,
+                           Stack<Pair<PdfIndirectReference>> indirects) {
             this.baseCmpObject = baseCmpObject;
             this.baseOutObject = baseOutObject;
             this.path = path;
+            this.indirects = indirects;
         }
 
 
@@ -1331,7 +1333,8 @@ public class CompareTool {
 
         @Override
         protected Object clone() {
-            return new ObjectPath(baseCmpObject, baseOutObject, (Stack<PathItem>) path.clone());
+            return new ObjectPath(baseCmpObject, baseOutObject, (Stack<PathItem>) path.clone(),
+                    (Stack<Pair<PdfIndirectReference>>) indirects.clone());
         }
 
         private class Pair<T> {
