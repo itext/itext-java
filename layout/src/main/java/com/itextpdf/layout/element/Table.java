@@ -51,13 +51,12 @@ import com.itextpdf.layout.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Table} is a layout element that represents data in a two-dimensional
@@ -566,8 +565,8 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * 
      * @return an array of {@link Border} objects
      */
-    public Border[] getLastRowBottomBorder() {
-        Border[] horizontalBorder = new Border[getNumberOfColumns()];
+    public ArrayList<Border> getLastRowBottomBorder() {
+        ArrayList<Border> horizontalBorder = new ArrayList<>();
         if (lastAddedRow != null) {
             for (int i = 0; i < lastAddedRow.length; i++) {
                 Cell cell = lastAddedRow[i];
@@ -576,7 +575,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
                     if (border == null) {
                         border = cell.getProperty(Property.BORDER_BOTTOM);
                     }
-                    horizontalBorder[i] = border;
+                    horizontalBorder.add(border);
                 }
             }
         }
