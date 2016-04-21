@@ -57,6 +57,11 @@ public class LogMessageConstant {
     /**
      * Log message.
      */
+    public static final String DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT = "DirectOnly object cannot be indirect";
+
+    /**
+     * Log message.
+     */
     public static final String ELEMENT_DOES_NOT_FIT_AREA = "Element does not fit current area. {0}";
 
     /**
@@ -148,6 +153,4 @@ public class LogMessageConstant {
      * Log message.
      */
     public static final String TOUNICODE_CMAP_MORE_THAN_2_BYTES_NOT_SUPPORTED = "ToUnicode CMap more than 2 bytes not supported.";
-
-
 }
