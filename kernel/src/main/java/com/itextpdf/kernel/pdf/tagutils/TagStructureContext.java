@@ -353,6 +353,23 @@ public class TagStructureContext implements Serializable {
         forbidUnknownRoles = forbid;
     }
 
+    /**
+     * Method for internal usages.
+     * Essentially, all it does is just making sure that for connected tags properties are
+     * up to date with connected accessible elements properties.
+     */
+    public void actualizeTagsProperties() {
+        for (Map.Entry<IAccessibleElement, PdfStructElem> structToModel : connectedModelToStruct.entrySet()) {
+
+            IAccessibleElement element = structToModel.getKey();
+            PdfStructElem structElem = structToModel.getValue();
+            structElem.setRole(element.getRole());
+            if (element.getAccessibilityProperties() != null) {
+                element.getAccessibilityProperties().setToStructElem(structElem);
+            }
+        }
+    }
+
     PdfStructElem getRootTag() {
         return rootTagElement;
     }

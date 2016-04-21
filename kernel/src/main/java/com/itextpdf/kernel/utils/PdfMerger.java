@@ -48,9 +48,7 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 
 public class PdfMerger {
@@ -86,8 +84,6 @@ public class PdfMerger {
      * @throws PdfException
      */
     public void addPages(PdfDocument from, List<Integer> pages) {
-        // TODO currently, if numbers in pages list are duplicated, page will be copied only once.
-        // TODO also tag structure does not correspond to the order of the given pages, it is always copied in the original order.
         for (Integer pageNum : pages){
             enqueuePageToCopy(from, pageNum);
         }
@@ -99,8 +95,7 @@ public class PdfMerger {
      */
     public void merge() {
         for (AddedPages addedPages : pagesToCopy) {
-            Set<Integer> pagesToCopy = new LinkedHashSet<>(addedPages.pagesToCopy); // TODO if PdfDocument#copyPagesTo will be left with Set - change PdfMerger interfaces to set too
-            addedPages.from.copyPagesTo(pagesToCopy, pdfDocument );
+            addedPages.from.copyPagesTo(addedPages.pagesToCopy, pdfDocument );
         }
     }
 

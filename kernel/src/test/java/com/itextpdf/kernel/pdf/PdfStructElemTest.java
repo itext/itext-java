@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.util.TreeSet;
+import java.util.ArrayList;
 
 @Category(IntegrationTest.class)
 public class PdfStructElemTest extends ExtendedITextTest {
@@ -331,7 +331,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         destination.setTagged();
         destination.initializeOutlines();
 
-        source.copyPagesTo(new TreeSet<Integer>() {{
+        source.copyPagesTo(new ArrayList<Integer>() {{
             add(3);
             add(4);
             add(10);

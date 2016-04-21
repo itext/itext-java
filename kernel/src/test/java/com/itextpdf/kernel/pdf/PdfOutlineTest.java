@@ -18,9 +18,8 @@ import org.junit.experimental.categories.Category;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 @Category(IntegrationTest.class)
 public class PdfOutlineTest extends ExtendedITextTest{
@@ -226,7 +225,7 @@ public class PdfOutlineTest extends ExtendedITextTest{
         PdfDocument pdfDoc = new PdfDocument(reader);
         PdfDocument pdfDoc1 = new PdfDocument(writer);
 
-        Set<Integer> pages = new TreeSet<Integer>();
+        List<Integer> pages = new ArrayList<>();
         pages.add(1);
         pages.add(2);
         pages.add(3);
