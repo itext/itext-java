@@ -147,10 +147,11 @@ public class XmlDomWriter {
                 fXML11 = false; //"1.1".equals(getVersion(document));
                 if (!fCanonical) {
                     if (fXML11) {
-                        fOut.println("<?xml version=\"1.1\" encoding=\"UTF-8\"?>");
+                        fOut.print("<?xml version=\"1.1\" encoding=\"UTF-8\"?>");
                     } else {
-                        fOut.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                        fOut.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
                     }
+                    fOut.print("\n");
                     fOut.flush();
                     write(document.getDoctype());
                 }
