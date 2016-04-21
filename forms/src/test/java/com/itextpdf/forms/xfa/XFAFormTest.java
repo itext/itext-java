@@ -62,7 +62,7 @@ public class XFAFormTest extends ExtendedITextTest {
 
         PdfDocument doc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
         XfaForm xfa = new XfaForm(new FileInputStream(XML));
-        XfaForm.setXfaForm(xfa, doc);
+        xfa.write(doc);
         doc.addNewPage();
         doc.close();
 

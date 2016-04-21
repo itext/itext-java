@@ -62,8 +62,7 @@ class AcroFieldsSearch extends Xml2Som {
     public AcroFieldsSearch(Collection<String> items) {
         inverseSearch = new HashMap<>();
         acroShort2LongName = new HashMap<>();
-        for (String string : items) {
-            String itemName = string;
+        for (String itemName : items) {
             String itemShort = getShortName(itemName);
             acroShort2LongName.put(itemShort, itemName);
             inverseSearchAdd(inverseSearch, splitParts(itemShort), itemName);
