@@ -44,7 +44,6 @@
  */
 package com.itextpdf.kernel.pdf.xobject;
 
-import com.itextpdf.io.NotImplementedException;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfStream;
@@ -77,9 +76,9 @@ public class PdfXObject extends PdfObjectWrapper<PdfStream> {
         getPdfObject().put(PdfName.OC, layer.getIndirectReference());
     }
 
-    public Float getWidth() {throw new NotImplementedException(); }
+    public float getWidth() { throw new UnsupportedOperationException(); }
 
-    public Float getHeight() { throw new NotImplementedException(); }
+    public float getHeight() { throw new UnsupportedOperationException(); }
 
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {

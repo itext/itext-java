@@ -106,7 +106,7 @@ public class PdfImageXObject extends PdfXObject {
     }
 
     @Override
-    public Float getWidth() {
+    public float getWidth() {
         if (!isFlushed())
             return getPdfObject().getAsNumber(PdfName.Width).floatValue();
         else
@@ -114,7 +114,7 @@ public class PdfImageXObject extends PdfXObject {
     }
 
     @Override
-    public Float getHeight() {
+    public float getHeight() {
         if (!isFlushed())
             return getPdfObject().getAsNumber(PdfName.Height).floatValue();
         else

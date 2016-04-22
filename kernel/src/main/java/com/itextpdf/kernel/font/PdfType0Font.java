@@ -45,7 +45,6 @@
 package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.NotImplementedException;
 import com.itextpdf.io.font.CFFFontSubset;
 import com.itextpdf.io.font.CMapEncoding;
 import com.itextpdf.io.font.CidFont;
@@ -599,7 +598,7 @@ public class PdfType0Font extends PdfFont {
                 cidFont.put(PdfName.W, new PdfLiteral(buf.toString()));
             }
         } else {
-            throw new NotImplementedException("Vertical writing has not implemented yet.");
+            throw new UnsupportedOperationException("Vertical writing has not implemented yet.");
         }
         return cidFont;
     }
