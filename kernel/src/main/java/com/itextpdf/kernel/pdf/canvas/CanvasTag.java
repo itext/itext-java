@@ -90,7 +90,7 @@ public class CanvasTag {
      * @param role the type of tag
      * @param mcid marked content id which serves as a reference to the document's logical structure
      */
-    public CanvasTag(PdfName role, Integer mcid) {
+    public CanvasTag(PdfName role, int mcid) {
         this.role = role;
         addProperty(PdfName.MCID, new PdfNumber(mcid));
     }
@@ -121,11 +121,11 @@ public class CanvasTag {
      * @throws IllegalStateException if there is no MCID
      */
     public int getMcid() {
-        Integer mcid = null;
+        int mcid = -1;
         if (properties != null) {
            mcid = properties.getAsInt(PdfName.MCID);
         }
-        if (mcid == null) {
+        if (mcid == -1) {
             throw new IllegalStateException("CanvasTag has no MCID");
         }
         return mcid;

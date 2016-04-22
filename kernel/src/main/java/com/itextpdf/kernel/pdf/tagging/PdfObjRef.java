@@ -67,8 +67,8 @@ public class PdfObjRef extends PdfMcr {
     }
 
     @Override
-    public Integer getMcid() {
-        return null;
+    public int getMcid() {
+        return -1;
     }
 
     @Override

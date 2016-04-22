@@ -183,11 +183,11 @@ import java.util.Set;
     }
 
     protected void parseTag(PdfMcr kid) {
-        Integer mcid = kid.getMcid();
+        int mcid = kid.getMcid();
         PdfDictionary pageDic = kid.getPageObject();
 
         String tagContent = "";
-        if (mcid != null) {
+        if (mcid != -1) {
             if (!parsedTags.containsKey(pageDic)) {
                 MarkedContentEventListener listener = new MarkedContentEventListener();
 

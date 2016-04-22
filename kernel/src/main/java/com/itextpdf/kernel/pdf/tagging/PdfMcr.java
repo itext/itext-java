@@ -65,7 +65,7 @@ public abstract class PdfMcr extends PdfObjectWrapper<PdfObject> implements IPdf
         this.parent = parent;
     }
 
-    public abstract Integer getMcid();
+    public abstract int getMcid();
 
     public abstract PdfDictionary getPageObject();
 
