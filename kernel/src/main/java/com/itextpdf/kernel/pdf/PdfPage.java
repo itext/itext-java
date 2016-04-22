@@ -75,8 +75,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -952395541908379500L;
 	private PdfResources resources = null;
-    private Integer mcid = null;
-    private Integer structParents = null;
+    private int mcid = -1;
+    private int structParents = -1;
     PdfPages parentPages;
     private List<PdfName> excludedKeys = new ArrayList<>(Arrays.asList(
             PdfName.Parent,
@@ -503,7 +503,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (!getDocument().isTagged()) {
             throw new PdfException(PdfException.MustBeATaggedDocument);
         }
-        if (mcid == null) {
+        if (mcid == -1) {
             PdfStructTreeRoot structTreeRoot = getDocument().getStructTreeRoot();
             mcid = structTreeRoot.getNextMcidForPage(this);
         }
@@ -511,7 +511,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public Integer getStructParentIndex() {
-        if (structParents == null) {
+        if (structParents == -1) {
             PdfNumber n = getPdfObject().getAsNumber(PdfName.StructParents);
             if (n != null) {
                 structParents = n.intValue();

@@ -186,7 +186,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         return list.isEmpty();
     }
 
-    public boolean contains(Object o) {
+    public boolean contains(PdfObject o) {
         return list.contains(o);
     }
 
@@ -199,7 +199,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         list.add(pdfObject);
     }
 
-    public void remove(Object o) {
+    public void remove(PdfObject o) {
         list.remove(o);
     }
 

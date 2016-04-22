@@ -63,7 +63,6 @@ import java.util.TreeSet;
 
 public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
-    
     private static final long serialVersionUID = 7160318458835945391L;
 	
     private static final String F = "F";
@@ -217,7 +216,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         setDefaultColorSpace(PdfName.DefaultCMYK, defaultCs);
     }
 
-    public PdfName getResourceName(PdfObjectWrapper resource) {
+    public <T extends PdfObject> PdfName getResourceName(PdfObjectWrapper<T> resource) {
         return resourceToName.get(resource.getPdfObject());
     }
 
@@ -279,7 +278,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return false;
     }
 
-    protected PdfName addResource(PdfObjectWrapper resource, ResourceNameGenerator nameGen) {
+    <T extends PdfObject> PdfName addResource(PdfObjectWrapper<T> resource, ResourceNameGenerator nameGen) {
         return addResource(resource.getPdfObject(), nameGen);
     }
 
@@ -308,11 +307,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         resDictionary.put(resName, resource);
     }
 
-    protected PdfName addResource(PdfObject resource, ResourceNameGenerator nameGen) {
+    PdfName addResource(PdfObject resource, ResourceNameGenerator nameGen) {
         PdfName resName = getResourceName(resource);
 
         if (resName == null) {
-            resName = nameGen.generate();
+            resName = nameGen.generate(this);
             addResource(resource, nameGen.getResourceType(), resName);
         }
 
@@ -409,7 +408,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
      * the names of already existing resources thus providing us a unique name.
      * The name consists of the following parts: prefix (literal) and number.
      */
-    private class ResourceNameGenerator implements Serializable {
+    static class ResourceNameGenerator implements Serializable {
+
         private static final long serialVersionUID = 1729961083476558303L;
 
         private PdfName resourceType;
@@ -449,11 +449,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
          *
          * @return New (unique) resource name.
          */
-        public PdfName generate() {
+        public PdfName generate(PdfResources resources) {
             PdfName newName = new PdfName(prefix + counter++);
-
-            if (getPdfObject().containsKey(resourceType)) {
-                while (getPdfObject().getAsDictionary(resourceType).containsKey(newName)) {
+            PdfDictionary r = resources.getPdfObject();
+            if (r.containsKey(resourceType)) {
+                while (r.getAsDictionary(resourceType).containsKey(newName)) {
                     newName = new PdfName(prefix + counter++);
                 }
             }

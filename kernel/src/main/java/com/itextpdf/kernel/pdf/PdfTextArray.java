@@ -62,7 +62,7 @@ public class PdfTextArray extends PdfArray {
 
     private static final long serialVersionUID = 2555632135770071680L;
 	
-    private Float lastNumber;
+    private float lastNumber = Float.NaN;
     private StringBuilder lastString;
 
     @Override
@@ -102,7 +102,7 @@ public class PdfTextArray extends PdfArray {
     public boolean add(float number) {
         // adding zero doesn't modify the TextArray at all
         if (number != 0) {
-            if (lastNumber != null) {
+            if (!Float.isNaN(lastNumber)) {
                 lastNumber = number + lastNumber;
                 if (lastNumber != 0) {
                     set(size() - 1, new PdfNumber(lastNumber));
@@ -138,7 +138,7 @@ public class PdfTextArray extends PdfArray {
                 lastString = new StringBuilder(text);
                 super.add(new PdfString(lastString.toString()));
             }
-            lastNumber = null;
+            lastNumber = Float.NaN;
             return true;
         }
         return false;

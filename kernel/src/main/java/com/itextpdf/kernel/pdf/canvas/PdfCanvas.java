@@ -710,8 +710,8 @@ public class PdfCanvas {
                                 .writeSpace()
                                 .writeBytes(Td);
                     }
-                    Float xPlacement = null;
-                    Float yPlacement = null;
+                    float xPlacement = Float.NaN;
+                    float yPlacement = Float.NaN;
                     if (glyph.hasPlacement()) {
                         xPlacement = -getSubrangeWidth(text, i + glyph.getAnchorDelta(), i) + glyph.getXPlacement() * fontSize;
                         yPlacement = glyph.getYAdvance() * fontSize;
@@ -724,7 +724,7 @@ public class PdfCanvas {
                     }
                     font.writeText(text, i, i, contentStream.getOutputStream());
                     contentStream.getOutputStream().writeBytes(Tj);
-                    if (xPlacement != null) {
+                    if (!Float.isNaN(xPlacement)) {
                         contentStream.getOutputStream()
                                 .writeFloat(-xPlacement, true)
                                 .writeSpace()
@@ -1001,17 +1001,17 @@ public class PdfCanvas {
         double y_cen = (y1 + y2) / 2f;
         double rx = (x2 - x1) / 2f;
         double ry = (y2 - y1) / 2f;
-        double halfAng = (fragAngle * Math.PI / 360.);
-        double kappa = Math.abs(4. / 3. * (1. - Math.cos(halfAng)) / Math.sin(halfAng));
+        double halfAng = (fragAngle * Math.PI / 360.0);
+        double kappa = Math.abs(4.0 / 3.0 * (1.0 - Math.cos(halfAng)) / Math.sin(halfAng));
         List<double[]> pointList = new ArrayList<>();
         for (int iter = 0; iter < Nfrag; ++iter) {
-            double theta0 =  ((startAng + iter * fragAngle) * Math.PI / 180.);
-            double theta1 =  ((startAng + (iter + 1) * fragAngle) * Math.PI / 180.);
+            double theta0 =  ((startAng + iter * fragAngle) * Math.PI / 180.0);
+            double theta1 =  ((startAng + (iter + 1) * fragAngle) * Math.PI / 180.0);
             double cos0 = Math.cos(theta0);
             double cos1 = Math.cos(theta1);
             double sin0 = Math.sin(theta0);
             double sin1 = Math.sin(theta1);
-            if (fragAngle > 0f) {
+            if (fragAngle > 0.0) {
                 pointList.add(new double[]{x_cen + rx * cos0,
                         y_cen - ry * sin0,
                         x_cen + rx * (cos0 - kappa * sin0),
@@ -2030,9 +2030,10 @@ public class PdfCanvas {
         PdfOutputStream out = contentStream.getOutputStream().write(tag).writeSpace();
         if (properties == null) {
             out.writeBytes(BMC);
+        } else if (properties.getIndirectReference() == null) {
+            out.write(properties).writeSpace().writeBytes(BDC);
         } else {
-            PdfObject objectToWrite = properties.getIndirectReference() == null ? properties : resources.addProperties(properties);
-            out.write(objectToWrite).writeSpace().writeBytes(BDC);
+            out.write(resources.addProperties(properties)).writeSpace().writeBytes(BDC);
         }
         return this;
     }
