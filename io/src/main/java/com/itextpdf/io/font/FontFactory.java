@@ -438,49 +438,7 @@ public class FontFactory {
         return cached ? FontCache.saveFont(fontBuilt, ttcPath + ttcIndex) : fontBuilt;
     }
 
-    /**
-     * Creates a new True Type font from ttc bytes array,
-     * <p/>
-     * The fonts may or may not be cached depending on the flag <CODE>cached</CODE>.
-     * If the <CODE>byte</CODE> arrays are present the font will be
-     * read from them instead of the name. A name is still required to identify
-     * the font type.
-     * <p/>
-     * Besides the common encodings described by name, custom encodings
-     * can also be made. These encodings will only work for the single byte fonts
-     * Type1 and TrueType. The encoding string starts with a '#'
-     * followed by "simple" or "full". If "simple" there is a decimal for the first character position and then a list
-     * of hex values representing the Unicode codes that compose that encoding.<br>
-     * The "simple" encoding is recommended for TrueType fonts
-     * as the "full" encoding risks not matching the character with the right glyph
-     * if not done with care.<br>
-     * The "full" encoding is specially aimed at Type1 fonts where the glyphs have to be
-     * described by non standard names like the Tex math fonts. Each group of three elements
-     * compose a code position: the one byte code order in decimal or as 'x' (x cannot be the space), the name and the Unicode character
-     * used to access the glyph. The space must be assigned to character position 32 otherwise
-     * text justification will not work.
-     * <p/>
-     * Example for a "simple" encoding that includes the Unicode
-     * character space, A, B and ecyrillic:
-     * <PRE>
-     * "# simple 32 0020 0041 0042 0454"
-     * </PRE>
-     * <p/>
-     * Example for a "full" encoding for a Type1 Tex font:
-     * <PRE>
-     * "# full 'A' nottriangeqlleft 0041 'B' dividemultiply 0042 32 space 0020"
-     * </PRE>
-     *
-     * @param ttcPath  bytes array of ttc font
-     * @param ttcIndex the encoding to be applied to this font
-     * @return returns a new font.
-     */
-    public static FontProgram createFont(String ttcPath, int ttcIndex) throws java.io.IOException {
-        return createFont(ttcPath, ttcIndex, true);
-    }
-
-    // TODO should we cache fonts based on byte array?
-    static FontProgram createFont(byte[] ttc, int ttcIndex, boolean cached) throws java.io.IOException {
+    public static FontProgram createFont(byte[] ttc, int ttcIndex, boolean cached) throws java.io.IOException {
         if (cached) {
             String ttcNameKey = MessageFormat.format("{0}{1}", ArrayUtil.hashCode(ttc), ttcIndex);
             FontProgram fontFound = FontCache.getFont(ttcNameKey);
@@ -492,11 +450,6 @@ public class FontFactory {
         String ttcNameKey = MessageFormat.format("{0}{1}", ArrayUtil.hashCode(ttc), ttcIndex);
         return cached ? FontCache.saveFont(fontBuilt, ttcNameKey) : fontBuilt;
     }
-
-    public static FontProgram createFont(byte[] ttc, int ttcIndex) throws java.io.IOException {
-        return createFont(ttc, ttcIndex, false);
-    }
-
 
     public static FontProgram createRegisteredFont(String fontName, int style, boolean cached) throws java.io.IOException {
         return fontRegisterProvider.getFont(fontName, style, cached);

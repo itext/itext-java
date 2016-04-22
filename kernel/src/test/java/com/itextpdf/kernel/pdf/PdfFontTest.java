@@ -1,13 +1,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.font.CidFont;
-import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.io.font.FontEncoding;
-import com.itextpdf.io.font.FontFactory;
-import com.itextpdf.io.font.TrueTypeCollection;
-import com.itextpdf.io.font.TrueTypeFont;
-import com.itextpdf.io.font.Type1Font;
+import com.itextpdf.io.font.*;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.color.DeviceRgb;
@@ -1190,7 +1184,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         String font = fontsFolder + "uming.ttc";
 
-        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, 0, "WinAnsi", true);
+        PdfFont pdfTrueTypeFont = PdfFontFactory.createTtcFont(font, 0, PdfEncodings.WINANSI, true, false);
 
         pdfTrueTypeFont.setSubset(true);
         PdfPage page = pdfDoc.addNewPage();
@@ -1208,7 +1202,7 @@ public class PdfFontTest extends ExtendedITextTest {
         page.flush();
 
         byte[] ttc = StreamUtil.inputStreamToArray(new FileInputStream(font));
-        pdfTrueTypeFont = PdfFontFactory.createFont(ttc, 1, "WinAnsi", true);
+        pdfTrueTypeFont = PdfFontFactory.createTtcFont(ttc, 1, PdfEncodings.WINANSI, true, false);
         pdfTrueTypeFont.setSubset(true);
         page = pdfDoc.addNewPage();
         canvas = new PdfCanvas(page);
