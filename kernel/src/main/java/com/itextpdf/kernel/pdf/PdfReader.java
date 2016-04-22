@@ -56,11 +56,8 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
 import com.itextpdf.kernel.pdf.filters.FilterHandler;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
-import com.itextpdf.kernel.security.ExternalDecryptionProcess;
 
 import java.io.*;
-import java.security.Key;
-import java.security.cert.Certificate;
 import java.text.MessageFormat;
 import java.util.Map;
 
@@ -71,35 +68,6 @@ public class PdfReader implements Closeable, Serializable {
 
     private static final long serialVersionUID = -3584187443691964939L;
 
-    protected static boolean correctStreamLength = true;
-
-    protected PdfTokenizer tokens;
-    protected PdfEncryption decrypt;
-    protected PdfVersion pdfVersion;
-    protected long lastXref;
-    protected long eofPos;
-    protected PdfDictionary trailer;
-    protected PdfDocument pdfDocument;
-    protected PdfAConformanceLevel pdfAConformanceLevel;
-
-    protected byte[] password; //added by ujihara for decryption
-
-    protected Key certificateKey; //added by Aiken Sam for certificate decryption
-    protected Certificate certificate; //added by Aiken Sam for certificate decryption
-    protected String certificateKeyProvider; //added by Aiken Sam for certificate decryption
-    protected ExternalDecryptionProcess externalDecryptionProcess;
-
-    private boolean unethicalReading;
-    private PdfObject cryptoDict;
-
-    //indicate nearest first Indirect reference object which includes current reading the object, using for PdfString decrypt
-    private PdfIndirectReference currentIndirectReference;
-    protected boolean encrypted = false;
-    protected boolean rebuiltXref = false;
-    protected boolean hybridXref = false;
-    protected boolean fixedXref = false;
-    protected boolean xrefStm = false;
-
     private static final String endstream1 = "endstream";
     private static final String endstream2 = "\nendstream";
     private static final String endstream3 = "\r\nendstream";
@@ -107,37 +75,56 @@ public class PdfReader implements Closeable, Serializable {
     private static final byte[] endstream = ByteUtils.getIsoBytes("endstream");
     private static final byte[] endobj = ByteUtils.getIsoBytes("endobj");
 
+    protected static boolean correctStreamLength = true;
+
+    private boolean unethicalReading;
+
+    //indicate nearest first Indirect reference object which includes current reading the object, using for PdfString decrypt
+    private PdfIndirectReference currentIndirectReference;
+
+    protected PdfTokenizer tokens;
+    protected PdfEncryption decrypt;
+
+    // here we store only the pdfVersion that is written in the document's header,
+    // however it could differ from the actual pdf version that could be written in document's catalog
+    protected PdfVersion headerPdfVersion;
+    protected long lastXref;
+    protected long eofPos;
+    protected PdfDictionary trailer;
+    protected PdfDocument pdfDocument;
+    protected PdfAConformanceLevel pdfAConformanceLevel;
+
+    protected ReaderProperties properties;
+
+    protected boolean encrypted = false;
+    protected boolean rebuiltXref = false;
+    protected boolean hybridXref = false;
+    protected boolean fixedXref = false;
+    protected boolean xrefStm = false;
+
+
     /**
-     * Constructs a new PdfReader. This is the master constructor.
+     * Constructs a new PdfReader.
      *
-     * @param byteSource                source of bytes for the reader
-     * @param ownerPassword             the password or null if no password is required
-     * @param certificate               the certificate or null if no certificate is required
-     * @param certificateKey            the key or null if no certificate key is required
-     * @param certificateKeyProvider    the name of the key provider, or null if no key is required
-     * @param externalDecryptionProcess External decryption process
+     * @param byteSource source of bytes for the reader
+     * @param properties properties of the created reader
      */
-    public PdfReader(RandomAccessSource byteSource, byte ownerPassword[], Certificate certificate, Key certificateKey,
-                     String certificateKeyProvider, ExternalDecryptionProcess externalDecryptionProcess) throws IOException {
-        this.password = ownerPassword;
-        this.certificate = certificate;
-        this.certificateKey = certificateKey;
-        this.certificateKeyProvider = certificateKeyProvider;
-        this.externalDecryptionProcess = externalDecryptionProcess;
+    public PdfReader(RandomAccessSource byteSource, ReaderProperties properties) throws IOException {
+        this.properties = properties;
         this.tokens = getOffsetTokeniser(byteSource);
     }
 
     /**
      * Reads and parses a PDF document.
      *
-     * @param is            the {@code InputStream} containing the document. The stream is read to the
-     *                      end but is not closed
-     * @param ownerPassword the password or null if no password is required
+     * @param is         the {@code InputStream} containing the document. The stream is read to the
+     *                   end but is not closed
+     * @param properties properties of the created reader
      * @throws IOException                      on error
      * @throws PdfException on error
      */
-    public PdfReader(InputStream is, byte ownerPassword[]) throws IOException {
-        this(new RandomAccessSourceFactory().createSource(is), ownerPassword, null, null, null, null);
+    public PdfReader(InputStream is, ReaderProperties properties) throws IOException {
+        this(new RandomAccessSourceFactory().createSource(is), properties);
     }
 
     /**
@@ -149,27 +136,23 @@ public class PdfReader implements Closeable, Serializable {
      * @throws PdfException on error
      */
     public PdfReader(InputStream is) throws IOException {
-        this(is, null);
+        this(is, new ReaderProperties());
     }
 
     /**
      * Reads and parses a PDF document.
      *
-     * @param filename                  the file name of the document
-     * @param certificate               the certificate or null if no certificate is required
-     * @param externalDecryptionProcess External decryption process
+     * @param filename   the file name of the document
+     * @param properties properties of the created reader
      * @throws IOException on error
      */
-    public PdfReader(final String filename, Certificate certificate, final ExternalDecryptionProcess externalDecryptionProcess) throws IOException {
+    public PdfReader(final String filename, ReaderProperties properties) throws IOException {
         this(
                 new RandomAccessSourceFactory()
                         .setForceRead(false)
                         .createBestSource(filename),
-                null,
-                certificate,
-                null,
-                null,
-                externalDecryptionProcess);
+                properties
+                );
 
     }
 
@@ -180,28 +163,8 @@ public class PdfReader implements Closeable, Serializable {
      * @throws IOException on error
      */
     public PdfReader(final String filename) throws IOException {
-        this(filename, null);
+        this(filename, new ReaderProperties());
 
-    }
-
-    /**
-     * Reads and parses a PDF document.
-     *
-     * @param filename      the file name of the document
-     * @param ownerPassword the password to read the document
-     * @throws IOException on error
-     */
-    public PdfReader(final String filename, final byte ownerPassword[]) throws IOException {
-        this(
-                new RandomAccessSourceFactory()
-                        .setForceRead(false)
-                        .createBestSource(filename),
-                ownerPassword,
-                null,
-                null,
-                null,
-                null
-        );
     }
 
     public void close() throws IOException {
@@ -471,7 +434,7 @@ public class PdfReader implements Closeable, Serializable {
      */
     public byte[] computeUserPassword() {
         if (!encrypted || !decrypt.isOpenedWithFullPermission()) return null;
-        return decrypt.computeUserPassword(password);
+        return decrypt.computeUserPassword(properties.password);
     }
 
     /**
@@ -480,7 +443,7 @@ public class PdfReader implements Closeable, Serializable {
     protected void readPdf() throws IOException {
         String version = tokens.checkPdfHeader();
         try {
-            this.pdfVersion = PdfVersion.fromString(version);
+            this.headerPdfVersion = PdfVersion.fromString(version);
         } catch (IllegalArgumentException exc) {
             throw new PdfException(PdfException.PdfVersionNotValid, version);
         }
@@ -502,11 +465,11 @@ public class PdfReader implements Closeable, Serializable {
 
         PdfName filter = enc.getAsName(PdfName.Filter);
         if (PdfName.Adobe_PubSec.equals(filter)) {
-            decrypt = new PdfEncryption(enc, certificateKey, certificate, certificateKeyProvider, externalDecryptionProcess);
+            decrypt = new PdfEncryption(enc, properties.certificateKey, properties.certificate,
+                    properties.certificateKeyProvider, properties.externalDecryptionProcess);
         } else if (PdfName.Standard.equals(filter)) {
-            decrypt = new PdfEncryption(enc, password, getOriginalFileId());
+            decrypt = new PdfEncryption(enc, properties.password, getOriginalFileId());
         }
-        cryptoDict = enc;
     }
 
     protected void readObjectStream(PdfStream objectStream) throws IOException {
@@ -610,7 +573,7 @@ public class PdfReader implements Closeable, Serializable {
                     pdfString.setDecryptInfoNum(currentIndirectReference.getObjNumber());
                     pdfString.setDecryptInfoGen(currentIndirectReference.getGenNumber());
                 }
-                return password == null || objStm ? pdfString : pdfString.decrypt(decrypt);
+                return properties.password == null || objStm ? pdfString : pdfString.decrypt(decrypt);
             }
             case Name:
                 return readPdfName(readAsDirect);
@@ -1016,10 +979,6 @@ public class PdfReader implements Closeable, Serializable {
 
     public boolean isEncrypted() {
         return encrypted;
-    }
-
-    PdfObject getCryptoDict() {
-        return cryptoDict;
     }
 
     /**

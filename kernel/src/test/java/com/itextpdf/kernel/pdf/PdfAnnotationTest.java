@@ -284,7 +284,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         FileOutputStream fos1 = new FileOutputStream(filename);
         PdfWriter writer1 = new PdfWriter(fos1);
-        writer1.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer1.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc1 = new PdfDocument(writer1);
 
         PdfPage page1 = pdfDoc1.addNewPage();

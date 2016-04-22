@@ -78,18 +78,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     // For internal usage only
     private PdfOutputStream duplicateStream = null;
 
-    /**
-     * Indicates if the writer copy objects in a smart mode. If so PdfDictionary and PdfStream will be hashed
-     * and reused if there's an object with the same content later.
-     */
-    private boolean smartMode;
-
-    /**
-     * Indicates if to use full compression (using object streams).
-     */
-    protected Boolean fullCompression;
-
-    protected int compressionLevel = DEFAULT_COMPRESSION;
+    protected WriterProperties properties;
 
     /**
      * Currently active object stream.
@@ -103,11 +92,31 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     protected boolean isUserWarnedAboutAcroFormCopying;
 
     public PdfWriter(java.io.OutputStream os) {
+        this(os, new WriterProperties());
+    }
+
+    public PdfWriter(java.io.OutputStream os, WriterProperties properties) {
         super(new BufferedOutputStream(os));
+        this.properties = properties;
+        EncryptionProperties encryptProps = properties.encryptionProperties;
+        if (properties.isStandardEncryptionUsed()) {
+            crypto = new PdfEncryption(encryptProps.userPassword, encryptProps.ownerPassword, encryptProps.standardEncryptPermissions,
+                    encryptProps.encryptionAlgorithm, PdfEncryption.generateNewDocumentId());
+        } else if (properties.isPublicKeyEncryptionUsed()) {
+            crypto = new PdfEncryption(encryptProps.publicCertificates,
+                    encryptProps.publicKeyEncryptPermissions, encryptProps.encryptionAlgorithm);
+        }
+        if (properties.debugMode) {
+            setDebugMode();
+        }
     }
 
     public PdfWriter(String filename) throws FileNotFoundException {
-        this(new FileOutputStream(filename));
+        this(new FileOutputStream(filename), new WriterProperties());
+    }
+
+    public PdfWriter(String filename, WriterProperties properties) throws FileNotFoundException {
+        this(new FileOutputStream(filename), properties);
     }
 
     /**
@@ -116,17 +125,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * @return true if to use full compression, false otherwise.
      */
     public boolean isFullCompression() {
-        return fullCompression != null ? fullCompression : false;
-    }
-
-    /**
-     * Sets full compression mode.
-     *
-     * @param fullCompression true if to use full compression, false otherwise.
-     */
-    public PdfWriter setFullCompression(boolean fullCompression) {
-        this.fullCompression = fullCompression;
-        return this;
+        return properties.isFullCompression != null ? properties.isFullCompression : false;
     }
 
     /**
@@ -136,7 +135,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * @return compression level.
      */
     public int getCompressionLevel() {
-        return compressionLevel;
+        return properties.compressionLevel;
     }
 
     /**
@@ -146,7 +145,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * @param compressionLevel compression level.
      */
     public PdfWriter setCompressionLevel(int compressionLevel) {
-        this.compressionLevel = compressionLevel;
+        this.properties.setCompressionLevel(compressionLevel);
         return this;
     }
 
@@ -160,7 +159,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * of the resulting PDF document.
      */
     public PdfWriter setSmartMode(boolean smartMode) {
-        this.smartMode = smartMode;
+        this.properties.smartMode = smartMode;
         return this;
     }
 
@@ -194,20 +193,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         if (duplicateStream != null) {
             duplicateStream.close();
         }
-    }
-
-    /**
-     * This method activates debug mode with pdfDebug tool.
-     * It causes additional overhead of duplicating document bytes into memory, so use it careful.
-     * NEVER use it in production or in any other cases except pdfDebug.
-     *
-     * NOTE that this method MUST be called right after the constructor and before passing the {@link PdfWriter}
-     * instance to the document for correct debugging.
-     * @return this {@link PdfWriter}
-     */
-    public PdfWriter setDebugMode() {
-        duplicateStream = new PdfOutputStream(new ByteArrayOutputStream());
-        return this;
     }
 
     /**
@@ -271,39 +256,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         }
     }
 
-    private void markArrayContentToFlush(PdfArray array) {
-        for (PdfObject item : array) {
-            markObjectToFlush(item);
-        }
-    }
-
-    private void markDictionaryContentToFlush(PdfDictionary dictionary) {
-        for (PdfObject item : dictionary.values()) {
-            markObjectToFlush(item);
-        }
-    }
-
-    private void markObjectToFlush(PdfObject pdfObject) {
-        if (pdfObject != null) {
-            PdfIndirectReference indirectReference = pdfObject.getIndirectReference();
-            if (indirectReference != null) {
-                if (!indirectReference.checkState(PdfObject.FLUSHED)) {
-                    indirectReference.setState(PdfObject.MUST_BE_FLUSHED);
-                }
-            } else {
-                if (pdfObject.getType() == PdfObject.INDIRECT_REFERENCE) {
-                    if (!pdfObject.checkState(PdfObject.FLUSHED)) {
-                        pdfObject.setState(PdfObject.MUST_BE_FLUSHED);
-                    }
-                } else if (pdfObject.getType() == PdfObject.ARRAY) {
-                    markArrayContentToFlush((PdfArray) pdfObject);
-                } else if (pdfObject.getType() == PdfObject.DICTIONARY) {
-                    markDictionaryContentToFlush((PdfDictionary) pdfObject);
-                }
-            }
-        }
-    }
-
     protected PdfObject copyObject(PdfObject object, PdfDocument document, boolean allowDuplicating) {
         if (object instanceof PdfIndirectReference)
             object = ((PdfIndirectReference) object).getRefersTo();
@@ -327,7 +279,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
                 return copiedIndirectReference.getRefersTo();
         }
 
-        if (smartMode && !checkTypeOfPdfDictionary(object, PdfName.Page)) {
+        if (properties.smartMode && !checkTypeOfPdfDictionary(object, PdfName.Page)) {
             PdfObject copiedObject = smartCopyObject(object);
             if (copiedObject != null) {
                 return copiedObjects.get(getCopyObjectKey(copiedObject)).getRefersTo();
@@ -444,14 +396,42 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         return result;
     }
 
-    /**
-     * This method is invoked while deserialization
-     */
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        if (outputStream == null) {
-            outputStream = new BufferedOutputStream(new ByteArrayOutputStream().assignBytes(getDebugBytes()));
+    private void markArrayContentToFlush(PdfArray array) {
+        for (PdfObject item : array) {
+            markObjectToFlush(item);
         }
+    }
+
+    private void markDictionaryContentToFlush(PdfDictionary dictionary) {
+        for (PdfObject item : dictionary.values()) {
+            markObjectToFlush(item);
+        }
+    }
+
+    private void markObjectToFlush(PdfObject pdfObject) {
+        if (pdfObject != null) {
+            PdfIndirectReference indirectReference = pdfObject.getIndirectReference();
+            if (indirectReference != null) {
+                if (!indirectReference.checkState(PdfObject.FLUSHED)) {
+                    indirectReference.setState(PdfObject.MUST_BE_FLUSHED);
+                }
+            } else {
+                if (pdfObject.getType() == PdfObject.INDIRECT_REFERENCE) {
+                    if (!pdfObject.checkState(PdfObject.FLUSHED)) {
+                        pdfObject.setState(PdfObject.MUST_BE_FLUSHED);
+                    }
+                } else if (pdfObject.getType() == PdfObject.ARRAY) {
+                    markArrayContentToFlush((PdfArray) pdfObject);
+                } else if (pdfObject.getType() == PdfObject.DICTIONARY) {
+                    markDictionaryContentToFlush((PdfDictionary) pdfObject);
+                }
+            }
+        }
+    }
+
+    private PdfWriter setDebugMode() {
+        duplicateStream = new PdfOutputStream(new ByteArrayOutputStream());
+        return this;
     }
 
     private PdfObject smartCopyObject(PdfObject object) {
@@ -475,19 +455,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         return null;
     }
 
-    /**
-     * This method is invoked while serialization
-     */
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-        if (duplicateStream == null) {
-            throw new NotSerializableException(this.getClass().getName() + ": debug mode is disabled!");
-        }
-        OutputStream tempOutputStream = outputStream;
-        outputStream = null;
-        out.defaultWriteObject();
-        outputStream = tempOutputStream;
-    }
-
     private byte[] getDebugBytes() throws IOException {
         if (duplicateStream != null) {
             duplicateStream.flush();
@@ -499,6 +466,29 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     private static boolean checkTypeOfPdfDictionary(PdfObject dictionary, PdfName expectedType) {
         return dictionary.isDictionary() && expectedType.equals(((PdfDictionary)dictionary).getAsName(PdfName.Type));
+    }
+
+    /**
+     * This method is invoked while deserialization
+     */
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        if (outputStream == null) {
+            outputStream = new BufferedOutputStream(new ByteArrayOutputStream().assignBytes(getDebugBytes()));
+        }
+    }
+
+    /**
+     * This method is invoked while serialization
+     */
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+        if (duplicateStream == null) {
+            throw new NotSerializableException(this.getClass().getName() + ": debug mode is disabled!");
+        }
+        OutputStream tempOutputStream = outputStream;
+        outputStream = null;
+        out.defaultWriteObject();
+        outputStream = tempOutputStream;
     }
 
     static class ByteStore {

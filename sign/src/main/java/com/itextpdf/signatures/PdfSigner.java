@@ -66,6 +66,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.forms.PdfAcroForm;
@@ -239,9 +240,14 @@ public class PdfSigner {
      * @throws IOException
      */
     public PdfSigner(PdfReader reader, OutputStream outputStream, File tempFile, boolean append) throws IOException {
+        StampingProperties properties = new StampingProperties()
+                .preserveEncryption();
+        if (append) {
+            properties.useAppendMode();
+        }
         if (tempFile == null) {
             temporaryOS = new ByteArrayOutputStream();
-            document = new PdfDocument(reader, new PdfWriter(temporaryOS), append);
+            document = new PdfDocument(reader, new PdfWriter(temporaryOS), properties);
         } else {
             if (tempFile.isDirectory()) {
                 tempFile = File.createTempFile("pdf", null, tempFile);
@@ -249,7 +255,8 @@ public class PdfSigner {
 
             OutputStream os = new FileOutputStream(tempFile);
             this.tempFile = tempFile;
-            document = new PdfDocument(reader, new PdfWriter(os), append);
+
+            document = new PdfDocument(reader, new PdfWriter(os), properties);
         }
 
         originalOS = outputStream;

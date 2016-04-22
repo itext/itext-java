@@ -41,7 +41,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     public void structElemTest01() throws Exception {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "structElemTest01.pdf");
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
         PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, com.itextpdf.kernel.pdf.PdfName.Document));
@@ -92,7 +92,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     public void structElemTest02() throws Exception {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "structElemTest02.pdf");
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
         document.getStructTreeRoot().getRoleMap().put(new com.itextpdf.kernel.pdf.PdfName("Chunk"), com.itextpdf.kernel.pdf.PdfName.Span);
@@ -125,7 +125,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     public void structElemTest03() throws Exception {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "structElemTest03.pdf");
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
         document.getStructTreeRoot().getRoleMap().put(new com.itextpdf.kernel.pdf.PdfName("Chunk"), com.itextpdf.kernel.pdf.PdfName.Span);
@@ -182,7 +182,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     public void structElemTest04() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(baos);
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
         document.getStructTreeRoot().getRoleMap().put(new com.itextpdf.kernel.pdf.PdfName("Chunk"), com.itextpdf.kernel.pdf.PdfName.Span);
@@ -211,7 +211,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
         com.itextpdf.kernel.pdf.PdfReader reader = new com.itextpdf.kernel.pdf.PdfReader(new ByteArrayInputStream(bytes));
         writer = new PdfWriter(new FileOutputStream(destinationFolder + "structElemTest04.pdf"));
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         document = new PdfDocument(reader, writer);
 
         page = document.getPage(1);
@@ -249,7 +249,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     public void structElemTest05() throws Exception {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "structElemTest05.pdf");
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
         PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, com.itextpdf.kernel.pdf.PdfName.Document));
@@ -291,7 +291,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     public void structElemTest06() throws Exception {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "structElemTest06.pdf");
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
         PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, com.itextpdf.kernel.pdf.PdfName.Document));

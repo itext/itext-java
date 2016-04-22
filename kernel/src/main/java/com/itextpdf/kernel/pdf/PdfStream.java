@@ -91,7 +91,7 @@ public class PdfStream extends PdfDictionary {
      * @param bytes bytes to write to the PdfStream
      */
     public PdfStream(byte[] bytes) {
-        this(bytes, PdfWriter.UNDEFINED_COMPRESSION);
+        this(bytes, CompressionConstants.UNDEFINED_COMPRESSION);
     }
 
     /**
@@ -141,7 +141,7 @@ public class PdfStream extends PdfDictionary {
      * @throws PdfException on error.
      */
     public PdfStream(PdfDocument doc, InputStream inputStream) {
-        this(doc, inputStream, PdfWriter.UNDEFINED_COMPRESSION);
+        this(doc, inputStream, CompressionConstants.UNDEFINED_COMPRESSION);
     }
 
     /**
@@ -164,7 +164,7 @@ public class PdfStream extends PdfDictionary {
     //NOTE This constructor only for PdfReader.
     PdfStream(long offset, PdfDictionary keys) {
         super();
-        this.compressionLevel = PdfOutputStream.UNDEFINED_COMPRESSION;
+        this.compressionLevel = CompressionConstants.UNDEFINED_COMPRESSION;
         this.offset = offset;
         putAll(keys);
         PdfNumber length = getAsNumber(PdfName.Length);

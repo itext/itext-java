@@ -44,6 +44,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.kernel.PdfException;
@@ -72,6 +73,8 @@ import com.itextpdf.kernel.xmp.options.SerializeOptions;
 
 import java.io.*;
 import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
@@ -123,7 +126,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     protected PdfDocumentInfo info = null;
 
     /**
-     * Document version. 1.7 by default.
+     * Document version.
      */
     protected PdfVersion pdfVersion = PdfVersion.PDF_1_7;
 
@@ -132,10 +135,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     final PdfXrefTable xref = new PdfXrefTable();
 
-    /**
-     * Indicate incremental updates mode of stamping mode.
-     */
-    protected final boolean appendMode;
+    protected final StampingProperties properties;
 
     protected PdfStructTreeRoot structTreeRoot;
 
@@ -176,7 +176,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             throw new NullPointerException("reader");
         }
         this.reader = reader;
-        this.appendMode = false;
+        this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
         open(null);
     }
 
@@ -187,71 +187,33 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param writer PDF writer
      */
     public PdfDocument(PdfWriter writer) {
-        this(writer, PdfVersion.PDF_1_7);
-    }
-
-    /**
-     * Open PDF document in writing mode.
-     * Document has no pages when initialized.
-     *
-     * @param writer     PDF writer
-     * @param pdfVersion pdf version of the resultant document
-     */
-    public PdfDocument(PdfWriter writer, PdfVersion pdfVersion) {
         if (writer == null) {
             throw new NullPointerException("writer");
         }
         this.writer = writer;
-        this.appendMode = false;
-        this.pdfVersion = pdfVersion;
-        open(pdfVersion);
-    }
-
-    /**
-     * Open PDF document in stamping mode.
-     *
-     * @param reader PDF reader.
-     * @param writer PDF writer.
-     * @param append if true, incremental updates will
-     */
-    public PdfDocument(PdfReader reader, PdfWriter writer, boolean append) {
-        this(reader, writer, append, null);
+        this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
+        open(writer.properties.pdfVersion);
     }
 
     /**
      * Opens PDF document in the stamping mode.
      * <br/>
-     * Note: to enable append mode use {@link #PdfDocument(PdfReader, PdfWriter, boolean)} instead.
-     *
+
      * @param reader PDF reader.
      * @param writer PDF writer.
      */
     public PdfDocument(PdfReader reader, PdfWriter writer) {
-        this(reader, writer, false);
-    }
-
-    /**
-     * Opens PDF document in the stamping mode.
-     * <br/>
-     * Note: to enable append mode use {@link #PdfDocument(PdfReader, PdfWriter, boolean)} instead.
-     *
-     * @param reader        PDF reader.
-     * @param writer        PDF writer.
-     * @param newPdfVersion the pdf version of the resultant file.
-     */
-    public PdfDocument(PdfReader reader, PdfWriter writer, PdfVersion newPdfVersion) {
-        this(reader, writer, false, newPdfVersion);
+        this(reader, writer, new StampingProperties());
     }
 
     /**
      * Open PDF document in stamping mode.
      *
-     * @param reader        PDF reader.
-     * @param writer        PDF writer.
-     * @param append        if true, incremental updates will
-     * @param newPdfVersion the pdf version of the resultant file, or null to leave it as is.
+     * @param reader PDF reader.
+     * @param writer PDF writer.
+     * @param properties properties of the stamping process
      */
-    public PdfDocument(PdfReader reader, PdfWriter writer, boolean append, PdfVersion newPdfVersion) {
+    public PdfDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
         if (reader == null) {
             throw new NullPointerException("reader");
         }
@@ -260,9 +222,19 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
         this.reader = reader;
         this.writer = writer;
-        this.appendMode = append;
+        this.properties = properties;
 
-        open(newPdfVersion);
+        boolean writerHasEncryption = writer.properties.isStandardEncryptionUsed() || writer.properties.isPublicKeyEncryptionUsed();
+        if (properties.appendMode && writerHasEncryption) {
+            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+            logger.warn(LogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_APPEND);
+        }
+        if (properties.preserveEncryption && writerHasEncryption) {
+            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+            logger.warn(LogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_PRESERVE);
+        }
+
+        open(writer.properties.pdfVersion);
     }
 
     /**
@@ -616,7 +588,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public boolean isAppendMode() {
         checkClosingStatus();
-        return appendMode;
+        return properties.appendMode;
     }
 
     /**
@@ -665,7 +637,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     xmp.getOutputStream().write(xmpMetadata);
                     xmp.put(PdfName.Type, PdfName.Metadata);
                     xmp.put(PdfName.Subtype, PdfName.XML);
-                    PdfEncryption crypto = writer.getEncryption();
+                    PdfEncryption crypto = writer.crypto;
                     if (crypto != null && !crypto.isMetadataEncrypted()) {
                         PdfArray ar = new PdfArray();
                         ar.add(PdfName.Crypt);
@@ -675,7 +647,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 }
                 checkIsoConformance();
                 PdfObject crypto = null;
-                if (appendMode) {
+                if (properties.appendMode) {
                     if (structTreeRoot != null && structTreeRoot.getPdfObject().isModified()) {
                         getTagStructureContext().removeAllConnectionsToTags();
                         structTreeRoot.flush();
@@ -707,8 +679,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
                     writer.flushModifiedWaitingObjects();
                     if (writer.crypto != null) {
-                        assert reader.getCryptoDict() == writer.crypto.getPdfObject() : "Conflict with source encryption";
-                        crypto = reader.getCryptoDict();
+                        assert reader.decrypt.getPdfObject() == writer.crypto.getPdfObject() : "Conflict with source encryption";
+                        crypto = reader.decrypt.getPdfObject();
                     }
                 } else {
                     if (structTreeRoot != null) {
@@ -1270,7 +1242,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             if (reader != null) {
                 reader.pdfDocument = this;
                 reader.readPdf();
-                pdfVersion = reader.pdfVersion;
+                pdfVersion = reader.headerPdfVersion;
                 trailer = new PdfDictionary(reader.trailer);
                 catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true));
                 if (catalog.getPdfObject().containsKey(PdfName.Version)) {
@@ -1296,15 +1268,18 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     structTreeRoot = new PdfStructTreeRoot(str);
                     structParentIndex = getStructTreeRoot().getParentTreeNextKey();
                 }
-                if (appendMode && (reader.hasRebuiltXref() || reader.hasFixedXref()))
+                if (properties.appendMode && (reader.hasRebuiltXref() || reader.hasFixedXref()))
                     throw new PdfException(PdfException.AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible);
             }
             if (writer != null) {
-                if (reader != null && reader.xrefStm && writer.fullCompression == null) {
-                    writer.setFullCompression(true);
+                if (reader != null && reader.hasXrefStm() && writer.properties.isFullCompression == null) {
+                    writer.properties.isFullCompression = true;
                 }
                 if (reader != null && !reader.isOpenedWithFullPermission()) {
                     throw new BadPasswordException(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);
+                }
+                if (reader != null && properties.preserveEncryption) {
+                    writer.crypto = reader.decrypt;
                 }
                 writer.document = this;
                 if (reader == null) {
@@ -1319,7 +1294,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 trailer.put(PdfName.Root, catalog.getPdfObject().getIndirectReference());
                 trailer.put(PdfName.Info, info.getPdfObject().getIndirectReference());
             }
-            if (appendMode) {       // Due to constructor reader and writer not null.
+            if (properties.appendMode) {       // Due to constructor reader and writer not null.
                 assert reader != null;
                 RandomAccessFileOrArray file = reader.tokens.getSafeFile();
                 int n;
@@ -1330,11 +1305,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 file.close();
                 writer.write((byte) '\n');
                 //TODO log if full compression differs
-                writer.setFullCompression(reader.hasXrefStm());
+                writer.properties.isFullCompression = reader.hasXrefStm();
 
-                if (writer.crypto != null) {
-                    // TODO log that writer crypto will be ignored
-                }
                 writer.crypto = reader.decrypt;
 
                 if (newPdfVersion != null) {
@@ -1345,7 +1317,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         // version specified in the header.
 
                         // So only update the version if it is older than the one in the header
-                        if (newPdfVersion.compareTo(reader.pdfVersion) > 0) {
+                        if (newPdfVersion.compareTo(reader.headerPdfVersion) > 0) {
                             catalog.put(PdfName.Version, newPdfVersion.toPdfName());
                             catalog.setModified();
                             pdfVersion = newPdfVersion;
@@ -1385,7 +1357,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     protected void flushFonts() {
-        if (appendMode) {
+        if (properties.appendMode) {
             for (PdfFont font : getDocumentFonts()) {
                 if (font.getPdfObject().getIndirectReference().checkState(PdfObject.MODIFIED)) {
                     font.flush();

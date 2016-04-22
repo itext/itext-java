@@ -310,8 +310,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(destinationFolder + "simpleCanvasWithFullCompression.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        writer.setFullCompression(true);
+        PdfWriter writer = new PdfWriter(fos, new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -343,8 +342,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(destinationFolder + "simpleCanvasWithPageFlushAndFullCompression.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        writer.setFullCompression(true);
+        PdfWriter writer = new PdfWriter(fos, new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -566,8 +564,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(filename);
-        PdfWriter writer = new PdfWriter(fos);
-        writer.setFullCompression(true);
+        PdfWriter writer = new PdfWriter(fos, new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -614,8 +611,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(filename);
-        PdfWriter writer = new PdfWriter(fos);
-        writer.setFullCompression(true);
+        PdfWriter writer = new PdfWriter(fos, new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -662,8 +658,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(filename);
-        PdfWriter writer = new PdfWriter(fos);
-        writer.setFullCompression(true);
+        PdfWriter writer = new PdfWriter(fos, new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -710,8 +705,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String title = "Empty iText 6 Document";
 
         FileOutputStream fos = new FileOutputStream(filename);
-        PdfWriter writer = new PdfWriter(fos);
-        writer.setFullCompression(true);
+        PdfWriter writer = new PdfWriter(fos, new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -1187,7 +1181,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     public void colorTest02() throws Exception {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest02.pdf");
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         final PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -1221,7 +1215,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     public void colorTest03() throws Exception {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest03.pdf");
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         final PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -1256,7 +1250,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         //Create document with 3 colored rectangles in memory.
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(baos);
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -1325,7 +1319,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest06.pdf");
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
 
@@ -1345,7 +1339,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     public void colorTest07() throws Exception {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest07.pdf");
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
 
@@ -1366,7 +1360,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     public void colorTest08() throws Exception {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest08.pdf");
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
 

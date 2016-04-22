@@ -57,6 +57,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.xmp.XMPConst;
@@ -83,11 +84,11 @@ public class PdfADocument extends PdfDocument {
     }
 
     public PdfADocument(PdfReader reader, PdfWriter writer) {
-        this(reader, writer, false);
+        this(reader, writer, new StampingProperties());
     }
 
-    public PdfADocument(PdfReader reader, PdfWriter writer, boolean append) {
-        super(reader, writer, append);
+    public PdfADocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
+        super(reader, writer, properties);
 
         byte[] existingXmpMetadata = getXmpMetadata();
         if (existingXmpMetadata == null) {

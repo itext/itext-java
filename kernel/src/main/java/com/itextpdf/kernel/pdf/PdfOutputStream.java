@@ -65,100 +65,6 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
 
     private static final long serialVersionUID = -548180479472231600L;
 
-    //TODO review location and use of the constants
-    /**
-     * Type of encryption.
-     */
-    public static final int STANDARD_ENCRYPTION_40 = 0;
-    /**
-     * Type of encryption.
-     */
-    public static final int STANDARD_ENCRYPTION_128 = 1;
-    /**
-     * Type of encryption.
-     */
-    public static final int ENCRYPTION_AES_128 = 2;
-    /**
-     * Type of encryption.
-     */
-    public static final int ENCRYPTION_AES_256 = 3;
-    /**
-     * Mask to separate the encryption type from the encryption mode.
-     */
-    static final int ENCRYPTION_MASK = 7;
-    /**
-     * Add this to the mode to keep the metadata in clear text.
-     */
-    public static final int DO_NOT_ENCRYPT_METADATA = 8;
-    /**
-     * Add this to the mode to keep encrypt only the embedded files.
-     */
-    public static final int EMBEDDED_FILES_ONLY = 24;
-
-    // permissions
-    /**
-     * The operation permitted when the document is opened with the user password.
-     */
-    public static final int ALLOW_PRINTING = 4 + 2048;
-
-    /**
-     * The operation permitted when the document is opened with the user password.
-     */
-    public static final int ALLOW_MODIFY_CONTENTS = 8;
-
-    /**
-     * The operation permitted when the document is opened with the user password.
-     */
-    public static final int ALLOW_COPY = 16;
-
-    /**
-     * The operation permitted when the document is opened with the user password.
-     */
-    public static final int ALLOW_MODIFY_ANNOTATIONS = 32;
-
-    /**
-     * The operation permitted when the document is opened with the user password.
-     */
-    public static final int ALLOW_FILL_IN = 256;
-
-    /**
-     * The operation permitted when the document is opened with the user password.
-     */
-    public static final int ALLOW_SCREENREADERS = 512;
-
-    /**
-     * The operation permitted when the document is opened with the user password.
-     */
-    public static final int ALLOW_ASSEMBLY = 1024;
-
-    /**
-     * The operation permitted when the document is opened with the user password.
-     */
-    public static final int ALLOW_DEGRADED_PRINTING = 4;
-
-
-    // compression constants
-    /**
-     * A possible compression level.
-     */
-    public static final int UNDEFINED_COMPRESSION = Integer.MIN_VALUE;
-    /**
-     * A possible compression level.
-     */
-    public static final int DEFAULT_COMPRESSION = java.util.zip.Deflater.DEFAULT_COMPRESSION;
-    /**
-     * A possible compression level.
-     */
-    public static final int NO_COMPRESSION = java.util.zip.Deflater.NO_COMPRESSION;
-    /**
-     * A possible compression level.
-     */
-    public static final int BEST_SPEED = java.util.zip.Deflater.BEST_SPEED;
-    /**
-     * A possible compression level.
-     */
-    public static final int BEST_COMPRESSION = java.util.zip.Deflater.BEST_COMPRESSION;
-
     private static final byte[] stream = ByteUtils.getIsoBytes("stream\n");
     private static final byte[] endstream = ByteUtils.getIsoBytes("\nendstream");
     private static final byte[] openDict = ByteUtils.getIsoBytes("<<");
@@ -222,51 +128,6 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
                 break;
         }
         return this;
-    }
-
-    /**
-     * Sets the encryption options for this document. The userPassword and the
-     * ownerPassword can be null or have zero length. In this case the ownerPassword
-     * is replaced by a random string. The open permissions for the document can be
-     * AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
-     * AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
-     * The permissions can be combined by ORing them.
-     *
-     * @param userPassword   the user password. Can be null or empty
-     * @param ownerPassword  the owner password. Can be null or empty
-     * @param permissions    the user permissions
-     * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128 or ENCRYPTION_AES128.
-     *                       Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
-     * @throws PdfException if the document is already open
-     */
-    public void setEncryption(final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType) {
-        if (document != null)
-            throw new PdfException(PdfException.EncryptionCanOnlyBeAddedBeforeOpeningDocument);
-        crypto = new PdfEncryption(userPassword, ownerPassword, permissions, encryptionType, PdfEncryption.generateNewDocumentId());
-    }
-
-    /**
-     * Sets the certificate encryption options for this document. An array of one or more public certificates
-     * must be provided together with an array of the same size for the permissions for each certificate.
-     * The open permissions for the document can be
-     * AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
-     * AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
-     * The permissions can be combined by ORing them.
-     * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
-     *
-     * @param certs          the public certificates to be used for the encryption
-     * @param permissions    the user permissions for each of the certificates
-     * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128 or ENCRYPTION_AES128.
-     * @throws PdfException if the document is already open
-     */
-    public void setEncryption(final Certificate[] certs, final int[] permissions, final int encryptionType) {
-        if (document != null)
-            throw new PdfException(PdfException.EncryptionCanOnlyBeAddedBeforeOpeningDocument);
-        crypto = new PdfEncryption(certs, permissions, encryptionType);
-    }
-
-    PdfEncryption getEncryption() {
-        return crypto;
     }
 
     protected void writePdfArray(PdfArray pdfArray) {
@@ -382,14 +243,14 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
 
     protected void writePdfStream(PdfStream pdfStream) {
         try {
-            boolean userDefinedCompression = pdfStream.getCompressionLevel() != UNDEFINED_COMPRESSION;
+            boolean userDefinedCompression = pdfStream.getCompressionLevel() != CompressionConstants.UNDEFINED_COMPRESSION;
             if (!userDefinedCompression) {
                 int defaultCompressionLevel = document != null ?
                         document.getWriter().getCompressionLevel() :
-                        DEFAULT_COMPRESSION;
+                        CompressionConstants.DEFAULT_COMPRESSION;
                 pdfStream.setCompressionLevel(defaultCompressionLevel);
             }
-            boolean toCompress = pdfStream.getCompressionLevel() != NO_COMPRESSION;
+            boolean toCompress = pdfStream.getCompressionLevel() != CompressionConstants.NO_COMPRESSION;
             boolean allowCompression = !pdfStream.containsKey(PdfName.Filter) && isNotMetadataPdfStream(pdfStream);
 
             if (pdfStream.getInputStream() != null) {

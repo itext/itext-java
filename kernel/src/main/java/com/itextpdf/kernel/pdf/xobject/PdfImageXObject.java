@@ -53,6 +53,7 @@ import com.itextpdf.io.image.RawImage;
 import com.itextpdf.io.image.RawImageHelper;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.Version;
+import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -184,7 +185,7 @@ public class PdfImageXObject extends PdfXObject {
         stream = new PdfStream(image.getData());
         String filter = image.getFilter();
         if (filter != null && filter.equals("JPXDecode") && image.getColorSpace() <= 0) {
-            stream.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+            stream.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
             image.setBpc(0);
         }
         stream.put(PdfName.Type, PdfName.XObject);

@@ -47,7 +47,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
     @Test
     public void tagTreePointerTest01() throws Exception {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "tagTreePointerTest01.pdf");
-        PdfWriter writer = new PdfWriter(fos).setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        PdfWriter writer = new PdfWriter(fos).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
 
@@ -111,7 +111,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
     public void tagTreePointerTest02() throws Exception {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "tagTreePointerTest02.pdf");
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
 
@@ -157,7 +157,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
     public void tagTreePointerTest03() throws Exception {
         PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
         PdfWriter writer = new PdfWriter(destinationFolder + "tagTreePointerTest03.pdf");
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(reader, writer);
 
         TagTreePointer tagPointer = new TagTreePointer(document);
@@ -203,7 +203,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
     @Test
     public void tagTreePointerTest04() throws Exception {
         PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
-        PdfWriter writer = new PdfWriter(destinationFolder + "tagTreePointerTest04.pdf").setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        PdfWriter writer = new PdfWriter(destinationFolder + "tagTreePointerTest04.pdf").setCompressionLevel(CompressionConstants.NO_COMPRESSION);
             PdfDocument document = new PdfDocument(reader, writer);
 
         TagTreePointer tagPointer = new TagTreePointer(document);
@@ -224,7 +224,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
     public void tagTreePointerTest05() throws Exception {
         PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
         PdfWriter writer = new PdfWriter(destinationFolder + "tagTreePointerTest05.pdf");
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(reader, writer);
 
         TagTreePointer tagPointer1 = new TagTreePointer(document);
@@ -248,7 +248,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
     public void tagTreePointerTest06() throws Exception {
         PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
         PdfWriter writer = new PdfWriter(destinationFolder + "tagTreePointerTest06.pdf");
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(reader, writer);
 
         TagTreePointer tagPointer = new TagTreePointer(document);
@@ -276,7 +276,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
     public void tagStructureFlushingTest01() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
         PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
         PdfWriter writer = new PdfWriter(destinationFolder + "tagStructureFlushingTest01.pdf");
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(reader, writer);
 
         TagTreePointer tagPointer = new TagTreePointer(document);
@@ -301,7 +301,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
     public void tagStructureFlushingTest02() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
         PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
         PdfWriter writer = new PdfWriter(destinationFolder + "tagStructureFlushingTest02.pdf");
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(reader, writer);
 
         TagStructureContext tagStructure = document.getTagStructureContext();
@@ -322,7 +322,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
     public void tagStructureFlushingTest03() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
         PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
         PdfWriter writer = new PdfWriter(destinationFolder + "tagStructureFlushingTest03.pdf");
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(reader, writer);
 
         document.getPage(2).flush();
@@ -341,7 +341,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
     public void tagStructureFlushingTest04() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
         PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
         PdfWriter writer = new PdfWriter(destinationFolder + "tagStructureFlushingTest04.pdf");
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(reader, writer);
 
         TagTreePointer tagPointer = new TagTreePointer(document);
@@ -364,7 +364,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
     @Test
     public void tagStructureFlushingTest05() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
         PdfWriter writer = new PdfWriter(destinationFolder + "tagStructureFlushingTest05.pdf");
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
 
@@ -453,7 +453,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
     public void tagStructureRemovingTest01() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
         PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
         PdfWriter writer = new PdfWriter(destinationFolder + "tagStructureRemovingTest01.pdf");
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(reader, writer);
         document.removePage(1);
         document.close();
@@ -465,7 +465,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
     public void tagStructureRemovingTest02() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
         PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
         PdfWriter writer = new PdfWriter(destinationFolder + "tagStructureRemovingTest02.pdf");
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(reader, writer);
 
         PdfPage firstPage = document.getPage(1);
@@ -505,7 +505,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
     @Test
     public void tagStructureRemovingTest03() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
         PdfWriter writer = new PdfWriter(destinationFolder + "tagStructureRemovingTest03.pdf");
-        writer.setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
 
@@ -561,7 +561,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
     @Test
     public void tagStructureRemovingTest04() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
         PdfReader reader = new PdfReader(sourceFolder + "taggedDocumentWithAnnots.pdf");
-        PdfWriter writer = new PdfWriter(destinationFolder + "tagStructureRemovingTest04.pdf").setCompressionLevel(PdfWriter.NO_COMPRESSION);
+        PdfWriter writer = new PdfWriter(destinationFolder + "tagStructureRemovingTest04.pdf").setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(reader, writer);
         document.removePage(1);
         document.close();

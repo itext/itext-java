@@ -359,17 +359,17 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     private int setCryptoMode(int mode, int length) {
         int revision;
         cryptoMode = mode;
-        encryptMetadata = (mode & PdfWriter.DO_NOT_ENCRYPT_METADATA) != PdfWriter.DO_NOT_ENCRYPT_METADATA;
-        embeddedFilesOnly = (mode & PdfWriter.EMBEDDED_FILES_ONLY) == PdfWriter.EMBEDDED_FILES_ONLY;
-        mode &= PdfWriter.ENCRYPTION_MASK;
+        encryptMetadata = (mode & EncryptionConstants.DO_NOT_ENCRYPT_METADATA) != EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
+        embeddedFilesOnly = (mode & EncryptionConstants.EMBEDDED_FILES_ONLY) == EncryptionConstants.EMBEDDED_FILES_ONLY;
+        mode &= EncryptionConstants.ENCRYPTION_MASK;
         switch (mode) {
-            case PdfWriter.STANDARD_ENCRYPTION_40:
+            case EncryptionConstants.STANDARD_ENCRYPTION_40:
                 encryptMetadata = true;
                 embeddedFilesOnly = false;
                 setKeyLength(40);
                 revision = STANDARD_ENCRYPTION_40;
                 break;
-            case PdfWriter.STANDARD_ENCRYPTION_128:
+            case EncryptionConstants.STANDARD_ENCRYPTION_128:
                 embeddedFilesOnly = false;
                 if (length > 0) {
                     setKeyLength(length);
@@ -378,11 +378,11 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 }
                 revision = STANDARD_ENCRYPTION_128;
                 break;
-            case PdfWriter.ENCRYPTION_AES_128:
+            case EncryptionConstants.ENCRYPTION_AES_128:
                 setKeyLength(128);
                 revision = AES_128;
                 break;
-            case PdfWriter.ENCRYPTION_AES_256:
+            case EncryptionConstants.ENCRYPTION_AES_256:
                 setKeyLength(256);
                 revision = AES_256;
                 break;
@@ -402,7 +402,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         int revision  = rValue.intValue();
         switch (revision) {
             case 2:
-                cryptoMode = PdfWriter.STANDARD_ENCRYPTION_40;
+                cryptoMode = EncryptionConstants.STANDARD_ENCRYPTION_40;
                 break;
             case 3:
                 PdfNumber lengthValue = encDict.getAsNumber(PdfName.Length);
@@ -411,7 +411,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 length = lengthValue.intValue();
                 if (length > 128 || length < 40 || length % 8 != 0)
                     throw new PdfException(PdfException.IllegalLengthValue);
-                cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
+                cryptoMode = EncryptionConstants.STANDARD_ENCRYPTION_128;
                 break;
             case 4:
                 PdfDictionary dic = (PdfDictionary) encDict.get(PdfName.CF);
@@ -421,22 +421,22 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 if (dic == null)
                     throw new PdfException(PdfException.StdcfNotFoundEncryption);
                 if (PdfName.V2.equals(dic.get(PdfName.CFM))) {
-                    cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
+                    cryptoMode = EncryptionConstants.STANDARD_ENCRYPTION_128;
                 } else if (PdfName.AESV2.equals(dic.get(PdfName.CFM))) {
-                    cryptoMode = PdfWriter.ENCRYPTION_AES_128;
+                    cryptoMode = EncryptionConstants.ENCRYPTION_AES_128;
                 } else {
                     throw new PdfException(PdfException.NoCompatibleEncryptionFound);
                 }
                 PdfBoolean em = encDict.getAsBoolean(PdfName.EncryptMetadata);
                 if (em != null && !em.getValue()) {
-                    cryptoMode |= PdfWriter.DO_NOT_ENCRYPT_METADATA;
+                    cryptoMode |= EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
                 }
                 break;
             case 5:
-                cryptoMode = PdfWriter.ENCRYPTION_AES_256;
+                cryptoMode = EncryptionConstants.ENCRYPTION_AES_256;
                 PdfBoolean em5 = encDict.getAsBoolean(PdfName.EncryptMetadata);
                 if (em5 != null && !em5.getValue()) {
-                    cryptoMode |= PdfWriter.DO_NOT_ENCRYPT_METADATA;
+                    cryptoMode |= EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
                 }
                 break;
             default:
@@ -457,7 +457,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         int v = vValue.intValue();
         switch (v) {
             case 1:
-                cryptoMode = PdfWriter.STANDARD_ENCRYPTION_40;
+                cryptoMode = EncryptionConstants.STANDARD_ENCRYPTION_40;
                 length = 40;
                 break;
             case 2:
@@ -467,7 +467,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 length = lengthValue.intValue();
                 if (length > 128 || length < 40 || length % 8 != 0)
                     throw new PdfException(PdfException.IllegalLengthValue);
-                cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
+                cryptoMode = EncryptionConstants.STANDARD_ENCRYPTION_128;
                 break;
             case 4:
             case 5:
@@ -478,20 +478,20 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 if (dic == null)
                     throw new PdfException(PdfException.DefaultcryptfilterNotFoundEncryption);
                 if (PdfName.V2.equals(dic.get(PdfName.CFM))) {
-                    cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
+                    cryptoMode = EncryptionConstants.STANDARD_ENCRYPTION_128;
                     length = 128;
                 } else if (PdfName.AESV2.equals(dic.get(PdfName.CFM))) {
-                    cryptoMode = PdfWriter.ENCRYPTION_AES_128;
+                    cryptoMode = EncryptionConstants.ENCRYPTION_AES_128;
                     length = 128;
                 } else if (PdfName.AESV3.equals(dic.get(PdfName.CFM))) {
-                    cryptoMode = PdfWriter.ENCRYPTION_AES_256;
+                    cryptoMode = EncryptionConstants.ENCRYPTION_AES_256;
                     length = 256;
                 } else {
                     throw new PdfException(PdfException.NoCompatibleEncryptionFound);
                 }
                 PdfBoolean em = dic.getAsBoolean(PdfName.EncryptMetadata);
                 if (em != null && !em.getValue()) {
-                    cryptoMode |= PdfWriter.DO_NOT_ENCRYPT_METADATA;
+                    cryptoMode |= EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
                 }
                 break;
             default:

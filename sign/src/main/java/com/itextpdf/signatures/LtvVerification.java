@@ -47,6 +47,7 @@ package com.itextpdf.signatures;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
+import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDeveloperExtension;
@@ -57,7 +58,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.forms.PdfAcroForm;
 
 import java.io.ByteArrayInputStream;
@@ -405,20 +405,20 @@ public class LtvVerification {
             PdfDictionary vri = new PdfDictionary();
             for (byte[] b : validated.get(vkey).crls) {
                 PdfStream ps = new PdfStream(b);
-                ps.setCompressionLevel(PdfWriter.DEFAULT_COMPRESSION);
+                ps.setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
                 ps.makeIndirect(document);
                 crl.add(ps);
                 crls.add(ps);
             }
             for (byte[] b : validated.get(vkey).ocsps) {
                 PdfStream ps = new PdfStream(b);
-                ps.setCompressionLevel(PdfWriter.DEFAULT_COMPRESSION);
+                ps.setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
                 ocsp.add(ps);
                 ocsps.add(ps);
             }
             for (byte[] b : validated.get(vkey).certs) {
                 PdfStream ps = new PdfStream(b);
-                ps.setCompressionLevel(PdfWriter.DEFAULT_COMPRESSION);
+                ps.setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
                 ps.makeIndirect(document);
                 cert.add(ps);
                 certs.add(ps);

@@ -164,7 +164,7 @@ class PdfXrefTable implements Serializable {
      */
     protected void writeXrefTableAndTrailer(PdfDocument document, PdfObject fileId, PdfObject crypto) throws IOException {
         PdfWriter writer = document.getWriter();
-        if (document.appendMode) {
+        if (document.isAppendMode()) {
             // Increment generation number for all freed references.
             for (Integer objNr : freeReferences) {
                 xref[objNr].genNr++;
@@ -179,14 +179,14 @@ class PdfXrefTable implements Serializable {
         List<Integer> sections = new ArrayList<>();
         int first = 0;
         int len = 1;
-        if (document.appendMode) {
+        if (document.isAppendMode()) {
             first = 1;
             len = 0;
         }
         for (int i = 1; i < size(); i++) {
             PdfIndirectReference reference = xref[i];
             if (reference != null) {
-                if ((document.appendMode && !reference.checkState(PdfObject.MODIFIED)) ||
+                if ((document.properties.appendMode && !reference.checkState(PdfObject.MODIFIED)) ||
                         (reference.isFree() && reference.getGenNumber() == 0) ||
                         (!reference.checkState(PdfObject.FLUSHED))) {
                     reference = null;
@@ -212,7 +212,7 @@ class PdfXrefTable implements Serializable {
             sections.add(first);
             sections.add(len);
         }
-        if (document.appendMode && sections.size() == 0) { // no modifications.
+        if (document.properties.appendMode && sections.size() == 0) { // no modifications.
             xref = null;
             return;
         }
@@ -238,7 +238,7 @@ class PdfXrefTable implements Serializable {
             for (Integer section : sections) {
                 index.add(new PdfNumber(section));
             }
-            if (document.appendMode) {
+            if (document.properties.appendMode) {
                 PdfNumber lastXref = new PdfNumber(document.reader.getLastXref());
                 xrefStream.put(PdfName.Prev, lastXref);
             }
@@ -299,7 +299,7 @@ class PdfXrefTable implements Serializable {
             if (crypto != null)
                 trailer.put(PdfName.Encrypt, crypto);
             writer.writeString("trailer\n");
-            if (document.appendMode) {
+            if (document.properties.appendMode) {
                 PdfNumber lastXref = new PdfNumber(document.reader.getLastXref());
                 trailer.put(PdfName.Prev, lastXref);
             }

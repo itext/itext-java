@@ -266,8 +266,8 @@ public class CompareTool {
     public String compareDocumentInfo(String outPdf, String cmpPdf, byte[] outPass, byte[] cmpPass) throws IOException {
         System.out.print("[itext] INFO  Comparing document info.......");
         String message = null;
-        PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf, outPass));
-        PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmpPdf, cmpPass));
+        PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf, new ReaderProperties().setPassword(outPass)));
+        PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmpPdf, new ReaderProperties().setPassword(cmpPass)));
         String[] cmpInfo = convertInfo(cmpDocument.getDocumentInfo());
         String[] outInfo = convertInfo(outDocument.getDocumentInfo());
         for (int i = 0; i < cmpInfo.length; ++i) {
@@ -579,7 +579,7 @@ public class CompareTool {
         System.out.print("[itext] INFO  Comparing by content..........");
         PdfDocument outDocument;
         try {
-            outDocument = new PdfDocument(new PdfReader(outPdf, outPass));
+            outDocument = new PdfDocument(new PdfReader(outPdf, new ReaderProperties().setPassword(outPass)));
         } catch (IOException e) {
             throw new IOException("File \"" + outPdf + "\" not found", e);
         }
@@ -589,7 +589,7 @@ public class CompareTool {
 
         PdfDocument cmpDocument;
         try {
-            cmpDocument = new PdfDocument(new PdfReader(cmpPdf, cmpPass));
+            cmpDocument = new PdfDocument(new PdfReader(cmpPdf, new ReaderProperties().setPassword(cmpPass)));
         } catch (IOException e) {
             throw new IOException("File \"" + cmpPdf + "\" not found", e);
         }

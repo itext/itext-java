@@ -56,7 +56,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -88,7 +88,7 @@ public class PdfFontTest extends ExtendedITextTest {
         final String title = "Type0 test";
 
         FileOutputStream fos = new FileOutputStream(filename);
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fos).setCompressionLevel(PdfOutputStream.NO_COMPRESSION));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fos).setCompressionLevel(CompressionConstants.NO_COMPRESSION));
 
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -120,7 +120,7 @@ public class PdfFontTest extends ExtendedITextTest {
         final String title = "Type0 test";
 
         FileOutputStream fos = new FileOutputStream(filename);
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fos).setCompressionLevel(PdfOutputStream.NO_COMPRESSION));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fos).setCompressionLevel(CompressionConstants.NO_COMPRESSION));
 
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -152,7 +152,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -218,7 +218,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
         PdfType3Font type3 = PdfFontFactory.createType3Font(pdfDoc, false);
@@ -283,7 +283,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
         pdfDoc.getDocumentInfo().setAuthor(author).
@@ -317,7 +317,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -353,7 +353,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -388,7 +388,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -423,7 +423,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -470,7 +470,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -502,7 +502,7 @@ public class PdfFontTest extends ExtendedITextTest {
         final String title = "Empty iText 6 Document";
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -553,7 +553,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -608,7 +608,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -664,7 +664,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(inputFileName);
         PdfWriter writer = new PdfWriter(new FileOutputStream(outputFileName));
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
 
@@ -705,7 +705,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         PdfReader reader = new PdfReader(inputFileName);
         PdfWriter pdfWriter = new PdfWriter(new FileOutputStream(outputFileName));
-        pdfWriter.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        pdfWriter.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument inputPdfDoc = new PdfDocument(reader);
         PdfDocument outputPdfDoc = new PdfDocument(pdfWriter);
 
@@ -752,7 +752,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -789,7 +789,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -826,7 +826,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -860,7 +860,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfReader reader1 = new PdfReader(inputFileName1);
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader1, writer);
 
         PdfDictionary pdfDictionary = (PdfDictionary) pdfDoc.getPdfObject(4);
@@ -893,7 +893,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(inputFileName1);
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -932,7 +932,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -970,7 +970,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -1005,7 +1005,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(inputFileName1);
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -1043,7 +1043,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -1074,7 +1074,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Afm_updated.pdf";
 
         PdfReader reader = new PdfReader(inputFileName1);
-        PdfWriter writer = new PdfWriter(new FileOutputStream(filename)).setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        PdfWriter writer = new PdfWriter(new FileOutputStream(filename)).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
         PdfDictionary pdfDictionary = (PdfDictionary) pdfDoc.getPdfObject(4);
@@ -1176,7 +1176,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         FileOutputStream fos = new FileOutputStream(filename);
         PdfWriter writer = new PdfWriter(fos);
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -1296,7 +1296,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void testFontDirectoryRegister() throws IOException {
         PdfFontFactory.registerDirectory(sourceFolder);
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         for (String name : PdfFontFactory.getRegisteredFonts()) {
             PdfFont pdfFont = PdfFontFactory.createRegisteredFont(name);
@@ -1313,7 +1313,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void testFontRegister() throws IOException {
         FontFactory.register(fontsFolder + "Aller_Rg.ttf", "aller");
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
         PdfFont pdfFont = PdfFontFactory.createRegisteredFont("aller");
         Assert.assertTrue(pdfFont instanceof PdfTrueTypeFont);

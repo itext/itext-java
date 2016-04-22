@@ -37,7 +37,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         // There is a possibility to override version in stamping mode
         String out = destinationFolder + "writing_pdf_version.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(out), PdfVersion.PDF_2_0);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(out, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
 
         assertEquals(PdfVersion.PDF_2_0, pdfDoc.getPdfVersion());
 
@@ -100,7 +100,9 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     public void freeReferencesInObjectStream() throws IOException {
-        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "styledLineArts_Redacted.pdf"), new PdfWriter(new ByteArrayOutputStream()), true);
+        PdfReader reader = new PdfReader(sourceFolder + "styledLineArts_Redacted.pdf");
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+        PdfDocument document = new PdfDocument(reader, writer, new StampingProperties().useAppendMode());
         PdfDictionary dict = new PdfDictionary();
         dict.makeIndirect(document);
         assertTrue(dict.getIndirectReference().getObjNumber() > 0);
@@ -272,8 +274,8 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     public void testFreeReference() throws IOException, InterruptedException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "baseFreeReference.pdf"), new PdfWriter(destinationFolder + "freeReference.pdf"));
-        pdfDocument.getWriter().setFullCompression(false);
+        PdfWriter writer = new PdfWriter(destinationFolder + "freeReference.pdf", new WriterProperties().setFullCompressionMode(false));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "baseFreeReference.pdf"), writer);
         pdfDocument.getPage(1).getResources().getPdfObject().getAsArray(new PdfName("d")).get(0).getIndirectReference().setFree();
         PdfStream pdfStream = new PdfStream();
         pdfStream.setData(new byte[]{24, 23, 67});
@@ -295,7 +297,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     public void readEncryptedDocumentWithFullCompression() throws IOException {
-        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "source.pdf"), "123".getBytes());
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "source.pdf"), new ReaderProperties().setPassword("123".getBytes()));
         PdfDocument pdfDocument = new PdfDocument(reader);
 
         PdfDictionary form = pdfDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
