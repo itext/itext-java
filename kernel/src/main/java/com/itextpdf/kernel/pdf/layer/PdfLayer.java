@@ -470,10 +470,6 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
     }
 
     private PdfOCProperties fetchOCProperties() {
-        try {
-            return getDocument().getCatalog().getOCProperties(true);
-        } catch (Exception ignored) {}
-        return null;
+        return getDocument().getCatalog().getOCProperties(true);
     }
-
 }
