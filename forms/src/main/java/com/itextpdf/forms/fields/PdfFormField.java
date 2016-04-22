@@ -611,6 +611,39 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Creates a generic {@link PdfFormField} that is added to a radio group.
+     *
+     * @param doc        the {@link PdfDocument} to create the radio group in
+     * @param rect       the location on the page for the field
+     * @param radioGroup the radio button group that this field should belong to
+     * @param value      the initial value
+     * @param pdfAVersion the PdfAVersion of the document (1, 2, 3 or any other number if it's no PDF/A document)
+     * @return a new {@link PdfFormField}
+     * @see #createRadioGroup(com.itextpdf.kernel.pdf.PdfDocument, java.lang.String, java.lang.String)
+     */
+    public static PdfFormField createRadioButton(PdfDocument doc, Rectangle rect, PdfButtonFormField radioGroup, String value, int pdfAVersion) {
+        PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
+        PdfFormField radio = new PdfButtonFormField(annot, doc);
+        radio.pdfAVersion = pdfAVersion;
+        annot.setFlag(PdfAnnotation.PRINT);
+
+        String name = radioGroup.getValue().toString().substring(1);
+        if (name.equals(value)) {
+            annot.setAppearanceState(new PdfName(value));
+        } else {
+            annot.setAppearanceState(new PdfName("Off"));
+        }
+        if (pdfAVersion == 1) {
+            radio.drawPdfA1RadioAppearance(rect.getWidth(), rect.getHeight(), value);
+        } else {
+            radio.drawRadioAppearance(rect.getWidth(), rect.getHeight(), value);
+        }
+
+        radioGroup.addKid(radio);
+        return radio;
+    }
+
+    /**
      * Creates a {@link PdfButtonFormField} as a push button without data.
      *
      * @param doc     the {@link PdfDocument} to create the radio group in
@@ -2271,7 +2304,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfFormXObject xObjectOff = new PdfFormXObject(rect);
 
         drawBorder(canvasOn, xObjectOn, width, height);
-        drawRadioField(canvasOn, 0, 0, width, height, true);
+        drawRadioField(canvasOn, width, height, true);
 
         PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
@@ -2288,6 +2321,29 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Draws the appearance of a radio button with a specified value.
+     *
+     * @param width  the width of the radio button to draw
+     * @param height the height of the radio button to draw
+     * @param value  the value of the button
+     */
+    protected void drawPdfA1RadioAppearance(float width, float height, String value) {
+        PdfStream stream = new PdfStream().makeIndirect(getDocument());
+        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
+        Rectangle rect = new Rectangle(0, 0, width, height);
+        PdfFormXObject xObject = new PdfFormXObject(rect);
+
+
+        drawBorder(canvas, xObject, width, height);
+        drawRadioField(canvas, rect.getWidth(), rect.getHeight(), !value.equals("Off"));
+
+        PdfWidgetAnnotation widget = getWidgets().get(0);
+
+        xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
+        widget.setNormalAppearance(xObject.getPdfObject());
+    }
+
+    /**
      * Draws a radio button.
      *
      * @param canvas the {@link PdfCanvas} on which to draw
@@ -2295,7 +2351,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param height the height of the radio button to draw
      * @param on     required to be <code>true</code> for fulfilling the drawing operation
      */
-    protected void drawRadioField(PdfCanvas canvas, final float x, final float y, final float width, final float height, final boolean on) {
+    protected void drawRadioField(PdfCanvas canvas, final float width, final float height, final boolean on) {
         canvas.saveState();
         if (on) {
             canvas.
