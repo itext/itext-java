@@ -61,7 +61,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -1354567597112193418L;
 	
-    protected final PdfPagesTree pageTree;
+    final PdfPagesTree pageTree;
     protected Map<PdfName, PdfNameTree> nameTrees = new HashMap<>();
     protected PdfNumTree pageLabels;
     protected PdfOCProperties ocProperties;

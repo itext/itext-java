@@ -301,13 +301,6 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             return location;
         }
 
-        private void printDiagnostics(){
-            System.out.println("Text (@" + location.getStartLocation() + " -> " + location.getEndLocation() + "): " + text);
-            System.out.println("orientationMagnitude: " + location.orientationMagnitude());
-            System.out.println("distPerpendicular: " + location.distPerpendicular());
-            System.out.println("distParallel: " + location.distParallelStart());
-        }
-
         /**
          * Compares based on orientation, perpendicular distance, then parallel distance
          *
@@ -318,7 +311,14 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             return location.compareTo(rhs.location);
         }
 
-        private boolean sameLine(TextChunk lastChunk) {
+        void printDiagnostics() {
+            System.out.println("Text (@" + location.getStartLocation() + " -> " + location.getEndLocation() + "): " + text);
+            System.out.println("orientationMagnitude: " + location.orientationMagnitude());
+            System.out.println("distPerpendicular: " + location.distPerpendicular());
+            System.out.println("distParallel: " + location.distParallelStart());
+        }
+
+        boolean sameLine(TextChunk lastChunk) {
             return getLocation().sameLine(lastChunk.getLocation());
         }
     }

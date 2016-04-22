@@ -130,7 +130,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * List of indirect objects used in the document.
      */
-    protected final PdfXrefTable xref = new PdfXrefTable();
+    final PdfXrefTable xref = new PdfXrefTable();
 
     /**
      * Indicate incremental updates mode of stamping mode.
@@ -1371,13 +1371,12 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      *
      * @return list of indirect references.
      */
-    protected PdfXrefTable getXref() {
+    PdfXrefTable getXref() {
         return xref;
     }
 
-
     /**
-     * TODO
+     * List all newly added or loaded fonts
      *
      * @return List of {@see PdfFonts}.
      */

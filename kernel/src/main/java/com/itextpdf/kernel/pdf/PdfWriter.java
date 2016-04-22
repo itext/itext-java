@@ -58,7 +58,7 @@ import java.io.Serializable;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,9 +95,9 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * Currently active object stream.
      * Objects are written to the object stream if fullCompression set to true.
      */
-    protected PdfObjectStream objectStream = null;
+    PdfObjectStream objectStream = null;
 
-    protected Hashtable<Integer, PdfIndirectReference> copiedObjects = new Hashtable<>();
+    protected Map<Integer, PdfIndirectReference> copiedObjects = new HashMap<>();
 
     //forewarned is forearmed
     protected boolean isUserWarnedAboutAcroFormCopying;
@@ -217,7 +217,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * @throws IOException
      * @throws PdfException
      */
-    protected PdfObjectStream getObjectStream() throws IOException {
+    PdfObjectStream getObjectStream() throws IOException {
         if (!isFullCompression())
             return null;
         if (objectStream == null) {
