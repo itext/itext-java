@@ -56,6 +56,7 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
 import com.itextpdf.kernel.pdf.filters.FilterHandler;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
@@ -67,7 +68,8 @@ import java.util.Map;
  */
 public final class InlineImageParsingUtils {
 
-    private InlineImageParsingUtils() { }
+    private InlineImageParsingUtils() {
+    }
 
     /**
      * Simple class in case users need to differentiate an exception from processing
@@ -147,10 +149,11 @@ public final class InlineImageParsingUtils {
     /**
      * Parses an inline image from the provided content parser.  The parser must be positioned immediately following the BI operator in the content stream.
      * The parser will be left with current position immediately following the EI operator that terminates the inline image
-     * @param ps the content parser to use for reading the image.
+     *
+     * @param ps            the content parser to use for reading the image.
      * @param colorSpaceDic a color space dictionary
      * @return the parsed image
-     * @throws IOException if anything goes wring with the parsing
+     * @throws IOException               if anything goes wring with the parsing
      * @throws InlineImageParseException if parsing of the inline image failed due to issues specific to inline image processing
      */
     public static PdfStream parse(PdfCanvasParser ps, PdfDictionary colorSpaceDic) throws IOException {
@@ -164,6 +167,7 @@ public final class InlineImageParsingUtils {
     /**
      * Parses the next inline image dictionary from the parser.  The parser must be positioned immediately following the BI operator.
      * The parser will be left with position immediately following the whitespace character that follows the ID operator that ends the inline image dictionary.
+     *
      * @param ps the parser to extract the embedded image information from
      * @return the dictionary for the inline image, with any abbreviations converted to regular image dictionary keys and values
      * @throws IOException if the parse fails
@@ -172,13 +176,12 @@ public final class InlineImageParsingUtils {
         // by the time we get to here, we have already parsed the BI operator
         PdfDictionary dict = new PdfDictionary();
 
-        for(PdfObject key = ps.readObject(); key != null && !"ID".equals(key.toString()); key = ps.readObject()){
+        for (PdfObject key = ps.readObject(); key != null && !"ID".equals(key.toString()); key = ps.readObject()) {
             PdfObject value = ps.readObject();
-
-            PdfName resolvedKey = inlineImageEntryAbbreviationMap.get(key);
-            if (resolvedKey == null)
-                resolvedKey = (PdfName)key;
-
+            PdfName resolvedKey = inlineImageEntryAbbreviationMap.get((PdfName) key);
+            if (resolvedKey == null) {
+                resolvedKey = (PdfName) key;
+            }
             dict.put(resolvedKey, getAlternateValue(resolvedKey, value));
         }
 
@@ -191,31 +194,33 @@ public final class InlineImageParsingUtils {
 
     /**
      * Transforms value abbreviations into their corresponding real value
-     * @param key the key that the value is for
+     *
+     * @param key   the key that the value is for
      * @param value the value that might be an abbreviation
      * @return if value is an allowed abbreviation for the key, the expanded value for that abbreviation.  Otherwise, value is returned without modification
      */
-    private static PdfObject getAlternateValue(PdfName key, PdfObject value){
-        if (key == PdfName.Filter){
-            if (value instanceof PdfName){
-                PdfName altValue = inlineImageFilterAbbreviationMap.get(value);
-                if (altValue != null)
+    private static PdfObject getAlternateValue(PdfName key, PdfObject value) {
+        if (key == PdfName.Filter) {
+            if (value instanceof PdfName) {
+                PdfName altValue = inlineImageFilterAbbreviationMap.get((PdfName) value);
+                if (altValue != null) {
                     return altValue;
-            } else if (value instanceof PdfArray){
-                PdfArray array = ((PdfArray)value);
+                }
+            } else if (value instanceof PdfArray) {
+                PdfArray array = ((PdfArray) value);
                 PdfArray altArray = new PdfArray();
                 int count = array.size();
-                for(int i = 0; i < count; i++){
+                for (int i = 0; i < count; i++) {
                     altArray.add(getAlternateValue(key, array.get(i)));
                 }
                 return altArray;
             }
-        } else if (key == PdfName.ColorSpace){
-            PdfName altValue = inlineImageColorSpaceAbbreviationMap.get(value);
-            if (altValue != null)
+        } else if (key == PdfName.ColorSpace && value instanceof PdfName) {
+            PdfName altValue = inlineImageColorSpaceAbbreviationMap.get((PdfName) value);
+            if (altValue != null) {
                 return altValue;
+            }
         }
-
         return value;
     }
 
@@ -223,7 +228,7 @@ public final class InlineImageParsingUtils {
      * @param colorSpaceName the name of the color space. If null, a bi-tonal (black and white) color space is assumed.
      * @return the components per pixel for the specified color space
      */
-    private static int getComponentsPerPixel(PdfName colorSpaceName, PdfDictionary colorSpaceDic){
+    private static int getComponentsPerPixel(PdfName colorSpaceName, PdfDictionary colorSpaceDic) {
         if (colorSpaceName == null)
             return 1;
         if (colorSpaceName.equals(PdfName.DeviceGray))
@@ -233,14 +238,13 @@ public final class InlineImageParsingUtils {
         if (colorSpaceName.equals(PdfName.DeviceCMYK))
             return 4;
 
-        if (colorSpaceDic != null){
+        if (colorSpaceDic != null) {
             PdfArray colorSpace = colorSpaceDic.getAsArray(colorSpaceName);
-            if (colorSpace != null){
-                if (PdfName.Indexed.equals(colorSpace.getAsName(0))){
+            if (colorSpace != null) {
+                if (PdfName.Indexed.equals(colorSpace.getAsName(0))) {
                     return 1;
                 }
-            }
-            else {
+            } else {
                 PdfName tempName = colorSpaceDic.getAsName(colorSpaceName);
                 if (tempName != null) {
                     return getComponentsPerPixel(tempName, colorSpaceDic);
@@ -255,10 +259,11 @@ public final class InlineImageParsingUtils {
      * Computes the number of unfiltered bytes that each row of the image will contain.
      * If the number of bytes results in a partial terminating byte, this number is rounded up
      * per the PDF specification
+     *
      * @param imageDictionary the dictionary of the inline image
      * @return the number of bytes per row of the image
      */
-    private static int computeBytesPerRow(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic){
+    private static int computeBytesPerRow(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic) {
         PdfNumber wObj = imageDictionary.getAsNumber(PdfName.Width);
         PdfNumber bpcObj = imageDictionary.getAsNumber(PdfName.BitsPerComponent);
         int cpp = getComponentsPerPixel(imageDictionary.getAsName(PdfName.ColorSpace), colorSpaceDic);
@@ -274,12 +279,13 @@ public final class InlineImageParsingUtils {
      * The parser must be positioned immediately after the ID operator that ends the inline image's dictionary.
      * The parser will be left positioned immediately following the EI operator.
      * This is primarily useful if no filters have been applied.
+     *
      * @param imageDictionary the dictionary of the inline image
-     * @param ps the content parser
+     * @param ps              the content parser
      * @return the samples of the image
      * @throws IOException if anything bad happens during parsing
      */
-    private static byte[] parseUnfilteredSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic, PdfCanvasParser ps) throws IOException{
+    private static byte[] parseUnfilteredSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic, PdfCanvasParser ps) throws IOException {
         // special case:  when no filter is specified, we just read the number of bits
         // per component, multiplied by the width and height.
         if (imageDictionary.containsKey(PdfName.Filter))
@@ -295,16 +301,16 @@ public final class InlineImageParsingUtils {
         // from the PDF spec:  Unless the image uses ASCIIHexDecode or ASCII85Decode as one of its filters, the ID operator shall be followed by a single white-space character, and the next character shall be interpreted as the first byte of image data.
         // unfortunately, we've seen some PDFs where there is no space following the ID, so we have to capture this case and handle it
         int startIndex = 0;
-        if (!PdfTokenizer.isWhitespace(shouldBeWhiteSpace) || shouldBeWhiteSpace == 0){ // tokeniser treats 0 as whitespace, but for our purposes, we shouldn't
-            bytes[0] = (byte)shouldBeWhiteSpace;
+        if (!PdfTokenizer.isWhitespace(shouldBeWhiteSpace) || shouldBeWhiteSpace == 0) { // tokeniser treats 0 as whitespace, but for our purposes, we shouldn't
+            bytes[0] = (byte) shouldBeWhiteSpace;
             startIndex++;
         }
-        for(int i = startIndex; i < bytesToRead; i++){
+        for (int i = startIndex; i < bytesToRead; i++) {
             int ch = tokeniser.read();
             if (ch == -1)
                 throw new InlineImageParseException(PdfException.EndOfContentStreamReachedBeforeEndOfImageData);
 
-            bytes[i] = (byte)ch;
+            bytes[i] = (byte) ch;
         }
         PdfObject ei = ps.readObject();
         if (!ei.toString().equals("EI")) {
@@ -322,15 +328,16 @@ public final class InlineImageParsingUtils {
      * The parser must be positioned immediately after the ID operator that ends the inline image's dictionary.
      * The parser will be left positioned immediately following the EI operator.
      * <b>Note:</b>This implementation does not actually apply the filters at this time
+     *
      * @param imageDictionary the dictionary of the inline image
-     * @param ps the content parser
+     * @param ps              the content parser
      * @return the samples of the image
      * @throws IOException if anything bad happens during parsing
      */
-    private static byte[] parseSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic, PdfCanvasParser ps) throws IOException{
+    private static byte[] parseSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic, PdfCanvasParser ps) throws IOException {
         // by the time we get to here, we have already parsed the ID operator
 
-        if (!imageDictionary.containsKey(PdfName.Filter) && imageColorSpaceIsKnown(imageDictionary, colorSpaceDic)){
+        if (!imageDictionary.containsKey(PdfName.Filter) && imageColorSpaceIsKnown(imageDictionary, colorSpaceDic)) {
             return parseUnfilteredSamples(imageDictionary, colorSpaceDic, ps);
         }
 
@@ -347,14 +354,14 @@ public final class InlineImageParsingUtils {
         int found = 0;
         PdfTokenizer tokeniser = ps.getTokeniser();
 
-        while ((ch = tokeniser.read()) != -1){
-            if (found == 0 && PdfTokenizer.isWhitespace(ch)){
+        while ((ch = tokeniser.read()) != -1) {
+            if (found == 0 && PdfTokenizer.isWhitespace(ch)) {
                 found++;
                 accumulated.write(ch);
-            } else if (found == 1 && ch == 'E'){
+            } else if (found == 1 && ch == 'E') {
                 found++;
                 accumulated.write(ch);
-            } else if (found == 1 && PdfTokenizer.isWhitespace(ch)){
+            } else if (found == 1 && PdfTokenizer.isWhitespace(ch)) {
                 // this clause is needed if we have a white space character that is part of the image data
                 // followed by a whitespace character that precedes the EI operator.  In this case, we need
                 // to flush the first whitespace, then treat the current whitespace as the first potential
@@ -362,12 +369,12 @@ public final class InlineImageParsingUtils {
                 baos.write(accumulated.toByteArray());
                 accumulated.reset();
                 accumulated.write(ch);
-            } else if (found == 2 && ch == 'I'){
+            } else if (found == 2 && ch == 'I') {
                 found++;
                 accumulated.write(ch);
-            } else if (found == 3 && PdfTokenizer.isWhitespace(ch)){
+            } else if (found == 3 && PdfTokenizer.isWhitespace(ch)) {
                 byte[] tmp = baos.toByteArray();
-                if (inlineImageStreamBytesAreComplete(tmp, imageDictionary)){
+                if (inlineImageStreamBytesAreComplete(tmp, imageDictionary)) {
                     return tmp;
                 }
                 baos.write(accumulated.toByteArray());
@@ -400,7 +407,7 @@ public final class InlineImageParsingUtils {
      * then decoding will succeed, but if not all image bytes were read and "<ws>EI<ws>" bytes were just a part of the image,
      * then decoding should fail.
      * Not the best solution, but probably there is no better and more reliable way to check this.
-     *
+     * <p>
      * Drawbacks: slow; images with DCTDecode, JBIG2Decode and JPXDecode filters couldn't be checked as iText doesn't
      * support these filters; what if decoding will succeed eventhough it's not all bytes?; also I'm not sure that all
      * filters throw an exception in case data is corrupted (For example, FlateDecodeFilter seems not to throw an exception).
