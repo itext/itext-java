@@ -45,11 +45,25 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.IsoKey;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfOutputIntent;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfResources;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
-import com.itextpdf.kernel.xmp.*;
-import com.itextpdf.kernel.xmp.properties.XMPProperty;
+import com.itextpdf.kernel.xmp.XMPConst;
+import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPMeta;
+import com.itextpdf.kernel.xmp.XMPMetaFactory;
+import com.itextpdf.kernel.xmp.XMPUtils;
 import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.checker.PdfA2Checker;
 import com.itextpdf.pdfa.checker.PdfA3Checker;
@@ -58,6 +72,8 @@ import com.itextpdf.pdfa.checker.PdfAChecker;
 import java.io.IOException;
 
 public class PdfADocument extends PdfDocument {
+
+    private static final long serialVersionUID = -5908390625367471894L;
     protected PdfAChecker checker;
 
     public PdfADocument(PdfWriter writer, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {
@@ -66,26 +82,27 @@ public class PdfADocument extends PdfDocument {
         addOutputIntent(outputIntent);
     }
 
-    public PdfADocument(PdfReader reader, PdfWriter writer) throws XMPException {
+    public PdfADocument(PdfReader reader, PdfWriter writer) {
         this(reader, writer, false);
     }
 
-    public PdfADocument(PdfReader reader, PdfWriter writer, boolean append) throws XMPException {
+    public PdfADocument(PdfReader reader, PdfWriter writer, boolean append) {
         super(reader, writer, append);
 
         byte[] existingXmpMetadata = getXmpMetadata();
         if (existingXmpMetadata == null) {
             throw new PdfAConformanceException(PdfAConformanceException.DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata);
         }
-        XMPMeta meta = XMPMetaFactory.parseFromBuffer(existingXmpMetadata);
-        XMPProperty conformanceXmpProperty = meta.getProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE);
-        XMPProperty partXmpProperty = meta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.PART);
-        if (conformanceXmpProperty == null || partXmpProperty == null) {
+        XMPMeta meta;
+        try {
+            meta = XMPMetaFactory.parseFromBuffer(existingXmpMetadata);
+        } catch (XMPException exc) {
             throw new PdfAConformanceException(PdfAConformanceException.DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata);
         }
-        String conformance = conformanceXmpProperty.getValue();
-        String part = partXmpProperty.getValue();
-        PdfAConformanceLevel conformanceLevel = getConformanceLevel(conformance, part);
+        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.getConformanceLevel(meta);
+        if (conformanceLevel == null) {
+            throw new PdfAConformanceException(PdfAConformanceException.DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata);
+        }
 
         setChecker(conformanceLevel);
     }
@@ -152,27 +169,27 @@ public class PdfADocument extends PdfDocument {
                 checker.checkInlineImage((PdfStream) obj, currentColorSpaces);
                 break;
             case GRAPHIC_STATE_ONLY:
-                    gState = (CanvasGraphicsState) obj;
-                    checker.checkExtGState(gState);
+                gState = (CanvasGraphicsState) obj;
+                checker.checkExtGState(gState);
                 break;
             case DRAWMODE_FILL:
-                    gState = (CanvasGraphicsState) obj;
-                    checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
-                    checker.checkExtGState(gState);
+                gState = (CanvasGraphicsState) obj;
+                checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
+                checker.checkExtGState(gState);
                 break;
             case DRAWMODE_STROKE:
-                    gState = (CanvasGraphicsState) obj;
-                    checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
-                    checker.checkExtGState(gState);
+                gState = (CanvasGraphicsState) obj;
+                checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
+                checker.checkExtGState(gState);
                 break;
             case DRAWMODE_FILL_STROKE:
-                    gState = (CanvasGraphicsState) obj;
-                    checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
-                    checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
-                    checker.checkExtGState(gState);
+                gState = (CanvasGraphicsState) obj;
+                checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
+                checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
+                checker.checkExtGState(gState);
                 break;
             case PAGE:
-                checker.checkSinglePage((PdfPage)obj);
+                checker.checkSinglePage((PdfPage) obj);
         }
     }
 
@@ -185,7 +202,7 @@ public class PdfADocument extends PdfDocument {
         createXmpMetadata(checker.getConformanceLevel());
     }
 
-        @Override
+    @Override
     protected void checkIsoConformance() {
         checker.checkDocument(catalog);
     }
@@ -203,7 +220,7 @@ public class PdfADocument extends PdfDocument {
 
     @Override
     protected void flushFonts() {
-        for (PdfFont pdfFont: getDocumentFonts()) {
+        for (PdfFont pdfFont : getDocumentFonts()) {
             if (!pdfFont.isEmbedded()) {
                 throw new PdfAConformanceException(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1)
                         .setMessageParams(pdfFont.getFontProgram().getFontNames().getFontName());
@@ -213,61 +230,22 @@ public class PdfADocument extends PdfDocument {
     }
 
     protected void setChecker(PdfAConformanceLevel conformanceLevel) {
-        switch (conformanceLevel) {
-            case PDF_A_1A:
-            case PDF_A_1B:
+        switch (conformanceLevel.getConformance()) {
+            case "1":
                 checker = new PdfA1Checker(conformanceLevel);
                 break;
-            case PDF_A_2A:
-            case PDF_A_2B:
-            case PDF_A_2U:
+            case "2":
                 checker = new PdfA2Checker(conformanceLevel);
                 break;
-            case PDF_A_3A:
-            case PDF_A_3B:
-            case PDF_A_3U:
+            case "3":
                 checker = new PdfA3Checker(conformanceLevel);
                 break;
         }
     }
 
     protected void addRdfDescription(XMPMeta xmpMeta, PdfAConformanceLevel conformanceLevel) throws XMPException {
-        switch (conformanceLevel) {
-            case PDF_A_1A:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "1");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
-                break;
-            case PDF_A_1B:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "1");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
-                break;
-            case PDF_A_2A:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "2");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
-                break;
-            case PDF_A_2B:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "2");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
-                break;
-            case PDF_A_2U:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "2");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "U");
-                break;
-            case PDF_A_3A:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "3");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
-                break;
-            case PDF_A_3B:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "3");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
-                break;
-            case PDF_A_3U:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "3");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "U");
-                break;
-            default:
-                break;
-        }
+        xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, conformanceLevel.getPart());
+        xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, conformanceLevel.getConformance());
         if (this.isTagged()) {
             XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
             XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
@@ -283,32 +261,4 @@ public class PdfADocument extends PdfDocument {
         setXmpMetadata(xmpMeta);
     }
 
-    private PdfAConformanceLevel getConformanceLevel(String conformance, String part) {
-        String lowLetter = part.toUpperCase();
-        boolean aLevel = lowLetter.equals("A");
-        boolean bLevel = lowLetter.equals("B");
-        boolean uLevel = lowLetter.equals("U");
-
-        if (conformance.equals("1")) {
-            if (aLevel)
-                return PdfAConformanceLevel.PDF_A_1A;
-            if (bLevel)
-                return PdfAConformanceLevel.PDF_A_1B;
-        } else if (conformance.equals("2")) {
-            if (aLevel)
-                return PdfAConformanceLevel.PDF_A_2A;
-            if (bLevel)
-                return PdfAConformanceLevel.PDF_A_2B;
-            if (uLevel)
-                return PdfAConformanceLevel.PDF_A_2U;
-        } else if (conformance.equals("3")) {
-            if (aLevel)
-                return PdfAConformanceLevel.PDF_A_3A;
-            if (bLevel)
-                return PdfAConformanceLevel.PDF_A_3B;
-            if (uLevel)
-                return PdfAConformanceLevel.PDF_A_3U;
-        }
-        return null;
-    }
 }

@@ -49,11 +49,6 @@ package com.itextpdf.pdfa;
  */
 public class PdfAXMPUtil {
 
-     /**
-     * Conformance, A, B, or U.
-     */
-    public static final String CONFORMANCE = "conformance";
-
     public static final String PDF_UA_EXTENSION =
             "    <x:xmpmeta xmlns:x=\"adobe:ns:meta/\">\n" +
                     "      <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n" +

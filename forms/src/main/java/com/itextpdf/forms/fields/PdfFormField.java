@@ -1956,10 +1956,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().release();
     }
 
-    public void setPdfAVersion(int conformanceLevel) {
-        pdfAVersion = conformanceLevel;
-    }
-
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;

@@ -1283,6 +1283,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 }
                 if (catalog.getPdfObject().containsKey(PdfName.Metadata) && null != catalog.getPdfObject().get(PdfName.Metadata)) {
                     xmpMetadata = catalog.getPdfObject().getAsStream(PdfName.Metadata).getBytes();
+                    try {
+                        reader.pdfAConformanceLevel = PdfAConformanceLevel.getConformanceLevel(XMPMetaFactory.parseFromBuffer(xmpMetadata));
+                    } catch (XMPException ignored) {}
                 }
                 PdfObject infoDict = trailer.get(PdfName.Info, true);
                 info = new PdfDocumentInfo(infoDict instanceof PdfDictionary ?

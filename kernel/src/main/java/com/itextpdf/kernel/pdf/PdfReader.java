@@ -80,6 +80,7 @@ public class PdfReader implements Closeable, Serializable {
     protected long eofPos;
     protected PdfDictionary trailer;
     protected PdfDocument pdfDocument;
+    protected PdfAConformanceLevel pdfAConformanceLevel;
 
     protected byte[] password; //added by ujihara for decryption
 
@@ -451,6 +452,17 @@ public class PdfReader implements Closeable, Serializable {
             return -1;
         else
             return decrypt.getCryptoMode();
+    }
+
+    /**
+     * Gets the declared Pdf/A conformance level of the source document that is being read.
+     * Note that this information is provided via XMP metadata and is not verified by iText.
+     *
+     * @return conformance level of the source document, or {@code null} if no Pdf/A
+     * conformance level information is specified.
+     */
+    public PdfAConformanceLevel getPdfAConformanceLevel() {
+        return pdfAConformanceLevel;
     }
 
     /**

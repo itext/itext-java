@@ -2,6 +2,7 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.io.image.ImageFactory;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
