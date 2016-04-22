@@ -338,6 +338,9 @@ public class PdfCanvas {
      */
     public PdfCanvas restoreState() {
         document.checkIsoConformance('Q', IsoKey.CANVAS_STACK);
+        if (gsStack.isEmpty()) {
+            throw new PdfException(PdfException.UnbalancedSaveRestoreStateOperators);
+        }
         currentGs = gsStack.pop();
         contentStream.getOutputStream().writeBytes(Q);
         return this;

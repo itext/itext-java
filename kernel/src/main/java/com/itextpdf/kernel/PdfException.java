@@ -221,6 +221,7 @@ public class PdfException extends RuntimeException {
     public static final String TrailerPrevEntryPointsToItsOwnCrossReferenceSection = "trailer.prev.entry.points.to.its.own.cross.reference.section";
     public static final String UnbalancedBeginEndMarkedContentOperators = "unbalanced.begin.end.marked.content.operators";
     public static final String UnbalancedLayerOperators = "unbalanced.layer.operators";
+    public static final String UnbalancedSaveRestoreStateOperators = "unbalanced.save.restore.state.operators";
     public static final String UnexpectedCharacter1FoundAfterIDInInlineImage = "unexpected.character.1.found.after.ID.in.inline.image";
     public static final String UnexpectedCloseBracket = "unexpected.close.bracket";
     public static final String UnexpectedColorSpace1 = "unexpected.color.space {0}";
