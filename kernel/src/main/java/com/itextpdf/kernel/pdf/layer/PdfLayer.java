@@ -70,7 +70,7 @@ import java.util.List;
  * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
  * must be indirect.
  */
-public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG {
+public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG {
 
     private static final long serialVersionUID = -5367953708241595665L;
 	/**

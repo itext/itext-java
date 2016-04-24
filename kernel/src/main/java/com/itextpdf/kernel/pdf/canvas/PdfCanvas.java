@@ -78,7 +78,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.layer.PdfLayerMembership;
-import com.itextpdf.kernel.pdf.layer.PdfOCG;
+import com.itextpdf.kernel.pdf.layer.IPdfOCG;
 import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -1702,7 +1702,7 @@ public class PdfCanvas {
      * @param layer @see PdfLayer.
      * @return current canvas.
      */
-    public PdfCanvas beginLayer(final PdfOCG layer) {
+    public PdfCanvas beginLayer(IPdfOCG layer) {
         if (layer instanceof PdfLayer && ((PdfLayer) layer).getTitle() != null)
             throw new IllegalArgumentException("Illegal layer argument.");
         if (layerDepth == null)
@@ -2366,7 +2366,7 @@ public class PdfCanvas {
         currentGs.getFont().writeText(text, contentStream.getOutputStream());
     }
 
-    private void addToPropertiesAndBeginLayer(PdfOCG layer) {
+    private void addToPropertiesAndBeginLayer(IPdfOCG layer) {
         PdfName name = resources.addProperties(layer.getPdfObject());
         contentStream.getOutputStream().write(PdfName.OC).writeSpace().write(name).writeSpace().writeBytes(BDC).writeNewLine();
     }

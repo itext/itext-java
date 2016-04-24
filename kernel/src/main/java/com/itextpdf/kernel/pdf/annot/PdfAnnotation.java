@@ -58,7 +58,7 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.action.PdfAction;
-import com.itextpdf.kernel.pdf.layer.PdfOCG;
+import com.itextpdf.kernel.pdf.layer.IPdfOCG;
 
 public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
@@ -203,7 +203,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param layer the layer this annotation belongs to
      */
-    public void setLayer(final PdfOCG layer) {
+    public void setLayer(IPdfOCG layer) {
         getPdfObject().put(PdfName.OC, layer.getIndirectReference());
     }
 

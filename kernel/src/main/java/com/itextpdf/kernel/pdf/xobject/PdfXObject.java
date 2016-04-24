@@ -47,7 +47,7 @@ package com.itextpdf.kernel.pdf.xobject;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.layer.PdfOCG;
+import com.itextpdf.kernel.pdf.layer.IPdfOCG;
 
 public class PdfXObject extends PdfObjectWrapper<PdfStream> {
 
@@ -72,7 +72,7 @@ public class PdfXObject extends PdfObjectWrapper<PdfStream> {
      * Sets the layer this XObject belongs to.
      * @param layer the layer this XObject belongs to
      */
-    public void setLayer(PdfOCG layer) {
+    public void setLayer(IPdfOCG layer) {
         getPdfObject().put(PdfName.OC, layer.getIndirectReference());
     }
 

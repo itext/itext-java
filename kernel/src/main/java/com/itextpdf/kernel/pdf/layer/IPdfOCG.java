@@ -50,8 +50,7 @@ import com.itextpdf.kernel.pdf.PdfIndirectReference;
 /**
  * The interface generalizing the layer types (PdfLayer, PdfLayerMembership).
  */
-public interface PdfOCG {
-
+public interface IPdfOCG {
     /**
      * Gets the object representing the layer.
      * @return the object representing the layer
@@ -62,5 +61,4 @@ public interface PdfOCG {
      * @return the <CODE>PdfIndirectReference</CODE> that represents this layer
      */
     PdfIndirectReference getIndirectReference();
-
 }
