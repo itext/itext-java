@@ -57,7 +57,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.security.cert.Certificate;
 import java.text.MessageFormat;
 import java.util.Map;
 
@@ -99,44 +98,44 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
         }
         switch (pdfObject.getType()) {
             case PdfObject.ARRAY:
-                writePdfArray((PdfArray) pdfObject);
+                write((PdfArray) pdfObject);
                 break;
             case PdfObject.DICTIONARY:
                 writePdfDictionary((PdfDictionary) pdfObject);
                 break;
             case PdfObject.INDIRECT_REFERENCE:
-                writePdfIndirectReference((PdfIndirectReference) pdfObject);
+                write((PdfIndirectReference) pdfObject);
                 break;
             case PdfObject.NAME:
-                writePdfName((PdfName) pdfObject);
+                write((PdfName) pdfObject);
                 break;
             case PdfObject.NULL:
             case PdfObject.BOOLEAN:
-                writePdfPrimitiveObject((PdfPrimitiveObject) pdfObject);
+                write((PdfPrimitiveObject) pdfObject);
                 break;
             case PdfObject.LITERAL:
-                writePdfLiteral((PdfLiteral) pdfObject);
+                write((PdfLiteral) pdfObject);
                 break;
             case PdfObject.STRING:
-                writePdfString((PdfString) pdfObject);
+                write((PdfString) pdfObject);
                 break;
             case PdfObject.NUMBER:
-                writePdfNumber((PdfNumber) pdfObject);
+                write((PdfNumber) pdfObject);
                 break;
             case PdfObject.STREAM:
-                writePdfStream((PdfStream) pdfObject);
+                write((PdfStream) pdfObject);
                 break;
         }
         return this;
     }
 
-    protected void writePdfArray(PdfArray pdfArray) {
+    protected void write(PdfArray pdfArray) {
         writeByte('[');
         for (int i = 0; i < pdfArray.size(); i++) {
             PdfObject value = pdfArray.get(i, false);
             PdfIndirectReference indirectReference;
             if ((indirectReference = value.getIndirectReference()) != null) {
-                writePdfIndirectReference(indirectReference);
+                write(indirectReference);
             } else {
                 write(value);
             }
@@ -150,7 +149,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
         writeBytes(openDict);
         for (Map.Entry<PdfName, PdfObject> entry : pdfDictionary.entrySet()) {
             boolean isAlreadyWriteSpace = false;
-            writePdfName(entry.getKey());
+            write(entry.getKey());
             PdfObject value = entry.getValue();
             if (value == null) {
                 Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
@@ -172,7 +171,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
                 if (!isAlreadyWriteSpace) {
                     writeSpace();
                 }
-                writePdfIndirectReference(indirectReference);
+                write(indirectReference);
             } else {
                 write(value);
             }
@@ -180,12 +179,12 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
         writeBytes(closeDict);
     }
 
-    protected void writePdfIndirectReference(PdfIndirectReference indirectReference) {
+    protected void write(PdfIndirectReference indirectReference) {
         if (document != null && !indirectReference.getDocument().equals(document)) {
             throw new PdfException(PdfException.PdfInderectObjectBelongToOtherPdfDocument);
         }
         if (indirectReference.getRefersTo() == null) {
-            writePdfPrimitiveObject(PdfNull.PDF_NULL);
+            write(PdfNull.PDF_NULL);
         } else if (indirectReference.getGenNumber() == 0) {
             writeInteger(indirectReference.getObjNumber()).
                     writeBytes(endIndirectWithZeroGenNr);
@@ -197,16 +196,16 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
         }
     }
 
-    protected void writePdfPrimitiveObject(PdfPrimitiveObject pdfPrimitive) {
+    protected void write(PdfPrimitiveObject pdfPrimitive) {
         writeBytes(pdfPrimitive.getInternalContent());
     }
 
-    protected void writePdfLiteral(PdfLiteral literal) {
+    protected void write(PdfLiteral literal) {
         literal.setPosition(getCurrentPos());
         writeBytes(literal.getInternalContent());
     }
 
-    protected void writePdfString(PdfString pdfString) {
+    protected void write(PdfString pdfString) {
         pdfString.encrypt(crypto);
         if (pdfString.isHexWriting()) {
             writeByte('<');
@@ -220,12 +219,12 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
     }
 
 
-    protected void writePdfName(PdfName name) {
+    protected void write(PdfName name) {
         writeByte('/');
         writeBytes(name.getInternalContent());
     }
 
-    protected void writePdfNumber(PdfNumber pdfNumber) {
+    protected void write(PdfNumber pdfNumber) {
         if (pdfNumber.hasContent()) {
             writeBytes(pdfNumber.getInternalContent());
         } else if (pdfNumber.isDoubleNumber()) {
@@ -241,7 +240,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
 
     }
 
-    protected void writePdfStream(PdfStream pdfStream) {
+    protected void write(PdfStream pdfStream) {
         try {
             boolean userDefinedCompression = pdfStream.getCompressionLevel() != CompressionConstants.UNDEFINED_COMPRESSION;
             if (!userDefinedCompression) {
