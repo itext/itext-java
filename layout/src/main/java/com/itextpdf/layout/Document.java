@@ -53,6 +53,7 @@ import com.itextpdf.layout.element.BlockElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.ILargeElement;
 import com.itextpdf.layout.renderer.DocumentRenderer;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
 
 /**

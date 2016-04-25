@@ -45,6 +45,9 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.layout.element.IElement;
+
+import java.util.EnumMap;
 
 /**
  * An enum of property names that are used for graphical properties of layout
@@ -213,7 +216,7 @@ public enum Property {
 
     /**
      * A specialized class holding configurable properties related to an {@link
-     * Element}'s background. This class is meant to be used as the value for the
+     * IElement}'s background. This class is meant to be used as the value for the
      * {@link Property#BACKGROUND} key in an {@link IPropertyContainer}. Allows
      * to define a background color, and positive or negative changes to the
      * location of the edges of the background coloring.
@@ -498,7 +501,7 @@ public enum Property {
 
     /**
      * A specialized enum holding the possible values for a text {@link
-     * Element}'s kerning property. This class is meant to
+     * IElement}'s kerning property. This class is meant to
      * be used as the value for the {@link Property#FONT_KERNING} key in an
      * {@link IPropertyContainer}.
      */
@@ -509,7 +512,7 @@ public enum Property {
 
     /**
      * A specialized enum holding the possible values for a text {@link
-     * Element}'s base direction. This class is meant to
+     * IElement}'s base direction. This class is meant to
      * be used as the value for the {@link Property#BASE_DIRECTION} key in an
      * {@link IPropertyContainer}.
      */

@@ -60,6 +60,7 @@ import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.Property;
 import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
 
@@ -104,7 +105,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @param modelElement the layout element that will be drawn by this renderer
      */
-    public AbstractRenderer(IPropertyContainer modelElement) {
+    public AbstractRenderer(IElement modelElement) {
         this.modelElement = modelElement;
     }
 
@@ -215,9 +216,8 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     @Override
-    public <T extends IRenderer> T setProperty(Property property, Object value) {
+    public void setProperty(Property property, Object value) {
         properties.put(property, value);
-        return (T) this;
     }
 
     @Override
@@ -450,7 +450,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Gets all rectangles that this {@link IRenderer} can draw upon in the given area.
      *
-     * @param area a physical area on the {@link DrawingContext}
+     * @param area a physical area on the {@link DrawContext}
      * @return a list of {@link Rectangle rectangles}
      */
     public List<Rectangle> initElementAreas(LayoutArea area) {
@@ -459,7 +459,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     /**
      * Gets the bounding box that contains all content written to the
-     * {@link DrawingContext} by this {@link IRenderer}.
+     * {@link DrawContext} by this {@link IRenderer}.
      *
      * @return the smallest {@link Rectangle} that surrounds the content
      */

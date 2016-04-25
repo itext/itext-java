@@ -150,7 +150,6 @@ public class TableRenderer extends AbstractRenderer {
                 new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), tableWidth, 0));
 
         int numberOfColumns = ((Table) getModelElement()).getNumberOfColumns();
-        int numberOfRows = rows.size();
         horizontalBorders = new ArrayList<>();
         verticalBorders = new ArrayList<>();
 

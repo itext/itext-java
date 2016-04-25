@@ -47,10 +47,9 @@ package com.itextpdf.layout;
 /**
  * A generic Map-like interface that defines methods for storing and retrieving
  * objects by an enum key of the {@link Property} type.
- * 
- * @param <Type> the type of the implementation
+ *
  */
-public interface IPropertyContainer<Type extends IPropertyContainer> {
+public interface IPropertyContainer {
 
     /**
      * Checks if this entity has the specified property. Compared to {@link #hasOwnProperty(Property)},
@@ -95,12 +94,10 @@ public interface IPropertyContainer<Type extends IPropertyContainer> {
 
     /**
      * Sets a property for this entity.
-     * @param <T> the type of this element
      * @param property the property to be set
      * @param value the value of the property
-     * @return this element
      */
-    <T extends Type> T setProperty(Property property, Object value);
+    void setProperty(Property property, Object value);
 
     /**
      * Deletes the own property of this entity.

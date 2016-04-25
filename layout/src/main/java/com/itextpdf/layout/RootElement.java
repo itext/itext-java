@@ -69,9 +69,9 @@ import java.util.Map;
 /**
  * A generic abstract root element for a PDF layout object hierarchy.
  * 
- * @param <Type> this type
+ * @param <T> this type
  */
-public abstract class RootElement<Type extends RootElement> implements IPropertyContainer<Type> {
+public abstract class RootElement<T extends IPropertyContainer> extends ElementPropertyContainer<T> {
 
     protected boolean immediateFlush = true;
     protected PdfDocument pdfDocument;
@@ -90,10 +90,10 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @return this element
      * @see BlockElement
      */
-    public Type add(BlockElement element) {
+    public T add(BlockElement element) {
         childElements.add(element);
         ensureRootRendererNotNull().addChild(element.createRendererSubTree());
-        return (Type) this;
+        return (T) this;
     }
 
     /**
@@ -102,10 +102,10 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @return this element
      * @see Image
      */
-    public Type add(Image image) {
+    public T add(Image image) {
         childElements.add(image);
         ensureRootRendererNotNull().addChild(image.createRendererSubTree());
-        return (Type) this;
+        return (T) this;
     }
 
     @Override
@@ -119,41 +119,41 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
     }
 
     @Override
-    public <T> T getProperty(Property property) {
+    public <T1> T1 getProperty(Property property) {
         return getOwnProperty(property);
     }
 
     @Override
-    public <T> T getOwnProperty(Property property) {
-        return (T) properties.get(property);
+    public <T1> T1 getOwnProperty(Property property) {
+        return (T1) properties.get(property);
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T1> T1 getDefaultProperty(Property property) {
         try {
             switch (property) {
                 case FONT:
                     if (defaultFont == null) {
                         defaultFont = PdfFontFactory.createFont();
                     }
-                    return (T) defaultFont;
+                    return (T1) defaultFont;
                 case SPLIT_CHARACTERS:
                     if (defaultSplitCharacters == null) {
                         defaultSplitCharacters = new DefaultSplitCharacters();
                     }
-                    return (T) defaultSplitCharacters;
+                    return (T1) defaultSplitCharacters;
                 case FONT_SIZE:
-                    return (T) Integer.valueOf(12);
+                    return (T1) Integer.valueOf(12);
                 case TEXT_RENDERING_MODE:
-                    return (T) Integer.valueOf(PdfCanvasConstants.TextRenderingMode.FILL);
+                    return (T1) Integer.valueOf(PdfCanvasConstants.TextRenderingMode.FILL);
                 case TEXT_RISE:
-                    return (T) Float.valueOf(0);
+                    return (T1) Float.valueOf(0);
                 case SPACING_RATIO:
-                    return (T) Float.valueOf(0.75f);
+                    return (T1) Float.valueOf(0.75f);
                 case FONT_KERNING:
-                    return (T) Property.FontKerning.NO;
+                    return (T1) Property.FontKerning.NO;
                 case BASE_DIRECTION:
-                    return (T) Property.BaseDirection.NO_BIDI;
+                    return (T1) Property.BaseDirection.NO_BIDI;
                 default:
                     return null;
             }
@@ -168,9 +168,8 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
     }
 
     @Override
-    public Type setProperty(Property property, Object value) {
+    public void setProperty(Property property, Object value) {
         properties.put(property, value);
-        return (Type) this;
     }
 
     /**
@@ -178,29 +177,26 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * acts as the root object that other {@link IRenderer renderers} descend
      * from.
      * 
-     * @param <T> the (sub)type of the {@link RootRenderer}
      * @return the {@link RootRenderer} attribute
      */
-    public <T extends RootRenderer> T getRenderer() {
-        return (T) ensureRootRendererNotNull();
+    public RootRenderer getRenderer() {
+        return ensureRootRendererNotNull();
     }
 
     /**
      * Convenience method to write a text aligned about the specified point
-     * @param <T> the return type
      * @param text text to be placed to the page
      * @param x the point about which the text will be aligned and rotated
      * @param y the point about which the text will be aligned and rotated
      * @param textAlign horizontal alignment about the specified point
      * @return this object
      */
-    public <T extends RootElement> T showTextAligned(String text, float x, float y, Property.TextAlignment textAlign) {
+    public T showTextAligned(String text, float x, float y, Property.TextAlignment textAlign) {
         return showTextAligned(text, x, y, textAlign, 0);
     }
 
     /**
      * Convenience method to write a text aligned about the specified point
-     * @param <T> the return type
      * @param text text to be placed to the page
      * @param x the point about which the text will be aligned and rotated
      * @param y the point about which the text will be aligned and rotated
@@ -208,13 +204,12 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @param angle the angle of rotation applied to the text, in radians
      * @return this object
      */
-    public <T extends RootElement> T showTextAligned(String text, float x, float y, Property.TextAlignment textAlign, float angle) {
+    public T showTextAligned(String text, float x, float y, Property.TextAlignment textAlign, float angle) {
         return showTextAligned(text, x, y, textAlign, Property.VerticalAlignment.BOTTOM, angle);
     }
 
     /**
      * Convenience method to write a text aligned about the specified point
-     * @param <T> the return type
      * @param text text to be placed to the page
      * @param x the point about which the text will be aligned and rotated
      * @param y the point about which the text will be aligned and rotated
@@ -223,14 +218,13 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @param angle the angle of rotation applied to the text, in radians
      * @return this object
      */
-    public <T extends RootElement> T showTextAligned(String text, float x, float y, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
+    public T showTextAligned(String text, float x, float y, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
         Paragraph p = new Paragraph(text);
         return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, angle);
     }
 
     /**
      * Convenience method to write a kerned text aligned about the specified point
-     * @param <T> the return type
      * @param text text to be placed to the page
      * @param x the point about which the text will be aligned and rotated
      * @param y the point about which the text will be aligned and rotated
@@ -239,14 +233,13 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @param angle the angle of rotation applied to the text, in radians
      * @return this object
      */
-    public <T extends RootElement> T showTextAlignedKerned(String text, float x, float y, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
+    public T showTextAlignedKerned(String text, float x, float y, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
         Paragraph p = new Paragraph(text).setFontKerning(Property.FontKerning.YES);
         return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, angle);
     }
 
     /**
      * Convenience method to write a text aligned about the specified point
-     * @param <T> the return type
      * @param p paragraph of text to be placed to the page. By default it has no leading and is written in single line.
      *          Set width to write multiline text.
      * @param x the point about which the text will be aligned and rotated
@@ -254,13 +247,12 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @param textAlign horizontal alignment about the specified point
      * @return this object
      */
-    public <T extends RootElement> T showTextAligned(Paragraph p, float x, float y, Property.TextAlignment textAlign) {
+    public T showTextAligned(Paragraph p, float x, float y, Property.TextAlignment textAlign) {
         return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, Property.VerticalAlignment.BOTTOM, 0);
     }
 
     /**
      * Convenience method to write a text aligned about the specified point
-     * @param <T> the return type
      * @param p paragraph of text to be placed to the page. By default it has no leading and is written in single line.
      *          Set width to write multiline text.
      * @param x the point about which the text will be aligned and rotated
@@ -269,13 +261,12 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @param vertAlign vertical alignment about the specified point
      * @return this object
      */
-    public <T extends RootElement> T showTextAligned(Paragraph p, float x, float y, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign) {
+    public T showTextAligned(Paragraph p, float x, float y, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign) {
         return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, 0);
     }
 
         /**
          * Convenience method to write a text aligned about the specified point
-         * @param <T> the return type
          * @param p paragraph of text to be placed to the page. By default it has no leading and is written in single line.
          *          Set width to write multiline text.
          * @param x the point about which the text will be aligned and rotated
@@ -286,7 +277,7 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
          * @param angle the angle of rotation applied to the text, in radians
          * @return this object
          */
-    public <T extends RootElement> T showTextAligned(Paragraph p, float x, float y, int pageNumber, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
+    public T showTextAligned(Paragraph p, float x, float y, int pageNumber, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
         Div div = new Div();
         div.setTextAlignment(textAlign).setVerticalAlignment(vertAlign);
         if (angle != 0) {
@@ -326,5 +317,4 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
     }
 
     protected abstract RootRenderer ensureRootRendererNotNull();
-
 }

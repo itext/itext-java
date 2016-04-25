@@ -65,7 +65,7 @@ import java.util.List;
  * It is an implementation of {@link ILargeElement}, which means it can be flushed
  * to the canvas, in order to reclaim memory that is locked up.
  */
-public class Table extends BlockElement<Table> implements ILargeElement<Table> {
+public class Table extends BlockElement<Table> implements ILargeElement {
 
     protected PdfName role = PdfName.Table;
     protected AccessibilityProperties tagProperties;

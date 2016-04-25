@@ -91,5 +91,4 @@ public class LineSeparator extends BlockElement<LineSeparator> {
         }
         return tagProperties;
     }
-
 }

@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 public class DrawContext {
+
     private PdfDocument document;
     private PdfCanvas canvas;
     private boolean taggingEnabled;

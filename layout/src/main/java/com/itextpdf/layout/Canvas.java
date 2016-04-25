@@ -51,6 +51,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.renderer.CanvasRenderer;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
 
 /**

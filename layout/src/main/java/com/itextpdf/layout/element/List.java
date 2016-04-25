@@ -116,7 +116,8 @@ public class List extends BlockElement<List> {
      * @return this list.
      */
     public List setItemStartIndex(int start) {
-        return setProperty(Property.LIST_START, start);
+        setProperty(Property.LIST_START, start);
+        return this;
     }
 
     /**
@@ -136,7 +137,8 @@ public class List extends BlockElement<List> {
      * @return this list.
      */
     public List setListSymbol(Text text) {
-        return setProperty(Property.LIST_SYMBOL, text);
+        setProperty(Property.LIST_SYMBOL, text);
+        return this;
     }
 
     /**
@@ -146,7 +148,8 @@ public class List extends BlockElement<List> {
      * @return this list.
      */
     public List setListSymbol(Image image) {
-        return setProperty(Property.LIST_SYMBOL, image);
+        setProperty(Property.LIST_SYMBOL, image);
+        return this;
     }
 
     /**
@@ -161,7 +164,8 @@ public class List extends BlockElement<List> {
                 listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_3 || listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_4) {
             setPostSymbolText(" ");
         }
-        return setProperty(Property.LIST_SYMBOL, listNumberingType);
+        setProperty(Property.LIST_SYMBOL, listNumberingType);
+        return this;
     }
 
     /**
@@ -175,7 +179,8 @@ public class List extends BlockElement<List> {
      * 10. Item 10
      */
     public List setListSymbolAlignment(Property.ListSymbolAlignment alignment) {
-        return setProperty(Property.LIST_SYMBOL_ALIGNMENT, alignment);
+        setProperty(Property.LIST_SYMBOL_ALIGNMENT, alignment);
+        return this;
     }
 
     /**
@@ -194,7 +199,8 @@ public class List extends BlockElement<List> {
      * @return this list.
      */
     public List setSymbolIndent(float symbolIndent) {
-        return setProperty(Property.LIST_SYMBOL_INDENT, symbolIndent);
+        setProperty(Property.LIST_SYMBOL_INDENT, symbolIndent);
+        return this;
     }
 
     /**

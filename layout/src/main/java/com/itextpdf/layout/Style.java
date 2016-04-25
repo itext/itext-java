@@ -44,6 +44,8 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.layout.element.AbstractElement;
+
 /** Container object for style properties of an element. A style can be used as
  * an effective way to define multiple equal properties to several elements.
  * Used in {@link AbstractElement}

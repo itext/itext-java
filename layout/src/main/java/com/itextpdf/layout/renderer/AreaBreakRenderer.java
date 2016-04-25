@@ -123,7 +123,7 @@ public class AreaBreakRenderer implements IRenderer {
     }
 
     @Override
-    public <T extends IRenderer> T setProperty(Property property, Object value) {
+    public void setProperty(Property property, Object value) {
         throw new UnsupportedOperationException();
     }
 

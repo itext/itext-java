@@ -62,25 +62,23 @@ public class Div extends BlockElement<Div> {
     /**
      * Adds any block element to the div's contents.
      * 
-     * @param <T> the type of this object
      * @param element a {@link BlockElement}
      * @return this Element
      */
-    public <T extends Div> T add(BlockElement element) {
+    public Div add(BlockElement element) {
         childElements.add(element);
-        return (T) this;
+        return this;
     }
     
     /**
      * Adds an image to the div's contents.
      * 
-     * @param <T> the type of this object
      * @param element an {@link Image}
      * @return this Element
      */
-    public <T extends Div> T add(Image element) {
+    public Div add(Image element) {
         childElements.add(element);
-        return (T) this;
+        return this;
     }
 
     @Override

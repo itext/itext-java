@@ -60,9 +60,9 @@ import java.util.Set;
  * Defines the most common properties that most {@link IElement} implementations
  * share.
  * 
- * @param <Type> the type of the implementation
+ * @param <T> the type of the implementation
  */
-public abstract class AbstractElement<Type extends AbstractElement> extends ElementPropertyContainer<Type> implements IElement<Type> {
+public abstract class AbstractElement<T extends IElement> extends ElementPropertyContainer<T> implements IElement {
 
     protected IRenderer nextRenderer;
     protected List<IElement> childElements = new ArrayList<>();
@@ -107,7 +107,7 @@ public abstract class AbstractElement<Type extends AbstractElement> extends Elem
     }
 
     @Override
-    public <T> T getProperty(Property property) {
+    public <T1> T1 getProperty(Property property) {
         Object result = super.getProperty(property);
         if (styles != null && styles.size() > 0 && result == null && !super.hasProperty(property)) {
             for (Style style : styles) {
@@ -117,7 +117,7 @@ public abstract class AbstractElement<Type extends AbstractElement> extends Elem
                 }
             }
         }
-        return (T) result;
+        return (T1) result;
     }
 
     /**
@@ -126,12 +126,12 @@ public abstract class AbstractElement<Type extends AbstractElement> extends Elem
      * @param style the style to be added
      * @return this element
      */
-    public Type addStyle(Style style) {
+    public T addStyle(Style style) {
         if (styles == null) {
             styles = new LinkedHashSet<>();
         }
         styles.add(style);
-        return (Type)this;
+        return (T)this;
     }
 
     protected abstract IRenderer makeNewRenderer();
@@ -152,5 +152,4 @@ public abstract class AbstractElement<Type extends AbstractElement> extends Elem
     public boolean isEmpty() {
         return 0 == childElements.size();
     }
-
 }

@@ -63,7 +63,7 @@ import java.util.List;
  * Renderers are designed to be extensible, and custom implementations can be
  * seeded to layout objects (or their custom subclasses) at runtime.
  */
-public interface IRenderer extends IPropertyContainer<IRenderer> {
+public interface IRenderer extends IPropertyContainer {
 
     /**
      * Adds a child to the current renderer

@@ -146,7 +146,7 @@ public class ListTest extends ExtendedITextTest{
         Paragraph p = new Paragraph("Test String");
         List list = new List(Property.ListNumberingType.DECIMAL).
                 add("first string");
-        ListItem item = new ListItem("second string").add(new Paragraph("third string"));
+        ListItem item = (ListItem) new ListItem("second string").add(new Paragraph("third string"));
         list.add(item).
             add("fourth item");
 

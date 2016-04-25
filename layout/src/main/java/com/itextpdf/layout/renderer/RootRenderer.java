@@ -185,5 +185,4 @@ public abstract class RootRenderer extends AbstractRenderer {
             resultRenderers.add(renderer);
         }
     }
-
 }

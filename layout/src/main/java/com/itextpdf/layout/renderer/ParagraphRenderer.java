@@ -184,7 +184,6 @@ public class ParagraphRenderer extends BlockRenderer {
                     layoutBox = areas.get(++currentAreaPos).clone();
                     lastYLine = layoutBox.getY() + layoutBox.getHeight();
                     firstLineInBox = true;
-                    continue;
                 } else {
                     boolean keepTogether = getProperty(Property.KEEP_TOGETHER);
                     if (keepTogether) {
