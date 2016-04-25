@@ -109,7 +109,7 @@ public class BarcodeInter25 extends Barcode1D {
             generateChecksum = false;
             checksumText = false;
         } catch (Exception e) {
-            throw new PdfException(e.getLocalizedMessage());
+            throw new PdfException(e);
         }
     }
 

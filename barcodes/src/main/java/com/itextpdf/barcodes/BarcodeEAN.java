@@ -222,7 +222,7 @@ public class BarcodeEAN extends Barcode1D {
             codeType = EAN13;
             code = "";
         } catch (IOException e) {
-            throw new PdfException(e.getLocalizedMessage());
+            throw new PdfException(e);
         }
     }
 

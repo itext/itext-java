@@ -1090,20 +1090,20 @@ public class BarcodePDF417 extends Barcode2D {
     protected void outCodeword17(int codeword) {
         int bytePtr = bitPtr / 8;
         int bit = bitPtr - bytePtr * 8;
-        outBits[bytePtr++] |= codeword >> 9 + bit;
-        outBits[bytePtr++] |= codeword >> 1 + bit;
+        outBits[bytePtr++] |= (byte) (codeword >> 9 + bit);
+        outBits[bytePtr++] |= (byte) (codeword >> 1 + bit);
         codeword <<= 8;
-        outBits[bytePtr] |= codeword >> 1 + bit;
+        outBits[bytePtr] |= (byte) (codeword >> 1 + bit);
         bitPtr += 17;
     }
 
     protected void outCodeword18(int codeword) {
         int bytePtr = bitPtr / 8;
         int bit = bitPtr - bytePtr * 8;
-        outBits[bytePtr++] |= codeword >> 10 + bit;
-        outBits[bytePtr++] |= codeword >> 2 + bit;
+        outBits[bytePtr++] |= (byte) (codeword >> 10 + bit);
+        outBits[bytePtr++] |= (byte) (codeword >> 2 + bit);
         codeword <<= 8;
-        outBits[bytePtr] |= codeword >> 2 + bit;
+        outBits[bytePtr] |= (byte) (codeword >> 2 + bit);
         if (bit == 7)
             outBits[++bytePtr] |= 0x80;
         bitPtr += 18;
@@ -1335,7 +1335,7 @@ public class BarcodePDF417 extends Barcode2D {
         int lastP = 0;
         int startN = 0;
         int nd = 0;
-        char c = 0;
+        char c = (char) 0;
         int k, j;
         boolean lastTxt, txt;
         Segment v;

@@ -128,7 +128,7 @@ public final class QRCodeWriter {
             // b. Write the contents of this row of the barcode
             int offset = leftPadding;
             for (int x = 0; x < inputWidth; x++) {
-                byte value = (inputArray[y][x] == 1) ? 0 : (byte) 255;
+                byte value = (inputArray[y][x] == 1) ? (byte) 0 : (byte) 255;
                 for (int z = 0; z < multiple; z++) {
                     row[offset + z] = value;
                 }
