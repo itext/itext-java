@@ -122,6 +122,17 @@ public class LogMessageConstant {
     /**
      * Log message.
      */
+    public static final String OCSP_STATUS_IS_UNKNOWN = "OCSP status is unknown.";
+
+    /**
+     * Log message.
+     */
+    public static final String OCSP_STATUS_IS_REVOKED = "OCSP status is revoked.";
+
+
+    /**
+     * Log message.
+     */
     public static final String ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE = "Only one of artbox or trimbox can exist on the page. The trimbox will be deleted";
 
     /**
