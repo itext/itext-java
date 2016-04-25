@@ -101,7 +101,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
                 write((PdfArray) pdfObject);
                 break;
             case PdfObject.DICTIONARY:
-                writePdfDictionary((PdfDictionary) pdfObject);
+                write((PdfDictionary) pdfObject);
                 break;
             case PdfObject.INDIRECT_REFERENCE:
                 write((PdfIndirectReference) pdfObject);
@@ -129,7 +129,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
         return this;
     }
 
-    protected void write(PdfArray pdfArray) {
+    private void write(PdfArray pdfArray) {
         writeByte('[');
         for (int i = 0; i < pdfArray.size(); i++) {
             PdfObject value = pdfArray.get(i, false);
@@ -145,7 +145,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
         writeByte(']');
     }
 
-    protected void writePdfDictionary(PdfDictionary pdfDictionary) {
+    private void write(PdfDictionary pdfDictionary) {
         writeBytes(openDict);
         for (Map.Entry<PdfName, PdfObject> entry : pdfDictionary.entrySet()) {
             boolean isAlreadyWriteSpace = false;
@@ -179,7 +179,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
         writeBytes(closeDict);
     }
 
-    protected void write(PdfIndirectReference indirectReference) {
+    private void write(PdfIndirectReference indirectReference) {
         if (document != null && !indirectReference.getDocument().equals(document)) {
             throw new PdfException(PdfException.PdfInderectObjectBelongToOtherPdfDocument);
         }
@@ -196,16 +196,16 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
         }
     }
 
-    protected void write(PdfPrimitiveObject pdfPrimitive) {
+    private void write(PdfPrimitiveObject pdfPrimitive) {
         writeBytes(pdfPrimitive.getInternalContent());
     }
 
-    protected void write(PdfLiteral literal) {
+    private void write(PdfLiteral literal) {
         literal.setPosition(getCurrentPos());
         writeBytes(literal.getInternalContent());
     }
 
-    protected void write(PdfString pdfString) {
+    private void write(PdfString pdfString) {
         pdfString.encrypt(crypto);
         if (pdfString.isHexWriting()) {
             writeByte('<');
@@ -219,12 +219,12 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
     }
 
 
-    protected void write(PdfName name) {
+    private void write(PdfName name) {
         writeByte('/');
         writeBytes(name.getInternalContent());
     }
 
-    protected void write(PdfNumber pdfNumber) {
+    private void write(PdfNumber pdfNumber) {
         if (pdfNumber.hasContent()) {
             writeBytes(pdfNumber.getInternalContent());
         } else if (pdfNumber.isDoubleNumber()) {
@@ -240,7 +240,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
 
     }
 
-    protected void write(PdfStream pdfStream) {
+    private void write(PdfStream pdfStream) {
         try {
             boolean userDefinedCompression = pdfStream.getCompressionLevel() != CompressionConstants.UNDEFINED_COMPRESSION;
             if (!userDefinedCompression) {
@@ -263,7 +263,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
                     updateCompressionFilter(pdfStream);
                     fout = def = new DeflaterOutputStream(fout, pdfStream.getCompressionLevel(), 0x8000);
                 }
-                writePdfDictionary(pdfStream);
+                this.write((PdfDictionary) pdfStream);
                 writeBytes(PdfOutputStream.stream);
                 long beginStreamContent = getCurrentPos();
                 byte buf[] = new byte[4192];
@@ -336,7 +336,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
                 }
                 pdfStream.put(PdfName.Length, new PdfNumber(byteArrayStream.size()));
                 pdfStream.updateLength((int) byteArrayStream.size());
-                writePdfDictionary(pdfStream);
+                this.write((PdfDictionary) pdfStream);
                 writeBytes(PdfOutputStream.stream);
                 byteArrayStream.writeTo(this);
                 writeBytes(PdfOutputStream.endstream);
@@ -413,9 +413,9 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
 
     protected byte[] decodeFlateBytes(PdfStream stream, byte[] bytes) {
         PdfObject filterObject = stream.get(PdfName.Filter);
-        if (filterObject == null)
+        if (filterObject == null) {
             return bytes;
-
+        }
         // check if flateDecode filter is on top
         PdfName filterName;
         PdfArray filtersArray = null;
@@ -475,15 +475,17 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
             }
         }
 
-        if (filterObject == null)
+        if (filterObject == null) {
             stream.remove(PdfName.Filter);
-        else
+        } else {
             stream.put(PdfName.Filter, filterObject);
+        }
 
-        if (decodeParamsObject == null)
+        if (decodeParamsObject == null) {
             stream.remove(PdfName.DecodeParms);
-        else
+        } else {
             stream.put(PdfName.DecodeParms, decodeParamsObject);
+        }
 
         return bytes;
     }
@@ -512,5 +514,4 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
         out.defaultWriteObject();
         outputStream = tempOutputStream;
     }
-
 }

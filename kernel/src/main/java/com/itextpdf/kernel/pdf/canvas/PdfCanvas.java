@@ -436,7 +436,7 @@ public class PdfCanvas {
         PdfName fontName = resources.addFont(document, font);
         currentGs.setFont(font);
         contentStream.getOutputStream()
-                .write((PdfObject) fontName)
+                .write(fontName)
                 .writeSpace()
                 .writeFloat(size).writeSpace()
                 .writeBytes(Tf);
@@ -930,8 +930,8 @@ public class PdfCanvas {
             return this;
         double pt[] = ar.get(0);
         moveTo(pt[0], pt[1]);
-        for (int iter = 0; iter < ar.size(); ++iter) {
-            pt = ar.get(iter);
+        for (int i = 0; i < ar.size(); ++i) {
+            pt = ar.get(i);
             curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
         }
 
@@ -1431,7 +1431,7 @@ public class PdfCanvas {
             return this;
         currentGs.setRenderingIntent(renderingIntent);
         contentStream.getOutputStream()
-                .write((PdfObject) renderingIntent).writeSpace()
+                .write(renderingIntent).writeSpace()
                 .writeBytes(ri);
         return this;
     }
@@ -1533,15 +1533,15 @@ public class PdfCanvas {
         else if (colorSpace instanceof PdfDeviceCs.Cmyk)
             contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? k : K);
         else if (colorSpace instanceof PdfSpecialCs.UncoloredTilingPattern)
-            contentStream.getOutputStream().write((PdfObject) resources.addColorSpace(colorSpace)).writeSpace().writeBytes(fill ? cs : CS).
-                    writeNewLine().writeFloats(colorValue).writeSpace().write((PdfObject) resources.addPattern(pattern)).writeSpace().writeBytes(fill ? scn : SCN);
+            contentStream.getOutputStream().write(resources.addColorSpace(colorSpace)).writeSpace().writeBytes(fill ? cs : CS).
+                    writeNewLine().writeFloats(colorValue).writeSpace().write(resources.addPattern(pattern)).writeSpace().writeBytes(fill ? scn : SCN);
         else if (colorSpace instanceof PdfSpecialCs.Pattern)
-            contentStream.getOutputStream().write((PdfObject) PdfName.Pattern).writeSpace().writeBytes(fill ? cs : CS).
-                    writeNewLine().write((PdfObject) resources.addPattern(pattern)).writeSpace().writeBytes(fill ? scn : SCN);
+            contentStream.getOutputStream().write(PdfName.Pattern).writeSpace().writeBytes(fill ? cs : CS).
+                    writeNewLine().write(resources.addPattern(pattern)).writeSpace().writeBytes(fill ? scn : SCN);
         else if (colorSpace.getPdfObject().isIndirect()) {
             if (!setColorValueOnly) {
                 PdfName name = resources.addColorSpace(colorSpace);
-                contentStream.getOutputStream().write((PdfObject) name).writeSpace().writeBytes(fill ? cs : CS);
+                contentStream.getOutputStream().write(name).writeSpace().writeBytes(fill ? cs : CS);
             }
             contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? scn : SCN);
         }
@@ -1732,7 +1732,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas endLayer() {
-        int num = 1;
+        int num;
         if (layerDepth != null && !layerDepth.isEmpty()) {
             num = layerDepth.get(layerDepth.size() - 1);
             layerDepth.remove(layerDepth.size() - 1);
@@ -1844,7 +1844,6 @@ public class PdfCanvas {
      * @param width
      * @param asInline true if to add image as in-line.
      * @return created XObject or null in case of in-line image (asInline = true).
-     * @on error.
      */
     public PdfXObject addImage(Image image, float x, float y, float width, boolean asInline) {
         if (image.getOriginalType() == ImageType.WMF) {
@@ -1892,7 +1891,6 @@ public class PdfCanvas {
      * @param e       an element of the transformation matrix
      * @param f       an element of the transformation matrix
      * @return current canvas.
-     * @on error.
      */
     public PdfCanvas addXObject(PdfXObject xObject, float a, float b, float c, float d, float e, float f) {
         if (xObject instanceof PdfFormXObject) {
@@ -1911,7 +1909,6 @@ public class PdfCanvas {
      * @param x
      * @param y
      * @return current canvas.
-     * @on error.
      */
     public PdfCanvas addXObject(PdfXObject xObject, float x, float y) {
         if (xObject instanceof PdfFormXObject) {
@@ -1929,7 +1926,6 @@ public class PdfCanvas {
      * @param xObject
      * @param rect
      * @return current canvas.
-     * @on error.
      */
     public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) {
         if (xObject instanceof PdfFormXObject) {
@@ -1949,7 +1945,6 @@ public class PdfCanvas {
      * @param y
      * @param width
      * @return current canvas.
-     * @on error.
      */
     public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float width) {
         if (xObject instanceof PdfFormXObject) {
@@ -1970,7 +1965,6 @@ public class PdfCanvas {
      * @param height
      * @param dummy
      * @return current canvas.
-     * @on error.
      */
     public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float height, boolean dummy) {
         if (xObject instanceof PdfFormXObject) {
@@ -1992,7 +1986,7 @@ public class PdfCanvas {
         if (!extGState.isFlushed())
             currentGs.updateFromExtGState(extGState);
         PdfName name = resources.addExtGState(extGState);
-        contentStream.getOutputStream().write((PdfObject) name).writeSpace().writeBytes(gs);
+        contentStream.getOutputStream().write(name).writeSpace().writeBytes(gs);
         return this;
     }
 
@@ -2027,13 +2021,13 @@ public class PdfCanvas {
      */
     public PdfCanvas beginMarkedContent(PdfName tag, PdfDictionary properties) {
         mcDepth++;
-        PdfOutputStream out = contentStream.getOutputStream().write((PdfObject) tag).writeSpace();
+        PdfOutputStream out = contentStream.getOutputStream().write(tag).writeSpace();
         if (properties == null) {
             out.writeBytes(BMC);
         } else if (properties.getIndirectReference() == null) {
             out.write(properties).writeSpace().writeBytes(BDC);
         } else {
-            out.write((PdfObject) resources.addProperties(properties)).writeSpace().writeBytes(BDC);
+            out.write(resources.addProperties(properties)).writeSpace().writeBytes(BDC);
         }
         return this;
     }
@@ -2152,7 +2146,7 @@ public class PdfCanvas {
         for (Map.Entry<PdfName, PdfObject> entry : imageXObject.getPdfObject().entrySet()) {
             PdfName key = entry.getKey();
             if (!PdfName.Type.equals(key) && !PdfName.Subtype.equals(key) && !PdfName.Length.equals(key)) {
-                os.write((PdfObject) entry.getKey()).writeSpace();
+                os.write(entry.getKey()).writeSpace();
                 os.write(entry.getValue()).writeNewLine();
             }
         }
@@ -2177,7 +2171,7 @@ public class PdfCanvas {
         saveState();
         concatMatrix(a, b, c, d, e, f);
         PdfName name = resources.addForm(form);
-        contentStream.getOutputStream().write((PdfObject) name).writeSpace().writeBytes(Do);
+        contentStream.getOutputStream().write(name).writeSpace().writeBytes(Do);
         restoreState();
         return this;
     }
@@ -2235,7 +2229,6 @@ public class PdfCanvas {
      * @param height
      * @param dummy
      * @return
-     * @on error.
      */
     private PdfCanvas addForm(PdfFormXObject form, float x, float y, float height, boolean dummy) {
         PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
@@ -2257,13 +2250,12 @@ public class PdfCanvas {
      * @param e     an element of the transformation matrix
      * @param f     an element of the transformation matrix
      * @return canvas a reference to this object.
-     * @on error
      */
     private PdfCanvas addImage(PdfImageXObject image, float a, float b, float c, float d, float e, float f) {
         saveState();
         concatMatrix(a, b, c, d, e, f);
         PdfName name = resources.addImage(image);
-        contentStream.getOutputStream().write((PdfObject) name).writeSpace().writeBytes(Do);
+        contentStream.getOutputStream().write(name).writeSpace().writeBytes(Do);
         restoreState();
         return this;
     }
@@ -2272,7 +2264,7 @@ public class PdfCanvas {
         saveState();
         concatMatrix(a, b, c, d, e, f);
         PdfName name = resources.addImage(xObject.getPdfObject());
-        contentStream.getOutputStream().write((PdfObject) name).writeSpace().writeBytes(Do);
+        contentStream.getOutputStream().write(name).writeSpace().writeBytes(Do);
         restoreState();
         return this;
     }
@@ -2284,7 +2276,6 @@ public class PdfCanvas {
      * @param x
      * @param y
      * @return
-     * @throws PdfException
      */
     private PdfCanvas addImage(PdfImageXObject image, float x, float y) {
         return addImage(image, image.getWidth(), 0, 0, image.getHeight(), x, y);
@@ -2296,7 +2287,6 @@ public class PdfCanvas {
      * @param image
      * @param rect
      * @return
-     * @throws PdfException
      */
     private PdfCanvas addImage(PdfImageXObject image, Rectangle rect) {
         return addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY());
@@ -2310,7 +2300,6 @@ public class PdfCanvas {
      * @param y
      * @param width
      * @return
-     * @throws PdfException
      */
     private PdfCanvas addImage(PdfImageXObject image, float x, float y, float width) {
         return addImage(image, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
@@ -2325,7 +2314,6 @@ public class PdfCanvas {
      * @param height
      * @param dummy
      * @return current canvas.
-     * @on error.
      */
     private PdfCanvas addImage(PdfImageXObject image, float x, float y, float height, boolean dummy) {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y);
@@ -2366,8 +2354,8 @@ public class PdfCanvas {
 
     private void addToPropertiesAndBeginLayer(IPdfOCG layer) {
         PdfName name = resources.addProperties(layer.getPdfObject());
-        contentStream.getOutputStream().write((PdfObject) PdfName.OC).writeSpace()
-                .write((PdfObject) name).writeSpace().writeBytes(BDC).writeNewLine();
+        contentStream.getOutputStream().write(PdfName.OC).writeSpace()
+                .write(name).writeSpace().writeBytes(BDC).writeNewLine();
     }
 
     private Color createColor(PdfColorSpace colorSpace, float[] colorValue, PdfPattern pattern) {
