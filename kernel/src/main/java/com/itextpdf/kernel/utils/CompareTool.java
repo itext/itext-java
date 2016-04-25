@@ -112,7 +112,7 @@ public class CompareTool {
         compareResult = new CompareResult(compareByContentErrorsLimit);
         ObjectPath catalogPath = new ObjectPath(cmpDocument.getCatalog().getPdfObject().getIndirectReference(),
                 outDocument.getCatalog().getPdfObject().getIndirectReference());
-        Set<PdfName> ignoredCatalogEntries = new LinkedHashSet<>(Arrays.asList(PdfName.Metadata, PdfName.AcroForm));
+        Set<PdfName> ignoredCatalogEntries = new LinkedHashSet<>(Arrays.asList(PdfName.Metadata));
         compareDictionariesExtended(outDocument.getCatalog().getPdfObject(), cmpDocument.getCatalog().getPdfObject(),
                 catalogPath, compareResult, ignoredCatalogEntries);
         return compareResult;
