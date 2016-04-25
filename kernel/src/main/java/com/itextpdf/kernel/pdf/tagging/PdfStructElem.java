@@ -95,6 +95,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     public static Set<PdfName> blockLevelRoles = new HashSet<PdfName>() {{
         add(PdfName.P);
+        add(PdfName.H);
         add(PdfName.H1);
         add(PdfName.H2);
         add(PdfName.H3);
