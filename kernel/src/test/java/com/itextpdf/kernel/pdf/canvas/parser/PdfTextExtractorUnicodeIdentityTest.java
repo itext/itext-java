@@ -1,8 +1,7 @@
 package com.itextpdf.kernel.pdf.canvas.parser;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
-import com.itextpdf.kernel.pdf.canvas.parser.filter.EventFilter;
+import com.itextpdf.kernel.pdf.canvas.parser.filter.IEventFilter;
 import com.itextpdf.kernel.pdf.canvas.parser.filter.TextRegionEventFilter;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.FilteredTextEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
@@ -27,7 +26,7 @@ public class PdfTextExtractorUnicodeIdentityTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "user10.pdf"));
 
         Rectangle rectangle = new Rectangle(71, 708, 154, 9);
-        EventFilter filter = new TextRegionEventFilter(rectangle);
+        IEventFilter filter = new TextRegionEventFilter(rectangle);
         String txt = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), new FilteredTextEventListener(new LocationTextExtractionStrategy(), filter));
         Assert.assertEquals("Pname Dname Email Address", txt);
     }

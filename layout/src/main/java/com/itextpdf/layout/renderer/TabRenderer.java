@@ -46,7 +46,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
-import com.itextpdf.kernel.pdf.canvas.draw.LineDrawer;
+import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
 import com.itextpdf.layout.Property;
 import com.itextpdf.layout.element.Tab;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -72,7 +72,7 @@ public class TabRenderer extends AbstractRenderer {
 
     @Override
     public void draw(DrawContext drawContext) {
-        LineDrawer leader = getProperty(Property.TAB_LEADER);
+        ILineDrawer leader = getProperty(Property.TAB_LEADER);
         if (leader == null)
             return;
 

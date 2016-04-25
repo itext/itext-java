@@ -9,7 +9,7 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.GlyphTextEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.TextExtractionStrategy;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -38,7 +38,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
     String TEXT1 = "TEXT1 TEXT1";
     String TEXT2 = "TEXT2 TEXT2";
 
-    public TextExtractionStrategy createRenderListenerForTest(){
+    public ITextExtractionStrategy createRenderListenerForTest(){
         return new SimpleTextExtractionStrategy();
     }
 

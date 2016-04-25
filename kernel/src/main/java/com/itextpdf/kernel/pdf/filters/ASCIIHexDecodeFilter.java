@@ -56,7 +56,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * Handles ASCIIHexDecode filter
  */
-public class ASCIIHexDecodeFilter implements FilterHandler {
+public class ASCIIHexDecodeFilter implements IFilterHandler {
 
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {

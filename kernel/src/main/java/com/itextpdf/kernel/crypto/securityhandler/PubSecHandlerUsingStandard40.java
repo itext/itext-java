@@ -44,7 +44,7 @@
  */
 package com.itextpdf.kernel.crypto.securityhandler;
 
-import com.itextpdf.kernel.crypto.Decryptor;
+import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.crypto.OutputStreamStandardEncryption;
 import com.itextpdf.kernel.crypto.StandardDecryptor;
@@ -52,7 +52,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.security.ExternalDecryptionProcess;
+import com.itextpdf.kernel.security.IExternalDecryptionProcess;
 import java.io.OutputStream;
 import java.security.Key;
 import java.security.cert.Certificate;
@@ -63,7 +63,7 @@ public class PubSecHandlerUsingStandard40 extends PubKeySecurityHandler {
     }
 
     public PubSecHandlerUsingStandard40(PdfDictionary encryptionDictionary, Key certificateKey, Certificate certificate,
-                                        String certificateKeyProvider, ExternalDecryptionProcess externalDecryptionProcess,
+                                        String certificateKeyProvider, IExternalDecryptionProcess externalDecryptionProcess,
                                         boolean encryptMetadata) {
         initKeyAndReadDictionary(encryptionDictionary, certificateKey, certificate, certificateKeyProvider,
                                 externalDecryptionProcess, encryptMetadata);
@@ -75,7 +75,7 @@ public class PubSecHandlerUsingStandard40 extends PubKeySecurityHandler {
     }
 
     @Override
-    public Decryptor getDecryptor() {
+    public IDecryptor getDecryptor() {
         return new StandardDecryptor(nextObjectKey, 0, nextObjectKeySize);
     }
 

@@ -2,14 +2,11 @@ package com.itextpdf.kernel.pdf.canvas.parser;
 
 import com.itextpdf.kernel.geom.LineSegment;
 import com.itextpdf.kernel.geom.Vector;
-import com.itextpdf.kernel.pdf.canvas.parser.EventType;
-import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
-import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
-import com.itextpdf.kernel.pdf.canvas.parser.data.EventData;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.EventListener;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.TextExtractionStrategy;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
@@ -52,7 +49,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
         String inFile = "japanese_text.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + inFile));
-        TextExtractionStrategy start = new SimpleTextExtractionStrategy();
+        ITextExtractionStrategy start = new SimpleTextExtractionStrategy();
 
         sb.append(PdfTextExtractor.getTextFromPage(pdfDocument.getPage(FIRST_PAGE), start));
 
@@ -84,11 +81,11 @@ public class TextRenderInfoTest extends ExtendedITextTest {
     }
 
 
-    private static class TextPositionEventListener implements EventListener {
+    private static class TextPositionEventListener implements IEventListener {
         List<LineSegment> lineSegments = new ArrayList<>();
 
         @Override
-        public void eventOccurred(EventData data, EventType type) {
+        public void eventOccurred(IEventData data, EventType type) {
             if (type.equals(EventType.RENDER_TEXT)) {
                 lineSegments.add(((TextRenderInfo) data).getBaseline());
             }
@@ -104,7 +101,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
         }
     }
 
-    private static class CharacterPositionEventListener implements TextExtractionStrategy {
+    private static class CharacterPositionEventListener implements ITextExtractionStrategy {
 
         @Override
         public String getResultantText() {
@@ -112,7 +109,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
         }
 
         @Override
-        public void eventOccurred(EventData data, EventType type) {
+        public void eventOccurred(IEventData data, EventType type) {
             if (type.equals(EventType.RENDER_TEXT)) {
                 TextRenderInfo renderInfo = (TextRenderInfo) data;
                 List<TextRenderInfo> subs = renderInfo.getCharacterRenderInfos();

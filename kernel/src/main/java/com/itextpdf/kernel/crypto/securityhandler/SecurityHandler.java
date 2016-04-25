@@ -45,7 +45,7 @@
 package com.itextpdf.kernel.crypto.securityhandler;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.crypto.Decryptor;
+import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import java.security.MessageDigest;
 
@@ -105,5 +105,5 @@ public abstract class SecurityHandler {
     }
 
     public abstract OutputStreamEncryption getEncryptionStream(java.io.OutputStream os);
-    public abstract Decryptor getDecryptor();
+    public abstract IDecryptor getDecryptor();
 }

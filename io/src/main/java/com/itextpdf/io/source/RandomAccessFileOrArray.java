@@ -63,7 +63,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
     /**
      * The source that backs this object
      */
-    private final RandomAccessSource byteSource;
+    private final IRandomAccessSource byteSource;
 
     /**
      * The physical location in the underlying byte source.
@@ -88,7 +88,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
         return new RandomAccessFileOrArray(new IndependentRandomAccessSource(byteSource));
     }
 
-    public RandomAccessSource createSourceView() {
+    public IRandomAccessSource createSourceView() {
         return new IndependentRandomAccessSource(byteSource);
     }
 
@@ -97,7 +97,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * this RandomAccessFileOrArray is closed.
      * @param byteSource the byte source to wrap
      */
-    public RandomAccessFileOrArray(RandomAccessSource byteSource){
+    public RandomAccessFileOrArray(IRandomAccessSource byteSource){
         this.byteSource = byteSource;
     }
 

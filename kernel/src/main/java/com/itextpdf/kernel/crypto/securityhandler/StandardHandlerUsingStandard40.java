@@ -47,7 +47,7 @@ package com.itextpdf.kernel.crypto.securityhandler;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.ARCFOUREncryption;
 import com.itextpdf.kernel.crypto.BadPasswordException;
-import com.itextpdf.kernel.crypto.Decryptor;
+import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.crypto.OutputStreamStandardEncryption;
 import com.itextpdf.kernel.crypto.StandardDecryptor;
@@ -88,7 +88,7 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
     }
 
     @Override
-    public Decryptor getDecryptor() {
+    public IDecryptor getDecryptor() {
         return new StandardDecryptor(nextObjectKey, 0, nextObjectKeySize);
     }
 

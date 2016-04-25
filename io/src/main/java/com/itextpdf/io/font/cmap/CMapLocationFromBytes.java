@@ -51,7 +51,7 @@ import com.itextpdf.io.source.RandomAccessSourceFactory;
 /**
  * @author psoares
  */
-public class CMapLocationFromBytes implements CMapLocation {
+public class CMapLocationFromBytes implements ICMapLocation {
 
     private byte[] data;
 

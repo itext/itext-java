@@ -59,7 +59,7 @@ import java.util.zip.InflaterInputStream;
 /**
  * Handles FlateDecode filter.
  */
-public class FlateDecodeFilter implements FilterHandler{
+public class FlateDecodeFilter implements IFilterHandler {
 
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {

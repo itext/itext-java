@@ -45,12 +45,12 @@
 package com.itextpdf.kernel.pdf.canvas.parser.filter;
 
 import com.itextpdf.kernel.pdf.canvas.parser.EventType;
-import com.itextpdf.kernel.pdf.canvas.parser.data.EventData;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 
 /**
  * This is an interface which helps to filter events.
  */
-public interface EventFilter {
+public interface IEventFilter {
 
     /**
      * This method checks an event and decides whether it should be processed further (corresponds to {@code true}
@@ -59,6 +59,6 @@ public interface EventFilter {
      * @param type event type
      * @return true to process event further, false to filter event out
      */
-    boolean accept(EventData data, EventType type);
+    boolean accept(IEventData data, EventType type);
 
 }

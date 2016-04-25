@@ -47,7 +47,7 @@ package com.itextpdf.kernel.font;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontCache;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.font.cmap.CMapLocation;
+import com.itextpdf.io.font.cmap.ICMapLocation;
 import com.itextpdf.io.font.cmap.CMapLocationFromBytes;
 import com.itextpdf.io.font.cmap.CMapParser;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
@@ -72,7 +72,7 @@ class FontUtil {
         if (toUnicode instanceof PdfStream) {
             try {
                 byte[] uniBytes = ((PdfStream) toUnicode).getBytes();
-                CMapLocation lb = new CMapLocationFromBytes(uniBytes);
+                ICMapLocation lb = new CMapLocationFromBytes(uniBytes);
                 cMapToUnicode = new CMapToUnicode();
                 CMapParser.parseCid("", cMapToUnicode, lb);
             } catch (Exception e) {

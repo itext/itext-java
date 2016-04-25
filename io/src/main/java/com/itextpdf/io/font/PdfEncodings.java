@@ -146,7 +146,7 @@ public class PdfEncodings {
 
     private static final IntHashtable pdfEncoding = new IntHashtable();
 
-    private static final Map<String, ExtraEncoding> extraEncodings = new HashMap<>();
+    private static final Map<String, IExtraEncoding> extraEncodings = new HashMap<>();
 
     static {
         for (int k = 128; k < 161; ++k) {
@@ -188,7 +188,7 @@ public class PdfEncodings {
             }
             return b;
         }
-        ExtraEncoding extra = extraEncodings.get(encoding.toLowerCase());
+        IExtraEncoding extra = extraEncodings.get(encoding.toLowerCase());
         if (extra != null) {
             byte[] b = extra.charToByte(text, encoding);
             if (b != null)
@@ -284,7 +284,7 @@ public class PdfEncodings {
             }
             return new String(c);
         }
-        ExtraEncoding extra = extraEncodings.get(encoding.toLowerCase());
+        IExtraEncoding extra = extraEncodings.get(encoding.toLowerCase());
         if (extra != null) {
             String text = extra.byteToChar(bytes, encoding);
             if (text != null) {
@@ -337,13 +337,13 @@ public class PdfEncodings {
      * @param enc the conversion class
      */
     @SuppressWarnings("unchecked")
-    public static void addExtraEncoding(String name, ExtraEncoding enc) {
+    public static void addExtraEncoding(String name, IExtraEncoding enc) {
         synchronized (extraEncodings) {
             extraEncodings.put(name.toLowerCase(), enc);
         }
     }
 
-    private static class WingdingsConversion implements ExtraEncoding {
+    private static class WingdingsConversion implements IExtraEncoding {
 
         public byte[] charToByte(char char1, String encoding) {
             if (char1 == ' ')
@@ -406,7 +406,7 @@ public class PdfEncodings {
         };
     }
 
-    private static class Cp437Conversion implements ExtraEncoding {
+    private static class Cp437Conversion implements IExtraEncoding {
         private static IntHashtable c2b = new IntHashtable();
 
         public byte[] charToByte(String text, String encoding) {
@@ -478,7 +478,7 @@ public class PdfEncodings {
         }
     }
 
-    private static class SymbolConversion implements ExtraEncoding {
+    private static class SymbolConversion implements IExtraEncoding {
 
         private static final IntHashtable t1 = new IntHashtable();
         private static final IntHashtable t2 = new IntHashtable();
@@ -585,7 +585,7 @@ public class PdfEncodings {
         }
     }
 
-    private static class SymbolTTConversion implements ExtraEncoding {
+    private static class SymbolTTConversion implements IExtraEncoding {
 
         public byte[] charToByte(char char1, String encoding) {
             if ((char1 & 0xff00) == 0 || (char1 & 0xff00) == 0xf000)

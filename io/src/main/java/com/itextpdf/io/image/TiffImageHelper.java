@@ -56,7 +56,7 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.io.source.RandomAccessSource;
+import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.FilterUtil;
 
@@ -79,7 +79,7 @@ class TiffImageHelper {
         if (image.getOriginalType() != ImageType.TIFF)
             throw new IllegalArgumentException("TIFF image expected");
         try {
-            RandomAccessSource ras;
+            IRandomAccessSource ras;
             if (image.getData() == null) {
                 image.loadData();
             }

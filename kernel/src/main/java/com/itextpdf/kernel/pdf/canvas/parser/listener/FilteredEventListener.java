@@ -44,8 +44,8 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.listener;
 
-import com.itextpdf.kernel.pdf.canvas.parser.data.EventData;
-import com.itextpdf.kernel.pdf.canvas.parser.filter.EventFilter;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
+import com.itextpdf.kernel.pdf.canvas.parser.filter.IEventFilter;
 import com.itextpdf.kernel.pdf.canvas.parser.EventType;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,14 +54,14 @@ import java.util.Set;
 /**
  * An event listener which filters events on the fly before passing them on to the delegate.
  */
-public class FilteredEventListener implements EventListener {
+public class FilteredEventListener implements IEventListener {
 
-    protected final List<EventListener> delegates;
-    protected final List<EventFilter[]> filters;
+    protected final List<IEventListener> delegates;
+    protected final List<IEventFilter[]> filters;
 
     /**
      * Constructs a {@link FilteredEventListener} empty instance.
-     * Use {@link #attachEventListener(EventListener, EventFilter...)} to add an event listener along with its filters.
+     * Use {@link #attachEventListener(IEventListener, IEventFilter...)} to add an event listener along with its filters.
      */
     public FilteredEventListener() {
         this.delegates = new ArrayList<>();
@@ -70,18 +70,18 @@ public class FilteredEventListener implements EventListener {
 
     /**
      * Constructs a {@link FilteredEventListener} instance with one delegate.
-     * Use {@link #attachEventListener(EventListener, EventFilter...)} to add more {@link EventListener} delegates
+     * Use {@link #attachEventListener(IEventListener, IEventFilter...)} to add more {@link IEventListener} delegates
      * along with their filters.
      * @param delegate a delegate that fill be called when all the corresponding filters for an event pass
      * @param filterSet filters attached to the delegate that will be tested before passing an event on to the delegate
      */
-    public FilteredEventListener(EventListener delegate, EventFilter... filterSet) {
+    public FilteredEventListener(IEventListener delegate, IEventFilter... filterSet) {
         this();
         attachEventListener(delegate, filterSet);
     }
 
     /**
-     * Attaches another {@link EventListener} delegate with its filters.
+     * Attaches another {@link IEventListener} delegate with its filters.
      * When all the filters attached to the delegate for an event accept the event, the event will be passed on to
      * the delegate.
      * You can attach multiple delegates to this {@link FilteredEventListener} instance. The content stream will
@@ -92,7 +92,7 @@ public class FilteredEventListener implements EventListener {
      * @param filterSet filters attached to the delegate that will be tested before passing an event on to the delegate
      * @return delegate that has been passed to the method, used for convenient call chaining
      */
-    public <T extends EventListener> T attachEventListener(T delegate, EventFilter... filterSet) {
+    public <T extends IEventListener> T attachEventListener(T delegate, IEventFilter... filterSet) {
         delegates.add(delegate);
         filters.add(filterSet);
 
@@ -100,11 +100,11 @@ public class FilteredEventListener implements EventListener {
     }
 
     @Override
-    public void eventOccurred(EventData data, EventType type) {
+    public void eventOccurred(IEventData data, EventType type) {
         for (int i = 0; i < delegates.size(); i++) {
-            EventListener delegate = delegates.get(i);
+            IEventListener delegate = delegates.get(i);
             boolean filtersPassed = delegate.getSupportedEvents() == null || delegate.getSupportedEvents().contains(type);
-            for (EventFilter filter : filters.get(i)) {
+            for (IEventFilter filter : filters.get(i)) {
                 if (!filter.accept(data, type)) {
                     filtersPassed = false;
                     break;

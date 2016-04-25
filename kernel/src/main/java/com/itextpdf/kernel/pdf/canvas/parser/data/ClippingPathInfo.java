@@ -47,7 +47,7 @@ package com.itextpdf.kernel.pdf.canvas.parser.data;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Path;
 
-public class ClippingPathInfo implements EventData {
+public class ClippingPathInfo implements IEventData {
     private Path path;
     private Matrix ctm;
 

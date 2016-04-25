@@ -75,8 +75,8 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.clipper;
 
-import com.itextpdf.kernel.pdf.canvas.parser.clipper.Clipper.EndType;
-import com.itextpdf.kernel.pdf.canvas.parser.clipper.Clipper.JoinType;
+import com.itextpdf.kernel.pdf.canvas.parser.clipper.IClipper.EndType;
+import com.itextpdf.kernel.pdf.canvas.parser.clipper.IClipper.JoinType;
 
 import java.util.ArrayList;
 import java.util.Collections;

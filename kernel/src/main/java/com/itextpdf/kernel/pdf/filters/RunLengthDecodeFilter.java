@@ -53,7 +53,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * Handles RunLengthDecode filter.
  */
-public class RunLengthDecodeFilter implements FilterHandler {
+public class RunLengthDecodeFilter implements IFilterHandler {
 
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {

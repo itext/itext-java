@@ -51,7 +51,7 @@ import com.itextpdf.kernel.pdf.PdfObject;
 /**
  * The main interface for creating a new {@code FilterHandler}
  */
-public interface FilterHandler {
+public interface IFilterHandler {
 
     /**
      * Decode the byte[] using the provided filterName.
@@ -62,5 +62,5 @@ public interface FilterHandler {
      * @param streamDictionary the dictionary of the stream. Can contain additional information needed to decode the byte[].
      * @return
      */
-    public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, final PdfDictionary streamDictionary);
+    byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, final PdfDictionary streamDictionary);
 }

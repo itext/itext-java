@@ -86,7 +86,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Paulo Soarees
  */
-public class OcspClientBouncyCastle implements OcspClient {
+public class OcspClientBouncyCastle implements IOcspClient {
 
     /**
      * The Logger instance.

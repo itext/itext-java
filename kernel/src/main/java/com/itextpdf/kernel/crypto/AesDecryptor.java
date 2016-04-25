@@ -44,7 +44,7 @@
  */
 package com.itextpdf.kernel.crypto;
 
-public class AesDecryptor implements Decryptor {
+public class AesDecryptor implements IDecryptor {
     private AESCipher cipher;
     private byte[] key;
     private boolean initiated;

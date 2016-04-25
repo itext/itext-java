@@ -81,7 +81,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public abstract class ClipperBase implements Clipper {
+public abstract class ClipperBase implements IClipper {
     protected class LocalMinima {
         long y;
         Edge leftBound;
@@ -150,7 +150,7 @@ public abstract class ClipperBase implements Clipper {
 
     protected final boolean preserveCollinear;
 
-    private static final Logger LOGGER = Logger.getLogger(Clipper.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(IClipper.class.getName());
 
     protected ClipperBase( boolean preserveCollinear ) //constructor (nb: no external instantiation)
     {

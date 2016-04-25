@@ -48,14 +48,14 @@ import com.itextpdf.kernel.geom.LineSegment;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.canvas.parser.EventType;
-import com.itextpdf.kernel.pdf.canvas.parser.data.EventData;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 
 /**
- * This {@link EventFilter} implementation only accepts text render events within the specified
+ * This {@link IEventFilter} implementation only accepts text render events within the specified
  * rectangular region.
  */
-public class TextRegionEventFilter implements EventFilter {
+public class TextRegionEventFilter implements IEventFilter {
 
     private final Rectangle filterRect;
 
@@ -68,7 +68,7 @@ public class TextRegionEventFilter implements EventFilter {
     }
 
     @Override
-    public boolean accept(EventData data, EventType type) {
+    public boolean accept(IEventData data, EventType type) {
         if (type.equals(EventType.RENDER_TEXT)) {
             TextRenderInfo renderInfo = (TextRenderInfo) data;
 

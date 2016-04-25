@@ -52,7 +52,7 @@ import com.itextpdf.kernel.pdf.PdfEncryptor;
 import com.itextpdf.kernel.pdf.PdfLiteral;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.security.ExternalDecryptionProcess;
+import com.itextpdf.kernel.security.IExternalDecryptionProcess;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -142,7 +142,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
 
     protected static byte[] computeGlobalKeyOnReading(PdfDictionary encryptionDictionary, PrivateKey certificateKey,
                                              Certificate certificate, String certificateKeyProvider,
-                                             ExternalDecryptionProcess externalDecryptionProcess,
+                                             IExternalDecryptionProcess externalDecryptionProcess,
                                              boolean encryptMetadata, String digestAlgorithm) {
         PdfArray recipients = encryptionDictionary.getAsArray(PdfName.Recipients);
         if (recipients == null) {
@@ -256,7 +256,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
     }
 
     protected void initKeyAndReadDictionary(PdfDictionary encryptionDictionary, Key certificateKey, Certificate certificate,
-                                          String certificateKeyProvider, ExternalDecryptionProcess externalDecryptionProcess,
+                                          String certificateKeyProvider, IExternalDecryptionProcess externalDecryptionProcess,
                                           boolean encryptMetadata) {
         String digestAlgorithm = getDigestAlgorithm();
         byte[] encryptionKey = computeGlobalKeyOnReading(encryptionDictionary, (PrivateKey) certificateKey, certificate,

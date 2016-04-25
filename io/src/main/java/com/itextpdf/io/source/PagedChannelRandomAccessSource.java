@@ -53,7 +53,7 @@ import java.util.LinkedList;
  * As an implementation detail, we use {@link GroupedRandomAccessSource} functionality, but override to make determination of the underlying
  * mapped page more efficient - and to close each page as another is opened
  */
-class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implements RandomAccessSource {
+class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implements IRandomAccessSource {
     // these values were selected based on parametric testing with extracting text content from a 2.3GB file.  These settings resulted in the best improvement over
     // the single size MRU case (24% speed improvement)
     public static final int DEFAULT_TOTAL_BUFSIZE = 1 << 26;
@@ -72,7 +72,7 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
     /**
      * Most recently used list used to hold a number of mapped pages open at a time
      */
-    private final MRU<RandomAccessSource> mru;
+    private final MRU<IRandomAccessSource> mru;
 
     /**
      * Constructs a new {@link PagedChannelRandomAccessSource} based on the specified FileChannel, with a default buffer configuration.
@@ -96,7 +96,7 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
         super(buildSources(channel, totalBufferSize/maxOpenBuffers));
         this.channel = channel;
         this.bufferSize = totalBufferSize/maxOpenBuffers;
-        this.mru = new MRU<RandomAccessSource>(maxOpenBuffers);
+        this.mru = new MRU<IRandomAccessSource>(maxOpenBuffers);
     }
 
     /**
@@ -106,7 +106,7 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
      * @return a list of sources that represent the pages of the channel
      * @throws java.io.IOException if IO fails for any reason
      */
-    private static RandomAccessSource[] buildSources(final FileChannel channel, final int bufferSize) throws java.io.IOException{
+    private static IRandomAccessSource[] buildSources(final FileChannel channel, final int bufferSize) throws java.io.IOException{
         long size = channel.size();
         if (size <= 0)
             throw new java.io.IOException("File size must be greater than zero");
@@ -135,8 +135,8 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
      * {@inheritDoc}
      * For now, close the source that is no longer being used.  In the future, we may implement an MRU that allows multiple pages to be opened at a time
      */
-    protected void sourceReleased(RandomAccessSource source) throws java.io.IOException {
-        RandomAccessSource old = mru.enqueue(source);
+    protected void sourceReleased(IRandomAccessSource source) throws java.io.IOException {
+        IRandomAccessSource old = mru.enqueue(source);
         if (old != null)
             old.close();
     }
@@ -146,7 +146,7 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
      * {@inheritDoc}
      * Ensure that the source is mapped.  In the future, we may implement an MRU that allows multiple pages to be opened at a time
      */
-    protected void sourceInUse(RandomAccessSource source) throws java.io.IOException {
+    protected void sourceInUse(IRandomAccessSource source) throws java.io.IOException {
         ((MappedChannelRandomAccessSource)source).open();
     }
 

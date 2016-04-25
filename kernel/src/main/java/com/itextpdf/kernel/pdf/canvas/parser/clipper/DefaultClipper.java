@@ -616,7 +616,7 @@ public class DefaultClipper extends ClipperBase {
 
     private boolean usingPolyTree;
 
-    public ZFillCallback zFillFunction;
+    public IZFillCallback zFillFunction;
 
     //------------------------------------------------------------------------------
 

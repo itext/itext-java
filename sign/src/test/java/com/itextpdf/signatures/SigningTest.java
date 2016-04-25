@@ -143,8 +143,8 @@ public class SigningTest {
 
         signer.setFieldName(name);
         // Creating the signature
-        ExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
-        ExternalDigest digest = new BouncyCastleDigest();
+        IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
+        IExternalDigest digest = new BouncyCastleDigest();
         signer.signDetached(digest, pks, chain, null, null, null, 0, subfilter);
     }
 }

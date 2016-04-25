@@ -54,7 +54,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.FillingRule;
 /**
  * Contains information relating to painting current path.
  */
-public class PathRenderInfo implements EventData {
+public class PathRenderInfo implements IEventData {
 
     /**
      * End the path object without filling or stroking it. This operator shall be a path-painting no-op,

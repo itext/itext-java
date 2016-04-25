@@ -83,8 +83,8 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
         fontProgram = DocType1Font.createFontProgram(fontDictionary, fontEncoding, toUni);
 
-        if (fontProgram instanceof DocFontProgram) {
-            embedded = ((DocFontProgram) fontProgram).getFontFile() != null;
+        if (fontProgram instanceof IDocFontProgram) {
+            embedded = ((IDocFontProgram) fontProgram).getFontFile() != null;
         }
         subset = false;
     }
@@ -139,8 +139,8 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
     @Override
     protected void addFontStream(PdfDictionary fontDescriptor) {
         if (embedded) {
-            if (fontProgram instanceof DocFontProgram) {
-                DocFontProgram docType1Font = (DocFontProgram)fontProgram;
+            if (fontProgram instanceof IDocFontProgram) {
+                IDocFontProgram docType1Font = (IDocFontProgram)fontProgram;
                 fontDescriptor.put(docType1Font.getFontFileName(),
                         docType1Font.getFontFile());
                 if (docType1Font.getSubtype() != null) {

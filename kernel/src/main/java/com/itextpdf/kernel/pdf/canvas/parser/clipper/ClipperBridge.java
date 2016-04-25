@@ -90,12 +90,12 @@ public class ClipperBridge {
     }
 
     /**
-     * Adds iText {@link Path} to the given {@link Clipper} object.
-     * @param clipper The {@link Clipper} object.
-     * @param path The {@link com.itextpdf.kernel.geom.Path} object to be added to the {@link Clipper}.
-     * @param polyType See {@link Clipper.PolyType}.
+     * Adds iText {@link Path} to the given {@link IClipper} object.
+     * @param clipper The {@link IClipper} object.
+     * @param path The {@link com.itextpdf.kernel.geom.Path} object to be added to the {@link IClipper}.
+     * @param polyType See {@link IClipper.PolyType}.
      */
-    public static void addPath(Clipper clipper, com.itextpdf.kernel.geom.Path path, Clipper.PolyType polyType) {
+    public static void addPath(IClipper clipper, com.itextpdf.kernel.geom.Path path, IClipper.PolyType polyType) {
         for (Subpath subpath : path.getSubpaths()) {
             if (!subpath.isSinglePointClosed() && !subpath.isSinglePointOpen()) {
                 List<com.itextpdf.kernel.geom.Point> linearApproxPoints = subpath.getPiecewiseLinearApproximation();
@@ -110,7 +110,7 @@ public class ClipperBridge {
      *
      * @return {@link java.util.List} consisting of all degenerate iText {@link Subpath}s of the path.
      */
-    public static List<Subpath> addPath(ClipperOffset offset, com.itextpdf.kernel.geom.Path path, Clipper.JoinType joinType, Clipper.EndType endType) {
+    public static List<Subpath> addPath(ClipperOffset offset, com.itextpdf.kernel.geom.Path path, IClipper.JoinType joinType, IClipper.EndType endType) {
         List<Subpath> degenerateSubpaths = new ArrayList<>();
 
         for (Subpath subpath : path.getSubpaths()) {
@@ -120,11 +120,11 @@ public class ClipperBridge {
             }
 
             if (!subpath.isSinglePointClosed() && !subpath.isSinglePointOpen()) {
-                Clipper.EndType et;
+                IClipper.EndType et;
 
                 if (subpath.isClosed()) {
                     // Offsetting is never used for path being filled
-                    et = Clipper.EndType.CLOSED_LINE;
+                    et = IClipper.EndType.CLOSED_LINE;
                 } else {
                     et = endType;
                 }
@@ -177,16 +177,16 @@ public class ClipperBridge {
      * @param lineJoinStyle iText line join style constant. See {@link PdfCanvasConstants}
      * @return Clipper line join style constant.
      */
-    public static Clipper.JoinType getJoinType(int lineJoinStyle) {
+    public static IClipper.JoinType getJoinType(int lineJoinStyle) {
         switch (lineJoinStyle) {
             case PdfCanvasConstants.LineJoinStyle.BEVEL:
-                return Clipper.JoinType.BEVEL;
+                return IClipper.JoinType.BEVEL;
 
             case PdfCanvasConstants.LineJoinStyle.MITER:
-                return Clipper.JoinType.MITER;
+                return IClipper.JoinType.MITER;
         }
 
-        return Clipper.JoinType.ROUND;
+        return IClipper.JoinType.ROUND;
     }
 
     /**
@@ -195,16 +195,16 @@ public class ClipperBridge {
      * @param lineCapStyle iText line cap style constant. See {@link PdfCanvasConstants}
      * @return Clipper line cap (end type) style constant.
      */
-    public static Clipper.EndType getEndType(int lineCapStyle) {
+    public static IClipper.EndType getEndType(int lineCapStyle) {
         switch (lineCapStyle) {
             case PdfCanvasConstants.LineCapStyle.BUTT:
-                return Clipper.EndType.OPEN_BUTT;
+                return IClipper.EndType.OPEN_BUTT;
 
             case PdfCanvasConstants.LineCapStyle.PROJECTING_SQUARE:
-                return Clipper.EndType.OPEN_SQUARE;
+                return IClipper.EndType.OPEN_SQUARE;
         }
 
-        return Clipper.EndType.OPEN_ROUND;
+        return IClipper.EndType.OPEN_ROUND;
     }
 
     /**
@@ -214,11 +214,11 @@ public class ClipperBridge {
      *                    {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.FillingRule#EVEN_ODD}.
      * @return Clipper fill type constant.
      */
-    public static Clipper.PolyFillType getFillType(int fillingRule) {
-        Clipper.PolyFillType fillType = Clipper.PolyFillType.NON_ZERO;
+    public static IClipper.PolyFillType getFillType(int fillingRule) {
+        IClipper.PolyFillType fillType = IClipper.PolyFillType.NON_ZERO;
 
         if (fillingRule == PdfCanvasConstants.FillingRule.EVEN_ODD) {
-            fillType = Clipper.PolyFillType.EVEN_ODD;
+            fillType = IClipper.PolyFillType.EVEN_ODD;
         }
 
         return fillType;
@@ -241,7 +241,7 @@ public class ClipperBridge {
         }
     }
 
-    public static void addRectToClipper(Clipper clipper, com.itextpdf.kernel.geom.Point[] rectVertices, Clipper.PolyType polyType) {
+    public static void addRectToClipper(IClipper clipper, com.itextpdf.kernel.geom.Point[] rectVertices, IClipper.PolyType polyType) {
         clipper.addPath(new Path(convertToLongPoints(new ArrayList<>(Arrays.asList(rectVertices)))), polyType, true);
     }
 }

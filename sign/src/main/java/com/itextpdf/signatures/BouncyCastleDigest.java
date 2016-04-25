@@ -64,7 +64,7 @@ import org.bouncycastle.jcajce.provider.digest.SHA512;
  * Implementation for digests accessed directly from the BouncyCastle library bypassing
  * any provider definition.
  */
-public class BouncyCastleDigest implements ExternalDigest {
+public class BouncyCastleDigest implements IExternalDigest {
 
     @Override
     public MessageDigest getMessageDigest(String hashAlgorithm) throws GeneralSecurityException {

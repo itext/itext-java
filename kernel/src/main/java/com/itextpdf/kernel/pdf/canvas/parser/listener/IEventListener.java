@@ -44,18 +44,29 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.listener;
 
-import com.itextpdf.kernel.pdf.canvas.parser.filter.EventFilter;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.EventListener;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
+import com.itextpdf.kernel.pdf.canvas.parser.EventType;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
+import java.util.Set;
 
 /**
- * This is a special interface for {@link EventFilter} that returns text as result of its work.
+ * A callback interface that receives notifications from the {@link PdfCanvasProcessor}
+ * as various events occur (see {@link EventType}).
  */
-public interface TextExtractionStrategy extends EventListener {
+public interface IEventListener {
 
     /**
-     * Returns the text that has been processed so far.
-     * @return {@link String} instance with the current resultant text
+     * Called when some event occurs during parsing a content stream.
+     * @param data Combines the data required for processing corresponding event type.
+     * @param type Event type.
      */
-    String getResultantText();
+    void eventOccurred(IEventData data, EventType type);
 
+    /**
+     * Provides the set of event types this listener supports.
+     * Returns null if all possible event types are supported.
+     * @return Set of event types supported by this listener or
+     * null if all possible event types are supported.
+     */
+    Set<EventType> getSupportedEvents();
 }

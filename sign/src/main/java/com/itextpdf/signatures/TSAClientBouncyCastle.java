@@ -76,7 +76,7 @@ import org.slf4j.LoggerFactory;
  * for ease of subclassing.
  * </p>
  */
-public class TSAClientBouncyCastle implements TSAClient {
+public class TSAClientBouncyCastle implements ITSAClient {
 
     /** The Logger instance. */
     private static final Logger LOGGER = LoggerFactory.getLogger(TSAClientBouncyCastle.class);
@@ -91,7 +91,7 @@ public class TSAClientBouncyCastle implements TSAClient {
     protected String tsaPassword;
 
     /** An interface that allows you to inspect the timestamp info. */
-    protected TSAInfoBouncyCastle tsaInfo;
+    protected ITSAInfoBouncyCastle tsaInfo;
 
     /** The default value for the hash algorithm */
     public static final int DEFAULTTOKENSIZE = 4096;
@@ -144,7 +144,7 @@ public class TSAClientBouncyCastle implements TSAClient {
     /**
      * @param tsaInfo the tsaInfo to set
      */
-    public void setTSAInfo(TSAInfoBouncyCastle tsaInfo) {
+    public void setTSAInfo(ITSAInfoBouncyCastle tsaInfo) {
         this.tsaInfo = tsaInfo;
     }
 

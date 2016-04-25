@@ -51,7 +51,7 @@ import com.itextpdf.kernel.pdf.PdfObject;
 /**
  * A filter that doesn't modify the stream at all
  */
-public class DoNothingFilter implements FilterHandler {
+public class DoNothingFilter implements IFilterHandler {
     private PdfName lastFilterName;
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {

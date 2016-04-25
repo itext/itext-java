@@ -54,7 +54,7 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
-import com.itextpdf.kernel.pdf.filters.FilterHandler;
+import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 
 import java.io.ByteArrayOutputStream;
@@ -414,7 +414,7 @@ public final class InlineImageParsingUtils {
      **/
     private static boolean inlineImageStreamBytesAreComplete(byte[] samples, PdfDictionary imageDictionary) {
         try {
-            Map<PdfName, FilterHandler> filters = new HashMap<>(FilterHandlers.getDefaultFilterHandlers());
+            Map<PdfName, IFilterHandler> filters = new HashMap<>(FilterHandlers.getDefaultFilterHandlers());
             DoNothingFilter stubfilter = new DoNothingFilter();
             filters.put(PdfName.DCTDecode, stubfilter);
             filters.put(PdfName.JBIG2Decode, stubfilter);

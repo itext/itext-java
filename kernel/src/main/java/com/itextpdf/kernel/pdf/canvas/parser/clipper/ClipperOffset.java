@@ -75,7 +75,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.clipper;
 
-import com.itextpdf.kernel.pdf.canvas.parser.clipper.Clipper.*;
+import com.itextpdf.kernel.pdf.canvas.parser.clipper.IClipper.*;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.Point.DoublePoint;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.Point.LongPoint;
 
@@ -413,7 +413,7 @@ public class ClipperOffset {
         fixOrientations();
         doOffset( delta );
         //now clean up 'corners' ...
-        final DefaultClipper clpr = new DefaultClipper( Clipper.REVERSE_SOLUTION );
+        final DefaultClipper clpr = new DefaultClipper( IClipper.REVERSE_SOLUTION );
         clpr.addPaths( destPolys, PolyType.SUBJECT, true );
         if (delta > 0) {
             clpr.execute( ClipType.UNION, solution, PolyFillType.POSITIVE, PolyFillType.POSITIVE );
@@ -444,7 +444,7 @@ public class ClipperOffset {
         doOffset( delta );
 
         //now clean up 'corners' ...
-        final DefaultClipper clpr = new DefaultClipper( Clipper.REVERSE_SOLUTION );
+        final DefaultClipper clpr = new DefaultClipper( IClipper.REVERSE_SOLUTION );
         clpr.addPaths( destPolys, PolyType.SUBJECT, true );
         if (delta > 0) {
             clpr.execute( ClipType.UNION, solution, PolyFillType.POSITIVE, PolyFillType.POSITIVE );

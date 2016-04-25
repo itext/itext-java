@@ -166,8 +166,8 @@ public class PdfType0Font extends PdfFont {
             }
             fontProgram = DocTrueTypeFont.createFontProgram(cidFont, toUnicodeCMap);
             cmapEncoding = new CMapEncoding(cmap);
-            assert fontProgram instanceof DocFontProgram;
-            embedded = ((DocFontProgram) fontProgram).getFontFile() != null;
+            assert fontProgram instanceof IDocFontProgram;
+            embedded = ((IDocFontProgram) fontProgram).getFontFile() != null;
             cidFontType = CID_FONT_TYPE_2;
         } else {
             String cidFontName = cidFont.getAsName(PdfName.BaseFont).getValue();

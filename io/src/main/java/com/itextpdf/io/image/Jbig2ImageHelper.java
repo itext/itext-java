@@ -46,12 +46,10 @@ package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.codec.Jbig2SegmentReader;
-import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.io.source.RandomAccessSource;
+import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,7 +78,7 @@ class Jbig2ImageHelper {
             throw new IllegalArgumentException("JBIG2 image expected");
         Jbig2Image image = (Jbig2Image)jbig2;
         try {
-            RandomAccessSource ras;
+            IRandomAccessSource ras;
             if (image.getData() == null) {
                 image.loadData();
             }

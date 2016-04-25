@@ -45,12 +45,12 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.canvas.parser.data.EventData;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.EventListener;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.EventType;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.TextExtractionStrategy;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -308,8 +308,8 @@ import java.util.Set;
                 || c >= 0x10000 && c <= 0x10FFFF);
     }
 
-    private class MarkedContentEventListener implements EventListener {
-        private Map<Integer, TextExtractionStrategy> contentByMcid = new HashMap<>();
+    private class MarkedContentEventListener implements IEventListener {
+        private Map<Integer, ITextExtractionStrategy> contentByMcid = new HashMap<>();
 
         public Map<Integer, String> getMcidContent() {
             Map<Integer, String> content = new HashMap<>();
@@ -320,13 +320,13 @@ import java.util.Set;
         }
 
         @Override
-        public void eventOccurred(EventData data, EventType type) {
+        public void eventOccurred(IEventData data, EventType type) {
             switch (type) {
                 case RENDER_TEXT:
                     TextRenderInfo textInfo = (TextRenderInfo) data;
                     int mcid = textInfo.getMcid();
                     if (mcid != -1) {
-                        TextExtractionStrategy textExtractionStrategy = contentByMcid.get(mcid);
+                        ITextExtractionStrategy textExtractionStrategy = contentByMcid.get(mcid);
                         if (textExtractionStrategy == null) {
                             textExtractionStrategy = new LocationTextExtractionStrategy();
                             contentByMcid.put(mcid, textExtractionStrategy);

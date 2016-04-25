@@ -137,7 +137,7 @@ public class PdfPKCS7 {
      * @throws NoSuchAlgorithmException on error
      */
     public PdfPKCS7(PrivateKey privKey, Certificate[] certChain,
-                    String hashAlgorithm, String provider, ExternalDigest interfaceDigest, boolean hasRSAdata)
+                    String hashAlgorithm, String provider, IExternalDigest interfaceDigest, boolean hasRSAdata)
             throws InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException {
         this.provider = provider;
         this.interfaceDigest = interfaceDigest;
@@ -628,7 +628,7 @@ public class PdfPKCS7 {
      *	DIGITAL SIGNATURE CREATION
      */
 
-    private ExternalDigest interfaceDigest;
+    private IExternalDigest interfaceDigest;
     // The signature is created externally
 
     /** The signed digest if created outside this class */
@@ -769,7 +769,7 @@ public class PdfPKCS7 {
      * @param tsaClient TSAClient - null or an optional time stamp authority client
      * @return byte[] the bytes for the PKCS7SignedData object
      */
-    public byte[] getEncodedPKCS7(byte secondDigest[], TSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
+    public byte[] getEncodedPKCS7(byte secondDigest[], ITSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
         try {
             if (externalDigest != null) {
                 digest = externalDigest;

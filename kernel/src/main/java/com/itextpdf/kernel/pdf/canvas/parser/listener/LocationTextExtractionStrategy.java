@@ -48,7 +48,7 @@ import com.itextpdf.kernel.geom.LineSegment;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
-import com.itextpdf.kernel.pdf.canvas.parser.data.EventData;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.EventType;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class LocationTextExtractionStrategy implements TextExtractionStrategy {
+public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
 
     /**
      * set to true for debugging
@@ -68,7 +68,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
      */
     private final List<TextChunk> locationalResult = new ArrayList<>();
 
-    private final TextChunkLocationStrategy tclStrat;
+    private final ITextChunkLocationStrategy tclStrat;
 
     private boolean useActualText = false;
 
@@ -78,8 +78,8 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
      * Creates a new text extraction renderer.
      */
     public LocationTextExtractionStrategy() {
-        this(new TextChunkLocationStrategy() {
-            public TextChunkLocation createLocation(TextRenderInfo renderInfo, LineSegment baseline) {
+        this(new ITextChunkLocationStrategy() {
+            public ITextChunkLocation createLocation(TextRenderInfo renderInfo, LineSegment baseline) {
                 return new TextChunkLocationDefaultImp(baseline.getStartPoint(), baseline.getEndPoint(), renderInfo.getSingleSpaceWidth());
             }
         });
@@ -91,7 +91,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
      * TextRenderInfo.
      * @param strat the custom strategy
      */
-    public LocationTextExtractionStrategy(TextChunkLocationStrategy strat) {
+    public LocationTextExtractionStrategy(ITextChunkLocationStrategy strat) {
         tclStrat = strat;
     }
 
@@ -117,7 +117,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     }
 
     @Override
-    public void eventOccurred(EventData data, EventType type) {
+    public void eventOccurred(IEventData data, EventType type) {
         if (type.equals(EventType.RENDER_TEXT)) {
             TextRenderInfo renderInfo = (TextRenderInfo) data;
             LineSegment segment = renderInfo.getBaseline();
@@ -251,11 +251,11 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         return lastActualText;
     }
 
-    public interface TextChunkLocationStrategy {
-        TextChunkLocation createLocation(TextRenderInfo renderInfo, LineSegment baseline);
+    public interface ITextChunkLocationStrategy {
+        ITextChunkLocation createLocation(TextRenderInfo renderInfo, LineSegment baseline);
     }
 
-    public interface TextChunkLocation extends Comparable<TextChunkLocation> {
+    public interface ITextChunkLocation extends Comparable<ITextChunkLocation> {
         float distParallelEnd();
 
         float distParallelStart();
@@ -270,11 +270,11 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
 
         int orientationMagnitude();
 
-        boolean sameLine(TextChunkLocation as);
+        boolean sameLine(ITextChunkLocation as);
 
-        float distanceFromEndOf(TextChunkLocation other);
+        float distanceFromEndOf(ITextChunkLocation other);
 
-        boolean isAtWordBoundary(TextChunkLocation previous);
+        boolean isAtWordBoundary(ITextChunkLocation previous);
     }
 
     /**
@@ -283,9 +283,9 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
     public static class TextChunk implements Comparable<TextChunk> {
         /** the text of the chunk */
         protected final String text;
-        protected final TextChunkLocation location;
+        protected final ITextChunkLocation location;
 
-        public TextChunk(String string, TextChunkLocation loc) {
+        public TextChunk(String string, ITextChunkLocation loc) {
             this.text = string;
             this.location = loc;
         }
@@ -297,7 +297,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
             return text;
         }
 
-        public TextChunkLocation getLocation() {
+        public ITextChunkLocation getLocation() {
             return location;
         }
 
@@ -323,7 +323,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         }
     }
 
-    private static class TextChunkLocationDefaultImp implements TextChunkLocation {
+    private static class TextChunkLocationDefaultImp implements ITextChunkLocation {
         /** the starting location of the chunk */
         private final Vector startLocation;
         /** the ending location of the chunk */
@@ -397,7 +397,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
          * @param as the location to compare to
          * @return true is this location is on the the same line as the other
          */
-        public boolean sameLine(TextChunkLocation as){
+        public boolean sameLine(ITextChunkLocation as){
             return orientationMagnitude() == as.orientationMagnitude() && distPerpendicular() == as.distPerpendicular();
         }
 
@@ -409,11 +409,11 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
          * @param other
          * @return the number of spaces between the end of 'other' and the beginning of this chunk
          */
-        public float distanceFromEndOf(TextChunkLocation other){
+        public float distanceFromEndOf(ITextChunkLocation other){
             return distParallelStart() - other.distParallelEnd();
         }
 
-        public boolean isAtWordBoundary(TextChunkLocation previous) {
+        public boolean isAtWordBoundary(ITextChunkLocation previous) {
             /**
              * Here we handle a very specific case which in PDF may look like:
              * -.232 Tc [( P)-226.2(r)-231.8(e)-230.8(f)-238(a)-238.9(c)-228.9(e)]TJ
@@ -438,7 +438,7 @@ public class LocationTextExtractionStrategy implements TextExtractionStrategy {
         }
 
         @Override
-        public int compareTo(TextChunkLocation other) {
+        public int compareTo(ITextChunkLocation other) {
             if (this == other) return 0; // not really needed, but just in case
 
             LineSegment mySegment = new LineSegment(startLocation, endLocation);

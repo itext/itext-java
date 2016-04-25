@@ -44,7 +44,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.listener;
 
-import com.itextpdf.kernel.pdf.canvas.parser.data.EventData;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.EventType;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import java.util.Set;
@@ -53,21 +53,21 @@ import java.util.Set;
  * This class expands each {@link TextRenderInfo} for {@link EventType#RENDER_TEXT} event types into
  * multiple {@link TextRenderInfo} instances for each glyph occurred.
  */
-public class GlyphEventListener implements EventListener {
+public class GlyphEventListener implements IEventListener {
 
-    protected final EventListener delegate;
+    protected final IEventListener delegate;
 
     /**
      * Constructs a {@link GlyphEventListener} instance by a delegate to which the expanded text events for each
      * glyph occurred will be passed on.
      * @param delegate delegate to pass the expanded glyph render events to.
      */
-    public GlyphEventListener(EventListener delegate) {
+    public GlyphEventListener(IEventListener delegate) {
         this.delegate = delegate;
     }
 
     @Override
-    public void eventOccurred(EventData data, EventType type) {
+    public void eventOccurred(IEventData data, EventType type) {
         if (type.equals(EventType.RENDER_TEXT)) {
             TextRenderInfo textRenderInfo = (TextRenderInfo) data;
             for (TextRenderInfo glyphRenderInfo : textRenderInfo.getCharacterRenderInfos()) {

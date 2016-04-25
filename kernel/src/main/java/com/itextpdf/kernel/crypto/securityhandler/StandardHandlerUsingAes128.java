@@ -45,7 +45,7 @@
 package com.itextpdf.kernel.crypto.securityhandler;
 
 import com.itextpdf.kernel.crypto.AesDecryptor;
-import com.itextpdf.kernel.crypto.Decryptor;
+import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamAesEncryption;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -73,7 +73,7 @@ public class StandardHandlerUsingAes128 extends StandardHandlerUsingStandard128 
     }
 
     @Override
-    public Decryptor getDecryptor() {
+    public IDecryptor getDecryptor() {
         return new AesDecryptor(nextObjectKey, 0, nextObjectKeySize);
     }
 

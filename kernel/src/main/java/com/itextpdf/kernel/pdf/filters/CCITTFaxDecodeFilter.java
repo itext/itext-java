@@ -57,7 +57,7 @@ import com.itextpdf.kernel.pdf.PdfObject;
 /**
  * Handles CCITTFaxDecode filter
  */
-public class CCITTFaxDecodeFilter  implements FilterHandler {
+public class CCITTFaxDecodeFilter  implements IFilterHandler {
 
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {

@@ -44,7 +44,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.security.ExternalDecryptionProcess;
+import com.itextpdf.kernel.security.IExternalDecryptionProcess;
 import java.io.Serializable;
 import java.security.Key;
 import java.security.cert.Certificate;
@@ -58,7 +58,7 @@ public class ReaderProperties implements Serializable {
     protected Key certificateKey; //added by Aiken Sam for certificate decryption
     protected Certificate certificate; //added by Aiken Sam for certificate decryption
     protected String certificateKeyProvider; //added by Aiken Sam for certificate decryption
-    protected ExternalDecryptionProcess externalDecryptionProcess;
+    protected IExternalDecryptionProcess externalDecryptionProcess;
 
     /**
      * Defines the password which will be used if the document is encrypted with standard encryption.
@@ -75,7 +75,7 @@ public class ReaderProperties implements Serializable {
      * Defines the certificate which will be used if the document is encrypted with public key encryption.
      */
     public ReaderProperties setPublicKeySecurityParams(Certificate certificate, Key certificateKey,
-                                                       String certificateKeyProvider, ExternalDecryptionProcess externalDecryptionProcess) {
+                                                       String certificateKeyProvider, IExternalDecryptionProcess externalDecryptionProcess) {
         clearEncryptionParams();
         this.certificate = certificate;
         this.certificateKey = certificateKey;
@@ -88,7 +88,7 @@ public class ReaderProperties implements Serializable {
     /**
      * Defines the certificate which will be used if the document is encrypted with public key encryption.
      */
-    public ReaderProperties setPublicKeySecurityParams(Certificate certificate, ExternalDecryptionProcess externalDecryptionProcess) {
+    public ReaderProperties setPublicKeySecurityParams(Certificate certificate, IExternalDecryptionProcess externalDecryptionProcess) {
         clearEncryptionParams();
         this.certificate = certificate;
         this.externalDecryptionProcess = externalDecryptionProcess;

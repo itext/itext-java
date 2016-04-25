@@ -1,14 +1,12 @@
 package com.itextpdf.kernel.pdf.canvas.parser;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.pdf.canvas.parser.EventType;
-import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ClippingPathInfo;
-import com.itextpdf.kernel.pdf.canvas.parser.data.EventData;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ImageRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.PathRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.EventListener;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -35,8 +33,8 @@ public class PdfCanvasProcessorTest extends ExtendedITextTest {
         for (int i = 1; i <= document.getNumberOfPages(); ++i) {
             PdfPage page = document.getPage(i);
 
-            PdfCanvasProcessor processor = new PdfCanvasProcessor(new EventListener() {
-                public void eventOccurred(EventData data, EventType type) {
+            PdfCanvasProcessor processor = new PdfCanvasProcessor(new IEventListener() {
+                public void eventOccurred(IEventData data, EventType type) {
                     switch (type) {
                         case BEGIN_TEXT:
                             System.out.println("-------- BEGIN TEXT CALLED ---------");

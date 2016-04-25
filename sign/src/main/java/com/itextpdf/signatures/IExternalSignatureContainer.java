@@ -44,34 +44,30 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 
 /**
- * Interface that needs to be implemented to do the actual signing.
- * For instance: you'll have to implement this interface if you want
- * to sign a PDF using a smart card.
+ * Interface to sign a document. The signing is fully done externally, including the container composition.
  * @author Paulo Soares
  */
-public interface ExternalSignature {
+public interface IExternalSignatureContainer {
 
     /**
-     * Returns the hash algorithm.
-     * @return	The hash algorithm (e.g. "SHA-1", "SHA-256,...").
-     */
-    String getHashAlgorithm();
-
-    /**
-     * Returns the encryption algorithm used for signing.
-     * @return The encryption algorithm ("RSA" or "DSA").
-     */
-    String getEncryptionAlgorithm();
-
-    /**
-     * Signs the given message using the encryption algorithm in combination
-     * with the hash algorithm.
-     * @param message The message you want to be hashed and signed.
-     * @return	A signed message digest.
+     * Produces the container with the signature.
+     * @param data the data to sign
+     * @return a container with the signature and other objects, like CRL and OCSP. The container will generally be a PKCS7 one.
      * @throws GeneralSecurityException
      */
-    byte[] sign(byte[] message) throws GeneralSecurityException;
+    byte[] sign(InputStream data) throws GeneralSecurityException;
+
+    /**
+     * Modifies the signature dictionary to suit the container. At least the keys {@link PdfName#Filter} and
+     * {@link PdfName#SubFilter} will have to be set.
+     * @param signDic the signature dictionary
+     */
+    void modifySigningDictionary(PdfDictionary signDic);
 }

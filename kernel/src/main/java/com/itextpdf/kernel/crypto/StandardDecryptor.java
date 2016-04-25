@@ -44,7 +44,7 @@
  */
 package com.itextpdf.kernel.crypto;
 
-public class StandardDecryptor implements Decryptor {
+public class StandardDecryptor implements IDecryptor {
 
     protected ARCFOUREncryption arcfour;
 

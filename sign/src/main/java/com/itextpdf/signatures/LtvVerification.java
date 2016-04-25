@@ -175,7 +175,7 @@ public class LtvVerification {
      * @throws GeneralSecurityException
      * @throws IOException
      */
-    public boolean addVerification(String signatureName, OcspClient ocsp, CrlClient crl, CertificateOption certOption, Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
+    public boolean addVerification(String signatureName, IOcspClient ocsp, ICrlClient crl, CertificateOption certOption, Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
         if (used)
             throw new IllegalStateException(PdfException.VerificationAlreadyOutput);
         PdfPKCS7 pk = sgnUtil.verifySignature(signatureName);

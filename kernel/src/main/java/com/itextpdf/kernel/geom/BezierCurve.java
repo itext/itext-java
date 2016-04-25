@@ -50,7 +50,7 @@ import java.util.List;
 /**
  * Represents a Bezier curve.
  */
-public class BezierCurve implements Shape {
+public class BezierCurve implements IShape {
 
     /**
      * If the distance between a point and a line is less than

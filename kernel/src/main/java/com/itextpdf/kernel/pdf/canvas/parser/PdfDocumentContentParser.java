@@ -44,7 +44,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
-import com.itextpdf.kernel.pdf.canvas.parser.listener.EventListener;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.util.HashMap;
@@ -72,9 +72,9 @@ public class PdfDocumentContentParser {
      * @param additionalContentOperators an optional map of custom ContentOperators for rendering instructions
      * @return the provided renderListener
      */
-    public <E extends EventListener> E processContent(int pageNumber, E renderListener, Map<String, ContentOperator> additionalContentOperators) {
+    public <E extends IEventListener> E processContent(int pageNumber, E renderListener, Map<String, IContentOperator> additionalContentOperators) {
         PdfCanvasProcessor processor = new PdfCanvasProcessor(renderListener);
-        for (Map.Entry<String, ContentOperator> entry : additionalContentOperators.entrySet()) {
+        for (Map.Entry<String, IContentOperator> entry : additionalContentOperators.entrySet()) {
             processor.registerContentOperator(entry.getKey(), entry.getValue());
         }
         processor.processPageContent(pdfDocument.getPage(pageNumber));
@@ -89,8 +89,8 @@ public class PdfDocumentContentParser {
      * @param renderListener the listener that will receive render callbacks
      * @return the provided renderListener
      */
-    public <E extends EventListener> E processContent(int pageNumber, E renderListener) {
-        return processContent(pageNumber, renderListener, new HashMap<String, ContentOperator>());
+    public <E extends IEventListener> E processContent(int pageNumber, E renderListener) {
+        return processContent(pageNumber, renderListener, new HashMap<String, IContentOperator>());
     }
 
 }

@@ -42,13 +42,19 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.io.font.cmap;
+package com.itextpdf.kernel.pdf.canvas.parser.listener;
 
-import com.itextpdf.io.source.PdfTokenizer;
+import com.itextpdf.kernel.pdf.canvas.parser.filter.IEventFilter;
 
 /**
- * @author psoares
+ * This is a special interface for {@link IEventFilter} that returns text as result of its work.
  */
-public interface CMapLocation {
-    PdfTokenizer getLocation(String location) throws java.io.IOException;
+public interface ITextExtractionStrategy extends IEventListener {
+
+    /**
+     * Returns the text that has been processed so far.
+     * @return {@link String} instance with the current resultant text
+     */
+    String getResultantText();
+
 }

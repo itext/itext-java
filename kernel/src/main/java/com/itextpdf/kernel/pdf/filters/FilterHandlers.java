@@ -52,17 +52,17 @@ import java.util.Map;
 
 /**
  * Encapsulates filter behavior for PDF streams.  Classes generally interace with this
- * using the static getDefaultFilterHandlers() method, then obtain the desired {@link FilterHandler}
+ * using the static getDefaultFilterHandlers() method, then obtain the desired {@link IFilterHandler}
  * via a lookup.
  */
 // Dev note:  we eventually want to refactor PdfReader so all of the existing filter functionality is moved into this class
 // it may also be better to split the sub-classes out into a separate package
 public final class FilterHandlers {
 
-    /** The default {@link FilterHandler}s used by iText */
-    private static final Map<PdfName, FilterHandler> defaults;
+    /** The default {@link IFilterHandler}s used by iText */
+    private static final Map<PdfName, IFilterHandler> defaults;
     static {
-        Map<PdfName, FilterHandler> map = new HashMap<>();
+        Map<PdfName, IFilterHandler> map = new HashMap<>();
 
         map.put(PdfName.FlateDecode, new FlateDecodeFilter());
         map.put(PdfName.FL, new FlateDecodeFilter());
@@ -79,9 +79,9 @@ public final class FilterHandlers {
     }
 
     /**
-     * @return the default {@link FilterHandler}s used by iText
+     * @return the default {@link IFilterHandler}s used by iText
      */
-    public static Map<PdfName, FilterHandler> getDefaultFilterHandlers(){
+    public static Map<PdfName, IFilterHandler> getDefaultFilterHandlers(){
         return defaults;
     }
 }

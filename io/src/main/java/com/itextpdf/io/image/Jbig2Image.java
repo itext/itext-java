@@ -48,7 +48,7 @@ import com.itextpdf.io.IOException;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.codec.Jbig2SegmentReader;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.io.source.RandomAccessSource;
+import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 
 import java.net.URL;
@@ -80,7 +80,7 @@ public class Jbig2Image extends Image {
      * @return the number of pages
      */
     public static int getNumberOfPages(byte[] bytes) {
-        RandomAccessSource ras = new RandomAccessSourceFactory().createSource(bytes);
+        IRandomAccessSource ras = new RandomAccessSourceFactory().createSource(bytes);
         return getNumberOfPages(new RandomAccessFileOrArray(ras));
     }
 

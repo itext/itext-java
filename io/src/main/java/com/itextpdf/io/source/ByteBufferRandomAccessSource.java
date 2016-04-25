@@ -56,7 +56,7 @@ import java.security.PrivilegedAction;
  * A RandomAccessSource that is based on an underlying {@link java.nio.ByteBuffer}.  This class takes steps to ensure that the byte buffer
  * is completely freed from memory during {@link ByteBufferRandomAccessSource#close()}
  */
-class ByteBufferRandomAccessSource implements RandomAccessSource {
+class ByteBufferRandomAccessSource implements IRandomAccessSource {
 
     /**
      * Internal cache of memory mapped buffers

@@ -7,9 +7,9 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.canvas.parser.data.EventData;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.EventListener;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -141,11 +141,11 @@ public class HighlightItemsTest extends ExtendedITextTest {
         pdfDocument.close();
     }
 
-    static class MyEventListener implements EventListener {
+    static class MyEventListener implements IEventListener {
         private List<Rectangle> rectangles = new ArrayList<>();
 
         @Override
-        public void eventOccurred(EventData data, EventType type) {
+        public void eventOccurred(IEventData data, EventType type) {
             if (type == EventType.RENDER_TEXT) {
                 TextRenderInfo renderInfo = (TextRenderInfo) data;
                 Vector startPoint = renderInfo.getDescentLine().getStartPoint();
@@ -174,7 +174,7 @@ public class HighlightItemsTest extends ExtendedITextTest {
 
     static class MyCharacterEventListener extends MyEventListener {
         @Override
-        public void eventOccurred(EventData data, EventType type) {
+        public void eventOccurred(IEventData data, EventType type) {
             if (type == EventType.RENDER_TEXT) {
                 TextRenderInfo renderInfo = (TextRenderInfo) data;
                 for (TextRenderInfo tri : renderInfo.getCharacterRenderInfos()) {

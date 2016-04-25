@@ -75,8 +75,8 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.clipper;
 
-public interface Clipper {
-    public enum ClipType {
+public interface IClipper {
+    enum ClipType {
         INTERSECTION, UNION, DIFFERENCE, XOR
     }
 
@@ -84,32 +84,32 @@ public interface Clipper {
         RIGHT_TO_LEFT, LEFT_TO_RIGHT
     };
 
-    public enum EndType {
+    enum EndType {
         CLOSED_POLYGON, CLOSED_LINE, OPEN_BUTT, OPEN_SQUARE, OPEN_ROUND
     };
 
-    public enum JoinType {
+    enum JoinType {
         BEVEL, ROUND, MITER
     };
 
-    public enum PolyFillType {
+    enum PolyFillType {
         EVEN_ODD, NON_ZERO, POSITIVE, NEGATIVE
     };
 
-    public enum PolyType {
+    enum PolyType {
         SUBJECT, CLIP
     };
 
-    public interface ZFillCallback {
+    interface IZFillCallback {
         void zFill(Point.LongPoint bot1, Point.LongPoint top1, Point.LongPoint bot2, Point.LongPoint top2, Point.LongPoint pt);
     };
 
     //InitOptions that can be passed to the constructor ...
-    public static final int REVERSE_SOLUTION = 1;
+    int REVERSE_SOLUTION = 1;
 
-    public static final int STRICTLY_SIMPLE = 2;
+    int STRICTLY_SIMPLE = 2;
 
-    public static final int PRESERVE_COLINEAR = 4;
+    int PRESERVE_COLINEAR = 4;
 
     boolean addPath(Path pg, PolyType polyType, boolean Closed);
 
@@ -123,5 +123,5 @@ public interface Clipper {
 
     boolean execute(ClipType clipType, PolyTree polytree);
 
-    public boolean execute(ClipType clipType, PolyTree polytree, PolyFillType subjFillType, PolyFillType clipFillType);
+    boolean execute(ClipType clipType, PolyTree polytree, PolyFillType subjFillType, PolyFillType clipFillType);
 }

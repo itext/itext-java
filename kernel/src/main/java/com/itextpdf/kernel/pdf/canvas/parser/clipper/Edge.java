@@ -75,10 +75,10 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.clipper;
 
-import com.itextpdf.kernel.pdf.canvas.parser.clipper.Clipper.ClipType;
-import com.itextpdf.kernel.pdf.canvas.parser.clipper.Clipper.Direction;
-import com.itextpdf.kernel.pdf.canvas.parser.clipper.Clipper.PolyFillType;
-import com.itextpdf.kernel.pdf.canvas.parser.clipper.Clipper.PolyType;
+import com.itextpdf.kernel.pdf.canvas.parser.clipper.IClipper.ClipType;
+import com.itextpdf.kernel.pdf.canvas.parser.clipper.IClipper.Direction;
+import com.itextpdf.kernel.pdf.canvas.parser.clipper.IClipper.PolyFillType;
+import com.itextpdf.kernel.pdf.canvas.parser.clipper.IClipper.PolyType;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.Point.LongPoint;
 
 import java.math.BigInteger;

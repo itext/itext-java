@@ -56,7 +56,7 @@ import java.util.Set;
 public class Subpath {
 
     private Point startPoint;
-    private List<Shape> segments = new ArrayList<>();
+    private List<IShape> segments = new ArrayList<>();
     private boolean closed;
 
     /**
@@ -120,7 +120,7 @@ public class Subpath {
         Point lastPoint = startPoint;
 
         if (segments.size() > 0 && !closed) {
-            Shape shape = segments.get(segments.size() - 1);
+            IShape shape = segments.get(segments.size() - 1);
             lastPoint = shape.getBasePoints().get(shape.getBasePoints().size() - 1);
         }
 
@@ -132,7 +132,7 @@ public class Subpath {
      * Note: each new segment shall start at the end of the previous segment.
      * @param segment new segment.
      */
-    public void addSegment(Shape segment) {
+    public void addSegment(IShape segment) {
         if (closed) {
             return;
         }
@@ -148,7 +148,7 @@ public class Subpath {
      * @return {@link java.util.List} comprising all the segments
      *         the subpath made on.
      */
-    public List<Shape> getSegments() {
+    public List<IShape> getSegments() {
         return segments;
     }
 
@@ -206,7 +206,7 @@ public class Subpath {
             return false;
         }
 
-        for (Shape segment : segments) {
+        for (IShape segment : segments) {
             Set<Point> points = new HashSet<>(segment.getBasePoints());
 
             // The first segment of a subpath always starts at startPoint, so...

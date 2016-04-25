@@ -49,12 +49,12 @@ import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.io.source.RandomAccessSource;
+import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.source.WindowRandomAccessSource;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
-import com.itextpdf.kernel.pdf.filters.FilterHandler;
+import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 
 import java.io.*;
@@ -109,7 +109,7 @@ public class PdfReader implements Closeable, Serializable {
      * @param byteSource source of bytes for the reader
      * @param properties properties of the created reader
      */
-    public PdfReader(RandomAccessSource byteSource, ReaderProperties properties) throws IOException {
+    public PdfReader(IRandomAccessSource byteSource, ReaderProperties properties) throws IOException {
         this.properties = properties;
         this.tokens = getOffsetTokeniser(byteSource);
     }
@@ -329,7 +329,7 @@ public class PdfReader implements Closeable, Serializable {
      * @return the decoded bytes
      * @throws PdfException if there are any problems decoding the bytes
      */
-    public static byte[] decodeBytes(byte[] b, PdfDictionary streamDictionary, Map<PdfName, FilterHandler> filterHandlers) {
+    public static byte[] decodeBytes(byte[] b, PdfDictionary streamDictionary, Map<PdfName, IFilterHandler> filterHandlers) {
         if (b == null) {
             return null;
         }
@@ -358,7 +358,7 @@ public class PdfReader implements Closeable, Serializable {
         }
         for (int j = 0; j < filters.size(); ++j) {
             PdfName filterName = (PdfName) filters.get(j);
-            FilterHandler filterHandler = filterHandlers.get(filterName);
+            IFilterHandler filterHandler = filterHandlers.get(filterName);
             if (filterHandler == null)
                 filterHandler =  new DoNothingFilter();
                 //throw new PdfException(PdfException.Filter1IsNotSupported).setMessageParams(filterName); //TODO replace with some kind of UnsupportedException
@@ -989,11 +989,11 @@ public class PdfReader implements Closeable, Serializable {
      * @return a tokeniser that is guaranteed to start at the PDF header
      * @throws IOException if there is a problem reading the byte source
      */
-    private static PdfTokenizer getOffsetTokeniser(RandomAccessSource byteSource) throws IOException {
+    private static PdfTokenizer getOffsetTokeniser(IRandomAccessSource byteSource) throws IOException {
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(byteSource));
         int offset = tok.getHeaderOffset();
         if (offset != 0) {
-            RandomAccessSource offsetSource = new WindowRandomAccessSource(byteSource, offset);
+            IRandomAccessSource offsetSource = new WindowRandomAccessSource(byteSource, offset);
             tok = new PdfTokenizer(new RandomAccessFileOrArray(offsetSource));
         }
         return tok;
@@ -1099,7 +1099,7 @@ public class PdfReader implements Closeable, Serializable {
         }
     }
 
-    protected static class ReusableRandomAccessSource implements RandomAccessSource {
+    protected static class ReusableRandomAccessSource implements IRandomAccessSource {
         private ByteBuffer buffer;
 
         public ReusableRandomAccessSource(ByteBuffer buffer) {

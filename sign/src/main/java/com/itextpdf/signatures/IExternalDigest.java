@@ -42,23 +42,22 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf.canvas.parser;
+package com.itextpdf.signatures;
 
-import com.itextpdf.kernel.pdf.PdfLiteral;
-import com.itextpdf.kernel.pdf.PdfObject;
-
-import java.util.List;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 
 /**
- * Root interface for a series of handlers for content stream operators.
+ * ExternalDigest allows the use of implementations of {@link java.security.MessageDigest} other than {@link com.itextpdf.signatures.BouncyCastleDigest}.
  */
-public interface ContentOperator {
+public interface IExternalDigest {
 
     /**
-     * Called when a content operator should be processed.
-     * @param processor	The processor that is dealing with the PDF content stream.
-     * @param operator The literal PDF syntax of the operator.
-     * @param operands The operands that come with the operator.
+     * Returns the MessageDigest associated with the provided hashing algorithm.
+     *
+     * @param hashAlgorithm String value representing the hashing algorithm
+     * @return MessageDigest
+     * @throws GeneralSecurityException
      */
-    void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands);
+    MessageDigest getMessageDigest(String hashAlgorithm) throws GeneralSecurityException;
 }

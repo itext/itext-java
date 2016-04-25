@@ -45,7 +45,7 @@
 package com.itextpdf.kernel.pdf.canvas.parser.listener;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.parser.data.EventData;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.EventType;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 
@@ -57,12 +57,12 @@ import java.util.Set;
 /**
  * This class allows you to find the rectangle which contains all the text in the given content stream.
  */
-public class TextMarginFinder implements EventListener {
+public class TextMarginFinder implements IEventListener {
 
     private Rectangle textRectangle = null;
 
     @Override
-    public void eventOccurred(EventData data, EventType type) {
+    public void eventOccurred(IEventData data, EventType type) {
         if (type == EventType.RENDER_TEXT) {
             TextRenderInfo info = (TextRenderInfo) data;
             if (textRectangle == null) {

@@ -47,7 +47,7 @@ package com.itextpdf.io.util;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.io.source.RandomAccessSource;
+import com.itextpdf.io.source.IRandomAccessSource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
@@ -225,7 +225,7 @@ public final class StreamUtil {
      * @param output   the {@code OutputStream} copy to.
      * @throws java.io.IOException on error.
      */
-    public static void copyBytes(RandomAccessSource source, long start, long length, java.io.OutputStream output) throws java.io.IOException {
+    public static void copyBytes(IRandomAccessSource source, long start, long length, java.io.OutputStream output) throws java.io.IOException {
         if (length <= 0) {
             return;
         }

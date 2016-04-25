@@ -50,7 +50,7 @@ import java.util.List;
 /**
  * Represents a line.
  */
-public class Line implements Shape {
+public class Line implements IShape {
 
     private final Point p1;
     private final Point p2;

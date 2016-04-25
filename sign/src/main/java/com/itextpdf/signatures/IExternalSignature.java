@@ -42,28 +42,36 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.security;
+package com.itextpdf.signatures;
 
-import org.bouncycastle.cms.Recipient;
-import org.bouncycastle.cms.RecipientId;
+import java.security.GeneralSecurityException;
 
 /**
- * Interface to externalize the retrieval of the CMS recipient info.
+ * Interface that needs to be implemented to do the actual signing.
+ * For instance: you'll have to implement this interface if you want
+ * to sign a PDF using a smart card.
+ * @author Paulo Soares
  */
-public interface ExternalDecryptionProcess {
+public interface IExternalSignature {
 
     /**
-     * Returns the ID of the CMS recipient.
-     *
-     * @return ID of the CMS Recipient
+     * Returns the hash algorithm.
+     * @return	The hash algorithm (e.g. "SHA-1", "SHA-256,...").
      */
-    RecipientId getCmsRecipientId();
+    String getHashAlgorithm();
 
     /**
-     * Returns the CMS recipient
-     *
-     * @return CMS Recipient
+     * Returns the encryption algorithm used for signing.
+     * @return The encryption algorithm ("RSA" or "DSA").
      */
-    Recipient getCmsRecipient();
+    String getEncryptionAlgorithm();
 
+    /**
+     * Signs the given message using the encryption algorithm in combination
+     * with the hash algorithm.
+     * @param message The message you want to be hashed and signed.
+     * @return	A signed message digest.
+     * @throws GeneralSecurityException
+     */
+    byte[] sign(byte[] message) throws GeneralSecurityException;
 }

@@ -96,7 +96,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         CMapToUnicode toUni = FontUtil.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
         fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
         fontProgram = DocTrueTypeFont.createFontProgram(fontDictionary, fontEncoding);
-        embedded = ((DocFontProgram) fontProgram).getFontFile() != null;
+        embedded = ((IDocFontProgram) fontProgram).getFontFile() != null;
         subset = false;
     }
 
@@ -169,9 +169,9 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         if (embedded) {
             PdfName fontFileName;
             PdfStream fontStream;
-            if (fontProgram instanceof DocFontProgram) {
-                fontFileName = ((DocFontProgram) fontProgram).getFontFileName();
-                fontStream = ((DocFontProgram) fontProgram).getFontFile();
+            if (fontProgram instanceof IDocFontProgram) {
+                fontFileName = ((IDocFontProgram) fontProgram).getFontFileName();
+                fontStream = ((IDocFontProgram) fontProgram).getFontFile();
             } else if (getFontProgram().isCff()) {
                 fontFileName = PdfName.FontFile3;
                 try {

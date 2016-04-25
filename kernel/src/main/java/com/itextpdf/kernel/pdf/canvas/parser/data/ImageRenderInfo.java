@@ -53,7 +53,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 /**
  * Represents image data from a PDF
  */
-public class ImageRenderInfo implements EventData {
+public class ImageRenderInfo implements IEventData {
     /** The coordinate transformation matrix that was in effect when the image was rendered */
     private Matrix ctm;
     private PdfImageXObject image;

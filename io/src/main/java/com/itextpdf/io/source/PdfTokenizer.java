@@ -772,7 +772,7 @@ public class PdfTokenizer implements Closeable, Serializable {
         return null;
     }
 
-    protected static class ReusableRandomAccessSource implements RandomAccessSource {
+    protected static class ReusableRandomAccessSource implements IRandomAccessSource {
         private ByteBuffer buffer;
 
         public ReusableRandomAccessSource(ByteBuffer buffer) {

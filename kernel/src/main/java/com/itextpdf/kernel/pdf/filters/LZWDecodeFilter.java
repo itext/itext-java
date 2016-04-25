@@ -53,7 +53,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * Handles LZWDECODE filter
  */
-public class LZWDecodeFilter implements FilterHandler{
+public class LZWDecodeFilter implements IFilterHandler {
 
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {

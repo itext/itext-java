@@ -47,7 +47,7 @@ package com.itextpdf.io.source;
 import java.io.InputStream;
 
 /**
- * An input stream that uses a {@link RandomAccessSource} as
+ * An input stream that uses a {@link IRandomAccessSource} as
  * its underlying source.
  */
 public class RASInputStream extends InputStream {
@@ -55,7 +55,7 @@ public class RASInputStream extends InputStream {
     /**
      * The source.
      */
-    private final RandomAccessSource source;
+    private final IRandomAccessSource source;
 
     /**
      * The current position in the source.
@@ -66,7 +66,7 @@ public class RASInputStream extends InputStream {
      * Creates an input stream based on the source.
      * @param source The source.
      */
-    public RASInputStream(RandomAccessSource source){
+    public RASInputStream(IRandomAccessSource source){
         this.source = source;
     }
 

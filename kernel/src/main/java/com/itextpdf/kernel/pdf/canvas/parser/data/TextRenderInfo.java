@@ -51,7 +51,7 @@ import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.EventListener;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 
@@ -66,10 +66,10 @@ import java.util.Stack;
  * to display/evaluate text render operations.
  * <br><br>
  * This is passed between the {@link PdfCanvasProcessor} and
- * {@link EventListener} objects as text rendering operations are
+ * {@link IEventListener} objects as text rendering operations are
  * discovered
  */
-public class TextRenderInfo implements EventData {
+public class TextRenderInfo implements IEventData {
 
     private final PdfString string;
     private String text = null;

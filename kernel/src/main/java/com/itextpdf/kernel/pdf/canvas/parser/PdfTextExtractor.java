@@ -45,7 +45,7 @@
 package com.itextpdf.kernel.pdf.canvas.parser;
 
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.TextExtractionStrategy;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
 import com.itextpdf.kernel.pdf.PdfPage;
 
 import java.io.IOException;
@@ -62,7 +62,7 @@ public final class PdfTextExtractor {
      * @param strategy the strategy to use for extracting text
      * @return the extracted text
      */
-    public static String getTextFromPage(PdfPage page, TextExtractionStrategy strategy) {
+    public static String getTextFromPage(PdfPage page, ITextExtractionStrategy strategy) {
         PdfCanvasProcessor parser = new PdfCanvasProcessor(strategy);
         parser.processPageContent(page);
         return strategy.getResultantText();
@@ -71,7 +71,7 @@ public final class PdfTextExtractor {
     /**
      * Extract text from a specified page using the default strategy.
      * Node: the default strategy is subject to change. If using a specific strategy
-     * is important, please use {@link PdfTextExtractor#getTextFromPage(PdfPage, TextExtractionStrategy)}.
+     * is important, please use {@link PdfTextExtractor#getTextFromPage(PdfPage, ITextExtractionStrategy)}.
      *
      * @param page the page for the text to be extracted from
      * @return the extracted text

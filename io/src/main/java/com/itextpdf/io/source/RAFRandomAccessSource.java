@@ -50,7 +50,7 @@ import java.io.RandomAccessFile;
  * A RandomAccessSource that uses a {@link java.io.RandomAccessFile} as it's source
  * Note: Unlike most of the RandomAccessSource implementations, this class is not thread safe
  */
-class RAFRandomAccessSource implements RandomAccessSource {
+class RAFRandomAccessSource implements IRandomAccessSource {
     /**
      * The source
      */

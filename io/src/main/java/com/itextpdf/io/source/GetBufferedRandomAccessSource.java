@@ -46,10 +46,10 @@ package com.itextpdf.io.source;
 
 import java.io.Serializable;
 
-public class GetBufferedRandomAccessSource implements RandomAccessSource, Serializable {
+public class GetBufferedRandomAccessSource implements IRandomAccessSource, Serializable {
 
     private static final long serialVersionUID = -8922625738755763494L;
-    private final RandomAccessSource source;
+    private final IRandomAccessSource source;
 
     private final byte[] getBuffer;
     private long getBufferStart = -1;
@@ -59,7 +59,7 @@ public class GetBufferedRandomAccessSource implements RandomAccessSource, Serial
      * Constructs a new OffsetRandomAccessSource
      * @param source the source
      */
-    public GetBufferedRandomAccessSource(RandomAccessSource source) {
+    public GetBufferedRandomAccessSource(IRandomAccessSource source) {
         this.source = source;
         this.getBuffer = new byte[(int)Math.min(Math.max(source.length()/4, 1), 4096)];
         this.getBufferStart = -1;

@@ -46,14 +46,14 @@ package com.itextpdf.kernel.pdf.canvas.parser.listener;
 
 import com.itextpdf.kernel.geom.LineSegment;
 import com.itextpdf.kernel.geom.Vector;
-import com.itextpdf.kernel.pdf.canvas.parser.data.EventData;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.EventType;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class SimpleTextExtractionStrategy implements TextExtractionStrategy {
+public class SimpleTextExtractionStrategy implements ITextExtractionStrategy {
 
     private Vector lastStart;
     private Vector lastEnd;
@@ -62,7 +62,7 @@ public class SimpleTextExtractionStrategy implements TextExtractionStrategy {
     private final StringBuilder result = new StringBuilder();;
 
     @Override
-    public void eventOccurred(EventData data, EventType type) {
+    public void eventOccurred(IEventData data, EventType type) {
         if (type.equals(EventType.RENDER_TEXT)) {
             TextRenderInfo renderInfo = (TextRenderInfo)data;
             boolean firstRender = result.length() == 0;

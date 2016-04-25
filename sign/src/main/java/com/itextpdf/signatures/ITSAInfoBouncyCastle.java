@@ -42,21 +42,21 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.geom;
+package com.itextpdf.signatures;
 
-import java.util.List;
+import org.bouncycastle.tsp.TimeStampTokenInfo;
 
 /**
- * Represents segment from a PDF path.
+ * Interface you can implement and pass to TSAClientBouncyCastle in case
+ * you want to do something with the information returned
  */
-public interface Shape {
+public interface ITSAInfoBouncyCastle {
 
     /**
-     * Treat base points as the points which are enough to construct a shape.
-     * E.g. for a bezier curve they are control points, for a line segment - the start and the end points
-     * of the segment.
-     *
-     * @return Ordered {@link java.util.List} consisting of shape's base points.
+     * When a timestamp is created using TSAClientBouncyCastle,
+     * this method is triggered passing an object that contains
+     * info about the timestamp and the time stamping authority.
+     * @param info a TimeStampTokenInfo object
      */
-    List<Point> getBasePoints();
+    void inspectTimeStampTokenInfo(final TimeStampTokenInfo info);
 }

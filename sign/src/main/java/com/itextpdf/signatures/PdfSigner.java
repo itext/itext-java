@@ -49,7 +49,7 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.RASInputStream;
-import com.itextpdf.io.source.RandomAccessSource;
+import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDate;
@@ -172,7 +172,7 @@ public class PdfSigner {
     /**
      * Holds value of property signatureEvent.
      */
-    protected SignatureEvent signatureEvent;
+    protected ISignatureEvent signatureEvent;
 
     /** OutputStream for the bytes of the document.
      */
@@ -358,7 +358,7 @@ public class PdfSigner {
      *
      * @return Value of property signatureEvent.
      */
-    public SignatureEvent getSignatureEvent() {
+    public ISignatureEvent getSignatureEvent() {
         return this.signatureEvent;
     }
 
@@ -367,7 +367,7 @@ public class PdfSigner {
      *
      * @param signatureEvent the signature event
      */
-    public void setSignatureEvent(SignatureEvent signatureEvent) {
+    public void setSignatureEvent(ISignatureEvent signatureEvent) {
         this.signatureEvent = signatureEvent;
     }
 
@@ -486,8 +486,8 @@ public class PdfSigner {
      * @throws IOException
      * @throws GeneralSecurityException
      */
-    public void signDetached(ExternalDigest externalDigest, ExternalSignature externalSignature, Certificate[] chain, Collection<CrlClient> crlList, OcspClient ocspClient,
-                                    TSAClient tsaClient, int estimatedSize, CryptoStandard sigtype) throws IOException, GeneralSecurityException {
+    public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain, Collection<ICrlClient> crlList, IOcspClient ocspClient,
+                             ITSAClient tsaClient, int estimatedSize, CryptoStandard sigtype) throws IOException, GeneralSecurityException {
         if (closed) {
             throw new PdfException(PdfException.ThisInstanceOfPdfSignerIsAlreadyClosed);
         }
@@ -564,7 +564,7 @@ public class PdfSigner {
      * @throws GeneralSecurityException
      * @throws IOException
      */
-    public void signExternalContainer(ExternalSignatureContainer externalSignatureContainer, int estimatedSize) throws GeneralSecurityException, IOException {
+    public void signExternalContainer(IExternalSignatureContainer externalSignatureContainer, int estimatedSize) throws GeneralSecurityException, IOException {
         if (closed) {
             throw new PdfException(PdfException.ThisInstanceOfPdfSignerIsAlreadyClosed);
         }
@@ -611,7 +611,7 @@ public class PdfSigner {
      * @throws IOException
      * @throws GeneralSecurityException
      */
-    public void timestamp(TSAClient tsa, String signatureName) throws IOException, GeneralSecurityException {
+    public void timestamp(ITSAClient tsa, String signatureName) throws IOException, GeneralSecurityException {
         if (closed) {
             throw new PdfException(PdfException.ThisInstanceOfPdfSignerIsAlreadyClosed);
         }
@@ -667,7 +667,7 @@ public class PdfSigner {
      * @throws IOException
      * @throws GeneralSecurityException
      */
-    public static void signDeferred(PdfDocument document, String fieldName, OutputStream outs, ExternalSignatureContainer externalSignatureContainer) throws IOException, GeneralSecurityException {
+    public static void signDeferred(PdfDocument document, String fieldName, OutputStream outs, IExternalSignatureContainer externalSignatureContainer) throws IOException, GeneralSecurityException {
         SignatureUtil signatureUtil = new SignatureUtil(document);
         PdfDictionary v = signatureUtil.getSignatureDictionary(fieldName);
         if (v == null) {
@@ -684,7 +684,7 @@ public class PdfSigner {
             throw new IllegalArgumentException("Single exclusion space supported");
         }
 
-        RandomAccessSource readerSource = document.getReader().getSafeFile().createSourceView();
+        IRandomAccessSource readerSource = document.getReader().getSafeFile().createSourceView();
         InputStream rg = new RASInputStream(new RandomAccessSourceFactory().createRanged(readerSource, gaps));
         byte[] signedContent = externalSignatureContainer.sign(rg);
         int spaceAvailable = (int)(gaps[2] - gaps[1]) - 2;
@@ -716,11 +716,11 @@ public class PdfSigner {
      * @param crlList a list of CrlClient implementations
      * @return a collection of CRL bytes that can be embedded in a PDF
      */
-    protected Collection<byte[]> processCrl(Certificate cert, Collection<CrlClient> crlList) {
+    protected Collection<byte[]> processCrl(Certificate cert, Collection<ICrlClient> crlList) {
         if (crlList == null)
             return null;
         List<byte[]> crlBytes = new ArrayList<>();
-        for (CrlClient cc : crlList) {
+        for (ICrlClient cc : crlList) {
             if (cc == null)
                 continue;
             Collection<byte[]> b = cc.getEncoded((X509Certificate) cert, null);
@@ -999,7 +999,7 @@ public class PdfSigner {
      * @return The underlying source
      * @throws IOException
      */
-    protected RandomAccessSource getUnderlyingSource() throws IOException {
+    protected IRandomAccessSource getUnderlyingSource() throws IOException {
         RandomAccessSourceFactory fac = new RandomAccessSourceFactory();
         return raf == null ? fac.createSource(bout) : fac.createSource(raf);
     }
@@ -1100,7 +1100,7 @@ public class PdfSigner {
     /**
      * An interface to retrieve the signature dictionary for modification.
      */
-    public interface SignatureEvent {
+    public interface ISignatureEvent {
 
         /**
          * Allows modification of the signature dictionary.

@@ -42,21 +42,23 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.signatures;
+package com.itextpdf.kernel.pdf.canvas.parser;
 
-import org.bouncycastle.tsp.TimeStampTokenInfo;
+import com.itextpdf.kernel.pdf.PdfLiteral;
+import com.itextpdf.kernel.pdf.PdfObject;
+
+import java.util.List;
 
 /**
- * Interface you can implement and pass to TSAClientBouncyCastle in case
- * you want to do something with the information returned
+ * Root interface for a series of handlers for content stream operators.
  */
-public interface TSAInfoBouncyCastle {
+public interface IContentOperator {
 
     /**
-     * When a timestamp is created using TSAClientBouncyCastle,
-     * this method is triggered passing an object that contains
-     * info about the timestamp and the time stamping authority.
-     * @param info a TimeStampTokenInfo object
+     * Called when a content operator should be processed.
+     * @param processor	The processor that is dealing with the PDF content stream.
+     * @param operator The literal PDF syntax of the operator.
+     * @param operands The operands that come with the operator.
      */
-    void inspectTimeStampTokenInfo(final TimeStampTokenInfo info);
+    void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands);
 }

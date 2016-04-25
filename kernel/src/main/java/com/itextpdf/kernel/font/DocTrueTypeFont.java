@@ -56,7 +56,7 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 
-class DocTrueTypeFont extends TrueTypeFont implements DocFontProgram {
+class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
 
     private static final long serialVersionUID = 4611535787920619829L;
     

@@ -66,11 +66,11 @@ import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Path;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ClippingPathInfo;
-import com.itextpdf.kernel.pdf.canvas.parser.data.EventData;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ImageRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.PathRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.EventListener;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.util.PdfCanvasParser;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -109,10 +109,10 @@ public class PdfCanvasProcessor {
     /**
      * Listener that will be notified of render events
      */
-    protected final EventListener eventListener;
+    protected final IEventListener eventListener;
 
     /**
-     * Cache supported events in case the user's {@link EventListener#getSupportedEvents()} method is not very efficient
+     * Cache supported events in case the user's {@link IEventListener#getSupportedEvents()} method is not very efficient
      **/
     protected final Set<EventType> supportedEvents;
 
@@ -133,7 +133,7 @@ public class PdfCanvasProcessor {
     /**
      * A map with all supported operators (PDF syntax).
      */
-    private Map<String, ContentOperator> operators;
+    private Map<String, IContentOperator> operators;
 
     /**
      * Resources for the content stream.
@@ -154,7 +154,7 @@ public class PdfCanvasProcessor {
     /**
      * A map with all supported XObject handlers
      */
-    private Map<PdfName, XObjectDoHandler> xobjectDoHandlers;
+    private Map<PdfName, IXObjectDoHandler> xobjectDoHandlers;
 
     /**
      * The font cache
@@ -170,9 +170,9 @@ public class PdfCanvasProcessor {
      * Creates a new PDF Content Stream Processor that will send it's output to the
      * designated render listener.
      *
-     * @param eventListener the {@link EventListener} that will receive rendering notifications
+     * @param eventListener the {@link IEventListener} that will receive rendering notifications
      */
-    public PdfCanvasProcessor(EventListener eventListener) {
+    public PdfCanvasProcessor(IEventListener eventListener) {
         this.eventListener = eventListener;
         this.supportedEvents = eventListener.getSupportedEvents();
         operators = new HashMap<>();
@@ -192,7 +192,7 @@ public class PdfCanvasProcessor {
      * @param handler        the handler that will receive notification when the Do operator for the specified subtype is encountered
      * @return the existing registered handler, if any
      */
-    public XObjectDoHandler registerXObjectDoHandler(PdfName xobjectSubType, XObjectDoHandler handler) {
+    public IXObjectDoHandler registerXObjectDoHandler(PdfName xobjectSubType, IXObjectDoHandler handler) {
         return xobjectDoHandlers.put(xobjectSubType, handler);
     }
 
@@ -206,7 +206,7 @@ public class PdfCanvasProcessor {
      * @param operator       the operator that will receive notification when the operator is encountered
      * @return the existing registered operator, if any
      */
-    public ContentOperator registerContentOperator(String operatorString, ContentOperator operator) {
+    public IContentOperator registerContentOperator(String operatorString, IContentOperator operator) {
         return operators.put(operatorString, operator);
     }
 
@@ -280,12 +280,12 @@ public class PdfCanvasProcessor {
     }
 
     /**
-     * Accessor method for the {@link EventListener} object maintained in this class.
+     * Accessor method for the {@link IEventListener} object maintained in this class.
      * Necessary for implementing custom ContentOperator implementations.
      *
      * @return the renderListener
      */
-    public EventListener getEventListener() {
+    public IEventListener getEventListener() {
         return eventListener;
     }
 
@@ -423,7 +423,7 @@ public class PdfCanvasProcessor {
      * @param operands a list with operands
      */
     protected void invokeOperator(PdfLiteral operator, List<PdfObject> operands) {
-        ContentOperator op = operators.get(operator.toString());
+        IContentOperator op = operators.get(operator.toString());
         if (op == null)
             op = operators.get(DEFAULT_OPERATOR);
         op.invoke(this, operator, operands);
@@ -501,7 +501,7 @@ public class PdfCanvasProcessor {
      * @param data event data
      * @param type event type
      */
-    private void eventOccurred(EventData data, EventType type) {
+    private void eventOccurred(IEventData data, EventType type) {
         if (supportedEvents == null || supportedEvents.contains(type)) {
             eventListener.eventOccurred(data, type);
         }
@@ -526,7 +526,7 @@ public class PdfCanvasProcessor {
     private void displayXObject(PdfName xobjectName) {
         PdfStream xobjectStream = getXObjectStream(xobjectName);
         PdfName subType = xobjectStream.getAsName(PdfName.Subtype);
-        XObjectDoHandler handler = xobjectDoHandlers.get(subType);
+        IXObjectDoHandler handler = xobjectDoHandlers.get(subType);
 
         if (handler == null) {
             handler = xobjectDoHandlers.get(PdfName.Default);
@@ -561,7 +561,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (unregistered).
      */
-    private static class IgnoreOperator implements ContentOperator {
+    private static class IgnoreOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             // ignore the operator
         }
@@ -570,7 +570,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (TJ).
      */
-    private static class ShowTextArrayOperator implements ContentOperator {
+    private static class ShowTextArrayOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfArray array = (PdfArray) operands.get(0);
             float tj = 0;
@@ -590,7 +590,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (").
      */
-    private static class MoveNextLineAndShowTextWithSpacingOperator implements ContentOperator {
+    private static class MoveNextLineAndShowTextWithSpacingOperator implements IContentOperator {
         private final SetTextWordSpacingOperator setTextWordSpacing;
         private final SetTextCharacterSpacingOperator setTextCharacterSpacing;
         private final MoveNextLineAndShowTextOperator moveNextLineAndShowText;
@@ -623,7 +623,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (').
      */
-    private static class MoveNextLineAndShowTextOperator implements ContentOperator {
+    private static class MoveNextLineAndShowTextOperator implements IContentOperator {
         private final TextMoveNextLineOperator textMoveNextLine;
         private final ShowTextOperator showText;
 
@@ -641,7 +641,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (Tj).
      */
-    private static class ShowTextOperator implements ContentOperator {
+    private static class ShowTextOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfString string = (PdfString) operands.get(0);
 
@@ -653,7 +653,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (T*).
      */
-    private static class TextMoveNextLineOperator implements ContentOperator {
+    private static class TextMoveNextLineOperator implements IContentOperator {
         private final TextMoveStartNextLineOperator moveStartNextLine;
 
         public TextMoveNextLineOperator(TextMoveStartNextLineOperator moveStartNextLine) {
@@ -671,7 +671,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (Tm).
      */
-    private static class TextSetTextMatrixOperator implements ContentOperator {
+    private static class TextSetTextMatrixOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float a = ((PdfNumber) operands.get(0)).floatValue();
             float b = ((PdfNumber) operands.get(1)).floatValue();
@@ -688,7 +688,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (TD).
      */
-    private static class TextMoveStartNextLineWithLeadingOperator implements ContentOperator {
+    private static class TextMoveStartNextLineWithLeadingOperator implements IContentOperator {
         private final TextMoveStartNextLineOperator moveStartNextLine;
         private final SetTextLeadingOperator setTextLeading;
 
@@ -710,7 +710,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (Td).
      */
-    private static class TextMoveStartNextLineOperator implements ContentOperator {
+    private static class TextMoveStartNextLineOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float tx = ((PdfNumber) operands.get(0)).floatValue();
             float ty = ((PdfNumber) operands.get(1)).floatValue();
@@ -724,7 +724,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (Tf).
      */
-    private static class SetTextFontOperator implements ContentOperator {
+    private static class SetTextFontOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfName fontResourceName = (PdfName) operands.get(0);
             float size = ((PdfNumber) operands.get(1)).floatValue();
@@ -743,7 +743,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (Tr).
      */
-    private static class SetTextRenderModeOperator implements ContentOperator {
+    private static class SetTextRenderModeOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber render = (PdfNumber) operands.get(0);
             processor.getGraphicsState().setTextRenderingMode(render.intValue());
@@ -753,7 +753,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (Ts).
      */
-    private static class SetTextRiseOperator implements ContentOperator {
+    private static class SetTextRiseOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber rise = (PdfNumber) operands.get(0);
             processor.getGraphicsState().setTextRise(rise.floatValue());
@@ -763,7 +763,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (TL).
      */
-    private static class SetTextLeadingOperator implements ContentOperator {
+    private static class SetTextLeadingOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber leading = (PdfNumber) operands.get(0);
             processor.getGraphicsState().setLeading(leading.floatValue());
@@ -773,7 +773,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (Tz).
      */
-    private static class SetTextHorizontalScalingOperator implements ContentOperator {
+    private static class SetTextHorizontalScalingOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber scale = (PdfNumber) operands.get(0);
             processor.getGraphicsState().setHorizontalScaling(scale.floatValue());
@@ -783,7 +783,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (Tc).
      */
-    private static class SetTextCharacterSpacingOperator implements ContentOperator {
+    private static class SetTextCharacterSpacingOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber charSpace = (PdfNumber) operands.get(0);
             processor.getGraphicsState().setCharSpacing(charSpace.floatValue());
@@ -793,7 +793,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (Tw).
      */
-    private static class SetTextWordSpacingOperator implements ContentOperator {
+    private static class SetTextWordSpacingOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfNumber wordSpace = (PdfNumber) operands.get(0);
             processor.getGraphicsState().setWordSpacing(wordSpace.floatValue());
@@ -803,7 +803,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (gs).
      */
-    private static class ProcessGraphicsStateResourceOperator implements ContentOperator {
+    private static class ProcessGraphicsStateResourceOperator implements IContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfName dictionaryName = (PdfName) operands.get(0);
@@ -829,7 +829,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (q).
      */
-    private static class PushGraphicsStateOperator implements ContentOperator {
+    private static class PushGraphicsStateOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             ParserGraphicsState gs = processor.gsStack.peek();
             ParserGraphicsState copy = new ParserGraphicsState(gs);
@@ -840,7 +840,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (cm).
      */
-    private static class ModifyCurrentTransformationMatrixOperator implements ContentOperator {
+    private static class ModifyCurrentTransformationMatrixOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float a = ((PdfNumber) operands.get(0)).floatValue();
             float b = ((PdfNumber) operands.get(1)).floatValue();
@@ -934,7 +934,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (Q).
      */
-    protected static class PopGraphicsStateOperator implements ContentOperator {
+    protected static class PopGraphicsStateOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.gsStack.pop();
             ParserGraphicsState gs = processor.getGraphicsState();
@@ -945,7 +945,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (g).
      */
-    private static class SetGrayFillOperator implements ContentOperator {
+    private static class SetGrayFillOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setFillColor(getColor(1, operands));
         }
@@ -954,7 +954,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (G).
      */
-    private static class SetGrayStrokeOperator implements ContentOperator {
+    private static class SetGrayStrokeOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setStrokeColor(getColor(1, operands));
         }
@@ -963,7 +963,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (rg).
      */
-    private static class SetRGBFillOperator implements ContentOperator {
+    private static class SetRGBFillOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setFillColor(getColor(3, operands));
         }
@@ -972,7 +972,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (RG).
      */
-    private static class SetRGBStrokeOperator implements ContentOperator {
+    private static class SetRGBStrokeOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setStrokeColor(getColor(3, operands));
         }
@@ -981,7 +981,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (k).
      */
-    private static class SetCMYKFillOperator implements ContentOperator {
+    private static class SetCMYKFillOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setFillColor(getColor(4, operands));
         }
@@ -990,7 +990,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (K).
      */
-    private static class SetCMYKStrokeOperator implements ContentOperator {
+    private static class SetCMYKStrokeOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setStrokeColor(getColor(4, operands));
         }
@@ -1000,7 +1000,7 @@ public class PdfCanvasProcessor {
      * A content operator implementation (CS).
      *
      */
-    private static class SetColorSpaceFillOperator implements ContentOperator {
+    private static class SetColorSpaceFillOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfColorSpace pdfColorSpace = determineColorSpace((PdfName) operands.get(0), processor);
             processor.getGraphicsState().setFillColorSpace(pdfColorSpace);
@@ -1026,7 +1026,7 @@ public class PdfCanvasProcessor {
      * A content operator implementation (cs).
      *
      */
-    private static class SetColorSpaceStrokeOperator implements ContentOperator {
+    private static class SetColorSpaceStrokeOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfColorSpace pdfColorSpace = SetColorSpaceFillOperator.determineColorSpace((PdfName) operands.get(0), processor);
             processor.getGraphicsState().setStrokeColorSpace(pdfColorSpace);
@@ -1037,7 +1037,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (sc / scn).
      */
-    private static class SetColorFillOperator implements ContentOperator {
+    private static class SetColorFillOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setFillColor(getColor(processor.getGraphicsState().getFillColorSpace(), operands, processor.getResources()));
         }
@@ -1046,7 +1046,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (SC / SCN).
      */
-    private static class SetColorStrokeOperator implements ContentOperator {
+    private static class SetColorStrokeOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.getGraphicsState().setStrokeColor(getColor(processor.getGraphicsState().getStrokeColorSpace(), operands, processor.getResources()));
         }
@@ -1055,7 +1055,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (BT).
      */
-    private static class BeginTextOperator implements ContentOperator {
+    private static class BeginTextOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.textMatrix = new Matrix();
             processor.textLineMatrix = processor.textMatrix;
@@ -1066,7 +1066,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (ET).
      */
-    private static class EndTextOperator implements ContentOperator {
+    private static class EndTextOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.textMatrix = null;
             processor.textLineMatrix = null;
@@ -1077,7 +1077,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (BMC).
      */
-    private static class BeginMarkedContentOperator implements ContentOperator {
+    private static class BeginMarkedContentOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor,
                            PdfLiteral operator, List<PdfObject> operands) {
             processor.beginMarkedContent((PdfName) operands.get(0), new PdfDictionary());
@@ -1088,7 +1088,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (BDC).
      */
-    private static class BeginMarkedContentDictionaryOperator implements ContentOperator {
+    private static class BeginMarkedContentDictionaryOperator implements IContentOperator {
 
         public void invoke(PdfCanvasProcessor processor,
                            PdfLiteral operator, List<PdfObject> operands) {
@@ -1110,7 +1110,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (EMC).
      */
-    private static class EndMarkedContentOperator implements ContentOperator {
+    private static class EndMarkedContentOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor,
                            PdfLiteral operator, List<PdfObject> operands) {
             processor.endMarkedContent();
@@ -1120,7 +1120,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (Do).
      */
-    private static class DoOperator implements ContentOperator {
+    private static class DoOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfName xobjectName = (PdfName) operands.get(0);
             processor.displayXObject(xobjectName);
@@ -1132,7 +1132,7 @@ public class PdfCanvasProcessor {
      * This not a usual operator, it will have a single operand, which will be a PdfStream object which
      * encapsulates inline image dictionary and bytes
      */
-    private static class EndImageOperator implements ContentOperator {
+    private static class EndImageOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfStream imageStream = (PdfStream) operands.get(0);
             processor.displayImage(imageStream, true);
@@ -1142,7 +1142,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (w).
      */
-    private static class SetLineWidthOperator implements ContentOperator {
+    private static class SetLineWidthOperator implements IContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
             float lineWidth = ((PdfNumber) operands.get(0)).floatValue();
@@ -1153,7 +1153,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (J).
      */
-    private class SetLineCapOperator implements ContentOperator {
+    private class SetLineCapOperator implements IContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
             int lineCap = ((PdfNumber) operands.get(0)).intValue();
@@ -1164,7 +1164,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (j).
      */
-    private class SetLineJoinOperator implements ContentOperator {
+    private class SetLineJoinOperator implements IContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
             int lineJoin = ((PdfNumber) operands.get(0)).intValue();
@@ -1175,7 +1175,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (M).
      */
-    private class SetMiterLimitOperator implements ContentOperator {
+    private class SetMiterLimitOperator implements IContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
             float miterLimit = ((PdfNumber) operands.get(0)).floatValue();
@@ -1186,7 +1186,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (d).
      */
-    private class SetLineDashPatternOperator implements ContentOperator {
+    private class SetLineDashPatternOperator implements IContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
             processor.getGraphicsState().setDashPattern(new PdfArray(Arrays.asList(operands.get(0), operands.get(1))));
@@ -1196,7 +1196,7 @@ public class PdfCanvasProcessor {
     /**
      * An XObject subtype handler for FORM
      */
-    private static class FormXObjectDoHandler implements XObjectDoHandler {
+    private static class FormXObjectDoHandler implements IXObjectDoHandler {
         public void handleXObject(PdfCanvasProcessor processor, PdfStream stream) {
 
             PdfDictionary resourcesDic = stream.getAsDictionary(PdfName.Resources);
@@ -1238,7 +1238,7 @@ public class PdfCanvasProcessor {
     /**
      * An XObject subtype handler for IMAGE
      */
-    private static class ImageXObjectDoHandler implements XObjectDoHandler {
+    private static class ImageXObjectDoHandler implements IXObjectDoHandler {
 
         public void handleXObject(PdfCanvasProcessor processor, PdfStream xobjectStream) {
             processor.displayImage(xobjectStream, false);
@@ -1248,7 +1248,7 @@ public class PdfCanvasProcessor {
     /**
      * An XObject subtype handler that does nothing
      */
-    private static class IgnoreXObjectDoHandler implements XObjectDoHandler {
+    private static class IgnoreXObjectDoHandler implements IXObjectDoHandler {
         public void handleXObject(PdfCanvasProcessor processor, PdfStream xobjectStream) {
             // ignore XObject subtype
         }
@@ -1257,7 +1257,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (m).
      */
-    private static class MoveToOperator implements ContentOperator {
+    private static class MoveToOperator implements IContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float x = ((PdfNumber) operands.get(0)).floatValue();
@@ -1269,7 +1269,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (l).
      */
-    private static class LineToOperator implements ContentOperator {
+    private static class LineToOperator implements IContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float x = ((PdfNumber) operands.get(0)).floatValue();
@@ -1281,7 +1281,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (c).
      */
-    private static class CurveOperator implements ContentOperator {
+    private static class CurveOperator implements IContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float x1 = ((PdfNumber) operands.get(0)).floatValue();
@@ -1297,7 +1297,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (v).
      */
-    private static class CurveFirstPointDuplicatedOperator implements ContentOperator {
+    private static class CurveFirstPointDuplicatedOperator implements IContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float x2 = ((PdfNumber) operands.get(0)).floatValue();
@@ -1311,7 +1311,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (y).
      */
-    private static class CurveFourhPointDuplicatedOperator implements ContentOperator {
+    private static class CurveFourhPointDuplicatedOperator implements IContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float x1 = ((PdfNumber) operands.get(0)).floatValue();
@@ -1325,7 +1325,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (h).
      */
-    private static class CloseSubpathOperator implements ContentOperator {
+    private static class CloseSubpathOperator implements IContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             processor.currentPath.closeSubpath();
@@ -1335,7 +1335,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (re).
      */
-    private static class RectangleOperator implements ContentOperator {
+    private static class RectangleOperator implements IContentOperator {
 
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             float x = ((PdfNumber) operands.get(0)).floatValue();
@@ -1349,7 +1349,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (S, s, f, F, f*, B, B*, b, b*).
      */
-    private static class PaintPathOperator implements ContentOperator {
+    private static class PaintPathOperator implements IContentOperator {
 
         private int operation;
         private int rule;
@@ -1383,7 +1383,7 @@ public class PdfCanvasProcessor {
     /**
      * A content operator implementation (W, W*)
      */
-    private static class ClipPathOperator implements ContentOperator {
+    private static class ClipPathOperator implements IContentOperator {
 
         private int rule;
 

@@ -58,7 +58,7 @@ import java.nio.channels.FileChannel;
 import java.text.MessageFormat;
 
 /**
- * Factory to create {@link RandomAccessSource} objects based on various types of sources
+ * Factory to create {@link IRandomAccessSource} objects based on various types of sources
  */
 public final class RandomAccessSourceFactory implements Serializable {
 
@@ -111,25 +111,25 @@ public final class RandomAccessSourceFactory implements Serializable {
     }
 
     /**
-     * Creates a {@link RandomAccessSource} based on a byte array
+     * Creates a {@link IRandomAccessSource} based on a byte array
      * @param data the byte array
-     * @return the newly created {@link RandomAccessSource}
+     * @return the newly created {@link IRandomAccessSource}
      */
-    public RandomAccessSource createSource(byte[] data){
+    public IRandomAccessSource createSource(byte[] data){
         return new ArrayRandomAccessSource(data);
     }
 
-    public RandomAccessSource createSource(RandomAccessFile raf) throws java.io.IOException {
+    public IRandomAccessSource createSource(RandomAccessFile raf) throws java.io.IOException {
         return new RAFRandomAccessSource(raf);
     }
 
     /**
-     * Creates a {@link RandomAccessSource} based on a URL.  The data available at the URL is read into memory and used
-     * as the source for the {@link RandomAccessSource}
+     * Creates a {@link IRandomAccessSource} based on a URL.  The data available at the URL is read into memory and used
+     * as the source for the {@link IRandomAccessSource}
      * @param url the url to read from
-     * @return the newly created {@link RandomAccessSource}
+     * @return the newly created {@link IRandomAccessSource}
      */
-    public RandomAccessSource createSource(URL url) throws java.io.IOException{
+    public IRandomAccessSource createSource(URL url) throws java.io.IOException{
         InputStream stream = url.openStream();
         try {
             return createSource(stream);
@@ -142,26 +142,26 @@ public final class RandomAccessSourceFactory implements Serializable {
     }
 
     /**
-     * Creates a {@link RandomAccessSource} based on an {@link InputStream}.  The full content of the InputStream is read into memory and used
-     * as the source for the {@link RandomAccessSource}
+     * Creates a {@link IRandomAccessSource} based on an {@link InputStream}.  The full content of the InputStream is read into memory and used
+     * as the source for the {@link IRandomAccessSource}
      * @param inputStream the stream to read from
-     * @return the newly created {@link RandomAccessSource}
+     * @return the newly created {@link IRandomAccessSource}
      */
-    public RandomAccessSource createSource(InputStream inputStream) throws java.io.IOException{
+    public IRandomAccessSource createSource(InputStream inputStream) throws java.io.IOException{
         return createSource(StreamUtil.inputStreamToArray(inputStream));
     }
 
     /**
-     * Creates a {@link RandomAccessSource} based on a filename string.
+     * Creates a {@link IRandomAccessSource} based on a filename string.
      * If the filename describes a URL, a URL based source is created
      * If the filename describes a file on disk, the contents may be read into memory (if {@code forceRead} is true),
      * opened using memory mapped file channel (if usePlainRandomAccess is false), or
      * opened using {@link RandomAccessFile} access (if usePlainRandomAccess is true)
      * This call will automatically fail over to using {@link RandomAccessFile} if the memory map operation fails
-     * @param filename the name of the file or resource to create the {@link RandomAccessSource} for
-     * @return the newly created {@link RandomAccessSource}
+     * @param filename the name of the file or resource to create the {@link IRandomAccessSource} for
+     * @return the newly created {@link IRandomAccessSource}
      */
-    public RandomAccessSource createBestSource(String filename) throws java.io.IOException{
+    public IRandomAccessSource createBestSource(String filename) throws java.io.IOException{
         File file = new File(filename);
         if (!file.canRead()) {
             if (filename.startsWith("file:/")
@@ -211,14 +211,14 @@ public final class RandomAccessSourceFactory implements Serializable {
     }
 
     /**
-     * Creates a {@link RandomAccessSource} based on memory mapping a file channel.
+     * Creates a {@link IRandomAccessSource} based on memory mapping a file channel.
      * Unless you are explicitly working with a {@code FileChannel} already, it is better to use
      * {@link RandomAccessSourceFactory#createBestSource(String)}.
      * If the file is large, it will be opened using a paging strategy.
-     * @param channel the name of the file or resource to create the {@link RandomAccessSource} for
-     * @return the newly created {@link RandomAccessSource}
+     * @param channel the name of the file or resource to create the {@link IRandomAccessSource} for
+     * @return the newly created {@link IRandomAccessSource}
      */
-    public RandomAccessSource createBestSource(FileChannel channel) throws java.io.IOException {
+    public IRandomAccessSource createBestSource(FileChannel channel) throws java.io.IOException {
         if (channel.size() <= PagedChannelRandomAccessSource.DEFAULT_TOTAL_BUFSIZE){ // if less than the fully mapped usage of PagedFileChannelRandomAccessSource, just map the whole thing and be done with it
             return new GetBufferedRandomAccessSource(new FileChannelRandomAccessSource(channel));
         } else {
@@ -226,8 +226,8 @@ public final class RandomAccessSourceFactory implements Serializable {
         }
     }
 
-    public RandomAccessSource createRanged(RandomAccessSource source, long[] ranges) throws java.io.IOException {
-        RandomAccessSource[] sources = new RandomAccessSource[ranges.length/2];
+    public IRandomAccessSource createRanged(IRandomAccessSource source, long[] ranges) throws java.io.IOException {
+        IRandomAccessSource[] sources = new IRandomAccessSource[ranges.length/2];
         for(int i = 0; i < ranges.length; i+=2){
             sources[i/2] = new WindowRandomAccessSource(source, ranges[i], ranges[i+1]);
         }
@@ -235,12 +235,12 @@ public final class RandomAccessSourceFactory implements Serializable {
     }
 
     /**
-     * Creates a new {@link RandomAccessSource} by reading the specified file/resource into memory
+     * Creates a new {@link IRandomAccessSource} by reading the specified file/resource into memory
      * @param filename the name of the resource to read
-     * @return the newly created {@link RandomAccessSource}
+     * @return the newly created {@link IRandomAccessSource}
      * @throws java.io.IOException if reading the underling file or stream fails
      */
-    private RandomAccessSource createByReadingToMemory(String filename) throws java.io.IOException {
+    private IRandomAccessSource createByReadingToMemory(String filename) throws java.io.IOException {
         InputStream stream = ResourceUtil.getResourceStream(filename);
         if (stream == null) {
             throw new java.io.IOException(MessageFormat.format(IOException._1NotFoundAsFileOrResource, filename));
@@ -249,12 +249,12 @@ public final class RandomAccessSourceFactory implements Serializable {
     }
 
     /**
-     * Creates a new {@link RandomAccessSource} by reading the specified file/resource into memory
+     * Creates a new {@link IRandomAccessSource} by reading the specified file/resource into memory
      * @param stream the name of the resource to read
-     * @return the newly created {@link RandomAccessSource}
+     * @return the newly created {@link IRandomAccessSource}
      * @throws java.io.IOException if reading the underling file or stream fails
      */
-    private RandomAccessSource createByReadingToMemory(InputStream stream) throws java.io.IOException {
+    private IRandomAccessSource createByReadingToMemory(InputStream stream) throws java.io.IOException {
         try {
             return new ArrayRandomAccessSource(StreamUtil.inputStreamToArray(stream));
         }

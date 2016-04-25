@@ -56,7 +56,7 @@ import java.io.InputStream;
 /**
  * @author psoares
  */
-public class CMapLocationResource implements CMapLocation{
+public class CMapLocationResource implements ICMapLocation {
 
     public PdfTokenizer getLocation(String location) throws java.io.IOException {
         String fullName = FontConstants.RESOURCE_PATH + "cmap/" + location;

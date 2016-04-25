@@ -51,9 +51,9 @@ import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Path;
 import com.itextpdf.kernel.geom.Point;
-import com.itextpdf.kernel.geom.Shape;
+import com.itextpdf.kernel.geom.IShape;
 import com.itextpdf.kernel.geom.Subpath;
-import com.itextpdf.kernel.pdf.canvas.parser.clipper.Clipper;
+import com.itextpdf.kernel.pdf.canvas.parser.clipper.IClipper;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.ClipperBridge;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.DefaultClipper;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.PolyTree;
@@ -129,12 +129,12 @@ public class ParserGraphicsState extends CanvasGraphicsState {
         Path pathCopy = new Path(path);
         pathCopy.closeAllSubpaths();
 
-        Clipper clipper = new DefaultClipper();
-        ClipperBridge.addPath(clipper, clippingPath, Clipper.PolyType.SUBJECT);
-        ClipperBridge.addPath(clipper, pathCopy, Clipper.PolyType.CLIP);
+        IClipper clipper = new DefaultClipper();
+        ClipperBridge.addPath(clipper, clippingPath, IClipper.PolyType.SUBJECT);
+        ClipperBridge.addPath(clipper, pathCopy, IClipper.PolyType.CLIP);
 
         PolyTree resultTree = new PolyTree();
-        clipper.execute(Clipper.ClipType.INTERSECTION, resultTree, Clipper.PolyFillType.NON_ZERO, ClipperBridge.getFillType(fillingRule));
+        clipper.execute(IClipper.ClipType.INTERSECTION, resultTree, IClipper.PolyFillType.NON_ZERO, ClipperBridge.getFillType(fillingRule));
 
         clippingPath = ClipperBridge.convertToPath(resultTree);
     }
@@ -165,16 +165,16 @@ public class ParserGraphicsState extends CanvasGraphicsState {
         Subpath newSubpath = new Subpath();
         newSubpath.setClosed(subpath.isClosed());
 
-        for (Shape segment : subpath.getSegments()) {
-            Shape transformedSegment = transformSegment(segment, newCtm);
+        for (IShape segment : subpath.getSegments()) {
+            IShape transformedSegment = transformSegment(segment, newCtm);
             newSubpath.addSegment(transformedSegment);
         }
 
         return newSubpath;
     }
 
-    private Shape transformSegment(Shape segment, Matrix newCtm) {
-        Shape newSegment;
+    private IShape transformSegment(IShape segment, Matrix newCtm) {
+        IShape newSegment;
         List<Point> segBasePts = segment.getBasePoints();
         Point[] transformedPoints = transformPoints(newCtm, segBasePts.toArray(new Point[segBasePts.size()]));
 

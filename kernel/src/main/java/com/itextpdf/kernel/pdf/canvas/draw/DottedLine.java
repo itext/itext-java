@@ -50,10 +50,10 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 
 /**
- * Implementation of {@link LineDrawer} which draws a dotted horizontal line along
+ * Implementation of {@link ILineDrawer} which draws a dotted horizontal line along
  * the bottom edge of the specified rectangle.
  */
-public class DottedLine implements LineDrawer {
+public class DottedLine implements ILineDrawer {
 
     /**
      * the gap between the dots.

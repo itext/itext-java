@@ -538,7 +538,7 @@ public class TextRenderer extends AbstractRenderer {
             if (horizontalScaling != null && horizontalScaling != 1)
                 canvas.setHorizontalScaling(horizontalScaling * 100);
 
-            GlyphLine.GlyphLineFilter filter = new GlyphLine.GlyphLineFilter() {
+            GlyphLine.IGlyphLineFilter filter = new GlyphLine.IGlyphLineFilter() {
                 @Override
                 public boolean accept(Glyph glyph) {
                     return !noPrint(glyph);

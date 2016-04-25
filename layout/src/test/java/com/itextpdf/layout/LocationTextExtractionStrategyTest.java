@@ -15,7 +15,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.TextExtractionStrategy;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Image;
@@ -37,7 +37,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/LocationTextExtractionStrategyTest/";
 
     @Override
-    public TextExtractionStrategy createRenderListenerForTest() {
+    public ITextExtractionStrategy createRenderListenerForTest() {
         return new LocationTextExtractionStrategy();
     }
 

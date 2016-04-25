@@ -51,29 +51,29 @@ import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
  * This class expands each {@link TextRenderInfo} for {@link EventType#RENDER_TEXT} event types into
  * multiple {@link TextRenderInfo} instances for each glyph occurred.
  * The only difference from {@link GlyphEventListener} is that this class conveniently implements
- * {@link TextExtractionStrategy} and can therefore used as a strategy on its own.
+ * {@link ITextExtractionStrategy} and can therefore used as a strategy on its own.
  */
-public class GlyphTextEventListener extends GlyphEventListener implements TextExtractionStrategy {
+public class GlyphTextEventListener extends GlyphEventListener implements ITextExtractionStrategy {
 
     /**
-     * Constructs a {@link GlyphEventListener} instance by a {@link TextExtractionStrategy} delegate to which
+     * Constructs a {@link GlyphEventListener} instance by a {@link ITextExtractionStrategy} delegate to which
      * the expanded text events for each glyph occurred will be passed on.
      *
      * @param delegate delegate to pass the expanded glyph render events to.
      */
-    public GlyphTextEventListener(TextExtractionStrategy delegate) {
+    public GlyphTextEventListener(ITextExtractionStrategy delegate) {
         super(delegate);
     }
 
     /**
      * As an resultant text we use the the resultant text of the delegate that implement
-     * {@link TextExtractionStrategy} and was passed to this class.
+     * {@link ITextExtractionStrategy} and was passed to this class.
      * @return the resulting text extracted from the delegate
      */
     @Override
     public String getResultantText() {
-        if (delegate instanceof TextExtractionStrategy) {
-            return ((TextExtractionStrategy) delegate).getResultantText();
+        if (delegate instanceof ITextExtractionStrategy) {
+            return ((ITextExtractionStrategy) delegate).getResultantText();
         } else {
             return null;
         }

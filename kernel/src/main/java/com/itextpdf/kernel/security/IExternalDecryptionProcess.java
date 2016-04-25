@@ -42,58 +42,28 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf.canvas.draw;
+package com.itextpdf.kernel.security;
 
-import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import org.bouncycastle.cms.Recipient;
+import org.bouncycastle.cms.RecipientId;
 
 /**
- * The {@link LineDrawer} defines a drawing operation on a {@link PdfCanvas}
- * <p/>
- * This interface allows to customize the 'empty' space in a
- * {@link com.itextpdf.layout.element.Tabstop TabStop} through a Strategy design
- * pattern
+ * Interface to externalize the retrieval of the CMS recipient info.
  */
-public interface LineDrawer {
+public interface IExternalDecryptionProcess {
 
     /**
-     * Performs configurable drawing operations related to specific region
-     * coordinates on a canvas.
+     * Returns the ID of the CMS recipient.
      *
-     * @param canvas   the canvas to draw on
-     * @param drawArea the rectangle in relation to which to fulfill drawing
-     *                 instructions
+     * @return ID of the CMS Recipient
      */
-    void draw(PdfCanvas canvas, Rectangle drawArea);
+    RecipientId getCmsRecipientId();
 
     /**
-     * Gets the width of the line
+     * Returns the CMS recipient
      *
-     * @return width of the line
+     * @return CMS Recipient
      */
-    float getLineWidth();
-
-    /**
-     * Sets line width in points
-     *
-     * @param lineWidth new line width
-     */
-    void setLineWidth(float lineWidth);
-
-    /**
-     * Gets the color of the line
-     *
-     * @return color of the line
-     */
-    Color getColor();
-
-    /**
-     * Sets line color
-     *
-     * @param color new line color
-     */
-    void setColor(Color color);
-
+    Recipient getCmsRecipient();
 
 }

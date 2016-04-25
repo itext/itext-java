@@ -1,15 +1,13 @@
 package com.itextpdf.kernel.pdf.canvas.parser;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
-import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.pdf.canvas.parser.filter.TextRegionEventFilter;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.FilteredEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.FilteredTextEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.GlyphEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.GlyphTextEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.TextExtractionStrategy;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
@@ -62,14 +60,14 @@ import org.junit.experimental.categories.Category;
         x2 = 22;
         y1 = 678.9f;
         y2 = 12;
-        TextExtractionStrategy region1Listener = listener.attachEventListener(new LocationTextExtractionStrategy(),
+        ITextExtractionStrategy region1Listener = listener.attachEventListener(new LocationTextExtractionStrategy(),
                 new TextRegionEventFilter(new Rectangle(x1, y1, x2, y2)));
 
         x1 = 156;
         x2 = 13;
         y1 = 678.9f;
         y2 = 12;
-        TextExtractionStrategy region2Listener = listener.attachEventListener(new LocationTextExtractionStrategy(),
+        ITextExtractionStrategy region2Listener = listener.attachEventListener(new LocationTextExtractionStrategy(),
                 new TextRegionEventFilter(new Rectangle(x1, y1, x2, y2)));
 
         PdfCanvasProcessor parser = new PdfCanvasProcessor(new GlyphEventListener(listener));

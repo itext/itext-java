@@ -42,32 +42,39 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.signatures;
-
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfName;
-
-import java.io.InputStream;
-import java.security.GeneralSecurityException;
+package com.itextpdf.io.font;
 
 /**
- * Interface to sign a document. The signing is fully done externally, including the container composition.
+ * Classes implementing this interface can create custom encodings or
+ * replace existing ones. It is used in the context of <code>PdfEncoding</code>.
  * @author Paulo Soares
  */
-public interface ExternalSignatureContainer {
+public interface IExtraEncoding {
 
     /**
-     * Produces the container with the signature.
-     * @param data the data to sign
-     * @return a container with the signature and other objects, like CRL and OCSP. The container will generally be a PKCS7 one.
-     * @throws GeneralSecurityException
+     * Converts an Unicode string to a byte array according to some encoding.
+     * @param text the Unicode string
+     * @param encoding the requested encoding. It's mainly of use if the same class
+     * supports more than one encoding.
+     * @return the conversion or <CODE>null</CODE> if no conversion is supported
      */
-    byte[] sign(InputStream data) throws GeneralSecurityException;
+    byte[] charToByte(String text, String encoding);
 
     /**
-     * Modifies the signature dictionary to suit the container. At least the keys {@link PdfName#Filter} and
-     * {@link PdfName#SubFilter} will have to be set.
-     * @param signDic the signature dictionary
+     * Converts an Unicode char to a byte array according to some encoding.
+     * @param char1 the Unicode char
+     * @param encoding the requested encoding. It's mainly of use if the same class
+     * supports more than one encoding.
+     * @return the conversion or <CODE>null</CODE> if no conversion is supported
      */
-    void modifySigningDictionary(PdfDictionary signDic);
+    byte[] charToByte(char char1, String encoding);
+
+    /**
+     * Converts a byte array to an Unicode string according to some encoding.
+     * @param b the input byte array
+     * @param encoding the requested encoding. It's mainly of use if the same class
+     * supports more than one encoding.
+     * @return the conversion or <CODE>null</CODE> if no conversion is supported
+     */
+    String byteToChar(byte b[], String encoding);
 }

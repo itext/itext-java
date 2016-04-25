@@ -69,11 +69,11 @@ public class CMapParser {
 
     private static final int MAX_LEVEL = 10;
 
-    public static void parseCid(String cmapName, AbstractCMap cmap, CMapLocation location) throws java.io.IOException {
+    public static void parseCid(String cmapName, AbstractCMap cmap, ICMapLocation location) throws java.io.IOException {
         parseCid(cmapName, cmap, location, 0);
     }
 
-    private static void parseCid(String cmapName, AbstractCMap cmap, CMapLocation location, int level) throws java.io.IOException {
+    private static void parseCid(String cmapName, AbstractCMap cmap, ICMapLocation location, int level) throws java.io.IOException {
         if (level >= MAX_LEVEL)
             return;
         PdfTokenizer inp = location.getLocation(cmapName);

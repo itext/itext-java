@@ -42,11 +42,23 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf.canvas.parser.data;
+package com.itextpdf.signatures;
+
+import java.security.cert.X509Certificate;
+import java.util.Collection;
 
 /**
- * Marker interface for the set of classes used to combine
- * parameters required for different types of events.
+ * Interface that needs to be implemented if you want to embed
+ * Certificate Revocation Lists (CRL) into your PDF.
+ * @author Paulo Soares
  */
-public interface EventData {
+public interface ICrlClient {
+
+    /**
+     * Gets an encoded byte array.
+     * @param	checkCert The certificate which a CRL URL can be obtained from.
+     * @param	url	A CRL url if you don't want to obtain it from the certificate.
+     * @return	A collection of byte array each representing a crl. It may return null or an empty collection.
+     */
+    Collection<byte[]> getEncoded(X509Certificate checkCert, String url);
 }

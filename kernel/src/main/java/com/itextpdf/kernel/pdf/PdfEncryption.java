@@ -45,7 +45,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.crypto.Decryptor;
+import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.crypto.securityhandler.PubKeySecurityHandler;
 import com.itextpdf.kernel.crypto.securityhandler.PubSecHandlerUsingAes128;
@@ -58,7 +58,7 @@ import com.itextpdf.kernel.crypto.securityhandler.StandardHandlerUsingAes256;
 import com.itextpdf.kernel.crypto.securityhandler.StandardHandlerUsingStandard128;
 import com.itextpdf.kernel.crypto.securityhandler.StandardHandlerUsingStandard40;
 import com.itextpdf.kernel.crypto.securityhandler.StandardSecurityHandler;
-import com.itextpdf.kernel.security.ExternalDecryptionProcess;
+import com.itextpdf.kernel.security.IExternalDecryptionProcess;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -204,7 +204,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfEncryption(PdfDictionary pdfDict, Key certificateKey, Certificate certificate,
-                         String certificateKeyProvider, ExternalDecryptionProcess externalDecryptionProcess) {
+                         String certificateKeyProvider, IExternalDecryptionProcess externalDecryptionProcess) {
         super(pdfDict);
         setForbidRelease();
         int revision = readAndSetCryptoModeForPubSecHandler(pdfDict);
@@ -305,7 +305,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     public byte[] decryptByteArray(byte[] b) {
         try {
             ByteArrayOutputStream ba = new ByteArrayOutputStream();
-            Decryptor dec = securityHandler.getDecryptor();
+            IDecryptor dec = securityHandler.getDecryptor();
             byte[] b2 = dec.update(b, 0, b.length);
             if (b2 != null)
                 ba.write(b2);

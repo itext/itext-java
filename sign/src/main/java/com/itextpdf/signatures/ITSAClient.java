@@ -42,31 +42,40 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf.canvas.parser.listener;
+package com.itextpdf.signatures;
 
-import com.itextpdf.kernel.pdf.canvas.parser.data.EventData;
-import com.itextpdf.kernel.pdf.canvas.parser.EventType;
-import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
-import java.util.Set;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 
 /**
- * A callback interface that receives notifications from the {@link PdfCanvasProcessor}
- * as various events occur (see {@link EventType}).
+ * Time Stamp Authority client (caller) interface.
+ * <p>
+ * Interface used by the PdfPKCS7 digital signature builder to call
+ * Time Stamp Authority providing RFC 3161 compliant time stamp token.
  */
-public interface EventListener {
+public interface ITSAClient { // TODO: refactor docs
 
     /**
-     * Called when some event occurs during parsing a content stream.
-     * @param data Combines the data required for processing corresponding event type.
-     * @param type Event type.
+     * Get the time stamp estimated token size.
+     * Implementation must return value large enough to accommodate the
+     * entire token returned by {@link #getTimeStampToken(byte[])} prior
+     * to actual {@link #getTimeStampToken(byte[])} call.
+     * @return	an estimate of the token size
      */
-    void eventOccurred(EventData data, EventType type);
+    int getTokenSizeEstimate();
 
     /**
-     * Provides the set of event types this listener supports.
-     * Returns null if all possible event types are supported.
-     * @return Set of event types supported by this listener or
-     * null if all possible event types are supported.
+     * Returns the {@link MessageDigest} to digest the data imprint
+     * @return The {@link MessageDigest} object.
      */
-    Set<EventType> getSupportedEvents();
+    MessageDigest getMessageDigest() throws GeneralSecurityException;
+
+    /**
+     * Returns RFC 3161 timeStampToken.
+     * Method may return null indicating that timestamp should be skipped.
+     * @param imprint byte[] - data imprint to be time-stamped
+     * @return byte[] - encoded, TSA signed data of the timeStampToken
+     * @throws Exception - TSA request failed
+     */
+    byte[] getTimeStampToken(byte[] imprint) throws Exception;
 }

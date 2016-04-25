@@ -62,13 +62,12 @@ import com.itextpdf.kernel.pdf.PdfLiteral;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfOutputStream;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImage;
 import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
-import com.itextpdf.kernel.pdf.filters.FilterHandler;
+import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 
 import java.io.ByteArrayInputStream;
@@ -154,7 +153,7 @@ public class PdfImageXObject extends PdfXObject {
         byte[] bytes;
         bytes = getPdfObject().getBytes(false);
         if (decoded) {
-            Map<PdfName, FilterHandler> filters = new HashMap<>(FilterHandlers.getDefaultFilterHandlers());
+            Map<PdfName, IFilterHandler> filters = new HashMap<>(FilterHandlers.getDefaultFilterHandlers());
             DoNothingFilter stubFilter = new DoNothingFilter();
             filters.put(PdfName.DCTDecode, stubFilter);
             filters.put(PdfName.JBIG2Decode, stubFilter);

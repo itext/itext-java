@@ -49,7 +49,7 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.AESCipherCBCnoPad;
 import com.itextpdf.kernel.crypto.AesDecryptor;
 import com.itextpdf.kernel.crypto.BadPasswordException;
-import com.itextpdf.kernel.crypto.Decryptor;
+import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.IVGenerator;
 import com.itextpdf.kernel.crypto.OutputStreamAesEncryption;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
@@ -94,7 +94,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
     }
 
     @Override
-    public Decryptor getDecryptor() {
+    public IDecryptor getDecryptor() {
         return new AesDecryptor(nextObjectKey, 0, nextObjectKeySize);
     }
 

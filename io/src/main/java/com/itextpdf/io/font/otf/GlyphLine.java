@@ -236,7 +236,7 @@ public class GlyphLine {
         }
     }
 
-    public GlyphLine filter(GlyphLineFilter filter) {
+    public GlyphLine filter(IGlyphLineFilter filter) {
         boolean anythingFiltered = false;
         List<Glyph> filteredGlyphs = new ArrayList<>(end - start);
         List<ActualText> filteredActualText = actualText != null ? new ArrayList<ActualText>(end - start) : null;
@@ -301,7 +301,7 @@ public class GlyphLine {
         }
     }
 
-    public interface GlyphLineFilter {
+    public interface IGlyphLineFilter {
         boolean accept(Glyph glyph);
     }
 

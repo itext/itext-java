@@ -49,7 +49,7 @@ import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.security.ExternalDecryptionProcess;
+import com.itextpdf.kernel.security.IExternalDecryptionProcess;
 import java.security.Key;
 import java.security.cert.Certificate;
 
@@ -58,7 +58,7 @@ public class PubSecHandlerUsingAes256 extends PubSecHandlerUsingAes128 {
         super(encryptionDictionary, certs, permissions, encryptMetadata, embeddedFilesOnly);
     }
 
-    public PubSecHandlerUsingAes256(PdfDictionary encryptionDictionary, Key certificateKey, Certificate certificate, String certificateKeyProvider, ExternalDecryptionProcess externalDecryptionProcess, boolean encryptMetadata) {
+    public PubSecHandlerUsingAes256(PdfDictionary encryptionDictionary, Key certificateKey, Certificate certificate, String certificateKeyProvider, IExternalDecryptionProcess externalDecryptionProcess, boolean encryptMetadata) {
         super(encryptionDictionary, certificateKey, certificate, certificateKeyProvider, externalDecryptionProcess, encryptMetadata);
     }
 
