@@ -216,7 +216,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }
 
     public int getParentTreeNextKey() {
-        // /ParentTreeNextKey entry is always inited on MaredContentReferencesManager initialization
+        // /ParentTreeNextKey entry is always inited on ParentTreeHandler initialization
         return getPdfObject().getAsNumber(PdfName.ParentTreeNextKey).intValue();
     }
 
