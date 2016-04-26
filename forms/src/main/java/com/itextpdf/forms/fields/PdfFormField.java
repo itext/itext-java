@@ -52,6 +52,7 @@ import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -165,7 +166,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected Color borderColor = Color.BLACK;
     protected int rotation = 0;
     protected PdfFormXObject form;
-    protected int pdfAVersion = 0;
+    protected PdfAConformanceLevel pdfAConformanceLevel;
 
     protected static final String check = "0.8 0 0 0.8 0.3 0.5 cm 0 0 m\n" +
             "0.066 -0.026 l\n" +
@@ -617,14 +618,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param rect       the location on the page for the field
      * @param radioGroup the radio button group that this field should belong to
      * @param value      the initial value
-     * @param pdfAVersion the PdfAVersion of the document (1, 2, 3 or any other number if it's no PDF/A document)
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
      * @return a new {@link PdfFormField}
      * @see #createRadioGroup(com.itextpdf.kernel.pdf.PdfDocument, java.lang.String, java.lang.String)
      */
-    public static PdfFormField createRadioButton(PdfDocument doc, Rectangle rect, PdfButtonFormField radioGroup, String value, int pdfAVersion) {
+    public static PdfFormField createRadioButton(PdfDocument doc, Rectangle rect, PdfButtonFormField radioGroup, String value, PdfAConformanceLevel pdfAConformanceLevel) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfFormField radio = new PdfButtonFormField(annot, doc);
-        radio.pdfAVersion = pdfAVersion;
+        radio.pdfAConformanceLevel = pdfAConformanceLevel;
         annot.setFlag(PdfAnnotation.PRINT);
 
         String name = radioGroup.getValue().toString().substring(1);
@@ -633,7 +634,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         } else {
             annot.setAppearanceState(new PdfName("Off"));
         }
-        if (pdfAVersion == 1) {
+        if (pdfAConformanceLevel != null && "1".equals(pdfAConformanceLevel.getPart())) {
             radio.drawPdfA1RadioAppearance(rect.getWidth(), rect.getHeight(), value);
         } else {
             radio.drawRadioAppearance(rect.getWidth(), rect.getHeight(), value);
@@ -718,7 +719,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfButtonFormField checkbox}
      */
     public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String name, String value, int checkType) {
-        return createCheckBox(doc, rect, name, value, checkType, 0);
+        return createCheckBox(doc, rect, name, value, checkType, null);
     }
 
     /**
@@ -729,26 +730,27 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param name      the name of the form field
      * @param value     the initial value
      * @param checkType the type of checkbox graphic to use.
-     * @param pdfAVersion the PdfAVersion of the document (1, 2, 3 or any other number if it's no PDF/A document
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
      * @return a new {@link PdfButtonFormField checkbox}
      */
-    public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String name, String value, int checkType, int pdfAVersion) {
+    public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String name, String value, int checkType, PdfAConformanceLevel pdfAConformanceLevel) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfButtonFormField check = new PdfButtonFormField(annot, doc);
-        check.pdfAVersion = pdfAVersion;
+        check.pdfAConformanceLevel = pdfAConformanceLevel;
         annot.setFlag(PdfAnnotation.PRINT);
         check.setCheckType(checkType);
         check.setFieldName(name);
         check.put(PdfName.V, new PdfName(value));
         annot.setAppearanceState(new PdfName(value));
+        String pdfAVersion = pdfAConformanceLevel != null ? pdfAConformanceLevel.getPart() : "";
         switch (pdfAVersion) {
-            case 1:
+            case "1":
                 check.drawPdfA1CheckAppearance(rect.getWidth(), rect.getHeight(), value.equals("Off") ? "Yes" : value, checkType);
                 break;
-            case 2:
+            case "2":
                 check.drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), value.equals("Off") ? "Yes" : value, checkType);
                 break;
-            case 3:
+            case "3":
                 check.drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), value.equals("Off") ? "Yes" : value, checkType);
                 break;
             default:
@@ -1569,7 +1571,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
         this.checkType = checkType;
         text = typeChars[checkType - 1];
-        if (pdfAVersion > 0 && pdfAVersion < 4 ) {
+        if (pdfAConformanceLevel != null) {
             return;
         }
         try {
@@ -1734,14 +1736,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 Rectangle rect = getRect(getPdfObject());
                 setCheckType(checkType);
 
+                String pdfAVersion = pdfAConformanceLevel != null ? pdfAConformanceLevel.getPart() : "";
                 switch (pdfAVersion) {
-                    case 1:
+                    case "1":
                         drawPdfA1CheckAppearance(rect.getWidth(), rect.getHeight(), value, checkType);
                         break;
-                    case 2:
+                    case "2":
                         drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), value, checkType);
                         break;
-                    case 3:
+                    case "3":
                         drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), value, checkType);
                         break;
                     default:

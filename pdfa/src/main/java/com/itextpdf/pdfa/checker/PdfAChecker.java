@@ -259,10 +259,12 @@ public abstract class PdfAChecker {
     private void checkAnnotations(PdfDictionary page) {
         PdfArray annots = page.getAsArray(PdfName.Annots);
         if (annots != null) {
-            for (PdfObject annot : annots) {
-                PdfDictionary annotDic = (PdfDictionary) annot;
-                checkAnnotation(annotDic);
-                PdfDictionary action = annotDic.getAsDictionary(PdfName.A);
+            // explicit iteration to resolve indirect references on get().
+            // TODO DEVSIX-591
+            for (int i = 0; i < annots.size(); i++) {
+                PdfDictionary annot = annots.getAsDictionary(i);
+                checkAnnotation(annot);
+                PdfDictionary action = annot.getAsDictionary(PdfName.A);
                 if (action != null) {
                     checkAction(action);
                 }

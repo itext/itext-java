@@ -493,9 +493,11 @@ public class PdfA1Checker extends PdfAChecker {
 
     private PdfArray getFormFields(PdfArray array) {
         PdfArray fields = new PdfArray();
-        for (PdfObject field : array) {
-            PdfDictionary fieldDic = (PdfDictionary) field;
-            PdfArray kids = fieldDic.getAsArray(PdfName.Kids);
+        // explicit iteration to resolve indirect references on get().
+        // TODO DEVSIX-591
+        for (int i = 0; i < array.size(); i++) {
+            PdfDictionary field = array.getAsDictionary(i);
+            PdfArray kids = field.getAsArray(PdfName.Kids);
             fields.add(field);
             if (kids != null) {
                 fields.addAll(getFormFields(kids));

@@ -231,7 +231,7 @@ public class PdfADocument extends PdfDocument {
     }
 
     protected void setChecker(PdfAConformanceLevel conformanceLevel) {
-        switch (conformanceLevel.getConformance()) {
+        switch (conformanceLevel.getPart()) {
             case "1":
                 checker = new PdfA1Checker(conformanceLevel);
                 break;
