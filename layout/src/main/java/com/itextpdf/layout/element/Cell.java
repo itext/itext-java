@@ -199,15 +199,15 @@ public class Cell extends BlockElement<Cell> {
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T1> T1 getDefaultProperty(Property property) {
         switch (property) {
             case BORDER:
-                return (T) DEFAULT_BORDER;
+                return (T1) DEFAULT_BORDER;
             case PADDING_BOTTOM:
             case PADDING_LEFT:
             case PADDING_RIGHT:
             case PADDING_TOP:
-                return (T) Float.valueOf(2);
+                return (T1) Float.valueOf(2);
             default:
                 return super.getDefaultProperty(property);
         }

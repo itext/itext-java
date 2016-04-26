@@ -18,9 +18,9 @@ public class StylesTest extends ExtendedITextTest {
         Style myStyle = new Style();
         myStyle.setFontColor(Color.RED);
 
-        Paragraph p = new Paragraph("text");
-        p.addStyle(myStyle);
-        p.setFontColor(Color.GREEN);
+        Paragraph p = new Paragraph("text")
+                .addStyle(myStyle)
+                .setFontColor(Color.GREEN);
 
         Assert.assertEquals(Color.GREEN, p.getRenderer().getProperty(Property.FONT_COLOR));
     }
@@ -30,8 +30,7 @@ public class StylesTest extends ExtendedITextTest {
         Style myStyle = new Style();
         myStyle.setFontColor(Color.RED);
 
-        Paragraph p = new Paragraph("text");
-        p.addStyle(myStyle);
+        Paragraph p = new Paragraph("text").addStyle(myStyle);
 
         Assert.assertEquals(Color.RED, p.getRenderer().getProperty(Property.FONT_COLOR));
     }

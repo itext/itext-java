@@ -62,7 +62,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
     /**
      * Creates a BlockElement.
      */
-    public BlockElement() {
+    protected BlockElement() {
     }
 
     /**
