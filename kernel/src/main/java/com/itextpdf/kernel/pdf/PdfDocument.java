@@ -1059,7 +1059,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      *              See PdfSpec 12.3.2.3 for more info.
      * @throws PdfException
      */
-    public void addNameDestination(String key, PdfObject value) {
+    public void addNamedDestination(String key, PdfObject value) {
         checkClosingStatus();
         catalog.addNamedDestination(key, value);
     }
@@ -1525,7 +1525,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                             }
                         }
                         if (dest != null) {
-                            toDocument.addNameDestination(name, array.makeIndirect(toDocument));
+                            toDocument.addNamedDestination(name, array.makeIndirect(toDocument));
                         }
                     }
                 } else {

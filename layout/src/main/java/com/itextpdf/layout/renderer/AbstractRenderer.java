@@ -625,7 +625,7 @@ public abstract class AbstractRenderer implements IRenderer {
             array.add(new PdfNumber(occupiedArea.getBBox().getX()));
             array.add(new PdfNumber(occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight()));
             array.add(new PdfNumber(1));
-            document.addNameDestination(destination, array.makeIndirect(document));
+            document.addNamedDestination(destination, array.makeIndirect(document));
 
             deleteProperty(Property.DESTINATION);
         }
