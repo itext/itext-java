@@ -136,8 +136,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * 
      * @param pdfObject the PdfDictionary to be wrapped
      */
-    protected PdfAcroForm(PdfDictionary pdfObject) {
+    private PdfAcroForm(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject);
+        document = pdfDocument;
         getFormFields();
         xfaForm = new XfaForm(pdfObject);
     }
@@ -148,8 +149,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * 
      * @param fields a {@link PdfArray} of {@link PdfDictionary} objects
      */
-    protected PdfAcroForm(PdfArray fields) {
-        this(createAcroFormDictionaryByFields(fields));
+    private PdfAcroForm(PdfArray fields) {
+        this(createAcroFormDictionaryByFields(fields), null);
         setForbidRelease();
     }
 
@@ -174,7 +175,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 acroForm.setDefaultAppearance("/Helv 0 Tf 0 g ");
             }
         } else {
-            acroForm = new PdfAcroForm(acroFormDictionary);
+            acroForm = new PdfAcroForm(acroFormDictionary, document);
         }
 
         if (acroForm != null) {

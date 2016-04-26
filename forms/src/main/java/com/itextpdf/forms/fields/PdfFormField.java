@@ -854,6 +854,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
         if (field != null) {
             field.makeIndirect(document);
+            if (document != null && document.getReader() != null && document.getReader().getPdfAConformanceLevel() != null) {
+                field.pdfAConformanceLevel = document.getReader().getPdfAConformanceLevel();
+            }
         }
         return field;
     }
@@ -1755,7 +1758,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         break;
                 }
                 PdfWidgetAnnotation widget = getWidgets().get(0);
-                if (widget.getNormalAppearanceObject().containsKey(new PdfName(value))) {
+                if (widget.getNormalAppearanceObject() != null && widget.getNormalAppearanceObject().containsKey(new PdfName(value))) {
                     widget.setAppearanceState(new PdfName(value));
                 } else {
                     widget.setAppearanceState(new PdfName("Off"));
