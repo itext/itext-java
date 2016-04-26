@@ -51,6 +51,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.Property;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -191,8 +192,10 @@ class TypographyUtils {
             logger.warn(MessageFormat.format("Cannot find method {0} for class {1}", methodName, className));
         } catch (ClassNotFoundException e) {
             logger.warn(MessageFormat.format("Cannot find class {0}", className));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e.getCause() != null ? e.getCause() : null);
+        } catch (Exception exc) {
+            throw new RuntimeException(exc);
         }
         return null;
     }
@@ -206,8 +209,10 @@ class TypographyUtils {
             logger.warn(MessageFormat.format("Cannot find constructor for class {0}", className));
         } catch (ClassNotFoundException e) {
             logger.warn(MessageFormat.format("Cannot find class {0}", className));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e.getCause() != null ? e.getCause() : null);
+        } catch (Exception exc) {
+            throw new RuntimeException(exc);
         }
         return null;
     }
