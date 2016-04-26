@@ -44,15 +44,74 @@
  */
 package com.itextpdf.io.image;
 
+import com.itextpdf.io.LogMessageConstant;
+
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
-public class JpegImage extends Image {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    protected JpegImage(URL url) {
-        super(url, ImageType.JPEG);
+public class Jpeg2000ImageData extends ImageData {
+
+    public static class Parameters {
+        public int numOfComps;
+        public List<ColorSpecBox> colorSpecBoxes = null;
+        public boolean isJp2 = false;
+        public boolean isJpxBaseline = false;
+        public byte[] bpcBoxData;
     }
 
-    protected JpegImage(byte[] bytes) {
-        super(bytes, ImageType.JPEG);
+    public static class ColorSpecBox extends ArrayList<Integer> {
+        
+		private static final long serialVersionUID = -6008490897027025733L;
+		
+		private byte[] colorProfile;
+
+        public int getMeth() {
+            return get(0);
+        }
+
+        public int getPrec() {
+            return get(1);
+        }
+
+        public int getApprox() {
+            return get(2);
+        }
+
+        public int getEnumCs() {
+            return get(3);
+        }
+
+        public byte[] getColorProfile() {
+            return colorProfile;
+        }
+
+        void setColorProfile(byte[] colorProfile) {
+            this.colorProfile = colorProfile;
+        }
+    }
+
+    protected Parameters parameters;
+
+    protected Jpeg2000ImageData(URL url) {
+        super(url, ImageType.JPEG2000);
+    }
+
+    protected Jpeg2000ImageData(byte[] bytes) {
+        super(bytes, ImageType.JPEG2000);
+    }
+
+    @Override
+    public boolean canImageBeInline() {
+        Logger logger = LoggerFactory.getLogger(ImageData.class);
+        logger.warn(LogMessageConstant.IMAGE_HAS_JPXDECODE_FILTER);
+        return false;
+    }
+
+    public Jpeg2000ImageData.Parameters getParameters() {
+        return parameters;
     }
 }

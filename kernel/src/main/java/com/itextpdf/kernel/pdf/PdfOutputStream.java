@@ -266,7 +266,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
                 this.write((PdfDictionary) pdfStream);
                 writeBytes(PdfOutputStream.stream);
                 long beginStreamContent = getCurrentPos();
-                byte buf[] = new byte[4192];
+                byte[] buf = new byte[4192];
                 while (true) {
                     int n = pdfStream.getInputStream().read(buf);
                     if (n <= 0)

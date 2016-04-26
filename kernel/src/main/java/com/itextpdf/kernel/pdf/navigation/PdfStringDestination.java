@@ -70,7 +70,7 @@ public class PdfStringDestination extends PdfDestination {
     }
 
     @Override
-    public PdfDestination replaceNamedDestination(final Map<Object, PdfObject> names) {
+    public PdfDestination replaceNamedDestination(Map<Object, PdfObject> names) {
         PdfArray array = (PdfArray) names.get(((PdfString)getPdfObject()).toUnicodeString());
         if (array != null){
             return PdfDestination.makeDestination(array);

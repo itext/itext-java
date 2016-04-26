@@ -68,7 +68,7 @@ public class LZWDecodeFilter implements IFilterHandler {
      * @param in byte[] to be decoded
      * @return decoded byte[]
      */
-    public static byte[] LZWDecode(final byte in[]) {
+    public static byte[] LZWDecode(byte[] in) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         LZWDecoder lzw = new LZWDecoder();
         lzw.decode(in, out);

@@ -77,11 +77,11 @@ public class FlateDecodeFilter implements IFilterHandler {
      * @param strict {@code true} to read a correct stream. {@code false} to try to read a corrupted stream.
      * @return the decoded data
      */
-    public static byte[] flateDecode(final byte in[], final boolean strict) {
+    public static byte[] flateDecode(byte[] in, boolean strict) {
         ByteArrayInputStream stream = new ByteArrayInputStream(in);
         InflaterInputStream zip = new InflaterInputStream(stream);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte b[] = new byte[strict ? 4092 : 1];
+        byte[] b = new byte[strict ? 4092 : 1];
         try {
             int n;
             while ((n = zip.read(b)) >= 0) {
@@ -103,7 +103,7 @@ public class FlateDecodeFilter implements IFilterHandler {
      * @param decodeParams PdfDictionary of decodeParams.
      * @return a byte array
      */
-    public static byte[] decodePredictor(final byte[] in, final PdfObject decodeParams) {
+    public static byte[] decodePredictor(byte[] in, PdfObject decodeParams) {
         if (decodeParams == null || decodeParams.getType() != PdfObject.DICTIONARY)
             return in;
         PdfDictionary dic = (PdfDictionary)decodeParams;

@@ -470,7 +470,7 @@ public class FontFactory {
      * @param fullName   the font name
      * @param path       the font path
      */
-    public static void registerFamily(final String familyName, final String fullName, final String path) {
+    public static void registerFamily(String familyName, String fullName, String path) {
         fontRegisterProvider.registerFamily(familyName, fullName, path);
     }
 
@@ -480,7 +480,7 @@ public class FontFactory {
      * @param path the path to a ttf- or ttc-file
      */
 
-    public static void register(final String path) {
+    public static void register(String path) {
         register(path, null);
     }
 
@@ -491,7 +491,7 @@ public class FontFactory {
      * @param alias the alias you want to use for the font
      */
 
-    public static void register(final String path, final String alias) {
+    public static void register(String path, String alias) {
         fontRegisterProvider.register(path, alias);
     }
 
@@ -501,7 +501,7 @@ public class FontFactory {
      * @param dir the directory
      * @return the number of fonts registered
      */
-    public static int registerDirectory(final String dir) {
+    public static int registerDirectory(String dir) {
         return fontRegisterProvider.registerDirectory(dir);
     }
 
@@ -542,7 +542,7 @@ public class FontFactory {
      * @return true if a given font is registered
      */
 
-    public static boolean contains(final String fontname) {
+    public static boolean contains(String fontname) {
         return fontRegisterProvider.isRegistered(fontname);
     }
 
@@ -553,7 +553,7 @@ public class FontFactory {
      * @return true if the font is found
      */
 
-    public static boolean isRegistered(final String fontname) {
+    public static boolean isRegistered(String fontname) {
         return fontRegisterProvider.isRegistered(fontname);
     }
 }

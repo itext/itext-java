@@ -47,16 +47,20 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.VerticalAlignment;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -187,7 +191,7 @@ public class TableRenderer extends AbstractRenderer {
         horizontalBorders.add(tableModel.getLastRowBottomBorder());
 
         for (int row = 0; row < rows.size(); row++) {
-            Property.VerticalAlignment verticalAlignment = null;
+            VerticalAlignment verticalAlignment = null;
             CellRenderer[] currentRow = rows.get(row);
             float rowHeight = 0;
             boolean split = false;
@@ -291,7 +295,7 @@ public class TableRenderer extends AbstractRenderer {
                                         if (rows.get(addRow)[addCol] != null) {
                                             CellRenderer addRenderer = rows.get(addRow)[addCol];
                                             verticalAlignment = addRenderer.getProperty(Property.VERTICAL_ALIGNMENT);
-                                            if (verticalAlignment != null && verticalAlignment.equals(Property.VerticalAlignment.BOTTOM)) {
+                                            if (verticalAlignment != null && verticalAlignment.equals(VerticalAlignment.BOTTOM)) {
                                                 if (row + addRenderer.getPropertyAsInteger(Property.ROWSPAN) - 1 < addRow) {
                                                     cellProcessingQueue.add(new CellRendererInfo(addRenderer, addCol, addRow));
                                                     cellWithBigRowspanAdded = true;
@@ -450,38 +454,35 @@ public class TableRenderer extends AbstractRenderer {
     public void draw(DrawContext drawContext) {
         PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
-        if (isTagged
-                && ((IAccessibleElement) getModelElement()).getRole() != null
-                && !((IAccessibleElement) getModelElement()).getRole().equals(PdfName.Artifact)) {
-            TagTreePointer tagPointer = document.getTagStructureContext().getAutoTaggingPointer();
+        boolean ignoreTag = false;
+        PdfName role = null;
+        if (isTagged) {
+            role = ((IAccessibleElement) getModelElement()).getRole();
+            boolean isHeaderOrFooter = PdfName.THead.equals(role) || PdfName.TFoot.equals(role);
+            boolean ignoreHeaderFooterTag =
+                    document.getTagStructureContext().getTagStructureTargetVersion().compareTo(PdfVersion.PDF_1_5) < 0;
+            ignoreTag = isHeaderOrFooter && ignoreHeaderFooterTag;
+        }
+        if (role != null
+                && !role.equals(PdfName.Artifact)
+                && !ignoreTag) {
+            TagStructureContext tagStructureContext = document.getTagStructureContext();
+            TagTreePointer tagPointer = tagStructureContext.getAutoTaggingPointer();
 
             IAccessibleElement accessibleElement = (IAccessibleElement) getModelElement();
-            if (!document.getTagStructureContext().isElementConnectedToTag(accessibleElement)) {
-                AccessibleAttributesApplier.applyLayoutAttributes(accessibleElement.getRole(), this, document);
+            if (!tagStructureContext.isElementConnectedToTag(accessibleElement)) {
+                AccessibleAttributesApplier.applyLayoutAttributes(role, this, document);
             }
-
 
             Table modelElement = (Table) getModelElement();
-            boolean toRemoveConnectionsWithTags = isLastRendererForModelElement && modelElement.isComplete();
-            if (accessibleElement.getRole().equals(PdfName.THead) || accessibleElement.getRole().equals(PdfName.TFoot)) {
-                for (IRenderer renderer : childRenderers) {
-                    if (renderer instanceof AbstractRenderer) {
-                        ((AbstractRenderer) renderer).isLastRendererForModelElement = toRemoveConnectionsWithTags;
-                    }
-                }
-            }
-
-            //footer/header tags order processing
-            if (accessibleElement.getRole().equals(PdfName.THead)) {
-                tagPointer.addTag(0, accessibleElement, true);
-            } else {
-                tagPointer.addTag(accessibleElement, true);
-            }
+            tagPointer.addTag(accessibleElement, true);
 
             super.draw(drawContext);
 
             tagPointer.moveToParent();
-            if (toRemoveConnectionsWithTags) {
+
+            boolean toRemoveConnectionsWithTag = isLastRendererForModelElement && modelElement.isComplete();
+            if (toRemoveConnectionsWithTag) {
                 tagPointer.removeElementConnectionToTag(accessibleElement);
             }
         } else {
@@ -492,21 +493,33 @@ public class TableRenderer extends AbstractRenderer {
     @Override
     public void drawChildren(DrawContext drawContext) {
         Table modelElement = (Table) getModelElement();
-        boolean isTheVeryLast = isLastRendererForModelElement && modelElement.isComplete();
-
         if (headerRenderer != null) {
-            headerRenderer.isLastRendererForModelElement = isTheVeryLast;
+            boolean firstHeader = rowRange.getStartRow() == 0 && isOriginalNonSplitRenderer && !modelElement.isSkipFirstHeader();
+            boolean notToTagHeader = drawContext.isTaggingEnabled() && !firstHeader;
+            if (notToTagHeader) {
+                drawContext.setTaggingEnabled(false);
+                drawContext.getCanvas().openTag(new CanvasArtifact());
+            }
             headerRenderer.draw(drawContext);
+            if (notToTagHeader) {
+                drawContext.getCanvas().closeTag();
+                drawContext.setTaggingEnabled(true);
+            }
         }
 
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement && !childRenderers.isEmpty();
         TagTreePointer tagPointer = null;
+        boolean shouldHaveFooterOrHeaderTag = modelElement.getHeader() != null || modelElement.getFooter() != null;
         if (isTagged) {
             PdfName role = modelElement.getRole();
             if (role != null && !PdfName.Artifact.equals(role)) {
                 tagPointer = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
 
-                if (modelElement.getHeader() != null || modelElement.getFooter() != null) {
+                boolean ignoreHeaderFooterTag = drawContext.getDocument().getTagStructureContext()
+                                                .getTagStructureTargetVersion().compareTo(PdfVersion.PDF_1_5) < 0;
+                shouldHaveFooterOrHeaderTag = shouldHaveFooterOrHeaderTag && !ignoreHeaderFooterTag
+                        && (!modelElement.isSkipFirstHeader() || !modelElement.isSkipLastFooter());
+                if (shouldHaveFooterOrHeaderTag) {
                     if (tagPointer.getKidsRoles().contains(PdfName.TBody)) {
                         tagPointer.moveToKid(PdfName.TBody);
                     } else {
@@ -520,7 +533,11 @@ public class TableRenderer extends AbstractRenderer {
 
         for (IRenderer child : childRenderers) {
             if (isTagged) {
-                int cellRow = ((Cell) child.getModelElement()).getRow();
+                int adjustByHeaderRowsNum = 0;
+                if (modelElement.getHeader() != null && !modelElement.isSkipFirstHeader() && !shouldHaveFooterOrHeaderTag) {
+                    adjustByHeaderRowsNum = modelElement.getHeader().getNumberOfRows();
+                }
+                int cellRow = ((Cell) child.getModelElement()).getRow() + adjustByHeaderRowsNum;
                 int rowsNum = tagPointer.getKidsRoles().size();
                 if (cellRow < rowsNum) {
                     tagPointer.moveToKid(cellRow);
@@ -537,7 +554,7 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         if (isTagged) {
-            if (modelElement.getHeader() != null || modelElement.getFooter() != null) {
+            if (shouldHaveFooterOrHeaderTag) {
                 tagPointer.moveToParent();
             }
         }
@@ -545,8 +562,17 @@ public class TableRenderer extends AbstractRenderer {
         drawBorders(drawContext);
 
         if (footerRenderer != null) {
-            footerRenderer.isLastRendererForModelElement = isTheVeryLast;
+            boolean lastFooter = isLastRendererForModelElement && modelElement.isComplete() && !modelElement.isSkipLastFooter();
+            boolean notToTagFooter = drawContext.isTaggingEnabled() && !lastFooter;
+            if (notToTagFooter) {
+                drawContext.setTaggingEnabled(false);
+                drawContext.getCanvas().openTag(new CanvasArtifact());
+            }
             footerRenderer.draw(drawContext);
+            if (notToTagFooter) {
+                drawContext.getCanvas().closeTag();
+                drawContext.setTaggingEnabled(true);
+            }
         }
     }
 

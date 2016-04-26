@@ -47,7 +47,7 @@ package com.itextpdf.pdfa.checker;
 import com.itextpdf.io.color.IccProfile;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.io.image.ImageFactory;
-import com.itextpdf.io.image.Jpeg2000Image;
+import com.itextpdf.io.image.Jpeg2000ImageData;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.PatternColor;
@@ -666,8 +666,8 @@ public class PdfA2Checker extends PdfA1Checker {
         }
 
         if (PdfName.JPXDecode.equals(image.get(PdfName.Filter))) {
-            Jpeg2000Image jpgImage = (Jpeg2000Image) ImageFactory.getJpeg2000Image(image.getBytes());
-            Jpeg2000Image.Parameters params = jpgImage.getParameters();
+            Jpeg2000ImageData jpgImage = (Jpeg2000ImageData) ImageFactory.getJpeg2000Image(image.getBytes());
+            Jpeg2000ImageData.Parameters params = jpgImage.getParameters();
 
             /* Concerning !params.isJpxBaseline check
              *
@@ -696,7 +696,7 @@ public class PdfA2Checker extends PdfA1Checker {
 
             if (params.colorSpecBoxes != null && params.colorSpecBoxes.size() > 1) {
                 int numOfApprox0x01 = 0;
-                for (Jpeg2000Image.ColorSpecBox colorSpecBox : params.colorSpecBoxes) {
+                for (Jpeg2000ImageData.ColorSpecBox colorSpecBox : params.colorSpecBoxes) {
                     if (colorSpecBox.getApprox() == 1) {
                         ++numOfApprox0x01;
                         if (numOfApprox0x01 == 1 &&

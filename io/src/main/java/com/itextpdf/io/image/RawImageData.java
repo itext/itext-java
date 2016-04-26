@@ -44,65 +44,72 @@
  */
 package com.itextpdf.io.image;
 
-import com.itextpdf.io.IOException;
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.codec.Jbig2SegmentReader;
-import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.io.source.IRandomAccessSource;
-import com.itextpdf.io.source.RandomAccessSourceFactory;
-
 import java.net.URL;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class Jbig2Image extends Image {
-
-    private int page;
-
-    protected Jbig2Image(URL url, int page) {
-        super(url, ImageType.JBIG2);
-        this.page = page;
-    }
-
-    protected Jbig2Image(byte[] bytes, int page) {
-        super(bytes, ImageType.JBIG2);
-        this.page = page;
-    }
-
-    public int getPage() {
-        return page;
-    }
+public class RawImageData extends ImageData {
 
     /**
-     * Gets the number of pages in a JBIG2 image.
-     * @param bytes	a byte array containing a JBIG2 image
-     * @return the number of pages
+     * Pure two-dimensional encoding (Group 4)
      */
-    public static int getNumberOfPages(byte[] bytes) {
-        IRandomAccessSource ras = new RandomAccessSourceFactory().createSource(bytes);
-        return getNumberOfPages(new RandomAccessFileOrArray(ras));
-    }
+    public static final int CCITTG4 = 0x100;
 
     /**
-     * Gets the number of pages in a JBIG2 image.
-     * @param raf a {@code RandomAccessFileOrArray} containing a JBIG2 image
-     * @return the number of pages
+     * Pure one-dimensional encoding (Group 3, 1-D)
      */
-    public static int getNumberOfPages(RandomAccessFileOrArray raf) {
-        try {
-            Jbig2SegmentReader sr = new Jbig2SegmentReader(raf);
-            sr.read();
-            return sr.numberOfPages();
-        } catch (Exception e) {
-            throw new IOException(IOException.Jbig2ImageException, e);
-        }
+    public static final int CCITTG3_1D = 0x101;
+
+    /**
+     * Mixed one- and two-dimensional encoding (Group 3, 2-D)
+     */
+    public static final int CCITTG3_2D = 0x102;
+
+    /**
+     * A flag indicating whether 1-bits are to be interpreted as black pixels
+     * and 0-bits as white pixels,
+     */
+    public static final int CCITT_BLACKIS1 = 1;
+
+    /**
+     * A flag indicating whether the filter expects extra 0-bits before each
+     * encoded line so that the line begins on a byte boundary.
+     */
+    public static final int CCITT_ENCODEDBYTEALIGN = 2;
+
+    /**
+     * A flag indicating whether end-of-line bit patterns are required to be
+     * present in the encoding.
+     */
+    public static final int CCITT_ENDOFLINE = 4;
+
+    /**
+     * A flag indicating whether the filter expects the encoded data to be
+     * terminated by an end-of-block pattern, overriding the Rows parameter. The
+     * use of this flag will set the key /EndOfBlock to false.
+     */
+    public static final int CCITT_ENDOFBLOCK = 8;
+
+    //NOTE in itext5 instead of typeCcitt bpc property was using for both bpc and type CCITT.
+    protected int typeCcitt;
+
+
+    protected RawImageData(URL url, ImageType type) {
+        super(url, type);
+    }
+
+    protected RawImageData(byte[] bytes, ImageType type) {
+        super(bytes, type);
     }
 
     @Override
-    public boolean canImageBeInline() {
-        Logger logger = LoggerFactory.getLogger(Image.class);
-        logger.warn(LogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER);
-        return false;
+    public boolean isRawImage(){
+        return true;
+    }
+
+    public int getTypeCcitt() {
+        return typeCcitt;
+    }
+
+    public void setTypeCcitt(int typeCcitt) {
+        this.typeCcitt = typeCcitt;
     }
 }

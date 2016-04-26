@@ -58,5 +58,5 @@ public interface ITSAInfoBouncyCastle {
      * info about the timestamp and the time stamping authority.
      * @param info a TimeStampTokenInfo object
      */
-    void inspectTimeStampTokenInfo(final TimeStampTokenInfo info);
+    void inspectTimeStampTokenInfo(TimeStampTokenInfo info);
 }

@@ -53,7 +53,7 @@ import java.util.LinkedList;
 
 public class CFFFont {
 
-    static final String operatorNames[] = {
+    static final String[] operatorNames = {
             "version", "Notice", "FullName", "FamilyName",
             "Weight", "FontBBox", "BlueValues", "OtherBlues",
             "FamilyBlues", "FamilyOtherBlues", "StdHW", "StdVW",
@@ -74,7 +74,7 @@ public class CFFFont {
             "FDArray", "FDSelect", "FontName"
     };
 
-    static final String standardStrings[] = {
+    static final String[] standardStrings = {
             // Automatically generated from Appendix A of the CFF specification; do
             // not edit. Size should be 391.
             ".notdef", "space", "exclam", "quotedbl", "numbersign", "dollar",

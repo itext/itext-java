@@ -59,7 +59,7 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
     public static final PdfName Polygon = PdfName.Polygon;
     public static final PdfName PolyLine = PdfName.PolyLine;
 
-    public PdfPolyGeomAnnotation(Rectangle rect, PdfName subtype, float vertices[]) {
+    public PdfPolyGeomAnnotation(Rectangle rect, PdfName subtype, float[] vertices) {
         super(rect);
         setSubtype(subtype);
         setVertices(vertices);
@@ -69,11 +69,11 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
         super(pdfObject);
     }
 
-    public static PdfPolyGeomAnnotation createPolygon(Rectangle rect, float vertices[]) {
+    public static PdfPolyGeomAnnotation createPolygon(Rectangle rect, float[] vertices) {
         return new PdfPolyGeomAnnotation(rect, Polygon, vertices);
     }
 
-    public static PdfPolyGeomAnnotation createPolyLine(Rectangle rect, float vertices[]) {
+    public static PdfPolyGeomAnnotation createPolyLine(Rectangle rect, float[] vertices) {
         return new PdfPolyGeomAnnotation(rect, PolyLine, vertices);
     }
 

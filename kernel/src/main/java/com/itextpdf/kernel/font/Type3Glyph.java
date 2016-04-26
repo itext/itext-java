@@ -46,7 +46,7 @@ package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfStream;
@@ -185,7 +185,7 @@ public final class Type3Glyph extends PdfCanvas {
      * @return created Image XObject or null in case of in-line image (asInline = true).
      */
     @Override
-    public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f, boolean inlineImage) {
+    public PdfXObject addImage(ImageData image, float a, float b, float c, float d, float e, float f, boolean inlineImage) {
         if (!isColor && (!image.isMask() || !(image.getBpc() == 1 || image.getBpc() > 0xff))) {
             throw new PdfException("not.colorized.typed3.fonts.only.accept.mask.images");
         }

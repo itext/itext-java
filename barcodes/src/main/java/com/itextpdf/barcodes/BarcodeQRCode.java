@@ -233,7 +233,7 @@ public class BarcodeQRCode extends Barcode2D {
 
         int width = bm.getWidth();
         int height = bm.getHeight();
-        int pix[] = new int[width * height];
+        int[] pix = new int[width * height];
         byte[][] mt = bm.getArray();
         for (int y = 0; y < height; ++y) {
             byte[] line = mt[y];

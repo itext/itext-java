@@ -70,7 +70,7 @@ public class PdfTokenizer implements Closeable, Serializable {
         EndOfFile
     }
 
-    public static final boolean delims[] = {
+    public static final boolean[] delims = {
             true, true, false, false, false, false, false, false, false, false,
             true, true, false, true, true, false, false, false, false, false,
             false, false, false, false, false, false, false, false, false, false,

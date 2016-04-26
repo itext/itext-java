@@ -104,7 +104,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * ON, all others must be turned OFF.
      * @param group the radio group
      */
-    public void addOCGRadioGroup(final List<PdfLayer> group) {
+    public void addOCGRadioGroup(List<PdfLayer> group) {
         PdfArray ar = new PdfArray();
         for (PdfLayer layer : group) {
             if (layer.getTitle() == null)
@@ -220,7 +220,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * This method registers a new layer in the OCProperties.
      * @param layer the new layer
      */
-    protected void registerLayer(final PdfLayer layer) {
+    protected void registerLayer(PdfLayer layer) {
         if (layer == null)
             throw new IllegalArgumentException("layer argument is null");
         layers.add(layer);
@@ -234,7 +234,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * Gets the order of the layers in which they will be displayed in the layer view panel,
      * including nesting.
      */
-    private static void getOCGOrder(final PdfArray order, final PdfLayer layer) {
+    private static void getOCGOrder(PdfArray order, PdfLayer layer) {
         if (!layer.isOnPanel())
             return;
         if (layer.getTitle() == null)
@@ -256,7 +256,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * Populates the /AS entry in the /D dictionary.
      * @throws PdfException
      */
-    private void addASEvent(final PdfName event, final PdfName category) {
+    private void addASEvent(PdfName event, PdfName category) {
         PdfArray arr = new PdfArray();
         for (PdfLayer layer : layers) {
             if (layer.getTitle() == null) {

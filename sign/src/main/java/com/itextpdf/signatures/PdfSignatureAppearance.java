@@ -46,7 +46,7 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
-import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -163,12 +163,12 @@ public class PdfSignatureAppearance {
     /**
      * The image that needs to be used for a visible signature.
      */
-    private Image signatureGraphic = null;
+    private ImageData signatureGraphic = null;
 
     /**
      * A background image for the text in layer 2.
      */
-    private Image image;
+    private ImageData image;
 
     /**
      * The scaling to be applied to the background image.
@@ -430,7 +430,7 @@ public class PdfSignatureAppearance {
      *
      * @return the image
      */
-    public Image getSignatureGraphic() {
+    public ImageData getSignatureGraphic() {
         return signatureGraphic;
     }
 
@@ -439,7 +439,7 @@ public class PdfSignatureAppearance {
      *
      * @param signatureGraphic image rendered. If null the mode is defaulted to RenderingMode.DESCRIPTION
      */
-    public PdfSignatureAppearance setSignatureGraphic(Image signatureGraphic) {
+    public PdfSignatureAppearance setSignatureGraphic(ImageData signatureGraphic) {
         this.signatureGraphic = signatureGraphic;
         return this;
     }
@@ -459,7 +459,7 @@ public class PdfSignatureAppearance {
      *
      * @return the background image for the layer 2
      */
-    public Image getImage() {
+    public ImageData getImage() {
         return this.image;
     }
 
@@ -468,7 +468,7 @@ public class PdfSignatureAppearance {
      *
      * @param image the background image for the layer 2
      */
-    public PdfSignatureAppearance setImage(Image image) {
+    public PdfSignatureAppearance setImage(ImageData image) {
         this.image = image;
         return this;
     }

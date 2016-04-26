@@ -172,7 +172,7 @@ public class RomanNumbering {
          * @param value the value
          * @param pre   can it be used as a prefix
          */
-        RomanDigit(final char digit, final int value, final boolean pre) {
+        RomanDigit(char digit, int value, boolean pre) {
             this.digit = digit;
             this.value = value;
             this.pre = pre;

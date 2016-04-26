@@ -42,76 +42,19 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.io.image;
+package com.itextpdf.layout.property;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.layout.IPropertyContainer;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class Jpeg2000Image extends Image {
-
-    public static class Parameters {
-        public int numOfComps;
-        public List<ColorSpecBox> colorSpecBoxes = null;
-        public boolean isJp2 = false;
-        public boolean isJpxBaseline = false;
-        public byte[] bpcBoxData;
-    }
-
-    public static class ColorSpecBox extends ArrayList<Integer> {
-        
-		private static final long serialVersionUID = -6008490897027025733L;
-		
-		private byte[] colorProfile;
-
-        public int getMeth() {
-            return get(0);
-        }
-
-        public int getPrec() {
-            return get(1);
-        }
-
-        public int getApprox() {
-            return get(2);
-        }
-
-        public int getEnumCs() {
-            return get(3);
-        }
-
-        public byte[] getColorProfile() {
-            return colorProfile;
-        }
-
-        void setColorProfile(byte[] colorProfile) {
-            this.colorProfile = colorProfile;
-        }
-    }
-
-    protected Parameters parameters;
-
-    protected Jpeg2000Image(URL url) {
-        super(url, ImageType.JPEG2000);
-    }
-
-    protected Jpeg2000Image(byte[] bytes) {
-        super(bytes, ImageType.JPEG2000);
-    }
-
-    @Override
-    public boolean canImageBeInline() {
-        Logger logger = LoggerFactory.getLogger(Image.class);
-        logger.warn(LogMessageConstant.IMAGE_HAS_JPXDECODE_FILTER);
-        return false;
-    }
-
-    public Jpeg2000Image.Parameters getParameters() {
-        return parameters;
-    }
+/**
+ * A specialized enum holding the possible values for a {@link
+ * com.itextpdf.layout.element.List List}'s entry prefix. This class is meant
+ * to be used as the value for the {@link Property#LIST_SYMBOL} key in an
+ * {@link IPropertyContainer}.
+ */
+public enum TabAlignment {
+    LEFT,
+    RIGHT,
+    CENTER,
+    ANCHOR
 }

@@ -92,7 +92,7 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
      * @param maxOpenBuffers open buffers
      * @throws java.io.IOException if the channel cannot be opened or mapped
      */
-    public PagedChannelRandomAccessSource(final FileChannel channel, final int totalBufferSize, final int maxOpenBuffers) throws java.io.IOException {
+    public PagedChannelRandomAccessSource(FileChannel channel, int totalBufferSize, int maxOpenBuffers) throws java.io.IOException {
         super(buildSources(channel, totalBufferSize/maxOpenBuffers));
         this.channel = channel;
         this.bufferSize = totalBufferSize/maxOpenBuffers;
@@ -106,7 +106,7 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
      * @return a list of sources that represent the pages of the channel
      * @throws java.io.IOException if IO fails for any reason
      */
-    private static IRandomAccessSource[] buildSources(final FileChannel channel, final int bufferSize) throws java.io.IOException{
+    private static IRandomAccessSource[] buildSources(FileChannel channel, int bufferSize) throws java.io.IOException{
         long size = channel.size();
         if (size <= 0)
             throw new java.io.IOException("File size must be greater than zero");

@@ -49,7 +49,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -85,7 +85,7 @@ public class DocumentRenderer extends RootRenderer {
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
         AreaBreak areaBreak = overflowResult != null && overflowResult.getAreaBreak() != null ? overflowResult.getAreaBreak() : null;
         moveToNextPage();
-        while (areaBreak != null && areaBreak.getType() == Property.AreaBreakType.LAST_PAGE && currentPageNumber < document.getPdfDocument().getNumberOfPages()) {
+        while (areaBreak != null && areaBreak.getType() == AreaBreakType.LAST_PAGE && currentPageNumber < document.getPdfDocument().getNumberOfPages()) {
             moveToNextPage();
         }
         PageSize customPageSize = areaBreak != null ? areaBreak.getPageSize() : null;

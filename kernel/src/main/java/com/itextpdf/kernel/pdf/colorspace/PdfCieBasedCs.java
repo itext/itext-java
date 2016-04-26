@@ -246,6 +246,4 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
             return stream;
         }
     }
-
-
 }

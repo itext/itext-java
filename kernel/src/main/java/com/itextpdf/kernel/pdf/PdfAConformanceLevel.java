@@ -66,7 +66,7 @@ public class PdfAConformanceLevel {
     private String conformance;
     private String part;
 
-    private PdfAConformanceLevel(String conformance, String part) {
+    private PdfAConformanceLevel(String part, String conformance) {
         this.conformance = conformance;
         this.part = part;
     }
@@ -79,13 +79,13 @@ public class PdfAConformanceLevel {
         return part;
     }
 
-    public static PdfAConformanceLevel getConformanceLevel(String conformance, String part) {
-        String lowLetter = part.toUpperCase();
+    public static PdfAConformanceLevel getConformanceLevel(String part, String conformance) {
+        String lowLetter = conformance.toUpperCase();
         boolean aLevel = lowLetter.equals("A");
         boolean bLevel = lowLetter.equals("B");
         boolean uLevel = lowLetter.equals("U");
 
-        switch (conformance) {
+        switch (part) {
             case "1":
                 if (aLevel)
                     return PdfAConformanceLevel.PDF_A_1A;
@@ -125,7 +125,7 @@ public class PdfAConformanceLevel {
         } else {
             String conformance = conformanceXmpProperty.getValue();
             String part = partXmpProperty.getValue();
-            return getConformanceLevel(conformance, part);
+            return getConformanceLevel(part, conformance);
         }
     }
 }

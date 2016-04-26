@@ -120,7 +120,7 @@ class JpegImageHelper {
      */
     private static final byte[] PS_8BIM_RESO = {0x38, 0x42, 0x49, 0x4d, 0x03, (byte) 0xed};
 
-    public static void processImage(Image image) {
+    public static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.JPEG)
             throw new IllegalArgumentException("JPEG image expected");
         InputStream jpegStream = null;
@@ -147,7 +147,7 @@ class JpegImageHelper {
         updateAttributes(image);
     }
 
-    private static void updateAttributes(Image image) {
+    private static void updateAttributes(ImageData image) {
         image.filter = "DCTDecode";
         if (image.getColorTransform() == 0) {
             Map<String, Object> decodeParms = new HashMap<>();
@@ -165,7 +165,7 @@ class JpegImageHelper {
      * @throws IOException
      * @throws java.io.IOException
      */
-    private static void processParameters(InputStream jpegStream, String errorID, Image image) throws java.io.IOException {
+    private static void processParameters(InputStream jpegStream, String errorID, ImageData image) throws java.io.IOException {
         byte[][] icc = null;
         if (jpegStream.read() != 0xFF || jpegStream.read() != 0xD8) {
             throw new IOException(IOException._1IsNotAValidJpegFile).setMessageParams(errorID);
@@ -185,7 +185,7 @@ class JpegImageHelper {
                         StreamUtil.skip(jpegStream, len - 2);
                         continue;
                     }
-                    byte bcomp[] = new byte[JFIF_ID.length];
+                    byte[] bcomp = new byte[JFIF_ID.length];
                     int r = jpegStream.read(bcomp);
                     if (r != bcomp.length)
                         throw new IOException(IOException._1CorruptedJfifMarker).setMessageParams(errorID);

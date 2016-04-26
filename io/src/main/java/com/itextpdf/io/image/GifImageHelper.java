@@ -60,7 +60,7 @@ public final class GifImageHelper {
 
     private static class GifParameters {
 
-        public GifParameters(GifImage image) {
+        public GifParameters(GifImageData image) {
             this.image = image;
         }
 
@@ -103,14 +103,14 @@ public final class GifImageHelper {
         URL fromUrl;
         int currentFrame;
 
-        GifImage image;
+        GifImageData image;
     }
 
     /**
      * Reads image source and fills GifImage object with parameters (frames, width, height)
      * @param image GifImage
      */
-    public static void processImage(GifImage image) {
+    public static void processImage(GifImageData image) {
         processImage(image, -1);
     }
 
@@ -119,7 +119,7 @@ public final class GifImageHelper {
      * @param image GifImage
      * @param lastFrameNumber the last frame of the gif image should be read
      */
-    public static void processImage(GifImage image, int lastFrameNumber) {
+    public static void processImage(GifImageData image, int lastFrameNumber) {
         GifParameters gif = new GifParameters(image);
         InputStream gifStream;
         try {
@@ -202,7 +202,7 @@ public final class GifImageHelper {
         int ncolors = 1 << bpc;
         int nbytes = 3*ncolors;
         bpc = newBpc(bpc);
-        byte table[] = new byte[(1 << bpc) * 3];
+        byte[] table = new byte[(1 << bpc) * 3];
         StreamUtil.readFully(gif.input, table, 0, nbytes);
         return table;
     }
@@ -286,7 +286,7 @@ public final class GifImageHelper {
         if (gif.transparency && gif.transIndex >= gif.m_curr_table.length / 3)
             gif.transparency = false;
         if (gif.transparency && gif.m_bpc == 1) { // Acrobat 5.05 doesn't like this combination
-            byte tp[] = new byte[12];
+            byte[] tp = new byte[12];
             System.arraycopy(gif.m_curr_table, 0, tp, 0, 6);
             gif.m_curr_table = tp;
             gif.m_bpc = 2;
@@ -304,7 +304,7 @@ public final class GifImageHelper {
             colorspace[3] = PdfEncodings.convertToString(gif.m_curr_table, null);
             Map<String, Object> ad = new HashMap<>();
             ad.put("ColorSpace", colorspace);
-            RawImage img = new RawImage(gif.m_out, ImageType.NONE);
+            RawImageData img = new RawImageData(gif.m_out, ImageType.NONE);
             RawImageHelper.updateRawImageParameters(img, gif.iw, gif.ih, 1, gif.m_bpc, gif.m_out);
             RawImageHelper.updateImageAttributes(img, ad);
             gif.image.addFrame(img);

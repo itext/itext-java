@@ -154,7 +154,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
         readFully(b, 0, b.length);
     }
 
-    public void readFully(byte b[], int off, int len) throws java.io.IOException {
+    public void readFully(byte[] b, int off, int len) throws java.io.IOException {
         int n = 0;
         do {
             int count = read(b, off + n, len - n);
@@ -492,7 +492,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * @throws java.io.IOException the font file could not be read
      */
     public String readString(int length, String encoding) throws java.io.IOException {
-        byte buf[] = new byte[length];
+        byte[] buf = new byte[length];
         readFully(buf);
         return new String(buf, encoding);
     }

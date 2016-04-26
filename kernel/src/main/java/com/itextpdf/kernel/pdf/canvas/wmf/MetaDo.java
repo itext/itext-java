@@ -46,7 +46,7 @@ package com.itextpdf.kernel.pdf.canvas.wmf;
 
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.kernel.PdfException;
@@ -311,7 +311,7 @@ public class MetaDo {
                     if (isNullStrokeFill(false))
                         break;
                     int numPoly = in.readWord();
-                    int lens[] = new int[numPoly];
+                    int[] lens = new int[numPoly];
                     for (int k = 0; k < lens.length; ++k)
                         lens[k] = in.readWord();
                     for (int j = 0; j < lens.length; ++j) {
@@ -386,7 +386,7 @@ public class MetaDo {
                     List<double[]> ar = PdfCanvas.bezierArc(l, b, r, t, arc1, arc2);
                     if (ar.isEmpty())
                         break;
-                    double pt[] = ar.get(0);
+                    double[] pt = ar.get(0);
                     cb.moveTo(cx, cy);
                     cb.lineTo(pt[0], pt[1]);
                     for (int k = 0; k < ar.size(); ++k) {
@@ -419,7 +419,7 @@ public class MetaDo {
                     List<double[]> ar = PdfCanvas.bezierArc(l, b, r, t, arc1, arc2);
                     if (ar.isEmpty())
                         break;
-                    double pt[] = ar.get(0);
+                    double[] pt = ar.get(0);
                     cx = (float)pt[0];
                     cy = (float)pt[1];
                     cb.moveTo(cx, cy);
@@ -484,7 +484,7 @@ public class MetaDo {
                         x2 = in.readShort();
                         y2 = in.readShort();
                     }
-                    byte text[] = new byte[count];
+                    byte[] text = new byte[count];
                     int k;
                     for (k = 0; k < count; ++k) {
                         byte c = (byte)in.readByte();
@@ -505,7 +505,7 @@ public class MetaDo {
                 case META_TEXTOUT:
                 {
                     int count = in.readWord();
-                    byte text[] = new byte[count];
+                    byte[] text = new byte[count];
                     int k;
                     for (k = 0; k < count; ++k) {
                         byte c = (byte)in.readByte();
@@ -568,7 +568,7 @@ public class MetaDo {
                     float destWidth = state.transformX(in.readShort()) - state.transformX(0);
                     float yDest = state.transformY(in.readShort());
                     float xDest = state.transformX(in.readShort());
-                    byte b[] = new byte[tsize * 2 - (in.getLength() - lenMarker)];
+                    byte[] b = new byte[tsize * 2 - (in.getLength() - lenMarker)];
                     for (int k = 0; k < b.length; ++k)
                         b[k] = (byte)in.readByte();
                     try {
@@ -576,7 +576,7 @@ public class MetaDo {
                         cb.rectangle(xDest, yDest, destWidth, destHeight);
                         cb.clip();
                         cb.newPath();
-                        Image bmpImage = ImageFactory.getBmpImage(b, true, b.length);
+                        ImageData bmpImage = ImageFactory.getBmpImage(b, true, b.length);
                         PdfImageXObject imageXObject = new PdfImageXObject(bmpImage);
 
                         float width = destWidth * bmpImage.getWidth() / srcWidth;
@@ -738,7 +738,7 @@ public class MetaDo {
      * @return the wrapped BMP
      * @throws IOException
      */
-    public static byte[] wrapBMP(Image image) throws IOException {
+    public static byte[] wrapBMP(ImageData image) throws IOException {
         if (image.getOriginalType() != ImageType.BMP) {
             throw new PdfException(PdfException.OnlyBmpCanBeWrappedInWmf);
         }

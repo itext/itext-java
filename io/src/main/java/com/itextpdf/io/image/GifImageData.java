@@ -42,89 +42,83 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf.canvas.wmf;
+package com.itextpdf.io.image;
 
-import com.itextpdf.io.image.ImageType;
+import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.image.Image;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Image implementation for WMF, Windows Metafile.
- */
-public class WmfImage extends Image {
+public class GifImageData {
 
-    private static final byte[] wmf = new byte[]{(byte) 0xD7, (byte) 0xCD};
+    private float logicalHeight;
+    private float logicalWidth;
+    private List<ImageData> frames = new ArrayList<>();
+    private byte[] data;
+    private URL url;
 
-    /**
-     * Creates a WmfImage from a file.
-     *
-     * @param fileName pah to the file
-     * @throws MalformedURLException
-     */
-    public WmfImage(String fileName) throws MalformedURLException {
-        this(UrlUtil.toURL(fileName));
+    protected GifImageData(URL url) {
+        this.url = url;
+    }
+
+    protected GifImageData(byte[] data) {
+        this.data = data;
+    }
+
+    public float getLogicalHeight() {
+        return logicalHeight;
+    }
+
+    public void setLogicalHeight(float logicalHeight) {
+        this.logicalHeight = logicalHeight;
+    }
+
+    public float getLogicalWidth() {
+        return logicalWidth;
+    }
+
+    public void setLogicalWidth(float logicalWidth) {
+        this.logicalWidth = logicalWidth;
+    }
+
+    public List<ImageData> getFrames() {
+        return frames;
+    }
+
+    protected byte[] getData() {
+        return data;
+    }
+
+    protected URL getUrl() {
+        return url;
+    }
+
+    protected void addFrame(ImageData frame) {
+        frames.add(frame);
     }
 
     /**
-     * Creates a WmfImage from a URL.
-     *
-     * @param url URL to the file
+     * Load data by URL. url must be not null.
+     * Note, this method doesn't check if data or url is null.
+     * @throws java.io.IOException
      */
-    public WmfImage(URL url) {
-        super(url, ImageType.WMF);
-        byte[] imageType = readImageType(url);
-        if (!imageTypeIs(imageType, wmf)) {
-            throw new PdfException(PdfException.IsNotWmfImage);
-        }
-    }
-
-    /**
-     * Creates a WmfImage from a byte[].
-     * @param bytes the image bytes
-     */
-    public WmfImage(byte[] bytes) {
-        super(bytes, ImageType.WMF);
-        byte[] imageType = readImageType(url);
-        if (!imageTypeIs(imageType, wmf)) {
-            throw new PdfException(PdfException.IsNotWmfImage);
-        }
-    }
-
-    private static boolean imageTypeIs(byte[] imageType, byte[] compareWith) {
-        for (int i = 0; i < compareWith.length; i++) {
-            if (imageType[i] != compareWith[i])
-                return false;
-        }
-        return true;
-    }
-
-    private static <T> byte[] readImageType(T source) {
-        InputStream is = null;
+    void loadData() throws java.io.IOException {
+        InputStream input = null;
         try {
-            if (source instanceof URL) {
-                is = ((URL) source).openStream();
-            } else {
-                is = new ByteArrayInputStream((byte[])source);
-            }
-            byte[] bytes = new byte[8];
-            is.read(bytes);
-            return bytes;
-        } catch (IOException e) {
-            throw new PdfException(PdfException.IoException, e);
+            input = UrlUtil.openStream(url);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            StreamUtil.transferBytes(UrlUtil.openStream(url), stream);
+            data = stream.toByteArray();
         } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException ignored) { }
+            if (input != null) {
+                input.close();
             }
         }
+
 
     }
 }

@@ -45,15 +45,16 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.canvas.wmf.WmfImage;
+import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ImageRenderer;
@@ -146,9 +147,9 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Creates an {@link Image} from an image resource, read in from a file
      * with the iText I/O module.
-     * @param img an internal representation of the {@link com.itextpdf.io.image.Image image resource}
+     * @param img an internal representation of the {@link com.itextpdf.io.image.ImageData image resource}
      */
-    public Image(com.itextpdf.io.image.Image img) {
+    public Image(ImageData img) {
         this(new PdfImageXObject(checkImageType(img)));
         setProperty(Property.FLUSH_ON_DRAW, true);
     }
@@ -156,11 +157,11 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Creates an {@link Image} from an image resource, read in from a file
      * with the iText I/O module, on a fixed position.
-     * @param img an internal representation of the {@link com.itextpdf.io.image.Image image resource}
+     * @param img an internal representation of the {@link com.itextpdf.io.image.ImageData image resource}
      * @param x a float value representing the horizontal offset of the lower left corner of the image
      * @param y a float value representing the vertical offset of the lower left corner of the image
      */
-    public Image(com.itextpdf.io.image.Image img, float x, float y) {
+    public Image(ImageData img, float x, float y) {
         this(new PdfImageXObject(checkImageType(img)), x, y);
         setProperty(Property.FLUSH_ON_DRAW, true);
     }
@@ -168,12 +169,12 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Creates an {@link Image} from an image resource, read in from a file
      * with the iText I/O module, with a custom width and on a fixed position.
-     * @param img an internal representation of the {@link com.itextpdf.io.image.Image image resource}
+     * @param img an internal representation of the {@link com.itextpdf.io.image.ImageData image resource}
      * @param x a float value representing the horizontal offset of the lower left corner of the image
      * @param y a float value representing the vertical offset of the lower left corner of the image
      * @param width a float value
      */
-    public Image(com.itextpdf.io.image.Image img, float x, float y, float width) {
+    public Image(ImageData img, float x, float y, float width) {
         this(new PdfImageXObject(checkImageType(img)), x, y, width);
         setProperty(Property.FLUSH_ON_DRAW, true);
     }
@@ -476,8 +477,8 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
         return new ImageRenderer(this);
     }
 
-    private static com.itextpdf.io.image.Image checkImageType(com.itextpdf.io.image.Image image) {
-        if (image instanceof WmfImage) {
+    private static ImageData checkImageType(ImageData image) {
+        if (image instanceof WmfImageData) {
             throw new PdfException(PdfException.CannotCreateLayoutImageByWmfImage);
         }
         return image;

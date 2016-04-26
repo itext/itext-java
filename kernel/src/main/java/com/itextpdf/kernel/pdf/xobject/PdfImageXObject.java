@@ -47,9 +47,9 @@ package com.itextpdf.kernel.pdf.xobject;
 import com.itextpdf.io.codec.PngWriter;
 import com.itextpdf.io.codec.TIFFConstants;
 import com.itextpdf.io.codec.TiffWriter;
-import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageType;
-import com.itextpdf.io.image.RawImage;
+import com.itextpdf.io.image.RawImageData;
 import com.itextpdf.io.image.RawImageHelper;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.Version;
@@ -65,7 +65,7 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.canvas.wmf.WmfImage;
+import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
 import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
@@ -91,11 +91,11 @@ public class PdfImageXObject extends PdfXObject {
     private byte[] icc;
     private int stride;
 
-    public PdfImageXObject(Image image) {
+    public PdfImageXObject(ImageData image) {
         this(image, null);
     }
 
-    public PdfImageXObject(Image image, PdfImageXObject imageMask) {
+    public PdfImageXObject(ImageData image, PdfImageXObject imageMask) {
         this(createPdfStream(checkImageType(image), imageMask));
         mask = image.isMask();
         softMask = image.isSoftMask();
@@ -176,10 +176,10 @@ public class PdfImageXObject extends PdfXObject {
         return this;
     }
 
-    protected static PdfStream createPdfStream(Image image, PdfImageXObject imageMask) {
+    protected static PdfStream createPdfStream(ImageData image, PdfImageXObject imageMask) {
         PdfStream stream;
         if (image.getOriginalType() == ImageType.RAW) {
-            RawImageHelper.updateImageAttributes((RawImage) image, null);
+            RawImageHelper.updateImageAttributes((RawImageData) image, null);
         }
         stream = new PdfStream(image.getData());
         String filter = image.getFilter();
@@ -240,7 +240,7 @@ public class PdfImageXObject extends PdfXObject {
                 stream.put(PdfName.Mask, imageMask.getPdfObject());
         }
 
-        Image mask = image.getImageMask();
+        ImageData mask = image.getImageMask();
         if (mask != null) {
             if (mask.isSoftMask())
                 stream.put(PdfName.SMask, new PdfImageXObject(image.getImageMask()).getPdfObject());
@@ -477,8 +477,8 @@ public class PdfImageXObject extends PdfXObject {
         }
     }
 
-    private static Image checkImageType(Image image) {
-        if (image instanceof WmfImage) {
+    private static ImageData checkImageType(ImageData image) {
+        if (image instanceof WmfImageData) {
             throw new PdfException(PdfException.CannotCreatePdfImageXObjectByWmfImage);
         }
         return image;

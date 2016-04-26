@@ -73,10 +73,10 @@ class Jbig2ImageHelper {
         }
     }
 
-    public static void processImage(Image jbig2) {
+    public static void processImage(ImageData jbig2) {
         if (jbig2.getOriginalType() != ImageType.JBIG2)
             throw new IllegalArgumentException("JBIG2 image expected");
-        Jbig2Image image = (Jbig2Image)jbig2;
+        Jbig2ImageData image = (Jbig2ImageData)jbig2;
         try {
             IRandomAccessSource ras;
             if (image.getData() == null) {

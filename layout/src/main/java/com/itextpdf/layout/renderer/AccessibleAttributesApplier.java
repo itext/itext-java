@@ -57,9 +57,15 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.Underline;
+import com.itextpdf.layout.property.UnitValue;
+
 import java.util.List;
 
 /**
@@ -109,8 +115,8 @@ public class AccessibleAttributesApplier {
         attributes.put(PdfName.O, attributesType);
 
         Object listSymbol = renderer.getProperty(Property.LIST_SYMBOL);
-        if (listSymbol instanceof Property.ListNumberingType) {
-            Property.ListNumberingType numberingType = (Property.ListNumberingType) listSymbol;
+        if (listSymbol instanceof ListNumberingType) {
+            ListNumberingType numberingType = (ListNumberingType) listSymbol;
             attributes.put(PdfName.ListNumbering, transformNumberingTypeToName(numberingType));
         }
 
@@ -202,7 +208,7 @@ public class AccessibleAttributesApplier {
             attributes.put(PdfName.TextIndent, new PdfNumber(firstLineIndent));
         }
 
-        Property.TextAlignment textAlignment = renderer.getProperty(Property.TEXT_ALIGNMENT);
+        TextAlignment textAlignment = renderer.getProperty(Property.TEXT_ALIGNMENT);
         if (textAlignment != null &&
                 //for table cells there is an InlineAlign attribute (see below)
                 (!role.equals(PdfName.TH) && !role.equals(PdfName.TD))) {
@@ -217,7 +223,7 @@ public class AccessibleAttributesApplier {
         }
 
         if (role.equals(PdfName.TH) || role.equals(PdfName.TD) || role.equals(PdfName.Table)) {
-            Property.UnitValue width = renderer.getProperty(Property.WIDTH);
+            UnitValue width = renderer.getProperty(Property.WIDTH);
             if (width != null && width.isPointValue()) {
                 attributes.put(PdfName.Width, new PdfNumber(width.getValue()));
             }
@@ -229,14 +235,14 @@ public class AccessibleAttributesApplier {
         }
 
         if (role.equals(PdfName.TH) || role.equals(PdfName.TD)) {
-            Property.HorizontalAlignment horizontalAlignment = renderer.getProperty(Property.HORIZONTAL_ALIGNMENT);
+            HorizontalAlignment horizontalAlignment = renderer.getProperty(Property.HORIZONTAL_ALIGNMENT);
             if (horizontalAlignment != null) {
                 attributes.put(PdfName.BlockAlign, transformBlockAlignToName(horizontalAlignment));
             }
 
             if (textAlignment != null
                     //there is no justified alignment for InlineAlign attribute
-                    && (textAlignment != Property.TextAlignment.JUSTIFIED && textAlignment != Property.TextAlignment.JUSTIFIED_ALL)) {
+                    && (textAlignment != TextAlignment.JUSTIFIED && textAlignment != TextAlignment.JUSTIFIED_ALL)) {
                 attributes.put(PdfName.InlineAlign, transformTextAlignmentValueToName(textAlignment));
             }
         }
@@ -252,14 +258,14 @@ public class AccessibleAttributesApplier {
         Object underlines = renderer.getProperty(Property.UNDERLINE);
         if (underlines != null) {
             Float fontSize = renderer.getPropertyAsFloat(Property.FONT_SIZE);
-            Property.Underline underline = null;
+            Underline underline = null;
             if (underlines instanceof List
                     && !((List) underlines).isEmpty()
-                    && ((List) underlines).get(0) instanceof Property.Underline) {
+                    && ((List) underlines).get(0) instanceof Underline) {
                 // in standard attributes only one text decoration could be described for an element. That's why we take only the first underline from the list.
-                underline = (Property.Underline) ((List) underlines).get(0);
-            } else if (underlines instanceof Property.Underline) {
-                underline = (Property.Underline) underlines;
+                underline = (Underline) ((List) underlines).get(0);
+            } else if (underlines instanceof Underline) {
+                underline = (Underline) underlines;
             }
             if (underline != null) {
                 attributes.put(PdfName.TextDecorationType, underline.getYPosition(fontSize) > 0 ? PdfName.LineThrough : PdfName.Underline);
@@ -276,7 +282,7 @@ public class AccessibleAttributesApplier {
         Rectangle bbox = renderer.getOccupiedArea().getBBox();
         attributes.put(PdfName.BBox, new PdfArray(bbox));
 
-        Property.UnitValue width = renderer.getProperty(Property.WIDTH);
+        UnitValue width = renderer.getProperty(Property.WIDTH);
         if (width != null && width.isPointValue()) {
             attributes.put(PdfName.Width, new PdfNumber(width.getValue()));
         } else {
@@ -407,7 +413,7 @@ public class AccessibleAttributesApplier {
         }
     }
 
-    private static PdfName transformTextAlignmentValueToName(Property.TextAlignment textAlignment) {
+    private static PdfName transformTextAlignmentValueToName(TextAlignment textAlignment) {
         //TODO set rightToLeft value according with actual text content if it is possible.
         boolean isLeftToRight = true;
         switch (textAlignment) {
@@ -433,7 +439,7 @@ public class AccessibleAttributesApplier {
         }
     }
 
-    private static PdfName transformBlockAlignToName(Property.HorizontalAlignment horizontalAlignment) {
+    private static PdfName transformBlockAlignToName(HorizontalAlignment horizontalAlignment) {
         //TODO set rightToLeft value according with actual text content if it is possible.
         boolean isLeftToRight = true;
         switch (horizontalAlignment) {
@@ -482,7 +488,7 @@ public class AccessibleAttributesApplier {
         }
     }
 
-    private static PdfName transformNumberingTypeToName(Property.ListNumberingType numberingType) {
+    private static PdfName transformNumberingTypeToName(ListNumberingType numberingType) {
         switch (numberingType) {
             case DECIMAL:
                 return PdfName.Decimal;

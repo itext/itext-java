@@ -73,7 +73,7 @@ public class CFFFontSubset extends CFFFont {
     /**
      * The Strings in this array represent Type1/Type2 operator names
      */
-    static final String SubrsFunctions[] = {
+    static final String[] SubrsFunctions = {
             "RESERVED_0", "hstem", "RESERVED_2", "vstem", "vmoveto", "rlineto", "hlineto", "vlineto",
             "rrcurveto", "RESERVED_9", "callsubr", "return", "escape", "RESERVED_13",
             "endchar", "RESERVED_15", "RESERVED_16", "RESERVED_17", "hstemhm", "hintmask",
@@ -83,7 +83,7 @@ public class CFFFontSubset extends CFFFont {
     /**
      * The Strings in this array represent Type1/Type2 escape operator names
      */
-    static final String SubrsEscapeFuncs[] = {
+    static final String[] SubrsEscapeFuncs = {
             "RESERVED_0", "RESERVED_1", "RESERVED_2", "and", "or", "not", "RESERVED_6",
             "RESERVED_7", "RESERVED_8", "abs", "add", "sub", "div", "RESERVED_13", "neg",
             "eq", "RESERVED_16", "RESERVED_17", "drop", "RESERVED_19", "put", "get", "ifelse",

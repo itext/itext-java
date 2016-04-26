@@ -646,7 +646,7 @@ public class PdfPKCS7 {
      * is also <CODE>null</CODE>. If the <CODE>digest</CODE> is not <CODE>null</CODE>
      * then it may be "RSA" or "DSA"
      */
-    public void setExternalDigest(byte digest[], byte RSAdata[], String digestEncryptionAlgorithm) {
+    public void setExternalDigest(byte[] digest, byte[] RSAdata, String digestEncryptionAlgorithm) {
         externalDigest = digest;
         externalRSAdata = RSAdata;
         if (digestEncryptionAlgorithm != null) {
@@ -757,7 +757,7 @@ public class PdfPKCS7 {
      * @param secondDigest the digest in the authenticatedAttributes
      * @return the bytes for the PKCS7SignedData object
      */
-    public byte[] getEncodedPKCS7(byte secondDigest[]) {
+    public byte[] getEncodedPKCS7(byte[] secondDigest) {
         return getEncodedPKCS7(secondDigest, null, null, null, PdfSigner.CryptoStandard.CMS);
     }
 
@@ -769,7 +769,7 @@ public class PdfPKCS7 {
      * @param tsaClient TSAClient - null or an optional time stamp authority client
      * @return byte[] the bytes for the PKCS7SignedData object
      */
-    public byte[] getEncodedPKCS7(byte secondDigest[], ITSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
+    public byte[] getEncodedPKCS7(byte[] secondDigest, ITSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
         try {
             if (externalDigest != null) {
                 digest = externalDigest;
@@ -933,21 +933,21 @@ public class PdfPKCS7 {
      * Calendar cal = Calendar.getInstance();
      * PdfPKCS7 pk7 = new PdfPKCS7(key, chain, null, "SHA1", null, false);
      * MessageDigest messageDigest = MessageDigest.getInstance("SHA1");
-     * byte buf[] = new byte[8192];
+     * byte[] buf = new byte[8192];
      * int n;
      * InputStream inp = sap.getRangeStream();
      * while ((n = inp.read(buf)) &gt; 0) {
      *    messageDigest.update(buf, 0, n);
      * }
-     * byte hash[] = messageDigest.digest();
-     * byte sh[] = pk7.getAuthenticatedAttributeBytes(hash, cal);
+     * byte[] hash = messageDigest.digest();
+     * byte[] sh = pk7.getAuthenticatedAttributeBytes(hash, cal);
      * pk7.update(sh, 0, sh.length);
-     * byte sg[] = pk7.getEncodedPKCS7(hash, cal);
+     * byte[] sg = pk7.getEncodedPKCS7(hash, cal);
      * </pre>
      * @param secondDigest the content digest
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    public byte[] getAuthenticatedAttributeBytes(byte secondDigest[], byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
+    public byte[] getAuthenticatedAttributeBytes(byte[] secondDigest, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
         try {
             return getAuthenticatedAttributeSet(secondDigest, ocsp, crlBytes, sigtype).getEncoded(ASN1Encoding.DER);
         }
@@ -963,7 +963,7 @@ public class PdfPKCS7 {
      * @param secondDigest the content digest
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    private DERSet getAuthenticatedAttributeSet(byte secondDigest[], byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
+    private DERSet getAuthenticatedAttributeSet(byte[] secondDigest, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
         try {
             ASN1EncodableVector attribute = new ASN1EncodableVector();
             ASN1EncodableVector v = new ASN1EncodableVector();

@@ -8,6 +8,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -67,7 +68,7 @@ public class AreaBreakTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
         document.setRenderer(new ColumnDocumentRenderer(document, new Rectangle[] {new Rectangle(30, 30, 200, 600), new Rectangle(300, 30, 200, 600)}));
 
-        document.add(new Paragraph("Hello World!")).add(new AreaBreak(Property.AreaBreakType.NEW_PAGE)).add(new Paragraph("New page hello world"));
+        document.add(new Paragraph("Hello World!")).add(new AreaBreak(AreaBreakType.NEW_PAGE)).add(new Paragraph("New page hello world"));
 
         document.close();
 
@@ -84,7 +85,7 @@ public class AreaBreakTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        document.add(new AreaBreak(Property.AreaBreakType.LAST_PAGE)).add(new Paragraph("Hello there on the last page!").setFontSize(30).setWidth(200).setMarginTop(250));
+        document.add(new AreaBreak(AreaBreakType.LAST_PAGE)).add(new Paragraph("Hello there on the last page!").setFontSize(30).setWidth(200).setMarginTop(250));
 
         document.close();
 

@@ -45,7 +45,8 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.AreaBreakType;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.AreaBreakRenderer;
 
 /**
@@ -62,14 +63,14 @@ public class AreaBreak extends AbstractElement {
      * current one.
      */
     public AreaBreak() {
-        this(Property.AreaBreakType.NEW_AREA);
+        this(AreaBreakType.NEW_AREA);
     }
 
     /**
      * Creates an AreaBreak that terminates a specified area type.
-     * @param areaBreakType an {@link Property.AreaBreakType area break type}
+     * @param areaBreakType an {@link AreaBreakType area break type}
      */
-    public AreaBreak(Property.AreaBreakType areaBreakType) {
+    public AreaBreak(AreaBreakType areaBreakType) {
         setProperty(Property.AREA_BREAK_TYPE, areaBreakType);
     }
     
@@ -79,7 +80,7 @@ public class AreaBreak extends AbstractElement {
      * @param pageSize the size of the new content area
      */
     public AreaBreak(PageSize pageSize) {
-        this(Property.AreaBreakType.NEW_PAGE);
+        this(AreaBreakType.NEW_PAGE);
         this.pageSize = pageSize;
     }
 
@@ -101,10 +102,10 @@ public class AreaBreak extends AbstractElement {
 
     /**
      * Gets the type of area that this AreaBreak will terminate.
-     * @return the current {@link Property.AreaBreakType area break type}
+     * @return the current {@link AreaBreakType area break type}
      */
-    public Property.AreaBreakType getType() {
-        return (Property.AreaBreakType) getProperty(Property.AREA_BREAK_TYPE);
+    public AreaBreakType getType() {
+        return (AreaBreakType) getProperty(Property.AREA_BREAK_TYPE);
     }
 
     @Override

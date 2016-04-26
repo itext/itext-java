@@ -52,32 +52,32 @@ import com.itextpdf.io.source.RandomAccessSourceFactory;
 
 import java.net.URL;
 
-public class TiffImage extends RawImage {
+public class TiffImageData extends RawImageData {
 
     private boolean recoverFromImageError;
     private int page;
     private boolean direct;
 
-    protected TiffImage(URL url, boolean recoverFromImageError, int page, boolean direct) {
+    protected TiffImageData(URL url, boolean recoverFromImageError, int page, boolean direct) {
         super(url, ImageType.TIFF);
         this.recoverFromImageError = recoverFromImageError;
         this.page = page;
         this.direct = direct;
     }
 
-    protected TiffImage(byte[] bytes, boolean recoverFromImageError, int page, boolean direct) {
+    protected TiffImageData(byte[] bytes, boolean recoverFromImageError, int page, boolean direct) {
         super(bytes, ImageType.TIFF);
         this.recoverFromImageError = recoverFromImageError;
         this.page = page;
         this.direct = direct;
     }
 
-    private static Image getImage(URL url, boolean recoverFromImageError, int page, boolean direct) {
-        return new TiffImage(url, recoverFromImageError, page, direct);
+    private static ImageData getImage(URL url, boolean recoverFromImageError, int page, boolean direct) {
+        return new TiffImageData(url, recoverFromImageError, page, direct);
     }
 
-    private static Image getImage(byte[] bytes, boolean recoverFromImageError, int page, boolean direct) {
-        return new TiffImage(bytes, recoverFromImageError, page, direct);
+    private static ImageData getImage(byte[] bytes, boolean recoverFromImageError, int page, boolean direct) {
+        return new TiffImageData(bytes, recoverFromImageError, page, direct);
     }
 
     /**

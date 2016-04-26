@@ -56,10 +56,12 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
@@ -203,6 +205,15 @@ public class PdfADocument extends PdfDocument {
         createXmpMetadata(checker.getConformanceLevel());
     }
 
+    public void createXmpMetadata(PdfAConformanceLevel conformanceLevel) throws XMPException {
+        super.createXmpMetadata();
+        XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(getXmpMetadata());
+        if (conformanceLevel != null) {
+            addRdfDescription(xmpMeta, conformanceLevel);
+        }
+        setXmpMetadata(xmpMeta);
+    }
+
     @Override
     protected void checkIsoConformance() {
         checker.checkDocument(catalog);
@@ -231,7 +242,7 @@ public class PdfADocument extends PdfDocument {
     }
 
     protected void setChecker(PdfAConformanceLevel conformanceLevel) {
-        switch (conformanceLevel.getConformance()) {
+        switch (conformanceLevel.getPart()) {
             case "1":
                 checker = new PdfA1Checker(conformanceLevel);
                 break;
@@ -253,13 +264,28 @@ public class PdfADocument extends PdfDocument {
         }
     }
 
-    public void createXmpMetadata(PdfAConformanceLevel conformanceLevel) throws XMPException {
-        super.createXmpMetadata();
-        XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(getXmpMetadata());
-        if (conformanceLevel != null) {
-            addRdfDescription(xmpMeta, conformanceLevel);
+    protected void initTagStructureContext() {
+        tagStructureContext = new TagStructureContext(this, getPdfVersionForPdfA(checker.getConformanceLevel()));
+    }
+
+
+    private static PdfVersion getPdfVersionForPdfA(PdfAConformanceLevel conformanceLevel) {
+        PdfVersion version;
+        switch (conformanceLevel.getConformance()) {
+            case "1":
+                version = PdfVersion.PDF_1_4;
+                break;
+            case "2":
+                version = PdfVersion.PDF_1_7;
+                break;
+            case "3":
+                version = PdfVersion.PDF_1_7;
+                break;
+            default:
+                version = PdfVersion.PDF_1_4;
+                break;
         }
-        setXmpMetadata(xmpMeta);
+        return version;
     }
 
 }

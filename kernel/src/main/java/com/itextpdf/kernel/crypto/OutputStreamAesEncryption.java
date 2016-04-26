@@ -54,7 +54,7 @@ public class OutputStreamAesEncryption extends OutputStreamEncryption {
     /**
      * Creates a new instance of OutputStreamCounter
      */
-    public OutputStreamAesEncryption(java.io.OutputStream out, byte key[], int off, int len) {
+    public OutputStreamAesEncryption(java.io.OutputStream out, byte[] key, int off, int len) {
         super(out);
         byte[] iv = IVGenerator.getIV();
         byte[] nkey = new byte[len];
@@ -67,7 +67,7 @@ public class OutputStreamAesEncryption extends OutputStreamEncryption {
         }
     }
 
-    public OutputStreamAesEncryption(java.io.OutputStream out, byte key[]) {
+    public OutputStreamAesEncryption(java.io.OutputStream out, byte[] key) {
         this(out, key, 0, key.length);
     }
 

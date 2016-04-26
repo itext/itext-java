@@ -244,7 +244,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @param xmpMetadata The xmpMetadata to set.
      * @throws IOException
      */
-    public void setXmpMetadata(final byte[] xmpMetadata) throws IOException {
+    public void setXmpMetadata(byte[] xmpMetadata) throws IOException {
         PdfStream xmp = new PdfStream().makeIndirect(getDocument());
         xmp.getOutputStream().write(xmpMetadata);
         xmp.put(PdfName.Type, PdfName.Metadata);
@@ -252,11 +252,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.Metadata, xmp);
     }
 
-    public void setXmpMetadata(final XMPMeta xmpMeta, final SerializeOptions serializeOptions) throws XMPException, IOException {
+    public void setXmpMetadata(XMPMeta xmpMeta, SerializeOptions serializeOptions) throws XMPException, IOException {
         setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
     }
 
-    public void setXmpMetadata(final XMPMeta xmpMeta) throws XMPException, IOException {
+    public void setXmpMetadata(XMPMeta xmpMeta) throws XMPException, IOException {
         SerializeOptions serializeOptions = new SerializeOptions();
         serializeOptions.setPadding(2000);
         setXmpMetadata(xmpMeta, serializeOptions);

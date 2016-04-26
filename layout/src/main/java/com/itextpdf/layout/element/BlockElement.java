@@ -45,7 +45,8 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.renderer.BlockRenderer;
 
 /**
@@ -268,7 +269,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @param verticalAlignment the vertical alignment setting
      * @return this element
      */
-    public T setVerticalAlignment(Property.VerticalAlignment verticalAlignment) {
+    public T setVerticalAlignment(VerticalAlignment verticalAlignment) {
         setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
         return (T) this;
     }

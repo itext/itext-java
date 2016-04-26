@@ -79,7 +79,7 @@ public class EncryptionProperties implements Serializable {
      *                       ENCRYPTION_AES128 or ENCRYPTION_AES256
      *                       Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
      */
-    public EncryptionProperties setStandardEncryption(byte userPassword[], byte ownerPassword[], int permissions, int encryptionAlgorithm) {
+    public EncryptionProperties setStandardEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionAlgorithm) {
         clearEncryption();
         this.userPassword = userPassword;
         this.ownerPassword = ownerPassword;

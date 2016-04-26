@@ -51,7 +51,7 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 
 public class StandardHandlerUsingStandard128 extends StandardHandlerUsingStandard40 {
 
-    public StandardHandlerUsingStandard128(PdfDictionary encryptionDictionary, byte userPassword[], byte ownerPassword[],
+    public StandardHandlerUsingStandard128(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,
                                            int permissions, boolean encryptMetadata, boolean embeddedFilesOnly, byte[] documentId) {
         super(encryptionDictionary, userPassword, ownerPassword, permissions, encryptMetadata, embeddedFilesOnly, documentId);
     }
@@ -68,10 +68,10 @@ public class StandardHandlerUsingStandard128 extends StandardHandlerUsingStandar
     }
 
     @Override
-    protected byte[] computeOwnerKey(byte userPad[], byte ownerPad[]) {
-        byte ownerKey[] = new byte[32];
-        byte digest[] = md5.digest(ownerPad);
-        byte mkey[] = new byte[keyLength / 8];
+    protected byte[] computeOwnerKey(byte[] userPad, byte[] ownerPad) {
+        byte[] ownerKey = new byte[32];
+        byte[] digest = md5.digest(ownerPad);
+        byte[] mkey = new byte[keyLength / 8];
         // only use for the input as many bit as the key consists of
         for (int k = 0; k < 50; ++k) {
             md5.update(digest, 0, mkey.length);
@@ -88,7 +88,7 @@ public class StandardHandlerUsingStandard128 extends StandardHandlerUsingStandar
     }
 
     @Override
-    protected void computeGlobalEncryptionKey(byte userPad[], byte ownerKey[], boolean encryptMetadata) {
+    protected void computeGlobalEncryptionKey(byte[] userPad, byte[] ownerKey, boolean encryptMetadata) {
         mkey = new byte[keyLength / 8];
 
         // fixed by ujihara in order to follow PDF reference
@@ -96,7 +96,7 @@ public class StandardHandlerUsingStandard128 extends StandardHandlerUsingStandar
         md5.update(userPad);
         md5.update(ownerKey);
 
-        byte ext[] = new byte[4];
+        byte[] ext = new byte[4];
         ext[0] = (byte) permissions;
         ext[1] = (byte) (permissions >> 8);
         ext[2] = (byte) (permissions >> 16);
@@ -107,7 +107,7 @@ public class StandardHandlerUsingStandard128 extends StandardHandlerUsingStandar
         if (!encryptMetadata)
             md5.update(metadataPad);
 
-        byte digest[] = new byte[mkey.length];
+        byte[] digest = new byte[mkey.length];
         System.arraycopy(md5.digest(), 0, digest, 0, mkey.length);
         // only use the really needed bits as input for the hash
         for (int k = 0; k < 50; ++k) {

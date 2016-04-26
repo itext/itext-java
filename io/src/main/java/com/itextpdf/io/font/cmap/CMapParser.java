@@ -136,7 +136,7 @@ public class CMapParser {
 //        --size;
 //        int nextPlane = 0;
 //        for (int idx = 0; idx < size; ++idx) {
-//            char plane[] = planes.get(nextPlane);
+//            char[] plane = planes.get(nextPlane);
 //            int one = seqs[idx] & 0xff;
 //            char c = plane[one];
 //            if (c != 0 && (c & 0x8000) == 0)
@@ -148,7 +148,7 @@ public class CMapParser {
 //            }
 //            nextPlane = c & 0x7fff;
 //        }
-//        char plane[] = planes.get(nextPlane);
+//        char[] plane = planes.get(nextPlane);
 //        int one = seqs[size] & 0xff;
 //        char c = plane[one];
 //        if ((c & 0x8000) != 0)

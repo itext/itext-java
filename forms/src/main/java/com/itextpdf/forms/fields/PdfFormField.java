@@ -52,6 +52,7 @@ import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -72,14 +73,16 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.io.codec.Base64;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.layout.Canvas;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.VerticalAlignment;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -152,10 +155,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public static final int FF_REQUIRED = makeFieldFlag(2);
     public static final int FF_NO_EXPORT = makeFieldFlag(3);
 
-    protected static String typeChars[] = {"4", "l", "8", "u", "n", "H"};
+    protected static String[] typeChars = {"4", "l", "8", "u", "n", "H"};
 
     protected String text;
-    protected Image img;
+    protected ImageData img;
     protected PdfFont font;
     protected int fontSize;
     protected Color color;
@@ -165,7 +168,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected Color borderColor = Color.BLACK;
     protected int rotation = 0;
     protected PdfFormXObject form;
-    protected int pdfAVersion = 0;
+    protected PdfAConformanceLevel pdfAConformanceLevel;
 
     protected static final String check = "0.8 0 0 0.8 0.3 0.5 cm 0 0 m\n" +
             "0.066 -0.026 l\n" +
@@ -373,7 +376,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         try {
             return createText(doc, rect, name, value, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE);
         } catch (IOException e) {
-            throw new PdfException(e.getLocalizedMessage());
+            throw new PdfException(e);
         }
     }
 
@@ -449,7 +452,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         try {
             return createText(doc, rect, name, value, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE, true);
         } catch (IOException e) {
-            throw new PdfException(e.getLocalizedMessage());
+            throw new PdfException(e);
         }
     }
 
@@ -505,7 +508,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         try {
             return createChoice(doc, rect, name, value, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE, options, flags);
         } catch (IOException e) {
-            throw new PdfException(e.getLocalizedMessage());
+            throw new PdfException(e);
         }
     }
 
@@ -617,14 +620,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param rect       the location on the page for the field
      * @param radioGroup the radio button group that this field should belong to
      * @param value      the initial value
-     * @param pdfAVersion the PdfAVersion of the document (1, 2, 3 or any other number if it's no PDF/A document)
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
      * @return a new {@link PdfFormField}
      * @see #createRadioGroup(com.itextpdf.kernel.pdf.PdfDocument, java.lang.String, java.lang.String)
      */
-    public static PdfFormField createRadioButton(PdfDocument doc, Rectangle rect, PdfButtonFormField radioGroup, String value, int pdfAVersion) {
+    public static PdfFormField createRadioButton(PdfDocument doc, Rectangle rect, PdfButtonFormField radioGroup, String value, PdfAConformanceLevel pdfAConformanceLevel) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfFormField radio = new PdfButtonFormField(annot, doc);
-        radio.pdfAVersion = pdfAVersion;
+        radio.pdfAConformanceLevel = pdfAConformanceLevel;
         annot.setFlag(PdfAnnotation.PRINT);
 
         String name = radioGroup.getValue().toString().substring(1);
@@ -633,7 +636,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         } else {
             annot.setAppearanceState(new PdfName("Off"));
         }
-        if (pdfAVersion == 1) {
+        if (pdfAConformanceLevel != null && "1".equals(pdfAConformanceLevel.getPart())) {
             radio.drawPdfA1RadioAppearance(rect.getWidth(), rect.getHeight(), value);
         } else {
             radio.drawRadioAppearance(rect.getWidth(), rect.getHeight(), value);
@@ -657,7 +660,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         try {
             field = createPushButton(doc, rect, name, caption, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE);
         } catch (IOException e) {
-            throw new PdfException(e.getLocalizedMessage());
+            throw new PdfException(e);
         }
         return field;
     }
@@ -718,7 +721,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return a new {@link PdfButtonFormField checkbox}
      */
     public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String name, String value, int checkType) {
-        return createCheckBox(doc, rect, name, value, checkType, 0);
+        return createCheckBox(doc, rect, name, value, checkType, null);
     }
 
     /**
@@ -729,26 +732,27 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param name      the name of the form field
      * @param value     the initial value
      * @param checkType the type of checkbox graphic to use.
-     * @param pdfAVersion the PdfAVersion of the document (1, 2, 3 or any other number if it's no PDF/A document
+     * @param pdfAConformanceLevel the {@link PdfAConformanceLevel} of the document. {@code} null if it's no PDF/A document
      * @return a new {@link PdfButtonFormField checkbox}
      */
-    public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String name, String value, int checkType, int pdfAVersion) {
+    public static PdfButtonFormField createCheckBox(PdfDocument doc, Rectangle rect, String name, String value, int checkType, PdfAConformanceLevel pdfAConformanceLevel) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfButtonFormField check = new PdfButtonFormField(annot, doc);
-        check.pdfAVersion = pdfAVersion;
+        check.pdfAConformanceLevel = pdfAConformanceLevel;
         annot.setFlag(PdfAnnotation.PRINT);
         check.setCheckType(checkType);
         check.setFieldName(name);
         check.put(PdfName.V, new PdfName(value));
         annot.setAppearanceState(new PdfName(value));
+        String pdfAVersion = pdfAConformanceLevel != null ? pdfAConformanceLevel.getPart() : "";
         switch (pdfAVersion) {
-            case 1:
+            case "1":
                 check.drawPdfA1CheckAppearance(rect.getWidth(), rect.getHeight(), value.equals("Off") ? "Yes" : value, checkType);
                 break;
-            case 2:
+            case "2":
                 check.drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), value.equals("Off") ? "Yes" : value, checkType);
                 break;
-            case 3:
+            case "3":
                 check.drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), value.equals("Off") ? "Yes" : value, checkType);
                 break;
             default:
@@ -771,7 +775,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *                to a PdfArray.
      * @return a new {@link PdfChoiceFormField} as a combobox
      */
-    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String name, String value, String options[][]) {
+    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String name, String value, String[][] options) {
         return createChoice(doc, rect, name, value, processOptions(options), PdfChoiceFormField.FF_COMBO);
     }
 
@@ -786,7 +790,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param options an array of Strings which will be converted to a PdfArray.
      * @return a new {@link PdfChoiceFormField} as a combobox
      */
-    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String name, String value, String options[]) {
+    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String name, String value, String[] options) {
         return createChoice(doc, rect, name, value, processOptions(options), PdfChoiceFormField.FF_COMBO);
     }
 
@@ -802,7 +806,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *                to a PdfArray.
      * @return a new {@link PdfChoiceFormField} as a list field
      */
-    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String name, String value, String options[][]) {
+    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String name, String value, String[][] options) {
         return createChoice(doc, rect, name, value, processOptions(options), 0);
     }
 
@@ -817,7 +821,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param options an array of Strings which will be converted to a PdfArray.
      * @return a new {@link PdfChoiceFormField} as a list field
      */
-    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String name, String value, String options[]) {
+    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String name, String value, String[] options) {
         return createChoice(doc, rect, name, value, processOptions(options), 0);
     }
 
@@ -852,6 +856,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
         if (field != null) {
             field.makeIndirect(document);
+            if (document != null && document.getReader() != null && document.getReader().getPdfAConformanceLevel() != null) {
+                field.pdfAConformanceLevel = document.getReader().getPdfAConformanceLevel();
+            }
         }
         return field;
     }
@@ -877,7 +884,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (ft == null || !ft.equals(PdfName.Btn)) {
             PdfArray kids = getKids();
             if (kids != null) {
-                for (PdfObject kid : kids) {
+                for (int i = 0; i < kids.size(); i++) {
+                    PdfObject kid = kids.get(i);
                     if (kid.isIndirectReference()) {
                         kid = ((PdfIndirectReference) kid).getRefersTo();
                     }
@@ -1343,7 +1351,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         PdfArray kids = getKids();
         if (kids != null) {
-            for (PdfObject kid : kids) {
+            for (int i = 0; i < kids.size(); i++) {
+                PdfObject kid = kids.get(i);
                 if (kid.isIndirectReference()) {
                     kid = ((PdfIndirectReference) kid).getRefersTo();
                 }
@@ -1569,13 +1578,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
         this.checkType = checkType;
         text = typeChars[checkType - 1];
-        if (pdfAVersion > 0 && pdfAVersion < 4 ) {
+        if (pdfAConformanceLevel != null) {
             return;
         }
         try {
             font = PdfFontFactory.createFont(FontConstants.ZAPFDINGBATS);
         } catch (IOException e) {
-            throw new PdfException(e.getLocalizedMessage());
+            throw new PdfException(e);
         }
     }
 
@@ -1671,7 +1680,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
                 return true;
             } catch (IOException e) {
-                throw new PdfException(e.getLocalizedMessage());
+                throw new PdfException(e);
             }
 
         } else if (PdfName.Btn.equals(type)) {
@@ -1710,11 +1719,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     }
                     apDic.put(PdfName.N, appearance.getPdfObject());
                 } catch (IOException e) {
-                    throw new PdfException(e.getLocalizedMessage());
+                    throw new PdfException(e);
                 }
             } else if ((ff & PdfButtonFormField.FF_RADIO) != 0) {
                 PdfArray kids = getKids();
-                for (PdfObject kid : kids) {
+                for (int i = 0; i < kids.size(); i++) {
+                    PdfObject kid = kids.get(i);
                     if (kid.isIndirectReference()) {
                         kid = ((PdfIndirectReference) kid).getRefersTo();
                     }
@@ -1734,14 +1744,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 Rectangle rect = getRect(getPdfObject());
                 setCheckType(checkType);
 
+                String pdfAVersion = pdfAConformanceLevel != null ? pdfAConformanceLevel.getPart() : "";
                 switch (pdfAVersion) {
-                    case 1:
+                    case "1":
                         drawPdfA1CheckAppearance(rect.getWidth(), rect.getHeight(), value, checkType);
                         break;
-                    case 2:
+                    case "2":
                         drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), value, checkType);
                         break;
-                    case 3:
+                    case "3":
                         drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(), value, checkType);
                         break;
                     default:
@@ -1749,7 +1760,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         break;
                 }
                 PdfWidgetAnnotation widget = getWidgets().get(0);
-                if (widget.getNormalAppearanceObject().containsKey(new PdfName(value))) {
+                if (widget.getNormalAppearanceObject() != null && widget.getNormalAppearanceObject().containsKey(new PdfName(value))) {
                     widget.setAppearanceState(new PdfName(value));
                 } else {
                     widget.setAppearanceState(new PdfName("Off"));
@@ -1869,7 +1880,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the edited field
      */
     public PdfFormField setPage(int pageNum) {
-        if (!getWidgets().isEmpty()) {
+        if (getWidgets().size() > 0) {
             PdfAnnotation annot = getWidgets().get(0);
             if (annot != null) {
                 annot.setPage(getDocument().getPage(pageNum));
@@ -1934,9 +1945,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
         }
-        String out[] = new String[names.size()];
-
-        return names.toArray(out);
+        return names.toArray(new String[names.size()]);
     }
 
     /**
@@ -2011,7 +2020,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return rect.toRectangle();
     }
 
-    protected static PdfArray processOptions(String options[][]) {
+    protected static PdfArray processOptions(String[][] options) {
         PdfArray array = new PdfArray();
         for (String[] option : options) {
             PdfArray subArray = new PdfArray(new PdfString(option[0]));
@@ -2021,7 +2030,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return array;
     }
 
-    protected static PdfArray processOptions(String options[]) {
+    protected static PdfArray processOptions(String[] options) {
         PdfArray array = new PdfArray();
         for (String option : options) {
             array.add(new PdfString(option));
@@ -2092,7 +2101,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected static Object[] splitDAelements(String da) {
         PdfTokenizer tk = new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(PdfEncodings.convertToBytes(da, null))));
         List<String> stack = new ArrayList<>();
-        Object ret[] = new Object[3];
+        Object[] ret = new Object[3];
         try {
             while (tk.nextToken()) {
                 if (tk.getTokenType() == PdfTokenizer.TokenType.Comment)
@@ -2176,15 +2185,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             justification = 0;
         }
         float x = 0;
-        Property.TextAlignment textAlignment = Property.TextAlignment.LEFT;
+        TextAlignment textAlignment = TextAlignment.LEFT;
         if (justification == ALIGN_RIGHT) {
-            textAlignment = Property.TextAlignment.RIGHT;
+            textAlignment = TextAlignment.RIGHT;
             x = rect.getWidth();
         } else if (justification == ALIGN_CENTER) {
-            textAlignment = Property.TextAlignment.CENTER;
+            textAlignment = TextAlignment.CENTER;
             x = rect.getWidth() / 2;
         }
-        new Canvas(canvas, getDocument(), new Rectangle(0, -height, 0, 2 * height)).showTextAligned(paragraph, x, rect.getHeight() / 2, textAlignment, Property.VerticalAlignment.MIDDLE);
+        new Canvas(canvas, getDocument(), new Rectangle(0, -height, 0, 2 * height)).showTextAligned(paragraph, x, rect.getHeight() / 2, textAlignment, VerticalAlignment.MIDDLE);
 
         canvas.
                 restoreState().
@@ -2309,6 +2318,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
         drawBorder(canvasOff, xObjectOff, width, height);
+        if (pdfAConformanceLevel != null && (pdfAConformanceLevel.getPart().equals("2") || pdfAConformanceLevel.getPart().equals("3"))) {
+            xObjectOn.getResources();
+            xObjectOff.getResources();
+        }
 
         PdfWidgetAnnotation widget = getWidgets().get(0);
 
@@ -2351,7 +2364,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param height the height of the radio button to draw
      * @param on     required to be <code>true</code> for fulfilling the drawing operation
      */
-    protected void drawRadioField(PdfCanvas canvas, final float width, final float height, final boolean on) {
+    protected void drawRadioField(PdfCanvas canvas, float width, float height, boolean on) {
         canvas.saveState();
         if (on) {
             canvas.
@@ -2444,6 +2457,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
         xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
+        xObjectOn.getResources();
+        xObjectOff.getResources();
 
         PdfDictionary normalAppearance = new PdfDictionary();
         normalAppearance.put(new PdfName(value), xObjectOn.getPdfObject());
@@ -2510,8 +2525,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
 
         Paragraph paragraph = new Paragraph(text).setFont(font).setFontSize(fontSize).setMargin(0).setMultipliedLeading(1).
-                setVerticalAlignment(Property.VerticalAlignment.MIDDLE);
-        new Canvas(canvas, getDocument(), new Rectangle(0, -height, width, 2 * height)).showTextAligned(paragraph, width / 2, height / 2, Property.TextAlignment.CENTER, Property.VerticalAlignment.MIDDLE);
+                setVerticalAlignment(VerticalAlignment.MIDDLE);
+        new Canvas(canvas, getDocument(), new Rectangle(0, -height, width, 2 * height)).showTextAligned(paragraph, width / 2, height / 2, TextAlignment.CENTER, VerticalAlignment.MIDDLE);
     }
 
     /**

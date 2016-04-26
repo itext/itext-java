@@ -42,13 +42,16 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf;
+package com.itextpdf.layout.property;
 
 /**
- * Hello world!
+ * A specialized enum containing potential property values for {@link
+ * Property#TEXT_ALIGNMENT}.
  */
-public class App {
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
-    }
+public enum TextAlignment {
+    LEFT,
+    CENTER,
+    RIGHT,
+    JUSTIFIED,
+    JUSTIFIED_ALL
 }

@@ -51,6 +51,14 @@ import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.layout.layout.LayoutPosition;
+import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.FontKerning;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.Underline;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
@@ -124,9 +132,9 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * Gets the width property of the Element.
      *
      * @return the width of the element, with a value and a measurement unit.
-     * @see Property.UnitValue
+     * @see UnitValue
      */
-    public Property.UnitValue getWidth() {
+    public UnitValue getWidth() {
         return getProperty(Property.WIDTH);
     }
 
@@ -137,7 +145,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @return this Element.
      */
     public T setWidth(float width) {
-        setProperty(Property.WIDTH, Property.UnitValue.createPointValue(width));
+        setProperty(Property.WIDTH, UnitValue.createPointValue(width));
         return (T) this;
     }
 
@@ -148,17 +156,17 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @return this Element.
      */
     public T setWidthPercent(float widthPercent) {
-        setProperty(Property.WIDTH, Property.UnitValue.createPercentValue(widthPercent));
+        setProperty(Property.WIDTH, UnitValue.createPercentValue(widthPercent));
         return (T) this;
     }
 
     /**
-     * Sets the width property of the Element with a {@link com.itextpdf.layout.Property.UnitValue}.
-     *
-     * @param width a {@link com.itextpdf.layout.Property.UnitValue} object
+     * Sets the width property of the Element with a {@link UnitValue}.
+     * 
+     * @param width a {@link UnitValue} object
      * @return this Element.
      */
-    public T setWidth(Property.UnitValue width) {
+    public T setWidth(UnitValue width) {
         setProperty(Property.WIDTH, width);
         return (T) this;
     }
@@ -220,7 +228,8 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @return this Element.
      */
     public T setFixedPosition(float x, float y, float width) {
-        return setFixedPosition(x, y, Property.UnitValue.createPointValue(width));
+        setFixedPosition(x, y, UnitValue.createPointValue(width));
+        return (T) this;
     }
 
     /**
@@ -228,12 +237,12 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * side effect that the Element's {@link Property#POSITION} is changed to
      * {@link LayoutPosition#FIXED fixed}.
      *
-     * @param x     horizontal position on the page
-     * @param y     vertical position on the page
-     * @param width a {@link com.itextpdf.layout.Property.UnitValue}
+     * @param x horizontal position on the page
+     * @param y vertical position on the page
+     * @param width a {@link UnitValue}
      * @return this Element.
      */
-    public T setFixedPosition(float x, float y, Property.UnitValue width) {
+    public T setFixedPosition(float x, float y, UnitValue width) {
         setProperty(Property.POSITION, LayoutPosition.FIXED);
         setProperty(Property.X, x);
         setProperty(Property.Y, y);
@@ -269,7 +278,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @param width      a floating point value measured in points.
      * @return this Element.
      */
-    public T setFixedPosition(int pageNumber, float x, float y, Property.UnitValue width) {
+    public T setFixedPosition(int pageNumber, float x, float y, UnitValue width) {
         setFixedPosition(x, y, width);
         setProperty(Property.PAGE_NUMBER, pageNumber);
         return (T) this;
@@ -278,10 +287,10 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     /**
      * Sets the horizontal alignment of this Element.
      *
-     * @param horizontalAlignment an enum value of type {@link com.itextpdf.layout.Property.HorizontalAlignment}
+     * @param horizontalAlignment an enum value of type {@link HorizontalAlignment}
      * @return this Element.
      */
-    public T setHorizontalAlignment(Property.HorizontalAlignment horizontalAlignment) {
+    public T setHorizontalAlignment(HorizontalAlignment horizontalAlignment) {
         setProperty(Property.HORIZONTAL_ALIGNMENT, horizontalAlignment);
         return (T) this;
     }
@@ -322,10 +331,10 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     /**
      * Sets the font size of this Element.
      *
-     * @param alignment an enum value of type {@link com.itextpdf.layout.Property.TextAlignment}
+     * @param alignment an enum value of type {@link TextAlignment}
      * @return this Element.
      */
-    public T setTextAlignment(Property.TextAlignment alignment) {
+    public T setTextAlignment(TextAlignment alignment) {
         setProperty(Property.TEXT_ALIGNMENT, alignment);
         return (T) this;
     }
@@ -362,7 +371,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @param fontKerning an enum value as a boolean wrapper specifying whether or not to apply kerning
      * @return this Element.
      */
-    public T setFontKerning(Property.FontKerning fontKerning) {
+    public T setFontKerning(FontKerning fontKerning) {
         setProperty(Property.FONT_KERNING, fontKerning);
         return (T) this;
     }
@@ -388,8 +397,8 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @param extraBottom     extra coloring at the bottom
      * @return this Element.
      */
-    public T setBackgroundColor(Color backgroundColor, float extraLeft, final float extraTop, final float extraRight, float extraBottom) {
-        setProperty(Property.BACKGROUND, new Property.Background(backgroundColor, extraLeft, extraTop, extraRight, extraBottom));
+    public T setBackgroundColor(Color backgroundColor, float extraLeft, float extraTop, float extraRight, float extraBottom) {
+        setProperty(Property.BACKGROUND, new Background(backgroundColor, extraLeft, extraTop, extraRight, extraBottom));
         return (T) this;
     }
 
@@ -614,12 +623,12 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @return this element
      */
     public T setUnderline(Color color, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {
-        Property.Underline newUnderline = new Property.Underline(color, thickness, thicknessMul, yPosition, yPositionMul, lineCapStyle);
+        Underline newUnderline = new Underline(color, thickness, thicknessMul, yPosition, yPositionMul, lineCapStyle);
         Object currentProperty = getProperty(Property.UNDERLINE);
         if (currentProperty instanceof List) {
             ((List) currentProperty).add(newUnderline);
-        } else if (currentProperty instanceof Property.Underline) {
-            setProperty(Property.UNDERLINE, Arrays.asList((Property.Underline) currentProperty, newUnderline));
+        } else if (currentProperty instanceof Underline) {
+            setProperty(Property.UNDERLINE, Arrays.asList((Underline)currentProperty, newUnderline));
         } else {
             setProperty(Property.UNDERLINE, newUnderline);
         }
@@ -634,7 +643,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @param baseDirection base direction
      * @return this element
      */
-    public T setBaseDirection(Property.BaseDirection baseDirection) {
+    public T setBaseDirection(BaseDirection baseDirection) {
         setProperty(Property.BASE_DIRECTION, baseDirection);
         return (T) this;
     }

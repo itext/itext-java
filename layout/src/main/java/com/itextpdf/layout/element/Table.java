@@ -47,8 +47,9 @@ package com.itextpdf.layout.element;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
 import org.slf4j.Logger;
@@ -135,7 +136,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         for (int k = 0; k < numColumns; ++k) {
             this.columnWidths[k] = 1;
         }
-        super.setWidth(Property.UnitValue.createPercentValue(100));
+        super.setWidth(UnitValue.createPercentValue(100));
         initializeRows();
     }
 
@@ -155,11 +156,11 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * @return this element
      */
     @Override
-    public Table setWidth(Property.UnitValue width) {
+    public Table setWidth(UnitValue width) {
         if (width.isPointValue() && width.getValue() == 0) {
-            width = Property.UnitValue.createPercentValue(100);
+            width = UnitValue.createPercentValue(100);
         }
-        Property.UnitValue currWidth = getWidth();
+        UnitValue currWidth = getWidth();
         if (!width.equals(currWidth)) {
             super.setWidth(width);
             calculateWidths();
@@ -326,7 +327,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * @param skipFirstHeader New value of property skipFirstHeader.
      * @return this element
      */
-    public Table setSkipFirstHeader(final boolean skipFirstHeader) {
+    public Table setSkipFirstHeader(boolean skipFirstHeader) {
         this.skipFirstHeader = skipFirstHeader;
         return this;
     }
@@ -338,7 +339,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * @param skipLastFooter New value of property skipLastFooter.
      * @return this element
      */
-    public Table setSkipLastFooter(final boolean skipLastFooter) {
+    public Table setSkipLastFooter(boolean skipLastFooter) {
         this.skipLastFooter = skipLastFooter;
         return this;
     }
@@ -605,7 +606,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     }
 
     protected void calculateWidths() {
-        Property.UnitValue width = getWidth();
+        UnitValue width = getWidth();
         float total = 0;
         int numCols = getNumberOfColumns();
         for (int k = 0; k < numCols; ++k) {

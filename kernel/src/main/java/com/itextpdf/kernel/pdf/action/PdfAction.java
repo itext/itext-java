@@ -374,7 +374,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         return arr;
     }
 
-    private static PdfArray buildArray(Object names[]) {
+    private static PdfArray buildArray(Object[] names) {
         PdfArray array = new PdfArray();
         for (Object obj : names) {
             if (obj instanceof String)

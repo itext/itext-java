@@ -45,7 +45,8 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.ListItemRenderer;
 
 /**
@@ -116,10 +117,10 @@ public class ListItem extends Div {
      * @param listNumberingType the {@link Property.ListNumberingType} that will generate appropriate prefixes for the {@link ListItem}.
      * @return this list item.
      */
-    public ListItem setListSymbol(Property.ListNumberingType listNumberingType) {
+    public ListItem setListSymbol(ListNumberingType listNumberingType) {
         // Do not draw any points after ZapfDingbats special number symbol
-        if (listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_1 || listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_2 ||
-                listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_3 || listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_4) {
+        if (listNumberingType == ListNumberingType.ZAPF_DINGBATS_1 || listNumberingType == ListNumberingType.ZAPF_DINGBATS_2 ||
+                listNumberingType == ListNumberingType.ZAPF_DINGBATS_3 || listNumberingType == ListNumberingType.ZAPF_DINGBATS_4) {
             setProperty(Property.LIST_SYMBOL_POST_TEXT, " ");
         }
         setProperty(Property.LIST_SYMBOL, listNumberingType);

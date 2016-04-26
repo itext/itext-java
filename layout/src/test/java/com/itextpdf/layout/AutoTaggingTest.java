@@ -18,6 +18,8 @@ import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -309,7 +311,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         String watermarkText = "WATERMARK";
         Paragraph watermark = new Paragraph(watermarkText);
         watermark.setFontColor(new DeviceGray(0.75f)).setFontSize(72);
-        document.showTextAligned(watermark, PageSize.A4.getWidth() / 2, PageSize.A4.getHeight() / 2, 1, Property.TextAlignment.CENTER, Property.VerticalAlignment.MIDDLE, (float) (Math.PI / 4));
+        document.showTextAligned(watermark, PageSize.A4.getWidth() / 2, PageSize.A4.getHeight() / 2, 1, TextAlignment.CENTER, VerticalAlignment.MIDDLE, (float) (Math.PI / 4));
 
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +

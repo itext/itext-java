@@ -14,7 +14,7 @@ public class BmpTest {
 
     @Test
     public void openBmp1() throws IOException {
-        Image img = ImageFactory.getImage(sourceFolder + "WP_20140410_001.bmp");
+        ImageData img = ImageFactory.getImage(sourceFolder + "WP_20140410_001.bmp");
         Assert.assertEquals(2592, img.getWidth(), 0);
         Assert.assertEquals(1456, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
@@ -22,7 +22,7 @@ public class BmpTest {
 
     @Test
     public void openBmp2() throws IOException {
-        Image img = ImageFactory.getImage(sourceFolder + "WP_20140410_001_gray.bmp");
+        ImageData img = ImageFactory.getImage(sourceFolder + "WP_20140410_001_gray.bmp");
         Assert.assertEquals(2592, img.getWidth(), 0);
         Assert.assertEquals(1456, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
@@ -30,7 +30,7 @@ public class BmpTest {
 
     @Test
     public void openBmp3() throws IOException {
-        Image img = ImageFactory.getImage(sourceFolder + "WP_20140410_001_monochrome.bmp");
+        ImageData img = ImageFactory.getImage(sourceFolder + "WP_20140410_001_monochrome.bmp");
         Assert.assertEquals(2592, img.getWidth(), 0);
         Assert.assertEquals(1456, img.getHeight(), 0);
         Assert.assertEquals(1, img.getBpc());

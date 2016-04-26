@@ -26,7 +26,7 @@ public class IndicTextExtractionTest extends ExtendedITextTest {
     public void test01() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "test01.pdf"));
 
-        final String expectedText[] = new String[]{
+        final String[] expectedText = new String[]{
                 "\u0928\u093F\u0930\u094D\u0935\u093E\u091A\u0915",
                 "\u0928\u0917\u0930\u0928\u093F\u0917\u092E / " +
                         "\u0928\u0917\u0930\u092A\u0930\u093F\u0937\u0926" +

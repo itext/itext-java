@@ -55,11 +55,11 @@ import java.util.Map;
 final class BmpImageHelper {
 
     private static class BmpParameters {
-        public BmpParameters(BmpImage image) {
+        public BmpParameters(BmpImageData image) {
             this.image = image;
         }
 
-        BmpImage image;
+        BmpImageData image;
         int width;
         int height;
         Map<String, Object> additional;
@@ -113,7 +113,7 @@ final class BmpImageHelper {
     private static final int BI_RLE4 = 2;
     private static final int BI_BITFIELDS = 3;
 
-    public static void processImage(Image image) {
+    public static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.BMP)
             throw new IllegalArgumentException("BMP image expected");
         BmpParameters bmp;
@@ -124,7 +124,7 @@ final class BmpImageHelper {
             }
             bmpStream = new ByteArrayInputStream(image.getData());
             image.imageSize = image.getData().length;
-            bmp = new BmpParameters((BmpImage)image);
+            bmp = new BmpParameters((BmpImageData)image);
             process(bmp, bmpStream);
             if (getImage(bmp)) {
                 image.setWidth(bmp.width);
@@ -479,7 +479,7 @@ final class BmpImageHelper {
         if (bmp.bitsPerPixel == 1 || bmp.bitsPerPixel == 4 || bmp.bitsPerPixel == 8) {
             bmp.numBands = 1;
             // Create IndexColorModel from the palette.
-            byte r[], g[], b[];
+            byte[] r, g, b;
             int sizep;
             if (bmp.imageType == VERSION_2_1_BIT ||
                     bmp.imageType == VERSION_2_4_BIT ||
@@ -658,12 +658,12 @@ final class BmpImageHelper {
         return false;
     }
 
-    private static void indexedModel(byte bdata[], int bpc, int paletteEntries, BmpParameters bmp) {
+    private static void indexedModel(byte[] bdata, int bpc, int paletteEntries, BmpParameters bmp) {
         RawImageHelper.updateRawImageParameters(bmp.image, bmp.width, bmp.height, 1, bpc, bdata);
         Object[] colorSpace = new Object[4];
         colorSpace[0] = "/Indexed";
         colorSpace[1] = "/DeviceRGB";
-        byte np[] = getPalette(paletteEntries, bmp);
+        byte[] np = getPalette(paletteEntries, bmp);
         int len = np.length;
         colorSpace[2] = len / 3 - 1;
         colorSpace[3] = PdfEncodings.convertToString(np, null);
@@ -690,7 +690,7 @@ final class BmpImageHelper {
 
     // Deal with 1 Bit images using IndexColorModels
     private static void read1Bit(int paletteEntries, BmpParameters bmp) throws java.io.IOException {
-        byte bdata[] = new byte[(bmp.width + 7) / 8 * bmp.height];
+        byte[] bdata = new byte[(bmp.width + 7) / 8 * bmp.height];
         int padding = 0;
         int bytesPerScanline = (int) Math.ceil(bmp.width / 8.0d);
 
@@ -702,7 +702,7 @@ final class BmpImageHelper {
         int imSize = (bytesPerScanline + padding) * bmp.height;
 
         // Read till we have the whole image
-        byte values[] = new byte[imSize];
+        byte[] values = new byte[imSize];
         int bytesRead = 0;
         while (bytesRead < imSize) {
             bytesRead += bmp.inputStream.read(values, bytesRead,
@@ -735,7 +735,7 @@ final class BmpImageHelper {
 
     // Method to read a 4 bit BMP image data
     private static void read4Bit(int paletteEntries, BmpParameters bmp) throws java.io.IOException {
-        byte bdata[] = new byte[(bmp.width + 1) / 2 * bmp.height];
+        byte[] bdata = new byte[(bmp.width + 1) / 2 * bmp.height];
 
         // Padding bytes at the end of each scanline
         int padding = 0;
@@ -749,7 +749,7 @@ final class BmpImageHelper {
         int imSize = (bytesPerScanline + padding) * bmp.height;
 
         // Read till we have the whole image
-        byte values[] = new byte[imSize];
+        byte[] values = new byte[imSize];
         int bytesRead = 0;
         while (bytesRead < imSize) {
             bytesRead += bmp.inputStream.read(values, bytesRead,
@@ -781,7 +781,7 @@ final class BmpImageHelper {
 
     // Method to read 8 bit BMP image data
     private static void read8Bit(int paletteEntries, BmpParameters bmp) throws java.io.IOException {
-        byte bdata[] = new byte[bmp.width * bmp.height];
+        byte[] bdata = new byte[bmp.width * bmp.height];
         // Padding bytes at the end of each scanline
         int padding = 0;
 
@@ -795,7 +795,7 @@ final class BmpImageHelper {
         int imSize = (bmp.width + padding) * bmp.height;
 
         // Read till we have the whole image
-        byte values[] = new byte[imSize];
+        byte[] values = new byte[imSize];
         int bytesRead = 0;
         while (bytesRead < imSize) {
             bytesRead += bmp.inputStream.read(values, bytesRead, imSize - bytesRead);
@@ -839,7 +839,7 @@ final class BmpImageHelper {
 
         int imSize = (bmp.width * 3 + 3) / 4 * 4 * bmp.height;
         // Read till we have the whole image
-        byte values[] = new byte[imSize];
+        byte[] values = new byte[imSize];
         int bytesRead = 0;
         while (bytesRead < imSize) {
             int r = bmp.inputStream.read(values, bytesRead,
@@ -909,7 +909,7 @@ final class BmpImageHelper {
         int blue_mask = findMask(bmp.blueMask);
         int blue_shift = findShift(bmp.blueMask);
         int blue_factor = blue_mask + 1;
-        byte bdata[] = new byte[bmp.width * bmp.height * 3];
+        byte[] bdata = new byte[bmp.width * bmp.height * 3];
         // Padding bytes at the end of each scanline
         int padding = 0;
 
@@ -973,7 +973,7 @@ final class BmpImageHelper {
         }
 
         // Read till we have the whole image
-        byte values[] = new byte[imSize];
+        byte[] values = new byte[imSize];
         int bytesRead = 0;
         while (bytesRead < imSize) {
             bytesRead += bmp.inputStream.read(values, bytesRead,
@@ -981,7 +981,7 @@ final class BmpImageHelper {
         }
 
         // Since data is compressed, decompress it
-        byte val[] = decodeRLE(true, values, bmp);
+        byte[] val = decodeRLE(true, values, bmp);
 
         // Uncompressed data does not have any padding
         imSize = bmp.width * bmp.height;
@@ -991,7 +991,7 @@ final class BmpImageHelper {
             // Convert the bottom up image to a top down format by copying
             // one scanline from the bottom to the top at a time.
             // int bytesPerScanline = (int)Math.ceil((double)width/8.0);
-            byte temp[] = new byte[val.length];
+            byte[] temp = new byte[val.length];
             int bytesPerScanline = bmp.width;
             for (int i = 0; i < bmp.height; i++) {
                 System.arraycopy(val,
@@ -1012,7 +1012,7 @@ final class BmpImageHelper {
         }
 
         // Read till we have the whole image
-        byte values[] = new byte[imSize];
+        byte[] values = new byte[imSize];
         int bytesRead = 0;
         while (bytesRead < imSize) {
             bytesRead += bmp.inputStream.read(values, bytesRead,
@@ -1020,12 +1020,12 @@ final class BmpImageHelper {
         }
 
         // Decompress the RLE4 compressed data.
-        byte val[] = decodeRLE(false, values, bmp);
+        byte[] val = decodeRLE(false, values, bmp);
 
         // Invert it as it is bottom up format.
         if (bmp.isBottomUp) {
 
-            byte inverted[] = val;
+            byte[] inverted = val;
             val = new byte[bmp.width * bmp.height];
             int l = 0, index, lineEnd;
 
@@ -1038,7 +1038,7 @@ final class BmpImageHelper {
             }
         }
         int stride = (bmp.width + 1) / 2;
-        byte bdata[] = new byte[stride * bmp.height];
+        byte[] bdata = new byte[stride * bmp.height];
         int ptr = 0;
         int sh = 0;
         for (int h = 0; h < bmp.height; ++h) {
@@ -1053,8 +1053,8 @@ final class BmpImageHelper {
         indexedModel(bdata, 4, 4, bmp);
     }
 
-    private static byte[] decodeRLE(boolean is8, byte values[], BmpParameters bmp) {
-        byte val[] = new byte[bmp.width * bmp.height];
+    private static byte[] decodeRLE(boolean is8, byte[] values, BmpParameters bmp) {
+        byte[] val = new byte[bmp.width * bmp.height];
         try {
             int ptr = 0;
             int x = 0;

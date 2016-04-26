@@ -70,40 +70,40 @@ public final class ImageFactory {
     private static final byte[] tiff_2 = new byte[]{'I', 'I', 42, 0};
     private static final byte[] jbig2 = new byte[]{(byte) 0x97, 'J', 'B', '2', '\r', '\n', 0x1a, '\n'};
 
-    public static Image getImage(byte[] bytes, boolean recoverImage) {
+    public static ImageData getImage(byte[] bytes, boolean recoverImage) {
         return getImageInstance(bytes, recoverImage);
     }
 
-    public static Image getImage(byte[] bytes) {
+    public static ImageData getImage(byte[] bytes) {
         return getImage(bytes, false);
     }
 
-    public static Image getImage(URL url, boolean recoverImage) {
+    public static ImageData getImage(URL url, boolean recoverImage) {
         return getImageInstance(url, recoverImage);
     }
 
-    public static Image getImage(URL url) {
+    public static ImageData getImage(URL url) {
         return getImage(url, false);
     }
 
-    public static Image getImage(String filename, boolean recoverImage) throws MalformedURLException {
+    public static ImageData getImage(String filename, boolean recoverImage) throws MalformedURLException {
         return getImage(UrlUtil.toURL(filename), recoverImage);
     }
 
-    public static Image getImage(String filename) throws MalformedURLException {
+    public static ImageData getImage(String filename) throws MalformedURLException {
         return getImage(filename, false);
     }
 
-    public static Image getImage(int width, int height, boolean reverseBits,
+    public static ImageData getImage(int width, int height, boolean reverseBits,
                                  int typeCCITT, int parameters, byte[] data,
                                  int[] transparency) {
         if (transparency != null && transparency.length != 2)
             throw new IOException(IOException.TransparencyLengthMustBeEqualTo2WithCcittImages);
-        if (typeCCITT != RawImage.CCITTG4 && typeCCITT != RawImage.CCITTG3_1D && typeCCITT != RawImage.CCITTG3_2D)
+        if (typeCCITT != RawImageData.CCITTG4 && typeCCITT != RawImageData.CCITTG3_1D && typeCCITT != RawImageData.CCITTG3_2D)
             throw new IOException(IOException.CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d);
         if (reverseBits)
             TIFFFaxDecoder.reverseBits(data);
-        RawImage image = new RawImage(data, ImageType.RAW);
+        RawImageData image = new RawImageData(data, ImageType.RAW);
         image.setTypeCcitt(typeCCITT);
         image.height = height;
         image.width = width;
@@ -112,15 +112,15 @@ public final class ImageFactory {
         return image;
     }
 
-    public static Image getImage(int width, int height, int components,
+    public static ImageData getImage(int width, int height, int components,
                                  int bpc, byte[] data, int[] transparency) {
         if (transparency != null && transparency.length != components * 2)
             throw new IOException(IOException.TransparencyLengthMustBeEqualTo2WithCcittImages);
         if (components == 1 && bpc == 1) {
-            byte g4[] = CCITTG4Encoder.compress(data, width, height);
-            return ImageFactory.getImage(width, height, false, RawImage.CCITTG4, RawImage.CCITT_BLACKIS1, g4, transparency);
+            byte[] g4 = CCITTG4Encoder.compress(data, width, height);
+            return ImageFactory.getImage(width, height, false, RawImageData.CCITTG4, RawImageData.CCITT_BLACKIS1, g4, transparency);
         }
-        RawImage image = new RawImage(data, ImageType.RAW);
+        RawImageData image = new RawImageData(data, ImageType.RAW);
         image.height = height;
         image.width = width;
         if (components != 1 && components != 3 && components != 4)
@@ -141,7 +141,7 @@ public final class ImageFactory {
      * @param color if different from <CODE>null</CODE> the transparency pixels are replaced by this color
      * @return RawImage
      */
-    public static Image getImage(java.awt.Image image, java.awt.Color color) throws java.io.IOException {
+    public static ImageData getImage(java.awt.Image image, java.awt.Color color) throws java.io.IOException {
         return ImageFactory.getImage(image, color, false);
     }
 
@@ -153,24 +153,24 @@ public final class ImageFactory {
      * @param forceBW if <CODE>true</CODE> the image is treated as black and white
      * @return RawImage
      */
-    public static Image getImage(java.awt.Image image, java.awt.Color color, boolean forceBW) throws java.io.IOException {
+    public static ImageData getImage(java.awt.Image image, java.awt.Color color, boolean forceBW) throws java.io.IOException {
         return AwtImageFactory.getImage(image, color, forceBW);
     }
 
-    public static Image getBmpImage(URL url, boolean noHeader, int size) {
+    public static ImageData getBmpImage(URL url, boolean noHeader, int size) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, bmp)) {
-            Image image = new BmpImage(url, noHeader, size);
+            ImageData image = new BmpImageData(url, noHeader, size);
             BmpImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("BMP image expected.");
     }
 
-    public static Image getBmpImage(byte[] bytes, boolean noHeader, int size) {
+    public static ImageData getBmpImage(byte[] bytes, boolean noHeader, int size) {
         byte[] imageType = readImageType(bytes);
         if (noHeader || imageTypeIs(imageType, bmp)) {
-            Image image = new BmpImage(bytes, noHeader, size);
+            ImageData image = new BmpImageData(bytes, noHeader, size);
             BmpImageHelper.processImage(image);
             return image;
         }
@@ -183,10 +183,10 @@ public final class ImageFactory {
      * @param bytes
      * @return
      */
-    public static GifImage getGifImage(byte[] bytes) {
+    public static GifImageData getGifImage(byte[] bytes) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, gif)) {
-            GifImage image = new GifImage(bytes);
+            GifImageData image = new GifImageData(bytes);
             GifImageHelper.processImage(image);
             return image;
         }
@@ -200,10 +200,10 @@ public final class ImageFactory {
      * @param frame number of frame to be returned
      * @return
      */
-    public static Image getGifFrame(URL url, int frame) {
+    public static ImageData getGifFrame(URL url, int frame) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, gif)) {
-            GifImage image = new GifImage(url);
+            GifImageData image = new GifImageData(url);
             GifImageHelper.processImage(image, frame - 1);
             return image.getFrames().get(frame - 1);
         }
@@ -217,10 +217,10 @@ public final class ImageFactory {
      * @param frame number of frame to be returned
      * @return
      */
-    public static Image getGifFrame(byte[] bytes, int frame) {
+    public static ImageData getGifFrame(byte[] bytes, int frame) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, gif)) {
-            GifImage image = new GifImage(bytes);
+            GifImageData image = new GifImageData(bytes);
             GifImageHelper.processImage(image, frame - 1);
             return image.getFrames().get(frame - 1);
         }
@@ -234,13 +234,13 @@ public final class ImageFactory {
      * @param frameNumbers array of frame numbers of gif image
      * @return
      */
-    public static List<Image> getGifFrames(byte[] bytes, int[] frameNumbers) {
+    public static List<ImageData> getGifFrames(byte[] bytes, int[] frameNumbers) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, gif)) {
-            GifImage image = new GifImage(bytes);
+            GifImageData image = new GifImageData(bytes);
             Arrays.sort(frameNumbers);
             GifImageHelper.processImage(image, frameNumbers[frameNumbers.length - 1] - 1);
-            List<Image> frames = new ArrayList<>();
+            List<ImageData> frames = new ArrayList<>();
             for (int frame : frameNumbers) {
                 frames.add(image.getFrames().get(frame - 1));
             }
@@ -256,13 +256,13 @@ public final class ImageFactory {
      * @param frameNumbers array of frame numbers of gif image
      * @return
      */
-    public static List<Image> getGifFrames(URL url, int[] frameNumbers) {
+    public static List<ImageData> getGifFrames(URL url, int[] frameNumbers) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, gif)) {
-            GifImage image = new GifImage(url);
+            GifImageData image = new GifImageData(url);
             Arrays.sort(frameNumbers);
             GifImageHelper.processImage(image, frameNumbers[frameNumbers.length - 1] - 1);
-            List<Image> frames = new ArrayList<>();
+            List<ImageData> frames = new ArrayList<>();
             for (int frame : frameNumbers) {
                 frames.add(image.getFrames().get(frame - 1));
             }
@@ -277,10 +277,10 @@ public final class ImageFactory {
      * @param bytes byte array of gif image
      * @return all frames of gif image
      */
-    public static List<Image> getGifFrames(byte[] bytes) {
+    public static List<ImageData> getGifFrames(byte[] bytes) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, gif)) {
-            GifImage image = new GifImage(bytes);
+            GifImageData image = new GifImageData(bytes);
             GifImageHelper.processImage(image);
             return image.getFrames();
         }
@@ -293,34 +293,34 @@ public final class ImageFactory {
      * @param url url of gif image
      * @return all frames of gif image
      */
-    public static List<Image> getGifFrames(URL url) {
+    public static List<ImageData> getGifFrames(URL url) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, gif)) {
-            GifImage image = new GifImage(url);
+            GifImageData image = new GifImageData(url);
             GifImageHelper.processImage(image);
             return image.getFrames();
         }
         throw new IllegalArgumentException("GIF image expected.");
     }
 
-    public static Image getJbig2Image(URL url, int page) {
+    public static ImageData getJbig2Image(URL url, int page) {
         if (page < 1)
             throw new IllegalArgumentException("The page number must be greater than 0");
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, jbig2)) {
-            Image image = new Jbig2Image(url, page);
+            ImageData image = new Jbig2ImageData(url, page);
             Jbig2ImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("JBIG2 image expected.");
     }
 
-    public static Image getJbig2Image(byte[] bytes, int page) {
+    public static ImageData getJbig2Image(byte[] bytes, int page) {
         if (page < 1)
             throw new IllegalArgumentException("The page number must be greater than 0");
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, jbig2)) {
-            Image image = new Jbig2Image(bytes, page);
+            ImageData image = new Jbig2ImageData(bytes, page);
             Jbig2ImageHelper.processImage(image);
             return image;
         }
@@ -328,20 +328,20 @@ public final class ImageFactory {
 
     }
 
-    public static Image getJpegImage(URL url) {
+    public static ImageData getJpegImage(URL url) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, jpeg)) {
-            Image image = new JpegImage(url);
+            ImageData image = new JpegImageData(url);
             JpegImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("JPEG image expected.");
     }
 
-    public static Image getJpegImage(byte[] bytes) {
+    public static ImageData getJpegImage(byte[] bytes) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, jpeg)) {
-            Image image = new JpegImage(bytes);
+            ImageData image = new JpegImageData(bytes);
             JpegImageHelper.processImage(image);
             return image;
         }
@@ -349,20 +349,20 @@ public final class ImageFactory {
 
     }
 
-    public static Image getJpeg2000Image(URL url) {
+    public static ImageData getJpeg2000Image(URL url) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
-            Image image = new Jpeg2000Image(url);
+            ImageData image = new Jpeg2000ImageData(url);
             Jpeg2000ImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("JPEG2000 image expected.");
     }
 
-    public static Image getJpeg2000Image(byte[] bytes) {
+    public static ImageData getJpeg2000Image(byte[] bytes) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
-            Image image = new Jpeg2000Image(bytes);
+            ImageData image = new Jpeg2000ImageData(bytes);
             Jpeg2000ImageHelper.processImage(image);
             return image;
         }
@@ -370,112 +370,112 @@ public final class ImageFactory {
 
     }
 
-    public static Image getPngImage(URL url) {
+    public static ImageData getPngImage(URL url) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, png)) {
-            Image image = new PngImage(url);
+            ImageData image = new PngImageData(url);
             PngImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("PNG image expected.");
     }
 
-    public static Image getPngImage(byte[] bytes) {
+    public static ImageData getPngImage(byte[] bytes) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, png)) {
-            Image image = new PngImage(bytes);
+            ImageData image = new PngImageData(bytes);
             PngImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("PNG image expected.");
     }
 
-    public static Image getTiffImage(URL url, boolean recoverFromImageError, int page, boolean direct) {
+    public static ImageData getTiffImage(URL url, boolean recoverFromImageError, int page, boolean direct) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
-            Image image = new TiffImage(url, recoverFromImageError, page, direct);
+            ImageData image = new TiffImageData(url, recoverFromImageError, page, direct);
             TiffImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("TIFF image expected.");
     }
 
-    public static Image getTiffImage(byte[] bytes, boolean recoverFromImageError, int page, boolean direct) {
+    public static ImageData getTiffImage(byte[] bytes, boolean recoverFromImageError, int page, boolean direct) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
-            Image image = new TiffImage(bytes, recoverFromImageError, page, direct);
+            ImageData image = new TiffImageData(bytes, recoverFromImageError, page, direct);
             TiffImageHelper.processImage(image);
             return image;
         }
         throw new IllegalArgumentException("TIFF image expected.");
     }
 
-    public static Image getRawImage(byte[] bytes) {
-        return new RawImage(bytes, ImageType.RAW);
+    public static ImageData getRawImage(byte[] bytes) {
+        return new RawImageData(bytes, ImageType.RAW);
     }
 
-    private static Image getImageInstance(URL source, boolean recoverImage) {
+    private static ImageData getImageInstance(URL source, boolean recoverImage) {
         byte[] imageType = readImageType(source);
         if (imageTypeIs(imageType, gif)) {
-            GifImage image = new GifImage(source);
+            GifImageData image = new GifImageData(source);
             GifImageHelper.processImage(image, 0);
             return image.getFrames().get(0);
         } else if (imageTypeIs(imageType, jpeg)) {
-            Image image = new JpegImage(source);
+            ImageData image = new JpegImageData(source);
             JpegImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
-            Image image = new Jpeg2000Image(source);
+            ImageData image = new Jpeg2000ImageData(source);
             Jpeg2000ImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, png)) {
-            Image image = new PngImage(source);
+            ImageData image = new PngImageData(source);
             PngImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, bmp)) {
-            Image image = new BmpImage(source, false, 0);
+            ImageData image = new BmpImageData(source, false, 0);
             BmpImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
-            Image image = new TiffImage(source, recoverImage, 1, false);
+            ImageData image = new TiffImageData(source, recoverImage, 1, false);
             TiffImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, jbig2)) {
-            Image image = new Jbig2Image(source, 1);
+            ImageData image = new Jbig2ImageData(source, 1);
             Jbig2ImageHelper.processImage(image);
             return image;
         }
         throw new IOException(IOException.ImageFormatCannotBeRecognized);
     }
 
-    private static Image getImageInstance(byte[] bytes, boolean recoverImage) {
+    private static ImageData getImageInstance(byte[] bytes, boolean recoverImage) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, gif)) {
-            GifImage image = new GifImage(bytes);
+            GifImageData image = new GifImageData(bytes);
             GifImageHelper.processImage(image, 0);
             return image.getFrames().get(0);
         } else if (imageTypeIs(imageType, jpeg)) {
-            Image image = new JpegImage(bytes);
+            ImageData image = new JpegImageData(bytes);
             JpegImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
-            Image image = new Jpeg2000Image(bytes);
+            ImageData image = new Jpeg2000ImageData(bytes);
             Jpeg2000ImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, png)) {
-            Image image = new PngImage(bytes);
+            ImageData image = new PngImageData(bytes);
             PngImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, bmp)) {
-            Image image = new BmpImage(bytes, false, 0);
+            ImageData image = new BmpImageData(bytes, false, 0);
             BmpImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
-            Image image = new TiffImage(bytes, recoverImage, 1, false);
+            ImageData image = new TiffImageData(bytes, recoverImage, 1, false);
             TiffImageHelper.processImage(image);
             return image;
         } else if (imageTypeIs(imageType, jbig2)) {
-            Image image = new Jbig2Image(bytes, 1);
+            ImageData image = new Jbig2ImageData(bytes, 1);
             Jbig2ImageHelper.processImage(image);
             return image;
         }

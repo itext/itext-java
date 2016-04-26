@@ -89,7 +89,7 @@ public class PngWriter {
         writeChunk(IEND, new byte[0]);
     }
 
-    public void writeData(byte[] data, final int stride) throws IOException {
+    public void writeData(byte[] data, int stride) throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         DeflaterOutputStream zip = new DeflaterOutputStream(stream);
         int k;

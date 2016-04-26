@@ -92,7 +92,7 @@ public class PdfPagesTest extends ExtendedITextTest{
     public void randomObjectPagesTest() throws IOException {
         String filename = "randomObjectPagesTest.pdf";
         int pageCount = 10000;
-        int indexes[] = new int[pageCount];
+        int[] indexes = new int[pageCount];
         for (int i = 0; i < indexes.length; i++)
             indexes[i] = i + 1;
 
@@ -107,7 +107,7 @@ public class PdfPagesTest extends ExtendedITextTest{
         FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
-        PdfPage pages[] = new PdfPage[pageCount];
+        PdfPage[] pages = new PdfPage[pageCount];
 
         for (int i = 0; i < indexes.length; i++) {
             PdfPage page = document.addNewPage();
@@ -135,7 +135,7 @@ public class PdfPagesTest extends ExtendedITextTest{
     public void randomNumberPagesTest() throws IOException {
         String filename = "randomNumberPagesTest.pdf";
         int pageCount = 3000;
-        int indexes[] = new int[pageCount];
+        int[] indexes = new int[pageCount];
         for (int i = 0; i < indexes.length; i++)
             indexes[i] = i + 1;
 

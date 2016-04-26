@@ -42,83 +42,40 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.io.image;
+package com.itextpdf.layout.property;
 
-import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.io.util.UrlUtil;
+import com.itextpdf.kernel.color.Color;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+public class Underline {
+    protected Color color;
+    protected float thickness;
+    protected float thicknessMul;
+    protected float yPosition;
+    protected float yPositionMul;
+    protected int lineCapStyle;
 
-public class GifImage {
-
-    private float logicalHeight;
-    private float logicalWidth;
-    private List<Image> frames = new ArrayList<>();
-    private byte[] data;
-    private URL url;
-
-    protected GifImage(URL url) {
-        this.url = url;
+    public Underline(Color color, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {
+        this.color = color;
+        this.thickness = thickness;
+        this.thicknessMul = thicknessMul;
+        this.yPosition = yPosition;
+        this.yPositionMul = yPositionMul;
+        this.lineCapStyle = lineCapStyle;
     }
 
-    protected GifImage(byte[] data) {
-        this.data = data;
+    public Color getColor() {
+        return color;
     }
 
-    public float getLogicalHeight() {
-        return logicalHeight;
+    public float getThickness(float fontSize) {
+        return thickness + thicknessMul * fontSize;
     }
 
-    public void setLogicalHeight(float logicalHeight) {
-        this.logicalHeight = logicalHeight;
+    public float getYPosition(float fontSize) {
+        return yPosition + yPositionMul * fontSize;
     }
 
-    public float getLogicalWidth() {
-        return logicalWidth;
-    }
-
-    public void setLogicalWidth(float logicalWidth) {
-        this.logicalWidth = logicalWidth;
-    }
-
-    public List<Image> getFrames() {
-        return frames;
-    }
-
-    protected byte[] getData() {
-        return data;
-    }
-
-    protected URL getUrl() {
-        return url;
-    }
-
-    protected void addFrame(Image frame) {
-        frames.add(frame);
-    }
-
-    /**
-     * Load data by URL. url must be not null.
-     * Note, this method doesn't check if data or url is null.
-     * @throws java.io.IOException
-     */
-    void loadData() throws java.io.IOException {
-        InputStream input = null;
-        try {
-            input = UrlUtil.openStream(url);
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            StreamUtil.transferBytes(UrlUtil.openStream(url), stream);
-            data = stream.toByteArray();
-        } finally {
-            if (input != null) {
-                input.close();
-            }
-        }
-
-
+    public float getYPositionMul() {
+        return yPositionMul;
     }
 }

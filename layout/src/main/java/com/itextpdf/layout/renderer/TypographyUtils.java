@@ -48,9 +48,11 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.Property;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -86,7 +88,7 @@ class TypographyUtils {
         }
     }
 
-    static byte[] getBidiLevels(Property.BaseDirection baseDirection, int[] unicodeIds) {
+    static byte[] getBidiLevels(BaseDirection baseDirection, int[] unicodeIds) {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
             logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
         } else {
@@ -191,8 +193,10 @@ class TypographyUtils {
             logger.warn(MessageFormat.format("Cannot find method {0} for class {1}", methodName, className));
         } catch (ClassNotFoundException e) {
             logger.warn(MessageFormat.format("Cannot find class {0}", className));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e.getCause() != null ? e.getCause() : null);
+        } catch (Exception exc) {
+            throw new RuntimeException(exc);
         }
         return null;
     }
@@ -206,8 +210,10 @@ class TypographyUtils {
             logger.warn(MessageFormat.format("Cannot find constructor for class {0}", className));
         } catch (ClassNotFoundException e) {
             logger.warn(MessageFormat.format("Cannot find class {0}", className));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e.getCause() != null ? e.getCause() : null);
+        } catch (Exception exc) {
+            throw new RuntimeException(exc);
         }
         return null;
     }

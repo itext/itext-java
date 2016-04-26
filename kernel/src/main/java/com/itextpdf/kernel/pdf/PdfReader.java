@@ -146,7 +146,7 @@ public class PdfReader implements Closeable, Serializable {
      * @param properties properties of the created reader
      * @throws IOException on error
      */
-    public PdfReader(final String filename, ReaderProperties properties) throws IOException {
+    public PdfReader(String filename, ReaderProperties properties) throws IOException {
         this(
                 new RandomAccessSourceFactory()
                         .setForceRead(false)
@@ -162,7 +162,7 @@ public class PdfReader implements Closeable, Serializable {
      * @param filename the file name of the document
      * @throws IOException on error
      */
-    public PdfReader(final String filename) throws IOException {
+    public PdfReader(String filename) throws IOException {
         this(filename, new ReaderProperties());
 
     }
@@ -480,8 +480,8 @@ public class PdfReader implements Closeable, Serializable {
         PdfTokenizer saveTokens = tokens;
         try {
             tokens = new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(bytes)));
-            int address[] = new int[n];
-            int objNumber[] = new int[n];
+            int[] address = new int[n];
+            int[] objNumber = new int[n];
             boolean ok = true;
             for (int k = 0; k < n; ++k) {
                 ok = tokens.nextToken();
@@ -783,7 +783,7 @@ public class PdfReader implements Closeable, Serializable {
         return trailer;
     }
 
-    protected boolean readXrefStream(final long ptr) throws IOException {
+    protected boolean readXrefStream(long ptr) throws IOException {
         tokens.seek(ptr);
         if (!tokens.nextToken()) {
             return false;
@@ -910,7 +910,7 @@ public class PdfReader implements Closeable, Serializable {
             if (!tokens.readLineSegment(buffer, true)) // added boolean because of mailing list issue (17 Feb. 2014)
                 break;
             if (buffer.get(0) >= '0' && buffer.get(0) <= '9') {
-                int obj[] = PdfTokenizer.checkObjectStart(lineTokeniser);
+                int[] obj = PdfTokenizer.checkObjectStart(lineTokeniser);
                 if (obj == null)
                     continue;
                 int num = obj[0];
@@ -1039,7 +1039,7 @@ public class PdfReader implements Closeable, Serializable {
         }
     }
 
-    private void checkPdfStreamLength(final PdfStream pdfStream) throws IOException {
+    private void checkPdfStreamLength(PdfStream pdfStream) throws IOException {
         if (!correctStreamLength)
             return;
         long fileLength = tokens.length();

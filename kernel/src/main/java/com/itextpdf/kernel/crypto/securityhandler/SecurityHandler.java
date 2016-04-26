@@ -72,7 +72,7 @@ public abstract class SecurityHandler {
     /**
      * Work area to prepare the object/generation bytes
      */
-    protected byte extra[] = new byte[5];
+    protected byte[] extra = new byte[5];
 
     public SecurityHandler() {
         try {

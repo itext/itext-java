@@ -47,6 +47,7 @@ package com.itextpdf.layout;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 
 /**
@@ -69,7 +70,7 @@ public class ColumnDocumentRenderer extends DocumentRenderer {
 
     @Override
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
-        if (overflowResult != null && overflowResult.getAreaBreak() != null && overflowResult.getAreaBreak().getType() != Property.AreaBreakType.NEW_AREA) {
+        if (overflowResult != null && overflowResult.getAreaBreak() != null && overflowResult.getAreaBreak().getType() != AreaBreakType.NEW_AREA) {
             nextAreaNumber = 0;
         }
         if (nextAreaNumber % columns.length == 0) {

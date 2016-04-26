@@ -173,7 +173,7 @@ public class TagTreePointer implements Serializable {
      * @param role role of the new tag.
      * @return this {@link TagTreePointer} instance.
      */
-    public TagTreePointer addTag(final PdfName role) {
+    public TagTreePointer addTag(PdfName role) {
         addTag(-1, role);
         return this;
     }
@@ -187,7 +187,7 @@ public class TagTreePointer implements Serializable {
      * @param role role of the new tag.
      * @return this {@link TagTreePointer} instance.
      */
-    public TagTreePointer addTag(int index, final PdfName role) {
+    public TagTreePointer addTag(int index, PdfName role) {
         addTag(index, new DummyAccessibleElement(role, null));
         return this;
     }

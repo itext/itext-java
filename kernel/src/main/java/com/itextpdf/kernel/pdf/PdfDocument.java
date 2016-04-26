@@ -76,9 +76,6 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     private static final long serialVersionUID = -7041578979319799646L;
@@ -245,15 +242,15 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      *
      * @param xmpMetadata The xmpMetadata to set.
      */
-    protected void setXmpMetadata(final byte[] xmpMetadata) {
+    protected void setXmpMetadata(byte[] xmpMetadata) {
         this.xmpMetadata = xmpMetadata;
     }
 
-    public void setXmpMetadata(final XMPMeta xmpMeta, final SerializeOptions serializeOptions) throws XMPException {
+    public void setXmpMetadata(XMPMeta xmpMeta, SerializeOptions serializeOptions) throws XMPException {
         setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
     }
 
-    public void setXmpMetadata(final XMPMeta xmpMeta) throws XMPException {
+    public void setXmpMetadata(XMPMeta xmpMeta) throws XMPException {
         SerializeOptions serializeOptions = new SerializeOptions();
         serializeOptions.setPadding(2000);
         setXmpMetadata(xmpMeta, serializeOptions);
@@ -314,7 +311,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return xmpMetadata;
     }
 
-    public PdfObject getPdfObject(final int objNum) {
+    public PdfObject getPdfObject(int objNum) {
         checkClosingStatus();
         PdfIndirectReference reference = xref.get(objNum);
         if (reference == null) {
@@ -814,15 +811,14 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public TagStructureContext getTagStructureContext() {
         checkClosingStatus();
-        if (tagStructureContext != null) {
-            return tagStructureContext;
+        if (tagStructureContext == null) {
+            if (!isTagged()) {
+                throw new PdfException(PdfException.MustBeATaggedDocument);
+            }
+
+            initTagStructureContext();
         }
 
-        if (!isTagged()) {
-            throw new PdfException(PdfException.MustBeATaggedDocument);
-        }
-
-        tagStructureContext = new TagStructureContext(this);
         return tagStructureContext;
     }
 
@@ -1211,6 +1207,19 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         this.userProperties = userProperties;
     }
 
+    /**
+     * Gets list of indirect references.
+     *
+     * @return list of indirect references.
+     */
+    PdfXrefTable getXref() {
+        return xref;
+    }
+
+    protected void initTagStructureContext() {
+        tagStructureContext = new TagStructureContext(this);
+    }
+
     protected void storeLinkAnnotation(PdfPage page, PdfLinkAnnotation annotation) {
         List<PdfLinkAnnotation> pageAnnotations = linkAnnotations.get(page);
         if (pageAnnotations == null) {
@@ -1339,15 +1348,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotOpenDocument, e, this);
         }
-    }
-
-    /**
-     * Gets list of indirect references.
-     *
-     * @return list of indirect references.
-     */
-    PdfXrefTable getXref() {
-        return xref;
     }
 
     /**

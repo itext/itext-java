@@ -69,7 +69,7 @@ public final class ArrayUtil {
         return array;
     }
 
-    public static int hashCode(byte a[]) {
+    public static int hashCode(byte[] a) {
         if (a == null)
             return 0;
 

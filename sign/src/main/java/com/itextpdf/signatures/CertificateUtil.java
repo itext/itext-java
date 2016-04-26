@@ -194,7 +194,7 @@ public class CertificateUtil {
      * @throws IOException
      */
     public static String getTSAURL(X509Certificate certificate) {
-        byte der[] = certificate.getExtensionValue(SecurityIDs.ID_TSA);
+        byte[] der = certificate.getExtensionValue(SecurityIDs.ID_TSA);
         if(der == null)
             return null;
         ASN1Primitive asn1obj;

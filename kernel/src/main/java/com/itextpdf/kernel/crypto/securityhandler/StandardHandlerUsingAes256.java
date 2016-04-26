@@ -70,7 +70,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
 
     protected boolean encryptMetadata;
 
-    public StandardHandlerUsingAes256(PdfDictionary encryptionDictionary, byte userPassword[], byte ownerPassword[],
+    public StandardHandlerUsingAes256(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,
                                       int permissions, boolean encryptMetadata, boolean embeddedFilesOnly) {
         initKeyAndFillDictionary(encryptionDictionary, userPassword, ownerPassword, permissions, encryptMetadata, embeddedFilesOnly);
     }

@@ -50,6 +50,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
@@ -90,6 +91,7 @@ public class TagStructureContext implements Serializable {
     private PdfDocument document;
     private PdfStructElem rootTagElement;
     protected TagTreePointer autoTaggingPointer;
+    private PdfVersion tagStructureTargetVersion;
     private boolean forbidUnknownRoles;
 
     /**
@@ -113,6 +115,10 @@ public class TagStructureContext implements Serializable {
      * @param document the document which tag structure will be manipulated with this class.
      */
     public TagStructureContext(PdfDocument document) {
+        this(document, document.getPdfVersion());
+    }
+
+    public TagStructureContext(PdfDocument document, PdfVersion tagStructureTargetVersion) {
         this.document = document;
         if (!document.isTagged()) {
             throw new PdfException(PdfException.MustBeATaggedDocument);
@@ -120,6 +126,7 @@ public class TagStructureContext implements Serializable {
         connectedModelToStruct = new HashMap<>();
         connectedStructToModel = new HashMap<>();
 
+        this.tagStructureTargetVersion = tagStructureTargetVersion;
         forbidUnknownRoles = true;
 
         normalizeDocumentRootTag();
@@ -135,6 +142,10 @@ public class TagStructureContext implements Serializable {
     public TagStructureContext setForbidUnknownRoles(boolean forbidUnknownRoles) {
         this.forbidUnknownRoles = forbidUnknownRoles;
         return this;
+    }
+
+    public PdfVersion getTagStructureTargetVersion() {
+        return tagStructureTargetVersion;
     }
 
     /**

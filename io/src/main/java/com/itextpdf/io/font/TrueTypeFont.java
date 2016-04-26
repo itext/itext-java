@@ -359,7 +359,7 @@ public class TrueTypeFont extends FontProgram {
                 ++count;
             bit <<= 1;
         }
-        String ret[] = new String[count];
+        String[] ret = new String[count];
         count = 0;
         bit = 1;
         for (int k = 0; k < 64; ++k) {

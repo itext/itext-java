@@ -95,6 +95,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     public static Set<PdfName> blockLevelRoles = new HashSet<PdfName>() {{
         add(PdfName.P);
+        add(PdfName.H);
         add(PdfName.H1);
         add(PdfName.H2);
         add(PdfName.H3);
@@ -162,11 +163,10 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         getPdfObject().put(PdfName.Pg, annot.getPage().getPdfObject());
     }
 
-    public PdfStructElem(PdfDocument document, final PdfName role) {
-        this(new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
-            put(PdfName.Type, PdfName.StructElem);
-            put(PdfName.S, role);
-        }}).makeIndirect(document));
+    public PdfStructElem(PdfDocument document, PdfName role) {
+        this(new PdfDictionary().makeIndirect(document));
+        getPdfObject().put(PdfName.Type, PdfName.StructElem);
+        getPdfObject().put(PdfName.S, role);
     }
 
     /**
@@ -192,7 +192,6 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
             attributes = new PdfDictionary();
             setAttributes(attributes);
         }
-
         return attributes;
     }
 

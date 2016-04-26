@@ -85,7 +85,7 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param range an array of pairs of integers that specifies the byte range used in the digest calculation. A pair consists of the starting byte offset and the length
      */
-    public void setByteRange(int range[]) {
+    public void setByteRange(int[] range) {
         PdfArray array = new PdfArray();
 
         for (int k = 0; k < range.length; ++k) {

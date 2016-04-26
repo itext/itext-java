@@ -119,7 +119,7 @@ public class CertificateVerification {
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
      */
-    public static List<VerificationException> verifyCertificates(Certificate certs[], KeyStore keystore, Collection<CRL> crls, Calendar calendar) {
+    public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore, Collection<CRL> crls, Calendar calendar) {
         List<VerificationException> result = new ArrayList<>();
         if (calendar == null)
             calendar = new GregorianCalendar();
@@ -181,7 +181,7 @@ public class CertificateVerification {
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
      */
-    public static List<VerificationException> verifyCertificates(Certificate certs[], KeyStore keystore, Calendar calendar) {
+    public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore, Calendar calendar) {
         return verifyCertificates(certs, keystore, null, calendar);
     }
 

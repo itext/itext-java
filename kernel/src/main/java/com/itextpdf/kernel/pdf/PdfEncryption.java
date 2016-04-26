@@ -106,7 +106,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
      *                       Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
      * @throws PdfException if the document is already open
      */
-    public PdfEncryption(byte userPassword[], byte ownerPassword[], int permissions, int encryptionType, byte[] documentId) {
+    public PdfEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionType, byte[] documentId) {
         super(new PdfDictionary());
         this.documentId = documentId;
 
@@ -153,7 +153,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
      * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128 or ENCRYPTION_AES128.
      * @throws PdfException if the document is already open
      */
-    public PdfEncryption(final Certificate[] certs, final int[] permissions, final int encryptionType) {
+    public PdfEncryption(Certificate[] certs, int[] permissions, int encryptionType) {
         super(new PdfDictionary());
         int revision = setCryptoMode(encryptionType);
         switch (revision) {
@@ -242,7 +242,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         return md5.digest(s.getBytes());
     }
 
-    public static PdfObject createInfoId(byte id[], boolean modified) {
+    public static PdfObject createInfoId(byte[] id, boolean modified) {
         com.itextpdf.io.source.ByteBuffer buf = new com.itextpdf.io.source.ByteBuffer(90);
         buf.append('[').append('<');
         if (id.length != 16)

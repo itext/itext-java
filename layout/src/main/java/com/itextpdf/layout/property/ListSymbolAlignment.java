@@ -42,32 +42,19 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.io.image;
+package com.itextpdf.layout.property;
 
-import java.net.URL;
-
-public class BmpImage extends RawImage {
-
-    private int size;
-    private boolean noHeader;
-
-    protected BmpImage(URL url, boolean noHeader, int size) {
-        super(url, ImageType.BMP);
-        this.noHeader = noHeader;
-        this.size = size;
-    }
-
-    protected BmpImage(byte[] bytes, boolean noHeader, int size) {
-        super(bytes, ImageType.BMP);
-        this.noHeader = noHeader;
-        this.size = size;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public boolean isNoHeader() {
-        return noHeader;
-    }
+/**
+ * A specialized enum containing alignment properties for list symbols.
+ * {@link ListSymbolAlignment#LEFT} means that the items will be aligned as follows:
+ * 9.  Item 9
+ * 10. Item 10
+ *
+ * Whereas {@link ListSymbolAlignment#RIGHT} means the items will be aligned as follows:
+ *  9. Item 9
+ * 10. Item 10
+ */
+public enum ListSymbolAlignment {
+    RIGHT,
+    LEFT
 }
