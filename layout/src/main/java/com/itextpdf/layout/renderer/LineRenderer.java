@@ -48,13 +48,17 @@ import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.Leading;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.TabStop;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.LineLayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
+import com.itextpdf.layout.property.TabAlignment;
+import com.itextpdf.layout.property.UnitValue;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -79,17 +83,17 @@ public class LineRenderer extends AbstractRenderer {
         maxDescent = 0;
         int childPos = 0;
 
-        Property.BaseDirection baseDirection = getProperty(Property.BASE_DIRECTION);
+        BaseDirection baseDirection = getProperty(Property.BASE_DIRECTION);
         for (IRenderer renderer : childRenderers) {
             if (renderer instanceof TextRenderer) {
                 ((TextRenderer) renderer).applyOtf();
-                if (baseDirection == null || baseDirection == Property.BaseDirection.NO_BIDI) {
+                if (baseDirection == null || baseDirection == BaseDirection.NO_BIDI) {
                     baseDirection = renderer.getOwnProperty(Property.BASE_DIRECTION);
                 }
             }
         }
 
-        if (levels == null && baseDirection != null && baseDirection != Property.BaseDirection.NO_BIDI) {
+        if (levels == null && baseDirection != null && baseDirection != BaseDirection.NO_BIDI) {
             List<Integer> unicodeIdsLst = new ArrayList<>();
             for (IRenderer child : childRenderers) {
                 if (child instanceof TextRenderer) {
@@ -139,7 +143,7 @@ public class LineRenderer extends AbstractRenderer {
                 ((TextRenderer) childRenderer).trimFirst();
             }
 
-            if (nextTabStop != null && nextTabStop.getTabAlignment() == Property.TabAlignment.ANCHOR
+            if (nextTabStop != null && nextTabStop.getTabAlignment() == TabAlignment.ANCHOR
                                                && childRenderer instanceof TextRenderer) {
                 childRenderer.setProperty(Property.TAB_ANCHOR, nextTabStop.getTabAnchor());
             }
@@ -230,7 +234,7 @@ public class LineRenderer extends AbstractRenderer {
 
         // Consider for now that all the children have the same font, and that after reordering text pieces
         // can be reordered, but cannot be split.
-        if (baseDirection != null && baseDirection != Property.BaseDirection.NO_BIDI) {
+        if (baseDirection != null && baseDirection != BaseDirection.NO_BIDI) {
             List<IRenderer> children = null;
             if (result.getStatus() == LayoutResult.PARTIAL) {
                 children = result.getSplitRenderer().getChildRenderers();
@@ -354,11 +358,11 @@ public class LineRenderer extends AbstractRenderer {
         return occupiedArea.getBBox().getY() - maxDescent;
     }
 
-    public float getLeadingValue(Property.Leading leading) {
+    public float getLeadingValue(Leading leading) {
         switch (leading.getType()) {
-            case Property.Leading.FIXED:
+            case Leading.FIXED:
                 return leading.getValue();
-            case Property.Leading.MULTIPLIED:
+            case Leading.MULTIPLIED:
                 return occupiedArea.getBBox().getHeight() * leading.getValue();
             default:
                 throw new IllegalStateException();
@@ -541,9 +545,9 @@ public class LineRenderer extends AbstractRenderer {
         }
 
         childRenderer.setProperty(Property.TAB_LEADER, nextTabStop.getTabLeader());
-        childRenderer.setProperty(Property.WIDTH, Property.UnitValue.createPointValue(nextTabStop.getTabPosition() - curWidth));
+        childRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(nextTabStop.getTabPosition() - curWidth));
         childRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
-        if (nextTabStop.getTabAlignment() == Property.TabAlignment.LEFT) {
+        if (nextTabStop.getTabAlignment() == TabAlignment.LEFT) {
             return null;
         }
 
@@ -580,7 +584,7 @@ public class LineRenderer extends AbstractRenderer {
         if (curWidth + tabWidth + childWidth > layoutBox.getWidth())
             tabWidth -= (curWidth + childWidth + tabWidth) - layoutBox.getWidth();
 
-        tabRenderer.setProperty(Property.WIDTH, Property.UnitValue.createPointValue(tabWidth));
+        tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(tabWidth));
         tabRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
         return tabWidth;
     }
@@ -590,7 +594,7 @@ public class LineRenderer extends AbstractRenderer {
         Float tabWidth = tabDefault - curWidth % tabDefault;
         if (curWidth + tabWidth > lineWidth)
             tabWidth = lineWidth - curWidth;
-        tabRenderer.setProperty(Property.WIDTH, Property.UnitValue.createPointValue(tabWidth));
+        tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(tabWidth));
         tabRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
     }
 

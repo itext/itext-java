@@ -79,8 +79,10 @@ import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.layout.Canvas;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.VerticalAlignment;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -2183,15 +2185,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             justification = 0;
         }
         float x = 0;
-        Property.TextAlignment textAlignment = Property.TextAlignment.LEFT;
+        TextAlignment textAlignment = TextAlignment.LEFT;
         if (justification == ALIGN_RIGHT) {
-            textAlignment = Property.TextAlignment.RIGHT;
+            textAlignment = TextAlignment.RIGHT;
             x = rect.getWidth();
         } else if (justification == ALIGN_CENTER) {
-            textAlignment = Property.TextAlignment.CENTER;
+            textAlignment = TextAlignment.CENTER;
             x = rect.getWidth() / 2;
         }
-        new Canvas(canvas, getDocument(), new Rectangle(0, -height, 0, 2 * height)).showTextAligned(paragraph, x, rect.getHeight() / 2, textAlignment, Property.VerticalAlignment.MIDDLE);
+        new Canvas(canvas, getDocument(), new Rectangle(0, -height, 0, 2 * height)).showTextAligned(paragraph, x, rect.getHeight() / 2, textAlignment, VerticalAlignment.MIDDLE);
 
         canvas.
                 restoreState().
@@ -2517,8 +2519,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
 
         Paragraph paragraph = new Paragraph(text).setFont(font).setFontSize(fontSize).setMargin(0).setMultipliedLeading(1).
-                setVerticalAlignment(Property.VerticalAlignment.MIDDLE);
-        new Canvas(canvas, getDocument(), new Rectangle(0, -height, width, 2 * height)).showTextAligned(paragraph, width / 2, height / 2, Property.TextAlignment.CENTER, Property.VerticalAlignment.MIDDLE);
+                setVerticalAlignment(VerticalAlignment.MIDDLE);
+        new Canvas(canvas, getDocument(), new Rectangle(0, -height, width, 2 * height)).showTextAligned(paragraph, width / 2, height / 2, TextAlignment.CENTER, VerticalAlignment.MIDDLE);
     }
 
     /**

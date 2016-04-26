@@ -50,13 +50,15 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.VerticalAlignment;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -188,7 +190,7 @@ public class TableRenderer extends AbstractRenderer {
         horizontalBorders.add(tableModel.getLastRowBottomBorder());
 
         for (int row = 0; row < rows.size(); row++) {
-            Property.VerticalAlignment verticalAlignment = null;
+            VerticalAlignment verticalAlignment = null;
             CellRenderer[] currentRow = rows.get(row);
             float rowHeight = 0;
             boolean split = false;
@@ -292,7 +294,7 @@ public class TableRenderer extends AbstractRenderer {
                                         if (rows.get(addRow)[addCol] != null) {
                                             CellRenderer addRenderer = rows.get(addRow)[addCol];
                                             verticalAlignment = addRenderer.getProperty(Property.VERTICAL_ALIGNMENT);
-                                            if (verticalAlignment != null && verticalAlignment.equals(Property.VerticalAlignment.BOTTOM)) {
+                                            if (verticalAlignment != null && verticalAlignment.equals(VerticalAlignment.BOTTOM)) {
                                                 if (row + addRenderer.getPropertyAsInteger(Property.ROWSPAN) - 1 < addRow) {
                                                     cellProcessingQueue.add(new CellRendererInfo(addRenderer, addCol, addRow));
                                                     cellWithBigRowspanAdded = true;

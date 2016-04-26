@@ -61,7 +61,10 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.FontKerning;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.hyphenation.Hyphenation;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
@@ -70,6 +73,7 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
+import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
 import java.util.Collection;
@@ -396,7 +400,7 @@ public class TextRenderer extends AbstractRenderer {
     public void applyOtf() {
         convertWaitingStringToGlyphLine();
         Character.UnicodeScript script = getProperty(Property.FONT_SCRIPT);
-        Property.FontKerning fontKerning = getProperty(Property.FONT_KERNING);
+        FontKerning fontKerning = getProperty(Property.FONT_KERNING);
         PdfFont font = getPropertyAsFont(Property.FONT);
         if (!otfFeaturesApplied) {
             if (script == null && TypographyUtils.isTypographyModuleInitialized()) {
@@ -424,7 +428,7 @@ public class TextRenderer extends AbstractRenderer {
                     }
                 }
                 if (selectScript == Character.UnicodeScript.ARABIC || selectScript == Character.UnicodeScript.HEBREW && parent instanceof LineRenderer) {
-                    setProperty(Property.BASE_DIRECTION, Property.BaseDirection.DEFAULT_BIDI);
+                    setProperty(Property.BASE_DIRECTION, BaseDirection.DEFAULT_BIDI);
                 }
                 if (selectScript != null && supportedScripts != null && supportedScripts.contains(selectScript)) {
                     script = selectScript;
@@ -435,7 +439,7 @@ public class TextRenderer extends AbstractRenderer {
                 TypographyUtils.applyOtfScript(font.getFontProgram(), text, script);
             }
 
-            if (fontKerning == Property.FontKerning.YES) {
+            if (fontKerning == FontKerning.YES) {
                 TypographyUtils.applyKerning(font.getFontProgram(), text);
             }
 
@@ -572,12 +576,12 @@ public class TextRenderer extends AbstractRenderer {
             Object underlines = getProperty(Property.UNDERLINE);
             if (underlines instanceof List) {
                 for (Object underline : (List) underlines) {
-                    if (underline instanceof Property.Underline) {
-                        drawSingleUnderline((Property.Underline) underline, fontColor, canvas, fontSize, italicSimulation ? ITALIC_ANGLE : 0);
+                    if (underline instanceof Underline) {
+                        drawSingleUnderline((Underline) underline, fontColor, canvas, fontSize, italicSimulation ? ITALIC_ANGLE : 0);
                     }
                 }
-            } else if (underlines instanceof Property.Underline) {
-                drawSingleUnderline((Property.Underline) underlines, fontColor, canvas, fontSize, italicSimulation ? ITALIC_ANGLE : 0);
+            } else if (underlines instanceof Underline) {
+                drawSingleUnderline((Underline) underlines, fontColor, canvas, fontSize, italicSimulation ? ITALIC_ANGLE : 0);
             }
         }
 
@@ -595,7 +599,7 @@ public class TextRenderer extends AbstractRenderer {
 
     @Override
     public void drawBackground(DrawContext drawContext) {
-        Property.Background background = getProperty(Property.BACKGROUND);
+        Background background = getProperty(Property.BACKGROUND);
         Float textRise = getPropertyAsFloat(Property.TEXT_RISE);
         float bottomBBoxY = occupiedArea.getBBox().getY();
         float leftBBoxX = occupiedArea.getBBox().getX();
@@ -849,7 +853,7 @@ public class TextRenderer extends AbstractRenderer {
         return new TextRenderer[]{splitRenderer, overflowRenderer};
     }
 
-    protected void drawSingleUnderline(Property.Underline underline, Color fontStrokeColor, PdfCanvas canvas, float fontSize, float italicAngleTan) {
+    protected void drawSingleUnderline(Underline underline, Color fontStrokeColor, PdfCanvas canvas, float fontSize, float italicAngleTan) {
         Color underlineColor = underline.getColor() != null ? underline.getColor() : fontStrokeColor;
         canvas.saveState();
 

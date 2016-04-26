@@ -50,6 +50,14 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.layout.layout.LayoutPosition;
+import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.FontKerning;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.Underline;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
 import java.util.Arrays;
@@ -123,9 +131,9 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
      * Gets the width property of the Element.
      * 
      * @return the width of the element, with a value and a measurement unit.
-     * @see Property.UnitValue
+     * @see UnitValue
      */
-    public Property.UnitValue getWidth() {
+    public UnitValue getWidth() {
         return getProperty(Property.WIDTH);
     }
 
@@ -136,7 +144,7 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
      * @return this Element.
      */
     public Type setWidth(float width) {
-        return setProperty(Property.WIDTH, Property.UnitValue.createPointValue(width));
+        return setProperty(Property.WIDTH, UnitValue.createPointValue(width));
     }
 
     /**
@@ -146,16 +154,16 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
      * @return this Element.
      */
     public Type setWidthPercent(float widthPercent) {
-        return setProperty(Property.WIDTH, Property.UnitValue.createPercentValue(widthPercent));
+        return setProperty(Property.WIDTH, UnitValue.createPercentValue(widthPercent));
     }
 
     /**
-     * Sets the width property of the Element with a {@link com.itextpdf.layout.Property.UnitValue}.
+     * Sets the width property of the Element with a {@link UnitValue}.
      * 
-     * @param width a {@link com.itextpdf.layout.Property.UnitValue} object
+     * @param width a {@link UnitValue} object
      * @return this Element.
      */
-    public Type setWidth(Property.UnitValue width) {
+    public Type setWidth(UnitValue width) {
         return setProperty(Property.WIDTH, width);
     }
     
@@ -214,7 +222,7 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
      * @return this Element.
      */
     public Type setFixedPosition(float x, float y, float width) {
-        return setFixedPosition(x, y, Property.UnitValue.createPointValue(width));
+        return setFixedPosition(x, y, UnitValue.createPointValue(width));
     }
 
     /**
@@ -224,10 +232,10 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
      * 
      * @param x horizontal position on the page
      * @param y vertical position on the page
-     * @param width a {@link com.itextpdf.layout.Property.UnitValue}
+     * @param width a {@link UnitValue}
      * @return this Element.
      */
-    public Type setFixedPosition(float x, float y, Property.UnitValue width) {
+    public Type setFixedPosition(float x, float y, UnitValue width) {
         return (Type) setProperty(Property.POSITION, LayoutPosition.FIXED).
                 setProperty(Property.X, x).
                 setProperty(Property.Y, y).
@@ -261,7 +269,7 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
      * @param width a floating point value measured in points.
      * @return this Element.
      */
-    public Type setFixedPosition(int pageNumber, float x, float y, Property.UnitValue width) {
+    public Type setFixedPosition(int pageNumber, float x, float y, UnitValue width) {
         return (Type) setFixedPosition(x, y, width).
                 setProperty(Property.PAGE_NUMBER, pageNumber);
     }
@@ -275,10 +283,10 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
     /**
      * Sets the horizontal alignment of this Element.
      * 
-     * @param horizontalAlignment an enum value of type {@link com.itextpdf.layout.Property.HorizontalAlignment}
+     * @param horizontalAlignment an enum value of type {@link HorizontalAlignment}
      * @return this Element.
      */
-    public Type setHorizontalAlignment(Property.HorizontalAlignment horizontalAlignment) {
+    public Type setHorizontalAlignment(HorizontalAlignment horizontalAlignment) {
         return setProperty(Property.HORIZONTAL_ALIGNMENT, horizontalAlignment);
     }
 
@@ -315,10 +323,10 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
     /**
      * Sets the font size of this Element.
      * 
-     * @param alignment an enum value of type {@link com.itextpdf.layout.Property.TextAlignment}
+     * @param alignment an enum value of type {@link TextAlignment}
      * @return this Element.
      */
-    public Type setTextAlignment(Property.TextAlignment alignment) {
+    public Type setTextAlignment(TextAlignment alignment) {
         return setProperty(Property.TEXT_ALIGNMENT, alignment);
     }
 
@@ -352,7 +360,7 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
      * @param fontKerning an enum value as a boolean wrapper specifying whether or not to apply kerning
      * @return this Element.
      */
-    public Type setFontKerning(Property.FontKerning fontKerning) {
+    public Type setFontKerning(FontKerning fontKerning) {
         return setProperty(Property.FONT_KERNING, fontKerning);
     }
 
@@ -378,7 +386,7 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
      * @return this Element.
      */
     public Type setBackgroundColor(Color backgroundColor, float extraLeft, float extraTop, float extraRight, float extraBottom) {
-        return setProperty(Property.BACKGROUND, new Property.Background(backgroundColor, extraLeft, extraTop, extraRight, extraBottom));
+        return setProperty(Property.BACKGROUND, new Background(backgroundColor, extraLeft, extraTop, extraRight, extraBottom));
     }
 
     /**
@@ -590,12 +598,12 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
      * @return this element
      */
     public Type setUnderline(Color color, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {
-        Property.Underline newUnderline = new Property.Underline(color, thickness, thicknessMul, yPosition, yPositionMul, lineCapStyle);
+        Underline newUnderline = new Underline(color, thickness, thicknessMul, yPosition, yPositionMul, lineCapStyle);
         Object currentProperty = getProperty(Property.UNDERLINE);
         if (currentProperty instanceof List) {
             ((List) currentProperty).add(newUnderline);
-        } else if (currentProperty instanceof Property.Underline) {
-            setProperty(Property.UNDERLINE, Arrays.asList((Property.Underline)currentProperty, newUnderline));
+        } else if (currentProperty instanceof Underline) {
+            setProperty(Property.UNDERLINE, Arrays.asList((Underline)currentProperty, newUnderline));
         } else {
             setProperty(Property.UNDERLINE, newUnderline);
         }
@@ -609,7 +617,7 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
      * @param baseDirection base direction
      * @return this element
      */
-    public Type setBaseDirection(Property.BaseDirection baseDirection) {
+    public Type setBaseDirection(BaseDirection baseDirection) {
         return setProperty(Property.BASE_DIRECTION, baseDirection);
     }
 

@@ -46,7 +46,8 @@ package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Leading;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
 import java.util.Arrays;
@@ -165,7 +166,7 @@ public class Paragraph extends BlockElement<Paragraph> {
     public <T> T getDefaultProperty(Property property) {
         switch (property) {
             case LEADING:
-                return (T) new Property.Leading(Property.Leading.MULTIPLIED, childElements.size() == 1 && childElements.get(0) instanceof Image ? 1 : 1.35f);
+                return (T) new Leading(Leading.MULTIPLIED, childElements.size() == 1 && childElements.get(0) instanceof Image ? 1 : 1.35f);
             case FIRST_LINE_INDENT:
                 return (T) Float.valueOf(0);
             case MARGIN_TOP:
@@ -192,28 +193,28 @@ public class Paragraph extends BlockElement<Paragraph> {
     }
 
     /**
-     * Sets the leading value, using the {@link Property.Leading#FIXED} strategy.
+     * Sets the leading value, using the {@link Leading#FIXED} strategy.
      * 
      * @param <T> the runtime type of this object
      * @param leading the new leading value
      * @return this Paragraph
-     * @see Property.Leading
+     * @see Leading
      */
     public <T extends Paragraph> T setFixedLeading(float leading) {
-        setProperty(Property.LEADING, new Property.Leading(Property.Leading.FIXED, leading));
+        setProperty(Property.LEADING, new Leading(Leading.FIXED, leading));
         return (T) this;
     }
 
     /**
-     * Sets the leading value, using the {@link Property.Leading#MULTIPLIED} strategy.
+     * Sets the leading value, using the {@link Leading#MULTIPLIED} strategy.
      * 
      * @param <T> the runtime type of this object
      * @param leading the new leading value
      * @return this Paragraph
-     * @see Property.Leading
+     * @see Leading
      */
     public <T extends Paragraph> T setMultipliedLeading(float leading) {
-        setProperty(Property.LEADING, new Property.Leading(Property.Leading.MULTIPLIED, leading));
+        setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, leading));
         return (T) this;
     }
 

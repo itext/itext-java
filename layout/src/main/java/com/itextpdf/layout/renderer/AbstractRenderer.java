@@ -58,10 +58,13 @@ import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.IPropertyContainer;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
+import com.itextpdf.layout.property.UnitValue;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -324,7 +327,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param drawContext the context (canvas, document, etc) of this drawing operation.
      */
     public void drawBackground(DrawContext drawContext) {
-        Property.Background background = getProperty(Property.BACKGROUND);
+        Background background = getProperty(Property.BACKGROUND);
         if (background != null) {
 
             Rectangle bBox = getOccupiedAreaBBox();
@@ -497,11 +500,11 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected Float retrieveUnitValue(float basePercentValue, Property property) {
-        Property.UnitValue value = getProperty(property);
+        UnitValue value = getProperty(property);
         if (value != null) {
-            if (value.getUnitType() == Property.UnitValue.POINT) {
+            if (value.getUnitType() == UnitValue.POINT) {
                 return value.getValue();
-            } else if (value.getUnitType() == Property.UnitValue.PERCENT) {
+            } else if (value.getUnitType() == UnitValue.PERCENT) {
                 return value.getValue() * basePercentValue / 100;
             } else {
                 throw new IllegalStateException("invalid unit type");
@@ -617,8 +620,8 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void alignChildHorizontally(IRenderer childRenderer, float availableWidth) {
-        Property.HorizontalAlignment horizontalAlignment = childRenderer.getProperty(Property.HORIZONTAL_ALIGNMENT);
-        if (horizontalAlignment != null && horizontalAlignment != Property.HorizontalAlignment.LEFT) {
+        HorizontalAlignment horizontalAlignment = childRenderer.getProperty(Property.HORIZONTAL_ALIGNMENT);
+        if (horizontalAlignment != null && horizontalAlignment != HorizontalAlignment.LEFT) {
             float freeSpace = availableWidth - childRenderer.getOccupiedArea().getBBox().getWidth();
             switch (horizontalAlignment) {
                 case RIGHT:

@@ -47,7 +47,8 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.ListSymbolAlignment;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -117,9 +118,9 @@ public class ListItemRenderer extends BlockRenderer {
                         symbolRenderer.getOccupiedArea().getBBox().getHeight() - symbolRenderer.getOccupiedArea().getBBox().getY());
             }
 
-            Property.ListSymbolAlignment listSymbolAlignment = parent.getProperty(Property.LIST_SYMBOL_ALIGNMENT);
+            ListSymbolAlignment listSymbolAlignment = parent.getProperty(Property.LIST_SYMBOL_ALIGNMENT);
             float xPosition = x - symbolRenderer.getOccupiedArea().getBBox().getX();
-            if (listSymbolAlignment == null || listSymbolAlignment == Property.ListSymbolAlignment.RIGHT) {
+            if (listSymbolAlignment == null || listSymbolAlignment == ListSymbolAlignment.RIGHT) {
                 xPosition += symbolAreaWidth - symbolRenderer.getOccupiedArea().getBBox().getWidth();
             }
             symbolRenderer.move(xPosition, 0);

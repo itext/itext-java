@@ -44,6 +44,8 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.layout.property.Property;
+
 /**
  * A generic Map-like interface that defines methods for storing and retrieving
  * objects by an enum key of the {@link Property} type.

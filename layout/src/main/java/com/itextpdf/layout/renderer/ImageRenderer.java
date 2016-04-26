@@ -56,12 +56,13 @@ import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.UnitValue;
 
 public class ImageRenderer extends AbstractRenderer {
 
@@ -233,11 +234,11 @@ public class ImageRenderer extends AbstractRenderer {
     protected ImageRenderer autoScale(LayoutArea area) {
         if (width > area.getBBox().getWidth()) {
             setProperty(Property.HEIGHT, area.getBBox().getWidth() / width * imageHeight);
-            setProperty(Property.WIDTH, Property.UnitValue.createPointValue(area.getBBox().getWidth()));
+            setProperty(Property.WIDTH, UnitValue.createPointValue(area.getBBox().getWidth()));
             // if still image is not scaled properly
             if (getPropertyAsFloat(Property.HEIGHT) > area.getBBox().getHeight()) {
-                setProperty(Property.WIDTH, Property.UnitValue.createPointValue(area.getBBox().getHeight() / getPropertyAsFloat(Property.HEIGHT) * ((Property.UnitValue)getProperty(Property.WIDTH)).getValue()));
-                setProperty(Property.HEIGHT, Property.UnitValue.createPointValue(area.getBBox().getHeight()));
+                setProperty(Property.WIDTH, UnitValue.createPointValue(area.getBBox().getHeight() / getPropertyAsFloat(Property.HEIGHT) * ((UnitValue)getProperty(Property.WIDTH)).getValue()));
+                setProperty(Property.HEIGHT, UnitValue.createPointValue(area.getBBox().getHeight()));
             }
         }
 

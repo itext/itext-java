@@ -48,7 +48,8 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.Property;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -87,7 +88,7 @@ class TypographyUtils {
         }
     }
 
-    static byte[] getBidiLevels(Property.BaseDirection baseDirection, int[] unicodeIds) {
+    static byte[] getBidiLevels(BaseDirection baseDirection, int[] unicodeIds) {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
             logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
         } else {

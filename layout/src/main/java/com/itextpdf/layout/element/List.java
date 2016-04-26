@@ -46,7 +46,9 @@ package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.ListSymbolAlignment;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.ListRenderer;
 
 /**
@@ -74,7 +76,7 @@ public class List extends BlockElement<List> {
      * Creates a List with a custom numbering type.
      * @param listNumberingType a prefix style
      */
-    public List(Property.ListNumberingType listNumberingType) {
+    public List(ListNumberingType listNumberingType) {
         super();
         setListSymbol(listNumberingType);
     }
@@ -152,13 +154,13 @@ public class List extends BlockElement<List> {
     /**
      * Sets the list numbering type to be used. This will create an ordered list,
      * i.e. every {@link ListItem} will have a unique prefix.
-     * @param listNumberingType the {@link Property.ListNumberingType} that will generate appropriate prefixes for the {@link ListItem}s.
+     * @param listNumberingType the {@link ListNumberingType} that will generate appropriate prefixes for the {@link ListItem}s.
      * @return this list.
      */
-    public List setListSymbol(Property.ListNumberingType listNumberingType) {
+    public List setListSymbol(ListNumberingType listNumberingType) {
         // Do not draw any points after ZapfDingbats special number symbol
-        if (listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_1 || listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_2 ||
-                listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_3 || listNumberingType == Property.ListNumberingType.ZAPF_DINGBATS_4) {
+        if (listNumberingType == ListNumberingType.ZAPF_DINGBATS_1 || listNumberingType == ListNumberingType.ZAPF_DINGBATS_2 ||
+                listNumberingType == ListNumberingType.ZAPF_DINGBATS_3 || listNumberingType == ListNumberingType.ZAPF_DINGBATS_4) {
             setPostSymbolText(" ");
         }
         return setProperty(Property.LIST_SYMBOL, listNumberingType);
@@ -166,15 +168,15 @@ public class List extends BlockElement<List> {
 
     /**
      * A specialized enum containing alignment properties for list symbols.
-     * {@link Property.ListSymbolAlignment#LEFT} means that the items will be aligned as follows:
+     * {@link ListSymbolAlignment#LEFT} means that the items will be aligned as follows:
      * 9.  Item 9
      * 10. Item 10
      *
-     * Whereas {@link Property.ListSymbolAlignment#RIGHT} means the items will be aligned as follows:
+     * Whereas {@link ListSymbolAlignment#RIGHT} means the items will be aligned as follows:
      *  9. Item 9
      * 10. Item 10
      */
-    public List setListSymbolAlignment(Property.ListSymbolAlignment alignment) {
+    public List setListSymbolAlignment(ListSymbolAlignment alignment) {
         return setProperty(Property.LIST_SYMBOL_ALIGNMENT, alignment);
     }
 

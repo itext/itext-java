@@ -12,6 +12,8 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.ListSymbolAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -43,15 +45,15 @@ public class ListTest extends ExtendedITextTest{
 
         Document document = new Document(pdfDocument);
 
-        List romanList2 = new List(Property.ListNumberingType.ROMAN_LOWER).setSymbolIndent(20).
+        List romanList2 = new List(ListNumberingType.ROMAN_LOWER).setSymbolIndent(20).
                 setMarginLeft(25).
                 add("One").add("Two").add("Three");
 
-        List romanList = new List(Property.ListNumberingType.ROMAN_LOWER).setSymbolIndent(20).
+        List romanList = new List(ListNumberingType.ROMAN_LOWER).setSymbolIndent(20).
                 setMarginLeft(25).
                 add("One").add("Two").add((ListItem) new ListItem("Three").add(romanList2));
 
-        List list = new List(Property.ListNumberingType.DECIMAL).setSymbolIndent(20).
+        List list = new List(ListNumberingType.DECIMAL).setSymbolIndent(20).
                 add("One").add("Two").add("Three").add("Four").add((ListItem) new ListItem("Roman List").add(romanList)).
                 add("Five").add("Six").add((ListItem) new ListItem().add(romanList2));
         document.add(list);
@@ -70,13 +72,13 @@ public class ListTest extends ExtendedITextTest{
         Document document = new Document(pdfDocument);
 
         java.util.List<List> lists = new ArrayList<>();
-        lists.add(new List(Property.ListNumberingType.DECIMAL));
-        lists.add(new List(Property.ListNumberingType.ROMAN_LOWER));
-        lists.add(new List(Property.ListNumberingType.ROMAN_UPPER));
-        lists.add(new List(Property.ListNumberingType.ENGLISH_LOWER));
-        lists.add(new List(Property.ListNumberingType.ENGLISH_UPPER));
-        lists.add(new List(Property.ListNumberingType.GREEK_LOWER));
-        lists.add(new List(Property.ListNumberingType.GREEK_UPPER));
+        lists.add(new List(ListNumberingType.DECIMAL));
+        lists.add(new List(ListNumberingType.ROMAN_LOWER));
+        lists.add(new List(ListNumberingType.ROMAN_UPPER));
+        lists.add(new List(ListNumberingType.ENGLISH_LOWER));
+        lists.add(new List(ListNumberingType.ENGLISH_UPPER));
+        lists.add(new List(ListNumberingType.GREEK_LOWER));
+        lists.add(new List(ListNumberingType.GREEK_UPPER));
 
         for (int i = 1; i <= 30; i++) {
             for (List list : lists) {
@@ -118,7 +120,7 @@ public class ListTest extends ExtendedITextTest{
         Document document = new Document(pdfDocument);
 
         Paragraph p = new Paragraph("Test String");
-        List list = new List(Property.ListNumberingType.DECIMAL).
+        List list = new List(ListNumberingType.DECIMAL).
                 add("first string").
                 add("second string").
                 add("third string").
@@ -144,7 +146,7 @@ public class ListTest extends ExtendedITextTest{
         Document document = new Document(pdfDocument);
 
         Paragraph p = new Paragraph("Test String");
-        List list = new List(Property.ListNumberingType.DECIMAL).
+        List list = new List(ListNumberingType.DECIMAL).
                 add("first string");
         ListItem item = new ListItem("second string").add(new Paragraph("third string"));
         list.add(item).
@@ -170,7 +172,7 @@ public class ListTest extends ExtendedITextTest{
         Document document = new Document(pdfDocument);
 
         Paragraph p = new Paragraph("Test String");
-        List list = new List(Property.ListNumberingType.DECIMAL).
+        List list = new List(ListNumberingType.DECIMAL).
                 setItemStartIndex(10).
                 add("first string").
                 add("second string").
@@ -196,7 +198,7 @@ public class ListTest extends ExtendedITextTest{
 
         Document document = new Document(pdfDocument);
 
-        List list = new List(Property.ListNumberingType.GREEK_LOWER);
+        List list = new List(ListNumberingType.GREEK_LOWER);
         list.add(new ListItem()).add(new ListItem()).add(new ListItem()).add("123").add((ListItem) new ListItem().add(new Div()));
 
         document.add(list);
@@ -214,7 +216,7 @@ public class ListTest extends ExtendedITextTest{
 
         Document document = new Document(pdfDocument);
 
-        List list = new List(Property.ListNumberingType.GREEK_LOWER);
+        List list = new List(ListNumberingType.GREEK_LOWER);
         PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
         list.add(new ListItem()).add(new ListItem(image)).add(new ListItem()).add("123").add((ListItem) new ListItem().add(new Div().setHeight(70).setBackgroundColor(Color.RED)));
@@ -234,7 +236,7 @@ public class ListTest extends ExtendedITextTest{
 
         Document document = new Document(pdfDocument);
 
-        List list = new List(Property.ListNumberingType.DECIMAL).setListSymbolAlignment(Property.ListSymbolAlignment.LEFT);
+        List list = new List(ListNumberingType.DECIMAL).setListSymbolAlignment(ListSymbolAlignment.LEFT);
 
         for (int i = 1; i <= 30; i++) {
             list.add("Item #" + i);
@@ -254,10 +256,10 @@ public class ListTest extends ExtendedITextTest{
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
         Document document = new Document(pdf);
         List list = new List();
-        list.add(new ListItem("The quick brown").setListSymbol(Property.ListNumberingType.ZAPF_DINGBATS_1))
-                .add(new ListItem("fox").setListSymbol(Property.ListNumberingType.ZAPF_DINGBATS_2))
-                .add(new ListItem("jumps over the lazy").setListSymbol(Property.ListNumberingType.ZAPF_DINGBATS_3))
-                .add(new ListItem("dog").setListSymbol(Property.ListNumberingType.ZAPF_DINGBATS_4));
+        list.add(new ListItem("The quick brown").setListSymbol(ListNumberingType.ZAPF_DINGBATS_1))
+                .add(new ListItem("fox").setListSymbol(ListNumberingType.ZAPF_DINGBATS_2))
+                .add(new ListItem("jumps over the lazy").setListSymbol(ListNumberingType.ZAPF_DINGBATS_3))
+                .add(new ListItem("dog").setListSymbol(ListNumberingType.ZAPF_DINGBATS_4));
         document.add(list);
         document.close();
 

@@ -7,6 +7,8 @@ import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.Cell;
@@ -438,7 +440,7 @@ public class RotationTest extends ExtendedITextTest{
         doc.add(new Paragraph(para1Text));
 
         Paragraph p = new Paragraph();
-        p.add("texttext").setTextAlignment(Property.TextAlignment.CENTER).setHorizontalAlignment(Property.HorizontalAlignment.CENTER);
+        p.add("texttext").setTextAlignment(TextAlignment.CENTER).setHorizontalAlignment(HorizontalAlignment.CENTER);
         p.setRotationAngle(Math.PI / 4);
         doc.add(p);
 

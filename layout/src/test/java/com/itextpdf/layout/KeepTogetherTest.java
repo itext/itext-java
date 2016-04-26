@@ -9,6 +9,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -106,7 +107,7 @@ public class KeepTogetherTest extends ExtendedITextTest{
         }
 
         List list = new List();
-        list.add("firstItem").add("secondItem").add("thirdItem").setKeepTogether(true).setListSymbol(Property.ListNumberingType.DECIMAL);
+        list.add("firstItem").add("secondItem").add("thirdItem").setKeepTogether(true).setListSymbol(ListNumberingType.DECIMAL);
         doc.add(list);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));

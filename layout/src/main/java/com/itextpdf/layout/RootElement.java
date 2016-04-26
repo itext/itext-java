@@ -54,6 +54,12 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.FontKerning;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
@@ -151,9 +157,9 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
                 case SPACING_RATIO:
                     return (T) Float.valueOf(0.75f);
                 case FONT_KERNING:
-                    return (T) Property.FontKerning.NO;
+                    return (T) FontKerning.NO;
                 case BASE_DIRECTION:
-                    return (T) Property.BaseDirection.NO_BIDI;
+                    return (T) BaseDirection.NO_BIDI;
                 default:
                     return null;
             }
@@ -194,7 +200,7 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @param textAlign horizontal alignment about the specified point
      * @return this object
      */
-    public <T extends RootElement> T showTextAligned(String text, float x, float y, Property.TextAlignment textAlign) {
+    public <T extends RootElement> T showTextAligned(String text, float x, float y, TextAlignment textAlign) {
         return showTextAligned(text, x, y, textAlign, 0);
     }
 
@@ -208,8 +214,8 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @param angle the angle of rotation applied to the text, in radians
      * @return this object
      */
-    public <T extends RootElement> T showTextAligned(String text, float x, float y, Property.TextAlignment textAlign, float angle) {
-        return showTextAligned(text, x, y, textAlign, Property.VerticalAlignment.BOTTOM, angle);
+    public <T extends RootElement> T showTextAligned(String text, float x, float y, TextAlignment textAlign, float angle) {
+        return showTextAligned(text, x, y, textAlign, VerticalAlignment.BOTTOM, angle);
     }
 
     /**
@@ -223,7 +229,7 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @param angle the angle of rotation applied to the text, in radians
      * @return this object
      */
-    public <T extends RootElement> T showTextAligned(String text, float x, float y, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
+    public <T extends RootElement> T showTextAligned(String text, float x, float y, TextAlignment textAlign, VerticalAlignment vertAlign, float angle) {
         Paragraph p = new Paragraph(text);
         return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, angle);
     }
@@ -239,8 +245,8 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @param angle the angle of rotation applied to the text, in radians
      * @return this object
      */
-    public <T extends RootElement> T showTextAlignedKerned(String text, float x, float y, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
-        Paragraph p = new Paragraph(text).setFontKerning(Property.FontKerning.YES);
+    public <T extends RootElement> T showTextAlignedKerned(String text, float x, float y, TextAlignment textAlign, VerticalAlignment vertAlign, float angle) {
+        Paragraph p = new Paragraph(text).setFontKerning(FontKerning.YES);
         return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, angle);
     }
 
@@ -254,8 +260,8 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @param textAlign horizontal alignment about the specified point
      * @return this object
      */
-    public <T extends RootElement> T showTextAligned(Paragraph p, float x, float y, Property.TextAlignment textAlign) {
-        return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, Property.VerticalAlignment.BOTTOM, 0);
+    public <T extends RootElement> T showTextAligned(Paragraph p, float x, float y, TextAlignment textAlign) {
+        return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, VerticalAlignment.BOTTOM, 0);
     }
 
     /**
@@ -269,7 +275,7 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
      * @param vertAlign vertical alignment about the specified point
      * @return this object
      */
-    public <T extends RootElement> T showTextAligned(Paragraph p, float x, float y, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign) {
+    public <T extends RootElement> T showTextAligned(Paragraph p, float x, float y, TextAlignment textAlign, VerticalAlignment vertAlign) {
         return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, 0);
     }
 
@@ -286,7 +292,7 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
          * @param angle the angle of rotation applied to the text, in radians
          * @return this object
          */
-    public <T extends RootElement> T showTextAligned(Paragraph p, float x, float y, int pageNumber, Property.TextAlignment textAlign, Property.VerticalAlignment vertAlign, float angle) {
+    public <T extends RootElement> T showTextAligned(Paragraph p, float x, float y, int pageNumber, TextAlignment textAlign, VerticalAlignment vertAlign, float angle) {
         Div div = new Div();
         div.setTextAlignment(textAlign).setVerticalAlignment(vertAlign);
         if (angle != 0) {
@@ -298,17 +304,17 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
         float divWidth = AbstractRenderer.INF;
         float divHeight = AbstractRenderer.INF;
         float divX = x, divY = y;
-        if (textAlign == Property.TextAlignment.CENTER) {
+        if (textAlign == TextAlignment.CENTER) {
             divX = x - divWidth / 2;
-            p.setHorizontalAlignment(Property.HorizontalAlignment.CENTER);
-        } else if (textAlign == Property.TextAlignment.RIGHT) {
+            p.setHorizontalAlignment(HorizontalAlignment.CENTER);
+        } else if (textAlign == TextAlignment.RIGHT) {
             divX = x - divWidth;
-            p.setHorizontalAlignment(Property.HorizontalAlignment.RIGHT);
+            p.setHorizontalAlignment(HorizontalAlignment.RIGHT);
         }
 
-        if (vertAlign == Property.VerticalAlignment.MIDDLE) {
+        if (vertAlign == VerticalAlignment.MIDDLE) {
             divY = y - divHeight / 2;
-        } else if (vertAlign == Property.VerticalAlignment.TOP) {
+        } else if (vertAlign == VerticalAlignment.TOP) {
             divY = y - divHeight;
         }
 

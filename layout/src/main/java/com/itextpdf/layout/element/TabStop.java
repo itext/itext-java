@@ -45,24 +45,24 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.TabAlignment;
 
 public class TabStop {
 
     private float tabPosition;
-    private Property.TabAlignment tabAlignment;
+    private TabAlignment tabAlignment;
     private Character tabAnchor;
     private ILineDrawer tabLeader;
 
     public TabStop(float tabPosition) {
-        this(tabPosition, Property.TabAlignment.LEFT);
+        this(tabPosition, TabAlignment.LEFT);
     }
 
-    public TabStop(float tabPosition, Property.TabAlignment tabAlignment) {
+    public TabStop(float tabPosition, TabAlignment tabAlignment) {
         this(tabPosition, tabAlignment, null);
     }
 
-    public TabStop(float tabPosition, Property.TabAlignment tabAlignment, ILineDrawer tabLeader) {
+    public TabStop(float tabPosition, TabAlignment tabAlignment, ILineDrawer tabLeader) {
         this.tabPosition = tabPosition;
         this.tabAlignment = tabAlignment;
         this.tabLeader = tabLeader;
@@ -74,11 +74,11 @@ public class TabStop {
         return tabPosition;
     }
 
-    public Property.TabAlignment getTabAlignment() {
+    public TabAlignment getTabAlignment() {
         return tabAlignment;
     }
 
-    public void setTabAlignment(Property.TabAlignment tabAlignment) {
+    public void setTabAlignment(TabAlignment tabAlignment) {
         this.tabAlignment = tabAlignment;
     }
 

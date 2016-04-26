@@ -21,6 +21,7 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
@@ -231,14 +232,14 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         float x = xstart;
         float y = ystart;
         for (String text : text1) {
-            doc.showTextAligned(text, x, y, Property.TextAlignment.LEFT);
+            doc.showTextAligned(text, x, y, TextAlignment.LEFT);
             x += 70.0;
         }
 
         x = xstart + 12;
         y = ystart;
         for (String text : text2) {
-            doc.showTextAligned(text, x, y, Property.TextAlignment.LEFT);
+            doc.showTextAligned(text, x, y, TextAlignment.LEFT);
             x += 70.0;
         }
 
@@ -256,13 +257,13 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         float x = 50;
         float y = ystart;
         for (String text : text1) {
-            doc.showTextAligned(text, x, y, Property.TextAlignment.LEFT);
+            doc.showTextAligned(text, x, y, TextAlignment.LEFT);
             y -= 25.0;
         }
 
         y = ystart - 13;
         for (String text : text2) {
-            doc.showTextAligned(text, x, y, Property.TextAlignment.LEFT);
+            doc.showTextAligned(text, x, y, TextAlignment.LEFT);
             y -= 25.0;
         }
 

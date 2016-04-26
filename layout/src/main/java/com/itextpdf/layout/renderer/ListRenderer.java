@@ -46,7 +46,8 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Text;
@@ -107,8 +108,8 @@ public class ListRenderer extends BlockRenderer {
             return new TextRenderer((Text) defaultListSymbol).setParent(this);
         } else if (defaultListSymbol instanceof Image) {
             return new ImageRenderer((Image) defaultListSymbol).setParent(this);
-        } else if (defaultListSymbol instanceof Property.ListNumberingType) {
-            Property.ListNumberingType numberingType = (Property.ListNumberingType) defaultListSymbol;
+        } else if (defaultListSymbol instanceof ListNumberingType) {
+            ListNumberingType numberingType = (ListNumberingType) defaultListSymbol;
             String numberText;
             com.itextpdf.layout.element.List listModelElement = (com.itextpdf.layout.element.List) getModelElement();
             switch (numberingType) {
@@ -153,11 +154,11 @@ public class ListRenderer extends BlockRenderer {
             // Be careful. There is a workaround here. For Greek symbols we first set a dummy font with document=null
             // in order for the metrics to be taken into account correctly during layout.
             // Then on draw we set the correct font with actual document in order for the font objects to be created.
-            if (numberingType == Property.ListNumberingType.GREEK_LOWER || numberingType == Property.ListNumberingType.GREEK_UPPER ||
-                    numberingType == Property.ListNumberingType.ZAPF_DINGBATS_1 || numberingType == Property.ListNumberingType.ZAPF_DINGBATS_2 ||
-                    numberingType == Property.ListNumberingType.ZAPF_DINGBATS_3 || numberingType == Property.ListNumberingType.ZAPF_DINGBATS_4) {
+            if (numberingType == ListNumberingType.GREEK_LOWER || numberingType == ListNumberingType.GREEK_UPPER ||
+                    numberingType == ListNumberingType.ZAPF_DINGBATS_1 || numberingType == ListNumberingType.ZAPF_DINGBATS_2 ||
+                    numberingType == ListNumberingType.ZAPF_DINGBATS_3 || numberingType == ListNumberingType.ZAPF_DINGBATS_4) {
 
-                final String constantFont = (numberingType == Property.ListNumberingType.GREEK_LOWER || numberingType == Property.ListNumberingType.GREEK_UPPER) ?
+                final String constantFont = (numberingType == ListNumberingType.GREEK_LOWER || numberingType == ListNumberingType.GREEK_UPPER) ?
                         FontConstants.SYMBOL : FontConstants.ZAPFDINGBATS;
 
                 textRenderer = new TextRenderer(textElement) {

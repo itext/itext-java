@@ -45,13 +45,15 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Leading;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.LineLayoutResult;
+import com.itextpdf.layout.property.TextAlignment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -125,7 +127,7 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         float lastYLine = layoutBox.getY() + layoutBox.getHeight();
-        Property.Leading leading = getProperty(Property.LEADING);
+        Leading leading = getProperty(Property.LEADING);
         float leadingValue = 0;
 
         float lastLineHeight = 0;
@@ -146,13 +148,13 @@ public class ParagraphRenderer extends BlockRenderer {
                 processedRenderer = (LineRenderer) result.getSplitRenderer();
             }
 
-            Property.TextAlignment textAlignment = getProperty(Property.TEXT_ALIGNMENT);
-            if (result.getStatus() == LayoutResult.PARTIAL && textAlignment == Property.TextAlignment.JUSTIFIED && !result.isSplitForcedByNewline() ||
-                    textAlignment == Property.TextAlignment.JUSTIFIED_ALL) {
+            TextAlignment textAlignment = getProperty(Property.TEXT_ALIGNMENT);
+            if (result.getStatus() == LayoutResult.PARTIAL && textAlignment == TextAlignment.JUSTIFIED && !result.isSplitForcedByNewline() ||
+                    textAlignment == TextAlignment.JUSTIFIED_ALL) {
                 if (processedRenderer != null) {
                     processedRenderer.justify(layoutBox.getWidth() - lineIndent);
                 }
-            } else if (textAlignment != null && textAlignment != Property.TextAlignment.LEFT && processedRenderer != null) {
+            } else if (textAlignment != null && textAlignment != TextAlignment.LEFT && processedRenderer != null) {
                 float deltaX = availableWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
                 switch (textAlignment) {
                     case RIGHT:
