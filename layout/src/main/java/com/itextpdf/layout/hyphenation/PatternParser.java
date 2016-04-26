@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.xml.parsers.SAXParserFactory;
@@ -83,30 +84,27 @@ public class PatternParser extends DefaultHandler {
      * @throws HyphenationException In case of an exception while parsing
      */
     public void parse(String filename) throws HyphenationException {
-        parse(new File(filename));
-    }
-
-    /**
-     * Parses a hyphenation pattern file.
-     * @param file the pattern file
-     * @throws HyphenationException In case of an exception while parsing
-     */
-    public void parse(File file) throws HyphenationException {
         try {
-            InputSource src = new InputSource(file.toURI().toURL().toExternalForm());
-            parse(src);
+            URL url = new File(filename).toURI().toURL();
+            parse(url.openStream(), url.toExternalForm());
         } catch (MalformedURLException e) {
-            throw new HyphenationException("Error converting the File '" + file + "' to a URL: "
+            throw new HyphenationException("Error converting the File '" + filename + "' to a URL: "
                     + e.getMessage());
+        } catch (IOException e) {
+            throw new HyphenationException("Error opening the File '" + filename + "'");
         }
     }
 
     /**
      * Parses a hyphenation pattern file.
-     * @param source the InputSource for the file
+     * @param stream the InputStream for the file
+     * @param name unique key representing country-language combination
+     *
      * @throws HyphenationException In case of an exception while parsing
      */
-    public void parse(InputSource source) throws HyphenationException {
+    public void parse(InputStream stream, String name) throws HyphenationException {
+        InputSource source = new InputSource(stream);
+        source.setSystemId(name);
         try {
             parser.parse(source);
         } catch (FileNotFoundException fnfe) {

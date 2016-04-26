@@ -17,17 +17,18 @@
 
 package com.itextpdf.layout.hyphenation;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.xml.sax.InputSource;
 
 /**
  * <p>This tree structure stores the hyphenation patterns in an efficient
@@ -130,24 +131,27 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
     public void loadPatterns(String filename) throws HyphenationException {
         File f = new File(filename);
         try {
-            InputSource src = new InputSource(f.toURI().toURL().toExternalForm());
-            loadPatterns(src);
+            URL url = f.toURI().toURL();
+            loadPatterns(new BufferedInputStream(url.openStream()), url.toExternalForm());
         } catch (MalformedURLException e) {
             throw new HyphenationException("Error converting the File '" + f + "' to a URL: "
                     + e.getMessage());
+        } catch (IOException e) {
+            throw new HyphenationException("Error opening the File '" + f + "'");
         }
     }
 
     /**
      * Read hyphenation patterns from an XML file.
-     * @param source the InputSource for the file
+     * @param stream the InputSource for the file
+     * @param name unique key representing country-language combination
      * @throws HyphenationException In case the parsing fails
      */
-    public void loadPatterns(InputSource source) throws HyphenationException {
+    public void loadPatterns(InputStream stream, String name) throws HyphenationException {
         PatternParser pp = new PatternParser(this);
         ivalues = new TernaryTree();
 
-        pp.parse(source);
+        pp.parse(stream, name);
 
         // patterns/values should be now in the tree
         // let's optimize a bit

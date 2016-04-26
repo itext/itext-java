@@ -17,7 +17,6 @@
 
 package com.itextpdf.layout.hyphenation;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -29,7 +28,6 @@ import java.util.Map;
 import com.itextpdf.io.util.ResourceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.InputSource;
 
 /**
  * <p>This class is the main entry point to the hyphenation package.
@@ -198,7 +196,7 @@ public final class Hyphenator {
 
         if (additionalHyphenationFileDirectories != null) {
             for (String dir : additionalHyphenationFileDirectories) {
-                hTree = getHyphenationTree(new File(dir), key);
+                hTree = getHyphenationTree(dir, key);
                 if (hTree != null) {
                     break;
                 }
@@ -228,11 +226,11 @@ public final class Hyphenator {
      * @param key language key for the requested hyphenation file
      * @return the requested HyphenationTree or null if it is not available
      */
-    public static HyphenationTree getHyphenationTree(File searchDirectory, String key) {
+    public static HyphenationTree getHyphenationTree(String searchDirectory, String key) {
         // try the raw XML file
         String name = key + ".xml";
         try {
-            InputStream fis = new FileInputStream(new File(searchDirectory, name));
+            InputStream fis = new FileInputStream(new File(new File(searchDirectory), name));
             return getHyphenationTree(fis, name);
         } catch (IOException ioe) {
             if (log.isDebugEnabled()) {
@@ -255,10 +253,8 @@ public final class Hyphenator {
         }
         HyphenationTree hTree;
         try {
-            InputSource src = new InputSource(new BufferedInputStream(in));
-            src.setSystemId(name);
             hTree = new HyphenationTree();
-            hTree.loadPatterns(src);
+            hTree.loadPatterns(in, name);
         }
         catch (HyphenationException ex) {
             log.error("Can't load user patterns from XML file " + name + ": " + ex.getMessage());
