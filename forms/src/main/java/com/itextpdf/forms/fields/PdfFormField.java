@@ -2318,6 +2318,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
         drawBorder(canvasOff, xObjectOff, width, height);
+        if (pdfAConformanceLevel != null && (pdfAConformanceLevel.getPart().equals("2") || pdfAConformanceLevel.getPart().equals("3"))) {
+            xObjectOn.getResources();
+            xObjectOff.getResources();
+        }
 
         PdfWidgetAnnotation widget = getWidgets().get(0);
 
@@ -2453,6 +2457,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
         xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
+        xObjectOn.getResources();
+        xObjectOff.getResources();
 
         PdfDictionary normalAppearance = new PdfDictionary();
         normalAppearance.put(new PdfName(value), xObjectOn.getPdfObject());
