@@ -59,44 +59,44 @@ public enum Property {
     AUTO_SCALE_HEIGHT,
     AUTO_SCALE_WIDTH,
     BACKGROUND,
-    BASE_DIRECTION(true),
-    BOLD_SIMULATION(true),
+    BASE_DIRECTION,
+    BOLD_SIMULATION,
     BORDER,
     BORDER_BOTTOM,
     BORDER_LEFT,
     BORDER_RIGHT,
     BORDER_TOP,
     BOTTOM,
-    CHARACTER_SPACING(true),
+    CHARACTER_SPACING,
     COLSPAN,
     DESTINATION,
-    FIRST_LINE_INDENT(true),
+    FIRST_LINE_INDENT,
     FLUSH_ON_DRAW,
-    FONT(true),
-    FONT_COLOR(true),
-    FONT_KERNING(true),
-    FONT_SCRIPT(true),
-    FONT_SIZE(true),
+    FONT,
+    FONT_COLOR,
+    FONT_KERNING,
+    FONT_SCRIPT,
+    FONT_SIZE,
     FULL,
-    FORCED_PLACEMENT(true),
+    FORCED_PLACEMENT,
     HEIGHT,
     HORIZONTAL_ALIGNMENT,
     /**
      * Value of 1 is equivalent to no scaling
      **/
     HORIZONTAL_SCALING,
-    HYPHENATION(true),
-    ITALIC_SIMULATION(true),
-    KEEP_TOGETHER(true),
+    HYPHENATION,
+    ITALIC_SIMULATION,
+    KEEP_TOGETHER,
     LEADING,
     LEFT,
     LINE_DRAWER,
     LIST_START,
-    LIST_SYMBOL(true),
+    LIST_SYMBOL,
     LIST_SYMBOL_ALIGNMENT,
     LIST_SYMBOL_INDENT,
-    LIST_SYMBOL_PRE_TEXT(true),
-    LIST_SYMBOL_POST_TEXT(true),
+    LIST_SYMBOL_PRE_TEXT,
+    LIST_SYMBOL_POST_TEXT,
     MARGIN_BOTTOM,
     MARGIN_LEFT,
     MARGIN_RIGHT,
@@ -115,53 +115,31 @@ public enum Property {
     ROTATION_POINT_X,
     ROTATION_POINT_Y,
     ROWSPAN,
-    SPACING_RATIO(true),
-    SPLIT_CHARACTERS(true),
-    STROKE_COLOR(true),
-    STROKE_WIDTH(true),
+    SPACING_RATIO,
+    SPLIT_CHARACTERS,
+    STROKE_COLOR,
+    STROKE_WIDTH,
     SKEW,
     TAB_ANCHOR,
     TAB_DEFAULT,
     TAB_LEADER,
     TAB_STOPS,
-    TEXT_ALIGNMENT(true),
+    TEXT_ALIGNMENT,
     /**
      * Use values from .
      */
-    TEXT_RENDERING_MODE(true),
-    TEXT_RISE(true),
+    TEXT_RENDERING_MODE,
+    TEXT_RISE,
     TOP,
-    UNDERLINE(true),
+    UNDERLINE,
     /**
      * Value of 1 is equivalent to no scaling
      **/
     VERTICAL_ALIGNMENT,
     VERTICAL_SCALING,
     WIDTH,
-    WORD_SPACING(true),
+    WORD_SPACING,
     X,
     Y;
-
-
-    private boolean inherited;
-
-    Property() {
-        this.inherited = false;
-    }
-
-    Property(boolean inherited) {
-        this.inherited = inherited;
-    }
-
-    /**
-     * Some properties must be passed to {@link IPropertyContainer} objects that
-     * are lower in the document's hierarchy. Most inherited properties are
-     * related to textual operations.
-     * 
-     * @return whether or not this type of property is inheritable.
-     */
-    public boolean isInherited() {
-        return inherited;
-    }
 
 }

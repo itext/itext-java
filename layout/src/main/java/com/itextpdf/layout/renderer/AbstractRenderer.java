@@ -58,18 +58,18 @@ import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.IPropertyContainer;
-import com.itextpdf.layout.property.Background;
-import com.itextpdf.layout.property.HorizontalAlignment;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
+import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,8 +93,51 @@ public abstract class AbstractRenderer implements IRenderer {
     protected boolean flushed = false;
     protected LayoutArea occupiedArea;
     protected IRenderer parent;
-    protected Map<Property, Object> properties = new EnumMap<>(Property.class);
+    protected Map<Property, Object> properties = new HashMap<>();
     protected boolean isLastRendererForModelElement = true;
+
+    /**
+     * Some properties must be passed to {@link IPropertyContainer} objects that
+     * are lower in the document's hierarchy. Most inherited properties are
+     * related to textual operations.
+     *
+     * @return whether or not this type of property is inheritable.
+     */
+    private static boolean INHERITED_PROPERTIES[];
+
+    static {
+        int maxOrdinal = 0;
+        for (Property property : Property.values()) {
+            maxOrdinal = Math.max(maxOrdinal, property.ordinal());
+        }
+        INHERITED_PROPERTIES = new boolean[maxOrdinal + 1];
+
+        INHERITED_PROPERTIES[Property.BASE_DIRECTION.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.BOLD_SIMULATION.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.CHARACTER_SPACING.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.FIRST_LINE_INDENT.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.FONT.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.FONT_COLOR.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.FONT_KERNING.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.FONT_SCRIPT.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.FONT_SIZE.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.FORCED_PLACEMENT.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.HYPHENATION.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.ITALIC_SIMULATION.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.KEEP_TOGETHER.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.LIST_SYMBOL.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.LIST_SYMBOL_PRE_TEXT.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.LIST_SYMBOL_POST_TEXT.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.SPACING_RATIO.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.SPLIT_CHARACTERS.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.STROKE_COLOR.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.STROKE_WIDTH.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.TEXT_ALIGNMENT.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.TEXT_RENDERING_MODE.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.TEXT_RISE.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.UNDERLINE.ordinal()] = true;
+        INHERITED_PROPERTIES[Property.WORD_SPACING.ordinal()] = true;
+    }
 
     /**
      * Creates a renderer.
@@ -158,7 +201,7 @@ public abstract class AbstractRenderer implements IRenderer {
     public boolean hasProperty(Property property) {
         return hasOwnProperty(property)
                 || (modelElement != null && modelElement.hasProperty(property))
-                || (parent != null && property.isInherited() && parent.hasProperty(property));
+                || (parent != null && INHERITED_PROPERTIES[property.ordinal()] && parent.hasProperty(property));
     }
 
     @Override
@@ -196,7 +239,7 @@ public abstract class AbstractRenderer implements IRenderer {
             return (T) property;
         }
         // TODO in some situations we will want to check inheritance with additional info, such as parent and descendant.
-        if (parent != null && key.isInherited() && (property = parent.getProperty(key)) != null) {
+        if (parent != null && INHERITED_PROPERTIES[key.ordinal()] && (property = parent.getProperty(key)) != null) {
             return (T) property;
         }
         property = getDefaultProperty(key);
@@ -453,7 +496,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Gets all rectangles that this {@link IRenderer} can draw upon in the given area.
      *
-     * @param area a physical area on the {@link DrawingContext}
+     * @param area a physical area on the {@link DrawContext}
      * @return a list of {@link Rectangle rectangles}
      */
     public List<Rectangle> initElementAreas(LayoutArea area) {
@@ -462,7 +505,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     /**
      * Gets the bounding box that contains all content written to the
-     * {@link DrawingContext} by this {@link IRenderer}.
+     * {@link DrawContext} by this {@link IRenderer}.
      *
      * @return the smallest {@link Rectangle} that surrounds the content
      */
