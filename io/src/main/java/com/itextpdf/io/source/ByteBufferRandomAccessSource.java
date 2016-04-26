@@ -67,7 +67,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource {
      * Constructs a new {@link ByteBufferRandomAccessSource} based on the specified ByteBuffer
      * @param byteBuffer the buffer to use as the backing store
      */
-    public ByteBufferRandomAccessSource(final java.nio.ByteBuffer byteBuffer) {
+    public ByteBufferRandomAccessSource(java.nio.ByteBuffer byteBuffer) {
         this.byteBuffer = byteBuffer;
     }
 

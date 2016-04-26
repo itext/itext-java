@@ -72,9 +72,7 @@ public class Vector {
     /**
      * the values inside the vector
      */
-    private final float[] vals = new float[]{
-            0, 0, 0
-    };
+    private final float[] vals = new float[] {0, 0, 0};
 
     /**
      * Creates a new Vector
@@ -83,7 +81,7 @@ public class Vector {
      * @param y the Y coordinate
      * @param z the Z coordinate
      */
-    public Vector(final float x, final float y, final float z) {
+    public Vector(float x, float y, float z) {
         vals[I1] = x;
         vals[I2] = y;
         vals[I3] = z;
@@ -95,7 +93,7 @@ public class Vector {
      * @param index the index of the value to get (I1, I2 or I3)
      * @return a coordinate value
      */
-    public float get(final int index) {
+    public float get(int index) {
         return vals[index];
     }
 
@@ -105,7 +103,7 @@ public class Vector {
      * @param by the matrix to cross this vector with
      * @return the result of the cross product
      */
-    public Vector cross(final Matrix by) {
+    public Vector cross(Matrix by) {
         float x = vals[I1] * by.get(Matrix.I11) + vals[I2] * by.get(Matrix.I21) + vals[I3] * by.get(Matrix.I31);
         float y = vals[I1] * by.get(Matrix.I12) + vals[I2] * by.get(Matrix.I22) + vals[I3] * by.get(Matrix.I32);
         float z = vals[I1] * by.get(Matrix.I13) + vals[I2] * by.get(Matrix.I23) + vals[I3] * by.get(Matrix.I33);
@@ -119,7 +117,7 @@ public class Vector {
      * @param v the vector to subtract from this one
      * @return the results of the subtraction
      */
-    public Vector subtract(final Vector v) {
+    public Vector subtract(Vector v) {
         float x = vals[I1] - v.vals[I1];
         float y = vals[I2] - v.vals[I2];
         float z = vals[I3] - v.vals[I3];
@@ -133,7 +131,7 @@ public class Vector {
      * @param with the vector to cross this vector with
      * @return the cross product
      */
-    public Vector cross(final Vector with) {
+    public Vector cross(Vector with) {
         float x = vals[I2] * with.vals[I3] - vals[I3] * with.vals[I2];
         float y = vals[I3] * with.vals[I1] - vals[I1] * with.vals[I3];
         float z = vals[I1] * with.vals[I2] - vals[I2] * with.vals[I1];
@@ -160,7 +158,7 @@ public class Vector {
      * @param by the scalar to multiply by
      * @return the result of the scalar multiplication
      */
-    public Vector multiply(final float by) {
+    public Vector multiply(float by) {
         float x = vals[I1] * by;
         float y = vals[I2] * by;
         float z = vals[I3] * by;
@@ -173,7 +171,7 @@ public class Vector {
      * @param with the vector to dot product this vector with
      * @return the dot product
      */
-    public float dot(final Vector with) {
+    public float dot(Vector with) {
         return vals[I1] * with.vals[I1] + vals[I2] * with.vals[I2] + vals[I3] * with.vals[I3];
     }
 
@@ -231,7 +229,7 @@ public class Vector {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }

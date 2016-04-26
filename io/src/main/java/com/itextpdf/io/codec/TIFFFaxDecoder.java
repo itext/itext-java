@@ -76,7 +76,7 @@ public class TIFFFaxDecoder {
     // should iText try to recover from images it can't read?
     private boolean recoverFromImageError;
 
-    static int table1[] = {
+    static int[] table1 = {
             0x00, // 0 bits are left in first byte - SHOULD NOT HAPPEN
             0x01, // 1 bits are left in first byte
             0x03, // 2 bits are left in first byte
@@ -88,7 +88,7 @@ public class TIFFFaxDecoder {
             0xff  // 8 bits are left in first byte
     };
 
-    static int table2[] = {
+    static int[] table2 = {
             0x00, // 0
             0x80, // 1
             0xc0, // 2
@@ -101,7 +101,7 @@ public class TIFFFaxDecoder {
     };
 
     // Table to be used when fillOrder = 2, for flipping bytes.
-    public static byte flipTable[] = {
+    public static byte[] flipTable = {
             (byte) 0, (byte) -128, (byte) 64, (byte) -64, (byte) 32, (byte) -96, (byte) 96, (byte) -32,
             (byte) 16, (byte) -112, (byte) 80, (byte) -48, (byte) 48, (byte) -80, (byte) 112, (byte) -16,
             (byte) 8, (byte) -120, (byte) 72, (byte) -56, (byte) 40, (byte) -88, (byte) 104, (byte) -24,
@@ -137,7 +137,7 @@ public class TIFFFaxDecoder {
     };
 
     // The main 10 bit white runs lookup table
-    static short white[] = {
+    static short[] white = {
             // 0 - 7
             6430, 6400, 6400, 6400, 3225, 3225, 3225, 3225,
             // 8 - 15
@@ -397,14 +397,14 @@ public class TIFFFaxDecoder {
     };
 
     // Additional make up codes for both White and Black runs
-//    static short additionalMakeup[] = {
+//    static short[] additionalMakeup = {
 //        28679,  28679,  31752,  (short)32777,
 //        (short)33801,  (short)34825,  (short)35849,  (short)36873,
 //        (short)29703,  (short)29703,  (short)30727,  (short)30727,
 //        (short)37897,  (short)38921,  (short)39945,  (short)40969
 //    };
     //replace with constants without overload
-    public static short additionalMakeup[] = {
+    public static short[] additionalMakeup = {
             28679,  28679,  31752,  -32759,
             -31735,  -30711,  -29687, -28663,
             29703,  29703, 30727, 30727,
@@ -412,7 +412,7 @@ public class TIFFFaxDecoder {
     };
 
     // Initial black run look up table, uses the first 4 bits of a code
-    static short initBlack[] = {
+    static short[] initBlack = {
             // 0 - 7
             3226, 6412, 200, 168, 38, 38, 134, 134,
             // 8 - 15
@@ -420,10 +420,10 @@ public class TIFFFaxDecoder {
     };
 
     //
-    static short twoBitBlack[] = {292, 260, 226, 226};   // 0 - 3
+    static short[] twoBitBlack = {292, 260, 226, 226};   // 0 - 3
 
     // Main black run table, using the last 9 bits of possible 13 bit code
-    static short black[] = {
+    static short[] black = {
             // 0 - 7
             62, 62, 30, 30, 0, 0, 0, 0,
             // 8 - 15
@@ -554,7 +554,7 @@ public class TIFFFaxDecoder {
             390, 390, 390, 390, 390, 390, 390, 390,
     };
 
-    static byte twoDCodes[] = {
+    static byte[] twoDCodes = {
             // 0 - 7
             80, 88, 23, 71, 30, 30, 62, 62,
             // 8 - 15
@@ -768,7 +768,7 @@ public class TIFFFaxDecoder {
 
     // Two-dimensional decoding methods
 
-    public void decode2D(byte[] buffer, byte compData[], int startX, int height, long tiffT4Options) {
+    public void decode2D(byte[] buffer, byte[] compData, int startX, int height, long tiffT4Options) {
         this.data = compData;
         compression = 3;
 

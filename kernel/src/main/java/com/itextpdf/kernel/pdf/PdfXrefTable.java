@@ -104,7 +104,7 @@ class PdfXrefTable implements Serializable {
         return count + 1;
     }
 
-    public PdfIndirectReference get(final int index) {
+    public PdfIndirectReference get(int index) {
         if (index > count) {
             return null;
         }
@@ -323,14 +323,14 @@ class PdfXrefTable implements Serializable {
     }
 
 
-    private void ensureCount(final int count) {
+    private void ensureCount(int count) {
         if (count >= xref.length) {
             extendXref(count << 1);
         }
     }
 
-    private void extendXref(final int capacity) {
-        PdfIndirectReference newXref[] = new PdfIndirectReference[capacity];
+    private void extendXref(int capacity) {
+        PdfIndirectReference[] newXref = new PdfIndirectReference[capacity];
         System.arraycopy(xref, 0, newXref, 0, xref.length);
         xref = newXref;
     }

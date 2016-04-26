@@ -81,7 +81,7 @@ public class ParserGraphicsState extends CanvasGraphicsState {
      * Copy constructor.
      * @param source the Graphics State to copy from
      */
-    ParserGraphicsState(final ParserGraphicsState source) {
+    ParserGraphicsState(ParserGraphicsState source) {
         super(source);
 
         if (source.clippingPath != null) {

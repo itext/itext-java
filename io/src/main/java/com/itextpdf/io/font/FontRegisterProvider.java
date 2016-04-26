@@ -135,7 +135,7 @@ class FontRegisterProvider {
      * @param style    the style of this font
      * @return the Font constructed based on the parameters
      */
-    public FontProgram getFont(final String fontName, final int style) throws java.io.IOException {
+    public FontProgram getFont(String fontName, int style) throws java.io.IOException {
         return getFont(fontName, style, true);
     }
 
@@ -204,7 +204,7 @@ class FontRegisterProvider {
      * @param fullName   the font name
      * @param path       the font path
      */
-    public void registerFamily(final String familyName, final String fullName, final String path) {
+    public void registerFamily(String familyName, String fullName, String path) {
         if (path != null)
             fontNames.put(fullName, path);
         List<String> tmp;
@@ -246,7 +246,7 @@ class FontRegisterProvider {
      * @param path the path to a ttf- or ttc-file
      */
 
-    public void register(final String path) {
+    public void register(String path) {
         register(path, null);
     }
 
@@ -257,11 +257,11 @@ class FontRegisterProvider {
      * @param alias the alias you want to use for the font
      */
 
-    public void register(final String path, final String alias) {
+    public void register(String path, String alias) {
         try {
             if (path.toLowerCase().endsWith(".ttf") || path.toLowerCase().endsWith(".otf") || path.toLowerCase().indexOf(".ttc,") > 0) {
                 FontProgram fontProgram = FontFactory.createFont(path);
-                Object allNames[] = new Object[]{fontProgram.getFontNames().getFontName(), fontProgram.getFontNames().getFamilyName(), fontProgram.getFontNames().getFullName()};
+                Object[] allNames = new Object[]{fontProgram.getFontNames().getFontName(), fontProgram.getFontNames().getFamilyName(), fontProgram.getFontNames().getFullName()};
                 fontNames.put(((String) allNames[0]).toLowerCase(), path);
                 if (alias != null) {
                     String lcAlias = alias.toLowerCase();
@@ -351,7 +351,7 @@ class FontRegisterProvider {
      * @param dir the directory
      * @return the number of fonts registered
      */
-    public int registerDirectory(final String dir) {
+    public int registerDirectory(String dir) {
         return registerDirectory(dir, false);
     }
 
@@ -362,7 +362,7 @@ class FontRegisterProvider {
      * @param scanSubdirectories recursively scan subdirectories if <code>true</true>
      * @return the number of fonts registered
      */
-    public int registerDirectory(final String dir, final boolean scanSubdirectories) {
+    public int registerDirectory(String dir, boolean scanSubdirectories) {
         LOGGER.debug(MessageFormat.format("Registering directory {0}, looking for fonts", dir));
         int count = 0;
         try {
@@ -449,7 +449,7 @@ class FontRegisterProvider {
      * @param fontname the name of the font that has to be checked.
      * @return true if the font is found
      */
-    public boolean isRegistered(final String fontname) {
+    public boolean isRegistered(String fontname) {
         return fontNames.containsKey(fontname.toLowerCase());
     }
 }

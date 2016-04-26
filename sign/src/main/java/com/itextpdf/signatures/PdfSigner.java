@@ -528,7 +528,7 @@ public class PdfSigner {
         String hashAlgorithm = externalSignature.getHashAlgorithm();
         PdfPKCS7 sgn = new PdfPKCS7(null, chain, hashAlgorithm, null, externalDigest, false);
         InputStream data = getRangeStream();
-        byte hash[] = DigestAlgorithms.digest(data, externalDigest.getMessageDigest(hashAlgorithm));
+        byte[] hash = DigestAlgorithms.digest(data, externalDigest.getMessageDigest(hashAlgorithm));
         byte[] ocsp = null;
         if (chain.length >= 2 && ocspClient != null) {
             ocsp = ocspClient.getEncoded((X509Certificate) chain[0], (X509Certificate) chain[1], null);
@@ -964,7 +964,7 @@ public class PdfSigner {
                 if (originalOS != null) {
                     raf.seek(0);
                     long length = raf.length();
-                    byte buf[] = new byte[8192];
+                    byte[] buf = new byte[8192];
                     while (length > 0) {
                         int r = raf.read(buf, 0, (int)Math.min((long)buf.length, length));
                         if (r < 0)

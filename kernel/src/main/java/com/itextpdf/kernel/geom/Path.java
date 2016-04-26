@@ -115,7 +115,7 @@ public class Path {
     /**
      * Begins a new subpath by moving the current point to coordinates <CODE>(x, y)</CODE>.
      */
-    public void moveTo(final float x, final float y) {
+    public void moveTo(float x, float y) {
         currentPoint = new Point(x, y);
         Subpath lastSubpath = subpaths.size() > 0 ? subpaths.get(subpaths.size() - 1) : null;
 
@@ -129,7 +129,7 @@ public class Path {
     /**
      * Appends a straight line segment from the current point to the point <CODE>(x, y)</CODE>.
      */
-    public void lineTo(final float x, final float y) {
+    public void lineTo(float x, float y) {
         if (currentPoint == null) {
             throw new RuntimeException(START_PATH_ERR_MSG);
         }
@@ -142,7 +142,7 @@ public class Path {
      * Appends a cubic Bezier curve to the current path. The curve shall extend from
      * the current point to the point <CODE>(x3, y3)</CODE>.
      */
-    public void curveTo(final float x1, final float y1, final float x2, final float y2, final float x3, final float y3) {
+    public void curveTo(float x1, float y1, float x2, float y2, float x3, float y3) {
         if (currentPoint == null) {
             throw new RuntimeException(START_PATH_ERR_MSG);
         }
@@ -162,7 +162,7 @@ public class Path {
      * the current point to the point <CODE>(x3, y3)</CODE> with the note that the current
      * point represents two control points.
      */
-    public void curveTo(final float x2, final float y2, final float x3, final float y3) {
+    public void curveTo(float x2, float y2, float x3, float y3) {
         if (currentPoint == null) {
             throw new RuntimeException(START_PATH_ERR_MSG);
         }
@@ -174,7 +174,7 @@ public class Path {
      * the current point to the point <CODE>(x3, y3)</CODE> with the note that the (x3, y3)
      * point represents two control points.
      */
-    public void curveFromTo(final float x1, final float y1, final float x3, final float y3) {
+    public void curveFromTo(float x1, float y1, float x3, float y3) {
         if (currentPoint == null) {
             throw new RuntimeException(START_PATH_ERR_MSG);
         }
@@ -191,7 +191,7 @@ public class Path {
     /**
      * Appends a rectangle to the current path as a complete subpath.
      */
-    public void rectangle(final float x, final float y, final float w, final float h) {
+    public void rectangle(float x, float y, float w, float h) {
         moveTo(x, y);
         lineTo(x + w, y);
         lineTo(x + w, y + h);

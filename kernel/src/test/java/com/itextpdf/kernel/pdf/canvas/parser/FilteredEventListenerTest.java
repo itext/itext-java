@@ -28,7 +28,7 @@ public class FilteredEventListenerTest extends ExtendedITextTest {
     public void test() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "test.pdf")));
 
-        final String expectedText[] = new String[]{
+        final String[] expectedText = new String[]{
                 "PostScript Compatibility",
                 "Because the PostScript language does not support the transparent imaging \n" +
                         "model, PDF 1.4 consumer applications must have some means for converting the \n" +

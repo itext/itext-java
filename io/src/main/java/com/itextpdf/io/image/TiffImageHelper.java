@@ -151,8 +151,8 @@ class TiffImageHelper {
                 rowsStrip = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP);
             if (rowsStrip <= 0 || rowsStrip > h)
                 rowsStrip = h;
-            long offset[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);
-            long size[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPBYTECOUNTS);
+            long[] offset = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);
+            long[] size = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPBYTECOUNTS);
             if ((size == null || (size.length == 1 && (size[0] == 0 || size[0] + offset[0] > s.length()))) && h == rowsStrip) { // some TIFF producers are really lousy, so...
                 size = new long[]{s.length() - (int) offset[0]};
             }
@@ -194,7 +194,7 @@ class TiffImageHelper {
                     break;
             }
             if (direct && rowsStrip == h) { //single strip, direct
-                byte im[] = new byte[(int) size[0]];
+                byte[] im = new byte[(int) size[0]];
                 s.seek(offset[0]);
                 s.readFully(im);
                 RawImageHelper.updateRawImageParameters(tiff.image, w, h, false, imagecomp, parameters, im, null);
@@ -203,13 +203,13 @@ class TiffImageHelper {
                 int rowsLeft = h;
                 CCITTG4Encoder g4 = new CCITTG4Encoder(w);
                 for (int k = 0; k < offset.length; ++k) {
-                    byte im[] = new byte[(int) size[k]];
+                    byte[] im = new byte[(int) size[k]];
                     s.seek(offset[k]);
                     s.readFully(im);
                     int height = Math.min(rowsStrip, rowsLeft);
                     TIFFFaxDecoder decoder = new TIFFFaxDecoder(fillOrder, w, height);
                     decoder.setRecoverFromImageError(recoverFromImageError);
-                    byte outBuf[] = new byte[(w + 7) / 8 * height];
+                    byte[] outBuf = new byte[(w + 7) / 8 * height];
                     switch (compression) {
                         case TIFFConstants.COMPRESSION_CCITTRLEW:
                         case TIFFConstants.COMPRESSION_CCITTRLE:
@@ -258,7 +258,7 @@ class TiffImageHelper {
                     }
                     rowsLeft -= rowsStrip;
                 }
-                byte g4pic[] = g4.close();
+                byte[] g4pic = g4.close();
                 RawImageHelper.updateRawImageParameters(tiff.image, w, h, false, RawImage.CCITTG4,
                         parameters & RawImage.CCITT_BLACKIS1, g4pic, null);
             }
@@ -359,8 +359,8 @@ class TiffImageHelper {
                 rowsStrip = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP);
             if (rowsStrip <= 0 || rowsStrip > h)
                 rowsStrip = h;
-            long offset[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);
-            long size[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPBYTECOUNTS);
+            long[] offset = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);
+            long[] size = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPBYTECOUNTS);
             if ((size == null || (size.length == 1 && (size[0] == 0 || size[0] + offset[0] > s.length()))) && h == rowsStrip) { // some TIFF producers are really lousy, so...
                 size = new long[]{s.length() - (int) offset[0]};
             }
@@ -462,11 +462,11 @@ class TiffImageHelper {
                 }
             } else {
                 for (int k = 0; k < offset.length; ++k) {
-                    byte im[] = new byte[(int) size[k]];
+                    byte[] im = new byte[(int) size[k]];
                     s.seek(offset[k]);
                     s.readFully(im);
                     int height = Math.min(rowsStrip, rowsLeft);
-                    byte outBuf[] = null;
+                    byte[] outBuf = null;
                     if (compression != TIFFConstants.COMPRESSION_NONE)
                         outBuf = new byte[(w * bitsPerSample * samplePerPixel + 7) / 8 * height];
                     if (reverse)
@@ -521,8 +521,8 @@ class TiffImageHelper {
                 }
                 if (dir.isTagPresent(TIFFConstants.TIFFTAG_COLORMAP)) {
                     TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_COLORMAP);
-                    char rgb[] = fd.getAsChars();
-                    byte palette[] = new byte[rgb.length];
+                    char[] rgb = fd.getAsChars();
+                    byte[] palette = new byte[rgb.length];
                     int gColor = rgb.length / 3;
                     int bColor = gColor * 2;
                     for (int k = 0; k < gColor; ++k) {
@@ -577,7 +577,7 @@ class TiffImageHelper {
     private static int getDpi(TIFFField fd, int resolutionUnit) {
         if (fd == null)
             return 0;
-        long res[] = fd.getAsRational(0);
+        long[] res = fd.getAsRational(0);
         float frac = (float) res[0] / (float) res[1];
         int dpi = 0;
         switch (resolutionUnit) {
@@ -619,7 +619,7 @@ class TiffImageHelper {
         if (field.getType() == TIFFField.TIFF_LONG)
             offset = field.getAsLongs();
         else { // must be short
-            char temp[] = field.getAsChars();
+            char[] temp = field.getAsChars();
             offset = new long[temp.length];
             for (int k = 0; k < temp.length; ++k)
                 offset[k] = temp[k];
@@ -628,7 +628,7 @@ class TiffImageHelper {
     }
 
     // Uncompress packbits compressed image data.
-    private static void decodePackbits(byte data[], byte[] dst) {
+    private static void decodePackbits(byte[] data, byte[] dst) {
         int srcCount = 0, dstCount = 0;
         byte repeat, b;
         try {

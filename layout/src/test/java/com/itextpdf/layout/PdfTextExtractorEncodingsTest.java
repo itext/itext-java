@@ -73,7 +73,7 @@ public class PdfTextExtractorEncodingsTest extends ExtendedITextTest {
         checkPdf(pdfBytes);
     }
 
-    private void checkPdf(final byte[] pdfBytes) throws Exception {
+    private void checkPdf(byte[] pdfBytes) throws Exception {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(pdfBytes)));
         // Characters from http://unicode.org/charts/PDF/U0000.pdf
         Assert.assertEquals(TEXT1, PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));

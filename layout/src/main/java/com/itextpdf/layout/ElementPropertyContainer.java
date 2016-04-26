@@ -377,7 +377,7 @@ public abstract class ElementPropertyContainer<Type extends ElementPropertyConta
      * @param extraBottom extra coloring at the bottom
      * @return this Element.
      */
-    public Type setBackgroundColor(Color backgroundColor, float extraLeft, final float extraTop, final float extraRight, float extraBottom) {
+    public Type setBackgroundColor(Color backgroundColor, float extraLeft, float extraTop, float extraRight, float extraBottom) {
         return setProperty(Property.BACKGROUND, new Property.Background(backgroundColor, extraLeft, extraTop, extraRight, extraBottom));
     }
 

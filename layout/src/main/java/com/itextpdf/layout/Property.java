@@ -243,7 +243,7 @@ public enum Property {
          * @param extraRight extra coloring to the right side
          * @param extraBottom extra coloring at the bottom
          */
-        public Background(Color color, float extraLeft, final float extraTop, final float extraRight, float extraBottom) {
+        public Background(Color color, float extraLeft, float extraTop, float extraRight, float extraBottom) {
             this.color = color;
             this.extraLeft = extraLeft;
             this.extraRight = extraRight;

@@ -52,13 +52,13 @@ public class OutputStreamStandardEncryption extends OutputStreamEncryption {
     /**
      * Creates a new instance of OutputStreamStandardEncryption
      */
-    public OutputStreamStandardEncryption(java.io.OutputStream out, byte key[], int off, int len) {
+    public OutputStreamStandardEncryption(java.io.OutputStream out, byte[] key, int off, int len) {
         super(out);
         arcfour = new ARCFOUREncryption();
         arcfour.prepareARCFOURKey(key, off, len);
     }
 
-    public OutputStreamStandardEncryption(java.io.OutputStream out, byte key[]) {
+    public OutputStreamStandardEncryption(java.io.OutputStream out, byte[] key) {
         this(out, key, 0, key.length);
     }
 

@@ -202,7 +202,7 @@ public final class GifImageHelper {
         int ncolors = 1 << bpc;
         int nbytes = 3*ncolors;
         bpc = newBpc(bpc);
-        byte table[] = new byte[(1 << bpc) * 3];
+        byte[] table = new byte[(1 << bpc) * 3];
         StreamUtil.readFully(gif.input, table, 0, nbytes);
         return table;
     }
@@ -286,7 +286,7 @@ public final class GifImageHelper {
         if (gif.transparency && gif.transIndex >= gif.m_curr_table.length / 3)
             gif.transparency = false;
         if (gif.transparency && gif.m_bpc == 1) { // Acrobat 5.05 doesn't like this combination
-            byte tp[] = new byte[12];
+            byte[] tp = new byte[12];
             System.arraycopy(gif.m_curr_table, 0, tp, 0, 6);
             gif.m_curr_table = tp;
             gif.m_bpc = 2;

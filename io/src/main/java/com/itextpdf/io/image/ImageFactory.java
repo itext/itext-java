@@ -117,7 +117,7 @@ public final class ImageFactory {
         if (transparency != null && transparency.length != components * 2)
             throw new IOException(IOException.TransparencyLengthMustBeEqualTo2WithCcittImages);
         if (components == 1 && bpc == 1) {
-            byte g4[] = CCITTG4Encoder.compress(data, width, height);
+            byte[] g4 = CCITTG4Encoder.compress(data, width, height);
             return ImageFactory.getImage(width, height, false, RawImage.CCITTG4, RawImage.CCITT_BLACKIS1, g4, transparency);
         }
         RawImage image = new RawImage(data, ImageType.RAW);

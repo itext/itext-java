@@ -124,7 +124,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      */
     protected PdfDocument document;
 
-    private static PdfName resourceNames[] = {PdfName.Font, PdfName.XObject, PdfName.ColorSpace, PdfName.Pattern};
+    private static PdfName[] resourceNames = {PdfName.Font, PdfName.XObject, PdfName.ColorSpace, PdfName.Pattern};
     private PdfDictionary defaultResources;
     private Set<PdfFormField> fieldsForFlattening = new LinkedHashSet<>();
     private XfaForm xfaForm;

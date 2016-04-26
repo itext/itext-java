@@ -185,7 +185,7 @@ class JpegImageHelper {
                         StreamUtil.skip(jpegStream, len - 2);
                         continue;
                     }
-                    byte bcomp[] = new byte[JFIF_ID.length];
+                    byte[] bcomp = new byte[JFIF_ID.length];
                     int r = jpegStream.read(bcomp);
                     if (r != bcomp.length)
                         throw new IOException(IOException._1CorruptedJfifMarker).setMessageParams(errorID);

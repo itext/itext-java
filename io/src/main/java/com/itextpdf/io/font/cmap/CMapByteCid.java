@@ -85,7 +85,7 @@ public class CMapByteCid extends AbstractCMap {
      * @param length
      * @return
      */
-    public String decodeSequence(byte[] cidBytes, final int offset, final int length) {
+    public String decodeSequence(byte[] cidBytes, int offset, int length) {
         StringBuilder sb = new StringBuilder();
         Cursor cursor = new Cursor(offset, length);
         int cid;
@@ -112,11 +112,11 @@ public class CMapByteCid extends AbstractCMap {
         return -1;
     }
 
-    private void encodeSequence(byte seq[], char cid) {
+    private void encodeSequence(byte[] seq, char cid) {
         int size = seq.length - 1;
         int nextPlane = 0;
         for (int idx = 0; idx < size; ++idx) {
-            char plane[] = planes.get(nextPlane);
+            char[] plane = planes.get(nextPlane);
             int one = seq[idx] & 0xff;
             char c = plane[one];
             if (c != 0 && (c & 0x8000) == 0)
@@ -128,7 +128,7 @@ public class CMapByteCid extends AbstractCMap {
             }
             nextPlane = c & 0x7fff;
         }
-        char plane[] = planes.get(nextPlane);
+        char[] plane = planes.get(nextPlane);
         int one = seq[size] & 0xff;
         char c = plane[one];
         if ((c & 0x8000) != 0)

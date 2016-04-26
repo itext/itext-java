@@ -133,7 +133,7 @@ public final class RawImageHelper {
         if (transparency != null && transparency.length != components * 2)
             throw new IOException(IOException.TransparencyLengthMustBeEqualTo2WithCcittImages);
         if (components == 1 && bpc == 1) {
-            byte g4[] = CCITTG4Encoder.compress(data, width, height);
+            byte[] g4 = CCITTG4Encoder.compress(data, width, height);
             updateRawImageParameters(image, width, height, false, RawImage.CCITTG4,
                     RawImage.CCITT_BLACKIS1, g4, transparency);
         } else {
@@ -143,7 +143,7 @@ public final class RawImageHelper {
     }
 
     protected static void updateRawImageParameters(RawImage image, int width, int height, boolean reverseBits,
-                                                int typeCCITT, int parameters, byte[] data, int transparency[]) {
+                                                int typeCCITT, int parameters, byte[] data, int[] transparency) {
         if (transparency != null && transparency.length != 2)
             throw new IOException(IOException.TransparencyLengthMustBeEqualTo2WithCcittImages);
         updateCcittImageParameters(image, width, height, reverseBits, typeCCITT, parameters, data);

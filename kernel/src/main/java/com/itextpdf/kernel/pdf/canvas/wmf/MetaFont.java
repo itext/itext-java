@@ -117,7 +117,7 @@ public class MetaFont extends MetaObject {
         charset = in.readByte();
         in.skip(3);
         pitchAndFamily = in.readByte();
-        byte name[] = new byte[NAME_SIZE];
+        byte[] name = new byte[NAME_SIZE];
         int k;
         for (k = 0; k < NAME_SIZE; ++k) {
             int c = in.readByte();

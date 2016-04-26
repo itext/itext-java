@@ -207,7 +207,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         return baos.toByteArray();
     }
 
-    private byte[] createSimplePdf(Rectangle pageSize, final String... text) throws Exception {
+    private byte[] createSimplePdf(Rectangle pageSize, String... text) throws Exception {
         final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
         final Document document = new Document(new PdfDocument(new PdfWriter(byteStream)), new PageSize(pageSize));

@@ -65,7 +65,7 @@ class TrueTypeFontSubset {
     static final String[] tableNamesSimple = {"cvt ", "fpgm", "glyf", "head", "hhea", "hmtx", "loca", "maxp", "prep"};
     static final String[] tableNamesCmap = {"cmap", "OS/2"};
     static final String[] tableNamesExtra = {"cmap", "OS/2", "name"};
-    static final int entrySelectors[] = {0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,4,4,4,4,4};
+    static final int[] entrySelectors = {0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,4,4,4,4,4};
     static final int TABLE_CHECKSUM = 0;
     static final int TABLE_OFFSET = 1;
     static final int TABLE_LENGTH = 2;
@@ -239,7 +239,7 @@ class TrueTypeFontSubset {
         rf.skipBytes(6);
         for (int k = 0; k < num_tables; ++k) {
             String tag = readStandardString(4);
-            int tableLocation[] = new int[3];
+            int[] tableLocation = new int[3];
             tableLocation[TABLE_CHECKSUM] = rf.readInt();
             tableLocation[TABLE_OFFSET] = rf.readInt();
             tableLocation[TABLE_LENGTH] = rf.readInt();
@@ -277,7 +277,7 @@ class TrueTypeFontSubset {
 
     protected void createNewGlyphTables() throws java.io.IOException {
         newLocaTable = new int[locaTable.length];
-        int activeGlyphs[] = new int[glyphsInList.size()];
+        int[] activeGlyphs = new int[glyphsInList.size()];
         for (int k = 0; k < activeGlyphs.length; ++k) {
             activeGlyphs[k] = glyphsInList.get(k);
         }
@@ -387,7 +387,7 @@ class TrueTypeFontSubset {
      * @throws java.io.IOException the font file could not be read
      */
     protected String readStandardString(int length) throws java.io.IOException {
-        byte buf[] = new byte[length];
+        byte[] buf = new byte[length];
         rf.readFully(buf);
         try {
             return new String(buf, PdfEncodings.WINANSI);
@@ -409,12 +409,12 @@ class TrueTypeFontSubset {
     }
 
     protected void writeFontString(String s) {
-        byte b[] = PdfEncodings.convertToBytes(s, PdfEncodings.WINANSI);
+        byte[] b = PdfEncodings.convertToBytes(s, PdfEncodings.WINANSI);
         System.arraycopy(b, 0, outFont, fontPtr, b.length);
         fontPtr += b.length;
     }
 
-    protected int calculateChecksum(byte b[]) {
+    protected int calculateChecksum(byte[] b) {
         int len = b.length / 4;
         int v0 = 0;
         int v1 = 0;

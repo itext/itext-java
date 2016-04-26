@@ -153,7 +153,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public static final int FF_REQUIRED = makeFieldFlag(2);
     public static final int FF_NO_EXPORT = makeFieldFlag(3);
 
-    protected static String typeChars[] = {"4", "l", "8", "u", "n", "H"};
+    protected static String[] typeChars = {"4", "l", "8", "u", "n", "H"};
 
     protected String text;
     protected Image img;
@@ -773,7 +773,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *                to a PdfArray.
      * @return a new {@link PdfChoiceFormField} as a combobox
      */
-    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String name, String value, String options[][]) {
+    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String name, String value, String[][] options) {
         return createChoice(doc, rect, name, value, processOptions(options), PdfChoiceFormField.FF_COMBO);
     }
 
@@ -788,7 +788,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param options an array of Strings which will be converted to a PdfArray.
      * @return a new {@link PdfChoiceFormField} as a combobox
      */
-    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String name, String value, String options[]) {
+    public static PdfChoiceFormField createComboBox(PdfDocument doc, Rectangle rect, String name, String value, String[] options) {
         return createChoice(doc, rect, name, value, processOptions(options), PdfChoiceFormField.FF_COMBO);
     }
 
@@ -804,7 +804,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *                to a PdfArray.
      * @return a new {@link PdfChoiceFormField} as a list field
      */
-    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String name, String value, String options[][]) {
+    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String name, String value, String[][] options) {
         return createChoice(doc, rect, name, value, processOptions(options), 0);
     }
 
@@ -819,7 +819,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param options an array of Strings which will be converted to a PdfArray.
      * @return a new {@link PdfChoiceFormField} as a list field
      */
-    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String name, String value, String options[]) {
+    public static PdfChoiceFormField createList(PdfDocument doc, Rectangle rect, String name, String value, String[] options) {
         return createChoice(doc, rect, name, value, processOptions(options), 0);
     }
 
@@ -1937,9 +1937,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
         }
-        String out[] = new String[names.size()];
-
-        return names.toArray(out);
+        return names.toArray(new String[names.size()]);
     }
 
     /**
@@ -2014,7 +2012,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return rect.toRectangle();
     }
 
-    protected static PdfArray processOptions(String options[][]) {
+    protected static PdfArray processOptions(String[][] options) {
         PdfArray array = new PdfArray();
         for (String[] option : options) {
             PdfArray subArray = new PdfArray(new PdfString(option[0]));
@@ -2024,7 +2022,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return array;
     }
 
-    protected static PdfArray processOptions(String options[]) {
+    protected static PdfArray processOptions(String[] options) {
         PdfArray array = new PdfArray();
         for (String option : options) {
             array.add(new PdfString(option));
@@ -2095,7 +2093,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected static Object[] splitDAelements(String da) {
         PdfTokenizer tk = new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(PdfEncodings.convertToBytes(da, null))));
         List<String> stack = new ArrayList<>();
-        Object ret[] = new Object[3];
+        Object[] ret = new Object[3];
         try {
             while (tk.nextToken()) {
                 if (tk.getTokenType() == PdfTokenizer.TokenType.Comment)
@@ -2354,7 +2352,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param height the height of the radio button to draw
      * @param on     required to be <code>true</code> for fulfilling the drawing operation
      */
-    protected void drawRadioField(PdfCanvas canvas, final float width, final float height, final boolean on) {
+    protected void drawRadioField(PdfCanvas canvas, float width, float height, boolean on) {
         canvas.saveState();
         if (on) {
             canvas.

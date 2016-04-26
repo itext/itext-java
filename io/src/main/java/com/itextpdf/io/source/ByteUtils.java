@@ -59,7 +59,7 @@ public class ByteUtils {
         if (text == null)
             return null;
         int len = text.length();
-        byte b[] = new byte[len];
+        byte[] b = new byte[len];
         for (int k = 0; k < len; ++k)
             b[k] = (byte) text.charAt(k);
         return b;
@@ -81,7 +81,7 @@ public class ByteUtils {
         if (post != 0) {
             len++;
         }
-        byte b[] = new byte[len];
+        byte[] b = new byte[len];
         if (pre != 0) {
             b[0] = pre;
         }

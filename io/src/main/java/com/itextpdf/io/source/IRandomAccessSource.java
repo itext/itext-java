@@ -66,7 +66,7 @@ public interface IRandomAccessSource {
      * @param len the number of bytes to read
      * @return the number of bytes actually read, or -1 if the file is at EOF
      */
-    int get(long position, byte bytes[], int off, int len) throws java.io.IOException;
+    int get(long position, byte[] bytes, int off, int len) throws java.io.IOException;
 
     /**
      * @return the length of this source

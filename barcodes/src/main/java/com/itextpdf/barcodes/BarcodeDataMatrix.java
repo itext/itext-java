@@ -258,7 +258,7 @@ public class BarcodeDataMatrix extends Barcode2D {
 
         int w = width + 2 * ws;
         int h = height + 2 * ws;
-        int pix[] = new int[w * h];
+        int[] pix = new int[w * h];
         int stride = (w + 7) / 8;
         int ptr = 0;
         for (int k = 0; k < h; ++k) {

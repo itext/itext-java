@@ -148,7 +148,7 @@ public class CanvasGraphicsState {
      * Copy constructor.
      * @param source the Graphics State to copy from
      */
-    protected CanvasGraphicsState(final CanvasGraphicsState source) {
+    protected CanvasGraphicsState(CanvasGraphicsState source) {
         copyFrom(source);
     }
 

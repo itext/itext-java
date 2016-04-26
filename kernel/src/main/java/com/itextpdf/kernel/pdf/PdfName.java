@@ -991,7 +991,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
         int length = value.length();
         ByteBuffer buf = new ByteBuffer(length + 20);
         char c;
-        char chars[] = value.toCharArray();
+        char[] chars = value.toCharArray();
         for (int k = 0; k < length; k++) {
             c = (char) (chars[k] & 0xff);
             // Escape special characters

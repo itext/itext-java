@@ -55,7 +55,7 @@ class AwtImageFactory {
      * @param color if different from <CODE>null</CODE> the transparency pixels are replaced by this color
      * @return RawImage
      */
-    public static Image getImage(final java.awt.Image image, final java.awt.Color color) throws java.io.IOException {
+    public static Image getImage(java.awt.Image image, java.awt.Color color) throws java.io.IOException {
         return AwtImageFactory.getImage(image, color, false);
     }
 
@@ -66,7 +66,7 @@ class AwtImageFactory {
      * @param forceBW if <CODE>true</CODE> the image is treated as black and white
      * @return RawImage
      */
-    public static Image getImage(final java.awt.Image image, final java.awt.Color color, boolean forceBW) throws java.io.IOException {
+    public static Image getImage(java.awt.Image image, java.awt.Color color, boolean forceBW) throws java.io.IOException {
         if (image instanceof BufferedImage) {
             BufferedImage bi = (BufferedImage) image;
             if (bi.getType() == BufferedImage.TYPE_BYTE_BINARY && bi.getColorModel().getPixelSize() == 1) {
@@ -97,7 +97,7 @@ class AwtImageFactory {
                 transColor = color.getRed() + color.getGreen()
                         + color.getBlue() < 384 ? 0 : 1;
             }
-            int transparency[] = null;
+            int[] transparency = null;
             int cbyte = 0x80;
             int wMarker = 0;
             int currByte = 0;
@@ -159,7 +159,7 @@ class AwtImageFactory {
                 green = color.getGreen();
                 blue = color.getBlue();
             }
-            int transparency[] = null;
+            int[] transparency = null;
             if (color != null) {
                 for (int j = 0; j < size; j++) {
                     int alpha = pixels[j] >> 24 & 0xff;

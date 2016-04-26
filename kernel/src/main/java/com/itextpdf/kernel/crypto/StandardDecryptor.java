@@ -51,7 +51,7 @@ public class StandardDecryptor implements IDecryptor {
     /**
      * Creates a new instance of StandardDecryption
      */
-    public StandardDecryptor(byte key[], int off, int len) {
+    public StandardDecryptor(byte[] key, int off, int len) {
         arcfour = new ARCFOUREncryption();
         arcfour.prepareARCFOURKey(key, off, len);
     }

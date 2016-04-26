@@ -378,7 +378,7 @@ public class PdfCanvas {
      * @return current canvas
      */
     public PdfCanvas concatMatrix(AffineTransform transform) {
-        float matrix[] = new float[6];
+        float[] matrix = new float[6];
         transform.getMatrix(matrix);
         return concatMatrix(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
     }
@@ -468,7 +468,7 @@ public class PdfCanvas {
      * @param leading the new leading.
      * @return current canvas.
      */
-    public PdfCanvas setLeading(final float leading) {
+    public PdfCanvas setLeading(float leading) {
         currentGs.setLeading(leading);
         contentStream.getOutputStream()
                 .writeFloat(leading)
@@ -487,7 +487,7 @@ public class PdfCanvas {
      * @param y y-coordinate of the new current point
      * @return current canvas.
      */
-    public PdfCanvas moveTextWithLeading(final float x, final float y) {
+    public PdfCanvas moveTextWithLeading(float x, float y) {
         currentGs.setLeading(-y);
         contentStream.getOutputStream()
                 .writeFloat(x)
@@ -515,7 +515,7 @@ public class PdfCanvas {
      * @param text the text to write
      * @return current canvas.
      */
-    public PdfCanvas newlineShowText(final String text) {
+    public PdfCanvas newlineShowText(String text) {
         document.checkShowTextIsoConformance(currentGs, resources);
         showTextInt(text);
         contentStream.getOutputStream()
@@ -532,7 +532,7 @@ public class PdfCanvas {
      * @param text        the text to write
      * @return current canvas.
      */
-    public PdfCanvas newlineShowText(final float wordSpacing, final float charSpacing, final String text) {
+    public PdfCanvas newlineShowText(float wordSpacing, float charSpacing, String text) {
         document.checkShowTextIsoConformance(currentGs, resources);
         contentStream.getOutputStream()
                 .writeFloat(wordSpacing)
@@ -874,7 +874,7 @@ public class PdfCanvas {
      * @param y3 y coordinate of the ending point.
      * @return current canvas.
      */
-    public PdfCanvas curveTo(final double x2, final double y2, final double x3, final double y3) {
+    public PdfCanvas curveTo(double x2, double y2, double x3, double y3) {
         contentStream.getOutputStream()
                 .writeDouble(x2)
                 .writeSpace()
@@ -896,7 +896,7 @@ public class PdfCanvas {
      * @param y3 y coordinate of the ending point.
      * @return current canvas.
      */
-    public PdfCanvas curveFromTo(final double x1, final double y1, final double x3, final double y3) {
+    public PdfCanvas curveFromTo(double x1, double y1, double x3, double y3) {
         contentStream.getOutputStream()
                 .writeDouble(x1)
                 .writeSpace()
@@ -923,12 +923,12 @@ public class PdfCanvas {
      * @param extent   angle extent in degrees.
      * @return current canvas.
      */
-    public PdfCanvas arc(final double x1, final double y1, final double x2, final double y2,
-                         final double startAng, final double extent) {
+    public PdfCanvas arc(double x1, double y1, double x2, double y2,
+                         double startAng, double extent) {
         List<double[]> ar = bezierArc(x1, y1, x2, y2, startAng, extent);
         if (ar.isEmpty())
             return this;
-        double pt[] = ar.get(0);
+        double[] pt = ar.get(0);
         moveTo(pt[0], pt[1]);
         for (int i = 0; i < ar.size(); ++i) {
             pt = ar.get(i);
@@ -947,7 +947,7 @@ public class PdfCanvas {
      * @param y2 a corner of the enclosing rectangle
      * @return current canvas.
      */
-    public PdfCanvas ellipse(final double x1, final double y1, final double x2, final double y2) {
+    public PdfCanvas ellipse(double x1, double y1, double x2, double y2) {
         return arc(x1, y1, x2, y2, 0f, 360f);
     }
 
@@ -975,7 +975,7 @@ public class PdfCanvas {
      * @param extent   angle extent in degrees.
      * @return a list of double[] with the bezier curves.
      */
-    public static List<double[]> bezierArc(double x1, double y1, double x2, double y2, final double startAng, final double extent) {
+    public static List<double[]> bezierArc(double x1, double y1, double x2, double y2, double startAng, double extent) {
         double tmp;
         if (x1 > x2) {
             tmp = x1;
@@ -1108,7 +1108,7 @@ public class PdfCanvas {
      * @param r radius of circle.
      * @return current canvas.
      */
-    public PdfCanvas circle(final double x, final double y, final double r) {
+    public PdfCanvas circle(double x, double y, double r) {
         final double curve = 0.5523f;
         moveTo(x + r, y);
         curveTo(x + r, y + r * curve, x + r * curve, y + r, x, y + r);
@@ -1342,7 +1342,7 @@ public class PdfCanvas {
      * @param phase the value of the phase
      * @return current canvas.
      */
-    public PdfCanvas setLineDash(final float phase) {
+    public PdfCanvas setLineDash(float phase) {
         currentGs.setDashPattern(getDashPatternArray(phase));
         contentStream.getOutputStream().writeByte('[').writeByte(']').writeSpace()
                 .writeFloat(phase).writeSpace()
@@ -1362,7 +1362,7 @@ public class PdfCanvas {
      * @param unitsOn the number of units that must be 'on' (equals the number of units that must be 'off').
      * @return current canvas.
      */
-    public PdfCanvas setLineDash(final float unitsOn, final float phase) {
+    public PdfCanvas setLineDash(float unitsOn, float phase) {
         currentGs.setDashPattern(getDashPatternArray(new float[]{unitsOn}, phase));
         contentStream.getOutputStream().writeByte('[').writeFloat(unitsOn).writeByte(']').writeSpace()
                 .writeFloat(phase).writeSpace()
@@ -1384,7 +1384,7 @@ public class PdfCanvas {
      * @param unitsOff the number of units that must be 'off'
      * @return current canvas.
      */
-    public PdfCanvas setLineDash(final float unitsOn, final float unitsOff, final float phase) {
+    public PdfCanvas setLineDash(float unitsOn, float unitsOff, float phase) {
         currentGs.setDashPattern(getDashPatternArray(new float[]{unitsOn, unitsOff}, phase));
         contentStream.getOutputStream().writeByte('[').writeFloat(unitsOn).writeSpace()
                 .writeFloat(unitsOff).writeByte(']').writeSpace()
@@ -1405,7 +1405,7 @@ public class PdfCanvas {
      * @param phase the value of the phase
      * @return current canvas.
      */
-    public final PdfCanvas setLineDash(final float[] array, final float phase) {
+    public PdfCanvas setLineDash(float[] array, float phase) {
         currentGs.setDashPattern(getDashPatternArray(array, phase));
         PdfOutputStream out = contentStream.getOutputStream();
         out.writeByte('[');
@@ -2089,7 +2089,7 @@ public class PdfCanvas {
      * @param s the {@code String}
      * @return current canvas.
      */
-    public PdfCanvas writeLiteral(final String s) {
+    public PdfCanvas writeLiteral(String s) {
         contentStream.getOutputStream().writeString(s);
         return this;
     }
@@ -2100,7 +2100,7 @@ public class PdfCanvas {
      * @param c the {@code char}
      * @return current canvas.
      */
-    public PdfCanvas writeLiteral(final char c) {
+    public PdfCanvas writeLiteral(char c) {
         contentStream.getOutputStream().writeInteger((int) c);
         return this;
     }
@@ -2111,7 +2111,7 @@ public class PdfCanvas {
      * @param n the {@code float}
      * @return current canvas.
      */
-    public PdfCanvas writeLiteral(final float n) {
+    public PdfCanvas writeLiteral(float n) {
         contentStream.getOutputStream().writeFloat(n);
         return this;
     }

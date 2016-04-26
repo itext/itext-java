@@ -326,7 +326,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * @param skipFirstHeader New value of property skipFirstHeader.
      * @return this element
      */
-    public Table setSkipFirstHeader(final boolean skipFirstHeader) {
+    public Table setSkipFirstHeader(boolean skipFirstHeader) {
         this.skipFirstHeader = skipFirstHeader;
         return this;
     }
@@ -338,7 +338,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * @param skipLastFooter New value of property skipLastFooter.
      * @return this element
      */
-    public Table setSkipLastFooter(final boolean skipLastFooter) {
+    public Table setSkipLastFooter(boolean skipLastFooter) {
         this.skipLastFooter = skipLastFooter;
         return this;
     }

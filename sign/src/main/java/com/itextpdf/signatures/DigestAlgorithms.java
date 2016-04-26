@@ -215,7 +215,7 @@ public class DigestAlgorithms {
      */
     public static byte[] digest(InputStream data, MessageDigest messageDigest)
             throws GeneralSecurityException, IOException {
-        byte buf[] = new byte[8192];
+        byte[] buf = new byte[8192];
         int n;
         while ((n = data.read(buf)) > 0) {
             messageDigest.update(buf, 0, n);

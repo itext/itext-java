@@ -159,7 +159,7 @@ class PngImageHelper {
     private static final int PNG_FILTER_UP = 2;
     private static final int PNG_FILTER_AVERAGE = 3;
     private static final int PNG_FILTER_PAETH = 4;
-    private static final String intents[] = {"/Perceptual",
+    private static final String[] intents = {"/Perceptual",
             "/RelativeColorimetric", "/Saturation", "/AbsoluteColorimetric"};
 
     public static void processImage(Image image) {
@@ -356,7 +356,7 @@ class PngImageHelper {
                 throw new java.io.IOException("file.is.not.a.valid.png");
             }
         }
-        byte buffer[] = new byte[TRANSFERSIZE];
+        byte[] buffer = new byte[TRANSFERSIZE];
         while (true) {
             int len = getInt(pngStream);
             String marker = getString(pngStream);
@@ -488,7 +488,7 @@ class PngImageHelper {
                 } while (pngStream.read() != 0);
                 pngStream.read();
                 --len;
-                byte icccom[] = new byte[len];
+                byte[] icccom = new byte[len];
                 int p = 0;
                 while (len > 0) {
                     int r = pngStream.read(icccom, p, len);
@@ -497,7 +497,7 @@ class PngImageHelper {
                     p += r;
                     len -= r;
                 }
-                byte iccp[] = FilterUtil.flateDecode(icccom, true);
+                byte[] iccp = FilterUtil.flateDecode(icccom, true);
                 icccom = null;
                 try {
                     png.iccProfile = IccProfile.getInstance(iccp);
@@ -721,7 +721,7 @@ class PngImageHelper {
         }
     }
 
-    private static int getPixel(byte image[], int x, int y, int bitDepth, int bytesPerRow) {
+    private static int getPixel(byte[] image, int x, int y, int bitDepth, int bytesPerRow) {
         if (bitDepth == 8) {
             int pos = bytesPerRow * y + x;
             return image[pos] & 0xff;
@@ -732,7 +732,7 @@ class PngImageHelper {
         }
     }
 
-    static void setPixel(byte image[], int data[], int offset, int size, int x, int y, int bitDepth, int bytesPerRow) {
+    static void setPixel(byte[] image, int[] data, int offset, int size, int x, int y, int bitDepth, int bytesPerRow) {
         if (bitDepth == 8) {
             int pos = bytesPerRow * y + size * x;
             for (int k = 0; k < size; ++k)

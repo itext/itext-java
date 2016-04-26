@@ -50,6 +50,7 @@ import com.itextpdf.io.source.ByteBuffer;
  * Encodes data in the CCITT G4 FAX format.
  */
 public class CCITTG4Encoder {
+
     private int rowbytes;
     private int rowpixels;
     private int bit = 8;
@@ -304,7 +305,7 @@ public class CCITTG4Encoder {
         return bs < be ? finddiff(bp, offset, bs, be, color) : be;
     }
 
-    private static byte zeroruns[] = {
+    private static byte[] zeroruns = {
             8, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4,	/* 0x00 - 0x0f */
             3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,	/* 0x10 - 0x1f */
             2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,	/* 0x20 - 0x2f */
@@ -323,7 +324,7 @@ public class CCITTG4Encoder {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0	/* 0xf0 - 0xff */
     };
 
-    private static byte oneruns[] = {
+    private static byte[] oneruns = {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0x00 - 0x0f */
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0x10 - 0x1f */
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0x20 - 0x2f */

@@ -54,7 +54,7 @@ public class AesDecryptor implements IDecryptor {
     /**
      * Creates a new instance of AesDecryption
      */
-    public AesDecryptor(byte key[], int off, int len) {
+    public AesDecryptor(byte[] key, int off, int len) {
         this.key = new byte[len];
         System.arraycopy(key, off, this.key, 0, len);
     }

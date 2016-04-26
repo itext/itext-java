@@ -94,7 +94,7 @@ public final class StreamUtil {
      * @param bytes the {@code byte} array to escape
      * @return an escaped {@code byte} array
      */
-    public static byte[] createEscapedString(byte bytes[]) {
+    public static byte[] createEscapedString(byte[] bytes) {
         return createBufferedEscapedString(bytes).toByteArray();
     }
 
@@ -203,7 +203,7 @@ public final class StreamUtil {
      * @throws java.io.IOException if there is a problem reading from the input stream
      */
     public static byte[] inputStreamToArray(InputStream stream) throws java.io.IOException {
-        byte b[] = new byte[8192];
+        byte[] b = new byte[8192];
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         while (true) {
             int read = stream.read(b);

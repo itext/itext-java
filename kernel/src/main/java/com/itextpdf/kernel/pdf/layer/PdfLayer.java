@@ -134,7 +134,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
      * @param document the <CODE>PdfDocument</CODE>
      * @param group the radio group
      */
-    public static void addOCGRadioGroup(PdfDocument document, final List<PdfLayer> group) {
+    public static void addOCGRadioGroup(PdfDocument document, List<PdfLayer> group) {
         document.getCatalog().getOCProperties(true).addOCGRadioGroup(group);
     }
 

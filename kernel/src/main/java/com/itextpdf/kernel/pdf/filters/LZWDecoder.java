@@ -54,14 +54,14 @@ import java.io.OutputStream;
 public class LZWDecoder {
 
     byte stringTable[][];
-    byte data[] = null;
+    byte[] data = null;
     OutputStream uncompData;
     int tableIndex, bitsToGet = 9;
     int bytePointer, bitPointer;
     int nextData = 0;
     int nextBits = 0;
 
-    int andTable[] = {
+    int[] andTable = {
             511,
             1023,
             2047,
@@ -160,7 +160,7 @@ public class LZWDecoder {
      *
      * @param string content to write to the uncompressed data
      */
-    public void writeString(byte string[]) {
+    public void writeString(byte[] string) {
         try {
             uncompData.write(string);
         } catch (IOException e) {
@@ -176,7 +176,7 @@ public class LZWDecoder {
      */
     public void addStringToTable(byte[] oldString, byte newString) {
         int length = oldString.length;
-        byte string[] = new byte[length + 1];
+        byte[] string = new byte[length + 1];
         System.arraycopy(oldString, 0, string, 0, length);
         string[length] = newString;
 
@@ -197,7 +197,7 @@ public class LZWDecoder {
      *
      * @param string byte[] to store in the string table
      */
-    public void addStringToTable(byte string[]) {
+    public void addStringToTable(byte[] string) {
 
         // Add this new String to the table
         stringTable[tableIndex++] = string;
@@ -218,9 +218,9 @@ public class LZWDecoder {
      * @param newString string that is to be appended to oldString
      * @return combined string
      */
-    public byte[] composeString(byte oldString[], byte newString) {
+    public byte[] composeString(byte[] oldString, byte newString) {
         int length = oldString.length;
-        byte string[] = new byte[length + 1];
+        byte[] string = new byte[length + 1];
         System.arraycopy(oldString, 0, string, 0, length);
         string[length] = newString;
 

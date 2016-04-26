@@ -245,15 +245,15 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      *
      * @param xmpMetadata The xmpMetadata to set.
      */
-    protected void setXmpMetadata(final byte[] xmpMetadata) {
+    protected void setXmpMetadata(byte[] xmpMetadata) {
         this.xmpMetadata = xmpMetadata;
     }
 
-    public void setXmpMetadata(final XMPMeta xmpMeta, final SerializeOptions serializeOptions) throws XMPException {
+    public void setXmpMetadata(XMPMeta xmpMeta, SerializeOptions serializeOptions) throws XMPException {
         setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
     }
 
-    public void setXmpMetadata(final XMPMeta xmpMeta) throws XMPException {
+    public void setXmpMetadata(XMPMeta xmpMeta) throws XMPException {
         SerializeOptions serializeOptions = new SerializeOptions();
         serializeOptions.setPadding(2000);
         setXmpMetadata(xmpMeta, serializeOptions);
@@ -314,7 +314,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return xmpMetadata;
     }
 
-    public PdfObject getPdfObject(final int objNum) {
+    public PdfObject getPdfObject(int objNum) {
         checkClosingStatus();
         PdfIndirectReference reference = xref.get(objNum);
         if (reference == null) {

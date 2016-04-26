@@ -2442,7 +2442,7 @@ public class DefaultClipper extends ClipperBase {
                 return false;
             }
         }
-        catch (final Exception e) {
+        catch (Exception e) {
             sortedEdges = null;
             intersectList.clear();
             throw new IllegalStateException( "ProcessIntersections error", e );

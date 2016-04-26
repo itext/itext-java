@@ -141,7 +141,7 @@ public class WriterProperties implements Serializable {
      *                       Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
      * @return this {@code WriterProperties} instance
      */
-    public WriterProperties setStandardEncryption(byte userPassword[], byte ownerPassword[], int permissions, int encryptionAlgorithm) {
+    public WriterProperties setStandardEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionAlgorithm) {
         encryptionProperties.setStandardEncryption(userPassword, ownerPassword, permissions, encryptionAlgorithm);
         return this;
     }

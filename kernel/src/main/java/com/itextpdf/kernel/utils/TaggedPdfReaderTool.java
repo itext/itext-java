@@ -77,14 +77,14 @@ import java.util.Set;
 /**
  * Converts a tagged PDF document into an XML file.
  */
- public class TaggedPdfReaderTool {
+public class TaggedPdfReaderTool {
 
     protected PdfDocument document;
     protected PrintWriter out;
     protected String rootTag;
 
     // key - page dictionary; value pairs of mcid and text in them
-    protected Map<PdfDictionary, Map<Integer, String> > parsedTags = new HashMap<>();
+    protected Map<PdfDictionary, Map<Integer, String>> parsedTags = new HashMap<>();
 
     public TaggedPdfReaderTool(PdfDocument document) {
         this.document = document;
@@ -243,8 +243,7 @@ import java.util.Set;
             if (k == 0) {
                 if (!nameStart)
                     c = '_';
-            }
-            else {
+            } else {
                 if (!nameMiddle)
                     c = '-';
             }
@@ -255,17 +254,18 @@ import java.util.Set;
 
     /**
      * NOTE: copied from itext5 XMLUtils class
-     *
+     * <p>
      * Escapes a string with the appropriated XML codes.
-     * @param s the string to be escaped
+     *
+     * @param s         the string to be escaped
      * @param onlyASCII codes above 127 will always be escaped with &amp;#nn; if <CODE>true</CODE>
      * @return the escaped string
      * @since 5.0.6
      */
-    protected static String escapeXML(final String s, final boolean onlyASCII) {
-        char cc[] = s.toCharArray();
+    protected static String escapeXML(String s, boolean onlyASCII) {
+        char[] cc = s.toCharArray();
         int len = cc.length;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int k = 0; k < len; ++k) {
             int c = cc[k];
             switch (c) {
@@ -289,7 +289,7 @@ import java.util.Set;
                         if (onlyASCII && c > 127)
                             sb.append("&#").append(c).append(';');
                         else
-                            sb.append((char)c);
+                            sb.append((char) c);
                     }
             }
         }
@@ -298,8 +298,9 @@ import java.util.Set;
 
     /**
      * Checks if a character value should be escaped/unescaped.
-     * @param	c	a character value
-     * @return	true if it's OK to escape or unescape this value
+     *
+     * @param    c    a character value
+     * @return true if it's OK to escape or unescape this value
      */
     public static boolean isValidCharacterValue(int c) {
         return (c == 0x9 || c == 0xA || c == 0xD

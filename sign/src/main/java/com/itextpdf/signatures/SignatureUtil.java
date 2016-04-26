@@ -175,7 +175,7 @@ public class SignatureUtil {
         InputStream rg = null;
         try {
             rg = new RASInputStream(new RandomAccessSourceFactory().createRanged(rf.createSourceView(), asLongArray(b)));
-            byte buf[] = new byte[8192];
+            byte[] buf = new byte[8192];
             int rd;
             while ((rd = rg.read(buf, 0, buf.length)) > 0) {
                 pkcs7.update(buf, 0, rd);
@@ -235,9 +235,9 @@ public class SignatureUtil {
                 // TODO: add exception handling (at least some logger)
             }
             for (int k = 0; k < sorter.size(); ++k) {
-                Object objs[] = sorter.get(k);
+                Object[] objs = sorter.get(k);
                 String name = (String)objs[0];
-                int p[] = (int[])objs[1];
+                int[] p = (int[])objs[1];
                 p[1] = k + 1;
                 sigNames.put(name, p);
                 orderedSignatureNames.add(name);
