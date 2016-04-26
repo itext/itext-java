@@ -46,13 +46,13 @@ package com.itextpdf.io.image;
 
 import java.net.URL;
 
-public class PngImage extends RawImage {
+public class PngImageData extends RawImageData {
 
-    protected PngImage(byte[] bytes) {
+    protected PngImageData(byte[] bytes) {
         super(bytes, ImageType.PNG);
     }
 
-    protected PngImage(URL url) {
+    protected PngImageData(URL url) {
         super(url, ImageType.PNG);
     }
 }

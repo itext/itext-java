@@ -29,7 +29,6 @@
         <module>hyph</module>
         <module>font-asian</module>
         <module>layout</module>
-        <module>parsing</module>
         <module>pdfa</module>
         <module>pdftest</module>
         <module>sign</module>
@@ -259,7 +258,7 @@
                     <additionalparam>${javadoc.doclint.none}</additionalparam>
                     <quiet>true</quiet>
                     <detectLinks>true</detectLinks>
-                    <subpackages>com.itextpdf.barcodes:com.itextpdf.font-asian:com.itextpdf.forms:com.itextpdf.hyph:com.itextpdf.io:com.itextpdf.kernel:com.itextpdf.layout:com.itextpdf.parsing:com.itextpdf.pdfa:com.itextpdf.signatures</subpackages>
+                    <subpackages>com.itextpdf.barcodes:com.itextpdf.font-asian:com.itextpdf.forms:com.itextpdf.hyph:com.itextpdf.io:com.itextpdf.kernel:com.itextpdf.layout:com.itextpdf.pdfa:com.itextpdf.signatures</subpackages>
                     <groups>
                         <group>
                             <title>Barcodes</title>
@@ -288,10 +287,6 @@
                         <group>
                             <title>Layout</title>
                             <packages>com.itextpdf.layout*</packages>
-                        </group>
-                        <group>
-                            <title>Parsing</title>
-                            <packages>com.itextpdf.parsing*</packages>
                         </group>
                         <group>
                             <title>PDF/A</title>

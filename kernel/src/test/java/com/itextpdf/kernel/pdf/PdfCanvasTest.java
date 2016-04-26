@@ -5,7 +5,7 @@ import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.color.CalGray;
@@ -20,7 +20,7 @@ import com.itextpdf.kernel.color.Lab;
 import com.itextpdf.kernel.color.Separation;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.canvas.wmf.WmfImage;
+import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
@@ -1388,7 +1388,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
-        Image img = new WmfImage(sourceFolder + "example.wmf");
+        ImageData img = new WmfImageData(sourceFolder + "example.wmf");
         canvas.addImage(img, 0, 0, 0.1f, false);
 
         document.close();
@@ -1404,7 +1404,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
-        Image img = new WmfImage(sourceFolder + "butterfly.wmf");
+        ImageData img = new WmfImageData(sourceFolder + "butterfly.wmf");
         canvas.addImage(img, 0, 0, 1, false);
 
         document.close();
@@ -1421,7 +1421,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
-        Image img = new WmfImage(sourceFolder + "type1.wmf");
+        ImageData img = new WmfImageData(sourceFolder + "type1.wmf");
         canvas.addImage(img, 0, 0, 1, false);
 
         document.close();
@@ -1437,7 +1437,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
-        Image img = new WmfImage(sourceFolder + "type0.wmf");
+        ImageData img = new WmfImageData(sourceFolder + "type0.wmf");
         canvas.addImage(img, 0, 0, 1, false);
 
         document.close();
@@ -1453,7 +1453,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
-        Image img = ImageFactory.getImage(sourceFolder + "2-frames.gif");
+        ImageData img = ImageFactory.getImage(sourceFolder + "2-frames.gif");
         canvas.addImage(img, 100, 100, 200, false);
 
         document.close();
@@ -1477,7 +1477,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
 
         PdfCanvas canvas = new PdfCanvas(page);
-        Image img = ImageFactory.getGifFrame(baos.toByteArray(), 1);
+        ImageData img = ImageFactory.getGifFrame(baos.toByteArray(), 1);
         canvas.addImage(img, 100, 100, 200, false);
 
         document.close();
@@ -1501,7 +1501,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
 
         PdfCanvas canvas = new PdfCanvas(page);
-        Image img = ImageFactory.getGifFrame(baos.toByteArray(), 2);
+        ImageData img = ImageFactory.getGifFrame(baos.toByteArray(), 2);
         canvas.addImage(img, 100, 100, 200, false);
 
         document.close();
@@ -1525,7 +1525,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
 
         PdfCanvas canvas = new PdfCanvas(page);
-        Image img = ImageFactory.getGifFrame(baos.toByteArray(), 3);
+        ImageData img = ImageFactory.getGifFrame(baos.toByteArray(), 3);
         canvas.addImage(img, 100, 100, 200, false);
     }
 
@@ -1545,9 +1545,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
 
         PdfCanvas canvas = new PdfCanvas(page);
-        List<Image> frames = ImageFactory.getGifFrames(baos.toByteArray(), new int[]{1, 2, 5});
+        List<ImageData> frames = ImageFactory.getGifFrames(baos.toByteArray(), new int[]{1, 2, 5});
         float y = 600;
-        for (Image img : frames) {
+        for (ImageData img : frames) {
             canvas.addImage(img, 100, y, 200, false);
             y -= 200;
         }

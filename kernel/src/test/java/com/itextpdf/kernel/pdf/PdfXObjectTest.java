@@ -3,7 +3,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
@@ -85,7 +85,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
 
-        Image image = ImageFactory.getImage(sourceFolder + "itext.jpg");
+        ImageData image = ImageFactory.getImage(sourceFolder + "itext.jpg");
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.addImage(image, 50, 500, 100, true);

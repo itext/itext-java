@@ -60,7 +60,7 @@ public final class GifImageHelper {
 
     private static class GifParameters {
 
-        public GifParameters(GifImage image) {
+        public GifParameters(GifImageData image) {
             this.image = image;
         }
 
@@ -103,14 +103,14 @@ public final class GifImageHelper {
         URL fromUrl;
         int currentFrame;
 
-        GifImage image;
+        GifImageData image;
     }
 
     /**
      * Reads image source and fills GifImage object with parameters (frames, width, height)
      * @param image GifImage
      */
-    public static void processImage(GifImage image) {
+    public static void processImage(GifImageData image) {
         processImage(image, -1);
     }
 
@@ -119,7 +119,7 @@ public final class GifImageHelper {
      * @param image GifImage
      * @param lastFrameNumber the last frame of the gif image should be read
      */
-    public static void processImage(GifImage image, int lastFrameNumber) {
+    public static void processImage(GifImageData image, int lastFrameNumber) {
         GifParameters gif = new GifParameters(image);
         InputStream gifStream;
         try {
@@ -304,7 +304,7 @@ public final class GifImageHelper {
             colorspace[3] = PdfEncodings.convertToString(gif.m_curr_table, null);
             Map<String, Object> ad = new HashMap<>();
             ad.put("ColorSpace", colorspace);
-            RawImage img = new RawImage(gif.m_out, ImageType.NONE);
+            RawImageData img = new RawImageData(gif.m_out, ImageType.NONE);
             RawImageHelper.updateRawImageParameters(img, gif.iw, gif.ih, 1, gif.m_bpc, gif.m_out);
             RawImageHelper.updateImageAttributes(img, ad);
             gif.image.addFrame(img);

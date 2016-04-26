@@ -55,11 +55,11 @@ import java.util.Map;
 final class BmpImageHelper {
 
     private static class BmpParameters {
-        public BmpParameters(BmpImage image) {
+        public BmpParameters(BmpImageData image) {
             this.image = image;
         }
 
-        BmpImage image;
+        BmpImageData image;
         int width;
         int height;
         Map<String, Object> additional;
@@ -113,7 +113,7 @@ final class BmpImageHelper {
     private static final int BI_RLE4 = 2;
     private static final int BI_BITFIELDS = 3;
 
-    public static void processImage(Image image) {
+    public static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.BMP)
             throw new IllegalArgumentException("BMP image expected");
         BmpParameters bmp;
@@ -124,7 +124,7 @@ final class BmpImageHelper {
             }
             bmpStream = new ByteArrayInputStream(image.getData());
             image.imageSize = image.getData().length;
-            bmp = new BmpParameters((BmpImage)image);
+            bmp = new BmpParameters((BmpImageData)image);
             process(bmp, bmpStream);
             if (getImage(bmp)) {
                 image.setWidth(bmp.width);

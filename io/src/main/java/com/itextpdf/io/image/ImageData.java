@@ -47,10 +47,6 @@ package com.itextpdf.io.image;
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.color.IccProfile;
-
-import java.net.URL;
-import java.util.Map;
-
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
@@ -58,7 +54,10 @@ import com.itextpdf.io.util.StreamUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class Image {
+import java.net.URL;
+import java.util.Map;
+
+public abstract class ImageData {
 
     protected URL url;
 
@@ -98,7 +97,7 @@ public abstract class Image {
 
     protected boolean mask = false;
 
-    protected Image imageMask;
+    protected ImageData imageMask;
 
     protected boolean interpolation;
 
@@ -110,12 +109,12 @@ public abstract class Image {
 
     protected Long mySerialId = getSerialId();
 
-    protected Image(URL url, ImageType type) {
+    protected ImageData(URL url, ImageType type) {
         this.url = url;
         this.originalType = type;
     }
 
-    protected Image(byte[] bytes, ImageType type) {
+    protected ImageData(byte[] bytes, ImageType type) {
         this.data = bytes;
         this.originalType = type;
     }
@@ -221,11 +220,11 @@ public abstract class Image {
         return mask;
     }
 
-    public Image getImageMask() {
+    public ImageData getImageMask() {
         return imageMask;
     }
 
-    public void setImageMask(Image imageMask) {
+    public void setImageMask(ImageData imageMask) {
         if (this.mask)
             throw new IOException(IOException.ImageMaskCannotContainAnotherImageMask);
         if (!imageMask.mask)
@@ -316,7 +315,7 @@ public abstract class Image {
      * @return if the image can be inline
      */
     public boolean canImageBeInline() {
-        Logger logger = LoggerFactory.getLogger(Image.class);
+        Logger logger = LoggerFactory.getLogger(ImageData.class);
         if (imageSize > 4096) {
             logger.warn(LogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB);
             return false;

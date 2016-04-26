@@ -53,7 +53,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Jpeg2000Image extends Image {
+public class Jpeg2000ImageData extends ImageData {
 
     public static class Parameters {
         public int numOfComps;
@@ -96,22 +96,22 @@ public class Jpeg2000Image extends Image {
 
     protected Parameters parameters;
 
-    protected Jpeg2000Image(URL url) {
+    protected Jpeg2000ImageData(URL url) {
         super(url, ImageType.JPEG2000);
     }
 
-    protected Jpeg2000Image(byte[] bytes) {
+    protected Jpeg2000ImageData(byte[] bytes) {
         super(bytes, ImageType.JPEG2000);
     }
 
     @Override
     public boolean canImageBeInline() {
-        Logger logger = LoggerFactory.getLogger(Image.class);
+        Logger logger = LoggerFactory.getLogger(ImageData.class);
         logger.warn(LogMessageConstant.IMAGE_HAS_JPXDECODE_FILTER);
         return false;
     }
 
-    public Jpeg2000Image.Parameters getParameters() {
+    public Jpeg2000ImageData.Parameters getParameters() {
         return parameters;
     }
 }

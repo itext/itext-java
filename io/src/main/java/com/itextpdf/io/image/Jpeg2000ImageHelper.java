@@ -45,10 +45,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.codec.Base64;
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.io.util.UrlUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -81,18 +78,18 @@ final class Jpeg2000ImageHelper {
 
     private static final int JPX_JPXB = 0x6a707862;
 
-    public static void processImage(Image image) {
+    public static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.JPEG2000)
             throw new IllegalArgumentException("JPEG2000 image expected");
-        processParameters((Jpeg2000Image)image);
+        processParameters((Jpeg2000ImageData)image);
         image.setFilter("JPXDecode");
     }
 
     /**
      * This method checks if the image is a valid JPEG and processes some parameters.
      */
-    private static void processParameters(Jpeg2000Image jp2) {
-        jp2.parameters = new Jpeg2000Image.Parameters();
+    private static void processParameters(Jpeg2000ImageData jp2) {
+        jp2.parameters = new Jpeg2000ImageData.Parameters();
         try {
             if (jp2.getData() == null) {
                 jp2.loadData();
@@ -147,7 +144,7 @@ final class Jpeg2000ImageHelper {
                 } else if (box.type == JP2_COLR) {
                     do {
                         if (jp2.parameters.colorSpecBoxes == null)
-                            jp2.parameters.colorSpecBoxes = new ArrayList<Jpeg2000Image.ColorSpecBox>();
+                            jp2.parameters.colorSpecBoxes = new ArrayList<Jpeg2000ImageData.ColorSpecBox>();
                         jp2.parameters.colorSpecBoxes.add(jp2_read_colr(box, jpeg2000Stream));
                         try {
                             jp2_read_boxhdr(box, jpeg2000Stream);
@@ -175,9 +172,9 @@ final class Jpeg2000ImageHelper {
         }
     }
 
-    private static Jpeg2000Image.ColorSpecBox jp2_read_colr(Jpeg2000Box box, InputStream jpeg2000Stream) throws java.io.IOException {
+    private static Jpeg2000ImageData.ColorSpecBox jp2_read_colr(Jpeg2000Box box, InputStream jpeg2000Stream) throws java.io.IOException {
         int readBytes = 8;
-        Jpeg2000Image.ColorSpecBox colorSpecBox = new Jpeg2000Image.ColorSpecBox();
+        Jpeg2000ImageData.ColorSpecBox colorSpecBox = new Jpeg2000ImageData.ColorSpecBox();
         for (int i = 0; i < 3; i++) {
             colorSpecBox.add(cio_read(1, jpeg2000Stream));
             readBytes++;

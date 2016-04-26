@@ -56,16 +56,16 @@ import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Jbig2Image extends Image {
+public class Jbig2ImageData extends ImageData {
 
     private int page;
 
-    protected Jbig2Image(URL url, int page) {
+    protected Jbig2ImageData(URL url, int page) {
         super(url, ImageType.JBIG2);
         this.page = page;
     }
 
-    protected Jbig2Image(byte[] bytes, int page) {
+    protected Jbig2ImageData(byte[] bytes, int page) {
         super(bytes, ImageType.JBIG2);
         this.page = page;
     }
@@ -101,7 +101,7 @@ public class Jbig2Image extends Image {
 
     @Override
     public boolean canImageBeInline() {
-        Logger logger = LoggerFactory.getLogger(Image.class);
+        Logger logger = LoggerFactory.getLogger(ImageData.class);
         logger.warn(LogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER);
         return false;
     }

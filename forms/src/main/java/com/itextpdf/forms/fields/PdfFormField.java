@@ -73,7 +73,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.io.codec.Base64;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
@@ -158,7 +158,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected static String[] typeChars = {"4", "l", "8", "u", "n", "H"};
 
     protected String text;
-    protected Image img;
+    protected ImageData img;
     protected PdfFont font;
     protected int fontSize;
     protected Color color;

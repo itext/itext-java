@@ -44,30 +44,81 @@
  */
 package com.itextpdf.io.image;
 
+import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.io.util.UrlUtil;
+
+import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
-public class BmpImage extends RawImage {
+public class GifImageData {
 
-    private int size;
-    private boolean noHeader;
+    private float logicalHeight;
+    private float logicalWidth;
+    private List<ImageData> frames = new ArrayList<>();
+    private byte[] data;
+    private URL url;
 
-    protected BmpImage(URL url, boolean noHeader, int size) {
-        super(url, ImageType.BMP);
-        this.noHeader = noHeader;
-        this.size = size;
+    protected GifImageData(URL url) {
+        this.url = url;
     }
 
-    protected BmpImage(byte[] bytes, boolean noHeader, int size) {
-        super(bytes, ImageType.BMP);
-        this.noHeader = noHeader;
-        this.size = size;
+    protected GifImageData(byte[] data) {
+        this.data = data;
     }
 
-    public int getSize() {
-        return size;
+    public float getLogicalHeight() {
+        return logicalHeight;
     }
 
-    public boolean isNoHeader() {
-        return noHeader;
+    public void setLogicalHeight(float logicalHeight) {
+        this.logicalHeight = logicalHeight;
+    }
+
+    public float getLogicalWidth() {
+        return logicalWidth;
+    }
+
+    public void setLogicalWidth(float logicalWidth) {
+        this.logicalWidth = logicalWidth;
+    }
+
+    public List<ImageData> getFrames() {
+        return frames;
+    }
+
+    protected byte[] getData() {
+        return data;
+    }
+
+    protected URL getUrl() {
+        return url;
+    }
+
+    protected void addFrame(ImageData frame) {
+        frames.add(frame);
+    }
+
+    /**
+     * Load data by URL. url must be not null.
+     * Note, this method doesn't check if data or url is null.
+     * @throws java.io.IOException
+     */
+    void loadData() throws java.io.IOException {
+        InputStream input = null;
+        try {
+            input = UrlUtil.openStream(url);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            StreamUtil.transferBytes(UrlUtil.openStream(url), stream);
+            data = stream.toByteArray();
+        } finally {
+            if (input != null) {
+                input.close();
+            }
+        }
+
+
     }
 }

@@ -61,11 +61,11 @@ import java.util.Map;
 class PngImageHelper {
 
     private static class PngParameters {
-        PngParameters(PngImage image) {
+        PngParameters(PngImageData image) {
             this.image = image;
         }
 
-        PngImage image;
+        PngImageData image;
 
         InputStream dataStream;
         int width;
@@ -162,7 +162,7 @@ class PngImageHelper {
     private static final String[] intents = {"/Perceptual",
             "/RelativeColorimetric", "/Saturation", "/AbsoluteColorimetric"};
 
-    public static void processImage(Image image) {
+    public static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.PNG)
             throw new IllegalArgumentException("PNG image expected");
         PngParameters png;
@@ -173,7 +173,7 @@ class PngImageHelper {
             }
             pngStream = new ByteArrayInputStream(image.getData());
             image.imageSize = image.getData().length;
-            png = new PngParameters((PngImage) image);
+            png = new PngParameters((PngImageData) image);
             processPng(pngStream, png);
         } catch (java.io.IOException e) {
             throw new IOException(IOException.PngImageException, e);
@@ -262,13 +262,13 @@ class PngImageHelper {
             if (png.iccProfile != null)
                 png.image.setProfile(png.iccProfile);
             if (png.palShades) {
-                RawImage im2 = (RawImage) ImageFactory.getRawImage(null);
+                RawImageData im2 = (RawImageData) ImageFactory.getRawImage(null);
                 RawImageHelper.updateRawImageParameters(im2, png.width, png.height, 1, 8, png.smask);
                 im2.makeMask();
                 png.image.setImageMask(im2);
             }
             if (png.genBWMask) {
-                RawImage im2 = (RawImage) ImageFactory.getRawImage(null);
+                RawImageData im2 = (RawImageData) ImageFactory.getRawImage(null);
                 RawImageHelper.updateRawImageParameters(im2, png.width, png.height, 1, 1, png.smask);
                 im2.makeMask();
                 png.image.setImageMask(im2);

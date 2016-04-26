@@ -47,7 +47,7 @@ package com.itextpdf.kernel.pdf.canvas;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
-import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.StreamUtil;
@@ -1756,7 +1756,7 @@ public class PdfCanvas {
      * @param f     an element of the transformation matrix
      * @return created Image XObject.
      */
-    public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f) {
+    public PdfXObject addImage(ImageData image, float a, float b, float c, float d, float e, float f) {
         return addImage(image, a, b, c, d, e, f, false);
     }
 
@@ -1773,7 +1773,7 @@ public class PdfCanvas {
      * @param asInline true if to add image as in-line.
      * @return created Image XObject or null in case of in-line image (asInline = true).
      */
-    public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f, boolean asInline) {
+    public PdfXObject addImage(ImageData image, float a, float b, float c, float d, float e, float f, boolean asInline) {
         document.checkIsoConformance(currentGs, IsoKey.GRAPHIC_STATE_ONLY, null);
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
@@ -1802,7 +1802,7 @@ public class PdfCanvas {
      * @return created XObject or null in case of in-line image (asInline = true).
      * @throws PdfException
      */
-    public PdfXObject addImage(Image image, Rectangle rect, boolean asInline) {
+    public PdfXObject addImage(ImageData image, Rectangle rect, boolean asInline) {
         return addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY(), asInline);
     }
 
@@ -1816,7 +1816,7 @@ public class PdfCanvas {
      * @return created XObject or null in case of in-line image (asInline = true).
      * @throws PdfException
      */
-    public PdfXObject addImage(Image image, float x, float y, boolean asInline) {
+    public PdfXObject addImage(ImageData image, float x, float y, boolean asInline) {
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
@@ -1845,7 +1845,7 @@ public class PdfCanvas {
      * @param asInline true if to add image as in-line.
      * @return created XObject or null in case of in-line image (asInline = true).
      */
-    public PdfXObject addImage(Image image, float x, float y, float width, boolean asInline) {
+    public PdfXObject addImage(ImageData image, float x, float y, float width, boolean asInline) {
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
@@ -1876,7 +1876,7 @@ public class PdfCanvas {
      * @return created XObject or null in case of in-line image (asInline = true).
      * @throws PdfException
      */
-    public PdfXObject addImage(Image image, float x, float y, float height, boolean asInline, boolean dummy) {
+    public PdfXObject addImage(ImageData image, float x, float y, float height, boolean asInline, boolean dummy) {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y, asInline);
     }
 

@@ -42,74 +42,89 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.io.image;
+package com.itextpdf.kernel.pdf.canvas.wmf;
 
+import com.itextpdf.io.image.ImageType;
+import com.itextpdf.io.util.UrlUtil;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.io.image.ImageData;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 
-public class RawImage extends Image {
+/**
+ * Image implementation for WMF, Windows Metafile.
+ */
+public class WmfImageData extends ImageData {
+
+    private static final byte[] wmf = new byte[]{(byte) 0xD7, (byte) 0xCD};
 
     /**
-     * Pure two-dimensional encoding (Group 4)
+     * Creates a WmfImage from a file.
+     *
+     * @param fileName pah to the file
+     * @throws MalformedURLException
      */
-    public static final int CCITTG4 = 0x100;
-
-    /**
-     * Pure one-dimensional encoding (Group 3, 1-D)
-     */
-    public static final int CCITTG3_1D = 0x101;
-
-    /**
-     * Mixed one- and two-dimensional encoding (Group 3, 2-D)
-     */
-    public static final int CCITTG3_2D = 0x102;
-
-    /**
-     * A flag indicating whether 1-bits are to be interpreted as black pixels
-     * and 0-bits as white pixels,
-     */
-    public static final int CCITT_BLACKIS1 = 1;
-
-    /**
-     * A flag indicating whether the filter expects extra 0-bits before each
-     * encoded line so that the line begins on a byte boundary.
-     */
-    public static final int CCITT_ENCODEDBYTEALIGN = 2;
-
-    /**
-     * A flag indicating whether end-of-line bit patterns are required to be
-     * present in the encoding.
-     */
-    public static final int CCITT_ENDOFLINE = 4;
-
-    /**
-     * A flag indicating whether the filter expects the encoded data to be
-     * terminated by an end-of-block pattern, overriding the Rows parameter. The
-     * use of this flag will set the key /EndOfBlock to false.
-     */
-    public static final int CCITT_ENDOFBLOCK = 8;
-
-    //NOTE in itext5 instead of typeCcitt bpc property was using for both bpc and type CCITT.
-    protected int typeCcitt;
-
-
-    protected RawImage(URL url, ImageType type) {
-        super(url, type);
+    public WmfImageData(String fileName) throws MalformedURLException {
+        this(UrlUtil.toURL(fileName));
     }
 
-    protected RawImage(byte[] bytes, ImageType type) {
-        super(bytes, type);
+    /**
+     * Creates a WmfImage from a URL.
+     *
+     * @param url URL to the file
+     */
+    public WmfImageData(URL url) {
+        super(url, ImageType.WMF);
+        byte[] imageType = readImageType(url);
+        if (!imageTypeIs(imageType, wmf)) {
+            throw new PdfException(PdfException.IsNotWmfImage);
+        }
     }
 
-    @Override
-    public boolean isRawImage(){
+    /**
+     * Creates a WmfImage from a byte[].
+     * @param bytes the image bytes
+     */
+    public WmfImageData(byte[] bytes) {
+        super(bytes, ImageType.WMF);
+        byte[] imageType = readImageType(url);
+        if (!imageTypeIs(imageType, wmf)) {
+            throw new PdfException(PdfException.IsNotWmfImage);
+        }
+    }
+
+    private static boolean imageTypeIs(byte[] imageType, byte[] compareWith) {
+        for (int i = 0; i < compareWith.length; i++) {
+            if (imageType[i] != compareWith[i])
+                return false;
+        }
         return true;
     }
 
-    public int getTypeCcitt() {
-        return typeCcitt;
-    }
+    private static <T> byte[] readImageType(T source) {
+        InputStream is = null;
+        try {
+            if (source instanceof URL) {
+                is = ((URL) source).openStream();
+            } else {
+                is = new ByteArrayInputStream((byte[])source);
+            }
+            byte[] bytes = new byte[8];
+            is.read(bytes);
+            return bytes;
+        } catch (IOException e) {
+            throw new PdfException(PdfException.IoException, e);
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException ignored) { }
+            }
+        }
 
-    public void setTypeCcitt(int typeCcitt) {
-        this.typeCcitt = typeCcitt;
     }
 }

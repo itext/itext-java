@@ -55,7 +55,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.canvas.wmf.WmfImage;
+import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageHelper;
 
 public class PdfFormXObject extends PdfXObject {
@@ -90,13 +90,13 @@ public class PdfFormXObject extends PdfXObject {
     }
 
     /**
-     * Creates a form XObject from {@link WmfImage}.
-     * Unlike other images, {@link WmfImage} images are represented as {@link PdfFormXObject}, not as
+     * Creates a form XObject from {@link com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData}.
+     * Unlike other images, {@link com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData} images are represented as {@link PdfFormXObject}, not as
      * {@link PdfImageXObject}.
      * @param image image to create form object from
      * @param pdfDocument document instance which is needed for writing form stream contents
      */
-    public PdfFormXObject(WmfImage image, PdfDocument pdfDocument) {
+    public PdfFormXObject(WmfImageData image, PdfDocument pdfDocument) {
         this(new WmfImageHelper(image).createPdfForm(pdfDocument).getPdfObject());
     }
 
