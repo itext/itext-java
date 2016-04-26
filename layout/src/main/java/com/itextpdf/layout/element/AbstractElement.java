@@ -45,6 +45,7 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.ElementPropertyContainer;
 import com.itextpdf.layout.property.Property;
@@ -151,5 +152,15 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
 
     public boolean isEmpty() {
         return 0 == childElements.size();
+    }
+
+    public T setAction(PdfAction action) {
+        setProperty(Property.ACTION, action);
+        return (T) this;
+    }
+
+    public T setPageNumber(int pageNumber) {
+        setProperty(Property.PAGE_NUMBER, pageNumber);
+        return (T) this;
     }
 }
