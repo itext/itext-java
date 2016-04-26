@@ -136,7 +136,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * 
      * @param pdfObject the PdfDictionary to be wrapped
      */
-    public PdfAcroForm(PdfDictionary pdfObject) {
+    protected PdfAcroForm(PdfDictionary pdfObject) {
         super(pdfObject);
         getFormFields();
         xfaForm = new XfaForm(pdfObject);
@@ -148,7 +148,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * 
      * @param fields a {@link PdfArray} of {@link PdfDictionary} objects
      */
-    public PdfAcroForm(PdfArray fields) {
+    protected PdfAcroForm(PdfArray fields) {
         this(createAcroFormDictionaryByFields(fields));
         setForbidRelease();
     }
@@ -265,8 +265,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * @return a map of field names and their associated {@link PdfFormField form field} objects
      */
     public Map<String, PdfFormField> getFormFields() {
-        if (fields.isEmpty()) {
+        if (fields.size() == 0) {
             fields = iterateFields(getFields());
+
         }
         return fields;
     }
@@ -579,7 +580,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             throw new PdfException(PdfException.FieldFlatteningIsNotSupportedInAppendMode);
         }
         Set<PdfFormField> fields;
-        if (fieldsForFlattening.isEmpty()) {
+        if (fieldsForFlattening.size() == 0) {
             this.fields.clear();
             fields = new LinkedHashSet<>(getFormFields().values());
         } else {
@@ -688,7 +689,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         }
 
         getPdfObject().remove(PdfName.NeedAppearances);
-        if (fieldsForFlattening.isEmpty()) {
+        if (fieldsForFlattening.size() == 0) {
             getFields().clear();
         }
         if (getFields().isEmpty()) {
@@ -854,7 +855,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
         } else {
-            for (PdfObject kid : kids){
+            for(int i = 0; i < kids.size(); i++) {
+                PdfObject kid = kids.get(i);
                 if (kid.isIndirectReference()) {
                     kid = ((PdfIndirectReference)kid).getRefersTo();
                 }

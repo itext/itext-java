@@ -207,9 +207,9 @@ public class PdfTextFormField extends PdfFormField {
      * This is an optional parameter, so if it is not specified, <code>null</code> will be returned.
      * @return the current maximum text length
      */
-    public Integer getMaxLen() {
+    public int getMaxLen() {
         PdfNumber number = getPdfObject().getAsNumber(PdfName.MaxLen);
-        return number != null ? number.intValue() : null;
+        return number != null ? number.intValue() : 0;
     }
 
     /**

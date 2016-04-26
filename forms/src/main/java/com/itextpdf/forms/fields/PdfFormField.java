@@ -374,7 +374,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         try {
             return createText(doc, rect, name, value, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE);
         } catch (IOException e) {
-            throw new PdfException(e.getLocalizedMessage());
+            throw new PdfException(e);
         }
     }
 
@@ -450,7 +450,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         try {
             return createText(doc, rect, name, value, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE, true);
         } catch (IOException e) {
-            throw new PdfException(e.getLocalizedMessage());
+            throw new PdfException(e);
         }
     }
 
@@ -506,7 +506,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         try {
             return createChoice(doc, rect, name, value, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE, options, flags);
         } catch (IOException e) {
-            throw new PdfException(e.getLocalizedMessage());
+            throw new PdfException(e);
         }
     }
 
@@ -658,7 +658,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         try {
             field = createPushButton(doc, rect, name, caption, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE);
         } catch (IOException e) {
-            throw new PdfException(e.getLocalizedMessage());
+            throw new PdfException(e);
         }
         return field;
     }
@@ -879,7 +879,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (ft == null || !ft.equals(PdfName.Btn)) {
             PdfArray kids = getKids();
             if (kids != null) {
-                for (PdfObject kid : kids) {
+                for (int i = 0; i < kids.size(); i++) {
+                    PdfObject kid = kids.get(i);
                     if (kid.isIndirectReference()) {
                         kid = ((PdfIndirectReference) kid).getRefersTo();
                     }
@@ -1345,7 +1346,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         PdfArray kids = getKids();
         if (kids != null) {
-            for (PdfObject kid : kids) {
+            for (int i = 0; i < kids.size(); i++) {
+                PdfObject kid = kids.get(i);
                 if (kid.isIndirectReference()) {
                     kid = ((PdfIndirectReference) kid).getRefersTo();
                 }
@@ -1577,7 +1579,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         try {
             font = PdfFontFactory.createFont(FontConstants.ZAPFDINGBATS);
         } catch (IOException e) {
-            throw new PdfException(e.getLocalizedMessage());
+            throw new PdfException(e);
         }
     }
 
@@ -1673,7 +1675,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
                 return true;
             } catch (IOException e) {
-                throw new PdfException(e.getLocalizedMessage());
+                throw new PdfException(e);
             }
 
         } else if (PdfName.Btn.equals(type)) {
@@ -1712,11 +1714,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     }
                     apDic.put(PdfName.N, appearance.getPdfObject());
                 } catch (IOException e) {
-                    throw new PdfException(e.getLocalizedMessage());
+                    throw new PdfException(e);
                 }
             } else if ((ff & PdfButtonFormField.FF_RADIO) != 0) {
                 PdfArray kids = getKids();
-                for (PdfObject kid : kids) {
+                for (int i = 0; i < kids.size(); i++) {
+                    PdfObject kid = kids.get(i);
                     if (kid.isIndirectReference()) {
                         kid = ((PdfIndirectReference) kid).getRefersTo();
                     }
@@ -1872,7 +1875,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the edited field
      */
     public PdfFormField setPage(int pageNum) {
-        if (!getWidgets().isEmpty()) {
+        if (getWidgets().size() > 0) {
             PdfAnnotation annot = getWidgets().get(0);
             if (annot != null) {
                 annot.setPage(getDocument().getPage(pageNum));
