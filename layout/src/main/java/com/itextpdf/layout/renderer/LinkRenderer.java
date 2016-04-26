@@ -90,7 +90,7 @@ public class LinkRenderer extends TextRenderer {
     }
 
     @Override
-    public LinkRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         return new LinkRenderer((Link) modelElement, null);
     }
 }

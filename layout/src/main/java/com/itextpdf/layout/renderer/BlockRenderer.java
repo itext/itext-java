@@ -47,12 +47,13 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.element.BlockElement;
+import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
@@ -64,9 +65,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class BlockRenderer extends AbstractRenderer {
+public abstract class BlockRenderer extends AbstractRenderer {
 
-    public BlockRenderer(BlockElement modelElement) {
+    protected BlockRenderer(IElement modelElement) {
         super(modelElement);
     }
 
@@ -144,12 +145,12 @@ public class BlockRenderer extends AbstractRenderer {
                         layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
 
                         if (currentAreaPos + 1 == areas.size()) {
-                            BlockRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
+                            AbstractRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
                             splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
                             splitRenderer.childRenderers.add(result.getSplitRenderer());
                             splitRenderer.occupiedArea = occupiedArea;
 
-                            BlockRenderer overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
+                            AbstractRenderer overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
                             List<IRenderer> overflowRendererChildren = new ArrayList<>();
                             overflowRendererChildren.add(result.getOverflowRenderer());
                             overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
@@ -169,10 +170,10 @@ public class BlockRenderer extends AbstractRenderer {
                         boolean keepTogether = getPropertyAsBoolean(Property.KEEP_TOGETHER);
                         int layoutResult = anythingPlaced && !keepTogether ? LayoutResult.PARTIAL : LayoutResult.NOTHING;
 
-                        BlockRenderer splitRenderer = createSplitRenderer(layoutResult);
+                        AbstractRenderer splitRenderer = createSplitRenderer(layoutResult);
                         splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
 
-                        BlockRenderer overflowRenderer = createOverflowRenderer(layoutResult);
+                        AbstractRenderer overflowRenderer = createOverflowRenderer(layoutResult);
                         List<IRenderer> overflowRendererChildren = new ArrayList<>();
                         overflowRendererChildren.add(result.getOverflowRenderer());
                         overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
@@ -234,13 +235,8 @@ public class BlockRenderer extends AbstractRenderer {
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
-    @Override
-    public BlockRenderer getNextRenderer() {
-        return new BlockRenderer((BlockElement) modelElement);
-    }
-
-    protected BlockRenderer createSplitRenderer(int layoutResult) {
-        BlockRenderer splitRenderer = getNextRenderer();
+    protected AbstractRenderer createSplitRenderer(int layoutResult) {
+        AbstractRenderer splitRenderer = (AbstractRenderer) getNextRenderer();
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         splitRenderer.occupiedArea = occupiedArea;
@@ -248,8 +244,8 @@ public class BlockRenderer extends AbstractRenderer {
         return splitRenderer;
     }
 
-    protected BlockRenderer createOverflowRenderer(int layoutResult) {
-        BlockRenderer overflowRenderer = getNextRenderer();
+    protected AbstractRenderer createOverflowRenderer(int layoutResult) {
+        AbstractRenderer overflowRenderer = (AbstractRenderer) getNextRenderer();
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.properties = properties;

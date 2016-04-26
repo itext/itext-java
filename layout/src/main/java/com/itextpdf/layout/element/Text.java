@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.TextRenderer;
 
 /**
@@ -72,11 +73,11 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T1> T1 getDefaultProperty(Property property) {
         switch (property) {
             case HORIZONTAL_SCALING:
             case VERTICAL_SCALING:
-                return (T) new Float(1);
+                return (T1) new Float(1);
             default:
                 return super.getDefaultProperty(property);
         }
@@ -165,7 +166,7 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
     }
 
     @Override
-    protected TextRenderer makeNewRenderer() {
+    protected IRenderer makeNewRenderer() {
         return new TextRenderer(this, text);
     }
 }

@@ -78,7 +78,7 @@ public class DocumentRenderer extends RootRenderer {
     }
 
     @Override
-    public DocumentRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         return null;
     }
 

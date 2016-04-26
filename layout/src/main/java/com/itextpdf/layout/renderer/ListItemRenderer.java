@@ -53,7 +53,7 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 
-public class ListItemRenderer extends BlockRenderer {
+public class ListItemRenderer extends DivRenderer {
 
     protected IRenderer symbolRenderer;
     protected float symbolAreaWidth;
@@ -140,13 +140,13 @@ public class ListItemRenderer extends BlockRenderer {
     }
 
     @Override
-    public ListItemRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         return new ListItemRenderer((ListItem) modelElement);
     }
 
     @Override
-    protected BlockRenderer createSplitRenderer(int layoutResult) {
-        ListItemRenderer splitRenderer = getNextRenderer();
+    protected AbstractRenderer createSplitRenderer(int layoutResult) {
+        ListItemRenderer splitRenderer = (ListItemRenderer) getNextRenderer();
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         splitRenderer.occupiedArea = occupiedArea;
@@ -160,8 +160,8 @@ public class ListItemRenderer extends BlockRenderer {
     }
 
     @Override
-    protected BlockRenderer createOverflowRenderer(int layoutResult) {
-        ListItemRenderer overflowRenderer = getNextRenderer();
+    protected AbstractRenderer createOverflowRenderer(int layoutResult) {
+        ListItemRenderer overflowRenderer = (ListItemRenderer) getNextRenderer();
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         if (layoutResult == LayoutResult.NOTHING) {

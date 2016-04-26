@@ -89,7 +89,7 @@ public class TabRenderer extends AbstractRenderer {
     }
 
     @Override
-    public TabRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         return new TabRenderer((Tab) modelElement);
     }
 }

@@ -102,6 +102,11 @@ public class ListRenderer extends BlockRenderer {
         return super.layout(layoutContext);
     }
 
+    @Override
+    public IRenderer getNextRenderer() {
+        return new ListRenderer((com.itextpdf.layout.element.List) modelElement);
+    }
+
     protected IRenderer makeListSymbolRenderer(int index, IRenderer renderer) {
         Object defaultListSymbol = renderer.getProperty(Property.LIST_SYMBOL);
         if (defaultListSymbol instanceof Text) {

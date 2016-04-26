@@ -104,12 +104,12 @@ public interface IRenderer extends IPropertyContainer {
     /**
      * Gets a property from this entity or one of its hierarchical parents.
      * If the property is not found, {@code defaultValue} will be returned.
-     * @param <T> the return type associated with the property
+     * @param <T1> the return type associated with the property
      * @param property the property to be retrieved
      * @param defaultValue a fallback value
      * @return the value of the given property
      */
-    <T> T getProperty(Property property, T defaultValue);
+    <T1> T1 getProperty(Property property, T1 defaultValue);
 
     /**
      * Explicitly sets this object as the child of another {@link IRenderer} in

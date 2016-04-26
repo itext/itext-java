@@ -100,7 +100,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Creates a renderer.
      */
-    public AbstractRenderer() {
+    protected AbstractRenderer() {
     }
 
     /**
@@ -108,7 +108,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @param modelElement the layout element that will be drawn by this renderer
      */
-    public AbstractRenderer(IElement modelElement) {
+    protected AbstractRenderer(IElement modelElement) {
         this.modelElement = modelElement;
     }
 
@@ -188,33 +188,33 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     @Override
-    public <T> T getProperty(Property key) {
+    public <T1> T1 getProperty(Property key) {
         Object property;
         if ((property = properties.get(key)) != null || properties.containsKey(key)) {
-            return (T) property;
+            return (T1) property;
         }
         if (modelElement != null && ((property = modelElement.getProperty(key)) != null || modelElement.hasProperty(key))) {
-            return (T) property;
+            return (T1) property;
         }
         // TODO in some situations we will want to check inheritance with additional info, such as parent and descendant.
         if (parent != null && key.isInherited() && (property = parent.getProperty(key)) != null) {
-            return (T) property;
+            return (T1) property;
         }
         property = getDefaultProperty(key);
         if (property != null) {
-            return (T) property;
+            return (T1) property;
         }
-        return modelElement != null ? (T) modelElement.getDefaultProperty(key) : null;
+        return modelElement != null ? (T1) modelElement.getDefaultProperty(key) : null;
     }
 
     @Override
-    public <T> T getOwnProperty(Property property) {
-        return (T) properties.get(property);
+    public <T1> T1 getOwnProperty(Property property) {
+        return (T1) properties.get(property);
     }
 
     @Override
-    public <T> T getProperty(Property property, T defaultValue) {
-        T result = getProperty(property);
+    public <T1> T1 getProperty(Property property, T1 defaultValue) {
+        T1 result = getProperty(property);
         return result != null ? result : defaultValue;
     }
 
@@ -224,10 +224,10 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T1> T1 getDefaultProperty(Property property) {
         switch (property) {
             case POSITION:
-                return (T) Integer.valueOf(LayoutPosition.STATIC);
+                return (T1) Integer.valueOf(LayoutPosition.STATIC);
             default:
                 return null;
         }

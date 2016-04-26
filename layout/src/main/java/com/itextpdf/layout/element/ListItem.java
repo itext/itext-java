@@ -47,6 +47,7 @@ package com.itextpdf.layout.element;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ListItemRenderer;
 
 /**
@@ -114,7 +115,7 @@ public class ListItem extends Div {
 
     /**
      * Sets the list item numbering type to be used.
-     * @param listNumberingType the {@link Property.ListNumberingType} that will generate appropriate prefixes for the {@link ListItem}.
+     * @param listNumberingType the {@link ListNumberingType} that will generate appropriate prefixes for the {@link ListItem}.
      * @return this list item.
      */
     public ListItem setListSymbol(ListNumberingType listNumberingType) {
@@ -128,7 +129,7 @@ public class ListItem extends Div {
     }
 
     @Override
-    protected ListItemRenderer makeNewRenderer() {
+    protected IRenderer makeNewRenderer() {
         return new ListItemRenderer(this);
     }
 }

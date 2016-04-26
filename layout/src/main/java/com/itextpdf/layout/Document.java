@@ -128,7 +128,7 @@ public class Document extends RootElement<Document> {
     }
 
     @Override
-    public Document add(BlockElement element) {
+    public <T extends IElement> Document add(BlockElement<T> element) {
         checkClosingStatus();
         super.add(element);
         if (element instanceof ILargeElement) {

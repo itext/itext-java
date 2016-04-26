@@ -93,7 +93,7 @@ public class CanvasRenderer extends RootRenderer {
     }
 
     @Override
-    public CanvasRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         return null;
     }
 }

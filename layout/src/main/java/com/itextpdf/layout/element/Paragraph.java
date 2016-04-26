@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
 import java.util.Arrays;
@@ -157,17 +158,17 @@ public class Paragraph extends BlockElement<Paragraph> {
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T1> T1 getDefaultProperty(Property property) {
         switch (property) {
             case LEADING:
-                return (T) new Leading(Leading.MULTIPLIED, childElements.size() == 1 && childElements.get(0) instanceof Image ? 1 : 1.35f);
+                return (T1) new Leading(Leading.MULTIPLIED, childElements.size() == 1 && childElements.get(0) instanceof Image ? 1 : 1.35f);
             case FIRST_LINE_INDENT:
-                return (T) Float.valueOf(0);
+                return (T1) Float.valueOf(0);
             case MARGIN_TOP:
             case MARGIN_BOTTOM:
-                return (T) Float.valueOf(4);
+                return (T1) Float.valueOf(4);
             case TAB_DEFAULT:
-                return (T) Float.valueOf(50);
+                return (T1) Float.valueOf(50);
             default:
                 return super.getDefaultProperty(property);
         }
@@ -211,7 +212,7 @@ public class Paragraph extends BlockElement<Paragraph> {
 
 
     @Override
-    protected ParagraphRenderer makeNewRenderer() {
+    protected IRenderer makeNewRenderer() {
         return new ParagraphRenderer(this);
     }
 

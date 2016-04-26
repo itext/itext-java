@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolAlignment;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ListRenderer;
 
 /**
@@ -82,12 +83,12 @@ public class List extends BlockElement<List> {
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T1> T1 getDefaultProperty(Property property) {
         switch (property) {
             case LIST_SYMBOL_PRE_TEXT:
-                return (T) "";
+                return (T1) "";
             case LIST_SYMBOL_POST_TEXT:
-                return (T) ". ";
+                return (T1) ". ";
             default:
                 return super.getDefaultProperty(property);
         }
@@ -259,7 +260,7 @@ public class List extends BlockElement<List> {
     }
 
     @Override
-    protected ListRenderer makeNewRenderer() {
+    protected IRenderer makeNewRenderer() {
         return new ListRenderer(this);
     }
 }

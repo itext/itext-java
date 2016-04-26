@@ -142,10 +142,8 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
      */
     protected void propagateArtifactRoleToChildElements() {
         for (IElement child : childElements) {
-            if (child instanceof AbstractElement) {
-                if (child instanceof IAccessibleElement) {
-                    ((IAccessibleElement) child).setRole(PdfName.Artifact);
-                }
+            if (child instanceof IAccessibleElement) {
+                ((IAccessibleElement) child).setRole(PdfName.Artifact);
             }
         }
     }

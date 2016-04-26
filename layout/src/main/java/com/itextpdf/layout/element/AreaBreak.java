@@ -48,13 +48,14 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.AreaBreakRenderer;
+import com.itextpdf.layout.renderer.IRenderer;
 
 /**
  * A layout object that terminates the current content area and creates a new
  * one. If no {@link PageSize} is given, the new content area will have the same
  * size as the current one.
  */
-public class AreaBreak extends AbstractElement {
+public class AreaBreak extends AbstractElement<AreaBreak> {
 
     protected PageSize pageSize;
 
@@ -109,7 +110,7 @@ public class AreaBreak extends AbstractElement {
     }
 
     @Override
-    protected AreaBreakRenderer makeNewRenderer() {
+    protected IRenderer makeNewRenderer() {
         return new AreaBreakRenderer(this);
     }
 }

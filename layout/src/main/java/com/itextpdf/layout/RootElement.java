@@ -96,7 +96,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      * @return this element
      * @see BlockElement
      */
-    public RootElement<T> add(BlockElement element) {
+    public <T2 extends IElement> RootElement<T> add(BlockElement<T2> element) {
         childElements.add(element);
         ensureRootRendererNotNull().addChild(element.createRendererSubTree());
         return this;

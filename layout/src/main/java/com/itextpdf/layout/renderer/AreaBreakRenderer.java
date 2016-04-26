@@ -103,22 +103,22 @@ public class AreaBreakRenderer implements IRenderer {
     }
 
     @Override
-    public <T> T getProperty(Property key) {
+    public <T1> T1 getProperty(Property key) {
         return null;
     }
 
     @Override
-    public <T> T getOwnProperty(Property property) {
+    public <T1> T1 getOwnProperty(Property property) {
         return null;
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T1> T1 getDefaultProperty(Property property) {
         return null;
     }
 
     @Override
-    public <T> T getProperty(Property property, T defaultValue) {
+    public <T1> T1 getProperty(Property property, T1 defaultValue) {
         throw new UnsupportedOperationException();
     }
 
@@ -158,7 +158,7 @@ public class AreaBreakRenderer implements IRenderer {
     }
 
     @Override
-    public AreaBreakRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         return null;
     }
 }

@@ -71,7 +71,7 @@ public class LineSeparatorRenderer extends BlockRenderer {
     }
 
     @Override
-    public BlockRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         return new LineSeparatorRenderer((LineSeparator) modelElement);
     }
 

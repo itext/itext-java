@@ -47,7 +47,6 @@ package com.itextpdf.layout.element;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
-import com.itextpdf.layout.renderer.BlockRenderer;
 
 /**
  * A {@link BlockElement} will try to take up as much horizontal space as
@@ -339,10 +338,5 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
     public T setRotationAngle(double angle) {
         setProperty(Property.ROTATION_ANGLE, (float) angle);
         return (T) this;
-    }
-
-    @Override
-    protected BlockRenderer makeNewRenderer() {
-        return new BlockRenderer(this);
     }
 }
