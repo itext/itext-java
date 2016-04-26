@@ -471,10 +471,12 @@ public class LineRenderer extends AbstractRenderer {
         splitRenderer.maxAscent = maxAscent;
         splitRenderer.maxDescent = maxDescent;
         splitRenderer.levels = levels;
+        splitRenderer.addAllProperties(getOwnProperties());
 
         LineRenderer overflowRenderer = createOverflowRenderer();
         overflowRenderer.parent = parent;
         overflowRenderer.levels = levels;
+        overflowRenderer.addAllProperties(getOwnProperties());
 
         return new LineRenderer[] {splitRenderer, overflowRenderer};
     }
