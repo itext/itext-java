@@ -140,6 +140,5 @@ public enum Property {
     WIDTH,
     WORD_SPACING,
     X,
-    Y;
-
+    Y
 }
