@@ -289,11 +289,12 @@ public abstract class PdfObject implements Serializable {
     }
 
     //TODO comment! Add note about flush, modified flag and xref.
-    public void setModified() {
+    public PdfObject setModified() {
         if (indirectReference != null) {
             indirectReference.setState(MODIFIED);
             setState(FORBID_RELEASE);
         }
+        return this;
     }
 
     public void release() {
