@@ -786,8 +786,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     */
     private void initParentPages() {
         if (this.parentPages == null) {
-            PdfPagesTree pageTree = getDocument().getCatalog().pageTree;
-            this.parentPages = pageTree.findPageParent(this);
+            this.parentPages = getDocument().getCatalog().getPageTree().findPageParent(this);
         }
     }
 

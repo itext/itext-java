@@ -102,7 +102,7 @@ public abstract class PdfAChecker {
         checkLogicalStructure(catalogDict);
         checkForm(catalogDict.getAsDictionary(PdfName.AcroForm));
         checkOutlines(catalogDict);
-        checkPages(catalog);
+        checkPages(catalog.getDocument());
         checkOpenAction(catalogDict.get(PdfName.OpenAction));
         checkColorsUsages();
     }
@@ -218,9 +218,9 @@ public abstract class PdfAChecker {
         return false;
     }
 
-    private void checkPages(PdfCatalog catalog) {
-        for (int i = 1; i <= catalog.getNumberOfPages(); i++) {
-            checkPage(catalog.getPage(i));
+    private void checkPages(PdfDocument document) {
+        for (int i = 1; i <= document.getNumberOfPages(); i++) {
+            checkPage(document.getPage(i));
         }
     }
 

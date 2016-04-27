@@ -167,7 +167,7 @@ public class PdfPagesTest extends ExtendedITextTest{
                     pdfDoc.addPage(j, page);
                 }
             }
-            Assert.assertTrue(verifyIntegrity(pdfDoc.getCatalog().pageTree) == -1);
+            Assert.assertTrue(verifyIntegrity(pdfDoc.getCatalog().getPageTree()) == -1);
         }
         pdfDoc.close();
 
@@ -323,7 +323,7 @@ public class PdfPagesTest extends ExtendedITextTest{
         for (PdfObject pageObject: pageDictionaries) {
             PdfDictionary pageDictionary = (PdfDictionary) pageObject;
             Assert.assertEquals(PdfName.Page, pageDictionary.get(PdfName.Type));
-            PdfPage page = pdfDoc.getCatalog().getPage(pageDictionary);
+            PdfPage page = pdfDoc.getPage(pageDictionary);
             Assert.assertEquals(pageDictionary, page.getPdfObject());
         }
         pdfDoc.close();

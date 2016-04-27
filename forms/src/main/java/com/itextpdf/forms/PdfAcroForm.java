@@ -885,7 +885,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 throw new PdfException(PdfException.PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
             }
             PdfDocument doc = pageDic.getIndirectReference().getDocument();
-            PdfPage widgetPage = doc.getCatalog().getPage(pageDic);
+            PdfPage widgetPage = doc.getPage(pageDic);
             addWidgetAnnotationToPage(widgetPage, annot);
         } else {
             addWidgetAnnotationToPage(currentPage, annot);
@@ -1027,7 +1027,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     private PdfPage getFieldPage(PdfDictionary annotDic) {
         PdfDictionary pageDic = annotDic.getAsDictionary(PdfName.P);
         if (pageDic != null) {
-            return document.getCatalog().getPage(pageDic);
+            return document.getPage(pageDic);
         }
         for (int i = 1; i <= document.getNumberOfPages(); i++) {
             PdfPage page = document.getPage(i);

@@ -1082,7 +1082,7 @@ public class PdfSigner {
         int pageNumber = 0;
         PdfDictionary pageDict = widget.getPdfObject().getAsDictionary(PdfName.P);
         if (pageDict != null) {
-            pageNumber = document.getCatalog().getPageNumber(pageDict);
+            pageNumber = document.getPageNumber(pageDict);
         } else {
             for (int i = 1; i <= document.getNumberOfPages(); i++) {
                 PdfPage page = document.getPage(i);

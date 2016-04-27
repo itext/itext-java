@@ -641,9 +641,9 @@ public class CompareTool {
     }
 
     private void loadPagesFromReader(PdfDocument doc, List<PdfDictionary> pages, List<PdfIndirectReference> pagesRef) {
-        int numOfPages = doc.getCatalog().getNumberOfPages();
+        int numOfPages = doc.getNumberOfPages();
         for (int i = 0; i < numOfPages; ++i) {
-            pages.add(doc.getCatalog().getPage(i + 1).getPdfObject());
+            pages.add(doc.getPage(i + 1).getPdfObject());
             pagesRef.add(pages.get(i).getIndirectReference());
         }
     }
@@ -1004,7 +1004,7 @@ public class CompareTool {
 
     private List<PdfLinkAnnotation> getLinkAnnotations(int pageNum, PdfDocument document) {
         List<PdfLinkAnnotation> linkAnnotations = new ArrayList<>();
-        List<PdfAnnotation> annotations = document.getCatalog().getPage(pageNum).getAnnotations();
+        List<PdfAnnotation> annotations = document.getPage(pageNum).getAnnotations();
         for (PdfAnnotation annotation : annotations) {
             if(PdfName.Link.equals(annotation.getSubtype())) {
                 linkAnnotations.add((PdfLinkAnnotation)annotation);
