@@ -88,7 +88,7 @@ public class ListRenderer extends BlockRenderer {
         for (IRenderer symbolRenderer : symbolRenderers) {
             maxSymbolWidth = Math.max(maxSymbolWidth, symbolRenderer.getOccupiedArea().getBBox().getWidth());
         }
-        Float symbolIndent = (Float)modelElement.getProperty(Property.LIST_SYMBOL_INDENT);
+        Float symbolIndent = modelElement.getProperty(Property.LIST_SYMBOL_INDENT);
         listItemNum = 0;
         for (IRenderer childRenderer : childRenderers) {
             childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
@@ -116,7 +116,6 @@ public class ListRenderer extends BlockRenderer {
         } else if (defaultListSymbol instanceof ListNumberingType) {
             ListNumberingType numberingType = (ListNumberingType) defaultListSymbol;
             String numberText;
-            com.itextpdf.layout.element.List listModelElement = (com.itextpdf.layout.element.List) getModelElement();
             switch (numberingType) {
                 case DECIMAL:
                     numberText = String.valueOf(index);

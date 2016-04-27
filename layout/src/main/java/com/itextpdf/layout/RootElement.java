@@ -74,7 +74,7 @@ import java.util.Map;
 
 /**
  * A generic abstract root element for a PDF layout object hierarchy.
- * 
+ *
  * @param <T> this type
  */
 public abstract class RootElement<T extends IPropertyContainer> extends ElementPropertyContainer<T> {
@@ -92,26 +92,28 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
 
     /**
      * Adds an element to the root. The element is immediately placed in the contents.
+     *
      * @param element an element with spacial margins, tabbing, and alignment
      * @return this element
      * @see BlockElement
      */
-    public <T2 extends IElement> RootElement<T> add(BlockElement<T2> element) {
+    public <T2 extends IElement> T add(BlockElement<T2> element) {
         childElements.add(element);
         ensureRootRendererNotNull().addChild(element.createRendererSubTree());
-        return this;
+        return (T) this;
     }
 
     /**
      * Adds an image to the root. The element is immediately placed in the contents.
+     *
      * @param image a graphical image element
      * @return this element
      * @see Image
      */
-    public RootElement<T> add(Image image) {
+    public T add(Image image) {
         childElements.add(image);
         ensureRootRendererNotNull().addChild(image.createRendererSubTree());
-        return this;
+        return (T) this;
     }
 
     @Override
@@ -182,7 +184,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      * Gets the rootRenderer attribute, a specialized {@link IRenderer} that
      * acts as the root object that other {@link IRenderer renderers} descend
      * from.
-     * 
+     *
      * @return the {@link RootRenderer} attribute
      */
     public RootRenderer getRenderer() {
@@ -191,99 +193,106 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
 
     /**
      * Convenience method to write a text aligned about the specified point
-     * @param text text to be placed to the page
-     * @param x the point about which the text will be aligned and rotated
-     * @param y the point about which the text will be aligned and rotated
+     *
+     * @param text      text to be placed to the page
+     * @param x         the point about which the text will be aligned and rotated
+     * @param y         the point about which the text will be aligned and rotated
      * @param textAlign horizontal alignment about the specified point
      * @return this object
      */
-    public RootElement<T> showTextAligned(String text, float x, float y, TextAlignment textAlign) {
+    public T showTextAligned(String text, float x, float y, TextAlignment textAlign) {
         return showTextAligned(text, x, y, textAlign, 0);
     }
 
     /**
      * Convenience method to write a text aligned about the specified point
-     * @param text text to be placed to the page
-     * @param x the point about which the text will be aligned and rotated
-     * @param y the point about which the text will be aligned and rotated
+     *
+     * @param text      text to be placed to the page
+     * @param x         the point about which the text will be aligned and rotated
+     * @param y         the point about which the text will be aligned and rotated
      * @param textAlign horizontal alignment about the specified point
-     * @param angle the angle of rotation applied to the text, in radians
+     * @param angle     the angle of rotation applied to the text, in radians
      * @return this object
      */
-    public RootElement<T> showTextAligned(String text, float x, float y, TextAlignment textAlign, float angle) {
+    public T showTextAligned(String text, float x, float y, TextAlignment textAlign, float angle) {
         return showTextAligned(text, x, y, textAlign, VerticalAlignment.BOTTOM, angle);
     }
 
     /**
      * Convenience method to write a text aligned about the specified point
-     * @param text text to be placed to the page
-     * @param x the point about which the text will be aligned and rotated
-     * @param y the point about which the text will be aligned and rotated
+     *
+     * @param text      text to be placed to the page
+     * @param x         the point about which the text will be aligned and rotated
+     * @param y         the point about which the text will be aligned and rotated
      * @param textAlign horizontal alignment about the specified point
      * @param vertAlign vertical alignment about the specified point
-     * @param angle the angle of rotation applied to the text, in radians
+     * @param angle     the angle of rotation applied to the text, in radians
      * @return this object
      */
-    public RootElement<T> showTextAligned(String text, float x, float y, TextAlignment textAlign, VerticalAlignment vertAlign, float angle) {
+    public T showTextAligned(String text, float x, float y, TextAlignment textAlign, VerticalAlignment vertAlign, float angle) {
         Paragraph p = new Paragraph(text);
         return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, angle);
     }
 
     /**
      * Convenience method to write a kerned text aligned about the specified point
-     * @param text text to be placed to the page
-     * @param x the point about which the text will be aligned and rotated
-     * @param y the point about which the text will be aligned and rotated
+     *
+     * @param text      text to be placed to the page
+     * @param x         the point about which the text will be aligned and rotated
+     * @param y         the point about which the text will be aligned and rotated
      * @param textAlign horizontal alignment about the specified point
      * @param vertAlign vertical alignment about the specified point
-     * @param angle the angle of rotation applied to the text, in radians
+     * @param angle     the angle of rotation applied to the text, in radians
      * @return this object
      */
-    public RootElement<T> showTextAlignedKerned(String text, float x, float y, TextAlignment textAlign, VerticalAlignment vertAlign, float angle) {
+    public T showTextAlignedKerned(String text, float x, float y, TextAlignment textAlign, VerticalAlignment vertAlign, float angle) {
         Paragraph p = new Paragraph(text).setFontKerning(FontKerning.YES);
         return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, angle);
     }
 
     /**
      * Convenience method to write a text aligned about the specified point
-     * @param p paragraph of text to be placed to the page. By default it has no leading and is written in single line.
-     *          Set width to write multiline text.
-     * @param x the point about which the text will be aligned and rotated
-     * @param y the point about which the text will be aligned and rotated
+     *
+     * @param p         paragraph of text to be placed to the page. By default it has no leading and is written in single line.
+     *                  Set width to write multiline text.
+     * @param x         the point about which the text will be aligned and rotated
+     * @param y         the point about which the text will be aligned and rotated
      * @param textAlign horizontal alignment about the specified point
      * @return this object
      */
-    public RootElement<T> showTextAligned(Paragraph p, float x, float y, TextAlignment textAlign) {
+    public T showTextAligned(Paragraph p, float x, float y, TextAlignment textAlign) {
         return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, VerticalAlignment.BOTTOM, 0);
     }
 
     /**
      * Convenience method to write a text aligned about the specified point
-     * @param p paragraph of text to be placed to the page. By default it has no leading and is written in single line.
-     *          Set width to write multiline text.
-     * @param x the point about which the text will be aligned and rotated
-     * @param y the point about which the text will be aligned and rotated
+     *
+     * @param p         paragraph of text to be placed to the page. By default it has no leading and is written in single line.
+     *                  Set width to write multiline text.
+     * @param x         the point about which the text will be aligned and rotated
+     * @param y         the point about which the text will be aligned and rotated
      * @param textAlign horizontal alignment about the specified point
      * @param vertAlign vertical alignment about the specified point
      * @return this object
      */
-    public RootElement<T> showTextAligned(Paragraph p, float x, float y, TextAlignment textAlign, VerticalAlignment vertAlign) {
+    public T showTextAligned(Paragraph p, float x, float y, TextAlignment textAlign, VerticalAlignment vertAlign) {
         return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, 0);
     }
 
-        /**
-         * Convenience method to write a text aligned about the specified point
-         * @param p paragraph of text to be placed to the page. By default it has no leading and is written in single line.
-         *          Set width to write multiline text.
-         * @param x the point about which the text will be aligned and rotated
-         * @param y the point about which the text will be aligned and rotated
-         * @param pageNumber the page number to write the text
-         * @param textAlign horizontal alignment about the specified point
-         * @param vertAlign vertical alignment about the specified point
-         * @param angle the angle of rotation applied to the text, in radians
-         * @return this object
-         */
-    public RootElement<T> showTextAligned(Paragraph p, float x, float y, int pageNumber, TextAlignment textAlign, VerticalAlignment vertAlign, float angle) {
+    /**
+     * Convenience method to write a text aligned about the specified point
+     *
+     * @param p          paragraph of text to be placed to the page. By default it has no leading and is written in single line.
+     *                   Set width to write multiline text.
+     * @param x          the point about which the text will be aligned and rotated
+     * @param y          the point about which the text will be aligned and rotated
+     * @param pageNumber the page number to write the text
+     * @param textAlign  horizontal alignment about the specified point
+     * @param vertAlign  vertical alignment about the specified point
+     * @param angle      the angle of rotation applied to the text, in radians
+     * @return this object
+     */
+    public T showTextAligned(Paragraph p, float x, float y, int pageNumber, TextAlignment textAlign, VerticalAlignment vertAlign, float angle) {
         Div div = new Div();
         div.setTextAlignment(textAlign).setVerticalAlignment(vertAlign);
         if (angle != 0) {
@@ -319,7 +328,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
         div.setRole(PdfName.Artifact);
         this.add(div);
 
-        return this;
+        return (T) this;
     }
 
     protected abstract RootRenderer ensureRootRendererNotNull();
