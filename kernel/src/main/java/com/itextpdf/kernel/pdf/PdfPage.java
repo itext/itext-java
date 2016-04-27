@@ -85,10 +85,15 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             // TODO This key contains reference to all articles, while this articles could reference to lots of pages.
             // See DEVSIX-191
             PdfName.B));
+
     /**
      * Automatically rotate new content if the page has a rotation ( is disabled by default )
      */
-    private boolean ignoreContentRotation = true;
+    private boolean ignorePageRotationForContent = false;
+    /**
+     * See {@link #isPageRotationInverseMatrixWritten()}.
+     */
+    private boolean pageRotationInverseMatrixWritten = false;
 
     protected PdfPage(PdfDictionary pdfObject) {
         super(pdfObject);
@@ -158,8 +163,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    public void setRotation(int degAngle) {
+    public PdfPage setRotation(int degAngle) {
         getPdfObject().put(PdfName.Rotate, new PdfNumber(degAngle));
+        return this;
     }
 
     public PdfStream getContentStream(int index) {
@@ -232,9 +238,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return this.resources;
     }
 
-    public void setResources(PdfResources pdfResources) {
+    public PdfPage setResources(PdfResources pdfResources) {
         getPdfObject().put(PdfName.Resources, pdfResources.getPdfObject());
         this.resources = pdfResources;
+        return this;
     }
 
 
@@ -416,8 +423,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return mediaBox.toRectangle();
     }
 
-    public void setMediaBox(Rectangle rectangle) {
+    public PdfPage setMediaBox(Rectangle rectangle) {
         getPdfObject().put(PdfName.MediaBox, new PdfArray(rectangle));
+        return this;
     }
 
 
@@ -433,30 +441,33 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return cropBox.toRectangle();
     }
 
-    public void setCropBox(Rectangle rectangle) {
+    public PdfPage setCropBox(Rectangle rectangle) {
         getPdfObject().put(PdfName.CropBox, new PdfArray(rectangle));
+        return this;
     }
 
-    public void setArtBox(Rectangle rectangle) {
+    public PdfPage setArtBox(Rectangle rectangle) {
         if (getPdfObject().getAsRectangle(PdfName.TrimBox) != null) {
             getPdfObject().remove(PdfName.TrimBox);
             Logger logger = LoggerFactory.getLogger(PdfPage.class);
             logger.warn(LogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
         }
         getPdfObject().put(PdfName.ArtBox, new PdfArray(rectangle));
+        return this;
     }
 
     public Rectangle getArtBox() {
         return getPdfObject().getAsRectangle(PdfName.ArtBox);
     }
 
-    public void setTrimBox(Rectangle rectangle) {
+    public PdfPage setTrimBox(Rectangle rectangle) {
         if (getPdfObject().getAsRectangle(PdfName.ArtBox) != null) {
             getPdfObject().remove(PdfName.ArtBox);
             Logger logger = LoggerFactory.getLogger(PdfPage.class);
             logger.warn(LogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
         }
         getPdfObject().put(PdfName.TrimBox, new PdfArray(rectangle));
+        return this;
     }
 
     public Rectangle getTrimBox() {
@@ -634,18 +645,19 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return true - if in case the page has a rotation, then new content will be automatically rotated in the
      * opposite direction. On the rotated page this would look like if new content ignores page rotation.
      */
-    public boolean isIgnoreContentRotation() {
-        return ignoreContentRotation;
+    public boolean isIgnorePageRotationForContent() {
+        return ignorePageRotationForContent;
     }
 
     /**
      * If true - defines that in case the page has a rotation, then new content will be automatically rotated in the
      * opposite direction. On the rotated page this would look like if new content ignores page rotation.
      * Default value - {@code false}.
-     * @param ignoreContentRotation - true to ignore rotation of the new content on the rotated page.
+     * @param ignorePageRotationForContent - true to ignore rotation of the new content on the rotated page.
      */
-    public void setIgnoreContentRotation(boolean ignoreContentRotation) {
-        this.ignoreContentRotation = ignoreContentRotation;
+    public PdfPage setIgnorePageRotationForContent(boolean ignorePageRotationForContent) {
+        this.ignorePageRotationForContent = ignorePageRotationForContent;
+        return this;
     }
 
     /**
@@ -706,6 +718,31 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public PdfPage put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
         return this;
+    }
+
+    /**
+     * This flag is meaningful for the case, when page rotation is applied and ignorePageRotationForContent
+     * is set to true. NOTE: It is needed for the internal usage.
+     * <br/><br/>
+     * This flag defines if inverse matrix (which rotates content into the opposite direction from page rotation
+     * direction in order to give the impression of the not rotated text) is already applied to the page content stream.
+     * See {@link #setIgnorePageRotationForContent(boolean)}
+     * @return true, if inverse matrix is already applied, false otherwise.
+     */
+    public boolean isPageRotationInverseMatrixWritten() {
+        return pageRotationInverseMatrixWritten;
+    }
+
+    /**
+     * NOTE: For internal usage! Use this method only if you know what you are doing.
+     * <br/><br/>
+     * This method is called when inverse matrix (which rotates content into the opposite direction from page rotation
+     * direction in order to give the impression of the not rotated text) is applied to the page content stream.
+     * See {@link #setIgnorePageRotationForContent(boolean)}
+     */
+    public void setPageRotationInverseMatrixWritten() {
+        // this method specifically return void to discourage it's unintended usage
+        pageRotationInverseMatrixWritten = true;
     }
 
     @Override
