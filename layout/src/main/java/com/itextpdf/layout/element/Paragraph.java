@@ -112,7 +112,7 @@ public class Paragraph extends BlockElement<Paragraph> {
      * @param elements the content to be added, any {@link ILeafElement}
      * @return this Paragraph
      */
-    public Paragraph addAll(java.util.List<? extends ILeafElement> elements) {
+    public <T2 extends ILeafElement> Paragraph addAll(java.util.List<T2> elements) {
         for (ILeafElement element : elements) {
             add(element);
         }

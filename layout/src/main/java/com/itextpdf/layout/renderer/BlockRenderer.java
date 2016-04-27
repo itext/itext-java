@@ -437,8 +437,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
         return new Point(dx, dy);
     }
 
-
-
     protected void beginRotationIfApplied(PdfCanvas canvas) {
         Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {

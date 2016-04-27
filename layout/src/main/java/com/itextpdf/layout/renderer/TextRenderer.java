@@ -884,7 +884,6 @@ public class TextRenderer extends AbstractRenderer {
     /**
      * This method return a LinkedHashMap with glyphlines as its keys. Values are boolean flags indicating if a
      * glyphline is written in a reversed order (right to left text).
-     * @return
      */
     private Map<GlyphLine, Boolean> getOutputChunks() {
         List<int[]> reversedRange = getProperty(Property.REVERSED);
