@@ -44,7 +44,6 @@
  */
 package com.itextpdf.kernel.utils;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.util.ArrayList;
@@ -54,7 +53,7 @@ import java.util.List;
 public class PdfMerger {
 
     private PdfDocument pdfDocument;
-    private List<AddedPages> pagesToCopy = new ArrayList<>();
+    private boolean closeSrcDocuments;
 
     /**
      * This class is used to merge a number of existing documents into one;
@@ -65,69 +64,57 @@ public class PdfMerger {
     }
 
     /**
-     * This method adds pages from the source document to the List of pages which will be merged.
+     * If set to <i>true</i> then passed to the <i>{@code PdfMerger#merge}</i> method source documents will be closed immediately after merging
+     * specified pages into current document. If <i>false</i> - PdfDocuments are left open. Default value - <i>false</i>.
+     * @param closeSourceDocuments should be true to close pdf documents in merge method.
+     * @return this {@code PdfMerger} instance.
+     */
+    public PdfMerger setCloseSourceDocuments(boolean closeSourceDocuments) {
+        this.closeSrcDocuments = closeSourceDocuments;
+        return this;
+    }
+
+    /**
+     * This method merges pages from the source document to the current one.
+     * <br/><br/>
+     * If <i>closeSourceDocuments</i> flag is set to <i>true</i> (see {@link #setCloseSourceDocuments(boolean)}),
+     * passed {@code PdfDocument} will be closed after pages are merged.
      * @param from - document, from which pages will be copied.
      * @param fromPage - start page in the range of pages to be copied.
      * @param toPage - end page in the range to be copied.
-     * @throws PdfException
+     * @return this {@code PdfMerger} instance.
      */
-    public void addPages(PdfDocument from, int fromPage, int toPage) {
+    public PdfMerger merge(PdfDocument from, int fromPage, int toPage) {
+        List<Integer> pages = new ArrayList<>(toPage - fromPage);
         for (int pageNum = fromPage; pageNum <= toPage; pageNum++){
-            enqueuePageToCopy(from, pageNum);
+            pages.add(pageNum);
         }
+        return merge(from, pages);
     }
 
     /**
-     * This method adds pages from the source document to the List of pages which will be merged.
+     * This method merges pages from the source document to the current one.
+     * <br/><br/>
+     * If <i>closeSourceDocuments</i> flag is set to <i>true</i> (see {@link #setCloseSourceDocuments(boolean)}),
+     * passed {@code PdfDocument} will be closed after pages are merged.
      * @param from - document, from which pages will be copied.
      * @param pages - List of numbers of pages which will be copied.
-     * @throws PdfException
+     * @return this {@code PdfMerger} instance.
      */
-    public void addPages(PdfDocument from, List<Integer> pages) {
-        for (Integer pageNum : pages){
-            enqueuePageToCopy(from, pageNum);
+    public PdfMerger merge(PdfDocument from, List<Integer> pages) {
+        from.copyPagesTo(pages, pdfDocument);
+        if (closeSrcDocuments) {
+            from.close();
         }
+        return this;
     }
 
     /**
-     * This method gets all pages from the List of pages to be copied and merges them into one document.
-     * @throws PdfException
+     * Closes the current document. It is a complete equivalent of calling {@code PdfDocument#close} on the PdfDocument
+     * passed to the constructor of this PdfMerger instance. This means that it is enough to call <i>close</i> either on
+     * passed PdfDocument or on this PdfMerger instance, but there is no need to call them both.
      */
-    public void merge() {
-        for (AddedPages addedPages : pagesToCopy) {
-            addedPages.from.copyPagesTo(addedPages.pagesToCopy, pdfDocument );
-        }
-    }
-
-    /**
-     * This method adds to the List of pages to be copied with given page.
-     * Pages are stored along with their documents.
-     * If last added page belongs to the same document as the new one, new page is added to the previous {@code AddedPages} instance.
-     * @param from - document, from which pages will be copied.
-     * @param pageNum - number of page to be copied.
-     * @throws PdfException
-     */
-    private void enqueuePageToCopy(PdfDocument from, int pageNum) {
-        if (!pagesToCopy.isEmpty()) {
-            AddedPages lastAddedPagesEntry = pagesToCopy.get(pagesToCopy.size() - 1);
-            if (lastAddedPagesEntry.from == from) {
-                lastAddedPagesEntry.pagesToCopy.add(pageNum);
-            } else {
-                pagesToCopy.add(new AddedPages(from, pageNum));
-            }
-        } else {
-            pagesToCopy.add(new AddedPages(from, pageNum));
-        }
-    }
-
-    static class AddedPages {
-        public AddedPages(PdfDocument from, int pageNum) {
-            this.from = from;
-            this.pagesToCopy = new ArrayList<>();
-            this.pagesToCopy.add(pageNum);
-        }
-
-        PdfDocument from;
-        List<Integer> pagesToCopy;
+    public void close() {
+        pdfDocument.close();
     }
 }
