@@ -44,9 +44,9 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
@@ -63,19 +63,19 @@ import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
 import java.util.Arrays;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * A generic abstract element that fits in a PDF layout object hierarchy.
- * A superclass of all {@link IElement layout object} implementations.
- *
+ * A superclass of all {@link com.itextpdf.layout.element.IElement layout object} implementations.
+ * 
  * @param <T> this type
  */
 public abstract class ElementPropertyContainer<T extends IPropertyContainer> implements IPropertyContainer {
 
-    protected Map<Property, Object> properties = new EnumMap<>(Property.class);
+    protected Map<Property, Object> properties = new HashMap<>();
 
     @Override
     public void setProperty(Property property, Object value) {
@@ -195,8 +195,13 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * Sets values for a relative repositioning of the Element. Also has as a
      * side effect that the Element's {@link Property#POSITION} is changed to
      * {@link LayoutPosition#RELATIVE relative}.
+<<<<<<< HEAD
      * <p>
      * The default implementation in {@link AbstractRenderer} treats
+=======
+     * 
+     * The default implementation in {@link com.itextpdf.layout.renderer.AbstractRenderer} treats
+>>>>>>> develop
      * <code>left</code> and <code>top</code> as the most important values. Only
      * if <code>left == 0</code> will <code>right</code> be used for the
      * calculation; ditto for top vs. bottom.

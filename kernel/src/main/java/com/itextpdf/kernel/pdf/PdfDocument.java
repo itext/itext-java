@@ -333,7 +333,18 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public PdfPage getPage(int pageNum) {
         checkClosingStatus();
-        return catalog.getPage(pageNum);
+        return catalog.getPageTree().getPage(pageNum);
+    }
+
+    /**
+     * Gets the {@link PdfPage} instance by {@link PdfDictionary}.
+     *
+     * @param pageDictionary {@link PdfDictionary} that present page.
+     * @return page by {@link PdfDictionary}.
+     */
+    public PdfPage getPage(PdfDictionary pageDictionary) {
+        checkClosingStatus();
+        return catalog.getPageTree().getPage(pageDictionary);
     }
 
     /**
@@ -373,7 +384,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     public PdfPage addNewPage(PageSize pageSize) {
         checkClosingStatus();
         PdfPage page = new PdfPage(this, pageSize);
-        catalog.addPage(page);
+        checkAndAddPage(page);
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_PAGE, page));
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.INSERT_PAGE, page));
         return page;
@@ -401,7 +412,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     public PdfPage addNewPage(int index, PageSize pageSize) {
         checkClosingStatus();
         PdfPage page = new PdfPage(this, pageSize);
-        catalog.addPage(index, page);
+        checkAndAddPage(index, page);
         currentPage = page;
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.START_PAGE, page));
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.INSERT_PAGE, page));
@@ -417,7 +428,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public PdfPage addPage(PdfPage page) {
         checkClosingStatus();
-        catalog.addPage(page);
+        checkAndAddPage(page);
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.INSERT_PAGE, page));
         return page;
     }
@@ -432,7 +443,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public PdfPage addPage(int index, PdfPage page) {
         checkClosingStatus();
-        catalog.addPage(index, page);
+        checkAndAddPage(index, page);
         currentPage = page;
         dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.INSERT_PAGE, page));
         return currentPage;
@@ -445,7 +456,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public int getNumberOfPages() {
         checkClosingStatus();
-        return catalog.getNumberOfPages();
+        return catalog.getPageTree().getNumberOfPages();
     }
 
     /**
@@ -456,7 +467,17 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public int getPageNumber(PdfPage page) {
         checkClosingStatus();
-        return catalog.getPageNumber(page);
+        return catalog.getPageTree().getPageNumber(page);
+    }
+
+    /**
+     * Gets page number by {@link PdfDictionary}.
+     *
+     * @param pageDictionary {@link PdfDictionary} that present page.
+     * @return page number by {@link PdfDictionary}.
+     */
+    public int getPageNumber(PdfDictionary pageDictionary) {
+        return catalog.getPageTree().getPageNumber(pageDictionary);
     }
 
     /**
@@ -471,9 +492,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     public boolean removePage(PdfPage page) {
         checkClosingStatus();
         int pageNum = getPageNumber(page);
-        if (pageNum < 1)
-            return false;
-        return removePage(pageNum) != null;
+        return pageNum >= 1 && removePage(pageNum) != null;
     }
 
     /**
@@ -484,7 +503,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public PdfPage removePage(int pageNum) {
         checkClosingStatus();
-        PdfPage removedPage = catalog.removePage(pageNum);
+        PdfPage removedPage = catalog.getPageTree().removePage(pageNum);
 
         if (removedPage != null) {
             catalog.removeOutlines(removedPage);
@@ -659,7 +678,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         catalog.put(PdfName.PageLabels, catalog.pageLabels.buildTree());
                     }
 
-                    PdfObject pageRoot = catalog.pageTree.generateTree();
+                    PdfObject pageRoot = catalog.getPageTree().generateTree();
                     if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
                         catalog.getPdfObject().put(PdfName.Pages, pageRoot);
                         catalog.getPdfObject().flush(false);
@@ -695,7 +714,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         catalog.put(PdfName.PageLabels, catalog.pageLabels.buildTree());
                     }
 
-                    catalog.getPdfObject().put(PdfName.Pages, catalog.pageTree.generateTree());
+                    catalog.getPdfObject().put(PdfName.Pages, catalog.getPageTree().generateTree());
 
                     for (Map.Entry<PdfName, PdfNameTree> entry : catalog.nameTrees.entrySet()) {
                         PdfNameTree tree = entry.getValue();
@@ -712,7 +731,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     flushFonts();
                     writer.flushWaitingObjects();
                     // flush unused objects
-                    if (flushUnusedObjects) {
+                    if (isFlushUnusedObjects()) {
                         for (int i = 0; i < xref.size(); i++) {
                             PdfIndirectReference indirectReference = xref.get(i);
                             if (!indirectReference.isFree() && !indirectReference.checkState(PdfObject.FLUSHED)) {
@@ -762,7 +781,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     writer.close();
                 }
             }
-            catalog.pageTree.clearPageRefs();
+            catalog.getPageTree().clearPageRefs();
             removeAllHandlers();
             if (reader != null && isCloseReader()) {
                 reader.close();
@@ -1059,7 +1078,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      *              See PdfSpec 12.3.2.3 for more info.
      * @throws PdfException
      */
-    public void addNameDestination(String key, PdfObject value) {
+    public void addNamedDestination(String key, PdfObject value) {
         checkClosingStatus();
         catalog.addNamedDestination(key, value);
     }
@@ -1298,9 +1317,29 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     catalog = new PdfCatalog(this);
                     info = new PdfDocumentInfo(this).addCreationDate();
                     info.addModDate();
-                    info.setProducer(Version.getInstance().getVersion());
+                    info.getPdfObject().put(PdfName.Producer, new PdfString(Version.getInstance().getVersion()));
                 } else {
                     info.addModDate();
+                    String producer = null;
+                    if (info.getPdfObject().containsKey(PdfName.Producer)) {
+                        producer = info.getPdfObject().getAsString(PdfName.Producer).toUnicodeString();
+                    }
+                    Version version = Version.getInstance();
+                    if (producer == null || !version.getVersion().contains(version.getProduct())) {
+                        producer = version.getVersion();
+                    } else {
+                        int idx = producer.indexOf("; modified using");
+                        StringBuilder buf;
+                        if (idx == -1) {
+                            buf = new StringBuilder(producer);
+                        } else {
+                            buf = new StringBuilder(producer.substring(0, idx));
+                        }
+                        buf.append("; modified using ");
+                        buf.append(version.getVersion());
+                        producer = buf.toString();
+                    }
+                    info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
                 }
                 trailer = new PdfDictionary();
                 trailer.put(PdfName.Root, catalog.getPdfObject().getIndirectReference());
@@ -1371,6 +1410,24 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 font.flush();
             }
         }
+    }
+
+    protected void checkAndAddPage(int index, PdfPage page) {
+        if (page.isFlushed()) {
+            throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted, page);
+        }
+        if (page.getDocument() != null && this != page.getDocument()) {
+            throw new PdfException(PdfException.Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3).setMessageParams(page, this, page.getDocument());
+        }
+        catalog.getPageTree().addPage(index, page);
+    }
+
+    protected void checkAndAddPage(PdfPage page) {
+        if (page.isFlushed())
+            throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted, page);
+        if (page.getDocument() != null && this != page.getDocument())
+            throw new PdfException(PdfException.Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3).setMessageParams(page, this, page.getDocument());
+        catalog.getPageTree().addPage(page);
     }
 
     /**
@@ -1516,7 +1573,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         array.addAll((PdfArray) srcNamedDestinations.get(name));
                         PdfObject pageObject = array.get(0);
                         if (!pageObject.isNumber()) {
-                            PdfPage oldPage = catalog.getPage((PdfDictionary)pageObject);
+                            PdfPage oldPage = catalog.getPageTree().getPage((PdfDictionary)pageObject);
                             PdfPage newPage = page2page.get(oldPage);
                             if (oldPage == null || newPage == null) {
                                 dest = null;
@@ -1525,7 +1582,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                             }
                         }
                         if (dest != null) {
-                            toDocument.addNameDestination(name, array.makeIndirect(toDocument));
+                            toDocument.addNamedDestination(name, array.makeIndirect(toDocument));
                         }
                     }
                 } else {
@@ -1533,7 +1590,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     destArray.addAll((PdfArray) dest.getPdfObject());
                     PdfObject pageObject = destArray.get(0);
                     if (!pageObject.isNumber()) {
-                        PdfPage oldPage = catalog.getPage((PdfDictionary)pageObject);
+                        PdfPage oldPage = catalog.getPageTree().getPage((PdfDictionary)pageObject);
                         PdfPage newPage = page2page.get(oldPage);
                         if (oldPage == null || newPage == null) {
                             dest = null;
@@ -1563,6 +1620,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         names.put(treeType, treeRoot);
     }
 
+    @SuppressWarnings("unused")
     private byte[] getSerializedBytes() {
         ByteArrayOutputStream bos = null;
         ObjectOutputStream oos = null;

@@ -93,11 +93,6 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
-    public PdfDocumentInfo setProducer(String creator) {
-        getPdfObject().put(PdfName.Producer, new PdfString(creator));
-        return this;
-    }
-
     public String getTitle() {
         return getStringValue(PdfName.Title);
     }

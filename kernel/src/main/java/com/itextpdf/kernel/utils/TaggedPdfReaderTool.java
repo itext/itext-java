@@ -192,7 +192,7 @@ public class TaggedPdfReaderTool {
                 MarkedContentEventListener listener = new MarkedContentEventListener();
 
                 PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
-                PdfPage page = document.getCatalog().getPage(pageDic);
+                PdfPage page = document.getPage(pageDic);
                 processor.processContent(page.getContentBytes(), page.getResources());
 
                 parsedTags.put(pageDic, listener.getMcidContent());

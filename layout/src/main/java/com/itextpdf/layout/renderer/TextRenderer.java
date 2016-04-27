@@ -844,11 +844,13 @@ public class TextRenderer extends AbstractRenderer {
         splitRenderer.yLineOffset = yLineOffset;
         splitRenderer.otfFeaturesApplied = otfFeaturesApplied;
         splitRenderer.isLastRendererForModelElement = false;
+        splitRenderer.addAllProperties(getOwnProperties());
 
         TextRenderer overflowRenderer = createOverflowRenderer();
         overflowRenderer.setText(text, initialOverflowTextPos, text.end);
         overflowRenderer.otfFeaturesApplied = otfFeaturesApplied;
         overflowRenderer.parent = parent;
+        overflowRenderer.addAllProperties(getOwnProperties());
 
         return new TextRenderer[]{splitRenderer, overflowRenderer};
     }

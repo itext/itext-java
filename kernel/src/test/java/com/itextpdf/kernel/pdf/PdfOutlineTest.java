@@ -271,9 +271,9 @@ public class PdfOutlineTest extends ExtendedITextTest{
         array3.add(new PdfNumber(806));
         array3.add(new PdfNumber(1));
 
-        pdfDoc.addNameDestination("test1", array2);
-        pdfDoc.addNameDestination("test2", array3);
-        pdfDoc.addNameDestination("test3", array1);
+        pdfDoc.addNamedDestination("test1", array2);
+        pdfDoc.addNamedDestination("test2", array3);
+        pdfDoc.addNamedDestination("test3", array1);
 
         PdfOutline root = pdfDoc.getOutlines(false);
 
@@ -321,9 +321,9 @@ public class PdfOutlineTest extends ExtendedITextTest{
         array3.add(new PdfNumber(806));
         array3.add(new PdfNumber(1));
 
-        pdfDoc.addNameDestination("page1", array2);
-        pdfDoc.addNameDestination("page2", array3);
-        pdfDoc.addNameDestination("page3", array1);
+        pdfDoc.addNamedDestination("page1", array2);
+        pdfDoc.addNamedDestination("page2", array3);
+        pdfDoc.addNamedDestination("page3", array1);
 
         PdfOutline root = pdfDoc.getOutlines(false);
         PdfOutline firstOutline = root.addOutline("Test1");

@@ -46,6 +46,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.Version;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -304,9 +305,10 @@ class PdfXrefTable implements Serializable {
                 trailer.put(PdfName.Prev, lastXref);
             }
             writer.write(document.getTrailer());
+            writer.write('\n');
         }
-
-        writer.writeString("\nstartxref\n").
+        writeKeyInfo(writer);
+        writer.writeString("startxref\n").
                 writeLong(startxref).
                 writeString("\n%%EOF\n");
         xref = null;
@@ -322,6 +324,14 @@ class PdfXrefTable implements Serializable {
         count = 1;
     }
 
+    protected static void writeKeyInfo(PdfWriter writer) throws IOException {
+        Version version = Version.getInstance();
+        String k = version.getKey();
+        if (k == null) {
+            k = "iText";
+        }
+        writer.writeString(String.format("%%%s-%s\n", k, version.getRelease()));
+    }
 
     private void ensureCount(int count) {
         if (count >= xref.length) {
