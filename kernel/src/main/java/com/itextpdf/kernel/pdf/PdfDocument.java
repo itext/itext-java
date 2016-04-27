@@ -1298,9 +1298,29 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     catalog = new PdfCatalog(this);
                     info = new PdfDocumentInfo(this).addCreationDate();
                     info.addModDate();
-                    info.setProducer(Version.getInstance().getVersion());
+                    info.getPdfObject().put(PdfName.Producer, new PdfString(Version.getInstance().getVersion()));
                 } else {
                     info.addModDate();
+                    String producer = null;
+                    if (info.getPdfObject().containsKey(PdfName.Producer)) {
+                        producer = info.getPdfObject().getAsString(PdfName.Producer).toUnicodeString();
+                    }
+                    Version version = Version.getInstance();
+                    if (producer == null || !version.getVersion().contains(version.getProduct())) {
+                        producer = version.getVersion();
+                    } else {
+                        int idx = producer.indexOf("; modified using");
+                        StringBuilder buf;
+                        if (idx == -1) {
+                            buf = new StringBuilder(producer);
+                        } else {
+                            buf = new StringBuilder(producer.substring(0, idx));
+                        }
+                        buf.append("; modified using ");
+                        buf.append(version.getVersion());
+                        producer = buf.toString();
+                    }
+                    info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
                 }
                 trailer = new PdfDictionary();
                 trailer.put(PdfName.Root, catalog.getPdfObject().getIndirectReference());
