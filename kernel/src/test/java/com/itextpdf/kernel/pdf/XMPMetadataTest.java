@@ -35,7 +35,7 @@ public class XMPMetadataTest extends ExtendedITextTest{
 
         String filename = "emptyDocumentWithXmp.pdf";
         FileOutputStream fos = new FileOutputStream(destinationFolder +filename);
-        PdfWriter writer = new PdfWriter(fos);
+        PdfWriter writer = new PdfWriter(fos,  new WriterProperties().addXmpMetadata());
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
@@ -43,7 +43,6 @@ public class XMPMetadataTest extends ExtendedITextTest{
         pdfDoc.getDocumentInfo().getPdfObject().remove(PdfName.CreationDate);
         PdfPage page = pdfDoc.addNewPage();
         page.flush();
-        pdfDoc.createXmpMetadata();
         pdfDoc.close();
         PdfReader reader = new PdfReader(destinationFolder +filename);
         PdfDocument pdfDocument = new PdfDocument(reader);

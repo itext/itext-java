@@ -49,7 +49,7 @@ import com.itextpdf.io.font.CFFFontSubset;
 import com.itextpdf.io.font.CMapEncoding;
 import com.itextpdf.io.font.CidFont;
 import com.itextpdf.io.font.CidFontProperties;
-import com.itextpdf.io.font.FontFactory;
+import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeFont;
@@ -128,7 +128,7 @@ public class PdfType0Font extends PdfFont {
         }
     }
 
-    //note Make this constructor protected. Only FontFactory (kernel level) will
+    // Note. Make this constructor protected. Only PdfFontFactory (kernel level) will
     // be able to create Type0 font based on predefined font.
     // Or not? Possible it will be convenient construct PdfType0Font based on custom CidFont.
     // There is no typography features in CJK fonts.
@@ -175,7 +175,7 @@ public class PdfType0Font extends PdfFont {
             if (uniMap != null && uniMap.startsWith("Uni")
                     && CidFontProperties.isCidFont(cidFontName, uniMap)) {
                 try {
-                    fontProgram = FontFactory.createFont(cidFontName);
+                    fontProgram = FontProgramFactory.createFont(cidFontName);
                     cmapEncoding = new CMapEncoding(cmap, uniMap);
                     embedded = false;
                 } catch (IOException ignored) {

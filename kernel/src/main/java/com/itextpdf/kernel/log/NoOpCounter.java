@@ -42,10 +42,25 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.layout.property;
+package com.itextpdf.kernel.log;
 
-public enum AreaBreakType {
-    NEXT_AREA,
-    NEXT_PAGE,
-    LAST_PAGE
+/**
+ * Implementation of the Counter interface that doesn't do anything.
+ */
+public class NoOpCounter implements Counter {
+
+    @Override
+    public Counter getCounter(Class<?> cls) {
+        return this;
+    }
+
+    @Override
+    public void onDocumentRead(long size) {
+
+    }
+
+    @Override
+    public void onDocumentWritten(long size) {
+
+    }
 }

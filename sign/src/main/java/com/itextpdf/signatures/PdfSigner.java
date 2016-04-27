@@ -44,56 +44,28 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.io.source.ByteBuffer;
-import com.itextpdf.io.source.RASInputStream;
-import com.itextpdf.io.source.IRandomAccessSource;
-import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDate;
-import com.itextpdf.kernel.pdf.PdfDeveloperExtension;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfLiteral;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfOutputStream;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.PdfVersion;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.StampingProperties;
-import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfSigFieldLockDictionary;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
+import com.itextpdf.io.source.ByteBuffer;
+import com.itextpdf.io.source.IRandomAccessSource;
+import com.itextpdf.io.source.RASInputStream;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 
-import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
+import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Takes care of the cryptographic options and appearances that form a signature.
@@ -235,13 +207,17 @@ public class PdfSigner {
      *
      * @param reader PdfReader that reads the PDF file
      * @param outputStream OutputStream to write the signed PDF file
-     * @param tempFile File to which the output is temporarily written
+     * @param path File to which the output is temporarily written
      * @param append boolean to indicate whether the signing should happen in append mode or not
      * @throws IOException
      */
-    public PdfSigner(PdfReader reader, OutputStream outputStream, File tempFile, boolean append) throws IOException {
+    public PdfSigner(PdfReader reader, OutputStream outputStream, String path, boolean append) throws IOException {
         StampingProperties properties = new StampingProperties()
                 .preserveEncryption();
+        File tempFile = null;
+        if (path != null) {
+            tempFile = new File(path);
+        }
         if (append) {
             properties.useAppendMode();
         }
@@ -416,7 +392,7 @@ public class PdfSigner {
                 appearance.setFieldName(fieldName);
 
                 List<PdfWidgetAnnotation> widgets = field.getWidgets();
-                if (!widgets.isEmpty()) {
+                if (widgets.size() > 0) {
                     PdfWidgetAnnotation widget = widgets.get(0);
                     appearance.setPageRect(getWidgetRectangle(widget));
                     appearance.setPageNumber(getWidgetPageNumber(widget));
@@ -526,7 +502,7 @@ public class PdfSigner {
         preClose(exc);
 
         String hashAlgorithm = externalSignature.getHashAlgorithm();
-        PdfPKCS7 sgn = new PdfPKCS7(null, chain, hashAlgorithm, null, externalDigest, false);
+        PdfPKCS7 sgn = new PdfPKCS7((PrivateKey) null, chain, hashAlgorithm, null, externalDigest, false);
         InputStream data = getRangeStream();
         byte[] hash = DigestAlgorithms.digest(data, externalDigest.getMessageDigest(hashAlgorithm));
         byte[] ocsp = null;
@@ -728,7 +704,7 @@ public class PdfSigner {
                 continue;
             crlBytes.addAll(b);
         }
-        if (crlBytes.isEmpty())
+        if (crlBytes.size() == 0)
             return null;
         else
             return crlBytes;
@@ -953,7 +929,7 @@ public class PdfSigner {
                     System.arraycopy(bous.toByteArray(), 0, bout, (int) lit.getPosition(), bous.size());
                 } else {
                     raf.seek(lit.getPosition());
-                    raf.write(bous.toByteArray(), 0, bous.size());
+                    raf.write(bous.toByteArray(), 0, (int) bous.size());
                 }
             }
             if (update.size() != exclusionLocations.size())

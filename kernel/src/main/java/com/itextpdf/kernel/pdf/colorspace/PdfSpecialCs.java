@@ -60,7 +60,7 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
 
     private static final long serialVersionUID = -2725455900398492836L;
 
-	public PdfSpecialCs(PdfArray pdfObject) {
+    protected PdfSpecialCs(PdfArray pdfObject) {
         super(pdfObject);
     }
 

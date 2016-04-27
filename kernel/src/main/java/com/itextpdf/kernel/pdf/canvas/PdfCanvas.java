@@ -218,8 +218,9 @@ public class PdfCanvas {
      * @param page page to create canvas from.
      */
     public PdfCanvas(PdfPage page) {
-        this(page, page.getDocument().getReader() != null && page.getDocument().getWriter() != null &&
-                page.getContentStreamCount() > 0 && page.getLastContentStream().getLength() > 0);
+        this(page, (page.getDocument().getReader() != null && page.getDocument().getWriter() != null
+                        && page.getContentStreamCount() > 0 && page.getLastContentStream().getLength() > 0)
+                   || (page.getRotation() != 0 && page.isIgnorePageRotationForContent()));
     }
 
     /**
@@ -235,27 +236,11 @@ public class PdfCanvas {
             // Wrap old content in q/Q in order not to get unexpected results because of the CTM
             page.newContentStreamBefore().getOutputStream().writeBytes(ByteUtils.getIsoBytes("q\n"));
             contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("Q\n"));
-            if (page.getRotation() != 0 && !page.isIgnoreContentRotation()) {
-                applyRotation(page);
-            }
         }
-
-
-    }
-
-    private void applyRotation(PdfPage page) {
-        Rectangle rectagle = page.getPageSizeWithRotation();
-        int rotation = page.getRotation();
-        switch (rotation) {
-            case 90:
-                concatMatrix(0, 1, -1, 0, rectagle.getTop(), 0);
-                break;
-            case 180:
-                concatMatrix(-1, 0, 0, -1, rectagle.getRight(), rectagle.getTop());
-                break;
-            case 270:
-                concatMatrix(0, -1, 1, 0, 0, rectagle.getRight());
-                break;
+        if (page.getRotation() != 0 && page.isIgnorePageRotationForContent()
+                && (wrapOldContent || !page.isPageRotationInverseMatrixWritten())) {
+            applyRotation(page);
+            page.setPageRotationInverseMatrixWritten();
         }
     }
 
@@ -2382,5 +2367,21 @@ public class PdfCanvas {
         dashPatternArray.add(dArray);
         dashPatternArray.add(new PdfNumber(phase));
         return dashPatternArray;
+    }
+
+    private void applyRotation(PdfPage page) {
+        Rectangle rectagle = page.getPageSizeWithRotation();
+        int rotation = page.getRotation();
+        switch (rotation) {
+            case 90:
+                concatMatrix(0, 1, -1, 0, rectagle.getTop(), 0);
+                break;
+            case 180:
+                concatMatrix(-1, 0, 0, -1, rectagle.getRight(), rectagle.getTop());
+                break;
+            case 270:
+                concatMatrix(0, -1, 1, 0, 0, rectagle.getRight());
+                break;
+        }
     }
 }

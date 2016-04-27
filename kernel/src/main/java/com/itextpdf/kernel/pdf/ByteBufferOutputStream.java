@@ -60,7 +60,7 @@ import java.util.Locale;
  * @author Paulo Soares
  */
 
-public class ByteBuffer extends OutputStream {
+public class ByteBufferOutputStream extends OutputStream {
     /** The count of bytes in the buffer. */
     protected int count;
     
@@ -80,8 +80,8 @@ public class ByteBuffer extends OutputStream {
     public static boolean HIGH_PRECISION = false;
     private static final DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.US);
     
-    /** Creates new ByteBuffer with capacity 128 */
-    public ByteBuffer() {
+    /** Creates new ByteBufferOutputStream with capacity 128 */
+    public ByteBufferOutputStream() {
         this(128);
     }
     
@@ -89,7 +89,7 @@ public class ByteBuffer extends OutputStream {
      * Creates a byte buffer with a certain capacity.
      * @param size the initial capacity
      */
-    public ByteBuffer(int size) {
+    public ByteBufferOutputStream(int size) {
         if (size < 1)
             size = 128;
         buf = new byte[size];
@@ -181,9 +181,9 @@ public class ByteBuffer extends OutputStream {
     /**
      * Appends an <CODE>int</CODE>. The size of the array will grow by one.
      * @param b the int to be appended
-     * @return a reference to this <CODE>ByteBuffer</CODE> object
+     * @return a reference to this <CODE>ByteBufferOutputStream</CODE> object
      */
-    public ByteBuffer append_i(int b) {
+    public ByteBufferOutputStream append_i(int b) {
         int newcount = count + 1;
         if (newcount > buf.length) {
             byte[] newbuf = new byte[Math.max(buf.length << 1, newcount)];
@@ -201,9 +201,9 @@ public class ByteBuffer extends OutputStream {
      * @param b the array to be appended
      * @param off the offset to the start of the array
      * @param len the length of bytes to append
-     * @return a reference to this <CODE>ByteBuffer</CODE> object
+     * @return a reference to this <CODE>ByteBufferOutputStream</CODE> object
      */
-    public ByteBuffer append(byte[] b, int off, int len) {
+    public ByteBufferOutputStream append(byte[] b, int off, int len) {
         if ((off < 0) || (off > b.length) || (len < 0) ||
         ((off + len) > b.length) || ((off + len) < 0) || len == 0)
             return this;
@@ -221,9 +221,9 @@ public class ByteBuffer extends OutputStream {
     /**
      * Appends an array of bytes.
      * @param b the array to be appended
-     * @return a reference to this <CODE>ByteBuffer</CODE> object
+     * @return a reference to this <CODE>ByteBufferOutputStream</CODE> object
      */
-    public ByteBuffer append(byte[] b) {
+    public ByteBufferOutputStream append(byte[] b) {
         return append(b, 0, b.length);
     }
     
@@ -231,9 +231,9 @@ public class ByteBuffer extends OutputStream {
      * Appends a <CODE>String</CODE> to the buffer. The <CODE>String</CODE> is
      * converted according to the encoding ISO-8859-1.
      * @param str the <CODE>String</CODE> to be appended
-     * @return a reference to this <CODE>ByteBuffer</CODE> object
+     * @return a reference to this <CODE>ByteBufferOutputStream</CODE> object
      */
-    public ByteBuffer append(String str) {
+    public ByteBufferOutputStream append(String str) {
         if (str != null)
             return append(str.getBytes());
         return this;
@@ -243,44 +243,44 @@ public class ByteBuffer extends OutputStream {
      * Appends a <CODE>char</CODE> to the buffer. The <CODE>char</CODE> is
      * converted according to the encoding ISO-8859-1.
      * @param c the <CODE>char</CODE> to be appended
-     * @return a reference to this <CODE>ByteBuffer</CODE> object
+     * @return a reference to this <CODE>ByteBufferOutputStream</CODE> object
      */
-    public ByteBuffer append(char c) {
+    public ByteBufferOutputStream append(char c) {
         return append_i(c);
     }
     
     /**
-     * Appends another <CODE>ByteBuffer</CODE> to this buffer.
-     * @param buf the <CODE>ByteBuffer</CODE> to be appended
-     * @return a reference to this <CODE>ByteBuffer</CODE> object
+     * Appends another <CODE>ByteBufferOutputStream</CODE> to this buffer.
+     * @param buf the <CODE>ByteBufferOutputStream</CODE> to be appended
+     * @return a reference to this <CODE>ByteBufferOutputStream</CODE> object
      */
-    public ByteBuffer append(ByteBuffer buf) {
+    public ByteBufferOutputStream append(ByteBufferOutputStream buf) {
         return append(buf.buf, 0, buf.count);
     }
     
     /**
      * Appends the string representation of an <CODE>int</CODE>.
      * @param i the <CODE>int</CODE> to be appended
-     * @return a reference to this <CODE>ByteBuffer</CODE> object
+     * @return a reference to this <CODE>ByteBufferOutputStream</CODE> object
      */
-    public ByteBuffer append(int i) {
+    public ByteBufferOutputStream append(int i) {
         return append((double)i);
     }
     
     /**
      * Appends the string representation of a <CODE>long</CODE>.
      * @param i the <CODE>long</CODE> to be appended
-     * @return a reference to this <CODE>ByteBuffer</CODE> object
+     * @return a reference to this <CODE>ByteBufferOutputStream</CODE> object
      */
-    public ByteBuffer append(long i) {
+    public ByteBufferOutputStream append(long i) {
         return append(Long.toString(i));
     }
     
-    public ByteBuffer append(byte b) {
+    public ByteBufferOutputStream append(byte b) {
         return append_i(b);
     }
     
-    public ByteBuffer appendHex(byte b) {
+    public ByteBufferOutputStream appendHex(byte b) {
         append(bytes[(b >> 4) & 0x0f]);
         return append(bytes[b & 0x0f]);
     }
@@ -289,9 +289,9 @@ public class ByteBuffer extends OutputStream {
      * Appends a string representation of a <CODE>float</CODE> according
      * to the Pdf conventions.
      * @param i the <CODE>float</CODE> to be appended
-     * @return a reference to this <CODE>ByteBuffer</CODE> object
+     * @return a reference to this <CODE>ByteBufferOutputStream</CODE> object
      */
-    public ByteBuffer append(float i) {
+    public ByteBufferOutputStream append(float i) {
         return append((double)i);
     }
     
@@ -299,9 +299,9 @@ public class ByteBuffer extends OutputStream {
      * Appends a string representation of a <CODE>double</CODE> according
      * to the Pdf conventions.
      * @param d the <CODE>double</CODE> to be appended
-     * @return a reference to this <CODE>ByteBuffer</CODE> object
+     * @return a reference to this <CODE>ByteBufferOutputStream</CODE> object
      */
-    public ByteBuffer append(double d) {
+    public ByteBufferOutputStream append(double d) {
         append(formatDouble(d, this));
         return this;
     }
@@ -318,12 +318,12 @@ public class ByteBuffer extends OutputStream {
     /**
      * Outputs a <CODE>double</CODE> into a format suitable for the PDF.
      * @param d a double
-     * @param buf a ByteBuffer
+     * @param buf a ByteBufferOutputStream
      * @return the <CODE>String</CODE> representation of the <CODE>double</CODE> if
      * <CODE>buf</CODE> is <CODE>null</CODE>. If <CODE>buf</CODE> is <B>not</B> <CODE>null</CODE>,
      * then the double is appended directly to the buffer and this methods returns <CODE>null</CODE>.
      */
-    public static String formatDouble(double d, ByteBuffer buf) {
+    public static String formatDouble(double d, ByteBufferOutputStream buf) {
         if (HIGH_PRECISION) {
             DecimalFormat dn = new DecimalFormat("0.######", dfs);
             String sform = dn.format(d);

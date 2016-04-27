@@ -105,7 +105,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
 
     private byte[] seed = new byte[SEED_LENGTH];
 
-    public PubKeySecurityHandler() {
+    protected PubKeySecurityHandler() {
         KeyGenerator key;
         try {
             key = KeyGenerator.getInstance("AES");
@@ -238,7 +238,9 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
     }
 
     protected abstract void setPubSecSpecificHandlerDicEntries(PdfDictionary encryptionDictionary, boolean encryptMetadata, boolean embeddedFilesOnly);
+
     protected abstract String getDigestAlgorithm();
+
     protected abstract void initKey(byte[] globalKey, int keyLength);
 
     protected void initKeyAndFillDictionary(PdfDictionary encryptionDictionary, Certificate[] certs, int[] permissions,

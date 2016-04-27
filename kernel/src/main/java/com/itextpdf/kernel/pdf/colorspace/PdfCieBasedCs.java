@@ -65,7 +65,7 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         return true;
     }
 
-    public PdfCieBasedCs(PdfArray pdfObject) {
+    protected PdfCieBasedCs(PdfArray pdfObject) {
         super(pdfObject);
     }
 

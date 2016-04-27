@@ -495,7 +495,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         private final byte[] b;
         private final int hash;
         private MessageDigest md5;
-        private void serObject(PdfObject obj, int level, ByteBuffer bb, HashMap<Integer, Integer> serialized) {
+        private void serObject(PdfObject obj, int level, ByteBufferOutputStream bb, HashMap<Integer, Integer> serialized) {
             if (level <= 0)
                 return;
             if (obj == null) {
@@ -503,7 +503,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
                 return;
             }
             PdfIndirectReference ref = null;
-            ByteBuffer savedBb = null;
+            ByteBufferOutputStream savedBb = null;
 
             if (obj.isIndirectReference()) {
                 ref = (PdfIndirectReference)obj;
@@ -514,7 +514,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
                 }
                 else {
                     savedBb = bb;
-                    bb = new ByteBuffer();
+                    bb = new ByteBufferOutputStream();
                 }
             }
 
@@ -549,22 +549,22 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             }
         }
 
-        private void serDic(PdfDictionary dic, int level, ByteBuffer bb, HashMap<Integer, Integer> serialized) {
+        private void serDic(PdfDictionary dic, int level, ByteBufferOutputStream bb, HashMap<Integer, Integer> serialized) {
             bb.append("$D");
             if (level <= 0)
                 return;
             Object[] keys = dic.keySet().toArray();
             Arrays.sort(keys);
-            for (int k = 0; k < keys.length; ++k) {
-                if(keys[k].equals(PdfName.P) &&(dic.get((PdfName)keys[k]).isIndirectReference() || dic.get((PdfName)keys[k]).isDictionary()) || keys[k].equals(PdfName.Parent)) // ignore recursive call
+            for (Object key : keys) {
+                if (key.equals(PdfName.P) && (dic.get((PdfName) key).isIndirectReference() || dic.get((PdfName) key).isDictionary()) || key.equals(PdfName.Parent)) // ignore recursive call
                     continue;
-                serObject((PdfObject) keys[k], level, bb, serialized);
-                serObject(dic.get((PdfName) keys[k], false), level, bb, serialized);
+                serObject((PdfObject) key, level, bb, serialized);
+                serObject(dic.get((PdfName) key, false), level, bb, serialized);
 
             }
         }
 
-        private void serArray(PdfArray array, int level, ByteBuffer bb, HashMap<Integer, Integer> serialized) {
+        private void serArray(PdfArray array, int level, ByteBufferOutputStream bb, HashMap<Integer, Integer> serialized) {
             bb.append("$A");
             if (level <= 0)
                 return;
@@ -580,7 +580,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             catch (Exception e) {
                 throw new PdfException(e);
             }
-            ByteBuffer bb = new ByteBuffer();
+            ByteBufferOutputStream bb = new ByteBufferOutputStream();
             int level = 100;
             serObject(str, level, bb, serialized);
             this.b = bb.toByteArray();
@@ -595,7 +595,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             catch (Exception e) {
                 throw new PdfException(e);
             }
-            ByteBuffer bb = new ByteBuffer();
+            ByteBufferOutputStream bb = new ByteBufferOutputStream();
             int level = 100;
             serObject(dict, level, bb, serialized);
             this.b = bb.toByteArray();
@@ -606,18 +606,16 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         private static int calculateHash(byte[] b) {
             int hash = 0;
             int len = b.length;
-            for (int k = 0; k < len; ++k)
+            for (int k = 0; k < len; ++k) {
                 hash = hash * 31 + (b[k] & 0xff);
+            }
             return hash;
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof ByteStore))
-                return false;
-            if (hashCode() != obj.hashCode())
-                return false;
-            return Arrays.equals(b, ((ByteStore)obj).b);
+            return obj instanceof ByteStore &&
+                    hashCode() == obj.hashCode() && Arrays.equals(b, ((ByteStore) obj).b);
         }
 
         @Override

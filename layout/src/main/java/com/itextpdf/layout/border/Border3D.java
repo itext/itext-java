@@ -62,7 +62,7 @@ public abstract class Border3D extends Border {
      *
      * @param width with of the border
      */
-    public Border3D(float width) {
+    protected Border3D(float width) {
         this(GRAY, width);
     }
 
@@ -72,7 +72,7 @@ public abstract class Border3D extends Border {
      * @param color color of the border
      * @param width with of the border
      */
-    public Border3D(DeviceRgb color, float width) {
+    protected Border3D(DeviceRgb color, float width) {
         super(color, width);
     }
 
@@ -82,7 +82,7 @@ public abstract class Border3D extends Border {
      * @param color color of the border
      * @param width with of the border
      */
-    public Border3D(DeviceCmyk color, float width) {
+    protected Border3D(DeviceCmyk color, float width) {
         super(color, width);
     }
 
@@ -92,7 +92,7 @@ public abstract class Border3D extends Border {
      * @param color color of the border
      * @param width with of the border
      */
-    public Border3D(DeviceGray color, float width) {
+    protected Border3D(DeviceGray color, float width) {
         super(color, width);
     }
 

@@ -94,51 +94,8 @@ public abstract class AbstractRenderer implements IRenderer {
     protected boolean flushed = false;
     protected LayoutArea occupiedArea;
     protected IRenderer parent;
-    protected Map<Property, Object> properties = new HashMap<>();
+    protected Map<Integer, Object> properties = new HashMap<>();
     protected boolean isLastRendererForModelElement = true;
-
-    /**
-     * Some properties must be passed to {@link IPropertyContainer} objects that
-     * are lower in the document's hierarchy. Most inherited properties are
-     * related to textual operations.
-     *
-     * @return whether or not this type of property is inheritable.
-     */
-    private static boolean INHERITED_PROPERTIES[];
-
-    static {
-        int maxOrdinal = 0;
-        for (Property property : Property.values()) {
-            maxOrdinal = Math.max(maxOrdinal, property.ordinal());
-        }
-        INHERITED_PROPERTIES = new boolean[maxOrdinal + 1];
-
-        INHERITED_PROPERTIES[Property.BASE_DIRECTION.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.BOLD_SIMULATION.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.CHARACTER_SPACING.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.FIRST_LINE_INDENT.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.FONT.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.FONT_COLOR.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.FONT_KERNING.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.FONT_SCRIPT.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.FONT_SIZE.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.FORCED_PLACEMENT.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.HYPHENATION.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.ITALIC_SIMULATION.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.KEEP_TOGETHER.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.LIST_SYMBOL.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.LIST_SYMBOL_PRE_TEXT.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.LIST_SYMBOL_POST_TEXT.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.SPACING_RATIO.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.SPLIT_CHARACTERS.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.STROKE_COLOR.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.STROKE_WIDTH.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.TEXT_ALIGNMENT.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.TEXT_RENDERING_MODE.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.TEXT_RISE.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.UNDERLINE.ordinal()] = true;
-        INHERITED_PROPERTIES[Property.WORD_SPACING.ordinal()] = true;
-    }
 
     /**
      * Creates a renderer.
@@ -199,19 +156,19 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     @Override
-    public boolean hasProperty(Property property) {
+    public boolean hasProperty(int property) {
         return hasOwnProperty(property)
                 || (modelElement != null && modelElement.hasProperty(property))
-                || (parent != null && INHERITED_PROPERTIES[property.ordinal()] && parent.hasProperty(property));
+                || (parent != null && Property.isPropertyInherited(property) && parent.hasProperty(property));
     }
 
     @Override
-    public boolean hasOwnProperty(Property property) {
+    public boolean hasOwnProperty(int property) {
         return properties.containsKey(property);
     }
 
     @Override
-    public void deleteOwnProperty(Property property) {
+    public void deleteOwnProperty(int property) {
         properties.remove(property);
     }
 
@@ -220,7 +177,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * property of the model element is deleted
      * @param property the property key to be deleted
      */
-    public void deleteProperty(Property property) {
+    public void deleteProperty(int property) {
         if (properties.containsKey(property)) {
             properties.remove(property);
         } else {
@@ -231,7 +188,7 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     @Override
-    public <T1> T1 getProperty(Property key) {
+    public <T1> T1 getProperty(int key) {
         Object property;
         if ((property = properties.get(key)) != null || properties.containsKey(key)) {
             return (T1) property;
@@ -240,7 +197,7 @@ public abstract class AbstractRenderer implements IRenderer {
             return (T1) property;
         }
         // TODO in some situations we will want to check inheritance with additional info, such as parent and descendant.
-        if (parent != null && INHERITED_PROPERTIES[key.ordinal()] && (property = parent.getProperty(key)) != null) {
+        if (parent != null && Property.isPropertyInherited(key) && (property = parent.getProperty(key)) != null) {
             return (T1) property;
         }
         property = getDefaultProperty(key);
@@ -251,25 +208,25 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     @Override
-    public <T1> T1 getOwnProperty(Property property) {
+    public <T1> T1 getOwnProperty(int property) {
         return (T1) properties.get(property);
     }
 
     @Override
-    public <T1> T1 getProperty(Property property, T1 defaultValue) {
+    public <T1> T1 getProperty(int property, T1 defaultValue) {
         T1 result = getProperty(property);
         return result != null ? result : defaultValue;
     }
 
     @Override
-    public void setProperty(Property property, Object value) {
+    public void setProperty(int property, Object value) {
         properties.put(property, value);
     }
 
     @Override
-    public <T1> T1 getDefaultProperty(Property property) {
+    public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
-            case POSITION:
+            case Property.POSITION:
                 return (T1) Integer.valueOf(LayoutPosition.STATIC);
             default:
                 return null;
@@ -282,7 +239,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param property an {@link Property enum value}
      * @return a {@link PdfFont}
      */
-    public PdfFont getPropertyAsFont(Property property) {
+    public PdfFont getPropertyAsFont(int property) {
         return getProperty(property);
     }
 
@@ -292,7 +249,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param property an {@link Property enum value}
      * @return a {@link Color}
      */
-    public Color getPropertyAsColor(Property property) {
+    public Color getPropertyAsColor(int property) {
         return getProperty(property);
     }
 
@@ -302,7 +259,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param property an {@link Property enum value}
      * @return a {@link Float}
      */
-    public Float getPropertyAsFloat(Property property) {
+    public Float getPropertyAsFloat(int property) {
         Number value = getProperty(property);
         return value != null ? value.floatValue() : null;
     }
@@ -313,7 +270,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param property an {@link Property enum value}
      * @return a {@link Boolean}
      */
-    public Boolean getPropertyAsBoolean(Property property) {
+    public Boolean getPropertyAsBoolean(int property) {
         return getProperty(property);
     }
 
@@ -323,7 +280,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param property an {@link Property enum value}
      * @return a {@link Integer}
      */
-    public Integer getPropertyAsInteger(Property property) {
+    public Integer getPropertyAsInteger(int property) {
         Number value = getProperty(property);
         return value != null ? value.intValue() : null;
     }
@@ -542,7 +499,7 @@ public abstract class AbstractRenderer implements IRenderer {
         return getProperty(Property.HEIGHT);
     }
 
-    protected Float retrieveUnitValue(float basePercentValue, Property property) {
+    protected Float retrieveUnitValue(float basePercentValue, int property) {
         UnitValue value = getProperty(property);
         if (value != null) {
             if (value.getUnitType() == UnitValue.POINT) {
@@ -558,11 +515,11 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     //TODO is behavior of copying all properties in split case common to all renderers?
-    protected Map<Property, Object> getOwnProperties() {
+    protected Map<Integer, Object> getOwnProperties() {
         return properties;
     }
 
-    protected void addAllProperties(Map<Property, Object> properties) {
+    protected void addAllProperties(Map<Integer, Object> properties) {
         this.properties.putAll(properties);
     }
 

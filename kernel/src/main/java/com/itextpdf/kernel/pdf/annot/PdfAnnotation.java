@@ -185,13 +185,13 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return annotation;
     }
 
-    public PdfAnnotation(Rectangle rect) {
+    protected PdfAnnotation(Rectangle rect) {
         this(new PdfDictionary());
         put(PdfName.Rect, new PdfArray(rect));
         put(PdfName.Subtype, getSubtype());
     }
 
-    public PdfAnnotation(PdfDictionary pdfObject) {
+    protected PdfAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
         markObjectAsIndirect(getPdfObject());
     }

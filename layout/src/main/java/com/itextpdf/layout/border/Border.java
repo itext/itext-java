@@ -65,11 +65,11 @@ public abstract class Border {
     protected int type;
     private int hash;
 
-    public Border(float width) {
+    protected Border(float width) {
         this(Color.BLACK, width);
     }
 
-    public Border(Color color, float width) {
+    protected Border(Color color, float width) {
         this.color = color;
         this.width = width;
     }

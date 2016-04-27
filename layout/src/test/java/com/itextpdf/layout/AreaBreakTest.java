@@ -68,7 +68,7 @@ public class AreaBreakTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
         document.setRenderer(new ColumnDocumentRenderer(document, new Rectangle[] {new Rectangle(30, 30, 200, 600), new Rectangle(300, 30, 200, 600)}));
 
-        document.add(new Paragraph("Hello World!")).add(new AreaBreak(AreaBreakType.NEW_PAGE)).add(new Paragraph("New page hello world"));
+        document.add(new Paragraph("Hello World!")).add(new AreaBreak(AreaBreakType.NEXT_PAGE)).add(new Paragraph("New page hello world"));
 
         document.close();
 

@@ -60,7 +60,6 @@ public class PdfA2AnnotationCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 650, 400, 100);
@@ -76,7 +75,6 @@ public class PdfA2AnnotationCheckTest {
         PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 650, 400, 100);
@@ -94,7 +92,6 @@ public class PdfA2AnnotationCheckTest {
         PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 100, 0, 0);
@@ -115,7 +112,6 @@ public class PdfA2AnnotationCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 650, 400, 100);
@@ -135,7 +131,6 @@ public class PdfA2AnnotationCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 650, 400, 100);
@@ -154,7 +149,6 @@ public class PdfA2AnnotationCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 650, 400, 100);
@@ -173,7 +167,6 @@ public class PdfA2AnnotationCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 650, 400, 100);
@@ -197,7 +190,6 @@ public class PdfA2AnnotationCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 650, 400, 100);
@@ -221,7 +213,6 @@ public class PdfA2AnnotationCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 650, 400, 100);
@@ -242,7 +233,6 @@ public class PdfA2AnnotationCheckTest {
         PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 650, 400, 100);
@@ -266,7 +256,6 @@ public class PdfA2AnnotationCheckTest {
 
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 650, 400, 100);
@@ -292,7 +281,6 @@ public class PdfA2AnnotationCheckTest {
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
-        doc.createXmpMetadata();
         PdfPage page = doc.addNewPage();
 
         Rectangle rect = new Rectangle(100, 650, 400, 100);
@@ -311,7 +299,6 @@ public class PdfA2AnnotationCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
         PdfPage page = doc.addNewPage();
@@ -332,7 +319,6 @@ public class PdfA2AnnotationCheckTest {
         PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
 

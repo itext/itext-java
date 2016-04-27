@@ -747,10 +747,10 @@ public class PdfStampingTest extends ExtendedITextTest {
         pdfDoc1.close();
 
         PdfReader reader2 = new PdfReader(new FileInputStream(filename1));
-        PdfWriter writer2 = new PdfWriter(new FileOutputStream(filename2), new WriterProperties().setFullCompressionMode(false));
+        PdfWriter writer2 = new PdfWriter(new FileOutputStream(filename2),
+                new WriterProperties().setFullCompressionMode(false).addXmpMetadata());
         PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
         pdfDoc2.getDocumentInfo().setAuthor("Alexander Chingarev");
-        pdfDoc2.createXmpMetadata();
         pdfDoc2.close();
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));
@@ -792,11 +792,10 @@ public class PdfStampingTest extends ExtendedITextTest {
         pdfDoc1.close();
 
         PdfReader reader2 = new PdfReader(new FileInputStream(filename1));
-        PdfWriter writer2 = new PdfWriter(new FileOutputStream(filename2), new WriterProperties().setFullCompressionMode(true));
+        PdfWriter writer2 = new PdfWriter(new FileOutputStream(filename2),
+                new WriterProperties().setFullCompressionMode(true).addXmpMetadata());
         PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
         pdfDoc2.getDocumentInfo().setAuthor("Alexander Chingarev");
-        pdfDoc2.getDocumentInfo().setAuthor("Alexander Chingarev");
-        pdfDoc2.createXmpMetadata();
         pdfDoc2.close();
 
         PdfReader reader3 = new PdfReader(new FileInputStream(filename2));

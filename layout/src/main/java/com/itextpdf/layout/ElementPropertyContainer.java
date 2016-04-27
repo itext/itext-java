@@ -75,53 +75,53 @@ import java.util.Map;
  */
 public abstract class ElementPropertyContainer<T extends IPropertyContainer> implements IPropertyContainer {
 
-    protected Map<Property, Object> properties = new HashMap<>();
+    protected Map<Integer, Object> properties = new HashMap<>();
 
     @Override
-    public void setProperty(Property property, Object value) {
+    public void setProperty(int property, Object value) {
         properties.put(property, value);
     }
 
     @Override
-    public boolean hasProperty(Property property) {
+    public boolean hasProperty(int property) {
         return hasOwnProperty(property);
     }
 
     @Override
-    public boolean hasOwnProperty(Property property) {
+    public boolean hasOwnProperty(int property) {
         return properties.containsKey(property);
     }
 
     @Override
-    public void deleteOwnProperty(Property property) {
+    public void deleteOwnProperty(int property) {
         properties.remove(property);
     }
 
     @Override
-    public <T1> T1 getProperty(Property property) {
+    public <T1> T1 getProperty(int property) {
         return getOwnProperty(property);
     }
 
     @Override
-    public <T1> T1 getOwnProperty(Property property) {
+    public <T1> T1 getOwnProperty(int property) {
         return (T1) properties.get(property);
     }
 
     @Override
-    public <T1> T1 getDefaultProperty(Property property) {
+    public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
-            case MARGIN_TOP:
-            case MARGIN_RIGHT:
-            case MARGIN_BOTTOM:
-            case MARGIN_LEFT:
-            case PADDING_TOP:
-            case PADDING_RIGHT:
-            case PADDING_BOTTOM:
-            case PADDING_LEFT:
+            case Property.MARGIN_TOP:
+            case Property.MARGIN_RIGHT:
+            case Property.MARGIN_BOTTOM:
+            case Property.MARGIN_LEFT:
+            case Property.PADDING_TOP:
+            case Property.PADDING_RIGHT:
+            case Property.PADDING_BOTTOM:
+            case Property.PADDING_LEFT:
                 return (T1) Float.valueOf(0);
-            case POSITION:
-                return (T1) Integer.valueOf(LayoutPosition.STATIC);
-            case FORCED_PLACEMENT:
+            case Property.POSITION:
+                return (T1)Integer.valueOf(LayoutPosition.STATIC);
+            case Property.FORCED_PLACEMENT:
                 return (T1) Boolean.FALSE;
             default:
                 return null;
@@ -195,13 +195,8 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * Sets values for a relative repositioning of the Element. Also has as a
      * side effect that the Element's {@link Property#POSITION} is changed to
      * {@link LayoutPosition#RELATIVE relative}.
-<<<<<<< HEAD
-     * <p>
-     * The default implementation in {@link AbstractRenderer} treats
-=======
-     * 
+     *
      * The default implementation in {@link com.itextpdf.layout.renderer.AbstractRenderer} treats
->>>>>>> develop
      * <code>left</code> and <code>top</code> as the most important values. Only
      * if <code>left == 0</code> will <code>right</code> be used for the
      * calculation; ditto for top vs. bottom.

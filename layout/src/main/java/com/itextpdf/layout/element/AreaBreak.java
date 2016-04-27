@@ -64,7 +64,7 @@ public class AreaBreak extends AbstractElement<AreaBreak> {
      * current one.
      */
     public AreaBreak() {
-        this(AreaBreakType.NEW_AREA);
+        this(AreaBreakType.NEXT_AREA);
     }
 
     /**
@@ -81,7 +81,7 @@ public class AreaBreak extends AbstractElement<AreaBreak> {
      * @param pageSize the size of the new content area
      */
     public AreaBreak(PageSize pageSize) {
-        this(AreaBreakType.NEW_PAGE);
+        this(AreaBreakType.NEXT_PAGE);
         this.pageSize = pageSize;
     }
 

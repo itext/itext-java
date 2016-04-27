@@ -44,9 +44,8 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.forms.PdfAcroForm;
-
+import com.itextpdf.kernel.pdf.*;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPResp;
@@ -61,13 +60,12 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import static com.itextpdf.signatures.LtvVerification.CertificateOption;
-
-import java.util.ArrayList;
 
 /**
  * Verifies the signatures in an LTV document.
@@ -150,14 +148,14 @@ public class LtvVerifier extends RootStoreVerifier {
             LOGGER.info("The timestamp covers whole document.");
         }
         else {
-            throw new VerificationException(null, "Signature doesn't cover whole document.");
+            throw new VerificationException((Certificate) null, "Signature doesn't cover whole document.");
         }
         if (pkcs7.verify()) {
             LOGGER.info("The signed document has not been modified.");
             return pkcs7;
         }
         else {
-            throw new VerificationException(null, "The document was altered after the final signature was applied.");
+            throw new VerificationException((Certificate) null, "The document was altered after the final signature was applied.");
         }
     }
 
@@ -198,7 +196,7 @@ public class LtvVerifier extends RootStoreVerifier {
             // the certificate to check
             signCert = (X509Certificate) chain[i++];
             // its issuer
-            issuerCert = null;
+            issuerCert = (X509Certificate) null;
             if (i < chain.length)
                 issuerCert = (X509Certificate) chain[i];
             // now lets verify the certificate

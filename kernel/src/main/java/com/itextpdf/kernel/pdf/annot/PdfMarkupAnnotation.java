@@ -63,11 +63,11 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
     protected PdfAnnotation inReplyTo = null;
     protected PdfPopupAnnotation popup = null;
 
-    public PdfMarkupAnnotation(Rectangle rect) {
+    protected PdfMarkupAnnotation(Rectangle rect) {
         super(rect);
     }
 
-    public PdfMarkupAnnotation(PdfDictionary pdfObject) {
+    protected PdfMarkupAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 

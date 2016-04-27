@@ -49,9 +49,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
@@ -120,7 +120,7 @@ public class CrlClientOnline implements ICrlClient {
     protected void addUrl(String url) {
         try {
             addUrl(new URL(url));
-        } catch (MalformedURLException e) {
+        } catch (IOException e) {
             LOGGER.info("Skipped CRL url (malformed): " + url);
         }
     }

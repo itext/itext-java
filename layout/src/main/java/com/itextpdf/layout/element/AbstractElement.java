@@ -48,8 +48,8 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.ElementPropertyContainer;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.Style;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.IRenderer;
 
 import java.util.ArrayList;
@@ -94,7 +94,7 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
     }
 
     @Override
-    public boolean hasProperty(Property property) {
+    public boolean hasProperty(int property) {
         boolean hasProperty = super.hasProperty(property);
         if (styles != null && styles.size() > 0 && !hasProperty) {
             for (Style style : styles) {
@@ -108,7 +108,7 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
     }
 
     @Override
-    public <T1> T1 getProperty(Property property) {
+    public <T1> T1 getProperty(int property) {
         Object result = super.getProperty(property);
         if (styles != null && styles.size() > 0 && result == null && !super.hasProperty(property)) {
             for (Style style : styles) {

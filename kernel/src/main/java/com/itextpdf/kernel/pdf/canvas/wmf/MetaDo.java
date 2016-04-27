@@ -47,7 +47,7 @@ package com.itextpdf.kernel.pdf.canvas.wmf;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageData;
-import com.itextpdf.io.image.ImageFactory;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.color.Color;
@@ -576,7 +576,7 @@ public class MetaDo {
                         cb.rectangle(xDest, yDest, destWidth, destHeight);
                         cb.clip();
                         cb.newPath();
-                        ImageData bmpImage = ImageFactory.getBmpImage(b, true, b.length);
+                        ImageData bmpImage = ImageDataFactory.createBmp(b, true, b.length);
                         PdfImageXObject imageXObject = new PdfImageXObject(bmpImage);
 
                         float width = destWidth * bmpImage.getWidth() / srcWidth;

@@ -44,10 +44,9 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.IPropertyContainer;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -109,7 +108,7 @@ public interface IRenderer extends IPropertyContainer {
      * @param defaultValue a fallback value
      * @return the value of the given property
      */
-    <T1> T1 getProperty(Property property, T1 defaultValue);
+    <T1> T1 getProperty(int property, T1 defaultValue);
 
     /**
      * Explicitly sets this object as the child of another {@link IRenderer} in

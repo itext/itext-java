@@ -13,7 +13,7 @@ public class FontProgramTest {
     @Test
     public void exceptionMessageTest() throws IOException {
         try {
-            FontFactory.createFont("some-font.ttf");
+            FontProgramFactory.createFont("some-font.ttf");
         } catch (com.itextpdf.io.IOException ex) {
             Assert.assertEquals("font.file some-font.ttf not.found", ex.getMessage());
         }
@@ -21,7 +21,7 @@ public class FontProgramTest {
 
     @Test
     public void boldTest() throws IOException {
-        FontProgram fp = FontFactory.createFont(FontConstants.HELVETICA);
+        FontProgram fp = FontProgramFactory.createFont(FontConstants.HELVETICA);
         fp.setBold(true);
         Assert.assertTrue("Bold expected", (fp.getPdfFontFlags() & (1 << 18)) != 0);
         fp.setBold(false);

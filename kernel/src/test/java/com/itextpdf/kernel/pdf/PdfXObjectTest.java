@@ -1,10 +1,10 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.io.image.ImageData;
-import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
@@ -50,7 +50,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
         PdfDocument document = new PdfDocument(writer);
         PdfImageXObject[] images = new PdfImageXObject[4];
         for (int i = 0; i < 4; i++) {
-            images[i] = new PdfImageXObject(ImageFactory.getImage(PdfXObjectTest.images[i]));
+            images[i] = new PdfImageXObject(ImageDataFactory.create(PdfXObjectTest.images[i]));
             images[i].setLayer(new PdfLayer("layer" + i, document));
             if (i % 2 == 0)
                 images[i].flush();
@@ -85,7 +85,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
 
-        ImageData image = ImageFactory.getImage(sourceFolder + "itext.jpg");
+        ImageData image = ImageDataFactory.create(sourceFolder + "itext.jpg");
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.addImage(image, 50, 500, 100, true);

@@ -47,7 +47,7 @@ package com.itextpdf.io;
 /**
  * Class containing constants to be used in logging.
  */
-public class LogMessageConstant {
+public final class LogMessageConstant {
 
     /**
      * Log message.
@@ -173,4 +173,6 @@ public class LogMessageConstant {
     public static final String WRITER_ENCRYPTION_IS_IGNORED_APPEND = "Writer encryption will be ignored, because append mode is used. Document will preserve the original encryption (or will stay unencrypted)";
 
     public static final String WRITER_ENCRYPTION_IS_IGNORED_PRESERVE = "Writer encryption will be ignored, because preservation of encryption is enabled. Document will preserve the original encryption (or will stay unencrypted)";
+
+    public static final String EXCEPTION_WHILE_UPDATING_XMPMETADATA = "Exception while updating XmpMetadata";
 }

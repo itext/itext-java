@@ -1,12 +1,12 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.image.ImageData;
-import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.color.CalGray;
 import com.itextpdf.kernel.color.CalRgb;
@@ -1453,7 +1453,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
-        ImageData img = ImageFactory.getImage(sourceFolder + "2-frames.gif");
+        ImageData img = ImageDataFactory.create(sourceFolder + "2-frames.gif");
         canvas.addImage(img, 100, 100, 200, false);
 
         document.close();
@@ -1477,7 +1477,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
 
         PdfCanvas canvas = new PdfCanvas(page);
-        ImageData img = ImageFactory.getGifFrame(baos.toByteArray(), 1);
+        ImageData img = ImageDataFactory.createGifFrame(baos.toByteArray(), 1);
         canvas.addImage(img, 100, 100, 200, false);
 
         document.close();
@@ -1501,7 +1501,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
 
         PdfCanvas canvas = new PdfCanvas(page);
-        ImageData img = ImageFactory.getGifFrame(baos.toByteArray(), 2);
+        ImageData img = ImageDataFactory.createGifFrame(baos.toByteArray(), 2);
         canvas.addImage(img, 100, 100, 200, false);
 
         document.close();
@@ -1525,7 +1525,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
 
         PdfCanvas canvas = new PdfCanvas(page);
-        ImageData img = ImageFactory.getGifFrame(baos.toByteArray(), 3);
+        ImageData img = ImageDataFactory.createGifFrame(baos.toByteArray(), 3);
         canvas.addImage(img, 100, 100, 200, false);
     }
 
@@ -1545,7 +1545,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
 
         PdfCanvas canvas = new PdfCanvas(page);
-        List<ImageData> frames = ImageFactory.getGifFrames(baos.toByteArray(), new int[]{1, 2, 5});
+        List<ImageData> frames = ImageDataFactory.createGifFrames(baos.toByteArray(), new int[]{1, 2, 5});
         float y = 600;
         for (ImageData img : frames) {
             canvas.addImage(img, 100, y, 200, false);
@@ -1594,7 +1594,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         barcode.paintCode();
 
         byte g4[] = CCITTG4Encoder.compress(barcode.getOutBits(), barcode.getBitColumns(), barcode.getCodeRows());
-        RawImage img = (RawImage) ImageFactory.getImage(barcode.getBitColumns(), barcode.getCodeRows(), false, RawImage.CCITTG4, 0, g4, null);
+        RawImage img = (RawImage) ImageDataFactory.create(barcode.getBitColumns(), barcode.getCodeRows(), false, RawImage.CCITTG4, 0, g4, null);
         img.setTypeCcitt(RawImage.CCITTG4);
         canvas.addImage(img, 100, 100, false);
 
@@ -1618,13 +1618,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
-        canvas.addImage(ImageFactory.getImage(sourceFolder + "Desert.jpg"), 36, 700, 100, true);
-        canvas.addImage(ImageFactory.getImage(sourceFolder + "bulb.gif"), 36, 600, 100, true);
-        canvas.addImage(ImageFactory.getImage(sourceFolder + "smpl.bmp"), 36, 500, 100, true);
-        canvas.addImage(ImageFactory.getImage(sourceFolder + "itext.png"), 36, 460, 100, true);
-        canvas.addImage(ImageFactory.getImage(sourceFolder + "0047478.jpg"), 36, 300, 100, true);
-        canvas.addImage(ImageFactory.getImage(sourceFolder + "map.jp2"), 36, 200, 100, true);
-        canvas.addImage(ImageFactory.getImage(sourceFolder + "amb.jb2"), 36, 30, 100, true);
+        canvas.addImage(ImageDataFactory.create(sourceFolder + "Desert.jpg"), 36, 700, 100, true);
+        canvas.addImage(ImageDataFactory.create(sourceFolder + "bulb.gif"), 36, 600, 100, true);
+        canvas.addImage(ImageDataFactory.create(sourceFolder + "smpl.bmp"), 36, 500, 100, true);
+        canvas.addImage(ImageDataFactory.create(sourceFolder + "itext.png"), 36, 460, 100, true);
+        canvas.addImage(ImageDataFactory.create(sourceFolder + "0047478.jpg"), 36, 300, 100, true);
+        canvas.addImage(ImageDataFactory.create(sourceFolder + "map.jp2"), 36, 200, 100, true);
+        canvas.addImage(ImageDataFactory.create(sourceFolder + "amb.jb2"), 36, 30, 100, true);
 
         document.close();
 
@@ -1649,31 +1649,31 @@ public class PdfCanvasTest extends ExtendedITextTest {
         InputStream stream = UrlUtil.toURL(sourceFolder + "Desert.jpg").openStream();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
-        canvas.addImage(ImageFactory.getImage(baos.toByteArray()), 36, 700, 100, true);
+        canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 700, 100, true);
         stream = UrlUtil.toURL(sourceFolder + "bulb.gif").openStream();
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
-        canvas.addImage(ImageFactory.getImage(baos.toByteArray()), 36, 600, 100, true);
+        canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 600, 100, true);
         stream = UrlUtil.toURL(sourceFolder + "smpl.bmp").openStream();
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
-        canvas.addImage(ImageFactory.getImage(baos.toByteArray()), 36, 500, 100, true);
+        canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 500, 100, true);
         stream = UrlUtil.toURL(sourceFolder + "itext.png").openStream();
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
-        canvas.addImage(ImageFactory.getImage(baos.toByteArray()), 36, 460, 100, true);
+        canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 460, 100, true);
         stream = UrlUtil.toURL(sourceFolder + "0047478.jpg").openStream();
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
-        canvas.addImage(ImageFactory.getImage(baos.toByteArray()), 36, 300, 100, true);
+        canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 300, 100, true);
         stream = UrlUtil.toURL(sourceFolder + "map.jp2").openStream();
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
-        canvas.addImage(ImageFactory.getImage(baos.toByteArray()), 36, 200, 100, true);
+        canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 200, 100, true);
         stream = UrlUtil.toURL(sourceFolder + "amb.jb2").openStream();
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
-        canvas.addImage(ImageFactory.getImage(baos.toByteArray()), 36, 30, 100, true);
+        canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 30, 100, true);
 
         document.close();
 
@@ -1694,7 +1694,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         int width = 100;
         for (String image : RESOURCES) {
             java.awt.Image awtImage = Toolkit.getDefaultToolkit().createImage(sourceFolder + image);
-            canvas.addImage(ImageFactory.getImage(awtImage, null), x, y, width, false);
+            canvas.addImage(ImageDataFactory.create(awtImage, null), x, y, width, false);
             y -= 150;
         }
 

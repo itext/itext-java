@@ -1,7 +1,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.io.image.ImageFactory;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
@@ -72,7 +72,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Image image = new Image(ImageFactory.getImage(sourceFolder + imageName));
+        Image image = new Image(ImageDataFactory.create(sourceFolder + imageName));
         document.add(image);
 
         document.close();
@@ -90,7 +90,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         Div div = new Div();
 
         div.add(createParagraph1());
-        Image image = new Image(ImageFactory.getImage(sourceFolder + imageName));
+        Image image = new Image(ImageDataFactory.create(sourceFolder + imageName));
         image.setAutoScale(true);
         div.add(image);
         div.add(createParagraph2());
@@ -114,7 +114,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         Table table = new Table(3);
 
         table.addCell(createParagraph1());
-        Image image = new Image(ImageFactory.getImage(sourceFolder + imageName));
+        Image image = new Image(ImageDataFactory.create(sourceFolder + imageName));
         image.setAutoScale(true);
         table.addCell(image);
         table.addCell(createParagraph2());

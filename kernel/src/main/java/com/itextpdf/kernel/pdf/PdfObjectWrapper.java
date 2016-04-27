@@ -54,7 +54,7 @@ public abstract class PdfObjectWrapper<T extends PdfObject> implements Serializa
 
     private T pdfObject = null;
 
-    public PdfObjectWrapper(T pdfObject) {
+    protected PdfObjectWrapper(T pdfObject) {
         this.pdfObject = pdfObject;
         if (isWrappedObjectMustBeIndirect()) {
             markObjectAsIndirect(this.pdfObject);

@@ -57,7 +57,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -6771280634868639993L;
 
-	public PdfPattern(PdfDictionary pdfObject) {
+	protected PdfPattern(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 

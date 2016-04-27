@@ -225,7 +225,7 @@ public class SignatureUtil {
             sorter.add(new Object[]{entry.getKey(), new int[]{length, 0}});
         }
         Collections.sort(sorter, new SorterComparator());
-        if (!sorter.isEmpty()) {
+        if (sorter.size() > 0) {
             try {
                 if (((int[])sorter.get(sorter.size() - 1)[1])[0] == document.getReader().getFileLength())
                     totalRevisions = sorter.size();

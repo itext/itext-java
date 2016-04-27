@@ -428,7 +428,7 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        PdfFont pdfType1Font = PdfFontFactory.createFont(FontFactory.createType1Font(fontsFolder + "cmr10.afm", fontsFolder + "cmr10.pfb"),
+        PdfFont pdfType1Font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(fontsFolder + "cmr10.afm", fontsFolder + "cmr10.pfb"),
                 FontEncoding.FONT_SPECIFIC, true);
         Assert.assertTrue("PdfType1Font expected", pdfType1Font instanceof PdfType1Font);
 
@@ -444,7 +444,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
         byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
         byte[] pfb = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
-        pdfType1Font = PdfFontFactory.createFont(FontFactory.createType1Font(afm, pfb), FontEncoding.FONT_SPECIFIC, true);
+        pdfType1Font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(afm, pfb), FontEncoding.FONT_SPECIFIC, true);
         Assert.assertTrue("PdfType1Font expected", pdfType1Font instanceof PdfType1Font);
 
         new PdfCanvas(pdfDoc.addNewPage())
@@ -475,7 +475,7 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        PdfFont pdfType1Font = PdfFontFactory.createFont(FontFactory.createType1Font(fontsFolder + "cmr10.pfm", fontsFolder + "cmr10.pfb"), FontEncoding.FONT_SPECIFIC, true);
+        PdfFont pdfType1Font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(fontsFolder + "cmr10.pfm", fontsFolder + "cmr10.pfb"), FontEncoding.FONT_SPECIFIC, true);
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -1102,7 +1102,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String message = "";
         try {
             byte[] pfb = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
-            FontFactory.createType1Font(null, pfb);
+            FontProgramFactory.createType1Font(null, pfb);
         } catch (com.itextpdf.io.IOException e) {
             message = e.getMessage();
         }
@@ -1113,7 +1113,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void createWrongAfm2() throws IOException, InterruptedException {
         String message = "";
         try {
-            FontFactory.createType1Font(fontsFolder + "cmr10.pfb", null);
+            FontProgramFactory.createType1Font(fontsFolder + "cmr10.pfb", null);
         } catch (com.itextpdf.io.IOException e) {
             message = e.getMessage();
         }
@@ -1127,7 +1127,7 @@ public class PdfFontTest extends ExtendedITextTest {
     })
     public void createWrongPfb() throws IOException, InterruptedException {
         byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
-        PdfFont font = PdfFontFactory.createFont(FontFactory.createType1Font(afm, afm), null);
+        PdfFont font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(afm, afm), null);
         byte[] streamContent = ((PdfType1Font) font).getFontProgram().getFontStreamBytes();
         Assert.assertTrue("Empty stream content expected", streamContent == null);
     }
@@ -1136,7 +1136,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void autoDetect1() throws IOException, InterruptedException {
         byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
 
-        Assert.assertTrue("Type1 font expected", FontFactory.createFont(afm) instanceof Type1Font);
+        Assert.assertTrue("Type1 font expected", FontProgramFactory.createFont(afm) instanceof Type1Font);
     }
 
     @Test
@@ -1144,25 +1144,25 @@ public class PdfFontTest extends ExtendedITextTest {
         byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
         byte[] pfb = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
 
-        Assert.assertTrue("Type1 font expected", FontFactory.createType1Font(afm, pfb) instanceof Type1Font);
+        Assert.assertTrue("Type1 font expected", FontProgramFactory.createType1Font(afm, pfb) instanceof Type1Font);
     }
 
     @Test
     public void autoDetect3() throws IOException, InterruptedException {
         byte[] otf = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "Puritan2.otf"));
-        Assert.assertTrue("TrueType (OTF) font expected", FontFactory.createFont(otf) instanceof TrueTypeFont);
+        Assert.assertTrue("TrueType (OTF) font expected", FontProgramFactory.createFont(otf) instanceof TrueTypeFont);
     }
 
     @Test
     public void autoDetect4() throws IOException, InterruptedException {
         byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "abserif4_5.ttf"));
-        Assert.assertTrue("TrueType (TTF) expected", FontFactory.createFont(ttf) instanceof TrueTypeFont);
+        Assert.assertTrue("TrueType (TTF) expected", FontProgramFactory.createFont(ttf) instanceof TrueTypeFont);
     }
 
     @Test
     public void autoDetect5() throws IOException, InterruptedException {
         byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "abserif4_5.ttf"));
-        Assert.assertTrue("TrueType (TTF) expected", FontFactory.createFont(ttf) instanceof TrueTypeFont);
+        Assert.assertTrue("TrueType (TTF) expected", FontProgramFactory.createFont(ttf) instanceof TrueTypeFont);
     }
 
     @Test
@@ -1311,7 +1311,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
     @Test
     public void testFontRegister() throws IOException {
-        FontFactory.register(fontsFolder + "Aller_Rg.ttf", "aller");
+        FontProgramFactory.registerFont(fontsFolder + "Aller_Rg.ttf", "aller");
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);

@@ -53,7 +53,10 @@ import java.util.Set;
 /**
  * Provides methods for creating various types of fonts.
  */
-public class FontFactory {
+public final class FontProgramFactory {
+
+    private FontProgramFactory() {
+    }
 
     private static FontRegisterProvider fontRegisterProvider = new FontRegisterProvider();
 
@@ -203,7 +206,7 @@ public class FontFactory {
      *
      * @param font the true type font or the afm in a byte array
      *             an exception if the font is not recognized. Note that even if true an exception may be thrown in some circumstances.
-     *             This parameter is useful for FontFactory that may have to check many invalid font names before finding the right one
+     *             This parameter is useful for FontProgramFactory that may have to check many invalid font names before finding the right one
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
@@ -470,8 +473,8 @@ public class FontFactory {
      * @param fullName   the font name
      * @param path       the font path
      */
-    public static void registerFamily(String familyName, String fullName, String path) {
-        fontRegisterProvider.registerFamily(familyName, fullName, path);
+    public static void registerFontFamily(String familyName, String fullName, String path) {
+        fontRegisterProvider.registerFontFamily(familyName, fullName, path);
     }
 
     /**
@@ -479,9 +482,8 @@ public class FontFactory {
      *
      * @param path the path to a ttf- or ttc-file
      */
-
-    public static void register(String path) {
-        register(path, null);
+    public static void registerFont(String path) {
+        registerFont(path, null);
     }
 
     /**
@@ -490,9 +492,8 @@ public class FontFactory {
      * @param path  the path to a font file
      * @param alias the alias you want to use for the font
      */
-
-    public static void register(String path, String alias) {
-        fontRegisterProvider.register(path, alias);
+    public static void registerFont(String path, String alias) {
+        fontRegisterProvider.registerFont(path, alias);
     }
 
     /**
@@ -501,8 +502,8 @@ public class FontFactory {
      * @param dir the directory
      * @return the number of fonts registered
      */
-    public static int registerDirectory(String dir) {
-        return fontRegisterProvider.registerDirectory(dir);
+    public static int registerFontDirectory(String dir) {
+        return fontRegisterProvider.registerFontDirectory(dir);
     }
 
     /**
@@ -511,8 +512,8 @@ public class FontFactory {
      *
      * @return the number of fonts registered
      */
-    public static int registerSystemDirectories() {
-        return fontRegisterProvider.registerSystemDirectories();
+    public static int registerSystemFontDirectories() {
+        return fontRegisterProvider.registerSystemFontDirectories();
     }
 
     /**
@@ -520,7 +521,6 @@ public class FontFactory {
      *
      * @return a set of registered fonts
      */
-
     public static Set<String> getRegisteredFonts() {
         return fontRegisterProvider.getRegisteredFonts();
     }
@@ -530,20 +530,8 @@ public class FontFactory {
      *
      * @return a set of registered font families
      */
-
-    public static Set<String> getRegisteredFamilies() {
-        return fontRegisterProvider.getRegisteredFamilies();
-    }
-
-    /**
-     * Gets a set of registered font names.
-     *
-     * @param fontname of a font that may or may not be registered
-     * @return true if a given font is registered
-     */
-
-    public static boolean contains(String fontname) {
-        return fontRegisterProvider.isRegistered(fontname);
+    public static Set<String> getRegisteredFontFamilies() {
+        return fontRegisterProvider.getRegisteredFontFamilies();
     }
 
     /**
@@ -552,8 +540,7 @@ public class FontFactory {
      * @param fontname the name of the font that has to be checked.
      * @return true if the font is found
      */
-
-    public static boolean isRegistered(String fontname) {
-        return fontRegisterProvider.isRegistered(fontname);
+    public static boolean isRegisteredFont(String fontname) {
+        return fontRegisterProvider.isRegisteredFont(fontname);
     }
 }

@@ -35,7 +35,6 @@ public class PdfA1ActionCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.Launch);
@@ -52,7 +51,6 @@ public class PdfA1ActionCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.Hide);
@@ -69,7 +67,6 @@ public class PdfA1ActionCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.Sound);
@@ -86,7 +83,6 @@ public class PdfA1ActionCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.Movie);
@@ -103,7 +99,6 @@ public class PdfA1ActionCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.ResetForm);
@@ -120,7 +115,6 @@ public class PdfA1ActionCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.ImportData);
@@ -137,7 +131,6 @@ public class PdfA1ActionCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.JavaScript);
@@ -154,7 +147,6 @@ public class PdfA1ActionCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         doc.addNewPage();
         PdfDictionary openActions = new PdfDictionary();
         openActions.put(PdfName.S, PdfName.Named);
@@ -172,7 +164,6 @@ public class PdfA1ActionCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         PdfPage page = doc.addNewPage();
         page.setAdditionalAction(PdfName.C, PdfAction.createJavaScript("js"));
 
@@ -187,7 +178,6 @@ public class PdfA1ActionCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         PdfPage page = doc.addNewPage();
         PdfDictionary action = new PdfDictionary();
         action.put(PdfName.S, PdfName.SetState);
@@ -204,7 +194,6 @@ public class PdfA1ActionCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         doc.getCatalog().setAdditionalAction(PdfName.C, PdfAction.createJavaScript("js"));
 
         doc.close();
