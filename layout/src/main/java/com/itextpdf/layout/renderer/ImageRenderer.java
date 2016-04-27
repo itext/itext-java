@@ -66,14 +66,14 @@ import com.itextpdf.layout.property.UnitValue;
 
 public class ImageRenderer extends AbstractRenderer {
 
-    float height;
-    Float width;
-    Float fixedXPosition;
-    Float fixedYPosition;
-    float pivotY;
-    float deltaX;
-    float imageWidth;
-    float imageHeight;
+    private float height;
+    private Float width;
+    protected Float fixedXPosition;
+    protected Float fixedYPosition;
+    protected float pivotY;
+    protected float deltaX;
+    protected float imageWidth;
+    protected float imageHeight;
 
     float[] matrix = new float[6];
 
@@ -227,7 +227,7 @@ public class ImageRenderer extends AbstractRenderer {
     }
 
     @Override
-    public ImageRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         return null;
     }
 

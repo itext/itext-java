@@ -52,10 +52,8 @@ import com.itextpdf.layout.Document;
  * In order to avoid consuming and holding on to undesirable amounts of
  * resources, the contents of a {@link ILargeElement} can be flushed regularly
  * by client code, e.g. at page boundaries or after a certain amount of additions.
- * 
- * @param <Type> the type of the implementation
  */
-public interface ILargeElement<Type extends ILargeElement> extends IElement<Type> {
+public interface ILargeElement extends IElement {
 
     /**
      * Checks whether an element has already been marked as complete.

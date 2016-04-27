@@ -186,7 +186,6 @@ public class ParagraphRenderer extends BlockRenderer {
                     layoutBox = areas.get(++currentAreaPos).clone();
                     lastYLine = layoutBox.getY() + layoutBox.getHeight();
                     firstLineInBox = true;
-                    continue;
                 } else {
                     boolean keepTogether = getProperty(Property.KEEP_TOGETHER);
                     if (keepTogether) {
@@ -269,20 +268,20 @@ public class ParagraphRenderer extends BlockRenderer {
     }
 
     @Override
-    public ParagraphRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         return new ParagraphRenderer((Paragraph) modelElement);
     }
 
     @Override
-    public <T> T getDefaultProperty(int property) {
+    public <T1> T1 getDefaultProperty(int property) {
         if ((property == Property.MARGIN_TOP || property == Property.MARGIN_BOTTOM) && parent instanceof CellRenderer) {
-            return (T) Float.valueOf(0);
+            return (T1) Float.valueOf(0);
         }
         return super.getDefaultProperty(property);
     }
 
     protected ParagraphRenderer createOverflowRenderer() {
-        ParagraphRenderer overflowRenderer = getNextRenderer();
+        ParagraphRenderer overflowRenderer = (ParagraphRenderer) getNextRenderer();
         // Reset first line indent in case of overflow.
         float firstLineIndent = getPropertyAsFloat(Property.FIRST_LINE_INDENT);
         if (firstLineIndent != 0) {
@@ -292,7 +291,7 @@ public class ParagraphRenderer extends BlockRenderer {
     }
 
     protected ParagraphRenderer createSplitRenderer() {
-        return getNextRenderer();
+        return (ParagraphRenderer) getNextRenderer();
     }
 
     protected ParagraphRenderer[] split() {

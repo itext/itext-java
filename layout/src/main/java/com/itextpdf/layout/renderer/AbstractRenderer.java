@@ -59,6 +59,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.property.Background;
@@ -99,7 +100,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Creates a renderer.
      */
-    public AbstractRenderer() {
+    protected AbstractRenderer() {
     }
 
     /**
@@ -107,7 +108,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @param modelElement the layout element that will be drawn by this renderer
      */
-    public AbstractRenderer(IPropertyContainer modelElement) {
+    protected AbstractRenderer(IElement modelElement) {
         this.modelElement = modelElement;
     }
 
@@ -187,47 +188,46 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     @Override
-    public <T> T getProperty(int key) {
+    public <T1> T1 getProperty(int key) {
         Object property;
         if ((property = properties.get(key)) != null || properties.containsKey(key)) {
-            return (T) property;
+            return (T1) property;
         }
         if (modelElement != null && ((property = modelElement.getProperty(key)) != null || modelElement.hasProperty(key))) {
-            return (T) property;
+            return (T1) property;
         }
         // TODO in some situations we will want to check inheritance with additional info, such as parent and descendant.
         if (parent != null && Property.isPropertyInherited(key) && (property = parent.getProperty(key)) != null) {
-            return (T) property;
+            return (T1) property;
         }
         property = getDefaultProperty(key);
         if (property != null) {
-            return (T) property;
+            return (T1) property;
         }
-        return modelElement != null ? (T) modelElement.getDefaultProperty(key) : null;
+        return modelElement != null ? (T1) modelElement.getDefaultProperty(key) : null;
     }
 
     @Override
-    public <T> T getOwnProperty(int property) {
-        return (T) properties.get(property);
+    public <T1> T1 getOwnProperty(int property) {
+        return (T1) properties.get(property);
     }
 
     @Override
-    public <T> T getProperty(int property, T defaultValue) {
-        T result = getProperty(property);
+    public <T1> T1 getProperty(int property, T1 defaultValue) {
+        T1 result = getProperty(property);
         return result != null ? result : defaultValue;
     }
 
     @Override
-    public <T extends IRenderer> T setProperty(int property, Object value) {
+    public void setProperty(int property, Object value) {
         properties.put(property, value);
-        return (T) this;
     }
 
     @Override
-    public <T> T getDefaultProperty(int property) {
+    public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
             case Property.POSITION:
-                return (T) Integer.valueOf(LayoutPosition.STATIC);
+                return (T1) Integer.valueOf(LayoutPosition.STATIC);
             default:
                 return null;
         }

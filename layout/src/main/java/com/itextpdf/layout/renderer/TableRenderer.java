@@ -154,7 +154,6 @@ public class TableRenderer extends AbstractRenderer {
                 new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), tableWidth, 0));
 
         int numberOfColumns = ((Table) getModelElement()).getNumberOfColumns();
-        int numberOfRows = rows.size();
         horizontalBorders = new ArrayList<>();
         verticalBorders = new ArrayList<>();
 
@@ -578,7 +577,7 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     @Override
-    public TableRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         TableRenderer nextTable = new TableRenderer();
         nextTable.modelElement = modelElement;
         return nextTable;
@@ -642,8 +641,8 @@ public class TableRenderer extends AbstractRenderer {
         return new TableRenderer[]{splitRenderer, overflowRenderer};
     }
 
-    protected <T extends TableRenderer> T createSplitRenderer(Table.RowRange rowRange) {
-        TableRenderer splitRenderer = getNextRenderer();
+    protected TableRenderer createSplitRenderer(Table.RowRange rowRange) {
+        TableRenderer splitRenderer = (TableRenderer)getNextRenderer();
         splitRenderer.rowRange = rowRange;
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
@@ -654,17 +653,17 @@ public class TableRenderer extends AbstractRenderer {
         splitRenderer.headerRenderer = headerRenderer;
         splitRenderer.footerRenderer = footerRenderer;
         splitRenderer.isLastRendererForModelElement = false;
-        return (T) splitRenderer;
+        return splitRenderer;
     }
 
-    protected <T extends TableRenderer> T createOverflowRenderer(Table.RowRange rowRange) {
-        TableRenderer overflowRenderer = getNextRenderer();
+    protected TableRenderer createOverflowRenderer(Table.RowRange rowRange) {
+        TableRenderer overflowRenderer = (TableRenderer) getNextRenderer();
         overflowRenderer.rowRange = rowRange;
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());
         overflowRenderer.isOriginalNonSplitRenderer = false;
-        return (T) overflowRenderer;
+        return overflowRenderer;
     }
 
     protected void drawBorders(DrawContext drawContext) {
@@ -993,8 +992,6 @@ public class TableRenderer extends AbstractRenderer {
      * This method is used to set row range for table renderer during creating a new renderer.
      * The purpose to use this method is to remove input argument RowRange from createOverflowRenderer
      * and createSplitRenderer methods.
-     *
-     * @param rowRange
      */
     private void setRowRange(Table.RowRange rowRange) {
         this.rowRange = rowRange;

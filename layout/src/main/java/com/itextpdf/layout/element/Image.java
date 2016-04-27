@@ -65,7 +65,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A layout element that represents an image for inclusion in the document model.
  */
-public class Image extends AbstractElement<Image> implements ILeafElement<Image>, IElement<Image>, IAccessibleElement {
+public class Image extends AbstractElement<Image> implements ILeafElement, IAccessibleElement {
 
     protected PdfXObject xObject;
     protected PdfName role = PdfName.Figure;
@@ -110,7 +110,10 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      */
     public Image(PdfImageXObject xObject, float x, float y, float width) {
         this.xObject = xObject;
-        setProperty(Property.X, x).setProperty(Property.Y, y).setWidth(width).setProperty(Property.POSITION, LayoutPosition.FIXED);
+        setProperty(Property.X, x);
+        setProperty(Property.Y, y);
+        setWidth(width);
+        setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 
     /**
@@ -122,7 +125,9 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      */
     public Image(PdfImageXObject xObject, float x, float y) {
         this.xObject = xObject;
-        setProperty(Property.X, x).setProperty(Property.Y, y).setProperty(Property.POSITION, LayoutPosition.FIXED);
+        setProperty(Property.X, x);
+        setProperty(Property.Y, y);
+        setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 
     /**
@@ -134,7 +139,9 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      */
     public Image(PdfFormXObject xObject, float x, float y) {
         this.xObject = xObject;
-        setProperty(Property.X, x).setProperty(Property.Y, y).setProperty(Property.POSITION, LayoutPosition.FIXED);
+        setProperty(Property.X, x);
+        setProperty(Property.Y, y);
+        setProperty(Property.POSITION, LayoutPosition.FIXED);
     }
 
     /**
@@ -186,7 +193,8 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      * @return this element
      */
     public Image setRotationAngle(double radAngle) {
-        return setProperty(Property.ROTATION_ANGLE, radAngle);
+        setProperty(Property.ROTATION_ANGLE, radAngle);
+        return this;
     }
 
     /**
@@ -203,7 +211,8 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      * @return this element
      */
     public Image setMarginLeft(float value) {
-        return setProperty(Property.MARGIN_LEFT, value);
+        setProperty(Property.MARGIN_LEFT, value);
+        return this;
     }
 
     /**
@@ -220,7 +229,8 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      * @return this element
      */
     public Image setMarginRight(float value) {
-        return setProperty(Property.MARGIN_RIGHT, value);
+        setProperty(Property.MARGIN_RIGHT, value);
+        return this;
     }
 
     /**
@@ -237,7 +247,8 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      * @return this element
      */
     public Image setMarginTop(float value) {
-        return setProperty(Property.MARGIN_TOP, value);
+        setProperty(Property.MARGIN_TOP, value);
+        return this;
     }
 
     /**
@@ -254,7 +265,8 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      * @return this element
      */
     public Image setMarginBottom(float value) {
-        return setProperty(Property.MARGIN_BOTTOM, value);
+        setProperty(Property.MARGIN_BOTTOM, value);
+        return this;
     }
 
     /**
@@ -278,7 +290,9 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      * @return this element
      */
     public Image scale(float horizontalScaling, float verticalScaling) {
-        return setProperty(Property.HORIZONTAL_SCALING, horizontalScaling).setProperty(Property.VERTICAL_SCALING, verticalScaling);
+        setProperty(Property.HORIZONTAL_SCALING, horizontalScaling);
+        setProperty(Property.VERTICAL_SCALING, verticalScaling);
+        return this;
     }
 
     /**
@@ -322,7 +336,8 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
             Logger logger = LoggerFactory.getLogger(Image.class);
             logger.warn(LogMessageConstant.IMAGE_HAS_AMBIGUOUS_SCALE);
         }
-        return setProperty(Property.AUTO_SCALE, autoScale);
+        setProperty(Property.AUTO_SCALE, autoScale);
+        return this;
     }
 
     /**
@@ -335,10 +350,11 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         if (hasProperty(Property.AUTO_SCALE_WIDTH) && autoScale && (Boolean) getProperty(Property.AUTO_SCALE_WIDTH)) {
             setProperty(Property.AUTO_SCALE_WIDTH, false);
             setProperty(Property.AUTO_SCALE_HEIGHT, false);
-            return setProperty(Property.AUTO_SCALE, true);
+            setProperty(Property.AUTO_SCALE, true);
         } else {
-            return setProperty(Property.AUTO_SCALE_WIDTH, autoScale);
+            setProperty(Property.AUTO_SCALE_WIDTH, autoScale);
         }
+        return this;
     }
 
     /**
@@ -351,10 +367,11 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
         if (hasProperty(Property.AUTO_SCALE_HEIGHT) && autoScale && (Boolean) getProperty(Property.AUTO_SCALE_HEIGHT)) {
             setProperty(Property.AUTO_SCALE_WIDTH, false);
             setProperty(Property.AUTO_SCALE_HEIGHT, false);
-            return setProperty(Property.AUTO_SCALE, true);
+            setProperty(Property.AUTO_SCALE, true);
         } else {
-            return setProperty(Property.AUTO_SCALE_WIDTH, autoScale);
+            setProperty(Property.AUTO_SCALE_WIDTH, autoScale);
         }
+        return this;
     }
 
     /**
@@ -367,7 +384,8 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      * @return this image.
      */
     public Image setFixedPosition(float x, float y) {
-        return setFixedPosition(x, y, getWidth());
+        setFixedPosition(x, y, getWidth());
+        return this;
     }
 
     /**
@@ -381,17 +399,18 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
      * @return this Element.
      */
     public Image setFixedPosition(int pageNumber, float x, float y) {
-        return setFixedPosition(pageNumber, x, y, getWidth());
+        setFixedPosition(pageNumber, x, y, getWidth());
+        return this;
     }
 
     @Override
-    public <T> T getDefaultProperty(int property) {
+    public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
             case Property.AUTO_SCALE:
-                return (T) Boolean.valueOf(false);
+                return (T1) Boolean.valueOf(false);
             case Property.HORIZONTAL_SCALING:
             case Property.VERTICAL_SCALING:
-                return (T) Float.valueOf(1);
+                return (T1) Float.valueOf(1);
             default:
                 return super.getDefaultProperty(property);
         }

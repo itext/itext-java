@@ -132,7 +132,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     @Override
-    public TextLayoutResult layout(LayoutContext layoutContext) {
+    public LayoutResult layout(LayoutContext layoutContext) {
         convertWaitingStringToGlyphLine();
 
         LayoutArea area = layoutContext.getArea();
@@ -621,10 +621,10 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     @Override
-    public <T> T getDefaultProperty(int property) {
+    public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
             case Property.HORIZONTAL_SCALING:
-                return (T) Float.valueOf(1);
+                return (T1) Float.valueOf(1);
             default:
                 return super.getDefaultProperty(property);
         }
@@ -774,7 +774,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     @Override
-    public TextRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         return new TextRenderer((Text) modelElement, null);
     }
 
@@ -828,11 +828,11 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     protected TextRenderer createSplitRenderer() {
-        return getNextRenderer();
+        return (TextRenderer) getNextRenderer();
     }
 
     protected TextRenderer createOverflowRenderer() {
-        return getNextRenderer();
+        return (TextRenderer) getNextRenderer();
     }
 
     protected TextRenderer[] split(int initialOverflowTextPos) {
@@ -884,7 +884,6 @@ public class TextRenderer extends AbstractRenderer {
     /**
      * This method return a LinkedHashMap with glyphlines as its keys. Values are boolean flags indicating if a
      * glyphline is written in a reversed order (right to left text).
-     * @return
      */
     private Map<GlyphLine, Boolean> getOutputChunks() {
         List<int[]> reversedRange = getProperty(Property.REVERSED);

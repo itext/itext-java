@@ -53,6 +53,7 @@ import com.itextpdf.layout.element.BlockElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.ILargeElement;
 import com.itextpdf.layout.renderer.DocumentRenderer;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
 
 /**
@@ -127,7 +128,7 @@ public class Document extends RootElement<Document> {
     }
 
     @Override
-    public Document add(BlockElement element) {
+    public <T extends IElement> Document add(BlockElement<T> element) {
         checkClosingStatus();
         super.add(element);
         if (element instanceof ILargeElement) {

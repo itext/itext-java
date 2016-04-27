@@ -370,7 +370,7 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     @Override
-    public LineRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         return new LineRenderer();
     }
 
@@ -457,11 +457,11 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     protected LineRenderer createSplitRenderer() {
-        return getNextRenderer();
+        return (LineRenderer) getNextRenderer();
     }
 
     protected LineRenderer createOverflowRenderer() {
-        return getNextRenderer();
+        return (LineRenderer) getNextRenderer();
     }
 
     protected LineRenderer[] split() {

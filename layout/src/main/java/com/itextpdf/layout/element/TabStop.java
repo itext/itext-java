@@ -66,7 +66,6 @@ public class TabStop {
         this.tabPosition = tabPosition;
         this.tabAlignment = tabAlignment;
         this.tabLeader = tabLeader;
-
         this.tabAnchor = '.';
     }
 
@@ -93,6 +92,7 @@ public class TabStop {
     public ILineDrawer getTabLeader() {
         return tabLeader;
     }
+
     public void setTabLeader(ILineDrawer tabLeader) {
         this.tabLeader = tabLeader;
     }

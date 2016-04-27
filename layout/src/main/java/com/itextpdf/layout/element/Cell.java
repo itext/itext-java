@@ -105,7 +105,7 @@ public class Cell extends BlockElement<Cell> {
      * @return a cell renderer for this element
      */
     @Override
-    public CellRenderer getRenderer() {
+    public IRenderer getRenderer() {
         CellRenderer cellRenderer = null;
         if (nextRenderer != null) {
             if (nextRenderer instanceof CellRenderer) {
@@ -143,7 +143,7 @@ public class Cell extends BlockElement<Cell> {
      * @param element a {@link BlockElement}
      * @return this Element
      */
-    public Cell add(BlockElement element) {
+    public <T extends IElement> Cell add(BlockElement<T> element) {
         childElements.add(element);
         return this;
     }
@@ -199,15 +199,15 @@ public class Cell extends BlockElement<Cell> {
     }
 
     @Override
-    public <T> T getDefaultProperty(int property) {
+    public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
             case Property.BORDER:
-                return (T) DEFAULT_BORDER;
+                return (T1) DEFAULT_BORDER;
             case Property.PADDING_BOTTOM:
             case Property.PADDING_LEFT:
             case Property.PADDING_RIGHT:
             case Property.PADDING_TOP:
-                return (T) Float.valueOf(2);
+                return (T1) Float.valueOf(2);
             default:
                 return super.getDefaultProperty(property);
         }
@@ -240,7 +240,7 @@ public class Cell extends BlockElement<Cell> {
     }
 
     @Override
-    protected CellRenderer makeNewRenderer() {
+    protected IRenderer makeNewRenderer() {
         return new CellRenderer(this);
     }
 

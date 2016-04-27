@@ -46,6 +46,8 @@ package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.layout.renderer.DivRenderer;
+import com.itextpdf.layout.renderer.IRenderer;
 
 /**
  * A {@link Div} is a container object that defines a section in a document,
@@ -62,25 +64,23 @@ public class Div extends BlockElement<Div> {
     /**
      * Adds any block element to the div's contents.
      * 
-     * @param <T> the type of this object
      * @param element a {@link BlockElement}
      * @return this Element
      */
-    public <T extends Div> T add(BlockElement element) {
+    public <T extends IElement> Div add(BlockElement<T> element) {
         childElements.add(element);
-        return (T) this;
+        return this;
     }
     
     /**
      * Adds an image to the div's contents.
      * 
-     * @param <T> the type of this object
      * @param element an {@link Image}
      * @return this Element
      */
-    public <T extends Div> T add(Image element) {
+    public Div add(Image element) {
         childElements.add(element);
-        return (T) this;
+        return this;
     }
 
     @Override
@@ -102,5 +102,10 @@ public class Div extends BlockElement<Div> {
             tagProperties = new AccessibilityProperties();
         }
         return tagProperties;
+    }
+
+    @Override
+    protected IRenderer makeNewRenderer() {
+        return new DivRenderer(this);
     }
 }

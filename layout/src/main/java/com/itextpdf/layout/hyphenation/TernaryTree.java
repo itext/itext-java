@@ -19,7 +19,6 @@ package com.itextpdf.layout.hyphenation;
 
 import java.io.Serializable;
 import java.util.Enumeration;
-import java.util.Stack;
 
 /**
  * <h2>Ternary Search Tree.</h2>
@@ -63,7 +62,7 @@ import java.util.Stack;
  * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
  */
 
-public class TernaryTree implements Cloneable, Serializable {
+public class TernaryTree implements Serializable {
 
     /**
      * We use 4 arrays to represent a node. I guess I should have created
@@ -120,6 +119,17 @@ public class TernaryTree implements Cloneable, Serializable {
     /** default constructor */
     TernaryTree() {
         init();
+    }
+
+    TernaryTree(TernaryTree tt) {
+        this.root = tt.root;
+        this.freenode = tt.freenode;
+        this.length = tt.length;
+        this.lo = (char[]) tt.lo.clone();
+        this.hi = (char[]) tt.hi.clone();
+        this.eq = (char[]) tt.eq.clone();
+        this.sc = (char[]) tt.sc.clone();
+        this.kv = new CharVector(tt.kv);
     }
 
     /** initialize */
@@ -403,18 +413,6 @@ public class TernaryTree implements Cloneable, Serializable {
         return length;
     }
 
-    /** {@inheritDoc} */
-    public Object clone() throws CloneNotSupportedException {
-        TernaryTree t = (TernaryTree) super.clone();
-        t.lo = this.lo.clone();
-        t.hi = this.hi.clone();
-        t.eq = this.eq.clone();
-        t.sc = this.sc.clone();
-        t.kv = (CharVector)this.kv.clone();
-
-        return t;
-    }
-
     /**
      * Recursively insert the median first and then the median of the
      * lower and upper halves, and so on in order to get a balanced
@@ -449,7 +447,7 @@ public class TernaryTree implements Cloneable, Serializable {
         int n = length;
         String[] k = new String[n];
         char[] v = new char[n];
-        Iterator iter = new Iterator();
+        TernaryTreeIterator iter = new TernaryTreeIterator(this);
         while (iter.hasMoreElements()) {
             v[i] = iter.getValue();
             k[i++] = (String)iter.nextElement();
@@ -514,198 +512,7 @@ public class TernaryTree implements Cloneable, Serializable {
 
     /** @return the keys */
     public Enumeration keys() {
-        return new Iterator();
+        return new TernaryTreeIterator(this);
     }
-
-    /** an iterator */
-    public class Iterator implements Enumeration {
-
-        /**
-         * current node index
-         */
-        int cur;
-
-        /**
-         * current key
-         */
-        String curkey;
-
-        private class Item implements Cloneable {
-            /** parent */
-            char parent;
-            /** child */
-            char child;
-
-            /** default constructor */
-            public Item() {
-                parent = 0;
-                child = 0;
-            }
-
-            /**
-             * Construct item.
-             * @param p a char
-             * @param c a char
-             */
-            public Item(char p, char c) {
-                parent = p;
-                child = c;
-            }
-
-            /** {@inheritDoc} */
-            public Object clone() {
-                return new Item(parent, child);
-            }
-
-        }
-
-        /**
-         * Node stack
-         */
-        Stack ns;
-
-        /**
-         * key stack implemented with a StringBuffer
-         */
-        StringBuffer ks;
-
-        /** default constructor */
-        public Iterator() {
-            cur = -1;
-            ns = new Stack();
-            ks = new StringBuffer();
-            rewind();
-        }
-
-        /** rewind iterator */
-        public void rewind() {
-            ns.removeAllElements();
-            ks.setLength(0);
-            cur = root;
-            run();
-        }
-
-        /** @return next element */
-        public Object nextElement() {
-            String res = curkey;
-            cur = up();
-            run();
-            return res;
-        }
-
-        /** @return value */
-        public char getValue() {
-            if (cur >= 0) {
-                return eq[cur];
-            }
-            return 0;
-        }
-
-        /** @return true if more elements */
-        public boolean hasMoreElements() {
-            return (cur != -1);
-        }
-
-        /**
-         * traverse upwards
-         */
-        private int up() {
-            Item i = new Item();
-            int res = 0;
-
-            if (ns.empty()) {
-                return -1;
-            }
-
-            if (cur != 0 && sc[cur] == 0) {
-                return lo[cur];
-            }
-
-            boolean climb = true;
-
-            while (climb) {
-                i = (Item)ns.pop();
-                i.child++;
-                switch (i.child) {
-                case 1:
-                    if (sc[i.parent] != 0) {
-                        res = eq[i.parent];
-                        ns.push(i.clone());
-                        ks.append(sc[i.parent]);
-                    } else {
-                        i.child++;
-                        ns.push(i.clone());
-                        res = hi[i.parent];
-                    }
-                    climb = false;
-                    break;
-
-                case 2:
-                    res = hi[i.parent];
-                    ns.push(i.clone());
-                    if (ks.length() > 0) {
-                        ks.setLength(ks.length() - 1);    // pop
-                    }
-                    climb = false;
-                    break;
-
-                default:
-                    if (ns.empty()) {
-                        return -1;
-                    }
-                    climb = true;
-                    break;
-                }
-            }
-            return res;
-        }
-
-        /**
-         * traverse the tree to find next key
-         */
-        private int run() {
-            if (cur == -1) {
-                return -1;
-            }
-
-            boolean leaf = false;
-            while (true) {
-                // first go down on low branch until leaf or compressed branch
-                while (cur != 0) {
-                    if (sc[cur] == 0xFFFF) {
-                        leaf = true;
-                        break;
-                    }
-                    ns.push(new Item((char)cur, '\u0000'));
-                    if (sc[cur] == 0) {
-                        leaf = true;
-                        break;
-                    }
-                    cur = lo[cur];
-                }
-                if (leaf) {
-                    break;
-                }
-                // nothing found, go up one node and try again
-                cur = up();
-                if (cur == -1) {
-                    return -1;
-                }
-            }
-            // The current node should be a data node and
-            // the key should be in the key stack (at least partially)
-            StringBuffer buf = new StringBuffer(ks.toString());
-            if (sc[cur] == 0xFFFF) {
-                int p = lo[cur];
-                while (kv.get(p) != 0) {
-                    buf.append(kv.get(p++));
-                }
-            }
-            curkey = buf.toString();
-            return 0;
-        }
-
-    }
-
 }
 

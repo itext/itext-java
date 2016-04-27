@@ -72,34 +72,55 @@ public class ListRenderer extends BlockRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        List<IRenderer> symbolRenderers = new ArrayList<>();
-        int listItemNum = getProperty(Property.LIST_START, 1);
-        for (int i = 0; i < childRenderers.size(); i++) {
-            if (childRenderers.get(i).getModelElement() instanceof ListItem) {
-                IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum++, childRenderers.get(i));
-                symbolRenderers.add(currentSymbolRenderer);
-                LayoutResult listSymbolLayoutResult = currentSymbolRenderer.layout(layoutContext);
-                if (listSymbolLayoutResult.getStatus() != LayoutResult.FULL) {
-                    return new LayoutResult(LayoutResult.NOTHING, null, null, this);
+        if (!hasOwnProperty(Property.LIST_SYMBOLS_INITIALIZED)) {
+            List<IRenderer> symbolRenderers = new ArrayList<>();
+            int listItemNum = getProperty(Property.LIST_START, 1);
+            for (int i = 0; i < childRenderers.size(); i++) {
+                if (childRenderers.get(i).getModelElement() instanceof ListItem) {
+                    IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum++, childRenderers.get(i));
+                    symbolRenderers.add(currentSymbolRenderer);
+                    LayoutResult listSymbolLayoutResult = currentSymbolRenderer.layout(layoutContext);
+                    if (listSymbolLayoutResult.getStatus() != LayoutResult.FULL) {
+                        return new LayoutResult(LayoutResult.NOTHING, null, null, this);
+                    }
                 }
             }
-        }
-        float maxSymbolWidth = 0;
-        for (IRenderer symbolRenderer : symbolRenderers) {
-            maxSymbolWidth = Math.max(maxSymbolWidth, symbolRenderer.getOccupiedArea().getBBox().getWidth());
-        }
-        Float symbolIndent = (Float)modelElement.getProperty(Property.LIST_SYMBOL_INDENT);
-        listItemNum = 0;
-        for (IRenderer childRenderer : childRenderers) {
-            childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
-            childRenderer.setProperty(Property.MARGIN_LEFT, childRenderer.getProperty(Property.MARGIN_LEFT, 0f) + maxSymbolWidth + (symbolIndent != null ? symbolIndent : 0f));
-            if (childRenderer.getModelElement() instanceof ListItem) {
-                IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
-                ((ListItemRenderer)childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);
+            float maxSymbolWidth = 0;
+            for (IRenderer symbolRenderer : symbolRenderers) {
+                maxSymbolWidth = Math.max(maxSymbolWidth, symbolRenderer.getOccupiedArea().getBBox().getWidth());
+            }
+            Float symbolIndent = modelElement.getProperty(Property.LIST_SYMBOL_INDENT);
+            listItemNum = 0;
+            for (IRenderer childRenderer : childRenderers) {
+                childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
+                childRenderer.setProperty(Property.MARGIN_LEFT, childRenderer.getProperty(Property.MARGIN_LEFT, 0f) + maxSymbolWidth + (symbolIndent != null ? symbolIndent : 0f));
+                if (childRenderer.getModelElement() instanceof ListItem) {
+                    IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
+                    ((ListItemRenderer) childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);
+                }
             }
         }
 
         return super.layout(layoutContext);
+    }
+
+    @Override
+    public IRenderer getNextRenderer() {
+        return new ListRenderer((com.itextpdf.layout.element.List) modelElement);
+    }
+
+    @Override
+    protected AbstractRenderer createSplitRenderer(int layoutResult) {
+        AbstractRenderer splitRenderer = super.createSplitRenderer(layoutResult);
+        splitRenderer.setProperty(Property.LIST_SYMBOLS_INITIALIZED, Boolean.valueOf(true));
+        return splitRenderer;
+    }
+
+    @Override
+    protected AbstractRenderer createOverflowRenderer(int layoutResult) {
+        AbstractRenderer overflowRenderer = super.createOverflowRenderer(layoutResult);
+        overflowRenderer.setProperty(Property.LIST_SYMBOLS_INITIALIZED, Boolean.valueOf(true));
+        return overflowRenderer;
     }
 
     protected IRenderer makeListSymbolRenderer(int index, IRenderer renderer) {
@@ -111,7 +132,6 @@ public class ListRenderer extends BlockRenderer {
         } else if (defaultListSymbol instanceof ListNumberingType) {
             ListNumberingType numberingType = (ListNumberingType) defaultListSymbol;
             String numberText;
-            com.itextpdf.layout.element.List listModelElement = (com.itextpdf.layout.element.List) getModelElement();
             switch (numberingType) {
                 case DECIMAL:
                     numberText = String.valueOf(index);

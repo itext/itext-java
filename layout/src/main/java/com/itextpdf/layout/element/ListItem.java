@@ -47,6 +47,7 @@ package com.itextpdf.layout.element;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ListItemRenderer;
 
 /**
@@ -98,7 +99,8 @@ public class ListItem extends Div {
      * @return this list item.
      */
     public ListItem setListSymbol(Text text) {
-        return setProperty(Property.LIST_SYMBOL, text);
+        setProperty(Property.LIST_SYMBOL, text);
+        return this;
     }
 
     /**
@@ -107,12 +109,13 @@ public class ListItem extends Div {
      * @return this list.
      */
     public ListItem setListSymbol(Image image) {
-        return setProperty(Property.LIST_SYMBOL, image);
+        setProperty(Property.LIST_SYMBOL, image);
+        return this;
     }
 
     /**
      * Sets the list item numbering type to be used.
-     * @param listNumberingType the {@link Property#ListNumberingType} that will generate appropriate prefixes for the {@link ListItem}.
+     * @param listNumberingType the {@link ListNumberingType} that will generate appropriate prefixes for the {@link ListItem}.
      * @return this list item.
      */
     public ListItem setListSymbol(ListNumberingType listNumberingType) {
@@ -121,12 +124,12 @@ public class ListItem extends Div {
                 listNumberingType == ListNumberingType.ZAPF_DINGBATS_3 || listNumberingType == ListNumberingType.ZAPF_DINGBATS_4) {
             setProperty(Property.LIST_SYMBOL_POST_TEXT, " ");
         }
-        return setProperty(Property.LIST_SYMBOL, listNumberingType);
+        setProperty(Property.LIST_SYMBOL, listNumberingType);
+        return this;
     }
 
     @Override
-    protected ListItemRenderer makeNewRenderer() {
+    protected IRenderer makeNewRenderer() {
         return new ListItemRenderer(this);
     }
-
 }

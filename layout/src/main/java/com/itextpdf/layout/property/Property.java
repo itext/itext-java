@@ -98,59 +98,60 @@ public final class Property {
     public static final int LIST_SYMBOL = 37;
     public static final int LIST_SYMBOL_ALIGNMENT = 38;
     public static final int LIST_SYMBOL_INDENT = 39;
-    public static final int LIST_SYMBOL_PRE_TEXT = 40;
-    public static final int LIST_SYMBOL_POST_TEXT = 41;
-    public static final int MARGIN_BOTTOM = 42;
-    public static final int MARGIN_LEFT = 43;
-    public static final int MARGIN_RIGHT = 44;
-    public static final int MARGIN_TOP = 45;
-    public static final int PADDING_BOTTOM = 46;
-    public static final int PADDING_LEFT = 47;
-    public static final int PADDING_RIGHT = 48;
-    public static final int PADDING_TOP = 49;
-    public static final int PAGE_NUMBER = 50;
-    public static final int POSITION = 51;
-    public static final int REVERSED = 52;
-    public static final int RIGHT = 53;
-    public static final int ROTATION_ANGLE = 54;
-    public static final int ROTATION_INITIAL_HEIGHT = 55;
-    public static final int ROTATION_INITIAL_WIDTH = 56;
-    public static final int ROTATION_POINT_X = 57;
-    public static final int ROTATION_POINT_Y = 58;
-    public static final int ROWSPAN = 59;
-    public static final int SPACING_RATIO = 60;
-    public static final int SPLIT_CHARACTERS = 61;
-    public static final int STROKE_COLOR = 62;
-    public static final int STROKE_WIDTH = 63;
-    public static final int SKEW = 64;
-    public static final int TAB_ANCHOR = 65;
-    public static final int TAB_DEFAULT = 66;
-    public static final int TAB_LEADER = 67;
-    public static final int TAB_STOPS = 68;
-    public static final int TEXT_ALIGNMENT = 69;
+    public static final int LIST_SYMBOLS_INITIALIZED = 40;
+    public static final int LIST_SYMBOL_PRE_TEXT = 41;
+    public static final int LIST_SYMBOL_POST_TEXT = 42;
+    public static final int MARGIN_BOTTOM = 43;
+    public static final int MARGIN_LEFT = 44;
+    public static final int MARGIN_RIGHT = 45;
+    public static final int MARGIN_TOP = 46;
+    public static final int PADDING_BOTTOM = 47;
+    public static final int PADDING_LEFT = 48;
+    public static final int PADDING_RIGHT = 49;
+    public static final int PADDING_TOP = 50;
+    public static final int PAGE_NUMBER = 51;
+    public static final int POSITION = 52;
+    public static final int REVERSED = 53;
+    public static final int RIGHT = 54;
+    public static final int ROTATION_ANGLE = 55;
+    public static final int ROTATION_INITIAL_HEIGHT = 56;
+    public static final int ROTATION_INITIAL_WIDTH = 57;
+    public static final int ROTATION_POINT_X = 58;
+    public static final int ROTATION_POINT_Y = 59;
+    public static final int ROWSPAN = 60;
+    public static final int SPACING_RATIO = 61;
+    public static final int SPLIT_CHARACTERS = 62;
+    public static final int STROKE_COLOR = 63;
+    public static final int STROKE_WIDTH = 64;
+    public static final int SKEW = 65;
+    public static final int TAB_ANCHOR = 66;
+    public static final int TAB_DEFAULT = 67;
+    public static final int TAB_LEADER = 68;
+    public static final int TAB_STOPS = 69;
+    public static final int TEXT_ALIGNMENT = 70;
     /**
      * Use values from .
      */
-    public static final int TEXT_RENDERING_MODE = 70;
-    public static final int TEXT_RISE = 71;
-    public static final int TOP = 72;
-    public static final int UNDERLINE = 73;
+    public static final int TEXT_RENDERING_MODE = 71;
+    public static final int TEXT_RISE = 72;
+    public static final int TOP = 73;
+    public static final int UNDERLINE = 74;
     /**
      * Value of 1 is equivalent to no scaling
      **/
-    public static final int VERTICAL_ALIGNMENT = 74;
-    public static final int VERTICAL_SCALING = 75;
-    public static final int WIDTH = 76;
-    public static final int WORD_SPACING = 77;
-    public static final int X = 78;
-    public static final int Y = 79;
+    public static final int VERTICAL_ALIGNMENT = 75;
+    public static final int VERTICAL_SCALING = 76;
+    public static final int WIDTH = 77;
+    public static final int WORD_SPACING = 78;
+    public static final int X = 79;
+    public static final int Y = 80;
 
     /**
      * Some properties must be passed to {@link IPropertyContainer} objects that
      * are lower in the document's hierarchy. Most inherited properties are
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
-    private static final boolean INHERITED_PROPERTIES[];
+    private static final boolean[] INHERITED_PROPERTIES;
     private static final int MAX_INHERITED_PROPERTY_ID = 80;
 
     static {
@@ -186,5 +187,4 @@ public final class Property {
     public static boolean isPropertyInherited(int property) {
         return property >= 0 && property < MAX_INHERITED_PROPERTY_ID && INHERITED_PROPERTIES[property];
     }
-
 }

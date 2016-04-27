@@ -18,7 +18,8 @@
 
 package com.itextpdf.layout.hyphenation;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,9 +29,9 @@ import java.util.Set;
 public class HyphenationTreeCache {
 
     /** Contains the cached hyphenation trees */
-    private Hashtable hyphenTrees = new Hashtable();
+    private Map<String, HyphenationTree> hyphenTrees = new HashMap<>();
     /** Used to avoid multiple error messages for the same language if a pattern file is missing. */
-    private Set missingHyphenationTrees;
+    private Set<String> missingHyphenationTrees;
 
     /**
      * Looks in the cache if a hyphenation tree is available and returns it if it is found.
@@ -47,9 +48,9 @@ public class HyphenationTreeCache {
 
         // first try to find it in the cache
         if (hyphenTrees.containsKey(key)) {
-            return (HyphenationTree)hyphenTrees.get(key);
+            return hyphenTrees.get(key);
         } else if (hyphenTrees.containsKey(lang)) {
-            return (HyphenationTree)hyphenTrees.get(lang);
+            return hyphenTrees.get(lang);
         } else {
             return null;
         }
@@ -83,7 +84,7 @@ public class HyphenationTreeCache {
         if (hyphPatNames != null) {
             String key = constructLlccKey(lang, country);
             key = key.replace('_', '-');
-            userKey = (String) hyphPatNames.get(key);
+            userKey = hyphPatNames.get(key);
         }
         return userKey;
     }
@@ -105,7 +106,7 @@ public class HyphenationTreeCache {
      */
     public void noteMissing(String key) {
         if (missingHyphenationTrees == null) {
-            missingHyphenationTrees = new java.util.HashSet();
+            missingHyphenationTrees = new HashSet<>();
         }
         missingHyphenationTrees.add(key);
     }
@@ -120,5 +121,4 @@ public class HyphenationTreeCache {
     public boolean isMissing(String key) {
         return (missingHyphenationTrees != null && missingHyphenationTrees.contains(key));
     }
-
 }

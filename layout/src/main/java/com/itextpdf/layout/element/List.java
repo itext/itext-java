@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolAlignment;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ListRenderer;
 
 /**
@@ -82,12 +83,12 @@ public class List extends BlockElement<List> {
     }
 
     @Override
-    public <T> T getDefaultProperty(int property) {
+    public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
             case Property.LIST_SYMBOL_PRE_TEXT:
-                return (T) "";
+                return (T1) "";
             case Property.LIST_SYMBOL_POST_TEXT:
-                return (T) ". ";
+                return (T1) ". ";
             default:
                 return super.getDefaultProperty(property);
         }
@@ -118,7 +119,8 @@ public class List extends BlockElement<List> {
      * @return this list.
      */
     public List setItemStartIndex(int start) {
-        return setProperty(Property.LIST_START, start);
+        setProperty(Property.LIST_START, start);
+        return this;
     }
 
     /**
@@ -138,7 +140,8 @@ public class List extends BlockElement<List> {
      * @return this list.
      */
     public List setListSymbol(Text text) {
-        return setProperty(Property.LIST_SYMBOL, text);
+        setProperty(Property.LIST_SYMBOL, text);
+        return this;
     }
 
     /**
@@ -148,7 +151,8 @@ public class List extends BlockElement<List> {
      * @return this list.
      */
     public List setListSymbol(Image image) {
-        return setProperty(Property.LIST_SYMBOL, image);
+        setProperty(Property.LIST_SYMBOL, image);
+        return this;
     }
 
     /**
@@ -163,7 +167,8 @@ public class List extends BlockElement<List> {
                 listNumberingType == ListNumberingType.ZAPF_DINGBATS_3 || listNumberingType == ListNumberingType.ZAPF_DINGBATS_4) {
             setPostSymbolText(" ");
         }
-        return setProperty(Property.LIST_SYMBOL, listNumberingType);
+        setProperty(Property.LIST_SYMBOL, listNumberingType);
+        return this;
     }
 
     /**
@@ -177,7 +182,8 @@ public class List extends BlockElement<List> {
      * 10. Item 10
      */
     public List setListSymbolAlignment(ListSymbolAlignment alignment) {
-        return setProperty(Property.LIST_SYMBOL_ALIGNMENT, alignment);
+        setProperty(Property.LIST_SYMBOL_ALIGNMENT, alignment);
+        return this;
     }
 
     /**
@@ -196,7 +202,8 @@ public class List extends BlockElement<List> {
      * @return this list.
      */
     public List setSymbolIndent(float symbolIndent) {
-        return setProperty(Property.LIST_SYMBOL_INDENT, symbolIndent);
+        setProperty(Property.LIST_SYMBOL_INDENT, symbolIndent);
+        return this;
     }
 
     /**
@@ -253,7 +260,7 @@ public class List extends BlockElement<List> {
     }
 
     @Override
-    protected ListRenderer makeNewRenderer() {
+    protected IRenderer makeNewRenderer() {
         return new ListRenderer(this);
     }
 }

@@ -47,7 +47,6 @@ package com.itextpdf.layout.element;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
-import com.itextpdf.layout.renderer.BlockRenderer;
 
 /**
  * A {@link BlockElement} will try to take up as much horizontal space as
@@ -57,12 +56,12 @@ import com.itextpdf.layout.renderer.BlockRenderer;
  * 
  * @param <T> the type of the implementation
  */
-public abstract class BlockElement<T extends BlockElement> extends AbstractElement<T> implements IElement<T>, IAccessibleElement {
+public abstract class BlockElement<T extends IElement> extends AbstractElement<T> implements IAccessibleElement {
 
     /**
      * Creates a BlockElement.
      */
-    public BlockElement() {
+    protected BlockElement() {
     }
 
     /**
@@ -79,7 +78,8 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
      * @return this element
      */
     public T setMarginLeft(float value) {
-        return setProperty(Property.MARGIN_LEFT, value);
+        setProperty(Property.MARGIN_LEFT, value);
+        return (T) this;
     }
 
     /**
@@ -96,7 +96,8 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
      * @return this element
      */
     public T setMarginRight(float value) {
-        return setProperty(Property.MARGIN_RIGHT, value);
+        setProperty(Property.MARGIN_RIGHT, value);
+        return (T) this;
     }
 
     /**
@@ -113,7 +114,8 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
      * @return this element
      */
     public T setMarginTop(float value) {
-        return setProperty(Property.MARGIN_TOP, value);
+        setProperty(Property.MARGIN_TOP, value);
+        return (T) this;
     }
 
     /**
@@ -130,12 +132,13 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
      * @return this element
      */
     public T setMarginBottom(float value) {
-        return setProperty(Property.MARGIN_BOTTOM, value);
+        setProperty(Property.MARGIN_BOTTOM, value);
+        return (T) this;
     }
 
     /**
      * Sets all margins around the element to the same width.
-     * 
+     *
      * @param commonMargin the new margin width
      * @return this element
      */
@@ -145,7 +148,7 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
 
     /**
      * Sets the margins around the element to a series of new widths.
-     * 
+     *
      * @param marginTop the new margin top width
      * @param marginRight the new margin right width
      * @param marginBottom the new margin bottom width
@@ -153,9 +156,13 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
      * @return this element
      */
     public T setMargins(float marginTop, float marginRight, float marginBottom, float marginLeft) {
-        return (T) setMarginTop(marginTop).setMarginRight(marginRight).setMarginBottom(marginBottom).setMarginLeft(marginLeft);
+        setMarginTop(marginTop);
+        setMarginRight(marginRight);
+        setMarginBottom(marginBottom);
+        setMarginLeft(marginLeft);
+        return (T) this;
     }
-    
+
     /**
      * Gets the current left padding width of the element.
      * @return the left padding width, as a <code>float</code>
@@ -170,7 +177,8 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
      * @return this element
      */
     public T setPaddingLeft(float value) {
-        return setProperty(Property.PADDING_LEFT, value);
+        setProperty(Property.PADDING_LEFT, value);
+        return (T) this;
     }
 
     /**
@@ -187,7 +195,8 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
      * @return this element
      */
     public T setPaddingRight(float value) {
-        return setProperty(Property.PADDING_RIGHT, value);
+        setProperty(Property.PADDING_RIGHT, value);
+        return (T) this;
     }
 
     /**
@@ -204,7 +213,8 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
      * @return this element
      */
     public T setPaddingTop(float value) {
-        return setProperty(Property.PADDING_TOP, value);
+        setProperty(Property.PADDING_TOP, value);
+        return (T) this;
     }
 
     /**
@@ -221,12 +231,13 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
      * @return this element
      */
     public T setPaddingBottom(float value) {
-        return setProperty(Property.PADDING_BOTTOM, value);
+        setProperty(Property.PADDING_BOTTOM, value);
+        return (T) this;
     }
 
     /**
      * Sets all paddings around the element to the same width.
-     * 
+     *
      * @param commonPadding the new padding width
      * @return this element
      */
@@ -236,7 +247,7 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
 
     /**
      * Sets the paddings around the element to a series of new widths.
-     * 
+     *
      * @param paddingTop the new padding top width
      * @param paddingRight the new padding right width
      * @param paddingBottom the new padding bottom width
@@ -244,7 +255,11 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
      * @return this element
      */
     public T setPaddings(float paddingTop, float paddingRight, float paddingBottom, float paddingLeft) {
-        return (T) setPaddingTop(paddingTop).setPaddingRight(paddingRight).setPaddingBottom(paddingBottom).setPaddingLeft(paddingLeft);
+        setPaddingTop(paddingTop);
+        setPaddingRight(paddingRight);
+        setPaddingBottom(paddingBottom);
+        setPaddingLeft(paddingLeft);
+        return (T) this;
     }
 
     /**
@@ -254,7 +269,8 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
      * @return this element
      */
     public T setVerticalAlignment(VerticalAlignment verticalAlignment) {
-        return setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
+        setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
+        return (T) this;
     }
 
     /**
@@ -268,14 +284,15 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
      *              If <b>ratio</b> is 0, additional word spacing will not be applied.
      */
     public T setSpacingRatio(float ratio) {
-        return setProperty(Property.SPACING_RATIO, ratio);
+        setProperty(Property.SPACING_RATIO, ratio);
+        return (T) this;
     }
 
     @Override
-    public <T> T getDefaultProperty(int property) {
+    public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
             case Property.KEEP_TOGETHER:
-                return (T) Boolean.valueOf(false);
+                return (T1) Boolean.valueOf(false);
             default:
                 return super.getDefaultProperty(property);
         }
@@ -297,7 +314,8 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
      * @return this element
      */
     public T setKeepTogether(boolean keepTogether) {
-        return setProperty(Property.KEEP_TOGETHER, keepTogether);
+        setProperty(Property.KEEP_TOGETHER, keepTogether);
+        return (T) this;
     }
 
     /**
@@ -320,10 +338,5 @@ public abstract class BlockElement<T extends BlockElement> extends AbstractEleme
     public T setRotationAngle(double angle) {
         setProperty(Property.ROTATION_ANGLE, (float) angle);
         return (T) this;
-    }
-
-    @Override
-    protected BlockRenderer makeNewRenderer() {
-        return new BlockRenderer(this);
     }
 }

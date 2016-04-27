@@ -48,7 +48,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.renderer.BlockRenderer;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineSeparatorRenderer;
 
 /**
@@ -70,7 +70,7 @@ public class LineSeparator extends BlockElement<LineSeparator> {
     }
 
     @Override
-    protected BlockRenderer makeNewRenderer() {
+    protected IRenderer makeNewRenderer() {
         return new LineSeparatorRenderer(this);
     }
 
@@ -91,5 +91,4 @@ public class LineSeparator extends BlockElement<LineSeparator> {
         }
         return tagProperties;
     }
-
 }
