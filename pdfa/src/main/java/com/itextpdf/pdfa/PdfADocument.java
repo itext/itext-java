@@ -45,6 +45,8 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.log.Counter;
+import com.itextpdf.kernel.log.CounterFactory;
 import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -268,6 +270,10 @@ public class PdfADocument extends PdfDocument {
         tagStructureContext = new TagStructureContext(this, getPdfVersionForPdfA(checker.getConformanceLevel()));
     }
 
+    @Override
+    protected Counter getCounter() {
+        return CounterFactory.getCounter(PdfADocument.class);
+    }
 
     private static PdfVersion getPdfVersionForPdfA(PdfAConformanceLevel conformanceLevel) {
         PdfVersion version;
