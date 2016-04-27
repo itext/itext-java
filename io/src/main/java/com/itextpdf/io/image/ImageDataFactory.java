@@ -70,6 +70,9 @@ public final class ImageDataFactory {
     private static final byte[] tiff_2 = new byte[]{'I', 'I', 42, 0};
     private static final byte[] jbig2 = new byte[]{(byte) 0x97, 'J', 'B', '2', '\r', '\n', 0x1a, '\n'};
 
+    private ImageDataFactory() {
+    }
+
     public static ImageData create(byte[] bytes, boolean recoverImage) {
         return createImageInstance(bytes, recoverImage);
     }

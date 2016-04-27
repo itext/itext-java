@@ -184,12 +184,12 @@ class FontRegisterProvider {
         fontName = fontNames.get(fontName.toLowerCase());
         // the font is not registered as truetype font
         if (fontName != null) {
-            fontProgram = FontFactory.createFont(fontName, cached);
+            fontProgram = FontProgramFactory.createFont(fontName, cached);
         }
         if (fontProgram == null) {
             try {
                 // the font is a type 1 font or CJK font
-                fontProgram = FontFactory.createFont(fontName, cached);
+                fontProgram = FontProgramFactory.createFont(fontName, cached);
             } catch (IOException ignored) {
             }
         }
@@ -204,7 +204,7 @@ class FontRegisterProvider {
      * @param fullName   the font name
      * @param path       the font path
      */
-    public void registerFamily(String familyName, String fullName, String path) {
+    public void registerFontFamily(String familyName, String fullName, String path) {
         if (path != null)
             fontNames.put(fullName, path);
         List<String> tmp;
@@ -246,8 +246,8 @@ class FontRegisterProvider {
      * @param path the path to a ttf- or ttc-file
      */
 
-    public void register(String path) {
-        register(path, null);
+    public void registerFont(String path) {
+        registerFont(path, null);
     }
 
     /**
@@ -257,10 +257,10 @@ class FontRegisterProvider {
      * @param alias the alias you want to use for the font
      */
 
-    public void register(String path, String alias) {
+    public void registerFont(String path, String alias) {
         try {
             if (path.toLowerCase().endsWith(".ttf") || path.toLowerCase().endsWith(".otf") || path.toLowerCase().indexOf(".ttc,") > 0) {
-                FontProgram fontProgram = FontFactory.createFont(path);
+                FontProgram fontProgram = FontProgramFactory.createFont(path);
                 Object[] allNames = new Object[]{fontProgram.getFontNames().getFontName(), fontProgram.getFontNames().getFamilyName(), fontProgram.getFontNames().getFullName()};
                 fontNames.put(((String) allNames[0]).toLowerCase(), path);
                 if (alias != null) {
@@ -281,7 +281,7 @@ class FontRegisterProvider {
                         saveCopyOfRegularFont(lcName, path);
                     }
                 }
-                String fullName = null;
+                String fullName;
                 String familyName = null;
                 names = (String[][]) allNames[1]; //family name
                 for (int k = 0; k < TTFamilyOrder.length; k += 3) {
@@ -303,7 +303,7 @@ class FontRegisterProvider {
                                 if (fullName.equals(lastName))
                                     continue;
                                 lastName = fullName;
-                                registerFamily(familyName, fullName, null);
+                                registerFontFamily(familyName, fullName, null);
                                 break;
                             }
                         }
@@ -315,14 +315,14 @@ class FontRegisterProvider {
                 }
                 TrueTypeCollection ttc = new TrueTypeCollection(path, PdfEncodings.WINANSI);
                 for (int i = 0; i < ttc.getTTCSize(); i++) {
-                    register(path + "," + i);
+                    registerFont(path + "," + i);
                 }
             } else if (path.toLowerCase().endsWith(".afm") || path.toLowerCase().endsWith(".pfm")) {
-                FontProgram fontProgram = FontFactory.createFont(path, false);
+                FontProgram fontProgram = FontProgramFactory.createFont(path, false);
                 String fullName = fontProgram.getFontNames().getFullName()[0][3].toLowerCase();
                 String familyName = fontProgram.getFontNames().getFamilyName()[0][3].toLowerCase();
                 String psName =fontProgram.getFontNames().getFontName().toLowerCase();
-                registerFamily(familyName, fullName, null);
+                registerFontFamily(familyName, fullName, null);
                 fontNames.put(psName, path);
                 fontNames.put(fullName, path);
             }
@@ -351,8 +351,8 @@ class FontRegisterProvider {
      * @param dir the directory
      * @return the number of fonts registered
      */
-    public int registerDirectory(String dir) {
-        return registerDirectory(dir, false);
+    public int registerFontDirectory(String dir) {
+        return registerFontDirectory(dir, false);
     }
 
     /**
@@ -362,7 +362,7 @@ class FontRegisterProvider {
      * @param scanSubdirectories recursively scan subdirectories if <code>true</true>
      * @return the number of fonts registered
      */
-    public int registerDirectory(String dir, boolean scanSubdirectories) {
+    public int registerFontDirectory(String dir, boolean scanSubdirectories) {
         LOGGER.debug(MessageFormat.format("Registering directory {0}, looking for fonts", dir));
         int count = 0;
         try {
@@ -376,11 +376,11 @@ class FontRegisterProvider {
                         /* Only register Type 1 fonts with matching .pfb files */
                         String pfb = file.substring(0, file.length() - 4) + ".pfb";
                         if (FileUtil.fileExists(pfb)) {
-                            register(file, null);
+                            registerFont(file, null);
                             ++count;
                         }
                     } else if (".ttf".equals(suffix) || ".otf".equals(suffix) || ".ttc".equals(suffix)) {
-                        register(file, null);
+                        registerFont(file, null);
                         ++count;
                     }
                 } catch (Exception e) {
@@ -399,7 +399,7 @@ class FontRegisterProvider {
      *
      * @return the number of fonts registered
      */
-    public int registerSystemDirectories() {
+    public int registerSystemFontDirectories() {
         int count = 0;
         String[] withSubDirs = {
                 FileUtil.getFontsDir(),
@@ -410,7 +410,7 @@ class FontRegisterProvider {
                 "/usr/X11R6/lib/X11/fonts"
         };
         for (String directory : withSubDirs) {
-            count += registerDirectory(directory, true);
+            count += registerFontDirectory(directory, true);
         }
 
         String[] withoutSubDirs = {
@@ -418,7 +418,7 @@ class FontRegisterProvider {
                 "/System/Library/Fonts"
         };
         for (String directory : withoutSubDirs) {
-            count += registerDirectory(directory, false);
+            count += registerFontDirectory(directory, false);
         }
 
         return count;
@@ -440,7 +440,7 @@ class FontRegisterProvider {
      * @return a set of registered font families
      */
 
-    public Set<String> getRegisteredFamilies() {
+    public Set<String> getRegisteredFontFamilies() {
         return fontFamilies.keySet();
     }
 
@@ -449,7 +449,7 @@ class FontRegisterProvider {
      * @param fontname the name of the font that has to be checked.
      * @return true if the font is found
      */
-    public boolean isRegistered(String fontname) {
+    public boolean isRegisteredFont(String fontname) {
         return fontNames.containsKey(fontname.toLowerCase());
     }
 }

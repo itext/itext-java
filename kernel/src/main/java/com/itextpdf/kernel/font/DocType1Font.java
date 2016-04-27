@@ -45,7 +45,7 @@
 package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.font.FontEncoding;
-import com.itextpdf.io.font.FontFactory;
+import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.otf.Glyph;
@@ -81,7 +81,7 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
             try {
                 //if there are no font modifiers, cached font could be used,
                 //otherwise a new instance should be created.
-                type1StdFont = (Type1Font)FontFactory.createRegisteredFont(baseFont);
+                type1StdFont = (Type1Font) FontProgramFactory.createRegisteredFont(baseFont);
             } catch (Exception e) {
                 type1StdFont = null;
             }

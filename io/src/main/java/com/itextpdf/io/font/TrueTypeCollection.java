@@ -90,9 +90,9 @@ public class TrueTypeCollection {
         }
 
         if (ttcPath != null) {
-            return FontFactory.createFont(ttcPath, ttcIndex, cached);
+            return FontProgramFactory.createFont(ttcPath, ttcIndex, cached);
         } else {
-            return FontFactory.createFont(ttc, ttcIndex, cached);
+            return FontProgramFactory.createFont(ttc, ttcIndex, cached);
         }
     }
 
