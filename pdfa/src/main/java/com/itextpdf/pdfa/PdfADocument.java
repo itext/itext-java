@@ -44,6 +44,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.log.Counter;
 import com.itextpdf.kernel.log.CounterFactory;
@@ -73,6 +74,8 @@ import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.checker.PdfA2Checker;
 import com.itextpdf.pdfa.checker.PdfA3Checker;
 import com.itextpdf.pdfa.checker.PdfAChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -203,17 +206,20 @@ public class PdfADocument extends PdfDocument {
     }
 
     @Override
-    public void createXmpMetadata() throws XMPException {
-        createXmpMetadata(checker.getConformanceLevel());
-    }
-
-    public void createXmpMetadata(PdfAConformanceLevel conformanceLevel) throws XMPException {
-        super.createXmpMetadata();
-        XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(getXmpMetadata());
-        if (conformanceLevel != null) {
-            addRdfDescription(xmpMeta, conformanceLevel);
+    protected void updateXmpMetadata() {
+        try {
+            XMPMeta xmpMeta = createXmpMetadata();
+            xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, checker.getConformanceLevel().getPart());
+            xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, checker.getConformanceLevel().getConformance());
+            if (this.isTagged()) {
+                XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
+                XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
+            }
+            setXmpMetadata(xmpMeta);
+        } catch (XMPException e) {
+            Logger logger = LoggerFactory.getLogger(PdfADocument.class);
+            logger.error(LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
         }
-        setXmpMetadata(xmpMeta);
     }
 
     @Override
@@ -254,15 +260,6 @@ public class PdfADocument extends PdfDocument {
             case "3":
                 checker = new PdfA3Checker(conformanceLevel);
                 break;
-        }
-    }
-
-    protected void addRdfDescription(XMPMeta xmpMeta, PdfAConformanceLevel conformanceLevel) throws XMPException {
-        xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, conformanceLevel.getPart());
-        xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, conformanceLevel.getConformance());
-        if (this.isTagged()) {
-            XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
-            XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
         }
     }
 

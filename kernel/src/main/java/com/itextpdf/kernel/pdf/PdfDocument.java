@@ -275,16 +275,19 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         setXmpMetadata(xmpMeta, serializeOptions);
     }
 
-    public void createXmpMetadata() throws XMPException {
-        checkClosingStatus();
-        XMPMeta xmpMeta = XMPMetaFactory.create();
-        xmpMeta.setObjectName(XMPConst.TAG_XMPMETA);
-        xmpMeta.setObjectName("");
+    protected void updateXmpMetadata() {
         try {
-            xmpMeta.setProperty(XMPConst.NS_DC, PdfConst.Format, "application/pdf");
-            xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, Version.getInstance().getVersion());
-        } catch (XMPException ignored) {
+            if (writer.properties.addXmpMetadata) {
+                setXmpMetadata(createXmpMetadata());
+            }
+        } catch (XMPException e) {
+            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+            logger.error(LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
         }
+    }
+
+    protected XMPMeta createXmpMetadata() throws XMPException {
+        XMPMeta xmpMeta = XMPMetaFactory.parseFromBuffer(getXmpMetadata(true));
         PdfDictionary docInfo = info.getPdfObject();
         if (docInfo != null) {
             PdfName key;
@@ -299,34 +302,73 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     continue;
                 value = ((PdfString) obj).toUnicodeString();
                 if (PdfName.Title.equals(key)) {
-                    xmpMeta.setLocalizedText(XMPConst.NS_DC, PdfConst.Title, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
+                    if (!IsXmpMetaHasLocalizedText(xmpMeta, XMPConst.NS_DC, PdfConst.Title)) {
+                        xmpMeta.setLocalizedText(XMPConst.NS_DC, PdfConst.Title, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
+                    }
                 } else if (PdfName.Author.equals(key)) {
                     xmpMeta.appendArrayItem(XMPConst.NS_DC, PdfConst.Creator, new PropertyOptions(PropertyOptions.ARRAY_ORDERED), value, null);
                 } else if (PdfName.Subject.equals(key)) {
-                    xmpMeta.setLocalizedText(XMPConst.NS_DC, PdfConst.Description, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
+                    if (!IsXmpMetaHasLocalizedText(xmpMeta, XMPConst.NS_DC, PdfConst.Description)) {
+                        xmpMeta.setLocalizedText(XMPConst.NS_DC, PdfConst.Description, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
+                    }
                 } else if (PdfName.Keywords.equals(key)) {
-                    for (String v : value.split(",|;"))
-                        if (v.trim().length() > 0)
+                    for (String v : value.split(",|;")) {
+                        if (v.trim().length() > 0) {
                             xmpMeta.appendArrayItem(XMPConst.NS_DC, PdfConst.Subject, new PropertyOptions(PropertyOptions.ARRAY), v.trim(), null);
-                    xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Keywords, value);
+                        }
+                    }
+                    if (!isXmpMetaHasProperty(xmpMeta, XMPConst.NS_PDF, PdfConst.Keywords)) {
+                        xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Keywords, value);
+                    }
                 } else if (PdfName.Creator.equals(key)) {
-                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.CreatorTool, value);
+                    if (!isXmpMetaHasProperty(xmpMeta, XMPConst.NS_PDF, PdfConst.CreatorTool)) {
+                        xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.CreatorTool, value);
+                    }
                 } else if (PdfName.Producer.equals(key)) {
-                xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, value);
+                    if (!isXmpMetaHasProperty(xmpMeta, XMPConst.NS_PDF, PdfConst.Producer)) {
+                        xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, value);
+                    }
                 } else if (PdfName.CreationDate.equals(key)) {
-                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.CreateDate, PdfDate.getW3CDate(value));
+                    if (!isXmpMetaHasProperty(xmpMeta, XMPConst.NS_XMP, PdfConst.CreateDate)) {
+                        xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.CreateDate, PdfDate.getW3CDate(value));
+                    }
                 } else if (PdfName.ModDate.equals(key)) {
-                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.ModifyDate, PdfDate.getW3CDate(value));
+                    if (!isXmpMetaHasProperty(xmpMeta, XMPConst.NS_XMP, PdfConst.ModifyDate)) {
+                        xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.ModifyDate, PdfDate.getW3CDate(value));
+                    }
                 }
             }
         }
-        if (isTagged()) {
+        if (isTagged() && !isXmpMetaHasProperty(xmpMeta, XMPConst.NS_PDFUA_ID, XMPConst.PART)) {
             xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART, 1, new PropertyOptions(PropertyOptions.SEPARATE_NODE));
         }
-        setXmpMetadata(xmpMeta);
+        return xmpMeta;
     }
 
+    /**
+     * Gets XMPMetadata.
+     */
     public byte[] getXmpMetadata() {
+        return getXmpMetadata(false);
+    }
+
+    /**
+     * Gets XMPMetadata or create a new one.
+     * @param createNew if true, create a new empty XMPMetadata if it did not present.
+     * @return existed or newly created XMPMetadata byte array.
+     */
+    public byte[] getXmpMetadata(boolean createNew) {
+        if (xmpMetadata == null && createNew) {
+            XMPMeta xmpMeta = XMPMetaFactory.create();
+            xmpMeta.setObjectName(XMPConst.TAG_XMPMETA);
+            xmpMeta.setObjectName("");
+            try {
+                xmpMeta.setProperty(XMPConst.NS_DC, PdfConst.Format, "application/pdf");
+                xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, Version.getInstance().getVersion());
+                setXmpMetadata(xmpMeta);
+            } catch (XMPException ignored) {
+            }
+        }
         return xmpMetadata;
     }
 
@@ -668,9 +710,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         isClosing = true;
         try {
             if (writer != null) {
-                if (catalog.isFlushed())
+                if (catalog.isFlushed()) {
                     throw new PdfException(PdfException.CannotCloseDocumentWithAlreadyFlushedPdfCatalog);
-                if (xmpMetadata != null) {
+                }
+                updateXmpMetadata();
+                if (getXmpMetadata() != null) {
                     PdfStream xmp = new PdfStream().makeIndirect(this);
                     xmp.getOutputStream().write(xmpMetadata);
                     xmp.put(PdfName.Type, PdfName.Metadata);
@@ -761,7 +805,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     }
 
                 }
-
                 byte[] originalFileID = null;
                 if (crypto == null && writer.crypto != null) {
                     originalFileID = writer.crypto.getDocumentId();
@@ -1649,6 +1692,14 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             names.makeIndirect(this);
         }
         names.put(treeType, treeRoot);
+    }
+
+    private static boolean isXmpMetaHasProperty(XMPMeta xmpMeta, String schemaNS, String propName) throws XMPException {
+        return xmpMeta.getProperty(schemaNS, propName) != null;
+    }
+
+    private static boolean IsXmpMetaHasLocalizedText(XMPMeta xmpMeta, String schemaNS, String altTextName) throws XMPException {
+        return xmpMeta.getLocalizedText(schemaNS, altTextName, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT) != null;
     }
 
     @SuppressWarnings("unused")

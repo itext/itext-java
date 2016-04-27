@@ -64,6 +64,7 @@ public class WriterProperties implements Serializable {
      */
     protected boolean smartMode;
     protected boolean debugMode;
+    protected boolean addXmpMetadata;
     protected PdfVersion pdfVersion;
     protected EncryptionProperties encryptionProperties;
 
@@ -98,6 +99,15 @@ public class WriterProperties implements Serializable {
      */
     public WriterProperties useSmartMode() {
         this.smartMode = true;
+        return this;
+    }
+
+    /**
+     * If true, default XMPMetadata based on {@link PdfDocumentInfo} will be added.
+     * @return this {@code WriterProperties} instance
+     */
+    public WriterProperties addXmpMetadata() {
+        this.addXmpMetadata = true;
         return this;
     }
 
