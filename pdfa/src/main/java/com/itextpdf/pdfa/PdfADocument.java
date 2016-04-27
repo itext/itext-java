@@ -271,7 +271,7 @@ public class PdfADocument extends PdfDocument {
 
     private static PdfVersion getPdfVersionForPdfA(PdfAConformanceLevel conformanceLevel) {
         PdfVersion version;
-        switch (conformanceLevel.getConformance()) {
+        switch (conformanceLevel.getPart()) {
             case "1":
                 version = PdfVersion.PDF_1_4;
                 break;
