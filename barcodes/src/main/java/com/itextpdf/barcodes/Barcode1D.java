@@ -145,7 +145,7 @@ public abstract class Barcode1D {
      */
     protected String altText;
 
-    public Barcode1D(PdfDocument document) {
+    protected Barcode1D(PdfDocument document) {
         this.document = document;
     }
 

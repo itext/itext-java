@@ -108,10 +108,6 @@ public abstract class PdfObject implements Serializable {
      */
     private short state;
 
-    public PdfObject() {
-
-    }
-
     /**
      * Gets object type.
      *

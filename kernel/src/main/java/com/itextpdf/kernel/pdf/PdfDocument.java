@@ -309,10 +309,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         if (v.trim().length() > 0)
                             xmpMeta.appendArrayItem(XMPConst.NS_DC, PdfConst.Subject, new PropertyOptions(PropertyOptions.ARRAY), v.trim(), null);
                     xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Keywords, value);
-                } else if (PdfName.Producer.equals(key)) {
-                    xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, value);
                 } else if (PdfName.Creator.equals(key)) {
                     xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.CreatorTool, value);
+                } else if (PdfName.Producer.equals(key)) {
+                xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, value);
                 } else if (PdfName.CreationDate.equals(key)) {
                     xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.CreateDate, PdfDate.getW3CDate(value));
                 } else if (PdfName.ModDate.equals(key)) {

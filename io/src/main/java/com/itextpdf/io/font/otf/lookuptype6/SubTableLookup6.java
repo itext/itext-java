@@ -54,6 +54,7 @@ import com.itextpdf.io.font.otf.OpenTypeFontTableReader;
 import java.util.List;
 
 public abstract class SubTableLookup6 extends ContextualSubTable {
+
     protected SubTableLookup6(OpenTypeFontTableReader openReader, int lookupFlag) {
         super(openReader, lookupFlag);
     }

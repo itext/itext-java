@@ -87,7 +87,7 @@ public abstract class PdfAChecker {
     protected Set<PdfObject> checkedObjects = new HashSet<>();
     protected Map<PdfObject, PdfColorSpace> checkedObjectsColorspace = new HashMap<>();
 
-    public PdfAChecker(PdfAConformanceLevel conformanceLevel) {
+    protected PdfAChecker(PdfAConformanceLevel conformanceLevel) {
         this.conformanceLevel = conformanceLevel;
     }
 

@@ -113,13 +113,12 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         return shading;
     }
 
-    public PdfShading(PdfDictionary pdfObject) {
+    protected PdfShading(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
-    public PdfShading(PdfDictionary pdfObject, int type, PdfObject colorSpace) {
+    protected PdfShading(PdfDictionary pdfObject, int type, PdfObject colorSpace) {
         super(pdfObject);
-
         getPdfObject().put(PdfName.ShadingType, new PdfNumber(type));
         getPdfObject().put(PdfName.ColorSpace, colorSpace);
     }

@@ -55,8 +55,7 @@ public abstract class PdfDeviceCs extends PdfColorSpace {
         return false;
     }
 
-
-    public PdfDeviceCs(PdfName pdfObject) {
+    protected PdfDeviceCs(PdfName pdfObject) {
         super(pdfObject);
     }
 
