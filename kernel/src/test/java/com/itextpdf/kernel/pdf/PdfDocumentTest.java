@@ -1,6 +1,6 @@
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.image.ImageFactory;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -255,7 +255,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     public void testImageCompressLevel() throws IOException {
-        byte[] b = ImageFactory.getImage(sourceFolder + "berlin2013.jpg").getData();
+        byte[] b = ImageDataFactory.create(sourceFolder + "berlin2013.jpg").getData();
         com.itextpdf.io.source.ByteArrayOutputStream image =  new com.itextpdf.io.source.ByteArrayOutputStream();
         image.assignBytes(b, b.length);
 

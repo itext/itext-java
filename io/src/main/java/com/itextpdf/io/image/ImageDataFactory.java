@@ -57,7 +57,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public final class ImageFactory {
+public final class ImageDataFactory {
 
     private static final byte[] gif = new byte[]{'G', 'I', 'F'};
     private static final byte[] jpeg = new byte[]{(byte) 0xFF, (byte) 0xD8};
@@ -70,33 +70,33 @@ public final class ImageFactory {
     private static final byte[] tiff_2 = new byte[]{'I', 'I', 42, 0};
     private static final byte[] jbig2 = new byte[]{(byte) 0x97, 'J', 'B', '2', '\r', '\n', 0x1a, '\n'};
 
-    public static ImageData getImage(byte[] bytes, boolean recoverImage) {
-        return getImageInstance(bytes, recoverImage);
+    public static ImageData create(byte[] bytes, boolean recoverImage) {
+        return createImageInstance(bytes, recoverImage);
     }
 
-    public static ImageData getImage(byte[] bytes) {
-        return getImage(bytes, false);
+    public static ImageData create(byte[] bytes) {
+        return create(bytes, false);
     }
 
-    public static ImageData getImage(URL url, boolean recoverImage) {
-        return getImageInstance(url, recoverImage);
+    public static ImageData create(URL url, boolean recoverImage) {
+        return createImageInstance(url, recoverImage);
     }
 
-    public static ImageData getImage(URL url) {
-        return getImage(url, false);
+    public static ImageData create(URL url) {
+        return create(url, false);
     }
 
-    public static ImageData getImage(String filename, boolean recoverImage) throws MalformedURLException {
-        return getImage(UrlUtil.toURL(filename), recoverImage);
+    public static ImageData create(String filename, boolean recoverImage) throws MalformedURLException {
+        return create(UrlUtil.toURL(filename), recoverImage);
     }
 
-    public static ImageData getImage(String filename) throws MalformedURLException {
-        return getImage(filename, false);
+    public static ImageData create(String filename) throws MalformedURLException {
+        return create(filename, false);
     }
 
-    public static ImageData getImage(int width, int height, boolean reverseBits,
-                                 int typeCCITT, int parameters, byte[] data,
-                                 int[] transparency) {
+    public static ImageData create(int width, int height, boolean reverseBits,
+                                   int typeCCITT, int parameters, byte[] data,
+                                   int[] transparency) {
         if (transparency != null && transparency.length != 2)
             throw new IOException(IOException.TransparencyLengthMustBeEqualTo2WithCcittImages);
         if (typeCCITT != RawImageData.CCITTG4 && typeCCITT != RawImageData.CCITTG3_1D && typeCCITT != RawImageData.CCITTG3_2D)
@@ -112,13 +112,13 @@ public final class ImageFactory {
         return image;
     }
 
-    public static ImageData getImage(int width, int height, int components,
-                                 int bpc, byte[] data, int[] transparency) {
+    public static ImageData create(int width, int height, int components,
+                                   int bpc, byte[] data, int[] transparency) {
         if (transparency != null && transparency.length != components * 2)
             throw new IOException(IOException.TransparencyLengthMustBeEqualTo2WithCcittImages);
         if (components == 1 && bpc == 1) {
             byte[] g4 = CCITTG4Encoder.compress(data, width, height);
-            return ImageFactory.getImage(width, height, false, RawImageData.CCITTG4, RawImageData.CCITT_BLACKIS1, g4, transparency);
+            return ImageDataFactory.create(width, height, false, RawImageData.CCITTG4, RawImageData.CCITT_BLACKIS1, g4, transparency);
         }
         RawImageData image = new RawImageData(data, ImageType.RAW);
         image.height = height;
@@ -141,8 +141,8 @@ public final class ImageFactory {
      * @param color if different from <CODE>null</CODE> the transparency pixels are replaced by this color
      * @return RawImage
      */
-    public static ImageData getImage(java.awt.Image image, java.awt.Color color) throws java.io.IOException {
-        return ImageFactory.getImage(image, color, false);
+    public static ImageData create(java.awt.Image image, java.awt.Color color) throws java.io.IOException {
+        return ImageDataFactory.create(image, color, false);
     }
 
     /**
@@ -153,11 +153,11 @@ public final class ImageFactory {
      * @param forceBW if <CODE>true</CODE> the image is treated as black and white
      * @return RawImage
      */
-    public static ImageData getImage(java.awt.Image image, java.awt.Color color, boolean forceBW) throws java.io.IOException {
+    public static ImageData create(java.awt.Image image, java.awt.Color color, boolean forceBW) throws java.io.IOException {
         return AwtImageFactory.getImage(image, color, forceBW);
     }
 
-    public static ImageData getBmpImage(URL url, boolean noHeader, int size) {
+    public static ImageData createBmp(URL url, boolean noHeader, int size) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, bmp)) {
             ImageData image = new BmpImageData(url, noHeader, size);
@@ -167,7 +167,7 @@ public final class ImageFactory {
         throw new IllegalArgumentException("BMP image expected.");
     }
 
-    public static ImageData getBmpImage(byte[] bytes, boolean noHeader, int size) {
+    public static ImageData createBmp(byte[] bytes, boolean noHeader, int size) {
         byte[] imageType = readImageType(bytes);
         if (noHeader || imageTypeIs(imageType, bmp)) {
             ImageData image = new BmpImageData(bytes, noHeader, size);
@@ -183,7 +183,7 @@ public final class ImageFactory {
      * @param bytes
      * @return
      */
-    public static GifImageData getGifImage(byte[] bytes) {
+    public static GifImageData createGif(byte[] bytes) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, gif)) {
             GifImageData image = new GifImageData(bytes);
@@ -200,7 +200,7 @@ public final class ImageFactory {
      * @param frame number of frame to be returned
      * @return
      */
-    public static ImageData getGifFrame(URL url, int frame) {
+    public static ImageData createGifFrame(URL url, int frame) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, gif)) {
             GifImageData image = new GifImageData(url);
@@ -217,7 +217,7 @@ public final class ImageFactory {
      * @param frame number of frame to be returned
      * @return
      */
-    public static ImageData getGifFrame(byte[] bytes, int frame) {
+    public static ImageData createGifFrame(byte[] bytes, int frame) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, gif)) {
             GifImageData image = new GifImageData(bytes);
@@ -234,7 +234,7 @@ public final class ImageFactory {
      * @param frameNumbers array of frame numbers of gif image
      * @return
      */
-    public static List<ImageData> getGifFrames(byte[] bytes, int[] frameNumbers) {
+    public static List<ImageData> createGifFrames(byte[] bytes, int[] frameNumbers) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, gif)) {
             GifImageData image = new GifImageData(bytes);
@@ -256,7 +256,7 @@ public final class ImageFactory {
      * @param frameNumbers array of frame numbers of gif image
      * @return
      */
-    public static List<ImageData> getGifFrames(URL url, int[] frameNumbers) {
+    public static List<ImageData> createGifFrames(URL url, int[] frameNumbers) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, gif)) {
             GifImageData image = new GifImageData(url);
@@ -277,7 +277,7 @@ public final class ImageFactory {
      * @param bytes byte array of gif image
      * @return all frames of gif image
      */
-    public static List<ImageData> getGifFrames(byte[] bytes) {
+    public static List<ImageData> createGifFrames(byte[] bytes) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, gif)) {
             GifImageData image = new GifImageData(bytes);
@@ -293,7 +293,7 @@ public final class ImageFactory {
      * @param url url of gif image
      * @return all frames of gif image
      */
-    public static List<ImageData> getGifFrames(URL url) {
+    public static List<ImageData> createGifFrames(URL url) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, gif)) {
             GifImageData image = new GifImageData(url);
@@ -303,7 +303,7 @@ public final class ImageFactory {
         throw new IllegalArgumentException("GIF image expected.");
     }
 
-    public static ImageData getJbig2Image(URL url, int page) {
+    public static ImageData createJbig2(URL url, int page) {
         if (page < 1)
             throw new IllegalArgumentException("The page number must be greater than 0");
         byte[] imageType = readImageType(url);
@@ -315,7 +315,7 @@ public final class ImageFactory {
         throw new IllegalArgumentException("JBIG2 image expected.");
     }
 
-    public static ImageData getJbig2Image(byte[] bytes, int page) {
+    public static ImageData createJbig2(byte[] bytes, int page) {
         if (page < 1)
             throw new IllegalArgumentException("The page number must be greater than 0");
         byte[] imageType = readImageType(bytes);
@@ -328,7 +328,7 @@ public final class ImageFactory {
 
     }
 
-    public static ImageData getJpegImage(URL url) {
+    public static ImageData createJpeg(URL url) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, jpeg)) {
             ImageData image = new JpegImageData(url);
@@ -338,7 +338,7 @@ public final class ImageFactory {
         throw new IllegalArgumentException("JPEG image expected.");
     }
 
-    public static ImageData getJpegImage(byte[] bytes) {
+    public static ImageData createJpeg(byte[] bytes) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, jpeg)) {
             ImageData image = new JpegImageData(bytes);
@@ -349,7 +349,7 @@ public final class ImageFactory {
 
     }
 
-    public static ImageData getJpeg2000Image(URL url) {
+    public static ImageData createJpeg2000(URL url) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
             ImageData image = new Jpeg2000ImageData(url);
@@ -359,7 +359,7 @@ public final class ImageFactory {
         throw new IllegalArgumentException("JPEG2000 image expected.");
     }
 
-    public static ImageData getJpeg2000Image(byte[] bytes) {
+    public static ImageData createJpeg2000(byte[] bytes) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, jpeg2000_1) || imageTypeIs(imageType, jpeg2000_2)) {
             ImageData image = new Jpeg2000ImageData(bytes);
@@ -370,7 +370,7 @@ public final class ImageFactory {
 
     }
 
-    public static ImageData getPngImage(URL url) {
+    public static ImageData createPng(URL url) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, png)) {
             ImageData image = new PngImageData(url);
@@ -380,7 +380,7 @@ public final class ImageFactory {
         throw new IllegalArgumentException("PNG image expected.");
     }
 
-    public static ImageData getPngImage(byte[] bytes) {
+    public static ImageData createPng(byte[] bytes) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, png)) {
             ImageData image = new PngImageData(bytes);
@@ -390,7 +390,7 @@ public final class ImageFactory {
         throw new IllegalArgumentException("PNG image expected.");
     }
 
-    public static ImageData getTiffImage(URL url, boolean recoverFromImageError, int page, boolean direct) {
+    public static ImageData createTiff(URL url, boolean recoverFromImageError, int page, boolean direct) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
             ImageData image = new TiffImageData(url, recoverFromImageError, page, direct);
@@ -400,7 +400,7 @@ public final class ImageFactory {
         throw new IllegalArgumentException("TIFF image expected.");
     }
 
-    public static ImageData getTiffImage(byte[] bytes, boolean recoverFromImageError, int page, boolean direct) {
+    public static ImageData createTiff(byte[] bytes, boolean recoverFromImageError, int page, boolean direct) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2)) {
             ImageData image = new TiffImageData(bytes, recoverFromImageError, page, direct);
@@ -410,11 +410,11 @@ public final class ImageFactory {
         throw new IllegalArgumentException("TIFF image expected.");
     }
 
-    public static ImageData getRawImage(byte[] bytes) {
+    public static ImageData createRawImage(byte[] bytes) {
         return new RawImageData(bytes, ImageType.RAW);
     }
 
-    private static ImageData getImageInstance(URL source, boolean recoverImage) {
+    private static ImageData createImageInstance(URL source, boolean recoverImage) {
         byte[] imageType = readImageType(source);
         if (imageTypeIs(imageType, gif)) {
             GifImageData image = new GifImageData(source);
@@ -448,7 +448,7 @@ public final class ImageFactory {
         throw new IOException(IOException.ImageFormatCannotBeRecognized);
     }
 
-    private static ImageData getImageInstance(byte[] bytes, boolean recoverImage) {
+    private static ImageData createImageInstance(byte[] bytes, boolean recoverImage) {
         byte[] imageType = readImageType(bytes);
         if (imageTypeIs(imageType, gif)) {
             GifImageData image = new GifImageData(bytes);

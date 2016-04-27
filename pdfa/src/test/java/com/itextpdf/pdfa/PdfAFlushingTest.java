@@ -1,7 +1,7 @@
 package com.itextpdf.pdfa;
 
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ITextTest;
@@ -52,7 +52,7 @@ public class PdfAFlushingTest extends ITextTest{
         doc.createXmpMetadata();
 
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
-        PdfImageXObject imageXObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         imageXObject.makeIndirect(doc);
         canvas.addXObject(imageXObject, new Rectangle(30, 300, 300, 300));
 
@@ -77,7 +77,7 @@ public class PdfAFlushingTest extends ITextTest{
         doc.createXmpMetadata();
 
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
-        PdfImageXObject imageXObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         imageXObject.makeIndirect(doc);
         canvas.addXObject(imageXObject, new Rectangle(30, 300, 300, 300));
 
@@ -103,7 +103,7 @@ public class PdfAFlushingTest extends ITextTest{
         doc.createXmpMetadata();
 
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
-        PdfImageXObject imageXObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         canvas.addXObject(imageXObject, new Rectangle(30, 300, 300, 300));
 
         PdfPage lastPage = doc.getLastPage();

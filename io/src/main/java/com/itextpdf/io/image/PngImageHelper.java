@@ -262,13 +262,13 @@ class PngImageHelper {
             if (png.iccProfile != null)
                 png.image.setProfile(png.iccProfile);
             if (png.palShades) {
-                RawImageData im2 = (RawImageData) ImageFactory.getRawImage(null);
+                RawImageData im2 = (RawImageData) ImageDataFactory.createRawImage(null);
                 RawImageHelper.updateRawImageParameters(im2, png.width, png.height, 1, 8, png.smask);
                 im2.makeMask();
                 png.image.setImageMask(im2);
             }
             if (png.genBWMask) {
-                RawImageData im2 = (RawImageData) ImageFactory.getRawImage(null);
+                RawImageData im2 = (RawImageData) ImageDataFactory.createRawImage(null);
                 RawImageHelper.updateRawImageParameters(im2, png.width, png.height, 1, 1, png.smask);
                 im2.makeMask();
                 png.image.setImageMask(im2);

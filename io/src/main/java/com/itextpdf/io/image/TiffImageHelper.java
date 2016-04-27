@@ -563,7 +563,7 @@ class TiffImageHelper {
                 tiff.image.setRotation(rotation);
             if (extraSamples > 0) {
                 mzip.close();
-                RawImageData mimg = (RawImageData)ImageFactory.getRawImage(null);
+                RawImageData mimg = (RawImageData) ImageDataFactory.createRawImage(null);
                 RawImageHelper.updateRawImageParameters(mimg, w, h, 1, bitsPerSample, mstream.toByteArray());
                 mimg.makeMask();
                 mimg.setDeflated(true);

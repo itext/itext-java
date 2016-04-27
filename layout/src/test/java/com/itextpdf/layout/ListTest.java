@@ -1,6 +1,6 @@
 package com.itextpdf.layout;
 
-import com.itextpdf.io.image.ImageFactory;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -217,7 +217,7 @@ public class ListTest extends ExtendedITextTest{
         Document document = new Document(pdfDocument);
 
         List list = new List(ListNumberingType.GREEK_LOWER);
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
         list.add(new ListItem()).add(new ListItem(image)).add(new ListItem()).add("123").add((ListItem) new ListItem().add(new Div().setHeight(70).setBackgroundColor(Color.RED)));
 

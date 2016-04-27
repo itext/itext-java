@@ -1,7 +1,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.image.ImageFactory;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -52,7 +52,7 @@ public class ImageTest extends ExtendedITextTest{
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
@@ -80,7 +80,7 @@ public class ImageTest extends ExtendedITextTest{
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createJpeg(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
         Image image = new Image(xObject, 100);
 
         Paragraph p = new Paragraph();
@@ -108,7 +108,7 @@ public class ImageTest extends ExtendedITextTest{
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
@@ -137,7 +137,7 @@ public class ImageTest extends ExtendedITextTest{
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
 
         Paragraph p = new Paragraph();
@@ -166,7 +166,7 @@ public class ImageTest extends ExtendedITextTest{
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
@@ -195,7 +195,7 @@ public class ImageTest extends ExtendedITextTest{
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
@@ -225,7 +225,7 @@ public class ImageTest extends ExtendedITextTest{
         Document doc = new Document(pdfDoc);
 
 
-        Image image = new Image(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
 
         Div div = new Div();
         div.add(image);
@@ -250,7 +250,7 @@ public class ImageTest extends ExtendedITextTest{
         Document doc = new Document(pdfDoc);
 
 
-        Image image = new Image(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
 
         Div div = new Div();
         div.add(image);
@@ -275,7 +275,7 @@ public class ImageTest extends ExtendedITextTest{
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
         com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
-        Image img = new Image(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Table table = new Table(8);
         table.setWidthPercent(100);
         for (int k = 0; k < rowCount; k++) {
@@ -304,7 +304,7 @@ public class ImageTest extends ExtendedITextTest{
         //Initialize document
         Document document = new Document(pdf);
 
-        Image img = new Image(ImageFactory.getImage(sourceFolder + "itis.jpg"));
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg"));
         img.setAutoScale(true);
         Table table = new Table(4);
         table.setWidthPercent(100);

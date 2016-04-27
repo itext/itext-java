@@ -144,7 +144,7 @@ class AwtImageFactory {
                         wMarker = 0;
                 }
             }
-            return ImageFactory.getImage(w, h, 1, 1, pixelsByte, transparency);
+            return ImageDataFactory.create(w, h, 1, 1, pixelsByte, transparency);
         } else {
             byte[] pixelsByte = new byte[w * h * 3];
             byte[] smask = null;
@@ -204,9 +204,9 @@ class AwtImageFactory {
                 else
                     smask = null;
             }
-            ImageData img = ImageFactory.getImage(w, h, 3, 8, pixelsByte, transparency);
+            ImageData img = ImageDataFactory.create(w, h, 3, 8, pixelsByte, transparency);
             if (smask != null) {
-                ImageData sm = ImageFactory.getImage(w, h, 1, 8, smask, null);
+                ImageData sm = ImageDataFactory.create(w, h, 1, 8, smask, null);
                 sm.makeMask();
                 img.setImageMask(sm);
             }

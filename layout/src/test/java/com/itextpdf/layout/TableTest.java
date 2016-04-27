@@ -1,8 +1,8 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -313,7 +313,7 @@ public class TableTest extends ExtendedITextTest{
 
         doc.add(new Paragraph("Table 3"));
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getPngImage(new File(sourceFolder + "itext.png").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(new File(sourceFolder + "itext.png").toURI().toURL()));
         Image image = new Image(xObject, 50);
 
         Table table3 = new Table(new float[]{100, 100})
@@ -629,7 +629,7 @@ public class TableTest extends ExtendedITextTest{
                 .addCell(new Cell().add(new Paragraph("cell 1, 3\n" + textContent)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + textContent)))
                 .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + textContent)))
-                .addCell(new Cell().add(new Image(ImageFactory.getImage(sourceFolder + "red.png"))))
+                .addCell(new Cell().add(new Image(ImageDataFactory.create(sourceFolder + "red.png"))))
                 .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + shortTextContent)))
@@ -658,7 +658,7 @@ public class TableTest extends ExtendedITextTest{
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{130, 130, 260})
-                .addCell(new Cell().add(new Image(ImageFactory.getImage(sourceFolder + "red.png"))))
+                .addCell(new Cell().add(new Image(ImageDataFactory.create(sourceFolder + "red.png"))))
                 .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + shortTextContent)))
@@ -696,7 +696,7 @@ public class TableTest extends ExtendedITextTest{
         doc.add(new Paragraph(textContent));
 
         Table table = new Table(new float[]{130, 130, 260})
-                .addCell(new Cell().add(new Image(ImageFactory.getImage(sourceFolder + "red.png"))))
+                .addCell(new Cell().add(new Image(ImageDataFactory.create(sourceFolder + "red.png"))))
                 .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + shortTextContent)))

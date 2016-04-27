@@ -44,6 +44,7 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceCmyk;
@@ -74,7 +75,6 @@ import com.itextpdf.io.codec.Base64;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageData;
-import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
@@ -914,7 +914,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         } else if (PdfName.Btn.equals(formType)) {
             if ((getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
                 try {
-                    img = ImageFactory.getImage(Base64.decode(value));
+                    img = ImageDataFactory.create(Base64.decode(value));
                 } catch (Exception e) {
                     text = value;
                 }
