@@ -562,6 +562,7 @@ public class PdfSignatureAppearance {
      * @return a top-level signature appearance
      */
     protected PdfFormXObject getAppearance() throws IOException {
+        PdfCanvas canvas;
         if (isInvisible()) {
             PdfFormXObject appearance = new PdfFormXObject(new Rectangle(0, 0));
             appearance.makeIndirect(document);
@@ -604,7 +605,7 @@ public class PdfSignatureAppearance {
 
             if (image != null) {
                 if (imageScale == 0) {
-                    PdfCanvas canvas = new PdfCanvas(n2, document);
+                    canvas = new PdfCanvas(n2, document);
                     canvas.addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), 0, 0);
                 } else {
                     float usableScale = imageScale;
@@ -618,7 +619,7 @@ public class PdfSignatureAppearance {
                     float x = (rect.getWidth() - w) / 2;
                     float y = (rect.getHeight() - h) / 2;
 
-                    PdfCanvas canvas = new PdfCanvas(n2, document);
+                    canvas = new PdfCanvas(n2, document);
                     canvas.addImage(image, w, 0, 0, h, x, y);
                 }
             }
@@ -692,7 +693,7 @@ public class PdfSignatureAppearance {
                         signedBy = "";
                     }
 
-                    PdfCanvas canvas = new PdfCanvas(n2, document);
+                    canvas = new PdfCanvas(n2, document);
                     Paragraph paragraph = new Paragraph(signedBy).setFont(font).setFontSize(layer2FontSize).setMargin(0).setMultipliedLeading(0.9f);
                     new Canvas(canvas, document, signatureRect).add(paragraph);
 
@@ -755,7 +756,7 @@ public class PdfSignatureAppearance {
             }
 
             if (renderingMode != RenderingMode.GRAPHIC) {
-                PdfCanvas canvas = new PdfCanvas(n2, document);
+                canvas = new PdfCanvas(n2, document);
                 Paragraph paragraph = new Paragraph(text).setFont(font).setFontSize(layer2FontSize).setMargin(0).setMultipliedLeading(0.9f);
                 new Canvas(canvas, document, dataRect).add(paragraph);
             }
@@ -773,7 +774,7 @@ public class PdfSignatureAppearance {
             float y = (rect.getHeight() - scale) / 2;
             scale /= 100;
 
-            PdfCanvas canvas = new PdfCanvas(topLayer, document);
+            canvas = new PdfCanvas(topLayer, document);
 
             if (rotation == 90) {
                 canvas.concatMatrix(0, 1, -1, 0, rect.getHeight(), 0);
@@ -817,7 +818,7 @@ public class PdfSignatureAppearance {
         napp.makeIndirect(document);
         napp.getResources().addForm(topLayer, new PdfName("FRM"));
 
-        PdfCanvas canvas = new PdfCanvas(napp, document);
+        canvas = new PdfCanvas(napp, document);
         canvas.addXObject(topLayer, 0, 0);
 
         return napp;

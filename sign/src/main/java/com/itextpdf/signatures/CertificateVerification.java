@@ -44,22 +44,17 @@
  */
 package com.itextpdf.signatures;
 
+import org.bouncycastle.cert.ocsp.BasicOCSPResp;
+import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
+import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
+import org.bouncycastle.tsp.TimeStampToken;
+
 import java.security.KeyStore;
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.GregorianCalendar;
-import java.util.List;
-
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
-import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
-import org.bouncycastle.tsp.TimeStampToken;
+import java.util.*;
 
 /**
  * This class consists of some methods that allow you to verify certificates.
@@ -168,7 +163,7 @@ public class CertificateVerification {
             }
         }
         if (result.size() == 0)
-            result.add(new VerificationException(null, "Invalid state. Possible circular certificate chain"));
+            result.add(new VerificationException((Certificate) null, "Invalid state. Possible circular certificate chain"));
         return result;
     }
 

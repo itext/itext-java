@@ -44,20 +44,6 @@
  */
 package com.itextpdf.signatures;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.security.cert.CRL;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateParsingException;
-import java.security.cert.X509CRL;
-import java.security.cert.X509Certificate;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
-
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
@@ -71,6 +57,16 @@ import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.KeyStoreException;
+import java.security.cert.*;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.List;
 
 /**
  * Class that allows you to verify a certificate against
@@ -255,7 +251,7 @@ public class OCSPVerifier extends RootStoreVerifier {
                             }
                         }
                     } catch (KeyStoreException e) {
-                        responderCert = null;
+                        responderCert = (X509Certificate) null;
                     }
                 }
 
@@ -278,7 +274,7 @@ public class OCSPVerifier extends RootStoreVerifier {
             try {
                 crl = CertificateUtil.getCRL(responderCert);
             } catch (Exception ignored) {
-                crl = null;
+                crl = (CRL) null;
             }
             if (crl != null && crl instanceof X509CRL) {
                 CRLVerifier crlVerifier = new CRLVerifier(null, null);
