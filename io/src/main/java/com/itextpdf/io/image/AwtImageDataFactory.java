@@ -48,15 +48,15 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.PixelGrabber;
 
-class AwtImageFactory {
+class AwtImageDataFactory {
     /**
      * Gets an instance of an Image from a java.awt.Image
      * @param image the java.awt.Image to convert
      * @param color if different from <CODE>null</CODE> the transparency pixels are replaced by this color
      * @return RawImage
      */
-    public static ImageData getImage(java.awt.Image image, java.awt.Color color) throws java.io.IOException {
-        return AwtImageFactory.getImage(image, color, false);
+    public static ImageData create(java.awt.Image image, java.awt.Color color) throws java.io.IOException {
+        return AwtImageDataFactory.create(image, color, false);
     }
 
     /**
@@ -66,7 +66,7 @@ class AwtImageFactory {
      * @param forceBW if <CODE>true</CODE> the image is treated as black and white
      * @return RawImage
      */
-    public static ImageData getImage(java.awt.Image image, java.awt.Color color, boolean forceBW) throws java.io.IOException {
+    public static ImageData create(java.awt.Image image, java.awt.Color color, boolean forceBW) throws java.io.IOException {
         if (image instanceof BufferedImage) {
             BufferedImage bi = (BufferedImage) image;
             if (bi.getType() == BufferedImage.TYPE_BYTE_BINARY && bi.getColorModel().getPixelSize() == 1) {

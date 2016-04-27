@@ -154,7 +154,7 @@ public final class ImageDataFactory {
      * @return RawImage
      */
     public static ImageData create(java.awt.Image image, java.awt.Color color, boolean forceBW) throws java.io.IOException {
-        return AwtImageFactory.getImage(image, color, forceBW);
+        return AwtImageDataFactory.create(image, color, forceBW);
     }
 
     public static ImageData createBmp(URL url, boolean noHeader, int size) {
