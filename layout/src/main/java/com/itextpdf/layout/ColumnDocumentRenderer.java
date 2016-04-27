@@ -70,7 +70,7 @@ public class ColumnDocumentRenderer extends DocumentRenderer {
 
     @Override
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
-        if (overflowResult != null && overflowResult.getAreaBreak() != null && overflowResult.getAreaBreak().getType() != AreaBreakType.NEW_AREA) {
+        if (overflowResult != null && overflowResult.getAreaBreak() != null && overflowResult.getAreaBreak().getType() != AreaBreakType.NEXT_AREA) {
             nextAreaNumber = 0;
         }
         if (nextAreaNumber % columns.length == 0) {

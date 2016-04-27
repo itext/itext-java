@@ -45,7 +45,7 @@
 package com.itextpdf.layout.property;
 
 public enum AreaBreakType {
-    NEW_AREA,
-    NEW_PAGE,
+    NEXT_AREA,
+    NEXT_PAGE,
     LAST_PAGE
 }
