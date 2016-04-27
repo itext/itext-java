@@ -82,6 +82,9 @@ public class PdfReader implements Closeable, Serializable {
     //indicate nearest first Indirect reference object which includes current reading the object, using for PdfString decrypt
     private PdfIndirectReference currentIndirectReference;
 
+    // For internal usage only
+    private String sourcePath;
+
     protected PdfTokenizer tokens;
     protected PdfEncryption decrypt;
 
@@ -101,7 +104,6 @@ public class PdfReader implements Closeable, Serializable {
     protected boolean hybridXref = false;
     protected boolean fixedXref = false;
     protected boolean xrefStm = false;
-
 
     /**
      * Constructs a new PdfReader.
@@ -153,7 +155,7 @@ public class PdfReader implements Closeable, Serializable {
                         .createBestSource(filename),
                 properties
                 );
-
+        this.sourcePath = filename;
     }
 
     /**
@@ -1096,6 +1098,30 @@ public class PdfReader implements Closeable, Serializable {
             }
             pdfNumber.setValue(streamLength);
             pdfStream.updateLength(streamLength);
+        }
+    }
+
+    /**
+     * This method is invoked while deserialization
+     */
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        if (sourcePath != null && tokens == null) {
+            tokens = getOffsetTokeniser(new RandomAccessSourceFactory().setForceRead(false).createBestSource(sourcePath));
+        }
+    }
+
+    /**
+     * This method is invoked while serialization
+     */
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+        if (sourcePath != null) {
+            PdfTokenizer tempTokens = tokens;
+            tokens = null;
+            out.defaultWriteObject();
+            tokens = tempTokens;
+        } else {
+            out.defaultWriteObject();
         }
     }
 
