@@ -72,10 +72,10 @@ public class Text extends AbstractElement<Text> implements ILeafElement<Text>, I
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T> T getDefaultProperty(int property) {
         switch (property) {
-            case HORIZONTAL_SCALING:
-            case VERTICAL_SCALING:
+            case Property.HORIZONTAL_SCALING:
+            case Property.VERTICAL_SCALING:
                 return (T) new Float(1);
             default:
                 return super.getDefaultProperty(property);

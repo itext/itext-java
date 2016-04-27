@@ -73,54 +73,54 @@ import java.util.Map;
  */
 public abstract class ElementPropertyContainer<Type extends ElementPropertyContainer> implements IPropertyContainer<Type> {
 
-    protected Map<Property, Object> properties = new HashMap<>();
+    protected Map<Integer, Object> properties = new HashMap<>();
 
     @Override
-    public <T extends Type> T setProperty(Property property, Object value) {
+    public <T extends Type> T setProperty(int property, Object value) {
         properties.put(property, value);
         return (T) this;
     }
 
     @Override
-    public boolean hasProperty(Property property) {
+    public boolean hasProperty(int property) {
         return hasOwnProperty(property);
     }
 
     @Override
-    public boolean hasOwnProperty(Property property) {
+    public boolean hasOwnProperty(int property) {
         return properties.containsKey(property);
     }
 
     @Override
-    public void deleteOwnProperty(Property property) {
+    public void deleteOwnProperty(int property) {
         properties.remove(property);
     }
 
     @Override
-    public <T> T getProperty(Property property) {
+    public <T> T getProperty(int property) {
         return getOwnProperty(property);
     }
 
     @Override
-    public <T> T getOwnProperty(Property property) {
+    public <T> T getOwnProperty(int property) {
         return (T) properties.get(property);
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T> T getDefaultProperty(int property) {
         switch (property) {
-            case MARGIN_TOP:
-            case MARGIN_RIGHT:
-            case MARGIN_BOTTOM:
-            case MARGIN_LEFT:
-            case PADDING_TOP:
-            case PADDING_RIGHT:
-            case PADDING_BOTTOM:
-            case PADDING_LEFT:
+            case Property.MARGIN_TOP:
+            case Property.MARGIN_RIGHT:
+            case Property.MARGIN_BOTTOM:
+            case Property.MARGIN_LEFT:
+            case Property.PADDING_TOP:
+            case Property.PADDING_RIGHT:
+            case Property.PADDING_BOTTOM:
+            case Property.PADDING_LEFT:
                 return (T) Float.valueOf(0);
-            case POSITION:
+            case Property.POSITION:
                 return (T)Integer.valueOf(LayoutPosition.STATIC);
-            case FORCED_PLACEMENT:
+            case Property.FORCED_PLACEMENT:
                 return (T) Boolean.FALSE;
             default:
                 return null;

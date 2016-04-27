@@ -274,7 +274,7 @@ public class ParagraphRenderer extends BlockRenderer {
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T> T getDefaultProperty(int property) {
         if ((property == Property.MARGIN_TOP || property == Property.MARGIN_BOTTOM) && parent instanceof CellRenderer) {
             return (T) Float.valueOf(0);
         }

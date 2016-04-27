@@ -82,11 +82,11 @@ public class List extends BlockElement<List> {
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T> T getDefaultProperty(int property) {
         switch (property) {
-            case LIST_SYMBOL_PRE_TEXT:
+            case Property.LIST_SYMBOL_PRE_TEXT:
                 return (T) "";
-            case LIST_SYMBOL_POST_TEXT:
+            case Property.LIST_SYMBOL_POST_TEXT:
                 return (T) ". ";
             default:
                 return super.getDefaultProperty(property);

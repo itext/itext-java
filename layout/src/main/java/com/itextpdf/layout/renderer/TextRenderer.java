@@ -621,9 +621,9 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T> T getDefaultProperty(int property) {
         switch (property) {
-            case HORIZONTAL_SCALING:
+            case Property.HORIZONTAL_SCALING:
                 return (T) Float.valueOf(1);
             default:
                 return super.getDefaultProperty(property);

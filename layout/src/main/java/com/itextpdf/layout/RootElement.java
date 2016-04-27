@@ -68,7 +68,7 @@ import com.itextpdf.layout.splitting.ISplitCharacters;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,7 +83,7 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
     protected PdfDocument pdfDocument;
 
     protected List<IElement> childElements = new ArrayList<>();
-    protected Map<Property, Object> properties = new EnumMap<>(Property.class);
+    protected Map<Integer, Object> properties = new HashMap<>();
 
     protected PdfFont defaultFont;
     protected ISplitCharacters defaultSplitCharacters;
@@ -115,50 +115,50 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
     }
 
     @Override
-    public boolean hasProperty(Property property) {
+    public boolean hasProperty(int property) {
         return hasOwnProperty(property);
     }
 
     @Override
-    public boolean hasOwnProperty(Property property) {
+    public boolean hasOwnProperty(int property) {
         return properties.containsKey(property);
     }
 
     @Override
-    public <T> T getProperty(Property property) {
+    public <T> T getProperty(int property) {
         return getOwnProperty(property);
     }
 
     @Override
-    public <T> T getOwnProperty(Property property) {
+    public <T> T getOwnProperty(int property) {
         return (T) properties.get(property);
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T> T getDefaultProperty(int property) {
         try {
             switch (property) {
-                case FONT:
+                case Property.FONT:
                     if (defaultFont == null) {
                         defaultFont = PdfFontFactory.createFont();
                     }
                     return (T) defaultFont;
-                case SPLIT_CHARACTERS:
+                case Property.SPLIT_CHARACTERS:
                     if (defaultSplitCharacters == null) {
                         defaultSplitCharacters = new DefaultSplitCharacters();
                     }
                     return (T) defaultSplitCharacters;
-                case FONT_SIZE:
+                case Property.FONT_SIZE:
                     return (T) Integer.valueOf(12);
-                case TEXT_RENDERING_MODE:
+                case Property.TEXT_RENDERING_MODE:
                     return (T) Integer.valueOf(PdfCanvasConstants.TextRenderingMode.FILL);
-                case TEXT_RISE:
+                case Property.TEXT_RISE:
                     return (T) Float.valueOf(0);
-                case SPACING_RATIO:
+                case Property.SPACING_RATIO:
                     return (T) Float.valueOf(0.75f);
-                case FONT_KERNING:
+                case Property.FONT_KERNING:
                     return (T) FontKerning.NO;
-                case BASE_DIRECTION:
+                case Property.BASE_DIRECTION:
                     return (T) BaseDirection.NO_BIDI;
                 default:
                     return null;
@@ -169,12 +169,12 @@ public abstract class RootElement<Type extends RootElement> implements IProperty
     }
 
     @Override
-    public void deleteOwnProperty(Property property) {
+    public void deleteOwnProperty(int property) {
         properties.remove(property);
     }
 
     @Override
-    public Type setProperty(Property property, Object value) {
+    public Type setProperty(int property, Object value) {
         properties.put(property, value);
         return (Type) this;
     }

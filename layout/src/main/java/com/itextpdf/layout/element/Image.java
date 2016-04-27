@@ -385,12 +385,12 @@ public class Image extends AbstractElement<Image> implements ILeafElement<Image>
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T> T getDefaultProperty(int property) {
         switch (property) {
-            case AUTO_SCALE:
+            case Property.AUTO_SCALE:
                 return (T) Boolean.valueOf(false);
-            case HORIZONTAL_SCALING:
-            case VERTICAL_SCALING:
+            case Property.HORIZONTAL_SCALING:
+            case Property.VERTICAL_SCALING:
                 return (T) Float.valueOf(1);
             default:
                 return super.getDefaultProperty(property);
