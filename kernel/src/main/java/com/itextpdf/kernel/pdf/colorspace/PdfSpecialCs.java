@@ -86,11 +86,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
             return 1;
         }
 
-        @Override
-        public float[] getDefaultColorants() {
-            return new float[getNumberOfComponents()];
-        }
-
         public PdfColorSpace getBaseCs() {
             return makeColorSpace(((PdfArray)getPdfObject()).get(1));
         }
@@ -128,11 +123,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
         @Override
         public int getNumberOfComponents() {
             return 1;
-        }
-
-        @Override
-        public float[] getDefaultColorants() {
-            return new float[]{1f};
         }
 
         public PdfColorSpace getBaseCs() {
@@ -179,15 +169,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
         @Override
         public int getNumberOfComponents() {
             return numOfComponents;
-        }
-
-        @Override
-        public float[] getDefaultColorants() {
-            float[] defaultColorants = new float[getNumberOfComponents()];
-            for (int i = 0; i < getNumberOfComponents(); i++) {
-                defaultColorants[i] = 1;
-            }
-            return defaultColorants;
         }
 
         public PdfColorSpace getBaseCs() {
@@ -256,11 +237,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
         @Override
         public int getNumberOfComponents() {
             return 0;
-        }
-
-        @Override
-        public float[] getDefaultColorants() {
-            return new float[getNumberOfComponents()];
         }
     }
 

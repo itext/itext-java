@@ -872,10 +872,12 @@ public class CompareTool {
         }
         String errorMessage = null;
         if (numberOfDifferentBytes > 0) {
-            int lCmp = Math.max(0, firstDifferenceOffset - 10);
-            int rCmp = Math.min(cmpStreamBytes.length, firstDifferenceOffset + 10);
-            int lOut = Math.max(0, firstDifferenceOffset - 10);
-            int rOut = Math.min(outStreamBytes.length, firstDifferenceOffset + 10);
+            int diffBytesAreaL = 10;
+            int diffBytesAreaR = 10;
+            int lCmp = Math.max(0, firstDifferenceOffset - diffBytesAreaL);
+            int rCmp = Math.min(cmpStreamBytes.length, firstDifferenceOffset + diffBytesAreaR);
+            int lOut = Math.max(0, firstDifferenceOffset - diffBytesAreaL);
+            int rOut = Math.min(outStreamBytes.length, firstDifferenceOffset + diffBytesAreaR);
 
 
             String cmpByte = new String(new byte[]{cmpStreamBytes[firstDifferenceOffset]});

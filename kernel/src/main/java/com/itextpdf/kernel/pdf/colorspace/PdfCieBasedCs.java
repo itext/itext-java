@@ -101,11 +101,6 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         public int getNumberOfComponents() {
             return 1;
         }
-
-        @Override
-        public float[] getDefaultColorants() {
-            return new float[getNumberOfComponents()];
-        }
     }
 
     public static class CalRgb extends PdfCieBasedCs {
@@ -142,11 +137,6 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         public int getNumberOfComponents() {
             return 3;
         }
-
-        @Override
-        public float[] getDefaultColorants() {
-            return new float[getNumberOfComponents()];
-        }
     }
 
     public static class Lab extends PdfCieBasedCs {
@@ -181,11 +171,6 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         public int getNumberOfComponents() {
             return 3;
         }
-
-        @Override
-        public float[] getDefaultColorants() {
-            return new float[getNumberOfComponents()];
-        }
     }
 
     public static class IccBased extends PdfCieBasedCs {
@@ -213,11 +198,6 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         @Override
         public int getNumberOfComponents() {
             return ((PdfArray)getPdfObject()).getAsStream(1).getAsInt(PdfName.N);
-        }
-
-        @Override
-        public float[] getDefaultColorants() {
-            return new float[getNumberOfComponents()];
         }
 
         public static PdfStream getIccProfileStream(InputStream iccStream) {

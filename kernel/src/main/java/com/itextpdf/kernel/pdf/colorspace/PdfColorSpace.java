@@ -66,18 +66,6 @@ public abstract class PdfColorSpace extends PdfObjectWrapper<PdfObject> {
 
     public abstract int getNumberOfComponents();
 
-    public abstract float[] getDefaultColorants();
-
-    public PdfName getPdfName() {
-        if (getPdfObject() instanceof PdfName) {
-            return (PdfName) getPdfObject();
-        } else if (getPdfObject() instanceof PdfArray) {
-            return ((PdfArray) getPdfObject()).getAsName(0);
-        } else {
-            return null;
-        }
-    }
-
     public static PdfColorSpace makeColorSpace(PdfObject pdfObject) {
         if (pdfObject.isIndirectReference())
             pdfObject = ((PdfIndirectReference) pdfObject).getRefersTo();

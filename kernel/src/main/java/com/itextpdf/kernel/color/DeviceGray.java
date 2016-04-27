@@ -57,7 +57,7 @@ public class DeviceGray extends Color {
     }
 
     public DeviceGray() {
-        this(0);
+        this(0f);
     }
 
     public static DeviceGray makeLighter(DeviceGray grayColor) {

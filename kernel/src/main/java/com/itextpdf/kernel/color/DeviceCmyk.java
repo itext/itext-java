@@ -53,6 +53,10 @@ public class DeviceCmyk extends Color {
     public static final DeviceCmyk YELLOW = new DeviceCmyk(0, 0, 100, 0);
     public static final DeviceCmyk BLACK = new DeviceCmyk(0, 0, 0, 100);
 
+    public DeviceCmyk() {
+        this(0f, 0f, 0f, 1f);
+    }
+
     public DeviceCmyk(int c, int m, int y, int k) {
         this(c / 100f, m / 100f, y / 100f, k / 100f);
     }

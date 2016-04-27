@@ -46,7 +46,6 @@ package com.itextpdf.kernel.pdf;
 
 public enum IsoKey {
     CANVAS_STACK,
-    COLOR_SPACE,
     DRAWMODE_FILL,
     DRAWMODE_FILL_STROKE,
     DRAWMODE_STROKE,

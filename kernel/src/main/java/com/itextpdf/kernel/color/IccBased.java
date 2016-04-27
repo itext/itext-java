@@ -51,6 +51,10 @@ import java.io.InputStream;
 
 public class IccBased extends Color {
 
+    public IccBased(PdfCieBasedCs.IccBased cs) {
+        this(cs, new float[cs.getNumberOfComponents()]); // TODO if zero if outside of the Range, default value should be the nearest to the zero valid value
+    }
+
     public IccBased(PdfCieBasedCs.IccBased cs, float[] value) {
         super(cs, value);
     }
@@ -84,5 +88,4 @@ public class IccBased extends Color {
         if (getNumberOfComponents() * 2 != range.length)
             throw new PdfException(PdfException.InvalidRangeArray, this);
     }
-
 }

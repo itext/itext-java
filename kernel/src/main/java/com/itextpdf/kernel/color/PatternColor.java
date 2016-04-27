@@ -70,13 +70,13 @@ public class PatternColor extends Color {
         if (underlyingCS instanceof PdfSpecialCs.Pattern)
             throw new IllegalArgumentException("underlyingCS");
         this.pattern = uncoloredPattern;
-        this.underlyingColor = new Color(underlyingCS, colorValue);
+        this.underlyingColor = Color.makeColor(underlyingCS, colorValue);
     }
 
     public PatternColor(PdfPattern.Tiling uncoloredPattern, PdfSpecialCs.UncoloredTilingPattern uncoloredTilingCS, float[] colorValue) {
         super(uncoloredTilingCS, colorValue);
         this.pattern = uncoloredPattern;
-        this.underlyingColor = new Color(uncoloredTilingCS.getUnderlyingColorSpace(), colorValue);
+        this.underlyingColor = Color.makeColor(uncoloredTilingCS.getUnderlyingColorSpace(), colorValue);
     }
 
     public PdfPattern getPattern() {
@@ -94,6 +94,6 @@ public class PatternColor extends Color {
         }
         PatternColor color = (PatternColor)o;
         return pattern.equals(color.pattern) &&
-                underlyingColor != null ? underlyingColor.equals(color.underlyingColor) : color.underlyingColor == null;
+                (underlyingColor != null ? underlyingColor.equals(color.underlyingColor) : color.underlyingColor == null);
     }
 }

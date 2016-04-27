@@ -1003,8 +1003,7 @@ public class PdfCanvasProcessor {
     private static class SetColorSpaceFillOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfColorSpace pdfColorSpace = determineColorSpace((PdfName) operands.get(0), processor);
-            processor.getGraphicsState().setFillColorSpace(pdfColorSpace);
-            processor.getGraphicsState().setFillColor(new Color(pdfColorSpace, pdfColorSpace.getDefaultColorants()));
+            processor.getGraphicsState().setFillColor(Color.makeColor(pdfColorSpace));
         }
 
         static PdfColorSpace determineColorSpace(PdfName colorSpace, PdfCanvasProcessor processor) {
@@ -1029,8 +1028,7 @@ public class PdfCanvasProcessor {
     private static class SetColorSpaceStrokeOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
             PdfColorSpace pdfColorSpace = SetColorSpaceFillOperator.determineColorSpace((PdfName) operands.get(0), processor);
-            processor.getGraphicsState().setStrokeColorSpace(pdfColorSpace);
-            processor.getGraphicsState().setStrokeColor(new Color(pdfColorSpace, pdfColorSpace.getDefaultColorants()));
+            processor.getGraphicsState().setStrokeColor(Color.makeColor(pdfColorSpace));
         }
     }
 
@@ -1039,7 +1037,7 @@ public class PdfCanvasProcessor {
      */
     private static class SetColorFillOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            processor.getGraphicsState().setFillColor(getColor(processor.getGraphicsState().getFillColorSpace(), operands, processor.getResources()));
+            processor.getGraphicsState().setFillColor(getColor(processor.getGraphicsState().getFillColor().getColorSpace(), operands, processor.getResources()));
         }
     }
 
@@ -1048,7 +1046,7 @@ public class PdfCanvasProcessor {
      */
     private static class SetColorStrokeOperator implements IContentOperator {
         public void invoke(PdfCanvasProcessor processor, PdfLiteral operator, List<PdfObject> operands) {
-            processor.getGraphicsState().setStrokeColor(getColor(processor.getGraphicsState().getStrokeColorSpace(), operands, processor.getResources()));
+            processor.getGraphicsState().setStrokeColor(getColor(processor.getGraphicsState().getStrokeColor().getColorSpace(), operands, processor.getResources()));
         }
     }
 

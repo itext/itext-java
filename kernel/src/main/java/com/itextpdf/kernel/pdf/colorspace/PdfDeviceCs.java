@@ -71,11 +71,6 @@ public abstract class PdfDeviceCs extends PdfColorSpace {
         public int getNumberOfComponents() {
             return 1;
         }
-
-        @Override
-        public float[] getDefaultColorants() {
-            return new float[getNumberOfComponents()];
-        }
     }
 
     public static class Rgb extends PdfDeviceCs {
@@ -90,11 +85,6 @@ public abstract class PdfDeviceCs extends PdfColorSpace {
         public int getNumberOfComponents() {
             return 3;
         }
-
-        @Override
-        public float[] getDefaultColorants() {
-            return new float[getNumberOfComponents()];
-        }
     }
 
     public static class Cmyk extends PdfDeviceCs {
@@ -108,11 +98,6 @@ public abstract class PdfDeviceCs extends PdfColorSpace {
         @Override
         public int getNumberOfComponents() {
             return 4;
-        }
-
-        @Override
-        public float[] getDefaultColorants() {
-            return new float[]{0, 0, 0, 1};
         }
     }
 }

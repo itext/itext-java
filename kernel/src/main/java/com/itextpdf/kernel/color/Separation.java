@@ -50,6 +50,10 @@ import com.itextpdf.kernel.pdf.function.PdfFunction;
 
 public class Separation extends Color {
 
+    public Separation(PdfSpecialCs.Separation cs) {
+        this(cs, 1f);
+    }
+
     public Separation(PdfSpecialCs.Separation cs, float value) {
         super(cs, new float[]{value});
     }

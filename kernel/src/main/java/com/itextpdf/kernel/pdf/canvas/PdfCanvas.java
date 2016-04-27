@@ -1509,7 +1509,11 @@ public class PdfCanvas {
             }
             setColorValueOnly = true;
         } else {
-            updateGStateColorFields(fill, newColor);
+            if (fill) {
+                currentGs.setFillColor(newColor);
+            } else {
+                currentGs.setStrokeColor(newColor);
+            }
         }
         if (colorSpace instanceof PdfDeviceCs.Gray)
             contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? g : G);
@@ -2304,22 +2308,6 @@ public class PdfCanvas {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y);
     }
 
-    private void updateGStateColorFields(boolean fill, Color newColor) {
-        if (fill) {
-            currentGs.setFillColor(newColor);
-            PdfObject colorSpaceObject = newColor.getColorSpace().getPdfObject();
-            if (colorSpaceObject instanceof PdfName) { // see CanvasGraphicState Fill/StrokeColorSpace field comments
-                currentGs.setFillColorSpace(newColor.getColorSpace());
-            }
-        } else {
-            currentGs.setStrokeColor(newColor);
-            PdfObject colorSpaceObject = newColor.getColorSpace().getPdfObject();
-            if (colorSpaceObject instanceof PdfName) { // see CanvasGraphicState Fill/StrokeColorSpace field comments
-                currentGs.setStrokeColorSpace(newColor.getColorSpace());
-            }
-        }
-    }
-
     private static PdfStream getPageStream(PdfPage page) {
         PdfStream stream = page.getContentStream(page.getContentStreamCount() - 1);
         return stream == null || stream.getOutputStream() == null || stream.containsKey(PdfName.Filter) ? page.newContentStreamAfter() : stream;
@@ -2349,7 +2337,7 @@ public class PdfCanvas {
         } else if (colorSpace instanceof PdfSpecialCs.Pattern) {
             return new PatternColor(pattern);
         }
-        return new Color(colorSpace, colorValue);
+        return Color.makeColor(colorSpace, colorValue);
     }
 
     private PdfArray getDashPatternArray(float phase) {

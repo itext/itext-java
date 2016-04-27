@@ -46,7 +46,11 @@ package com.itextpdf.kernel.color;
 
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
+import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 
 import java.util.Arrays;
 
@@ -69,20 +73,68 @@ public class Color {
     protected PdfColorSpace colorSpace;
     protected float[] colorValue;
 
-    public Color(PdfObject pdfObject, float[] colorValue) {
-        this(PdfColorSpace.makeColorSpace(pdfObject), colorValue);
-    }
-
-    public Color(PdfObject pdfObject) {
-        this(pdfObject, null);
-    }
-
-    public Color(PdfColorSpace colorSpace, float[] colorValue) {
+    protected Color(PdfColorSpace colorSpace, float[] colorValue) {
         this.colorSpace = colorSpace;
         if (colorValue == null)
             this.colorValue = new float[colorSpace.getNumberOfComponents()];
         else
             this.colorValue = colorValue;
+    }
+
+    public static Color makeColor(PdfColorSpace colorSpace) {
+        return makeColor(colorSpace, null);
+    }
+
+    public static Color makeColor(PdfColorSpace colorSpace, float[] colorValue) {
+        Color c = null;
+        boolean unknownColorSpace = false;
+        if (colorSpace instanceof PdfDeviceCs) {
+            if (colorSpace instanceof PdfDeviceCs.Gray) {
+                c = colorValue != null ? new DeviceGray(colorValue[0]) : new DeviceGray();
+            } else if (colorSpace instanceof PdfDeviceCs.Rgb) {
+                c = colorValue != null ? new DeviceRgb(colorValue[0], colorValue[1], colorValue[2]) : new DeviceRgb();
+            } else if (colorSpace instanceof PdfDeviceCs.Cmyk) {
+                c = colorValue != null ? new DeviceCmyk(colorValue[0], colorValue[1], colorValue[2], colorValue[3]) : new DeviceCmyk();
+            } else {
+                unknownColorSpace = true;
+            }
+        } else if (colorSpace instanceof PdfCieBasedCs) {
+            if (colorSpace instanceof PdfCieBasedCs.CalGray) {
+                PdfCieBasedCs.CalGray calGray = (PdfCieBasedCs.CalGray) colorSpace;
+                c = colorValue != null ? new CalGray(calGray, colorValue[0]) : new CalGray(calGray);
+            } else if (colorSpace instanceof PdfCieBasedCs.CalRgb) {
+                PdfCieBasedCs.CalRgb calRgb = (PdfCieBasedCs.CalRgb) colorSpace;
+                c = colorValue != null ? new CalRgb(calRgb, colorValue) : new CalRgb(calRgb);
+            } else if (colorSpace instanceof PdfCieBasedCs.IccBased) {
+                PdfCieBasedCs.IccBased iccBased = (PdfCieBasedCs.IccBased) colorSpace;
+                c = colorValue != null ? new IccBased(iccBased, colorValue) : new IccBased(iccBased);
+            } else if (colorSpace instanceof PdfCieBasedCs.Lab) {
+                PdfCieBasedCs.Lab lab = (PdfCieBasedCs.Lab) colorSpace;
+                c = colorValue != null ? new Lab(lab, colorValue) : new Lab(lab);
+            } else {
+                unknownColorSpace = true;
+            }
+        } else if (colorSpace instanceof PdfSpecialCs) {
+            if (colorSpace instanceof PdfSpecialCs.Separation) {
+                PdfSpecialCs.Separation separation = (PdfSpecialCs.Separation) colorSpace;
+                c = colorValue != null ? new Separation(separation, colorValue[0]) : new Separation(separation);
+            } else if (colorSpace instanceof PdfSpecialCs.DeviceN) { //NChannel goes here also
+                PdfSpecialCs.DeviceN deviceN = (PdfSpecialCs.DeviceN) colorSpace;
+                c = colorValue != null ? new DeviceN(deviceN, colorValue) : new DeviceN(deviceN);
+            } else if (colorSpace instanceof PdfSpecialCs.Indexed) {
+                c = colorValue != null ? new Indexed(colorSpace, (int) colorValue[0]) : new Indexed(colorSpace);
+            } else {
+                unknownColorSpace = true;
+            }
+        } else if (colorSpace instanceof PdfSpecialCs.Pattern) {
+            c = new Color(colorSpace, colorValue); // TODO review this. at least log a warning
+        } else {
+            unknownColorSpace = true;
+        }
+        if (unknownColorSpace) {
+            throw new PdfException("unknown.color.space");
+        }
+        return c;
     }
 
     public static DeviceRgb convertCmykToRgb(DeviceCmyk cmykColor) {
@@ -136,7 +188,7 @@ public class Color {
             return false;
         }
         Color color = (Color) o;
-        return (colorSpace != null ? colorSpace.equals(color.colorSpace) : color.colorSpace == null)
+        return (colorSpace != null ? colorSpace.getPdfObject().equals(color.colorSpace.getPdfObject()) : color.colorSpace == null)
                 && Arrays.equals(colorValue, color.colorValue);
     }
 

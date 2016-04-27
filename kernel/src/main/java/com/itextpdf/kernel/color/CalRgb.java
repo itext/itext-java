@@ -48,6 +48,10 @@ import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 
 public class CalRgb extends Color {
 
+    public CalRgb(PdfCieBasedCs.CalRgb cs) {
+        this(cs, new float[cs.getNumberOfComponents()]);
+    }
+
     public CalRgb(PdfCieBasedCs.CalRgb cs, float[] value) {
         super(cs, value);
     }

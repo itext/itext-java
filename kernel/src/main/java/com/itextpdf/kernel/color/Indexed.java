@@ -44,13 +44,12 @@
  */
 package com.itextpdf.kernel.color;
 
-import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 
 public class Indexed extends Color {
 
-    public Indexed(PdfObject pdfObject) {
-        super(pdfObject);
+    public Indexed(PdfColorSpace colorSpace) {
+        this(colorSpace, 0);
     }
 
     public Indexed(PdfColorSpace colorSpace, int colorValue) {

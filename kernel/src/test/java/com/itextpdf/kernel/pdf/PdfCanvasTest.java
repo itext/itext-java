@@ -1187,14 +1187,14 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(page);
 
         PdfDeviceCs.Rgb rgb = new PdfDeviceCs.Rgb();
-        Color red = new Color(rgb, new float[]{1, 0, 0});
-        Color green = new Color(rgb, new float[]{0, 1, 0});
-        Color blue = new Color(rgb, new float[]{0, 0, 1});
+        Color red = Color.makeColor(rgb, new float[]{1, 0, 0});
+        Color green = Color.makeColor(rgb, new float[]{0, 1, 0});
+        Color blue = Color.makeColor(rgb, new float[]{0, 0, 1});
         PdfDeviceCs.Cmyk cmyk = new PdfDeviceCs.Cmyk();
-        Color cyan = new Color(cmyk, new float[]{1, 0, 0, 0});
-        Color magenta = new Color(cmyk, new float[]{0, 1, 0, 0});
-        Color yellow = new Color(cmyk, new float[]{0, 0, 1, 0});
-        Color black = new Color(cmyk, new float[]{0, 0, 0, 1});
+        Color cyan = Color.makeColor(cmyk, new float[]{1, 0, 0, 0});
+        Color magenta = Color.makeColor(cmyk, new float[]{0, 1, 0, 0});
+        Color yellow = Color.makeColor(cmyk, new float[]{0, 0, 1, 0});
+        Color black = Color.makeColor(cmyk, new float[]{0, 0, 0, 1});
 
         canvas.setFillColor(red).rectangle(50, 500, 50, 50).fill();
         canvas.setFillColor(green).rectangle(150, 500, 50, 50).fill();
