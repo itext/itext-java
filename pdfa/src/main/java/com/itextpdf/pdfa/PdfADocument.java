@@ -208,7 +208,7 @@ public class PdfADocument extends PdfDocument {
     @Override
     protected void updateXmpMetadata() {
         try {
-            XMPMeta xmpMeta = createXmpMetadata();
+            XMPMeta xmpMeta = updateDefaultXmpMetadata();
             xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, checker.getConformanceLevel().getPart());
             xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, checker.getConformanceLevel().getConformance());
             if (this.isTagged()) {
