@@ -447,16 +447,6 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsDictionary(PdfName.BS);
     }
 
-    /**
-     * Marks annotation to be tagged.
-     * Normally it shall be done for link annotations.
-     *
-     * @return annotation itself.
-     */
-    public PdfAnnotation tag(PdfDocument pdfDocument) {
-        return put(PdfName.StructParent, new PdfNumber(pdfDocument.getNextStructParentIndex()));
-    }
-
     public static PdfAnnotation makeAnnotation(PdfObject pdfObject) {
         return makeAnnotation(pdfObject, null);
     }

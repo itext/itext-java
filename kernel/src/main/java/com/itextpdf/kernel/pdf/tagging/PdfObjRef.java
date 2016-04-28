@@ -45,7 +45,9 @@
 package com.itextpdf.kernel.pdf.tagging;
 
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 
 public class PdfObjRef extends PdfMcr {
@@ -61,9 +63,12 @@ public class PdfObjRef extends PdfMcr {
         PdfDictionary parentObject = parent.getPdfObject();
         ensureObjectIsAddedToDocument(parentObject);
 
+        PdfDocument doc = parentObject.getIndirectReference().getDocument();
+        annot.getPdfObject().put(PdfName.StructParent, new PdfNumber(doc.getNextStructParentIndex()));
+
         PdfDictionary dict = (PdfDictionary) getPdfObject();
         dict.put(PdfName.Type, PdfName.OBJR);
-        dict.put(PdfName.Obj, annot.tag(parentObject.getIndirectReference().getDocument()).getPdfObject());
+        dict.put(PdfName.Obj, annot.getPdfObject());
     }
 
     @Override
