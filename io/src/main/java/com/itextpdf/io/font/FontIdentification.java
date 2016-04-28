@@ -91,8 +91,7 @@ public class FontIdentification implements Serializable {
         this.panose = new String(panose);
     }
 
-    //todo change to protected!
-    public void setPanose(String panose) {
+    protected void setPanose(String panose) {
         this.panose = panose;
     }
 }

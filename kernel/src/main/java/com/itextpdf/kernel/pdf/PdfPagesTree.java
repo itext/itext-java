@@ -44,7 +44,10 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -231,7 +234,10 @@ class PdfPagesTree implements Serializable{
      */
     public PdfPage removePage(int pageNum) {
         PdfPage pdfPage = getPage(pageNum);
-        //TODO log removing flushed page
+        if (pdfPage.isFlushed()) {
+            Logger logger = LoggerFactory.getLogger(PdfPage.class);
+            logger.warn(LogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED);
+        }
         if (internalRemovePage(--pageNum)) {
             return pdfPage;
         } else {

@@ -132,8 +132,12 @@ public abstract class PdfObject implements Serializable {
      */
     public final void flush(boolean canBeInObjStm) {
         if (isFlushed() || getIndirectReference() == null) {
-            //TODO log meaningless call of flush: object is direct or released
-            //TODO also if object is mustBeIndirect log that flush call is premature
+//            Logger logger = LoggerFactory.getLogger(PdfObject.class);
+//            if (isFlushed()) {
+//                logger.warn("Meaningless call, the object has already flushed");
+//            } else {
+//                logger.warn("Meaningless call, the object is direct object.");
+//            }
             return;
         }
         try {

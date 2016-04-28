@@ -253,8 +253,7 @@ public class Jbig2SegmentReader {
             ra.seek(last);
             Jbig2Page p = pages.get(s.page);
             if (p == null) {
-                throw new IllegalStateException("referring.to.widht.height.of.page.we.havent.seen.yet.1");
-                        //TODO, s.page);
+                throw new com.itextpdf.io.IOException("referring.to.widht.height.of.page.we.havent.seen.yet.1").setMessageParams(s.page);
             }
 
             p.pageBitmapWidth = page_bitmap_width;
@@ -307,8 +306,9 @@ public class Jbig2SegmentReader {
             }
 
         } else if (count_of_referred_to_segments == 5 || count_of_referred_to_segments == 6) {
-            throw new IllegalStateException("count.of.referred.to.segments.had.bad.value.in.header.for.segment.1.starting.at.2");
-            //TODO, segment_number, ptr));
+            throw new com.itextpdf.io.IOException("count.of.referred.to.segments.had.bad.value.in.header.for.segment.1.starting.at.2")
+                    .setMessageParams(segment_number, ptr);
+
         }
         s.segmentRetentionFlags = segment_retention_flags;
         s.countOfReferredToSegments = count_of_referred_to_segments;
@@ -335,8 +335,8 @@ public class Jbig2SegmentReader {
             segment_page_association = ra.read();
         }
         if (segment_page_association < 0) {
-            throw new IllegalStateException("page.1.invalid.for.segment.2.starting.at.3");
-                    //TODO, String.valueOf(segment_page_association), String.valueOf(segment_number), String.valueOf(ptr)));
+            throw new com.itextpdf.io.IOException("page.1.invalid.for.segment.2.starting.at.3")
+                    .setMessageParams(segment_page_association, segment_number, ptr);
         }
         s.page = segment_page_association;
         // so we can change the page association at embedding time.
@@ -375,8 +375,7 @@ public class Jbig2SegmentReader {
 
         for (int i = 0; i < idstring.length; i++) {
             if (idstring[i] != refidstring[i]) {
-                throw new IllegalStateException("file.header.idstring.not.good.at.byte.1");
-                //TODO, i);
+                throw new com.itextpdf.io.IOException("file.header.idstring.not.good.at.byte.1").setMessageParams(i);
             }
         }
 
@@ -386,7 +385,7 @@ public class Jbig2SegmentReader {
         this.number_of_pages_known = (fileheaderflags & 0x2) == 0x0;
 
         if ((fileheaderflags & 0xfc) != 0x0) {
-            throw new IllegalStateException("file.header.flags.bits.2.7.not.0");//TODO
+            throw new com.itextpdf.io.IOException("file.header.flags.bits.2.7.not.0");
         }
 
         if (this.number_of_pages_known) {

@@ -335,7 +335,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param range the character range
      */
-    //TODO
     public void addSubsetRange(int[] range) {
         if (subsetRanges == null) {
             subsetRanges = new ArrayList<>();
@@ -414,10 +413,10 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * TODO strange comments
-     * If the embedded flag is {@code false} or if the font is one of the 14 built in types, it returns {@code null},
-     * otherwise the font is read and output in a PdfStream object.
+     * Create {@code PdfStream} based on {@code fontStreamBytes}.
      *
+     * @param fontStreamBytes original font data, must be not null.
+     * @param fontStreamLengths array to generate {@code Length*} keys, must be not null.
      * @return the PdfStream containing the font or {@code null}, if there is an error reading the font.
      * @exception PdfException Method will throw exception if {@code fontStreamBytes} is {@code null}.
      */

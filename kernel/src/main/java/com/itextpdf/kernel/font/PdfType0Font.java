@@ -95,7 +95,6 @@ public class PdfType0Font extends PdfFont {
 
     protected boolean vertical;
     protected CMapEncoding cmapEncoding;
-    // TODO HashSet will be enough
     protected Map<Integer, int[]> longTag;
     protected int cidFontType;
     protected char[] specificUnicodeDifferences;
@@ -225,7 +224,6 @@ public class PdfType0Font extends PdfFont {
 
     @Override
     public byte[] convertToBytes(String text) {
-        //TODO different with type0 and type2 could be removed after simplifying longTag
         int len = text.length();
         char[] glyphs = new char[len];
         int i = 0;
@@ -335,7 +333,6 @@ public class PdfType0Font extends PdfFont {
     @Override
     public GlyphLine createGlyphLine(String content) {
         List<Glyph> glyphs = new ArrayList<>();
-        //TODO different with type0 and type2 could be removed after simplifying longTag
         if (cidFontType == CID_FONT_TYPE_0) {
             int len = content.length();
             if (cmapEncoding.isDirect()) {

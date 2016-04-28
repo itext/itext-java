@@ -68,9 +68,9 @@ class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
         super();
         PdfName baseFontName = fontDictionary.getAsName(PdfName.BaseFont);
         if (baseFontName != null) {
-            getFontNames().setFontName(baseFontName.getValue());
+            setFontName(baseFontName.getValue());
         } else {
-            getFontNames().setFontName(FontUtil.createRandomFontName());
+            setFontName(FontUtil.createRandomFontName());
         }
         subtype = fontDictionary.getAsName(PdfName.Subtype);
     }

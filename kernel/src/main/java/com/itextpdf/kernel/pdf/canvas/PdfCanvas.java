@@ -1766,7 +1766,6 @@ public class PdfCanvas {
         document.checkIsoConformance(currentGs, IsoKey.GRAPHIC_STATE_ONLY, null);
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
-            // TODO add matrix parameters
             PdfXObject xObject = wmf.createPdfForm(document);
             addXObject(xObject, a, b, c, d, e, f);
             return xObject;
@@ -1808,7 +1807,6 @@ public class PdfCanvas {
     public PdfXObject addImage(ImageData image, float x, float y, boolean asInline) {
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
-            // TODO add matrix parameters
             PdfXObject xObject = wmf.createPdfForm(document);
             addXObject(xObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
             return xObject;

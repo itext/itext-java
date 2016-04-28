@@ -225,8 +225,7 @@ public class FontNames implements Serializable {
         this.fullName = new String[][]{new String[]{"", "", "", fullName}};
     }
 
-    // todo change to protected!
-    public void setFontName(String psFontName) {
+    protected void setFontName(String psFontName) {
         this.fontName = psFontName;
     }
 

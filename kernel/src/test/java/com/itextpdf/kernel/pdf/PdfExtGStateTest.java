@@ -34,7 +34,7 @@ public class PdfExtGStateTest extends ExtendedITextTest{
         createDestinationFolder(destinationFolder);
     }
 
-    @Test @Ignore("Document fonts")
+    @Test
     public void egsTest1() throws Exception {
         final String destinationDocument = destinationFolder + "egsTest1.pdf";
         FileOutputStream fos = new FileOutputStream(destinationDocument);
@@ -50,8 +50,7 @@ public class PdfExtGStateTest extends ExtendedITextTest{
         egs.getPdfObject().put(PdfName.LW, new PdfNumber(5));
         PdfArray font = new PdfArray();
         PdfFont pdfFont = PdfFontFactory.createFont(FontConstants.COURIER);
-        //TODO if uncomment - exception will generated
-        //pdfFont.flush();
+        pdfFont.flush();
         font.add(pdfFont.getPdfObject());
         font.add(new PdfNumber(24));
         egs.getPdfObject().put(PdfName.Font, font);

@@ -72,6 +72,11 @@ public final class LogMessageConstant {
     /**
      * Log message.
      */
+    public static final String REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED = "The removing page has already been flushed.";
+
+    /**
+     * Log message.
+     */
     public static final String FONT_HAS_INVALID_GLYPH = "Font {0} has invalid glyph: {1}";
 
     /**

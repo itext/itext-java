@@ -245,7 +245,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     public Set<PdfName> getResourceNames(PdfName resType) {
         PdfDictionary resourceCategory = getPdfObject().getAsDictionary(resType);
-        return resourceCategory == null ? new TreeSet<PdfName>() : resourceCategory.keySet(); // TODO: TreeSet...
+        return resourceCategory == null ? new TreeSet<PdfName>() : resourceCategory.keySet(); // TODO: TreeSet or HashSet enough?
     }
 
     public PdfDictionary getResource(PdfName pdfName) {
@@ -383,7 +383,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 //    }
 
     private void checkAndResolveCircularReferences(PdfObject pdfObject) {
-        // TODO consider the situation when an XObject references the resources of the first page.
+        // Consider the situation when an XObject references the resources of the first page.
         // We add this XObject to the first page, there is no need to resolve any circular references
         // and then we flush this object and try to add it to the second page.
         // Now there are circular references and we cannot resolve them because the object is flushed

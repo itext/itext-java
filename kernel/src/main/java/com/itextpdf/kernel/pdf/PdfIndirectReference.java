@@ -305,7 +305,6 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     }
 
     void fixOffset(long offset){
-        //TODO log invalid offsets
         if (!isFree()) {
             this.offsetOrIndex = offset;
         }

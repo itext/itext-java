@@ -131,7 +131,6 @@ public class PdfOutline {
         content.put(PdfName.Dest, destination.getPdfObject());
     }
 
-    //@TODO implement adding actions
     public void addAction(PdfAction action) {
         content.put(PdfName.A, action.getPdfObject());
     }

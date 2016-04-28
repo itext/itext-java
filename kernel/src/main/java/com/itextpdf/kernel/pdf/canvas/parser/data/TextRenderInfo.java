@@ -425,7 +425,7 @@ public class TextRenderInfo implements IEventData {
     private float[] getWidthAndWordSpacing(PdfString string) {
         float[] result = new float[2];
         result[0] = (float)((gs.getFont().getContentWidth(string) * fontMatrix[0]));
-        result[1] = " ".equals(string.getValue()) ? gs.getWordSpacing() : 0; // TODO ! what about space char?
+        result[1] = " ".equals(string.getValue()) ? gs.getWordSpacing() : 0;
         return result;
     }
 

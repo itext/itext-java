@@ -238,28 +238,23 @@ public class FontMetrics implements Serializable {
         this.glyphWidths = glyphWidths;
     }
 
-    //todo change to protected!
-    public void setTypoAscender(int typoAscender) {
+    protected void setTypoAscender(int typoAscender) {
         this.typoAscender = (int) (typoAscender * normalizationCoef);
     }
 
-    //todo change to protected!
-    public void setTypoDescender(int typoDesctender) {
+    protected void setTypoDescender(int typoDesctender) {
         this.typoDescender = (int) (typoDesctender * normalizationCoef);
     }
 
-    //todo change to protected!
-    public void setCapHeight(int capHeight) {
+    protected void setCapHeight(int capHeight) {
         this.capHeight = (int) (capHeight * normalizationCoef);
     }
 
-    //todo change to protected!
-    public void setXHeight(int xHeight) {
+    protected void setXHeight(int xHeight) {
         this.xHeight = (int) (xHeight * normalizationCoef);
     }
 
-    //todo change to protected!
-    public void setItalicAngle(float italicAngle) {
+    protected void setItalicAngle(float italicAngle) {
         this.italicAngle = italicAngle;
     }
 

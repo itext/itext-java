@@ -224,7 +224,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         if (field.getFormType() != null && (field.getFormType().equals(PdfName.Tx) || field.getFormType().equals(PdfName.Ch))) {
             List<PdfDictionary> resources = getResources(field.getPdfObject());
             for (PdfDictionary resDict : resources) {
-                mergeResources(defaultResources, resDict, field);
+                mergeResources(defaultResources, resDict);
             }
             if (!defaultResources.isEmpty()) {
                 put(PdfName.DR, defaultResources);
@@ -953,10 +953,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * 
      * @param result the {@link PdfDictionary} which may get extra entries from source
      * @param source the {@link PdfDictionary} whose entries may be merged into result
-     * @param field
      */
-    // TODO: determine whether we need the parameter called field
-    public void mergeResources(PdfDictionary result, PdfDictionary source, PdfFormField field) {
+    private void mergeResources(PdfDictionary result, PdfDictionary source) {
         for (PdfName name : resourceNames) {
             PdfDictionary dic = source.getAsDictionary(name);
             PdfDictionary res = result.getAsDictionary(name);

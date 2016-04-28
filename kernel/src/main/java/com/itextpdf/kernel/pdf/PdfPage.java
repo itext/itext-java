@@ -82,7 +82,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             PdfName.Parent,
             PdfName.Annots,
             PdfName.StructParents,
-            // TODO This key contains reference to all articles, while this articles could reference to lots of pages.
+            // This key contains reference to all articles, while this articles could reference to lots of pages.
             // See DEVSIX-191
             PdfName.B));
 

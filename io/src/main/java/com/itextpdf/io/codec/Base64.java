@@ -1404,41 +1404,33 @@ public class Base64 {
                     }   // end else if: also padded correctly
                     else {
                         // Must have broken out from above.
-                        throw new java.io.IOException(/*MessageLocalization.getComposedMessage("improperly.padded.base64.input")*/); // TODO: correct the message
+                        throw new java.io.IOException("improperly.padded.base64.input");
                     }   // end
 
                 }   // end else: decode
             }   // end else: get data
-
             // Got data?
-            if (position >= 0) {
-                // End of relevant data?
-                if ( /*!encode &&*/ position >= numSigBytes)
-                    return -1;
+            assert position >= 0;
+            // End of relevant data?
+            if ( /*!encode &&*/ position >= numSigBytes)
+                return -1;
 
-                if (encode && breakLines && lineLength >= MAX_LINE_LENGTH) {
-                    lineLength = 0;
-                    return '\n';
-                }   // end if
-                else {
-                    lineLength++;   // This isn't important when decoding
-                    // but throwing an extra "if" seems
-                    // just as wasteful.
-
-                    int b = buffer[position++];
-
-                    if (position >= bufferLength)
-                        position = -1;
-
-                    return b & 0xFF; // This is how you "cast" a byte that's
-                    // intended to be unsigned.
-                }   // end else
-            }   // end if: position >= 0
-
-            // Else error
+            if (encode && breakLines && lineLength >= MAX_LINE_LENGTH) {
+                lineLength = 0;
+                return '\n';
+            }   // end if
             else {
-                // When JDK1.4 is more accepted, use an assertion here.
-                throw new java.io.IOException(/*MessageLocalization.getComposedMessage("error.in.base64.code.reading.stream")*/); // TODO: correct the message
+                lineLength++;   // This isn't important when decoding
+                // but throwing an extra "if" seems
+                // just as wasteful.
+
+                int b = buffer[position++];
+
+                if (position >= bufferLength)
+                    position = -1;
+
+                return b & 0xFF; // This is how you "cast" a byte that's
+                // intended to be unsigned.
             }   // end else
         }   // end read
 
@@ -1602,7 +1594,7 @@ public class Base64 {
                     }   // end if: enough to output
                 }   // end if: meaningful base64 character
                 else if (decodabet[theByte & 0x7f] != WHITE_SPACE_ENC) {
-                    throw new java.io.IOException(/*MessageLocalization.getComposedMessage("invalid.character.in.base64.data")*/); // TODO: correct the message
+                    throw new java.io.IOException("invalid.character.in.base64.data");
                 }   // end else: not white space either
             }   // end else: decoding
         }   // end write
@@ -1642,7 +1634,7 @@ public class Base64 {
                     position = 0;
                 }   // end if: encoding
                 else {
-                    throw new java.io.IOException(/*MessageLocalization.getComposedMessage("base64.input.not.properly.padded")*/); // TODO: correct the message
+                    throw new java.io.IOException("base64.input.not.properly.padded");
                 }   // end else: decoding
             }   // end if: buffer partially full
 

@@ -164,8 +164,7 @@ public abstract class FontProgram implements Serializable {
      */
     public abstract int getKerning(Glyph first, Glyph second);
 
-    //TODO change to protected!
-    public void setRegistry(String registry) {
+    protected void setRegistry(String registry) {
         this.registry = registry;
     }
 
@@ -275,6 +274,10 @@ public abstract class FontProgram implements Serializable {
 
     protected void setFontFamily(String fontFamily) {
         fontNames.setFamilyName(fontFamily);
+    }
+
+    protected void setFontName(String psFontName) {
+        fontNames.setFontName(psFontName);
     }
 
     protected void checkFilePath(String path) {
