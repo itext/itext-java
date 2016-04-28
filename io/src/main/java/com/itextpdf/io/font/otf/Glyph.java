@@ -108,6 +108,7 @@ public class Glyph implements Serializable {
         this.chars = glyph.chars;
         this.unicode = glyph.unicode;
         this.isMark = glyph.isMark;
+        this.bbox = glyph.bbox;
 
         this.xPlacement = glyph.xPlacement;
         this.yPlacement = glyph.yPlacement;
