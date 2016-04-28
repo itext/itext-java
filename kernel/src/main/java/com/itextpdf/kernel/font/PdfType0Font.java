@@ -608,7 +608,14 @@ public class PdfType0Font extends PdfFont {
      * @return the stream representing this CMap or <CODE>null</CODE>
      */
     public PdfStream getToUnicode(Object[] metrics) {
-        if (metrics.length == 0)
+        ArrayList<Integer> unicodeGlyphs = new ArrayList<>(metrics.length);
+        for (int i = 0; i < metrics.length; i++) {
+            int[] metric = (int[]) metrics[i];
+            if (fontProgram.getGlyphByCode(metric[0]).getChars() != null) {
+                unicodeGlyphs.add(metric[0]);
+            }
+        }
+        if (unicodeGlyphs.size() == 0)
             return null;
         StringBuilder buf = new StringBuilder(
                 "/CIDInit /ProcSet findresource begin\n" +
@@ -625,18 +632,17 @@ public class PdfType0Font extends PdfFont {
                         "<0000><FFFF>\n" +
                         "endcodespacerange\n");
         int size = 0;
-        for (int k = 0; k < metrics.length; ++k) {
+        for (int k = 0; k < unicodeGlyphs.size(); ++k) {
             if (size == 0) {
                 if (k != 0) {
                     buf.append("endbfrange\n");
                 }
-                size = Math.min(100, metrics.length - k);
+                size = Math.min(100, unicodeGlyphs.size() - k);
                 buf.append(size).append(" beginbfrange\n");
             }
             --size;
-            int[] metric = (int[]) metrics[k];
-            String fromTo = CMapContentParser.toHex(metric[0]);
-            Glyph glyph = fontProgram.getGlyphByCode(metric[0]);
+            String fromTo = CMapContentParser.toHex(unicodeGlyphs.get(k));
+            Glyph glyph = fontProgram.getGlyphByCode(unicodeGlyphs.get(k));
             if (glyph.getChars() != null) {
                 StringBuilder uni = new StringBuilder(glyph.getChars().length);
                 for (char ch : glyph.getChars()) {
