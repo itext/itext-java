@@ -59,7 +59,7 @@ public class PdfMerger {
      * This class is used to merge a number of existing documents into one;
      * @param pdfDocument - the document into which source documents will be merged.
      */
-    public PdfMerger(PdfDocument pdfDocument){
+    public PdfMerger(PdfDocument pdfDocument) {
         this.pdfDocument = pdfDocument;
     }
 

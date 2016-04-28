@@ -80,11 +80,10 @@ public class ImageRenderInfo implements IEventData {
      * Gets an image wrapped in ImageXObject.
      * You can:
      * <ul>
-     *     <li>get image bytes with {@link PdfImageXObject#getImageBytes(boolean)};</li>
+     *     <li>get image bytes with {@link PdfImageXObject#getImageBytes(boolean)}, these image bytes
+     *     represent native image, i.e you can write these bytes to disk and get just an usual image;</li>
      *     <li>obtain PdfStream object which contains image dictionary with {@link PdfImageXObject#getPdfObject()} method;</li>
      *     <li>convert image to {@link java.awt.image.BufferedImage} with {@link PdfImageXObject#getBufferedImage()};</li>
-     *     //TODO: correct this when something like convertToNativeImage method is implemented
-     *     <li>convert this image to native image with PdfImageXObject#convertToNativeImage;</li>
      * </ul>
      */
     public PdfImageXObject getImage() {

@@ -362,8 +362,7 @@ public class PdfReader implements Closeable, Serializable {
             PdfName filterName = (PdfName) filters.get(j);
             IFilterHandler filterHandler = filterHandlers.get(filterName);
             if (filterHandler == null)
-                filterHandler =  new DoNothingFilter();
-                //throw new PdfException(PdfException.Filter1IsNotSupported).setMessageParams(filterName); //TODO replace with some kind of UnsupportedException
+                throw new PdfException(PdfException.Filter1IsNotSupported).setMessageParams(filterName);
 
             PdfDictionary decodeParams;
             if (j < dp.size()) {
@@ -373,7 +372,7 @@ public class PdfReader implements Closeable, Serializable {
                 } else if (dpEntry.getType() == PdfObject.DICTIONARY) {
                     decodeParams = (PdfDictionary) dpEntry;
                 } else {
-                    throw new PdfException(PdfException.DecodeParameterType1IsNotSupported).setMessageParams(dpEntry.getClass().toString()); //TODO replace with some kind of UnsupportedException
+                    throw new PdfException(PdfException.DecodeParameterType1IsNotSupported).setMessageParams(dpEntry.getClass().toString());
                 }
             } else {
                 decodeParams = null;
