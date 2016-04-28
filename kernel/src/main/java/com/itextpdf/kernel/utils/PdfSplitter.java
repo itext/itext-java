@@ -57,13 +57,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class PdfSplitter {
 
     private PdfDocument pdfDocument;
+    private boolean preserveTagged;
+    private boolean preserveOutlines;
 
     /**
      * Creates a new instance of PdfSplitter class.
@@ -75,6 +74,26 @@ public class PdfSplitter {
             throw new PdfException(PdfException.CannotSplitDocumentThatIsBeingWritten);
         }
         this.pdfDocument = pdfDocument;
+        this.preserveTagged = true;
+        this.preserveOutlines = true;
+    }
+
+    /**
+     * If original document is tagged, then by default all resultant document will also be tagged.
+     * This could be changed with this flag - if set to false, resultant documents will be not tagged, even if
+     * original document is tagged.
+     */
+    public void setPreserveTagged(boolean preserveTagged) {
+        this.preserveTagged = preserveTagged;
+    }
+
+    /**
+     * If original document has outlines, then by default all resultant document will also have outlines.
+     * This could be changed with this flag - if set to false, resultant documents won't contain outlines, even if
+     * original document had them.
+     */
+    public void setPreserveOutlines(boolean preserveOutlines) {
+        this.preserveOutlines = preserveOutlines;
     }
 
     /**
@@ -234,9 +253,9 @@ public class PdfSplitter {
 
     private PdfDocument createPdfDocument(PageRange currentPageRange) {
         PdfDocument newDocument = new PdfDocument(getNextPdfWriter(currentPageRange));
-        if (pdfDocument.isTagged())
+        if (pdfDocument.isTagged() && preserveTagged)
             newDocument.setTagged();
-        if (pdfDocument.getCatalog().isOutlineMode())
+        if (pdfDocument.hasOutlines() && preserveOutlines)
             newDocument.initializeOutlines();
         return newDocument;
     }

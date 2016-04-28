@@ -1023,7 +1023,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 toDocument.addPage(newPage);
             }
             pageInsertIndex++;
-            if (toDocument.getCatalog().isOutlineMode()) {
+            if (toDocument.hasOutlines()) {
                 List<PdfOutline> pageOutlines = page.getOutlines(false);
                 if (pageOutlines != null)
                     outlinesToCopy.addAll(pageOutlines);

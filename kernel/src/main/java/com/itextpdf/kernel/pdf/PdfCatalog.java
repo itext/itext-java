@@ -150,15 +150,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * This flag determines if Outline tree of the document has been built via calling getOutlines method. If this flag is false all outline operations will be ignored
-     *
-     * @return state of outline mode.
-     */
-    public boolean isOutlineMode() {
-        return outlineMode;
-    }
-
-    /**
      * This method sets a page mode of the document.
      * </p>
      * Valid values are: {@code PdfName.UseNone}, {@code PdfName.UseOutlines}, {@code PdfName.UseThumbs},
@@ -385,6 +376,15 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      */
     boolean hasOutlines() {
         return getPdfObject().containsKey(PdfName.Outlines);
+    }
+
+    /**
+     * This flag determines if Outline tree of the document has been built via calling getOutlines method. If this flag is false all outline operations will be ignored
+     *
+     * @return state of outline mode.
+     */
+    boolean isOutlineMode() {
+        return outlineMode;
     }
 
     /**
