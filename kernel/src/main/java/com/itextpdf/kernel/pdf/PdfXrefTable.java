@@ -160,7 +160,7 @@ class PdfXrefTable implements Serializable {
     /**
      * Writes cross reference table and trailer to PDF.
      *
-     * @throws java.io.IOException
+     * @throws IOException
      * @throws PdfException
      */
     protected void writeXrefTableAndTrailer(PdfDocument document, PdfObject fileId, PdfObject crypto) throws IOException {
@@ -176,6 +176,19 @@ class PdfXrefTable implements Serializable {
             }
         }
         freeReferences.clear();
+
+
+        for (int i = count; i > 0; --i) {
+            PdfIndirectReference lastRef = xref[i];
+            if (lastRef == null
+                    || (lastRef.isFree() && lastRef.getGenNumber() == 0)
+                    || (!lastRef.checkState(PdfObject.FLUSHED)
+                            && !(document.properties.appendMode && !lastRef.checkState(PdfObject.MODIFIED)))) {
+                --count;
+            } else {
+                break;
+            }
+        }
 
         List<Integer> sections = new ArrayList<>();
         int first = 0;
@@ -218,7 +231,6 @@ class PdfXrefTable implements Serializable {
             return;
         }
 
-        int size = sections.get(sections.size() - 2) + sections.get(sections.size() - 1);
         long startxref = writer.getCurrentPos();
         if (writer.isFullCompression()) {
             PdfStream xrefStream = new PdfStream().makeIndirect(document);
@@ -227,7 +239,7 @@ class PdfXrefTable implements Serializable {
             xrefStream.put(PdfName.ID, fileId);
             if (crypto != null)
                 xrefStream.put(PdfName.Encrypt, crypto);
-            xrefStream.put(PdfName.Size, new PdfNumber(size));
+            xrefStream.put(PdfName.Size, new PdfNumber(this.size()));
             xrefStream.put(PdfName.W, new PdfArray(new ArrayList<PdfObject>() {{
                 add(new PdfNumber(1));
                 add(new PdfNumber(4));
@@ -295,7 +307,7 @@ class PdfXrefTable implements Serializable {
             trailer.remove(PdfName.Index);
             trailer.remove(PdfName.Type);
             trailer.remove(PdfName.Length);
-            trailer.put(PdfName.Size, new PdfNumber(size));
+            trailer.put(PdfName.Size, new PdfNumber(this.size()));
             trailer.put(PdfName.ID, fileId);
             if (crypto != null)
                 trailer.put(PdfName.Encrypt, crypto);

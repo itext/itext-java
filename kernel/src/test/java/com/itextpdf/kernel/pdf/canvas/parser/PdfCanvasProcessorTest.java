@@ -1,5 +1,6 @@
 package com.itextpdf.kernel.pdf.canvas.parser;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ClippingPathInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
@@ -11,6 +12,8 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 
@@ -26,6 +29,7 @@ public class PdfCanvasProcessorTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/PdfCanvasProcessorTest/";
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
     public void contentStreamProcessorTest() throws IOException {
 
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "yaxiststar.pdf"), new PdfWriter(new ByteArrayOutputStream()));

@@ -204,7 +204,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
     public void tagTreePointerTest04() throws Exception {
         PdfReader reader = new PdfReader(sourceFolder + "taggedDocument.pdf");
         PdfWriter writer = new PdfWriter(destinationFolder + "tagTreePointerTest04.pdf").setCompressionLevel(CompressionConstants.NO_COMPRESSION);
-            PdfDocument document = new PdfDocument(reader, writer);
+        PdfDocument document = new PdfDocument(reader, writer);
 
         TagTreePointer tagPointer = new TagTreePointer(document);
         tagPointer.moveToKid(PdfName.Table).moveToKid(2, PdfName.TR);
