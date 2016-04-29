@@ -52,15 +52,15 @@ import com.itextpdf.io.source.OutputStream;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.pdf.filters.FlateDecodeFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Map;
 
-public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Serializable{
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
     private static final long serialVersionUID = -548180479472231600L;
 
