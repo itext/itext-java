@@ -53,7 +53,6 @@ import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.source.WindowRandomAccessSource;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 
@@ -451,6 +450,9 @@ public class PdfReader implements Closeable, Serializable {
         try {
             readXref();
         } catch (RuntimeException ex) {
+            Logger logger = LoggerFactory.getLogger(PdfReader.class);
+            logger.error(LogMessageConstant.XREF_ERROR, ex);
+
             rebuildXref();
         }
         readDecryptObj();
@@ -711,6 +713,11 @@ public class PdfReader implements Closeable, Serializable {
             tokens.seek(startxref);
             trailer2 = readXrefSection();
         }
+
+        Integer xrefSize = trailer.getAsInt(PdfName.Size);
+        if (xrefSize == null || xrefSize != pdfDocument.getXref().size()) {
+            throw new PdfException(PdfException.InvalidXrefTable);
+        }
     }
 
     protected PdfDictionary readXrefSection() throws IOException {
@@ -718,7 +725,6 @@ public class PdfReader implements Closeable, Serializable {
         if (!tokens.tokenValueEqualsTo(PdfTokenizer.Xref))
             tokens.throwError(PdfException.XrefSubsectionNotFound);
         PdfXrefTable xref = pdfDocument.getXref();
-        int end = 0;
         while (true) {
             tokens.nextValidToken();
             if (tokens.tokenValueEqualsTo(PdfTokenizer.Trailer)) {
@@ -732,7 +738,7 @@ public class PdfReader implements Closeable, Serializable {
             if (tokens.getTokenType() != PdfTokenizer.TokenType.Number) {
                 tokens.throwError(PdfException.NumberOfEntriesInThisXrefSubsectionNotFound);
             }
-            end = tokens.getIntValue() + start;
+            int end = tokens.getIntValue() + start;
             for (int num = start; num < end; num++) {
                 tokens.nextValidToken();
                 long pos = tokens.getLongValue();
@@ -764,11 +770,6 @@ public class PdfReader implements Closeable, Serializable {
             }
         }
         PdfDictionary trailer = (PdfDictionary) readObject(false);
-        PdfNumber xrefSize = (PdfNumber) trailer.get(PdfName.Size);
-        if (xrefSize == null || (xrefSize.intValue() != end && end > 0)) {
-            throw new PdfException(PdfException.InvalidXrefSection);
-        }
-
         PdfObject xrs = trailer.get(PdfName.XRefStm);
         if (xrs != null && xrs.getType() == PdfObject.NUMBER) {
             int loc = ((PdfNumber) xrs).intValue();

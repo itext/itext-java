@@ -152,8 +152,8 @@ public class PdfException extends RuntimeException {
     public static final String InvalidPageStructurePagesPagesMustBePdfDictionary = "invalid.page.structure.pages.must.be.pdfdictionary";
     public static final String InvalidRangeArray = "invalid.range.array";
     public static final String InvalidOffsetForObject1 = "invalid.offset.for.object {0}";
-    public static final String InvalidXrefSection = "invalid.xref.section";
     public static final String InvalidXrefStream = "invalid.xref.stream";
+    public static final String InvalidXrefTable = "invalid.xref.table";
     public static final String IoException = "io.exception";
     public static final String IsNotAnAcceptableValueForTheField = "{0}.is.not.an.acceptable.value.for.the.field.{1}";
     public static final String IsNotWmfImage = "is.not.wmf.image";

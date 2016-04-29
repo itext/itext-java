@@ -666,6 +666,7 @@ public class PdfReaderTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
     public void correctSimpleDoc1() throws IOException {
         String filename = sourceFolder + "correctSimpleDoc1.pdf";
 
@@ -702,6 +703,7 @@ public class PdfReaderTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
     public void correctSimpleDoc3() throws IOException {
         String filename = sourceFolder + "correctSimpleDoc3.pdf";
 
@@ -738,6 +740,7 @@ public class PdfReaderTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
     public void fixPdfTest01() throws IOException {
         String filename = sourceFolder + "OnlyTrailer.pdf";
 
@@ -820,6 +823,7 @@ public class PdfReaderTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
     public void fixPdfTest05() throws IOException {
         String filename = sourceFolder + "CompressionWrongShift.pdf";
 
@@ -873,6 +877,7 @@ public class PdfReaderTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
     public void fixPdfTest08() throws IOException {
         String filename = sourceFolder + "XRefSectionWithFreeReferences2.pdf";
 
@@ -898,6 +903,7 @@ public class PdfReaderTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
     public void fixPdfTest09() throws IOException {
         String filename = sourceFolder + "XRefSectionWithFreeReferences3.pdf";
 
@@ -950,6 +956,7 @@ public class PdfReaderTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
     public void fixPdfTest11() throws IOException {
         String filename = sourceFolder + "XRefSectionWithoutSize.pdf";
 
@@ -971,6 +978,7 @@ public class PdfReaderTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
     public void fixPdfTest12() throws IOException {
         String filename = sourceFolder + "XRefWithBreaks.pdf";
 
@@ -1061,6 +1069,7 @@ public class PdfReaderTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
     public void fixPdfTest15() throws IOException {
         String filename = sourceFolder + "XRefWithInvalidGenerations3.pdf";
 
@@ -1105,6 +1114,7 @@ public class PdfReaderTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
     public void fixPdfTest17() throws IOException {
         String filename = sourceFolder + "XrefWithNullOffsets.pdf";
 
@@ -1226,6 +1236,7 @@ public class PdfReaderTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
     public void appendModeWith10PagesFix1() throws IOException {
         String filename = sourceFolder + "10PagesDocumentAppendedFix1.pdf";
 
@@ -1252,6 +1263,7 @@ public class PdfReaderTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
     public void appendModeWith10PagesFix2() throws IOException {
         String filename = sourceFolder + "10PagesDocumentAppendedFix2.pdf";
 
@@ -1493,6 +1505,22 @@ public class PdfReaderTest extends ExtendedITextTest{
         Assert.assertFalse(reader.hasFixedXref());
         Assert.assertFalse(reader.hasRebuiltXref());
         Assert.assertTrue(((PdfDictionary)pdfDoc.getPdfObject(1)).containsKey(PdfName.AcroForm));
+        pdfDoc.close();
+    }
+
+    @Test
+    public void incrementalUpdateWithOnlyZeroObjectUpdate() throws IOException {
+        String filename = sourceFolder + "pdfReferenceUpdated.pdf";
+
+        FileInputStream fis = new FileInputStream(filename);
+        PdfReader reader = new PdfReader(fis);
+        PdfDocument pdfDoc = new PdfDocument(reader);
+
+        Assert.assertFalse(reader.hasFixedXref());
+        Assert.assertFalse(reader.hasRebuiltXref());
+
+        // problem that is tested here originally was found because the StructTreeRoot dictionary wasn't read
+        Assert.assertTrue(pdfDoc.isTagged());
         pdfDoc.close();
     }
 

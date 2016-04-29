@@ -151,19 +151,19 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     /**
      * Gets refersTo object offset in a document.
      *
-     * @return object offset in a document. If refersTo object is in object stream then 0.
+     * @return object offset in a document. If refersTo object is in object stream then -1.
      */
     public long getOffset() {
-        return objectStreamNumber == 0 ? offsetOrIndex : 0;
+        return objectStreamNumber == 0 ? offsetOrIndex : -1;
     }
 
     /**
      * Gets refersTo object index in the object stream.
      *
-     * @return object index in a document. If refersTo object is not in object stream then 0.
+     * @return object index in a document. If refersTo object is not in object stream then -1.
      */
     public int getIndex() {
-        return objectStreamNumber == 0 ? 0 : (int)offsetOrIndex;
+        return objectStreamNumber == 0 ? -1 : (int)offsetOrIndex;
     }
 
     @Override
