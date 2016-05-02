@@ -51,10 +51,14 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccessibilityProperties {
+public class AccessibilityProperties implements Serializable {
+
+    private static final long serialVersionUID = 3139055327755008473L;
+
     protected String language;
     protected String actualText;
     protected String alternateDescription;
@@ -167,7 +171,9 @@ public class AccessibilityProperties {
                 attributesArray.add(revision);
             }
         } else {
-            attributesArray.addAll(newAttributesList);
+            for (PdfDictionary newAttribute : newAttributesList) {
+                attributesArray.add(newAttribute);
+            }
         }
     }
 }

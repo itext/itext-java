@@ -46,7 +46,7 @@ package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.color.Color;
-import com.itextpdf.pdfa.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -307,7 +307,7 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     protected void checkPdfNumber(PdfNumber number) {
-        if (Math.abs(number.getLongValue()) > getMaxRealValue() && number.toString().contains(".")) {
+        if (Math.abs(number.longValue()) > getMaxRealValue() && number.toString().contains(".")) {
             throw new PdfAConformanceException(PdfAConformanceException.RealNumberIsOutOfRange);
         }
     }
@@ -368,7 +368,7 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(PdfAConformanceException.AnnotationType1IsNotPermitted).setMessageParams(subtype.getValue());
         }
         PdfNumber ca = annotDic.getAsNumber(PdfName.CA);
-        if (ca != null && ca.getFloatValue() != 1.0) {
+        if (ca != null && ca.floatValue() != 1.0) {
             throw new PdfAConformanceException(PdfAConformanceException.AnAnnotationDictionaryShallNotContainTheCaKeyWithAValueOtherThan1);
         }
         if (!annotDic.containsKey(PdfName.F)) {
@@ -376,11 +376,11 @@ public class PdfA1Checker extends PdfAChecker {
         }
 
         int flags = annotDic.getAsInt(PdfName.F);
-        if (!checkFlag(flags, PdfAnnotation.Print) || checkFlag(flags, PdfAnnotation.Hidden) || checkFlag(flags, PdfAnnotation.Invisible) ||
-                checkFlag(flags, PdfAnnotation.NoView)) {
+        if (!checkFlag(flags, PdfAnnotation.PRINT) || checkFlag(flags, PdfAnnotation.HIDDEN) || checkFlag(flags, PdfAnnotation.INVISIBLE) ||
+                checkFlag(flags, PdfAnnotation.NO_VIEW)) {
             throw new PdfAConformanceException(PdfAConformanceException.TheFKeysPrintFlagBitShallBeSetTo1AndItsHiddenInvisibleAndNoviewFlagBitsShallBeSetTo0);
         }
-        if (subtype.equals(PdfName.Text) && (!checkFlag(flags, PdfAnnotation.NoZoom) || !checkFlag(flags, PdfAnnotation.NoRotate))) {
+        if (subtype.equals(PdfName.Text) && (!checkFlag(flags, PdfAnnotation.NO_ZOOM) || !checkFlag(flags, PdfAnnotation.NO_ROTATE))) {
             throw new PdfAConformanceException(PdfAConformanceException.TextAnnotationsShouldSetTheNozoomAndNorotateFlagBitsOfTheFKeyTo1);
         }
         if (annotDic.containsKey(PdfName.C) || annotDic.containsKey(PdfName.IC)) {
@@ -493,9 +493,11 @@ public class PdfA1Checker extends PdfAChecker {
 
     private PdfArray getFormFields(PdfArray array) {
         PdfArray fields = new PdfArray();
-        for (PdfObject field : array) {
-            PdfDictionary fieldDic = (PdfDictionary) field;
-            PdfArray kids = fieldDic.getAsArray(PdfName.Kids);
+        // explicit iteration to resolve indirect references on get().
+        // TODO DEVSIX-591
+        for (int i = 0; i < array.size(); i++) {
+            PdfDictionary field = array.getAsDictionary(i);
+            PdfArray kids = field.getAsArray(PdfName.Kids);
             fields.add(field);
             if (kids != null) {
                 fields.addAll(getFormFields(kids));

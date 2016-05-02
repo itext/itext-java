@@ -113,9 +113,9 @@ public abstract class AbstractCMap {
                 addChar(mark, codes.get(k - start));
             } else if (code.isNumber()) {
                 int nn = (int)code.getValue() + k - start;
-                addChar(mark, new CMapObject(CMapObject.Number, nn));
+                addChar(mark, new CMapObject(CMapObject.NUMBER, nn));
             } else if (code.isString()) {
-                CMapObject s1 = new CMapObject(CMapObject.HexString, sout);
+                CMapObject s1 = new CMapObject(CMapObject.HEX_STRING, sout);
                 addChar(mark, s1);
                 assert sout != null;
                 ++sout[sout.length - 1];
@@ -125,7 +125,7 @@ public abstract class AbstractCMap {
     
 //    protected static byte[] toByteArray(String value) {
 //        if (PdfEncodings.isPdfDocEncoding(value)) {
-//            return PdfEncodings.convertToBytes(value, PdfEncodings.PdfDocEncoding);
+//            return PdfEncodings.convertToBytes(value, PdfEncodings.PDF_DOC_ENCODING);
 //        } else {
 //            return PdfEncodings.convertToBytes(value, null);
 //        }
@@ -145,9 +145,9 @@ public abstract class AbstractCMap {
             return PdfEncodings.convertToString(bytes, "UnicodeBigUnmarked");
         } else {
             if (bytes.length >= 2 && bytes[0] == (byte)254 && bytes[1] == (byte)255) {
-                return PdfEncodings.convertToString(bytes, PdfEncodings.UnicodeBig);
+                return PdfEncodings.convertToString(bytes, PdfEncodings.UNICODE_BIG);
             } else {
-                return PdfEncodings.convertToString(bytes, PdfEncodings.PdfDocEncoding);
+                return PdfEncodings.convertToString(bytes, PdfEncodings.PDF_DOC_ENCODING);
             }
         }
     }

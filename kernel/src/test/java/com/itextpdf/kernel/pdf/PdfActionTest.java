@@ -14,11 +14,11 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PdfActionTest  extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfActionTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfActionTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfActionTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfActionTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 

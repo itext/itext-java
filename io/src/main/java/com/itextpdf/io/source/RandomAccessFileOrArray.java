@@ -63,7 +63,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
     /**
      * The source that backs this object
      */
-    private final RandomAccessSource byteSource;
+    private final IRandomAccessSource byteSource;
 
     /**
      * The physical location in the underlying byte source.
@@ -88,7 +88,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
         return new RandomAccessFileOrArray(new IndependentRandomAccessSource(byteSource));
     }
 
-    public RandomAccessSource createSourceView() {
+    public IRandomAccessSource createSourceView() {
         return new IndependentRandomAccessSource(byteSource);
     }
 
@@ -97,7 +97,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * this RandomAccessFileOrArray is closed.
      * @param byteSource the byte source to wrap
      */
-    public RandomAccessFileOrArray(RandomAccessSource byteSource){
+    public RandomAccessFileOrArray(IRandomAccessSource byteSource){
         this.byteSource = byteSource;
     }
 
@@ -154,7 +154,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
         readFully(b, 0, b.length);
     }
 
-    public void readFully(byte b[], int off, int len) throws java.io.IOException {
+    public void readFully(byte[] b, int off, int len) throws java.io.IOException {
         int n = 0;
         do {
             int count = read(b, off + n, len - n);
@@ -492,13 +492,8 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * @throws java.io.IOException the font file could not be read
      */
     public String readString(int length, String encoding) throws java.io.IOException {
-        byte buf[] = new byte[length];
+        byte[] buf = new byte[length];
         readFully(buf);
-        try {
-            return new String(buf, encoding);
-        }
-        catch (Exception e) {
-            throw new java.io.IOException(e);
-        }
+        return new String(buf, encoding);
     }
 }

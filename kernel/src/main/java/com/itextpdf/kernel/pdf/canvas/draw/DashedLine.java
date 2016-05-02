@@ -49,10 +49,10 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
 /**
- * Implementation of {@link LineDrawer} which draws a dashed horizontal line over
+ * Implementation of {@link ILineDrawer} which draws a dashed horizontal line over
  * the middle of the specified rectangle.
  */
-public class DashedLine implements LineDrawer {
+public class DashedLine implements ILineDrawer {
 
     private float lineWidth = 1;
 

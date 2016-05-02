@@ -49,9 +49,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
@@ -65,7 +65,7 @@ import java.util.List;
  * from an URL.
  * @author Paulo Soares
  */
-public class CrlClientOnline implements CrlClient {
+public class CrlClientOnline implements ICrlClient {
 
     /** The Logger instance. */
     private static final Logger LOGGER = LoggerFactory.getLogger(CrlClientOnline.class);
@@ -120,7 +120,7 @@ public class CrlClientOnline implements CrlClient {
     protected void addUrl(String url) {
         try {
             addUrl(new URL(url));
-        } catch (MalformedURLException e) {
+        } catch (IOException e) {
             LOGGER.info("Skipped CRL url (malformed): " + url);
         }
     }
@@ -144,7 +144,7 @@ public class CrlClientOnline implements CrlClient {
      * If you want to load a CRL from a local file, subclass this method and pass an
      * URL with the path to the local file to this method. An other option is to use
      * the CrlClientOffline class.
-     * @see com.itextpdf.signatures.CrlClient#getEncoded(java.security.cert.X509Certificate, java.lang.String)
+     * @see ICrlClient#getEncoded(java.security.cert.X509Certificate, java.lang.String)
      */
     public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
         if (checkCert == null)

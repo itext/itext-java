@@ -1,13 +1,14 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.Cell;
@@ -31,8 +32,8 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class TableTest extends ExtendedITextTest{
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/TableTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/TableTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TableTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/TableTest/";
 
     static final String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
             "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
@@ -43,7 +44,7 @@ public class TableTest extends ExtendedITextTest{
 
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
        createDestinationFolder(destinationFolder);
     }
 
@@ -312,7 +313,7 @@ public class TableTest extends ExtendedITextTest{
 
         doc.add(new Paragraph("Table 3"));
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getPngImage(new File(sourceFolder + "itext.png").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(new File(sourceFolder + "itext.png").toURI().toURL()));
         Image image = new Image(xObject, 50);
 
         Table table3 = new Table(new float[]{100, 100})
@@ -628,7 +629,7 @@ public class TableTest extends ExtendedITextTest{
                 .addCell(new Cell().add(new Paragraph("cell 1, 3\n" + textContent)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + textContent)))
                 .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + textContent)))
-                .addCell(new Cell().add(new Image(ImageFactory.getImage(sourceFolder + "red.png"))))
+                .addCell(new Cell().add(new Image(ImageDataFactory.create(sourceFolder + "red.png"))))
                 .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + shortTextContent)))
@@ -657,7 +658,7 @@ public class TableTest extends ExtendedITextTest{
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{130, 130, 260})
-                .addCell(new Cell().add(new Image(ImageFactory.getImage(sourceFolder + "red.png"))))
+                .addCell(new Cell().add(new Image(ImageDataFactory.create(sourceFolder + "red.png"))))
                 .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + shortTextContent)))
@@ -695,7 +696,7 @@ public class TableTest extends ExtendedITextTest{
         doc.add(new Paragraph(textContent));
 
         Table table = new Table(new float[]{130, 130, 260})
-                .addCell(new Cell().add(new Image(ImageFactory.getImage(sourceFolder + "red.png"))))
+                .addCell(new Cell().add(new Image(ImageDataFactory.create(sourceFolder + "red.png"))))
                 .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + shortTextContent)))

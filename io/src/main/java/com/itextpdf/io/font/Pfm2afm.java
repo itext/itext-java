@@ -138,6 +138,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.util.FileUtil;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -153,7 +154,7 @@ public final class Pfm2afm {
     /** Creates a new instance of Pfm2afm */
     private Pfm2afm(RandomAccessFileOrArray input, OutputStream output) throws java.io.IOException {
         this.input = input;
-        this.output = new PrintWriter(new OutputStreamWriter(output, "ISO-8859-1"));
+        this.output = FileUtil.createPrintWriter(output, "ISO-8859-1");
     }
     
     /**
@@ -173,7 +174,7 @@ public final class Pfm2afm {
     }
     
     private String readString(int n) throws java.io.IOException {
-        byte b[] = new byte[n];
+        byte[] b = new byte[n];
         input.readFully(b);
         int k;
         for (k = 0; k < b.length; ++k) {
@@ -353,12 +354,12 @@ public final class Pfm2afm {
     
     private void putchartab() throws java.io.IOException {
         int count = lastchar - firstchar + 1;
-        int ctabs[] = new int[count];
+        int[] ctabs = new int[count];
         input.seek(chartab);
         for (int k = 0; k < count; ++k) {
             ctabs[k] = input.readUnsignedShortLE();
         }
-        int back[] = new int[256];
+        int[] back = new int[256];
         if (charset == 0) {
             for (int i = firstchar; i <= lastchar; ++i) {
                 if (Win2PSStd[i] != 0) {
@@ -409,7 +410,7 @@ public final class Pfm2afm {
         input.seek(kernpairs);
         int count = input.readUnsignedShortLE();
         int nzero = 0;
-        int kerns[] = new int[count * 3];
+        int[] kerns = new int[count * 3];
         for (int k = 0; k < kerns.length;) {
             kerns[k++] = input.read();
             kerns[k++] = input.read();
@@ -492,7 +493,7 @@ public final class Pfm2afm {
  * Translate table from 1004 to psstd.  1004 is an extension of the
  * Windows translate table used in PM.
  */
-    private int Win2PSStd[] = {
+    private int[] Win2PSStd = {
         0,   0,   0,   0, 197, 198, 199,   0, 202,   0,   205, 206, 207, 0,   0,   0,   // 00
         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   // 10
         32,  33,  34,  35,  36,  37,  38, 169,  40,  41,  42,  43,  44,  45,  46,  47,  // 20
@@ -516,7 +517,7 @@ public final class Pfm2afm {
 //     *  in the pfm file, all unused characters are given the width of space.
 //     *  Note that this array isn't used in iText.
 //     */
-//    private int WinClass[] = {
+//    private int[] WinClass = {
 //        0, 0, 0, 0, 2, 2, 2, 0, 2, 0, 2, 2, 2, 0, 0, 0,   /* 00 */
 //        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   /* 10 */
 //        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,   /* 20 */
@@ -539,7 +540,7 @@ public final class Pfm2afm {
  *  Windows character names.  Give a name to the used locations
  *  for when the all flag is specified.
  */
-    private String WinChars[] = {
+    private String[] WinChars = {
         "W00",              /*   00    */
         "W01",              /*   01    */
         "W02",              /*   02    */

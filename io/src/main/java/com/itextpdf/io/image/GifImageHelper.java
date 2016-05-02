@@ -46,11 +46,9 @@ package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.util.StreamUtil;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
@@ -58,10 +56,15 @@ import java.util.Map;
 
 public final class GifImageHelper {
 
-    static final int MaxStackSize = 4096;   // max decoder pixel stack size
+    static final int MAX_STACK_SIZE = 4096;   // max decoder pixel stack size
 
     private static class GifParameters {
-        DataInputStream input;
+
+        public GifParameters(GifImageData image) {
+            this.image = image;
+        }
+
+        InputStream input;
         boolean gctFlag;      // global color table used
 
         int bgIndex;          // background color index
@@ -100,14 +103,14 @@ public final class GifImageHelper {
         URL fromUrl;
         int currentFrame;
 
-        GifImage image;
+        GifImageData image;
     }
 
     /**
      * Reads image source and fills GifImage object with parameters (frames, width, height)
      * @param image GifImage
      */
-    public static void processImage(GifImage image) {
+    public static void processImage(GifImageData image) {
         processImage(image, -1);
     }
 
@@ -116,43 +119,22 @@ public final class GifImageHelper {
      * @param image GifImage
      * @param lastFrameNumber the last frame of the gif image should be read
      */
-    public static void processImage(GifImage image, int lastFrameNumber) {
-        GifParameters gif = new GifParameters();
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-
-        gif.image = image;
-
-        InputStream gifStream = null;
+    public static void processImage(GifImageData image, int lastFrameNumber) {
+        GifParameters gif = new GifParameters(image);
+        InputStream gifStream;
         try {
-            if (gif.image.getUrl() != null) {
-                gifStream = gif.image.getUrl().openStream();
-
-                int read;
-                byte[] bytes = new byte[4096];
-                while ((read = gifStream.read(bytes)) != -1) {
-                    stream.write(bytes, 0, read);
-                }
-                gifStream.close();
-                gifStream = new ByteArrayInputStream(stream.toByteArray());
-            } else {
-                gifStream = new ByteArrayInputStream(gif.image.getBytes());
+            if (image.getData() == null) {
+                image.loadData();
             }
+            gifStream = new ByteArrayInputStream(image.getData());
             process(gifStream, gif, lastFrameNumber);
         } catch (java.io.IOException e) {
             throw new IOException(IOException.GifImageException, e);
-        } finally {
-            if (gifStream != null) {
-                try {
-                    gifStream.close();
-                } catch (java.io.IOException ignore) {
-
-                }
-            }
         }
     }
 
     private static void process(InputStream stream, GifParameters gif, int lastFrameNumber) throws java.io.IOException {
-        gif.input = new DataInputStream(new BufferedInputStream(stream));
+        gif.input = stream;
         readHeader(gif);
         readContents(gif, lastFrameNumber);
         if (gif.currentFrame <= lastFrameNumber)
@@ -220,8 +202,8 @@ public final class GifImageHelper {
         int ncolors = 1 << bpc;
         int nbytes = 3*ncolors;
         bpc = newBpc(bpc);
-        byte table[] = new byte[(1 << bpc) * 3];
-        gif.input.readFully(table, 0, nbytes);
+        byte[] table = new byte[(1 << bpc) * 3];
+        StreamUtil.readFully(gif.input, table, 0, nbytes);
         return table;
     }
 
@@ -304,7 +286,7 @@ public final class GifImageHelper {
         if (gif.transparency && gif.transIndex >= gif.m_curr_table.length / 3)
             gif.transparency = false;
         if (gif.transparency && gif.m_bpc == 1) { // Acrobat 5.05 doesn't like this combination
-            byte tp[] = new byte[12];
+            byte[] tp = new byte[12];
             System.arraycopy(gif.m_curr_table, 0, tp, 0, 6);
             gif.m_curr_table = tp;
             gif.m_bpc = 2;
@@ -320,11 +302,11 @@ public final class GifImageHelper {
             int len = gif.m_curr_table.length;
             colorspace[2] = len / 3 - 1;
             colorspace[3] = PdfEncodings.convertToString(gif.m_curr_table, null);
-            Map ad = new HashMap();
+            Map<String, Object> ad = new HashMap<>();
             ad.put("ColorSpace", colorspace);
-            RawImage img = new RawImage(gif.m_out, ImageType.NONE);
+            RawImageData img = new RawImageData(gif.m_out, ImageType.NONE);
             RawImageHelper.updateRawImageParameters(img, gif.iw, gif.ih, 1, gif.m_bpc, gif.m_out);
-            RawImageHelper.updateImageAttributes(img, ad, new ByteArrayOutputStream());
+            RawImageHelper.updateImageAttributes(img, ad);
             gif.image.addFrame(img);
             if (gif.transparency) {
                 img.setTransparency(new int[]{gif.transIndex, gif.transIndex});
@@ -342,11 +324,11 @@ public final class GifImageHelper {
         boolean skipZero = false;
 
         if (gif.prefix == null)
-            gif.prefix = new short[MaxStackSize];
+            gif.prefix = new short[MAX_STACK_SIZE];
         if (gif.suffix == null)
-            gif.suffix = new byte[MaxStackSize];
+            gif.suffix = new byte[MAX_STACK_SIZE];
         if (gif.pixelStack == null)
-            gif.pixelStack = new byte[MaxStackSize+1];
+            gif.pixelStack = new byte[MAX_STACK_SIZE +1];
 
         gif.m_line_stride = (gif.iw * gif.m_bpc + 7) / 8;
         gif.m_out = new byte[gif.m_line_stride * gif.ih];
@@ -430,13 +412,13 @@ public final class GifImageHelper {
 
                 //  Add a new string to the string table,
 
-                if (available >= MaxStackSize)
+                if (available >= MAX_STACK_SIZE)
                     break;
                 gif.pixelStack[top++] = (byte) first;
                 gif.prefix[available] = (short) old_code;
                 gif.suffix[available] = (byte) first;
                 available++;
-                if ((available & code_mask) == 0 && available < MaxStackSize) {
+                if ((available & code_mask) == 0 && available < MAX_STACK_SIZE) {
                     code_size++;
                     code_mask += available;
                 }
@@ -494,7 +476,7 @@ public final class GifImageHelper {
         else {
             int pos = gif.m_line_stride * y + x / (8 / gif.m_bpc);
             int vout = v << 8 - gif.m_bpc * (x % (8 / gif.m_bpc))- gif.m_bpc;
-            gif.m_out[pos] |= vout;
+            gif.m_out[pos] |= (byte) vout;
         }
     }
 

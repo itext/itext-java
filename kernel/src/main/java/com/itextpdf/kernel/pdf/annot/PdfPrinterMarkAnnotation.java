@@ -56,7 +56,7 @@ public class PdfPrinterMarkAnnotation extends PdfAnnotation {
 	public PdfPrinterMarkAnnotation(Rectangle rect, PdfFormXObject appearanceStream) {
         super(rect);
         setNormalAppearance(appearanceStream.getPdfObject());
-        setFlags(PdfAnnotation.Print | PdfAnnotation.ReadOnly);
+        setFlags(PdfAnnotation.PRINT | PdfAnnotation.READ_ONLY);
     }
 
     public PdfPrinterMarkAnnotation(PdfDictionary pdfObject) {
@@ -68,7 +68,7 @@ public class PdfPrinterMarkAnnotation extends PdfAnnotation {
     }
 
     public PdfMarkupAnnotation setArbitraryTypeName(PdfName arbitraryTypeName) {
-        return put(PdfName.MN, arbitraryTypeName);
+        return (PdfMarkupAnnotation) put(PdfName.MN, arbitraryTypeName);
     }
 
     public PdfName getArbitraryTypeName() {

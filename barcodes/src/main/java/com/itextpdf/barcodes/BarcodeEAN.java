@@ -222,7 +222,7 @@ public class BarcodeEAN extends Barcode1D {
             codeType = EAN13;
             code = "";
         } catch (IOException e) {
-            throw new PdfException(e.getLocalizedMessage());
+            throw new PdfException(e);
         }
     }
 
@@ -251,7 +251,7 @@ public class BarcodeEAN extends Barcode1D {
      * @return the 8 converted digits or <CODE>null</CODE> if the
      * code could not be converted
      */
-    static public String convertUPCAtoUPCE(String text) {
+    public static String convertUPCAtoUPCE(String text) {
         if (text.length() != 12 || !(text.startsWith("0") || text.startsWith("1")))
             return null;
         if (text.substring(3, 6).equals("000") || text.substring(3, 6).equals("100")

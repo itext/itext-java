@@ -146,7 +146,7 @@ public class Barcode39 extends Barcode1D {
             startStopText = true;
             extended = false;
         } catch (IOException e) {
-            throw new PdfException(e.getLocalizedMessage());
+            throw new PdfException(e);
         }
     }
 

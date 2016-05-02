@@ -72,7 +72,7 @@ public class PdfSigFieldLockDictionary extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfSigFieldLockDictionary(PdfDictionary dict) {
         super(dict);
-        put(PdfName.Type, PdfName.SigFieldLock);
+        getPdfObject().put(PdfName.Type, PdfName.SigFieldLock);
     }
 
     /**
@@ -83,7 +83,7 @@ public class PdfSigFieldLockDictionary extends PdfObjectWrapper<PdfDictionary> {
      * @return This {@link PdfSigFieldLockDictionary} object.
      */
     public PdfSigFieldLockDictionary setDocumentPermissions(LockPermissions permissions) {
-        put(PdfName.P, permissions.getValue());
+        getPdfObject().put(PdfName.P, getLockPermission(permissions));
         return this;
     }
 
@@ -96,15 +96,38 @@ public class PdfSigFieldLockDictionary extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfSigFieldLockDictionary setFieldLock(LockAction action, String... fields) {
         PdfArray fieldsArray = new PdfArray();
-
         for (String field : fields) {
             fieldsArray.add(new PdfString(field));
         }
-
-        put(PdfName.Action, action.getValue());
-        put(PdfName.Fields, fieldsArray);
-
+        getPdfObject().put(PdfName.Action, getLockActionValue(action));
+        getPdfObject().put(PdfName.Fields, fieldsArray);
         return this;
+    }
+
+    public static PdfName getLockActionValue(LockAction action) {
+        switch (action) {
+            case ALL:
+                return PdfName.All;
+            case INCLUDE:
+                return PdfName.Include;
+            case EXCLUDE:
+                return PdfName.Exclude;
+            default:
+                return PdfName.All;
+        }
+    }
+
+    public static PdfNumber getLockPermission(LockPermissions permissions) {
+        switch (permissions) {
+            case NO_CHANGES_ALLOWED:
+                return new PdfNumber(1);
+            case FORM_FILLING:
+                return new PdfNumber(2);
+            case FORM_FILLING_AND_ANNOTATION:
+                return new PdfNumber(3);
+            default:
+                return new PdfNumber(0);
+        }
     }
 
     /**
@@ -118,17 +141,7 @@ public class PdfSigFieldLockDictionary extends PdfObjectWrapper<PdfDictionary> {
      * </ul>
      */
     public enum LockAction {
-        ALL(PdfName.All), INCLUDE(PdfName.Include), EXCLUDE(PdfName.Exclude);
-
-        private PdfName name;
-
-        LockAction(PdfName name) {
-            this.name = name;
-        }
-
-        public PdfName getValue() {
-            return name;
-        }
+        ALL, INCLUDE, EXCLUDE;
     }
 
     /**
@@ -146,17 +159,7 @@ public class PdfSigFieldLockDictionary extends PdfObjectWrapper<PdfDictionary> {
      * </ul>
      */
     public enum LockPermissions {
-        NO_CHANGES_ALLOWED(1), FORM_FILLING(2), FORM_FILLING_AND_ANNOTATION(3);
-
-        private PdfNumber number;
-
-        LockPermissions(int p) {
-            number = new PdfNumber(p);
-        }
-
-        public PdfNumber getValue() {
-            return number;
-        }
+        NO_CHANGES_ALLOWED, FORM_FILLING, FORM_FILLING_AND_ANNOTATION;
     }
 
     @Override

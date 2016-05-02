@@ -1,17 +1,16 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.io.image.ImageFactory;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
@@ -19,28 +18,31 @@ import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
 
-import static org.junit.Assert.assertNull;
-
 @Category(IntegrationTest.class)
 public class AutoTaggingTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/AutoTaggingTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/AutoTaggingTest/";
-    static final public String imageName = "Desert.jpg";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/AutoTaggingTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/AutoTaggingTest/";
+    public static final String imageName = "Desert.jpg";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
@@ -70,7 +72,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Image image = new Image(ImageFactory.getImage(sourceFolder + imageName));
+        Image image = new Image(ImageDataFactory.create(sourceFolder + imageName));
         document.add(image);
 
         document.close();
@@ -88,7 +90,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         Div div = new Div();
 
         div.add(createParagraph1());
-        Image image = new Image(ImageFactory.getImage(sourceFolder + imageName));
+        Image image = new Image(ImageDataFactory.create(sourceFolder + imageName));
         image.setAutoScale(true);
         div.add(image);
         div.add(createParagraph2());
@@ -112,7 +114,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         Table table = new Table(3);
 
         table.addCell(createParagraph1());
-        Image image = new Image(ImageFactory.getImage(sourceFolder + imageName));
+        Image image = new Image(ImageDataFactory.create(sourceFolder + imageName));
         image.setAutoScale(true);
         table.addCell(image);
         table.addCell(createParagraph2());
@@ -309,7 +311,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         String watermarkText = "WATERMARK";
         Paragraph watermark = new Paragraph(watermarkText);
         watermark.setFontColor(new DeviceGray(0.75f)).setFontSize(72);
-        document.showTextAligned(watermark, PageSize.A4.getWidth() / 2, PageSize.A4.getHeight() / 2, 1, Property.TextAlignment.CENTER, Property.VerticalAlignment.MIDDLE, (float) (Math.PI / 4));
+        document.showTextAligned(watermark, PageSize.A4.getWidth() / 2, PageSize.A4.getHeight() / 2, 1, TextAlignment.CENTER, VerticalAlignment.MIDDLE, (float) (Math.PI / 4));
 
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
@@ -394,11 +396,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         table.setSkipFirstHeader(true);
         table.setSkipLastFooter(true);
 
-        int magicalFlushingIndicator = 148;
         for (int i = 0; i < 350; i++) {
-            if (i % magicalFlushingIndicator == magicalFlushingIndicator - 1) {
-                pdfDocument.getPage(i / magicalFlushingIndicator + 1).flush();
-            }
             table.addCell(new Cell().add(new Paragraph(String.valueOf(i+1))));
             table.flush();
         }

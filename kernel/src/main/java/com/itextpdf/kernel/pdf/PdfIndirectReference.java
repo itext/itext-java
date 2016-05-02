@@ -50,7 +50,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
 
     private static final long serialVersionUID = -8293603068792908601L;
 
-	private static final int LengthOfIndirectsChain = 31;
+	private static final int LENGTH_OF_INDIRECTS_CHAIN = 31;
 
     /**
      * Object number.
@@ -115,20 +115,22 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         return getRefersTo(true);
     }
 
-    // Gets direct object and try to resolve indirects chain.
-    // <p>
-    // Note: If chain of references has length of more than 32,
-    // this method return 31st reference in chain.
-    // </p>
+    /**
+     * Gets direct object and try to resolve indirects chain.
+     * <p>
+     * Note: If chain of references has length of more than 32,
+     * this method return 31st reference in chain.
+     * </p>
+     */
     public PdfObject getRefersTo(boolean recursively) {
         if (!recursively) {
-            if (refersTo == null && !checkState(Flushed) && !checkState(Modified) && getReader() != null) {
+            if (refersTo == null && !checkState(FLUSHED) && !checkState(MODIFIED) && getReader() != null) {
                 refersTo = getReader().readObject(this);
             }
             return refersTo;
         } else {
             PdfObject currentRefersTo = getRefersTo(false);
-            for (int i = 0; i < LengthOfIndirectsChain; i++) {
+            for (int i = 0; i < LENGTH_OF_INDIRECTS_CHAIN; i++) {
                 if (currentRefersTo instanceof PdfIndirectReference)
                     currentRefersTo = ((PdfIndirectReference) currentRefersTo).getRefersTo(false);
                 else
@@ -149,19 +151,19 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     /**
      * Gets refersTo object offset in a document.
      *
-     * @return object offset in a document. If refersTo object is in object stream then 0.
+     * @return object offset in a document. If refersTo object is in object stream then -1.
      */
     public long getOffset() {
-        return objectStreamNumber == 0 ? offsetOrIndex : 0;
+        return objectStreamNumber == 0 ? offsetOrIndex : -1;
     }
 
     /**
      * Gets refersTo object index in the object stream.
      *
-     * @return object index in a document. If refersTo object is not in object stream then 0.
+     * @return object index in a document. If refersTo object is not in object stream then -1.
      */
     public int getIndex() {
-        return objectStreamNumber == 0 ? 0 : (int)offsetOrIndex;
+        return objectStreamNumber == 0 ? -1 : (int)offsetOrIndex;
     }
 
     @Override
@@ -193,11 +195,53 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
 
     @Override
     public byte getType() {
-        return IndirectReference;
+        return INDIRECT_REFERENCE;
     }
 
     public PdfDocument getDocument() {
         return pdfDocument;
+    }
+
+    /**
+     * Releases indirect reference from the document. Remove link to the referenced indirect object.
+     * <p>
+     * Note: Be careful when using this method. Do not use this method for wrapper objects,
+     * it can be cause of errors.
+     * Free indirect reference could be reused for a new indirect object.
+     * </p>
+     */
+    public void setFree() {
+        getDocument().getXref().freeReference(this);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder states = new StringBuilder(" ");
+        if (checkState(FREE)) {
+            states.append("Free; ");
+        }
+        if (checkState(MODIFIED)) {
+            states.append("Modified; ");
+        }
+        if (checkState(MUST_BE_FLUSHED)) {
+            states.append("MustBeFlushed; ");
+        }
+        if (checkState(READING)) {
+            states.append("Reading; ");
+        }
+        if (checkState(FLUSHED)) {
+            states.append("Flushed; ");
+        }
+        if (checkState(ORIGINAL_OBJECT_STREAM)) {
+            states.append("OriginalObjectStream; ");
+        }
+        if (checkState(FORBID_RELEASE)) {
+            states.append("ForbidRelease; ");
+        }
+        if (checkState(READ_ONLY)) {
+            states.append("ReadOnly; ");
+        }
+        return MessageFormat.format("{0} {1} R{2}", getObjNumber(), getGenNumber(), states.substring(0, states.length() - 1));
     }
 
     /**
@@ -222,82 +266,47 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         return null;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder states = new StringBuilder(" ");
-        if (checkState(Free)) {
-            states.append("Free; ");
-        }
-        if (checkState(Modified)) {
-            states.append("Modified; ");
-        }
-        if (checkState(MustBeFlushed)) {
-            states.append("MustBeFlushed; ");
-        }
-        if (checkState(Reading)) {
-            states.append("Reading; ");
-        }
-        if (checkState(Flushed)) {
-            states.append("Flushed; ");
-        }
-        if (checkState(OriginalObjectStream)) {
-            states.append("OriginalObjectStream; ");
-        }
-        if (checkState(ForbidRelease)) {
-            states.append("ForbidRelease; ");
-        }
-        if (checkState(ReadOnly)) {
-            states.append("ReadOnly; ");
-        }
-        return MessageFormat.format("{0} {1} R{2}", getObjNumber(), getGenNumber(), states.substring(0, states.length() - 1));
-    }
-
-    protected void setObjStreamNumber(int objectStreamNumber) {
-        this.objectStreamNumber = objectStreamNumber;
-    }
-
-    protected void setIndex(long index) {
-        this.offsetOrIndex = index;
-    }
-
-    protected void setOffset(long offset) {
-        this.offsetOrIndex = offset;
-        this.objectStreamNumber = 0;
-    }
-
-    protected void fixOffset(long offset){
-        //TODO log invalid offsets
-        if (!isFree()) {
-            this.offsetOrIndex = offset;
-        }
-    }
-
     // NOTE In append mode object could be OriginalObjectStream, but not Modified,
     // so information about this reference would not be added to the new Cross-Reference table.
     // In stamp mode without append the reference will be free.
     protected boolean isFree() {
-        return checkState(Free) || checkState(OriginalObjectStream);
-    }
-
-    /**
-    * Releases indirect reference from the document. Remove link to the referenced indirect object.
-    * <p>
-    * Note: Be careful when using this method. Do not use this method for wrapper objects,
-    * it can be cause of errors.
-    * Free indirect reference could be reused for a new indirect object.
-    * </p>
-    */
-    public void setFree() {
-        getDocument().getXref().freeReference(this);
+        return checkState(FREE) || checkState(ORIGINAL_OBJECT_STREAM);
     }
 
     @Override
     protected PdfObject newInstance() {
-        return PdfNull.PdfNull;
+        return PdfNull.PDF_NULL;
     }
 
     @Override
     protected void copyContent(PdfObject from, PdfDocument document) {
 
+    }
+
+    /**
+     * Sets special states of current object.
+     * @param state special flag of current object
+     */
+    protected PdfIndirectReference setState(short state) {
+        return (PdfIndirectReference) super.setState(state);
+    }
+
+    void setObjStreamNumber(int objectStreamNumber) {
+        this.objectStreamNumber = objectStreamNumber;
+    }
+
+    void setIndex(long index) {
+        this.offsetOrIndex = index;
+    }
+
+    void setOffset(long offset) {
+        this.offsetOrIndex = offset;
+        this.objectStreamNumber = 0;
+    }
+
+    void fixOffset(long offset){
+        if (!isFree()) {
+            this.offsetOrIndex = offset;
+        }
     }
 }

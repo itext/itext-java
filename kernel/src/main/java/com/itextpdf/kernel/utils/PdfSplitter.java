@@ -57,13 +57,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class PdfSplitter {
 
     private PdfDocument pdfDocument;
+    private boolean preserveTagged;
+    private boolean preserveOutlines;
 
     /**
      * Creates a new instance of PdfSplitter class.
@@ -75,6 +74,26 @@ public class PdfSplitter {
             throw new PdfException(PdfException.CannotSplitDocumentThatIsBeingWritten);
         }
         this.pdfDocument = pdfDocument;
+        this.preserveTagged = true;
+        this.preserveOutlines = true;
+    }
+
+    /**
+     * If original document is tagged, then by default all resultant document will also be tagged.
+     * This could be changed with this flag - if set to false, resultant documents will be not tagged, even if
+     * original document is tagged.
+     */
+    public void setPreserveTagged(boolean preserveTagged) {
+        this.preserveTagged = preserveTagged;
+    }
+
+    /**
+     * If original document has outlines, then by default all resultant document will also have outlines.
+     * This could be changed with this flag - if set to false, resultant documents won't contain outlines, even if
+     * original document had them.
+     */
+    public void setPreserveOutlines(boolean preserveOutlines) {
+        this.preserveOutlines = preserveOutlines;
     }
 
     /**
@@ -92,7 +111,8 @@ public class PdfSplitter {
         while (currentPage <= numOfPages) {
             PageRange nextRange = getNextRange(currentPage, numOfPages, size);
             splitRanges.add(nextRange);
-            currentPage = nextRange.getAllPages().last() + 1;
+            List<Integer> allPages = nextRange.getAllPages();
+            currentPage = allPages.get(allPages.size() - 1) + 1;
         }
 
         return extractPageRanges(splitRanges);
@@ -233,87 +253,15 @@ public class PdfSplitter {
 
     private PdfDocument createPdfDocument(PageRange currentPageRange) {
         PdfDocument newDocument = new PdfDocument(getNextPdfWriter(currentPageRange));
-        if (pdfDocument.isTagged())
+        if (pdfDocument.isTagged() && preserveTagged)
             newDocument.setTagged();
+        if (pdfDocument.hasOutlines() && preserveOutlines)
+            newDocument.initializeOutlines();
         return newDocument;
     }
 
     public interface IDocumentReadyListener {
         void documentReady(PdfDocument pdfDocument, PageRange pageRange);
-    }
-
-    public static class PageRange {
-        private List<Integer> sequenceStarts = new ArrayList<>();
-        private List<Integer> sequenceEnds = new ArrayList<>();
-
-        public PageRange() {
-        }
-
-        /**
-         * You can call specify the page range in a string form, for example: "1-12, 15, 45-66".
-         *
-         * @param pageRange the page range.
-         */
-        public PageRange(String pageRange) {
-            pageRange = pageRange.replaceAll("\\s+", "");
-            Pattern sequencePattern = Pattern.compile("(\\d+)-(\\d+)");
-            Pattern singlePagePattern = Pattern.compile("(\\d+)");
-            for (String pageRangePart : pageRange.split(",")) {
-                Matcher matcher;
-                if ((matcher = sequencePattern.matcher(pageRangePart)).matches()) {
-                    sequenceStarts.add(Integer.parseInt(matcher.group(1)));
-                    sequenceEnds.add(Integer.parseInt(matcher.group(2)));
-                } else if ((matcher = singlePagePattern.matcher(pageRangePart)).matches()) {
-                    int pageNumber = Integer.parseInt(matcher.group(1));
-                    sequenceStarts.add(pageNumber);
-                    sequenceEnds.add(pageNumber);
-                }
-            }
-        }
-
-        public PageRange addPageSequence(int startPageNumber, int endPageNumber) {
-            sequenceStarts.add(startPageNumber);
-            sequenceEnds.add(endPageNumber);
-            return this;
-        }
-
-        public PageRange addSinglePage(int pageNumber) {
-            sequenceStarts.add(pageNumber);
-            sequenceEnds.add(pageNumber);
-            return this;
-        }
-
-        public TreeSet<Integer> getAllPages() {
-            TreeSet<Integer> allPages = new TreeSet<>();
-            for (int ind = 0; ind < sequenceStarts.size(); ind++) {
-                for (int pageInRange = sequenceStarts.get(ind); pageInRange <= sequenceEnds.get(ind); pageInRange++) {
-                    allPages.add(pageInRange);
-                }
-            }
-            return allPages;
-        }
-
-        public boolean isPageInRange(int pageNumber) {
-            for (int ind = 0; ind < sequenceStarts.size(); ind++) {
-                if (sequenceStarts.get(ind) <= pageNumber && pageNumber <= sequenceEnds.get(ind))
-                    return true;
-            }
-            return false;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (!(obj instanceof PageRange))
-                return false;
-
-            PageRange other = (PageRange) obj;
-            return sequenceStarts.equals(other.sequenceStarts) && sequenceEnds.equals(other.sequenceEnds);
-        }
-
-        @Override
-        public int hashCode() {
-            return sequenceStarts.hashCode() * 31 + sequenceEnds.hashCode();
-        }
     }
 
     /**

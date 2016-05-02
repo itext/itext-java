@@ -45,7 +45,6 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.layout.IPropertyContainer;
-import com.itextpdf.layout.Property;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -93,43 +92,42 @@ public class AreaBreakRenderer implements IRenderer {
     }
 
     @Override
-    public boolean hasProperty(Property property) {
+    public boolean hasProperty(int property) {
         return false;
     }
 
     @Override
-    public boolean hasOwnProperty(Property property) {
+    public boolean hasOwnProperty(int property) {
         return false;
     }
 
     @Override
-    public <T> T getProperty(Property key) {
+    public <T1> T1 getProperty(int key) {
         return null;
     }
 
     @Override
-    public <T> T getOwnProperty(Property property) {
+    public <T1> T1 getOwnProperty(int property) {
         return null;
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T1> T1 getDefaultProperty(int property) {
         return null;
     }
 
     @Override
-    public <T> T getProperty(Property property, T defaultValue) {
+    public <T1> T1 getProperty(int property, T1 defaultValue) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public <T extends IRenderer> T setProperty(Property property, Object value) {
+    public void setProperty(int property, Object value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void deleteOwnProperty(Property property) {
-
+    public void deleteOwnProperty(int property) {
     }
 
     @Override
@@ -158,7 +156,7 @@ public class AreaBreakRenderer implements IRenderer {
     }
 
     @Override
-    public AreaBreakRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         return null;
     }
 }

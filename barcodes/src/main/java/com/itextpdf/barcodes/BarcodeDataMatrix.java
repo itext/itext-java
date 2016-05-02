@@ -123,7 +123,7 @@ public class BarcodeDataMatrix extends Barcode2D {
 
     private String encoding;
 
-    private final static DmParams[] dmSizes = {
+    private static final DmParams[] dmSizes = {
             new DmParams(10, 10, 10, 10, 3, 3, 5),
             new DmParams(12, 12, 12, 12, 5, 5, 7),
             new DmParams(8, 18, 8, 18, 5, 5, 7),
@@ -155,7 +155,7 @@ public class BarcodeDataMatrix extends Barcode2D {
             new DmParams(132, 132, 22, 22, 1304, 163, 62),
             new DmParams(144, 144, 24, 24, 1558, 156, 62)};
 
-    private static final String x12 = "\r*> 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String X12 = "\r*> 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private int extOut;
     private short[] place;
     private byte[] image;
@@ -258,7 +258,7 @@ public class BarcodeDataMatrix extends Barcode2D {
 
         int w = width + 2 * ws;
         int h = height + 2 * ws;
-        int pix[] = new int[w * h];
+        int[] pix = new int[w * h];
         int stride = (w + 7) / 8;
         int ptr = 0;
         for (int k = 0; k < h; ++k) {
@@ -625,7 +625,7 @@ public class BarcodeDataMatrix extends Barcode2D {
         byte[] x = new byte[textLength];
         count = 0;
         for (; ptrIn < textLength; ++ptrIn) {
-            int i = x12.indexOf((char) text[ptrIn + textOffset]);
+            int i = X12.indexOf((char) text[ptrIn + textOffset]);
             if (i >= 0) {
                 x[ptrIn] = (byte) i;
                 ++count;

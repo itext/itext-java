@@ -54,9 +54,6 @@ public abstract class Barcode2D {
 
     protected static final float DEFAULT_MODULE_SIZE = 1;
 
-    public Barcode2D() {
-    }
-
     /**
      * Gets the maximum area that the barcode and the text, if
      * any, will occupy. The lower left corner is always (0, 0).

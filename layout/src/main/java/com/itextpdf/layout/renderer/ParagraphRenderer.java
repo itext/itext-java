@@ -45,13 +45,15 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Leading;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.LineLayoutResult;
+import com.itextpdf.layout.property.TextAlignment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -125,7 +127,7 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         float lastYLine = layoutBox.getY() + layoutBox.getHeight();
-        Property.Leading leading = getProperty(Property.LEADING);
+        Leading leading = getProperty(Property.LEADING);
         float leadingValue = 0;
 
         float lastLineHeight = 0;
@@ -146,13 +148,13 @@ public class ParagraphRenderer extends BlockRenderer {
                 processedRenderer = (LineRenderer) result.getSplitRenderer();
             }
 
-            Property.TextAlignment textAlignment = getProperty(Property.TEXT_ALIGNMENT);
-            if (result.getStatus() == LayoutResult.PARTIAL && textAlignment == Property.TextAlignment.JUSTIFIED && !result.isSplitForcedByNewline() ||
-                    textAlignment == Property.TextAlignment.JUSTIFIED_ALL) {
+            TextAlignment textAlignment = getProperty(Property.TEXT_ALIGNMENT);
+            if (result.getStatus() == LayoutResult.PARTIAL && textAlignment == TextAlignment.JUSTIFIED && !result.isSplitForcedByNewline() ||
+                    textAlignment == TextAlignment.JUSTIFIED_ALL) {
                 if (processedRenderer != null) {
                     processedRenderer.justify(layoutBox.getWidth() - lineIndent);
                 }
-            } else if (textAlignment != null && textAlignment != Property.TextAlignment.LEFT && processedRenderer != null) {
+            } else if (textAlignment != null && textAlignment != TextAlignment.LEFT && processedRenderer != null) {
                 float deltaX = availableWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
                 switch (textAlignment) {
                     case RIGHT:
@@ -184,7 +186,6 @@ public class ParagraphRenderer extends BlockRenderer {
                     layoutBox = areas.get(++currentAreaPos).clone();
                     lastYLine = layoutBox.getY() + layoutBox.getHeight();
                     firstLineInBox = true;
-                    continue;
                 } else {
                     boolean keepTogether = getProperty(Property.KEEP_TOGETHER);
                     if (keepTogether) {
@@ -210,6 +211,8 @@ public class ParagraphRenderer extends BlockRenderer {
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]);
                         } else {
                             if (getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                                parent.setProperty(Property.FULL, true);
+                                lines.add(currentRenderer);
                                 return new LayoutResult(LayoutResult.FULL, occupiedArea, null, this);
                             } else {
                                 return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
@@ -265,12 +268,20 @@ public class ParagraphRenderer extends BlockRenderer {
     }
 
     @Override
-    public ParagraphRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         return new ParagraphRenderer((Paragraph) modelElement);
     }
 
+    @Override
+    public <T1> T1 getDefaultProperty(int property) {
+        if ((property == Property.MARGIN_TOP || property == Property.MARGIN_BOTTOM) && parent instanceof CellRenderer) {
+            return (T1) Float.valueOf(0);
+        }
+        return super.getDefaultProperty(property);
+    }
+
     protected ParagraphRenderer createOverflowRenderer() {
-        ParagraphRenderer overflowRenderer = getNextRenderer();
+        ParagraphRenderer overflowRenderer = (ParagraphRenderer) getNextRenderer();
         // Reset first line indent in case of overflow.
         float firstLineIndent = getPropertyAsFloat(Property.FIRST_LINE_INDENT);
         if (firstLineIndent != 0) {
@@ -280,7 +291,7 @@ public class ParagraphRenderer extends BlockRenderer {
     }
 
     protected ParagraphRenderer createSplitRenderer() {
-        return getNextRenderer();
+        return (ParagraphRenderer) getNextRenderer();
     }
 
     protected ParagraphRenderer[] split() {

@@ -45,6 +45,8 @@
 package com.itextpdf.io.util;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -71,5 +73,9 @@ public final class UrlUtil {
             url = new File(filename).toURI().toURL();
         }
         return url;
+    }
+
+    public static InputStream openStream(URL url) throws IOException {
+        return url.openStream();
     }
 }

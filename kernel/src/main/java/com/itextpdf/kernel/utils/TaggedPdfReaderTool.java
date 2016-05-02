@@ -45,14 +45,13 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.parser.EventData;
-import com.itextpdf.kernel.parser.EventListener;
-import com.itextpdf.kernel.parser.EventType;
-import com.itextpdf.kernel.parser.LocationTextExtractionStrategy;
-import com.itextpdf.kernel.parser.PdfCanvasProcessor;
-import com.itextpdf.kernel.parser.SimpleTextExtractionStrategy;
-import com.itextpdf.kernel.parser.TextExtractionStrategy;
-import com.itextpdf.kernel.parser.TextRenderInfo;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
+import com.itextpdf.kernel.pdf.canvas.parser.EventType;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
+import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -78,14 +77,14 @@ import java.util.Set;
 /**
  * Converts a tagged PDF document into an XML file.
  */
- public class TaggedPdfReaderTool {
+public class TaggedPdfReaderTool {
 
     protected PdfDocument document;
     protected PrintWriter out;
     protected String rootTag;
 
     // key - page dictionary; value pairs of mcid and text in them
-    protected Map<PdfDictionary, Map<Integer, String> > parsedTags = new HashMap<>();
+    protected Map<PdfDictionary, Map<Integer, String>> parsedTags = new HashMap<>();
 
     public TaggedPdfReaderTool(PdfDocument document) {
         this.document = document;
@@ -184,16 +183,16 @@ import java.util.Set;
     }
 
     protected void parseTag(PdfMcr kid) {
-        Integer mcid = kid.getMcid();
+        int mcid = kid.getMcid();
         PdfDictionary pageDic = kid.getPageObject();
 
         String tagContent = "";
-        if (mcid != null) {
+        if (mcid != -1) {
             if (!parsedTags.containsKey(pageDic)) {
                 MarkedContentEventListener listener = new MarkedContentEventListener();
 
                 PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
-                PdfPage page = document.getCatalog().getPage(pageDic);
+                PdfPage page = document.getPage(pageDic);
                 processor.processContent(page.getContentBytes(), page.getResources());
 
                 parsedTags.put(pageDic, listener.getMcidContent());
@@ -244,8 +243,7 @@ import java.util.Set;
             if (k == 0) {
                 if (!nameStart)
                     c = '_';
-            }
-            else {
+            } else {
                 if (!nameMiddle)
                     c = '-';
             }
@@ -256,17 +254,18 @@ import java.util.Set;
 
     /**
      * NOTE: copied from itext5 XMLUtils class
-     *
+     * <p>
      * Escapes a string with the appropriated XML codes.
-     * @param s the string to be escaped
+     *
+     * @param s         the string to be escaped
      * @param onlyASCII codes above 127 will always be escaped with &amp;#nn; if <CODE>true</CODE>
      * @return the escaped string
      * @since 5.0.6
      */
-    protected static String escapeXML(final String s, final boolean onlyASCII) {
-        char cc[] = s.toCharArray();
+    protected static String escapeXML(String s, boolean onlyASCII) {
+        char[] cc = s.toCharArray();
         int len = cc.length;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int k = 0; k < len; ++k) {
             int c = cc[k];
             switch (c) {
@@ -290,7 +289,7 @@ import java.util.Set;
                         if (onlyASCII && c > 127)
                             sb.append("&#").append(c).append(';');
                         else
-                            sb.append((char)c);
+                            sb.append((char) c);
                     }
             }
         }
@@ -299,8 +298,9 @@ import java.util.Set;
 
     /**
      * Checks if a character value should be escaped/unescaped.
-     * @param	c	a character value
-     * @return	true if it's OK to escape or unescape this value
+     *
+     * @param    c    a character value
+     * @return true if it's OK to escape or unescape this value
      */
     public static boolean isValidCharacterValue(int c) {
         return (c == 0x9 || c == 0xA || c == 0xD
@@ -309,8 +309,8 @@ import java.util.Set;
                 || c >= 0x10000 && c <= 0x10FFFF);
     }
 
-    private class MarkedContentEventListener implements EventListener {
-        private Map<Integer, TextExtractionStrategy> contentByMcid = new HashMap<>();
+    private class MarkedContentEventListener implements IEventListener {
+        private Map<Integer, ITextExtractionStrategy> contentByMcid = new HashMap<>();
 
         public Map<Integer, String> getMcidContent() {
             Map<Integer, String> content = new HashMap<>();
@@ -321,13 +321,13 @@ import java.util.Set;
         }
 
         @Override
-        public void eventOccurred(EventData data, EventType type) {
+        public void eventOccurred(IEventData data, EventType type) {
             switch (type) {
                 case RENDER_TEXT:
                     TextRenderInfo textInfo = (TextRenderInfo) data;
-                    Integer mcid = textInfo.getMcid();
-                    if (mcid != null) {
-                        TextExtractionStrategy textExtractionStrategy = contentByMcid.get(mcid);
+                    int mcid = textInfo.getMcid();
+                    if (mcid != -1) {
+                        ITextExtractionStrategy textExtractionStrategy = contentByMcid.get(mcid);
                         if (textExtractionStrategy == null) {
                             textExtractionStrategy = new LocationTextExtractionStrategy();
                             contentByMcid.put(mcid, textExtractionStrategy);

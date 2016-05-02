@@ -54,7 +54,14 @@ import java.lang.reflect.Method;
  */
 public final class Version {
 
-    /** The iText version instance. */
+    /**
+     * String that will indicate if the AGPL version is used.
+     */
+    private static String AGPL = " (AGPL-version)";
+
+    /**
+     * The iText version instance.
+     */
     private static Version version = null;
     /**
      * This String contains the name of the product.
@@ -66,7 +73,7 @@ public final class Version {
      * This String contains the version number of this iText release.
      * For debugging purposes, we request you NOT to change this constant.
      */
-    private String release = "7.0.0-SNAPSHOT";
+    private String release = "7.0.0";
     /**
      * This String contains the iText version as shown in the producer line.
      * iText is a product developed by iText Group NV.
@@ -87,11 +94,11 @@ public final class Version {
     public static Version getInstance() {
         if (version == null) {
             version = new Version();
-            synchronized ( version ) {
+            synchronized (version) {
                 try {
                     Class<?> klass = Class.forName("com.itextpdf.licensekey.LicenseKey");
                     Method m = klass.getMethod("getLicenseeInfo");
-                    String[] info = (String[])m.invoke(klass.newInstance());
+                    String[] info = (String[]) m.invoke(klass.newInstance());
                     if (info[3] != null && info[3].trim().length() > 0) {
                         version.key = info[3];
                     } else {
@@ -105,7 +112,7 @@ public final class Version {
 
                     if (info[4] != null && info[4].trim().length() > 0) {
                         version.iTextVersion = info[4];
-                    }  else if (info[2] != null && info[2].trim().length() > 0) {
+                    } else if (info[2] != null && info[2].trim().length() > 0) {
                         version.iTextVersion += " (" + info[2];
                         if (!version.key.toLowerCase().startsWith("trial")) {
                             version.iTextVersion += "; licensed version)";
@@ -126,7 +133,7 @@ public final class Version {
                         throw new Exception();
                     }
                 } catch (Exception e) {
-                    version.iTextVersion += "; AGPL";
+                    version.iTextVersion += AGPL;
                 }
             }
         }
@@ -134,9 +141,18 @@ public final class Version {
     }
 
     /**
+     * Checks if the AGPL version is used.
+     * @return returns true if the AGPL version is used.
+     */
+    public static boolean isAGPLVersion() {
+        return getInstance().getVersion().indexOf(AGPL) > 0;
+    }
+
+    /**
      * Gets the product name.
      * iText Group NV requests that you retain the iText producer line
      * in every PDF that is created or manipulated using iText.
+     *
      * @return the product name
      */
     public String getProduct() {
@@ -147,6 +163,7 @@ public final class Version {
      * Gets the release number.
      * iText Group NV requests that you retain the iText producer line
      * in every PDF that is created or manipulated using iText.
+     *
      * @return the release number
      */
     public String getRelease() {
@@ -158,6 +175,7 @@ public final class Version {
      * iText is a product developed by iText Group NV.
      * iText Group requests that you retain the iText producer line
      * in every PDF that is created or manipulated using iText.
+     *
      * @return iText version
      */
     public String getVersion() {
@@ -166,10 +184,11 @@ public final class Version {
 
     /**
      * Returns a license key if one was provided, or null if not.
+     *
      * @return a license key.
      */
     public String getKey() {
         return key;
     }
-}
 
+}

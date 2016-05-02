@@ -27,11 +27,11 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class BarcodeQRCodeTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodeQRCode/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodeQRCode/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         File dir = new File(destinationFolder);
         dir.mkdirs();
         for (File file : dir.listFiles())

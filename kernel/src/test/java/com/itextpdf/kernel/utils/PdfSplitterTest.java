@@ -5,11 +5,14 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -18,19 +21,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
 @Category(IntegrationTest.class)
 public class PdfSplitterTest extends ExtendedITextTest{
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/PdfSplitterTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/utils/PdfSplitterTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/PdfSplitterTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/PdfSplitterTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
@@ -87,9 +85,9 @@ public class PdfSplitterTest extends ExtendedITextTest{
             }
         }.splitByPageCount(60, new PdfSplitter.IDocumentReadyListener() {
             @Override
-            public void documentReady(PdfDocument pdfDocument, PdfSplitter.PageRange pageRange) {
+            public void documentReady(PdfDocument pdfDocument, PageRange pageRange) {
                 try {
-                    if (new PdfSplitter.PageRange("61-120").equals(pageRange)) {
+                    if (new PageRange("61-120").equals(pageRange)) {
                         pdfDocument.getDocumentInfo().setAuthor("Modified Author");
                     }
 
@@ -114,8 +112,8 @@ public class PdfSplitterTest extends ExtendedITextTest{
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
 
-        PdfSplitter.PageRange pageRange1 = new PdfSplitter.PageRange().addPageSequence(4, 15).addSinglePage(18).addPageSequence(1, 2);
-        PdfSplitter.PageRange pageRange2 = new PdfSplitter.PageRange().addSinglePage(99).addSinglePage(98).addPageSequence(70, 99);
+        PageRange pageRange1 = new PageRange().addPageSequence(4, 15).addSinglePage(18).addPageSequence(1, 2);
+        PageRange pageRange2 = new PageRange().addSinglePage(99).addSinglePage(98).addPageSequence(70, 99);
 
         List<PdfDocument> splitDocuments = new PdfSplitter(inputPdfDoc) {
             int partNumber = 1;

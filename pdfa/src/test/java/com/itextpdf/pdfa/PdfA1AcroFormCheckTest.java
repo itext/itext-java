@@ -1,6 +1,7 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -26,12 +27,12 @@ import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
 public class PdfA1AcroFormCheckTest {
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    static final public String cmpFolder = sourceFolder + "cmp/PdfA1AcroFormCheckTest/";
-    static final public String destinationFolder = "./target/test/PdfA1AcroFormCheckTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
+    public static final String cmpFolder = sourceFolder + "cmp/PdfA1AcroFormCheckTest/";
+    public static final String destinationFolder = "./target/test/PdfA1AcroFormCheckTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         new File(destinationFolder).mkdirs();
     }
 
@@ -45,7 +46,6 @@ public class PdfA1AcroFormCheckTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         doc.addNewPage();
         PdfDictionary acroForm = new PdfDictionary();
         acroForm.put(PdfName.NeedAppearances, new PdfBoolean(true));
@@ -62,7 +62,6 @@ public class PdfA1AcroFormCheckTest {
         PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         doc.addNewPage();
         PdfDictionary acroForm = new PdfDictionary();
         acroForm.put(PdfName.NeedAppearances, new PdfBoolean(false));
@@ -80,7 +79,6 @@ public class PdfA1AcroFormCheckTest {
         PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        doc.createXmpMetadata();
         doc.addNewPage();
         PdfDictionary acroForm = new PdfDictionary();
         doc.getCatalog().put(PdfName.AcroForm, acroForm);

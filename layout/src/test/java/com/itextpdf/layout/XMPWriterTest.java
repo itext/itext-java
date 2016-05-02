@@ -24,11 +24,11 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class XMPWriterTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/XMPWriterTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/XMPWriterTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/XMPWriterTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/XMPWriterTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 

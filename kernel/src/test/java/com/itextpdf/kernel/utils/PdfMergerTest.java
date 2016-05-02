@@ -27,11 +27,11 @@ import org.xml.sax.SAXException;
 @Category(IntegrationTest.class)
 public class PdfMergerTest extends ExtendedITextTest{
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/PdfMergerTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/utils/PdfMergerTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/PdfMergerTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/PdfMergerTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
@@ -53,15 +53,12 @@ public class PdfMergerTest extends ExtendedITextTest{
         PdfDocument pdfDoc2 = new PdfDocument(reader2);
         PdfDocument pdfDoc3 = new PdfDocument(writer1);
 
-        PdfMerger merger = new PdfMerger(pdfDoc3);
-        merger.addPages(pdfDoc, 1, 1);
-        pdfDoc.close();
-        merger.addPages(pdfDoc1, 1, 1);
-        pdfDoc1.close();
-        merger.addPages(pdfDoc2, 1, 1);
-        pdfDoc2.close();
+        PdfMerger merger = new PdfMerger(pdfDoc3).setCloseSourceDocuments(true);
+        merger.merge(pdfDoc, 1, 1);
+        merger.merge(pdfDoc1, 1, 1);
 
-        merger.merge();
+        merger.merge(pdfDoc2, 1, 1);
+
         pdfDoc3.close();
 
         CompareTool compareTool = new CompareTool();
@@ -72,7 +69,7 @@ public class PdfMergerTest extends ExtendedITextTest{
     }
 
     @Test
-     public void mergeDocumentTest02() throws IOException, InterruptedException {
+    public void mergeDocumentTest02() throws IOException, InterruptedException {
         String filename = sourceFolder + "doc1.pdf";
         String filename1 = sourceFolder + "doc2.pdf";
         String filename2 = sourceFolder + "doc3.pdf";
@@ -88,17 +85,10 @@ public class PdfMergerTest extends ExtendedITextTest{
         PdfDocument pdfDoc1 = new PdfDocument(reader1);
         PdfDocument pdfDoc2 = new PdfDocument(reader2);
         PdfDocument pdfDoc3 = new PdfDocument(writer1);
-        PdfMerger merger = new PdfMerger(pdfDoc3);
+        PdfMerger merger = new PdfMerger(pdfDoc3).setCloseSourceDocuments(true);
 
-        merger.addPages(pdfDoc, 1, 1);
-        pdfDoc.close();
-        merger.addPages(pdfDoc1, 1, 1);
-        pdfDoc1.close();
-        merger.addPages(pdfDoc2, 1, 1);
-        pdfDoc2.close();
+        merger.merge(pdfDoc, 1, 1).merge(pdfDoc1, 1, 1).merge(pdfDoc2, 1, 1).close();
 
-        merger.merge();
-        pdfDoc3.close();
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergedResult02.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
@@ -125,14 +115,14 @@ public class PdfMergerTest extends ExtendedITextTest{
         PdfDocument pdfDoc3 = new PdfDocument(writer1);
         pdfDoc3.setTagged();
 
-        PdfMerger merger = new PdfMerger(pdfDoc3);
-        merger.addPages(pdfDoc, 2, 2);
+        new PdfMerger(pdfDoc3)
+                .merge(pdfDoc, 2, 2)
+                .merge(pdfDoc1, 7, 8)
+                .close();
+
         pdfDoc.close();
-        merger.addPages(pdfDoc1, 7, 8);
         pdfDoc1.close();
 
-        merger.merge();
-        pdfDoc3.close();
         CompareTool compareTool = new CompareTool();
         String errorMessage = "";
         String contentErrorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergedResult03.pdf", destinationFolder, "diff_");
@@ -164,24 +154,22 @@ public class PdfMergerTest extends ExtendedITextTest{
         PdfDocument pdfDoc3 = new PdfDocument(writer1);
         pdfDoc3.setTagged();
 
-        PdfMerger merger = new PdfMerger(pdfDoc3);
+        PdfMerger merger = new PdfMerger(pdfDoc3).setCloseSourceDocuments(true);
         List<Integer> pages = new ArrayList<>();
         pages.add(3);
         pages.add(2);
         pages.add(1);
-        merger.addPages(pdfDoc, pages);
-        pdfDoc.close();
+        merger.merge(pdfDoc, pages);
 
         List<Integer> pages1 = new ArrayList<>();
         pages1.add(5);
         pages1.add(9);
         pages1.add(4);
         pages1.add(3);
-        merger.addPages(pdfDoc1, pages1);
-        pdfDoc1.close();
+        merger.merge(pdfDoc1, pages1);
 
-        merger.merge();
-        pdfDoc3.close();
+        merger.close();
+
         CompareTool compareTool = new CompareTool();
         String errorMessage = "";
         String contentErrorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergedResult04.pdf", destinationFolder, "diff_");

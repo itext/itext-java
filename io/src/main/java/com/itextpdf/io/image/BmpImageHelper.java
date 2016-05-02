@@ -46,25 +46,20 @@ package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.io.util.StreamUtil;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class BmpImageHelper {
+final class BmpImageHelper {
 
     private static class BmpParameters {
-        public BmpParameters(BmpImage image) {
+        public BmpParameters(BmpImageData image) {
             this.image = image;
         }
 
-        BmpImage image;
+        BmpImageData image;
         int width;
         int height;
         Map<String, Object> additional;
@@ -109,7 +104,7 @@ public final class BmpImageHelper {
 
     // Color space types
     private static final int LCS_CALIBRATED_RGB = 0;
-    private static final int LCS_sRGB = 1;
+    private static final int LCS_SRGB = 1;
     private static final int LCS_CMYK = 2;
 
     // Compression Types
@@ -118,25 +113,18 @@ public final class BmpImageHelper {
     private static final int BI_RLE4 = 2;
     private static final int BI_BITFIELDS = 3;
 
-    public static void processImage(Image image, ByteArrayOutputStream stream) {
+    public static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.BMP)
             throw new IllegalArgumentException("BMP image expected");
-        if (stream == null) {
-            stream = new ByteArrayOutputStream();
-        }
-        BmpParameters bmp = new BmpParameters((BmpImage)image);
+        BmpParameters bmp;
         InputStream bmpStream;
         try {
-            if (bmp.image.getUrl() != null) {
-                RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(bmp.image.getUrl()));
-                StreamUtil.transferBytes(raf, stream);
-                raf.close();
-                image.imageSize = stream.toByteArray().length;
-                bmpStream = new ByteArrayInputStream(stream.toByteArray());
-            } else {
-                bmpStream = new ByteArrayInputStream(bmp.image.getData());
-                image.imageSize = image.getData().length;
+            if (image.getData() == null) {
+                image.loadData();
             }
+            bmpStream = new ByteArrayInputStream(image.getData());
+            image.imageSize = image.getData().length;
+            bmp = new BmpParameters((BmpImageData)image);
             process(bmp, bmpStream);
             if (getImage(bmp)) {
                 image.setWidth(bmp.width);
@@ -146,21 +134,11 @@ public final class BmpImageHelper {
         } catch (java.io.IOException e){
             throw new IOException(IOException.BmpImageException, e);
         }
-        updateStream(bmp, stream);
+        RawImageHelper.updateImageAttributes(bmp.image, bmp.additional);
     }
 
-    public static void updateStream(BmpParameters bmp, ByteArrayOutputStream stream) {
-        RawImageHelper.updateImageAttributes(bmp.image, bmp.additional, stream);
-        bmp.image.data = stream.toByteArray();
-    }
-
-    protected static void process(BmpParameters bmp, InputStream stream) throws java.io.IOException {
-
-        if (bmp.image.isNoHeader() || stream instanceof BufferedInputStream) {
-            bmp.inputStream = stream;
-        } else {
-            bmp.inputStream = new BufferedInputStream(stream);
-        }
+    private static void process(BmpParameters bmp, InputStream stream) throws java.io.IOException {
+        bmp.inputStream = stream;
         if (!bmp.image.isNoHeader()) {
             // Start File Header
             if (!(readUnsignedByte(bmp.inputStream) == 'B' &&
@@ -270,6 +248,7 @@ public final class BmpImageHelper {
             bmp.properties.put("colors_important", colorsImportant);
 
             if (size == 40 || size == 52 || size == 56) {
+                int sizeOfPalette;
                 // Windows 3.x and Windows NT
                 switch ((int) bmp.compression) {
 
@@ -320,7 +299,7 @@ public final class BmpImageHelper {
 
                         // Read in the palette
                         int numberOfEntries = (int) ((bmp.bitmapOffset - 14 - size) / 4);
-                        int sizeOfPalette = numberOfEntries * 4;
+                        sizeOfPalette = numberOfEntries * 4;
                         if (bmp.bitmapOffset == size) {
                             switch (bmp.imageType) {
                                 case VERSION_3_1_BIT:
@@ -472,7 +451,7 @@ public final class BmpImageHelper {
                         bmp.properties.put("gamma_blue", gammaBlue);
                         throw new RuntimeException("Not implemented yet.");
 
-                    case LCS_sRGB:
+                    case LCS_SRGB:
                         // Default Windows color space
                         bmp.properties.put("color_space", "LCS_sRGB");
                         break;
@@ -500,7 +479,7 @@ public final class BmpImageHelper {
         if (bmp.bitsPerPixel == 1 || bmp.bitsPerPixel == 4 || bmp.bitsPerPixel == 8) {
             bmp.numBands = 1;
             // Create IndexColorModel from the palette.
-            byte r[], g[], b[];
+            byte[] r, g, b;
             int sizep;
             if (bmp.imageType == VERSION_2_1_BIT ||
                     bmp.imageType == VERSION_2_4_BIT ||
@@ -679,12 +658,12 @@ public final class BmpImageHelper {
         return false;
     }
 
-    private static void indexedModel(byte bdata[], int bpc, int paletteEntries, BmpParameters bmp) {
+    private static void indexedModel(byte[] bdata, int bpc, int paletteEntries, BmpParameters bmp) {
         RawImageHelper.updateRawImageParameters(bmp.image, bmp.width, bmp.height, 1, bpc, bdata);
         Object[] colorSpace = new Object[4];
         colorSpace[0] = "/Indexed";
         colorSpace[1] = "/DeviceRGB";
-        byte np[] = getPalette(paletteEntries, bmp);
+        byte[] np = getPalette(paletteEntries, bmp);
         int len = np.length;
         colorSpace[2] = len / 3 - 1;
         colorSpace[3] = PdfEncodings.convertToString(np, null);
@@ -711,7 +690,7 @@ public final class BmpImageHelper {
 
     // Deal with 1 Bit images using IndexColorModels
     private static void read1Bit(int paletteEntries, BmpParameters bmp) throws java.io.IOException {
-        byte bdata[] = new byte[(bmp.width + 7) / 8 * bmp.height];
+        byte[] bdata = new byte[(bmp.width + 7) / 8 * bmp.height];
         int padding = 0;
         int bytesPerScanline = (int) Math.ceil(bmp.width / 8.0d);
 
@@ -723,7 +702,7 @@ public final class BmpImageHelper {
         int imSize = (bytesPerScanline + padding) * bmp.height;
 
         // Read till we have the whole image
-        byte values[] = new byte[imSize];
+        byte[] values = new byte[imSize];
         int bytesRead = 0;
         while (bytesRead < imSize) {
             bytesRead += bmp.inputStream.read(values, bytesRead,
@@ -756,7 +735,7 @@ public final class BmpImageHelper {
 
     // Method to read a 4 bit BMP image data
     private static void read4Bit(int paletteEntries, BmpParameters bmp) throws java.io.IOException {
-        byte bdata[] = new byte[(bmp.width + 1) / 2 * bmp.height];
+        byte[] bdata = new byte[(bmp.width + 1) / 2 * bmp.height];
 
         // Padding bytes at the end of each scanline
         int padding = 0;
@@ -770,7 +749,7 @@ public final class BmpImageHelper {
         int imSize = (bytesPerScanline + padding) * bmp.height;
 
         // Read till we have the whole image
-        byte values[] = new byte[imSize];
+        byte[] values = new byte[imSize];
         int bytesRead = 0;
         while (bytesRead < imSize) {
             bytesRead += bmp.inputStream.read(values, bytesRead,
@@ -802,7 +781,7 @@ public final class BmpImageHelper {
 
     // Method to read 8 bit BMP image data
     private static void read8Bit(int paletteEntries, BmpParameters bmp) throws java.io.IOException {
-        byte bdata[] = new byte[bmp.width * bmp.height];
+        byte[] bdata = new byte[bmp.width * bmp.height];
         // Padding bytes at the end of each scanline
         int padding = 0;
 
@@ -816,7 +795,7 @@ public final class BmpImageHelper {
         int imSize = (bmp.width + padding) * bmp.height;
 
         // Read till we have the whole image
-        byte values[] = new byte[imSize];
+        byte[] values = new byte[imSize];
         int bytesRead = 0;
         while (bytesRead < imSize) {
             bytesRead += bmp.inputStream.read(values, bytesRead, imSize - bytesRead);
@@ -860,7 +839,7 @@ public final class BmpImageHelper {
 
         int imSize = (bmp.width * 3 + 3) / 4 * 4 * bmp.height;
         // Read till we have the whole image
-        byte values[] = new byte[imSize];
+        byte[] values = new byte[imSize];
         int bytesRead = 0;
         while (bytesRead < imSize) {
             int r = bmp.inputStream.read(values, bytesRead,
@@ -930,7 +909,7 @@ public final class BmpImageHelper {
         int blue_mask = findMask(bmp.blueMask);
         int blue_shift = findShift(bmp.blueMask);
         int blue_factor = blue_mask + 1;
-        byte bdata[] = new byte[bmp.width * bmp.height * 3];
+        byte[] bdata = new byte[bmp.width * bmp.height * 3];
         // Padding bytes at the end of each scanline
         int padding = 0;
 
@@ -994,7 +973,7 @@ public final class BmpImageHelper {
         }
 
         // Read till we have the whole image
-        byte values[] = new byte[imSize];
+        byte[] values = new byte[imSize];
         int bytesRead = 0;
         while (bytesRead < imSize) {
             bytesRead += bmp.inputStream.read(values, bytesRead,
@@ -1002,7 +981,7 @@ public final class BmpImageHelper {
         }
 
         // Since data is compressed, decompress it
-        byte val[] = decodeRLE(true, values, bmp);
+        byte[] val = decodeRLE(true, values, bmp);
 
         // Uncompressed data does not have any padding
         imSize = bmp.width * bmp.height;
@@ -1012,7 +991,7 @@ public final class BmpImageHelper {
             // Convert the bottom up image to a top down format by copying
             // one scanline from the bottom to the top at a time.
             // int bytesPerScanline = (int)Math.ceil((double)width/8.0);
-            byte temp[] = new byte[val.length];
+            byte[] temp = new byte[val.length];
             int bytesPerScanline = bmp.width;
             for (int i = 0; i < bmp.height; i++) {
                 System.arraycopy(val,
@@ -1033,7 +1012,7 @@ public final class BmpImageHelper {
         }
 
         // Read till we have the whole image
-        byte values[] = new byte[imSize];
+        byte[] values = new byte[imSize];
         int bytesRead = 0;
         while (bytesRead < imSize) {
             bytesRead += bmp.inputStream.read(values, bytesRead,
@@ -1041,12 +1020,12 @@ public final class BmpImageHelper {
         }
 
         // Decompress the RLE4 compressed data.
-        byte val[] = decodeRLE(false, values, bmp);
+        byte[] val = decodeRLE(false, values, bmp);
 
         // Invert it as it is bottom up format.
         if (bmp.isBottomUp) {
 
-            byte inverted[] = val;
+            byte[] inverted = val;
             val = new byte[bmp.width * bmp.height];
             int l = 0, index, lineEnd;
 
@@ -1059,7 +1038,7 @@ public final class BmpImageHelper {
             }
         }
         int stride = (bmp.width + 1) / 2;
-        byte bdata[] = new byte[stride * bmp.height];
+        byte[] bdata = new byte[stride * bmp.height];
         int ptr = 0;
         int sh = 0;
         for (int h = 0; h < bmp.height; ++h) {
@@ -1074,8 +1053,8 @@ public final class BmpImageHelper {
         indexedModel(bdata, 4, 4, bmp);
     }
 
-    private static byte[] decodeRLE(boolean is8, byte values[], BmpParameters bmp) {
-        byte val[] = new byte[bmp.width * bmp.height];
+    private static byte[] decodeRLE(boolean is8, byte[] values, BmpParameters bmp) {
+        byte[] val = new byte[bmp.width * bmp.height];
         try {
             int ptr = 0;
             int x = 0;

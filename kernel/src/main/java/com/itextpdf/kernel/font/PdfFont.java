@@ -44,19 +44,14 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.util.TextUtil;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfObjectWrapper;
-import com.itextpdf.kernel.pdf.PdfOutputStream;
-import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.io.util.TextUtil;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,9 +63,11 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -7661159455613720321L;
 
+    protected FontProgram fontProgram;
+
 	protected static final byte[] emptyBytes = new byte[0];
 
-    Map<Integer, Glyph> notdefGlyphs = new HashMap<>();
+    protected Map<Integer, Glyph> notdefGlyphs = new HashMap<>();
 
     /**
      * false, if the font comes from PdfDocument.
@@ -300,7 +297,9 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return (int) (max * fontSize / FontProgram.UNITS_NORMALIZATION);
     }
 
-    public abstract FontProgram getFontProgram();
+    public FontProgram getFontProgram() {
+        return fontProgram;
+    }
 
     public boolean isEmbedded() {
         return embedded;
@@ -336,7 +335,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param range the character range
      */
-    //TODO
     public void addSubsetRange(int[] range) {
         if (subsetRanges == null) {
             subsetRanges = new ArrayList<>();
@@ -374,6 +372,8 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         resultString.add(text.substring(startPos));
         return resultString;
     }
+
+    protected abstract PdfDictionary getFontDescriptor(String fontName);
 
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
@@ -413,10 +413,10 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * TODO strange comments
-     * If the embedded flag is {@code false} or if the font is one of the 14 built in types, it returns {@code null},
-     * otherwise the font is read and output in a PdfStream object.
+     * Create {@code PdfStream} based on {@code fontStreamBytes}.
      *
+     * @param fontStreamBytes original font data, must be not null.
+     * @param fontStreamLengths array to generate {@code Length*} keys, must be not null.
      * @return the PdfStream containing the font or {@code null}, if there is an error reading the font.
      * @exception PdfException Method will throw exception if {@code fontStreamBytes} is {@code null}.
      */

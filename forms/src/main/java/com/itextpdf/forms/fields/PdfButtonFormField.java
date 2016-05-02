@@ -64,10 +64,10 @@ public class PdfButtonFormField extends PdfFormField {
     /**
      * Button field flags
      */
-    public final static int FF_NO_TOGGLE_TO_OFF = makeFieldFlag(15);
-    public final static int FF_RADIO = makeFieldFlag(16);
-    public final static int FF_PUSH_BUTTON = makeFieldFlag(17);
-    public final static int FF_RADIOS_IN_UNISON = makeFieldFlag(26);
+    public static final int FF_NO_TOGGLE_TO_OFF = makeFieldFlag(15);
+    public static final int FF_RADIO = makeFieldFlag(16);
+    public static final int FF_PUSH_BUTTON = makeFieldFlag(17);
+    public static final int FF_RADIOS_IN_UNISON = makeFieldFlag(26);
 
     protected PdfButtonFormField(PdfDocument pdfDocument) {
         super(pdfDocument);
@@ -107,7 +107,7 @@ public class PdfButtonFormField extends PdfFormField {
      * @return current {@link PdfButtonFormField}
      */
     public PdfButtonFormField setRadio(boolean radio) {
-        return setFieldFlag(FF_RADIO, radio);
+        return (PdfButtonFormField) setFieldFlag(FF_RADIO, radio);
     }
 
     /**
@@ -127,7 +127,7 @@ public class PdfButtonFormField extends PdfFormField {
      * @return current {@link PdfButtonFormField}
      */
     public PdfButtonFormField setToggleOff(boolean toggleOff) {
-        return setFieldFlag(FF_NO_TOGGLE_TO_OFF, !toggleOff);
+        return (PdfButtonFormField) setFieldFlag(FF_NO_TOGGLE_TO_OFF, !toggleOff);
     }
 
     /**
@@ -144,7 +144,7 @@ public class PdfButtonFormField extends PdfFormField {
      * @return current {@link PdfButtonFormField}
      */
     public PdfButtonFormField setPushButton(boolean pushButton) {
-        return setFieldFlag(FF_PUSH_BUTTON, pushButton);
+        return (PdfButtonFormField) setFieldFlag(FF_PUSH_BUTTON, pushButton);
     }
 
     /**
@@ -167,7 +167,7 @@ public class PdfButtonFormField extends PdfFormField {
      * @return current {@link PdfButtonFormField}
      */
     public PdfButtonFormField setRadiosInUnison(boolean radiosInUnison) {
-        return setFieldFlag(FF_RADIOS_IN_UNISON, radiosInUnison);
+        return (PdfButtonFormField) setFieldFlag(FF_RADIOS_IN_UNISON, radiosInUnison);
     }
 
     public PdfButtonFormField setImage(String image) throws IOException {
@@ -180,7 +180,7 @@ public class PdfButtonFormField extends PdfFormField {
         }
 
         String str = Base64.encodeBytes(baos.toByteArray());
-        return setValue(str);
+        return (PdfButtonFormField) setValue(str);
     }
 
     public PdfButtonFormField setImageAsForm(PdfFormXObject form) {

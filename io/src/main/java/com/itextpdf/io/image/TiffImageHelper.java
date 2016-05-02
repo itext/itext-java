@@ -56,65 +56,44 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.io.source.RandomAccessSource;
+import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.FilterUtil;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TiffImageHelper {
+class TiffImageHelper {
 
     private static class TiffParameters {
-        TiffImage image;
-        ByteArrayOutputStream stream;
+        TiffParameters(TiffImageData image) {
+            this.image = image;
+        }
+        TiffImageData image;
+        //ByteArrayOutputStream stream;
         boolean jpegProcessing;
         Map<String, Object> additional;
     }
 
-    public static void processImage(Image image, ByteArrayOutputStream stream) {
+    public static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.TIFF)
             throw new IllegalArgumentException("TIFF image expected");
-        if (stream == null) {
-            stream = new ByteArrayOutputStream();
-        }
-        TiffParameters tiff = new TiffParameters();
-        tiff.image = (TiffImage)image;
-        tiff.stream = stream;
-        byte[] data;
-        if (tiff.image.getUrl() != null) {
-            InputStream tiffStream = null;
-            try {
-                tiffStream = tiff.image.getUrl().openStream();
-                int read;
-                byte[] bytes = new byte[4096];
-                while ((read = tiffStream.read(bytes)) != -1) {
-                    stream.write(bytes, 0, read);
-                }
-                tiffStream.close();
-                data = stream.toByteArray();
-            } catch (java.io.IOException e) {
-                throw new IOException(IOException.TiffImageException, e);
-            } finally {
-                if (tiffStream != null) {
-                    try {
-                        tiffStream.close();
-                    } catch (java.io.IOException ignored) { }
-                }
+        try {
+            IRandomAccessSource ras;
+            if (image.getData() == null) {
+                image.loadData();
             }
-        } else {
-            data = tiff.image.getData();
-        }
-        RandomAccessSource ras = new RandomAccessSourceFactory().createSource(data);
-        RandomAccessFileOrArray raf = new RandomAccessFileOrArray(ras);
+            ras = new RandomAccessSourceFactory().createSource(image.getData());
+            RandomAccessFileOrArray raf = new RandomAccessFileOrArray(ras);
+            TiffParameters tiff = new TiffParameters((TiffImageData)image);
+            processTiffImage(raf, tiff);
+            raf.close();
 
-        processTiffImage(raf, tiff);
-
-        if (stream != null && !tiff.jpegProcessing) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            RawImageHelper.updateImageAttributes(tiff.image, tiff.additional, baos);
-            tiff.image.data = baos.toByteArray();
+            if (!tiff.jpegProcessing) {
+                RawImageHelper.updateImageAttributes(tiff.image, tiff.additional);
+            }
+        } catch (java.io.IOException e) {
+            throw new IOException(IOException.TiffImageException, e);
         }
     }
 
@@ -172,8 +151,8 @@ public class TiffImageHelper {
                 rowsStrip = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP);
             if (rowsStrip <= 0 || rowsStrip > h)
                 rowsStrip = h;
-            long offset[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);
-            long size[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPBYTECOUNTS);
+            long[] offset = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);
+            long[] size = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPBYTECOUNTS);
             if ((size == null || (size.length == 1 && (size[0] == 0 || size[0] + offset[0] > s.length()))) && h == rowsStrip) { // some TIFF producers are really lousy, so...
                 size = new long[]{s.length() - (int) offset[0]};
             }
@@ -186,36 +165,36 @@ public class TiffImageHelper {
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_PHOTOMETRIC)) {
                 long photo = dir.getFieldAsLong(TIFFConstants.TIFFTAG_PHOTOMETRIC);
                 if (photo == TIFFConstants.PHOTOMETRIC_MINISBLACK)
-                    parameters |= RawImage.CCITT_BLACKIS1;
+                    parameters |= RawImageData.CCITT_BLACKIS1;
             }
             int imagecomp = 0;
             switch (compression) {
                 case TIFFConstants.COMPRESSION_CCITTRLEW:
                 case TIFFConstants.COMPRESSION_CCITTRLE:
-                    imagecomp = RawImage.CCITTG3_1D;
-                    parameters |= RawImage.CCITT_ENCODEDBYTEALIGN | RawImage.CCITT_ENDOFBLOCK;
+                    imagecomp = RawImageData.CCITTG3_1D;
+                    parameters |= RawImageData.CCITT_ENCODEDBYTEALIGN | RawImageData.CCITT_ENDOFBLOCK;
                     break;
                 case TIFFConstants.COMPRESSION_CCITTFAX3:
-                    imagecomp = RawImage.CCITTG3_1D;
-                    parameters |= RawImage.CCITT_ENDOFLINE | RawImage.CCITT_ENDOFBLOCK;
+                    imagecomp = RawImageData.CCITTG3_1D;
+                    parameters |= RawImageData.CCITT_ENDOFLINE | RawImageData.CCITT_ENDOFBLOCK;
                     TIFFField t4OptionsField = dir.getField(TIFFConstants.TIFFTAG_GROUP3OPTIONS);
                     if (t4OptionsField != null) {
                         tiffT4Options = t4OptionsField.getAsLong(0);
                         if ((tiffT4Options & TIFFConstants.GROUP3OPT_2DENCODING) != 0)
-                            imagecomp = RawImage.CCITTG3_2D;
+                            imagecomp = RawImageData.CCITTG3_2D;
                         if ((tiffT4Options & TIFFConstants.GROUP3OPT_FILLBITS) != 0)
-                            parameters |= RawImage.CCITT_ENCODEDBYTEALIGN;
+                            parameters |= RawImageData.CCITT_ENCODEDBYTEALIGN;
                     }
                     break;
                 case TIFFConstants.COMPRESSION_CCITTFAX4:
-                    imagecomp = RawImage.CCITTG4;
+                    imagecomp = RawImageData.CCITTG4;
                     TIFFField t6OptionsField = dir.getField(TIFFConstants.TIFFTAG_GROUP4OPTIONS);
                     if (t6OptionsField != null)
                         tiffT6Options = t6OptionsField.getAsLong(0);
                     break;
             }
             if (direct && rowsStrip == h) { //single strip, direct
-                byte im[] = new byte[(int) size[0]];
+                byte[] im = new byte[(int) size[0]];
                 s.seek(offset[0]);
                 s.readFully(im);
                 RawImageHelper.updateRawImageParameters(tiff.image, w, h, false, imagecomp, parameters, im, null);
@@ -224,13 +203,13 @@ public class TiffImageHelper {
                 int rowsLeft = h;
                 CCITTG4Encoder g4 = new CCITTG4Encoder(w);
                 for (int k = 0; k < offset.length; ++k) {
-                    byte im[] = new byte[(int) size[k]];
+                    byte[] im = new byte[(int) size[k]];
                     s.seek(offset[k]);
                     s.readFully(im);
                     int height = Math.min(rowsStrip, rowsLeft);
                     TIFFFaxDecoder decoder = new TIFFFaxDecoder(fillOrder, w, height);
                     decoder.setRecoverFromImageError(recoverFromImageError);
-                    byte outBuf[] = new byte[(w + 7) / 8 * height];
+                    byte[] outBuf = new byte[(w + 7) / 8 * height];
                     switch (compression) {
                         case TIFFConstants.COMPRESSION_CCITTRLEW:
                         case TIFFConstants.COMPRESSION_CCITTRLE:
@@ -279,9 +258,9 @@ public class TiffImageHelper {
                     }
                     rowsLeft -= rowsStrip;
                 }
-                byte g4pic[] = g4.close();
-                RawImageHelper.updateRawImageParameters(tiff.image, w, h, false, RawImage.CCITTG4,
-                        parameters & RawImage.CCITT_BLACKIS1, g4pic, null);
+                byte[] g4pic = g4.close();
+                RawImageHelper.updateRawImageParameters(tiff.image, w, h, false, RawImageData.CCITTG4,
+                        parameters & RawImageData.CCITT_BLACKIS1, g4pic, null);
             }
             tiff.image.setDpi(dpiX, dpiY);
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_ICCPROFILE)) {
@@ -380,8 +359,8 @@ public class TiffImageHelper {
                 rowsStrip = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP);
             if (rowsStrip <= 0 || rowsStrip > h)
                 rowsStrip = h;
-            long offset[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);
-            long size[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPBYTECOUNTS);
+            long[] offset = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);
+            long[] size = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPBYTECOUNTS);
             if ((size == null || (size.length == 1 && (size[0] == 0 || size[0] + offset[0] > s.length()))) && h == rowsStrip) { // some TIFF producers are really lousy, so...
                 size = new long[]{s.length() - (int) offset[0]};
             }
@@ -442,7 +421,7 @@ public class TiffImageHelper {
                 s.readFully(jpeg);
                 tiff.image.data = jpeg;
                 tiff.image.setOriginalType(ImageType.JPEG);
-                JpegImageHelper.processImage(tiff.image, tiff.stream);
+                JpegImageHelper.processImage(tiff.image);
                 tiff.jpegProcessing = true;
             } else if (compression == TIFFConstants.COMPRESSION_JPEG) {
                 if (size.length > 1)
@@ -476,18 +455,18 @@ public class TiffImageHelper {
                 }
                 tiff.image.data = jpeg;
                 tiff.image.setOriginalType(ImageType.JPEG);
-                JpegImageHelper.processImage(tiff.image, tiff.stream);
+                JpegImageHelper.processImage(tiff.image);
                 tiff.jpegProcessing = true;
                 if (photometric == TIFFConstants.PHOTOMETRIC_RGB) {
                     tiff.image.setColorTransform(0);
                 }
             } else {
                 for (int k = 0; k < offset.length; ++k) {
-                    byte im[] = new byte[(int) size[k]];
+                    byte[] im = new byte[(int) size[k]];
                     s.seek(offset[k]);
                     s.readFully(im);
                     int height = Math.min(rowsStrip, rowsLeft);
-                    byte outBuf[] = null;
+                    byte[] outBuf = null;
                     if (compression != TIFFConstants.COMPRESSION_NONE)
                         outBuf = new byte[(w * bitsPerSample * samplePerPixel + 7) / 8 * height];
                     if (reverse)
@@ -519,8 +498,8 @@ public class TiffImageHelper {
                     rowsLeft -= rowsStrip;
                 }
                 if (bitsPerSample == 1 && samplePerPixel == 1 && photometric != TIFFConstants.PHOTOMETRIC_PALETTE) {
-                    RawImageHelper.updateRawImageParameters(tiff.image, w, h, false, RawImage.CCITTG4,
-                            photometric == TIFFConstants.PHOTOMETRIC_MINISBLACK ? RawImage.CCITT_BLACKIS1 : 0, g4.close(), null);
+                    RawImageHelper.updateRawImageParameters(tiff.image, w, h, false, RawImageData.CCITTG4,
+                            photometric == TIFFConstants.PHOTOMETRIC_MINISBLACK ? RawImageData.CCITT_BLACKIS1 : 0, g4.close(), null);
                 } else {
                     zip.close();
                     RawImageHelper.updateRawImageParameters(tiff.image, w, h, samplePerPixel - extraSamples, bitsPerSample, stream.toByteArray());
@@ -542,14 +521,15 @@ public class TiffImageHelper {
                 }
                 if (dir.isTagPresent(TIFFConstants.TIFFTAG_COLORMAP)) {
                     TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_COLORMAP);
-                    char rgb[] = fd.getAsChars();
-                    byte palette[] = new byte[rgb.length];
+                    char[] rgb = fd.getAsChars();
+                    byte[] palette = new byte[rgb.length];
                     int gColor = rgb.length / 3;
                     int bColor = gColor * 2;
                     for (int k = 0; k < gColor; ++k) {
-                        palette[k * 3] = (byte) (rgb[k] >>> 8);
-                        palette[k * 3 + 1] = (byte) (rgb[k + gColor] >>> 8);
-                        palette[k * 3 + 2] = (byte) (rgb[k + bColor] >>> 8);
+                        //there is no sense in >>> for unsigned char
+                        palette[k * 3] = (byte) (rgb[k] >> 8);
+                        palette[k * 3 + 1] = (byte) (rgb[k + gColor] >> 8);
+                        palette[k * 3 + 2] = (byte) (rgb[k + bColor] >> 8);
                     }
                     // Colormap components are supposed to go from 0 to 655535 but,
                     // as usually, some tiff producers just put values from 0 to 255.
@@ -583,7 +563,7 @@ public class TiffImageHelper {
                 tiff.image.setRotation(rotation);
             if (extraSamples > 0) {
                 mzip.close();
-                RawImage mimg = (RawImage)ImageFactory.getRawImage(null);
+                RawImageData mimg = (RawImageData) ImageDataFactory.createRawImage(null);
                 RawImageHelper.updateRawImageParameters(mimg, w, h, 1, bitsPerSample, mstream.toByteArray());
                 mimg.makeMask();
                 mimg.setDeflated(true);
@@ -597,7 +577,7 @@ public class TiffImageHelper {
     private static int getDpi(TIFFField fd, int resolutionUnit) {
         if (fd == null)
             return 0;
-        long res[] = fd.getAsRational(0);
+        long[] res = fd.getAsRational(0);
         float frac = (float) res[0] / (float) res[1];
         int dpi = 0;
         switch (resolutionUnit) {
@@ -639,7 +619,7 @@ public class TiffImageHelper {
         if (field.getType() == TIFFField.TIFF_LONG)
             offset = field.getAsLongs();
         else { // must be short
-            char temp[] = field.getAsChars();
+            char[] temp = field.getAsChars();
             offset = new long[temp.length];
             for (int k = 0; k < temp.length; ++k)
                 offset[k] = temp[k];
@@ -648,7 +628,7 @@ public class TiffImageHelper {
     }
 
     // Uncompress packbits compressed image data.
-    private static void decodePackbits(byte data[], byte[] dst) {
+    private static void decodePackbits(byte[] data, byte[] dst) {
         int srcCount = 0, dstCount = 0;
         byte repeat, b;
         try {

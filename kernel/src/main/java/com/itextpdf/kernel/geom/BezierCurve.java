@@ -50,7 +50,7 @@ import java.util.List;
 /**
  * Represents a Bezier curve.
  */
-public class BezierCurve implements Shape {
+public class BezierCurve implements IShape {
 
     /**
      * If the distance between a point and a line is less than
@@ -80,20 +80,20 @@ public class BezierCurve implements Shape {
      */
     public static double distanceToleranceManhattan = 0.4D;
 
-    private final List<Point2D> controlPoints;
+    private final List<Point> controlPoints;
 
     /**
      * Constructs new bezier curve.
      * @param controlPoints Curve's control points.
      */
-    public BezierCurve(List<Point2D> controlPoints) {
+    public BezierCurve(List<Point> controlPoints) {
         this.controlPoints = new ArrayList<>(controlPoints);
     }
 
     /**
      * {@inheritDoc}
      */
-    public List<Point2D> getBasePoints() {
+    public List<Point> getBasePoints() {
         return controlPoints;
     }
 
@@ -105,8 +105,8 @@ public class BezierCurve implements Shape {
      * @return {@link java.util.List} containing points of piecewise linear approximation
      *         for this bezier curve.
      */
-    public List<Point2D> getPiecewiseLinearApproximation() {
-        List<Point2D> points = new ArrayList<>();
+    public List<Point> getPiecewiseLinearApproximation() {
+        List<Point> points = new ArrayList<>();
         points.add(controlPoints.get(0));
 
         recursiveApproximation(controlPoints.get(0).getX(), controlPoints.get(0).getY(),
@@ -120,7 +120,7 @@ public class BezierCurve implements Shape {
 
     // Based on the De Casteljau's algorithm
     private void recursiveApproximation(double x1, double y1, double x2, double y2,
-                                        double x3, double y3, double x4, double y4, List<Point2D> points) {
+                                        double x3, double y3, double x4, double y4, List<Point> points) {
         // Subdivision using the De Casteljau's algorithm (t = 0.5)
         double x12 = (x1 + x2) / 2;
         double y12 = (y1 + y2) / 2;
@@ -151,14 +151,14 @@ public class BezierCurve implements Shape {
             // True if the square of the distance between (x2, y2) and the line plus
             // the distance between (x3, y3) and the line is lower than the tolerance square
             if ((d2 + d3) * (d2 + d3) <= distanceToleranceSquare * (dx * dx + dy * dy)) {
-                points.add(new Point2D.Double(x1234, y1234));
+                points.add(new Point(x1234, y1234));
                 return;
             }
 
         } else {
             if ((Math.abs(x1 + x3 - x2 - x2) + Math.abs(y1 + y3 - y2 - y2) +
                     Math.abs(x2 + x4 - x3 - x3) + Math.abs(y2 + y4 - y3 - y3)) <= distanceToleranceManhattan) {
-                points.add(new Point2D.Double(x1234, y1234));
+                points.add(new Point(x1234, y1234));
                 return;
             }
         }

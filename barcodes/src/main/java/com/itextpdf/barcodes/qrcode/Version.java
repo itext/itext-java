@@ -269,7 +269,7 @@ final class Version {
     }
 
     public String toString() {
-        return String.valueOf(versionNumber);
+        return Integer.toString(versionNumber);
     }
 
     /**

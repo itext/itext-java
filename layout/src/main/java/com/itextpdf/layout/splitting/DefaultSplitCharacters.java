@@ -64,5 +64,4 @@ public class DefaultSplitCharacters implements ISplitCharacters {
                 || (charCode >= 0xfe30 && charCode < 0xfe50)
                 || (charCode >= 0xff61 && charCode < 0xffa0));
     }
-
 }

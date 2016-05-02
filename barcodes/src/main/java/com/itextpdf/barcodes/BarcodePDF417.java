@@ -141,7 +141,7 @@ public class BarcodePDF417 extends Barcode2D {
     private static final String MIXED_SET = "0123456789&\r\t,:#-.$/+%*=^";
     private static final String PUNCTUATION_SET = ";<>@[\\]_`~!\r\t,:\n-.$/\"|*()?{}'";
 
-    private static final int CLUSTERS[][] =
+    private static final int[][] CLUSTERS =
             {{
                     0x1d5c0, 0x1eaf0, 0x1f57c, 0x1d4e0, 0x1ea78, 0x1f53e, 0x1a8c0, 0x1d470,
                     0x1a860, 0x15040, 0x1a830, 0x15020, 0x1adc0, 0x1d6f0, 0x1eb7c, 0x1ace0,
@@ -498,7 +498,7 @@ public class BarcodePDF417 extends Barcode2D {
                     0x1c7ea
             }};
 
-    private static final int ERROR_LEVEL[][] =
+    private static final int[][] ERROR_LEVEL =
             {{
                     27, 917
             }, {
@@ -875,7 +875,7 @@ public class BarcodePDF417 extends Barcode2D {
 
         paintCode();
         int h = (int) yHeight;
-        int pix[] = new int[bitColumns * codeRows * h];
+        int[] pix = new int[bitColumns * codeRows * h];
         int stride = (bitColumns + 7) / 8;
         int ptr = 0;
         for (int k = 0; k < codeRows; ++k) {
@@ -1090,20 +1090,20 @@ public class BarcodePDF417 extends Barcode2D {
     protected void outCodeword17(int codeword) {
         int bytePtr = bitPtr / 8;
         int bit = bitPtr - bytePtr * 8;
-        outBits[bytePtr++] |= codeword >> 9 + bit;
-        outBits[bytePtr++] |= codeword >> 1 + bit;
+        outBits[bytePtr++] |= (byte) (codeword >> 9 + bit);
+        outBits[bytePtr++] |= (byte) (codeword >> 1 + bit);
         codeword <<= 8;
-        outBits[bytePtr] |= codeword >> 1 + bit;
+        outBits[bytePtr] |= (byte) (codeword >> 1 + bit);
         bitPtr += 17;
     }
 
     protected void outCodeword18(int codeword) {
         int bytePtr = bitPtr / 8;
         int bit = bitPtr - bytePtr * 8;
-        outBits[bytePtr++] |= codeword >> 10 + bit;
-        outBits[bytePtr++] |= codeword >> 2 + bit;
+        outBits[bytePtr++] |= (byte) (codeword >> 10 + bit);
+        outBits[bytePtr++] |= (byte) (codeword >> 2 + bit);
         codeword <<= 8;
-        outBits[bytePtr] |= codeword >> 2 + bit;
+        outBits[bytePtr] |= (byte) (codeword >> 2 + bit);
         if (bit == 7)
             outBits[++bytePtr] |= 0x80;
         bitPtr += 18;
@@ -1130,7 +1130,7 @@ public class BarcodePDF417 extends Barcode2D {
         for (int row = 0; row < codeRows; ++row) {
             bitPtr = ((bitColumns - 1) / 8 + 1) * 8 * row;
             int rowMod = row % 3;
-            int cluster[] = CLUSTERS[rowMod];
+            int[] cluster = CLUSTERS[rowMod];
             outStartPattern();
             int edge = 0;
             switch (rowMod) {
@@ -1173,7 +1173,7 @@ public class BarcodePDF417 extends Barcode2D {
     protected void calculateErrorCorrection(int dest) {
         if (errorLevel < 0 || errorLevel > 8)
             errorLevel = 0;
-        int A[] = ERROR_LEVEL[errorLevel];
+        int[] A = ERROR_LEVEL[errorLevel];
         int Alength = 2 << errorLevel;
         for (int k = 0; k < Alength; ++k)
             codewords[dest + k] = 0;
@@ -1288,7 +1288,7 @@ public class BarcodePDF417 extends Barcode2D {
         for (int k = 0; k < segmentList.size(); ++k) {
             Segment v = segmentList.get(k);
             int len = getSegmentLength(v);
-            char c[] = new char[len];
+            char[] c = new char[len];
             for (int j = 0; j < len; ++j) {
                 c[j] = (char) (code[v.start + j] & 0xff);
                 if (c[j] == '\r')
@@ -1335,7 +1335,7 @@ public class BarcodePDF417 extends Barcode2D {
         int lastP = 0;
         int startN = 0;
         int nd = 0;
-        char c = 0;
+        char c = (char) 0;
         int k, j;
         boolean lastTxt, txt;
         Segment v;
@@ -1573,7 +1573,7 @@ public class BarcodePDF417 extends Barcode2D {
     }
 
     private void textCompaction(byte[] input, int start, int length) {
-        int dest[] = new int[ABSOLUTE_MAX_TEXT_SIZE * 2];
+        int[] dest = new int[ABSOLUTE_MAX_TEXT_SIZE * 2];
         int mode = ALPHA;
         int ptr = 0;
         int fullBytes = 0;

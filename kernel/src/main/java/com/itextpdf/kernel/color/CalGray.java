@@ -48,6 +48,10 @@ import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 
 public class CalGray extends Color {
 
+    public CalGray(PdfCieBasedCs.CalGray cs) {
+        this(cs, 0f);
+    }
+
     public CalGray(PdfCieBasedCs.CalGray cs, float value) {
         super(cs, new float[]{value});
     }

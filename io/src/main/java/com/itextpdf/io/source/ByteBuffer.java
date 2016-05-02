@@ -47,7 +47,7 @@ package com.itextpdf.io.source;
 import java.io.Serializable;
 import java.text.MessageFormat;
 
-public class ByteBuffer implements Serializable{
+public class ByteBuffer implements Serializable {
 
     private static final byte[] bytes = new byte[]{48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102};
 
@@ -88,7 +88,7 @@ public class ByteBuffer implements Serializable{
         return this;
     }
 
-    public ByteBuffer append(byte b[], int off, int len) {
+    public ByteBuffer append(byte[] b, int off, int len) {
         if ((off < 0) || (off > b.length) || (len < 0) ||
                 ((off + len) > b.length) || ((off + len) < 0) || len == 0)
             return this;
@@ -149,7 +149,7 @@ public class ByteBuffer implements Serializable{
     }
 
     public byte[] toByteArray(int off, int len) {
-        byte newBuf[] = new byte[len];
+        byte[] newBuf = new byte[len];
         System.arraycopy(buffer, off, newBuf, 0, len);
         return newBuf;
     }

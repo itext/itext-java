@@ -58,15 +58,19 @@ import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.IPropertyContainer;
-import com.itextpdf.layout.Property;
 import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
+import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -90,13 +94,13 @@ public abstract class AbstractRenderer implements IRenderer {
     protected boolean flushed = false;
     protected LayoutArea occupiedArea;
     protected IRenderer parent;
-    protected Map<Property, Object> properties = new EnumMap<>(Property.class);
+    protected Map<Integer, Object> properties = new HashMap<>();
     protected boolean isLastRendererForModelElement = true;
 
     /**
      * Creates a renderer.
      */
-    public AbstractRenderer() {
+    protected AbstractRenderer() {
     }
 
     /**
@@ -104,7 +108,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @param modelElement the layout element that will be drawn by this renderer
      */
-    public AbstractRenderer(IPropertyContainer modelElement) {
+    protected AbstractRenderer(IElement modelElement) {
         this.modelElement = modelElement;
     }
 
@@ -115,7 +119,7 @@ public abstract class AbstractRenderer implements IRenderer {
         this.flushed = other.flushed;
         this.occupiedArea = other.occupiedArea.clone();
         this.parent = other.parent;
-        this.properties = other.properties;
+        this.properties.putAll(other.properties);
         this.isLastRendererForModelElement = other.isLastRendererForModelElement;
     }
 
@@ -152,19 +156,19 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     @Override
-    public boolean hasProperty(Property property) {
+    public boolean hasProperty(int property) {
         return hasOwnProperty(property)
                 || (modelElement != null && modelElement.hasProperty(property))
-                || (parent != null && property.isInherited() && parent.hasProperty(property));
+                || (parent != null && Property.isPropertyInherited(property) && parent.hasProperty(property));
     }
 
     @Override
-    public boolean hasOwnProperty(Property property) {
+    public boolean hasOwnProperty(int property) {
         return properties.containsKey(property);
     }
 
     @Override
-    public void deleteOwnProperty(Property property) {
+    public void deleteOwnProperty(int property) {
         properties.remove(property);
     }
 
@@ -173,7 +177,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * property of the model element is deleted
      * @param property the property key to be deleted
      */
-    public void deleteProperty(Property property) {
+    public void deleteProperty(int property) {
         if (properties.containsKey(property)) {
             properties.remove(property);
         } else {
@@ -184,43 +188,46 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     @Override
-    public <T> T getProperty(Property key) {
+    public <T1> T1 getProperty(int key) {
         Object property;
         if ((property = properties.get(key)) != null || properties.containsKey(key)) {
-            return (T) property;
+            return (T1) property;
         }
         if (modelElement != null && ((property = modelElement.getProperty(key)) != null || modelElement.hasProperty(key))) {
-            return (T) property;
+            return (T1) property;
         }
         // TODO in some situations we will want to check inheritance with additional info, such as parent and descendant.
-        if (parent != null && key.isInherited() && (property = parent.getProperty(key)) != null) {
-            return (T) property;
+        if (parent != null && Property.isPropertyInherited(key) && (property = parent.getProperty(key)) != null) {
+            return (T1) property;
         }
-        return modelElement != null ? (T) modelElement.getDefaultProperty(key) : (T) getDefaultProperty(key);
+        property = getDefaultProperty(key);
+        if (property != null) {
+            return (T1) property;
+        }
+        return modelElement != null ? (T1) modelElement.getDefaultProperty(key) : null;
     }
 
     @Override
-    public <T> T getOwnProperty(Property property) {
-        return (T) properties.get(property);
+    public <T1> T1 getOwnProperty(int property) {
+        return (T1) properties.get(property);
     }
 
     @Override
-    public <T> T getProperty(Property property, T defaultValue) {
-        T result = getProperty(property);
+    public <T1> T1 getProperty(int property, T1 defaultValue) {
+        T1 result = getProperty(property);
         return result != null ? result : defaultValue;
     }
 
     @Override
-    public <T extends IRenderer> T setProperty(Property property, Object value) {
+    public void setProperty(int property, Object value) {
         properties.put(property, value);
-        return (T) this;
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
-            case POSITION:
-                return (T) Integer.valueOf(LayoutPosition.STATIC);
+            case Property.POSITION:
+                return (T1) Integer.valueOf(LayoutPosition.STATIC);
             default:
                 return null;
         }
@@ -232,7 +239,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param property an {@link Property enum value}
      * @return a {@link PdfFont}
      */
-    public PdfFont getPropertyAsFont(Property property) {
+    public PdfFont getPropertyAsFont(int property) {
         return getProperty(property);
     }
 
@@ -242,7 +249,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param property an {@link Property enum value}
      * @return a {@link Color}
      */
-    public Color getPropertyAsColor(Property property) {
+    public Color getPropertyAsColor(int property) {
         return getProperty(property);
     }
 
@@ -252,7 +259,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param property an {@link Property enum value}
      * @return a {@link Float}
      */
-    public Float getPropertyAsFloat(Property property) {
+    public Float getPropertyAsFloat(int property) {
         Number value = getProperty(property);
         return value != null ? value.floatValue() : null;
     }
@@ -263,7 +270,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param property an {@link Property enum value}
      * @return a {@link Boolean}
      */
-    public Boolean getPropertyAsBoolean(Property property) {
+    public Boolean getPropertyAsBoolean(int property) {
         return getProperty(property);
     }
 
@@ -273,7 +280,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param property an {@link Property enum value}
      * @return a {@link Integer}
      */
-    public Integer getPropertyAsInteger(Property property) {
+    public Integer getPropertyAsInteger(int property) {
         Number value = getProperty(property);
         return value != null ? value.intValue() : null;
     }
@@ -320,7 +327,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param drawContext the context (canvas, document, etc) of this drawing operation.
      */
     public void drawBackground(DrawContext drawContext) {
-        Property.Background background = getProperty(Property.BACKGROUND);
+        Background background = getProperty(Property.BACKGROUND);
         if (background != null) {
 
             Rectangle bBox = getOccupiedAreaBBox();
@@ -446,7 +453,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Gets all rectangles that this {@link IRenderer} can draw upon in the given area.
      *
-     * @param area a physical area on the {@link DrawingContext}
+     * @param area a physical area on the {@link DrawContext}
      * @return a list of {@link Rectangle rectangles}
      */
     public List<Rectangle> initElementAreas(LayoutArea area) {
@@ -455,7 +462,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     /**
      * Gets the bounding box that contains all content written to the
-     * {@link DrawingContext} by this {@link IRenderer}.
+     * {@link DrawContext} by this {@link IRenderer}.
      *
      * @return the smallest {@link Rectangle} that surrounds the content
      */
@@ -492,12 +499,12 @@ public abstract class AbstractRenderer implements IRenderer {
         return getProperty(Property.HEIGHT);
     }
 
-    protected Float retrieveUnitValue(float basePercentValue, Property property) {
-        Property.UnitValue value = getProperty(property);
+    protected Float retrieveUnitValue(float basePercentValue, int property) {
+        UnitValue value = getProperty(property);
         if (value != null) {
-            if (value.getUnitType() == Property.UnitValue.POINT) {
+            if (value.getUnitType() == UnitValue.POINT) {
                 return value.getValue();
-            } else if (value.getUnitType() == Property.UnitValue.PERCENT) {
+            } else if (value.getUnitType() == UnitValue.PERCENT) {
                 return value.getValue() * basePercentValue / 100;
             } else {
                 throw new IllegalStateException("invalid unit type");
@@ -508,11 +515,11 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     //TODO is behavior of copying all properties in split case common to all renderers?
-    protected Map<Property, Object> getOwnProperties() {
+    protected Map<Integer, Object> getOwnProperties() {
         return properties;
     }
 
-    protected void addAllProperties(Map<Property, Object> properties) {
+    protected void addAllProperties(Map<Integer, Object> properties) {
         this.properties.putAll(properties);
     }
 
@@ -575,7 +582,7 @@ public abstract class AbstractRenderer implements IRenderer {
             array.add(new PdfNumber(occupiedArea.getBBox().getX()));
             array.add(new PdfNumber(occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight()));
             array.add(new PdfNumber(1));
-            document.addNameDestination(destination, array.makeIndirect(document));
+            document.addNamedDestination(destination, array.makeIndirect(document));
 
             deleteProperty(Property.DESTINATION);
         }
@@ -613,8 +620,8 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void alignChildHorizontally(IRenderer childRenderer, float availableWidth) {
-        Property.HorizontalAlignment horizontalAlignment = childRenderer.getProperty(Property.HORIZONTAL_ALIGNMENT);
-        if (horizontalAlignment != null && horizontalAlignment != Property.HorizontalAlignment.LEFT) {
+        HorizontalAlignment horizontalAlignment = childRenderer.getProperty(Property.HORIZONTAL_ALIGNMENT);
+        if (horizontalAlignment != null && horizontalAlignment != HorizontalAlignment.LEFT) {
             float freeSpace = availableWidth - childRenderer.getOccupiedArea().getBBox().getWidth();
             switch (horizontalAlignment) {
                 case RIGHT:

@@ -11,22 +11,23 @@ import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import java.io.IOException;
-import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+
 @Category(IntegrationTest.class)
 public class FormFieldsTaggingTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/forms/FormFieldsTaggingTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/forms/FormFieldsTaggingTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FormFieldsTaggingTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/FormFieldsTaggingTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
@@ -61,6 +62,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         pdfDoc.setTagged();
+        pdfDoc.initializeOutlines();
 
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, true);
         acroForm.addField(PdfFormField.createCheckBox(pdfDoc, new Rectangle(36, 560, 20, 20), "TestCheck", "1"));

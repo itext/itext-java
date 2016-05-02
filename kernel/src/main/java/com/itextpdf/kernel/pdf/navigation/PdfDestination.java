@@ -53,11 +53,11 @@ import com.itextpdf.kernel.pdf.PdfString;
 import java.util.Map;
 
 
-public abstract class PdfDestination<T extends PdfObject> extends PdfObjectWrapper<T> {
+public abstract class PdfDestination extends PdfObjectWrapper<PdfObject> {
 
     private static final long serialVersionUID = 8102903000978704308L;
 
-	public PdfDestination(T pdfObject) {
+	protected PdfDestination(PdfObject pdfObject) {
         super(pdfObject);
     }
 
@@ -67,11 +67,11 @@ public abstract class PdfDestination<T extends PdfObject> extends PdfObjectWrapp
 
     public static PdfDestination makeDestination(PdfObject pdfObject) {
 
-        if (pdfObject.getType() == PdfObject.String)
+        if (pdfObject.getType() == PdfObject.STRING)
             return  new PdfStringDestination((PdfString) pdfObject);
-        else if (pdfObject.getType() == PdfObject.Name)
+        else if (pdfObject.getType() == PdfObject.NAME)
             return new PdfNamedDestination((PdfName) pdfObject);
-        else if (pdfObject.getType() == PdfObject.Array)
+        else if (pdfObject.getType() == PdfObject.ARRAY)
             return new PdfExplicitDestination((PdfArray) pdfObject);
         else
             throw new UnsupportedOperationException();

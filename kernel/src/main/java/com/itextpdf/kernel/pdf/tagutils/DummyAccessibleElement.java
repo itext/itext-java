@@ -45,8 +45,12 @@
 package com.itextpdf.kernel.pdf.tagutils;
 
 import com.itextpdf.kernel.pdf.PdfName;
+import java.io.Serializable;
 
-class DummyAccessibleElement implements IAccessibleElement {
+class DummyAccessibleElement implements IAccessibleElement, Serializable {
+
+    private static final long serialVersionUID = 194933602110962224L;
+
     private PdfName role;
     private AccessibilityProperties properties;
 

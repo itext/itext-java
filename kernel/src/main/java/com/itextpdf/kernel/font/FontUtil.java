@@ -47,7 +47,7 @@ package com.itextpdf.kernel.font;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontCache;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.font.cmap.CMapLocation;
+import com.itextpdf.io.font.cmap.ICMapLocation;
 import com.itextpdf.io.font.cmap.CMapLocationFromBytes;
 import com.itextpdf.io.font.cmap.CMapParser;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
@@ -72,7 +72,7 @@ class FontUtil {
         if (toUnicode instanceof PdfStream) {
             try {
                 byte[] uniBytes = ((PdfStream) toUnicode).getBytes();
-                CMapLocation lb = new CMapLocationFromBytes(uniBytes);
+                ICMapLocation lb = new CMapLocationFromBytes(uniBytes);
                 cMapToUnicode = new CMapToUnicode();
                 CMapParser.parseCid("", cMapToUnicode, lb);
             } catch (Exception e) {
@@ -125,7 +125,7 @@ class FontUtil {
 
         for (int i = 0; i < widthsArray.size() && first + i < 256; i++) {
             PdfNumber number = widthsArray.getAsNumber(i);
-            res[first + i] = number != null ? number.getIntValue() : 0;
+            res[first + i] = number != null ? number.intValue() : 0;
         }
         return res;
     }
@@ -137,17 +137,17 @@ class FontUtil {
         }
 
         for (int k = 0; k < widthsArray.size(); ++k) {
-            int c1 = widthsArray.getAsInt(k);
+            int c1 = widthsArray.getAsNumber(k).intValue();
             PdfObject obj = widthsArray.get(++k);
             if (obj.isArray()) {
                 PdfArray subWidths = (PdfArray)obj;
                 for (int j = 0; j < subWidths.size(); ++j) {
-                    int c2 = subWidths.getAsInt(j);
+                    int c2 = subWidths.getAsNumber(j).intValue();
                     res.put(c1++, c2);
                 }
             } else {
-                int c2 = ((PdfNumber)obj).getIntValue();
-                int w = widthsArray.getAsInt(++k);
+                int c2 = ((PdfNumber)obj).intValue();
+                int w = widthsArray.getAsNumber(++k).intValue();
                 for (; c1 <= c2; ++c1) {
                     res.put(c1, w);
                 }

@@ -146,6 +146,7 @@ public class IOException extends RuntimeException {
     public static final String UnexpectedCloseBracket = "unexpected.close.bracket";
     public static final String UnexpectedGtGt = "unexpected.gt.gt";
     public static final String UnknownCompressionType1 = "unknown.compression.type {0}";
+    public static final String UnknownIOException = "unknown.io.exception";
     public static final String UnsupportedBoxSizeEqEq0 = "unsupported.box.size.eq.eq.0";
     public static final String WrongNumberOfComponentsInIccProfile = "icc.profile.contains {0} components.the.image.data.contains {2} components";
 
@@ -157,7 +158,7 @@ public class IOException extends RuntimeException {
     }
 
     public IOException(Throwable cause) {
-        super(cause);
+        this(UnknownIOException, cause);
     }
 
     public IOException(String message, Object obj) {
@@ -176,10 +177,10 @@ public class IOException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        if (messageParams == null || messageParams.isEmpty()) {
+        if (messageParams == null || messageParams.size() == 0) {
             return super.getMessage();
         } else {
-            return MessageFormat.format(super.getMessage(), messageParams.toArray());
+            return MessageFormat.format(super.getMessage(), getMessageParams());
         }
     }
 
@@ -187,5 +188,13 @@ public class IOException extends RuntimeException {
         this.messageParams = new ArrayList<>();
         Collections.addAll(this.messageParams, messageParams);
         return this;
+    }
+
+    protected Object[] getMessageParams() {
+        Object[] parameters = new Object[messageParams.size()];
+        for (int i = 0; i < messageParams.size(); i++) {
+            parameters[i] = messageParams.get(i);
+        }
+        return parameters;
     }
 }

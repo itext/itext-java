@@ -48,9 +48,14 @@ import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.function.PdfFunction;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class DeviceN extends Color {
+
+    public DeviceN(PdfSpecialCs.DeviceN cs) {
+        this(cs, getDefaultColorants(cs.getNumberOfComponents()));
+    }
 
     public DeviceN(PdfSpecialCs.DeviceN cs, float[] value) {
         super(cs, value);
@@ -60,4 +65,9 @@ public class DeviceN extends Color {
         this(new PdfSpecialCs.DeviceN(names, alternateCs, tintTransform), value);
     }
 
+    private static float[] getDefaultColorants(int numOfColorants) {
+        float[] colorants = new float[numOfColorants];
+        Arrays.fill(colorants, 1f);
+        return colorants;
+    }
 }

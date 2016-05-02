@@ -51,17 +51,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * A representation of an array as described in the PDF specification. A PdfArray can contain any
  * subclass of {@link com.itextpdf.kernel.pdf.PdfObject}.
  */
-public class PdfArray extends PdfObject implements Collection<PdfObject> {
+public class PdfArray extends PdfObject implements Iterable<PdfObject> {
 
     private static final long serialVersionUID = 1617495612878046869L;
 	
-    private List<PdfObject> list;
+    protected List<PdfObject> list;
 
     /**
      * Create a new, empty PdfArray.
@@ -179,18 +178,15 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
         }
     }
 
-    @Override
     public int size() {
         return list.size();
     }
 
-    @Override
     public boolean isEmpty() {
         return list.isEmpty();
     }
 
-    @Override
-    public boolean contains(Object o) {
+    public boolean contains(PdfObject o) {
         return list.contains(o);
     }
 
@@ -199,59 +195,34 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
         return list.iterator();
     }
 
-    @Override
-    public Object[] toArray() {
-        return list.toArray();
+    public void add(PdfObject pdfObject) {
+        list.add(pdfObject);
     }
 
-    @Override
-    public <T> T[] toArray(T[] a) {
-        return list.toArray(a);
-    }
-
-    @Override
-    public boolean add(PdfObject pdfObject) {
-        return list.add(pdfObject);
-    }
-
-    @Override
-    public boolean remove(Object o) {
-        return list.remove(o);
-    }
-
-    @Override
-    public boolean containsAll(Collection<?> c) {
-        return list.containsAll(c);
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends PdfObject> c) {
-        return list.addAll(c);
+    public void remove(PdfObject o) {
+        list.remove(o);
     }
 
     /**
-     * Adds the Collection of PdfObjects starting at the specified index.
+     * Adds the Collection of PdfObjects.
      *
-     * @param index position of the first PdfObject to be added
      * @param c the Collection of PdfObjects to be added
-     * @return true if the list changed because of this operation
-     * @see java.util.List#addAll(int, java.util.Collection)
+     * @see java.util.List#addAll(java.util.Collection)
      */
-    public boolean addAll(int index, Collection<? extends PdfObject> c) {
-        return list.addAll(index, c);
+    public void addAll(Collection<PdfObject> c) {
+        list.addAll(c);
     }
 
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        return list.removeAll(c);
+    /**
+     * Adds content of the {@code PdfArray}.
+     *
+     * @param a the {@code PdfArray} to be added
+     * @see java.util.List#addAll(java.util.Collection)
+     */
+    public void addAll(PdfArray a) {
+        if (a != null) addAll(a.list);
     }
 
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        return list.retainAll(c);
-    }
-
-    @Override
     public void clear() {
         list.clear();
     }
@@ -296,8 +267,8 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      * @return true if the operation changes the PdfArray
      * @see java.util.List#remove(int)
      */
-    public PdfObject remove(int index) {
-        return list.remove(index);
+    public void remove(int index) {
+        list.remove(index);
     }
 
     /**
@@ -309,38 +280,6 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     public int indexOf(PdfObject o) {
         return list.indexOf(o);
-    }
-
-    /**
-     * Gets the index of the last occurrence of the specified PdfObject.
-     *
-     * @param o PdfObject to find the index of
-     * @return index of the PdfObject
-     * @see java.util.List#lastIndexOf(Object)
-     */
-    public int lastIndexOf(PdfObject o) {
-        return list.lastIndexOf(o);
-    }
-
-    /**
-     * Returns a ListIterator.
-     *
-     * @return a list iterator
-     * @see java.util.List#listIterator()
-     */
-    public ListIterator<PdfObject> listIterator() {
-        return list.listIterator();
-    }
-
-    /**
-     * Returns a ListIterator, which will start at the specified index.
-     *
-     * @param index position where the iterator should start.
-     * @return ListIterator
-     * @see java.util.List#listIterator(int)
-     */
-    public ListIterator<PdfObject> listIterator(int index) {
-        return list.listIterator(index);
     }
 
     /**
@@ -357,7 +296,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
 
     @Override
     public byte getType() {
-        return Array;
+        return ARRAY;
     }
 
     /**
@@ -369,7 +308,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     @SuppressWarnings("unchecked")
     @Override
     public PdfArray makeIndirect(PdfDocument document) {
-        return super.makeIndirect(document);
+        return (PdfArray) super.makeIndirect(document);
     }
 
     /**
@@ -381,7 +320,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     @SuppressWarnings("unchecked")
     @Override
     public PdfArray makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return super.makeIndirect(document, reference);
+        return (PdfArray) super.makeIndirect(document, reference);
     }
 
     /**
@@ -394,7 +333,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     @SuppressWarnings("unchecked")
     @Override
     public PdfArray copyTo(PdfDocument document) {
-        return super.copyTo(document, true);
+        return (PdfArray) super.copyTo(document, true);
     }
 
     /**
@@ -410,13 +349,13 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     @SuppressWarnings("unchecked")
     @Override
     public PdfArray copyTo(PdfDocument document, boolean allowDuplicating) {
-        return super.copyTo(document, allowDuplicating);
+        return (PdfArray) super.copyTo(document, allowDuplicating);
     }
 
     @Override
     public String toString() {
         String string = "[";
-        for (PdfObject entry : this) {
+        for (PdfObject entry : list) {
             PdfIndirectReference indirectReference = entry.getIndirectReference();
             string = string + (indirectReference == null ? entry.toString() : indirectReference.toString()) + " ";
         }
@@ -433,7 +372,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
             return list.get(index);
         else {
             PdfObject obj = list.get(index);
-            if (obj.getType() == IndirectReference)
+            if (obj.getType() == INDIRECT_REFERENCE)
                 return ((PdfIndirectReference) obj).getRefersTo(true);
             else
                 return obj;
@@ -448,7 +387,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     public PdfArray getAsArray(int index) {
         PdfObject direct = get(index, true);
-        if (direct != null && direct.getType() == PdfObject.Array)
+        if (direct != null && direct.getType() == PdfObject.ARRAY)
             return (PdfArray) direct;
         return null;
     }
@@ -462,7 +401,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     public PdfDictionary getAsDictionary(int index) {
         PdfObject direct = get(index, true);
-        if (direct != null && direct.getType() == PdfObject.Dictionary)
+        if (direct != null && direct.getType() == PdfObject.DICTIONARY)
             return (PdfDictionary) direct;
         return null;
     }
@@ -476,7 +415,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     public PdfStream getAsStream(int index) {
         PdfObject direct = get(index, true);
-        if (direct != null && direct.getType() == PdfObject.Stream)
+        if (direct != null && direct.getType() == PdfObject.STREAM)
             return (PdfStream) direct;
         return null;
     }
@@ -490,7 +429,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     public PdfNumber getAsNumber(int index) {
         PdfObject direct = get(index, true);
-        if (direct != null && direct.getType() == PdfObject.Number)
+        if (direct != null && direct.getType() == PdfObject.NUMBER)
             return (PdfNumber) direct;
         return null;
     }
@@ -504,7 +443,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     public PdfName getAsName(int index) {
         PdfObject direct = get(index, true);
-        if (direct != null && direct.getType() == PdfObject.Name)
+        if (direct != null && direct.getType() == PdfObject.NAME)
             return (PdfName) direct;
         return null;
     }
@@ -518,7 +457,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     public PdfString getAsString(int index) {
         PdfObject direct = get(index, true);
-        if (direct != null && direct.getType() == PdfObject.String)
+        if (direct != null && direct.getType() == PdfObject.STRING)
             return (PdfString) direct;
         return null;
     }
@@ -531,57 +470,9 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     public PdfBoolean getAsBoolean(int index) {
         PdfObject direct = get(index, true);
-        if (direct != null && direct.getType() == PdfObject.Boolean)
+        if (direct != null && direct.getType() == PdfObject.BOOLEAN)
             return (PdfBoolean) direct;
         return null;
-    }
-
-    /**
-     * Returns the element at the specified index as a Rectangle. The element at the index should be a PdfArray,
-     * if it isn't, null is returned.
-     *
-     * @param index position of the element to be returned
-     * @return the element at the index as a Rectangle
-     */
-    public Rectangle getAsRectangle(int index) {
-        PdfArray a = getAsArray(index);
-        return a == null ? null : a.toRectangle();
-    }
-
-    /**
-     * Returns the element at the specified index as a Float. The element at the index should be a PdfNumber,
-     * if it isn't, null is returned.
-     *
-     * @param index position of the element to be returned
-     * @return the element at the index as a Float
-     */
-    public Float getAsFloat(int index) {
-        PdfNumber number = getAsNumber(index);
-        return number == null ? null : number.getFloatValue();
-    }
-
-    /**
-     * Returns the element at the specified index as an Integer. The element at the index should be a PdfNumber,
-     * if it isn't, null is returned.
-     *
-     * @param index position of the element to be returned
-     * @return the element at the index as an Integer
-     */
-    public Integer getAsInt(int index) {
-        PdfNumber number = getAsNumber(index);
-        return number == null ? null : number.getIntValue();
-    }
-
-    /**
-     * Returns the element at the specified index as a Boolean. The element at the index should be a PdfBoolean,
-     * if it isn't, null is returned.
-     *
-     * @param index position of the element to be returned
-     * @return the element at the index as a Boolean
-     */
-    public Boolean getAsBool(int index) {
-        PdfBoolean b = getAsBoolean(index);
-        return b == null ? null : b.getValue();
     }
 
     /**
@@ -593,10 +484,10 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
      */
     public Rectangle toRectangle() {
         try {
-            float x1 = getAsNumber(0).getFloatValue();
-            float y1 = getAsNumber(1).getFloatValue();
-            float x2 = getAsNumber(2).getFloatValue();
-            float y2 = getAsNumber(3).getFloatValue();
+            float x1 = getAsNumber(0).floatValue();
+            float y1 = getAsNumber(1).floatValue();
+            float x2 = getAsNumber(2).floatValue();
+            float y2 = getAsNumber(3).floatValue();
             return new Rectangle(x1, y1, x2 - x1, y2 - y1);
         } catch (Exception e) {
             throw new PdfException(PdfException.CannotConvertPdfArrayToRectanle, e, this);
@@ -612,7 +503,7 @@ public class PdfArray extends PdfObject implements Collection<PdfObject> {
     protected void copyContent(PdfObject from, PdfDocument document) {
         super.copyContent(from, document);
         PdfArray array = (PdfArray) from;
-        for (PdfObject entry : array) {
+        for (PdfObject entry : array.list) {
             add(entry.processCopying(document, false));
         }
     }

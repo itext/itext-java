@@ -59,18 +59,18 @@ public class LZWStringTable {
     /**
      * codesize + Reserved Codes
      */
-    private final static int RES_CODES = 2;
+    private static final int RES_CODES = 2;
 
     //0xFFFF
-    private final static short HASH_FREE = -1;
+    private static final short HASH_FREE = -1;
     //0xFFFF
-    private final static short NEXT_FIRST = -1;
+    private static final short NEXT_FIRST = -1;
 
-    private final static int MAXBITS = 12;
-    private final static int MAXSTR = (1 << MAXBITS);
+    private static final int MAXBITS = 12;
+    private static final int MAXSTR = (1 << MAXBITS);
 
-    private final static short HASHSIZE = 9973;
-    private final static short HASHSTEP = 2039;
+    private static final short HASHSIZE = 9973;
+    private static final short HASHSTEP = 2039;
 
     byte[] strChr_;        // after predecessor character
     short[] strNxt_;        // predecessor string
@@ -166,7 +166,7 @@ public class LZWStringTable {
         }
     }
 
-    static public int Hash(short index, byte lastbyte) {
+    public static int Hash(short index, byte lastbyte) {
         return (((short) (lastbyte << 8) ^ index) & 0xFFFF) % HASHSIZE;
     }
 

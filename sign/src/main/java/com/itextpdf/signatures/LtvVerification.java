@@ -44,21 +44,15 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfCatalog;
-import com.itextpdf.kernel.pdf.PdfDeveloperExtension;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfIndirectReference;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.*;
+import org.bouncycastle.asn1.*;
+import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -67,23 +61,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1Enumerated;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.DERTaggedObject;
-import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 /**
  * Add verification according to PAdES-LTV (part 4).
@@ -175,7 +153,7 @@ public class LtvVerification {
      * @throws GeneralSecurityException
      * @throws IOException
      */
-    public boolean addVerification(String signatureName, OcspClient ocsp, CrlClient crl, CertificateOption certOption, Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
+    public boolean addVerification(String signatureName, IOcspClient ocsp, ICrlClient crl, CertificateOption certOption, Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
         if (used)
             throw new IllegalStateException(PdfException.VerificationAlreadyOutput);
         PdfPKCS7 pk = sgnUtil.verifySignature(signatureName);
@@ -221,7 +199,7 @@ public class LtvVerification {
                 vd.certs.add(cert.getEncoded());
             }
         }
-        if (vd.crls.isEmpty() && vd.ocsps.isEmpty())
+        if (vd.crls.size() == 0 && vd.ocsps.size() == 0)
             return false;
         validated.put(getSignatureHashKey(signatureName), vd);
         return true;
@@ -321,7 +299,7 @@ public class LtvVerification {
      * @throws IOException
      */
     public void merge() throws IOException {
-        if (used || validated.isEmpty())
+        if (used || validated.size() == 0)
             return;
         used = true;
         PdfDictionary catalog = document.getCatalog().getPdfObject();
@@ -405,20 +383,20 @@ public class LtvVerification {
             PdfDictionary vri = new PdfDictionary();
             for (byte[] b : validated.get(vkey).crls) {
                 PdfStream ps = new PdfStream(b);
-                ps.setCompressionLevel(PdfWriter.DEFAULT_COMPRESSION);
+                ps.setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
                 ps.makeIndirect(document);
                 crl.add(ps);
                 crls.add(ps);
             }
             for (byte[] b : validated.get(vkey).ocsps) {
                 PdfStream ps = new PdfStream(b);
-                ps.setCompressionLevel(PdfWriter.DEFAULT_COMPRESSION);
+                ps.setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
                 ocsp.add(ps);
                 ocsps.add(ps);
             }
             for (byte[] b : validated.get(vkey).certs) {
                 PdfStream ps = new PdfStream(b);
-                ps.setCompressionLevel(PdfWriter.DEFAULT_COMPRESSION);
+                ps.setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
                 ps.makeIndirect(document);
                 cert.add(ps);
                 certs.add(ps);
@@ -458,9 +436,9 @@ public class LtvVerification {
     }
 
     private static class ValidationData {
-        private List<byte[]> crls = new ArrayList<>();
-        private List<byte[]> ocsps = new ArrayList<>();
-        private List<byte[]> certs = new ArrayList<>();
+        public List<byte[]> crls = new ArrayList<>();
+        public List<byte[]> ocsps = new ArrayList<>();
+        public List<byte[]> certs = new ArrayList<>();
     }
 
     // TODO: Refactor. Copied from itext5 Utilities

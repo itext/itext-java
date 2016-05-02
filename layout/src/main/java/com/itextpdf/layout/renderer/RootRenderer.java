@@ -45,7 +45,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -125,6 +125,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                 renderer = result.getOverflowRenderer();
             }
             if (currentArea != null) {
+                assert result != null && result.getOccupiedArea() != null;
                 currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
                 currentArea.setEmptyArea(false);
                 if (renderer != null) {
@@ -185,5 +186,4 @@ public abstract class RootRenderer extends AbstractRenderer {
             resultRenderers.add(renderer);
         }
     }
-
 }

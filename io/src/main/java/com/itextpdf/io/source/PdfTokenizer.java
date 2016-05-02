@@ -70,7 +70,7 @@ public class PdfTokenizer implements Closeable, Serializable {
         EndOfFile
     }
 
-    public static final boolean delims[] = {
+    public static final boolean[] delims = {
             true, true, false, false, false, false, false, false, false, false,
             true, true, false, true, true, false, false, false, false, false,
             false, false, false, false, false, false, false, false, false, false,
@@ -772,7 +772,7 @@ public class PdfTokenizer implements Closeable, Serializable {
         return null;
     }
 
-    protected static class ReusableRandomAccessSource implements RandomAccessSource {
+    protected static class ReusableRandomAccessSource implements IRandomAccessSource {
         private ByteBuffer buffer;
 
         public ReusableRandomAccessSource(ByteBuffer buffer) {

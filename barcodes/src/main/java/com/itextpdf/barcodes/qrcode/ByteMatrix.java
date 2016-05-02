@@ -61,7 +61,10 @@ public final class ByteMatrix {
     private final int height;
 
     public ByteMatrix(int width, int height) {
-        bytes = new byte[height][width];
+        bytes = new byte[height][];
+        for(int i = 0; i < height; i++) {
+            bytes[i] = new byte[width];
+        }
         this.width = width;
         this.height = height;
     }

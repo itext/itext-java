@@ -59,7 +59,7 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
     public static final PdfName Polygon = PdfName.Polygon;
     public static final PdfName PolyLine = PdfName.PolyLine;
 
-    public PdfPolyGeomAnnotation(Rectangle rect, PdfName subtype, float vertices[]) {
+    public PdfPolyGeomAnnotation(Rectangle rect, PdfName subtype, float[] vertices) {
         super(rect);
         setSubtype(subtype);
         setVertices(vertices);
@@ -69,11 +69,11 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
         super(pdfObject);
     }
 
-    public static PdfPolyGeomAnnotation createPolygon(Rectangle rect, float vertices[]) {
+    public static PdfPolyGeomAnnotation createPolygon(Rectangle rect, float[] vertices) {
         return new PdfPolyGeomAnnotation(rect, Polygon, vertices);
     }
 
-    public static PdfPolyGeomAnnotation createPolyLine(Rectangle rect, float vertices[]) {
+    public static PdfPolyGeomAnnotation createPolyLine(Rectangle rect, float[] vertices) {
         return new PdfPolyGeomAnnotation(rect, PolyLine, vertices);
     }
 
@@ -87,11 +87,11 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfPolyGeomAnnotation setVertices(PdfArray vertices) {
-        return put(PdfName.Vertices, vertices);
+        return (PdfPolyGeomAnnotation) put(PdfName.Vertices, vertices);
     }
 
     public PdfPolyGeomAnnotation setVertices(float[] vertices) {
-        return put(PdfName.Vertices, new PdfArray(vertices));
+        return (PdfPolyGeomAnnotation) put(PdfName.Vertices, new PdfArray(vertices));
     }
 
     public PdfArray getLineEndingStyles() {
@@ -99,7 +99,7 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfPolyGeomAnnotation setLineEndingStyles(PdfArray lineEndingStyles) {
-        return put(PdfName.LE, lineEndingStyles);
+        return (PdfPolyGeomAnnotation) put(PdfName.LE, lineEndingStyles);
     }
 
     public PdfDictionary getMeasure() {
@@ -107,7 +107,7 @@ public class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfPolyGeomAnnotation setMeasure(PdfDictionary measure) {
-        return put(PdfName.Measure, measure);
+        return (PdfPolyGeomAnnotation) put(PdfName.Measure, measure);
     }
 
     private void setSubtype(PdfName subtype) {

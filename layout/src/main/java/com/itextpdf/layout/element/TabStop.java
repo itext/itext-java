@@ -44,29 +44,28 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.kernel.pdf.canvas.draw.LineDrawer;
-import com.itextpdf.layout.Property;
+import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
+import com.itextpdf.layout.property.TabAlignment;
 
 public class TabStop {
 
     private float tabPosition;
-    private Property.TabAlignment tabAlignment;
+    private TabAlignment tabAlignment;
     private Character tabAnchor;
-    private LineDrawer tabLeader;
+    private ILineDrawer tabLeader;
 
     public TabStop(float tabPosition) {
-        this(tabPosition, Property.TabAlignment.LEFT);
+        this(tabPosition, TabAlignment.LEFT);
     }
 
-    public TabStop(float tabPosition, Property.TabAlignment tabAlignment) {
+    public TabStop(float tabPosition, TabAlignment tabAlignment) {
         this(tabPosition, tabAlignment, null);
     }
 
-    public TabStop(float tabPosition, Property.TabAlignment tabAlignment, LineDrawer tabLeader) {
+    public TabStop(float tabPosition, TabAlignment tabAlignment, ILineDrawer tabLeader) {
         this.tabPosition = tabPosition;
         this.tabAlignment = tabAlignment;
         this.tabLeader = tabLeader;
-
         this.tabAnchor = '.';
     }
 
@@ -74,11 +73,11 @@ public class TabStop {
         return tabPosition;
     }
 
-    public Property.TabAlignment getTabAlignment() {
+    public TabAlignment getTabAlignment() {
         return tabAlignment;
     }
 
-    public void setTabAlignment(Property.TabAlignment tabAlignment) {
+    public void setTabAlignment(TabAlignment tabAlignment) {
         this.tabAlignment = tabAlignment;
     }
 
@@ -90,10 +89,11 @@ public class TabStop {
         this.tabAnchor = tabAnchor;
     }
 
-    public LineDrawer getTabLeader() {
+    public ILineDrawer getTabLeader() {
         return tabLeader;
     }
-    public void setTabLeader(LineDrawer tabLeader) {
+
+    public void setTabLeader(ILineDrawer tabLeader) {
         this.tabLeader = tabLeader;
     }
 }

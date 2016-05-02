@@ -44,9 +44,13 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Arrays;
 
-abstract class PdfPrimitiveObject extends PdfObject {
+public abstract class PdfPrimitiveObject extends PdfObject {
 
     private static final long serialVersionUID = -1788064882121987538L;
 	
@@ -57,7 +61,7 @@ abstract class PdfPrimitiveObject extends PdfObject {
         super();
     }
 
-    public PdfPrimitiveObject(boolean directOnly) {
+    protected PdfPrimitiveObject(boolean directOnly) {
         super();
         this.directOnly = directOnly;
     }
@@ -80,21 +84,25 @@ abstract class PdfPrimitiveObject extends PdfObject {
     protected abstract void generateContent();
 
     @Override
-    public <T extends PdfObject> T makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        //TODO log makingIndirect directOnly Objects
+    public PdfObject makeIndirect(PdfDocument document, PdfIndirectReference reference) {
         if (!directOnly) {
             return super.makeIndirect(document, reference);
+        } else {
+            Logger logger = LoggerFactory.getLogger(PdfObject.class);
+            logger.warn(LogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT);
         }
-        return (T) this;
+        return this;
     }
 
     @Override
-    public <T extends PdfObject> T setIndirectReference(PdfIndirectReference indirectReference) {
-        //TODO log setIndirect for directOnly Objects
+    public PdfObject setIndirectReference(PdfIndirectReference indirectReference) {
         if (!directOnly) {
             super.setIndirectReference(indirectReference);
+        } else {
+            Logger logger = LoggerFactory.getLogger(PdfObject.class);
+            logger.warn(LogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT);
         }
-        return (T) this;
+        return this;
     }
 
     @Override
@@ -112,10 +120,6 @@ abstract class PdfPrimitiveObject extends PdfObject {
             if (content[i] < o.content[i])
                 return -1;
         }
-        if (content.length > o.content.length)
-            return 1;
-        if (content.length < o.content.length)
-            return -1;
-        return 0;
+        return Integer.compare(content.length, o.content.length);
     }
 }

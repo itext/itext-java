@@ -96,7 +96,7 @@ final class BitVector {
             sizeInBits -= 8;
         }
         // Modify the last byte.
-        array[sizeInBits >> 3] |= (bit << (7 - numBitsInLastByte));
+        array[sizeInBits >> 3] |= (byte) (bit << (7 - numBitsInLastByte));
         ++sizeInBits;
     }
 

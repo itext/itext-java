@@ -23,11 +23,11 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class OverflowTest extends ExtendedITextTest{
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/OverflowTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/OverflowTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/OverflowTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/OverflowTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 

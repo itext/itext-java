@@ -59,18 +59,19 @@ public class PdfWin extends PdfObjectWrapper<PdfDictionary> {
 
     public PdfWin(PdfString f) {
         this(new PdfDictionary());
-        put(PdfName.F, f);
+        getPdfObject().put(PdfName.F, f);
     }
 
     public PdfWin(PdfString f, PdfString d, PdfString o, PdfString p) {
         this(new PdfDictionary());
-        put(PdfName.F, f).put(PdfName.D, d).put(PdfName.O, o).put(PdfName.P, p);
+        getPdfObject().put(PdfName.F, f);
+        getPdfObject().put(PdfName.D, d);
+        getPdfObject().put(PdfName.O, o);
+        getPdfObject().put(PdfName.P, p);
     }
-
 
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return false;
     }
-
 }

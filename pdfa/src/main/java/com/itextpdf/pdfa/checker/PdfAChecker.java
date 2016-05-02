@@ -49,7 +49,7 @@ import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
-import com.itextpdf.pdfa.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -65,7 +65,7 @@ public abstract class PdfAChecker {
     public static final String ICC_DEVICE_CLASS_OUTPUT_PROFILE = "prtr";
     public static final String ICC_DEVICE_CLASS_MONITOR_PROFILE = "mntr";
 
-    static public final int maxGsStackDepth = 28;
+    public static final int maxGsStackDepth = 28;
 
     protected PdfAConformanceLevel conformanceLevel;
     protected String pdfAOutputIntentColorSpace;
@@ -87,7 +87,7 @@ public abstract class PdfAChecker {
     protected Set<PdfObject> checkedObjects = new HashSet<>();
     protected Map<PdfObject, PdfColorSpace> checkedObjectsColorspace = new HashMap<>();
 
-    public PdfAChecker(PdfAConformanceLevel conformanceLevel) {
+    protected PdfAChecker(PdfAConformanceLevel conformanceLevel) {
         this.conformanceLevel = conformanceLevel;
     }
 
@@ -102,7 +102,7 @@ public abstract class PdfAChecker {
         checkLogicalStructure(catalogDict);
         checkForm(catalogDict.getAsDictionary(PdfName.AcroForm));
         checkOutlines(catalogDict);
-        checkPages(catalog);
+        checkPages(catalog.getDocument());
         checkOpenAction(catalogDict.get(PdfName.OpenAction));
         checkColorsUsages();
     }
@@ -114,19 +114,19 @@ public abstract class PdfAChecker {
 
     public void checkPdfObject(PdfObject obj) {
         switch (obj.getType()) {
-            case PdfObject.Number:
+            case PdfObject.NUMBER:
                 checkPdfNumber((PdfNumber) obj);
                 break;
-            case PdfObject.Stream:
+            case PdfObject.STREAM:
                 PdfStream stream = (PdfStream) obj;
                 //form xObjects, annotation appearance streams, patterns and type3 glyphs may have their own resources dictionary
                 checkResources(stream.getAsDictionary(PdfName.Resources));
                 checkPdfStream(stream);
                 break;
-            case PdfObject.String:
+            case PdfObject.STRING:
                 checkPdfString((PdfString) obj);
                 break;
-            case PdfObject.Dictionary:
+            case PdfObject.DICTIONARY:
                 PdfDictionary dict = (PdfDictionary) obj;
                 PdfName type = dict.getAsName(PdfName.Type);
                 if (PdfName.Filespec.equals(type)) {
@@ -218,9 +218,9 @@ public abstract class PdfAChecker {
         return false;
     }
 
-    private void checkPages(PdfCatalog catalog) {
-        for (int i = 1; i <= catalog.getNumberOfPages(); i++) {
-            checkPage(catalog.getPage(i));
+    private void checkPages(PdfDocument document) {
+        for (int i = 1; i <= document.getNumberOfPages(); i++) {
+            checkPage(document.getPage(i));
         }
     }
 
@@ -259,10 +259,12 @@ public abstract class PdfAChecker {
     private void checkAnnotations(PdfDictionary page) {
         PdfArray annots = page.getAsArray(PdfName.Annots);
         if (annots != null) {
-            for (PdfObject annot : annots) {
-                PdfDictionary annotDic = (PdfDictionary) annot;
-                checkAnnotation(annotDic);
-                PdfDictionary action = annotDic.getAsDictionary(PdfName.A);
+            // explicit iteration to resolve indirect references on get().
+            // TODO DEVSIX-591
+            for (int i = 0; i < annots.size(); i++) {
+                PdfDictionary annot = annots.getAsDictionary(i);
+                checkAnnotation(annot);
+                PdfDictionary action = annot.getAsDictionary(PdfName.A);
                 if (action != null) {
                     checkAction(action);
                 }

@@ -54,78 +54,73 @@ import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract public class PdfObject implements Serializable{
+public abstract class PdfObject implements Serializable {
 
     private static final long serialVersionUID = -3852543867469424720L;
 
+    public static final byte ARRAY = 1;
+    public static final byte BOOLEAN = 2;
+    public static final byte DICTIONARY = 3;
+    public static final byte LITERAL = 4;
+    public static final byte INDIRECT_REFERENCE = 5;
+    public static final byte NAME = 6;
+    public static final byte NULL = 7;
+    public static final byte NUMBER = 8;
+    public static final byte STREAM = 9;
+    public static final byte STRING = 10;
 
-    static public final byte Array = 1;
-    static public final byte Boolean = 2;
-    static public final byte Dictionary = 3;
-    static public final byte Literal = 4;
-    static public final byte IndirectReference = 5;
-    static public final byte Name = 6;
-    static public final byte Null = 7;
-    static public final byte Number = 8;
-    static public final byte Stream = 9;
-    static public final byte String = 10;
+    // Indicates if the object has been flushed.
+    protected static final short FLUSHED = 1;
+    // Indicates that the indirect reference of the object could be reused or have to be marked as free.
+    protected static final short FREE = 2;
+    // Indicates that definition of the indirect reference of the object still not found (e.g. keys in XRefStm).
+    protected static final short READING = 4;
+    // Indicates that object changed (using in stamp mode).
+    protected static final short MODIFIED = 8;
+    // Indicates that the indirect reference of the object represents ObjectStream from original document.
+    // When PdfReader read ObjectStream reference marked as OriginalObjectStream
+    // to avoid further reusing.
+    protected static final short ORIGINAL_OBJECT_STREAM = 16;
+    // For internal usage only. Marks objects that shall be written to the output document.
+    // Option is needed to build the correct PDF objects tree when closing the document.
+    // As a result it avoids writing unused (removed) objects.
+    protected static final short MUST_BE_FLUSHED = 32;
+    // Indicates that the object shall be indirect when it is written to the document.
+    // It is used to postpone the creation of indirect reference for the objects that shall be indirect,
+    // so it is possible to create such objects without PdfDocument instance.
+    protected static final short MUST_BE_INDIRECT = 64;
+    // Indicates that the object is highly sensitive and we do not want to release it even if release() is called.
+    // This flag can be set in stamping mode in object wrapper constructors and is automatically set when setModified
+    // flag is set (we do not want to release changed objects).
+    // The flag is set automatically for some wrappers that need document even in reader mode (FormFields etc).
+    protected static final short FORBID_RELEASE = 128;
+    // Indicates that we do not want this object to be ever written into the resultant document
+    // (because of multiple objects read from the same reference inconsistency).
+    protected static final short READ_ONLY = 256;
 
     /**
      * If object is flushed the indirect reference is kept here.
      */
     protected PdfIndirectReference indirectReference = null;
 
-    // Indicates if the object has been flushed.
-    protected static final short Flushed = 1;
-    // Indicates that the indirect reference of the object could be reused or have to be marked as free.
-    protected static final short Free = 2;
-    // Indicates that definition of the indirect reference of the object still not found (e.g. keys in XRefStm).
-    protected static final short Reading = 4;
-    // Indicates that object changed (using in stamp mode).
-    protected static final short Modified = 8;
-    // Indicates that the indirect reference of the object represents ObjectStream from original document.
-    // When PdfReader read ObjectStream reference marked as OriginalObjectStream
-    // to avoid further reusing.
-    protected static final short OriginalObjectStream = 16;
-    // For internal usage only. Marks objects that shall be written to the output document.
-    // Option is needed to build the correct PDF objects tree when closing the document.
-    // As a result it avoids writing unused (removed) objects.
-    protected static final short MustBeFlushed = 32;
-    // Indicates that the object shall be indirect when it is written to the document.
-    // It is used to postpone the creation of indirect reference for the objects that shall be indirect,
-    // so it is possible to create such objects without PdfDocument instance.
-    protected static final short MustBeIndirect = 64;
-    // Indicates that the object is highly sensitive and we do not want to release it even if release() is called.
-    // This flag can be set in stamping mode in object wrapper constructors and is automatically set when setModified
-    // flag is set (we do not want to release changed objects).
-    // The flag is set automatically for some wrappers that need document even in reader mode (FormFields etc).
-    protected static final short ForbidRelease = 128;
-    // Indicates that we do not want this object to be ever written into the resultant document
-    // (because of multiple objects read from the same reference inconsistency).
-    protected static final short ReadOnly = 256;
-
     /**
      * Indicate same special states of PdfIndirectObject or PdfObject like @see Free, @see Reading, @see Modified.
      */
     private short state;
-
-    public PdfObject() {
-
-    }
 
     /**
      * Gets object type.
      *
      * @return object type.
      */
-    abstract public byte getType();
+    public abstract byte getType();
 
     /**
      * Flushes the object to the document.
      *
      * @throws PdfException
      */
-    final public void flush() {
+    public final void flush() {
         flush(true);
     }
 
@@ -135,18 +130,22 @@ abstract public class PdfObject implements Serializable{
      * @param canBeInObjStm indicates whether object can be placed into object stream.
      * @throws PdfException
      */
-    final public void flush(boolean canBeInObjStm) {
+    public final void flush(boolean canBeInObjStm) {
         if (isFlushed() || getIndirectReference() == null) {
-            //TODO log meaningless call of flush: object is direct or released
-            //TODO also if object is mustBeIndirect log that flush call is premature
+//            Logger logger = LoggerFactory.getLogger(PdfObject.class);
+//            if (isFlushed()) {
+//                logger.warn("Meaningless call, the object has already flushed");
+//            } else {
+//                logger.warn("Meaningless call, the object is direct object.");
+//            }
             return;
         }
         try {
             PdfDocument document = getIndirectReference().getDocument();
             if (document != null) {
                 document.checkIsoConformance(this, IsoKey.PDF_OBJECT);
-                document.flushObject(this, canBeInObjStm && getType() != Stream
-                        && getType() != IndirectReference && getIndirectReference().getGenNumber() == 0);
+                document.flushObject(this, canBeInObjStm && getType() != STREAM
+                        && getType() != INDIRECT_REFERENCE && getIndirectReference().getGenNumber() == 0);
             }
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotFlushObject, e, this);
@@ -167,7 +166,7 @@ abstract public class PdfObject implements Serializable{
      * Checks if object is indirect.
      * <br>
      * Note:
-     * Return value {@true} doesn't necessarily mean that indirect reference of this object
+     * Return value {@code true} doesn't necessarily mean that indirect reference of this object
      * is not null at the moment. Object could be marked as indirect and
      * be transformed to indirect on flushing.
      * <br>
@@ -176,7 +175,7 @@ abstract public class PdfObject implements Serializable{
      * @return returns {@code true} if object is indirect or is to be indirect in the resultant document.
      */
     public boolean isIndirect() {
-        return indirectReference != null || checkState(PdfObject.MustBeIndirect);
+        return indirectReference != null || checkState(PdfObject.MUST_BE_INDIRECT);
     }
 
     /**
@@ -185,8 +184,10 @@ abstract public class PdfObject implements Serializable{
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
-    public <T extends PdfObject> T makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        if (document == null || indirectReference != null) return (T) this;
+    public PdfObject makeIndirect(PdfDocument document, PdfIndirectReference reference) {
+        if (document == null || indirectReference != null) {
+            return this;
+        }
         if (document.getWriter() == null) {
             throw new PdfException(PdfException.ThereIsNoAssociatePdfWriterForMakingIndirects);
         }
@@ -197,8 +198,8 @@ abstract public class PdfObject implements Serializable{
             indirectReference = reference;
             indirectReference.setRefersTo(this);
         }
-        clearState(MustBeIndirect);
-        return (T) this;
+        clearState(MUST_BE_INDIRECT);
+        return this;
     }
 
     /**
@@ -207,8 +208,223 @@ abstract public class PdfObject implements Serializable{
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
-    public <T extends PdfObject> T makeIndirect(PdfDocument document) {
+    public PdfObject makeIndirect(PdfDocument document) {
         return makeIndirect(document, null);
+    }
+
+    /**
+     * Indicates is the object has been flushed or not.
+     *
+     * @return true is object has been flushed, otherwise false.
+     */
+    public boolean isFlushed() {
+        PdfIndirectReference indirectReference = getIndirectReference();
+        return (indirectReference != null && indirectReference.checkState(FLUSHED));
+    }
+
+    /**
+     * Indicates is the object has been set as modified or not. Useful for incremental updates (e.g. appendMode).
+     *
+     * @return true is object has been set as modified, otherwise false.
+     */
+    public boolean isModified() {
+        PdfIndirectReference indirectReference = getIndirectReference();
+        return (indirectReference != null && indirectReference.checkState(MODIFIED));
+    }
+
+    /**
+     * Creates clone of the object which belongs to the same document as original object.
+     * New object shall not be used in other documents.
+     *
+     * @return cloned object.
+     */
+    @SuppressWarnings("CloneDoesntCallSuperClone")
+    @Override
+    public PdfObject clone() {
+        PdfObject newObject = newInstance();
+        if (indirectReference != null || checkState(MUST_BE_INDIRECT)) {
+            newObject.setState(MUST_BE_INDIRECT);
+        }
+        newObject.copyContent(this, null);
+        return newObject;
+    }
+
+    /**
+     * Copies object to a specified document.
+     * <br/><br/>
+     * NOTE: Works only for objects that are read from document opened in reading mode, otherwise an exception is thrown.
+     *
+     * @param document document to copy object to.
+     * @return copied object.
+     */
+    public PdfObject copyTo(PdfDocument document) {
+        return copyTo(document, true);
+    }
+
+    /**
+     * Copies object to a specified document.
+     * <br/><br/>
+     * NOTE: Works only for objects that are read from document opened in reading mode, otherwise an exception is thrown.
+     *
+     * @param document         document to copy object to.
+     * @param allowDuplicating indicates if to allow copy objects which already have been copied.
+     *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
+     *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
+     * @return copied object.
+     */
+    public  PdfObject copyTo(PdfDocument document, boolean allowDuplicating) {
+        if (document == null)
+            throw new PdfException(PdfException.DocumentToCopyToCannotBeNull);
+
+        if (indirectReference != null) {
+            if (indirectReference.getWriter() != null || checkState(MUST_BE_INDIRECT)) {
+                throw new PdfException(PdfException.CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten);
+            }
+            if (!indirectReference.getReader().isOpenedWithFullPermission()) {
+                throw new BadPasswordException(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);
+            }
+        }
+
+        return processCopying(document, allowDuplicating);
+    }
+
+    //TODO comment! Add note about flush, modified flag and xref.
+    public PdfObject setModified() {
+        if (indirectReference != null) {
+            indirectReference.setState(MODIFIED);
+            setState(FORBID_RELEASE);
+        }
+        return this;
+    }
+
+    public void release() {
+        // In case ForbidRelease flag is set, release will not be performed.
+        if (checkState(FORBID_RELEASE)) {
+            Logger logger = LoggerFactory.getLogger(PdfObject.class);
+            logger.warn(LogMessageConstant.FORBID_RELEASE_IS_SET);
+        } else {
+            if (indirectReference != null && indirectReference.getReader() != null
+                    && !indirectReference.checkState(FLUSHED)) {
+                indirectReference.refersTo = null;
+                indirectReference = null;
+                setState(READ_ONLY);
+            }
+            //TODO log reasonless call of method
+        }
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfNull</CODE>.
+     *
+     * @return <CODE>true</CODE> or <CODE>false</CODE>
+     */
+    public boolean isNull() {
+        return getType() == NULL;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfBoolean</CODE>.
+     *
+     * @return <CODE>true</CODE> or <CODE>false</CODE>
+     */
+    public boolean isBoolean() {
+        return getType() == BOOLEAN;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfNumber</CODE>.
+     *
+     * @return <CODE>true</CODE> or <CODE>false</CODE>
+     */
+    public boolean isNumber() {
+        return getType() == NUMBER;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfString</CODE>.
+     *
+     * @return <CODE>true</CODE> or <CODE>false</CODE>
+     */
+    public boolean isString() {
+        return getType() == STRING;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfName</CODE>.
+     *
+     * @return <CODE>true</CODE> or <CODE>false</CODE>
+     */
+    public boolean isName() {
+        return getType() == NAME;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfArray</CODE>.
+     *
+     * @return <CODE>true</CODE> or <CODE>false</CODE>
+     */
+    public boolean isArray() {
+        return getType() == ARRAY;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfDictionary</CODE>.
+     *
+     * @return <CODE>true</CODE> or <CODE>false</CODE>
+     */
+    public boolean isDictionary() {
+        return getType() == DICTIONARY;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfStream</CODE>.
+     *
+     * @return <CODE>true</CODE> or <CODE>false</CODE>
+     */
+    public boolean isStream() {
+        return getType() == STREAM;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfIndirectReference</CODE>.
+     *
+     * @return <CODE>true</CODE> if this is an indirect reference,
+     *   otherwise <CODE>false</CODE>
+     */
+    public boolean isIndirectReference() {
+        return getType() == INDIRECT_REFERENCE;
+    }
+
+    /**
+     * Checks if this <CODE>PdfObject</CODE> is of the type
+     * <CODE>PdfLiteral</CODE>.
+     *
+     * @return <CODE>true</CODE> if this is a literal,
+     *   otherwise <CODE>false</CODE>
+     */
+    public boolean isLiteral() {
+        return getType() == LITERAL;
+    }
+
+    /**
+     * Creates new instance of object.
+     *
+     * @return new instance of object.
+     */
+    protected abstract PdfObject newInstance();
+
+    protected PdfObject setIndirectReference(PdfIndirectReference indirectReference) {
+        this.indirectReference = indirectReference;
+        return this;
     }
 
     /**
@@ -224,93 +440,29 @@ abstract public class PdfObject implements Serializable{
      * Sets special states of current object.
      * @param state special flag of current object
      */
-    protected <T extends PdfObject> T setState(short state) {
+    protected PdfObject setState(short state) {
         this.state |= state;
-        return (T) this;
+        return this;
     }
 
     /**
      * Clear state of the flag of current object.
      * @param state special flag state to clear
      */
-    protected <T extends PdfObject> T clearState(short state) {
+    protected PdfObject clearState(short state) {
         this.state &= ~state;
-        return (T) this;
+        return this;
     }
 
     /**
-     * Indicates is the object has been flushed or not.
+     * Copies object content from object 'from'.
      *
-     * @return true is object has been flushed, otherwise false.
-     */
-    public boolean isFlushed() {
-        PdfIndirectReference indirectReference = getIndirectReference();
-        return (indirectReference != null && indirectReference.checkState(Flushed));
-    }
-
-    /**
-     * Indicates is the object has been set as modified or not. Useful for incremental updates (e.g. appendMode).
-     *
-     * @return true is object has been set as modified, otherwise false.
-     */
-    public boolean isModified() {
-        PdfIndirectReference indirectReference = getIndirectReference();
-        return (indirectReference != null && indirectReference.checkState(Modified));
-    }
-
-    /**
-     * Creates clone of the object which belongs to the same document as original object.
-     * New object shall not be used in other documents.
-     *
-     * @return cloned object.
-     */
-    @Override
-    public PdfObject clone() {
-        PdfObject newObject = newInstance();
-        if (indirectReference != null || checkState(MustBeIndirect)) {
-            newObject.setState(MustBeIndirect);
-        }
-        newObject.copyContent(this, null);
-        return newObject;
-    }
-
-    /**
-     * Copies object to a specified document.
-     * <br/><br/>
-     * NOTE: Works only for objects that are read from document opened in reading mode, otherwise an exception is thrown.
-     *
+     * @param from     object to copy content from.
      * @param document document to copy object to.
-     * @return copied object.
      */
-    public <T extends PdfObject> T copyTo(PdfDocument document) {
-        return copyTo(document, true);
-    }
-
-    /**
-     * Copies object to a specified document.
-     * <br/><br/>
-     * NOTE: Works only for objects that are read from document opened in reading mode, otherwise an exception is thrown.
-     *
-     * @param document         document to copy object to.
-     * @param allowDuplicating indicates if to allow copy objects which already have been copied.
-     *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
-     *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
-     * @return copied object.
-     */
-    public  <T extends PdfObject> T copyTo(PdfDocument document, boolean allowDuplicating) {
-        if (document == null)
-            throw new PdfException(PdfException.DocumentToCopyToCannotBeNull);
-
-        if (indirectReference != null) {
-            if (indirectReference.getWriter() != null || checkState(MustBeIndirect)) {
-                throw new PdfException(PdfException.CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten);
-            }
-            if (!indirectReference.getReader().isOpenedWithFullPermission()) {
-                throw new BadPasswordException(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);
-            }
-        }
-
-        return processCopying(document, allowDuplicating);
+    protected void copyContent(PdfObject from, PdfDocument document) {
+        if (isFlushed())
+            throw new PdfException(PdfException.CannotCopyFlushedObject, this);
     }
 
     /**
@@ -329,13 +481,13 @@ abstract public class PdfObject implements Serializable{
      *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
      * @return copied object.
      */
-    protected <T extends PdfObject> T processCopying(PdfDocument documentTo, boolean allowDuplicating) {
+    PdfObject processCopying(PdfDocument documentTo, boolean allowDuplicating) {
         if (documentTo != null) {
             //copyTo case
             PdfWriter writer = documentTo.getWriter();
             if (writer == null)
                 throw new PdfException(PdfException.CannotCopyToDocumentOpenedInReadingMode);
-            return (T) writer.copyObject(this, documentTo, allowDuplicating);
+            return writer.copyObject(this, documentTo, allowDuplicating);
 
         } else {
             //clone case
@@ -345,160 +497,9 @@ abstract public class PdfObject implements Serializable{
                 obj = refTo != null ? refTo : obj;
             }
             if (obj.isIndirect() && !allowDuplicating) {
-                return (T) obj;
+                return obj;
             }
-            return (T) obj.clone();
+            return obj.clone();
         }
     }
-
-    protected <T extends PdfObject> T setIndirectReference(PdfIndirectReference indirectReference) {
-        this.indirectReference = indirectReference;
-        return (T) this;
-    }
-
-    //TODO comment! Add note about flush, modified flag and xref.
-    public void setModified() {
-        if (indirectReference != null) {
-            indirectReference.setState(Modified);
-            setState(ForbidRelease);
-        }
-    }
-
-    public void release() {
-        // In case ForbidRelease flag is set, release will not be performed.
-        if (checkState(ForbidRelease)) {
-            Logger logger = LoggerFactory.getLogger(PdfObject.class);
-            logger.warn(LogMessageConstant.FORBID_RELEASE_IS_SET);
-        } else {
-            if (indirectReference != null && indirectReference.getReader() != null
-                    && !indirectReference.checkState(Flushed)) {
-                indirectReference.refersTo = null;
-                indirectReference = null;
-                setState(ReadOnly);
-            }
-            //TODO log reasonless call of method
-        }
-    }
-
-    /**
-     * Checks if this <CODE>PdfObject</CODE> is of the type
-     * <CODE>PdfNull</CODE>.
-     *
-     * @return <CODE>true</CODE> or <CODE>false</CODE>
-     */
-    public boolean isNull() {
-        return getType() == Null;
-    }
-
-    /**
-     * Checks if this <CODE>PdfObject</CODE> is of the type
-     * <CODE>PdfBoolean</CODE>.
-     *
-     * @return <CODE>true</CODE> or <CODE>false</CODE>
-     */
-    public boolean isBoolean() {
-        return getType() == Boolean;
-    }
-
-    /**
-     * Checks if this <CODE>PdfObject</CODE> is of the type
-     * <CODE>PdfNumber</CODE>.
-     *
-     * @return <CODE>true</CODE> or <CODE>false</CODE>
-     */
-    public boolean isNumber() {
-        return getType() == Number;
-    }
-
-    /**
-     * Checks if this <CODE>PdfObject</CODE> is of the type
-     * <CODE>PdfString</CODE>.
-     *
-     * @return <CODE>true</CODE> or <CODE>false</CODE>
-     */
-    public boolean isString() {
-        return getType() == String;
-    }
-
-    /**
-     * Checks if this <CODE>PdfObject</CODE> is of the type
-     * <CODE>PdfName</CODE>.
-     *
-     * @return <CODE>true</CODE> or <CODE>false</CODE>
-     */
-    public boolean isName() {
-        return getType() == Name;
-    }
-
-    /**
-     * Checks if this <CODE>PdfObject</CODE> is of the type
-     * <CODE>PdfArray</CODE>.
-     *
-     * @return <CODE>true</CODE> or <CODE>false</CODE>
-     */
-    public boolean isArray() {
-        return getType() == Array;
-    }
-
-    /**
-     * Checks if this <CODE>PdfObject</CODE> is of the type
-     * <CODE>PdfDictionary</CODE>.
-     *
-     * @return <CODE>true</CODE> or <CODE>false</CODE>
-     */
-    public boolean isDictionary() {
-        return getType() == Dictionary;
-    }
-
-    /**
-     * Checks if this <CODE>PdfObject</CODE> is of the type
-     * <CODE>PdfStream</CODE>.
-     *
-     * @return <CODE>true</CODE> or <CODE>false</CODE>
-     */
-    public boolean isStream() {
-        return getType() == Stream;
-    }
-
-    /**
-     * Checks if this <CODE>PdfObject</CODE> is of the type
-     * <CODE>PdfIndirectReference</CODE>.
-     *
-     * @return <CODE>true</CODE> if this is an indirect reference,
-     *   otherwise <CODE>false</CODE>
-     */
-    public boolean isIndirectReference() {
-        return getType() == IndirectReference;
-    }
-
-    /**
-     * Checks if this <CODE>PdfObject</CODE> is of the type
-     * <CODE>PdfLiteral</CODE>.
-     *
-     * @return <CODE>true</CODE> if this is a literal,
-     *   otherwise <CODE>false</CODE>
-     */
-    public boolean isLiteral() {
-        return getType() == Literal;
-    }
-
-    /**
-     * Creates new instance of object.
-     *
-     * @return new instance of object.
-     */
-    abstract protected <T extends PdfObject> T newInstance();
-
-    /**
-     * Copies object content from object 'from'.
-     *
-     * @param from     object to copy content from.
-     * @param document document to copy object to.
-     */
-    protected void copyContent(PdfObject from, PdfDocument document) {
-        if (isFlushed())
-            throw new PdfException(PdfException.CannotCopyFlushedObject, this);
-    }
-
-
 }

@@ -44,11 +44,10 @@
  */
 package com.itextpdf.kernel.pdf.xobject;
 
-import com.itextpdf.io.NotImplementedException;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.layer.PdfOCG;
+import com.itextpdf.kernel.pdf.layer.IPdfOCG;
 
 public class PdfXObject extends PdfObjectWrapper<PdfStream> {
 
@@ -62,7 +61,7 @@ public class PdfXObject extends PdfObjectWrapper<PdfStream> {
         super(pdfObject);
     }
 
-    static public PdfXObject makeXObject(PdfStream stream) {
+    public static PdfXObject makeXObject(PdfStream stream) {
         if (PdfName.Form.equals(stream.getAsName(PdfName.Subtype)) || stream.containsKey(PdfName.BBox))
             return new PdfFormXObject(stream);
         else
@@ -73,13 +72,13 @@ public class PdfXObject extends PdfObjectWrapper<PdfStream> {
      * Sets the layer this XObject belongs to.
      * @param layer the layer this XObject belongs to
      */
-    public void setLayer(PdfOCG layer) {
+    public void setLayer(IPdfOCG layer) {
         getPdfObject().put(PdfName.OC, layer.getIndirectReference());
     }
 
-    public Float getWidth() {throw new NotImplementedException(); }
+    public float getWidth() { throw new UnsupportedOperationException(); }
 
-    public Float getHeight() { throw new NotImplementedException(); }
+    public float getHeight() { throw new UnsupportedOperationException(); }
 
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {

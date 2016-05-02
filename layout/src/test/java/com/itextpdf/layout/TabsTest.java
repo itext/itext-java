@@ -5,11 +5,12 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.canvas.draw.DashedLine;
 import com.itextpdf.kernel.pdf.canvas.draw.DottedLine;
-import com.itextpdf.kernel.pdf.canvas.draw.LineDrawer;
+import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.property.TabAlignment;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Tab;
@@ -30,16 +31,16 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class TabsTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/TabTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/TabTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TabTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/TabTest/";
 
-    static final private String text0 = "The Po\u017Eega Valley is a geographic microregion\tof Croatia, located in central" +
+    private static final String text0 = "The Po\u017Eega Valley is a geographic microregion\tof Croatia, located in central" +
             " Slavonia, enveloped by the Slavonian mountains. It consists of\tsouthern slopes of 984-metre (3,228 ft)" +
             " Psunj, 953-metre (3,127 ft) Papuk, and 792-metre (2,598 ft) The Krndija\tmountains, the northern slopes of " +
             "618-metre (2,028 ft) Po\u017Ee\u0161ka Gora and 461-metre\t(1,512 ft) the Dilj hills,\tand\tlowland is surrounded  by the " +
             "mountains and\thills, and occupying the eastern paaart\tof the Po\u017Eega-Slavonia County.";
 
-    static final private String text1 = "Sarehole Mill, Hall Green, Birmingham\t\"Inspired\" 1896\u20131900 (i. e. lived nearby)\t15 August 2002\tBirmingham Civic Society and The Tolkien Society\n" +
+    private static final String text1 = "Sarehole Mill, Hall Green, Birmingham\t\"Inspired\" 1896\u20131900 (i. e. lived nearby)\t15 August 2002\tBirmingham Civic Society and The Tolkien Society\n" +
             "1 Duchess Place, Ladywood, Birmingham\tLived near here 1902\u20131910\tUnknown\tBirmingham Civic Society\n" +
             "4 Highfield Road, Edgbaston, Birmingham\tLived here 1910\u20131911\tUnknown\tBirmingham Civic Society and The Tolkien Society\n" +
             "Plough and Harrow, Hagley Road, Birmingham\tStayed here June 1916\tJune 1997\tThe Tolkien Society\n" +
@@ -47,14 +48,14 @@ public class TabsTest extends ExtendedITextTest {
             "20 Northmoor Road, North Oxford\tLived here 1930\u20131947\t3 December 2002\tOxfordshire Blue Plaques Board\n" +
             "Hotel Miramar, East Overcliff Drive, Bournemouth\tStayed here regularly from the 1950s until 1972\t10 June 1992 by Priscilla Tolkien\tBorough of Bournemouth";
 
-    static final private String text2 = "space anchor:\t222222222222222222222222222222222222222222222222 03\tslash anchor:\t2024\\12\tdot anchor:\t20421.32\n" +
+    private static final String text2 = "space anchor:\t222222222222222222222222222222222222222222222222 03\tslash anchor:\t2024\\12\tdot anchor:\t20421.32\n" +
             "space anchor:\t2012 203\tslash anchor:\t2024\\2\tdot anchor:\t20421.333452\n" +
             "space anchor:\t201212 0423\tslash anchor:\t2067867824\\67867812\tdot anchor:\t21.32131232\n" +
             "space anchor:\t2123123012 03\tslash anchor:\t202131224\\12\tdot anchor:\t202.32323232323232323223223223223232323232323232323232\n" +
             "space anchor:\t2012 0213133\tslash anchor:\t2024\\21312312\tdot anchor:\t131.292\n";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
@@ -95,8 +96,8 @@ public class TabsTest extends ExtendedITextTest {
 
         //left alignments
         Float[] positions1 = {tabInterval * 2, tabInterval * 4, tabInterval * 5};
-        Property.TabAlignment[] alignments1 = {Property.TabAlignment.LEFT, Property.TabAlignment.LEFT, Property.TabAlignment.LEFT};
-        LineDrawer[] leaders1 = {null, null, null};
+        TabAlignment[] alignments1 = {TabAlignment.LEFT, TabAlignment.LEFT, TabAlignment.LEFT};
+        ILineDrawer[] leaders1 = {null, null, null};
         Character[] anchors1 = {null, null, null};
 
         Paragraph p = new Paragraph();
@@ -108,8 +109,8 @@ public class TabsTest extends ExtendedITextTest {
 
         //right alignments
         Float[] positions2 = {tabInterval * 3, tabInterval * 4, tabInterval * 6};
-        Property.TabAlignment[] alignments2 = {Property.TabAlignment.RIGHT, Property.TabAlignment.RIGHT, Property.TabAlignment.RIGHT};
-        LineDrawer[] leaders2 = {null, null, null};
+        TabAlignment[] alignments2 = {TabAlignment.RIGHT, TabAlignment.RIGHT, TabAlignment.RIGHT};
+        ILineDrawer[] leaders2 = {null, null, null};
         Character[] anchors2 = {null, null, null};
 
         p = new Paragraph();
@@ -121,8 +122,8 @@ public class TabsTest extends ExtendedITextTest {
 
         //center alignments
         Float[] positions3 = {tabInterval * 3, tabInterval * 4, tabInterval * 6};
-        Property.TabAlignment[] alignments3 = {Property.TabAlignment.CENTER, Property.TabAlignment.CENTER, Property.TabAlignment.CENTER};
-        LineDrawer[] leaders3 = {null, null, null};
+        TabAlignment[] alignments3 = {TabAlignment.CENTER, TabAlignment.CENTER, TabAlignment.CENTER};
+        ILineDrawer[] leaders3 = {null, null, null};
         Character[] anchors3 = {null, null, null};
 
         p = new Paragraph();
@@ -151,9 +152,9 @@ public class TabsTest extends ExtendedITextTest {
         float tabInterval = doc.getPdfDocument().getDefaultPageSize().getWidth() / 8;
 
         Float[] positions1 = {tabInterval * 2, tabInterval * 3, tabInterval * 4, tabInterval * 5, tabInterval * 6};
-        Property.TabAlignment[] alignments1 = {Property.TabAlignment.ANCHOR, Property.TabAlignment.CENTER, Property.TabAlignment.ANCHOR,
-                Property.TabAlignment.RIGHT, Property.TabAlignment.ANCHOR};
-        LineDrawer[] leaders1 = {new DottedLine(), null, new DashedLine(.5f), null, new SolidLine(.5f)};
+        TabAlignment[] alignments1 = {TabAlignment.ANCHOR, TabAlignment.CENTER, TabAlignment.ANCHOR,
+                TabAlignment.RIGHT, TabAlignment.ANCHOR};
+        ILineDrawer[] leaders1 = {new DottedLine(), null, new DashedLine(.5f), null, new SolidLine(.5f)};
         Character[] anchors1 = {' ', null, '\\', null, '.'};
 
         Paragraph p = new Paragraph();
@@ -179,9 +180,9 @@ public class TabsTest extends ExtendedITextTest {
         float tabInterval = doc.getPdfDocument().getDefaultPageSize().getWidth() / 8;
 
         Float[] positions = {tabInterval * 2, tabInterval * 4, tabInterval * 6};
-        Property.TabAlignment[] alignments = {Property.TabAlignment.RIGHT, Property.TabAlignment.CENTER, Property.TabAlignment.CENTER};
+        TabAlignment[] alignments = {TabAlignment.RIGHT, TabAlignment.CENTER, TabAlignment.CENTER};
 //        Drawable[] leaders = {null, null, null};
-        LineDrawer[] leaders = {new DottedLine(), new DashedLine(.5f), new SolidLine(.5f)};
+        ILineDrawer[] leaders = {new DottedLine(), new DashedLine(.5f), new SolidLine(.5f)};
 
         Paragraph p = new Paragraph();
         p.setFontSize(8);
@@ -223,7 +224,7 @@ public class TabsTest extends ExtendedITextTest {
         doc.add(p);
 
         p = new Paragraph();
-        p.addTabStops(new TabStop(1000, Property.TabAlignment.LEFT, new DashedLine(.5f)));
+        p.addTabStops(new TabStop(1000, TabAlignment.LEFT, new DashedLine(.5f)));
         p.add("text").add(new Tab()).add("some interesting text after left-tabstop");
         doc.add(p);
 
@@ -233,7 +234,7 @@ public class TabsTest extends ExtendedITextTest {
         doc.add(p);
 
         p = new Paragraph();
-        p.addTabStops(new TabStop(1000, Property.TabAlignment.RIGHT, new DashedLine(.5f)));
+        p.addTabStops(new TabStop(1000, TabAlignment.RIGHT, new DashedLine(.5f)));
         p.add("text").add(new Tab()).add("some interesting text after right-tabstop");
         doc.add(p);
 
@@ -244,7 +245,7 @@ public class TabsTest extends ExtendedITextTest {
         doc.add(p);
 
         p = new Paragraph();
-        p.addTabStops(new TabStop(450, Property.TabAlignment.LEFT, new DashedLine(.5f)));
+        p.addTabStops(new TabStop(450, TabAlignment.LEFT, new DashedLine(.5f)));
         p.add("text").add(new Tab()).add("some interesting text after left-tabstop\n");
         p.add("text").add(new Tab()).add("someinterestingtextafterleft-tabstop");
         doc.add(p);
@@ -255,7 +256,7 @@ public class TabsTest extends ExtendedITextTest {
         doc.add(p);
 
         p = new Paragraph();
-        p.addTabStops(new TabStop(450, Property.TabAlignment.RIGHT, new DashedLine(.5f)));
+        p.addTabStops(new TabStop(450, TabAlignment.RIGHT, new DashedLine(.5f)));
         p.add("teeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeext")
                 .add(new Tab()).add("some interesting text after right-tabstop\n");
         p.add("teeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeext")
@@ -296,8 +297,8 @@ public class TabsTest extends ExtendedITextTest {
         canvas.release();
     }
 
-    private void addTabbedTextToParagraph(Paragraph p, String text, Float[] positions, Property.TabAlignment[] alignments,
-                                          LineDrawer[] tabLeadings, Character[] tabAnchorCharacters) {
+    private void addTabbedTextToParagraph(Paragraph p, String text, Float[] positions, TabAlignment[] alignments,
+                                          ILineDrawer[] tabLeadings, Character[] tabAnchorCharacters) {
         java.util.List<TabStop> tabStops = new ArrayList<>();
         for (int i = 0; i < positions.length; ++i) {
             TabStop tabStop = new TabStop(positions[i], alignments[i], tabLeadings[i]);

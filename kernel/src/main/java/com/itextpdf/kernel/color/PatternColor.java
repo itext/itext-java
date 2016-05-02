@@ -53,10 +53,8 @@ import java.util.Objects;
 public class PatternColor extends Color {
 
     private PdfPattern pattern;
-    // The underlying color space for uncolored patterns. Will be null for colored ones.
-    private PdfColorSpace underlyingCS;
-    // The color value in underlying CS for uncolored patterns. Null for colored ones.
-    private float[] colorValue;
+    // The underlying color for uncolored patterns. Will be null for colored ones.
+    private Color underlyingColor;
 
     public PatternColor(PdfPattern coloredPattern) {
         super(new PdfSpecialCs.Pattern(), null);
@@ -72,15 +70,13 @@ public class PatternColor extends Color {
         if (underlyingCS instanceof PdfSpecialCs.Pattern)
             throw new IllegalArgumentException("underlyingCS");
         this.pattern = uncoloredPattern;
-        this.underlyingCS = underlyingCS;
-        this.colorValue = colorValue;
+        this.underlyingColor = Color.makeColor(underlyingCS, colorValue);
     }
 
     public PatternColor(PdfPattern.Tiling uncoloredPattern, PdfSpecialCs.UncoloredTilingPattern uncoloredTilingCS, float[] colorValue) {
         super(uncoloredTilingCS, colorValue);
         this.pattern = uncoloredPattern;
-        this.underlyingCS = uncoloredTilingCS.getUnderlyingColorSpace();
-        this.colorValue = colorValue;
+        this.underlyingColor = Color.makeColor(uncoloredTilingCS.getUnderlyingColorSpace(), colorValue);
     }
 
     public PdfPattern getPattern() {
@@ -93,11 +89,11 @@ public class PatternColor extends Color {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass() || !super.equals(o)){
+        if (!super.equals(o)) {
             return false;
         }
-        return pattern.equals(((PatternColor)o).pattern) && Objects.equals(underlyingCS, ((PatternColor)o).underlyingCS)
-                && Objects.equals(colorValue, ((PatternColor)o).colorValue);
+        PatternColor color = (PatternColor)o;
+        return pattern.equals(color.pattern) &&
+                (underlyingColor != null ? underlyingColor.equals(color.underlyingColor) : color.underlyingColor == null);
     }
 }

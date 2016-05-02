@@ -44,7 +44,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -69,7 +69,7 @@ public class CellRenderer extends BlockRenderer {
 
     @Override
     protected CellRenderer createSplitRenderer(int layoutResult) {
-        CellRenderer splitRenderer = getNextRenderer();
+        CellRenderer splitRenderer = (CellRenderer) getNextRenderer();
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         splitRenderer.occupiedArea = occupiedArea;
@@ -80,7 +80,7 @@ public class CellRenderer extends BlockRenderer {
 
     @Override
     protected CellRenderer createOverflowRenderer(int layoutResult) {
-        CellRenderer overflowRenderer = getNextRenderer();
+        CellRenderer overflowRenderer = (CellRenderer) getNextRenderer();
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());
@@ -93,7 +93,7 @@ public class CellRenderer extends BlockRenderer {
     }
 
     @Override
-    public CellRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         return new CellRenderer(getModelElement());
     }
 }

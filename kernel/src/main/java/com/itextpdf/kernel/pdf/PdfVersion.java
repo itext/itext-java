@@ -44,35 +44,50 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import java.io.Serializable;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Enum listing all official PDF versions.
  */
-public enum PdfVersion {
+public class PdfVersion implements Comparable<PdfVersion>, Serializable {
 
-    PDF_1_0("PDF-1.0"),
-    PDF_1_1("PDF-1.1"),
-    PDF_1_2("PDF-1.2"),
-    PDF_1_3("PDF-1.3"),
-    PDF_1_4("PDF-1.4"),
-    PDF_1_5("PDF-1.5"),
-    PDF_1_6("PDF-1.6"),
-    PDF_1_7("PDF-1.7"),
-    PDF_2_0("PDF-2.0");
+    private static final long serialVersionUID = 6168855906667968169L;
 
-    private String value;
+    private static final List<PdfVersion> values = new ArrayList<>();
+
+    public static final PdfVersion PDF_1_0 = createPdfVersion(1, 0);
+    public static final PdfVersion PDF_1_1 = createPdfVersion(1, 0);
+    public static final PdfVersion PDF_1_2 = createPdfVersion(1, 2);
+    public static final PdfVersion PDF_1_3 = createPdfVersion(1, 3);
+    public static final PdfVersion PDF_1_4 = createPdfVersion(1, 4);
+    public static final PdfVersion PDF_1_5 = createPdfVersion(1, 5);
+    public static final PdfVersion PDF_1_6 = createPdfVersion(1, 6);
+    public static final PdfVersion PDF_1_7 = createPdfVersion(1, 7);
+    public static final PdfVersion PDF_2_0 = createPdfVersion(2, 0);
+
+    private int major;
+    private int minor;
 
     /**
      * Creates a PdfVersion enum.
-     *
-     * @param value version number
+     * @param major major version number
+     * @param minor minor version number
      */
-    PdfVersion(String value) {
-        this.value = value;
+    private PdfVersion(int major, int minor) {
+        this.major = major;
+        this.minor = minor;
     }
 
     @Override
     public String toString() {
-        return value;
+        return MessageFormat.format("PDF-{0}.{1}", major, minor);
+    }
+
+    public PdfName toPdfName() {
+        return new PdfName(MessageFormat.format("{0}.{1}", major, minor));
     }
 
     /**
@@ -83,11 +98,43 @@ public enum PdfVersion {
      * @return PdfVersion of the specified version
      */
     public static PdfVersion fromString(String value) {
-        for (PdfVersion version : PdfVersion.values()) {
-            if (version.value.equals(value)) {
+        for (PdfVersion version : values) {
+            if (version.toString().equals(value)) {
                 return version;
             }
         }
         throw new IllegalArgumentException("The provided pdf version was not found.");
+    }
+
+    /**
+     * Creates a PdfVersion enum from a {@link PdfName} object if the specified version
+     * can be found.
+     *
+     * @param name version number
+     * @return PdfVersion of the specified version
+     */
+    public static PdfVersion fromPdfName(PdfName name) {
+        for (PdfVersion version : values) {
+            if (version.toPdfName().equals(name)) {
+                return version;
+            }
+        }
+        throw new IllegalArgumentException("The provided pdf version was not found.");
+    }
+
+    @Override
+    public int compareTo(PdfVersion o) {
+        int majorResult = Integer.compare(major, o.major);
+        if (majorResult != 0) {
+            return majorResult;
+        } else {
+            return Integer.compare(minor, o.minor);
+        }
+    }
+
+    private static PdfVersion createPdfVersion(int major, int minor) {
+        PdfVersion pdfVersion = new PdfVersion(major, minor);
+        values.add(pdfVersion);
+        return pdfVersion;
     }
 }

@@ -55,7 +55,7 @@ import java.security.GeneralSecurityException;
  * MakeSignature.signExternalContainer().
  * @author Paulo Soares
  */
-public class ExternalBlankSignatureContainer implements ExternalSignatureContainer {
+public class ExternalBlankSignatureContainer implements IExternalSignatureContainer {
 
     /* The Signature dictionary. Should contain values for /Filter and /SubFilter at minimum. */
     private PdfDictionary sigDic;

@@ -48,13 +48,13 @@ import com.itextpdf.kernel.PdfException;
 
 import java.io.Serializable;
 
-public abstract class PdfObjectWrapper<T extends PdfObject> implements Serializable{
+public abstract class PdfObjectWrapper<T extends PdfObject> implements Serializable {
 
     private static final long serialVersionUID = 3516473712028588356L;
 
     private T pdfObject = null;
 
-    public PdfObjectWrapper(T pdfObject) {
+    protected PdfObjectWrapper(T pdfObject) {
         this.pdfObject = pdfObject;
         if (isWrappedObjectMustBeIndirect()) {
             markObjectAsIndirect(this.pdfObject);
@@ -71,9 +71,9 @@ public abstract class PdfObjectWrapper<T extends PdfObject> implements Serializa
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
-    public <T1 extends PdfObjectWrapper<T>> T1 makeIndirect(PdfDocument document, PdfIndirectReference reference) {
+    public PdfObjectWrapper<T> makeIndirect(PdfDocument document, PdfIndirectReference reference) {
         getPdfObject().makeIndirect(document, reference);
-        return (T1) this;
+        return this;
     }
 
     /**
@@ -82,7 +82,7 @@ public abstract class PdfObjectWrapper<T extends PdfObject> implements Serializa
      * @param document a document the indirect reference will belong to.
      * @return object itself.
      */
-    public <T1 extends PdfObjectWrapper<T>> T1 makeIndirect(PdfDocument document) {
+    public PdfObjectWrapper<T> makeIndirect(PdfDocument document) {
         return makeIndirect(document, null);
     }
 
@@ -99,77 +99,6 @@ public abstract class PdfObjectWrapper<T extends PdfObject> implements Serializa
 
     public boolean isFlushed() {
         return pdfObject.isFlushed();
-    }
-
-    public <T1 extends PdfObjectWrapper<T>> T1 put(PdfName key, PdfObject value) {
-        if (value != null) {
-            if (getPdfObject().isDictionary() || getPdfObject().isStream())
-                ((PdfDictionary) getPdfObject()).put(key, value);
-            else
-                throw new UnsupportedOperationException();
-        }
-        return (T1) this;
-    }
-
-    public <T1 extends PdfObjectWrapper<T>> T1 put(PdfName key, PdfObjectWrapper value) {
-        if (value != null) {
-            if (getPdfObject().isDictionary())
-                ((PdfDictionary) getPdfObject()).put(key, value.getPdfObject());
-            else
-                throw new UnsupportedOperationException();
-        }
-        return (T1) this;
-    }
-
-    public <T1 extends PdfObjectWrapper<T>> T1 add(PdfObject value) {
-        if (value != null) {
-            if (getPdfObject().isArray())
-                ((PdfArray) getPdfObject()).add(value);
-            else
-                throw new UnsupportedOperationException();
-        }
-        return (T1) this;
-    }
-
-    public <T1 extends PdfObjectWrapper<T>> T1 add(int index, PdfObject value) {
-        if (value != null) {
-            if (getPdfObject().isArray())
-                ((PdfArray) getPdfObject()).add(index, value);
-            else
-                throw new UnsupportedOperationException();
-        }
-        return (T1) this;
-    }
-
-    public <T1 extends PdfObjectWrapper<T>> T1 add(PdfObjectWrapper value) {
-        if (value != null) {
-
-            if (getPdfObject().isArray())
-                ((PdfArray) getPdfObject()).add(value.getPdfObject());
-            else
-                throw new UnsupportedOperationException();
-        }
-        return (T1) this;
-    }
-
-    public <T1 extends PdfObjectWrapper<T>> T1 add(int index, PdfObjectWrapper value) {
-        if (value != null) {
-            if (getPdfObject().isArray())
-                ((PdfArray) getPdfObject()).add(index, value.getPdfObject());
-            else
-                throw new UnsupportedOperationException();
-        }
-        return (T1) this;
-    }
-
-    public <T1 extends PdfObjectWrapper<T>> T1 remove(PdfName key) {
-        if (getPdfObject().isDictionary()) {
-            ((PdfDictionary) getPdfObject()).remove(key);
-        } else {
-            throw new UnsupportedOperationException();
-        }
-
-        return (T1) this;
     }
 
     /**
@@ -194,19 +123,19 @@ public abstract class PdfObjectWrapper<T extends PdfObject> implements Serializa
 
     protected void setForbidRelease() {
         if (pdfObject != null) {
-            pdfObject.setState(PdfObject.ForbidRelease);
+            pdfObject.setState(PdfObject.FORBID_RELEASE);
         }
     }
 
     protected void unsetForbidRelease() {
         if (pdfObject != null) {
-            pdfObject.clearState(PdfObject.ForbidRelease);
+            pdfObject.clearState(PdfObject.FORBID_RELEASE);
         }
     }
 
     protected static void markObjectAsIndirect(PdfObject pdfObject) {
         if (pdfObject.getIndirectReference() == null) {
-            pdfObject.setState(PdfObject.MustBeIndirect);
+            pdfObject.setState(PdfObject.MUST_BE_INDIRECT);
         }
     }
 

@@ -50,6 +50,7 @@ import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 
@@ -62,13 +63,19 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates new PdfSignature.
+     */
+    public PdfSignature() {
+        super(new PdfDictionary());
+        put(PdfName.Type, PdfName.Sig);
+    }
+    /**
+     * Creates new PdfSignature.
      *
      * @param filter PdfName of the signature handler to use when validating this signature
      * @param subFilter PdfName that describes the encoding of the signature
      */
     public PdfSignature(PdfName filter, PdfName subFilter) {
-        super(new PdfDictionary());
-        put(PdfName.Type, PdfName.Sig);
+        this();
         put(PdfName.Filter, filter);
         put(PdfName.SubFilter, subFilter);
     }
@@ -78,7 +85,7 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param range an array of pairs of integers that specifies the byte range used in the digest calculation. A pair consists of the starting byte offset and the length
      */
-    public void setByteRange(int range[]) {
+    public void setByteRange(int[] range) {
         PdfArray array = new PdfArray();
 
         for (int k = 0; k < range.length; ++k) {
@@ -112,7 +119,7 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      * @param name name of the person signing the document
      */
     public void setName(String name) {
-        put(PdfName.Name, new PdfString(name, PdfEncodings.UnicodeBig));
+        put(PdfName.Name, new PdfString(name, PdfEncodings.UNICODE_BIG));
     }
 
     /**
@@ -121,7 +128,7 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      * @param date time of signing
      */
     public void setDate(PdfDate date) {
-        put(PdfName.M, date);
+        put(PdfName.M, date.getPdfObject());
     }
 
     /**
@@ -130,7 +137,7 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      * @param location physical location of signing
      */
     public void setLocation(String location) {
-        put(PdfName.Location, new PdfString(location, PdfEncodings.UnicodeBig));
+        put(PdfName.Location, new PdfString(location, PdfEncodings.UNICODE_BIG));
     }
 
     /**
@@ -139,7 +146,7 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      * @param reason reason for signing
      */
     public void setReason(String reason) {
-        put(PdfName.Reason, new PdfString(reason, PdfEncodings.UnicodeBig));
+        put(PdfName.Reason, new PdfString(reason, PdfEncodings.UNICODE_BIG));
     }
 
     /**
@@ -160,7 +167,12 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      * @param contactInfo information to contact the person who signed this document
      */
     public void setContact(String contactInfo) {
-        put(PdfName.ContactInfo, new PdfString(contactInfo, PdfEncodings.UnicodeBig));
+        put(PdfName.ContactInfo, new PdfString(contactInfo, PdfEncodings.UNICODE_BIG));
+    }
+
+    public PdfSignature put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return this;
     }
 
     @Override

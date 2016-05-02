@@ -55,22 +55,22 @@ public class PdfDocumentEvent extends Event {
     /**
      * Dispatched after page is created.
      */
-    final static public String START_PAGE = "StartPdfPage";
+    public static final String START_PAGE = "StartPdfPage";
 
     /**
      * Dispatched after page is inserted/added into document.
      */
-    final static public String INSERT_PAGE = "InsertPdfPage";
+    public static final String INSERT_PAGE = "InsertPdfPage";
 
     /**
      * Dispatched after page is removed from document.
      */
-    final static public String REMOVE_PAGE = "RemovePdfPage";
+    public static final String REMOVE_PAGE = "RemovePdfPage";
 
     /**
      * Dispatched before page is closed and written.
      */
-    final static public String END_PAGE = "EndPdfPage";
+    public static final String END_PAGE = "EndPdfPage";
 
     /**
      * The PdfPage associated with this event.

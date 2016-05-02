@@ -57,7 +57,7 @@ class PdfObjectStream extends PdfStream {
 	/**
      * Max number of objects in object stream.
      */
-    public static final int maxObjStreamSize = 200;
+    public static final int MAX_OBJ_STREAM_SIZE = 200;
 
     /**
      * Current object stream size (number of objects inside).
@@ -100,7 +100,7 @@ class PdfObjectStream extends PdfStream {
      * @throws PdfException
      */
     public void addObject(PdfObject object) {
-        if (size.getIntValue() == maxObjStreamSize) {
+        if (size.intValue() == MAX_OBJ_STREAM_SIZE) {
             throw new PdfException(PdfException.PdfObjectStreamReachMaxSize);
         }
         PdfOutputStream outputStream = getOutputStream();
@@ -110,7 +110,7 @@ class PdfObjectStream extends PdfStream {
                 writeSpace();
         outputStream.write(object);
         object.getIndirectReference().setObjStreamNumber(getIndirectReference().getObjNumber());
-        object.getIndirectReference().setIndex(size.getIntValue());
+        object.getIndirectReference().setIndex(size.intValue());
         outputStream.writeSpace();
         size.increment();
         ((PdfNumber)get(PdfName.First)).setValue(indexStream.getCurrentPos());
@@ -122,7 +122,7 @@ class PdfObjectStream extends PdfStream {
      * @return object stream size.
      */
     public int getSize() {
-        return size.getIntValue();
+        return size.intValue();
     }
 
     public PdfOutputStream getIndexStream() {

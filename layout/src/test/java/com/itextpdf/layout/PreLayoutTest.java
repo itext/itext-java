@@ -7,6 +7,7 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
@@ -30,11 +31,11 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PreLayoutTest extends ExtendedITextTest{
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/PreLayoutTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/PreLayoutTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/PreLayoutTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/PreLayoutTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 

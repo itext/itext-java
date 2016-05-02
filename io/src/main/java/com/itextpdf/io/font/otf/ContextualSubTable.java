@@ -47,6 +47,7 @@ package com.itextpdf.io.font.otf;
 import java.util.List;
 
 public abstract class ContextualSubTable {
+
     protected OpenTypeFontTableReader openReader;
     protected int lookupFlag;
 

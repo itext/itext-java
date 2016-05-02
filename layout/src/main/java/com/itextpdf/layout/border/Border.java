@@ -60,17 +60,16 @@ public abstract class Border {
     public static final int _3D_OUTSET = 7;
     public static final int _3D_RIDGE = 8;
 
-
     protected Color color;
     protected float width;
     protected int type;
     private int hash;
 
-    public Border(float width) {
+    protected Border(float width) {
         this(Color.BLACK, width);
     }
 
-    public Border(Color color, float width) {
+    protected Border(Color color, float width) {
         this.color = color;
         this.width = width;
     }

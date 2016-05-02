@@ -57,7 +57,7 @@ public class Placement {
     private Placement() {
     }
 
-    static public short[] doPlacement(int nrow, int ncol) {
+    public static short[] doPlacement(int nrow, int ncol) {
         int key = nrow * 1000 + ncol;
         short[] pc = cache.get(key);
         if (pc != null)

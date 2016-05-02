@@ -55,6 +55,19 @@ import java.util.Set;
 
 public final class PdfFontFactory {
 
+    /**
+     * This is the default encoding to use.
+     */
+    private static String DEFAULT_ENCODING = PdfEncodings.WINANSI;
+    /**
+     * This is the default value of the <VAR>embedded</VAR> variable.
+     */
+    private static boolean DEFAULT_EMBEDDING = false;
+    /**
+     * This is the default value of the <VAR>embedded</VAR> variable.
+     */
+    private static boolean DEFAULT_CACHED = false;
+
     public static PdfFont createFont() throws IOException {
         return createFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
     }
@@ -74,28 +87,20 @@ public final class PdfFontFactory {
     }
 
     public static PdfFont createFont(String path) throws IOException {
-        return createFont(path, null, false);
+        return createFont(path, null, DEFAULT_EMBEDDING);
     }
 
     public static PdfFont createFont(String path, String encoding) throws IOException {
-        return createFont(path, encoding, false);
+        return createFont(path, encoding, DEFAULT_EMBEDDING);
     }
 
-    public static PdfFont createFont(byte[] ttc, int ttcIndex, String encoding) throws IOException {
-        return createFont(ttc, ttcIndex, encoding, true);
-    }
-
-    public static PdfFont createFont(byte[] ttc, int ttcIndex, String encoding, boolean embedded) throws IOException {
-        FontProgram fontProgram = FontFactory.createFont(ttc, ttcIndex);
+    public static PdfFont createTtcFont(byte[] ttc, int ttcIndex, String encoding, boolean embedded, boolean cached) throws IOException {
+        FontProgram fontProgram = FontProgramFactory.createFont(ttc, ttcIndex, cached);
         return createFont(fontProgram, encoding, embedded);
     }
 
-    public static PdfFont createFont(String ttcPath, int ttcIndex, String encoding) throws IOException {
-        return createFont(ttcPath, ttcIndex, encoding, false);
-    }
-
-    public static PdfFont createFont(String ttcPath, int ttcIndex, String encoding, boolean embedded) throws IOException {
-        FontProgram fontProgram = FontFactory.createFont(ttcPath, ttcIndex);
+    public static PdfFont createTtcFont(String ttcPath, int ttcIndex, String encoding, boolean embedded, boolean cached) throws IOException {
+        FontProgram fontProgram = FontProgramFactory.createFont(ttcPath, ttcIndex, cached);
         return createFont(fontProgram, encoding, embedded);
     }
 
@@ -104,7 +109,7 @@ public final class PdfFontFactory {
     }
 
     public static PdfFont createFont(String path, String encoding, boolean embedded) throws IOException {
-        FontProgram fontProgram = FontFactory.createFont(path);
+        FontProgram fontProgram = FontProgramFactory.createFont(path);
         return createFont(fontProgram, encoding, embedded);
     }
 
@@ -131,15 +136,15 @@ public final class PdfFontFactory {
     }
 
     public static PdfFont createFont(FontProgram fontProgram, String encoding) throws IOException {
-        return createFont(fontProgram, encoding, false);
+        return createFont(fontProgram, encoding, DEFAULT_EMBEDDING);
     }
 
     public static PdfFont createFont(FontProgram fontProgram) throws IOException {
-        return createFont(fontProgram, PdfEncodings.WINANSI);
+        return createFont(fontProgram, DEFAULT_ENCODING);
     }
 
     public static PdfFont createFont(byte[] font, String encoding) throws IOException {
-        return createFont(font, encoding, false);
+        return createFont(font, encoding, DEFAULT_EMBEDDING);
     }
 
     public static PdfFont createFont(byte[] font, boolean embedded) throws IOException {
@@ -147,7 +152,11 @@ public final class PdfFontFactory {
     }
 
     public static PdfFont createFont(byte[] font, String encoding, boolean embedded) throws IOException {
-        FontProgram fontProgram = FontFactory.createFont(null, font, true);
+        return createFont(font, encoding, embedded, DEFAULT_CACHED);
+    }
+
+    public static PdfFont createFont(byte[] font, String encoding, boolean embedded, boolean cached) throws IOException {
+        FontProgram fontProgram = FontProgramFactory.createFont(null, font, cached);
         return createFont(fontProgram, encoding, embedded);
     }
 
@@ -155,25 +164,29 @@ public final class PdfFontFactory {
         return new PdfType3Font(document, colorized);
     }
 
-    public static PdfFont createRegisteredFont(String font, final String encoding, boolean embedded, int style, boolean cached) throws IOException {
-        FontProgram fontProgram = FontFactory.createRegisteredFont(font, style, cached);
+    public static PdfFont createRegisteredFont(String font, String encoding, boolean embedded, int style, boolean cached) throws IOException {
+        FontProgram fontProgram = FontProgramFactory.createRegisteredFont(font, style, cached);
         return createFont(fontProgram, encoding, embedded);
     }
 
-    public static PdfFont createRegisteredFont(String font, final String encoding, boolean embedded) throws IOException {
+    public static PdfFont createRegisteredFont(String font, String encoding, boolean embedded, boolean cached) throws IOException {
+        return createRegisteredFont(font, encoding, embedded, FontConstants.UNDEFINED, cached);
+    }
+
+    public static PdfFont createRegisteredFont(String font, String encoding, boolean embedded) throws IOException {
         return createRegisteredFont(font, encoding, embedded, FontConstants.UNDEFINED);
     }
 
-    public static PdfFont createRegisteredFont(String font, final String encoding, boolean embedded, int style) throws IOException {
-        return createRegisteredFont(font, encoding, embedded, style, false);
+    public static PdfFont createRegisteredFont(String font, String encoding, boolean embedded, int style) throws IOException {
+        return createRegisteredFont(font, encoding, embedded, style, DEFAULT_CACHED);
     }
 
-    public static PdfFont createRegisteredFont(String font, final String encoding) throws IOException {
-        return createRegisteredFont(font, encoding, false, FontConstants.UNDEFINED, false);
+    public static PdfFont createRegisteredFont(String font, String encoding) throws IOException {
+        return createRegisteredFont(font, encoding, false, FontConstants.UNDEFINED);
     }
 
     public static PdfFont createRegisteredFont(String fontName) throws IOException {
-        return createRegisteredFont(fontName, null, false, FontConstants.UNDEFINED, false);
+        return createRegisteredFont(fontName, null, false, FontConstants.UNDEFINED);
     }
 
     /**
@@ -183,8 +196,8 @@ public final class PdfFontFactory {
      * @param fullName   the font name
      * @param path       the font path
      */
-    public static void registerFamily(final String familyName, final String fullName, final String path) {
-        FontFactory.registerFamily(familyName, fullName, path);
+    public static void registerFamily(String familyName, String fullName, String path) {
+        FontProgramFactory.registerFontFamily(familyName, fullName, path);
     }
 
     /**
@@ -192,7 +205,7 @@ public final class PdfFontFactory {
      *
      * @param path the path to a ttf- or ttc-file
      */
-    public static void register(final String path) {
+    public static void register(String path) {
         register(path, null);
     }
 
@@ -202,8 +215,8 @@ public final class PdfFontFactory {
      * @param path  the path to a font file
      * @param alias the alias you want to use for the font
      */
-    public static void register(final String path, final String alias) {
-        FontFactory.register(path, alias);
+    public static void register(String path, String alias) {
+        FontProgramFactory.registerFont(path, alias);
     }
 
     /**
@@ -212,8 +225,8 @@ public final class PdfFontFactory {
      * @param dir the directory
      * @return the number of fonts registered
      */
-    public static int registerDirectory(final String dir) {
-        return FontFactory.registerDirectory(dir);
+    public static int registerDirectory(String dir) {
+        return FontProgramFactory.registerFontDirectory(dir);
     }
 
     /**
@@ -223,7 +236,7 @@ public final class PdfFontFactory {
      * @return the number of fonts registered
      */
     public static int registerSystemDirectories() {
-        return FontFactory.registerSystemDirectories();
+        return FontProgramFactory.registerSystemFontDirectories();
     }
 
     /**
@@ -232,7 +245,7 @@ public final class PdfFontFactory {
      * @return a set of registered fonts
      */
     public static Set<String> getRegisteredFonts() {
-        return FontFactory.getRegisteredFonts();
+        return FontProgramFactory.getRegisteredFonts();
     }
 
     /**
@@ -241,7 +254,7 @@ public final class PdfFontFactory {
      * @return a set of registered font families
      */
     public static Set<String> getRegisteredFamilies() {
-        return FontFactory.getRegisteredFamilies();
+        return FontProgramFactory.getRegisteredFontFamilies();
     }
 
     /**
@@ -250,8 +263,8 @@ public final class PdfFontFactory {
      * @param fontname the name of the font that has to be checked.
      * @return true if the font is found
      */
-    public static boolean isRegistered(final String fontname) {
-        return FontFactory.isRegistered(fontname);
+    public static boolean isRegistered(String fontname) {
+        return FontProgramFactory.isRegisteredFont(fontname);
     }
 
     protected static boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType, boolean isException) {

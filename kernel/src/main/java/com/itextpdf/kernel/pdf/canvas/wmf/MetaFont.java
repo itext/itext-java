@@ -76,7 +76,7 @@ public class MetaFont extends MetaObject {
     static final int FF_SCRIPT = 4;
     static final int FF_DECORATIVE = 5;
     static final int BOLDTHRESHOLD = 600;    
-    static final int nameSize = 32;
+    static final int NAME_SIZE = 32;
     static final int ETO_OPAQUE = 2;
     static final int ETO_CLIPPED = 4;
 
@@ -117,9 +117,9 @@ public class MetaFont extends MetaObject {
         charset = in.readByte();
         in.skip(3);
         pitchAndFamily = in.readByte();
-        byte name[] = new byte[nameSize];
+        byte[] name = new byte[NAME_SIZE];
         int k;
-        for (k = 0; k < nameSize; ++k) {
+        for (k = 0; k < NAME_SIZE; ++k) {
             int c = in.readByte();
             if (c == 0) {
                 break;
@@ -143,7 +143,7 @@ public class MetaFont extends MetaObject {
     public FontProgram getFont() throws IOException {
         if (font != null)
             return font;
-        FontProgram ff2 = FontFactory.createRegisteredFont(faceName, ((italic != 0) ? FontConstants.ITALIC : 0) | ((bold != 0) ? FontConstants.BOLD : 0));
+        FontProgram ff2 = FontProgramFactory.createRegisteredFont(faceName, ((italic != 0) ? FontConstants.ITALIC : 0) | ((bold != 0) ? FontConstants.BOLD : 0));
         encoding = FontEncoding.createFontEncoding(PdfEncodings.WINANSI);
         font = ff2;
         if (font != null)
@@ -196,7 +196,7 @@ public class MetaFont extends MetaObject {
             }
         }
         try {
-            font = FontFactory.createFont(fontName);
+            font = FontProgramFactory.createFont(fontName);
             encoding = FontEncoding.createFontEncoding(PdfEncodings.WINANSI);
         }
         catch (Exception e) {

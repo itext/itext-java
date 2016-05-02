@@ -44,6 +44,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.action.PdfAction;
@@ -97,7 +98,7 @@ public class PdfOutline {
 
     public void setTitle(String title){
         this.title = title;
-        this.content.put(PdfName.Title, new PdfString(title));
+        this.content.put(PdfName.Title, new PdfString(title, PdfEncodings.UNICODE_BIG));
     }
 
     public void setColor(Color color) {
@@ -131,7 +132,6 @@ public class PdfOutline {
         content.put(PdfName.Dest, destination.getPdfObject());
     }
 
-    //@TODO implement adding actions
     public void addAction(PdfAction action) {
         content.put(PdfName.A, action.getPdfObject());
     }
@@ -161,7 +161,7 @@ public class PdfOutline {
             position = children.size();
         PdfDictionary dictionary = new PdfDictionary();
         PdfOutline outline = new PdfOutline(title, dictionary, this);
-        dictionary.put(PdfName.Title, new PdfString(title));
+        dictionary.put(PdfName.Title, new PdfString(title, PdfEncodings.UNICODE_BIG));
         dictionary.put(PdfName.Parent, content);
         if (!children.isEmpty()){
             if (position != 0){

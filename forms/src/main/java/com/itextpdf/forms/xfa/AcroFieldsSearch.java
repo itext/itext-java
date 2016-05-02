@@ -51,7 +51,7 @@ import java.util.Map;
 /**
  * A class to process "classic" fields.
  */
-public class AcroFieldsSearch extends Xml2Som {
+class AcroFieldsSearch extends Xml2Som {
     private Map<String, String> acroShort2LongName;
 
     /**
@@ -62,8 +62,7 @@ public class AcroFieldsSearch extends Xml2Som {
     public AcroFieldsSearch(Collection<String> items) {
         inverseSearch = new HashMap<>();
         acroShort2LongName = new HashMap<>();
-        for (String string : items) {
-            String itemName = string;
+        for (String itemName : items) {
             String itemShort = getShortName(itemName);
             acroShort2LongName.put(itemShort, itemName);
             inverseSearchAdd(inverseSearch, splitParts(itemShort), itemName);

@@ -44,22 +44,44 @@
  */
 package com.itextpdf.pdfa;
 
-import com.itextpdf.kernel.Version;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.log.Counter;
+import com.itextpdf.kernel.log.CounterFactory;
+import com.itextpdf.kernel.pdf.IsoKey;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfOutputIntent;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfResources;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
-import com.itextpdf.kernel.xmp.*;
-import com.itextpdf.kernel.xmp.options.PropertyOptions;
-import com.itextpdf.kernel.xmp.properties.XMPProperty;
+import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
+import com.itextpdf.kernel.xmp.XMPConst;
+import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPMeta;
+import com.itextpdf.kernel.xmp.XMPMetaFactory;
+import com.itextpdf.kernel.xmp.XMPUtils;
 import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.checker.PdfA2Checker;
 import com.itextpdf.pdfa.checker.PdfA3Checker;
 import com.itextpdf.pdfa.checker.PdfAChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class PdfADocument extends PdfDocument {
+
+    private static final long serialVersionUID = -5908390625367471894L;
     protected PdfAChecker checker;
 
     public PdfADocument(PdfWriter writer, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {
@@ -68,26 +90,27 @@ public class PdfADocument extends PdfDocument {
         addOutputIntent(outputIntent);
     }
 
-    public PdfADocument(PdfReader reader, PdfWriter writer) throws XMPException {
-        this(reader, writer, false);
+    public PdfADocument(PdfReader reader, PdfWriter writer) {
+        this(reader, writer, new StampingProperties());
     }
 
-    public PdfADocument(PdfReader reader, PdfWriter writer, boolean append) throws XMPException {
-        super(reader, writer, append);
+    public PdfADocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
+        super(reader, writer, properties);
 
         byte[] existingXmpMetadata = getXmpMetadata();
         if (existingXmpMetadata == null) {
             throw new PdfAConformanceException(PdfAConformanceException.DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata);
         }
-        XMPMeta meta = XMPMetaFactory.parseFromBuffer(existingXmpMetadata);
-        XMPProperty conformanceXmpProperty = meta.getProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE);
-        XMPProperty partXmpProperty = meta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.PART);
-        if (conformanceXmpProperty == null || partXmpProperty == null) {
+        XMPMeta meta;
+        try {
+            meta = XMPMetaFactory.parseFromBuffer(existingXmpMetadata);
+        } catch (XMPException exc) {
             throw new PdfAConformanceException(PdfAConformanceException.DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata);
         }
-        String conformance = conformanceXmpProperty.getValue();
-        String part = partXmpProperty.getValue();
-        PdfAConformanceLevel conformanceLevel = getConformanceLevel(conformance, part);
+        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.getConformanceLevel(meta);
+        if (conformanceLevel == null) {
+            throw new PdfAConformanceException(PdfAConformanceException.DocumentToReadFromShallBeAPdfAConformantFileWithValidXmpMetadata);
+        }
 
         setChecker(conformanceLevel);
     }
@@ -154,27 +177,27 @@ public class PdfADocument extends PdfDocument {
                 checker.checkInlineImage((PdfStream) obj, currentColorSpaces);
                 break;
             case GRAPHIC_STATE_ONLY:
-                    gState = (CanvasGraphicsState) obj;
-                    checker.checkExtGState(gState);
+                gState = (CanvasGraphicsState) obj;
+                checker.checkExtGState(gState);
                 break;
             case DRAWMODE_FILL:
-                    gState = (CanvasGraphicsState) obj;
-                    checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
-                    checker.checkExtGState(gState);
+                gState = (CanvasGraphicsState) obj;
+                checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
+                checker.checkExtGState(gState);
                 break;
             case DRAWMODE_STROKE:
-                    gState = (CanvasGraphicsState) obj;
-                    checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
-                    checker.checkExtGState(gState);
+                gState = (CanvasGraphicsState) obj;
+                checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
+                checker.checkExtGState(gState);
                 break;
             case DRAWMODE_FILL_STROKE:
-                    gState = (CanvasGraphicsState) obj;
-                    checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
-                    checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
-                    checker.checkExtGState(gState);
+                gState = (CanvasGraphicsState) obj;
+                checker.checkColor(gState.getFillColor(), currentColorSpaces, true);
+                checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false);
+                checker.checkExtGState(gState);
                 break;
             case PAGE:
-                checker.checkSinglePage((PdfPage)obj);
+                checker.checkSinglePage((PdfPage) obj);
         }
     }
 
@@ -183,11 +206,23 @@ public class PdfADocument extends PdfDocument {
     }
 
     @Override
-    public void createXmpMetadata() throws XMPException {
-        createXmpMetadata(checker.getConformanceLevel());
+    protected void updateXmpMetadata() {
+        try {
+            XMPMeta xmpMeta = updateDefaultXmpMetadata();
+            xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, checker.getConformanceLevel().getPart());
+            xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, checker.getConformanceLevel().getConformance());
+            if (this.isTagged()) {
+                XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
+                XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
+            }
+            setXmpMetadata(xmpMeta);
+        } catch (XMPException e) {
+            Logger logger = LoggerFactory.getLogger(PdfADocument.class);
+            logger.error(LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
+        }
     }
 
-        @Override
+    @Override
     protected void checkIsoConformance() {
         checker.checkDocument(catalog);
     }
@@ -205,7 +240,7 @@ public class PdfADocument extends PdfDocument {
 
     @Override
     protected void flushFonts() {
-        for (PdfFont pdfFont: getDocumentFonts()) {
+        for (PdfFont pdfFont : getDocumentFonts()) {
             if (!pdfFont.isEmbedded()) {
                 throw new PdfAConformanceException(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1)
                         .setMessageParams(pdfFont.getFontProgram().getFontNames().getFontName());
@@ -215,147 +250,44 @@ public class PdfADocument extends PdfDocument {
     }
 
     protected void setChecker(PdfAConformanceLevel conformanceLevel) {
-        switch (conformanceLevel) {
-            case PDF_A_1A:
-            case PDF_A_1B:
+        switch (conformanceLevel.getPart()) {
+            case "1":
                 checker = new PdfA1Checker(conformanceLevel);
                 break;
-            case PDF_A_2A:
-            case PDF_A_2B:
-            case PDF_A_2U:
+            case "2":
                 checker = new PdfA2Checker(conformanceLevel);
                 break;
-            case PDF_A_3A:
-            case PDF_A_3B:
-            case PDF_A_3U:
+            case "3":
                 checker = new PdfA3Checker(conformanceLevel);
                 break;
         }
     }
 
-    protected void addRdfDescription(XMPMeta xmpMeta, PdfAConformanceLevel conformanceLevel) throws XMPException {
-        switch (conformanceLevel) {
-            case PDF_A_1A:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "1");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
+    protected void initTagStructureContext() {
+        tagStructureContext = new TagStructureContext(this, getPdfVersionForPdfA(checker.getConformanceLevel()));
+    }
+
+    @Override
+    protected Counter getCounter() {
+        return CounterFactory.getCounter(PdfADocument.class);
+    }
+
+    private static PdfVersion getPdfVersionForPdfA(PdfAConformanceLevel conformanceLevel) {
+        PdfVersion version;
+        switch (conformanceLevel.getPart()) {
+            case "1":
+                version = PdfVersion.PDF_1_4;
                 break;
-            case PDF_A_1B:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "1");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
+            case "2":
+                version = PdfVersion.PDF_1_7;
                 break;
-            case PDF_A_2A:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "2");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
-                break;
-            case PDF_A_2B:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "2");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
-                break;
-            case PDF_A_2U:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "2");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "U");
-                break;
-            case PDF_A_3A:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "3");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "A");
-                break;
-            case PDF_A_3B:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "3");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "B");
-                break;
-            case PDF_A_3U:
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, "3");
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, PdfAXMPUtil.CONFORMANCE, "U");
+            case "3":
+                version = PdfVersion.PDF_1_7;
                 break;
             default:
+                version = PdfVersion.PDF_1_4;
                 break;
         }
-        if (this.isTagged()) {
-            XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
-            XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
-        }
-    }
-
-    public void createXmpMetadata(PdfAConformanceLevel conformanceLevel) throws XMPException {
-        checkClosingStatus();
-        XMPMeta xmpMeta = XMPMetaFactory.create();
-        xmpMeta.setObjectName(XMPConst.TAG_XMPMETA);
-        xmpMeta.setObjectName("");
-        try {
-            xmpMeta.setProperty(XMPConst.NS_DC, PdfConst.Format, "application/pdf");
-            xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, Version.getInstance().getVersion());
-        } catch (XMPException ignored) {
-        }
-        PdfDictionary docInfo = info.getPdfObject();
-        if (docInfo != null) {
-            PdfName key;
-            PdfObject obj;
-            String value;
-            for (PdfName pdfName : docInfo.keySet()) {
-                key = pdfName;
-                obj = docInfo.get(key);
-                if (obj == null)
-                    continue;
-                if (obj.getType() != PdfObject.String)
-                    continue;
-                value = ((PdfString) obj).toUnicodeString();
-                if (PdfName.Title.equals(key)) {
-                    xmpMeta.setLocalizedText(XMPConst.NS_DC, PdfConst.Title, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
-                } else if (PdfName.Author.equals(key)) {
-                    xmpMeta.appendArrayItem(XMPConst.NS_DC, PdfConst.Creator, new PropertyOptions(PropertyOptions.ARRAY_ORDERED), value, null);
-                } else if (PdfName.Subject.equals(key)) {
-                    xmpMeta.setLocalizedText(XMPConst.NS_DC, PdfConst.Description, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
-                } else if (PdfName.Keywords.equals(key)) {
-                    for (String v : value.split(",|;"))
-                        if (v.trim().length() > 0)
-                            xmpMeta.appendArrayItem(XMPConst.NS_DC, PdfConst.Subject, new PropertyOptions(PropertyOptions.ARRAY), v.trim(), null);
-                    xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Keywords, value);
-                } else if (PdfName.Producer.equals(key)) {
-                    xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, value);
-                } else if (PdfName.Creator.equals(key)) {
-                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.CreatorTool, value);
-                } else if (PdfName.CreationDate.equals(key)) {
-                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.CreateDate, PdfDate.getW3CDate(value));
-                } else if (PdfName.ModDate.equals(key)) {
-                    xmpMeta.setProperty(XMPConst.NS_XMP, PdfConst.ModifyDate, PdfDate.getW3CDate(value));
-                }
-            }
-        }
-        if (isTagged()) {
-            xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART, 1, new PropertyOptions(PropertyOptions.SEPARATE_NODE));
-        }
-        if (conformanceLevel != null) {
-            addRdfDescription(xmpMeta, conformanceLevel);
-        }
-        setXmpMetadata(xmpMeta);
-    }
-
-    private PdfAConformanceLevel getConformanceLevel(String conformance, String part) {
-        String lowLetter = part.toUpperCase();
-        boolean aLevel = lowLetter.equals("A");
-        boolean bLevel = lowLetter.equals("B");
-        boolean uLevel = lowLetter.equals("U");
-
-        if (conformance.equals("1")) {
-            if (aLevel)
-                return PdfAConformanceLevel.PDF_A_1A;
-            if (bLevel)
-                return PdfAConformanceLevel.PDF_A_1B;
-        } else if (conformance.equals("2")) {
-            if (aLevel)
-                return PdfAConformanceLevel.PDF_A_2A;
-            if (bLevel)
-                return PdfAConformanceLevel.PDF_A_2B;
-            if (uLevel)
-                return PdfAConformanceLevel.PDF_A_2U;
-        } else if (conformance.equals("3")) {
-            if (aLevel)
-                return PdfAConformanceLevel.PDF_A_3A;
-            if (bLevel)
-                return PdfAConformanceLevel.PDF_A_3B;
-            if (uLevel)
-                return PdfAConformanceLevel.PDF_A_3U;
-        }
-        return null;
+        return version;
     }
 }

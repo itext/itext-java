@@ -5,33 +5,30 @@ import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 @Category(IntegrationTest.class)
 public class PdfOutlineTest extends ExtendedITextTest{
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfOutlineTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfOutlineTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfOutlineTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfOutlineTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
@@ -228,14 +225,14 @@ public class PdfOutlineTest extends ExtendedITextTest{
         PdfDocument pdfDoc = new PdfDocument(reader);
         PdfDocument pdfDoc1 = new PdfDocument(writer);
 
-        Set<Integer> pages = new TreeSet<Integer>();
+        List<Integer> pages = new ArrayList<>();
         pages.add(1);
         pages.add(2);
         pages.add(3);
         pages.add(5);
         pages.add(52);
         pages.add(102);
-        pdfDoc.getOutlines(false);
+        pdfDoc1.initializeOutlines();
         pdfDoc.copyPagesTo(pages, pdfDoc1);
         pdfDoc.close();
 
@@ -274,9 +271,9 @@ public class PdfOutlineTest extends ExtendedITextTest{
         array3.add(new PdfNumber(806));
         array3.add(new PdfNumber(1));
 
-        pdfDoc.addNameDestination("test1", array2);
-        pdfDoc.addNameDestination("test2", array3);
-        pdfDoc.addNameDestination("test3", array1);
+        pdfDoc.addNamedDestination("test1", array2);
+        pdfDoc.addNamedDestination("test2", array3);
+        pdfDoc.addNamedDestination("test3", array1);
 
         PdfOutline root = pdfDoc.getOutlines(false);
 
@@ -324,9 +321,9 @@ public class PdfOutlineTest extends ExtendedITextTest{
         array3.add(new PdfNumber(806));
         array3.add(new PdfNumber(1));
 
-        pdfDoc.addNameDestination("page1", array2);
-        pdfDoc.addNameDestination("page2", array3);
-        pdfDoc.addNameDestination("page3", array1);
+        pdfDoc.addNamedDestination("page1", array2);
+        pdfDoc.addNamedDestination("page2", array3);
+        pdfDoc.addNamedDestination("page3", array1);
 
         PdfOutline root = pdfDoc.getOutlines(false);
         PdfOutline firstOutline = root.addOutline("Test1");

@@ -80,7 +80,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         if (this.count == null) {
             this.count = new PdfNumber(1);
             pdfObject.put(PdfName.Count, this.count);
-        } else if (maxCount < this.count.getIntValue()) {
+        } else if (maxCount < this.count.intValue()) {
             this.count.setValue(maxCount);
         }
         this.kids = pdfObject.getAsArray(PdfName.Kids);
@@ -113,7 +113,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
 
     public void addPages(PdfPages pdfPages) {
         kids.add(pdfPages.getPdfObject());
-        count.setValue(count.getIntValue() + pdfPages.getCount());
+        count.setValue(count.intValue() + pdfPages.getCount());
         pdfPages.getPdfObject().put(PdfName.Parent, getPdfObject());
         setModified();
     }
@@ -122,7 +122,9 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
     public void removeFromParent() {
         if (parent != null) {
             assert getCount() == 0;
-            if (!parent.kids.remove(getPdfObject().getIndirectReference())) {
+            if (parent.kids.contains(getPdfObject().getIndirectReference())) {
+                parent.kids.remove(getPdfObject().getIndirectReference());
+            } else {
                 parent.kids.remove(getPdfObject());
             }
             if (parent.getCount() == 0) {
@@ -136,7 +138,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public int getCount() {
-        return count.getIntValue();
+        return count.intValue();
     }
 
     public void correctFrom(int correction){

@@ -47,17 +47,17 @@ package com.itextpdf.layout.element;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Table} is a layout element that represents data in a two-dimensional
@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
  * It is an implementation of {@link ILargeElement}, which means it can be flushed
  * to the canvas, in order to reclaim memory that is locked up.
  */
-public class Table extends BlockElement<Table> implements ILargeElement<Table> {
+public class Table extends BlockElement<Table> implements ILargeElement {
 
     protected PdfName role = PdfName.Table;
     protected AccessibilityProperties tagProperties;
@@ -136,7 +136,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
         for (int k = 0; k < numColumns; ++k) {
             this.columnWidths[k] = 1;
         }
-        super.setWidth(Property.UnitValue.createPercentValue(100));
+        super.setWidth(UnitValue.createPercentValue(100));
         initializeRows();
     }
 
@@ -156,11 +156,11 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * @return this element
      */
     @Override
-    public Table setWidth(Property.UnitValue width) {
+    public Table setWidth(UnitValue width) {
         if (width.isPointValue() && width.getValue() == 0) {
-            width = Property.UnitValue.createPercentValue(100);
+            width = UnitValue.createPercentValue(100);
         }
-        Property.UnitValue currWidth = getWidth();
+        UnitValue currWidth = getWidth();
         if (!width.equals(currWidth)) {
             super.setWidth(width);
             calculateWidths();
@@ -202,9 +202,10 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * See also {@link #setSkipFirstHeader(boolean)}.
      * @param headerCell a header cell to be added
      */
-    public void addHeaderCell(Cell headerCell) {
+    public Table addHeaderCell(Cell headerCell) {
         ensureHeaderIsInitialized();
         header.addCell(headerCell);
+        return this;
     }
 
     /**
@@ -213,9 +214,10 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * See also {@link #setSkipFirstHeader(boolean)}.
      * @param blockElement an element to be added to a header cell
      */
-    public void addHeaderCell(BlockElement blockElement) {
+    public <T extends IElement> Table addHeaderCell(BlockElement<T> blockElement) {
         ensureHeaderIsInitialized();
         header.addCell(blockElement);
+        return this;
     }
 
     /**
@@ -224,9 +226,10 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * See also {@link #setSkipFirstHeader(boolean)}.
      * @param image an element to be added to a header cell
      */
-    public void addHeaderCell(Image image) {
+    public Table addHeaderCell(Image image) {
         ensureHeaderIsInitialized();
         header.addCell(image);
+        return this;
     }
 
     /**
@@ -235,9 +238,10 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * See also {@link #setSkipFirstHeader(boolean)}.
      * @param content a string to be added to a header cell
      */
-    public void addHeaderCell(String content) {
+    public Table addHeaderCell(String content) {
         ensureHeaderIsInitialized();
         header.addCell(content);
+        return this;
     }
 
     /**
@@ -254,9 +258,10 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * See also {@link #setSkipLastFooter(boolean)}.
      * @param footerCell a footer cell
      */
-    public void addFooterCell(Cell footerCell) {
+    public Table addFooterCell(Cell footerCell) {
         ensureFooterIsInitialized();
         footer.addCell(footerCell);
+        return this;
     }
 
     /**
@@ -265,9 +270,10 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * See also {@link #setSkipLastFooter(boolean)}.
      * @param blockElement an element to be added to a footer cell
      */
-    public void addFooterCell(BlockElement blockElement) {
+    public <T extends IElement> Table addFooterCell(BlockElement<T> blockElement) {
         ensureFooterIsInitialized();
         footer.addCell(blockElement);
+        return this;
     }
 
     /**
@@ -276,9 +282,10 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * See also {@link #setSkipLastFooter(boolean)}.
      * @param image an image to be added to a footer cell
      */
-    public void addFooterCell(Image image) {
+    public Table addFooterCell(Image image) {
         ensureFooterIsInitialized();
         footer.addCell(image);
+        return this;
     }
 
     /**
@@ -287,9 +294,10 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * See also {@link #setSkipLastFooter(boolean)}.
      * @param content a content string to be added to a footer cell
      */
-    public void addFooterCell(String content) {
+    public Table addFooterCell(String content) {
         ensureFooterIsInitialized();
         footer.addCell(content);
+        return this;
     }
 
     /**
@@ -327,7 +335,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * @param skipFirstHeader New value of property skipFirstHeader.
      * @return this element
      */
-    public Table setSkipFirstHeader(final boolean skipFirstHeader) {
+    public Table setSkipFirstHeader(boolean skipFirstHeader) {
         this.skipFirstHeader = skipFirstHeader;
         return this;
     }
@@ -339,7 +347,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * @param skipLastFooter New value of property skipLastFooter.
      * @return this element
      */
-    public Table setSkipLastFooter(final boolean skipLastFooter) {
+    public Table setSkipLastFooter(boolean skipLastFooter) {
         this.skipLastFooter = skipLastFooter;
         return this;
     }
@@ -363,7 +371,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * Adds a new cell to the table. The implementation decides for itself which
      * row the cell will be placed on.
      * 
-     * @param cell
+     * @param cell {@code Cell} to add.
      * @return this element
      */
     public Table addCell(Cell cell) {
@@ -405,7 +413,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * @param blockElement a blockElement to add to the cell and then to the table
      * @return this element
      */
-    public Table addCell(BlockElement blockElement) {
+    public <T extends IElement> Table addCell(BlockElement<T> blockElement) {
         return addCell(new Cell().add(blockElement));
     }
 
@@ -453,8 +461,8 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * @return a {@link TableRenderer} subtree for this element
      */
     @Override
-    public TableRenderer createRendererSubTree() {
-        TableRenderer rendererRoot = getRenderer();
+    public IRenderer createRendererSubTree() {
+        TableRenderer rendererRoot = (TableRenderer) getRenderer();
         for (IElement child : childElements) {
             boolean childShouldBeAdded = isComplete || cellBelongsToAnyRowGroup((Cell) child, lastAddedRowGroups);
             if (childShouldBeAdded) {
@@ -464,6 +472,11 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
         return rendererRoot;
     }
 
+    @Override
+    protected IRenderer makeNewRenderer() {
+        return new TableRenderer(this);
+    }
+
     /**
      * Gets a table renderer for this element. Note that this method can be called more than once.
      * By default each element should define its own renderer, but the renderer can be overridden by
@@ -471,12 +484,12 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * @return a table renderer for this element
      */
     @Override
-    public TableRenderer getRenderer() {
+    public IRenderer getRenderer() {
         if (nextRenderer != null) {
             if (nextRenderer instanceof TableRenderer) {
                 IRenderer renderer = nextRenderer;
                 nextRenderer = nextRenderer.getNextRenderer();
-                return (TableRenderer)renderer;
+                return renderer;
             } else {
                 Logger logger = LoggerFactory.getLogger(Table.class);
                 logger.error("Invalid renderer for Table: must be inherited from TableRenderer");
@@ -566,8 +579,8 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
      * 
      * @return an array of {@link Border} objects
      */
-    public Border[] getLastRowBottomBorder() {
-        Border[] horizontalBorder = new Border[getNumberOfColumns()];
+    public ArrayList<Border> getLastRowBottomBorder() {
+        ArrayList<Border> horizontalBorder = new ArrayList<>();
         if (lastAddedRow != null) {
             for (int i = 0; i < lastAddedRow.length; i++) {
                 Cell cell = lastAddedRow[i];
@@ -576,7 +589,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
                     if (border == null) {
                         border = cell.getProperty(Property.BORDER_BOTTOM);
                     }
-                    horizontalBorder[i] = border;
+                    horizontalBorder.add(border);
                 }
             }
         }
@@ -606,7 +619,7 @@ public class Table extends BlockElement<Table> implements ILargeElement<Table> {
     }
 
     protected void calculateWidths() {
-        Property.UnitValue width = getWidth();
+        UnitValue width = getWidth();
         float total = 0;
         int numCols = getNumberOfColumns();
         for (int k = 0; k < numCols; ++k) {

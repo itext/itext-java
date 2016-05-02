@@ -53,7 +53,7 @@ public class PdfNull extends PdfPrimitiveObject {
 
     private static final long serialVersionUID = 7789114018630038033L;
 
-	public static final PdfNull PdfNull = new PdfNull(true);
+	public static final PdfNull PDF_NULL = new PdfNull(true);
     private static final byte[] NullContent = ByteUtils.getIsoBytes("null");
 
     /**
@@ -69,7 +69,7 @@ public class PdfNull extends PdfPrimitiveObject {
 
     @Override
     public byte getType() {
-        return Null;
+        return NULL;
     }
 
     /**
@@ -81,7 +81,7 @@ public class PdfNull extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfNull makeIndirect(PdfDocument document) {
-        return super.makeIndirect(document);
+        return (PdfNull) super.makeIndirect(document);
     }
 
     /**
@@ -93,7 +93,7 @@ public class PdfNull extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfNull makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return super.makeIndirect(document, reference);
+        return (PdfNull) super.makeIndirect(document, reference);
     }
 
     /**
@@ -106,7 +106,7 @@ public class PdfNull extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfNull copyTo(PdfDocument document) {
-        return super.copyTo(document, true);
+        return (PdfNull) super.copyTo(document, true);
     }
 
     /**
@@ -122,7 +122,7 @@ public class PdfNull extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfNull copyTo(PdfDocument document, boolean allowDuplicating) {
-        return super.copyTo(document, allowDuplicating);
+        return (PdfNull) super.copyTo(document, allowDuplicating);
     }
 
     @Override

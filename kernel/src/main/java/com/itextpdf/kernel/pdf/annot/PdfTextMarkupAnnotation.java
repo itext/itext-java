@@ -60,9 +60,9 @@ public class PdfTextMarkupAnnotation extends PdfMarkupAnnotation {
     public static final PdfName MarkupStrikeout = PdfName.StrikeOut;
     public static final PdfName MarkupSquiggly = PdfName.Squiggly;
 
-    public PdfTextMarkupAnnotation(Rectangle rect, PdfName subtype, float quadPoints[]) {
+    public PdfTextMarkupAnnotation(Rectangle rect, PdfName subtype, float[] quadPoints) {
         super(rect);
-        setSubtype(subtype);
+        put(PdfName.Subtype, subtype);
         setQuadPoints(new PdfArray(quadPoints));
     }
 
@@ -70,29 +70,28 @@ public class PdfTextMarkupAnnotation extends PdfMarkupAnnotation {
         super(pdfObject);
     }
 
-    public static PdfTextMarkupAnnotation createHighLight(Rectangle rect, float quadPoints[]) {
+    public static PdfTextMarkupAnnotation createHighLight(Rectangle rect, float[] quadPoints) {
         return new PdfTextMarkupAnnotation(rect, MarkupHighlight, quadPoints);
     }
 
-    public static PdfTextMarkupAnnotation createUnderline(Rectangle rect, float quadPoints[]) {
+    public static PdfTextMarkupAnnotation createUnderline(Rectangle rect, float[] quadPoints) {
         return new PdfTextMarkupAnnotation(rect, MarkupUnderline, quadPoints);
     }
 
-    public static PdfTextMarkupAnnotation createStrikeout(Rectangle rect, float quadPoints[]) {
+    public static PdfTextMarkupAnnotation createStrikeout(Rectangle rect, float[] quadPoints) {
         return new PdfTextMarkupAnnotation(rect, MarkupStrikeout, quadPoints);
     }
 
-    public static PdfTextMarkupAnnotation createSquiggly(Rectangle rect, float quadPoints[]) {
+    public static PdfTextMarkupAnnotation createSquiggly(Rectangle rect, float[] quadPoints) {
         return new PdfTextMarkupAnnotation(rect, MarkupSquiggly, quadPoints);
     }
 
     @Override
     public PdfName getSubtype() {
-        return getPdfObject().getAsName(PdfName.Subtype);
+        PdfName subType = getPdfObject().getAsName(PdfName.Subtype);
+        if (subType == null) {
+            subType = PdfName.Underline;
+        }
+        return subType;
     }
-
-    private void setSubtype(PdfName subtype) {
-        put(PdfName.Subtype, subtype);
-    }
-
 }

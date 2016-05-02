@@ -54,22 +54,26 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Internal helper class which is used to copy tag structure across documents.
+ */
 class StructureTreeCopier {
 
-    static private List<PdfName> ignoreKeysForCopy = new ArrayList<PdfName>() {{
+    private static List<PdfName> ignoreKeysForCopy = new ArrayList<PdfName>() {{
         add(PdfName.K);
         add(PdfName.P);
         add(PdfName.Pg);
         add(PdfName.Obj);
     }};
 
-    static private List<PdfName> ignoreKeysForClone = new ArrayList<PdfName>() {{
+    private static List<PdfName> ignoreKeysForClone = new ArrayList<PdfName>() {{
         add(PdfName.K);
         add(PdfName.P);
     }};
@@ -89,7 +93,6 @@ class StructureTreeCopier {
             return;
 
         copyTo(destDocument, page2page, callingDocument, false);
-        destDocument.getStructTreeRoot().getMcrManager().unregisterAllMcrs();
     }
 
     /**
@@ -117,7 +120,7 @@ class StructureTreeCopier {
         PdfStructTreeRoot destStructTreeRoot = destDocument.getStructTreeRoot();
         for (int i = 1; i < insertBeforePage; ++i) {
             PdfPage pageOfFirstHalf = destDocument.getPage(i);
-            List<PdfMcr> pageMcrs = destStructTreeRoot.getMcrManager().getPageMarkedContentReferences(pageOfFirstHalf);
+            Collection<PdfMcr> pageMcrs = destStructTreeRoot.getPageMarkedContentReferences(pageOfFirstHalf);
             if (pageMcrs != null) {
                 for (PdfMcr mcr : pageMcrs) {
                     firstPartElems.add(mcr.getPdfObject());
@@ -160,8 +163,6 @@ class StructureTreeCopier {
         }
 
         copyTo(destDocument, page2page, callingDocument, false, lastTopBefore + 1);
-
-        destDocument.getStructTreeRoot().getMcrManager().unregisterAllMcrs();
     }
 
     /**
@@ -183,7 +184,7 @@ class StructureTreeCopier {
         Map<PdfDictionary, PdfDictionary> page2pageDictionaries = new HashMap<>();
         for (Map.Entry<PdfPage, PdfPage> page : page2page.entrySet()) {
             page2pageDictionaries.put(page.getKey().getPdfObject(), page.getValue().getPdfObject());
-            List<PdfMcr> mcrs = fromDocument.getStructTreeRoot().getMcrManager().getPageMarkedContentReferences(page.getKey());
+            Collection<PdfMcr> mcrs = fromDocument.getStructTreeRoot().getPageMarkedContentReferences(page.getKey());
             if (mcrs != null) {
                 for (PdfMcr mcr : mcrs) {
                     if (mcr instanceof PdfMcrDictionary || mcr instanceof PdfObjRef) {
@@ -234,8 +235,8 @@ class StructureTreeCopier {
                 // When obj.copyTo is called, and annotation was already copied, we would get this already created copy.
                 // If it was already copied and added, /P key would be set. Otherwise /P won't be set.
                 obj = obj.copyTo(toDocument, Arrays.asList(PdfName.P), false);
+                copied.put(PdfName.Obj, obj);
             }
-            copied.put(PdfName.Obj, obj);
         }
 
         PdfDictionary pg = source.getAsDictionary(PdfName.Pg);
@@ -268,26 +269,34 @@ class StructureTreeCopier {
         return copied;
     }
 
-    private static PdfObject copyObjectKid(PdfObject kid, PdfObject copiedParent, Set<PdfObject> objectsToCopy,
+    private static PdfObject copyObjectKid(PdfObject kid, PdfDictionary copiedParent, Set<PdfObject> objectsToCopy,
                                            PdfDocument toDocument, Map<PdfDictionary, PdfDictionary> page2page, boolean copyFromDestDocument) {
         if (kid.isNumber()) {
+            toDocument.getStructTreeRoot().getParentTreeHandler()
+                    .registerMcr(new PdfMcrNumber((PdfNumber) kid, new PdfStructElem(copiedParent)));
             return kid; // TODO do we always copy numbers?
         } else if (kid.isDictionary()) {
             PdfDictionary kidAsDict = (PdfDictionary) kid;
             if (objectsToCopy.contains(kidAsDict)) {
                 boolean hasParent = kidAsDict.containsKey(PdfName.P);
                 PdfDictionary copiedKid = copyObject(kidAsDict, objectsToCopy, toDocument, page2page, copyFromDestDocument);
-                if (hasParent)
+                if (hasParent) {
                     copiedKid.put(PdfName.P, copiedParent);
-
-                if (copiedKid.containsKey(PdfName.Obj)) {
-                    PdfDictionary contentItemObject = copiedKid.getAsDictionary(PdfName.Obj);
-                    if (!PdfName.Form.equals(contentItemObject.getAsName(PdfName.Subtype))
-                            && !contentItemObject.containsKey(PdfName.P)) {
-                        // Some link annotations could be not added to any page.
-                        return null;
+                } else {
+                    PdfMcr mcr;
+                    if (copiedKid.containsKey(PdfName.Obj)) {
+                        mcr = new PdfObjRef(copiedKid, new PdfStructElem(copiedParent));
+                        PdfDictionary contentItemObject = copiedKid.getAsDictionary(PdfName.Obj);
+                        if (PdfName.Link.equals(contentItemObject.getAsName(PdfName.Subtype))
+                                && !contentItemObject.containsKey(PdfName.P)) {
+                            // Some link annotations may be not copied, because their destination page is not copied.
+                            return null;
+                        }
+                        contentItemObject.put(PdfName.StructParent, new PdfNumber(toDocument.getNextStructParentIndex()));
+                    } else {
+                        mcr = new PdfMcrDictionary(copiedKid, new PdfStructElem(copiedParent));
                     }
-                    contentItemObject.put(PdfName.StructParent, new PdfNumber(toDocument.getNextStructParentIndex()));
+                    toDocument.getStructTreeRoot().getParentTreeHandler().registerMcr(mcr);
                 }
                 return copiedKid;
             }
@@ -341,18 +350,17 @@ class StructureTreeCopier {
                         PdfMcr mcr;
                         if (dictKid != null) {
                             if (dictKid.get(PdfName.Type).equals(PdfName.MCR)) {
-                                mcr = new PdfMcrDictionary(dictKid, new PdfStructElem(structElem));
+                                mcr = new PdfMcrDictionary(dictKid, new PdfStructElem(lastCloned.clone));
                             } else {
-                                mcr = new PdfObjRef(dictKid, new PdfStructElem(structElem));
+                                mcr = new PdfObjRef(dictKid, new PdfStructElem(lastCloned.clone));
                             }
                         } else {
-                            mcr = new PdfMcrNumber((PdfNumber) kid, new PdfStructElem(structElem));
+                            mcr = new PdfMcrNumber((PdfNumber) kid, new PdfStructElem(lastCloned.clone));
                         }
 
                         kids.remove(i--);
-                        document.getStructTreeRoot().getMcrManager().unregisterMcr(mcr);
                         PdfStructElem.addKidObject(lastCloned.clone, -1, kid);
-                        document.getStructTreeRoot().getMcrManager().registerMcr(mcr);
+                        document.getStructTreeRoot().getParentTreeHandler().registerMcr(mcr); // re-register mcr
                     }
                 }
             }

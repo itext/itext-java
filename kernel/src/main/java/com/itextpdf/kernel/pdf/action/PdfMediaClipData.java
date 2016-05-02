@@ -66,16 +66,16 @@ public class PdfMediaClipData extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary dic = new PdfDictionary();
         markObjectAsIndirect(dic);
         dic.put(PdfName.TF, TEMPACCESS);
-        put(PdfName.Type, PdfName.MediaClip).put(PdfName.S, PdfName.MCD).
-                put(PdfName.N, new PdfString(MessageFormat.format("Media clip for {0}", file))).
-                put(PdfName.CT, new PdfString(mimeType)).
-                put(PdfName.P, dic).
-                put(PdfName.D, fs.getPdfObject());
+        getPdfObject().put(PdfName.Type, PdfName.MediaClip);
+        getPdfObject().put(PdfName.S, PdfName.MCD);
+        getPdfObject().put(PdfName.N, new PdfString(MessageFormat.format("Media clip for {0}", file)));
+        getPdfObject().put(PdfName.CT, new PdfString(mimeType));
+        getPdfObject().put(PdfName.P, dic);
+        getPdfObject().put(PdfName.D, fs.getPdfObject());
     }
 
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;
     }
-
 }

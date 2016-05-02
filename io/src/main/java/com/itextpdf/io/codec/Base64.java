@@ -1,47 +1,4 @@
-/*
-    $Id$
-
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
-
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
- */
+/* $Id$ */
 package com.itextpdf.io.codec;
 
 /**
@@ -118,30 +75,30 @@ public class Base64 {
     /**
      * No options specified. Value is zero.
      */
-    public final static int NO_OPTIONS = 0;
+    public static final int NO_OPTIONS = 0;
 
     /**
      * Specify encoding.
      */
-    public final static int ENCODE = 1;
+    public static final int ENCODE = 1;
 
 
     /**
      * Specify decoding.
      */
-    public final static int DECODE = 0;
+    public static final int DECODE = 0;
 
 
     /**
      * Specify that data should be gzip-compressed.
      */
-    public final static int GZIP = 2;
+    public static final int GZIP = 2;
 
 
     /**
      * Don't break lines when encoding (violates strict Base64 specification)
      */
-    public final static int DONT_BREAK_LINES = 8;
+    public static final int DONT_BREAK_LINES = 8;
 
     /**
      * Encode using Base64-like encoding that is URL- and Filename-safe as described
@@ -151,14 +108,14 @@ public class Base64 {
      * or at the very least should not be called Base64 without also specifying that is
      * was encoded using the URL- and Filename-safe dialect.
      */
-    public final static int URL_SAFE = 16;
+    public static final int URL_SAFE = 16;
 
 
     /**
      * Encode using the special "ordered" dialect of Base64 described here:
      * <a href="http://www.faqs.org/qa/rfcc-1940.html">http://www.faqs.org/qa/rfcc-1940.html</a>.
      */
-    public final static int ORDERED = 32;
+    public static final int ORDERED = 32;
     
     
     /* ********  P R I V A T E   F I E L D S  ******** */
@@ -167,31 +124,31 @@ public class Base64 {
     /**
      * Maximum line length (76) of Base64 output.
      */
-    private final static int MAX_LINE_LENGTH = 76;
+    private static final int MAX_LINE_LENGTH = 76;
 
 
     /**
      * The equals sign (=) as a byte.
      */
-    private final static byte EQUALS_SIGN = (byte) '=';
+    private static final byte EQUALS_SIGN = (byte) '=';
 
 
     /**
      * The new line character (\n) as a byte.
      */
-    private final static byte NEW_LINE = (byte) '\n';
+    private static final byte NEW_LINE = (byte) '\n';
 
 
     /**
      * Preferred encoding.
      */
-    private final static String PREFERRED_ENCODING = "UTF-8";
+    private static final String PREFERRED_ENCODING = "UTF-8";
 
 
     // I think I end up not using the BAD_ENCODING indicator.
-    //private final static byte BAD_ENCODING    = -9; // Indicates error in encoding
-    private final static byte WHITE_SPACE_ENC = -5; // Indicates white space in encoding
-    private final static byte EQUALS_SIGN_ENC = -1; // Indicates equals sign in encoding
+    //private static final byte BAD_ENCODING    = -9; // Indicates error in encoding
+    private static final byte WHITE_SPACE_ENC = -5; // Indicates white space in encoding
+    private static final byte EQUALS_SIGN_ENC = -1; // Indicates equals sign in encoding
     
     
     /* ********  S T A N D A R D   B A S E 6 4   A L P H A B E T  ******** */
@@ -199,9 +156,9 @@ public class Base64 {
     /**
      * The 64 valid Base64 values.
      */
-    //private final static byte[] ALPHABET;
+    //private static final byte[] ALPHABET;
     /* Host platform me be something funny like EBCDIC, so we hardcode these values. */
-    private final static byte[] _STANDARD_ALPHABET =
+    private static final byte[] _STANDARD_ALPHABET =
             {
                     (byte) 'A', (byte) 'B', (byte) 'C', (byte) 'D', (byte) 'E', (byte) 'F', (byte) 'G',
                     (byte) 'H', (byte) 'I', (byte) 'J', (byte) 'K', (byte) 'L', (byte) 'M', (byte) 'N',
@@ -220,7 +177,7 @@ public class Base64 {
      * Translates a Base64 value to either its 6-bit reconstruction value
      * or a negative number indicating some other meaning.
      **/
-    private final static byte[] _STANDARD_DECODABET =
+    private static final byte[] _STANDARD_DECODABET =
             {
                     -9, -9, -9, -9, -9, -9, -9, -9, -9,                 // Decimal  0 -  8
                     -5, -5,                                      // Whitespace: Tab and Linefeed
@@ -263,7 +220,7 @@ public class Base64 {
      * <a href="http://www.faqs.org/rfcs/rfc3548.html">http://www.faqs.org/rfcs/rfc3548.html</a>.
      * Notice that the last two bytes become "hyphen" and "underscore" instead of "plus" and "slash."
      */
-    private final static byte[] _URL_SAFE_ALPHABET =
+    private static final byte[] _URL_SAFE_ALPHABET =
             {
                     (byte) 'A', (byte) 'B', (byte) 'C', (byte) 'D', (byte) 'E', (byte) 'F', (byte) 'G',
                     (byte) 'H', (byte) 'I', (byte) 'J', (byte) 'K', (byte) 'L', (byte) 'M', (byte) 'N',
@@ -280,7 +237,7 @@ public class Base64 {
     /**
      * Used in decoding URL- and Filename-safe dialects of Base64.
      */
-    private final static byte[] _URL_SAFE_DECODABET =
+    private static final byte[] _URL_SAFE_DECODABET =
             {
                     -9, -9, -9, -9, -9, -9, -9, -9, -9,                 // Decimal  0 -  8
                     -5, -5,                                      // Whitespace: Tab and Linefeed
@@ -327,7 +284,7 @@ public class Base64 {
      * I don't get the point of this technique, but it is described here:
      * <a href="http://www.faqs.org/qa/rfcc-1940.html">http://www.faqs.org/qa/rfcc-1940.html</a>.
      */
-    private final static byte[] _ORDERED_ALPHABET =
+    private static final byte[] _ORDERED_ALPHABET =
             {
                     (byte) '-',
                     (byte) '0', (byte) '1', (byte) '2', (byte) '3', (byte) '4',
@@ -346,7 +303,7 @@ public class Base64 {
     /**
      * Used in decoding the "ordered" dialect of Base64.
      */
-    private final static byte[] _ORDERED_DECODABET =
+    private static final byte[] _ORDERED_DECODABET =
             {
                     -9, -9, -9, -9, -9, -9, -9, -9, -9,                 // Decimal  0 -  8
                     -5, -5,                                      // Whitespace: Tab and Linefeed
@@ -430,7 +387,7 @@ public class Base64 {
      * Encodes or decodes two files from the command line;
      * <strong>feel free to delete this method (in fact you probably should)
      * if you're embedding this code into a larger program.</strong>
-     public final static void main( String[] args ) {
+     public static final void main( String[] args ) {
      if( args.length < 3 ){
      usage("Not enough arguments.");
      }   // end if: args.length < 3
@@ -1447,41 +1404,33 @@ public class Base64 {
                     }   // end else if: also padded correctly
                     else {
                         // Must have broken out from above.
-                        throw new java.io.IOException(/*MessageLocalization.getComposedMessage("improperly.padded.base64.input")*/); // TODO: correct the message
+                        throw new java.io.IOException("improperly.padded.base64.input");
                     }   // end
 
                 }   // end else: decode
             }   // end else: get data
-
             // Got data?
-            if (position >= 0) {
-                // End of relevant data?
-                if ( /*!encode &&*/ position >= numSigBytes)
-                    return -1;
+            assert position >= 0;
+            // End of relevant data?
+            if ( /*!encode &&*/ position >= numSigBytes)
+                return -1;
 
-                if (encode && breakLines && lineLength >= MAX_LINE_LENGTH) {
-                    lineLength = 0;
-                    return '\n';
-                }   // end if
-                else {
-                    lineLength++;   // This isn't important when decoding
-                    // but throwing an extra "if" seems
-                    // just as wasteful.
-
-                    int b = buffer[position++];
-
-                    if (position >= bufferLength)
-                        position = -1;
-
-                    return b & 0xFF; // This is how you "cast" a byte that's
-                    // intended to be unsigned.
-                }   // end else
-            }   // end if: position >= 0
-
-            // Else error
+            if (encode && breakLines && lineLength >= MAX_LINE_LENGTH) {
+                lineLength = 0;
+                return '\n';
+            }   // end if
             else {
-                // When JDK1.4 is more accepted, use an assertion here.
-                throw new java.io.IOException(/*MessageLocalization.getComposedMessage("error.in.base64.code.reading.stream")*/); // TODO: correct the message
+                lineLength++;   // This isn't important when decoding
+                // but throwing an extra "if" seems
+                // just as wasteful.
+
+                int b = buffer[position++];
+
+                if (position >= bufferLength)
+                    position = -1;
+
+                return b & 0xFF; // This is how you "cast" a byte that's
+                // intended to be unsigned.
             }   // end else
         }   // end read
 
@@ -1645,7 +1594,7 @@ public class Base64 {
                     }   // end if: enough to output
                 }   // end if: meaningful base64 character
                 else if (decodabet[theByte & 0x7f] != WHITE_SPACE_ENC) {
-                    throw new java.io.IOException(/*MessageLocalization.getComposedMessage("invalid.character.in.base64.data")*/); // TODO: correct the message
+                    throw new java.io.IOException("invalid.character.in.base64.data");
                 }   // end else: not white space either
             }   // end else: decoding
         }   // end write
@@ -1685,7 +1634,7 @@ public class Base64 {
                     position = 0;
                 }   // end if: encoding
                 else {
-                    throw new java.io.IOException(/*MessageLocalization.getComposedMessage("base64.input.not.properly.padded")*/); // TODO: correct the message
+                    throw new java.io.IOException("base64.input.not.properly.padded");
                 }   // end else: decoding
             }   // end if: buffer partially full
 

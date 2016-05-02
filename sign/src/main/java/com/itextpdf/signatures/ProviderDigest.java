@@ -53,7 +53,7 @@ import java.security.MessageDigest;
  *
  * @author psoares
  */
-public class ProviderDigest implements ExternalDigest {
+public class ProviderDigest implements IExternalDigest {
     private String provider;
 
     /**

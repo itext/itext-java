@@ -75,7 +75,7 @@ public class PdfStream extends PdfDictionary {
      */
     public PdfStream(byte[] bytes, int compressionLevel) {
         super();
-        setState(MustBeIndirect);
+        setState(MUST_BE_INDIRECT);
         this.compressionLevel = compressionLevel;
         if (bytes != null && bytes.length > 0) {
             this.outputStream = new PdfOutputStream(new ByteArrayOutputStream(bytes.length));
@@ -91,7 +91,7 @@ public class PdfStream extends PdfDictionary {
      * @param bytes bytes to write to the PdfStream
      */
     public PdfStream(byte[] bytes) {
-        this(bytes, PdfWriter.UNDEFINED_COMPRESSION);
+        this(bytes, CompressionConstants.UNDEFINED_COMPRESSION);
     }
 
     /**
@@ -141,7 +141,7 @@ public class PdfStream extends PdfDictionary {
      * @throws PdfException on error.
      */
     public PdfStream(PdfDocument doc, InputStream inputStream) {
-        this(doc, inputStream, PdfWriter.UNDEFINED_COMPRESSION);
+        this(doc, inputStream, CompressionConstants.UNDEFINED_COMPRESSION);
     }
 
     /**
@@ -164,14 +164,14 @@ public class PdfStream extends PdfDictionary {
     //NOTE This constructor only for PdfReader.
     PdfStream(long offset, PdfDictionary keys) {
         super();
-        this.compressionLevel = PdfOutputStream.UNDEFINED_COMPRESSION;
+        this.compressionLevel = CompressionConstants.UNDEFINED_COMPRESSION;
         this.offset = offset;
         putAll(keys);
         PdfNumber length = getAsNumber(PdfName.Length);
         if (length == null) {
             this.length = 0;
         } else {
-            this.length = length.getIntValue();
+            this.length = length.intValue();
         }
     }
 
@@ -206,7 +206,7 @@ public class PdfStream extends PdfDictionary {
 
     @Override
     public byte getType() {
-        return Stream;
+        return STREAM;
     }
 
     public int getLength() {

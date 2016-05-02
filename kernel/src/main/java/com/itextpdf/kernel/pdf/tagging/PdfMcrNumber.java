@@ -49,7 +49,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
 
-public class PdfMcrNumber extends PdfMcr<PdfNumber> {
+public class PdfMcrNumber extends PdfMcr {
 
     private static final long serialVersionUID = -9039654592261202430L;
 
@@ -62,13 +62,12 @@ public class PdfMcrNumber extends PdfMcr<PdfNumber> {
     }
 
     @Override
-    public Integer getMcid() {
-        return ((PdfNumber) getPdfObject()).getIntValue();
+    public int getMcid() {
+        return ((PdfNumber) getPdfObject()).intValue();
     }
 
     @Override
     public PdfDictionary getPageObject() {
-        PdfDictionary page = parent.getPdfObject().getAsDictionary(PdfName.Pg);
-        return page;
+        return parent.getPdfObject().getAsDictionary(PdfName.Pg);
     }
 }

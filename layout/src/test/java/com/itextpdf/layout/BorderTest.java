@@ -34,16 +34,16 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class BorderTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/BorderTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/BorderTest/";
-    static final public String cmpPrefix = "cmp_";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/BorderTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/BorderTest/";
+    public static final String cmpPrefix = "cmp_";
 
     String fileName;
     String outFileName;
     String cmpFileName;
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
        createDestinationFolder(destinationFolder);
     }
 
@@ -190,16 +190,16 @@ public class BorderTest extends ExtendedITextTest {
                 "<p class=\"hidden\">A hidden border.</p>";
         Paragraph p = new Paragraph(text);
 
-        p.setBorderTop(new SolidBorder(DeviceCmyk.Magenta, 4));
+        p.setBorderTop(new SolidBorder(DeviceCmyk.MAGENTA, 4));
         p.setBorderRight(new DoubleBorder(DeviceRgb.RED, 6));
-        p.setBorderBottom(new RoundDotsBorder(DeviceCmyk.Cyan, 2));
+        p.setBorderBottom(new RoundDotsBorder(DeviceCmyk.CYAN, 2));
         p.setBorderLeft(new DashedBorder(DeviceGray.BLACK, 3));
 
         doc.add(p);
 
-        doc.add(new Paragraph(text).setBorderTop(new SolidBorder(DeviceCmyk.Magenta, 8)));
+        doc.add(new Paragraph(text).setBorderTop(new SolidBorder(DeviceCmyk.MAGENTA, 8)));
         doc.add(new Paragraph(text).setBorderRight(new DoubleBorder(DeviceRgb.RED, 4)));
-        doc.add(new Paragraph(text).setBorderBottom(new RoundDotsBorder(DeviceCmyk.Cyan, 3)));
+        doc.add(new Paragraph(text).setBorderBottom(new RoundDotsBorder(DeviceCmyk.CYAN, 3)));
         doc.add(new Paragraph(text).setBorderLeft(new DashedBorder(DeviceGray.BLACK, 5)));
         doc.add(new Paragraph(text).setBorder(new DottedBorder(DeviceGray.BLACK, 1)));
 

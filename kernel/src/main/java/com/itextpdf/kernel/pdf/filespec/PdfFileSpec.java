@@ -53,24 +53,21 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 
-public class PdfFileSpec<T extends PdfObject> extends PdfObjectWrapper<T>  {
+public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
 
     private static final long serialVersionUID = 126861971006090239L;
 
-	public PdfFileSpec(T pdfObject) {
+	protected PdfFileSpec(PdfObject pdfObject) {
         super(pdfObject);
     }
 
     public static PdfFileSpec createExternalFileSpec(PdfDocument doc, String filePath, boolean isUnicodeFileName) {
         PdfDictionary dict = new PdfDictionary();
-
         dict.put(PdfName.Type, PdfName.Filespec);
         dict.put(PdfName.F, new PdfString(filePath));
-        dict.put(PdfName.UF, new PdfString(filePath, isUnicodeFileName ? PdfEncodings.UnicodeBig : PdfEncodings.PdfDocEncoding));
-
-        PdfFileSpec fileSpec = new PdfFileSpec<>(dict).makeIndirect(doc);
-
-        return fileSpec;
+        dict.put(PdfName.UF, new PdfString(filePath, isUnicodeFileName
+                ? PdfEncodings.UNICODE_BIG : PdfEncodings.PDF_DOC_ENCODING));
+        return (PdfFileSpec) new PdfFileSpec(dict).makeIndirect(doc);
     }
 
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String description, String fileDisplay, PdfName mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue, boolean isUnicodeFileName) {
@@ -120,14 +117,14 @@ public class PdfFileSpec<T extends PdfObject> extends PdfObjectWrapper<T>  {
         }
         dict.put(PdfName.Type, PdfName.Filespec);
         dict.put(PdfName.F, new PdfString(fileDisplay));
-        dict.put(PdfName.UF, new PdfString(fileDisplay, isUnicodeFileName ? PdfEncodings.UnicodeBig : PdfEncodings.PdfDocEncoding));
+        dict.put(PdfName.UF, new PdfString(fileDisplay, isUnicodeFileName ? PdfEncodings.UNICODE_BIG : PdfEncodings.PDF_DOC_ENCODING));
 
         PdfDictionary ef = new PdfDictionary();
         ef.put(PdfName.F, stream);
         ef.put(PdfName.UF, stream);
         dict.put(PdfName.EF, ef);
 
-        return new PdfFileSpec<>(dict).makeIndirect(doc);
+        return (PdfFileSpec) new PdfFileSpec(dict).makeIndirect(doc);
     }
 
     public PdfFileSpec setFileIdentifier(PdfArray fileIdentifier){
@@ -147,7 +144,12 @@ public class PdfFileSpec<T extends PdfObject> extends PdfObjectWrapper<T>  {
     }
 
     public PdfFileSpec setCollectionItem(PdfCollectionItem item) {
-        return put(PdfName.CI, item);
+        return put(PdfName.CI, item.getPdfObject());
+    }
+
+    public PdfFileSpec put(PdfName key, PdfObject value) {
+        ((PdfDictionary)getPdfObject()).put(key, value);
+        return this;
     }
 
     @Override

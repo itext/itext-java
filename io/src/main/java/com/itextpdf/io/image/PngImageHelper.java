@@ -53,18 +53,21 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteBuffer;
 
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PngImageHelper {
+class PngImageHelper {
 
     private static class PngParameters {
-        PngImage image;
+        PngParameters(PngImageData image) {
+            this.image = image;
+        }
 
-        DataInputStream dataStream;
+        PngImageData image;
+
+        InputStream dataStream;
         int width;
         int height;
         int bitDepth;
@@ -76,7 +79,7 @@ public class PngImageHelper {
         byte[] imageData;
         byte[] smask;
         byte[] trans;
-        NewByteArrayOutputStream idat = new NewByteArrayOutputStream();
+        ByteArrayOutputStream idat = new ByteArrayOutputStream();
         int dpiX;
         int dpiY;
         float XYRatio;
@@ -156,30 +159,21 @@ public class PngImageHelper {
     private static final int PNG_FILTER_UP = 2;
     private static final int PNG_FILTER_AVERAGE = 3;
     private static final int PNG_FILTER_PAETH = 4;
-    private static final String intents[] = {"/Perceptual",
+    private static final String[] intents = {"/Perceptual",
             "/RelativeColorimetric", "/Saturation", "/AbsoluteColorimetric"};
 
-    public static void processImage(Image image, ByteArrayOutputStream stream) {
+    public static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.PNG)
             throw new IllegalArgumentException("PNG image expected");
-        PngParameters png = new PngParameters();
-        png.image = (PngImage) image;
+        PngParameters png;
         InputStream pngStream = null;
         try {
-            if (png.image.getUrl() != null) {
-                pngStream = png.image.getUrl().openStream();
-                int read;
-                byte[] bytes = new byte[4096];
-                while ((read = pngStream.read(bytes)) != -1) {
-                    stream.write(bytes, 0, read);
-                }
-                image.imageSize = stream.toByteArray().length;
-                pngStream.close();
-                pngStream = new ByteArrayInputStream(stream.toByteArray());
-            } else {
-                pngStream = new ByteArrayInputStream(png.image.getData());
-                image.imageSize = image.getData().length;
+            if (image.getData() == null) {
+                image.loadData();
             }
+            pngStream = new ByteArrayInputStream(image.getData());
+            image.imageSize = image.getData().length;
+            png = new PngParameters((PngImageData) image);
             processPng(pngStream, png);
         } catch (java.io.IOException e) {
             throw new IOException(IOException.PngImageException, e);
@@ -191,14 +185,7 @@ public class PngImageHelper {
                 }
             }
         }
-
-        if (stream != null) {
-            updateStream(stream, png);
-        }
-    }
-
-    private static void updateStream(ByteArrayOutputStream stream, PngParameters png) {
-        RawImageHelper.updateImageAttributes(png.image, png.additional, stream);
+        RawImageHelper.updateImageAttributes(png.image, png.additional);
     }
 
     private static void processPng(InputStream pngStream, PngParameters png) throws java.io.IOException {
@@ -275,13 +262,13 @@ public class PngImageHelper {
             if (png.iccProfile != null)
                 png.image.setProfile(png.iccProfile);
             if (png.palShades) {
-                RawImage im2 = (RawImage) ImageFactory.getRawImage(null);
+                RawImageData im2 = (RawImageData) ImageDataFactory.createRawImage(null);
                 RawImageHelper.updateRawImageParameters(im2, png.width, png.height, 1, 8, png.smask);
                 im2.makeMask();
                 png.image.setImageMask(im2);
             }
             if (png.genBWMask) {
-                RawImage im2 = (RawImage) ImageFactory.getRawImage(null);
+                RawImageData im2 = (RawImageData) ImageDataFactory.createRawImage(null);
                 RawImageHelper.updateRawImageParameters(im2, png.width, png.height, 1, 1, png.smask);
                 im2.makeMask();
                 png.image.setImageMask(im2);
@@ -369,7 +356,7 @@ public class PngImageHelper {
                 throw new java.io.IOException("file.is.not.a.valid.png");
             }
         }
-        byte buffer[] = new byte[TRANSFERSIZE];
+        byte[] buffer = new byte[TRANSFERSIZE];
         while (true) {
             int len = getInt(pngStream);
             String marker = getString(pngStream);
@@ -501,7 +488,7 @@ public class PngImageHelper {
                 } while (pngStream.read() != 0);
                 pngStream.read();
                 --len;
-                byte icccom[] = new byte[len];
+                byte[] icccom = new byte[len];
                 int p = 0;
                 while (len > 0) {
                     int r = pngStream.read(icccom, p, len);
@@ -510,7 +497,7 @@ public class PngImageHelper {
                     p += r;
                     len -= r;
                 }
-                byte iccp[] = FilterUtil.flateDecode(icccom, true);
+                byte[] iccp = FilterUtil.flateDecode(icccom, true);
                 icccom = null;
                 try {
                     png.iccProfile = IccProfile.getInstance(iccp);
@@ -571,8 +558,8 @@ public class PngImageHelper {
             png.smask = new byte[png.width * png.height];
         else if (png.genBWMask)
             png.smask = new byte[(png.width + 7) / 8 * png.height];
-        ByteArrayInputStream bai = new ByteArrayInputStream(png.idat.getBuf(), 0, png.idat.size());
-        png.dataStream = new DataInputStream(FilterUtil.getInflaterInputStream(bai));
+        ByteArrayInputStream bai = new ByteArrayInputStream(png.idat.toByteArray());
+        png.dataStream = FilterUtil.getInflaterInputStream(bai);
 
         if (png.interlaceMethod != 1) {
             decodePass(0, 0, 1, 1, png.width, png.height, png);
@@ -607,7 +594,7 @@ public class PngImageHelper {
             int filter = 0;
             try {
                 filter = png.dataStream.read();
-                png.dataStream.readFully(curr, 0, bytesPerRow);
+                StreamUtil.readFully(png.dataStream, curr, 0, bytesPerRow);
             } catch (Exception e) {
                 // empty on purpose
             }
@@ -734,7 +721,7 @@ public class PngImageHelper {
         }
     }
 
-    private static int getPixel(byte image[], int x, int y, int bitDepth, int bytesPerRow) {
+    private static int getPixel(byte[] image, int x, int y, int bitDepth, int bytesPerRow) {
         if (bitDepth == 8) {
             int pos = bytesPerRow * y + x;
             return image[pos] & 0xff;
@@ -745,7 +732,7 @@ public class PngImageHelper {
         }
     }
 
-    static void setPixel(byte image[], int data[], int offset, int size, int x, int y, int bitDepth, int bytesPerRow) {
+    static void setPixel(byte[] image, int[] data, int offset, int size, int x, int y, int bitDepth, int bytesPerRow) {
         if (bitDepth == 8) {
             int pos = bytesPerRow * y + size * x;
             for (int k = 0; k < size; ++k)
@@ -757,7 +744,7 @@ public class PngImageHelper {
         } else {
             int pos = bytesPerRow * y + x / (8 / bitDepth);
             int v = data[offset] << (8 - bitDepth * (x % (8 / bitDepth)) - bitDepth);
-            image[pos] |= v;
+            image[pos] |= (byte) v;
         }
     }
 
@@ -855,12 +842,6 @@ public class PngImageHelper {
             curr[i] = (byte) (raw + paethPredictor(priorPixel,
                     priorRow,
                     priorRowPixel));
-        }
-    }
-
-    static class NewByteArrayOutputStream extends ByteArrayOutputStream {
-        public byte[] getBuf() {
-            return buf;
         }
     }
 

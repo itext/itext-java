@@ -46,7 +46,9 @@ package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Leading;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
 import java.util.Arrays;
@@ -88,91 +90,85 @@ public class Paragraph extends BlockElement<Paragraph> {
 
     /**
      * Adds a piece of text to the Paragraph
-     * @param <T> the runtime type of this object
      * @param text the content to be added, as a {@link String}
      * @return this Paragraph
      */
-    public <T extends Paragraph> T add(String text) {
+    public Paragraph add(String text) {
         return add(new Text(text));
     }
 
     /**
      * Adds a layout element to the Paragraph.
-     * @param <T> the runtime type of this object
      * @param element the content to be added, any {@link ILeafElement}
      * @return this Paragraph
      */
-    public <T extends Paragraph> T add(ILeafElement element) {
+    public Paragraph add(ILeafElement element) {
         childElements.add(element);
-        return (T) this;
+        return this;
     }
 
     /**
      * Adds a {@link java.util.List} of layout elements to the Paragraph.
-     * @param <T> the runtime type of this object
      * @param elements the content to be added, any {@link ILeafElement}
      * @return this Paragraph
      */
-    public <T extends Paragraph> T addAll(java.util.List<? extends ILeafElement> elements) {
+    public <T2 extends ILeafElement> Paragraph addAll(java.util.List<T2> elements) {
         for (ILeafElement element : elements) {
             add(element);
         }
-        return (T) this;
+        return this;
     }
 
     /**
      * Adds an unspecified amount of tabstop elements as properties to the Paragraph.
-     * @param <T> the runtime type of this object
      * @param tabStops the {@link TabStop tabstop(s)} to be added as properties
      * @return this Paragraph
      * @see TabStop
      */
-    public <T extends Paragraph> T addTabStops(TabStop ... tabStops) {
+    public Paragraph addTabStops(TabStop ... tabStops) {
         addTabStopsAsProperty(Arrays.asList(tabStops));
-        return (T) this;
+        return this;
     }
 
     /**
      * Adds a {@link java.util.List} of tabstop elements as properties to the Paragraph.
-     * @param <T> the runtime type of this object
      * @param tabStops the list of {@link TabStop}s to be added as properties
      * @return this Paragraph
      * @see TabStop
      */
-    public <T extends Paragraph> T addTabStops(java.util.List<TabStop> tabStops) {
+    public Paragraph addTabStops(java.util.List<TabStop> tabStops) {
         addTabStopsAsProperty(tabStops);
-        return (T) this;
+        return this;
     }
 
     /**
      * Removes a tabstop position from the Paragraph, if it is present in the
      * {@link Property#TAB_STOPS} property.
      * 
-     * @param <T> the runtime type of this object
      * @param tabStopPosition the {@link TabStop} position to be removed.
      * @return this Paragraph
      * @see TabStop
      */
-    public <T extends Paragraph> T removeTabStop(float tabStopPosition) {
+    public Paragraph removeTabStop(float tabStopPosition) {
         Map<Float, TabStop> tabStops = getProperty(Property.TAB_STOPS);
         if (tabStops != null) {
             tabStops.remove(tabStopPosition);
         }
-        return (T) this;
+        return this;
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
-            case LEADING:
-                return (T) new Property.Leading(Property.Leading.MULTIPLIED, childElements.size() == 1 && childElements.get(0) instanceof Image ? 1 : 1.35f);
-            case FIRST_LINE_INDENT:
-                return (T) Float.valueOf(0);
-            case MARGIN_TOP:
-            case MARGIN_BOTTOM:
-                return (T) Float.valueOf(4);
-            case TAB_DEFAULT:
-                return (T) Float.valueOf(50);
+            case Property.LEADING:
+                return (T1) new Leading(Leading.MULTIPLIED, childElements.size() == 1 && childElements.get(0) instanceof Image ? 1 : 1.35f);
+            case Property.FIRST_LINE_INDENT:
+                return (T1) Float.valueOf(0);
+            case Property.MARGIN_TOP:
+            case Property.MARGIN_BOTTOM:
+                return (T1) Float.valueOf(4);
+            case Property.TAB_DEFAULT:
+                return (T1) Float.valueOf(50);
             default:
                 return super.getDefaultProperty(property);
         }
@@ -181,45 +177,42 @@ public class Paragraph extends BlockElement<Paragraph> {
     /**
      * Sets the indent value for the first line of the {@link Paragraph}.
      * 
-     * @param <T> the runtime type of this object
      * @param indent the indent value that must be applied to the first line of
      * the Paragraph, as a <code>float</code>
      * @return this Paragraph
      */
-    public <T extends Paragraph> T setFirstLineIndent(float indent) {
+    public Paragraph setFirstLineIndent(float indent) {
         setProperty(Property.FIRST_LINE_INDENT, indent);
-        return (T) this;
+        return this;
     }
 
     /**
-     * Sets the leading value, using the {@link Property.Leading#FIXED} strategy.
+     * Sets the leading value, using the {@link Leading#FIXED} strategy.
      * 
-     * @param <T> the runtime type of this object
      * @param leading the new leading value
      * @return this Paragraph
-     * @see Property.Leading
+     * @see Leading
      */
-    public <T extends Paragraph> T setFixedLeading(float leading) {
-        setProperty(Property.LEADING, new Property.Leading(Property.Leading.FIXED, leading));
-        return (T) this;
+    public Paragraph setFixedLeading(float leading) {
+        setProperty(Property.LEADING, new Leading(Leading.FIXED, leading));
+        return this;
     }
 
     /**
-     * Sets the leading value, using the {@link Property.Leading#MULTIPLIED} strategy.
+     * Sets the leading value, using the {@link Leading#MULTIPLIED} strategy.
      * 
-     * @param <T> the runtime type of this object
      * @param leading the new leading value
      * @return this Paragraph
-     * @see Property.Leading
+     * @see Leading
      */
-    public <T extends Paragraph> T setMultipliedLeading(float leading) {
-        setProperty(Property.LEADING, new Property.Leading(Property.Leading.MULTIPLIED, leading));
-        return (T) this;
+    public Paragraph setMultipliedLeading(float leading) {
+        setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, leading));
+        return this;
     }
 
 
     @Override
-    protected ParagraphRenderer makeNewRenderer() {
+    protected IRenderer makeNewRenderer() {
         return new ParagraphRenderer(this);
     }
 

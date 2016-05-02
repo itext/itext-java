@@ -117,7 +117,7 @@ public class SignaturePermissions {
                 PdfNumber p = params.getAsNumber(PdfName.P);
                 if (p == null)
                     continue;
-                switch (p.getIntValue()) {
+                switch (p.intValue()) {
                     default:
                         break;
                     case 1:

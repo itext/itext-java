@@ -57,7 +57,7 @@ public class DeviceRgb extends Color {
     }
 
     public DeviceRgb() {
-        this(0, 0, 0);
+        this(0f, 0f, 0f);
     }
 
     public static DeviceRgb makeLighter(DeviceRgb rgbColor) {

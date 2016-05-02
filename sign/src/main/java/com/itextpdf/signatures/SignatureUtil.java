@@ -175,7 +175,7 @@ public class SignatureUtil {
         InputStream rg = null;
         try {
             rg = new RASInputStream(new RandomAccessSourceFactory().createRanged(rf.createSourceView(), asLongArray(b)));
-            byte buf[] = new byte[8192];
+            byte[] buf = new byte[8192];
             int rd;
             while ((rd = rg.read(buf, 0, buf.length)) > 0) {
                 pkcs7.update(buf, 0, rd);
@@ -221,11 +221,11 @@ public class SignatureUtil {
             int rangeSize = ro.size();
             if (rangeSize < 2)
                 continue;
-            int length = ro.getAsNumber(rangeSize - 1).getIntValue() + ro.getAsNumber(rangeSize - 2).getIntValue();
+            int length = ro.getAsNumber(rangeSize - 1).intValue() + ro.getAsNumber(rangeSize - 2).intValue();
             sorter.add(new Object[]{entry.getKey(), new int[]{length, 0}});
         }
         Collections.sort(sorter, new SorterComparator());
-        if (!sorter.isEmpty()) {
+        if (sorter.size() > 0) {
             try {
                 if (((int[])sorter.get(sorter.size() - 1)[1])[0] == document.getReader().getFileLength())
                     totalRevisions = sorter.size();
@@ -235,9 +235,9 @@ public class SignatureUtil {
                 // TODO: add exception handling (at least some logger)
             }
             for (int k = 0; k < sorter.size(); ++k) {
-                Object objs[] = sorter.get(k);
+                Object[] objs = sorter.get(k);
                 String name = (String)objs[0];
-                int p[] = (int[])objs[1];
+                int[] p = (int[])objs[1];
                 p[1] = k + 1;
                 sigNames.put(name, p);
                 orderedSignatureNames.add(name);
@@ -282,7 +282,7 @@ public class SignatureUtil {
 
     public String getTranslatedFieldName(String name) {
         if (acroForm.getXfaForm().isXfaPresent()) {
-            String namex = acroForm.getXfaForm().findFieldName(name, acroForm);
+            String namex = acroForm.getXfaForm().findFieldName(name);
             if (namex != null)
                 name = namex;
         }
@@ -344,7 +344,7 @@ public class SignatureUtil {
         long[] rslt = new long[pdfArray.size()];
 
         for (int k = 0; k < rslt.length; ++k) {
-            rslt[k] = pdfArray.getAsNumber(k).getLongValue();
+            rslt[k] = pdfArray.getAsNumber(k).longValue();
         }
 
         return rslt;

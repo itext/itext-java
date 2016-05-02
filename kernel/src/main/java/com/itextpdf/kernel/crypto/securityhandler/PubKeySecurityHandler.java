@@ -52,7 +52,7 @@ import com.itextpdf.kernel.pdf.PdfEncryptor;
 import com.itextpdf.kernel.pdf.PdfLiteral;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.security.ExternalDecryptionProcess;
+import com.itextpdf.kernel.security.IExternalDecryptionProcess;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -105,7 +105,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
 
     private byte[] seed = new byte[SEED_LENGTH];
 
-    public PubKeySecurityHandler() {
+    protected PubKeySecurityHandler() {
         KeyGenerator key;
         try {
             key = KeyGenerator.getInstance("AES");
@@ -142,7 +142,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
 
     protected static byte[] computeGlobalKeyOnReading(PdfDictionary encryptionDictionary, PrivateKey certificateKey,
                                              Certificate certificate, String certificateKeyProvider,
-                                             ExternalDecryptionProcess externalDecryptionProcess,
+                                             IExternalDecryptionProcess externalDecryptionProcess,
                                              boolean encryptMetadata, String digestAlgorithm) {
         PdfArray recipients = encryptionDictionary.getAsArray(PdfName.Recipients);
         if (recipients == null) {
@@ -238,7 +238,9 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
     }
 
     protected abstract void setPubSecSpecificHandlerDicEntries(PdfDictionary encryptionDictionary, boolean encryptMetadata, boolean embeddedFilesOnly);
+
     protected abstract String getDigestAlgorithm();
+
     protected abstract void initKey(byte[] globalKey, int keyLength);
 
     protected void initKeyAndFillDictionary(PdfDictionary encryptionDictionary, Certificate[] certs, int[] permissions,
@@ -256,7 +258,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
     }
 
     protected void initKeyAndReadDictionary(PdfDictionary encryptionDictionary, Key certificateKey, Certificate certificate,
-                                          String certificateKeyProvider, ExternalDecryptionProcess externalDecryptionProcess,
+                                          String certificateKeyProvider, IExternalDecryptionProcess externalDecryptionProcess,
                                           boolean encryptMetadata) {
         String digestAlgorithm = getDigestAlgorithm();
         byte[] encryptionKey = computeGlobalKeyOnReading(encryptionDictionary, (PrivateKey) certificateKey, certificate,

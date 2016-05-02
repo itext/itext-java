@@ -49,7 +49,7 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.AESCipherCBCnoPad;
 import com.itextpdf.kernel.crypto.AesDecryptor;
 import com.itextpdf.kernel.crypto.BadPasswordException;
-import com.itextpdf.kernel.crypto.Decryptor;
+import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.IVGenerator;
 import com.itextpdf.kernel.crypto.OutputStreamAesEncryption;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
@@ -70,7 +70,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
 
     protected boolean encryptMetadata;
 
-    public StandardHandlerUsingAes256(PdfDictionary encryptionDictionary, byte userPassword[], byte ownerPassword[],
+    public StandardHandlerUsingAes256(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,
                                       int permissions, boolean encryptMetadata, boolean embeddedFilesOnly) {
         initKeyAndFillDictionary(encryptionDictionary, userPassword, ownerPassword, permissions, encryptMetadata, embeddedFilesOnly);
     }
@@ -94,15 +94,15 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
     }
 
     @Override
-    public Decryptor getDecryptor() {
+    public IDecryptor getDecryptor() {
         return new AesDecryptor(nextObjectKey, 0, nextObjectKeySize);
     }
 
     private void initKeyAndFillDictionary(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,
                                           int permissions, boolean encryptMetadata, boolean embeddedFilesOnly) {
         ownerPassword = generateOwnerPasswordIfNullOrEmpty(ownerPassword);
-        permissions |= permsMask1ForRevision3OrGreater;
-        permissions &= permsMask2;
+        permissions |= PERMS_MASK_1_FOR_REVISION_3_OR_GREATER;
+        permissions &= PERMS_MASK_2;
 
         try {
             byte[] userKey;
@@ -185,7 +185,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
         PdfDictionary stdcf = new PdfDictionary();
         stdcf.put(PdfName.Length, new PdfNumber(32));
         if (!encryptMetadata) {
-            encryptionDictionary.put(PdfName.EncryptMetadata, PdfBoolean.PdfFalse);
+            encryptionDictionary.put(PdfName.EncryptMetadata, PdfBoolean.FALSE);
         }
         if (embeddedFilesOnly) {
             stdcf.put(PdfName.AuthEvent, PdfName.EFOpen);
@@ -214,7 +214,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             byte[] perms = getIsoBytes(encryptionDictionary.getAsString(PdfName.Perms));
             PdfNumber pValue = (PdfNumber) encryptionDictionary.get(PdfName.P);
 
-            this.permissions = pValue.getLongValue();
+            this.permissions = pValue.longValue();
 
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(password, 0, Math.min(password.length, 127));

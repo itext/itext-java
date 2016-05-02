@@ -56,7 +56,7 @@ public class PdfBorderArray extends PdfObjectWrapper<PdfArray> {
         super(new PdfArray(new float[]{hRadius, vRadius, width}));
         if (dash != null) {
             PdfArray dashArray = new PdfArray();
-            add(dashArray);
+            getPdfObject().add(dashArray);
             if (dash.getDash() >= 0) {
                 dashArray.add(new PdfNumber(dash.getDash()));
             }
@@ -64,7 +64,7 @@ public class PdfBorderArray extends PdfObjectWrapper<PdfArray> {
                 dashArray.add(new PdfNumber(dash.getGap()));
             }
             if (dash.getPhase() >= 0) {
-                add(new PdfNumber(dash.getPhase()));
+                getPdfObject().add(new PdfNumber(dash.getPhase()));
             }
         }
     }

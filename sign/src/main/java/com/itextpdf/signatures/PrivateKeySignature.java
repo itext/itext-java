@@ -49,11 +49,11 @@ import java.security.PrivateKey;
 import java.security.Signature;
 
 /**
- * Implementation of the {@link ExternalSignature} interface that
+ * Implementation of the {@link IExternalSignature} interface that
  * can be used when you have a {@link PrivateKey} object.
  * @author Paulo Soares
  */
-public class PrivateKeySignature implements ExternalSignature {
+public class PrivateKeySignature implements IExternalSignature {
 
     /** The private key object. */
     private PrivateKey pk;

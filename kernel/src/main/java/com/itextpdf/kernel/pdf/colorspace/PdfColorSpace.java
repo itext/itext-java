@@ -54,31 +54,19 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-abstract public class PdfColorSpace<T extends PdfObject> extends PdfObjectWrapper<T> {
+public abstract class PdfColorSpace extends PdfObjectWrapper<PdfObject> {
 
-    public static final Set<PdfName> directColorSpaces = new HashSet(Arrays.asList(PdfName.DeviceGray, PdfName.DeviceRGB, PdfName.DeviceCMYK, PdfName.Pattern));
+    public static final Set<PdfName> directColorSpaces = new HashSet<>(Arrays.asList(PdfName.DeviceGray, PdfName.DeviceRGB, PdfName.DeviceCMYK, PdfName.Pattern));
 
     private static final long serialVersionUID = 2553991039779429813L;
 
-    public PdfColorSpace(T pdfObject) {
+    protected PdfColorSpace(PdfObject pdfObject) {
         super(pdfObject);
     }
 
-    abstract public int getNumberOfComponents();
+    public abstract int getNumberOfComponents();
 
-    abstract public float[] getDefaultColorants();
-
-    public PdfName getPdfName() {
-        if (getPdfObject() instanceof PdfName) {
-            return (PdfName) getPdfObject();
-        } else if (getPdfObject() instanceof PdfArray) {
-            return ((PdfArray) getPdfObject()).getAsName(0);
-        } else {
-            return null;
-        }
-    }
-
-    static public PdfColorSpace makeColorSpace(PdfObject pdfObject) {
+    public static PdfColorSpace makeColorSpace(PdfObject pdfObject) {
         if (pdfObject.isIndirectReference())
             pdfObject = ((PdfIndirectReference) pdfObject).getRefersTo();
         if (PdfName.DeviceGray.equals(pdfObject))

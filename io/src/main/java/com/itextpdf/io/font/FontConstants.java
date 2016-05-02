@@ -49,7 +49,7 @@ import java.util.Set;
 
 public class FontConstants {
 
-    public static final Set<String> BUILTIN_FONTS_14 = new HashSet<>();
+    static final Set<String> BUILTIN_FONTS_14 = new HashSet<>();
 
     static {
         BUILTIN_FONTS_14.add(FontConstants.COURIER);
@@ -105,27 +105,27 @@ public class FontConstants {
     /**
      * Type 1 PostScript font.
      */
-    public static final int Type1Font = 1;
+    public static final int TYPE_1_FONT = 1;
     /**
      * Compact Font Format PostScript font.
      */
-    public static final int Type1CompactFont = 2;
+    public static final int TYPE_1_COMPACT_FONT = 2;
     /**
      * TrueType or OpenType with TrueType outlines font.
      */
-    public static final int TrueTypeFont = 3;
+    public static final int TRUE_TYPE_FONT = 3;
     /**
      * CIDFont Type0 (Type1 outlines).
      */
-    public static final int CIDFontType0Font = 4;
+    public static final int CID_FONT_TYPE_0_FONT = 4;
     /**
      * CIDFont Type2 (TrueType outlines).
      */
-    public static final int CIDFontType2Font = 5;
+    public static final int CID_FONT_TYPE_2_FONT = 5;
     /**
      * OpenType with Type1 outlines.
      */
-    public static final int OpenTypeFont = 6;
+    public static final int OPEN_TYPE_FONT = 6;
 
     //-Default fonts----------------------------------------------------------------------------------------------------
 
@@ -322,7 +322,7 @@ public class FontConstants {
     /**
      * The code pages possible for a True Type font.
      */
-    protected static final String TrueTypeCodePages[] = {
+    protected static final String[] CODE_PAGES = {
             "1252 Latin 1",
             "1250 Latin 2: Eastern Europe",
             "1251 Cyrillic",

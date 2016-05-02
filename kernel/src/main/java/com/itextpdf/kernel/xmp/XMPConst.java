@@ -208,7 +208,12 @@ public interface XMPConst
 
 
 	/**
-     * Part, always 1.
+     * Part, 1, 2, or 3
      */
 	String PART = "part";
+
+	/**
+	 * Conformance, A, B, or U.
+	 */
+	String CONFORMANCE = "conformance";
 }

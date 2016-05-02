@@ -23,12 +23,12 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class BarcodeInter25Test {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodeInter25/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodeInter25/";
 
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         new File(destinationFolder).mkdirs();
     }
 

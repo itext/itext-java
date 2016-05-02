@@ -1,11 +1,13 @@
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -18,8 +20,8 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfPagesTest extends ExtendedITextTest{
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfPagesTest/";
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfPagesTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfPagesTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfPagesTest/";
     static final PdfName PageNum = new PdfName("PageNum");
     static final PdfName PageNum5 = new PdfName("PageNum");
 
@@ -93,7 +95,7 @@ public class PdfPagesTest extends ExtendedITextTest{
     public void randomObjectPagesTest() throws IOException {
         String filename = "randomObjectPagesTest.pdf";
         int pageCount = 10000;
-        int indexes[] = new int[pageCount];
+        int[] indexes = new int[pageCount];
         for (int i = 0; i < indexes.length; i++)
             indexes[i] = i + 1;
 
@@ -108,7 +110,7 @@ public class PdfPagesTest extends ExtendedITextTest{
         FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument document = new PdfDocument(writer);
-        PdfPage pages[] = new PdfPage[pageCount];
+        PdfPage[] pages = new PdfPage[pageCount];
 
         for (int i = 0; i < indexes.length; i++) {
             PdfPage page = document.addNewPage();
@@ -136,7 +138,7 @@ public class PdfPagesTest extends ExtendedITextTest{
     public void randomNumberPagesTest() throws IOException {
         String filename = "randomNumberPagesTest.pdf";
         int pageCount = 3000;
-        int indexes[] = new int[pageCount];
+        int[] indexes = new int[pageCount];
         for (int i = 0; i < indexes.length; i++)
             indexes[i] = i + 1;
 
@@ -159,8 +161,8 @@ public class PdfPagesTest extends ExtendedITextTest{
 
         for (int i = 1; i < pageCount; i++) {
             for (int j = i + 1; j <= pageCount; j++) {
-                int j_page = pdfDoc.getPage(j).getPdfObject().getAsNumber(PageNum).getIntValue();
-                int i_page = pdfDoc.getPage(i).getPdfObject().getAsNumber(PageNum).getIntValue();
+                int j_page = pdfDoc.getPage(j).getPdfObject().getAsNumber(PageNum).intValue();
+                int i_page = pdfDoc.getPage(i).getPdfObject().getAsNumber(PageNum).intValue();
                 if (j_page < i_page) {
                     PdfPage page = pdfDoc.removePage(j);
                     pdfDoc.addPage(i + 1, page);
@@ -168,7 +170,7 @@ public class PdfPagesTest extends ExtendedITextTest{
                     pdfDoc.addPage(j, page);
                 }
             }
-            Assert.assertTrue(verifyIntegrity(pdfDoc.getCatalog().pageTree) == -1);
+            Assert.assertTrue(verifyIntegrity(pdfDoc.getCatalog().getPageTree()) == -1);
         }
         pdfDoc.close();
 
@@ -176,6 +178,9 @@ public class PdfPagesTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED)
+    })
     public void insertFlushedPageTest() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -195,6 +200,9 @@ public class PdfPagesTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED)
+    })
     public void addFlushedPageTest() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -214,6 +222,9 @@ public class PdfPagesTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED, count = 2)
+    })
     public void removeFlushedPage() throws IOException {
         String filename = "removeFlushedPage.pdf";
         int pageCount = 10;
@@ -235,7 +246,7 @@ public class PdfPagesTest extends ExtendedITextTest{
         }
 
         Assert.assertEquals("Remove last page", true, pdfDoc.removePage(pdfDoc.getPage(pageCount)));
-        Assert.assertEquals("Free reference", true, pdfDoc.getXref().get(removedPageObjectNumber).checkState(PdfObject.Free));
+        Assert.assertEquals("Free reference", true, pdfDoc.getXref().get(removedPageObjectNumber).checkState(PdfObject.FREE));
 
         pdfDoc.close();
         verifyPagesOrder(destinationFolder + filename, pageCount - 1);
@@ -250,7 +261,7 @@ public class PdfPagesTest extends ExtendedITextTest{
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
             Assert.assertNotNull(page);
             PdfNumber number = page.getAsNumber(PageNum5);
-            Assert.assertEquals("Page number", i, number.getIntValue());
+            Assert.assertEquals("Page number", i, number.intValue());
         }
 
         Assert.assertEquals("Number of pages", numOfPages, pdfDocument.getNumberOfPages());
@@ -324,7 +335,7 @@ public class PdfPagesTest extends ExtendedITextTest{
         for (PdfObject pageObject: pageDictionaries) {
             PdfDictionary pageDictionary = (PdfDictionary) pageObject;
             Assert.assertEquals(PdfName.Page, pageDictionary.get(PdfName.Type));
-            PdfPage page = pdfDoc.getCatalog().getPage(pageDictionary);
+            PdfPage page = pdfDoc.getPage(pageDictionary);
             Assert.assertEquals(pageDictionary, page.getPdfObject());
         }
         pdfDoc.close();

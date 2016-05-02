@@ -1,7 +1,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.image.ImageFactory;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -9,6 +9,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
@@ -29,11 +30,11 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class ImageTest extends ExtendedITextTest{
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/ImageTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/ImageTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/ImageTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/ImageTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
@@ -51,7 +52,7 @@ public class ImageTest extends ExtendedITextTest{
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
@@ -79,7 +80,7 @@ public class ImageTest extends ExtendedITextTest{
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getJpegImage(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createJpeg(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
         Image image = new Image(xObject, 100);
 
         Paragraph p = new Paragraph();
@@ -107,7 +108,7 @@ public class ImageTest extends ExtendedITextTest{
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
@@ -136,7 +137,7 @@ public class ImageTest extends ExtendedITextTest{
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
 
         Paragraph p = new Paragraph();
@@ -165,7 +166,7 @@ public class ImageTest extends ExtendedITextTest{
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
@@ -194,7 +195,7 @@ public class ImageTest extends ExtendedITextTest{
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
 
         doc.add(new Paragraph(new Text("First Line")));
@@ -224,7 +225,7 @@ public class ImageTest extends ExtendedITextTest{
         Document doc = new Document(pdfDoc);
 
 
-        Image image = new Image(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
 
         Div div = new Div();
         div.add(image);
@@ -249,7 +250,7 @@ public class ImageTest extends ExtendedITextTest{
         Document doc = new Document(pdfDoc);
 
 
-        Image image = new Image(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
 
         Div div = new Div();
         div.add(image);
@@ -274,7 +275,7 @@ public class ImageTest extends ExtendedITextTest{
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
         com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
-        Image img = new Image(ImageFactory.getImage(sourceFolder + "Desert.jpg"));
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Table table = new Table(8);
         table.setWidthPercent(100);
         for (int k = 0; k < rowCount; k++) {
@@ -288,4 +289,48 @@ public class ImageTest extends ExtendedITextTest{
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
+
+    /**
+     * If an image is flushed automatically on draw, we will later check it for circular references
+     * as it is an XObject. This is a test for {@link NullPointerException} that was caused by getting
+     * a value from flushed image.
+     */
+    @Test
+    public void flushOnDrawCheckCircularReferencesTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "flushOnDrawCheckCircularReferencesTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_flushOnDrawCheckCircularReferencesTest.pdf";
+
+        PdfDocument pdf = pdf = new PdfDocument(new PdfWriter(outFileName));
+        //Initialize document
+        Document document = new Document(pdf);
+
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg"));
+        img.setAutoScale(true);
+        Table table = new Table(4);
+        table.setWidthPercent(100);
+        for (int k = 0; k < 5; k++) {
+            table.addCell("Hello World from iText7");
+
+            List list = new List().setListSymbol("-> ");
+            list.add("list item").add("list item").add("list item").add("list item").add("list item");
+            Cell cell = new Cell().add(list);
+            table.addCell(cell);
+
+            Cell c = new Cell().add(img);
+            table.addCell(c);
+
+            Table innerTable = new Table(3);
+            int j = 0;
+            while (j < 9) {
+                innerTable.addCell("Hi");
+                j++;
+            }
+            table.addCell(innerTable);
+        }
+        document.add(table);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
 }

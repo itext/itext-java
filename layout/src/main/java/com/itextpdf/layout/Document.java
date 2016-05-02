@@ -53,6 +53,7 @@ import com.itextpdf.layout.element.BlockElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.ILargeElement;
 import com.itextpdf.layout.renderer.DocumentRenderer;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
 
 /**
@@ -127,7 +128,7 @@ public class Document extends RootElement<Document> {
     }
 
     @Override
-    public Document add(BlockElement element) {
+    public <T extends IElement> Document add(BlockElement<T> element) {
         checkClosingStatus();
         super.add(element);
         if (element instanceof ILargeElement) {
@@ -249,16 +250,6 @@ public class Document extends RootElement<Document> {
      */
     public Rectangle getPageEffectiveArea(PageSize pageSize) {
         return new Rectangle(pageSize.getLeft() + leftMargin, pageSize.getBottom() + bottomMargin, pageSize.getWidth() - leftMargin - rightMargin, pageSize.getHeight() - bottomMargin - topMargin);
-    }
-
-    /**
-     * Rotates PageSize clockwise with all the margins, i.e. the margins are rotated as well.
-     * @param pageSize the current page size
-     * @return the same page size, after clockwise rotation
-     */
-    public PageSize rotatePage(PageSize pageSize) {
-        setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
-        return pageSize.rotate();
     }
 
     /**

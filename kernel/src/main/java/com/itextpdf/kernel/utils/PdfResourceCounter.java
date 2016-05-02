@@ -44,6 +44,7 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.io.util.IdelOutputStream;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
@@ -65,7 +66,7 @@ public class PdfResourceCounter {
     /**
      * A map of the resources that are already taken into account
      */
-    protected Map<Integer, PdfObject> resources;
+    private Map<Integer, PdfObject> resources;
 
     /**
      * Creates a PdfResourceCounter instance to be used to count the resources
@@ -87,8 +88,10 @@ public class PdfResourceCounter {
      */
     protected final void process(PdfObject obj) {
         PdfIndirectReference ref = obj.getIndirectReference();
-
-        if (ref == null || resources.put(ref.getObjNumber(), obj) == null) {
+        if (ref == null) {
+            loopOver(obj);
+        } else if (!resources.containsKey(ref.getObjNumber())) {
+            resources.put(ref.getObjNumber(), obj);
             loopOver(obj);
         }
     }
@@ -101,7 +104,7 @@ public class PdfResourceCounter {
      */
     protected final void loopOver(PdfObject obj) {
         switch (obj.getType()) {
-            case PdfObject.Array:
+            case PdfObject.ARRAY:
                 PdfArray array = (PdfArray) obj;
 
                 for (int i = 0; i < array.size(); i++) {
@@ -109,8 +112,8 @@ public class PdfResourceCounter {
                 }
 
                 break;
-            case PdfObject.Dictionary:
-            case PdfObject.Stream:
+            case PdfObject.DICTIONARY:
+            case PdfObject.STREAM:
                 PdfDictionary dict = (PdfDictionary) obj;
 
                 if (PdfName.Pages.equals(dict.get(PdfName.Type))) {
@@ -152,13 +155,9 @@ public class PdfResourceCounter {
                 continue;
             }
 
-            PdfOutputStream os = new PdfOutputStream(new OutputStream() {
-                @Override
-                public void write(int b) throws IOException {
-                }
-            });
+            PdfOutputStream os = new PdfOutputStream(new IdelOutputStream());
 
-            os.write((PdfObject)resources.get(ref).clone());
+            os.write(resources.get(ref).clone());
             length += os.getCurrentPos() - 1;
         }
 

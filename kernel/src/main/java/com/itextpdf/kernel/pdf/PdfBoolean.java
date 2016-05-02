@@ -50,8 +50,8 @@ public class PdfBoolean extends PdfPrimitiveObject {
 
     private static final long serialVersionUID = -1363839858135046832L;
 	
-    public static final PdfBoolean PdfTrue = new PdfBoolean(true, true);
-    public static final PdfBoolean PdfFalse = new PdfBoolean(false, true);
+    public static final PdfBoolean TRUE = new PdfBoolean(true, true);
+    public static final PdfBoolean FALSE = new PdfBoolean(false, true);
 
     private static final byte[] True = ByteUtils.getIsoBytes("true");
     private static final byte[] False = ByteUtils.getIsoBytes("false");
@@ -76,7 +76,7 @@ public class PdfBoolean extends PdfPrimitiveObject {
     }
 
     public byte getType() {
-        return Boolean;
+        return BOOLEAN;
     }
 
     /**
@@ -88,7 +88,7 @@ public class PdfBoolean extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfBoolean makeIndirect(PdfDocument document) {
-        return super.makeIndirect(document);
+        return (PdfBoolean) super.makeIndirect(document);
     }
 
     /**
@@ -100,7 +100,7 @@ public class PdfBoolean extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfBoolean makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return super.makeIndirect(document, reference);
+        return (PdfBoolean) super.makeIndirect(document, reference);
     }
 
     /**
@@ -113,7 +113,7 @@ public class PdfBoolean extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfBoolean copyTo(PdfDocument document) {
-        return super.copyTo(document, true);
+        return (PdfBoolean) super.copyTo(document, true);
     }
 
     /**
@@ -129,12 +129,12 @@ public class PdfBoolean extends PdfPrimitiveObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfBoolean copyTo(PdfDocument document, boolean allowDuplicating) {
-        return super.copyTo(document, allowDuplicating);
+        return (PdfBoolean) super.copyTo(document, allowDuplicating);
     }
 
     @Override
     public String toString() {
-        return java.lang.Boolean.toString(value);
+        return value ? "true" : "false";
     }
 
     @Override

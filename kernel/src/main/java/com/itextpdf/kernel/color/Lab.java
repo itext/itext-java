@@ -48,6 +48,10 @@ import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 
 public class Lab extends Color {
 
+    public Lab(PdfCieBasedCs.Lab cs) {
+        this(cs, new float[cs.getNumberOfComponents()]); // TODO if zero if outside of the Range, default value should be the nearest to the zero valid value
+    }
+
     public Lab(PdfCieBasedCs.Lab cs, float[] value) {
         super(cs, value);
     }

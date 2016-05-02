@@ -68,8 +68,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
     private static final long serialVersionUID = -4942318223894676176L;
 
-	protected T fontProgram;
-
     protected FontEncoding fontEncoding;
 
     /**
@@ -108,7 +106,11 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
     @Override
     public T getFontProgram() {
-        return fontProgram;
+        return (T) fontProgram;
+    }
+
+    public FontEncoding getFontEncoding() {
+        return fontEncoding;
     }
 
     @Override
@@ -198,6 +200,11 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             int uni = fontEncoding.getUnicode(b & 0xff);
             if (uni > -1) {
                 builder.append((char) (int) uni);
+            } else {
+                Glyph glyph = fontProgram.getGlyphByCode(b & 0xff);
+                if (glyph != null && glyph.getChars() != null) {
+                    builder.append(glyph.getChars());
+                }
             }
         }
         return builder.toString();
@@ -208,8 +215,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         float width = 0;
         byte[] contentBytes = content.getValueBytes();
         for (byte b : contentBytes) {
-            int uni = fontEncoding.getUnicode(b & 0xff);
-            Glyph glyph = uni > -1 ? getGlyph(uni) : fontProgram.getGlyphByCode(b);
+            Glyph glyph = fontProgram.getGlyphByCode(b & 0xff);
             width += glyph != null ? glyph.getWidth() : 0;
         }
         return width;
@@ -261,7 +267,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 } else if (!fontEncoding.hasDifferences() && fontProgram.getGlyphByCode(k) != null) {
                     shortTag[k] = 1;
                 } else {
-
                     shortTag[k] = 0;
                 }
             }
@@ -345,7 +350,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         fontDescriptor.put(PdfName.Ascent, new PdfNumber(fontMetrics.getTypoAscender()));
         fontDescriptor.put(PdfName.CapHeight, new PdfNumber(fontMetrics.getCapHeight()));
         fontDescriptor.put(PdfName.Descent, new PdfNumber(fontMetrics.getTypoDescender()));
-        fontDescriptor.put(PdfName.FontBBox, new PdfArray(fontMetrics.getBbox().clone()));
+        fontDescriptor.put(PdfName.FontBBox, new PdfArray(ArrayUtil.cloneArray(fontMetrics.getBbox())));
         fontDescriptor.put(PdfName.ItalicAngle, new PdfNumber(fontMetrics.getItalicAngle()));
         fontDescriptor.put(PdfName.StemV, new PdfNumber(fontMetrics.getStemV()));
         if (fontMetrics.getXHeight() > 0) {

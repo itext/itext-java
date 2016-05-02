@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
 
 /**
@@ -66,11 +67,6 @@ public class CanvasTag {
      * The type of the tag.
      */
     protected PdfName role;
-
-    /**
-     * The marked content id of the tag.
-     */
-    protected Integer mcid;
 
     /**
      * The properties of the tag.
@@ -94,10 +90,8 @@ public class CanvasTag {
      * @param role the type of tag
      * @param mcid marked content id which serves as a reference to the document's logical structure
      */
-    public CanvasTag(PdfName role, Integer mcid) {
+    public CanvasTag(PdfName role, int mcid) {
         this.role = role;
-        this.mcid = mcid;
-
         addProperty(PdfName.MCID, new PdfNumber(mcid));
     }
 
@@ -124,9 +118,25 @@ public class CanvasTag {
      * Get the marked content id of the tag.
      *
      * @return marked content id
+     * @throws IllegalStateException if there is no MCID
      */
-    public Integer getMcid() {
+    public int getMcid() {
+        int mcid = -1;
+        if (properties != null) {
+           mcid = properties.getAsInt(PdfName.MCID);
+        }
+        if (mcid == -1) {
+            throw new IllegalStateException("CanvasTag has no MCID");
+        }
         return mcid;
+    }
+
+    /**
+     * Determine if an MCID is available
+     * @return true if the MCID is available, false otherwise
+     */
+    public boolean hasMcid(){
+        return properties != null && properties.containsKey(PdfName.MCID);
     }
 
     /**
@@ -135,13 +145,10 @@ public class CanvasTag {
      * @param properties a dictionary
      * @return current {@link CanvasTag}
      */
-    public CanvasTag addProperties(PdfDictionary properties) {
-        if (properties == null) {
-            return this;
+    public CanvasTag setProperties(PdfDictionary properties) {
+        if (properties != null) {
+            this.properties = properties;
         }
-
-        ensurePropertiesInit();
-        this.properties.putAll(properties);
         return this;
     }
 
@@ -154,7 +161,6 @@ public class CanvasTag {
      */
     public CanvasTag addProperty(PdfName name, PdfObject value) {
         ensurePropertiesInit();
-
         properties.put(name, value);
         return this;
     }
@@ -192,6 +198,15 @@ public class CanvasTag {
      */
     public PdfDictionary getProperties() {
         return properties;
+    }
+
+    public String getActualText() {
+        PdfString actualText = properties.getAsString(PdfName.ActualText);
+        String result = null;
+        if (actualText != null) {
+            result = actualText.toUnicodeString();
+        }
+        return result;
     }
 
     private void ensurePropertiesInit() {

@@ -68,7 +68,7 @@ public class TagReference {
         return role;
     }
 
-    public Integer createNextMcid() {
+    public int createNextMcid() {
         return tagPointer.createNextMcidForStructElem(referencedTag, insertIndex);
     }
 

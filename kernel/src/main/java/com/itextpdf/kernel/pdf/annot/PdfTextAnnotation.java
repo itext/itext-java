@@ -71,7 +71,7 @@ public class PdfTextAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfTextAnnotation setState(PdfString state) {
-        return put(PdfName.State, state);
+        return (PdfTextAnnotation) put(PdfName.State, state);
     }
 
     public PdfString getStateModel() {
@@ -79,7 +79,7 @@ public class PdfTextAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfTextAnnotation setStateModel(PdfString stateModel) {
-        return put(PdfName.StateModel, stateModel);
+        return (PdfTextAnnotation) put(PdfName.StateModel, stateModel);
     }
 
 

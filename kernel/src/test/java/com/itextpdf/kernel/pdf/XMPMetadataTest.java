@@ -18,13 +18,13 @@ import java.util.TimeZone;
 @Category(IntegrationTest.class)
 public class XMPMetadataTest extends ExtendedITextTest{
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/XmpWriterTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/XmpWriterTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/XmpWriterTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/XmpWriterTest/";
 
     static  public TimeZone CURRENT_USER_TIME_ZONE;
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
         CURRENT_USER_TIME_ZONE = TimeZone.getDefault();
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Brussels"));
@@ -35,7 +35,7 @@ public class XMPMetadataTest extends ExtendedITextTest{
 
         String filename = "emptyDocumentWithXmp.pdf";
         FileOutputStream fos = new FileOutputStream(destinationFolder +filename);
-        PdfWriter writer = new PdfWriter(fos);
+        PdfWriter writer = new PdfWriter(fos,  new WriterProperties().addXmpMetadata());
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
@@ -43,7 +43,6 @@ public class XMPMetadataTest extends ExtendedITextTest{
         pdfDoc.getDocumentInfo().getPdfObject().remove(PdfName.CreationDate);
         PdfPage page = pdfDoc.addNewPage();
         page.flush();
-        pdfDoc.createXmpMetadata();
         pdfDoc.close();
         PdfReader reader = new PdfReader(destinationFolder +filename);
         PdfDocument pdfDocument = new PdfDocument(reader);

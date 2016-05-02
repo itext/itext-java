@@ -1,47 +1,48 @@
 /*
-    $Id$
-
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
-
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
- */
+* Copyright 2003-2012 by Paulo Soares.
+*
+* This code was originally released in 2001 by SUN (see class
+* com.sun.media.imageioimpl.plugins.tiff.TIFFFaxDecompressor.java)
+* using the BSD license in a specific wording. In a mail dating from
+* January 23, 2008, Brian Burkhalter (@sun.com) gave us permission
+* to use the code under the following version of the BSD license:
+*
+* Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions
+* are met:
+*
+* - Redistribution of source code must retain the above copyright
+*   notice, this  list of conditions and the following disclaimer.
+*
+* - Redistribution in binary form must reproduce the above copyright
+*   notice, this list of conditions and the following disclaimer in
+*   the documentation and/or other materials provided with the
+*   distribution.
+*
+* Neither the name of Sun Microsystems, Inc. or the names of
+* contributors may be used to endorse or promote products derived
+* from this software without specific prior written permission.
+*
+* This software is provided "AS IS," without a warranty of any
+* kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+* WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
+* EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+* NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
+* USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
+* DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
+* ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
+* CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
+* REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
+* INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGES.
+*
+* You acknowledge that this software is not designed or intended for
+* use in the design, construction, operation or maintenance of any
+* nuclear facility.
+*/
 package com.itextpdf.io.codec;
 
 import com.itextpdf.io.IOException;
@@ -90,7 +91,7 @@ public class TIFFFaxDecompressor {
     private int currChangingElems[];
     // Element at which to start search in getNextChangingElement
     private int lastChangingElement = 0;
-    static int table1[] = {
+    static int[] table1 = {
             0x00, // 0 bits are left in first byte - SHOULD NOT HAPPEN
             0x01, // 1 bits are left in first byte
             0x03, // 2 bits are left in first byte
@@ -101,7 +102,7 @@ public class TIFFFaxDecompressor {
             0x7f, // 7 bits are left in first byte
             0xff // 8 bits are left in first byte
     };
-    static int table2[] = {
+    static int[] table2 = {
             0x00, // 0
             0x80, // 1
             0xc0, // 2
@@ -113,7 +114,7 @@ public class TIFFFaxDecompressor {
             0xff // 8
     };
     // Table to be used when fillOrder = 2, for flipping bytes.
-    static byte flipTable[] = {
+    static byte[] flipTable = {
             (byte) 0, (byte) -128, (byte) 64, (byte) -64, (byte) 32, (byte) -96, (byte) 96, (byte) -32,
             (byte) 16, (byte) -112, (byte) 80, (byte) -48, (byte) 48, (byte) -80, (byte) 112, (byte) -16,
             (byte) 8, (byte) -120, (byte) 72, (byte) -56, (byte) 40, (byte) -88, (byte) 104, (byte) -24,
@@ -148,7 +149,7 @@ public class TIFFFaxDecompressor {
             (byte) 31, (byte) -97, (byte) 95, (byte) -33, (byte) 63, (byte) -65, (byte) 127, (byte) -1,
     };
     // The main 10 bit white runs lookup table
-    static short white[] = {
+    static short[] white = {
             // 0 - 7
             6430, 6400, 6400, 6400, 3225, 3225, 3225, 3225,
             // 8 - 15
@@ -406,14 +407,14 @@ public class TIFFFaxDecompressor {
             // 1016 - 1023
             232, 232, 232, 232, 232, 232, 232, 232,};
     // Additional make up codes for both White and Black runs
-//    static short additionalMakeup[] = {
+//    static short[] additionalMakeup = {
 //        28679,  28679,  31752,  (short)32777,
 //        (short)33801,  (short)34825,  (short)35849,  (short)36873,
 //        (short)29703,  (short)29703,  (short)30727,  (short)30727,
 //        (short)37897,  (short)38921,  (short)39945,  (short)40969
 //    };
     //replace with constants without overload
-    static public short additionalMakeup[] = {
+    public static short[] additionalMakeup = {
             28679,  28679,  31752,  -32759,
             -31735,  -30711,  -29687, -28663,
             29703,  29703, 30727, 30727,
@@ -421,16 +422,16 @@ public class TIFFFaxDecompressor {
     };
 
     // Initial black run look up table, uses the first 4 bits of a code
-    static short initBlack[] = {
+    static short[] initBlack = {
             // 0 - 7
             3226, 6412, 200, 168, 38, 38, 134, 134,
             // 8 - 15
             100, 100, 100, 100, 68, 68, 68, 68
     };
     //
-    static short twoBitBlack[] = {292, 260, 226, 226};   // 0 - 3
+    static short[] twoBitBlack = {292, 260, 226, 226};   // 0 - 3
     // Main black run table, using the last 9 bits of possible 13 bit code
-    static short black[] = {
+    static short[] black = {
             // 0 - 7
             62, 62, 30, 30, 0, 0, 0, 0,
             // 8 - 15
@@ -559,7 +560,7 @@ public class TIFFFaxDecompressor {
             390, 390, 390, 390, 390, 390, 390, 390,
             // 504 - 511
             390, 390, 390, 390, 390, 390, 390, 390,};
-    static byte twoDCodes[] = {
+    static byte[] twoDCodes = {
             // 0 - 7
             80, 88, 23, 71, 30, 30, 62, 62,
             // 8 - 15

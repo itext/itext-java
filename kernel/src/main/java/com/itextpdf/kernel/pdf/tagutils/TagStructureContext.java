@@ -45,18 +45,22 @@
 package com.itextpdf.kernel.pdf.tagutils;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
+import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -71,7 +75,10 @@ import java.util.Set;
  * There shall be only one instance of this class per {@code PdfDocument}. To obtain instance of this class use
  * {@link PdfDocument#getTagStructureContext()}.
  */
-public class TagStructureContext {
+public class TagStructureContext implements Serializable {
+
+    private static final long serialVersionUID = -7870069015800895036L;
+
     private static final Set<PdfName> allowedRootTagRoles = new HashSet<PdfName>() {{
         add(PdfName.Book);
         add(PdfName.Document);
@@ -84,6 +91,8 @@ public class TagStructureContext {
     private PdfDocument document;
     private PdfStructElem rootTagElement;
     protected TagTreePointer autoTaggingPointer;
+    private PdfVersion tagStructureTargetVersion;
+    private boolean forbidUnknownRoles;
 
     /**
      * These two fields define the connections between tags ({@code PdfStructElem}) and
@@ -106,6 +115,10 @@ public class TagStructureContext {
      * @param document the document which tag structure will be manipulated with this class.
      */
     public TagStructureContext(PdfDocument document) {
+        this(document, document.getPdfVersion());
+    }
+
+    public TagStructureContext(PdfDocument document, PdfVersion tagStructureTargetVersion) {
         this.document = document;
         if (!document.isTagged()) {
             throw new PdfException(PdfException.MustBeATaggedDocument);
@@ -113,7 +126,26 @@ public class TagStructureContext {
         connectedModelToStruct = new HashMap<>();
         connectedStructToModel = new HashMap<>();
 
+        this.tagStructureTargetVersion = tagStructureTargetVersion;
+        forbidUnknownRoles = true;
+
         normalizeDocumentRootTag();
+    }
+
+    /**
+     * If forbidUnknownRoles is set to true, then if you would try to add new tag which has not a standard role and
+     * it's role is not mapped through RoleMap, an exception will be raised.
+     * Default value - true.
+     * @param forbidUnknownRoles new value of the flag
+     * @return current {@link TagStructureContext} instance.
+     */
+    public TagStructureContext setForbidUnknownRoles(boolean forbidUnknownRoles) {
+        this.forbidUnknownRoles = forbidUnknownRoles;
+        return this;
+    }
+
+    public PdfVersion getTagStructureTargetVersion() {
+        return tagStructureTargetVersion;
     }
 
     /**
@@ -157,11 +189,45 @@ public class TagStructureContext {
      * otherwise returns null.
      */
     public TagTreePointer removeAnnotationTag(PdfAnnotation annotation) {
-        PdfStructElem structElem = document.getStructTreeRoot().removeAnnotationObjectReference(annotation.getPdfObject());
+        PdfStructElem structElem = null;
+        PdfDictionary annotDic = annotation.getPdfObject();
+
+        PdfNumber structParentIndex = (PdfNumber) annotDic.get(PdfName.StructParent);
+        if (structParentIndex != null) {
+            PdfObjRef objRef = document.getStructTreeRoot().findObjRefByStructParentIndex(annotDic.getAsDictionary(PdfName.P), structParentIndex.intValue());
+
+            if (objRef != null) {
+                PdfStructElem parent = (PdfStructElem) objRef.getParent();
+                parent.removeKid(objRef);
+                structElem = parent;
+            }
+        }
+        annotDic.remove(PdfName.StructParent);
+
         if (structElem != null) {
             return new TagTreePointer(document).setCurrentStructElem(structElem);
         }
         return null;
+    }
+
+    /**
+     * Removes content item from the tag structure.
+     * <br/>
+     * Nothing happens if there is no such mcid on given page.
+     * @param page page, which contains this content item
+     * @param mcid marked content id of this content item
+     * @return {@code TagTreePointer} which points at the parent of the removed content item, or null if there is no
+     * such mcid on given page.
+     */
+    public TagTreePointer removeContentItem(PdfPage page, int mcid) {
+        PdfMcr mcr = document.getStructTreeRoot().findMcrByMcid(page.getPdfObject(), mcid);
+        if (mcr == null) {
+            return null;
+        }
+
+        PdfStructElem parent = (PdfStructElem) mcr.getParent();
+        parent.removeKid(mcr);
+        return new TagTreePointer(document).setCurrentStructElem(parent);
     }
 
     /**
@@ -171,22 +237,13 @@ public class TagStructureContext {
      * @return current {@link TagStructureContext} instance.
      */
     public TagStructureContext removePageTags(PdfPage page) {
-        if (document.getStructTreeRoot().isStructTreeIsPartialFlushed()) {
-            // some page tags could already be flushed in this case, and we won't be able even to find parents of these
-            // flushed tags to remove them from tag structure
-            throw new PdfException(PdfException.CannotRemoveTagStructureElementsIfTagStructureWasPartiallyFlushed);
-        }
-
         PdfStructTreeRoot structTreeRoot = document.getStructTreeRoot();
-        List<PdfMcr> pageMcrs = structTreeRoot.getMcrManager().getPageMarkedContentReferences(page);
+        Collection<PdfMcr> pageMcrs = structTreeRoot.getPageMarkedContentReferences(page);
         if (pageMcrs != null) {
-            int mcrsCount = pageMcrs.size();
-            PdfMcr mcr;
-            // it's crucial to run this cycle backwards, because at each iteration we remove mcr
-            for (int i = mcrsCount - 1; i >= 0; --i) {
-                mcr = pageMcrs.get(i);
-                removePageTagFromParent(mcr.getPdfObject(), mcr.getParent());
-                document.getStructTreeRoot().getMcrManager().unregisterMcr(mcr);
+            // We create a copy here, because pageMcrs is backed by the internal collection which is changed when mcrs are removed.
+            List<PdfMcr> mcrsList = new ArrayList<>(pageMcrs);
+            for (PdfMcr mcr : mcrsList) {
+                removePageTagFromParent(mcr, mcr.getParent());
             }
         }
         return this;
@@ -235,7 +292,7 @@ public class TagStructureContext {
      */
     public TagStructureContext flushPageTags(PdfPage page) {
         PdfStructTreeRoot structTreeRoot = document.getStructTreeRoot();
-        List<PdfMcr> pageMcrs = structTreeRoot.getMcrManager().getPageMarkedContentReferences(page);
+        Collection<PdfMcr> pageMcrs = structTreeRoot.getPageMarkedContentReferences(page);
         if (pageMcrs != null) {
             for (PdfMcr mcr : pageMcrs) {
                 PdfStructElem parent = (PdfStructElem) mcr.getParent();
@@ -247,22 +304,81 @@ public class TagStructureContext {
     }
 
     /**
-     * If document tag structure was modified on the low (PdfObjects) level, the {@code TagStructureContext} should be
-     * reinitialized. If iText does some of these low level modifications, this method is called automatically
-     * (e.g. when tagged page is copied to the current document).
-     * This method essentially does three things:
-     *  <ul>
-     *      <li>removes all connections between model elements and tags;</li>
-     *      <li>normalizes document root tag (if there is more than one root tags, combines them under the single root tag);</li>
-     *      <li>moves auto tagging pointer to the root tag.</li>
-     *  </ul>
-     * @return current {@link TagStructureContext} instance.
+     * Transforms root tags in a way that complies with the PDF References.
+     *
+     * <br/><br/>
+     * PDF Reference
+     * 10.7.3 Grouping Elements:
+     *
+     * <br/><br/>
+     * For most content extraction formats, the document must be a tree with a single top-level element;
+     * the structure tree root (identified by the StructTreeRoot entry in the document catalog) must have
+     * only one child in its K (kids) array. If the PDF file contains a complete document, the structure
+     * type Document is recommended for this top-level element in the logical structure hierarchy. If the
+     * file contains a well-formed document fragment, one of the structure types Part, Art, Sect, or Div
+     * may be used instead.
      */
-    public TagStructureContext reinitialize() {
-        removeAllConnectionsToTags();
-        normalizeDocumentRootTag();
-        getAutoTaggingPointer().moveToRoot();
-        return this;
+    public void normalizeDocumentRootTag() {
+        // in this method we could deal with existing document, so we don't won't to throw exceptions here
+        boolean forbid = forbidUnknownRoles;
+        forbidUnknownRoles = false;
+
+        List<IPdfStructElem> rootKids = document.getStructTreeRoot().getKids();
+        if (rootKids.size() == 1 && allowedRootTagRoles.contains(rootKids.get(0).getRole())) {
+            rootTagElement = (PdfStructElem) rootKids.get(0);
+        } else {
+            PdfStructElem prevRootTag = rootTagElement;
+            document.getStructTreeRoot().getPdfObject().remove(PdfName.K);
+            if (prevRootTag == null) {
+                rootTagElement = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
+            } else {
+                document.getStructTreeRoot().addKid(rootTagElement);
+                if (!PdfName.Document.equals(rootTagElement.getRole())) {
+                    wrapAllKidsInTag(rootTagElement, rootTagElement.getRole());
+                    rootTagElement.setRole(PdfName.Document);
+                }
+            }
+
+            int originalRootKidsIndex = 0;
+            boolean isBeforeOriginalRoot = true;
+            for (IPdfStructElem elem : rootKids) {
+                // StructTreeRoot kids are always PdfStructElem, so we are save here to cast it
+                PdfStructElem kid = (PdfStructElem) elem;
+                if (kid.getPdfObject() == rootTagElement.getPdfObject()) {
+                    isBeforeOriginalRoot = false;
+                    continue;
+                }
+
+                boolean kidIsDocument = PdfName.Document.equals(kid.getRole());
+                if (isBeforeOriginalRoot) {
+                    rootTagElement.addKid(originalRootKidsIndex, kid);
+                    originalRootKidsIndex += kidIsDocument ? kid.getKids().size() : 1;
+                } else {
+                    rootTagElement.addKid(kid);
+                }
+                if (kidIsDocument) {
+                    removeOldRoot(kid);
+                }
+            }
+        }
+        forbidUnknownRoles = forbid;
+    }
+
+    /**
+     * Method for internal usages.
+     * Essentially, all it does is just making sure that for connected tags properties are
+     * up to date with connected accessible elements properties.
+     */
+    public void actualizeTagsProperties() {
+        for (Map.Entry<IAccessibleElement, PdfStructElem> structToModel : connectedModelToStruct.entrySet()) {
+
+            IAccessibleElement element = structToModel.getKey();
+            PdfStructElem structElem = structToModel.getValue();
+            structElem.setRole(element.getRole());
+            if (element.getAccessibilityProperties() != null) {
+                element.getAccessibilityProperties().setToStructElem(structElem);
+            }
+        }
     }
 
     PdfStructElem getRootTag() {
@@ -278,6 +394,12 @@ public class TagStructureContext {
 
     IAccessibleElement getModelConnectedToStruct(PdfStructElem struct) {
         return connectedStructToModel.get(struct);
+    }
+
+    void throwExceptionIfRoleIsInvalid(PdfName role) {
+        if (forbidUnknownRoles && PdfStructElem.identifyType(getDocument(), role) == PdfStructElem.Unknown) {
+            throw new PdfException(PdfException.RoleIsNotMappedWithAnyStandardRole);
+        }
     }
 
     void saveConnectionBetweenStructAndModel(IAccessibleElement element, PdfStructElem structElem) {
@@ -299,34 +421,6 @@ public class TagStructureContext {
         return parent;
     }
 
-    // returns index of the removed kid
-    static int removeKidFromParent(PdfObject kid, PdfDictionary parent) {
-        PdfObject parentK = parent.get(PdfName.K);
-        int removedKidIndex = -1;
-        if (parentK.isArray()) {
-            removedKidIndex = removeObjectFromArray((PdfArray) parentK, kid);
-        }
-
-        if (parentK.isDictionary() || parentK.isArray() && ((PdfArray)parentK).isEmpty()) {
-            parent.remove(PdfName.K);
-            removedKidIndex = 0;
-        }
-
-        return removedKidIndex;
-    }
-
-    static int removeObjectFromArray(PdfArray array, PdfObject toRemove) {
-        int i;
-        for (i = 0; i < array.size(); ++i) {
-            PdfObject obj = array.get(i);
-            if (obj == toRemove || obj == toRemove.getIndirectReference()) {
-                array.remove(i);
-                break;
-            }
-        }
-        return i;
-    }
-
     private void removeStructToModelConnection(PdfStructElem structElem) {
         if (structElem != null) {
             IAccessibleElement element = connectedStructToModel.remove(structElem.getPdfObject());
@@ -340,14 +434,21 @@ public class TagStructureContext {
         }
     }
 
-    private void removePageTagFromParent(PdfObject pageTagObject, IPdfStructElem parent) {
+    private void removePageTagFromParent(IPdfStructElem pageTag, IPdfStructElem parent) {
         if (parent instanceof PdfStructElem) {
-            PdfDictionary parentObject = ((PdfStructElem) parent).getPdfObject();
-            removeKidFromParent(pageTagObject, parentObject);
-            if (!connectedStructToModel.containsKey(parentObject) && parent.getKids().isEmpty()
-                    && parentObject != rootTagElement.getPdfObject()) {
-                removePageTagFromParent(parentObject, parent.getParent());
-                parentObject.getIndirectReference().setFree();
+            PdfStructElem structParent = (PdfStructElem) parent;
+            if (!structParent.isFlushed()) {
+                structParent.removeKid(pageTag);
+                PdfDictionary parentObject = structParent.getPdfObject();
+                if (!connectedStructToModel.containsKey(parentObject) && parent.getKids().isEmpty()
+                        && parentObject != rootTagElement.getPdfObject()) {
+                    removePageTagFromParent(structParent, parent.getParent());
+                    parentObject.getIndirectReference().setFree();
+                }
+            } else {
+                if (pageTag instanceof PdfMcr) {
+                    throw new PdfException(PdfException.CannotRemoveTagBecauseItsParentIsFlushed);
+                }
             }
         } else {
             // it is StructTreeRoot
@@ -379,9 +480,8 @@ public class TagStructureContext {
         }
 
         if (allKidsBelongToPage) {
-            PdfStructTreeRoot structTreeRoot = document.getStructTreeRoot();
             IPdfStructElem parentsParent = parent.getParent();
-            structTreeRoot.flushStructElement(parent);
+            parent.flush();
             if (parentsParent instanceof PdfStructElem) {
                 flushParentIfBelongsToPage((PdfStructElem)parentsParent, currentPage);
             }
@@ -400,37 +500,19 @@ public class TagStructureContext {
                 flushStructElementAndItKids((PdfStructElem) kid);
             }
         }
-        document.getStructTreeRoot().flushStructElement(elem);
+        elem.flush();
     }
 
-    /**
-     * PDF Reference
-     * 10.7.3 Grouping Elements:
-     *
-     * For most content extraction formats, the document must be a tree with a single top-level element;
-     * the structure tree root (identified by the StructTreeRoot entry in the document catalog) must have
-     * only one child in its K (kids) array. If the PDF file contains a complete document, the structure
-     * type Document is recommended for this top-level element in the logical structure hierarchy. If the
-     * file contains a well-formed document fragment, one of the structure types Part, Art, Sect, or Div
-     * may be used instead.
-     */
-    private void normalizeDocumentRootTag() {
-        List<IPdfStructElem> rootKids = document.getStructTreeRoot().getKids();
-
-        if (rootKids.size() == 1 && allowedRootTagRoles.contains(rootKids.get(0).getRole())) {
-            rootTagElement = (PdfStructElem) rootKids.get(0);
-        } else {
-            document.getStructTreeRoot().remove(PdfName.K);
-            rootTagElement = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
-
-            for (IPdfStructElem elem : rootKids) {
-                // StructTreeRoot kids are always PdfStructElem, so we are save here to cast it
-                PdfStructElem kid = (PdfStructElem) elem;
-                rootTagElement.addKid(kid);
-                if (PdfName.Document.equals(kid.getRole())) {
-                    removeOldRoot(kid);
-                }
-            }
+    private void wrapAllKidsInTag(PdfStructElem parent, PdfName wrapTagRole) {
+        int kidsNum = parent.getKids().size();
+        TagTreePointer tagPointer = new TagTreePointer(document);
+        tagPointer
+                .setCurrentStructElem(parent)
+                .addTag(0, wrapTagRole);
+        TagTreePointer newParentOfKids = new TagTreePointer(tagPointer);
+        tagPointer.moveToParent();
+        for (int i = 0; i < kidsNum; ++i) {
+            tagPointer.relocateKid(1, newParentOfKids);
         }
     }
 

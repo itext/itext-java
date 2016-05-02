@@ -46,53 +46,7 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfName;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.Signature;
-import java.security.SignatureException;
-import java.security.cert.CRL;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509CRL;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1Encoding;
-import org.bouncycastle.asn1.ASN1Enumerated;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1OutputStream;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.bouncycastle.asn1.DERNull;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.ContentInfo;
@@ -116,6 +70,15 @@ import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.tsp.TimeStampTokenInfo;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.*;
+import java.security.cert.*;
+import java.security.cert.Certificate;
+import java.util.*;
+
 /**
  * This class does all the processing related to signing
  * and verifying a PKCS#7 signature.
@@ -137,7 +100,7 @@ public class PdfPKCS7 {
      * @throws NoSuchAlgorithmException on error
      */
     public PdfPKCS7(PrivateKey privKey, Certificate[] certChain,
-                    String hashAlgorithm, String provider, ExternalDigest interfaceDigest, boolean hasRSAdata)
+                    String hashAlgorithm, String provider, IExternalDigest interfaceDigest, boolean hasRSAdata)
             throws InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException {
         this.provider = provider;
         this.interfaceDigest = interfaceDigest;
@@ -628,7 +591,7 @@ public class PdfPKCS7 {
      *	DIGITAL SIGNATURE CREATION
      */
 
-    private ExternalDigest interfaceDigest;
+    private IExternalDigest interfaceDigest;
     // The signature is created externally
 
     /** The signed digest if created outside this class */
@@ -646,7 +609,7 @@ public class PdfPKCS7 {
      * is also <CODE>null</CODE>. If the <CODE>digest</CODE> is not <CODE>null</CODE>
      * then it may be "RSA" or "DSA"
      */
-    public void setExternalDigest(byte digest[], byte RSAdata[], String digestEncryptionAlgorithm) {
+    public void setExternalDigest(byte[] digest, byte[] RSAdata, String digestEncryptionAlgorithm) {
         externalDigest = digest;
         externalRSAdata = RSAdata;
         if (digestEncryptionAlgorithm != null) {
@@ -757,7 +720,7 @@ public class PdfPKCS7 {
      * @param secondDigest the digest in the authenticatedAttributes
      * @return the bytes for the PKCS7SignedData object
      */
-    public byte[] getEncodedPKCS7(byte secondDigest[]) {
+    public byte[] getEncodedPKCS7(byte[] secondDigest) {
         return getEncodedPKCS7(secondDigest, null, null, null, PdfSigner.CryptoStandard.CMS);
     }
 
@@ -769,7 +732,7 @@ public class PdfPKCS7 {
      * @param tsaClient TSAClient - null or an optional time stamp authority client
      * @return byte[] the bytes for the PKCS7SignedData object
      */
-    public byte[] getEncodedPKCS7(byte secondDigest[], TSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
+    public byte[] getEncodedPKCS7(byte[] secondDigest, ITSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
         try {
             if (externalDigest != null) {
                 digest = externalDigest;
@@ -933,21 +896,21 @@ public class PdfPKCS7 {
      * Calendar cal = Calendar.getInstance();
      * PdfPKCS7 pk7 = new PdfPKCS7(key, chain, null, "SHA1", null, false);
      * MessageDigest messageDigest = MessageDigest.getInstance("SHA1");
-     * byte buf[] = new byte[8192];
+     * byte[] buf = new byte[8192];
      * int n;
      * InputStream inp = sap.getRangeStream();
      * while ((n = inp.read(buf)) &gt; 0) {
      *    messageDigest.update(buf, 0, n);
      * }
-     * byte hash[] = messageDigest.digest();
-     * byte sh[] = pk7.getAuthenticatedAttributeBytes(hash, cal);
+     * byte[] hash = messageDigest.digest();
+     * byte[] sh = pk7.getAuthenticatedAttributeBytes(hash, cal);
      * pk7.update(sh, 0, sh.length);
-     * byte sg[] = pk7.getEncodedPKCS7(hash, cal);
+     * byte[] sg = pk7.getEncodedPKCS7(hash, cal);
      * </pre>
      * @param secondDigest the content digest
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    public byte[] getAuthenticatedAttributeBytes(byte secondDigest[], byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
+    public byte[] getAuthenticatedAttributeBytes(byte[] secondDigest, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
         try {
             return getAuthenticatedAttributeSet(secondDigest, ocsp, crlBytes, sigtype).getEncoded(ASN1Encoding.DER);
         }
@@ -963,7 +926,7 @@ public class PdfPKCS7 {
      * @param secondDigest the content digest
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
-    private DERSet getAuthenticatedAttributeSet(byte secondDigest[], byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
+    private DERSet getAuthenticatedAttributeSet(byte[] secondDigest, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
         try {
             ASN1EncodableVector attribute = new ASN1EncodableVector();
             ASN1EncodableVector v = new ASN1EncodableVector();
@@ -1276,7 +1239,7 @@ public class PdfPKCS7 {
      * @throws IOException
      */
     private void findOcsp(ASN1Sequence seq) throws IOException {
-        basicResp = null;
+        basicResp = (BasicOCSPResp) null;
         boolean ret = false;
         while (true) {
             if (seq.getObjectAt(0) instanceof ASN1ObjectIdentifier

@@ -47,13 +47,13 @@ package com.itextpdf.kernel.pdf.xobject;
 import com.itextpdf.io.codec.PngWriter;
 import com.itextpdf.io.codec.TIFFConstants;
 import com.itextpdf.io.codec.TiffWriter;
-import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageType;
-import com.itextpdf.io.image.RawImage;
+import com.itextpdf.io.image.RawImageData;
 import com.itextpdf.io.image.RawImageHelper;
-import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.Version;
+import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -62,13 +62,12 @@ import com.itextpdf.kernel.pdf.PdfLiteral;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfOutputStream;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.canvas.wmf.WmfImage;
+import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
 import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
-import com.itextpdf.kernel.pdf.filters.FilterHandler;
+import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 
 import java.io.ByteArrayInputStream;
@@ -92,11 +91,11 @@ public class PdfImageXObject extends PdfXObject {
     private byte[] icc;
     private int stride;
 
-    public PdfImageXObject(Image image) {
+    public PdfImageXObject(ImageData image) {
         this(image, null);
     }
 
-    public PdfImageXObject(Image image, PdfImageXObject imageMask) {
+    public PdfImageXObject(ImageData image, PdfImageXObject imageMask) {
         this(createPdfStream(checkImageType(image), imageMask));
         mask = image.isMask();
         softMask = image.isSoftMask();
@@ -107,29 +106,30 @@ public class PdfImageXObject extends PdfXObject {
     }
 
     @Override
-    public Float getWidth() {
+    public float getWidth() {
         if (!isFlushed())
-            return getPdfObject().getAsNumber(PdfName.Width).getFloatValue();
+            return getPdfObject().getAsNumber(PdfName.Width).floatValue();
         else
             return width;
     }
 
     @Override
-    public Float getHeight() {
+    public float getHeight() {
         if (!isFlushed())
-            return getPdfObject().getAsNumber(PdfName.Height).getFloatValue();
+            return getPdfObject().getAsNumber(PdfName.Height).floatValue();
         else
             return height;
     }
 
     @Override
     public void flush() {
-        width = getPdfObject().getAsNumber(PdfName.Width).getFloatValue();
-        height = getPdfObject().getAsNumber(PdfName.Height).getFloatValue();
-        super.flush();
+        if (!isFlushed()) {
+            width = getPdfObject().getAsNumber(PdfName.Width).floatValue();
+            height = getPdfObject().getAsNumber(PdfName.Height).floatValue();
+            super.flush();
+        }
     }
 
-    // TODO probably remove it. or may be not. images copying sounds not so bad.
     public PdfImageXObject copyTo(PdfDocument document) {
         PdfImageXObject image = new PdfImageXObject(getPdfObject().copyTo(document));
         image.width = width;
@@ -152,7 +152,7 @@ public class PdfImageXObject extends PdfXObject {
         byte[] bytes;
         bytes = getPdfObject().getBytes(false);
         if (decoded) {
-            Map<PdfName, FilterHandler> filters = new HashMap<>(FilterHandlers.getDefaultFilterHandlers());
+            Map<PdfName, IFilterHandler> filters = new HashMap<>(FilterHandlers.getDefaultFilterHandlers());
             DoNothingFilter stubFilter = new DoNothingFilter();
             filters.put(PdfName.DCTDecode, stubFilter);
             filters.put(PdfName.JBIG2Decode, stubFilter);
@@ -170,18 +170,20 @@ public class PdfImageXObject extends PdfXObject {
         return bytes;
     }
 
-    protected static PdfStream createPdfStream(Image image, PdfImageXObject imageMask) {
+    public PdfImageXObject put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return this;
+    }
+
+    protected static PdfStream createPdfStream(ImageData image, PdfImageXObject imageMask) {
         PdfStream stream;
         if (image.getOriginalType() == ImageType.RAW) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            RawImageHelper.updateImageAttributes((RawImage) image, null, baos);
-            stream = new PdfStream(baos.toByteArray());
-        } else {
-            stream = new PdfStream(image.getData());
+            RawImageHelper.updateImageAttributes((RawImageData) image, null);
         }
+        stream = new PdfStream(image.getData());
         String filter = image.getFilter();
         if (filter != null && filter.equals("JPXDecode") && image.getColorSpace() <= 0) {
-            stream.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
+            stream.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
             image.setBpc(0);
         }
         stream.put(PdfName.Type, PdfName.XObject);
@@ -228,7 +230,7 @@ public class PdfImageXObject extends PdfXObject {
 
 
         if (image.isMask() && (image.getBpc() == 1 || image.getBpc() > 0xff))
-            stream.put(PdfName.ImageMask, PdfBoolean.PdfTrue);
+            stream.put(PdfName.ImageMask, PdfBoolean.TRUE);
 
         if (imageMask != null) {
             if (imageMask.softMask)
@@ -237,7 +239,7 @@ public class PdfImageXObject extends PdfXObject {
                 stream.put(PdfName.Mask, imageMask.getPdfObject());
         }
 
-        Image mask = image.getImageMask();
+        ImageData mask = image.getImageMask();
         if (mask != null) {
             if (mask.isSoftMask())
                 stream.put(PdfName.SMask, new PdfImageXObject(image.getImageMask()).getPdfObject());
@@ -251,7 +253,7 @@ public class PdfImageXObject extends PdfXObject {
         if (image.isMask() && image.isInverted())
             stream.put(PdfName.Decode, new PdfArray(new float[]{1, 0}));
         if (image.isInterpolation())
-            stream.put(PdfName.Interpolate, PdfBoolean.PdfTrue);
+            stream.put(PdfName.Interpolate, PdfBoolean.TRUE);
         // deal with transparency
         int[] transparency = image.getTransparency();
         if (transparency != null && !image.isMask() && imageMask == null) {
@@ -288,7 +290,7 @@ public class PdfImageXObject extends PdfXObject {
                         }
                     }
                 } else if (value instanceof byte[]) {
-                    //@TODO Check inline images
+                    //TODO Check inline images
                     PdfStream globalsStream = new PdfStream();
                     globalsStream.getOutputStream().writeBytes((byte[]) value);
                     dictionary.put(PdfName.JBIG2Globals, globalsStream);
@@ -318,7 +320,7 @@ public class PdfImageXObject extends PdfXObject {
             } else if (object instanceof Integer) {
                 array.add(new PdfNumber((Integer) object));
             } else if (object instanceof Float) {
-                array.add(new PdfNumber((Double) object));
+                array.add(new PdfNumber((Float) object));
             } else if (object instanceof Map) {
                 array.add(createDictionaryFromMap(stream, (Map<String, Object>) object));
             }
@@ -330,9 +332,9 @@ public class PdfImageXObject extends PdfXObject {
 
         pngColorType = -1;
         PdfArray decode = getPdfObject().getAsArray(PdfName.Decode);
-        width = getPdfObject().getAsNumber(PdfName.Width).getIntValue();
-        height = getPdfObject().getAsNumber(PdfName.Height).getIntValue();
-        bpc = getPdfObject().getAsNumber(PdfName.BitsPerComponent).getIntValue();
+        width = getPdfObject().getAsNumber(PdfName.Width).intValue();
+        height = getPdfObject().getAsNumber(PdfName.Height).intValue();
+        bpc = getPdfObject().getAsNumber(PdfName.BitsPerComponent).intValue();
         pngBitDepth = bpc;
         PdfObject colorspace = getPdfObject().get(PdfName.ColorSpace);
 
@@ -345,20 +347,20 @@ public class PdfImageXObject extends PdfXObject {
             if (bpc != 8)
                 throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.ColorDepthIsNotSupported).setMessageParams(bpc);
 
-            if (PdfName.DeviceCMYK.equals(colorspace)) {
-            } else if (colorspace instanceof PdfArray) {
+            if (colorspace instanceof PdfArray) {
                 PdfArray ca = (PdfArray) colorspace;
                 PdfObject tyca = ca.get(0);
                 if (!PdfName.ICCBased.equals(tyca))
                     throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.ColorSpaceIsNotSupported).setMessageParams(tyca.toString());
                 PdfStream pr = (PdfStream) ca.get(1);
-                int n = pr.getAsNumber(PdfName.N).getIntValue();
+                int n = pr.getAsNumber(PdfName.N).intValue();
                 if (n != 4) {
                     throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.NValueIsNotSupported).setMessageParams(n);
                 }
                 icc = pr.getBytes();
-            } else
+            } else if (!PdfName.DeviceCMYK.equals(colorspace)) {
                 throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.ColorSpaceIsNotSupported).setMessageParams(colorspace.toString());
+            }
             stride = (int) (4 * width);
             TiffWriter wr = new TiffWriter();
             wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_SAMPLESPERPIXEL, 4));
@@ -390,7 +392,7 @@ public class PdfImageXObject extends PdfXObject {
             if (decode != null) {
                 if (pngBitDepth == 1) {
                     // if the decode array is 1,0, then we need to invert the image
-                    if (decode.getAsNumber(0).getIntValue() == 1 && decode.getAsNumber(1).getIntValue() == 0) {
+                    if (decode.getAsNumber(0).intValue() == 1 && decode.getAsNumber(1).intValue() == 0) {
                         int len = imageBytes.length;
                         for (int t = 0; t < len; ++t) {
                             imageBytes[t] ^= 0xff;
@@ -448,7 +450,7 @@ public class PdfImageXObject extends PdfXObject {
                 }
             } else if (PdfName.ICCBased.equals(tyca)) {
                 PdfStream pr = (PdfStream) ca.get(1);
-                int n = pr.getAsNumber(PdfName.N).getIntValue();
+                int n = pr.getAsNumber(PdfName.N).intValue();
                 if (n == 1) {
                     stride = (int) ((width * bpc + 7) / 8);
                     pngColorType = 0;
@@ -474,8 +476,8 @@ public class PdfImageXObject extends PdfXObject {
         }
     }
 
-    private static Image checkImageType(Image image) {
-        if (image instanceof WmfImage) {
+    private static ImageData checkImageType(ImageData image) {
+        if (image instanceof WmfImageData) {
             throw new PdfException(PdfException.CannotCreatePdfImageXObjectByWmfImage);
         }
         return image;

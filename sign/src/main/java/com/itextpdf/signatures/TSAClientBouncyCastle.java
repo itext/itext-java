@@ -44,6 +44,14 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.io.codec.Base64;
+import com.itextpdf.kernel.PdfException;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.cmp.PKIFailureInfo;
+import org.bouncycastle.tsp.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,22 +59,8 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
-
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
-
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.codec.Base64;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.cmp.PKIFailureInfo;
-import org.bouncycastle.tsp.TSPException;
-import org.bouncycastle.tsp.TimeStampRequest;
-import org.bouncycastle.tsp.TimeStampRequestGenerator;
-import org.bouncycastle.tsp.TimeStampResponse;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.bouncycastle.tsp.TimeStampTokenInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Time Stamp Authority Client interface implementation using Bouncy Castle
@@ -76,7 +70,7 @@ import org.slf4j.LoggerFactory;
  * for ease of subclassing.
  * </p>
  */
-public class TSAClientBouncyCastle implements TSAClient {
+public class TSAClientBouncyCastle implements ITSAClient {
 
     /** The Logger instance. */
     private static final Logger LOGGER = LoggerFactory.getLogger(TSAClientBouncyCastle.class);
@@ -91,7 +85,7 @@ public class TSAClientBouncyCastle implements TSAClient {
     protected String tsaPassword;
 
     /** An interface that allows you to inspect the timestamp info. */
-    protected TSAInfoBouncyCastle tsaInfo;
+    protected ITSAInfoBouncyCastle tsaInfo;
 
     /** The default value for the hash algorithm */
     public static final int DEFAULTTOKENSIZE = 4096;
@@ -144,7 +138,7 @@ public class TSAClientBouncyCastle implements TSAClient {
     /**
      * @param tsaInfo the tsaInfo to set
      */
-    public void setTSAInfo(TSAInfoBouncyCastle tsaInfo) {
+    public void setTSAInfo(ITSAInfoBouncyCastle tsaInfo) {
         this.tsaInfo = tsaInfo;
     }
 
@@ -259,7 +253,7 @@ public class TSAClientBouncyCastle implements TSAClient {
         byte[] respBytes = baos.toByteArray();
 
         String encoding = tsaConnection.getContentEncoding();
-        if (encoding != null && encoding.equalsIgnoreCase("base64")) {
+        if (encoding != null && encoding.toLowerCase().equals("base64".toLowerCase())) {
             respBytes = Base64.decode(new String(respBytes));
         }
         return respBytes;

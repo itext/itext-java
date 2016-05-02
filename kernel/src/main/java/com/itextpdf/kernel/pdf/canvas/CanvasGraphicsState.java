@@ -55,7 +55,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
-import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import java.util.Arrays;
 
@@ -72,14 +71,6 @@ public class CanvasGraphicsState {
      * "a matrix that transforms default user coordinates to device coordinates".
      */
     private Matrix ctm = new Matrix();
-
-    /**
-     * Those two fields are currently used only in {@code PdfContentStreamProcessor}, which in it's turn doesn't work with
-     * other than device color spaces (RGB, CMYK, GRAY). Therefore for simplicity, if current color space is not a device color space
-     * it will have a {@code null} value.
-     */
-    private PdfColorSpace strokeColorSpace = new PdfDeviceCs.Gray();
-    private PdfColorSpace fillColorSpace = new PdfDeviceCs.Gray();
 
     // color
     private Color strokeColor = DeviceGray.BLACK;
@@ -110,7 +101,7 @@ public class CanvasGraphicsState {
      * An empty dash array (first element in the array) and zero phase (second element in the array)
      * can be used to restore the dash pattern to a solid line.
      */
-    private PdfArray dashPattern = new PdfArray(Arrays.asList(new PdfArray(), new PdfNumber(0)));
+    private PdfArray dashPattern = new PdfArray(Arrays.<PdfObject>asList(new PdfArray(), new PdfNumber(0)));
 
     private PdfName renderingIntent = PdfName.RelativeColorimetric;
     private boolean automaticStrokeAdjustment = false;
@@ -148,7 +139,7 @@ public class CanvasGraphicsState {
      * Copy constructor.
      * @param source the Graphics State to copy from
      */
-    protected CanvasGraphicsState(final CanvasGraphicsState source) {
+    protected CanvasGraphicsState(CanvasGraphicsState source) {
         copyFrom(source);
     }
 
@@ -181,22 +172,6 @@ public class CanvasGraphicsState {
      */
     public void updateCtm(Matrix newCtm) {
         ctm = newCtm.multiply(ctm);
-    }
-
-    public PdfColorSpace getStrokeColorSpace() {
-        return strokeColorSpace;
-    }
-
-    public void setStrokeColorSpace(PdfColorSpace strokeColorSpace) {
-        this.strokeColorSpace = strokeColorSpace;
-    }
-
-    public PdfColorSpace getFillColorSpace() {
-        return fillColorSpace;
-    }
-
-    public void setFillColorSpace(PdfColorSpace fillColorSpace) {
-        this.fillColorSpace = fillColorSpace;
     }
 
     public Color getFillColor() {
@@ -307,7 +282,7 @@ public class CanvasGraphicsState {
         this.wordSpacing = wordSpacing;
     }
 
-    public Float getWordSpacing() {
+    public float getWordSpacing() {
         return wordSpacing;
     }
 
@@ -449,9 +424,9 @@ public class CanvasGraphicsState {
             if (this.font == null || this.font.getPdfObject() != fontDictionary) {
                 this.font = PdfFontFactory.createFont(fontDictionary);
             }
-            Float fntSz = fnt.getAsFloat(1);
+            PdfNumber fntSz = fnt.getAsNumber(1);
             if (fntSz != null)
-                this.fontSize = fntSz;
+                this.fontSize = fntSz.floatValue();
         }
         PdfObject bg = extGState.getBlackGenerationFunction();
         if (bg != null)
@@ -508,8 +483,6 @@ public class CanvasGraphicsState {
 
     private void copyFrom(CanvasGraphicsState source) {
         this.ctm = source.ctm;
-        this.strokeColorSpace = source.strokeColorSpace;
-        this.fillColorSpace = source.fillColorSpace;
         this.strokeColor = source.strokeColor;
         this.fillColor = source.fillColor;
         this.charSpacing = source.charSpacing;

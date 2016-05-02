@@ -54,7 +54,7 @@ public abstract class OutputStreamEncryption extends java.io.OutputStream {
     /**
      * Creates a new instance of OutputStreamCounter
      */
-    public OutputStreamEncryption(java.io.OutputStream out) {
+    protected OutputStreamEncryption(java.io.OutputStream out) {
         this.out = out;
     }
 

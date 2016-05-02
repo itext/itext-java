@@ -47,12 +47,13 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.ListSymbolAlignment;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 
-public class ListItemRenderer extends BlockRenderer {
+public class ListItemRenderer extends DivRenderer {
 
     protected IRenderer symbolRenderer;
     protected float symbolAreaWidth;
@@ -117,9 +118,9 @@ public class ListItemRenderer extends BlockRenderer {
                         symbolRenderer.getOccupiedArea().getBBox().getHeight() - symbolRenderer.getOccupiedArea().getBBox().getY());
             }
 
-            Property.ListSymbolAlignment listSymbolAlignment = parent.getProperty(Property.LIST_SYMBOL_ALIGNMENT);
+            ListSymbolAlignment listSymbolAlignment = parent.getProperty(Property.LIST_SYMBOL_ALIGNMENT);
             float xPosition = x - symbolRenderer.getOccupiedArea().getBBox().getX();
-            if (listSymbolAlignment == null || listSymbolAlignment == Property.ListSymbolAlignment.RIGHT) {
+            if (listSymbolAlignment == null || listSymbolAlignment == ListSymbolAlignment.RIGHT) {
                 xPosition += symbolAreaWidth - symbolRenderer.getOccupiedArea().getBBox().getWidth();
             }
             symbolRenderer.move(xPosition, 0);
@@ -139,13 +140,13 @@ public class ListItemRenderer extends BlockRenderer {
     }
 
     @Override
-    public ListItemRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         return new ListItemRenderer((ListItem) modelElement);
     }
 
     @Override
-    protected BlockRenderer createSplitRenderer(int layoutResult) {
-        ListItemRenderer splitRenderer = getNextRenderer();
+    protected AbstractRenderer createSplitRenderer(int layoutResult) {
+        ListItemRenderer splitRenderer = (ListItemRenderer) getNextRenderer();
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         splitRenderer.occupiedArea = occupiedArea;
@@ -159,8 +160,8 @@ public class ListItemRenderer extends BlockRenderer {
     }
 
     @Override
-    protected BlockRenderer createOverflowRenderer(int layoutResult) {
-        ListItemRenderer overflowRenderer = getNextRenderer();
+    protected AbstractRenderer createOverflowRenderer(int layoutResult) {
+        ListItemRenderer overflowRenderer = (ListItemRenderer) getNextRenderer();
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         if (layoutResult == LayoutResult.NOTHING) {

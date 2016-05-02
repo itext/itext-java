@@ -45,7 +45,7 @@
 package com.itextpdf.kernel.crypto.securityhandler;
 
 import com.itextpdf.kernel.crypto.AesDecryptor;
-import com.itextpdf.kernel.crypto.Decryptor;
+import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamAesEncryption;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -58,7 +58,7 @@ public class StandardHandlerUsingAes128 extends StandardHandlerUsingStandard128 
     private static final byte[] salt = {(byte) 0x73, (byte) 0x41, (byte) 0x6c,
             (byte) 0x54};
 
-    public StandardHandlerUsingAes128(PdfDictionary encryptionDictionary, byte userPassword[], byte ownerPassword[],
+    public StandardHandlerUsingAes128(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,
                                       int permissions, boolean encryptMetadata, boolean embeddedFilesOnly, byte[] documentId) {
         super(encryptionDictionary, userPassword, ownerPassword, permissions, encryptMetadata, embeddedFilesOnly, documentId);
     }
@@ -73,7 +73,7 @@ public class StandardHandlerUsingAes128 extends StandardHandlerUsingStandard128 
     }
 
     @Override
-    public Decryptor getDecryptor() {
+    public IDecryptor getDecryptor() {
         return new AesDecryptor(nextObjectKey, 0, nextObjectKeySize);
     }
 
@@ -97,7 +97,7 @@ public class StandardHandlerUsingAes128 extends StandardHandlerUsingStandard128 
     @Override
     protected void setSpecificHandlerDicEntries(PdfDictionary encryptionDictionary, boolean encryptMetadata, boolean embeddedFilesOnly) {
         if (!encryptMetadata) {
-            encryptionDictionary.put(PdfName.EncryptMetadata, PdfBoolean.PdfFalse);
+            encryptionDictionary.put(PdfName.EncryptMetadata, PdfBoolean.FALSE);
         }
         encryptionDictionary.put(PdfName.R, new PdfNumber(4));
         encryptionDictionary.put(PdfName.V, new PdfNumber(4));

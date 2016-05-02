@@ -94,7 +94,7 @@ public class Matrix {
      * @param tx
      * @param ty
      */
-    public Matrix(float tx, float ty){
+    public Matrix(float tx, float ty) {
         vals[I31] = tx;
         vals[I32] = ty;
     }

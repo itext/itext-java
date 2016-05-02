@@ -46,16 +46,14 @@ package com.itextpdf.io.image;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.codec.Jbig2SegmentReader;
-import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.io.source.RandomAccessSource;
+import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Jbig2ImageHelper {
+class Jbig2ImageHelper {
 
     private byte[] globals;
 
@@ -75,47 +73,16 @@ public class Jbig2ImageHelper {
         }
     }
 
-    public static void processImage(Image jbig2, ByteArrayOutputStream stream) {
+    public static void processImage(ImageData jbig2) {
         if (jbig2.getOriginalType() != ImageType.JBIG2)
             throw new IllegalArgumentException("JBIG2 image expected");
-        Jbig2Image image = (Jbig2Image)jbig2;
-
-        if (stream != null) {
-            updateStream(stream, image);
-        }
-    }
-
-
-    private static void updateStream(ByteArrayOutputStream stream, Jbig2Image image) {
-        byte[] data;
-        if (image.getUrl() != null) {
-            InputStream jbig2Stream = null;
-            try {
-                jbig2Stream = image.getUrl().openStream();
-                int read;
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                byte[] bytes = new byte[4096];
-                while ((read = jbig2Stream.read(bytes)) != -1) {
-                    baos.write(bytes, 0, read);
-                }
-                jbig2Stream.close();
-                data = baos.toByteArray();
-                baos.flush();
-                baos.close();
-            } catch (java.io.IOException e) {
-                throw new IOException(IOException.Jbig2ImageException, e);
-            } finally {
-                if (jbig2Stream != null) {
-                    try {
-                        jbig2Stream.close();
-                    } catch (java.io.IOException ignored) { }
-                }
-            }
-        } else {
-            data = image.getData();
-        }
+        Jbig2ImageData image = (Jbig2ImageData)jbig2;
         try {
-            RandomAccessSource ras = new RandomAccessSourceFactory().createSource(data);
+            IRandomAccessSource ras;
+            if (image.getData() == null) {
+                image.loadData();
+            }
+            ras = new RandomAccessSourceFactory().createSource(image.getData());
             RandomAccessFileOrArray raf = new RandomAccessFileOrArray(ras);
             Jbig2SegmentReader sr = new Jbig2SegmentReader(raf);
             sr.read();
@@ -128,7 +95,6 @@ public class Jbig2ImageHelper {
             image.setColorSpace(1);
             //TODO JBIG2 globals caching
             byte[] globals = sr.getGlobal(true);
-
 
             //TODO due to the fact, that streams now may be transformed to indirect objects only on writing,
             //pdfStream.getDocument() cannot longer be the sign of inline/indirect images
@@ -145,8 +111,7 @@ public class Jbig2ImageHelper {
             image.setFilter("JBIG2Decode");
             image.setColorSpace(1);
             image.setBpc(1);
-
-            stream.write(p.getData(true));
+            image.data = p.getData(true);
         } catch (java.io.IOException e) {
             throw new IOException(IOException.Jbig2ImageException, e);
         }

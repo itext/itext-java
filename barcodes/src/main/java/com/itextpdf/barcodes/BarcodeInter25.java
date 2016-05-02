@@ -64,7 +64,7 @@ import java.awt.Image;
  * <pre>
  * x = 0.8f;
  * n = 2;
- * font = new PdfType1Font(document, new Type1Font(FontConstants.HELVETICA, PdfEncodings.WINANSI));
+ * font = new PdfType1Font(document, new TYPE_1_FONT(FontConstants.HELVETICA, PdfEncodings.WINANSI));
  * size = 8;
  * baseline = size;
  * barHeight = size * 3;
@@ -109,7 +109,7 @@ public class BarcodeInter25 extends Barcode1D {
             generateChecksum = false;
             checksumText = false;
         } catch (Exception e) {
-            throw new PdfException(e.getLocalizedMessage());
+            throw new PdfException(e);
         }
     }
 

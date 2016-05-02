@@ -1,12 +1,15 @@
 package com.itextpdf.layout;
 
-import com.itextpdf.io.image.ImageFactory;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.Div;
@@ -29,11 +32,11 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class AlignmentTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/AlignmentTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/AlignmentTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/AlignmentTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/AlignmentTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
@@ -46,7 +49,7 @@ public class AlignmentTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Paragraph paragraph = new Paragraph().setTextAlignment(Property.TextAlignment.JUSTIFIED);
+        Paragraph paragraph = new Paragraph().setTextAlignment(TextAlignment.JUSTIFIED);
         for (int i = 0; i < 21; i++) {
             paragraph.add(new Text ("Hello World! Hello People! " +
                     "Hello Sky! Hello Sun! Hello Moon! Hello Stars!").setBackgroundColor(DeviceRgb.RED));
@@ -66,7 +69,7 @@ public class AlignmentTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Paragraph paragraph = new Paragraph().setTextAlignment(Property.TextAlignment.JUSTIFIED);
+        Paragraph paragraph = new Paragraph().setTextAlignment(TextAlignment.JUSTIFIED);
         paragraph.add(new Text("Hello World!")).add(new Text(" ")).add(new Text("Hello People! ")).add("End");
         document.add(paragraph);
 
@@ -83,7 +86,7 @@ public class AlignmentTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Paragraph paragraph = new Paragraph().setTextAlignment(Property.TextAlignment.JUSTIFIED);
+        Paragraph paragraph = new Paragraph().setTextAlignment(TextAlignment.JUSTIFIED);
         for (int i = 0; i < 21; i++) {
             paragraph.add(new Text("Hello World! Hello People! " +
                     "Hello Sky! Hello Sun! Hello Moon! Hello Stars!").setBorder(new SolidBorder(Color.GREEN, 0.1f))).setMultipliedLeading(1);
@@ -103,7 +106,7 @@ public class AlignmentTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Paragraph paragraph = new Paragraph().setTextAlignment(Property.TextAlignment.JUSTIFIED);
+        Paragraph paragraph = new Paragraph().setTextAlignment(TextAlignment.JUSTIFIED);
         for (int i = 0; i < 21; i++) {
             paragraph.add(new Text("Hello World! Hello People! " +
                     "Hello Sky! Hello Sun! Hello Moon! Hello Stars!")).setFixedLeading(24);
@@ -123,7 +126,7 @@ public class AlignmentTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Paragraph paragraph = new Paragraph().setTextAlignment(Property.TextAlignment.JUSTIFIED);
+        Paragraph paragraph = new Paragraph().setTextAlignment(TextAlignment.JUSTIFIED);
         paragraph.add("Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add. You can also type a keyword to search online for the video that best fits your document.\n" +
                 "To make your document look professionally produced, Word provides header, footer, cover page, and text box designs that complement each other. For example, you can add a matching cover page, header, and sidebar. Click Insert and then choose the elements you want from the different galleries.\n" +
                 "Themes and styles also help keep your document coordinated. When you click Design and choose a new Theme, the pictures, charts, and SmartArt graphics change to match your new theme. When you apply styles, your headings change to match the new theme.\n" +
@@ -144,7 +147,7 @@ public class AlignmentTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Paragraph paragraph = new Paragraph().setTextAlignment(Property.TextAlignment.JUSTIFIED_ALL);
+        Paragraph paragraph = new Paragraph().setTextAlignment(TextAlignment.JUSTIFIED_ALL);
         paragraph.add("Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add. You can also type a keyword to search online for the video that best fits your document.\n" +
                 "To make your document look professionally produced, Word provides header, footer, cover page, and text box designs that complement each other. For example, you can add a matching cover page, header, and sidebar. Click Insert and then choose the elements you want from the different galleries.\n" +
                 "Themes and styles also help keep your document coordinated. When you click Design and choose a new Theme, the pictures, charts, and SmartArt graphics change to match your new theme. When you apply styles, your headings change to match the new theme.\n" +
@@ -165,17 +168,17 @@ public class AlignmentTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        List list = new List(Property.ListNumberingType.GREEK_LOWER);
+        List list = new List(ListNumberingType.GREEK_LOWER);
         for (int i = 0; i < 10; i++) {
             list.add("Item # " + (i + 1));
         }
         list.setWidth(250);
-        list.setHorizontalAlignment(Property.HorizontalAlignment.CENTER);
+        list.setHorizontalAlignment(HorizontalAlignment.CENTER);
         list.setBackgroundColor(Color.GREEN);
 
         document.add(list);
-        list.setHorizontalAlignment(Property.HorizontalAlignment.RIGHT).setBackgroundColor(Color.RED);
-        list.setTextAlignment(Property.TextAlignment.CENTER);
+        list.setHorizontalAlignment(HorizontalAlignment.RIGHT).setBackgroundColor(Color.RED);
+        list.setTextAlignment(TextAlignment.CENTER);
         document.add(list);
 
         document.close();
@@ -192,10 +195,10 @@ public class AlignmentTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         Div div = new Div();
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getJpegImage(new File(sourceFolder + "Desert.jpg").toURI().toURL()));
-        Image image1 = new Image(xObject, 100).setHorizontalAlignment(Property.HorizontalAlignment.RIGHT);
-        Image image2 = new Image(xObject, 100).setHorizontalAlignment(Property.HorizontalAlignment.CENTER);
-        Image image3 = new Image(xObject, 100).setHorizontalAlignment(Property.HorizontalAlignment.LEFT);
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createJpeg(new File(sourceFolder + "Desert.jpg").toURI().toURL()));
+        Image image1 = new Image(xObject, 100).setHorizontalAlignment(HorizontalAlignment.RIGHT);
+        Image image2 = new Image(xObject, 100).setHorizontalAlignment(HorizontalAlignment.CENTER);
+        Image image3 = new Image(xObject, 100).setHorizontalAlignment(HorizontalAlignment.LEFT);
 
         div.add(image1).add(image2).add(image3);
 
@@ -220,8 +223,8 @@ public class AlignmentTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageFactory.getJpegImage(new File(sourceFolder + "Desert.jpg").toURI().toURL()));
-        Image image = new Image(xObject, 100).setHorizontalAlignment(Property.HorizontalAlignment.RIGHT);
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createJpeg(new File(sourceFolder + "Desert.jpg").toURI().toURL()));
+        Image image = new Image(xObject, 100).setHorizontalAlignment(HorizontalAlignment.RIGHT);
 
         doc.add(image);
 

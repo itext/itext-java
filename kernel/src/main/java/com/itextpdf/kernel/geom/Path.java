@@ -59,7 +59,7 @@ public class Path {
     private static final String START_PATH_ERR_MSG = "Path shall start with \"re\" or \"m\" operator";
 
     private List<Subpath> subpaths = new ArrayList<>();
-    private Point2D currentPoint;
+    private Point currentPoint;
 
     public Path() {
     }
@@ -99,7 +99,6 @@ public class Path {
             for (Subpath subpath : subpaths) {
                 this.subpaths.add(new Subpath(subpath));
             }
-
             currentPoint = this.subpaths.get(subpaths.size() - 1).getLastPoint();
         }
     }
@@ -109,16 +108,16 @@ public class Path {
      *
      * @return The current point.
      */
-    public Point2D getCurrentPoint() {
+    public Point getCurrentPoint() {
         return currentPoint;
     }
 
     /**
      * Begins a new subpath by moving the current point to coordinates <CODE>(x, y)</CODE>.
      */
-    public void moveTo(final float x, final float y) {
-        currentPoint = new Point2D.Float(x, y);
-        Subpath lastSubpath = getLastSubpath();
+    public void moveTo(float x, float y) {
+        currentPoint = new Point(x, y);
+        Subpath lastSubpath = subpaths.size() > 0 ? subpaths.get(subpaths.size() - 1) : null;
 
         if (lastSubpath != null && lastSubpath.isSinglePointOpen()) {
             lastSubpath.setStartPoint(currentPoint);
@@ -130,12 +129,11 @@ public class Path {
     /**
      * Appends a straight line segment from the current point to the point <CODE>(x, y)</CODE>.
      */
-    public void lineTo(final float x, final float y) {
+    public void lineTo(float x, float y) {
         if (currentPoint == null) {
             throw new RuntimeException(START_PATH_ERR_MSG);
         }
-
-        Point2D targetPoint = new Point2D.Float(x, y);
+        Point targetPoint = new Point(x, y);
         getLastSubpath().addSegment(new Line(currentPoint, targetPoint));
         currentPoint = targetPoint;
     }
@@ -144,16 +142,16 @@ public class Path {
      * Appends a cubic Bezier curve to the current path. The curve shall extend from
      * the current point to the point <CODE>(x3, y3)</CODE>.
      */
-    public void curveTo(final float x1, final float y1, final float x2, final float y2, final float x3, final float y3) {
+    public void curveTo(float x1, float y1, float x2, float y2, float x3, float y3) {
         if (currentPoint == null) {
             throw new RuntimeException(START_PATH_ERR_MSG);
         }
         // Numbered in natural order
-        Point2D secondPoint = new Point2D.Float(x1, y1);
-        Point2D thirdPoint = new Point2D.Float(x2, y2);
-        Point2D fourthPoint = new Point2D.Float(x3, y3);
+        Point secondPoint = new Point(x1, y1);
+        Point thirdPoint = new Point(x2, y2);
+        Point fourthPoint = new Point(x3, y3);
 
-        List<Point2D> controlPoints = new ArrayList(Arrays.asList(currentPoint, secondPoint, thirdPoint, fourthPoint));
+        List<Point> controlPoints = new ArrayList<>(Arrays.asList(currentPoint, secondPoint, thirdPoint, fourthPoint));
         getLastSubpath().addSegment(new BezierCurve(controlPoints));
 
         currentPoint = fourthPoint;
@@ -164,11 +162,10 @@ public class Path {
      * the current point to the point <CODE>(x3, y3)</CODE> with the note that the current
      * point represents two control points.
      */
-    public void curveTo(final float x2, final float y2, final float x3, final float y3) {
+    public void curveTo(float x2, float y2, float x3, float y3) {
         if (currentPoint == null) {
             throw new RuntimeException(START_PATH_ERR_MSG);
         }
-
         curveTo((float) currentPoint.getX(), (float) currentPoint.getY(), x2, y2, x3, y3);
     }
 
@@ -177,11 +174,10 @@ public class Path {
      * the current point to the point <CODE>(x3, y3)</CODE> with the note that the (x3, y3)
      * point represents two control points.
      */
-    public void curveFromTo(final float x1, final float y1, final float x3, final float y3) {
+    public void curveFromTo(float x1, float y1, float x3, float y3) {
         if (currentPoint == null) {
             throw new RuntimeException(START_PATH_ERR_MSG);
         }
-
         curveTo(x1, y1, x3, y3, x3, y3);
     }
 
@@ -195,7 +191,7 @@ public class Path {
     /**
      * Appends a rectangle to the current path as a complete subpath.
      */
-    public void rectangle(final float x, final float y, final float w, final float h) {
+    public void rectangle(float x, float y, float w, float h) {
         moveTo(x, y);
         lineTo(x + w, y);
         lineTo(x + w, y + h);
@@ -210,7 +206,7 @@ public class Path {
         Subpath lastSubpath = getLastSubpath();
         lastSubpath.setClosed(true);
 
-        Point2D startPoint = lastSubpath.getStartPoint();
+        Point startPoint = lastSubpath.getStartPoint();
         moveTo((float) startPoint.getX(), (float) startPoint.getY());
     }
 
@@ -227,23 +223,22 @@ public class Path {
      * Adds additional line to each closed subpath and makes the subpath unclosed.
      * The line connects the last and the first points of the subpaths.
      *
-     * @returns Indices of modified subpaths.
+     * @return Indices of modified subpaths.
      */
     public List<Integer> replaceCloseWithLine() {
         List<Integer> modifiedSubpathsIndices = new ArrayList<>();
         int i = 0;
 
-            /* It could be replaced with "for" cycle, because IList in C# provides effective
-             * access by index. In Java List interface has at least one implementation (LinkedList)
-             * which is "bad" for access elements by index.
-             */
+        /* It could be replaced with "for" cycle, because IList in C# provides effective
+         * access by index. In Java List interface has at least one implementation (LinkedList)
+         * which is "bad" for access elements by index.
+         */
         for (Subpath subpath : subpaths) {
             if (subpath.isClosed()) {
                 subpath.setClosed(false);
                 subpath.addSegment(new Line(subpath.getLastPoint(), subpath.getStartPoint()));
                 modifiedSubpathsIndices.add(i);
             }
-
             ++i;
         }
 
@@ -258,6 +253,7 @@ public class Path {
     }
 
     private Subpath getLastSubpath() {
-        return subpaths.size() > 0 ? subpaths.get(subpaths.size() - 1) : null;
+        assert subpaths.size() > 0;
+        return subpaths.get(subpaths.size() - 1);
     }
 }

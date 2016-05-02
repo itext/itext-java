@@ -46,17 +46,18 @@ package com.itextpdf.io.util;
 
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.io.source.OutputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.io.source.RandomAccessSource;
+import com.itextpdf.io.source.IRandomAccessSource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 public final class StreamUtil {
 
-    private static final int transferSize = 64 * 1024;
+    private static final int TRANSFER_SIZE = 64 * 1024;
 
     private static final byte[] escR = ByteUtils.getIsoBytes("\\r");
     private static final byte[] escN = ByteUtils.getIsoBytes("\\n");
@@ -76,7 +77,7 @@ public final class StreamUtil {
      * @param size the number of bytes to skip
      * @throws java.io.IOException
      */
-    public static void skip(InputStream stream, int size) throws java.io.IOException {
+    public static void skip(InputStream stream, long size) throws java.io.IOException {
         long n;
         while (size > 0) {
             n = stream.skip(size);
@@ -93,7 +94,7 @@ public final class StreamUtil {
      * @param bytes the {@code byte} array to escape
      * @return an escaped {@code byte} array
      */
-    public static byte[] createEscapedString(byte bytes[]) {
+    public static byte[] createEscapedString(byte[] bytes) {
         return createBufferedEscapedString(bytes).toByteArray();
     }
 
@@ -105,12 +106,20 @@ public final class StreamUtil {
      */
     public static void writeEscapedString(OutputStream outputStream, byte[] bytes) {
         ByteBuffer buf = createBufferedEscapedString(bytes);
-        outputStream.writeBytes(buf.getInternalBuffer(), 0, buf.size());
+        try {
+            outputStream.write(buf.getInternalBuffer(), 0, buf.size());
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.CannotWriteBytes, e);
+        }
     }
 
     public static void writeHexedString(OutputStream outputStream, byte[] bytes) {
         ByteBuffer buf = createBufferedHexedString(bytes);
-        outputStream.writeBytes(buf.getInternalBuffer(), 0, buf.size());
+        try {
+            outputStream.write(buf.getInternalBuffer(), 0, buf.size());
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.CannotWriteBytes, e);
+        }
     }
 
     public static ByteBuffer createBufferedEscapedString(byte[] bytes) {
@@ -163,9 +172,9 @@ public final class StreamUtil {
     }
 
     public static void transferBytes(InputStream input, java.io.OutputStream output) throws java.io.IOException {
-        byte[] buffer = new byte[transferSize];
+        byte[] buffer = new byte[TRANSFER_SIZE];
         for (; ; ) {
-            int len = input.read(buffer, 0, transferSize);
+            int len = input.read(buffer, 0, TRANSFER_SIZE);
             if (len > 0) {
                 output.write(buffer, 0, len);
             } else {
@@ -175,9 +184,9 @@ public final class StreamUtil {
     }
 
     public static void transferBytes(RandomAccessFileOrArray input, java.io.OutputStream output) throws java.io.IOException {
-        byte[] buffer = new byte[transferSize];
+        byte[] buffer = new byte[TRANSFER_SIZE];
         for (; ; ) {
-            int len = input.read(buffer, 0, transferSize);
+            int len = input.read(buffer, 0, TRANSFER_SIZE);
             if (len > 0) {
                 output.write(buffer, 0, len);
             } else {
@@ -194,7 +203,7 @@ public final class StreamUtil {
      * @throws java.io.IOException if there is a problem reading from the input stream
      */
     public static byte[] inputStreamToArray(InputStream stream) throws java.io.IOException {
-        byte b[] = new byte[8192];
+        byte[] b = new byte[8192];
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         while (true) {
             int read = stream.read(b);
@@ -216,7 +225,7 @@ public final class StreamUtil {
      * @param output   the {@code OutputStream} copy to.
      * @throws java.io.IOException on error.
      */
-    public static void copyBytes(RandomAccessSource source, long start, long length, java.io.OutputStream output) throws java.io.IOException {
+    public static void copyBytes(IRandomAccessSource source, long start, long length, java.io.OutputStream output) throws java.io.IOException {
         if (length <= 0) {
             return;
         }
@@ -230,6 +239,29 @@ public final class StreamUtil {
             output.write(buf, 0, (int) n);
             idx += n;
             length -= n;
+        }
+    }
+
+    /**
+     *
+     * Reads {@code len}  bytes from an input stream.
+     *
+     * @param b the buffer into which the data is read.
+     * @param off an int specifying the offset into the data.
+     * @param len an int specifying the number of bytes to read.
+     * @exception EOFException  if this stream reaches the end before reading all the bytes.
+     * @exception IOException   if an I/O error occurs.
+     */
+    public static void readFully(InputStream input, byte[] b, int off, int len) throws IOException {
+        if (len < 0)
+            throw new IndexOutOfBoundsException();
+        int n = 0;
+        while (n < len) {
+            int count = input.read(b, off + n, len - n);
+            if (count < 0) {
+                throw new EOFException();
+            }
+            n += count;
         }
     }
 }

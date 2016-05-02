@@ -54,7 +54,6 @@ public class PdfException extends RuntimeException {
     public static final String _1IsAnUnknownGraphicsStateDictionary = "{0} is.an.unknown.graphics.state.dictionary";
     public static final String _1IsNotAValidPlaceableWindowsMetafile = "{0} is.not.a.valid.placeable.windows.metafile";
 
-    public static final String AnnotationHasInvalidStructParentValue = "annotation.has.invalid.struct.parent.value";
     public static final String AnnotShallHaveReferenceToPage = "annot.shall.have.reference.to.page";
     public static final String AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible = "append.mode.requires.a.document.without.errors.even.if.recovery.was.possible";
     public static final String AuthenticatedAttributeIsMissingTheDigest = "authenticated.attribute.is.missing.the.digest";
@@ -86,9 +85,9 @@ public class PdfException extends RuntimeException {
     public static final String CannotParseContentStream = "could.not.parse.content.stream";
     public static final String CannotReadAStreamInOrderToAppendNewBytes = "cannot.read.a.stream.in.order.to.append.new.bytes.reason {0}";
     public static final String CannotReadPdfObject = "cannot.read.pdf.object";
-    public static final String CannotModifyTagStructureWhenItWasPartlyFlushed = "cannot.modify.tag.structure.when.it.was.partly.flushed";
     public static final String CannotRemoveDocumentRootTag = "cannot.remove.document.root.tag";
-    public static final String CannotRemoveTagStructureElementsIfTagStructureWasPartiallyFlushed = "cannot.remove.tag.structure.elements.if.tag.structure.was.partially.flushed";
+    public static final String CannotRemoveMarkedContentReferenceBecauseItsPageWasAlreadyFlushed = "cannot.remove.marked.content.reference.because.its.page.was.already.flushed";
+    public static final String CannotRemoveTagBecauseItsParentIsFlushed = "cannot.remove.tag.because.its.parent.is.flushed";
     public static final String CannotSetDataToPdfstreamWhichWasCreatedByInputstream = "cannot.set.data.to.pdfstream.which.was.created.by.inputstream";
     public static final String CannotSplitDocumentThatIsBeingWritten = "cannot.split.document.that.is.being.written";
     public static final String CannotWritePdfStream = "cannot.write.pdf.stream";
@@ -153,8 +152,8 @@ public class PdfException extends RuntimeException {
     public static final String InvalidPageStructurePagesPagesMustBePdfDictionary = "invalid.page.structure.pages.must.be.pdfdictionary";
     public static final String InvalidRangeArray = "invalid.range.array";
     public static final String InvalidOffsetForObject1 = "invalid.offset.for.object {0}";
-    public static final String InvalidXrefSection = "invalid.xref.section";
     public static final String InvalidXrefStream = "invalid.xref.stream";
+    public static final String InvalidXrefTable = "invalid.xref.table";
     public static final String IoException = "io.exception";
     public static final String IsNotAnAcceptableValueForTheField = "{0}.is.not.an.acceptable.value.for.the.field.{1}";
     public static final String IsNotWmfImage = "is.not.wmf.image";
@@ -201,6 +200,7 @@ public class PdfException extends RuntimeException {
     public static final String RoleIsNotMappedWithAnyStandardRole = "role.is.not.mapped.with.any.standard.role";
     public static final String SignatureWithName1IsNotTheLastItDoesntCoverWholeDocument = "signature.with.name.1.is.not.the.last.it.doesnt.cover.whole.document";
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";
+    public static final String StructParentIndexNotFoundInTaggedObject = "struct.parent.index.not.found.in.tagged.object";
     public static final String StructureElementShallContainParentObject = "structure.element.shall.contain.parent.object";
     public static final String TagCannotBeMovedToTheAnotherDocumentsTagStructure = "tag.cannot.be.moved.to.the.another.documents.tag.structure";
     public static final String TagFromTheExistingTagStructureIsFlushedCannotAddCopiedPageTags = "tag.from.the.existing.tag.structure.is.flushed.cannot.add.copied.page.tags";
@@ -221,17 +221,21 @@ public class PdfException extends RuntimeException {
     public static final String TrailerPrevEntryPointsToItsOwnCrossReferenceSection = "trailer.prev.entry.points.to.its.own.cross.reference.section";
     public static final String UnbalancedBeginEndMarkedContentOperators = "unbalanced.begin.end.marked.content.operators";
     public static final String UnbalancedLayerOperators = "unbalanced.layer.operators";
+    public static final String UnbalancedSaveRestoreStateOperators = "unbalanced.save.restore.state.operators";
     public static final String UnexpectedCharacter1FoundAfterIDInInlineImage = "unexpected.character.1.found.after.ID.in.inline.image";
     public static final String UnexpectedCloseBracket = "unexpected.close.bracket";
     public static final String UnexpectedColorSpace1 = "unexpected.color.space {0}";
     public static final String UnexpectedEndOfFile = "unexpected.end.of.file";
     public static final String UnexpectedGtGt = "unexpected.gt.gt";
+    public static final String UnexpectedShadingType = "unexpected.shading.type";
     public static final String UnknownEncryptionTypeREq1 = "unknown.encryption.type.r.eq {0}";
     public static final String UnknownEncryptionTypeVEq1 = "unknown.encryption.type.v.eq {0}";
+    public static final String UnknownPdfException = "unknown.pdf.exception";
     public static final String UnknownHashAlgorithm1 = "unknown.hash.algorithm {0}";
     public static final String UnknownKeyAlgorithm1 = "unknown.key.algorithm {0}";
     public static final String UnknownColorFormatMustBeRGBorRRGGBB = "unknown.color.format.must.be.rgb.or.rrggbb";
     public static final String VerificationAlreadyOutput = "verification.already.output";
+    public static final String WhenAddingObjectReferenceToTheTagTreeItMustBeConnectedToNotFlushedObject = "when.adding.object.reference.to.the.tag.tree.it.must.be.connected.to.not.flushed.object";
     public static final String WhitePointIsIncorrectlySpecified = "white.point.is.incorrectly.specified";
     public static final String WmfImageException = "wmf.image.exception";
     public static final String WrongFormFieldAddAnnotationToTheField = "wrong.form.field.add.annotation.to.the.field";
@@ -249,7 +253,7 @@ public class PdfException extends RuntimeException {
     }
 
     public PdfException(Throwable cause) {
-        super(cause);
+        this(UnknownPdfException, cause);
     }
 
     public PdfException(String message, Object object) {
@@ -268,10 +272,10 @@ public class PdfException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        if (messageParams == null || messageParams.isEmpty()) {
+        if (messageParams == null || messageParams.size() == 0) {
             return super.getMessage();
         } else {
-            return MessageFormat.format(super.getMessage(), messageParams.toArray());
+            return MessageFormat.format(super.getMessage(), getMessageParams());
         }
     }
 
@@ -279,5 +283,13 @@ public class PdfException extends RuntimeException {
         this.messageParams = new ArrayList<>();
         Collections.addAll(this.messageParams, messageParams);
         return this;
+    }
+
+    protected Object[] getMessageParams() {
+        Object[] parameters = new Object[messageParams.size()];
+        for (int i = 0; i < messageParams.size(); i++) {
+            parameters[i] = messageParams.get(i);
+        }
+        return parameters;
     }
 }

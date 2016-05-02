@@ -22,11 +22,11 @@ import static org.junit.Assert.assertNull;
 @Category(IntegrationTest.class)
 public class PdfCopyTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfCopyTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfCopyTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfCopyTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfCopyTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
@@ -62,7 +62,7 @@ public class PdfCopyTest extends ExtendedITextTest {
         pdfDoc1.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
-        pdfDoc1.getCatalog().getPdfObject().put(new PdfName("a"), new PdfName("b").makeIndirect(pdfDoc1));
+        pdfDoc1.getCatalog().put(new PdfName("a"), new PdfName("b").makeIndirect(pdfDoc1));
         PdfPage page1 = pdfDoc1.addNewPage();
         page1.flush();
         pdfDoc1.close();
@@ -192,6 +192,7 @@ public class PdfCopyTest extends ExtendedITextTest {
         PdfDocument sourceDoc = new PdfDocument(reader);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
+        sourceDoc.initializeOutlines();
         sourceDoc.copyPagesTo(1, sourceDoc.getNumberOfPages(), pdfDoc);
 
         pdfDoc.close();

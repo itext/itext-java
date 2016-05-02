@@ -44,11 +44,9 @@
  */
 package com.itextpdf.test;
 
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
-
 
 public abstract class ExtendedITextTest extends ITextTest {
 
@@ -62,5 +60,4 @@ public abstract class ExtendedITextTest extends ITextTest {
     @After
     public void afterTestMethodAction(){
     }
-
 }

@@ -51,7 +51,7 @@ import java.util.List;
  * A structure to store each part of a SOM name and link it to the next part
  * beginning from the lower hierarchy.
  */
-public  class InverseStore {
+class InverseStore {
     protected List<String> part = new ArrayList<>();
     protected List<Object> follow = new ArrayList<>();
 

@@ -45,15 +45,17 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.AreaBreakType;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.AreaBreakRenderer;
+import com.itextpdf.layout.renderer.IRenderer;
 
 /**
  * A layout object that terminates the current content area and creates a new
  * one. If no {@link PageSize} is given, the new content area will have the same
  * size as the current one.
  */
-public class AreaBreak extends AbstractElement {
+public class AreaBreak extends AbstractElement<AreaBreak> {
 
     protected PageSize pageSize;
 
@@ -62,14 +64,14 @@ public class AreaBreak extends AbstractElement {
      * current one.
      */
     public AreaBreak() {
-        this(Property.AreaBreakType.NEW_AREA);
+        this(AreaBreakType.NEXT_AREA);
     }
 
     /**
      * Creates an AreaBreak that terminates a specified area type.
-     * @param areaBreakType an {@link Property.AreaBreakType area break type}
+     * @param areaBreakType an {@link AreaBreakType area break type}
      */
-    public AreaBreak(Property.AreaBreakType areaBreakType) {
+    public AreaBreak(AreaBreakType areaBreakType) {
         setProperty(Property.AREA_BREAK_TYPE, areaBreakType);
     }
     
@@ -79,7 +81,7 @@ public class AreaBreak extends AbstractElement {
      * @param pageSize the size of the new content area
      */
     public AreaBreak(PageSize pageSize) {
-        this(Property.AreaBreakType.NEW_PAGE);
+        this(AreaBreakType.NEXT_PAGE);
         this.pageSize = pageSize;
     }
 
@@ -101,14 +103,14 @@ public class AreaBreak extends AbstractElement {
 
     /**
      * Gets the type of area that this AreaBreak will terminate.
-     * @return the current {@link Property.AreaBreakType area break type}
+     * @return the current {@link AreaBreakType area break type}
      */
-    public Property.AreaBreakType getType() {
-        return (Property.AreaBreakType) getProperty(Property.AREA_BREAK_TYPE);
+    public AreaBreakType getType() {
+        return (AreaBreakType) getProperty(Property.AREA_BREAK_TYPE);
     }
 
     @Override
-    protected AreaBreakRenderer makeNewRenderer() {
+    protected IRenderer makeNewRenderer() {
         return new AreaBreakRenderer(this);
     }
 }

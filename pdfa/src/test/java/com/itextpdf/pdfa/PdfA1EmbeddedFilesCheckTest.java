@@ -16,7 +16,7 @@ import java.io.InputStream;
 
 @Category(IntegrationTest.class)
 public class PdfA1EmbeddedFilesCheckTest {
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -30,10 +30,9 @@ public class PdfA1EmbeddedFilesCheckTest {
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, outputIntent);
-        pdfDocument.createXmpMetadata();
 
         PdfDictionary fileNames = new PdfDictionary();
-        pdfDocument.getCatalog().getPdfObject().put(PdfName.Names, fileNames);
+        pdfDocument.getCatalog().put(PdfName.Names, fileNames);
 
         PdfDictionary embeddedFiles = new PdfDictionary();
         fileNames.put(PdfName.EmbeddedFiles, embeddedFiles);
@@ -59,10 +58,9 @@ public class PdfA1EmbeddedFilesCheckTest {
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, outputIntent);
-        pdfDocument.createXmpMetadata();
 
         PdfStream stream = new PdfStream();
-        pdfDocument.getCatalog().getPdfObject().put(new PdfName("testStream"), stream);
+        pdfDocument.getCatalog().put(new PdfName("testStream"), stream);
 
         PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", "sample", null, null,  true);
         stream.put(PdfName.F, spec.getPdfObject());
@@ -81,10 +79,9 @@ public class PdfA1EmbeddedFilesCheckTest {
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, outputIntent);
-        pdfDocument.createXmpMetadata();
 
         PdfStream stream = new PdfStream();
-        pdfDocument.getCatalog().getPdfObject().put(new PdfName("testStream"), stream);
+        pdfDocument.getCatalog().put(new PdfName("testStream"), stream);
 
         PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", "sample", null, null,  true);
         stream.put(new PdfName("fileData"), spec.getPdfObject());

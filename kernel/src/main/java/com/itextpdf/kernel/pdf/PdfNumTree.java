@@ -51,7 +51,7 @@ public class PdfNumTree implements Serializable {
 
     private static final long serialVersionUID = 2636796232945164670L;
 
-    private static final int NodeSize = 40;
+    private static final int NODE_SIZE = 40;
 
     private PdfCatalog catalog;
     private Map<Integer, PdfObject> items = new HashMap<>();
@@ -100,7 +100,7 @@ public class PdfNumTree implements Serializable {
         Integer[] numbers = new Integer[items.size()];
         numbers = items.keySet().toArray(numbers);
         Arrays.sort(numbers);
-        if (numbers.length <= NodeSize) {
+        if (numbers.length <= NODE_SIZE) {
             PdfDictionary dic = new PdfDictionary();
             PdfArray ar = new PdfArray();
             for (int k = 0; k < numbers.length; ++k) {
@@ -110,11 +110,11 @@ public class PdfNumTree implements Serializable {
             dic.put(PdfName.Nums, ar);
             return dic;
         }
-        int skip = NodeSize;
-        PdfDictionary[] kids = new PdfDictionary[(numbers.length + NodeSize - 1) / NodeSize];
+        int skip = NODE_SIZE;
+        PdfDictionary[] kids = new PdfDictionary[(numbers.length + NODE_SIZE - 1) / NODE_SIZE];
         for (int k = 0; k < kids.length; ++k) {
-            int offset = k * NodeSize;
-            int end = Math.min(offset + NodeSize, numbers.length);
+            int offset = k * NODE_SIZE;
+            int end = Math.min(offset + NODE_SIZE, numbers.length);
             PdfDictionary dic = new PdfDictionary();
             PdfArray arr = new PdfArray();
             arr.add(new PdfNumber(numbers[offset]));
@@ -131,7 +131,7 @@ public class PdfNumTree implements Serializable {
         }
         int top = kids.length;
         while (true) {
-            if (top <= NodeSize) {
+            if (top <= NODE_SIZE) {
                 PdfArray arr = new PdfArray();
                 for (int k = 0; k < top; ++k)
                     arr.add(kids[k]);
@@ -139,11 +139,11 @@ public class PdfNumTree implements Serializable {
                 dic.put(PdfName.Kids, arr);
                 return dic;
             }
-            skip *= NodeSize;
+            skip *= NODE_SIZE;
             int tt = (numbers.length + skip - 1 )/ skip;
             for (int k = 0; k < tt; ++k) {
-                int offset = k * NodeSize;
-                int end = Math.min(offset + NodeSize, top);
+                int offset = k * NODE_SIZE;
+                int end = Math.min(offset + NODE_SIZE, top);
                 PdfDictionary dic = new PdfDictionary().makeIndirect(catalog.getDocument());
                 PdfArray arr = new PdfArray();
                 arr.add(new PdfNumber(numbers[k * skip]));
@@ -178,7 +178,7 @@ public class PdfNumTree implements Serializable {
                     leftOver = null;
                 }
                 if (k < nums.size()) {
-                    items.put(number.getIntValue(), nums.get(k));
+                    items.put(number.intValue(), nums.get(k));
                 } else {
                     return number;
                 }

@@ -61,14 +61,13 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -1354567597112193418L;
 	
-    protected final PdfPagesTree pageTree;
+    final private PdfPagesTree pageTree;
     protected Map<PdfName, PdfNameTree> nameTrees = new HashMap<>();
     protected PdfNumTree pageLabels;
     protected PdfOCProperties ocProperties;
 
-    private final static String OutlineRoot = "Outlines";
+    private static final String OutlineRoot = "Outlines";
     private PdfOutline outlines;
-    private boolean replaceNamedDestinations = true;
     //This HashMap contents all pages of the document and outlines associated to them
     private Map<PdfObject, List<PdfOutline>> pagesWithOutlines = new HashMap<>();
     //This flag determines if Outline tree of the document has been built via calling getOutlines method. If this flag is false all outline operations will be ignored
@@ -87,42 +86,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     protected PdfCatalog(PdfDocument pdfDocument) {
         this(new PdfDictionary().makeIndirect(pdfDocument));
-    }
-
-    public void addPage(PdfPage page) {
-        if (page.isFlushed())
-            throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted, page);
-        if (page.getDocument() != null && page.getDocument() != getDocument())
-            throw new PdfException(PdfException.Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3).setMessageParams(page, getDocument(), page.getDocument());
-        pageTree.addPage(page);
-    }
-
-    public void addPage(int index, PdfPage page) {
-        if (page.isFlushed())
-            throw new PdfException(PdfException.FlushedPageCannotBeAddedOrInserted, page);
-        if (page.getDocument() != null && page.getDocument() != getDocument())
-            throw new PdfException(PdfException.Page1CannotBeAddedToDocument2BecauseItBelongsToDocument3).setMessageParams(page, getDocument(), page.getDocument());
-        pageTree.addPage(index, page);
-    }
-
-    public PdfPage getPage(int pageNum) {
-        return pageTree.getPage(pageNum);
-    }
-
-    public PdfPage getPage(PdfDictionary pageDictionary) {
-        return pageTree.getPage(pageDictionary);
-    }
-
-    public int getNumberOfPages() {
-        return pageTree.getNumberOfPages();
-    }
-
-    public int getPageNumber(PdfPage page) {
-        return pageTree.getPageNumber(page);
-    }
-
-    public int getPageNumber(PdfDictionary pageDictionary) {
-        return pageTree.getPageNumber(pageDictionary);
     }
 
     /**
@@ -174,11 +137,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfCatalog setOpenAction(PdfDestination destination) {
-        return put(PdfName.OpenAction, destination);
+        return put(PdfName.OpenAction, destination.getPdfObject());
     }
 
     public PdfCatalog setOpenAction(PdfAction action) {
-        return put(PdfName.OpenAction, action);
+        return put(PdfName.OpenAction, action.getPdfObject());
     }
 
     public PdfCatalog setAdditionalAction(PdfName key, PdfAction action) {
@@ -186,36 +149,22 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
-    public boolean isReplaceNamedDestinations() {
-        return replaceNamedDestinations;
-    }
-
-    public void setReplaceNamedDestinations(boolean replaceNamedDestinations) {
-        this.replaceNamedDestinations = replaceNamedDestinations;
-    }
-
     /**
-     * This flag determines if Outline tree of the document has been built via calling getOutlines method. If this flag is false all outline operations will be ignored
+     * This method sets a page mode of the document.
+     * </p>
+     * Valid values are: {@code PdfName.UseNone}, {@code PdfName.UseOutlines}, {@code PdfName.UseThumbs},
+     * {@code PdfName.FullScreen},  {@code PdfName.UseOC}, {@code PdfName.UseAttachments}.
      *
-     * @return
-     */
-    public boolean isOutlineMode() {
-        return outlineMode;
-    }
-
-    /**
-     * This method sets a page mode of the document
-     *
-     * @param pageMode
-     * @return
+     * @param pageMode page mode.
+     * @return current instance of PdfCatalog
      */
     public PdfCatalog setPageMode(PdfName pageMode) {
-        if (!pageMode.equals(PdfName.UseNone) && !pageMode.equals(PdfName.UseOutlines) &&
-                !pageMode.equals(PdfName.UseThumbs) && !pageMode.equals(PdfName.FullScreen) &&
-                !pageMode.equals(PdfName.UseOC) && !pageMode.equals(PdfName.UseAttachments)) {
-            return this;
+        if (pageMode.equals(PdfName.UseNone) || pageMode.equals(PdfName.UseOutlines) ||
+                pageMode.equals(PdfName.UseThumbs) || pageMode.equals(PdfName.FullScreen) ||
+                pageMode.equals(PdfName.UseOC) || pageMode.equals(PdfName.UseAttachments)) {
+            return put(PdfName.PageMode, pageMode);
         }
-        return put(PdfName.PageMode, pageMode);
+        return this;
     }
 
     public PdfName getPageMode() {
@@ -228,12 +177,12 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @return
      */
     public PdfCatalog setPageLayout (PdfName pageLayout) {
-        if (!pageLayout.equals(PdfName.SinglePage) && !pageLayout.equals(PdfName.OneColumn) &&
-                !pageLayout.equals(PdfName.TwoColumnLeft) && !pageLayout.equals(PdfName.TwoColumnRight) &&
-                !pageLayout.equals(PdfName.TwoPageLeft) && !pageLayout.equals(PdfName.TwoPageRight)) {
-            return this;
+        if (pageLayout.equals(PdfName.SinglePage) || pageLayout.equals(PdfName.OneColumn) ||
+                pageLayout.equals(PdfName.TwoColumnLeft) || pageLayout.equals(PdfName.TwoColumnRight) ||
+                pageLayout.equals(PdfName.TwoPageLeft) || pageLayout.equals(PdfName.TwoPageRight)) {
+            return put(PdfName.PageLayout, pageLayout);
         }
-        return put(PdfName.PageLayout, pageLayout);
+        return this;
     }
 
     public PdfName getPageLayout(){
@@ -247,7 +196,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @return
      */
     public PdfCatalog setViewerPreferences(PdfViewerPreferences preferences) {
-        return put(PdfName.ViewerPreferences, preferences);
+        return put(PdfName.ViewerPreferences, preferences.getPdfObject());
     }
 
     public PdfViewerPreferences getViewerPreferences() {
@@ -262,7 +211,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This method gets Names tree from the catalog.
      * @param treeType type of the tree (Dests, AP, EmbeddedFiles etc).
-     * @return
+     * @return returns {@link PdfNameTree}
      */
     public PdfNameTree getNameTree(PdfName treeType) {
         PdfNameTree tree = nameTrees.get(treeType);
@@ -276,7 +225,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method returns the NumberTree of Page Labels
-     * @return
+     * @return returns {@link PdfNumTree}
      */
     public PdfNumTree getPageLabelsTree(boolean createIfNotExists) {
         if (pageLabels == null && (getPdfObject().containsKey(PdfName.PageLabels) || createIfNotExists)) {
@@ -307,15 +256,12 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             put(PdfName.Extensions, extensions);
         } else {
             PdfDictionary existingExtensionDict = extensions.getAsDictionary(extension.getPrefix());
-
-            if (extension != null) { // TODO: refactor
-                int diff = extension.getBaseVersion().compareTo(existingExtensionDict.getAsName(PdfName.BaseVersion));
-                if (diff < 0)
-                    return;
-                diff = extension.getExtensionLevel() - existingExtensionDict.getAsNumber(PdfName.ExtensionLevel).getIntValue();
-                if (diff <= 0)
-                    return;
-            }
+            int diff = extension.getBaseVersion().compareTo(existingExtensionDict.getAsName(PdfName.BaseVersion));
+            if (diff < 0)
+                return;
+            diff = extension.getExtensionLevel() - existingExtensionDict.getAsNumber(PdfName.ExtensionLevel).intValue();
+            if (diff <= 0)
+                return;
         }
 
         extensions.put(extension.getPrefix(), extension.getDeveloperExtensions());
@@ -328,7 +274,18 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @return
      */
     public PdfCatalog setCollection(PdfCollection collection) {
-        return put(PdfName.Collection, collection);
+        getPdfObject().put(PdfName.Collection, collection.getPdfObject());
+        return this;
+    }
+
+    public PdfCatalog put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return this;
+    }
+
+    public PdfCatalog remove(PdfName key) {
+        getPdfObject().remove(key);
+        return this;
     }
 
     @Override
@@ -344,9 +301,10 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return ocProperties != null;
     }
 
-    PdfPage removePage(int pageNum) {
-        return pageTree.removePage(pageNum);
+    PdfPagesTree getPageTree() {
+        return pageTree;
     }
+
     /**
      * this method return map containing all pages of the document with associated outlines.
      *
@@ -400,6 +358,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
         PdfDictionary outlineRoot = getPdfObject().getAsDictionary(PdfName.Outlines);
         if (outlineRoot == null) {
+            if (null == getDocument().getWriter()) {
+                return null;
+            }
             outlines = new PdfOutline(getDocument());
         } else {
             outlines = new PdfOutline(OutlineRoot, outlineRoot, getDocument());
@@ -415,6 +376,15 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      */
     boolean hasOutlines() {
         return getPdfObject().containsKey(PdfName.Outlines);
+    }
+
+    /**
+     * This flag determines if Outline tree of the document has been built via calling getOutlines method. If this flag is false all outline operations will be ignored
+     *
+     * @return state of outline mode.
+     */
+    boolean isOutlineMode() {
+        return outlineMode;
     }
 
     /**
@@ -474,7 +444,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                     if (oldPage.getPdfObject() == pageObject) {
                         array.set(0, page2page.get(oldPage).getPdfObject());
                         d = new PdfStringDestination(name);
-                        toDocument.addNameDestination(name,array);
+                        toDocument.addNamedDestination(name,array);
                     }
                 }
             }
@@ -496,6 +466,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private void getNextItem(PdfDictionary item, PdfOutline parent, Map<String, PdfObject> names) {
+        if (null == item) {
+            return;
+        }
         PdfOutline outline = new PdfOutline(item.getAsString(PdfName.Title).toUnicodeString(), item, parent);
         PdfObject dest = item.get(PdfName.Dest);
         if (dest != null) {

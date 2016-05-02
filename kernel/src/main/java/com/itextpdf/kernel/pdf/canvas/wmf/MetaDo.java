@@ -44,22 +44,21 @@
  */
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.io.image.Image;
-import com.itextpdf.io.image.ImageFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
-import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -269,7 +268,7 @@ public class MetaDo {
                     int y = in.readShort();
                     int x = in.readShort();
                     Point p = state.getCurrentPoint();
-                    cb.moveTo(state.transformX(p.x), state.transformY(p.y));
+                    cb.moveTo(state.transformX((int)p.getX()), state.transformY((int)p.getY()));
                     cb.lineTo(state.transformX(x), state.transformY(y));
                     cb.stroke();
                     state.setCurrentPoint(new Point(x, y));
@@ -312,7 +311,7 @@ public class MetaDo {
                     if (isNullStrokeFill(false))
                         break;
                     int numPoly = in.readWord();
-                    int lens[] = new int[numPoly];
+                    int[] lens = new int[numPoly];
                     for (int k = 0; k < lens.length; ++k)
                         lens[k] = in.readWord();
                     for (int j = 0; j < lens.length; ++j) {
@@ -384,10 +383,10 @@ public class MetaDo {
                     arc2 -= arc1;
                     if (arc2 <= 0)
                         arc2 += 360;
-                    List<float[]> ar = PdfCanvas.bezierArc(l, b, r, t, arc1, arc2);
+                    List<double[]> ar = PdfCanvas.bezierArc(l, b, r, t, arc1, arc2);
                     if (ar.isEmpty())
                         break;
-                    float pt[] = ar.get(0);
+                    double[] pt = ar.get(0);
                     cb.moveTo(cx, cy);
                     cb.lineTo(pt[0], pt[1]);
                     for (int k = 0; k < ar.size(); ++k) {
@@ -417,12 +416,12 @@ public class MetaDo {
                     arc2 -= arc1;
                     if (arc2 <= 0)
                         arc2 += 360;
-                    List<float[]> ar = PdfCanvas.bezierArc(l, b, r, t, arc1, arc2);
+                    List<double[]> ar = PdfCanvas.bezierArc(l, b, r, t, arc1, arc2);
                     if (ar.isEmpty())
                         break;
-                    float pt[] = ar.get(0);
-                    cx = pt[0];
-                    cy = pt[1];
+                    double[] pt = ar.get(0);
+                    cx = (float)pt[0];
+                    cy = (float)pt[1];
                     cb.moveTo(cx, cy);
                     for (int k = 0; k < ar.size(); ++k) {
                         pt = ar.get(k);
@@ -485,7 +484,7 @@ public class MetaDo {
                         x2 = in.readShort();
                         y2 = in.readShort();
                     }
-                    byte text[] = new byte[count];
+                    byte[] text = new byte[count];
                     int k;
                     for (k = 0; k < count; ++k) {
                         byte c = (byte)in.readByte();
@@ -506,7 +505,7 @@ public class MetaDo {
                 case META_TEXTOUT:
                 {
                     int count = in.readWord();
-                    byte text[] = new byte[count];
+                    byte[] text = new byte[count];
                     int k;
                     for (k = 0; k < count; ++k) {
                         byte c = (byte)in.readByte();
@@ -569,7 +568,7 @@ public class MetaDo {
                     float destWidth = state.transformX(in.readShort()) - state.transformX(0);
                     float yDest = state.transformY(in.readShort());
                     float xDest = state.transformX(in.readShort());
-                    byte b[] = new byte[tsize * 2 - (in.getLength() - lenMarker)];
+                    byte[] b = new byte[tsize * 2 - (in.getLength() - lenMarker)];
                     for (int k = 0; k < b.length; ++k)
                         b[k] = (byte)in.readByte();
                     try {
@@ -577,7 +576,7 @@ public class MetaDo {
                         cb.rectangle(xDest, yDest, destWidth, destHeight);
                         cb.clip();
                         cb.newPath();
-                        Image bmpImage = ImageFactory.getBmpImage(b, true, b.length);
+                        ImageData bmpImage = ImageDataFactory.createBmp(b, true, b.length);
                         PdfImageXObject imageXObject = new PdfImageXObject(bmpImage);
 
                         float width = destWidth * bmpImage.getWidth() / srcWidth;
@@ -656,9 +655,7 @@ public class MetaDo {
         textColor = state.getCurrentTextColor();
         cb.setFillColor(textColor);
         cb.beginText();
-        //TODO Actually here must be used the font which is default for the OS
-        //TODO Uncomment it after PdfDocument will be removed from PdfFont constructors
-        //cb.setFontAndSize(PdfFont.createFont(null, state.getCurrentFont().getFont(), null, true), fontSize);
+        cb.setFontAndSize(PdfFontFactory.createFont(state.getCurrentFont().getFont(), PdfEncodings.CP1252, true), fontSize);
         cb.setTextMatrix(tx, ty);
         cb.showText(text);
         cb.endText();
@@ -741,7 +738,7 @@ public class MetaDo {
      * @return the wrapped BMP
      * @throws IOException
      */
-    public static byte[] wrapBMP(Image image) throws IOException {
+    public static byte[] wrapBMP(ImageData image) throws IOException {
         if (image.getOriginalType() != ImageType.BMP) {
             throw new PdfException(PdfException.OnlyBmpCanBeWrappedInWmf);
         }
@@ -826,39 +823,5 @@ public class MetaDo {
     public static void writeDWord(OutputStream os, int v) throws IOException {
         writeWord(os, v & 0xffff);
         writeWord(os, v >>> 16 & 0xffff);
-    }
-
-    /**
-     * Represents a 2-dimensional point.
-     */
-    static class Point {
-
-        /**
-         * The X value of the point.
-         */
-        public int x;
-
-        /**
-         * The Y value of the point.
-         */
-        public int y;
-
-        /**
-         * Creates a point without coordinates.
-         */
-        public Point() {
-            // empty body
-        }
-
-        /**
-         * Creates a point and sets the two values as its coordinates.
-         *
-         * @param x the X value of the point
-         * @param y the Y value of the point
-         */
-        public Point(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
     }
 }

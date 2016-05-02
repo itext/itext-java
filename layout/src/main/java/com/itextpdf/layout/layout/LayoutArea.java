@@ -46,10 +46,11 @@ package com.itextpdf.layout.layout;
 
 import com.itextpdf.io.util.HashCode;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.layout.renderer.AbstractRenderer;
 
 import java.text.MessageFormat;
 
-public class LayoutArea implements Cloneable {
+public class LayoutArea {
 
     protected int pageNumber;
     protected Rectangle bBox;
@@ -92,7 +93,7 @@ public class LayoutArea implements Cloneable {
         if (!(obj instanceof LayoutArea))
             return false;
         LayoutArea that = (LayoutArea) obj;
-        return pageNumber == that.pageNumber && bBox.equals(that.bBox);
+        return pageNumber == that.pageNumber && bBox.equalsWithEpsilon(that.bBox, AbstractRenderer.EPS);
     }
 
     @Override

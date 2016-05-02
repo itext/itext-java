@@ -344,4 +344,29 @@ public class TrueTypeFont extends FontProgram {
 
         isVertical = false;
     }
+
+    /**
+     * Gets the code pages supported by the font.
+     *
+     * @return the code pages supported by the font
+     */
+    public String[] getCodePagesSupported() {
+        long cp = ((long) fontParser.getOs_2Table().ulCodePageRange2 << 32) + (fontParser.getOs_2Table().ulCodePageRange1 & 0xffffffffL);
+        int count = 0;
+        long bit = 1;
+        for (int k = 0; k < 64; ++k) {
+            if ((cp & bit) != 0 && FontConstants.CODE_PAGES[k] != null)
+                ++count;
+            bit <<= 1;
+        }
+        String[] ret = new String[count];
+        count = 0;
+        bit = 1;
+        for (int k = 0; k < 64; ++k) {
+            if ((cp & bit) != 0 && FontConstants.CODE_PAGES[k] != null)
+                ret[count++] = FontConstants.CODE_PAGES[k];
+            bit <<= 1;
+        }
+        return ret;
+    }
 }

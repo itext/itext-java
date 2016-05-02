@@ -59,7 +59,7 @@ import java.util.zip.InflaterInputStream;
 /**
  * Handles FlateDecode filter.
  */
-public class FlateDecodeFilter implements FilterHandler{
+public class FlateDecodeFilter implements IFilterHandler {
 
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
@@ -77,11 +77,11 @@ public class FlateDecodeFilter implements FilterHandler{
      * @param strict {@code true} to read a correct stream. {@code false} to try to read a corrupted stream.
      * @return the decoded data
      */
-    public static byte[] flateDecode(final byte in[], final boolean strict) {
+    public static byte[] flateDecode(byte[] in, boolean strict) {
         ByteArrayInputStream stream = new ByteArrayInputStream(in);
         InflaterInputStream zip = new InflaterInputStream(stream);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte b[] = new byte[strict ? 4092 : 1];
+        byte[] b = new byte[strict ? 4092 : 1];
         try {
             int n;
             while ((n = zip.read(b)) >= 0) {
@@ -103,28 +103,28 @@ public class FlateDecodeFilter implements FilterHandler{
      * @param decodeParams PdfDictionary of decodeParams.
      * @return a byte array
      */
-    public static byte[] decodePredictor(final byte[] in, final PdfObject decodeParams) {
-        if (decodeParams == null || decodeParams.getType() != PdfObject.Dictionary)
+    public static byte[] decodePredictor(byte[] in, PdfObject decodeParams) {
+        if (decodeParams == null || decodeParams.getType() != PdfObject.DICTIONARY)
             return in;
         PdfDictionary dic = (PdfDictionary)decodeParams;
         PdfObject obj = dic.get(PdfName.Predictor);
-        if (obj == null || obj.getType() != PdfObject.Number)
+        if (obj == null || obj.getType() != PdfObject.NUMBER)
             return in;
-        int predictor = ((PdfNumber)obj).getIntValue();
+        int predictor = ((PdfNumber)obj).intValue();
         if (predictor < 10 && predictor != 2)
             return in;
         int width = 1;
         obj = dic.get(PdfName.Columns);
-        if (obj != null && obj.getType() == PdfObject.Number)
-            width = ((PdfNumber)obj).getIntValue();
+        if (obj != null && obj.getType() == PdfObject.NUMBER)
+            width = ((PdfNumber)obj).intValue();
         int colors = 1;
         obj = dic.get(PdfName.Colors);
-        if (obj != null && obj.getType() == PdfObject.Number)
-            colors = ((PdfNumber)obj).getIntValue();
+        if (obj != null && obj.getType() == PdfObject.NUMBER)
+            colors = ((PdfNumber)obj).intValue();
         int bpc = 8;
         obj = dic.get(PdfName.BitsPerComponent);
-        if (obj != null && obj.getType() == PdfObject.Number)
-            bpc = ((PdfNumber)obj).getIntValue();
+        if (obj != null && obj.getType() == PdfObject.NUMBER)
+            bpc = ((PdfNumber)obj).intValue();
         DataInputStream dataStream = new DataInputStream(new ByteArrayInputStream(in));
         ByteArrayOutputStream fout = new ByteArrayOutputStream(in.length);
         int bytesPerPixel = colors * bpc / 8;

@@ -44,13 +44,13 @@
  */
 package com.itextpdf.kernel.geom;
 
-import com.itextpdf.io.util.HashCode;
-
 import java.io.Serializable;
 
-public class Rectangle implements Cloneable, Serializable {
+public class Rectangle implements Serializable {
 
     private static final long serialVersionUID = 8025677415569233446L;
+
+    private static float EPS = 1e-4f;
 
     protected float x;
     protected float y;
@@ -240,27 +240,20 @@ public class Rectangle implements Cloneable, Serializable {
                 getHeight();
     }
 
-    @Override
     public Rectangle clone() {
         return new Rectangle(x, y, width, height);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Rectangle))
-            return false;
-        Rectangle that = (Rectangle) obj;
-        return x == that.x && y == that.y && width == that.width && height == that.height;
+    public boolean equalsWithEpsilon(Rectangle that) {
+        return equalsWithEpsilon(that, EPS);
     }
 
-    @Override
-    public int hashCode() {
-        HashCode hashCode = new HashCode();
-        hashCode.append(x).
-            append(y).
-            append(width).
-            append(height);
-        return hashCode.hashCode();
+    public boolean equalsWithEpsilon(Rectangle that, float eps) {
+        float dx = Math.abs(x - that.x);
+        float dy = Math.abs(y - that.y);
+        float dw = Math.abs(width - that.width);
+        float dh = Math.abs(height - that.height);
+        return dx < eps && dy < eps && dw < eps && dh < eps;
     }
 
     private static boolean linesIntersect(double x1, double y1, double x2,

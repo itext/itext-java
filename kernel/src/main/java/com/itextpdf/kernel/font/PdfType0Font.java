@@ -45,12 +45,11 @@
 package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.NotImplementedException;
 import com.itextpdf.io.font.CFFFontSubset;
 import com.itextpdf.io.font.CMapEncoding;
 import com.itextpdf.io.font.CidFont;
 import com.itextpdf.io.font.CidFontProperties;
-import com.itextpdf.io.font.FontFactory;
+import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeFont;
@@ -85,18 +84,17 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PdfType0Font extends PdfSimpleFont<FontProgram> {
+public class PdfType0Font extends PdfFont {
 
     private static final long serialVersionUID = -8033620300884193397L;
 
 	private static final byte[] rotbits = {(byte) 0x80, (byte) 0x40, (byte) 0x20, (byte) 0x10, (byte) 0x08, (byte) 0x04, (byte) 0x02, (byte) 0x01};
 
-    protected static final int CidFontType0 = 0;
-    protected static final int CidFontType2 = 2;
+    protected static final int CID_FONT_TYPE_0 = 0;
+    protected static final int CID_FONT_TYPE_2 = 2;
 
     protected boolean vertical;
     protected CMapEncoding cmapEncoding;
-    // TODO HashSet will be enough
     protected Map<Integer, int[]> longTag;
     protected int cidFontType;
     protected char[] specificUnicodeDifferences;
@@ -116,7 +114,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         vertical = cmap.endsWith("V");
         cmapEncoding = new CMapEncoding(cmap);
         longTag = new LinkedHashMap<>();
-        cidFontType = CidFontType2;
+        cidFontType = CID_FONT_TYPE_2;
         if (ttf.isFontSpecific()) {
             specificUnicodeDifferences = new char[256];
             byte[] bytes = new byte[1];
@@ -129,7 +127,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         }
     }
 
-    //note Make this constructor protected. Only FontFactory (kernel level) will
+    // Note. Make this constructor protected. Only PdfFontFactory (kernel level) will
     // be able to create Type0 font based on predefined font.
     // Or not? Possible it will be convenient construct PdfType0Font based on custom CidFont.
     // There is no typography features in CJK fonts.
@@ -144,7 +142,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         String uniMap = getCompatibleUniMap(fontProgram.getRegistry());
         cmapEncoding = new CMapEncoding(cmap, uniMap);
         longTag = new LinkedHashMap<>();
-        cidFontType = CidFontType0;
+        cidFontType = CID_FONT_TYPE_0;
     }
 
     PdfType0Font(PdfDictionary fontDictionary) {
@@ -167,16 +165,16 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             }
             fontProgram = DocTrueTypeFont.createFontProgram(cidFont, toUnicodeCMap);
             cmapEncoding = new CMapEncoding(cmap);
-            assert fontProgram instanceof DocFontProgram;
-            embedded = ((DocFontProgram) fontProgram).getFontFile() != null;
-            cidFontType = CidFontType2;
+            assert fontProgram instanceof IDocFontProgram;
+            embedded = ((IDocFontProgram) fontProgram).getFontFile() != null;
+            cidFontType = CID_FONT_TYPE_2;
         } else {
             String cidFontName = cidFont.getAsName(PdfName.BaseFont).getValue();
             String uniMap = getUniMapFromOrdering(getOrdering(cidFont));
             if (uniMap != null && uniMap.startsWith("Uni")
                     && CidFontProperties.isCidFont(cidFontName, uniMap)) {
                 try {
-                    fontProgram = FontFactory.createFont(cidFontName);
+                    fontProgram = FontProgramFactory.createFont(cidFontName);
                     cmapEncoding = new CMapEncoding(cmap, uniMap);
                     embedded = false;
                 } catch (IOException ignored) {
@@ -193,7 +191,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             if (fontProgram == null) {
                 throw new PdfException(MessageFormat.format("Cannot recognise document font {0} with {1} encoding", cidFontName, cmap));
             }
-            cidFontType = CidFontType0;
+            cidFontType = CID_FONT_TYPE_0;
         }
         longTag = new LinkedHashMap<>();
         subset = false;
@@ -226,7 +224,6 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
     @Override
     public byte[] convertToBytes(String text) {
-        //TODO different with type0 and type2 could be removed after simplifying longTag
         int len = text.length();
         char[] glyphs = new char[len];
         int i = 0;
@@ -264,7 +261,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
         String s = new String(glyphs, 0, i);
         try {
-            return s.getBytes(PdfEncodings.UnicodeBigUnmarked);
+            return s.getBytes(PdfEncodings.UNICODE_BIG_UNMARKED);
         } catch (UnsupportedEncodingException e) {
             throw new PdfException("TrueTypeFont", e);
         }
@@ -286,7 +283,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
 
             String s = new String(glyphs, 0, glyphs.length);
             try {
-                return s.getBytes(PdfEncodings.UnicodeBigUnmarked);
+                return s.getBytes(PdfEncodings.UNICODE_BIG_UNMARKED);
             } catch (UnsupportedEncodingException e) {
                 throw new PdfException("TrueTypeFont", e);
             }
@@ -303,7 +300,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         }
         String s = new String(new char[]{(char) glyph.getCode()}, 0, 1);
         try {
-            return s.getBytes(PdfEncodings.UnicodeBigUnmarked);
+            return s.getBytes(PdfEncodings.UNICODE_BIG_UNMARKED);
         } catch (UnsupportedEncodingException e) {
             throw new PdfException("PdfType0Font", e);
         }
@@ -322,7 +319,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         }
         //TODO improve converting chars to hexed string
         try {
-            StreamUtil.writeHexedString(stream, bytes.toString().getBytes(PdfEncodings.UnicodeBigUnmarked));
+            StreamUtil.writeHexedString(stream, bytes.toString().getBytes(PdfEncodings.UNICODE_BIG_UNMARKED));
         } catch (UnsupportedEncodingException e) {
             throw new PdfException("PdfType0Font", e);
         }
@@ -336,8 +333,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
     @Override
     public GlyphLine createGlyphLine(String content) {
         List<Glyph> glyphs = new ArrayList<>();
-        //TODO different with type0 and type2 could be removed after simplifying longTag
-        if (cidFontType == CidFontType0) {
+        if (cidFontType == CID_FONT_TYPE_0) {
             int len = content.length();
             if (cmapEncoding.isDirect()) {
                 for (int k = 0; k < len; ++k) {
@@ -358,7 +354,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                     glyphs.add(getGlyph(ch));
                 }
             }
-        } else if (cidFontType == CidFontType2) {
+        } else if (cidFontType == CID_FONT_TYPE_2) {
             TrueTypeFont ttf = (TrueTypeFont) fontProgram;
             int len = content.length();
 
@@ -451,6 +447,10 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         return fontDescriptor;
     }
 
+    public CMapEncoding getCmap() {
+        return cmapEncoding;
+    }
+
     @Override
     public void flush() {
         if (newFont) {
@@ -459,12 +459,8 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
         super.flush();
     }
 
-    @Override //TODO remove
-    protected void addFontStream(PdfDictionary fontDescriptor) {
-    }
-
     private void flushFontData() {
-        if (cidFontType == CidFontType0) {
+        if (cidFontType == CID_FONT_TYPE_0) {
             getPdfObject().put(PdfName.Type, PdfName.Font);
             getPdfObject().put(PdfName.Subtype, PdfName.Type0);
             String name = fontProgram.getFontNames().getFontName();
@@ -481,7 +477,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
             getPdfObject().put(PdfName.DescendantFonts, new PdfArray(cidFont));
             fontDescriptor.flush();
             cidFont.flush();
-        } else if (cidFontType == CidFontType2) {
+        } else if (cidFontType == CID_FONT_TYPE_2) {
             TrueTypeFont ttf = (TrueTypeFont) getFontProgram();
             addRangeUni(ttf, longTag, true);
             int[][] metrics = longTag.values().toArray(new int[0][]);
@@ -599,7 +595,7 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                 cidFont.put(PdfName.W, new PdfLiteral(buf.toString()));
             }
         } else {
-            throw new NotImplementedException("Vertical writing has not implemented yet.");
+            throw new UnsupportedOperationException("Vertical writing has not implemented yet.");
         }
         return cidFont;
     }
@@ -612,7 +608,14 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
      * @return the stream representing this CMap or <CODE>null</CODE>
      */
     public PdfStream getToUnicode(Object[] metrics) {
-        if (metrics.length == 0)
+        ArrayList<Integer> unicodeGlyphs = new ArrayList<>(metrics.length);
+        for (int i = 0; i < metrics.length; i++) {
+            int[] metric = (int[]) metrics[i];
+            if (fontProgram.getGlyphByCode(metric[0]).getChars() != null) {
+                unicodeGlyphs.add(metric[0]);
+            }
+        }
+        if (unicodeGlyphs.size() == 0)
             return null;
         StringBuilder buf = new StringBuilder(
                 "/CIDInit /ProcSet findresource begin\n" +
@@ -629,18 +632,17 @@ public class PdfType0Font extends PdfSimpleFont<FontProgram> {
                         "<0000><FFFF>\n" +
                         "endcodespacerange\n");
         int size = 0;
-        for (int k = 0; k < metrics.length; ++k) {
+        for (int k = 0; k < unicodeGlyphs.size(); ++k) {
             if (size == 0) {
                 if (k != 0) {
                     buf.append("endbfrange\n");
                 }
-                size = Math.min(100, metrics.length - k);
+                size = Math.min(100, unicodeGlyphs.size() - k);
                 buf.append(size).append(" beginbfrange\n");
             }
             --size;
-            int[] metric = (int[]) metrics[k];
-            String fromTo = CMapContentParser.toHex(metric[0]);
-            Glyph glyph = fontProgram.getGlyphByCode(metric[0]);
+            String fromTo = CMapContentParser.toHex(unicodeGlyphs.get(k));
+            Glyph glyph = fontProgram.getGlyphByCode(unicodeGlyphs.get(k));
             if (glyph.getChars() != null) {
                 StringBuilder uni = new StringBuilder(glyph.getChars().length);
                 for (char ch : glyph.getChars()) {

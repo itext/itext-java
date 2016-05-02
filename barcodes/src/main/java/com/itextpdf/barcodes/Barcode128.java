@@ -67,148 +67,148 @@ public class Barcode128 extends Barcode1D {
     /**
      * The bars to generate the code.
      */
-    private static final byte[][] BARS =
+    private static final byte[][] BARS = new byte[][]
             {
-                    {2, 1, 2, 2, 2, 2},
-                    {2, 2, 2, 1, 2, 2},
-                    {2, 2, 2, 2, 2, 1},
-                    {1, 2, 1, 2, 2, 3},
-                    {1, 2, 1, 3, 2, 2},
-                    {1, 3, 1, 2, 2, 2},
-                    {1, 2, 2, 2, 1, 3},
-                    {1, 2, 2, 3, 1, 2},
-                    {1, 3, 2, 2, 1, 2},
-                    {2, 2, 1, 2, 1, 3},
-                    {2, 2, 1, 3, 1, 2},
-                    {2, 3, 1, 2, 1, 2},
-                    {1, 1, 2, 2, 3, 2},
-                    {1, 2, 2, 1, 3, 2},
-                    {1, 2, 2, 2, 3, 1},
-                    {1, 1, 3, 2, 2, 2},
-                    {1, 2, 3, 1, 2, 2},
-                    {1, 2, 3, 2, 2, 1},
-                    {2, 2, 3, 2, 1, 1},
-                    {2, 2, 1, 1, 3, 2},
-                    {2, 2, 1, 2, 3, 1},
-                    {2, 1, 3, 2, 1, 2},
-                    {2, 2, 3, 1, 1, 2},
-                    {3, 1, 2, 1, 3, 1},
-                    {3, 1, 1, 2, 2, 2},
-                    {3, 2, 1, 1, 2, 2},
-                    {3, 2, 1, 2, 2, 1},
-                    {3, 1, 2, 2, 1, 2},
-                    {3, 2, 2, 1, 1, 2},
-                    {3, 2, 2, 2, 1, 1},
-                    {2, 1, 2, 1, 2, 3},
-                    {2, 1, 2, 3, 2, 1},
-                    {2, 3, 2, 1, 2, 1},
-                    {1, 1, 1, 3, 2, 3},
-                    {1, 3, 1, 1, 2, 3},
-                    {1, 3, 1, 3, 2, 1},
-                    {1, 1, 2, 3, 1, 3},
-                    {1, 3, 2, 1, 1, 3},
-                    {1, 3, 2, 3, 1, 1},
-                    {2, 1, 1, 3, 1, 3},
-                    {2, 3, 1, 1, 1, 3},
-                    {2, 3, 1, 3, 1, 1},
-                    {1, 1, 2, 1, 3, 3},
-                    {1, 1, 2, 3, 3, 1},
-                    {1, 3, 2, 1, 3, 1},
-                    {1, 1, 3, 1, 2, 3},
-                    {1, 1, 3, 3, 2, 1},
-                    {1, 3, 3, 1, 2, 1},
-                    {3, 1, 3, 1, 2, 1},
-                    {2, 1, 1, 3, 3, 1},
-                    {2, 3, 1, 1, 3, 1},
-                    {2, 1, 3, 1, 1, 3},
-                    {2, 1, 3, 3, 1, 1},
-                    {2, 1, 3, 1, 3, 1},
-                    {3, 1, 1, 1, 2, 3},
-                    {3, 1, 1, 3, 2, 1},
-                    {3, 3, 1, 1, 2, 1},
-                    {3, 1, 2, 1, 1, 3},
-                    {3, 1, 2, 3, 1, 1},
-                    {3, 3, 2, 1, 1, 1},
-                    {3, 1, 4, 1, 1, 1},
-                    {2, 2, 1, 4, 1, 1},
-                    {4, 3, 1, 1, 1, 1},
-                    {1, 1, 1, 2, 2, 4},
-                    {1, 1, 1, 4, 2, 2},
-                    {1, 2, 1, 1, 2, 4},
-                    {1, 2, 1, 4, 2, 1},
-                    {1, 4, 1, 1, 2, 2},
-                    {1, 4, 1, 2, 2, 1},
-                    {1, 1, 2, 2, 1, 4},
-                    {1, 1, 2, 4, 1, 2},
-                    {1, 2, 2, 1, 1, 4},
-                    {1, 2, 2, 4, 1, 1},
-                    {1, 4, 2, 1, 1, 2},
-                    {1, 4, 2, 2, 1, 1},
-                    {2, 4, 1, 2, 1, 1},
-                    {2, 2, 1, 1, 1, 4},
-                    {4, 1, 3, 1, 1, 1},
-                    {2, 4, 1, 1, 1, 2},
-                    {1, 3, 4, 1, 1, 1},
-                    {1, 1, 1, 2, 4, 2},
-                    {1, 2, 1, 1, 4, 2},
-                    {1, 2, 1, 2, 4, 1},
-                    {1, 1, 4, 2, 1, 2},
-                    {1, 2, 4, 1, 1, 2},
-                    {1, 2, 4, 2, 1, 1},
-                    {4, 1, 1, 2, 1, 2},
-                    {4, 2, 1, 1, 1, 2},
-                    {4, 2, 1, 2, 1, 1},
-                    {2, 1, 2, 1, 4, 1},
-                    {2, 1, 4, 1, 2, 1},
-                    {4, 1, 2, 1, 2, 1},
-                    {1, 1, 1, 1, 4, 3},
-                    {1, 1, 1, 3, 4, 1},
-                    {1, 3, 1, 1, 4, 1},
-                    {1, 1, 4, 1, 1, 3},
-                    {1, 1, 4, 3, 1, 1},
-                    {4, 1, 1, 1, 1, 3},
-                    {4, 1, 1, 3, 1, 1},
-                    {1, 1, 3, 1, 4, 1},
-                    {1, 1, 4, 1, 3, 1},
-                    {3, 1, 1, 1, 4, 1},
-                    {4, 1, 1, 1, 3, 1},
-                    {2, 1, 1, 4, 1, 2},
-                    {2, 1, 1, 2, 1, 4},
-                    {2, 1, 1, 2, 3, 2}
+                    new byte[] {2, 1, 2, 2, 2, 2},
+                    new byte[] {2, 2, 2, 1, 2, 2},
+                    new byte[] {2, 2, 2, 2, 2, 1},
+                    new byte[] {1, 2, 1, 2, 2, 3},
+                    new byte[] {1, 2, 1, 3, 2, 2},
+                    new byte[] {1, 3, 1, 2, 2, 2},
+                    new byte[] {1, 2, 2, 2, 1, 3},
+                    new byte[] {1, 2, 2, 3, 1, 2},
+                    new byte[] {1, 3, 2, 2, 1, 2},
+                    new byte[] {2, 2, 1, 2, 1, 3},
+                    new byte[] {2, 2, 1, 3, 1, 2},
+                    new byte[] {2, 3, 1, 2, 1, 2},
+                    new byte[] {1, 1, 2, 2, 3, 2},
+                    new byte[] {1, 2, 2, 1, 3, 2},
+                    new byte[] {1, 2, 2, 2, 3, 1},
+                    new byte[] {1, 1, 3, 2, 2, 2},
+                    new byte[] {1, 2, 3, 1, 2, 2},
+                    new byte[] {1, 2, 3, 2, 2, 1},
+                    new byte[] {2, 2, 3, 2, 1, 1},
+                    new byte[] {2, 2, 1, 1, 3, 2},
+                    new byte[] {2, 2, 1, 2, 3, 1},
+                    new byte[] {2, 1, 3, 2, 1, 2},
+                    new byte[] {2, 2, 3, 1, 1, 2},
+                    new byte[] {3, 1, 2, 1, 3, 1},
+                    new byte[] {3, 1, 1, 2, 2, 2},
+                    new byte[] {3, 2, 1, 1, 2, 2},
+                    new byte[] {3, 2, 1, 2, 2, 1},
+                    new byte[] {3, 1, 2, 2, 1, 2},
+                    new byte[] {3, 2, 2, 1, 1, 2},
+                    new byte[] {3, 2, 2, 2, 1, 1},
+                    new byte[] {2, 1, 2, 1, 2, 3},
+                    new byte[] {2, 1, 2, 3, 2, 1},
+                    new byte[] {2, 3, 2, 1, 2, 1},
+                    new byte[] {1, 1, 1, 3, 2, 3},
+                    new byte[] {1, 3, 1, 1, 2, 3},
+                    new byte[] {1, 3, 1, 3, 2, 1},
+                    new byte[] {1, 1, 2, 3, 1, 3},
+                    new byte[] {1, 3, 2, 1, 1, 3},
+                    new byte[] {1, 3, 2, 3, 1, 1},
+                    new byte[] {2, 1, 1, 3, 1, 3},
+                    new byte[] {2, 3, 1, 1, 1, 3},
+                    new byte[] {2, 3, 1, 3, 1, 1},
+                    new byte[] {1, 1, 2, 1, 3, 3},
+                    new byte[] {1, 1, 2, 3, 3, 1},
+                    new byte[] {1, 3, 2, 1, 3, 1},
+                    new byte[] {1, 1, 3, 1, 2, 3},
+                    new byte[] {1, 1, 3, 3, 2, 1},
+                    new byte[] {1, 3, 3, 1, 2, 1},
+                    new byte[] {3, 1, 3, 1, 2, 1},
+                    new byte[] {2, 1, 1, 3, 3, 1},
+                    new byte[] {2, 3, 1, 1, 3, 1},
+                    new byte[] {2, 1, 3, 1, 1, 3},
+                    new byte[] {2, 1, 3, 3, 1, 1},
+                    new byte[] {2, 1, 3, 1, 3, 1},
+                    new byte[] {3, 1, 1, 1, 2, 3},
+                    new byte[] {3, 1, 1, 3, 2, 1},
+                    new byte[] {3, 3, 1, 1, 2, 1},
+                    new byte[] {3, 1, 2, 1, 1, 3},
+                    new byte[] {3, 1, 2, 3, 1, 1},
+                    new byte[] {3, 3, 2, 1, 1, 1},
+                    new byte[] {3, 1, 4, 1, 1, 1},
+                    new byte[] {2, 2, 1, 4, 1, 1},
+                    new byte[] {4, 3, 1, 1, 1, 1},
+                    new byte[] {1, 1, 1, 2, 2, 4},
+                    new byte[] {1, 1, 1, 4, 2, 2},
+                    new byte[] {1, 2, 1, 1, 2, 4},
+                    new byte[] {1, 2, 1, 4, 2, 1},
+                    new byte[] {1, 4, 1, 1, 2, 2},
+                    new byte[] {1, 4, 1, 2, 2, 1},
+                    new byte[] {1, 1, 2, 2, 1, 4},
+                    new byte[] {1, 1, 2, 4, 1, 2},
+                    new byte[] {1, 2, 2, 1, 1, 4},
+                    new byte[] {1, 2, 2, 4, 1, 1},
+                    new byte[] {1, 4, 2, 1, 1, 2},
+                    new byte[] {1, 4, 2, 2, 1, 1},
+                    new byte[] {2, 4, 1, 2, 1, 1},
+                    new byte[] {2, 2, 1, 1, 1, 4},
+                    new byte[] {4, 1, 3, 1, 1, 1},
+                    new byte[] {2, 4, 1, 1, 1, 2},
+                    new byte[] {1, 3, 4, 1, 1, 1},
+                    new byte[] {1, 1, 1, 2, 4, 2},
+                    new byte[] {1, 2, 1, 1, 4, 2},
+                    new byte[] {1, 2, 1, 2, 4, 1},
+                    new byte[] {1, 1, 4, 2, 1, 2},
+                    new byte[] {1, 2, 4, 1, 1, 2},
+                    new byte[] {1, 2, 4, 2, 1, 1},
+                    new byte[] {4, 1, 1, 2, 1, 2},
+                    new byte[] {4, 2, 1, 1, 1, 2},
+                    new byte[] {4, 2, 1, 2, 1, 1},
+                    new byte[] {2, 1, 2, 1, 4, 1},
+                    new byte[] {2, 1, 4, 1, 2, 1},
+                    new byte[] {4, 1, 2, 1, 2, 1},
+                    new byte[] {1, 1, 1, 1, 4, 3},
+                    new byte[] {1, 1, 1, 3, 4, 1},
+                    new byte[] {1, 3, 1, 1, 4, 1},
+                    new byte[] {1, 1, 4, 1, 1, 3},
+                    new byte[] {1, 1, 4, 3, 1, 1},
+                    new byte[] {4, 1, 1, 1, 1, 3},
+                    new byte[] {4, 1, 1, 3, 1, 1},
+                    new byte[] {1, 1, 3, 1, 4, 1},
+                    new byte[] {1, 1, 4, 1, 3, 1},
+                    new byte[] {3, 1, 1, 1, 4, 1},
+                    new byte[] {4, 1, 1, 1, 3, 1},
+                    new byte[] {2, 1, 1, 4, 1, 2},
+                    new byte[] {2, 1, 1, 2, 1, 4},
+                    new byte[] {2, 1, 1, 2, 3, 2}
             };
 
     /**
      * The stop bars.
      */
-    private static final byte[] BARS_STOP = {2, 3, 3, 1, 1, 1, 2};
+    private static final byte[] BARS_STOP = new byte[] {2, 3, 3, 1, 1, 1, 2};
     /**
      * The charset code change.
      */
-    public static final char CODE_AB_TO_C = 99;
+    public static final char CODE_AB_TO_C = (char) 99;
     /**
      * The charset code change.
      */
-    public static final char CODE_AC_TO_B = 100;
+    public static final char CODE_AC_TO_B = (char) 100;
     /**
      * The charset code change.
      */
-    public static final char CODE_BC_TO_A = 101;
+    public static final char CODE_BC_TO_A = (char) 101;
     /**
      * The code for UCC/EAN-128.
      */
-    public static final char FNC1_INDEX = 102;
+    public static final char FNC1_INDEX = (char) 102;
     /**
      * The start code.
      */
-    public static final char START_A = 103;
+    public static final char START_A = (char) 103;
     /**
      * The start code.
      */
-    public static final char START_B = 104;
+    public static final char START_B = (char) 104;
     /**
      * The start code.
      */
-    public static final char START_C = 105;
+    public static final char START_C = (char) 105;
 
     public static final char FNC1 = '\u00ca';
     public static final char DEL = '\u00c3';
@@ -238,7 +238,7 @@ public class Barcode128 extends Barcode1D {
             textAlignment = ALIGN_CENTER;
             codeType = CODE128;
         } catch (Exception e) {
-            throw new RuntimeException(e.getLocalizedMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -246,20 +246,7 @@ public class Barcode128 extends Barcode1D {
         A,
         B,
         C,
-        AUTO;
-
-        public char getStartSymbol() {
-            switch (this) {
-                case A:
-                    return START_A;
-                case B:
-                    return START_B;
-                case C:
-                    return START_C;
-                default:
-                    return START_B;
-            }
-        }
+        AUTO
     }
 
     public void setCodeSet(Barcode128CodeSet codeSet) {
@@ -296,7 +283,7 @@ public class Barcode128 extends Barcode1D {
      */
     public static String getHumanReadableUCCEAN(String code) {
         StringBuilder buf = new StringBuilder();
-        String fnc1 = String.valueOf(FNC1);
+        String fnc1 = new String(new char[]{FNC1});
         while (true) {
             if (code.startsWith(fnc1)) {
                 code = code.substring(1);
@@ -350,7 +337,7 @@ public class Barcode128 extends Barcode1D {
         String out = "";
         int tLen = text.length();
         if (tLen == 0) {
-            out += codeSet.getStartSymbol();
+            out += getStartSymbol(codeSet);
             if (ucc)
                 out += FNC1_INDEX;
             return out;
@@ -389,7 +376,7 @@ public class Barcode128 extends Barcode1D {
                 out += (char) (c - ' ');
             ++index;
         }
-        if (codeSet != Barcode128CodeSet.AUTO && currentCode != codeSet.getStartSymbol())
+        if (codeSet != Barcode128CodeSet.AUTO && currentCode != getStartSymbol(codeSet))
             throw new PdfException(PdfException.ThereAreIllegalCharactersForBarcode128In1);
         while (index < tLen) {
             switch (currentCode) {
@@ -458,7 +445,7 @@ public class Barcode128 extends Barcode1D {
                 }
                 break;
             }
-            if (codeSet != Barcode128CodeSet.AUTO && currentCode != codeSet.getStartSymbol())
+            if (codeSet != Barcode128CodeSet.AUTO && currentCode != getStartSymbol(codeSet))
                 throw new PdfException(PdfException.ThereAreIllegalCharactersForBarcode128In1);
         }
         return out;
@@ -702,7 +689,7 @@ public class Barcode128 extends Barcode1D {
                 if (len == 0) {
                     throw new IllegalArgumentException("AI not found");
                 }
-                sai = String.valueOf(ai);
+                sai = Integer.valueOf(ai).toString();
                 if (sai.length() == 1) {
                     sai = "0" + sai;
                 }
@@ -770,6 +757,19 @@ public class Barcode128 extends Barcode1D {
             System.arraycopy(pix, 0, pix, k, fullWidth);
         }
         return canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
+    }
+
+    private static char getStartSymbol(Barcode128CodeSet codeSet) {
+        switch (codeSet) {
+            case A:
+                return START_A;
+            case B:
+                return START_B;
+            case C:
+                return START_C;
+            default:
+                return START_B;
+        }
     }
 
     static {

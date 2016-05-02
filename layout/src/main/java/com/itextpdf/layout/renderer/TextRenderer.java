@@ -56,11 +56,15 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
+import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.FontKerning;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.hyphenation.Hyphenation;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
@@ -69,10 +73,12 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
+import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -126,7 +132,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     @Override
-    public TextLayoutResult layout(LayoutContext layoutContext) {
+    public LayoutResult layout(LayoutContext layoutContext) {
         convertWaitingStringToGlyphLine();
 
         LayoutArea area = layoutContext.getArea();
@@ -215,7 +221,10 @@ public class TextRenderer extends AbstractRenderer {
                 }
 
                 float glyphWidth = getCharWidth(currentGlyph, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
-                float xAdvance = previousCharPos != -1 ? scaleXAdvance(text.get(previousCharPos).getXAdvance(), fontSize, hScale) / TEXT_SPACE_COEFF : 0;
+                float xAdvance = previousCharPos != -1 ? text.get(previousCharPos).getXAdvance() : 0;
+                if (xAdvance != 0) {
+                    xAdvance = scaleXAdvance(xAdvance, fontSize, hScale) / TEXT_SPACE_COEFF;
+                }
                 if ((nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition) > layoutBox.getWidth() - currentLineWidth && firstCharacterWhichExceedsAllowedWidth == -1) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
                 }
@@ -345,7 +354,7 @@ public class TextRenderer extends AbstractRenderer {
         if (result != null && result.getStatus() == LayoutResult.NOTHING) {
             return result;
         } else {
-            if (currentLineHeight > layoutBox.getHeight()) {
+            if (currentLineHeight > layoutBox.getHeight() && !getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
                 applyBorderBox(occupiedArea.getBBox(), true);
                 applyMargins(occupiedArea.getBBox(), true);
                 return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
@@ -391,7 +400,7 @@ public class TextRenderer extends AbstractRenderer {
     public void applyOtf() {
         convertWaitingStringToGlyphLine();
         Character.UnicodeScript script = getProperty(Property.FONT_SCRIPT);
-        Property.FontKerning fontKerning = getProperty(Property.FONT_KERNING);
+        FontKerning fontKerning = getProperty(Property.FONT_KERNING);
         PdfFont font = getPropertyAsFont(Property.FONT);
         if (!otfFeaturesApplied) {
             if (script == null && TypographyUtils.isTypographyModuleInitialized()) {
@@ -419,7 +428,7 @@ public class TextRenderer extends AbstractRenderer {
                     }
                 }
                 if (selectScript == Character.UnicodeScript.ARABIC || selectScript == Character.UnicodeScript.HEBREW && parent instanceof LineRenderer) {
-                    setProperty(Property.BASE_DIRECTION, Property.BaseDirection.DEFAULT_BIDI);
+                    setProperty(Property.BASE_DIRECTION, BaseDirection.DEFAULT_BIDI);
                 }
                 if (selectScript != null && supportedScripts != null && supportedScripts.contains(selectScript)) {
                     script = selectScript;
@@ -430,7 +439,7 @@ public class TextRenderer extends AbstractRenderer {
                 TypographyUtils.applyOtfScript(font.getFontProgram(), text, script);
             }
 
-            if (fontKerning == Property.FontKerning.YES) {
+            if (fontKerning == FontKerning.YES) {
                 TypographyUtils.applyKerning(font.getFontProgram(), text);
             }
 
@@ -533,14 +542,32 @@ public class TextRenderer extends AbstractRenderer {
             if (horizontalScaling != null && horizontalScaling != 1)
                 canvas.setHorizontalScaling(horizontalScaling * 100);
 
-            GlyphLine output = line.filter(new GlyphLine.GlyphLineFilter() {
+            GlyphLine.IGlyphLineFilter filter = new GlyphLine.IGlyphLineFilter() {
                 @Override
                 public boolean accept(Glyph glyph) {
                     return !noPrint(glyph);
                 }
-            });
+            };
 
-            canvas.showText(output);
+            if (hasOwnProperty(Property.REVERSED)) {
+                //We should mark a RTL written text
+                Map<GlyphLine, Boolean> outputs = getOutputChunks();
+
+                for (Map.Entry<GlyphLine, Boolean> output : outputs.entrySet()) {
+                    GlyphLine o = output.getKey().filter(filter);
+
+                    if (output.getValue()) {
+                        canvas.openTag(new CanvasTag(PdfName.ReversedChars));
+                    }
+                    canvas.showText(o);
+                    if (output.getValue()) {
+                        canvas.closeTag();
+                    }
+                }
+            } else {
+                canvas.showText(line.filter(filter));
+            }
+
             canvas.endText().restoreState();
             if (isTagged || isArtifact) {
                 canvas.closeTag();
@@ -549,12 +576,12 @@ public class TextRenderer extends AbstractRenderer {
             Object underlines = getProperty(Property.UNDERLINE);
             if (underlines instanceof List) {
                 for (Object underline : (List) underlines) {
-                    if (underline instanceof Property.Underline) {
-                        drawSingleUnderline((Property.Underline) underline, fontColor, canvas, fontSize, italicSimulation ? ITALIC_ANGLE : 0);
+                    if (underline instanceof Underline) {
+                        drawSingleUnderline((Underline) underline, fontColor, canvas, fontSize, italicSimulation ? ITALIC_ANGLE : 0);
                     }
                 }
-            } else if (underlines instanceof Property.Underline) {
-                drawSingleUnderline((Property.Underline) underlines, fontColor, canvas, fontSize, italicSimulation ? ITALIC_ANGLE : 0);
+            } else if (underlines instanceof Underline) {
+                drawSingleUnderline((Underline) underlines, fontColor, canvas, fontSize, italicSimulation ? ITALIC_ANGLE : 0);
             }
         }
 
@@ -572,7 +599,7 @@ public class TextRenderer extends AbstractRenderer {
 
     @Override
     public void drawBackground(DrawContext drawContext) {
-        Property.Background background = getProperty(Property.BACKGROUND);
+        Background background = getProperty(Property.BACKGROUND);
         Float textRise = getPropertyAsFloat(Property.TEXT_RISE);
         float bottomBBoxY = occupiedArea.getBBox().getY();
         float leftBBoxX = occupiedArea.getBBox().getX();
@@ -594,10 +621,10 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
-            case HORIZONTAL_SCALING:
-                return (T) Float.valueOf(1);
+            case Property.HORIZONTAL_SCALING:
+                return (T1) Float.valueOf(1);
             default:
                 return super.getDefaultProperty(property);
         }
@@ -747,7 +774,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     @Override
-    public TextRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         return new TextRenderer((Text) modelElement, null);
     }
 
@@ -801,11 +828,11 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     protected TextRenderer createSplitRenderer() {
-        return getNextRenderer();
+        return (TextRenderer) getNextRenderer();
     }
 
     protected TextRenderer createOverflowRenderer() {
-        return getNextRenderer();
+        return (TextRenderer) getNextRenderer();
     }
 
     protected TextRenderer[] split(int initialOverflowTextPos) {
@@ -817,16 +844,18 @@ public class TextRenderer extends AbstractRenderer {
         splitRenderer.yLineOffset = yLineOffset;
         splitRenderer.otfFeaturesApplied = otfFeaturesApplied;
         splitRenderer.isLastRendererForModelElement = false;
+        splitRenderer.addAllProperties(getOwnProperties());
 
         TextRenderer overflowRenderer = createOverflowRenderer();
         overflowRenderer.setText(text, initialOverflowTextPos, text.end);
         overflowRenderer.otfFeaturesApplied = otfFeaturesApplied;
         overflowRenderer.parent = parent;
+        overflowRenderer.addAllProperties(getOwnProperties());
 
         return new TextRenderer[]{splitRenderer, overflowRenderer};
     }
 
-    protected void drawSingleUnderline(Property.Underline underline, Color fontStrokeColor, PdfCanvas canvas, float fontSize, float italicAngleTan) {
+    protected void drawSingleUnderline(Underline underline, Color fontStrokeColor, PdfCanvas canvas, float fontSize, float italicAngleTan) {
         Color underlineColor = underline.getColor() != null ? underline.getColor() : fontStrokeColor;
         canvas.saveState();
 
@@ -850,6 +879,35 @@ public class TextRenderer extends AbstractRenderer {
     protected float calculateLineWidth() {
         return getGlyphLineWidth(line, getPropertyAsFloat(Property.FONT_SIZE), getPropertyAsFloat(Property.HORIZONTAL_SCALING),
                 getPropertyAsFloat(Property.CHARACTER_SPACING), getPropertyAsFloat(Property.WORD_SPACING));
+    }
+
+    /**
+     * This method return a LinkedHashMap with glyphlines as its keys. Values are boolean flags indicating if a
+     * glyphline is written in a reversed order (right to left text).
+     */
+    private Map<GlyphLine, Boolean> getOutputChunks() {
+        List<int[]> reversedRange = getProperty(Property.REVERSED);
+        Map<GlyphLine, Boolean> outputs = new LinkedHashMap<>();
+        if (reversedRange != null) {
+            if (reversedRange.get(0)[0] > 0) {
+                outputs.put(line.copy(0, reversedRange.get(0)[0]), false);
+            }
+            for(int i = 0; i < reversedRange.size(); i++) {
+                int[] range = reversedRange.get(i);
+                outputs.put(line.copy(range[0], range[1] + 1), true);
+                if (i != reversedRange.size() - 1) {
+                    outputs.put(line.copy(range[1] + 1, reversedRange.get(i + 1)[0]), false);
+                }
+            }
+            int lastIndex = reversedRange.get(reversedRange.size() - 1)[1];
+            if (lastIndex < line.size()) {
+                outputs.put(line.copy(lastIndex + 1, line.size()), false);
+            }
+        } else {
+            outputs.put(line, false);
+        }
+
+        return outputs;
     }
 
     private static boolean noPrint(Glyph g) {

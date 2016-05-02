@@ -45,7 +45,9 @@
 package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.Type1Font;
+import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -54,7 +56,7 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 
-class DocType1Font extends Type1Font implements DocFontProgram {
+class DocType1Font extends Type1Font implements IDocFontProgram {
 
     private static final long serialVersionUID = 6260280563455951912L;
 
@@ -66,7 +68,7 @@ class DocType1Font extends Type1Font implements DocFontProgram {
         super(fontName);
     }
 
-    static Type1Font createFontProgram(PdfDictionary fontDictionary, FontEncoding fontEncoding) {
+    static Type1Font createFontProgram(PdfDictionary fontDictionary, FontEncoding fontEncoding, CMapToUnicode toUnicode) {
         PdfName baseFontName = fontDictionary.getAsName(PdfName.BaseFont);
         String baseFont;
         if (baseFontName != null) {
@@ -79,7 +81,7 @@ class DocType1Font extends Type1Font implements DocFontProgram {
             try {
                 //if there are no font modifiers, cached font could be used,
                 //otherwise a new instance should be created.
-                type1StdFont = Type1Font.createStandardFont(baseFont);
+                type1StdFont = (Type1Font) FontProgramFactory.createRegisteredFont(baseFont);
             } catch (Exception e) {
                 type1StdFont = null;
             }
@@ -93,7 +95,7 @@ class DocType1Font extends Type1Font implements DocFontProgram {
         fillFontDescriptor(fontProgram, fontDesc);
 
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
-        int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.getIntValue(), 0) : 0;
+        int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.intValue(), 0) : 0;
         int[] widths = FontUtil.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
         fontProgram.avgWidth = 0;
         int glyphsWithWidths = 0;
@@ -101,7 +103,12 @@ class DocType1Font extends Type1Font implements DocFontProgram {
             Glyph glyph = new Glyph(i, widths[i], fontEncoding.getUnicode(i));
             fontProgram.codeToGlyph.put(i, glyph);
             if (glyph.hasValidUnicode()) {
-                fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
+                // Workaround for fonts for embedded Document fonts with differences without base encoding
+                if (!fontProgram.unicodeToGlyph.containsKey(glyph.getUnicode()) || glyph.getWidth() != 0) {
+                    fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
+                }
+            } else if (toUnicode != null) {
+                glyph.setChars(toUnicode.lookup(i));
             }
             if (widths[i] > 0) {
                 glyphsWithWidths++;
@@ -132,35 +139,35 @@ class DocType1Font extends Type1Font implements DocFontProgram {
         }
         PdfNumber v = fontDesc.getAsNumber(PdfName.Ascent);
         if (v != null) {
-            font.setTypoAscender(v.getIntValue());
+            font.setTypoAscender(v.intValue());
         }
         v = fontDesc.getAsNumber(PdfName.Descent);
         if (v != null) {
-            font.setTypoDescender(v.getIntValue());
+            font.setTypoDescender(v.intValue());
         }
         v = fontDesc.getAsNumber(PdfName.CapHeight);
         if (v != null) {
-            font.setCapHeight(v.getIntValue());
+            font.setCapHeight(v.intValue());
         }
         v = fontDesc.getAsNumber(PdfName.XHeight);
         if (v != null) {
-            font.setXHeight(v.getIntValue());
+            font.setXHeight(v.intValue());
         }
         v = fontDesc.getAsNumber(PdfName.ItalicAngle);
         if (v != null) {
-            font.setItalicAngle(v.getIntValue());
+            font.setItalicAngle(v.intValue());
         }
         v = fontDesc.getAsNumber(PdfName.StemV);
         if (v != null) {
-            font.setStemV(v.getIntValue());
+            font.setStemV(v.intValue());
         }
         v = fontDesc.getAsNumber(PdfName.StemH);
         if (v != null) {
-            font.setStemH(v.getIntValue());
+            font.setStemH(v.intValue());
         }
         v = fontDesc.getAsNumber(PdfName.FontWeight);
         if (v != null) {
-            font.setFontWeight(v.getIntValue());
+            font.setFontWeight(v.intValue());
         }
 
         PdfName fontStretch = fontDesc.getAsName(PdfName.FontStretch);
@@ -168,19 +175,18 @@ class DocType1Font extends Type1Font implements DocFontProgram {
             font.setFontWidth(fontStretch.getValue());
         }
 
-
         PdfArray bboxValue = fontDesc.getAsArray(PdfName.FontBBox);
 
         if (bboxValue != null) {
             int[] bbox = new int[4];
             //llx
-            bbox[0] = bboxValue.getAsNumber(0).getIntValue();
+            bbox[0] = bboxValue.getAsNumber(0).intValue();
             //lly
-            bbox[1] = bboxValue.getAsNumber(1).getIntValue();
+            bbox[1] = bboxValue.getAsNumber(1).intValue();
             //urx
-            bbox[2] = bboxValue.getAsNumber(2).getIntValue();
+            bbox[2] = bboxValue.getAsNumber(2).intValue();
             //ury
-            bbox[3] = bboxValue.getAsNumber(3).getIntValue();
+            bbox[3] = bboxValue.getAsNumber(3).intValue();
 
             if (bbox[0] > bbox[2]) {
                 int t = bbox[0];
@@ -193,6 +199,15 @@ class DocType1Font extends Type1Font implements DocFontProgram {
                 bbox[3] = t;
             }
             font.setBbox(bbox);
+
+            // If ascender or descender in font descriptor are zero, we still want to get more or less correct valuee for
+            // text extraction, stamping etc. Thus we rely on font bbox in this case
+            if (font.getFontMetrics().getTypoAscender() == 0 && font.getFontMetrics().getTypoDescender() == 0) {
+                float maxAscent = Math.max(bbox[3], font.getFontMetrics().getTypoAscender());
+                float minDescent = Math.min(bbox[1], font.getFontMetrics().getTypoDescender());
+                font.setTypoAscender((int) (maxAscent * 1000 / (maxAscent - minDescent)));
+                font.setTypoDescender((int) (minDescent * 1000 / (maxAscent - minDescent)));
+            }
         }
 
         PdfString fontFamily = fontDesc.getAsString(PdfName.FontFamily);
@@ -202,7 +217,7 @@ class DocType1Font extends Type1Font implements DocFontProgram {
 
         PdfNumber flagsValue = fontDesc.getAsNumber(PdfName.Flags);
         if (flagsValue != null) {
-            int flags = flagsValue.getIntValue();
+            int flags = flagsValue.intValue();
             if ((flags & 1) != 0) {
                 font.setFixedPitch(true);
             }

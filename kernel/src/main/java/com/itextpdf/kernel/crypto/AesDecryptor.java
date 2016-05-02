@@ -44,7 +44,7 @@
  */
 package com.itextpdf.kernel.crypto;
 
-public class AesDecryptor implements Decryptor {
+public class AesDecryptor implements IDecryptor {
     private AESCipher cipher;
     private byte[] key;
     private boolean initiated;
@@ -54,7 +54,7 @@ public class AesDecryptor implements Decryptor {
     /**
      * Creates a new instance of AesDecryption
      */
-    public AesDecryptor(byte key[], int off, int len) {
+    public AesDecryptor(byte[] key, int off, int len) {
         this.key = new byte[len];
         System.arraycopy(key, off, this.key, 0, len);
     }

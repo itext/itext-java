@@ -66,103 +66,33 @@ public final class PdfEncryptor {
     }
 
     /**
-     * Entry point to encrypt a PDF document. The encryption parameters are the same as in
-     * {@code PdfWriter}. The userPassword and the
-     * ownerPassword can be null or have zero length. In this case the ownerPassword
-     * is replaced by a random string. The open permissions for the document can be
-     * ALLOW_PRINTING, ALLOW_MODIFY_CONTENTS, ALLOW_COPY, ALLOW_MODIFY_ANNOTATIONS,
-     * ALLOW_FILL_IN, ALLOW_SCREENREADERS, ALLOW_ASSEMBLY and ALLOW_DEGRADED_PRINTING.
-     * The permissions can be combined by ORing them.
+     * Entry point to encrypt a PDF document.
      *
      * @param reader         the read PDF
      * @param os             the output destination
-     * @param userPassword   the user password. Can be null or empty
-     * @param ownerPassword  the owner password. Can be null or empty
-     * @param permissions    the user permissions
-     * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40,
-     *                       STANDARD_ENCRYPTION_128 or ENCRYPTION_AES_128.
+     * @param properties     encryption properties. See {@link EncryptionProperties}.
      * @param newInfo        an optional {@code String} map to add or change
      *                       the info dictionary. Entries with {@code null}
      *                       values delete the key in the original info dictionary
-     * @throws PdfException on error
      */
-    public static void encrypt(PdfReader reader, OutputStream os, final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType, Map<String, String> newInfo) {
-        PdfWriter writer = new PdfWriter(os);
-        writer.setEncryption(userPassword, ownerPassword, permissions, encryptionType);
+    public static void encrypt(PdfReader reader, OutputStream os, EncryptionProperties properties, Map<String, String> newInfo) {
+        WriterProperties writerProperties = new WriterProperties();
+        writerProperties.encryptionProperties = properties;
+        PdfWriter writer = new PdfWriter(os, writerProperties);
         PdfDocument document = new PdfDocument(reader, writer);
         document.getDocumentInfo().setMoreInfo(newInfo);
         document.close();
     }
 
     /**
-     * Entry point to encrypt a PDF document. The encryption parameters are the same as in
-     * {@code PdfWriter}. The userPassword and the
-     * ownerPassword can be null or have zero length. In this case the ownerPassword
-     * is replaced by a random string. The open permissions for the document can be
-     * ALLOW_PRINTING, ALLOW_MODIFY_CONTENTS, ALLOW_COPY, ALLOW_MODIFY_ANNOTATIONS,
-     * ALLOW_FILL_IN, ALLOW_SCREENREADERS, ALLOW_ASSEMBLY and ALLOW_DEGRADED_PRINTING.
-     * The permissions can be combined by ORing them.
+     * Entry point to encrypt a PDF document.
      *
      * @param reader         the read PDF
      * @param os             the output destination
-     * @param userPassword   the user password. Can be null or empty
-     * @param ownerPassword  the owner password. Can be null or empty
-     * @param permissions    the user permissions
-     * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40,
-     *                       STANDARD_ENCRYPTION_128 or ENCRYPTION_AES_128.
-     * @throws PdfException on error
+     * @param properties     encryption properties. See {@link EncryptionProperties}.
      */
-    public static void encrypt(PdfReader reader, OutputStream os, final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType) {
-        encrypt(reader, os, userPassword, ownerPassword, permissions, encryptionType, null);
-    }
-
-    /**
-     * Entry point to encrypt a PDF document. The encryption parameters are the same as in
-     * {@code PdfWriter}. The userPassword and the
-     * ownerPassword can be null or have zero length. In this case the ownerPassword
-     * is replaced by a random string. The open permissions for the document can be
-     * ALLOW_PRINTING, ALLOW_MODIFY_CONTENTS, ALLOW_COPY, ALLOW_MODIFY_ANNOTATIONS,
-     * ALLOW_FILL_IN, ALLOW_SCREENREADERS, ALLOW_ASSEMBLY and ALLOW_DEGRADED_PRINTING.
-     * The permissions can be combined by ORing them.
-     *
-     * @param reader         the read PDF
-     * @param os             the output destination
-     * @param certs          the public certificates to be used for the encryption
-     * @param permissions    the user permissions for each of the certificates
-     * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40,
-     *                       STANDARD_ENCRYPTION_128 or ENCRYPTION_AES_128.
-     * @param newInfo        an optional {@code String} map to add or change
-     *                       the info dictionary. Entries with {@code null}
-     *                       values delete the key in the original info dictionary
-     * @on error
-     */
-    public static void encrypt(PdfReader reader, OutputStream os, final Certificate[] certs, final int[] permissions, final int encryptionType, Map<String, String> newInfo) {
-        PdfWriter writer = new PdfWriter(os);
-        writer.setEncryption(certs, permissions, encryptionType);
-        PdfDocument document = new PdfDocument(reader, writer);
-        document.getDocumentInfo().setMoreInfo(newInfo);
-        document.close();
-    }
-
-    /**
-     * Entry point to encrypt a PDF document. The encryption parameters are the same as in
-     * {@code PdfWriter}. The userPassword and the
-     * ownerPassword can be null or have zero length. In this case the ownerPassword
-     * is replaced by a random string. The open permissions for the document can be
-     * ALLOW_PRINTING, ALLOW_MODIFY_CONTENTS, ALLOW_COPY, ALLOW_MODIFY_ANNOTATIONS,
-     * ALLOW_FILL_IN, ALLOW_SCREENREADERS, ALLOW_ASSEMBLY and ALLOW_DEGRADED_PRINTING.
-     * The permissions can be combined by ORing them.
-     *
-     * @param reader         the read PDF
-     * @param os             the output destination
-     * @param certs          the public certificates to be used for the encryption
-     * @param permissions    the user permissions for each of the certificates
-     * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40,
-     *                       STANDARD_ENCRYPTION_128 or ENCRYPTION_AES_128.
-     * @on error
-     */
-    public static void encrypt(PdfReader reader, OutputStream os, final Certificate[] certs, final int[] permissions, final int encryptionType) {
-        encrypt(reader, os, certs, permissions, encryptionType, null);
+    public static void encrypt(PdfReader reader, OutputStream os, EncryptionProperties properties) {
+        encrypt(reader, os, properties, null);
     }
 
     /**
@@ -173,17 +103,17 @@ public final class PdfEncryptor {
      */
     public static String getPermissionsVerbose(int permissions) {
         StringBuilder buf = new StringBuilder("Allowed:");
-        if ((PdfWriter.ALLOW_PRINTING & permissions) == PdfWriter.ALLOW_PRINTING) buf.append(" Printing");
-        if ((PdfWriter.ALLOW_MODIFY_CONTENTS & permissions) == PdfWriter.ALLOW_MODIFY_CONTENTS)
+        if ((EncryptionConstants.ALLOW_PRINTING & permissions) == EncryptionConstants.ALLOW_PRINTING) buf.append(" Printing");
+        if ((EncryptionConstants.ALLOW_MODIFY_CONTENTS & permissions) == EncryptionConstants.ALLOW_MODIFY_CONTENTS)
             buf.append(" Modify contents");
-        if ((PdfWriter.ALLOW_COPY & permissions) == PdfWriter.ALLOW_COPY) buf.append(" Copy");
-        if ((PdfWriter.ALLOW_MODIFY_ANNOTATIONS & permissions) == PdfWriter.ALLOW_MODIFY_ANNOTATIONS)
+        if ((EncryptionConstants.ALLOW_COPY & permissions) == EncryptionConstants.ALLOW_COPY) buf.append(" Copy");
+        if ((EncryptionConstants.ALLOW_MODIFY_ANNOTATIONS & permissions) == EncryptionConstants.ALLOW_MODIFY_ANNOTATIONS)
             buf.append(" Modify annotations");
-        if ((PdfWriter.ALLOW_FILL_IN & permissions) == PdfWriter.ALLOW_FILL_IN) buf.append(" Fill in");
-        if ((PdfWriter.ALLOW_SCREENREADERS & permissions) == PdfWriter.ALLOW_SCREENREADERS)
+        if ((EncryptionConstants.ALLOW_FILL_IN & permissions) == EncryptionConstants.ALLOW_FILL_IN) buf.append(" Fill in");
+        if ((EncryptionConstants.ALLOW_SCREENREADERS & permissions) == EncryptionConstants.ALLOW_SCREENREADERS)
             buf.append(" Screen readers");
-        if ((PdfWriter.ALLOW_ASSEMBLY & permissions) == PdfWriter.ALLOW_ASSEMBLY) buf.append(" Assembly");
-        if ((PdfWriter.ALLOW_DEGRADED_PRINTING & permissions) == PdfWriter.ALLOW_DEGRADED_PRINTING)
+        if ((EncryptionConstants.ALLOW_ASSEMBLY & permissions) == EncryptionConstants.ALLOW_ASSEMBLY) buf.append(" Assembly");
+        if ((EncryptionConstants.ALLOW_DEGRADED_PRINTING & permissions) == EncryptionConstants.ALLOW_DEGRADED_PRINTING)
             buf.append(" Degraded printing");
         return buf.toString();
     }
@@ -195,7 +125,7 @@ public final class PdfEncryptor {
      * @return true if printing is allowed
      */
     public static boolean isPrintingAllowed(int permissions) {
-        return (PdfWriter.ALLOW_PRINTING & permissions) == PdfWriter.ALLOW_PRINTING;
+        return (EncryptionConstants.ALLOW_PRINTING & permissions) == EncryptionConstants.ALLOW_PRINTING;
     }
 
     /**
@@ -205,7 +135,7 @@ public final class PdfEncryptor {
      * @return true if modifying content is allowed
      */
     public static boolean isModifyContentsAllowed(int permissions) {
-        return (PdfWriter.ALLOW_MODIFY_CONTENTS & permissions) == PdfWriter.ALLOW_MODIFY_CONTENTS;
+        return (EncryptionConstants.ALLOW_MODIFY_CONTENTS & permissions) == EncryptionConstants.ALLOW_MODIFY_CONTENTS;
     }
 
     /**
@@ -215,7 +145,7 @@ public final class PdfEncryptor {
      * @return true if copying is allowed
      */
     public static boolean isCopyAllowed(int permissions) {
-        return (PdfWriter.ALLOW_COPY & permissions) == PdfWriter.ALLOW_COPY;
+        return (EncryptionConstants.ALLOW_COPY & permissions) == EncryptionConstants.ALLOW_COPY;
     }
 
     /**
@@ -225,7 +155,7 @@ public final class PdfEncryptor {
      * @return true if modifying annotations is allowed
      */
     public static boolean isModifyAnnotationsAllowed(int permissions) {
-        return (PdfWriter.ALLOW_MODIFY_ANNOTATIONS & permissions) == PdfWriter.ALLOW_MODIFY_ANNOTATIONS;
+        return (EncryptionConstants.ALLOW_MODIFY_ANNOTATIONS & permissions) == EncryptionConstants.ALLOW_MODIFY_ANNOTATIONS;
     }
 
     /**
@@ -235,7 +165,7 @@ public final class PdfEncryptor {
      * @return true if filling in fields is allowed
      */
     public static boolean isFillInAllowed(int permissions) {
-        return (PdfWriter.ALLOW_FILL_IN & permissions) == PdfWriter.ALLOW_FILL_IN;
+        return (EncryptionConstants.ALLOW_FILL_IN & permissions) == EncryptionConstants.ALLOW_FILL_IN;
     }
 
     /**
@@ -245,7 +175,7 @@ public final class PdfEncryptor {
      * @return true if repurposing for screenreaders is allowed
      */
     public static boolean isScreenReadersAllowed(int permissions) {
-        return (PdfWriter.ALLOW_SCREENREADERS & permissions) == PdfWriter.ALLOW_SCREENREADERS;
+        return (EncryptionConstants.ALLOW_SCREENREADERS & permissions) == EncryptionConstants.ALLOW_SCREENREADERS;
     }
 
     /**
@@ -255,7 +185,7 @@ public final class PdfEncryptor {
      * @return true if document assembly is allowed
      */
     public static boolean isAssemblyAllowed(int permissions) {
-        return (PdfWriter.ALLOW_ASSEMBLY & permissions) == PdfWriter.ALLOW_ASSEMBLY;
+        return (EncryptionConstants.ALLOW_ASSEMBLY & permissions) == EncryptionConstants.ALLOW_ASSEMBLY;
     }
 
     /**
@@ -265,7 +195,7 @@ public final class PdfEncryptor {
      * @return true if degraded printing is allowed
      */
     public static boolean isDegradedPrintingAllowed(int permissions) {
-        return (PdfWriter.ALLOW_DEGRADED_PRINTING & permissions) == PdfWriter.ALLOW_DEGRADED_PRINTING;
+        return (EncryptionConstants.ALLOW_DEGRADED_PRINTING & permissions) == EncryptionConstants.ALLOW_DEGRADED_PRINTING;
     }
 
     /**

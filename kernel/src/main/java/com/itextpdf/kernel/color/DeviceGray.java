@@ -48,16 +48,16 @@ import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 
 public class DeviceGray extends Color {
 
-    static final public DeviceGray WHITE = new DeviceGray(1f);
-    static final public DeviceGray GRAY = new DeviceGray(.5f);
-    static final public DeviceGray BLACK = new DeviceGray();
+    public static final DeviceGray WHITE = new DeviceGray(1f);
+    public static final DeviceGray GRAY = new DeviceGray(.5f);
+    public static final DeviceGray BLACK = new DeviceGray();
 
     public DeviceGray(float value) {
         super(new PdfDeviceCs.Gray(), new float[] {value});
     }
 
     public DeviceGray() {
-        this(0);
+        this(0f);
     }
 
     public static DeviceGray makeLighter(DeviceGray grayColor) {

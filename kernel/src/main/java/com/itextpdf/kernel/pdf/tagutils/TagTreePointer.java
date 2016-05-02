@@ -61,6 +61,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,11 +75,12 @@ import java.util.List;
  * There could be any number of the instances of this class, simultaneously pointing to different (or the same) parts of
  * the tag structure. Because of this, you can for example remove the tag at which another instance is currently pointing.
  * In this case, this another instance becomes invalid, and invocation of any method on it will result in exception. To make
- * given instance valid again, use {@link #moveToRoot()} method. The same situation could occur in some rare cases
- * of the low level modifications of the document's tag structure. So for example, after copying of tagged pages to the
- * current document you would need to use {@link #moveToRoot()} to fix invalid instances.
+ * given instance valid again, use {@link #moveToRoot()} method.
  */
-public class TagTreePointer {
+public class TagTreePointer implements Serializable {
+
+    private static final long serialVersionUID = 3774218733446157411L;
+
     private TagStructureContext tagStructureContext;
     private PdfStructElem currentStructElem;
     private PdfPage currentPage;
@@ -171,7 +173,7 @@ public class TagTreePointer {
      * @param role role of the new tag.
      * @return this {@link TagTreePointer} instance.
      */
-    public TagTreePointer addTag(final PdfName role) {
+    public TagTreePointer addTag(PdfName role) {
         addTag(-1, role);
         return this;
     }
@@ -185,7 +187,7 @@ public class TagTreePointer {
      * @param role role of the new tag.
      * @return this {@link TagTreePointer} instance.
      */
-    public TagTreePointer addTag(int index, final PdfName role) {
+    public TagTreePointer addTag(int index, PdfName role) {
         addTag(index, new DummyAccessibleElement(role, null));
         return this;
     }
@@ -260,7 +262,7 @@ public class TagTreePointer {
      * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer addTag(int index, IAccessibleElement element, boolean keepConnectedToTag) {
-        throwExceptionIfRoleIsInvalid(element.getRole());
+        tagStructureContext.throwExceptionIfRoleIsInvalid(element.getRole());
         if (!tagStructureContext.isElementConnectedToTag(element)) {
             setNextNewKidIndex(index);
             setCurrentStructElem(addNewKid(element, keepConnectedToTag));
@@ -347,12 +349,6 @@ public class TagTreePointer {
      * @return this {@link TagStructureContext} instance.
      */
     public TagTreePointer removeTag() {
-        if (getDocument().getStructTreeRoot().isStructTreeIsPartialFlushed()) {
-            // Struct element can have mcrs from different pages as kids. If this is the case, some pages with these
-            // mcrs could already be flushed and current element will be already in the parentTree.
-            throw new PdfException(PdfException.CannotRemoveTagStructureElementsIfTagStructureWasPartiallyFlushed);
-        }
-
         IPdfStructElem parentElem = getCurrentStructElem().getParent();
         if (parentElem instanceof PdfStructTreeRoot) {
             throw new PdfException(PdfException.CannotRemoveDocumentRootTag);
@@ -361,7 +357,10 @@ public class TagTreePointer {
         List<IPdfStructElem> kids = getCurrentStructElem().getKids();
         PdfStructElem parent = (PdfStructElem) parentElem;
 
-        int removedKidIndex = TagStructureContext.removeKidFromParent(getCurrentStructElem().getPdfObject(), parent.getPdfObject());
+        if (parent.isFlushed()) {
+            throw new PdfException(PdfException.CannotRemoveTagBecauseItsParentIsFlushed);
+        }
+        int removedKidIndex = parent.removeKid(getCurrentStructElem());
         getCurrentStructElem().getPdfObject().getIndirectReference().setFree();
 
         for (IPdfStructElem kid : kids) {
@@ -681,8 +680,6 @@ public class TagTreePointer {
     }
 
     private PdfMcr prepareMcrForMovingToNewParent(PdfMcr mcrKid, PdfStructElem newParent) {
-        getDocument().getStructTreeRoot().getMcrManager().unregisterMcr(mcrKid);
-
         PdfObject mcrObject = mcrKid.getPdfObject();
         PdfDictionary mcrPage = mcrKid.getPageObject();
 
@@ -726,12 +723,6 @@ public class TagTreePointer {
 
     private boolean markedContentNotInPageStream() {
         return contentStream != null;
-    }
-
-    private void throwExceptionIfRoleIsInvalid(PdfName role) {
-        if (PdfStructElem.identifyType(getDocument(), role) == PdfStructElem.Unknown) {
-            throw new PdfException(PdfException.RoleIsNotMappedWithAnyStandardRole);
-        }
     }
 
     private void throwExceptionIfCurrentPageIsNotInited() {

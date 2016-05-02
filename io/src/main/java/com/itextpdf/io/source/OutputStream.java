@@ -46,7 +46,11 @@ package com.itextpdf.io.source;
 
 import com.itextpdf.io.IOException;
 
-public class OutputStream<T extends java.io.OutputStream> extends java.io.OutputStream {
+import java.io.Serializable;
+
+public class OutputStream<T extends java.io.OutputStream> extends java.io.OutputStream implements Serializable {
+
+    private static final long serialVersionUID = -5337390096148526418L;
 
     //long=19 + max frac=6 => 26 => round to 32.
     private final ByteBuffer numBuffer = new ByteBuffer(32);
@@ -73,7 +77,6 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
      */
     protected OutputStream() {
         super();
-        this.outputStream = new ByteArrayOutputStream();
     }
 
     @Override
@@ -234,4 +237,22 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
         } else
             throw new IOException(IOException.BytesCanBeResetInByteArrayOutputStreamOnly);
     }
+
+    /**
+     * This method is invoked while deserialization
+     */
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+    }
+
+    /**
+     * This method is invoked while serialization
+     */
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+        java.io.OutputStream tempOutputStream = outputStream;
+        outputStream = null;
+        out.defaultWriteObject();
+        outputStream = tempOutputStream;
+    }
+
 }

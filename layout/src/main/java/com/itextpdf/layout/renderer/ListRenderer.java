@@ -46,7 +46,8 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Text;
@@ -71,34 +72,55 @@ public class ListRenderer extends BlockRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        List<IRenderer> symbolRenderers = new ArrayList<>();
-        int listItemNum = getProperty(Property.LIST_START, 1);
-        for (int i = 0; i < childRenderers.size(); i++) {
-            if (childRenderers.get(i).getModelElement() instanceof ListItem) {
-                IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum++, childRenderers.get(i));
-                symbolRenderers.add(currentSymbolRenderer);
-                LayoutResult listSymbolLayoutResult = currentSymbolRenderer.layout(layoutContext);
-                if (listSymbolLayoutResult.getStatus() != LayoutResult.FULL) {
-                    return new LayoutResult(LayoutResult.NOTHING, null, null, this);
+        if (!hasOwnProperty(Property.LIST_SYMBOLS_INITIALIZED)) {
+            List<IRenderer> symbolRenderers = new ArrayList<>();
+            int listItemNum = getProperty(Property.LIST_START, 1);
+            for (int i = 0; i < childRenderers.size(); i++) {
+                if (childRenderers.get(i).getModelElement() instanceof ListItem) {
+                    IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum++, childRenderers.get(i));
+                    symbolRenderers.add(currentSymbolRenderer);
+                    LayoutResult listSymbolLayoutResult = currentSymbolRenderer.layout(layoutContext);
+                    if (listSymbolLayoutResult.getStatus() != LayoutResult.FULL) {
+                        return new LayoutResult(LayoutResult.NOTHING, null, null, this);
+                    }
                 }
             }
-        }
-        float maxSymbolWidth = 0;
-        for (IRenderer symbolRenderer : symbolRenderers) {
-            maxSymbolWidth = Math.max(maxSymbolWidth, symbolRenderer.getOccupiedArea().getBBox().getWidth());
-        }
-        Float symbolIndent = (Float)modelElement.getProperty(Property.LIST_SYMBOL_INDENT);
-        listItemNum = 0;
-        for (IRenderer childRenderer : childRenderers) {
-            childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
-            childRenderer.setProperty(Property.MARGIN_LEFT, childRenderer.getProperty(Property.MARGIN_LEFT, 0f) + maxSymbolWidth + (symbolIndent != null ? symbolIndent : 0f));
-            if (childRenderer.getModelElement() instanceof ListItem) {
-                IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
-                ((ListItemRenderer)childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);
+            float maxSymbolWidth = 0;
+            for (IRenderer symbolRenderer : symbolRenderers) {
+                maxSymbolWidth = Math.max(maxSymbolWidth, symbolRenderer.getOccupiedArea().getBBox().getWidth());
+            }
+            Float symbolIndent = modelElement.getProperty(Property.LIST_SYMBOL_INDENT);
+            listItemNum = 0;
+            for (IRenderer childRenderer : childRenderers) {
+                childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
+                childRenderer.setProperty(Property.MARGIN_LEFT, childRenderer.getProperty(Property.MARGIN_LEFT, 0f) + maxSymbolWidth + (symbolIndent != null ? symbolIndent : 0f));
+                if (childRenderer.getModelElement() instanceof ListItem) {
+                    IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
+                    ((ListItemRenderer) childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);
+                }
             }
         }
 
         return super.layout(layoutContext);
+    }
+
+    @Override
+    public IRenderer getNextRenderer() {
+        return new ListRenderer((com.itextpdf.layout.element.List) modelElement);
+    }
+
+    @Override
+    protected AbstractRenderer createSplitRenderer(int layoutResult) {
+        AbstractRenderer splitRenderer = super.createSplitRenderer(layoutResult);
+        splitRenderer.setProperty(Property.LIST_SYMBOLS_INITIALIZED, Boolean.valueOf(true));
+        return splitRenderer;
+    }
+
+    @Override
+    protected AbstractRenderer createOverflowRenderer(int layoutResult) {
+        AbstractRenderer overflowRenderer = super.createOverflowRenderer(layoutResult);
+        overflowRenderer.setProperty(Property.LIST_SYMBOLS_INITIALIZED, Boolean.valueOf(true));
+        return overflowRenderer;
     }
 
     protected IRenderer makeListSymbolRenderer(int index, IRenderer renderer) {
@@ -107,10 +129,9 @@ public class ListRenderer extends BlockRenderer {
             return new TextRenderer((Text) defaultListSymbol).setParent(this);
         } else if (defaultListSymbol instanceof Image) {
             return new ImageRenderer((Image) defaultListSymbol).setParent(this);
-        } else if (defaultListSymbol instanceof Property.ListNumberingType) {
-            Property.ListNumberingType numberingType = (Property.ListNumberingType) defaultListSymbol;
+        } else if (defaultListSymbol instanceof ListNumberingType) {
+            ListNumberingType numberingType = (ListNumberingType) defaultListSymbol;
             String numberText;
-            com.itextpdf.layout.element.List listModelElement = (com.itextpdf.layout.element.List) getModelElement();
             switch (numberingType) {
                 case DECIMAL:
                     numberText = String.valueOf(index);
@@ -153,11 +174,11 @@ public class ListRenderer extends BlockRenderer {
             // Be careful. There is a workaround here. For Greek symbols we first set a dummy font with document=null
             // in order for the metrics to be taken into account correctly during layout.
             // Then on draw we set the correct font with actual document in order for the font objects to be created.
-            if (numberingType == Property.ListNumberingType.GREEK_LOWER || numberingType == Property.ListNumberingType.GREEK_UPPER ||
-                    numberingType == Property.ListNumberingType.ZAPF_DINGBATS_1 || numberingType == Property.ListNumberingType.ZAPF_DINGBATS_2 ||
-                    numberingType == Property.ListNumberingType.ZAPF_DINGBATS_3 || numberingType == Property.ListNumberingType.ZAPF_DINGBATS_4) {
+            if (numberingType == ListNumberingType.GREEK_LOWER || numberingType == ListNumberingType.GREEK_UPPER ||
+                    numberingType == ListNumberingType.ZAPF_DINGBATS_1 || numberingType == ListNumberingType.ZAPF_DINGBATS_2 ||
+                    numberingType == ListNumberingType.ZAPF_DINGBATS_3 || numberingType == ListNumberingType.ZAPF_DINGBATS_4) {
 
-                final String constantFont = (numberingType == Property.ListNumberingType.GREEK_LOWER || numberingType == Property.ListNumberingType.GREEK_UPPER) ?
+                final String constantFont = (numberingType == ListNumberingType.GREEK_LOWER || numberingType == ListNumberingType.GREEK_UPPER) ?
                         FontConstants.SYMBOL : FontConstants.ZAPFDINGBATS;
 
                 textRenderer = new TextRenderer(textElement) {

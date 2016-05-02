@@ -25,7 +25,7 @@ import java.io.Serializable;
  *
  * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
  */
-public class CharVector implements Cloneable, Serializable {
+public class CharVector implements Serializable {
 
     private static final long serialVersionUID = 4263472982169004048L;
 
@@ -91,18 +91,17 @@ public class CharVector implements Cloneable, Serializable {
         n = a.length;
     }
 
+    public CharVector(CharVector cv) {
+        this.array = (char[])cv.array.clone();
+        this.blockSize = cv.blockSize;
+        this.n = cv.n;
+    }
+
     /**
      * Reset length of vector, but don't clear contents.
      */
     public void clear() {
         n = 0;
-    }
-
-    /** {@inheritDoc} */
-    public Object clone() throws CloneNotSupportedException {
-        CharVector cv = (CharVector) super.clone();
-        cv.array = array.clone();
-        return cv;
     }
 
     /**
@@ -174,5 +173,4 @@ public class CharVector implements Cloneable, Serializable {
             array = aux;
         }
     }
-
 }

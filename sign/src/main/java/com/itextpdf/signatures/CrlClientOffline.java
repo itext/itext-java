@@ -58,7 +58,7 @@ import java.util.List;
  *
  * @author Paulo Soares
  */
-public class CrlClientOffline implements CrlClient {
+public class CrlClientOffline implements ICrlClient {
 
     /**
      * The CRL as a byte array.
@@ -92,7 +92,7 @@ public class CrlClientOffline implements CrlClient {
     /**
      * Returns the CRL bytes (the parameters are ignored).
      *
-     * @see com.itextpdf.signatures.CrlClient#getEncoded(java.security.cert.X509Certificate, java.lang.String)
+     * @see ICrlClient#getEncoded(java.security.cert.X509Certificate, java.lang.String)
      */
     public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
         return crls;

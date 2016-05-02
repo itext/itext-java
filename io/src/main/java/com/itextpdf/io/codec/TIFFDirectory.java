@@ -303,7 +303,7 @@ public class TIFFDirectory implements Serializable {
                             }
 
                             count = v.size();
-                            String strings[] = new String[count];
+                            String[] strings = new String[count];
                             for (int c = 0; c < count; c++) {
                                 strings[c] = v.get(c);
                             }

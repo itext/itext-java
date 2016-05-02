@@ -1,6 +1,6 @@
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.image.ImageFactory;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -24,11 +24,11 @@ import static org.junit.Assert.assertEquals;
 @Category(IntegrationTest.class)
 public class PdfDocumentTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfDocumentTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfDocumentTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
@@ -37,7 +37,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         // There is a possibility to override version in stamping mode
         String out = destinationFolder + "writing_pdf_version.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(out), PdfVersion.PDF_2_0);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(out, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
 
         assertEquals(PdfVersion.PDF_2_0, pdfDoc.getPdfVersion());
 
@@ -79,9 +79,9 @@ public class PdfDocumentTest extends ExtendedITextTest {
         array3.add(new PdfNumber(806));
         array3.add(new PdfNumber(1));
 
-        pdfDoc.addNameDestination("test1", array2);
-        pdfDoc.addNameDestination("test2", array3);
-        pdfDoc.addNameDestination("test3", array1);
+        pdfDoc.addNamedDestination("test1", array2);
+        pdfDoc.addNamedDestination("test2", array3);
+        pdfDoc.addNamedDestination("test3", array1);
 
         PdfOutline root = pdfDoc.getOutlines(false);
         if (root == null)
@@ -100,7 +100,9 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     public void freeReferencesInObjectStream() throws IOException {
-        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "styledLineArts_Redacted.pdf"), new PdfWriter(new ByteArrayOutputStream()), true);
+        PdfReader reader = new PdfReader(sourceFolder + "styledLineArts_Redacted.pdf");
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+        PdfDocument document = new PdfDocument(reader, writer, new StampingProperties().useAppendMode());
         PdfDictionary dict = new PdfDictionary();
         dict.makeIndirect(document);
         assertTrue(dict.getIndirectReference().getObjNumber() > 0);
@@ -253,7 +255,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     public void testImageCompressLevel() throws IOException {
-        byte[] b = ImageFactory.getImage(sourceFolder + "berlin2013.jpg").getData();
+        byte[] b = ImageDataFactory.create(sourceFolder + "berlin2013.jpg").getData();
         com.itextpdf.io.source.ByteArrayOutputStream image =  new com.itextpdf.io.source.ByteArrayOutputStream();
         image.assignBytes(b, b.length);
 
@@ -272,8 +274,8 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     public void testFreeReference() throws IOException, InterruptedException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "baseFreeReference.pdf"), new PdfWriter(destinationFolder + "freeReference.pdf"));
-        pdfDocument.getWriter().setFullCompression(false);
+        PdfWriter writer = new PdfWriter(destinationFolder + "freeReference.pdf", new WriterProperties().setFullCompressionMode(false));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "baseFreeReference.pdf"), writer);
         pdfDocument.getPage(1).getResources().getPdfObject().getAsArray(new PdfName("d")).get(0).getIndirectReference().setFree();
         PdfStream pdfStream = new PdfStream();
         pdfStream.setData(new byte[]{24, 23, 67});
@@ -295,7 +297,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     public void readEncryptedDocumentWithFullCompression() throws IOException {
-        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "source.pdf"), "123".getBytes());
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "source.pdf"), new ReaderProperties().setPassword("123".getBytes()));
         PdfDocument pdfDocument = new PdfDocument(reader);
 
         PdfDictionary form = pdfDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);

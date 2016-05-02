@@ -44,6 +44,8 @@
  */
 package com.itextpdf.forms.xfa;
 
+import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -53,12 +55,6 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.xmp.XmlDomWriter;
-import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.forms.fields.PdfFormField;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -68,6 +64,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -81,14 +80,15 @@ import org.xml.sax.SAXException;
  */
 public class XfaForm {
 
-    private Xml2SomTemplate templateSom;
+    private static final String DEFAULT_XFA = "com/itextpdf/forms/xfa/default.xml";
+
     private Node templateNode;
     private Xml2SomDatasets datasetsSom;
     private Node datasetsNode;
     private AcroFieldsSearch acroFieldsSom;
     private boolean xfaPresent = false;
     private org.w3c.dom.Document domDocument;
-    private boolean changed = false;
+
     /**
      * The URI for the XFA Data schema.
      */
@@ -98,6 +98,25 @@ public class XfaForm {
      * An empty constructor to build on.
      */
     public XfaForm() {
+        this(ResourceUtil.getResourceStream(DEFAULT_XFA));
+    }
+
+    /**
+     * Creates an XFA form by the stream containing all xml information
+     */
+    public XfaForm(InputStream inputStream) {
+        try {
+            initXfaForm(inputStream);
+        } catch (Exception e) {
+            throw new PdfException(e);
+        }
+    }
+
+    /**
+     * Creates an XFA form by the {@link Document} containing all xml information
+     */
+    public XfaForm(Document domDocument) {
+        setDomDocument(domDocument);
     }
 
     /**
@@ -106,7 +125,7 @@ public class XfaForm {
      * {@link PdfAcroForm}. An entry in the dictionary with the <code>XFA</code>
      * key must contain correct XFA syntax. If the <code>XFA</code> key is
      * absent, then the constructor essentially does nothing.
-     * 
+     *
      * @param acroFormDictionary the dictionary object to initialize from
      */
     public XfaForm(PdfDictionary acroFormDictionary) {
@@ -138,44 +157,16 @@ public class XfaForm {
     }
 
     /**
-     * Return the XFA Object, could be an array, could be a Stream.
-     * Returns null f no XFA Object is present.
-     *
-     * @param pdfDocument a PdfDocument instance
-     * @return the XFA object
-     */
-    public static PdfObject getXfaObject(PdfDocument pdfDocument) {
-        PdfDictionary af = pdfDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
-        return af == null ? null : af.get(PdfName.XFA);
-    }
-
-    /**
-     * Write the XfaForm to the provided PdfDocument.
-     *
-     * @param document the PdfDocument to write the XFA Form to
-     * @throws IOException
-     */
-    public void write(PdfDocument document) throws IOException {
-        if (isChanged()) {
-            setXfaForm(this, document);
-        }
-    }
-
-    /**
      * Sets the XFA key from a byte array. The old XFA is erased.
      *
-     * @param form the data
+     * @param form        the data
      * @param pdfDocument pdfDocument
      * @throws java.io.IOException on IO error
      */
     public static void setXfaForm(XfaForm form, PdfDocument pdfDocument) throws IOException {
-        PdfDictionary af = pdfDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
-        if (af == null) {
-            return;
-        }
+        PdfDictionary af = PdfAcroForm.getAcroForm(pdfDocument, true).getPdfObject();
         PdfObject xfa = getXfaObject(pdfDocument);
-        assert xfa != null;
-        if (xfa.isArray()) {
+        if (xfa != null && xfa.isArray()) {
             PdfArray ar = (PdfArray) xfa;
             int t = -1;
             int d = -1;
@@ -207,13 +198,14 @@ public class XfaForm {
         stream.setCompressionLevel(pdfDocument.getWriter().getCompressionLevel());
         stream.flush();
         af.put(PdfName.XFA, stream);
+        af.setModified();
     }
 
     /**
      * Extracts DOM nodes from an XFA document.
-     * 
+     *
      * @param domDocument an XFA file as a {@link org.w3c.dom.Document DOM
-     * document}
+     *                    document}
      * @return a {@link Map} of XFA packet names and their associated
      * {@link org.w3c.dom.Node DOM nodes}
      */
@@ -236,20 +228,51 @@ public class XfaForm {
     }
 
     /**
-     * Serializes a XML document to a byte array.
+     * Write the XfaForm to the provided PdfDocument.
      *
-     * @param n the XML document
-     * @return the serialized XML document
-     * @throws java.io.IOException on error
+     * @param document the PdfDocument to write the XFA Form to
+     * @throws IOException
      */
-    public static byte[] serializeDocument(Node n) throws IOException {
-        XmlDomWriter xw = new XmlDomWriter();
-        ByteArrayOutputStream fout = new ByteArrayOutputStream();
-        xw.setOutput(fout, null);
-        xw.setCanonical(false);
-        xw.write(n);
-        fout.close();
-        return fout.toByteArray();
+    public void write(PdfDocument document) throws IOException {
+        setXfaForm(this, document);
+    }
+
+    /**
+     * Changes a field value in the XFA form.
+     *
+     * @param name  the name of the field to be changed
+     * @param value the new value
+     */
+    public void setXfaFieldValue(String name, String value) {
+        if (isXfaPresent()) {
+            name = findFieldName(name);
+            if (name != null) {
+                String shortName = Xml2Som.getShortName(name);
+                Node xn = findDatasetsNode(shortName);
+                if (xn == null) {
+                    xn = datasetsSom.insertNode(getDatasetsNode(), shortName);
+                }
+                setNodeText(xn, value);
+            }
+        }
+    }
+
+    /**
+     * Gets the xfa field value.
+     *
+     * @param name the fully qualified field name
+     * @return the field value
+     */
+    public String getXfaFieldValue(String name) {
+        if (isXfaPresent()) {
+            name = findFieldName(name);
+            if (name != null) {
+
+                name = Xml2Som.getShortName(name);
+                return XfaForm.getNodeText(findDatasetsNode(name));
+            }
+        }
+        return null;
     }
 
     /**
@@ -262,34 +285,17 @@ public class XfaForm {
     }
 
     /**
-     * Gets the top level DOM document.
-     *
-     * @return the top level DOM document
-     */
-    public org.w3c.dom.Document getDomDocument() {
-        return domDocument;
-    }
-
-    /**
-     * Finds the complete field name contained in the "classic" forms from a partial
-     * name.
+     * Finds the complete field name from a partial name.
      *
      * @param name the complete or partial name
-     * @param af   the fields
      * @return the complete name or <CODE>null</CODE> if not found
      */
-    public String findFieldName(String name, PdfAcroForm af) {
-        Map<String, PdfFormField> items = af.getFormFields();
-        if (items.containsKey(name))
-            return name;
-        if (acroFieldsSom == null) {
-            if (items.isEmpty() && xfaPresent) {
-                acroFieldsSom = new AcroFieldsSearch(datasetsSom.getName2Node().keySet());
-            } else {
-                acroFieldsSom = new AcroFieldsSearch(items.keySet());
-            }
+    public String findFieldName(String name) {
+        if (acroFieldsSom == null && xfaPresent) {
+            acroFieldsSom = new AcroFieldsSearch(datasetsSom.getName2Node().keySet());
+            return acroFieldsSom.getAcroShort2LongName().containsKey(name) ? acroFieldsSom.getAcroShort2LongName().get(name) : acroFieldsSom.inverseSearchGlobal(Xml2Som.splitParts(name));
         }
-        return acroFieldsSom.getAcroShort2LongName().containsKey(name) ? acroFieldsSom.getAcroShort2LongName().get(name) : acroFieldsSom.inverseSearchGlobal(Xml2Som.splitParts(name));
+        return null;
     }
 
     /**
@@ -329,19 +335,6 @@ public class XfaForm {
         return n == null ? "" : getNodeText(n, "");
     }
 
-    private static String getNodeText(Node n, String name) {
-        Node n2 = n.getFirstChild();
-        while (n2 != null) {
-            if (n2.getNodeType() == Node.ELEMENT_NODE) {
-                name = getNodeText(n2, name);
-            } else if (n2.getNodeType() == Node.TEXT_NODE) {
-                name += n2.getNodeValue();
-            }
-            n2 = n2.getNextSibling();
-        }
-        return name;
-    }
-
     /**
      * Sets the text of this node. All the child's node are deleted and a new
      * child text node is created.
@@ -359,16 +352,15 @@ public class XfaForm {
         if (n.getAttributes().getNamedItemNS(XFA_DATA_SCHEMA, "dataNode") != null)
             n.getAttributes().removeNamedItemNS(XFA_DATA_SCHEMA, "dataNode");
         n.appendChild(domDocument.createTextNode(text));
-        changed = true;
     }
 
     /**
-     * Sets the XFA form flag signaling that this is a valid XFA form.
+     * Gets the top level DOM document.
      *
-     * @param xfaPresent the XFA form flag signaling that this is a valid XFA form
+     * @return the top level DOM document
      */
-    public void setXfaPresent(boolean xfaPresent) {
-        this.xfaPresent = xfaPresent;
+    public Document getDomDocument() {
+        return domDocument;
     }
 
     /**
@@ -379,78 +371,6 @@ public class XfaForm {
     public void setDomDocument(org.w3c.dom.Document domDocument) {
         this.domDocument = domDocument;
         extractNodes();
-    }
-
-    /**
-     * Checks if this XFA form was changed.
-     *
-     * @return <CODE>true</CODE> if this XFA form was changed
-     */
-    public boolean isChanged() {
-        return changed;
-    }
-
-    /**
-     * Sets the changed status of this XFA instance.
-     *
-     * @param changed the changed status of this XFA instance
-     */
-    public void setChanged(boolean changed) {
-        this.changed = changed;
-    }
-
-    /**
-     * Gets the class that contains the template processing section of the XFA.
-     *
-     * @return the class that contains the template processing section of the XFA
-     */
-    public Xml2SomTemplate getTemplateSom() {
-        return templateSom;
-    }
-
-    /**
-     * Sets the class that contains the template processing section of the XFA.
-     *
-     * @param templateSom the class that contains the template processing section of the XFA
-     */
-    public void setTemplateSom(Xml2SomTemplate templateSom) {
-        this.templateSom = templateSom;
-    }
-
-    /**
-     * Gets the class that contains the datasets processing section of the XFA.
-     *
-     * @return the class that contains the datasets processing section of the XFA
-     */
-    public Xml2SomDatasets getDatasetsSom() {
-        return datasetsSom;
-    }
-
-    /**
-     * Sets the class that contains the datasets processing section of the XFA.
-     *
-     * @param datasetsSom the class that contains the datasets processing section of the XFA
-     */
-    public void setDatasetsSom(Xml2SomDatasets datasetsSom) {
-        this.datasetsSom = datasetsSom;
-    }
-
-    /**
-     * Gets the class that contains the "classic" fields processing.
-     *
-     * @return the class that contains the "classic" fields processing
-     */
-    public AcroFieldsSearch getAcroFieldsSom() {
-        return acroFieldsSom;
-    }
-
-    /**
-     * Sets the class that contains the "classic" fields processing.
-     *
-     * @param acroFieldsSom the class that contains the "classic" fields processing
-     */
-    public void setAcroFieldsSom(AcroFieldsSearch acroFieldsSom) {
-        this.acroFieldsSom = acroFieldsSom;
     }
 
     /**
@@ -466,7 +386,7 @@ public class XfaForm {
      * Replaces the XFA data under datasets/data. Accepts a {@link File file
      * object} to fill this object with XFA data. The resulting DOM document may
      * be modified.
-     * 
+     *
      * @param file the {@link File}
      * @throws java.io.IOException on IO error on the {@link InputSource}
      */
@@ -477,8 +397,8 @@ public class XfaForm {
     /**
      * Replaces the XFA data under datasets/data. Accepts a {@link File file
      * object} to fill this object with XFA data.
-     * 
-     * @param file the {@link File}
+     *
+     * @param file     the {@link File}
      * @param readOnly whether or not the resulting DOM document may be modified
      * @throws java.io.IOException on IO error on the {@link InputSource}
      */
@@ -490,7 +410,7 @@ public class XfaForm {
      * Replaces the XFA data under datasets/data. Accepts an {@link InputStream}
      * to fill this object with XFA data. The resulting DOM document may be
      * modified.
-     * 
+     *
      * @param is the {@link InputStream}
      * @throws java.io.IOException on IO error on the {@link InputSource}
      */
@@ -501,8 +421,8 @@ public class XfaForm {
     /**
      * Replaces the XFA data under datasets/data. Accepts an {@link InputStream}
      * to fill this object with XFA data.
-     * 
-     * @param is the {@link InputStream}
+     *
+     * @param is       the {@link InputStream}
      * @param readOnly whether or not the resulting DOM document may be modified
      * @throws java.io.IOException on IO error on the {@link InputSource}
      */
@@ -514,7 +434,7 @@ public class XfaForm {
      * Replaces the XFA data under datasets/data. Accepts a {@link InputSource
      * SAX input source} to fill this object with XFA data. The resulting DOM
      * document may be modified.
-     * 
+     *
      * @param is the {@link InputSource SAX input source}
      * @throws java.io.IOException on IO error on the {@link InputSource}
      */
@@ -525,8 +445,8 @@ public class XfaForm {
     /**
      * Replaces the XFA data under datasets/data. Accepts a {@link InputSource
      * SAX input source} to fill this object with XFA data.
-     * 
-     * @param is the {@link InputSource SAX input source}
+     *
+     * @param is       the {@link InputSource SAX input source}
      * @param readOnly whether or not the resulting DOM document may be modified
      * @throws java.io.IOException on IO error on the {@link InputSource}
      */
@@ -546,6 +466,7 @@ public class XfaForm {
 
     /**
      * Replaces the XFA data under datasets/data.
+     *
      * @param node the input {@link org.w3c.dom.Node}
      */
     public void fillXfaForm(Node node) {
@@ -554,7 +475,8 @@ public class XfaForm {
 
     /**
      * Replaces the XFA data under datasets/data.
-     * @param node the input {@link org.w3c.dom.Node}
+     *
+     * @param node     the input {@link org.w3c.dom.Node}
      * @param readOnly whether or not the resulting DOM document may be modified
      */
     public void fillXfaForm(Node node, boolean readOnly) {
@@ -589,11 +511,51 @@ public class XfaForm {
                 data.replaceChild(domDocument.importNode(node, true), firstNode);
         }
         extractNodes();
-        setChanged(true);
+    }
+
+    private static String getNodeText(Node n, String name) {
+        Node n2 = n.getFirstChild();
+        while (n2 != null) {
+            if (n2.getNodeType() == Node.ELEMENT_NODE) {
+                name = getNodeText(n2, name);
+            } else if (n2.getNodeType() == Node.TEXT_NODE) {
+                name += n2.getNodeValue();
+            }
+            n2 = n2.getNextSibling();
+        }
+        return name;
+    }
+
+    /**
+     * Return the XFA Object, could be an array, could be a Stream.
+     * Returns null f no XFA Object is present.
+     *
+     * @param pdfDocument a PdfDocument instance
+     * @return the XFA object
+     */
+    private static PdfObject getXfaObject(PdfDocument pdfDocument) {
+        PdfDictionary af = pdfDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
+        return af == null ? null : af.get(PdfName.XFA);
+    }
+
+    /**
+     * Serializes a XML document to a byte array.
+     *
+     * @param n the XML document
+     * @return the serialized XML document
+     * @throws java.io.IOException on error
+     */
+    private static byte[] serializeDocument(Node n) throws IOException {
+        XmlDomWriter xw = new XmlDomWriter();
+        ByteArrayOutputStream fout = new ByteArrayOutputStream();
+        xw.setOutput(fout, null);
+        xw.setCanonical(false);
+        xw.write(n);
+        fout.close();
+        return fout.toByteArray();
     }
 
     private void initXfaForm(PdfObject xfa) throws IOException, ParserConfigurationException, SAXException {
-        xfaPresent = true;
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         if (xfa.isArray()) {
             PdfArray ar = (PdfArray) xfa;
@@ -609,11 +571,15 @@ public class XfaForm {
             bout.write(b);
         }
         bout.close();
+        initXfaForm(new ByteArrayInputStream(bout.toByteArray()));
+    }
+
+    private void initXfaForm(InputStream inputStream) throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
         fact.setNamespaceAware(true);
         DocumentBuilder db = fact.newDocumentBuilder();
-        domDocument = db.parse(new ByteArrayInputStream(bout.toByteArray()));
-        extractNodes();
+        setDomDocument(db.parse(inputStream));
+        xfaPresent = true;
     }
 
     /**
@@ -624,7 +590,6 @@ public class XfaForm {
 
         if (xfaNodes.containsKey("template")) {
             templateNode = xfaNodes.get("template");
-            templateSom = new Xml2SomTemplate(templateNode);
         }
         if (xfaNodes.containsKey("datasets")) {
             datasetsNode = xfaNodes.get("datasets");

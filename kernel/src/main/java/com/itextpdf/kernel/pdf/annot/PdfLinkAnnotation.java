@@ -58,10 +58,10 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     /**
      * Highlight modes.
      */
-    static public final PdfName None = PdfName.N;
-    static public final PdfName Invert = PdfName.I;
-    static public final PdfName Outline = PdfName.O;
-    static public final PdfName Push = PdfName.P;
+    public static final PdfName None = PdfName.N;
+    public static final PdfName Invert = PdfName.I;
+    public static final PdfName Outline = PdfName.O;
+    public static final PdfName Push = PdfName.P;
 
     public PdfLinkAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
@@ -80,23 +80,20 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     }
 
     public PdfLinkAnnotation setDestination(PdfObject destination) {
-        return put(PdfName.Dest, destination);
+        return (PdfLinkAnnotation) put(PdfName.Dest, destination);
     }
 
     public PdfLinkAnnotation setDestination(PdfDestination destination) {
-        return put(PdfName.Dest, destination);
-    }
-
-    public PdfDictionary getActionObject() {
-        return getPdfObject().getAsDictionary(PdfName.A);
+        return (PdfLinkAnnotation) put(PdfName.Dest, destination.getPdfObject());
     }
 
     public PdfLinkAnnotation setAction(PdfDictionary action) {
-        return put(PdfName.A, action);
+        return (PdfLinkAnnotation) put(PdfName.A, action);
     }
 
+    @Override
     public PdfLinkAnnotation setAction(PdfAction action) {
-        return put(PdfName.A, action);
+        return (PdfLinkAnnotation) put(PdfName.A, action.getPdfObject());
     }
 
     public PdfName getHighlightMode() {
@@ -104,7 +101,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     }
 
     public PdfLinkAnnotation setHighlightMode(PdfName hlMode) {
-        return put(PdfName.H, hlMode);
+        return (PdfLinkAnnotation) put(PdfName.H, hlMode);
     }
 
     public PdfDictionary getUriActionObject() {
@@ -112,13 +109,10 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     }
 
     public PdfLinkAnnotation setUriAction(PdfDictionary action) {
-        return put(PdfName.PA, action);
+        return (PdfLinkAnnotation) put(PdfName.PA, action);
     }
 
     public PdfLinkAnnotation setUriAction(PdfAction action) {
-        return put(PdfName.PA, action);
+        return (PdfLinkAnnotation) put(PdfName.PA, action.getPdfObject());
     }
-
-
-
 }

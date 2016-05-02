@@ -56,9 +56,9 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
 	/**
      * Text justification options.
      */
-    public static final int LeftJustified = 0;
-    public static final int Centered = 1;
-    public static final int RightJustified = 2;
+    public static final int LEFT_JUSTIFIED = 0;
+    public static final int CENTERED = 1;
+    public static final int RIGHT_JUSTIFIED = 2;
 
     public PdfFreeTextAnnotation(Rectangle rect, String appearanceString) {
         super(rect);
@@ -79,7 +79,7 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfFreeTextAnnotation setDefaultStyleString(PdfString defaultStyleString) {
-        return put(PdfName.DS, defaultStyleString);
+        return (PdfFreeTextAnnotation) put(PdfName.DS, defaultStyleString);
     }
 
     public PdfArray getCalloutLine() {
@@ -91,7 +91,7 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfFreeTextAnnotation setCalloutLine(PdfArray calloutLine) {
-        return put(PdfName.CL, calloutLine);
+        return (PdfFreeTextAnnotation) put(PdfName.CL, calloutLine);
     }
 
     public PdfName getLineEndingStyle() {
@@ -99,7 +99,7 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfFreeTextAnnotation setLineEndingStyle(PdfName lineEndingStyle) {
-        return put(PdfName.LE, lineEndingStyle);
+        return (PdfFreeTextAnnotation) put(PdfName.LE, lineEndingStyle);
     }
 
 

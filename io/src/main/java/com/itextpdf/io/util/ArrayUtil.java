@@ -69,7 +69,7 @@ public final class ArrayUtil {
         return array;
     }
 
-    public static int hashCode(byte a[]) {
+    public static int hashCode(byte[] a) {
         if (a == null)
             return 0;
 
@@ -90,5 +90,9 @@ public final class ArrayUtil {
         for (int i = 0; i < a.length; i++) {
             a[i] = value;
         }
+    }
+
+    public static int[] cloneArray(int[] src) {
+        return (int[]) src.clone();
     }
 }

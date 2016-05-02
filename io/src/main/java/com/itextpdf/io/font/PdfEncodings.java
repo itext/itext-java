@@ -45,13 +45,10 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
+import com.itextpdf.io.util.EncodingUtil;
 import com.itextpdf.io.util.IntHashtable;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
-import java.nio.charset.CodingErrorAction;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,52 +77,53 @@ public class PdfEncodings {
     /** A possible encoding. */
     public static final String ZAPFDINGBATS = "ZapfDingbats";
     /** This is the encoding to be used to output text in Unicode. */
-    public static final String UnicodeBig = "UnicodeBig";
+    public static final String UNICODE_BIG = "UnicodeBig";
     /** This is the encoding to be used to output text for Identity-H/V CMaps. */
-    public static final String UnicodeBigUnmarked = "UnicodeBigUnmarked";
+    public static final String UNICODE_BIG_UNMARKED = "UnicodeBigUnmarked";
     /** This is the default encoding to be used for converting Strings into
-     * bytes and vice versa. The default encoding is PdfDocEncoding. */
-    public static final String PdfDocEncoding = "PDF";
+     * bytes and vice versa. The default encoding is PDF_DOC_ENCODING. */
+    public static final String PDF_DOC_ENCODING = "PDF";
 
-    public static final String EmptyString = "";
+    private static final String EMPTY_STRING = "";
 
-    static final char[] winansiByteToChar = {
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-            16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-            32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
-            48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-            64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
-            80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95,
-            96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111,
-            112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127,
-            8364, 65533, 8218, 402, 8222, 8230, 8224, 8225, 710, 8240, 352, 8249, 338, 65533, 381, 65533,
-            65533, 8216, 8217, 8220, 8221, 8226, 8211, 8212, 732, 8482, 353, 8250, 339, 65533, 382, 376,
-            160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175,
-            176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191,
-            192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207,
-            208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223,
-            224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
-            240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255 };
+    private static final char[] winansiByteToChar = {
+            (char) 0, (char) 1, (char) 2, (char) 3, (char) 4, (char) 5, (char) 6, (char) 7, (char) 8, (char) 9, (char) 10, (char) 11, (char) 12, (char) 13, (char) 14, (char) 15,
+            (char) 16, (char) 17, (char) 18, (char) 19, (char) 20, (char) 21, (char) 22, (char) 23, (char) 24, (char) 25, (char) 26, (char) 27, (char) 28, (char) 29, (char) 30, (char) 31,
+            (char) 32, (char) 33, (char) 34, (char) 35, (char) 36, (char) 37, (char) 38, (char) 39, (char) 40, (char) 41, (char) 42, (char) 43, (char) 44, (char) 45, (char) 46, (char) 47,
+            (char) 48, (char) 49, (char) 50, (char) 51, (char) 52, (char) 53, (char) 54, (char) 55, (char) 56, (char) 57, (char) 58, (char) 59, (char) 60, (char) 61, (char) 62, (char) 63,
+            (char) 64, (char) 65, (char) 66, (char) 67, (char) 68, (char) 69, (char) 70, (char) 71, (char) 72, (char) 73, (char) 74, (char) 75, (char) 76, (char) 77, (char) 78, (char) 79,
+            (char) 80, (char) 81, (char) 82, (char) 83, (char) 84, (char) 85, (char) 86, (char) 87, (char) 88, (char) 89, (char) 90, (char) 91, (char) 92, (char) 93, (char) 94, (char) 95,
+            (char) 96, (char) 97, (char) 98, (char) 99, (char) 100, (char) 101, (char) 102, (char) 103, (char) 104, (char) 105, (char) 106, (char) 107, (char) 108, (char) 109, (char) 110, (char) 111,
+            (char) 112, (char) 113, (char) 114, (char) 115, (char) 116, (char) 117, (char) 118, (char) 119, (char) 120, (char) 121, (char) 122, (char) 123, (char) 124, (char) 125, (char) 126, (char) 127,
+            (char) 8364, (char) 65533, (char) 8218, (char) 402, (char) 8222, (char) 8230, (char) 8224, (char) 8225, (char) 710, (char) 8240, (char) 352, (char) 8249, (char) 338, (char) 65533, (char) 381, (char) 65533,
+            (char) 65533, (char) 8216, (char) 8217, (char) 8220, (char) 8221, (char) 8226, (char) 8211, (char) 8212, (char) 732, (char) 8482, (char) 353, (char) 8250, (char) 339, (char) 65533, (char) 382, (char) 376,
+            (char) 160, (char) 161, (char) 162, (char) 163, (char) 164, (char) 165, (char) 166, (char) 167, (char) 168, (char) 169, (char) 170, (char) 171, (char) 172, (char) 173, (char) 174, (char) 175,
+            (char) 176, (char) 177, (char) 178, (char) 179, (char) 180, (char) 181, (char) 182, (char) 183, (char) 184, (char) 185, (char) 186, (char) 187, (char) 188, (char) 189, (char) 190, (char) 191,
+            (char) 192, (char) 193, (char) 194, (char) 195, (char) 196, (char) 197, (char) 198, (char) 199, (char) 200, (char) 201, (char) 202, (char) 203, (char) 204, (char) 205, (char) 206, (char) 207,
+            (char) 208, (char) 209, (char) 210, (char) 211, (char) 212, (char) 213, (char) 214, (char) 215, (char) 216, (char) 217, (char) 218, (char) 219, (char) 220, (char) 221, (char) 222, (char) 223,
+            (char) 224, (char) 225, (char) 226, (char) 227, (char) 228, (char) 229, (char) 230, (char) 231, (char) 232, (char) 233, (char) 234, (char) 235, (char) 236, (char) 237, (char) 238, (char) 239,
+            (char) 240, (char) 241, (char) 242, (char) 243, (char) 244, (char) 245, (char) 246, (char) 247, (char) 248, (char) 249, (char) 250, (char) 251, (char) 252, (char) 253, (char) 254, (char) 255
+    };
 
-    static final char[] pdfEncodingByteToChar = {
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-            16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-            32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
-            48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-            64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
-            80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95,
-            96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111,
-            112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127,
-            0x2022, 0x2020, 0x2021, 0x2026, 0x2014, 0x2013, 0x0192, 0x2044, 0x2039, 0x203a, 0x2212, 0x2030, 0x201e, 0x201c, 0x201d, 0x2018,
-            0x2019, 0x201a, 0x2122, 0xfb01, 0xfb02, 0x0141, 0x0152, 0x0160, 0x0178, 0x017d, 0x0131, 0x0142, 0x0153, 0x0161, 0x017e, 65533,
-            0x20ac, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175,
-            176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191,
-            192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207,
-            208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223,
-            224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
-            240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255 };
+    private static final char[] pdfEncodingByteToChar = {
+            (char) 0, (char) 1, (char) 2, (char) 3, (char) 4, (char) 5, (char) 6, (char) 7, (char) 8, (char) 9, (char) 10, (char) 11, (char) 12, (char) 13, (char) 14, (char) 15,
+            (char) 16, (char) 17, (char) 18, (char) 19, (char) 20, (char) 21, (char) 22, (char) 23, (char) 24, (char) 25, (char) 26, (char) 27, (char) 28, (char) 29, (char) 30, (char) 31,
+            (char) 32, (char) 33, (char) 34, (char) 35, (char) 36, (char) 37, (char) 38, (char) 39, (char) 40, (char) 41, (char) 42, (char) 43, (char) 44, (char) 45, (char) 46, (char) 47,
+            (char) 48, (char) 49, (char) 50, (char) 51, (char) 52, (char) 53, (char) 54, (char) 55, (char) 56, (char) 57, (char) 58, (char) 59, (char) 60, (char) 61, (char) 62, (char) 63,
+            (char) 64, (char) 65, (char) 66, (char) 67, (char) 68, (char) 69, (char) 70, (char) 71, (char) 72, (char) 73, (char) 74, (char) 75, (char) 76, (char) 77, (char) 78, (char) 79,
+            (char) 80, (char) 81, (char) 82, (char) 83, (char) 84, (char) 85, (char) 86, (char) 87, (char) 88, (char) 89, (char) 90, (char) 91, (char) 92, (char) 93, (char) 94, (char) 95,
+            (char) 96, (char) 97, (char) 98, (char) 99, (char) 100, (char) 101, (char) 102, (char) 103, (char) 104, (char) 105, (char) 106, (char) 107, (char) 108, (char) 109, (char) 110, (char) 111,
+            (char) 112, (char) 113, (char) 114, (char) 115, (char) 116, (char) 117, (char) 118, (char) 119, (char) 120, (char) 121, (char) 122, (char) 123, (char) 124, (char) 125, (char) 126, (char) 127,
+            (char) 0x2022, (char) 0x2020, (char) 0x2021, (char) 0x2026, (char) 0x2014, (char) 0x2013, (char) 0x0192, (char) 0x2044, (char) 0x2039, (char) 0x203a, (char) 0x2212, (char) 0x2030, (char) 0x201e, (char) 0x201c, (char) 0x201d, (char) 0x2018,
+            (char) 0x2019, (char) 0x201a, (char) 0x2122, (char) 0xfb01, (char) 0xfb02, (char) 0x0141, (char) 0x0152, (char) 0x0160, (char) 0x0178, (char) 0x017d, (char) 0x0131, (char) 0x0142, (char) 0x0153, (char) 0x0161, (char) 0x017e, (char) 65533,
+            (char) 0x20ac, (char) 161, (char) 162, (char) 163, (char) 164, (char) 165, (char) 166, (char) 167, (char) 168, (char) 169, (char) 170, (char) 171, (char) 172, (char) 173, (char) 174, (char) 175,
+            (char) 176, (char) 177, (char) 178, (char) 179, (char) 180, (char) 181, (char) 182, (char) 183, (char) 184, (char) 185, (char) 186, (char) 187, (char) 188, (char) 189, (char) 190, (char) 191,
+            (char) 192, (char) 193, (char) 194, (char) 195, (char) 196, (char) 197, (char) 198, (char) 199, (char) 200, (char) 201, (char) 202, (char) 203, (char) 204, (char) 205, (char) 206, (char) 207,
+            (char) 208, (char) 209, (char) 210, (char) 211, (char) 212, (char) 213, (char) 214, (char) 215, (char) 216, (char) 217, (char) 218, (char) 219, (char) 220, (char) 221, (char) 222, (char) 223,
+            (char) 224, (char) 225, (char) 226, (char) 227, (char) 228, (char) 229, (char) 230, (char) 231, (char) 232, (char) 233, (char) 234, (char) 235, (char) 236, (char) 237, (char) 238, (char) 239,
+            (char) 240, (char) 241, (char) 242, (char) 243, (char) 244, (char) 245, (char) 246, (char) 247, (char) 248, (char) 249, (char) 250, (char) 251, (char) 252, (char) 253, (char) 254, (char) 255 };
 
-    public static final int[] standardEncoding = {
+    static final int[] standardEncoding = {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             32, 33, 34, 35, 36, 37, 38, 8217, 40, 41, 42, 43, 44, 45, 46, 47,
@@ -144,11 +142,11 @@ public class PdfEncodings {
             0, 230, 0, 0, 0, 305, 0, 0, 322, 248, 339, 223, 0, 0, 0, 0
     };
 
-    public static final IntHashtable winansi = new IntHashtable();
+    private static final IntHashtable winansi = new IntHashtable();
 
-    public static final IntHashtable pdfEncoding = new IntHashtable();
+    private static final IntHashtable pdfEncoding = new IntHashtable();
 
-    private static final Map<String, ExtraEncoding> extraEncodings = new HashMap<>();
+    private static final Map<String, IExtraEncoding> extraEncodings = new HashMap<>();
 
     static {
         for (int k = 128; k < 161; ++k) {
@@ -185,11 +183,12 @@ public class PdfEncodings {
         if (encoding == null || encoding.length() == 0) {
             int len = text.length();
             byte[] b = new byte[len];
-            for (int k = 0; k < len; ++k)
+            for (int k = 0; k < len; ++k) {
                 b[k] = (byte) text.charAt(k);
+            }
             return b;
         }
-        ExtraEncoding extra = extraEncodings.get(encoding.toLowerCase());
+        IExtraEncoding extra = extraEncodings.get(encoding.toLowerCase());
         if (extra != null) {
             byte[] b = extra.charToByte(text, encoding);
             if (b != null)
@@ -198,7 +197,7 @@ public class PdfEncodings {
         IntHashtable hash = null;
         if (encoding.equals(WINANSI)) {
             hash = winansi;
-        } else if (encoding.equals(PdfDocEncoding)) {
+        } else if (encoding.equals(PDF_DOC_ENCODING)) {
             hash = pdfEncoding;
         }
         if (hash != null) {
@@ -224,32 +223,8 @@ public class PdfEncodings {
             System.arraycopy(b, 0, b2, 0, ptr);
             return b2;
         }
-        if (encoding.equals(UnicodeBig)) {
-            // workaround for jdk 1.2.2 bug
-            char[] cc = text.toCharArray();
-            int len = cc.length;
-            byte[] b = new byte[cc.length * 2 + 2];
-            b[0] = -2;
-            b[1] = -1;
-            int bptr = 2;
-            for (int k = 0; k < len; ++k) {
-                char c = cc[k];
-                b[bptr++] = (byte) (c >> 8);
-                b[bptr++] = (byte) (c & 0xff);
-            }
-            return b;
-        }
         try {
-            Charset cc = Charset.forName(encoding);
-            CharsetEncoder ce = cc.newEncoder();
-            ce.onUnmappableCharacter(CodingErrorAction.IGNORE);
-            CharBuffer cb = CharBuffer.wrap(text.toCharArray());
-            java.nio.ByteBuffer bb = ce.encode(cb);
-            bb.rewind();
-            int lim = bb.limit();
-            byte[] br = new byte[lim];
-            bb.get(br);
-            return br;
+            return EncodingUtil.convertToBytes(text.toCharArray(), encoding);
         } catch (java.io.IOException e) {
             throw new IOException(IOException.PdfEncodings, e);
         }
@@ -269,39 +244,23 @@ public class PdfEncodings {
         IntHashtable hash = null;
         if (encoding.equals(WINANSI))
             hash = winansi;
-        else if (encoding.equals(PdfDocEncoding))
+        else if (encoding.equals(PDF_DOC_ENCODING))
             hash = pdfEncoding;
         if (hash != null) {
             int c;
-            if (ch < 128 || ch > 160 && ch <= 255)
+            if (ch < 128 || ch > 160 && ch <= 255) {
                 c = ch;
-            else
+            } else {
                 c = hash.get((int) ch);
-            if (c != 0)
+            }
+            if (c != 0) {
                 return new byte[]{(byte) c};
-            else
+            } else {
                 return new byte[0];
-        }
-        if (encoding.equals(UnicodeBig)) {
-            // workaround for jdk 1.2.2 bug
-            byte[] b = new byte[4];
-            b[0] = -2;
-            b[1] = -1;
-            b[2] = (byte) (ch >> 8);
-            b[3] = (byte) (ch & 0xff);
-            return b;
+            }
         }
         try {
-            Charset cc = Charset.forName(encoding);
-            CharsetEncoder ce = cc.newEncoder();
-            ce.onUnmappableCharacter(CodingErrorAction.IGNORE);
-            CharBuffer cb = CharBuffer.wrap(new char[]{ch});
-            java.nio.ByteBuffer bb = ce.encode(cb);
-            bb.rewind();
-            int lim = bb.limit();
-            byte[] br = new byte[lim];
-            bb.get(br);
-            return br;
+            return EncodingUtil.convertToBytes(new char[]{ch}, encoding);
         } catch (java.io.IOException e) {
             throw new IOException(IOException.PdfEncodings, e);
         }
@@ -317,23 +276,25 @@ public class PdfEncodings {
      */
     public static String convertToString(byte[] bytes, String encoding) {
         if (bytes == null)
-            return EmptyString;
+            return EMPTY_STRING;
         if (encoding == null || encoding.length() == 0) {
             char[] c = new char[bytes.length];
-            for (int k = 0; k < bytes.length; ++k)
+            for (int k = 0; k < bytes.length; ++k) {
                 c[k] = (char) (bytes[k] & 0xff);
+            }
             return new String(c);
         }
-        ExtraEncoding extra = extraEncodings.get(encoding.toLowerCase());
+        IExtraEncoding extra = extraEncodings.get(encoding.toLowerCase());
         if (extra != null) {
             String text = extra.byteToChar(bytes, encoding);
-            if (text != null)
+            if (text != null) {
                 return text;
+            }
         }
         char[] ch = null;
         if (encoding.equals(WINANSI))
             ch = winansiByteToChar;
-        else if (encoding.equals(PdfDocEncoding))
+        else if (encoding.equals(PDF_DOC_ENCODING))
             ch = pdfEncodingByteToChar;
         if (ch != null) {
             int len = bytes.length;
@@ -351,10 +312,10 @@ public class PdfEncodings {
     }
 
     /**
-     * Checks is {@code text} only has PdfDocEncoding characters.
+     * Checks is {@code text} only has PDF_DOC_ENCODING characters.
      *
      * @param text the {@code String} to test
-     * @return {@code true} if only PdfDocEncoding characters are present
+     * @return {@code true} if only PDF_DOC_ENCODING characters are present
      */
     public static boolean isPdfDocEncoding(String text) {
         if (text == null)
@@ -376,13 +337,13 @@ public class PdfEncodings {
      * @param enc the conversion class
      */
     @SuppressWarnings("unchecked")
-    public static void addExtraEncoding(String name, ExtraEncoding enc) {
+    public static void addExtraEncoding(String name, IExtraEncoding enc) {
         synchronized (extraEncodings) {
             extraEncodings.put(name.toLowerCase(), enc);
         }
     }
 
-    private static class WingdingsConversion implements ExtraEncoding {
+    private static class WingdingsConversion implements IExtraEncoding {
 
         public byte[] charToByte(char char1, String encoding) {
             if (char1 == ' ')
@@ -421,31 +382,31 @@ public class PdfEncodings {
             return null;
         }
 
-        private final static byte[] table = {
-                0, 35, 34, 0, 0, 0, 41, 62, 81, 42,
-                0, 0, 65, 63, 0, 0, 0, 0, 0, -4,
-                0, 0, 0, -5, 0, 0, 0, 0, 0, 0,
-                86, 0, 88, 89, 0, 0, 0, 0, 0, 0,
-                0, 0, -75, 0, 0, 0, 0, 0, -74, 0,
-                0, 0, -83, -81, -84, 0, 0, 0, 0, 0,
-                0, 0, 0, 124, 123, 0, 0, 0, 84, 0,
-                0, 0, 0, 0, 0, 0, 0, -90, 0, 0,
-                0, 113, 114, 0, 0, 0, 117, 0, 0, 0,
-                0, 0, 0, 125, 126, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, -116, -115,
-                -114, -113, -112, -111, -110, -109, -108, -107, -127, -126,
-                -125, -124, -123, -122, -121, -120, -119, -118, -116, -115,
-                -114, -113, -112, -111, -110, -109, -108, -107, -24, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, -24, -40, 0, 0, -60, -58, 0, 0, -16,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, -36,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0
+        private static final byte[] table = {
+                (byte) 0, (byte) 35, (byte) 34, (byte) 0, (byte) 0, (byte) 0, (byte) 41, (byte) 62, (byte) 81, (byte) 42,
+                (byte) 0, (byte) 0, (byte) 65, (byte) 63, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) -4,
+                (byte) 0, (byte) 0, (byte) 0, (byte) -5, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
+                (byte) 86, (byte) 0, (byte) 88, (byte) 89, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
+                (byte) 0, (byte) 0, (byte) -75, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) -74, (byte) 0,
+                (byte) 0, (byte) 0, (byte) -83, (byte) -81, (byte) -84, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
+                (byte) 0, (byte) 0, (byte) 0, (byte) 124, (byte) 123, (byte) 0, (byte) 0, (byte) 0, (byte) 84, (byte) 0,
+                (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) -90, (byte) 0, (byte) 0,
+                (byte) 0, (byte) 113, (byte) 114, (byte) 0, (byte) 0, (byte) 0, (byte) 117, (byte) 0, (byte) 0, (byte) 0,
+                (byte) 0, (byte) 0, (byte) 0, (byte) 125, (byte) 126, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
+                (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
+                (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) -116, (byte) -115,
+                (byte) -114, (byte) -113, (byte) -112, (byte) -111, (byte) -110, (byte) -109, (byte) -108, (byte) -107, (byte) -127, (byte) -126,
+                (byte) -125, (byte) -124, (byte) -123, (byte) -122, (byte) -121, (byte) -120, (byte) -119, (byte) -118, (byte) -116, (byte) -115,
+                (byte) -114, (byte) -113, (byte) -112, (byte) -111, (byte) -110, (byte) -109, (byte) -108, (byte) -107, (byte) -24, (byte) 0,
+                (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
+                (byte) 0, (byte) -24, (byte) -40, (byte) 0, (byte) 0, (byte) -60, (byte) -58, (byte) 0, (byte) 0, (byte) -16,
+                (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) -36,
+                (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
+                (byte) 0
         };
     }
 
-    private static class Cp437Conversion implements ExtraEncoding {
+    private static class Cp437Conversion implements IExtraEncoding {
         private static IntHashtable c2b = new IntHashtable();
 
         public byte[] charToByte(String text, String encoding) {
@@ -500,7 +461,7 @@ public class PdfEncodings {
             return new String(cc, 0, ptr);
         }
 
-        private final static char[] table = {
+        private static final char[] table = {
                 '\u00C7', '\u00FC', '\u00E9', '\u00E2', '\u00E4', '\u00E0', '\u00E5', '\u00E7', '\u00EA', '\u00EB', '\u00E8', '\u00EF', '\u00EE', '\u00EC', '\u00C4', '\u00C5',
                 '\u00C9', '\u00E6', '\u00C6', '\u00F4', '\u00F6', '\u00F2', '\u00FB', '\u00F9', '\u00FF', '\u00D6', '\u00DC', '\u00A2', '\u00A3', '\u00A5', '\u20A7', '\u0192',
                 '\u00E1', '\u00ED', '\u00F3', '\u00FA', '\u00F1', '\u00D1', '\u00AA', '\u00BA', '\u00BF', '\u2310', '\u00AC', '\u00BD', '\u00BC', '\u00A1', '\u00AB', '\u00BB',
@@ -517,7 +478,7 @@ public class PdfEncodings {
         }
     }
 
-    private static class SymbolConversion implements ExtraEncoding {
+    private static class SymbolConversion implements IExtraEncoding {
 
         private static final IntHashtable t1 = new IntHashtable();
         private static final IntHashtable t2 = new IntHashtable();
@@ -572,7 +533,7 @@ public class PdfEncodings {
             return new String(cc, 0, ptr);
         }
 
-        private final static char[] table1 = {
+        private static final char[] table1 = {
                 '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
                 '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
                 ' ','!','\u2200','#','\u2203','%','&','\u220b','(',')','*','+',',','-','.','/',
@@ -591,7 +552,7 @@ public class PdfEncodings {
                 '\0','\u232a','\u222b','\u2320','\u23ae','\u2321','\u239e','\u239f','\u23a0','\u23a4','\u23a5','\u23a6','\u23ab','\u23ac','\u23ad','\0'
         };
 
-        private final static char[] table2 = {
+        private static final char[] table2 = {
                 '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
                 '\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
                 '\u0020','\u2701','\u2702','\u2703','\u2704','\u260e','\u2706','\u2707','\u2708','\u2709','\u261b','\u261e','\u270C','\u270D','\u270E','\u270F',
@@ -624,7 +585,7 @@ public class PdfEncodings {
         }
     }
 
-    private static class SymbolTTConversion implements ExtraEncoding {
+    private static class SymbolTTConversion implements IExtraEncoding {
 
         public byte[] charToByte(char char1, String encoding) {
             if ((char1 & 0xff00) == 0 || (char1 & 0xff00) == 0xf000)

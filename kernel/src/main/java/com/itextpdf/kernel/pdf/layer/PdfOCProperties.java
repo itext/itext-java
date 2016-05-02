@@ -104,7 +104,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * ON, all others must be turned OFF.
      * @param group the radio group
      */
-    public void addOCGRadioGroup(final List<PdfLayer> group) {
+    public void addOCGRadioGroup(List<PdfLayer> group) {
         PdfArray ar = new PdfArray();
         for (PdfLayer layer : group) {
             if (layer.getTitle() == null)
@@ -220,7 +220,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * This method registers a new layer in the OCProperties.
      * @param layer the new layer
      */
-    protected void registerLayer(final PdfLayer layer) {
+    protected void registerLayer(PdfLayer layer) {
         if (layer == null)
             throw new IllegalArgumentException("layer argument is null");
         layers.add(layer);
@@ -234,7 +234,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * Gets the order of the layers in which they will be displayed in the layer view panel,
      * including nesting.
      */
-    private static void getOCGOrder(final PdfArray order, final PdfLayer layer) {
+    private static void getOCGOrder(PdfArray order, PdfLayer layer) {
         if (!layer.isOnPanel())
             return;
         if (layer.getTitle() == null)
@@ -244,7 +244,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
             return;
         PdfArray kids = new PdfArray();
         if (layer.getTitle() != null)
-            kids.add(new PdfString(layer.getTitle(), PdfEncodings.UnicodeBig));
+            kids.add(new PdfString(layer.getTitle(), PdfEncodings.UNICODE_BIG));
         for (PdfLayer child : children) {
             getOCGOrder(kids, child);
         }
@@ -256,7 +256,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * Populates the /AS entry in the /D dictionary.
      * @throws PdfException
      */
-    private void addASEvent(final PdfName event, final PdfName category) {
+    private void addASEvent(PdfName event, PdfName category) {
         PdfArray arr = new PdfArray();
         for (PdfLayer layer : layers) {
             if (layer.getTitle() == null) {
@@ -334,23 +334,23 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
     private void readOrderFromDictionary(PdfLayer parent, PdfArray orderArray, Map<PdfIndirectReference, PdfLayer> layerMap) {
         for (int i = 0; i < orderArray.size(); i++) {
             PdfObject item = orderArray.get(i);
-            if (item.getType() == PdfObject.Dictionary) {
+            if (item.getType() == PdfObject.DICTIONARY) {
                 PdfLayer layer = layerMap.get(item.getIndirectReference());
                 if (layer != null) {
                     layers.add(layer);
                     layer.onPanel = true;
                     if (parent != null)
                         parent.addChild(layer);
-                    if (i + 1 < orderArray.size() && orderArray.get(i + 1).getType() == PdfObject.Array) {
+                    if (i + 1 < orderArray.size() && orderArray.get(i + 1).getType() == PdfObject.ARRAY) {
                         readOrderFromDictionary(layer, orderArray.getAsArray(i + 1), layerMap);
                         i++;
                     }
                 }
-            } else if (item.getType() == PdfObject.Array) {
+            } else if (item.getType() == PdfObject.ARRAY) {
                 PdfArray subArray = (PdfArray)item;
                 if (subArray.isEmpty()) continue;
                 PdfObject firstObj = subArray.get(0);
-                if (firstObj.getType() == PdfObject.String) {
+                if (firstObj.getType() == PdfObject.STRING) {
                     PdfLayer titleLayer = PdfLayer.createTitleSilent(((PdfString)firstObj).toUnicodeString(), getDocument());
                     titleLayer.onPanel = true;
                     layers.add(titleLayer);

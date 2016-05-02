@@ -93,7 +93,7 @@ public class PdfSignatureBuildProperties extends PdfObjectWrapper<PdfDictionary>
 
         if (appPropDic == null) {
             appPropDic = new PdfDictionary();
-            put(PdfName.App, appPropDic);
+            getPdfObject().put(PdfName.App, appPropDic);
         }
 
         return new PdfSignatureAppDictionary(appPropDic);

@@ -44,9 +44,9 @@
  */
 package com.itextpdf.barcodes.dmcode;
 
-final public  class ReedSolomon {
+public final class ReedSolomon {
 
-    private static final int log[] = {
+    private static final int[] log = {
             0, 255, 1, 240, 2, 225, 241, 53, 3, 38, 226, 133, 242, 43, 54, 210,
             4, 195, 39, 114, 227, 106, 134, 28, 243, 140, 44, 23, 55, 118, 211, 234,
             5, 219, 196, 96, 40, 222, 115, 103, 228, 78, 107, 125, 135, 8, 29, 162,
@@ -65,7 +65,7 @@ final public  class ReedSolomon {
             214, 250, 168, 71, 201, 156, 64, 60, 237, 130, 111, 20, 93, 122, 177, 150
     };
 
-    private static final int alog[] = {
+    private static final int[] alog = {
             1, 2, 4, 8, 16, 32, 64, 128, 45, 90, 180, 69, 138, 57, 114, 228,
             229, 231, 227, 235, 251, 219, 155, 27, 54, 108, 216, 157, 23, 46, 92, 184,
             93, 186, 89, 178, 73, 146, 9, 18, 36, 72, 144, 13, 26, 52, 104, 208,
@@ -84,83 +84,83 @@ final public  class ReedSolomon {
             3, 6, 12, 24, 48, 96, 192, 173, 119, 238, 241, 207, 179, 75, 150, 1
     };
 
-    private static final int poly5[] = {
+    private static final int[] poly5 = {
             228, 48, 15, 111, 62
     };
 
-    private static final int poly7[] = {
+    private static final int[] poly7 = {
             23, 68, 144, 134, 240, 92, 254
     };
 
-    private static final int poly10[] = {
+    private static final int[] poly10 = {
             28, 24, 185, 166, 223, 248, 116, 255, 110, 61
     };
 
-    private static final int poly11[] = {
+    private static final int[] poly11 = {
             175, 138, 205, 12, 194, 168, 39, 245, 60, 97, 120
     };
 
-    private static final int poly12[] = {
+    private static final int[] poly12 = {
             41, 153, 158, 91, 61, 42, 142, 213, 97, 178, 100, 242
     };
 
-    private static final int poly14[] = {
+    private static final int[] poly14 = {
             156, 97, 192, 252, 95, 9, 157, 119, 138, 45, 18, 186, 83, 185
     };
 
-    private static final int poly18[] = {
+    private static final int[] poly18 = {
             83, 195, 100, 39, 188, 75, 66, 61, 241, 213, 109, 129, 94, 254, 225, 48,
             90, 188
     };
 
-    private static final int poly20[] = {
+    private static final int[] poly20 = {
             15, 195, 244, 9, 233, 71, 168, 2, 188, 160, 153, 145, 253, 79, 108, 82,
             27, 174, 186, 172
     };
 
-    private static final int poly24[] = {
+    private static final int[] poly24 = {
             52, 190, 88, 205, 109, 39, 176, 21, 155, 197, 251, 223, 155, 21, 5, 172,
             254, 124, 12, 181, 184, 96, 50, 193
     };
 
-    private static final int poly28[] = {
+    private static final int[] poly28 = {
             211, 231, 43, 97, 71, 96, 103, 174, 37, 151, 170, 53, 75, 34, 249, 121,
             17, 138, 110, 213, 141, 136, 120, 151, 233, 168, 93, 255
     };
 
-    private static final int poly36[] = {
+    private static final int[] poly36 = {
             245, 127, 242, 218, 130, 250, 162, 181, 102, 120, 84, 179, 220, 251, 80, 182,
             229, 18, 2, 4, 68, 33, 101, 137, 95, 119, 115, 44, 175, 184, 59, 25,
             225, 98, 81, 112
     };
 
-    private static final int poly42[] = {
+    private static final int[] poly42 = {
             77, 193, 137, 31, 19, 38, 22, 153, 247, 105, 122, 2, 245, 133, 242, 8,
             175, 95, 100, 9, 167, 105, 214, 111, 57, 121, 21, 1, 253, 57, 54, 101,
             248, 202, 69, 50, 150, 177, 226, 5, 9, 5
     };
 
-    private static final int poly48[] = {
+    private static final int[] poly48 = {
             245, 132, 172, 223, 96, 32, 117, 22, 238, 133, 238, 231, 205, 188, 237, 87,
             191, 106, 16, 147, 118, 23, 37, 90, 170, 205, 131, 88, 120, 100, 66, 138,
             186, 240, 82, 44, 176, 87, 187, 147, 160, 175, 69, 213, 92, 253, 225, 19
     };
 
-    private static final int poly56[] = {
+    private static final int[] poly56 = {
             175, 9, 223, 238, 12, 17, 220, 208, 100, 29, 175, 170, 230, 192, 215, 235,
             150, 159, 36, 223, 38, 200, 132, 54, 228, 146, 218, 234, 117, 203, 29, 232,
             144, 238, 22, 150, 201, 117, 62, 207, 164, 13, 137, 245, 127, 67, 247, 28,
             155, 43, 203, 107, 233, 53, 143, 46
     };
 
-    private static final int poly62[] = {
+    private static final int[] poly62 = {
             242, 93, 169, 50, 144, 210, 39, 118, 202, 188, 201, 189, 143, 108, 196, 37,
             185, 112, 134, 230, 245, 63, 197, 190, 250, 106, 185, 221, 175, 64, 114, 71,
             161, 44, 147, 6, 27, 218, 51, 63, 87, 10, 40, 130, 188, 17, 163, 31,
             176, 170, 4, 107, 232, 7, 94, 166, 224, 124, 86, 47, 11, 204
     };
 
-    private static final int poly68[] = {
+    private static final int[] poly68 = {
             220, 228, 173, 89, 251, 149, 159, 56, 89, 33, 147, 244, 154, 36, 73, 127,
             213, 136, 248, 180, 234, 197, 158, 177, 68, 122, 93, 213, 15, 160, 227, 236,
             66, 139, 153, 185, 202, 167, 179, 25, 220, 232, 96, 210, 231, 136, 223, 239,
@@ -218,7 +218,7 @@ final public  class ReedSolomon {
         }
     }
 
-    static public void generateECC(byte[] wd, int nd, int datablock, int nc) {
+    public static void generateECC(byte[] wd, int nd, int datablock, int nc) {
         int blocks = (nd + 2) / datablock;
         int b;
         byte[] buf = new byte[256];

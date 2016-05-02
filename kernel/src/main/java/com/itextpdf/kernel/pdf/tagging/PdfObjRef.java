@@ -45,11 +45,12 @@
 package com.itextpdf.kernel.pdf.tagging;
 
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 
-public class PdfObjRef extends PdfMcr<PdfDictionary> {
+public class PdfObjRef extends PdfMcr {
 
     private static final long serialVersionUID = 344098256404114906L;
 
@@ -62,14 +63,17 @@ public class PdfObjRef extends PdfMcr<PdfDictionary> {
         PdfDictionary parentObject = parent.getPdfObject();
         ensureObjectIsAddedToDocument(parentObject);
 
+        PdfDocument doc = parentObject.getIndirectReference().getDocument();
+        annot.getPdfObject().put(PdfName.StructParent, new PdfNumber(doc.getNextStructParentIndex()));
+
         PdfDictionary dict = (PdfDictionary) getPdfObject();
         dict.put(PdfName.Type, PdfName.OBJR);
-        dict.put(PdfName.Obj, annot.tag(parentObject.getIndirectReference().getDocument()).getPdfObject());
+        dict.put(PdfName.Obj, annot.getPdfObject());
     }
 
     @Override
-    public Integer getMcid() {
-        return null;
+    public int getMcid() {
+        return -1;
     }
 
     @Override
@@ -80,8 +84,8 @@ public class PdfObjRef extends PdfMcr<PdfDictionary> {
         return page;
     }
 
-    public PdfObject getReferencedObject() {
-        return ((PdfDictionary) getPdfObject()).get(PdfName.Obj);
+    public PdfDictionary getReferencedObject() {
+        return ((PdfDictionary) getPdfObject()).getAsDictionary(PdfName.Obj);
     }
 
 }

@@ -289,6 +289,11 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.NumCopies, new PdfNumber(numCopies));
     }
 
+    public PdfViewerPreferences put(PdfName key, PdfObject value) {
+        getPdfObject().put(key, value);
+        return this;
+    }
+
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return false;

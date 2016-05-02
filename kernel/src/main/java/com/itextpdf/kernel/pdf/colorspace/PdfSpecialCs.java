@@ -56,11 +56,11 @@ import com.itextpdf.kernel.pdf.function.PdfFunction;
 import java.util.Arrays;
 import java.util.List;
 
-abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
+public abstract class PdfSpecialCs extends PdfColorSpace {
 
     private static final long serialVersionUID = -2725455900398492836L;
 
-	public PdfSpecialCs(PdfArray pdfObject) {
+    protected PdfSpecialCs(PdfArray pdfObject) {
         super(pdfObject);
     }
 
@@ -69,7 +69,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
         return true;
     }
 
-    static public class Indexed extends PdfSpecialCs {
+    public static class Indexed extends PdfSpecialCs {
         
     	private static final long serialVersionUID = -1155418938167317916L;
 
@@ -86,16 +86,11 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
             return 1;
         }
 
-        @Override
-        public float[] getDefaultColorants() {
-            return new float[getNumberOfComponents()];
-        }
-
         public PdfColorSpace getBaseCs() {
-            return makeColorSpace(getPdfObject().get(1));
+            return makeColorSpace(((PdfArray)getPdfObject()).get(1));
         }
 
-        static private PdfArray getIndexedCsArray(PdfObject base, int hival, PdfString lookup) {
+        private static PdfArray getIndexedCsArray(PdfObject base, int hival, PdfString lookup) {
             PdfArray indexed = new PdfArray();
             indexed.add(PdfName.Indexed);
             indexed.add(base);
@@ -106,7 +101,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
     }
 
-    static public class Separation extends PdfSpecialCs {
+    public static class Separation extends PdfSpecialCs {
         
 		private static final long serialVersionUID = 4259327393838350842L;
 
@@ -130,20 +125,15 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
             return 1;
         }
 
-        @Override
-        public float[] getDefaultColorants() {
-            return new float[]{1f};
-        }
-
         public PdfColorSpace getBaseCs() {
-            return makeColorSpace((getPdfObject()).get(2));
+            return makeColorSpace(((PdfArray)getPdfObject()).get(2));
         }
 
         public PdfName getName() {
-            return (getPdfObject()).getAsName(1);
+            return ((PdfArray)getPdfObject()).getAsName(1);
         }
 
-        static private PdfArray getSeparationCsArray(PdfName name, PdfObject alternateSpace, PdfObject tintTransform) {
+        private static PdfArray getSeparationCsArray(PdfName name, PdfObject alternateSpace, PdfObject tintTransform) {
             PdfArray separation = new PdfArray();
             separation.add(PdfName.Separation);
             separation.add(name);
@@ -154,7 +144,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
     }
 
-    static public class DeviceN extends PdfSpecialCs {
+    public static class DeviceN extends PdfSpecialCs {
 
         private static final long serialVersionUID = 4051693146595260270L;
 		
@@ -181,24 +171,15 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
             return numOfComponents;
         }
 
-        @Override
-        public float[] getDefaultColorants() {
-            float[] defaultColorants = new float[getNumberOfComponents()];
-            for (int i = 0; i < getNumberOfComponents(); i++) {
-                defaultColorants[i] = 1;
-            }
-            return defaultColorants;
-        }
-
         public PdfColorSpace getBaseCs() {
-            return makeColorSpace(getPdfObject().get(2));
+            return makeColorSpace(((PdfArray)getPdfObject()).get(2));
         }
 
         public PdfArray getNames() {
-            return getPdfObject().getAsArray(1);
+            return ((PdfArray)getPdfObject()).getAsArray(1);
         }
 
-        static protected PdfArray getDeviceNCsArray(PdfArray names, PdfObject alternateSpace, PdfObject tintTransform) {
+        protected static PdfArray getDeviceNCsArray(PdfArray names, PdfObject alternateSpace, PdfObject tintTransform) {
             PdfArray deviceN = new PdfArray();
             deviceN.add(PdfName.DeviceN);
             deviceN.add(names);
@@ -209,7 +190,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
     }
 
-    static public class NChannel extends DeviceN {
+    public static class NChannel extends DeviceN {
         
     	private static final long serialVersionUID = 5352964946869757972L;
 
@@ -228,7 +209,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
             }
         }
 
-        static protected PdfArray getNChannelCsArray(PdfArray names, PdfObject alternateSpace, PdfObject tintTransform, PdfDictionary attributes) {
+        protected static PdfArray getNChannelCsArray(PdfArray names, PdfObject alternateSpace, PdfObject tintTransform, PdfDictionary attributes) {
             PdfArray nChannel = getDeviceNCsArray(names, alternateSpace, tintTransform);
             nChannel.add(attributes);
             return nChannel;
@@ -236,7 +217,7 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
 
     }
 
-    static public class Pattern extends PdfColorSpace<PdfObject> {
+    public static class Pattern extends PdfColorSpace {
 
         private static final long serialVersionUID = 8057478102447278706L;
 
@@ -257,14 +238,9 @@ abstract public class PdfSpecialCs extends PdfColorSpace<PdfArray> {
         public int getNumberOfComponents() {
             return 0;
         }
-
-        @Override
-        public float[] getDefaultColorants() {
-            return new float[getNumberOfComponents()];
-        }
     }
 
-    static public class UncoloredTilingPattern extends Pattern {
+    public static class UncoloredTilingPattern extends Pattern {
 
         private static final long serialVersionUID = -9030226298201261021L;
 

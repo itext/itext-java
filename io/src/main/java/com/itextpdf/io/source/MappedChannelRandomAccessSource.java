@@ -52,7 +52,7 @@ import java.nio.channels.FileChannel;
  * This class is an internal implementation detail of the {@link FileChannelRandomAccessSource} class and
  * shouldn't be used by general iText users.
  */
-class MappedChannelRandomAccessSource implements RandomAccessSource {
+class MappedChannelRandomAccessSource implements IRandomAccessSource {
     /**
      * The underlying channel
      */

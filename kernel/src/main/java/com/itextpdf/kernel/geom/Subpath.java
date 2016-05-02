@@ -55,8 +55,8 @@ import java.util.Set;
  */
 public class Subpath {
 
-    private Point2D startPoint;
-    private List<Shape> segments = new ArrayList<>();
+    private Point startPoint;
+    private List<IShape> segments = new ArrayList<>();
     private boolean closed;
 
     /**
@@ -78,7 +78,7 @@ public class Subpath {
     /**
      * Constructs a new subpath starting at the given point.
      */
-    public Subpath(Point2D startPoint) {
+    public Subpath(Point startPoint) {
         this((float) startPoint.getX(), (float) startPoint.getY());
     }
 
@@ -86,14 +86,14 @@ public class Subpath {
      * Constructs a new subpath starting at the given point.
      */
     public Subpath(float startPointX, float startPointY) {
-        this.startPoint = new Point2D.Float(startPointX, startPointY);
+        this.startPoint = new Point(startPointX, startPointY);
     }
 
     /**
      * Sets the start point of the subpath.
      * @param startPoint
      */
-    public void setStartPoint(Point2D startPoint) {
+    public void setStartPoint(Point startPoint) {
         setStartPoint((float) startPoint.getX(), (float) startPoint.getY());
     }
 
@@ -103,24 +103,24 @@ public class Subpath {
      * @param y
      */
     public void setStartPoint(float x, float y) {
-        this.startPoint = new Point2D.Float(x, y);
+        this.startPoint = new Point(x, y);
     }
 
     /**
      * @return The point this subpath starts at.
      */
-    public Point2D getStartPoint() {
+    public Point getStartPoint() {
         return startPoint;
     }
 
     /**
      * @return The last point of the subpath.
      */
-    public Point2D getLastPoint() {
-        Point2D lastPoint = startPoint;
+    public Point getLastPoint() {
+        Point lastPoint = startPoint;
 
         if (segments.size() > 0 && !closed) {
-            Shape shape = segments.get(segments.size() - 1);
+            IShape shape = segments.get(segments.size() - 1);
             lastPoint = shape.getBasePoints().get(shape.getBasePoints().size() - 1);
         }
 
@@ -132,7 +132,7 @@ public class Subpath {
      * Note: each new segment shall start at the end of the previous segment.
      * @param segment new segment.
      */
-    public void addSegment(Shape segment) {
+    public void addSegment(IShape segment) {
         if (closed) {
             return;
         }
@@ -148,7 +148,7 @@ public class Subpath {
      * @return {@link java.util.List} comprising all the segments
      *         the subpath made on.
      */
-    public List<Shape> getSegments() {
+    public List<IShape> getSegments() {
         return segments;
     }
 
@@ -206,8 +206,8 @@ public class Subpath {
             return false;
         }
 
-        for (Shape segment : segments) {
-            Set<Point2D> points = new HashSet<Point2D>(segment.getBasePoints());
+        for (IShape segment : segments) {
+            Set<Point> points = new HashSet<>(segment.getBasePoints());
 
             // The first segment of a subpath always starts at startPoint, so...
             if (points.size() != 1) {
@@ -223,8 +223,8 @@ public class Subpath {
      * @return {@link java.util.List} containing points of piecewise linear approximation
      *         for this subpath.
      */
-    public List<Point2D> getPiecewiseLinearApproximation() {
-        List<Point2D> result = new ArrayList<Point2D>();
+    public List<Point> getPiecewiseLinearApproximation() {
+        List<Point> result = new ArrayList<>();
 
         if (segments.size() == 0) {
             return result;
@@ -237,7 +237,7 @@ public class Subpath {
         }
 
         for (int i = 1; i < segments.size(); ++i) {
-            List<Point2D> segApprox;
+            List<Point> segApprox;
 
             if (segments.get(i) instanceof BezierCurve) {
                 segApprox = ((BezierCurve) segments.get(i)).getPiecewiseLinearApproximation();

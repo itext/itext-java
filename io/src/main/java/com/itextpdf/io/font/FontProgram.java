@@ -75,7 +75,7 @@ public abstract class FontProgram implements Serializable {
      * The font's encoding name. This encoding is 'StandardEncoding' or 'AdobeStandardEncoding' for a font
      * that can be totally encoded according to the characters names. For all other names the font is treated as symbolic.
      */
-    protected String encodingScheme = "FontSpecific";
+    protected String encodingScheme = FontEncoding.FONT_SPECIFIC;
 
     protected String registry;
 
@@ -164,8 +164,7 @@ public abstract class FontProgram implements Serializable {
      */
     public abstract int getKerning(Glyph first, Glyph second);
 
-    //TODO change to protected!
-    public void setRegistry(String registry) {
+    protected void setRegistry(String registry) {
         this.registry = registry;
     }
 
@@ -275,6 +274,10 @@ public abstract class FontProgram implements Serializable {
 
     protected void setFontFamily(String fontFamily) {
         fontNames.setFamilyName(fontFamily);
+    }
+
+    protected void setFontName(String psFontName) {
+        fontNames.setFontName(psFontName);
     }
 
     protected void checkFilePath(String path) {

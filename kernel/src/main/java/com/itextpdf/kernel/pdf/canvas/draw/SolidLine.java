@@ -49,10 +49,10 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
 /**
- * Implementation of {@link LineDrawer} which draws a solid horizontal line along
+ * Implementation of {@link ILineDrawer} which draws a solid horizontal line along
  * the bottom edge of the specified rectangle.
  */
-public class SolidLine implements LineDrawer {
+public class SolidLine implements ILineDrawer {
 
     private float lineWidth = 1;
 

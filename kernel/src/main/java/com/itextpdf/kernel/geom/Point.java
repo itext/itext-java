@@ -23,9 +23,12 @@
  */
 package com.itextpdf.kernel.geom;
 
-import java.io.Serializable;
+import com.itextpdf.io.util.HashCode;
 
-public class Point extends Point2D implements Serializable {
+import java.io.Serializable;
+import java.text.MessageFormat;
+
+public class Point implements Serializable, Cloneable {
 
     private static final long serialVersionUID = -5276940640259749850L;
 
@@ -62,15 +65,13 @@ public class Point extends Point2D implements Serializable {
 
     @Override
     public String toString() {
-        return getClass().getName() + "[x=" + x + ",y=" + y + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        return MessageFormat.format("Point: [x={0},y={1}]", x, y); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
-    @Override
     public double getX() {
         return x;
     }
 
-    @Override
     public double getY() {
         return y;
     }
@@ -87,26 +88,59 @@ public class Point extends Point2D implements Serializable {
         setLocation((double)x, (double)y);
     }
 
-    @Override
     public void setLocation(double x, double y) {
     	this.x = x;
     	this.y = y;
     }
 
-    public void move(int x, int y) {
-        move((double)x, (double)y);
-    }
     public void move(double x, double y) {
         setLocation(x, y);
     }
 
-    public void translate(int dx, int dy) {
-        translate((double)dx, (double)dy);
-    }
     public void translate(double dx, double dy) {
         x += dx;
         y += dy;
     }
 
+
+    @Override
+    public int hashCode() {
+        HashCode hash = new HashCode();
+        hash.append(getX());
+        hash.append(getY());
+        return hash.hashCode();
+    }
+
+    public static double distanceSq(double x1, double y1, double x2, double y2) {
+        x2 -= x1;
+        y2 -= y1;
+        return x2 * x2 + y2 * y2;
+    }
+
+    public double distanceSq(double px, double py) {
+        return distanceSq(getX(), getY(), px, py);
+    }
+
+    public double distanceSq(Point p) {
+        return distanceSq(getX(), getY(), p.getX(), p.getY());
+    }
+
+    public static double distance(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(distanceSq(x1, y1, x2, y2));
+    }
+
+    public double distance(double px, double py) {
+        return Math.sqrt(distanceSq(px, py));
+    }
+
+    public double distance(Point p) {
+        return Math.sqrt(distanceSq(p));
+    }
+
+    @SuppressWarnings("CloneDoesntCallSuperClone")
+    @Override
+    public Object clone() {
+        return new Point(x, y);
+    }
 }
 

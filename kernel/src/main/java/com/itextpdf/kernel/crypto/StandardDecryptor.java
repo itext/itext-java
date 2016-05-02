@@ -44,14 +44,14 @@
  */
 package com.itextpdf.kernel.crypto;
 
-public class StandardDecryptor implements Decryptor {
+public class StandardDecryptor implements IDecryptor {
 
     protected ARCFOUREncryption arcfour;
 
     /**
      * Creates a new instance of StandardDecryption
      */
-    public StandardDecryptor(byte key[], int off, int len) {
+    public StandardDecryptor(byte[] key, int off, int len) {
         arcfour = new ARCFOUREncryption();
         arcfour.prepareARCFOURKey(key, off, len);
     }

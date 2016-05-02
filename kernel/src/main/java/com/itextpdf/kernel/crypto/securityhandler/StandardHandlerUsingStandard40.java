@@ -47,7 +47,7 @@ package com.itextpdf.kernel.crypto.securityhandler;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.ARCFOUREncryption;
 import com.itextpdf.kernel.crypto.BadPasswordException;
-import com.itextpdf.kernel.crypto.Decryptor;
+import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.crypto.OutputStreamStandardEncryption;
 import com.itextpdf.kernel.crypto.StandardDecryptor;
@@ -73,7 +73,7 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
 
     protected ARCFOUREncryption arcfour = new ARCFOUREncryption();
 
-    public StandardHandlerUsingStandard40(PdfDictionary encryptionDictionary, byte userPassword[], byte ownerPassword[],
+    public StandardHandlerUsingStandard40(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,
                                       int permissions, boolean encryptMetadata, boolean embeddedFilesOnly, byte[] documentId) {
         initKeyAndFillDictionary(encryptionDictionary, userPassword, ownerPassword, permissions, encryptMetadata, embeddedFilesOnly, documentId);
     }
@@ -88,7 +88,7 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
     }
 
     @Override
-    public Decryptor getDecryptor() {
+    public IDecryptor getDecryptor() {
         return new StandardDecryptor(nextObjectKey, 0, nextObjectKeySize);
     }
 
@@ -112,20 +112,20 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
     }
 
     protected void calculatePermissions(int permissions) {
-        permissions |= permsMask1ForRevision2;
-        permissions &= permsMask2;
+        permissions |= PERMS_MASK_1_FOR_REVISION_2;
+        permissions &= PERMS_MASK_2;
         this.permissions = permissions;
     }
 
-    protected byte[] computeOwnerKey(byte userPad[], byte ownerPad[]) {
-        byte ownerKey[] = new byte[32];
-        byte digest[] = md5.digest(ownerPad);
+    protected byte[] computeOwnerKey(byte[] userPad, byte[] ownerPad) {
+        byte[] ownerKey = new byte[32];
+        byte[] digest = md5.digest(ownerPad);
         arcfour.prepareARCFOURKey(digest, 0, 5);
         arcfour.encryptARCFOUR(userPad, ownerKey);
         return ownerKey;
     }
 
-    protected void computeGlobalEncryptionKey(byte userPad[], byte ownerKey[], boolean encryptMetadata) {
+    protected void computeGlobalEncryptionKey(byte[] userPad, byte[] ownerKey, boolean encryptMetadata) {
         mkey = new byte[keyLength / 8];
 
         // fixed by ujihara in order to follow PDF reference
@@ -133,7 +133,7 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
         md5.update(userPad);
         md5.update(ownerKey);
 
-        byte ext[] = new byte[4];
+        byte[] ext = new byte[4];
         ext[0] = (byte) permissions;
         ext[1] = (byte) (permissions >> 8);
         ext[2] = (byte) (permissions >> 16);
@@ -144,7 +144,7 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
         if (!encryptMetadata)
             md5.update(metadataPad);
 
-        byte digest[] = new byte[mkey.length];
+        byte[] digest = new byte[mkey.length];
         System.arraycopy(md5.digest(), 0, digest, 0, mkey.length);
         System.arraycopy(digest, 0, mkey, 0, mkey.length);
     }
@@ -191,7 +191,7 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
         byte[] oValue = getIsoBytes(encryptionDictionary.getAsString(PdfName.O));
 
         PdfNumber pValue = (PdfNumber) encryptionDictionary.get(PdfName.P);
-        this.permissions = pValue.getLongValue();
+        this.permissions = pValue.longValue();
 
         this.documentId = documentId;
         keyLength = getKeyLength(encryptionDictionary);
@@ -201,7 +201,7 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
 
     private void checkPassword(boolean encryptMetadata, byte[] uValue, byte[] oValue, byte[] paddedPassword) {
         byte[] userKey;// assume password - is owner password
-        byte userPad[] = computeOwnerKey(oValue, paddedPassword);
+        byte[] userPad = computeOwnerKey(oValue, paddedPassword);
         computeGlobalEncryptionKey(userPad, oValue, encryptMetadata);
         userKey = computeUserKey();
         if (isValidPassword(uValue, userKey)) { // computed user key should be equal to uValue
@@ -216,8 +216,8 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
     }
 
 
-    private byte[] padPassword(byte password[]) {
-        byte userPad[] = new byte[32];
+    private byte[] padPassword(byte[] password) {
+        byte[] userPad = new byte[32];
         if (password == null) {
             System.arraycopy(pad, 0, userPad, 0, 32);
         } else {

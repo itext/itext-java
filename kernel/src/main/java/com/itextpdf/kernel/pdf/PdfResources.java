@@ -63,7 +63,6 @@ import java.util.TreeSet;
 
 public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
-    
     private static final long serialVersionUID = 7160318458835945391L;
 	
     private static final String F = "F";
@@ -217,7 +216,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         setDefaultColorSpace(PdfName.DefaultCMYK, defaultCs);
     }
 
-    public PdfName getResourceName(PdfObjectWrapper resource) {
+    public <T extends PdfObject> PdfName getResourceName(PdfObjectWrapper<T> resource) {
         return resourceToName.get(resource.getPdfObject());
     }
 
@@ -246,7 +245,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     public Set<PdfName> getResourceNames(PdfName resType) {
         PdfDictionary resourceCategory = getPdfObject().getAsDictionary(resType);
-        return resourceCategory == null ? new TreeSet<PdfName>() : resourceCategory.keySet(); // TODO: TreeSet...
+        return resourceCategory == null ? new TreeSet<PdfName>() : resourceCategory.keySet(); // TODO: TreeSet or HashSet enough?
     }
 
     public PdfDictionary getResource(PdfName pdfName) {
@@ -279,7 +278,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return false;
     }
 
-    protected PdfName addResource(PdfObjectWrapper resource, ResourceNameGenerator nameGen) {
+    <T extends PdfObject> PdfName addResource(PdfObjectWrapper<T> resource, ResourceNameGenerator nameGen) {
         return addResource(resource.getPdfObject(), nameGen);
     }
 
@@ -308,11 +307,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         resDictionary.put(resName, resource);
     }
 
-    protected PdfName addResource(PdfObject resource, ResourceNameGenerator nameGen) {
+    PdfName addResource(PdfObject resource, ResourceNameGenerator nameGen) {
         PdfName resName = getResourceName(resource);
 
         if (resName == null) {
-            resName = nameGen.generate();
+            resName = nameGen.generate(this);
             addResource(resource, nameGen.getResourceType(), resName);
         }
 
@@ -384,7 +383,14 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 //    }
 
     private void checkAndResolveCircularReferences(PdfObject pdfObject) {
-        if (pdfObject instanceof PdfDictionary) {
+        // Consider the situation when an XObject references the resources of the first page.
+        // We add this XObject to the first page, there is no need to resolve any circular references
+        // and then we flush this object and try to add it to the second page.
+        // Now there are circular references and we cannot resolve them because the object is flushed
+        // and we cannot get resources.
+        // On the other hand, this situation may occur any time when object is already flushed and we
+        // try to add it to resources and it seems difficult to overcome this without keeping /Resources key value.
+        if (pdfObject instanceof PdfDictionary && !pdfObject.isFlushed()) {
             PdfDictionary pdfXObject = (PdfDictionary) pdfObject;
             PdfObject pdfXObjectResources = pdfXObject.get(PdfName.Resources);
             if (pdfXObjectResources != null && pdfXObjectResources.getIndirectReference() != null) {
@@ -402,7 +408,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
      * the names of already existing resources thus providing us a unique name.
      * The name consists of the following parts: prefix (literal) and number.
      */
-    private class ResourceNameGenerator implements Serializable {
+    static class ResourceNameGenerator implements Serializable {
+
         private static final long serialVersionUID = 1729961083476558303L;
 
         private PdfName resourceType;
@@ -442,11 +449,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
          *
          * @return New (unique) resource name.
          */
-        public PdfName generate() {
+        public PdfName generate(PdfResources resources) {
             PdfName newName = new PdfName(prefix + counter++);
-
-            if (getPdfObject().containsKey(resourceType)) {
-                while (getPdfObject().getAsDictionary(resourceType).containsKey(newName)) {
+            PdfDictionary r = resources.getPdfObject();
+            if (r.containsKey(resourceType)) {
+                while (r.getAsDictionary(resourceType).containsKey(newName)) {
                     newName = new PdfName(prefix + counter++);
                 }
             }

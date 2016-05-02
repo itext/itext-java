@@ -47,7 +47,7 @@ package com.itextpdf.kernel.pdf.canvas;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
-import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.StreamUtil;
@@ -78,7 +78,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.layer.PdfLayerMembership;
-import com.itextpdf.kernel.pdf.layer.PdfOCG;
+import com.itextpdf.kernel.pdf.layer.IPdfOCG;
 import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -99,73 +99,73 @@ import java.util.Stack;
  */
 public class PdfCanvas {
 
-    static final private byte[] B = ByteUtils.getIsoBytes("B\n");
-    static final private byte[] b = ByteUtils.getIsoBytes("b\n");
-    static final private byte[] BDC = ByteUtils.getIsoBytes("BDC\n");
-    static final private byte[] BI = ByteUtils.getIsoBytes("BI\n");
-    static final private byte[] BMC = ByteUtils.getIsoBytes("BMC\n");
-    static final private byte[] BStar = ByteUtils.getIsoBytes("B*\n");
-    static final private byte[] bStar = ByteUtils.getIsoBytes("b*\n");
-    static final private byte[] BT = ByteUtils.getIsoBytes("BT\n");
-    static final private byte[] c = ByteUtils.getIsoBytes("c\n");
-    static final private byte[] cm = ByteUtils.getIsoBytes("cm\n");
-    static final private byte[] cs = ByteUtils.getIsoBytes("cs\n");
-    static final private byte[] CS = ByteUtils.getIsoBytes("CS\n");
-    static final private byte[] d = ByteUtils.getIsoBytes("d\n");
-    static final private byte[] Do = ByteUtils.getIsoBytes("Do\n");
-    static final private byte[] EI = ByteUtils.getIsoBytes("EI\n");
-    static final private byte[] EMC = ByteUtils.getIsoBytes("EMC\n");
-    static final private byte[] ET = ByteUtils.getIsoBytes("ET\n");
-    static final private byte[] f = ByteUtils.getIsoBytes("f\n");
-    static final private byte[] fStar = ByteUtils.getIsoBytes("f*\n");
-    static final private byte[] G = ByteUtils.getIsoBytes("G\n");
-    static final private byte[] g = ByteUtils.getIsoBytes("g\n");
-    static final private byte[] gs = ByteUtils.getIsoBytes("gs\n");
-    static final private byte[] h = ByteUtils.getIsoBytes("h\n");
-    static final private byte[] i = ByteUtils.getIsoBytes("i\n");
-    static final private byte[] ID = ByteUtils.getIsoBytes("ID\n");
-    static final private byte[] j = ByteUtils.getIsoBytes("j\n");
-    static final private byte[] J = ByteUtils.getIsoBytes("J\n");
-    static final private byte[] K = ByteUtils.getIsoBytes("K\n");
-    static final private byte[] k = ByteUtils.getIsoBytes("k\n");
-    static final private byte[] l = ByteUtils.getIsoBytes("l\n");
-    static final private byte[] m = ByteUtils.getIsoBytes("m\n");
-    static final private byte[] M = ByteUtils.getIsoBytes("M\n");
-    static final private byte[] n = ByteUtils.getIsoBytes("n\n");
-    static final private byte[] q = ByteUtils.getIsoBytes("q\n");
-    static final private byte[] Q = ByteUtils.getIsoBytes("Q\n");
-    static final private byte[] re = ByteUtils.getIsoBytes("re\n");
-    static final private byte[] rg = ByteUtils.getIsoBytes("rg\n");
-    static final private byte[] RG = ByteUtils.getIsoBytes("RG\n");
-    static final private byte[] ri = ByteUtils.getIsoBytes("ri\n");
-    static final private byte[] S = ByteUtils.getIsoBytes("S\n");
-    static final private byte[] s = ByteUtils.getIsoBytes("s\n");
-    static final private byte[] scn = ByteUtils.getIsoBytes("scn\n");
-    static final private byte[] SCN = ByteUtils.getIsoBytes("SCN\n");
-    static final private byte[] sh = ByteUtils.getIsoBytes("sh\n");
-    static final private byte[] Tc = ByteUtils.getIsoBytes("Tc\n");
-    static final private byte[] Td = ByteUtils.getIsoBytes("Td\n");
-    static final private byte[] TD = ByteUtils.getIsoBytes("TD\n");
-    static final private byte[] Tf = ByteUtils.getIsoBytes("Tf\n");
-    static final private byte[] TJ = ByteUtils.getIsoBytes("TJ\n");
-    static final private byte[] Tj = ByteUtils.getIsoBytes("Tj\n");
-    static final private byte[] TL = ByteUtils.getIsoBytes("TL\n");
-    static final private byte[] Tm = ByteUtils.getIsoBytes("Tm\n");
-    static final private byte[] Tr = ByteUtils.getIsoBytes("Tr\n");
-    static final private byte[] Ts = ByteUtils.getIsoBytes("Ts\n");
-    static final private byte[] TStar = ByteUtils.getIsoBytes("T*\n");
-    static final private byte[] Tw = ByteUtils.getIsoBytes("Tw\n");
-    static final private byte[] Tz = ByteUtils.getIsoBytes("Tz\n");
-    static final private byte[] v = ByteUtils.getIsoBytes("v\n");
-    static final private byte[] W = ByteUtils.getIsoBytes("W\n");
-    static final private byte[] w = ByteUtils.getIsoBytes("w\n");
-    static final private byte[] WStar = ByteUtils.getIsoBytes("W*\n");
-    static final private byte[] y = ByteUtils.getIsoBytes("y\n");
+    private static final byte[] B = ByteUtils.getIsoBytes("B\n");
+    private static final byte[] b = ByteUtils.getIsoBytes("b\n");
+    private static final byte[] BDC = ByteUtils.getIsoBytes("BDC\n");
+    private static final byte[] BI = ByteUtils.getIsoBytes("BI\n");
+    private static final byte[] BMC = ByteUtils.getIsoBytes("BMC\n");
+    private static final byte[] BStar = ByteUtils.getIsoBytes("B*\n");
+    private static final byte[] bStar = ByteUtils.getIsoBytes("b*\n");
+    private static final byte[] BT = ByteUtils.getIsoBytes("BT\n");
+    private static final byte[] c = ByteUtils.getIsoBytes("c\n");
+    private static final byte[] cm = ByteUtils.getIsoBytes("cm\n");
+    private static final byte[] cs = ByteUtils.getIsoBytes("cs\n");
+    private static final byte[] CS = ByteUtils.getIsoBytes("CS\n");
+    private static final byte[] d = ByteUtils.getIsoBytes("d\n");
+    private static final byte[] Do = ByteUtils.getIsoBytes("Do\n");
+    private static final byte[] EI = ByteUtils.getIsoBytes("EI\n");
+    private static final byte[] EMC = ByteUtils.getIsoBytes("EMC\n");
+    private static final byte[] ET = ByteUtils.getIsoBytes("ET\n");
+    private static final byte[] f = ByteUtils.getIsoBytes("f\n");
+    private static final byte[] fStar = ByteUtils.getIsoBytes("f*\n");
+    private static final byte[] G = ByteUtils.getIsoBytes("G\n");
+    private static final byte[] g = ByteUtils.getIsoBytes("g\n");
+    private static final byte[] gs = ByteUtils.getIsoBytes("gs\n");
+    private static final byte[] h = ByteUtils.getIsoBytes("h\n");
+    private static final byte[] i = ByteUtils.getIsoBytes("i\n");
+    private static final byte[] ID = ByteUtils.getIsoBytes("ID\n");
+    private static final byte[] j = ByteUtils.getIsoBytes("j\n");
+    private static final byte[] J = ByteUtils.getIsoBytes("J\n");
+    private static final byte[] K = ByteUtils.getIsoBytes("K\n");
+    private static final byte[] k = ByteUtils.getIsoBytes("k\n");
+    private static final byte[] l = ByteUtils.getIsoBytes("l\n");
+    private static final byte[] m = ByteUtils.getIsoBytes("m\n");
+    private static final byte[] M = ByteUtils.getIsoBytes("M\n");
+    private static final byte[] n = ByteUtils.getIsoBytes("n\n");
+    private static final byte[] q = ByteUtils.getIsoBytes("q\n");
+    private static final byte[] Q = ByteUtils.getIsoBytes("Q\n");
+    private static final byte[] re = ByteUtils.getIsoBytes("re\n");
+    private static final byte[] rg = ByteUtils.getIsoBytes("rg\n");
+    private static final byte[] RG = ByteUtils.getIsoBytes("RG\n");
+    private static final byte[] ri = ByteUtils.getIsoBytes("ri\n");
+    private static final byte[] S = ByteUtils.getIsoBytes("S\n");
+    private static final byte[] s = ByteUtils.getIsoBytes("s\n");
+    private static final byte[] scn = ByteUtils.getIsoBytes("scn\n");
+    private static final byte[] SCN = ByteUtils.getIsoBytes("SCN\n");
+    private static final byte[] sh = ByteUtils.getIsoBytes("sh\n");
+    private static final byte[] Tc = ByteUtils.getIsoBytes("Tc\n");
+    private static final byte[] Td = ByteUtils.getIsoBytes("Td\n");
+    private static final byte[] TD = ByteUtils.getIsoBytes("TD\n");
+    private static final byte[] Tf = ByteUtils.getIsoBytes("Tf\n");
+    private static final byte[] TJ = ByteUtils.getIsoBytes("TJ\n");
+    private static final byte[] Tj = ByteUtils.getIsoBytes("Tj\n");
+    private static final byte[] TL = ByteUtils.getIsoBytes("TL\n");
+    private static final byte[] Tm = ByteUtils.getIsoBytes("Tm\n");
+    private static final byte[] Tr = ByteUtils.getIsoBytes("Tr\n");
+    private static final byte[] Ts = ByteUtils.getIsoBytes("Ts\n");
+    private static final byte[] TStar = ByteUtils.getIsoBytes("T*\n");
+    private static final byte[] Tw = ByteUtils.getIsoBytes("Tw\n");
+    private static final byte[] Tz = ByteUtils.getIsoBytes("Tz\n");
+    private static final byte[] v = ByteUtils.getIsoBytes("v\n");
+    private static final byte[] W = ByteUtils.getIsoBytes("W\n");
+    private static final byte[] w = ByteUtils.getIsoBytes("w\n");
+    private static final byte[] WStar = ByteUtils.getIsoBytes("W*\n");
+    private static final byte[] y = ByteUtils.getIsoBytes("y\n");
 
-    static private final PdfDeviceCs.Gray gray = new PdfDeviceCs.Gray();
-    static private final PdfDeviceCs.Rgb rgb = new PdfDeviceCs.Rgb();
-    static private final PdfDeviceCs.Cmyk cmyk = new PdfDeviceCs.Cmyk();
-    static private final PdfSpecialCs.Pattern pattern = new PdfSpecialCs.Pattern();
+    private static final PdfDeviceCs.Gray gray = new PdfDeviceCs.Gray();
+    private static final PdfDeviceCs.Rgb rgb = new PdfDeviceCs.Rgb();
+    private static final PdfDeviceCs.Cmyk cmyk = new PdfDeviceCs.Cmyk();
+    private static final PdfSpecialCs.Pattern pattern = new PdfSpecialCs.Pattern();
 
     /**
      * a LIFO stack of graphics state saved states.
@@ -218,8 +218,9 @@ public class PdfCanvas {
      * @param page page to create canvas from.
      */
     public PdfCanvas(PdfPage page) {
-        this(page, page.getDocument().getReader() != null && page.getDocument().getWriter() != null &&
-                page.getContentStreamCount() > 0 && page.getLastContentStream().getLength() > 0);
+        this(page, (page.getDocument().getReader() != null && page.getDocument().getWriter() != null
+                        && page.getContentStreamCount() > 0 && page.getLastContentStream().getLength() > 0)
+                   || (page.getRotation() != 0 && page.isIgnorePageRotationForContent()));
     }
 
     /**
@@ -235,27 +236,11 @@ public class PdfCanvas {
             // Wrap old content in q/Q in order not to get unexpected results because of the CTM
             page.newContentStreamBefore().getOutputStream().writeBytes(ByteUtils.getIsoBytes("q\n"));
             contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("Q\n"));
-            if (page.getRotation() != 0 && !page.isIgnoreContentRotation()) {
-                applyRotation(page);
-            }
         }
-
-
-    }
-
-    private void applyRotation(PdfPage page) {
-        Rectangle rectagle = page.getPageSizeWithRotation();
-        int rotation = page.getRotation();
-        switch (rotation) {
-            case 90:
-                concatMatrix(0, 1, -1, 0, rectagle.getTop(), 0);
-                break;
-            case 180:
-                concatMatrix(-1, 0, 0, -1, rectagle.getRight(), rectagle.getTop());
-                break;
-            case 270:
-                concatMatrix(0, -1, 1, 0, 0, rectagle.getRight());
-                break;
+        if (page.getRotation() != 0 && page.isIgnorePageRotationForContent()
+                && (wrapOldContent || !page.isPageRotationInverseMatrixWritten())) {
+            applyRotation(page);
+            page.setPageRotationInverseMatrixWritten();
         }
     }
 
@@ -338,6 +323,9 @@ public class PdfCanvas {
      */
     public PdfCanvas restoreState() {
         document.checkIsoConformance('Q', IsoKey.CANVAS_STACK);
+        if (gsStack.isEmpty()) {
+            throw new PdfException(PdfException.UnbalancedSaveRestoreStateOperators);
+        }
         currentGs = gsStack.pop();
         contentStream.getOutputStream().writeBytes(Q);
         return this;
@@ -356,26 +344,26 @@ public class PdfCanvas {
      * @param f operand 3,2 in the matrix.
      * @return current canvas
      */
-    public PdfCanvas concatMatrix(float a, float b, float c, float d, float e, float f) {
-        currentGs.updateCtm(a, b, c, d, e, f);
-        contentStream.getOutputStream().writeFloat(a).writeSpace().
-                writeFloat(b).writeSpace().
-                writeFloat(c).writeSpace().
-                writeFloat(d).writeSpace().
-                writeFloat(e).writeSpace().
-                writeFloat(f).writeSpace().writeBytes(cm);
+    public PdfCanvas concatMatrix(double a, double b, double c, double d, double e, double f) {
+        currentGs.updateCtm((float) a, (float) b, (float) c, (float) d, (float) e, (float) f);
+        contentStream.getOutputStream().writeDouble(a).writeSpace().
+                writeDouble(b).writeSpace().
+                writeDouble(c).writeSpace().
+                writeDouble(d).writeSpace().
+                writeDouble(e).writeSpace().
+                writeDouble(f).writeSpace().writeBytes(cm);
         return this;
     }
 
     /**
      * Concatenates the affine transformation matrix to the current matrix
      * in the content stream managed by this Canvas.
-     * See also {@link #concatMatrix(float, float, float, float, float, float)}
+     * See also {@link #concatMatrix(double, double, double, double, double, double)}
      *
      * @return current canvas
      */
     public PdfCanvas concatMatrix(AffineTransform transform) {
-        float matrix[] = new float[6];
+        float[] matrix = new float[6];
         transform.getMatrix(matrix);
         return concatMatrix(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
     }
@@ -447,11 +435,11 @@ public class PdfCanvas {
      * @param y y coordinate.
      * @return current canvas.
      */
-    public PdfCanvas moveText(float x, float y) {
+    public PdfCanvas moveText(double x, double y) {
         contentStream.getOutputStream()
-                .writeFloat(x)
+                .writeDouble(x)
                 .writeSpace()
-                .writeFloat(y).writeSpace()
+                .writeDouble(y).writeSpace()
                 .writeBytes(Td);
         return this;
     }
@@ -465,7 +453,7 @@ public class PdfCanvas {
      * @param leading the new leading.
      * @return current canvas.
      */
-    public PdfCanvas setLeading(final float leading) {
+    public PdfCanvas setLeading(float leading) {
         currentGs.setLeading(leading);
         contentStream.getOutputStream()
                 .writeFloat(leading)
@@ -484,7 +472,7 @@ public class PdfCanvas {
      * @param y y-coordinate of the new current point
      * @return current canvas.
      */
-    public PdfCanvas moveTextWithLeading(final float x, final float y) {
+    public PdfCanvas moveTextWithLeading(float x, float y) {
         currentGs.setLeading(-y);
         contentStream.getOutputStream()
                 .writeFloat(x)
@@ -512,7 +500,7 @@ public class PdfCanvas {
      * @param text the text to write
      * @return current canvas.
      */
-    public PdfCanvas newlineShowText(final String text) {
+    public PdfCanvas newlineShowText(String text) {
         document.checkShowTextIsoConformance(currentGs, resources);
         showTextInt(text);
         contentStream.getOutputStream()
@@ -529,7 +517,7 @@ public class PdfCanvas {
      * @param text        the text to write
      * @return current canvas.
      */
-    public PdfCanvas newlineShowText(final float wordSpacing, final float charSpacing, final String text) {
+    public PdfCanvas newlineShowText(float wordSpacing, float charSpacing, String text) {
         document.checkShowTextIsoConformance(currentGs, resources);
         contentStream.getOutputStream()
                 .writeFloat(wordSpacing)
@@ -690,7 +678,7 @@ public class PdfCanvas {
             GlyphLine.GlyphLinePart glyphLinePart = iterator.next();
             if (glyphLinePart.actualText != null) {
                 PdfDictionary properties = new PdfDictionary();
-                properties.put(PdfName.ActualText, new PdfString(glyphLinePart.actualText, PdfEncodings.UnicodeBig).setHexWriting(true));
+                properties.put(PdfName.ActualText, new PdfString(glyphLinePart.actualText, PdfEncodings.UNICODE_BIG).setHexWriting(true));
                 beginMarkedContent(PdfName.Span, properties);
             }
             int sub = glyphLinePart.start;
@@ -707,8 +695,8 @@ public class PdfCanvas {
                                 .writeSpace()
                                 .writeBytes(Td);
                     }
-                    Float xPlacement = null;
-                    Float yPlacement = null;
+                    float xPlacement = Float.NaN;
+                    float yPlacement = Float.NaN;
                     if (glyph.hasPlacement()) {
                         xPlacement = -getSubrangeWidth(text, i + glyph.getAnchorDelta(), i) + glyph.getXPlacement() * fontSize;
                         yPlacement = glyph.getYAdvance() * fontSize;
@@ -721,7 +709,7 @@ public class PdfCanvas {
                     }
                     font.writeText(text, i, i, contentStream.getOutputStream());
                     contentStream.getOutputStream().writeBytes(Tj);
-                    if (xPlacement != null) {
+                    if (!Float.isNaN(xPlacement)) {
                         contentStream.getOutputStream()
                                 .writeFloat(-xPlacement, true)
                                 .writeSpace()
@@ -768,7 +756,7 @@ public class PdfCanvas {
         float width = 0;
         for (int iter = from; iter <= to; iter++) {
             Glyph glyph = text.get(iter);
-            width += (glyph.getWidth() * fontSize + (glyph.hasValidUnicode() && glyph.getUnicode() == ' ' ? wordSpacing : charSpacing)) * scaling;
+            width += (glyph.getWidth() * fontSize + (glyph.hasValidUnicode() && glyph.getCode() == ' ' ? wordSpacing : charSpacing)) * scaling;
         }
         return width;
     }
@@ -792,7 +780,7 @@ public class PdfCanvas {
             if (obj.isString()) {
                 StreamUtil.writeEscapedString(contentStream.getOutputStream(), ((PdfString) obj).getValueBytes());
             } else if (obj.isNumber()) {
-                contentStream.getOutputStream().writeFloat(((PdfNumber) obj).getFloatValue());
+                contentStream.getOutputStream().writeFloat(((PdfNumber) obj).floatValue());
             }
         }
         contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("]"));
@@ -807,11 +795,11 @@ public class PdfCanvas {
      * @param y y coordinate.
      * @return current canvas.
      */
-    public PdfCanvas moveTo(float x, float y) {
+    public PdfCanvas moveTo(double x, double y) {
         contentStream.getOutputStream()
-                .writeFloat(x)
+                .writeDouble(x)
                 .writeSpace()
-                .writeFloat(y).writeSpace()
+                .writeDouble(y).writeSpace()
                 .writeBytes(m);
         return this;
     }
@@ -824,11 +812,11 @@ public class PdfCanvas {
      * @param y y coordinate.
      * @return current canvas.
      */
-    public PdfCanvas lineTo(float x, float y) {
+    public PdfCanvas lineTo(double x, double y) {
         contentStream.getOutputStream()
-                .writeFloat(x)
+                .writeDouble(x)
                 .writeSpace()
-                .writeFloat(y).writeSpace()
+                .writeDouble(y).writeSpace()
                 .writeBytes(l);
         return this;
     }
@@ -844,19 +832,19 @@ public class PdfCanvas {
      * @param y3 y coordinate of the ending point.
      * @return current canvas.
      */
-    public PdfCanvas curveTo(float x1, float y1, float x2, float y2, float x3, float y3) {
+    public PdfCanvas curveTo(double x1, double y1, double x2, double y2, double x3, double y3) {
         contentStream.getOutputStream()
-                .writeFloat(x1)
+                .writeDouble(x1)
                 .writeSpace()
-                .writeFloat(y1)
+                .writeDouble(y1)
                 .writeSpace()
-                .writeFloat(x2)
+                .writeDouble(x2)
                 .writeSpace()
-                .writeFloat(y2)
+                .writeDouble(y2)
                 .writeSpace()
-                .writeFloat(x3)
+                .writeDouble(x3)
                 .writeSpace()
-                .writeFloat(y3)
+                .writeDouble(y3)
                 .writeSpace()
                 .writeBytes(c);
         return this;
@@ -871,15 +859,15 @@ public class PdfCanvas {
      * @param y3 y coordinate of the ending point.
      * @return current canvas.
      */
-    public PdfCanvas curveTo(final float x2, final float y2, final float x3, final float y3) {
+    public PdfCanvas curveTo(double x2, double y2, double x3, double y3) {
         contentStream.getOutputStream()
-                .writeFloat(x2)
+                .writeDouble(x2)
                 .writeSpace()
-                .writeFloat(y2)
+                .writeDouble(y2)
                 .writeSpace()
-                .writeFloat(x3)
+                .writeDouble(x3)
                 .writeSpace()
-                .writeFloat(y3).writeSpace()
+                .writeDouble(y3).writeSpace()
                 .writeBytes(v);
         return this;
     }
@@ -893,15 +881,15 @@ public class PdfCanvas {
      * @param y3 y coordinate of the ending point.
      * @return current canvas.
      */
-    public PdfCanvas curveFromTo(final float x1, final float y1, final float x3, final float y3) {
+    public PdfCanvas curveFromTo(double x1, double y1, double x3, double y3) {
         contentStream.getOutputStream()
-                .writeFloat(x1)
+                .writeDouble(x1)
                 .writeSpace()
-                .writeFloat(y1)
+                .writeDouble(y1)
                 .writeSpace()
-                .writeFloat(x3)
+                .writeDouble(x3)
                 .writeSpace()
-                .writeFloat(y3).writeSpace()
+                .writeDouble(y3).writeSpace()
                 .writeBytes(y);
         return this;
     }
@@ -920,15 +908,15 @@ public class PdfCanvas {
      * @param extent   angle extent in degrees.
      * @return current canvas.
      */
-    public PdfCanvas arc(final float x1, final float y1, final float x2, final float y2,
-                         final float startAng, final float extent) {
-        List<float[]> ar = bezierArc(x1, y1, x2, y2, startAng, extent);
+    public PdfCanvas arc(double x1, double y1, double x2, double y2,
+                         double startAng, double extent) {
+        List<double[]> ar = bezierArc(x1, y1, x2, y2, startAng, extent);
         if (ar.isEmpty())
             return this;
-        float pt[] = ar.get(0);
+        double[] pt = ar.get(0);
         moveTo(pt[0], pt[1]);
-        for (int iter = 0; iter < ar.size(); ++iter) {
-            pt = ar.get(iter);
+        for (int i = 0; i < ar.size(); ++i) {
+            pt = ar.get(i);
             curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
         }
 
@@ -944,7 +932,7 @@ public class PdfCanvas {
      * @param y2 a corner of the enclosing rectangle
      * @return current canvas.
      */
-    public PdfCanvas ellipse(final float x1, final float y1, final float x2, final float y2) {
+    public PdfCanvas ellipse(double x1, double y1, double x2, double y2) {
         return arc(x1, y1, x2, y2, 0f, 360f);
     }
 
@@ -957,7 +945,7 @@ public class PdfCanvas {
      * to startAng+extent.  i.e. startAng=0 and extent=180 yields an openside-down
      * semi-circle.
      * <p/>
-     * The resulting coordinates are of the form float[]{x1,y1,x2,y2,x3,y3, x4,y4}
+     * The resulting coordinates are of the form double[]{x1,y1,x2,y2,x3,y3, x4,y4}
      * such that the curve goes from (x1, y1) to (x4, y4) with (x2, y2) and
      * (x3, y3) as their respective Bezier control points.
      * <p/>
@@ -970,10 +958,10 @@ public class PdfCanvas {
      * @param y2       a corner of the enclosing rectangle.
      * @param startAng starting angle in degrees.
      * @param extent   angle extent in degrees.
-     * @return a list of float[] with the bezier curves.
+     * @return a list of double[] with the bezier curves.
      */
-    public static List<float[]> bezierArc(float x1, float y1, float x2, float y2, final float startAng, final float extent) {
-        float tmp;
+    public static List<double[]> bezierArc(double x1, double y1, double x2, double y2, double startAng, double extent) {
+        double tmp;
         if (x1 > x2) {
             tmp = x1;
             x1 = x2;
@@ -985,7 +973,7 @@ public class PdfCanvas {
             y2 = tmp;
         }
 
-        float fragAngle;
+        double fragAngle;
         int Nfrag;
         if (Math.abs(extent) <= 90f) {
             fragAngle = extent;
@@ -994,22 +982,22 @@ public class PdfCanvas {
             Nfrag = (int) Math.ceil(Math.abs(extent) / 90f);
             fragAngle = extent / Nfrag;
         }
-        float x_cen = (x1 + x2) / 2f;
-        float y_cen = (y1 + y2) / 2f;
-        float rx = (x2 - x1) / 2f;
-        float ry = (y2 - y1) / 2f;
-        float halfAng = (float) (fragAngle * Math.PI / 360.);
-        float kappa = (float) Math.abs(4. / 3. * (1. - Math.cos(halfAng)) / Math.sin(halfAng));
-        List<float[]> pointList = new ArrayList<>();
+        double x_cen = (x1 + x2) / 2f;
+        double y_cen = (y1 + y2) / 2f;
+        double rx = (x2 - x1) / 2f;
+        double ry = (y2 - y1) / 2f;
+        double halfAng = (fragAngle * Math.PI / 360.0);
+        double kappa = Math.abs(4.0 / 3.0 * (1.0 - Math.cos(halfAng)) / Math.sin(halfAng));
+        List<double[]> pointList = new ArrayList<>();
         for (int iter = 0; iter < Nfrag; ++iter) {
-            float theta0 = (float) ((startAng + iter * fragAngle) * Math.PI / 180.);
-            float theta1 = (float) ((startAng + (iter + 1) * fragAngle) * Math.PI / 180.);
-            float cos0 = (float) Math.cos(theta0);
-            float cos1 = (float) Math.cos(theta1);
-            float sin0 = (float) Math.sin(theta0);
-            float sin1 = (float) Math.sin(theta1);
-            if (fragAngle > 0f) {
-                pointList.add(new float[]{x_cen + rx * cos0,
+            double theta0 =  ((startAng + iter * fragAngle) * Math.PI / 180.0);
+            double theta1 =  ((startAng + (iter + 1) * fragAngle) * Math.PI / 180.0);
+            double cos0 = Math.cos(theta0);
+            double cos1 = Math.cos(theta1);
+            double sin0 = Math.sin(theta0);
+            double sin1 = Math.sin(theta1);
+            if (fragAngle > 0.0) {
+                pointList.add(new double[]{x_cen + rx * cos0,
                         y_cen - ry * sin0,
                         x_cen + rx * (cos0 - kappa * sin0),
                         y_cen - ry * (sin0 + kappa * cos0),
@@ -1018,7 +1006,7 @@ public class PdfCanvas {
                         x_cen + rx * cos1,
                         y_cen - ry * sin1});
             } else {
-                pointList.add(new float[]{x_cen + rx * cos0,
+                pointList.add(new double[]{x_cen + rx * cos0,
                         y_cen - ry * sin0,
                         x_cen + rx * (cos0 + kappa * sin0),
                         y_cen - ry * (sin0 - kappa * cos0),
@@ -1040,14 +1028,14 @@ public class PdfCanvas {
      * @param height height.
      * @return current canvas.
      */
-    public PdfCanvas rectangle(float x, float y, float width, float height) {
-        contentStream.getOutputStream().writeFloat(x).
+    public PdfCanvas rectangle(double x, double y, double width, double height) {
+        contentStream.getOutputStream().writeDouble(x).
                 writeSpace().
-                writeFloat(y).
+                writeDouble(y).
                 writeSpace().
-                writeFloat(width).
+                writeDouble(width).
                 writeSpace().
-                writeFloat(height).
+                writeDouble(height).
                 writeSpace().
                 writeBytes(re);
         return this;
@@ -1073,7 +1061,7 @@ public class PdfCanvas {
      * @param radius radius of the arc corner.
      * @return current canvas.
      */
-    public PdfCanvas roundRectangle(float x, float y, float width, float height, float radius) {
+    public PdfCanvas roundRectangle(double x, double y, double width, double height, double radius) {
         if (width < 0) {
             x += width;
             width = -width;
@@ -1084,7 +1072,7 @@ public class PdfCanvas {
         }
         if (radius < 0)
             radius = -radius;
-        final float curv = 0.4477f;
+        final double curv = 0.4477f;
         moveTo(x + radius, y);
         lineTo(x + width - radius, y);
         curveTo(x + width - radius * curv, y, x + width, y + radius * curv, x + width, y + radius);
@@ -1105,8 +1093,8 @@ public class PdfCanvas {
      * @param r radius of circle.
      * @return current canvas.
      */
-    public PdfCanvas circle(final float x, final float y, final float r) {
-        final float curve = 0.5523f;
+    public PdfCanvas circle(double x, double y, double r) {
+        final double curve = 0.5523f;
         moveTo(x + r, y);
         curveTo(x + r, y + r * curve, x + r * curve, y + r, x, y + r);
         curveTo(x - r * curve, y + r, x - r, y + r * curve, x - r, y);
@@ -1124,7 +1112,7 @@ public class PdfCanvas {
     public PdfCanvas paintShading(PdfShading shading) {
         PdfName shadingName = resources.addShading(shading);
         document.checkIsoConformance(currentGs, IsoKey.GRAPHIC_STATE_ONLY);
-        contentStream.getOutputStream().write(shadingName).writeSpace().writeBytes(sh);
+        contentStream.getOutputStream().write((PdfObject) shadingName).writeSpace().writeBytes(sh);
         return this;
     }
 
@@ -1339,7 +1327,7 @@ public class PdfCanvas {
      * @param phase the value of the phase
      * @return current canvas.
      */
-    public PdfCanvas setLineDash(final float phase) {
+    public PdfCanvas setLineDash(float phase) {
         currentGs.setDashPattern(getDashPatternArray(phase));
         contentStream.getOutputStream().writeByte('[').writeByte(']').writeSpace()
                 .writeFloat(phase).writeSpace()
@@ -1359,7 +1347,7 @@ public class PdfCanvas {
      * @param unitsOn the number of units that must be 'on' (equals the number of units that must be 'off').
      * @return current canvas.
      */
-    public PdfCanvas setLineDash(final float unitsOn, final float phase) {
+    public PdfCanvas setLineDash(float unitsOn, float phase) {
         currentGs.setDashPattern(getDashPatternArray(new float[]{unitsOn}, phase));
         contentStream.getOutputStream().writeByte('[').writeFloat(unitsOn).writeByte(']').writeSpace()
                 .writeFloat(phase).writeSpace()
@@ -1381,7 +1369,7 @@ public class PdfCanvas {
      * @param unitsOff the number of units that must be 'off'
      * @return current canvas.
      */
-    public PdfCanvas setLineDash(final float unitsOn, final float unitsOff, final float phase) {
+    public PdfCanvas setLineDash(float unitsOn, float unitsOff, float phase) {
         currentGs.setDashPattern(getDashPatternArray(new float[]{unitsOn, unitsOff}, phase));
         contentStream.getOutputStream().writeByte('[').writeFloat(unitsOn).writeSpace()
                 .writeFloat(unitsOff).writeByte(']').writeSpace()
@@ -1402,7 +1390,7 @@ public class PdfCanvas {
      * @param phase the value of the phase
      * @return current canvas.
      */
-    public final PdfCanvas setLineDash(final float[] array, final float phase) {
+    public PdfCanvas setLineDash(float[] array, float phase) {
         currentGs.setDashPattern(getDashPatternArray(array, phase));
         PdfOutputStream out = contentStream.getOutputStream();
         out.writeByte('[');
@@ -1521,7 +1509,11 @@ public class PdfCanvas {
             }
             setColorValueOnly = true;
         } else {
-            updateGStateColorFields(fill, newColor);
+            if (fill) {
+                currentGs.setFillColor(newColor);
+            } else {
+                currentGs.setStrokeColor(newColor);
+            }
         }
         if (colorSpace instanceof PdfDeviceCs.Gray)
             contentStream.getOutputStream().writeFloats(colorValue).writeSpace().writeBytes(fill ? g : G);
@@ -1699,7 +1691,7 @@ public class PdfCanvas {
      * @param layer @see PdfLayer.
      * @return current canvas.
      */
-    public PdfCanvas beginLayer(final PdfOCG layer) {
+    public PdfCanvas beginLayer(IPdfOCG layer) {
         if (layer instanceof PdfLayer && ((PdfLayer) layer).getTitle() != null)
             throw new IllegalArgumentException("Illegal layer argument.");
         if (layerDepth == null)
@@ -1729,7 +1721,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas endLayer() {
-        int num = 1;
+        int num;
         if (layerDepth != null && !layerDepth.isEmpty()) {
             num = layerDepth.get(layerDepth.size() - 1);
             layerDepth.remove(layerDepth.size() - 1);
@@ -1753,7 +1745,7 @@ public class PdfCanvas {
      * @param f     an element of the transformation matrix
      * @return created Image XObject.
      */
-    public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f) {
+    public PdfXObject addImage(ImageData image, float a, float b, float c, float d, float e, float f) {
         return addImage(image, a, b, c, d, e, f, false);
     }
 
@@ -1770,11 +1762,10 @@ public class PdfCanvas {
      * @param asInline true if to add image as in-line.
      * @return created Image XObject or null in case of in-line image (asInline = true).
      */
-    public PdfXObject addImage(Image image, float a, float b, float c, float d, float e, float f, boolean asInline) {
+    public PdfXObject addImage(ImageData image, float a, float b, float c, float d, float e, float f, boolean asInline) {
         document.checkIsoConformance(currentGs, IsoKey.GRAPHIC_STATE_ONLY, null);
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
-            // TODO add matrix parameters
             PdfXObject xObject = wmf.createPdfForm(document);
             addXObject(xObject, a, b, c, d, e, f);
             return xObject;
@@ -1799,7 +1790,7 @@ public class PdfCanvas {
      * @return created XObject or null in case of in-line image (asInline = true).
      * @throws PdfException
      */
-    public PdfXObject addImage(Image image, Rectangle rect, boolean asInline) {
+    public PdfXObject addImage(ImageData image, Rectangle rect, boolean asInline) {
         return addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY(), asInline);
     }
 
@@ -1813,10 +1804,9 @@ public class PdfCanvas {
      * @return created XObject or null in case of in-line image (asInline = true).
      * @throws PdfException
      */
-    public PdfXObject addImage(Image image, float x, float y, boolean asInline) {
+    public PdfXObject addImage(ImageData image, float x, float y, boolean asInline) {
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
-            // TODO add matrix parameters
             PdfXObject xObject = wmf.createPdfForm(document);
             addXObject(xObject, image.getWidth(), 0, 0, image.getHeight(), x, y);
             return xObject;
@@ -1841,9 +1831,8 @@ public class PdfCanvas {
      * @param width
      * @param asInline true if to add image as in-line.
      * @return created XObject or null in case of in-line image (asInline = true).
-     * @on error.
      */
-    public PdfXObject addImage(Image image, float x, float y, float width, boolean asInline) {
+    public PdfXObject addImage(ImageData image, float x, float y, float width, boolean asInline) {
         if (image.getOriginalType() == ImageType.WMF) {
             WmfImageHelper wmf = new WmfImageHelper(image);
             // TODO add matrix parameters
@@ -1874,7 +1863,7 @@ public class PdfCanvas {
      * @return created XObject or null in case of in-line image (asInline = true).
      * @throws PdfException
      */
-    public PdfXObject addImage(Image image, float x, float y, float height, boolean asInline, boolean dummy) {
+    public PdfXObject addImage(ImageData image, float x, float y, float height, boolean asInline, boolean dummy) {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y, asInline);
     }
 
@@ -1889,7 +1878,6 @@ public class PdfCanvas {
      * @param e       an element of the transformation matrix
      * @param f       an element of the transformation matrix
      * @return current canvas.
-     * @on error.
      */
     public PdfCanvas addXObject(PdfXObject xObject, float a, float b, float c, float d, float e, float f) {
         if (xObject instanceof PdfFormXObject) {
@@ -1908,7 +1896,6 @@ public class PdfCanvas {
      * @param x
      * @param y
      * @return current canvas.
-     * @on error.
      */
     public PdfCanvas addXObject(PdfXObject xObject, float x, float y) {
         if (xObject instanceof PdfFormXObject) {
@@ -1926,7 +1913,6 @@ public class PdfCanvas {
      * @param xObject
      * @param rect
      * @return current canvas.
-     * @on error.
      */
     public PdfCanvas addXObject(PdfXObject xObject, Rectangle rect) {
         if (xObject instanceof PdfFormXObject) {
@@ -1946,7 +1932,6 @@ public class PdfCanvas {
      * @param y
      * @param width
      * @return current canvas.
-     * @on error.
      */
     public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float width) {
         if (xObject instanceof PdfFormXObject) {
@@ -1967,7 +1952,6 @@ public class PdfCanvas {
      * @param height
      * @param dummy
      * @return current canvas.
-     * @on error.
      */
     public PdfCanvas addXObject(PdfXObject xObject, float x, float y, float height, boolean dummy) {
         if (xObject instanceof PdfFormXObject) {
@@ -2027,9 +2011,10 @@ public class PdfCanvas {
         PdfOutputStream out = contentStream.getOutputStream().write(tag).writeSpace();
         if (properties == null) {
             out.writeBytes(BMC);
+        } else if (properties.getIndirectReference() == null) {
+            out.write(properties).writeSpace().writeBytes(BDC);
         } else {
-            PdfObject objectToWrite = properties.getIndirectReference() == null ? properties : resources.addProperties(properties);
-            out.write(objectToWrite).writeSpace().writeBytes(BDC);
+            out.write(resources.addProperties(properties)).writeSpace().writeBytes(BDC);
         }
         return this;
     }
@@ -2055,8 +2040,6 @@ public class PdfCanvas {
     public PdfCanvas openTag(CanvasTag tag) {
         if (tag.getRole() == null)
             return this;
-//        if ((tag.getStructParentIndex() == null) && !(tag instanceof PdfArtifact))
-//            throw new PdfException(PdfException.StructureElementIsNotLinkedToStructParent, tag);
         return beginMarkedContent(tag.getRole(), tag.getProperties());
     }
 
@@ -2074,7 +2057,7 @@ public class PdfCanvas {
         if (tagReference.getRole() == null)
             return this;
         CanvasTag tag = new CanvasTag(tagReference.getRole(), tagReference.createNextMcid());
-        tag.addProperties(tagReference.getProperties());
+        tag.setProperties(tagReference.getProperties());
         return openTag(tag);
     }
 
@@ -2093,7 +2076,7 @@ public class PdfCanvas {
      * @param s the {@code String}
      * @return current canvas.
      */
-    public PdfCanvas writeLiteral(final String s) {
+    public PdfCanvas writeLiteral(String s) {
         contentStream.getOutputStream().writeString(s);
         return this;
     }
@@ -2104,7 +2087,7 @@ public class PdfCanvas {
      * @param c the {@code char}
      * @return current canvas.
      */
-    public PdfCanvas writeLiteral(final char c) {
+    public PdfCanvas writeLiteral(char c) {
         contentStream.getOutputStream().writeInteger((int) c);
         return this;
     }
@@ -2115,7 +2098,7 @@ public class PdfCanvas {
      * @param n the {@code float}
      * @return current canvas.
      */
-    public PdfCanvas writeLiteral(final float n) {
+    public PdfCanvas writeLiteral(float n) {
         contentStream.getOutputStream().writeFloat(n);
         return this;
     }
@@ -2140,7 +2123,6 @@ public class PdfCanvas {
      * @param d            an element of the transformation matrix
      * @param e            an element of the transformation matrix
      * @param f            an element of the transformation matrix
-     * @on error
      */
     protected void addInlineImage(PdfImageXObject imageXObject, float a, float b, float c, float d, float e, float f) {
         document.checkIsoConformance(imageXObject.getPdfObject(), IsoKey.INLINE_IMAGE, resources);
@@ -2171,7 +2153,6 @@ public class PdfCanvas {
      * @param e    an element of the transformation matrix
      * @param f    an element of the transformation matrix
      * @return current canvas.
-     * @on error
      */
     private PdfCanvas addForm(PdfFormXObject form, float a, float b, float c, float d, float e, float f) {
         saveState();
@@ -2221,8 +2202,8 @@ public class PdfCanvas {
         PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
         if (bbox == null)
             throw new PdfException(PdfException.PdfFormXobjectHasInvalidBbox);
-        Float formWidth = Math.abs(bbox.getAsFloat(2) - bbox.getAsFloat(0));
-        Float formHeight = Math.abs(bbox.getAsFloat(3) - bbox.getAsFloat(1));
+        float formWidth = Math.abs(bbox.getAsNumber(2).floatValue() - bbox.getAsNumber(0).floatValue());
+        float formHeight = Math.abs(bbox.getAsNumber(3).floatValue() - bbox.getAsNumber(1).floatValue());
         return addForm(form, width, 0, 0, width / formWidth * formHeight, x, y);
     }
 
@@ -2235,14 +2216,13 @@ public class PdfCanvas {
      * @param height
      * @param dummy
      * @return
-     * @on error.
      */
     private PdfCanvas addForm(PdfFormXObject form, float x, float y, float height, boolean dummy) {
         PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
         if (bbox == null)
             throw new PdfException(PdfException.PdfFormXobjectHasInvalidBbox);
-        Float formWidth = Math.abs(bbox.getAsFloat(2) - bbox.getAsFloat(0));
-        Float formHeight = Math.abs(bbox.getAsFloat(3) - bbox.getAsFloat(1));
+        float formWidth = Math.abs(bbox.getAsNumber(2).floatValue() - bbox.getAsNumber(0).floatValue());
+        float formHeight = Math.abs(bbox.getAsNumber(3).floatValue() - bbox.getAsNumber(1).floatValue());
         return addForm(form, height / formHeight * formWidth, 0, 0, height, x, y);
     }
 
@@ -2257,7 +2237,6 @@ public class PdfCanvas {
      * @param e     an element of the transformation matrix
      * @param f     an element of the transformation matrix
      * @return canvas a reference to this object.
-     * @on error
      */
     private PdfCanvas addImage(PdfImageXObject image, float a, float b, float c, float d, float e, float f) {
         saveState();
@@ -2284,7 +2263,6 @@ public class PdfCanvas {
      * @param x
      * @param y
      * @return
-     * @throws PdfException
      */
     private PdfCanvas addImage(PdfImageXObject image, float x, float y) {
         return addImage(image, image.getWidth(), 0, 0, image.getHeight(), x, y);
@@ -2296,7 +2274,6 @@ public class PdfCanvas {
      * @param image
      * @param rect
      * @return
-     * @throws PdfException
      */
     private PdfCanvas addImage(PdfImageXObject image, Rectangle rect) {
         return addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY());
@@ -2310,7 +2287,6 @@ public class PdfCanvas {
      * @param y
      * @param width
      * @return
-     * @throws PdfException
      */
     private PdfCanvas addImage(PdfImageXObject image, float x, float y, float width) {
         return addImage(image, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);
@@ -2325,26 +2301,9 @@ public class PdfCanvas {
      * @param height
      * @param dummy
      * @return current canvas.
-     * @on error.
      */
     private PdfCanvas addImage(PdfImageXObject image, float x, float y, float height, boolean dummy) {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y);
-    }
-
-    private void updateGStateColorFields(boolean fill, Color newColor) {
-        if (fill) {
-            currentGs.setFillColor(newColor);
-            PdfObject colorSpaceObject = newColor.getColorSpace().getPdfObject();
-            if (colorSpaceObject instanceof PdfName) { // see CanvasGraphicState Fill/StrokeColorSpace field comments
-                currentGs.setFillColorSpace(newColor.getColorSpace());
-            }
-        } else {
-            currentGs.setStrokeColor(newColor);
-            PdfObject colorSpaceObject = newColor.getColorSpace().getPdfObject();
-            if (colorSpaceObject instanceof PdfName) { // see CanvasGraphicState Fill/StrokeColorSpace field comments
-                currentGs.setStrokeColorSpace(newColor.getColorSpace());
-            }
-        }
     }
 
     private static PdfStream getPageStream(PdfPage page) {
@@ -2364,9 +2323,10 @@ public class PdfCanvas {
         currentGs.getFont().writeText(text, contentStream.getOutputStream());
     }
 
-    private void addToPropertiesAndBeginLayer(PdfOCG layer) {
+    private void addToPropertiesAndBeginLayer(IPdfOCG layer) {
         PdfName name = resources.addProperties(layer.getPdfObject());
-        contentStream.getOutputStream().write(PdfName.OC).writeSpace().write(name).writeSpace().writeBytes(BDC).writeNewLine();
+        contentStream.getOutputStream().write(PdfName.OC).writeSpace()
+                .write(name).writeSpace().writeBytes(BDC).writeNewLine();
     }
 
     private Color createColor(PdfColorSpace colorSpace, float[] colorValue, PdfPattern pattern) {
@@ -2375,7 +2335,7 @@ public class PdfCanvas {
         } else if (colorSpace instanceof PdfSpecialCs.Pattern) {
             return new PatternColor(pattern);
         }
-        return new Color(colorSpace, colorValue);
+        return Color.makeColor(colorSpace, colorValue);
     }
 
     private PdfArray getDashPatternArray(float phase) {
@@ -2393,5 +2353,21 @@ public class PdfCanvas {
         dashPatternArray.add(dArray);
         dashPatternArray.add(new PdfNumber(phase));
         return dashPatternArray;
+    }
+
+    private void applyRotation(PdfPage page) {
+        Rectangle rectagle = page.getPageSizeWithRotation();
+        int rotation = page.getRotation();
+        switch (rotation) {
+            case 90:
+                concatMatrix(0, 1, -1, 0, rectagle.getTop(), 0);
+                break;
+            case 180:
+                concatMatrix(-1, 0, 0, -1, rectagle.getRight(), rectagle.getTop());
+                break;
+            case 270:
+                concatMatrix(0, -1, 1, 0, 0, rectagle.getRight());
+                break;
+        }
     }
 }

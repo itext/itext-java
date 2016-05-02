@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LinkRenderer;
 
 /**
@@ -101,7 +102,7 @@ public class Link extends Text {
     }
 
     @Override
-    protected LinkRenderer makeNewRenderer() {
+    protected IRenderer makeNewRenderer() {
         return new LinkRenderer(this, text);
     }
 }

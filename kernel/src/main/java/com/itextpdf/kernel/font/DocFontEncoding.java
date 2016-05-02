@@ -117,7 +117,7 @@ class DocFontEncoding extends FontEncoding {
             for (int k = 0; k < diffs.size(); ++k) {
                 PdfObject obj = diffs.get(k);
                 if (obj.isNumber()) {
-                    currentNumber = ((PdfNumber) obj).getIntValue();
+                    currentNumber = ((PdfNumber) obj).intValue();
                 } else {
                     String glyphName = ((PdfName) obj).getValue();
                     Integer unicode = AdobeGlyphList.nameToUnicode(glyphName);

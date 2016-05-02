@@ -47,7 +47,7 @@ package com.itextpdf.kernel.pdf.canvas.wmf;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.io.image.Image;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
@@ -65,7 +65,7 @@ public class WmfImageHelper {
     public static float wmfFontCorrection = 0.86f;
 
 
-    private WmfImage wmf;
+    private WmfImageData wmf;
 
     private float plainWidth;
     private float plainHeight;
@@ -73,12 +73,12 @@ public class WmfImageHelper {
     /**
      * Creates a helper instance.
      *
-     * @param wmf the {@link com.itextpdf.kernel.pdf.canvas.wmf.WmfImage} object
+     * @param wmf the {@link WmfImageData} object
      */
-    public WmfImageHelper(Image wmf) {
+    public WmfImageHelper(ImageData wmf) {
         if (wmf.getOriginalType() != ImageType.WMF)
             throw new IllegalArgumentException("WMF image expected");
-        this.wmf = (WmfImage)wmf;
+        this.wmf = (WmfImageData)wmf;
         processParameters();
     }
 

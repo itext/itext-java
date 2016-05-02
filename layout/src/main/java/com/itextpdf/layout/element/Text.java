@@ -47,14 +47,15 @@ package com.itextpdf.layout.element;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.TextRenderer;
 
 /**
  * A {@link Text} is a piece of text of any length. As a {@link ILeafElement leaf element},
  * it is the smallest piece of content that may bear specific layout attributes.
  */
-public class Text extends AbstractElement<Text> implements ILeafElement<Text>, IElement<Text>, IAccessibleElement {
+public class Text extends AbstractElement<Text> implements ILeafElement, IAccessibleElement {
 
     protected String text;
     protected PdfName role = PdfName.Span;
@@ -72,11 +73,11 @@ public class Text extends AbstractElement<Text> implements ILeafElement<Text>, I
     }
 
     @Override
-    public <T> T getDefaultProperty(Property property) {
+    public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
-            case HORIZONTAL_SCALING:
-            case VERTICAL_SCALING:
-                return (T) new Float(1);
+            case Property.HORIZONTAL_SCALING:
+            case Property.VERTICAL_SCALING:
+                return (T1) new Float(1);
             default:
                 return super.getDefaultProperty(property);
         }
@@ -104,7 +105,8 @@ public class Text extends AbstractElement<Text> implements ILeafElement<Text>, I
      * @return this Text
      */
     public Text setTextRise(float textRise) {
-        return setProperty(Property.TEXT_RISE, textRise);
+        setProperty(Property.TEXT_RISE, textRise);
+        return this;
     }
 
     /**
@@ -128,7 +130,8 @@ public class Text extends AbstractElement<Text> implements ILeafElement<Text>, I
     public Text setSkew(float alpha, float beta){
         alpha = (float) Math.tan(alpha * Math.PI / 180);
         beta = (float) Math.tan(beta * Math.PI / 180);
-        return setProperty(Property.SKEW, new Float[]{alpha, beta});
+        setProperty(Property.SKEW, new Float[]{alpha, beta});
+        return this;
     }
 
     /**
@@ -140,7 +143,8 @@ public class Text extends AbstractElement<Text> implements ILeafElement<Text>, I
      * @return this Text
      */
     public Text setHorizontalScaling(float horizontalScaling) {
-        return setProperty(Property.HORIZONTAL_SCALING, horizontalScaling);
+        setProperty(Property.HORIZONTAL_SCALING, horizontalScaling);
+        return this;
     }
 
     @Override
@@ -162,7 +166,7 @@ public class Text extends AbstractElement<Text> implements ILeafElement<Text>, I
     }
 
     @Override
-    protected TextRenderer makeNewRenderer() {
+    protected IRenderer makeNewRenderer() {
         return new TextRenderer(this, text);
     }
 }

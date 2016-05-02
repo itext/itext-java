@@ -70,7 +70,7 @@ public abstract class OpenTypeFontTableReader {
 
     private final int unitsPerEm;
 
-	public OpenTypeFontTableReader(RandomAccessFileOrArray rf, int tableLocation, OpenTypeGdefTableReader gdef,
+	protected OpenTypeFontTableReader(RandomAccessFileOrArray rf, int tableLocation, OpenTypeGdefTableReader gdef,
                                    Map<Integer, Glyph> indexGlyphMap, int unitsPerEm) throws java.io.IOException {
 		this.rf = rf;
 		this.tableLocation = tableLocation;
@@ -79,52 +79,10 @@ public abstract class OpenTypeFontTableReader {
         this.unitsPerEm = unitsPerEm;
 	}
 	
-    protected int getGlyphWidth(int index) {
-        Glyph glyph = indexGlyphMap.get(index);
-        if (glyph == null) {
-            return 0;
-        } else {
-            return glyph.getWidth();
-        }
-    }
-    
-    public int getGlyphToCharacter(int index) {
-        Glyph glyph = indexGlyphMap.get(index);
-        if (glyph == null) {
-            return -1;
-        } else {
-            return glyph.getUnicode();
-        }
-    }
-
     public Glyph getGlyph(int index) {
         return indexGlyphMap.get(index);
     }
         
-	/**
-	 * This is the starting point of the class. A sub-class must call this
-	 * method to start getting call backs to the {@link #readLookupTable(int, int, int[])}
-	 * method.
-	 * @throws FontReadingException 
-	 */
-	protected final void startReadingTable() throws FontReadingException {
-		try {
-            rf.seek(tableLocation);
-            /*int version =*/ rf.readInt(); //version not used
-            int scriptListOffset = rf.readUnsignedShort();
-            int featureListOffset = rf.readUnsignedShort();
-            int lookupListOffset = rf.readUnsignedShort();
-			// read the Script tables
-            scriptsType = new OpenTypeScript(this, tableLocation + scriptListOffset);
-			// read Feature table
-            featuresType = new OpenTypeFeature(this, tableLocation + featureListOffset);
-			// read LookUpList table
-			readLookupListTable(tableLocation + lookupListOffset);
-		} catch (java.io.IOException e) {
-			throw new FontReadingException("Error reading font file", e);
-		}
-	}
-    
     public OpenTableLookup getLookupTable(int idx) {
         if (idx < 0 || idx >= lookupList.size()) {
             return null;
@@ -259,6 +217,30 @@ public abstract class OpenTypeFontTableReader {
             tagslLocs[k] = tl;
         }
         return tagslLocs;
+    }
+
+    /**
+     * This is the starting point of the class. A sub-class must call this
+     * method to start getting call backs to the {@link #readLookupTable(int, int, int[])}
+     * method.
+     * @throws FontReadingException
+     */
+    final void startReadingTable() throws FontReadingException {
+        try {
+            rf.seek(tableLocation);
+            /*int version =*/ rf.readInt(); //version not used
+            int scriptListOffset = rf.readUnsignedShort();
+            int featureListOffset = rf.readUnsignedShort();
+            int lookupListOffset = rf.readUnsignedShort();
+            // read the Script tables
+            scriptsType = new OpenTypeScript(this, tableLocation + scriptListOffset);
+            // read Feature table
+            featuresType = new OpenTypeFeature(this, tableLocation + featureListOffset);
+            // read LookUpList table
+            readLookupListTable(tableLocation + lookupListOffset);
+        } catch (java.io.IOException e) {
+            throw new FontReadingException("Error reading font file", e);
+        }
     }
 
     private void readLookupListTable(int lookupListTableLocation) throws java.io.IOException {

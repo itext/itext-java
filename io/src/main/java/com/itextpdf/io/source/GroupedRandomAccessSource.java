@@ -48,7 +48,7 @@ package com.itextpdf.io.source;
  * A RandomAccessSource that is based on a set of underlying sources,
  * treating the sources as if they were a contiguous block of data.
  */
-class GroupedRandomAccessSource implements RandomAccessSource {
+class GroupedRandomAccessSource implements IRandomAccessSource {
     /**
      * The underlying sources (along with some meta data to quickly determine where each source begins and ends)
      */
@@ -68,7 +68,7 @@ class GroupedRandomAccessSource implements RandomAccessSource {
      * Constructs a new {@link GroupedRandomAccessSource} based on the specified set of sources
      * @param sources the sources used to build this group
      */
-    public GroupedRandomAccessSource(RandomAccessSource[] sources) throws java.io.IOException {
+    public GroupedRandomAccessSource(IRandomAccessSource[] sources) throws java.io.IOException {
         this.sources = new SourceEntry[sources.length];
 
         long totalSize = 0;
@@ -132,7 +132,7 @@ class GroupedRandomAccessSource implements RandomAccessSource {
      * @param source the source that is no longer the active source
      * @throws java.io.IOException if there are any problems
      */
-    protected void sourceReleased(RandomAccessSource source) throws java.io.IOException{
+    protected void sourceReleased(IRandomAccessSource source) throws java.io.IOException{
         // by default, do nothing
     }
 
@@ -141,7 +141,7 @@ class GroupedRandomAccessSource implements RandomAccessSource {
      * @param source the source that is about to become the active source
      * @throws java.io.IOException if there are any problems
      */
-    protected void sourceInUse(RandomAccessSource source) throws java.io.IOException{
+    protected void sourceInUse(IRandomAccessSource source) throws java.io.IOException{
         // by default, do nothing
     }
 
@@ -217,7 +217,7 @@ class GroupedRandomAccessSource implements RandomAccessSource {
         /**
          * The underlying source
          */
-        final RandomAccessSource source;
+        final IRandomAccessSource source;
         /**
          * The first byte (in the coordinates of the GroupedRandomAccessSource) that this source contains
          */
@@ -237,7 +237,7 @@ class GroupedRandomAccessSource implements RandomAccessSource {
          * @param source the source
          * @param offset the offset of the source in the GroupedRandomAccessSource
          */
-        public SourceEntry(int index, RandomAccessSource source, long offset) {
+        public SourceEntry(int index, IRandomAccessSource source, long offset) {
             this.index = index;
             this.source = source;
             this.firstByte = offset;

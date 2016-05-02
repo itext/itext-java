@@ -92,7 +92,7 @@ public class PdfWidgetAnnotation extends PdfAnnotation {
     }
 
     public PdfWidgetAnnotation setParent(PdfObject parent) {
-        return put(PdfName.Parent, parent);
+        return (PdfWidgetAnnotation) put(PdfName.Parent, parent);
     }
 
     /**
@@ -108,7 +108,7 @@ public class PdfWidgetAnnotation extends PdfAnnotation {
      * @return The widget annotation which this method was called on.
      */
     public PdfWidgetAnnotation setHighlightMode(PdfName mode) {
-        return put(PdfName.H, mode);
+        return (PdfWidgetAnnotation) put(PdfName.H, mode);
     }
 
     /**
@@ -124,12 +124,14 @@ public class PdfWidgetAnnotation extends PdfAnnotation {
      */
     public void releaseFormFieldFromWidgetAnnotation(){
         PdfDictionary annotDict = getPdfObject();
-        getPdfObject().keySet().removeAll(widgetEntries);
+        for (PdfName entry: widgetEntries) {
+            annotDict.remove(entry);
+        }
         PdfDictionary parent = annotDict.getAsDictionary(PdfName.Parent);
-        if (parent != null && annotDict.keySet().size() == 1) {
+        if (parent != null && annotDict.size() == 1) {
             PdfArray kids = parent.getAsArray(PdfName.Kids);
             kids.remove(annotDict.getIndirectReference());
-            if (kids.isEmpty()) {
+            if (kids.size() == 0) {
                 parent.remove(PdfName.Kids);
             }
         }

@@ -9,6 +9,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
@@ -27,11 +28,11 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class TextWritingTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/TextWritingTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/TextWritingTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TextWritingTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/TextWritingTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
@@ -127,7 +128,8 @@ public class TextWritingTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_firstLineIndentTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
 
-        Document document = new Document(pdfDocument).setProperty(Property.FIRST_LINE_INDENT, 25);
+        Document document = new Document(pdfDocument);
+        document.setProperty(Property.FIRST_LINE_INDENT, 25);
 
         document.add(new Paragraph("Portable Document Format (PDF) is a file format used to present documents in a manner " +
                 "independent of application software, hardware, and operating systems.[2] Each PDF file encapsulates a complete " +

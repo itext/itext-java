@@ -571,6 +571,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Params = createDirectName("Params");
     public static final PdfName Parent = createDirectName("Parent");
     public static final PdfName ParentTree = createDirectName("ParentTree");
+    public static final PdfName ParentTreeNextKey = createDirectName("ParentTreeNextKey");
     public static final PdfName Part = createDirectName("Part");
     public static final PdfName Pattern = createDirectName("Pattern");
     public static final PdfName PatternType = createDirectName("PatternType");
@@ -634,6 +635,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName ResetForm = createDirectName("ResetForm");
     public static final PdfName Requirements = createDirectName("Requirements");
     public static final PdfName Resources = createDirectName("Resources");
+    public static final PdfName ReversedChars = createDirectName("ReversedChars");
     public static final PdfName RI = createDirectName("RI");
     public static final PdfName RichMedia = createDirectName("RichMedia");
     public static final PdfName Ridge = createDirectName("Ridge");
@@ -833,7 +835,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static Map<String, PdfName> staticNames;
 
     /**
-     * Use reflection to cache all the static public final names so
+     * Use reflection to cache all the public static final names so
      * future <code>PdfName</code> additions don't have to be "added twice".
      * A bit less efficient (around 50ms spent here on a 2.2ghz machine),
      *  but Much Less error prone.
@@ -880,7 +882,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
     @Override
     public byte getType() {
-        return PdfObject.Name;
+        return PdfObject.NAME;
     }
 
     public String getValue() {
@@ -908,7 +910,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     @SuppressWarnings("unchecked")
     @Override
     public PdfName makeIndirect(PdfDocument document) {
-        return super.makeIndirect(document);
+        return (PdfName) super.makeIndirect(document);
     }
 
     /**
@@ -920,7 +922,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     @SuppressWarnings("unchecked")
     @Override
     public PdfName makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return super.makeIndirect(document, reference);
+        return (PdfName) super.makeIndirect(document, reference);
     }
 
     /**
@@ -933,7 +935,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     @SuppressWarnings("unchecked")
     @Override
     public PdfName copyTo(PdfDocument document) {
-        return super.copyTo(document, true);
+        return (PdfName) super.copyTo(document, true);
     }
 
     /**
@@ -949,7 +951,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     @SuppressWarnings("unchecked")
     @Override
     public PdfName copyTo(PdfDocument document, boolean allowDuplicating) {
-        return super.copyTo(document, allowDuplicating);
+        return (PdfName) super.copyTo(document, allowDuplicating);
     }
 
     @Override
@@ -989,7 +991,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
         int length = value.length();
         ByteBuffer buf = new ByteBuffer(length + 20);
         char c;
-        char chars[] = value.toCharArray();
+        char[] chars = value.toCharArray();
         for (int k = 0; k < length; k++) {
             c = (char) (chars[k] & 0xff);
             // Escape special characters

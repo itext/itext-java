@@ -48,11 +48,11 @@ package com.itextpdf.io.source;
  * A RandomAccessSource that wraps another RandomAccessSource and provides a window of it at a specific offset and over
  * a specific length.  Position 0 becomes the offset position in the underlying source.
  */
-public class WindowRandomAccessSource implements RandomAccessSource {
+public class WindowRandomAccessSource implements IRandomAccessSource {
     /**
      * The source
      */
-    private final RandomAccessSource source;
+    private final IRandomAccessSource source;
 
     /**
      * The amount to offset the source by
@@ -69,7 +69,7 @@ public class WindowRandomAccessSource implements RandomAccessSource {
      * @param source the source
      * @param offset the amount of the offset to use
      */
-    public WindowRandomAccessSource(RandomAccessSource source, long offset) {
+    public WindowRandomAccessSource(IRandomAccessSource source, long offset) {
         this(source, offset, source.length() - offset);
     }
 
@@ -79,7 +79,7 @@ public class WindowRandomAccessSource implements RandomAccessSource {
      * @param offset the amount of the offset to use
      * @param length the number of bytes to be included in this RAS
      */
-    public WindowRandomAccessSource(RandomAccessSource source, long offset, long length) {
+    public WindowRandomAccessSource(IRandomAccessSource source, long offset, long length) {
         this.source = source;
         this.offset = offset;
         this.length = length;

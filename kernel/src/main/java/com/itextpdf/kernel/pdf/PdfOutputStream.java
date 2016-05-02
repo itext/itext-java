@@ -44,6 +44,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.DeflaterOutputStream;
@@ -53,107 +54,15 @@ import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.pdf.filters.FlateDecodeFilter;
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.security.cert.Certificate;
+import java.text.MessageFormat;
 import java.util.Map;
 
-public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Serializable{
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
     private static final long serialVersionUID = -548180479472231600L;
-
-    //TODO review location and use of the constants
-    /**
-     * Type of encryption.
-     */
-    public static final int STANDARD_ENCRYPTION_40 = 0;
-    /**
-     * Type of encryption.
-     */
-    public static final int STANDARD_ENCRYPTION_128 = 1;
-    /**
-     * Type of encryption.
-     */
-    public static final int ENCRYPTION_AES_128 = 2;
-    /**
-     * Type of encryption.
-     */
-    public static final int ENCRYPTION_AES_256 = 3;
-    /**
-     * Mask to separate the encryption type from the encryption mode.
-     */
-    static final int ENCRYPTION_MASK = 7;
-    /**
-     * Add this to the mode to keep the metadata in clear text.
-     */
-    public static final int DO_NOT_ENCRYPT_METADATA = 8;
-    /**
-     * Add this to the mode to keep encrypt only the embedded files.
-     */
-    public static final int EMBEDDED_FILES_ONLY = 24;
-
-    // permissions
-    /**
-     * The operation permitted when the document is opened with the user password.
-     */
-    public static final int ALLOW_PRINTING = 4 + 2048;
-
-    /**
-     * The operation permitted when the document is opened with the user password.
-     */
-    public static final int ALLOW_MODIFY_CONTENTS = 8;
-
-    /**
-     * The operation permitted when the document is opened with the user password.
-     */
-    public static final int ALLOW_COPY = 16;
-
-    /**
-     * The operation permitted when the document is opened with the user password.
-     */
-    public static final int ALLOW_MODIFY_ANNOTATIONS = 32;
-
-    /**
-     * The operation permitted when the document is opened with the user password.
-     */
-    public static final int ALLOW_FILL_IN = 256;
-
-    /**
-     * The operation permitted when the document is opened with the user password.
-     */
-    public static final int ALLOW_SCREENREADERS = 512;
-
-    /**
-     * The operation permitted when the document is opened with the user password.
-     */
-    public static final int ALLOW_ASSEMBLY = 1024;
-
-    /**
-     * The operation permitted when the document is opened with the user password.
-     */
-    public static final int ALLOW_DEGRADED_PRINTING = 4;
-
-
-    // compression constants
-    /**
-     * A possible compression level.
-     */
-    public static final int UNDEFINED_COMPRESSION = Integer.MIN_VALUE;
-    /**
-     * A possible compression level.
-     */
-    public static final int DEFAULT_COMPRESSION = java.util.zip.Deflater.DEFAULT_COMPRESSION;
-    /**
-     * A possible compression level.
-     */
-    public static final int NO_COMPRESSION = java.util.zip.Deflater.NO_COMPRESSION;
-    /**
-     * A possible compression level.
-     */
-    public static final int BEST_SPEED = java.util.zip.Deflater.BEST_SPEED;
-    /**
-     * A possible compression level.
-     */
-    public static final int BEST_COMPRESSION = java.util.zip.Deflater.BEST_COMPRESSION;
 
     private static final byte[] stream = ByteUtils.getIsoBytes("stream\n");
     private static final byte[] endstream = ByteUtils.getIsoBytes("\nendstream");
@@ -161,6 +70,9 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
     private static final byte[] closeDict = ByteUtils.getIsoBytes(">>");
     private static final byte[] endIndirect = ByteUtils.getIsoBytes(" R");
     private static final byte[] endIndirectWithZeroGenNr = ByteUtils.getIsoBytes(" 0 R");
+
+    // For internal usage only
+    private byte[] duplicateContentBuffer = null;
 
     /**
      * Document associated with PdfOutputStream.
@@ -171,106 +83,53 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
      */
     protected PdfEncryption crypto;
 
-    /**
-     * Do not use this constructor. This is only for internal usage.
-     */
-    private PdfOutputStream() {
-        super();
-    }
-
     public PdfOutputStream(java.io.OutputStream outputStream) {
         super(outputStream);
     }
 
+    @SuppressWarnings("ConstantConditions")
     public PdfOutputStream write(PdfObject pdfObject) {
-        if (pdfObject.checkState(PdfObject.MustBeIndirect) && document != null) {
+        if (pdfObject.checkState(PdfObject.MUST_BE_INDIRECT) && document != null) {
             pdfObject.makeIndirect(document);
             pdfObject = pdfObject.getIndirectReference();
         }
-        if (pdfObject.checkState(PdfObject.ReadOnly)) {
+        if (pdfObject.checkState(PdfObject.READ_ONLY)) {
             throw new PdfException(PdfException.CannotWriteObjectAfterItWasReleased);
         }
         switch (pdfObject.getType()) {
-            case PdfObject.Array:
+            case PdfObject.ARRAY:
                 write((PdfArray) pdfObject);
                 break;
-            case PdfObject.Dictionary:
+            case PdfObject.DICTIONARY:
                 write((PdfDictionary) pdfObject);
                 break;
-            case PdfObject.IndirectReference:
+            case PdfObject.INDIRECT_REFERENCE:
                 write((PdfIndirectReference) pdfObject);
                 break;
-            case PdfObject.Name:
+            case PdfObject.NAME:
                 write((PdfName) pdfObject);
                 break;
-            case PdfObject.Null:
-            case PdfObject.Boolean:
+            case PdfObject.NULL:
+            case PdfObject.BOOLEAN:
                 write((PdfPrimitiveObject) pdfObject);
                 break;
-            case PdfObject.Literal:
+            case PdfObject.LITERAL:
                 write((PdfLiteral) pdfObject);
                 break;
-            case PdfObject.String:
+            case PdfObject.STRING:
                 write((PdfString) pdfObject);
                 break;
-            case PdfObject.Number:
+            case PdfObject.NUMBER:
                 write((PdfNumber) pdfObject);
                 break;
-            case PdfObject.Stream:
+            case PdfObject.STREAM:
                 write((PdfStream) pdfObject);
-                break;
-            default:
                 break;
         }
         return this;
     }
 
-    /**
-     * Sets the encryption options for this document. The userPassword and the
-     * ownerPassword can be null or have zero length. In this case the ownerPassword
-     * is replaced by a random string. The open permissions for the document can be
-     * AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
-     * AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
-     * The permissions can be combined by ORing them.
-     *
-     * @param userPassword   the user password. Can be null or empty
-     * @param ownerPassword  the owner password. Can be null or empty
-     * @param permissions    the user permissions
-     * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128 or ENCRYPTION_AES128.
-     *                       Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
-     * @throws PdfException if the document is already open
-     */
-    public void setEncryption(final byte userPassword[], final byte ownerPassword[], final int permissions, final int encryptionType) {
-        if (document != null)
-            throw new PdfException(PdfException.EncryptionCanOnlyBeAddedBeforeOpeningDocument);
-        crypto = new PdfEncryption(userPassword, ownerPassword, permissions, encryptionType, PdfEncryption.generateNewDocumentId());
-    }
-
-    /**
-     * Sets the certificate encryption options for this document. An array of one or more public certificates
-     * must be provided together with an array of the same size for the permissions for each certificate.
-     * The open permissions for the document can be
-     * AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
-     * AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
-     * The permissions can be combined by ORing them.
-     * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
-     *
-     * @param certs          the public certificates to be used for the encryption
-     * @param permissions    the user permissions for each of the certificates
-     * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128 or ENCRYPTION_AES128.
-     * @throws PdfException if the document is already open
-     */
-    public void setEncryption(final Certificate[] certs, final int[] permissions, final int encryptionType) {
-        if (document != null)
-            throw new PdfException(PdfException.EncryptionCanOnlyBeAddedBeforeOpeningDocument);
-        crypto = new PdfEncryption(certs, permissions, encryptionType);
-    }
-
-    PdfEncryption getEncryption() {
-        return crypto;
-    }
-
-    protected void write(PdfArray pdfArray) {
+    private void write(PdfArray pdfArray) {
         writeByte('[');
         for (int i = 0; i < pdfArray.size(); i++) {
             PdfObject value = pdfArray.get(i, false);
@@ -286,18 +145,23 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
         writeByte(']');
     }
 
-    protected void write(PdfDictionary pdfDictionary) {
+    private void write(PdfDictionary pdfDictionary) {
         writeBytes(openDict);
         for (Map.Entry<PdfName, PdfObject> entry : pdfDictionary.entrySet()) {
             boolean isAlreadyWriteSpace = false;
             write(entry.getKey());
             PdfObject value = entry.getValue();
-            if ((value.getType() == PdfObject.Number
-                    || value.getType() == PdfObject.Literal
-                    || value.getType() == PdfObject.Boolean
-                    || value.getType() == PdfObject.Null
-                    || value.getType() == PdfObject.IndirectReference
-                    || value.checkState(PdfObject.MustBeIndirect))) {
+            if (value == null) {
+                Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
+                logger.warn(MessageFormat.format(LogMessageConstant.INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE, entry.getKey()));
+                value = PdfNull.PDF_NULL;
+            }
+            if ((value.getType() == PdfObject.NUMBER
+                    || value.getType() == PdfObject.LITERAL
+                    || value.getType() == PdfObject.BOOLEAN
+                    || value.getType() == PdfObject.NULL
+                    || value.getType() == PdfObject.INDIRECT_REFERENCE
+                    || value.checkState(PdfObject.MUST_BE_INDIRECT))) {
                 isAlreadyWriteSpace = true;
                 writeSpace();
             }
@@ -315,12 +179,12 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
         writeBytes(closeDict);
     }
 
-    protected void write(PdfIndirectReference indirectReference) {
+    private void write(PdfIndirectReference indirectReference) {
         if (document != null && !indirectReference.getDocument().equals(document)) {
             throw new PdfException(PdfException.PdfInderectObjectBelongToOtherPdfDocument);
         }
         if (indirectReference.getRefersTo() == null) {
-            write(PdfNull.PdfNull);
+            write(PdfNull.PDF_NULL);
         } else if (indirectReference.getGenNumber() == 0) {
             writeInteger(indirectReference.getObjNumber()).
                     writeBytes(endIndirectWithZeroGenNr);
@@ -332,16 +196,16 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
         }
     }
 
-    protected void write(PdfPrimitiveObject pdfPrimitive) {
+    private void write(PdfPrimitiveObject pdfPrimitive) {
         writeBytes(pdfPrimitive.getInternalContent());
     }
 
-    protected void write(PdfLiteral literal) {
+    private void write(PdfLiteral literal) {
         literal.setPosition(getCurrentPos());
         writeBytes(literal.getInternalContent());
     }
 
-    protected void write(PdfString pdfString) {
+    private void write(PdfString pdfString) {
         pdfString.encrypt(crypto);
         if (pdfString.isHexWriting()) {
             writeByte('<');
@@ -355,18 +219,18 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
     }
 
 
-    protected void write(PdfName name) {
+    private void write(PdfName name) {
         writeByte('/');
         writeBytes(name.getInternalContent());
     }
 
-    protected void write(PdfNumber pdfNumber) {
+    private void write(PdfNumber pdfNumber) {
         if (pdfNumber.hasContent()) {
             writeBytes(pdfNumber.getInternalContent());
-        } else if (pdfNumber.getValueType() == PdfNumber.Int) {
-            writeInteger(pdfNumber.getIntValue());
-        } else {
+        } else if (pdfNumber.isDoubleNumber()) {
             writeDouble(pdfNumber.getValue());
+        } else {
+            writeInteger(pdfNumber.intValue());
         }
     }
 
@@ -376,16 +240,16 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
 
     }
 
-    protected void write(PdfStream pdfStream) {
+    private void write(PdfStream pdfStream) {
         try {
-            boolean userDefinedCompression = pdfStream.getCompressionLevel() != UNDEFINED_COMPRESSION;
+            boolean userDefinedCompression = pdfStream.getCompressionLevel() != CompressionConstants.UNDEFINED_COMPRESSION;
             if (!userDefinedCompression) {
                 int defaultCompressionLevel = document != null ?
                         document.getWriter().getCompressionLevel() :
-                        DEFAULT_COMPRESSION;
+                        CompressionConstants.DEFAULT_COMPRESSION;
                 pdfStream.setCompressionLevel(defaultCompressionLevel);
             }
-            boolean toCompress = pdfStream.getCompressionLevel() != NO_COMPRESSION;
+            boolean toCompress = pdfStream.getCompressionLevel() != CompressionConstants.NO_COMPRESSION;
             boolean allowCompression = !pdfStream.containsKey(PdfName.Filter) && isNotMetadataPdfStream(pdfStream);
 
             if (pdfStream.getInputStream() != null) {
@@ -399,10 +263,10 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
                     updateCompressionFilter(pdfStream);
                     fout = def = new DeflaterOutputStream(fout, pdfStream.getCompressionLevel(), 0x8000);
                 }
-                write((PdfDictionary) pdfStream);
+                this.write((PdfDictionary) pdfStream);
                 writeBytes(PdfOutputStream.stream);
                 long beginStreamContent = getCurrentPos();
-                byte buf[] = new byte[4192];
+                byte[] buf = new byte[4192];
                 while (true) {
                     int n = pdfStream.getInputStream().read(buf);
                     if (n <= 0)
@@ -417,7 +281,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
                 }
                 PdfNumber length = pdfStream.getAsNumber(PdfName.Length);
                 length.setValue((int) (getCurrentPos() - beginStreamContent));
-                pdfStream.updateLength(length.getIntValue());
+                pdfStream.updateLength(length.intValue());
                 writeBytes(PdfOutputStream.endstream);
             } else {
                 //When document is opened in stamping mode the output stream can be uninitialized.
@@ -471,8 +335,8 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
                     throw new PdfException(PdfException.IoException, ioe);
                 }
                 pdfStream.put(PdfName.Length, new PdfNumber(byteArrayStream.size()));
-                pdfStream.updateLength(byteArrayStream.size());
-                write((PdfDictionary) pdfStream);
+                pdfStream.updateLength((int) byteArrayStream.size());
+                this.write((PdfDictionary) pdfStream);
                 writeBytes(PdfOutputStream.stream);
                 byteArrayStream.writeTo(this);
                 writeBytes(PdfOutputStream.endstream);
@@ -490,7 +354,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
             if (filter != null) {
                 if (PdfName.Crypt.equals(filter)) {
                     return false;
-                } else if (filter.getType() == PdfObject.Array) {
+                } else if (filter.getType() == PdfObject.ARRAY) {
                     PdfArray filters = (PdfArray) filter;
                     if (!filters.isEmpty() && PdfName.Crypt.equals(filters.get(0, true))) {
                         return false;
@@ -504,11 +368,11 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
     protected boolean containsFlateFilter(PdfStream pdfStream) {
         PdfObject filter = pdfStream.get(PdfName.Filter);
         if (filter != null) {
-            if (filter.getType() == PdfObject.Name) {
+            if (filter.getType() == PdfObject.NAME) {
                 if (PdfName.FlateDecode.equals(filter)) {
                     return true;
                 }
-            } else if (filter.getType() == PdfObject.Array) {
+            } else if (filter.getType() == PdfObject.ARRAY) {
                 if (((PdfArray) filter).contains(PdfName.FlateDecode))
                     return true;
             } else {
@@ -549,9 +413,9 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
 
     protected byte[] decodeFlateBytes(PdfStream stream, byte[] bytes) {
         PdfObject filterObject = stream.get(PdfName.Filter);
-        if (filterObject == null)
+        if (filterObject == null) {
             return bytes;
-
+        }
         // check if flateDecode filter is on top
         PdfName filterName;
         PdfArray filtersArray = null;
@@ -574,9 +438,9 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
         PdfObject decodeParamsObject = stream.get(PdfName.DecodeParms);
         if (decodeParamsObject == null) {
             decodeParams = null;
-        } else if (decodeParamsObject.getType() == PdfObject.Dictionary) {
+        } else if (decodeParamsObject.getType() == PdfObject.DICTIONARY) {
             decodeParams = (PdfDictionary) decodeParamsObject;
-        } else if (decodeParamsObject.getType() == PdfObject.Array) {
+        } else if (decodeParamsObject.getType() == PdfObject.ARRAY) {
             decodeParamsArray = (PdfArray) decodeParamsObject;
             decodeParams = decodeParamsArray.getAsDictionary(0);
         } else {
@@ -604,23 +468,50 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> implements Se
         decodeParamsObject = null;
         if (decodeParamsArray != null) {
             decodeParamsArray.remove(0);
-            if (decodeParamsArray.size() == 1 && decodeParamsArray.get(0).getType() != PdfObject.Null) {
+            if (decodeParamsArray.size() == 1 && decodeParamsArray.get(0).getType() != PdfObject.NULL) {
                 decodeParamsObject = decodeParamsArray.get(0);
             } else if (!decodeParamsArray.isEmpty()) {
                 decodeParamsObject = decodeParamsArray;
             }
         }
 
-        if (filterObject == null)
+        if (filterObject == null) {
             stream.remove(PdfName.Filter);
-        else
+        } else {
             stream.put(PdfName.Filter, filterObject);
+        }
 
-        if (decodeParamsObject == null)
+        if (decodeParamsObject == null) {
             stream.remove(PdfName.DecodeParms);
-        else
+        } else {
             stream.put(PdfName.DecodeParms, decodeParamsObject);
+        }
 
         return bytes;
+    }
+
+    /**
+     * This method is invoked while deserialization
+     */
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        if (outputStream == null && duplicateContentBuffer != null) {
+            outputStream = new ByteArrayOutputStream();
+            write(duplicateContentBuffer);
+            duplicateContentBuffer = null;
+        }
+    }
+
+    /**
+     * This method is invoked while serialization
+     */
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+        java.io.OutputStream tempOutputStream = outputStream;
+        if (outputStream instanceof java.io.ByteArrayOutputStream) {
+            duplicateContentBuffer = ((java.io.ByteArrayOutputStream)outputStream).toByteArray();
+        }
+        outputStream = null;
+        out.defaultWriteObject();
+        outputStream = tempOutputStream;
     }
 }

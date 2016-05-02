@@ -80,9 +80,9 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                     .setMessageParams(fontNames.getFontName());
         }
         if ((encoding == null || encoding.length() == 0) && ttf.isFontSpecific()) {
-            encoding = FontEncoding.FontSpecific;
+            encoding = FontEncoding.FONT_SPECIFIC;
         }
-        if (encoding != null && FontEncoding.FontSpecific.toLowerCase().equals(encoding.toLowerCase())) {
+        if (encoding != null && FontEncoding.FONT_SPECIFIC.toLowerCase().equals(encoding.toLowerCase())) {
             fontEncoding = FontEncoding.createFontSpecificEncoding();
         } else {
             fontEncoding = FontEncoding.createFontEncoding(encoding);
@@ -96,7 +96,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         CMapToUnicode toUni = FontUtil.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
         fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
         fontProgram = DocTrueTypeFont.createFontProgram(fontDictionary, fontEncoding);
-        embedded = ((DocFontProgram) fontProgram).getFontFile() != null;
+        embedded = ((IDocFontProgram) fontProgram).getFontFile() != null;
         subset = false;
     }
 
@@ -123,11 +123,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         if (newFont) {
             PdfName subtype;
             String fontName;
-//            if (fontProgram instanceof DocFontProgram) {
-//                subtype = ((DocFontProgram) fontProgram).getSubtype();
-//                fontName = fontProgram.getFontNames().getFontName();
-//            } else
-            if (fontProgram.isCff()) {
+            if (getFontProgram().isCff()) {
                 subtype = PdfName.Type1;
                 fontName = fontProgram.getFontNames().getFontName();
             } else {
@@ -173,10 +169,10 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         if (embedded) {
             PdfName fontFileName;
             PdfStream fontStream;
-            if (fontProgram instanceof DocFontProgram) {
-                fontFileName = ((DocFontProgram) fontProgram).getFontFileName();
-                fontStream = ((DocFontProgram) fontProgram).getFontFile();
-            } else if (fontProgram.isCff()) {
+            if (fontProgram instanceof IDocFontProgram) {
+                fontFileName = ((IDocFontProgram) fontProgram).getFontFileName();
+                fontStream = ((IDocFontProgram) fontProgram).getFontFile();
+            } else if (getFontProgram().isCff()) {
                 fontFileName = PdfName.FontFile3;
                 try {
                     byte[] fontStreamBytes = getFontProgram().getFontStreamBytes();

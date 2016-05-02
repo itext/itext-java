@@ -7,6 +7,9 @@ import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.List;
@@ -26,11 +29,11 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PositioningTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/layout/PositioningTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/layout/PositioningTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/PositioningTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/PositioningTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
        createOrClearDestinationFolder(destinationFolder);
     }
 
@@ -89,7 +92,7 @@ public class PositioningTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        List list = new List(Property.ListNumberingType.ROMAN_UPPER).
+        List list = new List(ListNumberingType.ROMAN_UPPER).
                 setFixedPosition(2, 300, 300, 50).
                 setBackgroundColor(Color.BLUE).
                 setHeight(100);
@@ -141,44 +144,44 @@ public class PositioningTest extends ExtendedITextTest {
         y = 700;
         x = 115;
         drawCross(canvas, x, y);
-        document.showTextAligned(text, x, y, Property.TextAlignment.LEFT, Property.VerticalAlignment.BOTTOM, 0);
-        document.showTextAligned(text, x, y, Property.TextAlignment.LEFT, Property.VerticalAlignment.BOTTOM, (float) (Math.PI / 6 * 1));
+        document.showTextAligned(text, x, y, TextAlignment.LEFT, VerticalAlignment.BOTTOM, 0);
+        document.showTextAligned(text, x, y, TextAlignment.LEFT, VerticalAlignment.BOTTOM, (float) (Math.PI / 6 * 1));
         x = 300;
         drawCross(canvas, x, y);
-        document.showTextAligned(text, x, y, Property.TextAlignment.LEFT, Property.VerticalAlignment.MIDDLE, 0);
-        document.showTextAligned(text, x, y, Property.TextAlignment.LEFT, Property.VerticalAlignment.MIDDLE, (float) (Math.PI/6 * 3));
+        document.showTextAligned(text, x, y, TextAlignment.LEFT, VerticalAlignment.MIDDLE, 0);
+        document.showTextAligned(text, x, y, TextAlignment.LEFT, VerticalAlignment.MIDDLE, (float) (Math.PI/6 * 3));
         x = 485;
         drawCross(canvas, x, y);
-        document.showTextAligned(text, x, y, Property.TextAlignment.LEFT, Property.VerticalAlignment.TOP, 0);
-        document.showTextAligned(text, x, y, Property.TextAlignment.LEFT, Property.VerticalAlignment.TOP, (float) (Math.PI/6 * 5));
+        document.showTextAligned(text, x, y, TextAlignment.LEFT, VerticalAlignment.TOP, 0);
+        document.showTextAligned(text, x, y, TextAlignment.LEFT, VerticalAlignment.TOP, (float) (Math.PI/6 * 5));
 
         y = 400;
         x = 115;
         drawCross(canvas, x, y);
-        document.showTextAligned(text, x, y, Property.TextAlignment.CENTER, Property.VerticalAlignment.BOTTOM, 0);
-        document.showTextAligned(text, x, y, Property.TextAlignment.CENTER, Property.VerticalAlignment.BOTTOM, (float) (Math.PI/6 * 2));
+        document.showTextAligned(text, x, y, TextAlignment.CENTER, VerticalAlignment.BOTTOM, 0);
+        document.showTextAligned(text, x, y, TextAlignment.CENTER, VerticalAlignment.BOTTOM, (float) (Math.PI/6 * 2));
         x = 300;
         drawCross(canvas, x, y);
-        document.showTextAligned(text, x, y, Property.TextAlignment.CENTER, Property.VerticalAlignment.MIDDLE, 0);
-        document.showTextAligned(text, x, y, Property.TextAlignment.CENTER, Property.VerticalAlignment.MIDDLE, (float) (Math.PI / 6 * 4));
+        document.showTextAligned(text, x, y, TextAlignment.CENTER, VerticalAlignment.MIDDLE, 0);
+        document.showTextAligned(text, x, y, TextAlignment.CENTER, VerticalAlignment.MIDDLE, (float) (Math.PI / 6 * 4));
         x = 485;
         drawCross(canvas, x, y);
-        document.showTextAligned(text, x, y, Property.TextAlignment.CENTER, Property.VerticalAlignment.TOP, 0);
-        document.showTextAligned(text, x, y, Property.TextAlignment.CENTER, Property.VerticalAlignment.TOP, (float) (Math.PI/6 * 8));
+        document.showTextAligned(text, x, y, TextAlignment.CENTER, VerticalAlignment.TOP, 0);
+        document.showTextAligned(text, x, y, TextAlignment.CENTER, VerticalAlignment.TOP, (float) (Math.PI/6 * 8));
 
         y = 100;
         x = 115;
         drawCross(canvas, x, y);
-        document.showTextAligned(text, x, y, Property.TextAlignment.RIGHT, Property.VerticalAlignment.BOTTOM, 0);
-        document.showTextAligned(text, x, y, Property.TextAlignment.RIGHT, Property.VerticalAlignment.BOTTOM, (float) (Math.PI/6 * 9));
+        document.showTextAligned(text, x, y, TextAlignment.RIGHT, VerticalAlignment.BOTTOM, 0);
+        document.showTextAligned(text, x, y, TextAlignment.RIGHT, VerticalAlignment.BOTTOM, (float) (Math.PI/6 * 9));
         x = 300;
         drawCross(canvas, x, y);
-        document.showTextAligned(text, x, y, Property.TextAlignment.RIGHT, Property.VerticalAlignment.MIDDLE, 0);
-        document.showTextAligned(text, x, y, Property.TextAlignment.RIGHT, Property.VerticalAlignment.MIDDLE, (float) (Math.PI/6 * 7));
+        document.showTextAligned(text, x, y, TextAlignment.RIGHT, VerticalAlignment.MIDDLE, 0);
+        document.showTextAligned(text, x, y, TextAlignment.RIGHT, VerticalAlignment.MIDDLE, (float) (Math.PI/6 * 7));
         x = 485;
         drawCross(canvas, x, y);
-        document.showTextAligned(text, x, y, Property.TextAlignment.RIGHT, Property.VerticalAlignment.TOP, 0);
-        document.showTextAligned(text, x, y, Property.TextAlignment.RIGHT, Property.VerticalAlignment.TOP, (float) (Math.PI/6 * 6));
+        document.showTextAligned(text, x, y, TextAlignment.RIGHT, VerticalAlignment.TOP, 0);
+        document.showTextAligned(text, x, y, TextAlignment.RIGHT, VerticalAlignment.TOP, (float) (Math.PI/6 * 6));
 
         document.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
@@ -195,7 +198,7 @@ public class PositioningTest extends ExtendedITextTest {
         String watermarkText = "WATERMARK";
         Paragraph watermark = new Paragraph(watermarkText);
         watermark.setFontColor(new DeviceGray(0.75f)).setFontSize(72);
-        document.showTextAligned(watermark, PageSize.A4.getWidth() / 2, PageSize.A4.getHeight() / 2, 1, Property.TextAlignment.CENTER, Property.VerticalAlignment.MIDDLE, (float) (Math.PI / 4));
+        document.showTextAligned(watermark, PageSize.A4.getWidth() / 2, PageSize.A4.getHeight() / 2, 1, TextAlignment.CENTER, VerticalAlignment.MIDDLE, (float) (Math.PI / 4));
 
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +

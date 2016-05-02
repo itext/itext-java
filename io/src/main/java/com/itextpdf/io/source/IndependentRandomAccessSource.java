@@ -48,17 +48,17 @@ package com.itextpdf.io.source;
  * A RandomAccessSource that is wraps another RandomAccessSource but does not propagate close().  This is useful when
  * passing a RandomAccessSource to a method that would normally close the source.
  */
-public class IndependentRandomAccessSource implements RandomAccessSource {
+public class IndependentRandomAccessSource implements IRandomAccessSource {
     /**
      * The source
      */
-    private final RandomAccessSource source;
+    private final IRandomAccessSource source;
 
     /**
      * Constructs a new OffsetRandomAccessSource
      * @param source the source
      */
-    public IndependentRandomAccessSource(RandomAccessSource source) {
+    public IndependentRandomAccessSource(IRandomAccessSource source) {
         this.source = source;
     }
 

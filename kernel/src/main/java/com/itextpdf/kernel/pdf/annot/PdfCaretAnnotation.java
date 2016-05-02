@@ -67,7 +67,7 @@ public class PdfCaretAnnotation extends PdfMarkupAnnotation {
     }
 
     public PdfCaretAnnotation setSymbol(PdfString symbol) {
-        return put(PdfName.Sy, symbol);
+        return (PdfCaretAnnotation) put(PdfName.Sy, symbol);
     }
 
     public PdfString getSymbol() {

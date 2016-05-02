@@ -45,27 +45,29 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.AffineTransform;
-import com.itextpdf.kernel.geom.Point2D;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.Property;
-import com.itextpdf.layout.element.BlockElement;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.VerticalAlignment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class BlockRenderer extends AbstractRenderer {
+public abstract class BlockRenderer extends AbstractRenderer {
 
-    public BlockRenderer(BlockElement modelElement) {
+    protected BlockRenderer(IElement modelElement) {
         super(modelElement);
     }
 
@@ -143,12 +145,12 @@ public class BlockRenderer extends AbstractRenderer {
                         layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
 
                         if (currentAreaPos + 1 == areas.size()) {
-                            BlockRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
+                            AbstractRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
                             splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
                             splitRenderer.childRenderers.add(result.getSplitRenderer());
                             splitRenderer.occupiedArea = occupiedArea;
 
-                            BlockRenderer overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
+                            AbstractRenderer overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
                             List<IRenderer> overflowRendererChildren = new ArrayList<>();
                             overflowRendererChildren.add(result.getOverflowRenderer());
                             overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
@@ -168,10 +170,10 @@ public class BlockRenderer extends AbstractRenderer {
                         boolean keepTogether = getPropertyAsBoolean(Property.KEEP_TOGETHER);
                         int layoutResult = anythingPlaced && !keepTogether ? LayoutResult.PARTIAL : LayoutResult.NOTHING;
 
-                        BlockRenderer splitRenderer = createSplitRenderer(layoutResult);
+                        AbstractRenderer splitRenderer = createSplitRenderer(layoutResult);
                         splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
 
-                        BlockRenderer overflowRenderer = createOverflowRenderer(layoutResult);
+                        AbstractRenderer overflowRenderer = createOverflowRenderer(layoutResult);
                         List<IRenderer> overflowRendererChildren = new ArrayList<>();
                         overflowRendererChildren.add(result.getOverflowRenderer());
                         overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
@@ -184,14 +186,16 @@ public class BlockRenderer extends AbstractRenderer {
                             overflowRenderer.childRenderers.clear();
                             overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
                         }
-                        if (getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
-                            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
-                        }
 
                         applyPaddings(occupiedArea.getBBox(), true);
                         applyBorderBox(occupiedArea.getBBox(), true);
                         applyMargins(occupiedArea.getBBox(), true);
-                        return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer);
+
+                        if (getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+                        } else {
+                            return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer);
+                        }
                     }
                 }
             }
@@ -210,7 +214,6 @@ public class BlockRenderer extends AbstractRenderer {
         applyPaddings(occupiedArea.getBBox(), true);
         if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
             occupiedArea.getBBox().moveDown(blockHeight - occupiedArea.getBBox().getHeight()).setHeight(blockHeight);
-            applyVerticalAlignment();
         }
         if (isPositioned()) {
             float y = getPropertyAsFloat(Property.Y);
@@ -228,16 +231,12 @@ public class BlockRenderer extends AbstractRenderer {
                 }
             }
         }
+        applyVerticalAlignment();
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
-    @Override
-    public BlockRenderer getNextRenderer() {
-        return new BlockRenderer((BlockElement) modelElement);
-    }
-
-    protected BlockRenderer createSplitRenderer(int layoutResult) {
-        BlockRenderer splitRenderer = getNextRenderer();
+    protected AbstractRenderer createSplitRenderer(int layoutResult) {
+        AbstractRenderer splitRenderer = (AbstractRenderer) getNextRenderer();
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         splitRenderer.occupiedArea = occupiedArea;
@@ -245,8 +244,8 @@ public class BlockRenderer extends AbstractRenderer {
         return splitRenderer;
     }
 
-    protected BlockRenderer createOverflowRenderer(int layoutResult) {
-        BlockRenderer overflowRenderer = getNextRenderer();
+    protected AbstractRenderer createOverflowRenderer(int layoutResult) {
+        AbstractRenderer overflowRenderer = (AbstractRenderer) getNextRenderer();
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.properties = properties;
@@ -324,9 +323,9 @@ public class BlockRenderer extends AbstractRenderer {
     }
 
     protected void applyVerticalAlignment() {
-        Property.VerticalAlignment verticalAlignment = getProperty(Property.VERTICAL_ALIGNMENT);
-        if (verticalAlignment != null && verticalAlignment != Property.VerticalAlignment.TOP && childRenderers.size() > 0) {
-            float deltaY = childRenderers.get(childRenderers.size() - 1).getOccupiedArea().getBBox().getY() - occupiedArea.getBBox().getY();
+        VerticalAlignment verticalAlignment = getProperty(Property.VERTICAL_ALIGNMENT);
+        if (verticalAlignment != null && verticalAlignment != VerticalAlignment.TOP && childRenderers.size() > 0) {
+            float deltaY = childRenderers.get(childRenderers.size() - 1).getOccupiedArea().getBBox().getY() - getInnerAreaBBox().getY();
             switch (verticalAlignment) {
                 case BOTTOM:
                     for (IRenderer child : childRenderers) {
@@ -362,16 +361,16 @@ public class BlockRenderer extends AbstractRenderer {
 
 
         if (!isPositioned()) {
-            List<Point2D.Float> rotatedPoints = new ArrayList<>();
+            List<Point> rotatedPoints = new ArrayList<>();
             getLayoutShiftAndRotatedPoints(rotatedPoints, rotationPointX, rotationPointY);
 
-            Point2D clipLineBeg = new Point2D.Float(layoutBox.getRight(), layoutBox.getTop());
-            Point2D clipLineEnd = new Point2D.Float(layoutBox.getRight(), layoutBox.getBottom());
-            List<Point2D> newOccupiedBox = clipBBox(rotatedPoints, clipLineBeg, clipLineEnd);
+            Point clipLineBeg = new Point(layoutBox.getRight(), layoutBox.getTop());
+            Point clipLineEnd = new Point(layoutBox.getRight(), layoutBox.getBottom());
+            List<Point> newOccupiedBox = clipBBox(rotatedPoints, clipLineBeg, clipLineEnd);
 
             double maxX = -Double.MAX_VALUE;
             double minY = Double.MAX_VALUE;
-            for (Point2D point : newOccupiedBox) {
+            for (Point point : newOccupiedBox) {
                 if (point.getX() > maxX)  maxX = point.getX();
                 if (point.getY() < minY)  minY = point.getY();
             }
@@ -389,7 +388,7 @@ public class BlockRenderer extends AbstractRenderer {
     protected float[] applyRotation() {
         float dx = 0, dy = 0;
         if (!isPositioned()) {
-            Point2D shift = getLayoutShiftAndRotatedPoints(new ArrayList<Point2D.Float>(), 0, 0);
+            Point shift = getLayoutShiftAndRotatedPoints(new ArrayList<Point>(), 0, 0);
 
             dy = (float) shift.getY();
             dx = (float) shift.getX();
@@ -406,7 +405,7 @@ public class BlockRenderer extends AbstractRenderer {
         return ctm;
     }
 
-    private Point2D.Float getLayoutShiftAndRotatedPoints(List<Point2D.Float> rotatedPoints, float shiftX, float shiftY) {
+    private Point getLayoutShiftAndRotatedPoints(List<Point> rotatedPoints, float shiftX, float shiftY) {
         float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
         float width = getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH);
         float height = getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT);
@@ -423,7 +422,7 @@ public class BlockRenderer extends AbstractRenderer {
 
         double minX = Double.MAX_VALUE;
         double maxY = -Double.MAX_VALUE;
-        for (Point2D point : rotatedPoints) {
+        for (Point point : rotatedPoints) {
             if (point.getX() < minX)  minX = point.getX();
             if (point.getY() > maxY)  maxY = point.getY();
         }
@@ -431,14 +430,12 @@ public class BlockRenderer extends AbstractRenderer {
         float dx = (float) (left - minX);
         float dy = (float) (top - maxY);
 
-        for (Point2D point : rotatedPoints) {
+        for (Point point : rotatedPoints) {
             point.setLocation(point.getX() + dx + shiftX, point.getY() + dy + shiftY);
         }
 
-        return new Point2D.Float(dx, dy);
+        return new Point(dx, dy);
     }
-
-
 
     protected void beginRotationIfApplied(PdfCanvas canvas) {
         Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
@@ -467,28 +464,28 @@ public class BlockRenderer extends AbstractRenderer {
         }
     }
 
-    private List<Point2D.Float> transformBBox(float left, float bottom, float right, float top, AffineTransform transform, List<Point2D.Float> bBoxPoints) {
-        bBoxPoints.addAll(Arrays.asList(new Point2D.Float(left, bottom), new Point2D.Float(right, bottom),
-                new Point2D.Float(right, top), new Point2D.Float(left, top)));
+    private List<Point> transformBBox(float left, float bottom, float right, float top, AffineTransform transform, List<Point> bBoxPoints) {
+        bBoxPoints.addAll(Arrays.asList(new Point(left, bottom), new Point(right, bottom),
+                new Point(right, top), new Point(left, top)));
 
-        for (Point2D.Float point : bBoxPoints) {
+        for (Point point : bBoxPoints) {
             transform.transform(point, point);
         }
 
         return bBoxPoints;
     }
 
-    private List<Point2D> clipBBox(List<Point2D.Float> points, Point2D clipLineBeg, Point2D clipLineEnd) {
-        List<Point2D> filteredPoints = new ArrayList<>();
+    private List<Point> clipBBox(List<Point> points, Point clipLineBeg, Point clipLineEnd) {
+        List<Point> filteredPoints = new ArrayList<>();
 
         boolean prevOnRightSide = false;
-        Point2D filteringPoint = points.get(0);
+        Point filteringPoint = points.get(0);
         if (checkPointSide(filteringPoint, clipLineBeg, clipLineEnd) >= 0) {
             filteredPoints.add(filteringPoint);
             prevOnRightSide = true;
         }
 
-        Point2D prevPoint = filteringPoint;
+        Point prevPoint = filteringPoint;
         for (int i = 1; i < points.size() + 1; ++i) {
             filteringPoint = points.get(i % points.size());
             if (checkPointSide(filteringPoint, clipLineBeg, clipLineEnd) >= 0) {
@@ -507,7 +504,7 @@ public class BlockRenderer extends AbstractRenderer {
         return filteredPoints;
     }
 
-    private int checkPointSide(Point2D filteredPoint, Point2D clipLineBeg, Point2D clipLineEnd) {
+    private int checkPointSide(Point filteredPoint, Point clipLineBeg, Point clipLineEnd) {
         double x1, x2, y1, y2;
         x1 = filteredPoint.getX() - clipLineBeg.getX();
         y2 = clipLineEnd.getY() - clipLineBeg.getY();
@@ -524,7 +521,7 @@ public class BlockRenderer extends AbstractRenderer {
         return 0;
     }
 
-    private Point2D getIntersectionPoint(Point2D lineBeg, Point2D lineEnd, Point2D clipLineBeg, Point2D clipLineEnd) {
+    private Point getIntersectionPoint(Point lineBeg, Point lineEnd, Point clipLineBeg, Point clipLineEnd) {
         double A1 = lineBeg.getY() - lineEnd.getY(), A2 = clipLineBeg.getY() - clipLineEnd.getY();
         double B1 = lineEnd.getX() - lineBeg.getX(), B2 = clipLineEnd.getX() - clipLineBeg.getX();
         double C1 = lineBeg.getX() * lineEnd.getY() - lineBeg.getY() * lineEnd.getX();
@@ -532,6 +529,6 @@ public class BlockRenderer extends AbstractRenderer {
 
         double M = B1 * A2 - B2 * A1;
 
-        return new Point2D.Double((B2 * C1 - B1 * C2) / M, (C2 * A1 - C1 * A2) / M);
+        return new Point((B2 * C1 - B1 * C2) / M, (C2 * A1 - C1 * A2) / M);
     }
 }

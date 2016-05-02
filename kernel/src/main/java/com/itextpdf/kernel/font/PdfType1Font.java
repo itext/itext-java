@@ -62,9 +62,9 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         setFontProgram(type1Font);
         this.embedded = embedded && !type1Font.isBuiltInFont();
         if ((encoding == null || encoding.length() == 0) && type1Font.isFontSpecific()) {
-            encoding = FontEncoding.FontSpecific;
+            encoding = FontEncoding.FONT_SPECIFIC;
         }
-        if (encoding != null && FontEncoding.FontSpecific.toLowerCase().equals(encoding.toLowerCase())) {
+        if (encoding != null && FontEncoding.FONT_SPECIFIC.toLowerCase().equals(encoding.toLowerCase())) {
             fontEncoding = FontEncoding.createFontSpecificEncoding();
         } else {
             fontEncoding = FontEncoding.createFontEncoding(encoding);
@@ -81,10 +81,10 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         checkFontDictionary(fontDictionary, PdfName.Type1);
         CMapToUnicode toUni = FontUtil.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
         fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
-        fontProgram = DocType1Font.createFontProgram(fontDictionary, fontEncoding);
+        fontProgram = DocType1Font.createFontProgram(fontDictionary, fontEncoding, toUni);
 
-        if (fontProgram instanceof DocFontProgram) {
-            embedded = ((DocFontProgram) fontProgram).getFontFile() != null;
+        if (fontProgram instanceof IDocFontProgram) {
+            embedded = ((IDocFontProgram) fontProgram).getFontFile() != null;
         }
         subset = false;
     }
@@ -129,7 +129,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
     @Override
     protected boolean isBuiltInFont() {
-        return fontProgram.isBuiltInFont();
+        return getFontProgram().isBuiltInFont();
     }
 
     /**
@@ -139,8 +139,8 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
     @Override
     protected void addFontStream(PdfDictionary fontDescriptor) {
         if (embedded) {
-            if (fontProgram instanceof DocFontProgram) {
-                DocFontProgram docType1Font = (DocFontProgram)fontProgram;
+            if (fontProgram instanceof IDocFontProgram) {
+                IDocFontProgram docType1Font = (IDocFontProgram)fontProgram;
                 fontDescriptor.put(docType1Font.getFontFileName(),
                         docType1Font.getFontFile());
                 if (docType1Font.getSubtype() != null) {

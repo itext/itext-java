@@ -14,7 +14,7 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfTokenizerTest {
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfTokeniserTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfTokeniserTest/";
 
     private void checkTokenTypes(String data, PdfTokenizer.TokenType... expectedTypes) throws Exception {
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();

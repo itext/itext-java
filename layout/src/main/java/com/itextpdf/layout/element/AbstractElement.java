@@ -45,10 +45,11 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.ElementPropertyContainer;
-import com.itextpdf.layout.Property;
 import com.itextpdf.layout.Style;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.IRenderer;
 
 import java.util.ArrayList;
@@ -60,9 +61,9 @@ import java.util.Set;
  * Defines the most common properties that most {@link IElement} implementations
  * share.
  * 
- * @param <Type> the type of the implementation
+ * @param <T> the type of the implementation
  */
-public abstract class AbstractElement<Type extends AbstractElement> extends ElementPropertyContainer<Type> implements IElement<Type> {
+public abstract class AbstractElement<T extends IElement> extends ElementPropertyContainer<T> implements IElement {
 
     protected IRenderer nextRenderer;
     protected List<IElement> childElements = new ArrayList<>();
@@ -93,7 +94,7 @@ public abstract class AbstractElement<Type extends AbstractElement> extends Elem
     }
 
     @Override
-    public boolean hasProperty(Property property) {
+    public boolean hasProperty(int property) {
         boolean hasProperty = super.hasProperty(property);
         if (styles != null && styles.size() > 0 && !hasProperty) {
             for (Style style : styles) {
@@ -107,7 +108,7 @@ public abstract class AbstractElement<Type extends AbstractElement> extends Elem
     }
 
     @Override
-    public <T> T getProperty(Property property) {
+    public <T1> T1 getProperty(int property) {
         Object result = super.getProperty(property);
         if (styles != null && styles.size() > 0 && result == null && !super.hasProperty(property)) {
             for (Style style : styles) {
@@ -117,7 +118,7 @@ public abstract class AbstractElement<Type extends AbstractElement> extends Elem
                 }
             }
         }
-        return (T) result;
+        return (T1) result;
     }
 
     /**
@@ -126,12 +127,12 @@ public abstract class AbstractElement<Type extends AbstractElement> extends Elem
      * @param style the style to be added
      * @return this element
      */
-    public Type addStyle(Style style) {
+    public T addStyle(Style style) {
         if (styles == null) {
             styles = new LinkedHashSet<>();
         }
         styles.add(style);
-        return (Type)this;
+        return (T)this;
     }
 
     protected abstract IRenderer makeNewRenderer();
@@ -141,10 +142,8 @@ public abstract class AbstractElement<Type extends AbstractElement> extends Elem
      */
     protected void propagateArtifactRoleToChildElements() {
         for (IElement child : childElements) {
-            if (child instanceof AbstractElement) {
-                if (child instanceof IAccessibleElement) {
-                    ((IAccessibleElement) child).setRole(PdfName.Artifact);
-                }
+            if (child instanceof IAccessibleElement) {
+                ((IAccessibleElement) child).setRole(PdfName.Artifact);
             }
         }
     }
@@ -153,4 +152,13 @@ public abstract class AbstractElement<Type extends AbstractElement> extends Elem
         return 0 == childElements.size();
     }
 
+    public T setAction(PdfAction action) {
+        setProperty(Property.ACTION, action);
+        return (T) this;
+    }
+
+    public T setPageNumber(int pageNumber) {
+        setProperty(Property.PAGE_NUMBER, pageNumber);
+        return (T) this;
+    }
 }

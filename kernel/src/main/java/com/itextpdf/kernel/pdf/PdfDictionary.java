@@ -160,7 +160,7 @@ public class PdfDictionary extends PdfObject {
      */
     public PdfArray getAsArray(PdfName key) {
         PdfObject direct = get(key, true);
-        if (direct != null && direct.getType() == PdfObject.Array)
+        if (direct != null && direct.getType() == PdfObject.ARRAY)
             return (PdfArray)direct;
         return null;
     }
@@ -173,7 +173,7 @@ public class PdfDictionary extends PdfObject {
      */
     public PdfDictionary getAsDictionary(PdfName key) {
         PdfObject direct = get(key, true);
-        if (direct != null && direct.getType() == PdfObject.Dictionary)
+        if (direct != null && direct.getType() == PdfObject.DICTIONARY)
             return (PdfDictionary)direct;
         return null;
     }
@@ -186,7 +186,7 @@ public class PdfDictionary extends PdfObject {
      */
     public PdfStream getAsStream(PdfName key) {
         PdfObject direct = get(key, true);
-        if (direct != null && direct.getType() == PdfObject.Stream)
+        if (direct != null && direct.getType() == PdfObject.STREAM)
             return (PdfStream)direct;
         return null;
     }
@@ -199,7 +199,7 @@ public class PdfDictionary extends PdfObject {
      */
     public PdfNumber getAsNumber(PdfName key) {
         PdfObject direct = get(key, true);
-        if (direct != null && direct.getType() == PdfObject.Number)
+        if (direct != null && direct.getType() == PdfObject.NUMBER)
             return (PdfNumber)direct;
         return null;
     }
@@ -212,7 +212,7 @@ public class PdfDictionary extends PdfObject {
      */
     public PdfName getAsName(PdfName key) {
         PdfObject direct = get(key, true);
-        if (direct != null && direct.getType() == PdfObject.Name)
+        if (direct != null && direct.getType() == PdfObject.NAME)
             return (PdfName)direct;
         return null;
     }
@@ -225,7 +225,7 @@ public class PdfDictionary extends PdfObject {
      */
     public PdfString getAsString(PdfName key) {
         PdfObject direct = get(key, true);
-        if (direct != null && direct.getType() == PdfObject.String)
+        if (direct != null && direct.getType() == PdfObject.STRING)
             return (PdfString)direct;
         return null;
     }
@@ -238,7 +238,7 @@ public class PdfDictionary extends PdfObject {
      */
     public PdfBoolean getAsBoolean(PdfName key) {
         PdfObject direct = get(key, true);
-        if (direct != null && direct.getType() == PdfObject.Boolean)
+        if (direct != null && direct.getType() == PdfObject.BOOLEAN)
             return (PdfBoolean)direct;
         return null;
     }
@@ -264,7 +264,7 @@ public class PdfDictionary extends PdfObject {
      */
     public Float getAsFloat(PdfName key) {
         PdfNumber number = getAsNumber(key);
-        return number == null ? null : number.getFloatValue();
+        return number == null ? null : number.floatValue();
     }
 
     /**
@@ -275,7 +275,7 @@ public class PdfDictionary extends PdfObject {
      */
     public Integer getAsInt(PdfName key) {
         PdfNumber number = getAsNumber(key);
-        return number == null ? null : number.getIntValue();
+        return number == null ? null : number.intValue();
     }
 
     /**
@@ -298,6 +298,7 @@ public class PdfDictionary extends PdfObject {
      * @return the previous PdfObject associated with this key
      */
     public PdfObject put(PdfName key, PdfObject value) {
+        assert value != null;
         return map.put(key, value);
     }
 
@@ -356,18 +357,22 @@ public class PdfDictionary extends PdfObject {
 
     @Override
     public byte getType() {
-        return Dictionary;
+        return DICTIONARY;
     }
 
     @Override
     public String toString() {
-        String string = "<<";
-        for (Map.Entry<PdfName, PdfObject> entry : entrySet()) {
-            PdfIndirectReference indirectReference = entry.getValue().getIndirectReference();
-            string = string + entry.getKey().toString() + " " + (indirectReference == null ? entry.getValue().toString() : indirectReference.toString()) + " ";
+        if (!isFlushed()) {
+            String string = "<<";
+            for (Map.Entry<PdfName, PdfObject> entry : entrySet()) {
+                PdfIndirectReference indirectReference = entry.getValue().getIndirectReference();
+                string = string + entry.getKey().toString() + " " + (indirectReference == null ? entry.getValue().toString() : indirectReference.toString()) + " ";
+            }
+            string += ">>";
+            return string;
+        } else {
+            return indirectReference.toString();
         }
-        string += ">>";
-        return string;
     }
 
     /**
@@ -399,7 +404,7 @@ public class PdfDictionary extends PdfObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfDictionary makeIndirect(PdfDocument document) {
-        return super.makeIndirect(document);
+        return (PdfDictionary) super.makeIndirect(document);
     }
 
     /**
@@ -411,7 +416,7 @@ public class PdfDictionary extends PdfObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfDictionary makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        return super.makeIndirect(document, reference);
+        return (PdfDictionary) super.makeIndirect(document, reference);
     }
 
     /**
@@ -424,7 +429,7 @@ public class PdfDictionary extends PdfObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfDictionary copyTo(PdfDocument document) {
-        return super.copyTo(document, true);
+        return (PdfDictionary) super.copyTo(document, true);
     }
 
     /**
@@ -440,7 +445,7 @@ public class PdfDictionary extends PdfObject {
     @SuppressWarnings("unchecked")
     @Override
     public PdfDictionary copyTo(PdfDocument document, boolean allowDuplicating) {
-        return super.copyTo(document, allowDuplicating);
+        return (PdfDictionary) super.copyTo(document, allowDuplicating);
     }
 
     /**
@@ -475,7 +480,7 @@ public class PdfDictionary extends PdfObject {
             return map.get(key);
         else {
             PdfObject obj = map.get(key);
-            if (obj != null && obj.getType() == IndirectReference)
+            if (obj != null && obj.getType() == INDIRECT_REFERENCE)
                 return ((PdfIndirectReference)obj).getRefersTo(true);
             else
                 return obj;

@@ -52,7 +52,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 
 import java.util.Map;
 
-public class PdfExplicitDestination extends PdfDestination<PdfArray> {
+public class PdfExplicitDestination extends PdfDestination {
 
     private static final long serialVersionUID = -1515785642472963298L;
 
@@ -66,7 +66,7 @@ public class PdfExplicitDestination extends PdfDestination<PdfArray> {
 
     @Override
     public PdfObject getDestinationPage(Map<String, PdfObject> names) {
-        return getPdfObject().get(0);
+        return ((PdfArray)getPdfObject()).get(0);
     }
 
     @Override
@@ -74,75 +74,75 @@ public class PdfExplicitDestination extends PdfDestination<PdfArray> {
         return this;
     }
 
-    static public PdfExplicitDestination createXYZ(PdfPage page, float left, float top, float zoom) {
+    public static PdfExplicitDestination createXYZ(PdfPage page, float left, float top, float zoom) {
         return create(page, PdfName.XYZ, left, Float.NaN, Float.NaN, top, zoom);
     }
 
-    static public PdfExplicitDestination createXYZ(int pageNum, float left, float top, float zoom) {
+    public static PdfExplicitDestination createXYZ(int pageNum, float left, float top, float zoom) {
         return create(pageNum, PdfName.XYZ, left, Float.NaN, Float.NaN, top, zoom);
     }
 
-    static public PdfExplicitDestination createFit(PdfPage page) {
+    public static PdfExplicitDestination createFit(PdfPage page) {
         return create(page, PdfName.Fit, Float.NaN, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
-    static public PdfExplicitDestination createFit(int pageNum) {
+    public static PdfExplicitDestination createFit(int pageNum) {
         return create(pageNum, PdfName.Fit, Float.NaN, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
-    static public PdfExplicitDestination createFitH(PdfPage page, float top) {
+    public static PdfExplicitDestination createFitH(PdfPage page, float top) {
         return create(page, PdfName.FitH, Float.NaN, Float.NaN, Float.NaN, top, Float.NaN);
     }
 
-    static public PdfExplicitDestination createFitH(int pageNum, float top) {
+    public static PdfExplicitDestination createFitH(int pageNum, float top) {
         return create(pageNum, PdfName.FitH, Float.NaN, Float.NaN, Float.NaN, top, Float.NaN);
     }
 
-    static public PdfExplicitDestination createFitV(PdfPage page, float left) {
+    public static PdfExplicitDestination createFitV(PdfPage page, float left) {
         return create(page, PdfName.FitV, left, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
-    static public PdfExplicitDestination createFitV(int pageNum, float left) {
+    public static PdfExplicitDestination createFitV(int pageNum, float left) {
         return create(pageNum, PdfName.FitV, left, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
-    static public PdfExplicitDestination createFitR(PdfPage page, float left, float bottom, float right, float top) {
+    public static PdfExplicitDestination createFitR(PdfPage page, float left, float bottom, float right, float top) {
         return create(page, PdfName.FitR, left, bottom, right, top, Float.NaN);
     }
 
-    static public PdfExplicitDestination createFitR(int pageNum, float left, float bottom, float right, float top) {
+    public static PdfExplicitDestination createFitR(int pageNum, float left, float bottom, float right, float top) {
         return create(pageNum, PdfName.FitR, left, bottom, right, top, Float.NaN);
     }
 
-    static public PdfExplicitDestination createFitB(PdfPage page) {
+    public static PdfExplicitDestination createFitB(PdfPage page) {
         return create(page, PdfName.FitB, Float.NaN, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
-    static public PdfExplicitDestination createFitB(int pageNum) {
+    public static PdfExplicitDestination createFitB(int pageNum) {
         return create(pageNum, PdfName.FitB, Float.NaN, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
-    static public PdfExplicitDestination createFitBH(PdfPage page, float top) {
+    public static PdfExplicitDestination createFitBH(PdfPage page, float top) {
         return create(page, PdfName.FitBH, Float.NaN, Float.NaN, Float.NaN, top, Float.NaN);
     }
 
-    static public PdfExplicitDestination createFitBH(int pageNum, float top) {
+    public static PdfExplicitDestination createFitBH(int pageNum, float top) {
         return create(pageNum, PdfName.FitBH, Float.NaN, Float.NaN, Float.NaN, top, Float.NaN);
     }
 
-    static public PdfExplicitDestination createFitBV(PdfPage page, float left) {
+    public static PdfExplicitDestination createFitBV(PdfPage page, float left) {
         return create(page, PdfName.FitBH, left, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
-    static public PdfExplicitDestination createFitBV(int pageNum, float left) {
+    public static PdfExplicitDestination createFitBV(int pageNum, float left) {
         return create(pageNum, PdfName.FitBH, left, Float.NaN, Float.NaN, Float.NaN, Float.NaN);
     }
 
-    static public PdfExplicitDestination create(PdfPage page, PdfName type, float left, float bottom, float right, float top, float zoom) {
+    public static PdfExplicitDestination create(PdfPage page, PdfName type, float left, float bottom, float right, float top, float zoom) {
         return new PdfExplicitDestination().add(page).add(type).add(left).add(bottom).add(right).add(top).add(zoom);
     }
 
-    static public PdfExplicitDestination create(int pageNum, PdfName type, float left, float bottom, float right, float top, float zoom) {
+    public static PdfExplicitDestination create(int pageNum, PdfName type, float left, float bottom, float right, float top, float zoom) {
         return new PdfExplicitDestination().add(--pageNum).add(type).add(left).add(bottom).add(right).add(top).add(zoom);
     }
 
@@ -152,23 +152,24 @@ public class PdfExplicitDestination extends PdfDestination<PdfArray> {
     }
 
     private PdfExplicitDestination add(float value) {
-        if (!Float.isNaN(value))
-            getPdfObject().add(new PdfNumber(value));
+        if (!Float.isNaN(value)) {
+            ((PdfArray) getPdfObject()).add(new PdfNumber(value));
+        }
         return this;
     }
 
     private PdfExplicitDestination add(int value) {
-        getPdfObject().add(new PdfNumber(value));
+        ((PdfArray)getPdfObject()).add(new PdfNumber(value));
         return this;
     }
 
     private PdfExplicitDestination add(PdfPage page) {
-        getPdfObject().add(page.getPdfObject());
+        ((PdfArray)getPdfObject()).add(page.getPdfObject());
         return this;
     }
 
     private PdfExplicitDestination add(PdfName type) {
-        getPdfObject().add(type);
+        ((PdfArray)getPdfObject()).add(type);
         return this;
     }
 

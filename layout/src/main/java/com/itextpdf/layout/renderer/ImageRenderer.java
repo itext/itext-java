@@ -45,7 +45,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.AffineTransform;
-import com.itextpdf.kernel.geom.Point2D;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -56,23 +56,24 @@ import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
-import com.itextpdf.layout.Property;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.UnitValue;
 
 public class ImageRenderer extends AbstractRenderer {
 
-    float height;
-    Float width;
-    Float fixedXPosition;
-    Float fixedYPosition;
-    float pivotY;
-    float deltaX;
-    float imageWidth;
-    float imageHeight;
+    private float height;
+    private Float width;
+    protected Float fixedXPosition;
+    protected Float fixedYPosition;
+    protected float pivotY;
+    protected float deltaX;
+    protected float imageWidth;
+    protected float imageHeight;
 
     float[] matrix = new float[6];
 
@@ -226,14 +227,19 @@ public class ImageRenderer extends AbstractRenderer {
     }
 
     @Override
-    public ImageRenderer getNextRenderer() {
+    public IRenderer getNextRenderer() {
         return null;
     }
 
     protected ImageRenderer autoScale(LayoutArea area) {
         if (width > area.getBBox().getWidth()) {
             setProperty(Property.HEIGHT, area.getBBox().getWidth() / width * imageHeight);
-            setProperty(Property.WIDTH, Property.UnitValue.createPointValue(area.getBBox().getWidth()));
+            setProperty(Property.WIDTH, UnitValue.createPointValue(area.getBBox().getWidth()));
+            // if still image is not scaled properly
+            if (getPropertyAsFloat(Property.HEIGHT) > area.getBBox().getHeight()) {
+                setProperty(Property.WIDTH, UnitValue.createPointValue(area.getBBox().getHeight() / getPropertyAsFloat(Property.HEIGHT) * ((UnitValue)getProperty(Property.WIDTH)).getValue()));
+                setProperty(Property.HEIGHT, UnitValue.createPointValue(area.getBBox().getHeight()));
+            }
         }
 
         return this;
@@ -253,10 +259,10 @@ public class ImageRenderer extends AbstractRenderer {
     private float adjustPositionAfterRotation(float angle, float maxWidth, float maxHeight) {
         if (angle != 0) {
             AffineTransform t = AffineTransform.getRotateInstance(angle);
-            Point2D p00 = t.transform(new Point2D.Float(0, 0), new Point2D.Float());
-            Point2D p01 = t.transform(new Point2D.Float(0, height), new Point2D.Float());
-            Point2D p10 = t.transform(new Point2D.Float(width, 0), new Point2D.Float());
-            Point2D p11 = t.transform(new Point2D.Float(width, height), new Point2D.Float());
+            Point p00 = t.transform(new Point(0, 0), new Point());
+            Point p01 = t.transform(new Point(0, height), new Point());
+            Point p10 = t.transform(new Point(width, 0), new Point());
+            Point p11 = t.transform(new Point(width, height), new Point());
 
             double[] xValues = {p01.getX(), p10.getX(), p11.getX()};
             double[] yValues = {p01.getY(), p10.getY(), p11.getY()};
@@ -307,10 +313,10 @@ public class ImageRenderer extends AbstractRenderer {
         t.translate(xDistance, yDistance);
         t.getMatrix(matrix);
         if (fixedXPosition != null) {
-            fixedXPosition += t.getTranslateX();
+            fixedXPosition += (float)t.getTranslateX();
         }
         if (fixedYPosition != null) {
-            fixedYPosition += t.getTranslateY();
+            fixedYPosition += (float)t.getTranslateY();
         }
     }
 }

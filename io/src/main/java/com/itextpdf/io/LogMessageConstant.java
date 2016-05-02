@@ -47,7 +47,7 @@ package com.itextpdf.io;
 /**
  * Class containing constants to be used in logging.
  */
-public class LogMessageConstant {
+public final class LogMessageConstant {
 
     /**
      * Log message.
@@ -57,7 +57,24 @@ public class LogMessageConstant {
     /**
      * Log message.
      */
+    public static final String DOCUMENT_SERIALIZATION_EXCEPTION_RAISED = "Unhandled exception while serialization";
+
+    /**
+     * Log message.
+     */
+    public static final String DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT = "DirectOnly object cannot be indirect";
+
+    /**
+     * Log message.
+     */
     public static final String ELEMENT_DOES_NOT_FIT_AREA = "Element does not fit current area. {0}";
+
+    public static final String EXCEPTION_WHILE_UPDATING_XMPMETADATA = "Exception while updating XmpMetadata";
+
+    /**
+     * Log message.
+     */
+    public static final String REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED = "The removing page has already been flushed.";
 
     /**
      * Log message.
@@ -102,7 +119,23 @@ public class LogMessageConstant {
     /**
      * Log message.
      */
+    public static final String INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE = "Invalid key value: key {0} has null value.";
+
+    /**
+     * Log message.
+     */
     public static final String MAKE_COPY_OF_CATALOG_DICTIONARY_IS_FORBIDDEN = "Make copy of Catalog dictionary is forbidden.";
+
+    /**
+     * Log message.
+     */
+    public static final String OCSP_STATUS_IS_UNKNOWN = "OCSP status is unknown.";
+
+    /**
+     * Log message.
+     */
+    public static final String OCSP_STATUS_IS_REVOKED = "OCSP status is revoked.";
+
 
     /**
      * Log message.
@@ -144,5 +177,9 @@ public class LogMessageConstant {
      */
     public static final String TOUNICODE_CMAP_MORE_THAN_2_BYTES_NOT_SUPPORTED = "ToUnicode CMap more than 2 bytes not supported.";
 
+    public static final String WRITER_ENCRYPTION_IS_IGNORED_APPEND = "Writer encryption will be ignored, because append mode is used. Document will preserve the original encryption (or will stay unencrypted)";
 
+    public static final String WRITER_ENCRYPTION_IS_IGNORED_PRESERVE = "Writer encryption will be ignored, because preservation of encryption is enabled. Document will preserve the original encryption (or will stay unencrypted)";
+
+    public static final String XREF_ERROR = "Error occurred while reading cross reference table. Cross reference table will be rebuilt.";
 }

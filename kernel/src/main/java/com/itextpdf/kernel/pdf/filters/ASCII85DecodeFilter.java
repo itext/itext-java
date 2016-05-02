@@ -55,7 +55,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * Handles ASCII85Decode filter
  */
-public class ASCII85DecodeFilter implements FilterHandler {
+public class ASCII85DecodeFilter implements IFilterHandler {
 
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
@@ -69,10 +69,10 @@ public class ASCII85DecodeFilter implements FilterHandler {
      * @param in the byte[] to be decoded
      * @return the decoded byte[]
      */
-    public static byte[] ASCII85Decode(final byte[] in) {
+    public static byte[] ASCII85Decode(byte[] in) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int state = 0;
-        int chn[] = new int[5];
+        int[] chn = new int[5];
         for (int k = 0; k < in.length; ++k) {
             int ch = in[k] & 0xff;
             if (ch == '~')

@@ -60,7 +60,7 @@ public class PdfFileAttachmentAnnotation extends PdfMarkupAnnotation {
 
     public PdfFileAttachmentAnnotation(Rectangle rect, PdfFileSpec file) {
         this(rect);
-        put(PdfName.FS, file);
+        put(PdfName.FS, file.getPdfObject());
     }
 
     public PdfFileAttachmentAnnotation(PdfDictionary pdfObject) {

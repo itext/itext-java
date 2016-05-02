@@ -70,7 +70,7 @@ import java.util.List;
  * To be able to be wrapped with this {@link PdfObjectWrapper} the {@link PdfObject}
  * must be indirect.
  */
-public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG {
+public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG {
 
     private static final long serialVersionUID = -5367953708241595665L;
 	/**
@@ -134,7 +134,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * @param document the <CODE>PdfDocument</CODE>
      * @param group the radio group
      */
-    public static void addOCGRadioGroup(PdfDocument document, final List<PdfLayer> group) {
+    public static void addOCGRadioGroup(PdfDocument document, List<PdfLayer> group) {
         document.getCatalog().getOCProperties(true).addOCGRadioGroup(group);
     }
 
@@ -164,7 +164,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
      * @param name the name of the layer.
      */
     public void setName(String name) {
-        getPdfObject().put(PdfName.Name, new PdfString(name, PdfEncodings.UnicodeBig));
+        getPdfObject().put(PdfName.Name, new PdfString(name, PdfEncodings.UNICODE_BIG));
         getPdfObject().setModified();
     }
 
@@ -271,7 +271,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
     public void setCreatorInfo(String creator, String subtype) {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
-        dic.put(PdfName.Creator, new PdfString(creator, PdfEncodings.UnicodeBig));
+        dic.put(PdfName.Creator, new PdfString(creator, PdfEncodings.UNICODE_BIG));
         dic.put(PdfName.Subtype, new PdfName(subtype));
         usage.put(PdfName.CreatorInfo, dic);
         usage.setModified();
@@ -288,7 +288,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
     public void setLanguage(String lang, boolean preferred) {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
-        dic.put(PdfName.Lang, new PdfString(lang, PdfEncodings.UnicodeBig));
+        dic.put(PdfName.Lang, new PdfString(lang, PdfEncodings.UNICODE_BIG));
         if (preferred)
             dic.put(PdfName.Preferred, PdfName.ON);
         usage.put(PdfName.Language, dic);
@@ -378,11 +378,11 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
         PdfDictionary dic = new PdfDictionary();
         dic.put(PdfName.Type, new PdfName(type));
         if (names.length == 1) {
-            dic.put(PdfName.Name, new PdfString(names[0], PdfEncodings.UnicodeBig));
+            dic.put(PdfName.Name, new PdfString(names[0], PdfEncodings.UNICODE_BIG));
         } else {
             PdfArray namesArray = new PdfArray();
             for (String name : names) {
-                namesArray.add(new PdfString(name, PdfEncodings.UnicodeBig));
+                namesArray.add(new PdfString(name, PdfEncodings.UNICODE_BIG));
             }
             dic.put(PdfName.Name, namesArray);
         }
@@ -470,10 +470,6 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements PdfOCG 
     }
 
     private PdfOCProperties fetchOCProperties() {
-        try {
-            return getDocument().getCatalog().getOCProperties(true);
-        } catch (Exception ignored) {}
-        return null;
+        return getDocument().getCatalog().getOCProperties(true);
     }
-
 }

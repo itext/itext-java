@@ -47,7 +47,6 @@ package com.itextpdf.io.image;
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.color.IccProfile;
-import com.itextpdf.io.source.ByteArrayOutputStream;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -57,7 +56,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JpegImageHelper {
+class JpegImageHelper {
 
     /**
      * This is a type of marker.
@@ -121,19 +120,20 @@ public class JpegImageHelper {
      */
     private static final byte[] PS_8BIM_RESO = {0x38, 0x42, 0x49, 0x4d, 0x03, (byte) 0xed};
 
-    public static void processImage(Image image, ByteArrayOutputStream stream) {
+    public static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.JPEG)
             throw new IllegalArgumentException("JPEG image expected");
         InputStream jpegStream = null;
         try {
             String errorID;
             if (image.getData() == null) {
-                jpegStream = image.getUrl().openStream();
+                image.loadData();
                 errorID = image.getUrl().toString();
             } else {
-                jpegStream = new java.io.ByteArrayInputStream(image.getData());
                 errorID = "Byte array";
             }
+            jpegStream = new java.io.ByteArrayInputStream(image.getData());
+            image.imageSize = image.getData().length;
             processParameters(jpegStream, errorID, image);
         } catch (java.io.IOException e) {
             throw new IOException(IOException.JpegImageException, e);
@@ -144,13 +144,10 @@ public class JpegImageHelper {
                 } catch (java.io.IOException ignore) { }
             }
         }
-
-        if (stream != null) {
-            updateStream(stream, image);
-        }
+        updateAttributes(image);
     }
 
-    private static void updateStream(ByteArrayOutputStream stream, Image image) {
+    private static void updateAttributes(ImageData image) {
         image.filter = "DCTDecode";
         if (image.getColorTransform() == 0) {
             Map<String, Object> decodeParms = new HashMap<>();
@@ -160,26 +157,6 @@ public class JpegImageHelper {
         if (image.getColorSpace() != 1 && image.getColorSpace() != 3 && image.isInverted()) {
             image.decode = new float[]{1, 0, 1, 0, 1, 0, 1, 0};
         }
-
-        if (image.getData() != null) {
-            byte[] imgBytes = image.getData();
-            stream.assignBytes(imgBytes, imgBytes.length);
-        } else {
-            InputStream jpegStream = null;
-            try {
-                jpegStream = image.getUrl().openStream();
-                StreamUtil.transferBytes(jpegStream, stream);
-            } catch (java.io.IOException e) {
-                throw new IOException(IOException.JpegImageException, e);
-            } finally {
-                if (jpegStream != null) {
-                    try {
-                        jpegStream.close();
-                    } catch (java.io.IOException ignored) { }
-                }
-            }
-        }
-        image.imageSize = stream.toByteArray().length;
     }
 
     /**
@@ -188,7 +165,7 @@ public class JpegImageHelper {
      * @throws IOException
      * @throws java.io.IOException
      */
-    private static void processParameters(InputStream jpegStream, String errorID, Image image) throws java.io.IOException {
+    private static void processParameters(InputStream jpegStream, String errorID, ImageData image) throws java.io.IOException {
         byte[][] icc = null;
         if (jpegStream.read() != 0xFF || jpegStream.read() != 0xD8) {
             throw new IOException(IOException._1IsNotAValidJpegFile).setMessageParams(errorID);
@@ -208,7 +185,7 @@ public class JpegImageHelper {
                         StreamUtil.skip(jpegStream, len - 2);
                         continue;
                     }
-                    byte bcomp[] = new byte[JFIF_ID.length];
+                    byte[] bcomp = new byte[JFIF_ID.length];
                     int r = jpegStream.read(bcomp);
                     if (r != bcomp.length)
                         throw new IOException(IOException._1CorruptedJfifMarker).setMessageParams(errorID);
@@ -363,7 +340,7 @@ public class JpegImageHelper {
                     image.setBpc(8);
                     break;
                 } else if (markertype == UNSUPPORTED_MARKER) {
-                    throw new IOException(IOException._1UnsupportedJpegMarker2).setMessageParams(errorID, String.valueOf(marker));
+                    throw new IOException(IOException._1UnsupportedJpegMarker2).setMessageParams(errorID, Integer.toString(marker));
                 } else if (markertype != NOPARAM_MARKER) {
                     StreamUtil.skip(jpegStream, getShort(jpegStream) - 2);
                 }

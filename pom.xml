@@ -4,10 +4,12 @@
 
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.0.0-RC.20160406</version>
+    <version>7.0.0</version>
     <packaging>pom</packaging>
     <name>iText 7</name>
+    <description>A Free Java-PDF library</description>
     <url>http://itextpdf.com/</url>
+    <inceptionYear>1998</inceptionYear>
 
     <organization>
         <name>iText Group NV</name>
@@ -15,8 +17,8 @@
     </organization>
 
     <scm>
-        <connection>scm:git:git@gitlab.itextsupport.com:itext6/itextpdf.git</connection>
-        <url>scm:git:git@gitlab.itextsupport.com:itext6/itextpdf.git</url>
+        <connection>scm:git:git@gitlab.itextsupport.com:itext7/itextcore.git</connection>
+        <url>scm:git:git@gitlab.itextsupport.com:itext7/itextcore.git</url>
     </scm>
 
     <modules>
@@ -27,12 +29,9 @@
         <module>hyph</module>
         <module>font-asian</module>
         <module>layout</module>
-        <module>parsing</module>
         <module>pdfa</module>
         <module>pdftest</module>
-        
         <module>sign</module>
-        
     </modules>
 
     <properties>
@@ -253,12 +252,97 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <excludeResources>true</excludeResources>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${javadoc.version}</version>
                 <configuration>
                     <additionalparam>${javadoc.doclint.none}</additionalparam>
                     <quiet>true</quiet>
+                    <detectLinks>true</detectLinks>
+                    <subpackages>com.itextpdf.barcodes:com.itextpdf.font-asian:com.itextpdf.forms:com.itextpdf.hyph:com.itextpdf.io:com.itextpdf.kernel:com.itextpdf.layout:com.itextpdf.pdfa:com.itextpdf.signatures</subpackages>
+                    <groups>
+                        <group>
+                            <title>Barcodes</title>
+                            <packages>com.itextpdf.barcodes*</packages>
+                        </group>
+                        <group>
+                            <title>Asian Fonts</title>
+                            <packages>com.itextpdf.font-asian*</packages>
+                        </group>
+                        <group>
+                            <title>Forms</title>
+                            <packages>com.itextpdf.forms*</packages>
+                        </group>
+                        <group>
+                            <title>Hyphenation</title>
+                            <packages>com.itextpdf.hyph*</packages>
+                        </group>
+                        <group>
+                            <title>Input / Output</title>
+                            <packages>com.itextpdf.io*</packages>
+                        </group>
+                        <group>
+                            <title>Kernel</title>
+                            <packages>com.itextpdf.kernel*</packages>
+                        </group>
+                        <group>
+                            <title>Layout</title>
+                            <packages>com.itextpdf.layout*</packages>
+                        </group>
+                        <group>
+                            <title>PDF/A</title>
+                            <packages>com.itextpdf.pdfa*</packages>
+                        </group>
+                        <group>
+                            <title>Signatures</title>
+                            <packages>com.itextpdf.signatures*</packages>
+                        </group>
+                    </groups>
+                    <footer><![CDATA[
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-11854164-1', 'itextpdf.com');
+ga('send', 'pageview');
+
+</script>
+                    ]]></footer>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>site-javadoc</id>
+                        <phase>site</phase>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>external.atlassian.jgitflow</groupId>

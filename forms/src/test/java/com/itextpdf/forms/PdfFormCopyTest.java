@@ -6,29 +6,27 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
+import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
 @Category(IntegrationTest.class)
 public class PdfFormCopyTest extends ExtendedITextTest {
 
-    static final public String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldsCopyTest/";
-    static final public String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldsCopyTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldsCopyTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldsCopyTest/";
 
     @BeforeClass
-    static public void beforeClass() {
+    public static void beforeClass() {
         createDestinationFolder(destinationFolder);
     }
 
@@ -47,6 +45,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         PdfDocument doc2 = new PdfDocument(new PdfReader(new FileInputStream(srcFilename2)));
         PdfDocument doc3 = new PdfDocument(new PdfReader(new FileInputStream(srcFilename3)));
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(filename)));
+        pdfDoc.initializeOutlines();
 
         doc3.copyPagesTo(1, doc3.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
         doc2.copyPagesTo(1, doc2.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
@@ -65,6 +64,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         PdfDocument doc1 = new PdfDocument(new PdfReader(new FileInputStream(srcFilename)));
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(filename)));
+        pdfDoc.initializeOutlines();
 
         doc1.copyPagesTo(1, doc1.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
 
@@ -81,6 +81,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         PdfDocument doc1 = new PdfDocument(new PdfReader(new FileInputStream(srcFilename)));
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(filename)));
+        pdfDoc.initializeOutlines();
 
         doc1.copyPagesTo(1, doc1.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
 
@@ -101,6 +102,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         PdfDocument doc1 = new PdfDocument(new PdfReader(new FileInputStream(srcFilename1)));
         PdfDocument doc2 = new PdfDocument(new PdfReader(new FileInputStream(srcFilename2)));
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(filename)));
+        pdfDoc.initializeOutlines();
 
         doc1.copyPagesTo(1, doc1.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
         doc2.copyPagesTo(1, doc2.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
@@ -155,6 +157,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(destFile);
         PdfDocument source = new PdfDocument(reader);
         PdfDocument target = new PdfDocument(writer);
+        target.initializeOutlines();
         source.copyPagesTo(1, source.getNumberOfPages(), target, new PdfPageFormCopier());
         target.close();
         Assert.assertNull(new CompareTool().compareByContent(destFile, sourceFolder + "cmp_AnnotationSampleStandard_copy.pdf", destinationFolder, "diff_"));
