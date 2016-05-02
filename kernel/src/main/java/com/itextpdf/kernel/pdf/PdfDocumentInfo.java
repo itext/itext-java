@@ -68,28 +68,29 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
         this(new PdfDictionary(), pdfDocument);
     }
 
+
     public PdfDocumentInfo setTitle(String title) {
-        getPdfObject().put(PdfName.Title, new PdfString(title));
+        getPdfObject().put(PdfName.Title, new PdfString(title, PdfEncodings.UNICODE_BIG));
         return this;
     }
 
     public PdfDocumentInfo setAuthor(String author) {
-        getPdfObject().put(PdfName.Author, new PdfString(author));
+        getPdfObject().put(PdfName.Author, new PdfString(author, PdfEncodings.UNICODE_BIG));
         return this;
     }
 
     public PdfDocumentInfo setSubject(String subject) {
-        getPdfObject().put(PdfName.Subject, new PdfString(subject));
+        getPdfObject().put(PdfName.Subject, new PdfString(subject, PdfEncodings.UNICODE_BIG));
         return this;
     }
 
     public PdfDocumentInfo setKeywords(String keywords) {
-        getPdfObject().put(PdfName.Keywords, new PdfString(keywords));
+        getPdfObject().put(PdfName.Keywords, new PdfString(keywords, PdfEncodings.UNICODE_BIG));
         return this;
     }
 
     public PdfDocumentInfo setCreator(String creator) {
-        getPdfObject().put(PdfName.Creator, new PdfString(creator));
+        getPdfObject().put(PdfName.Creator, new PdfString(creator, PdfEncodings.UNICODE_BIG));
         return this;
     }
 
@@ -158,6 +159,6 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
 
     private String getStringValue(PdfName name) {
         PdfString pdfString = getPdfObject().getAsString(name);
-        return pdfString != null ? pdfString.getValue() : null;
+        return pdfString != null ? pdfString.toUnicodeString() : null;
     }
 }
