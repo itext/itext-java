@@ -1645,7 +1645,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                             toDocument.addNamedDestination(name, array.makeIndirect(toDocument));
                         }
                     }
-                } else {
+                } else if (dest instanceof PdfExplicitDestination) {
                     PdfArray destArray = new PdfArray();
                     destArray.addAll((PdfArray) dest.getPdfObject());
                     PdfObject pageObject = destArray.get(0);
