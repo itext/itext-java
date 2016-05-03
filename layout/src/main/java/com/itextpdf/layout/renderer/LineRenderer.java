@@ -396,7 +396,7 @@ public class LineRenderer extends AbstractRenderer {
             child.move(lastRightPos - childX, 0);
             childX = lastRightPos;
             if (child instanceof TextRenderer) {
-                float childHSCale = child.getProperty(Property.HORIZONTAL_SCALING);
+                float childHSCale = ((TextRenderer) child).getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
                 child.setProperty(Property.CHARACTER_SPACING, characterSpacing / childHSCale);
                 child.setProperty(Property.WORD_SPACING, wordSpacing / childHSCale);
                 boolean isLastTextRenderer = !iterator.hasNext();

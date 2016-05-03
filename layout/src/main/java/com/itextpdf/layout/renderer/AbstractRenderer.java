@@ -260,6 +260,18 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
+     * Returns a property with a certain key, as a floating point value.
+     *
+     * @param property an {@link Property enum value}
+     * @param defaultValue default value to be returned if property is not found
+     * @return a {@link Float}
+     */
+    public Float getPropertyAsFloat(int property, Float defaultValue) {
+        Number value = getProperty(property, defaultValue);
+        return value != null ? value.floatValue() : null;
+    }
+
+    /**
      * Returns a property with a certain key, as a boolean value.
      *
      * @param property an {@link Property enum value}

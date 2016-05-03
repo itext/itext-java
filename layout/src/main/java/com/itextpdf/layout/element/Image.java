@@ -403,19 +403,6 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
         return this;
     }
 
-    @Override
-    public <T1> T1 getDefaultProperty(int property) {
-        switch (property) {
-            case Property.AUTO_SCALE:
-                return (T1) Boolean.valueOf(false);
-            case Property.HORIZONTAL_SCALING:
-            case Property.VERTICAL_SCALING:
-                return (T1) Float.valueOf(1);
-            default:
-                return super.getDefaultProperty(property);
-        }
-    }
-
     /**
      * Gets width of the image. It returns width of image or form XObject,
      * not the width set by one of the #setWidth methods

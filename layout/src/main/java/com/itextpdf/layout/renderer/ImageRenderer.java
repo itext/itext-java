@@ -100,8 +100,8 @@ public class ImageRenderer extends AbstractRenderer {
         fixedXPosition = getPropertyAsFloat(Property.X);
         fixedYPosition = getPropertyAsFloat(Property.Y);
 
-        Float horizontalScaling = getPropertyAsFloat(Property.HORIZONTAL_SCALING);
-        Float verticalScaling = getPropertyAsFloat(Property.VERTICAL_SCALING);
+        Float horizontalScaling = getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
+        Float verticalScaling = getPropertyAsFloat(Property.VERTICAL_SCALING, 1f);
 
         AffineTransform t = new AffineTransform();
 
@@ -291,7 +291,7 @@ public class ImageRenderer extends AbstractRenderer {
         // TODO
         float scaleCoeff = 1;
         // hasProperty(Property) checks only properties field, cannot use it
-        if (null != getPropertyAsBoolean(Property.AUTO_SCALE) && getPropertyAsBoolean(Property.AUTO_SCALE)) {
+        if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.AUTO_SCALE))) {
             scaleCoeff = Math.min(maxWidth / width, maxHeight / height);
             height *= scaleCoeff;
             width *= scaleCoeff;

@@ -648,7 +648,7 @@ public class TextRenderer extends AbstractRenderer {
         float fontSize = getPropertyAsFloat(Property.FONT_SIZE);
         Float characterSpacing = getPropertyAsFloat(Property.CHARACTER_SPACING);
         Float wordSpacing = getPropertyAsFloat(Property.WORD_SPACING);
-        Float hScale = getProperty(Property.HORIZONTAL_SCALING);
+        Float hScale = getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
 
         int firstNonSpaceCharIndex = line.end - 1;
         while (firstNonSpaceCharIndex >= line.start) {
