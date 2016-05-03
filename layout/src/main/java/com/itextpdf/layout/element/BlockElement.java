@@ -288,16 +288,6 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
         return (T) this;
     }
 
-    @Override
-    public <T1> T1 getDefaultProperty(int property) {
-        switch (property) {
-            case Property.KEEP_TOGETHER:
-                return (T1) Boolean.valueOf(false);
-            default:
-                return super.getDefaultProperty(property);
-        }
-    }
-
     /**
      * Returns whether the {@link BlockElement} should be kept together as much
      * as possible.

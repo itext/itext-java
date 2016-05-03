@@ -225,12 +225,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     @Override
     public <T1> T1 getDefaultProperty(int property) {
-        switch (property) {
-            case Property.POSITION:
-                return (T1) Integer.valueOf(LayoutPosition.STATIC);
-            default:
-                return null;
-        }
+        return null;
     }
 
     /**
@@ -304,8 +299,8 @@ public abstract class AbstractRenderer implements IRenderer {
         applyDestination(drawContext.getDocument());
         applyAction(drawContext.getDocument());
 
-        int position = getPropertyAsInteger(Property.POSITION);
-        if (position == LayoutPosition.RELATIVE) {
+        boolean relativePosition = isRelativePosition();
+        if (relativePosition) {
             applyAbsolutePositioningTranslation(false);
         }
 
@@ -313,7 +308,7 @@ public abstract class AbstractRenderer implements IRenderer {
         drawBorder(drawContext);
         drawChildren(drawContext);
 
-        if (position == LayoutPosition.RELATIVE) {
+        if (relativePosition) {
             applyAbsolutePositioningTranslation(true);
         }
 
@@ -617,6 +612,15 @@ public abstract class AbstractRenderer implements IRenderer {
     protected boolean isFixedLayout() {
         Object positioning = getProperty(Property.POSITION);
         return Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
+    }
+
+    protected boolean isRelativePosition() {
+        Integer positioning = getPropertyAsInteger(Property.POSITION);
+        return Integer.valueOf(LayoutPosition.RELATIVE).equals(positioning);
+    }
+
+    protected boolean isKeepTogether() {
+        return Boolean.TRUE.equals(getPropertyAsBoolean(Property.KEEP_TOGETHER));
     }
 
     protected void alignChildHorizontally(IRenderer childRenderer, float availableWidth) {

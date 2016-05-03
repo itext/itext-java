@@ -54,7 +54,6 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.FontKerning;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
@@ -158,10 +157,6 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
                     return (T1) Float.valueOf(0);
                 case Property.SPACING_RATIO:
                     return (T1) Float.valueOf(0.75f);
-                case Property.FONT_KERNING:
-                    return (T1) FontKerning.NO;
-                case Property.BASE_DIRECTION:
-                    return (T1) BaseDirection.NO_BIDI;
                 default:
                     return null;
             }

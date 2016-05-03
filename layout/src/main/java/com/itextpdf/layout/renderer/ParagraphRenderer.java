@@ -45,14 +45,14 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.property.Leading;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.LineLayoutResult;
+import com.itextpdf.layout.property.Leading;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 
 import java.util.ArrayList;
@@ -187,7 +187,7 @@ public class ParagraphRenderer extends BlockRenderer {
                     lastYLine = layoutBox.getY() + layoutBox.getHeight();
                     firstLineInBox = true;
                 } else {
-                    boolean keepTogether = getProperty(Property.KEEP_TOGETHER);
+                    boolean keepTogether = isKeepTogether();
                     if (keepTogether) {
                         return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
                     } else {
@@ -210,7 +210,7 @@ public class ParagraphRenderer extends BlockRenderer {
                         if (anythingPlaced) {
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]);
                         } else {
-                            if (getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                            if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                                 parent.setProperty(Property.FULL, true);
                                 lines.add(currentRenderer);
                                 return new LayoutResult(LayoutResult.FULL, occupiedArea, null, this);

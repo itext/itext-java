@@ -52,12 +52,11 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
 
 import java.util.ArrayList;
@@ -167,7 +166,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             break;
                         }
                     } else if (result.getStatus() == LayoutResult.NOTHING) {
-                        boolean keepTogether = getPropertyAsBoolean(Property.KEEP_TOGETHER);
+                        boolean keepTogether = isKeepTogether();
                         int layoutResult = anythingPlaced && !keepTogether ? LayoutResult.PARTIAL : LayoutResult.NOTHING;
 
                         AbstractRenderer splitRenderer = createSplitRenderer(layoutResult);
@@ -191,7 +190,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         applyBorderBox(occupiedArea.getBBox(), true);
                         applyMargins(occupiedArea.getBBox(), true);
 
-                        if (getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                        if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                             return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
                         } else {
                             return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer);
@@ -226,7 +225,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingHeight(layoutContext.getArea())) {
-                if (!getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                     return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
                 }
             }
@@ -284,8 +283,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
 
-        int position = getPropertyAsInteger(Property.POSITION);
-        if (position == LayoutPosition.RELATIVE) {
+        boolean isRelativePosition = isRelativePosition();
+        if (isRelativePosition) {
             applyAbsolutePositioningTranslation(false);
         }
 
@@ -297,7 +296,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         endRotationIfApplied(drawContext.getCanvas());
 
-        if (position == LayoutPosition.RELATIVE) {
+        if (isRelativePosition) {
             applyAbsolutePositioningTranslation(true);
         }
 

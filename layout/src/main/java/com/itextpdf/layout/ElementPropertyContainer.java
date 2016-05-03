@@ -48,7 +48,6 @@ import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.layout.border.Border;
-import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.property.Background;
@@ -59,7 +58,6 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.property.UnitValue;
-import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
 import java.util.Arrays;
@@ -119,10 +117,6 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
             case Property.PADDING_BOTTOM:
             case Property.PADDING_LEFT:
                 return (T1) Float.valueOf(0);
-            case Property.POSITION:
-                return (T1)Integer.valueOf(LayoutPosition.STATIC);
-            case Property.FORCED_PLACEMENT:
-                return (T1) Boolean.FALSE;
             default:
                 return null;
         }

@@ -52,22 +52,22 @@ import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Table}
@@ -417,13 +417,13 @@ public class TableRenderer extends AbstractRenderer {
 
                 applyBorderBox(occupiedArea.getBBox(), true);
                 applyMargins(occupiedArea.getBBox(), true);
-                if (getPropertyAsBoolean(Property.KEEP_TOGETHER) && !getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                if (isKeepTogether() && !getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
                     return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
                 } else {
                     int status = (childRenderers.isEmpty() && footerRenderer == null)
                             ? LayoutResult.NOTHING
                             : LayoutResult.PARTIAL;
-                    if (status == LayoutResult.NOTHING && getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                    if (status == LayoutResult.NOTHING && Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
                     } else {
                         return new LayoutResult(status, occupiedArea, splitResult[0], splitResult[1]);

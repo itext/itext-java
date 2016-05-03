@@ -56,12 +56,11 @@ import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 
 public class ImageRenderer extends AbstractRenderer {
@@ -142,7 +141,7 @@ public class ImageRenderer extends AbstractRenderer {
 
         getMatrix(t, imageItselfScaledWidth, imageItselfScaledHeight);
 
-        if (!getPropertyAsBoolean(Property.FORCED_PLACEMENT) && (width > layoutBox.getWidth() || height > layoutBox.getHeight())) {
+        if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && (width > layoutBox.getWidth() || height > layoutBox.getHeight())) {
             return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
         }
 
@@ -186,8 +185,8 @@ public class ImageRenderer extends AbstractRenderer {
 
         applyMargins(occupiedArea.getBBox(), false);
 
-        int position = getPropertyAsInteger(Property.POSITION);
-        if (position == LayoutPosition.RELATIVE) {
+        boolean isRelativePosition = isRelativePosition();
+        if (isRelativePosition) {
             applyAbsolutePositioningTranslation(false);
         }
 
@@ -215,7 +214,7 @@ public class ImageRenderer extends AbstractRenderer {
             canvas.closeTag();
         }
 
-        if (position == LayoutPosition.RELATIVE) {
+        if (isRelativePosition) {
             applyAbsolutePositioningTranslation(true);
         }
 

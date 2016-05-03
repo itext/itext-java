@@ -61,18 +61,17 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.property.Background;
-import com.itextpdf.layout.property.BaseDirection;
-import com.itextpdf.layout.property.FontKerning;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.hyphenation.Hyphenation;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
+import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.FontKerning;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
@@ -354,7 +353,7 @@ public class TextRenderer extends AbstractRenderer {
         if (result != null && result.getStatus() == LayoutResult.NOTHING) {
             return result;
         } else {
-            if (currentLineHeight > layoutBox.getHeight() && !getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+            if (currentLineHeight > layoutBox.getHeight() && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                 applyBorderBox(occupiedArea.getBBox(), true);
                 applyMargins(occupiedArea.getBBox(), true);
                 return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
@@ -473,8 +472,8 @@ public class TextRenderer extends AbstractRenderer {
             }
         }
 
-        int position = getPropertyAsInteger(Property.POSITION);
-        if (position == LayoutPosition.RELATIVE) {
+        boolean isRelativePosition = isRelativePosition();
+        if (isRelativePosition) {
             applyAbsolutePositioningTranslation(false);
         }
 
@@ -585,7 +584,7 @@ public class TextRenderer extends AbstractRenderer {
             }
         }
 
-        if (position == LayoutPosition.RELATIVE) {
+        if (isRelativePosition) {
             applyAbsolutePositioningTranslation(false);
         }
 
@@ -617,16 +616,6 @@ public class TextRenderer extends AbstractRenderer {
             if (isTagged) {
                 canvas.closeTag();
             }
-        }
-    }
-
-    @Override
-    public <T1> T1 getDefaultProperty(int property) {
-        switch (property) {
-            case Property.HORIZONTAL_SCALING:
-                return (T1) Float.valueOf(1);
-            default:
-                return super.getDefaultProperty(property);
         }
     }
 
