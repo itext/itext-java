@@ -58,6 +58,7 @@
         <logback.version>1.1.3</logback.version>
         <jfreechart.version>1.0.19</jfreechart.version>
         <hsqldb.version>2.3.3</hsqldb.version>
+        <sonar.clirr.reportPath>${project.build.directory}/clirr-report.txt</sonar.clirr.reportPath>
     </properties>
 
     <dependencies>
@@ -251,6 +252,25 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>clirr-maven-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <comparisonVersion>7.0.0</comparisonVersion>
+                    <textOutputFile>${project.build.directory}/clirr-report.txt</textOutputFile>
+                    <linkXRef>false</linkXRef>
+                    <failOnError>false</failOnError>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>clirr</id>
+                        <goals>
+                            <goal>check-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.0.0</version>
@@ -410,6 +430,11 @@ ga('send', 'pageview');
                         </plugin>
                     </plugins>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>clirr-maven-plugin</artifactId>
+                <version>2.7</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
