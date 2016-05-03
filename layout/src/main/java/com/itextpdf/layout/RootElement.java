@@ -82,7 +82,6 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
     protected PdfDocument pdfDocument;
 
     protected List<IElement> childElements = new ArrayList<>();
-    protected Map<Integer, Object> properties = new HashMap<>();
 
     protected PdfFont defaultFont;
     protected ISplitCharacters defaultSplitCharacters;
