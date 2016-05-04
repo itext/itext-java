@@ -135,6 +135,10 @@ public class IntHashtable implements Cloneable, Serializable {
         threshold = (int) (initialCapacity * loadFactor);
     }
 
+    public IntHashtable(IntHashtable o) {
+        this(o.table.length, o.loadFactor);
+    }
+
     /***
      * <p>Returns the number of keys in this hashtable.</p>
      *
@@ -453,7 +457,7 @@ public class IntHashtable implements Cloneable, Serializable {
     @Override
     public Object clone() throws CloneNotSupportedException {
         try {
-            IntHashtable t = (IntHashtable)super.clone();
+            IntHashtable t = new IntHashtable(this);
             t.table = new Entry[table.length];
             for (int i = table.length ; i-- > 0 ; ) {
                 t.table[i] = table[i] != null

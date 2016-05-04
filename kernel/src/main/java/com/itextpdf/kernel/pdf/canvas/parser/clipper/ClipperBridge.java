@@ -130,7 +130,7 @@ public class ClipperBridge {
                 }
 
                 List<com.itextpdf.kernel.geom.Point> linearApproxPoints = subpath.getPiecewiseLinearApproximation();
-                offset.addPath(new Path(convertToLongPoints(linearApproxPoints)), joinType, et);
+                offset.addPath((Path) convertToLongPoints(linearApproxPoints), joinType, et);
             }
         }
 
