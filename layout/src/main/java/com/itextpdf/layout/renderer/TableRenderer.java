@@ -417,7 +417,7 @@ public class TableRenderer extends AbstractRenderer {
 
                 applyBorderBox(occupiedArea.getBBox(), true);
                 applyMargins(occupiedArea.getBBox(), true);
-                if (isKeepTogether() && !getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                if (isKeepTogether() && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                     return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
                 } else {
                     int status = (childRenderers.isEmpty() && footerRenderer == null)
