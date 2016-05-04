@@ -77,7 +77,11 @@ class TypographyUtils {
         } catch (ClassNotFoundException ignored) {
         }
         TYPOGRAPHY_MODULE_INITIALIZED = moduleFound;
-        SUPPORTED_SCRIPTS = getSupportedScripts();
+        if (moduleFound) {
+            SUPPORTED_SCRIPTS = getSupportedScripts();
+        } else {
+            SUPPORTED_SCRIPTS = null;
+        }
     }
 
     static void applyOtfScript(FontProgram fontProgram, GlyphLine text, Character.UnicodeScript script) {
