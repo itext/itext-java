@@ -66,7 +66,19 @@ class TypographyUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(TypographyUtils.class);
     private static final String TYPOGRAPHY_PACKAGE = "com.itextpdf.typography.";
-    private static final boolean TYPOGRAPHY_MODULE_INITIALIZED = checkTypographyModulePresence();
+    private static final Collection<Character.UnicodeScript> SUPPORTED_SCRIPTS;
+    private static final boolean TYPOGRAPHY_MODULE_INITIALIZED;
+
+    static {
+        boolean moduleFound = false;
+        try {
+            Class.forName("com.itextpdf.typography.shaping.Shaper");
+            moduleFound = true;
+        } catch (ClassNotFoundException ignored) {
+        }
+        TYPOGRAPHY_MODULE_INITIALIZED = moduleFound;
+        SUPPORTED_SCRIPTS = getSupportedScripts();
+    }
 
     static void applyOtfScript(FontProgram fontProgram, GlyphLine text, Character.UnicodeScript script) {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
@@ -162,23 +174,15 @@ class TypographyUtils {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
             logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
             return null;
+        } else if (SUPPORTED_SCRIPTS != null) {
+            return SUPPORTED_SCRIPTS;
         } else {
-            return (Collection<Character.UnicodeScript>)callMethod(TYPOGRAPHY_PACKAGE + "shaping.Shaper", "getSupportedScripts", new Class[] {});
+            return (Collection<Character.UnicodeScript>) callMethod(TYPOGRAPHY_PACKAGE + "shaping.Shaper", "getSupportedScripts", new Class[]{});
         }
     }
 
     static boolean isTypographyModuleInitialized() {
         return TYPOGRAPHY_MODULE_INITIALIZED;
-    }
-
-    private static boolean checkTypographyModulePresence() {
-        boolean moduleFound = false;
-        try {
-            Class.forName("com.itextpdf.typography.shaping.Shaper");
-            moduleFound = true;
-        } catch (ClassNotFoundException ignored) {
-        }
-        return moduleFound;
     }
 
     private static Object callMethod(String className, String methodName, Class[] parameterTypes, Object... args) {
@@ -202,9 +206,8 @@ class TypographyUtils {
     }
 
     private static Object callConstructor(String className, Class[] parameterTypes, Object... args) {
-        Constructor constructor = null;
         try {
-            constructor = Class.forName(className).getConstructor(parameterTypes);
+            Constructor constructor = Class.forName(className).getConstructor(parameterTypes);
             return constructor.newInstance(args);
         } catch (NoSuchMethodException e) {
             logger.warn(MessageFormat.format("Cannot find constructor for class {0}", className));

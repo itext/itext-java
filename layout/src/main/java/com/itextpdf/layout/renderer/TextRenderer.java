@@ -148,7 +148,7 @@ public class TextRenderer extends AbstractRenderer {
         Float characterSpacing = getPropertyAsFloat(Property.CHARACTER_SPACING);
         Float wordSpacing = getPropertyAsFloat(Property.WORD_SPACING);
         PdfFont font = getPropertyAsFont(Property.FONT);
-        Float hScale = getProperty(Property.HORIZONTAL_SCALING);
+        Float hScale = getProperty(Property.HORIZONTAL_SCALING, 1f);
         ISplitCharacters splitCharacters = getProperty(Property.SPLIT_CHARACTERS);
         float italicSkewAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION)) ? ITALIC_ANGLE * fontSize : 0;
         float boldSimulationAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.BOLD_SIMULATION)) ? BOLD_SIMULATION_STROKE_COEFF * fontSize : 0;
