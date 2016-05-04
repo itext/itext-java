@@ -866,7 +866,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     protected float calculateLineWidth() {
-        return getGlyphLineWidth(line, getPropertyAsFloat(Property.FONT_SIZE), getPropertyAsFloat(Property.HORIZONTAL_SCALING),
+        return getGlyphLineWidth(line, getPropertyAsFloat(Property.FONT_SIZE), getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f),
                 getPropertyAsFloat(Property.CHARACTER_SPACING), getPropertyAsFloat(Property.WORD_SPACING));
     }
 
