@@ -58,7 +58,7 @@ public final class PdfFontFactory {
     /**
      * This is the default encoding to use.
      */
-    private static String DEFAULT_ENCODING = PdfEncodings.WINANSI;
+    private static String DEFAULT_ENCODING = "";
     /**
      * This is the default value of the <VAR>embedded</VAR> variable.
      */
