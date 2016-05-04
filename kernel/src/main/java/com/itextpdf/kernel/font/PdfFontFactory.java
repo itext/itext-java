@@ -87,7 +87,7 @@ public final class PdfFontFactory {
     }
 
     public static PdfFont createFont(String path) throws IOException {
-        return createFont(path, null, DEFAULT_EMBEDDING);
+        return createFont(path, DEFAULT_ENCODING);
     }
 
     public static PdfFont createFont(String path, String encoding) throws IOException {
@@ -105,11 +105,15 @@ public final class PdfFontFactory {
     }
 
     public static PdfFont createFont(String path, boolean embedded) throws IOException {
-        return createFont(path, null, embedded);
+        return createFont(path, DEFAULT_ENCODING, embedded);
     }
 
     public static PdfFont createFont(String path, String encoding, boolean embedded) throws IOException {
-        FontProgram fontProgram = FontProgramFactory.createFont(path);
+        return createFont(path, encoding, embedded, DEFAULT_CACHED);
+    }
+
+    public static PdfFont createFont(String path, String encoding, boolean embedded, boolean cached) throws IOException {
+        FontProgram fontProgram = FontProgramFactory.createFont(path, cached);
         return createFont(fontProgram, encoding, embedded);
     }
 
