@@ -97,4 +97,9 @@ public class Leading {
     public float getValue() {
         return value;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Leading && type == ((Leading) obj).type && value == ((Leading) obj).value;
+    }
 }
