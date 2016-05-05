@@ -191,6 +191,12 @@ public class TableRenderer extends AbstractRenderer {
         horizontalBorders.add(tableModel.getLastRowBottomBorder());
 
         for (int row = 0; row < rows.size(); row++) {
+            // if forced placement was earlier set, this means the element did not fit into the area, and in this case
+            // we only want to place the first row in a forced way, not the next ones, otherwise they will be invisible
+            if (row == 1 && Boolean.TRUE.equals(getOwnProperty(Property.FORCED_PLACEMENT))) {
+                deleteOwnProperty(Property.FORCED_PLACEMENT);
+            }
+
             VerticalAlignment verticalAlignment = null;
             CellRenderer[] currentRow = rows.get(row);
             float rowHeight = 0;
