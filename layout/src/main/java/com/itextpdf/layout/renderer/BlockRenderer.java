@@ -116,6 +116,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         for (int childPos = 0; childPos < childRenderers.size(); childPos++) {
             IRenderer childRenderer = childRenderers.get(childPos);
             LayoutResult result;
+            childRenderer.setParent(this);
             while ((result = childRenderer.layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox)))).getStatus() != LayoutResult.FULL) {
                 if (result.getOccupiedArea() != null) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
@@ -171,6 +172,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
                         AbstractRenderer splitRenderer = createSplitRenderer(layoutResult);
                         splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
+                        for (IRenderer renderer : splitRenderer.childRenderers) {
+                            renderer.setParent(splitRenderer);
+                        }
 
                         AbstractRenderer overflowRenderer = createOverflowRenderer(layoutResult);
                         List<IRenderer> overflowRendererChildren = new ArrayList<>();

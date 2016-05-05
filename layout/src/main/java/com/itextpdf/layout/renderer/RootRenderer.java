@@ -72,6 +72,7 @@ public abstract class RootRenderer extends AbstractRenderer {
 
         // Static layout
         if (currentArea != null && !childRenderers.isEmpty() && childRenderers.get(childRenderers.size() - 1) == renderer) {
+            childRenderers.remove(childRenderers.size() - 1);
             List<IRenderer> resultRenderers = new ArrayList<>();
             LayoutResult result = null;
 
@@ -133,7 +134,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                 }
             }
 
-            childRenderers.remove(childRenderers.size() - 1);
+
             if (!immediateFlush) {
                 childRenderers.addAll(resultRenderers);
             }

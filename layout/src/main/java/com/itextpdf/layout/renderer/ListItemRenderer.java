@@ -140,6 +140,14 @@ public class ListItemRenderer extends DivRenderer {
     }
 
     @Override
+    public IRenderer setParent(IRenderer parent) {
+        if (symbolRenderer != null) {
+            symbolRenderer.setParent(parent);
+        }
+        return super.setParent(parent);
+    }
+
+    @Override
     public IRenderer getNextRenderer() {
         return new ListItemRenderer((ListItem) modelElement);
     }
