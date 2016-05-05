@@ -76,23 +76,28 @@ public class ParagraphRenderer extends BlockRenderer {
         if (getProperty(Property.ROTATION_ANGLE) != null) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
-        applyMargins(parentBBox, false);
-        applyBorderBox(parentBBox, false);
+        float[] margins = getMargins();
+        applyMargins(parentBBox, margins, false);
+        Border[] borders = getBorders();
+        applyBorderBox(parentBBox, borders, false);
 
-        if (isPositioned()) {
+        boolean isPositioned = isPositioned();
+
+        if (isPositioned) {
             float x = getPropertyAsFloat(Property.X);
             float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
             parentBBox.setX(relativeX + x);
         }
 
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
-        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned())) {
+        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
             parentBBox.setWidth(blockWidth);
         }
-        applyPaddings(parentBBox, false);
+        float[] paddings = getPaddings();
+        applyPaddings(parentBBox, paddings, false);
 
         List<Rectangle> areas;
-        if (isPositioned()) {
+        if (isPositioned) {
             areas = Collections.singletonList(parentBBox);
         } else {
             areas = initElementAreas(new LayoutArea(pageNumber, parentBBox));
@@ -115,6 +120,8 @@ public class ParagraphRenderer extends BlockRenderer {
         if (0 == childRenderers.size()) {
             anythingPlaced = true;
             currentRenderer = null;
+
+            // TODO is this really needed??
             setProperty(Property.MARGIN_TOP, 0);
             setProperty(Property.MARGIN_RIGHT, 0);
             setProperty(Property.MARGIN_BOTTOM, 0);
@@ -124,6 +131,9 @@ public class ParagraphRenderer extends BlockRenderer {
             setProperty(Property.PADDING_BOTTOM, 0);
             setProperty(Property.PADDING_LEFT, 0);
             setProperty(Property.BORDER, Border.NO_BORDER);
+            margins = getMargins();
+            borders = getBorders();
+            paddings = getPaddings();
         }
 
         float lastYLine = layoutBox.getY() + layoutBox.getHeight();
@@ -191,9 +201,9 @@ public class ParagraphRenderer extends BlockRenderer {
                     if (keepTogether) {
                         return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
                     } else {
-                        applyPaddings(occupiedArea.getBBox(), true);
-                        applyBorderBox(occupiedArea.getBBox(), true);
-                        applyMargins(occupiedArea.getBBox(), true);
+                        applyPaddings(occupiedArea.getBBox(), paddings, true);
+                        applyBorderBox(occupiedArea.getBBox(), borders, true);
+                        applyMargins(occupiedArea.getBBox(), margins, true);
 
                         ParagraphRenderer[] split = split();
                         split[0].lines = lines;
@@ -237,25 +247,25 @@ public class ParagraphRenderer extends BlockRenderer {
             }
         }
 
-        if (!isPositioned()) {
+        if (!isPositioned) {
             float moveDown = Math.min((leadingValue - lastLineHeight) / 2, occupiedArea.getBBox().getY() - layoutBox.getY());
             occupiedArea.getBBox().moveDown(moveDown);
             occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
         }
         Float blockHeight = getPropertyAsFloat(Property.HEIGHT);
-        applyPaddings(occupiedArea.getBBox(), true);
+        applyPaddings(occupiedArea.getBBox(), paddings, true);
         if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
             occupiedArea.getBBox().moveDown(blockHeight - occupiedArea.getBBox().getHeight()).setHeight(blockHeight);
             applyVerticalAlignment();
         }
-        if (isPositioned()) {
+        if (isPositioned) {
             float y = getPropertyAsFloat(Property.Y);
             float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
             move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
 
-        applyBorderBox(occupiedArea.getBBox(), true);
-        applyMargins(occupiedArea.getBBox(), true);
+        applyBorderBox(occupiedArea.getBBox(), borders, true);
+        applyMargins(occupiedArea.getBBox(), margins, true);
         if (getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingHeight(layoutContext.getArea())) {

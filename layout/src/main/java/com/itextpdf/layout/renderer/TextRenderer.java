@@ -61,6 +61,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.hyphenation.Hyphenation;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
@@ -135,8 +136,10 @@ public class TextRenderer extends AbstractRenderer {
         convertWaitingStringToGlyphLine();
 
         LayoutArea area = layoutContext.getArea();
-        Rectangle layoutBox = applyMargins(area.getBBox().clone(), false);
-        applyBorderBox(layoutBox, false);
+        float[] margins = getMargins();
+        Rectangle layoutBox = applyMargins(area.getBBox().clone(), margins, false);
+        Border[] borders = getBorders();
+        applyBorderBox(layoutBox, borders, false);
 
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
@@ -269,8 +272,8 @@ public class TextRenderer extends AbstractRenderer {
                 if (Math.max(currentLineHeight, nonBreakablePartMaxHeight) > layoutBox.getHeight()) {
                     // the line does not fit because of height - full overflow
                     TextRenderer[] splitResult = split(initialLineTextPos);
-                    applyBorderBox(occupiedArea.getBBox(), true);
-                    applyMargins(occupiedArea.getBBox(), true);
+                    applyBorderBox(occupiedArea.getBBox(), borders, true);
+                    applyMargins(occupiedArea.getBBox(), margins, true);
                     return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1]);
                 } else {
                     // cannot fit a word as a whole
@@ -354,8 +357,8 @@ public class TextRenderer extends AbstractRenderer {
             return result;
         } else {
             if (currentLineHeight > layoutBox.getHeight() && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                applyBorderBox(occupiedArea.getBBox(), true);
-                applyMargins(occupiedArea.getBBox(), true);
+                applyBorderBox(occupiedArea.getBBox(), borders, true);
+                applyMargins(occupiedArea.getBBox(), margins, true);
                 return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
             }
 
@@ -368,8 +371,8 @@ public class TextRenderer extends AbstractRenderer {
             layoutBox.setHeight(area.getBBox().getHeight() - currentLineHeight);
 
             occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() + italicSkewAddition + boldSimulationAddition);
-            applyBorderBox(occupiedArea.getBBox(), true);
-            applyMargins(occupiedArea.getBBox(), true);
+            applyBorderBox(occupiedArea.getBBox(), borders, true);
+            applyMargins(occupiedArea.getBBox(), margins, true);
 
             if (result != null) {
                 TextRenderer[] split;

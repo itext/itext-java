@@ -544,20 +544,40 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected Rectangle applyMargins(Rectangle rect, boolean reverse) {
+        return applyMargins(rect, getMargins(), reverse);
+    }
+
+    protected Rectangle applyMargins(Rectangle rect, float[] margins, boolean reverse) {
         if (isPositioned())
             return rect;
 
-        return rect.applyMargins(getPropertyAsFloat(Property.MARGIN_TOP), getPropertyAsFloat(Property.MARGIN_RIGHT),
-                getPropertyAsFloat(Property.MARGIN_BOTTOM), getPropertyAsFloat(Property.MARGIN_LEFT), reverse);
+        return rect.applyMargins(margins[0], margins[1], margins[2], margins[3], reverse);
+    }
+
+    protected float[] getMargins() {
+        return new float[] {getPropertyAsFloat(Property.MARGIN_TOP), getPropertyAsFloat(Property.MARGIN_RIGHT),
+                getPropertyAsFloat(Property.MARGIN_BOTTOM), getPropertyAsFloat(Property.MARGIN_LEFT)};
+    }
+
+    protected float[] getPaddings() {
+        return new float[] {getPropertyAsFloat(Property.PADDING_TOP), getPropertyAsFloat(Property.PADDING_RIGHT),
+                getPropertyAsFloat(Property.PADDING_BOTTOM), getPropertyAsFloat(Property.PADDING_LEFT)};
     }
 
     protected Rectangle applyPaddings(Rectangle rect, boolean reverse) {
-        return rect.applyMargins(getPropertyAsFloat(Property.PADDING_TOP), getPropertyAsFloat(Property.PADDING_RIGHT),
-                getPropertyAsFloat(Property.PADDING_BOTTOM), getPropertyAsFloat(Property.PADDING_LEFT), reverse);
+        return applyPaddings(rect, getPaddings(), reverse);
+    }
+
+    protected Rectangle applyPaddings(Rectangle rect, float[] paddings, boolean reverse) {
+        return rect.applyMargins(paddings[0], paddings[1], paddings[2], paddings[3], reverse);
     }
 
     protected Rectangle applyBorderBox(Rectangle rect, boolean reverse) {
         Border[] borders = getBorders();
+        return applyBorderBox(rect, borders, reverse);
+    }
+
+    protected Rectangle applyBorderBox(Rectangle rect, Border[] borders, boolean reverse) {
         float topWidth = borders[0] != null ? borders[0].getWidth() : 0;
         float rightWidth = borders[1] != null ? borders[1].getWidth() : 0;
         float bottomWidth = borders[2] != null ? borders[2].getWidth() : 0;
