@@ -44,10 +44,8 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.Property;
 
 public class CellRenderer extends BlockRenderer {
 
@@ -60,11 +58,6 @@ public class CellRenderer extends BlockRenderer {
     @Override
     public Cell getModelElement() {
         return (Cell) super.getModelElement();
-    }
-
-    @Override
-    public LayoutResult layout(LayoutContext layoutContext) {
-        return super.layout(layoutContext);
     }
 
     @Override

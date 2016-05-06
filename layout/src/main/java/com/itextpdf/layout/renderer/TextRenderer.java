@@ -402,8 +402,6 @@ public class TextRenderer extends AbstractRenderer {
     public void applyOtf() {
         convertWaitingStringToGlyphLine();
         Character.UnicodeScript script = getProperty(Property.FONT_SCRIPT);
-        FontKerning fontKerning = getProperty(Property.FONT_KERNING);
-        PdfFont font = getPropertyAsFont(Property.FONT);
         if (!otfFeaturesApplied) {
             if (script == null && TypographyUtils.isTypographyModuleInitialized()) {
                 // Try to autodetect complex script.
@@ -437,10 +435,12 @@ public class TextRenderer extends AbstractRenderer {
                 }
             }
 
+            PdfFont font = getPropertyAsFont(Property.FONT);
             if (isOtfFont(font) && script != null) {
                 TypographyUtils.applyOtfScript(font.getFontProgram(), text, script);
             }
 
+            FontKerning fontKerning = getProperty(Property.FONT_KERNING);
             if (fontKerning == FontKerning.YES) {
                 TypographyUtils.applyKerning(font.getFontProgram(), text);
             }
