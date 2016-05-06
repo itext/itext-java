@@ -48,13 +48,12 @@ import com.itextpdf.io.IOException;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Type1Font extends FontProgram {
 
@@ -384,7 +383,10 @@ public class Type1Font extends FontProgram {
         // nonbreakingspace;00A0
         // space;0020
         if (!unicodeToGlyph.containsKey(0x00A0)) {
-            Glyph space = unicodeToGlyph.get(0x0020);
+            Glyph space = null;
+            if (unicodeToGlyph.containsKey(0x0020)) {
+                space = unicodeToGlyph.get(0x0020);
+            }
             if (space != null) {
                 unicodeToGlyph.put(0x00A0, new Glyph(space.getCode(), space.getWidth(), 0x00A0, space.getBbox()));
             }

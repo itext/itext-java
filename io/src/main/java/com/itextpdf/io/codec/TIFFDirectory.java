@@ -414,8 +414,11 @@ public class TIFFDirectory implements Serializable {
      * or null if the tag is not present.
      */
     public TIFFField getField(int tag) {
-        Integer i = fieldIndex.get(tag);
-        if (i == null) {
+        int i = -1;
+        if (fieldIndex.containsKey(tag)) {
+            i = fieldIndex.get(tag);
+        }
+        if (i == -1) {
             return null;
         } else {
             return fields[i];
