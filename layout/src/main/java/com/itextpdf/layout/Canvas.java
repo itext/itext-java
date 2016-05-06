@@ -80,6 +80,7 @@ public class Canvas extends RootElement<Canvas> {
      * @param rootArea the maximum area that the Canvas may write upon
      */
     public Canvas(PdfCanvas pdfCanvas, PdfDocument pdfDocument, Rectangle rootArea) {
+        super();
         this.pdfDocument = pdfDocument;
         this.pdfCanvas = pdfCanvas;
         this.rootArea = rootArea;
@@ -93,9 +94,7 @@ public class Canvas extends RootElement<Canvas> {
      * @param rootArea the maximum area that the Canvas may write upon
      */
     public Canvas(PdfCanvas pdfCanvas, PdfDocument pdfDocument, Rectangle rootArea, boolean immediateFlush) {
-        this.pdfDocument = pdfDocument;
-        this.pdfCanvas = pdfCanvas;
-        this.rootArea = rootArea;
+        this(pdfCanvas, pdfDocument, rootArea);
         this.immediateFlush = immediateFlush;
     }
 
@@ -106,9 +105,7 @@ public class Canvas extends RootElement<Canvas> {
      * @param pdfDocument the document that the resulting content stream will be written to
      */
     public Canvas(PdfFormXObject formXObject, PdfDocument pdfDocument) {
-        this.pdfDocument = pdfDocument;
-        this.pdfCanvas = new PdfCanvas(formXObject, pdfDocument);
-        this.rootArea = formXObject.getBBox().toRectangle();
+        this(new PdfCanvas(formXObject, pdfDocument), pdfDocument, formXObject.getBBox().toRectangle());
     }
 
     /**

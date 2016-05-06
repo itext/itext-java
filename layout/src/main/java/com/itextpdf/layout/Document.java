@@ -101,6 +101,7 @@ public class Document extends RootElement<Document> {
      * to the {@link PdfDocument} as soon as possible.
      */
     public Document(PdfDocument pdfDoc, PageSize pageSize, boolean immediateFlush) {
+        super();
         this.pdfDocument = pdfDoc;
         this.pdfDocument.setDefaultPageSize(pageSize);
         this.immediateFlush = immediateFlush;
