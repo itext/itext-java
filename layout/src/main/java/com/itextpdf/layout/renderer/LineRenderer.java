@@ -86,7 +86,9 @@ public class LineRenderer extends AbstractRenderer {
         BaseDirection baseDirection = getProperty(Property.BASE_DIRECTION);
         for (IRenderer renderer : childRenderers) {
             if (renderer instanceof TextRenderer) {
+                renderer.setParent(this);
                 ((TextRenderer) renderer).applyOtf();
+                renderer.setParent(null);
                 if (baseDirection == null || baseDirection == BaseDirection.NO_BIDI) {
                     baseDirection = renderer.getOwnProperty(Property.BASE_DIRECTION);
                 }
@@ -148,7 +150,7 @@ public class LineRenderer extends AbstractRenderer {
                 childRenderer.setProperty(Property.TAB_ANCHOR, nextTabStop.getTabAnchor());
             }
 
-            childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
+            childResult = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
 
             float childAscent = 0;
             float childDescent = 0;

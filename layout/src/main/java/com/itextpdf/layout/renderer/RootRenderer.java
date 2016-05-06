@@ -78,7 +78,7 @@ public abstract class RootRenderer extends AbstractRenderer {
 
             LayoutArea storedArea = null;
             LayoutArea nextStoredArea = null;
-            while (currentArea != null && renderer != null && (result = renderer.layout(new LayoutContext(currentArea.clone()))).getStatus() != LayoutResult.FULL) {
+            while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(new LayoutContext(currentArea.clone()))).getStatus() != LayoutResult.FULL) {
                 if (result.getStatus() == LayoutResult.PARTIAL) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
                         ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
@@ -134,7 +134,6 @@ public abstract class RootRenderer extends AbstractRenderer {
                 }
             }
 
-
             if (!immediateFlush) {
                 childRenderers.addAll(resultRenderers);
             }
@@ -142,7 +141,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             Integer positionedPageNumber = renderer.getProperty(Property.PAGE_NUMBER);
             if (positionedPageNumber == null)
                 positionedPageNumber = currentPageNumber;
-            renderer.layout(new LayoutContext(new LayoutArea(positionedPageNumber, currentArea.getBBox().clone())));
+            renderer.setParent(this).layout(new LayoutContext(new LayoutArea(positionedPageNumber, currentArea.getBBox().clone())));
 
             if (immediateFlush) {
                 flushSingleRenderer(renderer);

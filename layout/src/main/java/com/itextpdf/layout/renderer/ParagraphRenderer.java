@@ -149,7 +149,7 @@ public class ParagraphRenderer extends BlockRenderer {
             float lineIndent = anythingPlaced ? 0 : getPropertyAsFloat(Property.FIRST_LINE_INDENT);
             float availableWidth = layoutBox.getWidth() - lineIndent;
             Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), availableWidth, layoutBox.getHeight());
-            LineLayoutResult result = currentRenderer.layout(new LayoutContext(new LayoutArea(pageNumber, childLayoutBox)));
+            LineLayoutResult result = ((LineRenderer)currentRenderer.setParent(this)).layout(new LayoutContext(new LayoutArea(pageNumber, childLayoutBox)));
 
             LineRenderer processedRenderer = null;
             if (result.getStatus() == LayoutResult.FULL) {

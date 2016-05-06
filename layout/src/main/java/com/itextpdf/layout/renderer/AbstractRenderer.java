@@ -130,7 +130,6 @@ public abstract class AbstractRenderer implements IRenderer {
         Integer positioning = renderer.getProperty(Property.POSITION);
         if (positioning == null || positioning == LayoutPosition.RELATIVE || positioning == LayoutPosition.STATIC) {
             childRenderers.add(renderer);
-            renderer.setParent(this);
         } else if (positioning == LayoutPosition.FIXED) {
             AbstractRenderer root = this;
             while (root.parent instanceof AbstractRenderer) {
@@ -138,7 +137,6 @@ public abstract class AbstractRenderer implements IRenderer {
             }
             if (root == this) {
                 positionedRenderers.add(renderer);
-                renderer.setParent(this);
             } else {
                 root.addChild(renderer);
             }

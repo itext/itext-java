@@ -77,9 +77,12 @@ public class ListRenderer extends BlockRenderer {
             int listItemNum = getProperty(Property.LIST_START, 1);
             for (int i = 0; i < childRenderers.size(); i++) {
                 if (childRenderers.get(i).getModelElement() instanceof ListItem) {
+                    childRenderers.get(i).setParent(this);
                     IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum++, childRenderers.get(i));
+                    childRenderers.get(i).setParent(null);
                     symbolRenderers.add(currentSymbolRenderer);
-                    LayoutResult listSymbolLayoutResult = currentSymbolRenderer.layout(layoutContext);
+                    LayoutResult listSymbolLayoutResult = currentSymbolRenderer.setParent(this).layout(layoutContext);
+                    currentSymbolRenderer.setParent(null);
                     if (listSymbolLayoutResult.getStatus() != LayoutResult.FULL) {
                         return new LayoutResult(LayoutResult.NOTHING, null, null, this);
                     }
@@ -126,9 +129,9 @@ public class ListRenderer extends BlockRenderer {
     protected IRenderer makeListSymbolRenderer(int index, IRenderer renderer) {
         Object defaultListSymbol = renderer.getProperty(Property.LIST_SYMBOL);
         if (defaultListSymbol instanceof Text) {
-            return new TextRenderer((Text) defaultListSymbol).setParent(this);
+            return new TextRenderer((Text) defaultListSymbol);
         } else if (defaultListSymbol instanceof Image) {
-            return new ImageRenderer((Image) defaultListSymbol).setParent(this);
+            return new ImageRenderer((Image) defaultListSymbol);
         } else if (defaultListSymbol instanceof ListNumberingType) {
             ListNumberingType numberingType = (ListNumberingType) defaultListSymbol;
             String numberText;
@@ -189,12 +192,12 @@ public class ListRenderer extends BlockRenderer {
                         } catch (IOException ignored) {}
                         super.draw(drawContext);
                     }
-                }.setParent(this);
+                };
                 try {
                     textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(constantFont));
                 } catch (IOException exc) {}
             } else {
-                textRenderer = new TextRenderer(textElement).setParent(this);
+                textRenderer = new TextRenderer(textElement);
             }
             return textRenderer;
         } else {

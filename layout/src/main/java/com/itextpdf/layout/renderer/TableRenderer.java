@@ -114,7 +114,6 @@ public class TableRenderer extends AbstractRenderer {
     @Override
     public void addChild(IRenderer renderer) {
         if (renderer instanceof CellRenderer) {
-            renderer.setParent(this);
             // In case rowspan or colspan save cell into bottom left corner.
             // In in this case it will be easier handle row heights in case rowspan.
             Cell cell = (Cell) renderer.getModelElement();
@@ -251,7 +250,7 @@ public class TableRenderer extends AbstractRenderer {
                 LayoutArea cellArea = new LayoutArea(layoutContext.getArea().getPageNumber(), cellLayoutBox);
                 verticalAlignment = cell.getProperty(Property.VERTICAL_ALIGNMENT);
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, null);
-                LayoutResult cellResult = cell.layout(new LayoutContext(cellArea));
+                LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea));
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
                 //width of BlockRenderer depends on child areas, while in cell case it is hardly define.
                 if (cellResult.getStatus() != LayoutResult.NOTHING) {
@@ -839,7 +838,7 @@ public class TableRenderer extends AbstractRenderer {
                 float cellLayoutBoxHeight = rowspanOffset + layoutArea.getBBox().getHeight();
                 Rectangle cellLayoutBox = new Rectangle(layoutArea.getBBox().getX() + colOffset, layoutArea.getBBox().getY(), cellWidth, cellLayoutBoxHeight);
                 LayoutArea cellArea = new LayoutArea(layoutArea.getPageNumber(), cellLayoutBox);
-                LayoutResult cellResult = cell.layout(new LayoutContext(cellArea));
+                LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea));
 
                 if (cellResult.getStatus() != LayoutResult.FULL) {
                     return false;

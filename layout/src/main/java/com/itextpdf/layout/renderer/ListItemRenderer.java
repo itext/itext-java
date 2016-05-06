@@ -100,6 +100,7 @@ public class ListItemRenderer extends DivRenderer {
 
         // It will be null in case of overflow (only the "split" part will contain symbol renderer.
         if (symbolRenderer != null) {
+            symbolRenderer.setParent(parent);
             float x = occupiedArea.getBBox().getX();
             if (childRenderers.size() > 0) {
                 Float yLine = ((AbstractRenderer) childRenderers.get(0)).getFirstYLineRecursively();
@@ -137,14 +138,6 @@ public class ListItemRenderer extends DivRenderer {
         if (isTagged) {
             tagPointer.moveToParent();
         }
-    }
-
-    @Override
-    public IRenderer setParent(IRenderer parent) {
-        if (symbolRenderer != null) {
-            symbolRenderer.setParent(parent);
-        }
-        return super.setParent(parent);
     }
 
     @Override
