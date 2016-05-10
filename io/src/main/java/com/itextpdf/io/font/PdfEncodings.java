@@ -383,26 +383,26 @@ public class PdfEncodings {
         }
 
         private static final byte[] table = {
-                (byte) 0, (byte) 35, (byte) 34, (byte) 0, (byte) 0, (byte) 0, (byte) 41, (byte) 62, (byte) 81, (byte) 42,
-                (byte) 0, (byte) 0, (byte) 65, (byte) 63, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) -4,
-                (byte) 0, (byte) 0, (byte) 0, (byte) -5, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
-                (byte) 86, (byte) 0, (byte) 88, (byte) 89, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
-                (byte) 0, (byte) 0, (byte) -75, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) -74, (byte) 0,
-                (byte) 0, (byte) 0, (byte) -83, (byte) -81, (byte) -84, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
-                (byte) 0, (byte) 0, (byte) 0, (byte) 124, (byte) 123, (byte) 0, (byte) 0, (byte) 0, (byte) 84, (byte) 0,
-                (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) -90, (byte) 0, (byte) 0,
-                (byte) 0, (byte) 113, (byte) 114, (byte) 0, (byte) 0, (byte) 0, (byte) 117, (byte) 0, (byte) 0, (byte) 0,
-                (byte) 0, (byte) 0, (byte) 0, (byte) 125, (byte) 126, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
-                (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
-                (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) -116, (byte) -115,
-                (byte) -114, (byte) -113, (byte) -112, (byte) -111, (byte) -110, (byte) -109, (byte) -108, (byte) -107, (byte) -127, (byte) -126,
-                (byte) -125, (byte) -124, (byte) -123, (byte) -122, (byte) -121, (byte) -120, (byte) -119, (byte) -118, (byte) -116, (byte) -115,
-                (byte) -114, (byte) -113, (byte) -112, (byte) -111, (byte) -110, (byte) -109, (byte) -108, (byte) -107, (byte) -24, (byte) 0,
-                (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
-                (byte) 0, (byte) -24, (byte) -40, (byte) 0, (byte) 0, (byte) -60, (byte) -58, (byte) 0, (byte) 0, (byte) -16,
-                (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) -36,
-                (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0,
-                (byte) 0
+                (byte) 0x00, (byte) 0x23, (byte) 0x22, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x29, (byte) 0x3e, (byte) 0x51, (byte) 0x2a,
+                (byte) 0x00, (byte) 0x00, (byte) 0x41, (byte) 0x3f, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xfc,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xfb, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                (byte) 0x56, (byte) 0x00, (byte) 0x58, (byte) 0x59, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                (byte) 0x00, (byte) 0x00, (byte) 0xb5, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xb6, (byte) 0x00,
+                (byte) 0x00, (byte) 0x00, (byte) 0xad, (byte) 0xaf, (byte) 0xac, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x7c, (byte) 0x7b, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x54, (byte) 0x00,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xa6, (byte) 0x00, (byte) 0x00,
+                (byte) 0x00, (byte) 0x71, (byte) 0x72, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x75, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x7d, (byte) 0x7e, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x8c, (byte) 0x8d,
+                (byte) 0x8e, (byte) 0x8f, (byte) 0x90, (byte) 0x91, (byte) 0x92, (byte) 0x93, (byte) 0x94, (byte) 0x95, (byte) 0x81, (byte) 0x82,
+                (byte) 0x83, (byte) 0x84, (byte) 0x85, (byte) 0x86, (byte) 0x87, (byte) 0x88, (byte) 0x89, (byte) 0x8a, (byte) 0x8c, (byte) 0x8d,
+                (byte) 0x8e, (byte) 0x8f, (byte) 0x90, (byte) 0x91, (byte) 0x92, (byte) 0x93, (byte) 0x94, (byte) 0x95, (byte) 0xe8, (byte) 0x00,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                (byte) 0x00, (byte) 0xe8, (byte) 0xd8, (byte) 0x00, (byte) 0x00, (byte) 0xc4, (byte) 0xc6, (byte) 0x00, (byte) 0x00, (byte) 0xf0,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xdc,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                (byte) 0x00
         };
     }
 

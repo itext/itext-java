@@ -127,24 +127,24 @@ public final class StreamUtil {
         buf.append('(');
         for (byte b : bytes) {
             switch (b) {
-                case '\r':
+                case (byte) '\r':
                     buf.append(escR);
                     break;
-                case '\n':
+                case (byte) '\n':
                     buf.append(escN);
                     break;
-                case '\t':
+                case (byte) '\t':
                     buf.append(escT);
                     break;
-                case '\b':
+                case (byte) '\b':
                     buf.append(escB);
                     break;
-                case '\f':
+                case (byte) '\f':
                     buf.append(escF);
                     break;
-                case '(':
-                case ')':
-                case '\\':
+                case (byte) '(':
+                case (byte) ')':
+                case (byte) '\\':
                     buf.append('\\').append(b);
                     break;
                 default:
