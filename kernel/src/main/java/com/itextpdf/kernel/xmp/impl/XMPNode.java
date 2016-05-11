@@ -384,7 +384,7 @@ class XMPNode implements Comparable
 		}
 		else
 		{
-			return Collections.EMPTY_LIST.listIterator();
+			return Collections.emptyIterator();
 		}
 	}
 	
@@ -430,7 +430,7 @@ class XMPNode implements Comparable
 		}
 		else
 		{
-			return Collections.EMPTY_LIST.iterator();
+			return Collections.emptyIterator();
 		}
 	}
 	

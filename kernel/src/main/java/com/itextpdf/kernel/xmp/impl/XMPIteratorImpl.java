@@ -137,7 +137,7 @@ public class XMPIteratorImpl implements XMPIterator
 		else
 		{
 			// create null iterator
-			nodeIterator = Collections.EMPTY_LIST.iterator();
+			nodeIterator = Collections.emptyIterator();
 		}
 	}
 
@@ -245,7 +245,7 @@ public class XMPIteratorImpl implements XMPIterator
 		/** index of node with parent, only interesting for arrays */
 		private int index = 0;
 		/** the iterator for each child */
-		private Iterator subIterator = Collections.EMPTY_LIST.iterator();
+		private Iterator subIterator = Collections.emptyIterator();
 		/** the cached <code>PropertyInfo</code> to return */
 		private XMPPropertyInfo returnProperty = null;
 
@@ -357,7 +357,7 @@ public class XMPIteratorImpl implements XMPIterator
 			{
 				// setSkipSiblings(false);
 				skipSiblings = false;
-				subIterator = Collections.EMPTY_LIST.iterator();
+				subIterator = Collections.emptyIterator();
 			}
 
 			// create sub iterator for every child,
