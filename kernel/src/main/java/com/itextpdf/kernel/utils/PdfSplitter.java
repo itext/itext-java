@@ -272,7 +272,7 @@ public class PdfSplitter {
      * @throws PdfException
      */
     public List<PdfDocument> splitByOutlines(List<String> outlineTitles) {
-        if (outlineTitles == null || outlineTitles.isEmpty()) {
+        if (outlineTitles == null || outlineTitles.size() == 0) {
             return Collections.emptyList();
         }
 
