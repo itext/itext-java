@@ -44,15 +44,16 @@
  */
 package com.itextpdf.barcodes;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -237,8 +238,8 @@ public class Barcode128 extends Barcode1D {
             barHeight = size * 3;
             textAlignment = ALIGN_CENTER;
             codeType = CODE128;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot create font", e);
         }
     }
 
