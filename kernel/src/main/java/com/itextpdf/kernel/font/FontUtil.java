@@ -47,21 +47,22 @@ package com.itextpdf.kernel.font;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontCache;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.font.cmap.ICMapLocation;
 import com.itextpdf.io.font.cmap.CMapLocationFromBytes;
 import com.itextpdf.io.font.cmap.CMapParser;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.cmap.CMapUniCid;
+import com.itextpdf.io.font.cmap.ICMapLocation;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class FontUtil {
 
@@ -78,8 +79,7 @@ class FontUtil {
             } catch (Exception e) {
                 Logger logger = LoggerFactory.getLogger(CMapToUnicode.class);
                 logger.error(LogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP);
-//                cMapToUnicode = CMapToUnicode.EmptyCMapToUnicodeMap;
-                cMapToUnicode = new CMapToUnicode();
+                cMapToUnicode = CMapToUnicode.EmptyCMapToUnicodeMap;
             }
         } else if (PdfName.IdentityH.equals(toUnicode)) {
             cMapToUnicode = CMapToUnicode.getIdentity();

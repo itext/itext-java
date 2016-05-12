@@ -44,15 +44,17 @@
  */
 package com.itextpdf.io.font.cmap;
 
-import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.util.TextUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a CMap file.
@@ -61,13 +63,13 @@ import java.util.Set;
  */
 public class CMapToUnicode extends AbstractCMap {
 
-//    public static CMapToUnicode EmptyCMapToUnicodeMap = new CMapToUnicode(true);
+    public static CMapToUnicode EmptyCMapToUnicodeMap = new CMapToUnicode(true);
 
     private Map<Integer, char[]> byteMappings;
 
-//    private CMapToUnicode(boolean emptyCMap) {
-//        byteMappings = Collections.emptyMap();
-//    }
+    private CMapToUnicode(boolean emptyCMap) {
+        byteMappings = Collections.<Integer, char[]>emptyMap();
+    }
 
     /**
      * Creates a new instance of CMap.
