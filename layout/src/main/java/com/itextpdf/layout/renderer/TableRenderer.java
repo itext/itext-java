@@ -60,14 +60,13 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Table}
@@ -422,7 +421,7 @@ public class TableRenderer extends AbstractRenderer {
 
                 applyBorderBox(occupiedArea.getBBox(), true);
                 applyMargins(occupiedArea.getBBox(), true);
-                if (isKeepTogether() && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+                if (isKeepTogether() && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && !(this.parent instanceof CellRenderer)) {
                     return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
                 } else {
                     int status = (childRenderers.isEmpty() && footerRenderer == null)
@@ -521,7 +520,7 @@ public class TableRenderer extends AbstractRenderer {
                 tagPointer = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
 
                 boolean ignoreHeaderFooterTag = drawContext.getDocument().getTagStructureContext()
-                                                .getTagStructureTargetVersion().compareTo(PdfVersion.PDF_1_5) < 0;
+                        .getTagStructureTargetVersion().compareTo(PdfVersion.PDF_1_5) < 0;
                 shouldHaveFooterOrHeaderTag = shouldHaveFooterOrHeaderTag && !ignoreHeaderFooterTag
                         && (!modelElement.isSkipFirstHeader() || !modelElement.isSkipLastFooter());
                 if (shouldHaveFooterOrHeaderTag) {
@@ -681,9 +680,16 @@ public class TableRenderer extends AbstractRenderer {
 
         for (IRenderer child : childRenderers) {
             CellRenderer cell = (CellRenderer) child;
+            if (cell.getModelElement().getRow() == this.rowRange.getStartRow()) {
+                startY = cell.getOccupiedArea().getBBox().getY() + cell.getOccupiedArea().getBBox().getHeight();
+                break;
+            }
+        }
+
+        for (IRenderer child : childRenderers) {
+            CellRenderer cell = (CellRenderer) child;
             if (cell.getModelElement().getCol() == 0) {
                 startX = cell.getOccupiedArea().getBBox().getX();
-                startY = cell.getOccupiedArea().getBBox().getY() + cell.getOccupiedArea().getBBox().getHeight();
                 break;
             }
         }
