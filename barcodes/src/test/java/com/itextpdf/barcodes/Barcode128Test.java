@@ -11,8 +11,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.junit.Assert;
@@ -32,9 +30,8 @@ public class Barcode128Test {
 
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
-
         String filename = "barcode128_01.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -55,8 +52,8 @@ public class Barcode128Test {
     @Test
     public void barcode02Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcode128_02.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
-        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "DocumentWithTrueTypeFont1.pdf"));
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfReader reader = new PdfReader(sourceFolder + "DocumentWithTrueTypeFont1.pdf");
         PdfDocument document = new PdfDocument(reader, writer);
 
         PdfCanvas canvas = new PdfCanvas(document.getLastPage());

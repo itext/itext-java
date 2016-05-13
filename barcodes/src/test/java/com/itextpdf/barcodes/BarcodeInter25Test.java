@@ -2,19 +2,17 @@ package com.itextpdf.barcodes;
 
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -34,9 +32,8 @@ public class BarcodeInter25Test {
 
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
-
         String filename = "barcodeInter25.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
