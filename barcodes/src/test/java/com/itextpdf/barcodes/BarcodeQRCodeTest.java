@@ -9,9 +9,9 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,17 +22,14 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class BarcodeQRCodeTest {
+public class BarcodeQRCodeTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
     public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodeQRCode/";
 
     @BeforeClass
     public static void beforeClass() {
-        File dir = new File(destinationFolder);
-        dir.mkdirs();
-        for (File file : dir.listFiles())
-            file.delete();
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test

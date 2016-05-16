@@ -8,9 +8,9 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.junit.Assert;
@@ -19,13 +19,13 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class BarcodeEANTest {
+public class BarcodeEANTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
     public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodeEAN/";
 
     @BeforeClass
     public static void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test
