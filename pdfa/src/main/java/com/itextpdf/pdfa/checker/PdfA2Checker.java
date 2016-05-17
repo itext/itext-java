@@ -445,8 +445,8 @@ public class PdfA2Checker extends PdfA1Checker {
                 }
             }
 
-            Set<String> names = new HashSet<>();
-            Set<PdfObject> order = new HashSet<>();
+            HashSet<String> names = new HashSet<>();
+            HashSet<PdfObject> order = new HashSet<>();
             for (PdfDictionary config : configList) {
                 PdfString name = config.getAsString(PdfName.Name);
                 if (name == null) {

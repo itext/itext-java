@@ -52,11 +52,8 @@ import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 public abstract class PdfAChecker {
-
-    protected Logger LOGGER = Logger.getLogger(getClass().getName());
 
     public static final String ICC_COLOR_SPACE_RGB = "RGB ";
     public static final String ICC_COLOR_SPACE_CMYK = "CMYK";

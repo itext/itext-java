@@ -64,6 +64,8 @@ import com.itextpdf.pdfa.PdfAConformanceException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfA1Checker extends PdfAChecker {
 
@@ -273,7 +275,8 @@ public class PdfA1Checker extends PdfAChecker {
                 throw new PdfAConformanceException(PdfAConformanceException.CatalogShallIncludeMarkInfoDictionaryWithMarkedTrueValue);
             }
             if (!catalog.containsKey(PdfName.Lang)) {
-                LOGGER.warning(PdfAConformanceException.CatalogShallContainLangEntry);
+                Logger logger = LoggerFactory.getLogger(PdfAChecker.class);
+                logger.warn(PdfAConformanceException.CatalogShallContainLangEntry);
             }
         }
     }
