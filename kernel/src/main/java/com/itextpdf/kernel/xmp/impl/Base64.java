@@ -42,11 +42,11 @@ package com.itextpdf.kernel.xmp.impl;
 public class  Base64
 {
 	/** marker for invalid bytes */
-	private static final byte INVALID = -1;
+	private static final byte INVALID = (byte) 0xff;
 	/** marker for accepted whitespace bytes */
-	private static final byte WHITESPACE =  -2;
+	private static final byte WHITESPACE = (byte) 0xfe;
 	/** marker for an equal symbol */
-	private static final byte EQUAL = -3;
+	private static final byte EQUAL = (byte) 0xfd;
 	
 	/** */
     private static byte[] base64 = {
