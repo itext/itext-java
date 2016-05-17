@@ -63,10 +63,7 @@ import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Table}
@@ -378,6 +375,8 @@ public class TableRenderer extends AbstractRenderer {
             }
             if (split) {
                 TableRenderer[] splitResult = split(row, hasContent);
+                int[] rowspans = new int[currentRow.length];
+                boolean[] columnsWithCellToBeSplitted = new boolean[currentRow.length];
                 for (int col = 0; col < currentRow.length; col++) {
                     if (splits[col] != null) {
                         CellRenderer cellSplit;
@@ -385,6 +384,9 @@ public class TableRenderer extends AbstractRenderer {
                             cellSplit = (CellRenderer) splits[col].getSplitRenderer();
                         } else {
                             cellSplit = currentRow[col];
+                        }
+                        if (null != cellSplit ) {
+                            rowspans[col] = cellSplit.getModelElement().getRowspan();
                         }
                         if (splits[col].getStatus() != LayoutResult.NOTHING && (hasContent || cellWithBigRowspanAdded)) {
                             childRenderers.add(cellSplit);
@@ -398,15 +400,47 @@ public class TableRenderer extends AbstractRenderer {
                             rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) currentRow[col].setParent(splitResult[1]);
                         }
                     } else if (hasContent && currentRow[col] != null) {
-                        // Here we use the same cell, but create a new renderer which doesn't have any children,
-                        // therefore it won't have any content.
-                        Cell overflowCell = currentRow[col].getModelElement();
-                        currentRow[col].isLastRendererForModelElement = false;
-                        childRenderers.add(currentRow[col]);
-                        currentRow[col] = null;
-                        rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) overflowCell.getRenderer().setParent(this);
+                        columnsWithCellToBeSplitted[col] = true;
                     }
                 }
+
+                int minRowspan = Integer.MAX_VALUE;
+                for (int col = 0; col < rowspans.length; col++) {
+                    if (0 != rowspans[col]) {
+                        minRowspan = Math.min(minRowspan, rowspans[col]);
+                    }
+                }
+
+                for (int col = 0; col < columnsWithCellToBeSplitted.length; col++) {
+                    if (columnsWithCellToBeSplitted[col]) {
+                        if (1 == minRowspan) {
+                            // Here we use the same cell, but create a new renderer which doesn't have any children,
+                            // therefore it won't have any content.
+                            Cell overflowCell = currentRow[col].getModelElement();
+                            currentRow[col].isLastRendererForModelElement = false;
+                            childRenderers.add(currentRow[col]);
+                            currentRow[col] = null;
+                            rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) overflowCell.getRenderer().setParent(this);
+                        } else {
+                            childRenderers.add(currentRow[col]);
+                            // shift all cells in the column up
+                            int i = row;
+                            for (; i < row + minRowspan && i+1 < rows.size() && rows.get(i+1)[col] != null; i++) {
+                                rows.get(i)[col] = rows.get(i + 1)[col];
+                                rows.get(i + 1)[col] = null;
+                            }
+                            // the number of cells behind is less then minRowspan-1
+                            // so we should process the last cell in the columnt as in the case 1 == minRowspan
+                            if (i != row+minRowspan-1 && null != rows.get(i)[col]) {
+                                    Cell overflowCell = rows.get(i)[col].getModelElement();
+                                    rows.get(i)[col].isLastRendererForModelElement = false;
+                                    rows.get(i)[col] = null;
+                                    rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) overflowCell.getRenderer().setParent(this);
+                            }
+                        }
+                    }
+                }
+
 
                 if (row == rowRange.getFinishRow() && footerRenderer != null) {
                     footerRenderer.getOccupiedAreaBBox().setY(splitResult[0].getOccupiedAreaBBox().getY()

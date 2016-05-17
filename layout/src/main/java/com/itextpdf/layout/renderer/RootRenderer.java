@@ -45,17 +45,16 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.Property;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class RootRenderer extends AbstractRenderer {
 
@@ -120,7 +119,13 @@ public abstract class RootRenderer extends AbstractRenderer {
                             continue;
                         }
                         storedArea = currentArea;
-                        updateCurrentArea(result);
+                        if (nextStoredArea != null) {
+                            currentArea = nextStoredArea;
+                            currentPageNumber = nextStoredArea.getPageNumber();
+                            nextStoredArea = null;
+                        } else {
+                            updateCurrentArea(result);
+                        }
                     }
                 }
                 renderer = result.getOverflowRenderer();

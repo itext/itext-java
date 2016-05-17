@@ -2,33 +2,28 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.border.SolidBorder;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class TableTest extends ExtendedITextTest{
@@ -960,4 +955,42 @@ public class TableTest extends ExtendedITextTest{
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
+
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+    })
+    @Test
+    public void splitTableOnLowPage() throws IOException, InterruptedException {
+        String testName = "splitTableOnLowPage.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(300, 120));
+
+        doc.add(new Paragraph("Table with setKeepTogether(true):"));
+        Table table = new Table(2);
+        table.setKeepTogether(true);
+        table.setMarginTop(10);
+        Cell cell = new Cell(3, 1);
+        cell.add("G");
+        cell.add("R");
+        cell.add("P");
+        table.addCell(cell);
+        table.addCell("row 1");
+        table.addCell("row 2");
+        table.addCell("row 3");
+        doc.add(table);
+
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Table with setKeepTogether(false):"));
+        table.setKeepTogether(false);
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+
 }
