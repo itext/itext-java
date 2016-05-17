@@ -44,12 +44,11 @@
  */
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.image.ImageData;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -105,14 +104,10 @@ public class WmfImageData extends ImageData {
         return true;
     }
 
-    private static <T> byte[] readImageType(T source) {
+    private static byte[] readImageType(URL source) {
         InputStream is = null;
         try {
-            if (source instanceof URL) {
-                is = ((URL) source).openStream();
-            } else {
-                is = new ByteArrayInputStream((byte[])source);
-            }
+            is = source.openStream();
             byte[] bytes = new byte[8];
             is.read(bytes);
             return bytes;

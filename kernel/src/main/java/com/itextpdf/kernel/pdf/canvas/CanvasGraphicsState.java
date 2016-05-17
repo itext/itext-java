@@ -49,13 +49,9 @@ import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Matrix;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+
 import java.util.Arrays;
 
 /**
@@ -101,7 +97,7 @@ public class CanvasGraphicsState {
      * An empty dash array (first element in the array) and zero phase (second element in the array)
      * can be used to restore the dash pattern to a solid line.
      */
-    private PdfArray dashPattern = new PdfArray(Arrays.<PdfObject>asList(new PdfArray(), new PdfNumber(0)));
+    private PdfArray dashPattern = new PdfArray(Arrays.asList(new PdfObject[]{new PdfArray(), new PdfNumber(0)}));
 
     private PdfName renderingIntent = PdfName.RelativeColorimetric;
     private boolean automaticStrokeAdjustment = false;

@@ -9,10 +9,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 
 @Category(IntegrationTest.class)
 public class PdfA1EmbeddedFilesCheckTest {
@@ -22,7 +19,7 @@ public class PdfA1EmbeddedFilesCheckTest {
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void fileSpecCheckTest01() throws FileNotFoundException, XMPException {
+    public void fileSpecCheckTest01() throws IOException, XMPException {
         thrown.expect(PdfAConformanceException.class);
         thrown.expectMessage(PdfAConformanceException.NameDictionaryShallNotContainTheEmbeddedFilesKey);
 
@@ -50,7 +47,7 @@ public class PdfA1EmbeddedFilesCheckTest {
     }
 
     @Test
-    public void fileSpecCheckTest02() throws FileNotFoundException, XMPException {
+    public void fileSpecCheckTest02() throws IOException, XMPException {
         thrown.expect(PdfAConformanceException.class);
         thrown.expectMessage(PdfAConformanceException.StreamObjDictShallNotContainForFFilterOrFDecodeParams);
 
@@ -71,7 +68,7 @@ public class PdfA1EmbeddedFilesCheckTest {
     }
 
     @Test
-    public void fileSpecCheckTest03() throws FileNotFoundException, XMPException {
+    public void fileSpecCheckTest03() throws IOException, XMPException {
         thrown.expect(PdfAConformanceException.class);
         thrown.expectMessage(PdfAConformanceException.FileSpecificationDictionaryShallNotContainTheEFKey);
 

@@ -69,31 +69,17 @@ import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
-import com.itextpdf.kernel.xmp.PdfConst;
-import com.itextpdf.kernel.xmp.XMPConst;
-import com.itextpdf.kernel.xmp.XMPException;
-import com.itextpdf.kernel.xmp.XMPMeta;
-import com.itextpdf.kernel.xmp.XMPMetaFactory;
+import com.itextpdf.kernel.xmp.*;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
@@ -1127,7 +1113,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         addFileAttachment(description, PdfFileSpec.createEmbeddedFileSpec(this, fileStore, description, fileDisplay, mimeType, fileParameter, afRelationshipValue, true));
     }
 
-    public void addFileAttachment(String description, String file, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue) throws FileNotFoundException {
+    public void addFileAttachment(String description, String file, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue) throws IOException {
         addFileAttachment(description, PdfFileSpec.createEmbeddedFileSpec(this, file, description, fileDisplay, mimeType, afRelationshipValue, true));
     }
 
