@@ -177,8 +177,7 @@ public class TagStructureContext implements Serializable {
      * @return current {@link TagStructureContext} instance.
      */
     public TagStructureContext removeElementConnectionToTag(IAccessibleElement element) {
-        PdfStructElem structElem = connectedModelToStruct.get(element);
-        connectedModelToStruct.remove(element);
+        PdfStructElem structElem = connectedModelToStruct.remove(element);
         removeStructToModelConnection(structElem);
         return this;
     }
@@ -412,8 +411,7 @@ public class TagStructureContext implements Serializable {
      * @return parent of the flushed tag
      */
     IPdfStructElem flushTag(PdfStructElem tagStruct) {
-        IAccessibleElement modelElement = connectedStructToModel.get(tagStruct.getPdfObject());
-        connectedStructToModel.remove(tagStruct.getPdfObject());
+        IAccessibleElement modelElement = connectedStructToModel.remove(tagStruct.getPdfObject());;
         if (modelElement != null) {
             connectedModelToStruct.remove(modelElement);
         }
@@ -425,8 +423,7 @@ public class TagStructureContext implements Serializable {
 
     private void removeStructToModelConnection(PdfStructElem structElem) {
         if (structElem != null) {
-            IAccessibleElement element = connectedStructToModel.get(structElem.getPdfObject());
-            connectedStructToModel.remove(structElem.getPdfObject());
+            IAccessibleElement element = connectedStructToModel.remove(structElem.getPdfObject());
             structElem.setRole(element.getRole());
             if (element.getAccessibilityProperties() != null) {
                 element.getAccessibilityProperties().setToStructElem(structElem);
