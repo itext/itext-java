@@ -177,11 +177,8 @@ public class Document extends RootElement<Document> {
             throw new IllegalStateException("Operation not supported with immediate flush");
         }
 
-        try {
-            while (pdfDocument.getNumberOfPages() > 0)
-                pdfDocument.removePage(pdfDocument.getNumberOfPages());
-        } catch (Exception exc) {
-            throw new RuntimeException(exc);
+        while (pdfDocument.getNumberOfPages() > 0) {
+            pdfDocument.removePage(pdfDocument.getNumberOfPages());
         }
         rootRenderer = new DocumentRenderer(this, immediateFlush);
         for (IElement element : childElements) {
