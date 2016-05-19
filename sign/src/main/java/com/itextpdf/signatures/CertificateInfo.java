@@ -44,6 +44,7 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.kernel.PdfException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
@@ -194,14 +195,14 @@ public class CertificateInfo {
          */
         public X500Name(ASN1Sequence seq) {
             @SuppressWarnings("unchecked")
-            Enumeration<ASN1Set> e = seq.getObjects();
+            Enumeration<ASN1Set> e = (Enumeration<ASN1Set>)seq.getObjects();
 
             while (e.hasMoreElements()) {
                 ASN1Set set = e.nextElement();
 
                 for (int i = 0; i < set.size(); i++) {
                     ASN1Sequence s = (ASN1Sequence)set.getObjectAt(i);
-                    String id = DefaultSymbols.get(s.getObjectAt(0));
+                    String id = DefaultSymbols.get((ASN1ObjectIdentifier)s.getObjectAt(0));
                     if (id == null)
                         continue;
                     List<String> vs = values.get(id);
@@ -370,7 +371,7 @@ public class CertificateInfo {
             return new X500Name((ASN1Sequence)CertificateInfo.getIssuer(cert.getTBSCertificate()));
         }
         catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new PdfException(e);
         }
     }
 
@@ -387,7 +388,7 @@ public class CertificateInfo {
             return (ASN1Primitive)seq.getObjectAt(seq.getObjectAt(0) instanceof ASN1TaggedObject ? 3 : 2);
         }
         catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new PdfException(e);
         }
     }
 
@@ -405,7 +406,7 @@ public class CertificateInfo {
                 return new X500Name((ASN1Sequence)CertificateInfo.getSubject(cert.getTBSCertificate()));
         }
         catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new PdfException(e);
         }
         return null;
     }
@@ -423,7 +424,7 @@ public class CertificateInfo {
             return (ASN1Primitive)seq.getObjectAt(seq.getObjectAt(0) instanceof ASN1TaggedObject ? 5 : 4);
         }
         catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new PdfException(e);
         }
     }
 
