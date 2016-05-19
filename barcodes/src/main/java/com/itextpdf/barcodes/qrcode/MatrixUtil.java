@@ -154,7 +154,7 @@ final class MatrixUtil {
     // JAVAPORT: We shouldn't need to do this at all. The code should be rewritten to begin encoding
     // with the ByteMatrix initialized all to zero.
     public static void clearMatrix(ByteMatrix matrix) {
-        matrix.clear((byte) -1);
+        matrix.clear((byte) 0xff);
     }
 
     // Build 2D matrix of QR Code from "dataBits" with "ecLevel", "version" and "getMaskPattern". On
