@@ -91,7 +91,7 @@ public class PdfA2EmbeddedFilesCheckTest extends ExtendedITextTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int length;
-        while ((length = fis.read(buffer)) > 0) {
+        while ((length = fis.read(buffer, 0, buffer.length)) > 0) {
             os.write(buffer, 0, length);
         }
         pdfDocument.addFileAttachment("some pdf file", os.toByteArray(), "foo.pdf", PdfName.ApplicationPdf, null, null);

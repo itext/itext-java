@@ -142,7 +142,7 @@ public class PdfADocument extends PdfDocument {
                 break;
         }
 
-        IsoKey drawMode = null;
+        IsoKey drawMode = IsoKey.DRAWMODE_FILL;
         if (fill && stroke) {
             drawMode = IsoKey.DRAWMODE_FILL_STROKE;
         } else if (fill) {

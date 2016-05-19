@@ -150,7 +150,7 @@ public class PdfA2Checker extends PdfA1Checker {
     @Override
     public void checkColorSpace(PdfColorSpace colorSpace, PdfDictionary currentColorSpaces, boolean checkAlternate, Boolean fill) {
         if (fill != null) {
-            if (fill) {
+            if ((boolean)fill) {
                 currentFillCsIsIccBasedCMYK = false;
             } else {
                 currentStrokeCsIsIccBasedCMYK = false;
@@ -208,7 +208,7 @@ public class PdfA2Checker extends PdfA1Checker {
         if (fill != null && colorSpace instanceof PdfCieBasedCs.IccBased) {
             byte[] iccBytes = ((PdfArray) colorSpace.getPdfObject()).getAsStream(1).getBytes();
             if (ICC_COLOR_SPACE_CMYK.equals(IccProfile.getIccColorSpaceName(iccBytes))) {
-                if (fill) {
+                if ((boolean)fill) {
                     currentFillCsIsIccBasedCMYK = true;
                 } else {
                     currentStrokeCsIsIccBasedCMYK = true;
