@@ -42,20 +42,19 @@ import java.io.OutputStream;
 public final class CountOutputStream extends OutputStream
 {
 	/** the decorated output stream */
-	private final OutputStream out;
+	private final OutputStream output;
 	/** the byte counter */
 	private int bytesWritten = 0;
 
 
 	/**
 	 * Constructor with providing the output stream to decorate.
-	 * @param out an <code>OutputStream</code>
+	 * @param output an <code>OutputStream</code>
 	 */
-	CountOutputStream(OutputStream out)
+	CountOutputStream(OutputStream output)
 	{
-		this.out = out;
+		this.output = output;
 	}
-
 
 	/**
 	 * Counts the written bytes.
@@ -63,10 +62,9 @@ public final class CountOutputStream extends OutputStream
 	 */
 	public void write(byte[] buf, int off, int len) throws IOException
 	{
-		out.write(buf, off, len);
+		output.write(buf, off, len);
 		bytesWritten += len;
 	}
-
 
 	/**
 	 * Counts the written bytes.
@@ -74,10 +72,9 @@ public final class CountOutputStream extends OutputStream
 	 */
 	public void write(byte[] buf) throws IOException
 	{
-		out.write(buf);
+		output.write(buf);
 		bytesWritten += buf.length;
 	}
-
 
 	/**
 	 * Counts the written bytes.
@@ -85,10 +82,9 @@ public final class CountOutputStream extends OutputStream
 	 */
 	public void write(int b) throws IOException
 	{
-		out.write(b);
+		output.write(b);
 		bytesWritten++;
 	}
-
 
 	/**
 	 * @return the bytesWritten

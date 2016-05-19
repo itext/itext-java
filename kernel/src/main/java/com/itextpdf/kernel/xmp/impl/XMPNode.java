@@ -56,7 +56,7 @@ import java.util.ListIterator;
  * 
  * @since 21.02.2006
  */
-class XMPNode implements Comparable
+public class XMPNode implements Comparable
 {
 	/** name of the node, contains different information depending of the node kind */
 	private String name;
@@ -217,7 +217,7 @@ class XMPNode implements Comparable
 	 */
 	protected void cleanupChildren()
 	{
-		if (children.isEmpty())
+		if (children.size() == 0)
 		{
 			children = null;
 		}
@@ -329,7 +329,7 @@ class XMPNode implements Comparable
 		}
 		
 		getQualifier().remove(qualNode);
-		if (qualifier.isEmpty())
+		if (qualifier.size() == 0)
 		{
 			opts.setHasQualifiers(false);
 			qualifier = null;
@@ -841,7 +841,7 @@ class XMPNode implements Comparable
 	 * that its initialized.
 	 * @return Returns list of children that is lazy initialized.
 	 */
-	private List getChildren()
+	protected List getChildren()
 	{
 		if (children == null)
 		{
