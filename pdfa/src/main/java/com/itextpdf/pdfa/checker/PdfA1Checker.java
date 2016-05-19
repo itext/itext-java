@@ -339,7 +339,7 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     protected void checkPdfString(PdfString string) {
-        if (string.getValue().getBytes().length > getMaxStringLength()) {
+        if (string.getValueBytes().length > getMaxStringLength()) {
             throw new PdfAConformanceException(PdfAConformanceException.PdfStringIsTooLong);
         }
     }

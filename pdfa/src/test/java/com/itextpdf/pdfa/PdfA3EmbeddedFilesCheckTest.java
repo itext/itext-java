@@ -5,6 +5,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.kernel.xmp.XMPException;
 import org.junit.BeforeClass;
@@ -18,18 +19,18 @@ import java.io.*;
 import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
-public class PdfA3EmbeddedFilesCheckTest {
+public class PdfA3EmbeddedFilesCheckTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = sourceFolder + "cmp/PdfA3EmbeddedFilesCheckTest/";
-    public static final String destinationFolder = "./target/test/PdfA3EmbeddedFilesCheckTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA3EmbeddedFilesCheckTest/";
 
     @BeforeClass
     public static void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void fileSpecCheckTest01() throws IOException, XMPException, InterruptedException {

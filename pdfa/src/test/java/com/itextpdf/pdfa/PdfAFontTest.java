@@ -10,11 +10,11 @@ import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.kernel.xmp.XMPException;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,18 +28,18 @@ import org.junit.rules.ExpectedException;
 import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
-public class PdfAFontTest {
+public class PdfAFontTest extends ExtendedITextTest {
 
     static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    static final String outputDir = "./target/test/PdfAFontTest/";
+    static final String outputDir = "./target/test/com/itextpdf/pdfa/PdfAFontTest/";
 
     @BeforeClass
     public static void beforeClass() {
-        new File(outputDir).mkdirs();
+        createOrClearDestinationFolder(outputDir);
     }
 
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void fontCheckPdfA1_01() throws IOException, XMPException, InterruptedException {
@@ -65,8 +65,8 @@ public class PdfAFontTest {
 
     @Test
     public void fontCheckPdfA1_02() throws IOException, XMPException {
-        thrown.expect(PdfAConformanceException.class);
-        thrown.expectMessage(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1);
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -110,8 +110,8 @@ public class PdfAFontTest {
 
     @Test
     public void fontCheckPdfA1_04() throws IOException, XMPException {
-        thrown.expect(PdfAConformanceException.class);
-        thrown.expectMessage(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1);
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
