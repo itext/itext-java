@@ -32,9 +32,9 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class SigningTest {
 
-    public static final String sourceFolder = "src/test/resources/signingTest/";
-    public static final String destinationFolder = "target/test/signingTest/";
-    public static final String keystorePath = "src/test/resources/ks";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/signatures/";
+    public static final String keystorePath = "./src/test/resources/com/itextpdf/signatures/ks";
     public static final char[] password = "password".toCharArray();
 
     private BouncyCastleProvider provider;
