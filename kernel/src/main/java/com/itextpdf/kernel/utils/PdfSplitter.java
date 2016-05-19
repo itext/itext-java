@@ -112,7 +112,7 @@ public class PdfSplitter {
             PageRange nextRange = getNextRange(currentPage, numOfPages, size);
             splitRanges.add(nextRange);
             List<Integer> allPages = nextRange.getAllPages();
-            currentPage = allPages.get(allPages.size() - 1) + 1;
+            currentPage = (int) allPages.get(allPages.size() - 1) + 1;
         }
 
         return extractPageRanges(splitRanges);
@@ -131,7 +131,7 @@ public class PdfSplitter {
         int currentPageNumber = 1;
 
         for (int ind = 0; ind <= pageNumbers.size(); ind++) {
-            int nextPageNumber = ind == pageNumbers.size() ? pdfDocument.getNumberOfPages() + 1 : pageNumbers.get(ind);
+            int nextPageNumber = ind == pageNumbers.size() ? pdfDocument.getNumberOfPages() + 1 : (int) pageNumbers.get(ind);
             if (ind == 0 && nextPageNumber == 1)
                 continue;
 
@@ -273,7 +273,7 @@ public class PdfSplitter {
      */
     public List<PdfDocument> splitByOutlines(List<String> outlineTitles) {
         if (outlineTitles == null || outlineTitles.size() == 0) {
-            return Collections.emptyList();
+            return Collections.<PdfDocument>emptyList();
         }
 
         List<PdfDocument> documentList = new ArrayList<>(outlineTitles.size());

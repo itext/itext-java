@@ -69,7 +69,7 @@ public class IccProfile {
         icc.data = data;
         Integer cs;
         cs = getIccNumberOfComponents(data);
-        int nc = cs == null ? 0 : cs;
+        int nc = cs == null ? 0 : (int) cs;
         icc.numComponents = nc;
         // invalid ICC
         if (nc != numComponents) {
@@ -81,7 +81,7 @@ public class IccProfile {
     public static IccProfile getInstance(byte[] data) {
         Integer cs;
         cs = getIccNumberOfComponents(data);
-        int numComponents = cs == null ? 0 : cs;
+        int numComponents = cs == null ? 0 : (int) cs;
         return getInstance(data, numComponents);
     }
 

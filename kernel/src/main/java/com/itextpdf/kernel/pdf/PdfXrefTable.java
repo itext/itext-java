@@ -168,11 +168,11 @@ class PdfXrefTable implements Serializable {
         if (document.isAppendMode()) {
             // Increment generation number for all freed references.
             for (Integer objNr : freeReferences) {
-                xref[objNr].genNr++;
+                xref[(int) objNr].genNr++;
             }
         } else {
             for (Integer objNr : freeReferences) {
-                xref[objNr] = null;
+                xref[(int) objNr] = null;
             }
         }
         freeReferences.clear();
@@ -249,19 +249,19 @@ class PdfXrefTable implements Serializable {
             xrefStream.put(PdfName.Root, document.getCatalog().getPdfObject());
             PdfArray index = new PdfArray();
             for (Integer section : sections) {
-                index.add(new PdfNumber(section));
+                index.add(new PdfNumber((int) section));
             }
             if (document.properties.appendMode) {
                 PdfNumber lastXref = new PdfNumber(document.reader.getLastXref());
                 xrefStream.put(PdfName.Prev, lastXref);
             }
             xrefStream.put(PdfName.Index, index);
-            PdfXrefTable xref = document.getXref();
+            PdfXrefTable xrefTable = document.getXref();
             for (int k = 0; k < sections.size(); k += 2) {
-                first = sections.get(k);
-                len = sections.get(k + 1);
+                first = (int) sections.get(k);
+                len = (int) sections.get(k + 1);
                 for (int i = first; i < first + len; i++) {
-                    PdfIndirectReference reference = xref.get(i);
+                    PdfIndirectReference reference = xrefTable.get(i);
                     if (reference == null) {
                         continue;
                     }
@@ -285,13 +285,13 @@ class PdfXrefTable implements Serializable {
             xrefStream.flush();
         } else {
             writer.writeString("xref\n");
-            PdfXrefTable xref = document.getXref();
+            PdfXrefTable xrefTable = document.getXref();
             for (int k = 0; k < sections.size(); k += 2) {
-                first = sections.get(k);
-                len = sections.get(k + 1);
+                first = (int) sections.get(k);
+                len = (int) sections.get(k + 1);
                 writer.writeInteger(first).writeSpace().writeInteger(len).writeByte((byte) '\n');
                 for (int i = first; i < first + len; i++) {
-                    PdfIndirectReference reference = xref.get(i);
+                    PdfIndirectReference reference = xrefTable.get(i);
                     writer.writeString(objectOffsetFormatter.format(reference.getOffset())).writeSpace().
                             writeString(objectGenerationFormatter.format(reference.getGenNumber())).writeSpace();
                     if (reference.isFree()) {

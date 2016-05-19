@@ -163,7 +163,7 @@ public class PdfOutline {
         PdfOutline outline = new PdfOutline(title, dictionary, this);
         dictionary.put(PdfName.Title, new PdfString(title, PdfEncodings.UNICODE_BIG));
         dictionary.put(PdfName.Parent, content);
-        if (!children.isEmpty()){
+        if (children.size() > 0){
             if (position != 0){
                 PdfDictionary prevContent = children.get(position-1).getContent();
                 dictionary.put(PdfName.Prev, prevContent);
@@ -182,7 +182,7 @@ public class PdfOutline {
             content.put(PdfName.Last, dictionary);
 
         if (children.size() > 0){
-            int count = this.content.getAsInt(PdfName.Count);
+            int count = (int) this.content.getAsInt(PdfName.Count);
             if (count > 0)
                 content.put(PdfName.Count, new PdfNumber(count++));
             else
@@ -219,7 +219,7 @@ public class PdfOutline {
         List<PdfOutline> children = parent.children;
         children.remove(this);
         PdfDictionary parentContent = parent.content;
-        if (!children.isEmpty()){
+        if (children.size() > 0){
             parentContent.put(PdfName.First, children.get(0).content);
             parentContent.put(PdfName.Last, children.get(children.size()-1).content);
         } else {

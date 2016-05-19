@@ -83,7 +83,7 @@ public class CMapCidByte extends AbstractCMap {
                 byteCode <<= 8;
                 byteCode += b & 0xff;
             }
-            code2cid.put(byteCode, cid);
+            code2cid.put(byteCode, (int) cid);
         }
         return code2cid;
     }

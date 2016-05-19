@@ -399,7 +399,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         }
         if (hasOutlines()) {
             getOutlines(false);
-            if (!pagesWithOutlines.isEmpty()) {
+            if (pagesWithOutlines.size() > 0) {
                 for (PdfOutline outline : pagesWithOutlines.get(page.getPdfObject())) {
                     outline.removeOutline();
                 }

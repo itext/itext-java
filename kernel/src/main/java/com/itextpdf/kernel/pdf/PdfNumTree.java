@@ -104,7 +104,7 @@ public class PdfNumTree implements Serializable {
             PdfDictionary dic = new PdfDictionary();
             PdfArray ar = new PdfArray();
             for (int k = 0; k < numbers.length; ++k) {
-                ar.add(new PdfNumber(numbers[k]));
+                ar.add(new PdfNumber((int) numbers[k]));
                 ar.add(items.get(numbers[k]));
             }
             dic.put(PdfName.Nums, ar);
@@ -112,22 +112,22 @@ public class PdfNumTree implements Serializable {
         }
         int skip = NODE_SIZE;
         PdfDictionary[] kids = new PdfDictionary[(numbers.length + NODE_SIZE - 1) / NODE_SIZE];
-        for (int k = 0; k < kids.length; ++k) {
-            int offset = k * NODE_SIZE;
+        for (int i = 0; i < kids.length; ++i) {
+            int offset = i * NODE_SIZE;
             int end = Math.min(offset + NODE_SIZE, numbers.length);
             PdfDictionary dic = new PdfDictionary();
             PdfArray arr = new PdfArray();
-            arr.add(new PdfNumber(numbers[offset]));
-            arr.add(new PdfNumber(numbers[end - 1]));
+            arr.add(new PdfNumber((int) numbers[offset]));
+            arr.add(new PdfNumber((int) numbers[end - 1]));
             dic.put(PdfName.Limits, arr);
             arr = new PdfArray();
             for (; offset < end; ++offset) {
-                arr.add(new PdfNumber(numbers[offset]));
+                arr.add(new PdfNumber((int) numbers[offset]));
                 arr.add(items.get(numbers[offset]));
             }
             dic.put(PdfName.Nums, arr);
             dic.makeIndirect(catalog.getDocument());
-            kids[k] = dic;
+            kids[i] = dic;
         }
         int top = kids.length;
         while (true) {
@@ -146,8 +146,8 @@ public class PdfNumTree implements Serializable {
                 int end = Math.min(offset + NODE_SIZE, top);
                 PdfDictionary dic = new PdfDictionary().makeIndirect(catalog.getDocument());
                 PdfArray arr = new PdfArray();
-                arr.add(new PdfNumber(numbers[k * skip]));
-                arr.add(new PdfNumber(numbers[Math.min((k + 1) * skip, numbers.length) - 1]));
+                arr.add(new PdfNumber((int) numbers[k * skip]));
+                arr.add(new PdfNumber((int) numbers[Math.min((k + 1) * skip, numbers.length) - 1]));
                 dic.put(PdfName.Limits, arr);
                 arr = new PdfArray();
                 for (; offset < end; ++offset) {

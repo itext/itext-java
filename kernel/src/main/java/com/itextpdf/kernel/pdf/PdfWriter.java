@@ -47,21 +47,14 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.PdfException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.OutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.itextpdf.io.source.ByteUtils.getIsoBytes;
 
@@ -125,7 +118,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * @return true if to use full compression, false otherwise.
      */
     public boolean isFullCompression() {
-        return properties.isFullCompression != null ? properties.isFullCompression : false;
+        return properties.isFullCompression;
     }
 
     /**

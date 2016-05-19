@@ -123,7 +123,7 @@ public class CidFont extends FontProgram {
         Integer lly = Integer.parseInt(tk.nextToken());
         Integer urx = Integer.parseInt(tk.nextToken());
         Integer ury = Integer.parseInt(tk.nextToken());
-        fontMetrics.updateBbox(llx, lly, urx, ury);
+        fontMetrics.updateBbox((int) llx, (int) lly, (int) urx, (int) ury);
         registry = (String) fontDesc.get("Registry");
         String uniMap = getCompatibleUniMap(registry);
         if (uniMap != null) {

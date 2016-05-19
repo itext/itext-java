@@ -102,12 +102,12 @@ public class PdfFormXObject extends PdfXObject {
 
     public PdfResources getResources() {
         if (this.resources == null) {
-            PdfDictionary resources = getPdfObject().getAsDictionary(PdfName.Resources);
-            if (resources == null) {
-                resources = new PdfDictionary();
-                getPdfObject().put(PdfName.Resources, resources);
+            PdfDictionary resourcesDict = getPdfObject().getAsDictionary(PdfName.Resources);
+            if (resourcesDict == null) {
+                resourcesDict = new PdfDictionary();
+                getPdfObject().put(PdfName.Resources, resourcesDict);
             }
-            this.resources = new PdfResources(resources);
+            this.resources = new PdfResources(resourcesDict);
         }
         return resources;
     }

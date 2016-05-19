@@ -1289,8 +1289,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     throw new PdfException(PdfException.AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible);
             }
             if (writer != null) {
-                if (reader != null && reader.hasXrefStm() && writer.properties.isFullCompression == null) {
+                if (reader != null && reader.hasXrefStm() && writer.properties.isFullCompression) {
                     writer.properties.isFullCompression = true;
+                } else {
+                    writer.properties.isFullCompression = false;
                 }
                 if (reader != null && !reader.isOpenedWithFullPermission()) {
                     throw new BadPasswordException(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);

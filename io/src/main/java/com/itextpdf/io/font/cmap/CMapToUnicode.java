@@ -47,14 +47,13 @@ package com.itextpdf.io.font.cmap;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.util.TextUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a CMap file.
@@ -135,7 +134,7 @@ public class CMapToUnicode extends AbstractCMap {
         IntHashtable result = new IntHashtable();
         for (Map.Entry<Integer, char[]> entry : byteMappings.entrySet()) {
             if (entry.getValue().length <= 2) {
-                result.put(entry.getKey(), convertToInt(entry.getValue()));
+                result.put((int) entry.getKey(), convertToInt(entry.getValue()));
             }
         }
         return result;

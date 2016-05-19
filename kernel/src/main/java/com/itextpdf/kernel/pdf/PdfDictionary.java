@@ -47,11 +47,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * A representation of a Dictionary as described by the PDF Specification. A Dictionary is a mapping between keys
@@ -119,7 +115,7 @@ public class PdfDictionary extends PdfObject {
      * @return true if there are no key-value pairs in this PdfDictionary
      */
     public boolean isEmpty() {
-        return map.isEmpty();
+        return map.size() == 0;
     }
 
     /**
@@ -139,7 +135,7 @@ public class PdfDictionary extends PdfObject {
      * @return true if value is present in the PdfDictionary
      */
     public boolean containsValue(PdfObject value) {
-        return map.containsValue(value);
+        return map.values().contains(value);
     }
 
     /**
@@ -264,7 +260,11 @@ public class PdfDictionary extends PdfObject {
      */
     public Float getAsFloat(PdfName key) {
         PdfNumber number = getAsNumber(key);
-        return number == null ? null : number.floatValue();
+        Float floatNumber = null;
+        if (number != null) {
+            floatNumber = number.floatValue();
+        }
+        return floatNumber;
     }
 
     /**
@@ -275,7 +275,11 @@ public class PdfDictionary extends PdfObject {
      */
     public Integer getAsInt(PdfName key) {
         PdfNumber number = getAsNumber(key);
-        return number == null ? null : number.intValue();
+        Integer intNumber = null;
+        if (number != null) {
+            intNumber = number.intValue();
+        }
+        return intNumber;
     }
 
     /**
@@ -286,7 +290,12 @@ public class PdfDictionary extends PdfObject {
      */
     public Boolean getAsBool(PdfName key) {
         PdfBoolean b = getAsBoolean(key);
-        return b == null ? null : b.getValue();
+        Boolean booleanValue = null;
+        if (b != null) {
+            booleanValue = b.getValue();
+        }
+
+        return booleanValue;
     }
 
     /**

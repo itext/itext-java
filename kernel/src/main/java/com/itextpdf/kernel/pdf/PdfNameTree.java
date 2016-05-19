@@ -83,10 +83,11 @@ public class PdfNameTree {
                 for (Iterator<Map.Entry<String, PdfObject>> it = items.entrySet().iterator(); it.hasNext(); ) {
                     Map.Entry<String, PdfObject> entry = it.next();
                     PdfArray arr = getNameArray(entry.getValue());
-                    if (arr != null)
-                        entry.setValue(arr);
+                    if (arr != null) {
+                        items.put(entry.getKey(), arr);
+                    }
                     else
-                        it.remove();
+                        items.remove(entry.getKey());
                 }
             }
         }
@@ -127,9 +128,9 @@ public class PdfNameTree {
         if (names.length <= NODE_SIZE) {
             PdfDictionary dic = new PdfDictionary();
             PdfArray ar = new PdfArray();
-            for (int k = 0; k < names.length; ++k) {
-                ar.add(new PdfString(names[k], null));
-                ar.add(items.get(names[k]));
+            for (String name : names) {
+                ar.add(new PdfString(name, null));
+                ar.add(items.get(name));
             }
             dic.put(PdfName.Names, ar);
             return dic;
@@ -157,28 +158,28 @@ public class PdfNameTree {
         while (true) {
             if (top <= NODE_SIZE) {
                 PdfArray arr = new PdfArray();
-                for (int k = 0; k < top; ++k)
-                    arr.add(kids[k]);
+                for (int i = 0; i < top; ++i)
+                    arr.add(kids[i]);
                 PdfDictionary dic = new PdfDictionary();
                 dic.put(PdfName.Kids, arr);
                 return dic;
             }
             skip *= NODE_SIZE;
             int tt = (names.length + skip - 1 )/ skip;
-            for (int k = 0; k < tt; ++k) {
-                int offset = k * NODE_SIZE;
+            for (int i = 0; i < tt; ++i) {
+                int offset = i * NODE_SIZE;
                 int end = Math.min(offset + NODE_SIZE, top);
                 PdfDictionary dic = new PdfDictionary().makeIndirect(catalog.getDocument());
                 PdfArray arr = new PdfArray();
-                arr.add(new PdfString(names[k * skip], null));
-                arr.add(new PdfString(names[Math.min((k + 1) * skip, names.length) - 1], null));
+                arr.add(new PdfString(names[i * skip], null));
+                arr.add(new PdfString(names[Math.min((i + 1) * skip, names.length) - 1], null));
                 dic.put(PdfName.Limits, arr);
                 arr = new PdfArray();
                 for (; offset < end; ++offset) {
                     arr.add(kids[offset]);
                 }
                 dic.put(PdfName.Kids, arr);
-                kids[k] = dic;
+                kids[i] = dic;
             }
             top = tt;
         }

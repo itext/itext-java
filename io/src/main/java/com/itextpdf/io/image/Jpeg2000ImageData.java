@@ -45,13 +45,12 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.LogMessageConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Jpeg2000ImageData extends ImageData {
 
@@ -70,19 +69,19 @@ public class Jpeg2000ImageData extends ImageData {
 		private byte[] colorProfile;
 
         public int getMeth() {
-            return get(0);
+            return (int) get(0);
         }
 
         public int getPrec() {
-            return get(1);
+            return (int) get(1);
         }
 
         public int getApprox() {
-            return get(2);
+            return (int) get(2);
         }
 
         public int getEnumCs() {
-            return get(3);
+            return (int) get(3);
         }
 
         public byte[] getColorProfile() {

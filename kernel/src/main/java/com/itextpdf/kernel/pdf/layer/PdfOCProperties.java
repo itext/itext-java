@@ -44,22 +44,11 @@
  */
 package com.itextpdf.kernel.pdf.layer;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfIndirectReference;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfObjectWrapper;
-import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * This class represents /OCProperties entry if pdf catalog and manages
@@ -155,11 +144,14 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
 
         List<PdfLayer> docOrder = new ArrayList<>(layers);
-        for (Iterator<PdfLayer> it = docOrder.iterator(); it.hasNext();) {
-            PdfLayer layer = it.next();
-            if (layer.getParent() != null)
-                it.remove();
+        for (int i = 0; i < docOrder.size(); i++) {
+            PdfLayer layer = docOrder.get(i);
+            if (layer.getParent() != null) {
+                docOrder.remove(layer);
+                i--;
+            }
         }
+
         PdfArray order = new PdfArray();
         for (Object element : docOrder) {
             PdfLayer layer = (PdfLayer)element;
@@ -304,14 +296,14 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
             PdfArray off = d.getAsArray(PdfName.OFF);
             if (off != null) {
                 for (PdfObject offLayer : off) {
-                    layerMap.get(offLayer).on = false;
+                    layerMap.get((PdfIndirectReference) offLayer).on = false;
                 }
             }
 
             PdfArray locked = d.getAsArray(PdfName.Locked);
             if (locked != null) {
                 for (PdfObject lockedLayer : locked) {
-                    layerMap.get(lockedLayer).locked = true;
+                    layerMap.get((PdfIndirectReference) lockedLayer).locked = true;
                 }
             }
 

@@ -177,7 +177,8 @@ public class TagStructureContext implements Serializable {
      * @return current {@link TagStructureContext} instance.
      */
     public TagStructureContext removeElementConnectionToTag(IAccessibleElement element) {
-        PdfStructElem structElem = connectedModelToStruct.remove(element);
+        PdfStructElem structElem = connectedModelToStruct.get(element);
+        connectedModelToStruct.remove(element);
         removeStructToModelConnection(structElem);
         return this;
     }
@@ -393,7 +394,7 @@ public class TagStructureContext implements Serializable {
     }
 
     IAccessibleElement getModelConnectedToStruct(PdfStructElem struct) {
-        return connectedStructToModel.get(struct);
+        return connectedStructToModel.get(struct.getPdfObject());
     }
 
     void throwExceptionIfRoleIsInvalid(PdfName role) {
@@ -411,7 +412,8 @@ public class TagStructureContext implements Serializable {
      * @return parent of the flushed tag
      */
     IPdfStructElem flushTag(PdfStructElem tagStruct) {
-        IAccessibleElement modelElement = connectedStructToModel.remove(tagStruct.getPdfObject());
+        IAccessibleElement modelElement = connectedStructToModel.get(tagStruct.getPdfObject());
+        connectedStructToModel.remove(tagStruct.getPdfObject());
         if (modelElement != null) {
             connectedModelToStruct.remove(modelElement);
         }
@@ -423,7 +425,8 @@ public class TagStructureContext implements Serializable {
 
     private void removeStructToModelConnection(PdfStructElem structElem) {
         if (structElem != null) {
-            IAccessibleElement element = connectedStructToModel.remove(structElem.getPdfObject());
+            IAccessibleElement element = connectedStructToModel.get(structElem.getPdfObject());
+            connectedStructToModel.remove(structElem.getPdfObject());
             structElem.setRole(element.getRole());
             if (element.getAccessibilityProperties() != null) {
                 element.getAccessibilityProperties().setToStructElem(structElem);
@@ -440,7 +443,7 @@ public class TagStructureContext implements Serializable {
             if (!structParent.isFlushed()) {
                 structParent.removeKid(pageTag);
                 PdfDictionary parentObject = structParent.getPdfObject();
-                if (!connectedStructToModel.containsKey(parentObject) && parent.getKids().isEmpty()
+                if (!connectedStructToModel.containsKey(parentObject) && parent.getKids().size() == 0
                         && parentObject != rootTagElement.getPdfObject()) {
                     removePageTagFromParent(structParent, parent.getParent());
                     parentObject.getIndirectReference().setFree();

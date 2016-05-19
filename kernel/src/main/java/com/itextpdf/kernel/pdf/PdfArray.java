@@ -174,7 +174,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     public PdfArray(List<String> strings, boolean asNames) {
         list = new ArrayList<>(strings.size());
         for (String s : strings) {
-            list.add(asNames ? new PdfName(s) : new PdfString(s));
+            list.add(asNames ? (PdfObject) new PdfName(s) : new PdfString(s));
         }
     }
 
@@ -183,14 +183,13 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     }
 
     public boolean isEmpty() {
-        return list.isEmpty();
+        return list.size() == 0;
     }
 
     public boolean contains(PdfObject o) {
         return list.contains(o);
     }
 
-    @Override
     public Iterator<PdfObject> iterator() {
         return list.iterator();
     }

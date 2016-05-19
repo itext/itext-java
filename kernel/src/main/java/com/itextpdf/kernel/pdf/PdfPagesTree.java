@@ -177,7 +177,7 @@ class PdfPagesTree implements Serializable{
     public void addPage(PdfPage pdfPage) {
         PdfPages pdfPages;
         if (root != null) { // in this case we save tree structure
-            if (pageRefs.isEmpty()) {
+            if (pageRefs.size() == 0) {
                 pdfPages = root;
             } else {
                 loadPage(pageRefs.size() - 1);
@@ -185,7 +185,7 @@ class PdfPagesTree implements Serializable{
             }
         } else {
             pdfPages = parents.get(parents.size() - 1);
-            if (pdfPages.getCount() % leafSize == 0 && !pageRefs.isEmpty()) {
+            if (pdfPages.getCount() % leafSize == 0 && pageRefs.size() > 0) {
                 pdfPages = new PdfPages(pdfPages.getFrom() + pdfPages.getCount(), document);
                 parents.add(pdfPages);
             }
@@ -252,7 +252,7 @@ class PdfPagesTree implements Serializable{
      * @throws PdfException in case empty document
      */
     protected  PdfObject generateTree() {
-        if (pageRefs.isEmpty())
+        if (pageRefs.size() == 0)
             throw new PdfException(PdfException.DocumentHasNoPages);
         if (generated)
             throw new PdfException(PdfException.PdfPagesTreeCouldBeGeneratedOnlyOnce);

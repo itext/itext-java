@@ -66,4 +66,8 @@ public final class EncodingUtil {
         bb.get(br);
         return br;
     }
+
+    public static String convertToString(byte[] bytes, Charset charset) {
+        return new String(bytes, charset);
+    }
 }

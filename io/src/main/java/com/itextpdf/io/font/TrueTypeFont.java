@@ -47,21 +47,17 @@ package com.itextpdf.io.font;
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.otf.Glyph;
-import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.font.otf.GlyphPositioningTableReader;
 import com.itextpdf.io.font.otf.GlyphSubstitutionTableReader;
 import com.itextpdf.io.font.otf.OpenTypeGdefTableReader;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.itextpdf.io.util.IntHashtable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.MessageFormat;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class TrueTypeFont extends FontProgram {
 
@@ -319,7 +315,7 @@ public class TrueTypeFont extends FontProgram {
                 LOGGER.warn(MessageFormat.format(LogMessageConstant.FONT_HAS_INVALID_GLYPH, getFontNames().getFontName(), index));
                 continue;
             }
-            Glyph glyph = new Glyph(index, glyphWidths[index], charCode, bBoxes != null ? bBoxes[index] : null);
+            Glyph glyph = new Glyph(index, glyphWidths[index], (int) charCode, bBoxes != null ? bBoxes[index] : null);
             unicodeToGlyph.put(charCode, glyph);
             codeToGlyph.put(index, glyph);
             avgWidth += glyph.getWidth();

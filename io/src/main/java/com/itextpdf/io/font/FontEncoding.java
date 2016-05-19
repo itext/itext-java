@@ -245,7 +245,7 @@ public class FontEncoding implements Serializable {
                 unicodeToCode.put(uni, orderK);
                 codeToUnicode[orderK] = (int) uni;
                 differences[orderK] = name;
-                unicodeDifferences.put(uni, uniName != null ? uniName : -1);
+                unicodeDifferences.put(uni, uniName != null ? (int) uniName : -1);
             }
         } else {
             int k = 0;

@@ -72,7 +72,7 @@ public class GsubLookupType1 extends OpenTableLookup {
         if (!openReader.isSkip(g.getCode(), lookupFlag)) {
             Integer substCode = substMap.get(g.getCode());
             if (substCode != null) {
-                line.substituteOneToOne(openReader, substCode);
+                line.substituteOneToOne(openReader, (int) substCode);
                 changed = true;
             }
         }

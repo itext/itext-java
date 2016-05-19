@@ -279,7 +279,7 @@ class TrueTypeFontSubset {
         newLocaTable = new int[locaTable.length];
         int[] activeGlyphs = new int[glyphsInList.size()];
         for (int k = 0; k < activeGlyphs.length; ++k) {
-            activeGlyphs[k] = glyphsInList.get(k);
+            activeGlyphs[k] = (int) glyphsInList.get(k);
         }
         Arrays.sort(activeGlyphs);
         int glyfSize = 0;
@@ -336,7 +336,7 @@ class TrueTypeFontSubset {
         tableGlyphOffset = tableLocation[TABLE_OFFSET];
         // Do not replace with foreach. ConcurrentModificationException will arise.
         for (int k = 0; k < glyphsInList.size(); ++k) {
-            int glyph = glyphsInList.get(k);
+            int glyph = (int) glyphsInList.get(k);
             checkGlyphComposite(glyph);
         }
     }

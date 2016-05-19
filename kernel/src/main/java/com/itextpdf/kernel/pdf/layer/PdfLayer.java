@@ -254,7 +254,11 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
         } else if (intents.size() == 1) {
             getPdfObject().put(PdfName.Intent, intents.get(0));
         } else if (intents.size() > 1) {
-            getPdfObject().put(PdfName.Intent, new PdfArray(intents));
+            PdfArray array = new PdfArray();
+            for (PdfName intent : intents) {
+                array.add(intent);
+            }
+            getPdfObject().put(PdfName.Intent, array);
         }
         getPdfObject().setModified();
     }

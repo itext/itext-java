@@ -93,7 +93,7 @@ public class PageRange {
     public List<Integer> getAllPages() {
         List<Integer> allPages = new ArrayList<>();
         for (int ind = 0; ind < sequenceStarts.size(); ind++) {
-            for (int pageInRange = sequenceStarts.get(ind); pageInRange <= sequenceEnds.get(ind); pageInRange++) {
+            for (int pageInRange = (int) sequenceStarts.get(ind); pageInRange <= sequenceEnds.get(ind); pageInRange++) {
                 allPages.add(pageInRange);
             }
         }

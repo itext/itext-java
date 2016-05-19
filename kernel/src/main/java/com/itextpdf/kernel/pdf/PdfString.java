@@ -47,6 +47,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.PdfTokenizer;
+import com.itextpdf.io.util.EncodingUtil;
 import com.itextpdf.io.util.StreamUtil;
 
 import java.nio.charset.Charset;
@@ -252,7 +253,7 @@ public class PdfString extends PdfPrimitiveObject {
     @Override
     public String toString() {
         if (value == null) {
-            return new String(content, Charset.forName(defaultCharset));
+            return EncodingUtil.convertToString(content, Charset.forName(defaultCharset));
         } else {
             return getValue();
         }
@@ -277,7 +278,9 @@ public class PdfString extends PdfPrimitiveObject {
             byte[] decodedContent = PdfTokenizer.decodeStringContent(content, hexWriting);
             content = null;
             decrypt.setHashKeyForNextObject(decryptInfoNum, decryptInfoGen);
-            value = new String(decrypt.decryptByteArray(decodedContent), Charset.forName(defaultCharset));
+
+            value = EncodingUtil.convertToString(decrypt.decryptByteArray(decodedContent), Charset.forName(defaultCharset));
+            //value = new String(decrypt.decryptByteArray(decodedContent), Charset.forName(defaultCharset));
         }
         return this;
     }

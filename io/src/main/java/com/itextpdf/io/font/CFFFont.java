@@ -1081,11 +1081,11 @@ public class CFFFont {
                 } else if (key=="ROS")
                     fonts[j].isCID = true;
                 else if (key=="Private") {
-                    fonts[j].privateLength  = ((Integer)args[0]).intValue();
-                    fonts[j].privateOffset  = ((Integer)args[1]).intValue();
+                    fonts[j].privateLength  = (int) ((Integer)args[0]).intValue();
+                    fonts[j].privateOffset  = (int) ((Integer)args[1]).intValue();
                 }
                 else if (key=="charset"){
-                    fonts[j].charsetOffset = ((Integer)args[0]).intValue();
+                    fonts[j].charsetOffset = (int) ((Integer)args[0]).intValue();
 
                 }
 //                else if (key=="Encoding"){
@@ -1096,18 +1096,18 @@ public class CFFFont {
 //                    }
 //                }
                 else if (key=="CharStrings") {
-                    fonts[j].charstringsOffset = ((Integer)args[0]).intValue();
+                    fonts[j].charstringsOffset = (int) ((Integer)args[0]).intValue();
                     //System.err.println("charstrings "+fonts[j].charstringsOffset);
                     // Added by Oren & Ygal
                     int p = getPosition();
                     fonts[j].charstringsOffsets = getIndex(fonts[j].charstringsOffset);
                     seek(p);
                 } else if (key=="FDArray")
-                    fonts[j].fdarrayOffset = ((Integer)args[0]).intValue();
+                    fonts[j].fdarrayOffset = (int) ((Integer)args[0]).intValue();
                 else if (key=="FDSelect")
-                    fonts[j].fdselectOffset = ((Integer)args[0]).intValue();
+                    fonts[j].fdselectOffset = (int) ((Integer)args[0]).intValue();
                 else if (key=="CharstringType")
-                    fonts[j].CharstringType = ((Integer)args[0]).intValue();
+                    fonts[j].CharstringType = (int) ((Integer)args[0]).intValue();
             }
 
             // private dict
@@ -1119,7 +1119,7 @@ public class CFFFont {
                     if (key=="Subrs")
                         //Add the private offset to the lsubrs since the offset is
                         // relative to the beginning of the PrivateDict
-                        fonts[j].privateSubrs = ((Integer)args[0]).intValue()+fonts[j].privateOffset;
+                        fonts[j].privateSubrs = (int) ((Integer)args[0]).intValue()+fonts[j].privateOffset;
                 }
             }
 
@@ -1137,8 +1137,8 @@ public class CFFFont {
                     while (getPosition() < fdarrayOffsets[k+1]) {
                         getDictItem();
                         if (key=="Private") {
-                            fonts[j].fdprivateLengths[k]  = ((Integer)args[0]).intValue();
-                            fonts[j].fdprivateOffsets[k]  = ((Integer)args[1]).intValue();
+                            fonts[j].fdprivateLengths[k]  = (int) ((Integer)args[0]).intValue();
+                            fonts[j].fdprivateOffsets[k]  = (int) ((Integer)args[1]).intValue();
                         }
                     }
                 }

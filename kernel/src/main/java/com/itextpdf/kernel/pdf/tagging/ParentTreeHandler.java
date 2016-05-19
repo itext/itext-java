@@ -120,10 +120,10 @@ class ParentTreeHandler implements Serializable {
 
     public int getNextMcidForPage(PdfPage page) {
         TreeMap<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(page.getPdfObject().getIndirectReference());
-        if (pageMcrs == null || pageMcrs.isEmpty()) {
+        if (pageMcrs == null || pageMcrs.size() == 0) {
             return 0;
         } else {
-            int lastKey = pageMcrs.lastKey();
+            int lastKey = pageMcrs.lastEntry().getKey();
             if (lastKey < 0) {
                 return 0;
             }
@@ -190,15 +190,11 @@ class ParentTreeHandler implements Serializable {
                     }
                 }
 
-                Integer keyToRemove = null;
                 for (Map.Entry<Integer, PdfMcr> entry : pageMcrs.entrySet()) {
                     if (entry.getValue().getPdfObject() == mcrToUnregister.getPdfObject()) {
-                        keyToRemove = entry.getKey();
+                        pageMcrs.remove(entry.getKey());
                         break;
                     }
-                }
-                if (keyToRemove != null) {
-                    pageMcrs.remove(keyToRemove);
                 }
             } else {
                 pageMcrs.remove(mcrToUnregister.getMcid());
@@ -270,7 +266,7 @@ class ParentTreeHandler implements Serializable {
         }
 
 
-        if (!parentsOfPageMcrs.isEmpty()) {
+        if (parentsOfPageMcrs.size() > 0) {
             parentsOfPageMcrs.makeIndirect(structTreeRoot.getDocument());
             parentTree.addEntry(pageStructParentIndex, parentsOfPageMcrs);
             parentsOfPageMcrs.flush();

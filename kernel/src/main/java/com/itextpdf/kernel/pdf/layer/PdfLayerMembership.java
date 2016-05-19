@@ -101,8 +101,11 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
      */
     public Collection<PdfLayer> getLayers() {
         final PdfObject layers = getPdfObject().get(PdfName.OCGs);
-        if (layers instanceof PdfDictionary)
-            return new ArrayList<PdfLayer>() {{add(new PdfLayer(((PdfDictionary) layers).makeIndirect(getDocument())));}};
+        if (layers instanceof PdfDictionary) {
+            List<PdfLayer> list = new ArrayList<>();
+            list.add(new PdfLayer(((PdfDictionary) layers).makeIndirect(getDocument())));
+            return list;
+        }
         else if (layers instanceof PdfArray) {
             List<PdfLayer> layerList = new ArrayList<>();
             for (int ind = 0; ind < ((PdfArray) layers).size(); ind++) {

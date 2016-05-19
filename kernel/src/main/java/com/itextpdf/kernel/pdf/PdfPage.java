@@ -46,19 +46,21 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
-import com.itextpdf.kernel.pdf.tagging.*;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -67,9 +69,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
@@ -109,7 +108,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.MediaBox, new PdfArray(pageSize));
         getPdfObject().put(PdfName.TrimBox, new PdfArray(pageSize));
         if (pdfDocument.isTagged()) {
-            structParents = pdfDocument.getNextStructParentIndex();
+            structParents = (int) pdfDocument.getNextStructParentIndex();
             getPdfObject().put(PdfName.StructParents, new PdfNumber(structParents));
         }
     }
@@ -307,7 +306,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             }
         }
         if (toDocument.isTagged()) {
-            page.structParents = toDocument.getNextStructParentIndex();
+            page.structParents = (int) toDocument.getNextStructParentIndex();
             page.getPdfObject().put(PdfName.StructParents, new PdfNumber(page.structParents));
         }
 
@@ -527,7 +526,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (n != null) {
                 structParents = n.intValue();
             } else {
-                structParents = getDocument().getNextStructParentIndex();
+                structParents = (int) getDocument().getNextStructParentIndex();
             }
         }
         return structParents;
@@ -614,7 +613,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (tagPointer != null) {
                 boolean standardAnnotTagRole = tagPointer.getRole().equals(PdfName.Annot)
                         || tagPointer.getRole().equals(PdfName.Form);
-                if (tagPointer.getKidsRoles().isEmpty() && standardAnnotTagRole) {
+                if (tagPointer.getKidsRoles().size() == 0 && standardAnnotTagRole) {
                     tagPointer.removeTag();
                 }
             }

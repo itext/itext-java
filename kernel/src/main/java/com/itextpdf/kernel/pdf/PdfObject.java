@@ -47,12 +47,11 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.BadPasswordException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class PdfObject implements Serializable {
 
@@ -450,7 +449,7 @@ public abstract class PdfObject implements Serializable {
      * @param state special flag state to clear
      */
     protected PdfObject clearState(short state) {
-        this.state &= ~state;
+        this.state &= (short) ~state;
         return this;
     }
 
