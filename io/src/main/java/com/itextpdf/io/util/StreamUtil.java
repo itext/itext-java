@@ -49,11 +49,7 @@ import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.IRandomAccessSource;
 
-import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 public final class StreamUtil {
 
@@ -263,5 +259,19 @@ public final class StreamUtil {
             }
             n += count;
         }
+    }
+
+    public static InputStream correctInputStreamForWavFile(InputStream is) throws IOException {
+        String header = "";
+        InputStream bufferedIn = new BufferedInputStream(is);
+        bufferedIn.mark(0);
+        for (int i = 0; i < 4; i++) {
+            header = header + (char) bufferedIn.read();
+        }
+        bufferedIn.reset();
+        if (header.equals("RIFF")) {
+            bufferedIn.read();
+        }
+        return bufferedIn;
     }
 }
