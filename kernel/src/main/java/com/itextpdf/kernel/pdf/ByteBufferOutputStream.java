@@ -46,13 +46,11 @@ package com.itextpdf.kernel.pdf;
 
 
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.util.DecimalFormatUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
 
 /**
  * Acts like a <CODE>StringBuffer</CODE> but works with <CODE>byte</CODE> arrays.
@@ -78,7 +76,6 @@ public class ByteBufferOutputStream extends OutputStream {
      * If <CODE>false</CODE> uses the faster, although less precise, representation.
      */    
     public static boolean HIGH_PRECISION = false;
-    private static final DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.US);
     
     /** Creates new ByteBufferOutputStream with capacity 128 */
     public ByteBufferOutputStream() {
@@ -325,8 +322,7 @@ public class ByteBufferOutputStream extends OutputStream {
      */
     public static String formatDouble(double d, ByteBufferOutputStream buf) {
         if (HIGH_PRECISION) {
-            DecimalFormat dn = new DecimalFormat("0.######", dfs);
-            String sform = dn.format(d);
+            String sform = DecimalFormatUtil.formatNumber(d, "0.######");
             if (buf == null)
                 return sform;
             else {
