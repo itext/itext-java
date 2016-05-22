@@ -40,7 +40,6 @@ import com.itextpdf.kernel.xmp.properties.XMPAliasInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -56,14 +55,14 @@ import java.util.regex.Pattern;
 public final class XMPSchemaRegistryImpl implements XMPSchemaRegistry, XMPConst
 {
 	/** a map from a namespace URI to its registered prefix */
-	private Map namespaceToPrefixMap = new HashMap();
+	private Map<String, String> namespaceToPrefixMap = new HashMap<>();
 
 	/** a map from a prefix to the associated namespace URI */
-	private Map prefixToNamespaceMap = new HashMap();
+	private Map<String, String> prefixToNamespaceMap = new HashMap<>();
 
 	/** a map of all registered aliases. 
 	 *  The map is a relationship from a qname to an <code>XMPAliasInfo</code>-object. */
-	private Map aliasMap = new HashMap();
+	private Map<String, XMPAliasInfo> aliasMap = new HashMap<>();
 	/** The pattern that must not be contained in simple properties */
 	private Pattern p = Pattern.compile("[/*?\\[\\]]");
 
@@ -110,8 +109,8 @@ public final class XMPSchemaRegistryImpl implements XMPSchemaRegistry, XMPConst
 			throw new XMPException("The prefix is a bad XML name", XMPError.BADXML);
 		}
 		
-		String registeredPrefix = (String) namespaceToPrefixMap.get(namespaceURI);
-		String registeredNS = (String) prefixToNamespaceMap.get(suggestedPrefix);
+		String registeredPrefix = namespaceToPrefixMap.get(namespaceURI);
+		String registeredNS = prefixToNamespaceMap.get(suggestedPrefix);
 		if (registeredPrefix != null)
 		{
 			// Return the actual prefix
@@ -160,7 +159,7 @@ public final class XMPSchemaRegistryImpl implements XMPSchemaRegistry, XMPConst
 	 */
 	public synchronized String getNamespacePrefix(String namespaceURI)
 	{
-		return (String) namespaceToPrefixMap.get(namespaceURI);
+		return namespaceToPrefixMap.get(namespaceURI);
 	}
 
 
@@ -173,7 +172,7 @@ public final class XMPSchemaRegistryImpl implements XMPSchemaRegistry, XMPConst
 		{
 			namespacePrefix += ":";
 		}
-		return (String) prefixToNamespaceMap.get(namespacePrefix);
+		return prefixToNamespaceMap.get(namespacePrefix);
 	}
 
 
@@ -182,7 +181,7 @@ public final class XMPSchemaRegistryImpl implements XMPSchemaRegistry, XMPConst
 	 */
 	public synchronized Map getNamespaces()
 	{
-		return Collections.unmodifiableMap(new TreeMap(namespaceToPrefixMap));
+		return Collections.unmodifiableMap(new TreeMap<>(namespaceToPrefixMap));
 	}
 	
 	
@@ -191,7 +190,7 @@ public final class XMPSchemaRegistryImpl implements XMPSchemaRegistry, XMPConst
 	 */
 	public synchronized Map getPrefixes()
 	{
-		return Collections.unmodifiableMap(new TreeMap(prefixToNamespaceMap));
+		return Collections.unmodifiableMap(new TreeMap<>(prefixToNamespaceMap));
 	}
 	
 	
@@ -289,7 +288,7 @@ public final class XMPSchemaRegistryImpl implements XMPSchemaRegistry, XMPConst
 			return null;
 		}
 		
-		return (XMPAliasInfo) aliasMap.get(aliasPrefix + aliasProp);
+		return aliasMap.get(aliasPrefix + aliasProp);
 	}
 
 
@@ -298,7 +297,7 @@ public final class XMPSchemaRegistryImpl implements XMPSchemaRegistry, XMPConst
 	 */
 	public synchronized XMPAliasInfo findAlias(String qname)
 	{
-		return (XMPAliasInfo) aliasMap.get(qname);
+		return aliasMap.get(qname);
 	}
 
 	
@@ -308,20 +307,17 @@ public final class XMPSchemaRegistryImpl implements XMPSchemaRegistry, XMPConst
 	public synchronized XMPAliasInfo[] findAliases(String aliasNS)
 	{
 		String prefix = getNamespacePrefix(aliasNS);
-		List result = new ArrayList(); 
+		List<XMPAliasInfo> result = new ArrayList<>();
 		if (prefix != null)
 		{
-			for (Iterator it = aliasMap.keySet().iterator(); it.hasNext();)
-			{
-				String qname = (String) it.next();
-				if (qname.startsWith(prefix))
-				{
+			for (String qname : aliasMap.keySet()) {
+				if (qname.startsWith(prefix)) {
 					result.add(findAlias(qname));
 				}
 			}
 			
 		}
-		return (XMPAliasInfo[]) result.toArray(new XMPAliasInfo[result.size()]);
+		return result.toArray(new XMPAliasInfo[result.size()]);
 	}	
 	
 	
@@ -458,7 +454,7 @@ public final class XMPSchemaRegistryImpl implements XMPSchemaRegistry, XMPConst
 	 */
 	public synchronized Map getAliases()
 	{
-		return Collections.unmodifiableMap(new TreeMap(aliasMap));
+		return Collections.unmodifiableMap(new TreeMap<>(aliasMap));
 	}
 	
 	
