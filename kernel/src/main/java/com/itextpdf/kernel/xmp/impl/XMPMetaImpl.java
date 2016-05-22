@@ -54,7 +54,7 @@ import java.util.Iterator;
  * 
  * @since 17.02.2006
  */
-public class XMPMetaImpl implements XMPConst, XMPMeta
+public class XMPMetaImpl implements XMPMeta, XMPConst
 {
 	/** Property values are Strings by default */
 	private static final int VALUE_STRING = 0;
@@ -1410,16 +1410,16 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 		switch (valueType)
 		{
 		case VALUE_BOOLEAN:
-			value = new Boolean(XMPUtils.convertToBoolean(rawValue));
+			value = XMPUtils.convertToBoolean(rawValue);
 			break;
 		case VALUE_INTEGER:
-			value = new Integer(XMPUtils.convertToInteger(rawValue));
+			value = XMPUtils.convertToInteger(rawValue);
 			break;
 		case VALUE_LONG:
-			value = new Long(XMPUtils.convertToLong(rawValue));
+			value = XMPUtils.convertToLong(rawValue);
 			break;
 		case VALUE_DOUBLE:
-			value = new Double(XMPUtils.convertToDouble(rawValue));
+			value = XMPUtils.convertToDouble(rawValue);
 			break;
 		case VALUE_DATE:
 			value = XMPUtils.convertToDate(rawValue);

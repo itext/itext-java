@@ -87,7 +87,7 @@ public class XMPSerializerRDF
 	/** */
 	private static final String RDF_EMPTY_STRUCT  = "<rdf:Description/>";
 	/** a set of all rdf attribute qualifier */
-	static final Set RDF_ATTR_QUALIFIER = new HashSet(Arrays.asList(new String[] {
+	static final Set<String> RDF_ATTR_QUALIFIER = new HashSet<>(Arrays.asList(new String[] {
 			XMPConst.XML_LANG, "rdf:resource", "rdf:ID", "rdf:bagID", "rdf:nodeID" }));
 	
 	/** the metadata object to be serialized. */ 
@@ -395,7 +395,7 @@ public class XMPSerializerRDF
 		writeTreeName();
 
 		// Write all necessary xmlns attributes.
-		Set usedPrefixes = new HashSet();
+		Set<String> usedPrefixes = new HashSet<>();
 		usedPrefixes.add("xml");
 		usedPrefixes.add("rdf");
 
@@ -583,9 +583,9 @@ public class XMPSerializerRDF
 				// This node has only attribute qualifiers. Emit as a property element.
 				if (!node.getOptions().isCompositeProperty())
 				{
-					Object[] result = serializeCompactRDFSimpleProp(node);
-					emitEndTag = ((Boolean) result[0]).booleanValue();
-					indentEndTag = ((Boolean) result[1]).booleanValue();
+					boolean[] result = serializeCompactRDFSimpleProp(node);
+					emitEndTag = result[0];
+					indentEndTag = result[1];
 				}
 				else if (node.getOptions().isArray())
 				{
@@ -623,11 +623,11 @@ public class XMPSerializerRDF
 	 * @return Returns an array containing the flags emitEndTag and indentEndTag.
 	 * @throws java.io.IOException Forwards the writer exceptions.
 	 */
-	private Object[] serializeCompactRDFSimpleProp(XMPNode node) throws IOException
+	private boolean[] serializeCompactRDFSimpleProp(XMPNode node) throws IOException
 	{
 		// This is a simple property.
-		Boolean emitEndTag = Boolean.TRUE;
-		Boolean indentEndTag = Boolean.TRUE;
+		boolean emitEndTag = true;
+		boolean indentEndTag = true;
 
 		if (node.getOptions().isURI())
 		{
@@ -635,22 +635,22 @@ public class XMPSerializerRDF
 			appendNodeValue(node.getValue(), true);
 			write("\"/>");
 			writeNewline();
-			emitEndTag = Boolean.FALSE;
+			emitEndTag = false;
 		}
 		else if (node.getValue() == null  ||  node.getValue().length() == 0)
 		{
 			write("/>");
 			writeNewline();
-			emitEndTag = Boolean.FALSE;
+			emitEndTag = false;
 		}
 		else
 		{
 			write('>');
 			appendNodeValue (node.getValue(), false);
-			indentEndTag = Boolean.FALSE;
+			indentEndTag = false;
 		}
 
-		return new Object[] {emitEndTag, indentEndTag};
+		return new boolean[] {emitEndTag, indentEndTag};
 	}
 
 
@@ -849,7 +849,7 @@ public class XMPSerializerRDF
 	 * @param indent the current indent level
 	 * @throws java.io.IOException Forwards all writer exceptions.
 	 */
-	private void declareUsedNamespaces(XMPNode node, Set usedPrefixes, int indent)
+	private void declareUsedNamespaces(XMPNode node, Set<String> usedPrefixes, int indent)
 			throws IOException
 	{
 		if (node.getOptions().isSchemaNode())
@@ -890,7 +890,7 @@ public class XMPSerializerRDF
 	 * @param indent the current indent level
 	 * @throws java.io.IOException Forwards all writer exceptions.
 	 */
-	private void declareNamespace(String prefix, String namespace, Set usedPrefixes, int indent)
+	private void declareNamespace(String prefix, String namespace, Set<String> usedPrefixes, int indent)
 			throws IOException
 	{
 		if (namespace == null)
@@ -937,7 +937,7 @@ public class XMPSerializerRDF
 		write(RDF_SCHEMA_START);
 		writeTreeName();
 
-		Set usedPrefixes = new HashSet();
+		Set<String> usedPrefixes = new HashSet<>();
 		usedPrefixes.add("xml");
 		usedPrefixes.add("rdf");
 

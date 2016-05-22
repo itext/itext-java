@@ -56,7 +56,7 @@ import java.util.ListIterator;
  * 
  * @since 21.02.2006
  */
-public class XMPNode implements Comparable
+class XMPNode implements Comparable
 {
 	/** name of the node, contains different information depending of the node kind */
 	private String name;
