@@ -47,9 +47,6 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.HashMap;
 import java.util.Map;
 
 public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
@@ -842,19 +839,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
      */
 
     static {
-        Field[] fields = PdfName.class.getDeclaredFields();
-        staticNames = new HashMap<>(fields.length);
-        final int flags = Modifier.STATIC | Modifier.PUBLIC | Modifier.FINAL;
-        try {
-            for (Field field : fields) {
-                if ((field.getModifiers() & flags) == flags && field.getType().equals(PdfName.class)) {
-                    PdfName name = (PdfName) field.get(null);
-                    staticNames.put(name.getValue(), name);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        staticNames = PdfNameLoader.loadNames();
     }
 
     private static PdfName createDirectName(String name) {
