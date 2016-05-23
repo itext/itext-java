@@ -63,7 +63,7 @@ public class ByteBufferOutputStream extends OutputStream {
     protected int count;
     
     /** The buffer where the bytes are stored. */
-    protected byte buf[];
+    protected byte[] buf;
     
     private static int byteCacheSize = 0;
     
@@ -604,11 +604,11 @@ public class ByteBufferOutputStream extends OutputStream {
      * the specified output stream argument, as if by calling the output
      * stream's write method using <code>out.write(buf, 0, count)</code>.
      *
-     * @param      out   the output stream to which to write the data.
+     * @param      output   the output stream to which to write the data.
      * @exception  java.io.IOException  if an I/O error occurs.
      */
-    public void writeTo(OutputStream out) throws IOException {
-        out.write(buf, 0, count);
+    public void writeTo(OutputStream output) throws IOException {
+        output.write(buf, 0, count);
     }
     
     public void write(int b) throws IOException {
