@@ -105,8 +105,8 @@ class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
         DocTrueTypeFont fontProgram = new DocTrueTypeFont(fontDictionary);
         PdfDictionary fontDescriptor = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
         fillFontDescriptor(fontProgram, fontDescriptor);
-        int dw = fontDescriptor != null && fontDescriptor.containsKey(PdfName.DW)
-                ? fontDescriptor.getAsInt(PdfName.DW) : 1000;
+        int dw = (fontDescriptor != null && fontDescriptor.containsKey(PdfName.DW))
+                ? (int) fontDescriptor.getAsInt(PdfName.DW) : 1000;
         if (toUnicode != null) {
             IntHashtable widths = FontUtil.convertCompositeWidthsArray(fontDictionary.getAsArray(PdfName.W));
             fontProgram.avgWidth = 0;

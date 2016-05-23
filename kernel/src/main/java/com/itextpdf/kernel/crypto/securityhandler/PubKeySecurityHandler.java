@@ -178,7 +178,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         addAllRecipients(certs, permissions);
 
         Integer keyLen = encryptionDictionary.getAsInt(PdfName.Length);
-        int keyLength = keyLen != null ? keyLen : 40;
+        int keyLength = keyLen != null ? (int) keyLen : 40;
 
         String digestAlgorithm = getDigestAlgorithm();
         byte[] digest = computeGlobalKey(digestAlgorithm, encryptMetadata);
@@ -195,7 +195,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
                 certificateKeyProvider, externalDecryptionProcess, encryptMetadata, digestAlgorithm);
 
         Integer keyLen = encryptionDictionary.getAsInt(PdfName.Length);
-        int keyLength = keyLen != null ? keyLen : 40;
+        int keyLength = keyLen != null ? (int) keyLen : 40;
         initKey(encryptionKey, keyLength);
     }
 

@@ -233,6 +233,6 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
 
     private int getKeyLength(PdfDictionary encryptionDict) {
         Integer keyLength = encryptionDict.getAsInt(PdfName.Length);
-        return keyLength != null ? keyLength : 40;
+        return keyLength != null ? (int) keyLength : 40;
     }
 }
