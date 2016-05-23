@@ -45,12 +45,12 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.io.util.DecimalFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.Version;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
@@ -62,8 +62,8 @@ class PdfXrefTable implements Serializable {
     private static final int INITIAL_CAPACITY = 32;
     private static final int MAX_GENERATION = 65535;
 
-    private static final DecimalFormat objectOffsetFormatter = new DecimalFormat("0000000000");
-    private static final DecimalFormat objectGenerationFormatter = new DecimalFormat("00000");
+    private static final String objectOffsetFormatter = "0000000000";
+    private static final String objectGenerationFormatter = "00000";
     private static final byte[] freeXRefEntry = ByteUtils.getIsoBytes("f \n");
     private static final byte[] inUseXRefEntry = ByteUtils.getIsoBytes("n \n");
 
@@ -292,8 +292,8 @@ class PdfXrefTable implements Serializable {
                 writer.writeInteger(first).writeSpace().writeInteger(len).writeByte((byte) '\n');
                 for (int i = first; i < first + len; i++) {
                     PdfIndirectReference reference = xrefTable.get(i);
-                    writer.writeString(objectOffsetFormatter.format(reference.getOffset())).writeSpace().
-                            writeString(objectGenerationFormatter.format(reference.getGenNumber())).writeSpace();
+                    writer.writeString(DecimalFormatUtil.formatNumber(reference.getOffset(), objectOffsetFormatter)).writeSpace().
+                            writeString(DecimalFormatUtil.formatNumber(reference.getGenNumber(), objectGenerationFormatter)).writeSpace();
                     if (reference.isFree()) {
                         writer.writeBytes(freeXRefEntry);
                     } else {
