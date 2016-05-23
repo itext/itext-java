@@ -117,4 +117,8 @@ public final class FileUtil {
         return new PrintWriter(new OutputStreamWriter(output, encoding));
     }
 
+    public static java.io.OutputStream getBufferedOutputStream(String filename) throws FileNotFoundException {
+        return new BufferedOutputStream(new FileOutputStream(filename));
+    }
+
 }

@@ -46,11 +46,17 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.kernel.PdfException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.OutputStream;
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -89,7 +95,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     }
 
     public PdfWriter(java.io.OutputStream os, WriterProperties properties) {
-        super(new BufferedOutputStream(os));
+        super(os);
         this.properties = properties;
         EncryptionProperties encryptProps = properties.encryptionProperties;
         if (properties.isStandardEncryptionUsed()) {
@@ -105,11 +111,11 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     }
 
     public PdfWriter(String filename) throws FileNotFoundException {
-        this(new FileOutputStream(filename), new WriterProperties());
+        this(filename, new WriterProperties());
     }
 
     public PdfWriter(String filename, WriterProperties properties) throws FileNotFoundException {
-        this(new FileOutputStream(filename), properties);
+        this(FileUtil.getBufferedOutputStream(filename), properties);
     }
 
     /**
@@ -467,7 +473,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
         in.defaultReadObject();
         if (outputStream == null) {
-            outputStream = new BufferedOutputStream(new ByteArrayOutputStream().assignBytes(getDebugBytes()));
+            outputStream = new ByteArrayOutputStream().assignBytes(getDebugBytes());
         }
     }
 
