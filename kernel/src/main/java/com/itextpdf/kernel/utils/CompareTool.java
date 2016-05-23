@@ -1034,8 +1034,8 @@ public class CompareTool {
                         explicitOutDest = (PdfArray) outDestObject;
                         break;
                     case PdfObject.NAME:
-                        explicitCmpDest = (PdfArray) cmpNamedDestinations.get(cmpDestObject);
-                        explicitOutDest = (PdfArray) outNamedDestinations.get(outDestObject);
+                        explicitCmpDest = (PdfArray) cmpNamedDestinations.get(((PdfName)cmpDestObject).getValue());
+                        explicitOutDest = (PdfArray) outNamedDestinations.get(((PdfName)outDestObject).getValue());
                         break;
                     case PdfObject.STRING:
                         explicitCmpDest = (PdfArray) cmpNamedDestinations.get(((PdfString) cmpDestObject).toUnicodeString());
