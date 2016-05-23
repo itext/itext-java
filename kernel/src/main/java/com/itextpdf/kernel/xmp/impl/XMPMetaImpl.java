@@ -54,7 +54,7 @@ import java.util.Iterator;
  * 
  * @since 17.02.2006
  */
-public class XMPMetaImpl implements XMPMeta, XMPConst
+public class XMPMetaImpl implements XMPConst, XMPMeta
 {
 	/** Property values are Strings by default */
 	private static final int VALUE_STRING = 0;

@@ -52,7 +52,7 @@ import java.util.regex.Pattern;
  * 
  * @since 27.01.2006
  */
-public final class XMPSchemaRegistryImpl implements XMPSchemaRegistry, XMPConst
+public final class XMPSchemaRegistryImpl implements XMPConst, XMPSchemaRegistry
 {
 	/** a map from a namespace URI to its registered prefix */
 	private Map<String, String> namespaceToPrefixMap = new HashMap<>();
