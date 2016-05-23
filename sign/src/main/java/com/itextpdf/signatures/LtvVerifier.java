@@ -56,7 +56,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
@@ -314,11 +313,9 @@ public class LtvVerifier extends RootStoreVerifier {
         PdfArray crlarray = dss.getAsArray(PdfName.CRLs);
         if (crlarray == null)
             return crls;
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
         for (int i = 0; i < crlarray.size(); i++) {
             PdfStream stream = crlarray.getAsStream(i);
-            X509CRL crl = (X509CRL)cf.generateCRL(new ByteArrayInputStream(stream.getBytes()));
-            crls.add(crl);
+            crls.add((X509CRL) SignUtils.parseCrlFromStream(new ByteArrayInputStream(stream.getBytes())));
         }
         return crls;
     }
@@ -343,7 +340,7 @@ public class LtvVerifier extends RootStoreVerifier {
                 try {
                     ocsps.add((BasicOCSPResp) ocspResponse.getResponseObject());
                 } catch (OCSPException e) {
-                    throw new GeneralSecurityException(e);
+                    throw new GeneralSecurityException(e.toString());
                 }
         }
         return ocsps;

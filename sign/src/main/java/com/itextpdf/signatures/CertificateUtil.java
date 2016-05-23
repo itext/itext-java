@@ -50,7 +50,6 @@ import org.bouncycastle.asn1.x509.Extension;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.security.cert.*;
 
@@ -123,9 +122,7 @@ public class CertificateUtil {
     public static CRL getCRL(String url) throws IOException, CertificateException, CRLException {
         if (url == null)
             return null;
-        InputStream is = new URL(url).openStream();
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-        return (CRL)cf.generateCRL(is);
+        return SignUtils.parseCrlFromStream(new URL(url).openStream());
     }
 
     // Online Certificate Status Protocol
@@ -178,7 +175,7 @@ public class CertificateUtil {
      * @throws IOException
      */
     public static String getTSAURL(X509Certificate certificate) {
-        byte[] der = certificate.getExtensionValue(SecurityIDs.ID_TSA);
+        byte[] der = SignUtils.getExtensionValueByOid(certificate, SecurityIDs.ID_TSA);
         if(der == null)
             return null;
         ASN1Primitive asn1obj;
@@ -202,7 +199,7 @@ public class CertificateUtil {
      * @throws IOException
      */
     private static ASN1Primitive getExtensionValue(X509Certificate certificate, String oid) throws IOException {
-        byte[] bytes = certificate.getExtensionValue(oid);
+        byte[] bytes = SignUtils.getExtensionValueByOid(certificate, oid);
         if (bytes == null) {
             return null;
         }

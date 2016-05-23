@@ -62,16 +62,25 @@ import java.util.*;
 public class CertificateVerification {
 
     /**
+     * Verifies a single certificate for the current date.
+     * @param cert the certificate to verify
+     * @param crls the certificate revocation list or <CODE>null</CODE>
+     * @return a <CODE>String</CODE> with the error description or <CODE>null</CODE>
+     * if no error
+     */
+    public static String verifyCertificate(X509Certificate cert, Collection<CRL> crls) {
+        return verifyCertificate(cert, crls, new GregorianCalendar());
+    }
+
+    /**
      * Verifies a single certificate.
      * @param cert the certificate to verify
      * @param crls the certificate revocation list or <CODE>null</CODE>
-     * @param calendar the date or <CODE>null</CODE> for the current date
+     * @param calendar the date, shall not be null
      * @return a <CODE>String</CODE> with the error description or <CODE>null</CODE>
      * if no error
      */
     public static String verifyCertificate(X509Certificate cert, Collection<CRL> crls, Calendar calendar) {
-        if (calendar == null)
-            calendar = new GregorianCalendar();
         if (cert.hasUnsupportedCriticalExtension()) {
             for (String oid : cert.getCriticalExtensionOIDs()) {
                 // KEY USAGE and DIGITAL SIGNING is ALLOWED
@@ -104,20 +113,33 @@ public class CertificateVerification {
         return null;
     }
 
+
+
+    /**
+     * Verifies a certificate chain against a KeyStore for the current date.
+     * @param certs the certificate chain
+     * @param keystore the <CODE>KeyStore</CODE>
+     * @param crls the certificate revocation list or <CODE>null</CODE>
+     * @return <CODE>null</CODE> if the certificate chain could be validated or a
+     * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
+     * failed certificate and <CODE>error</CODE> is the error message
+     */
+    public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore, Collection<CRL> crls) {
+        return verifyCertificates(certs, keystore, crls, new GregorianCalendar());
+    }
+
     /**
      * Verifies a certificate chain against a KeyStore.
      * @param certs the certificate chain
      * @param keystore the <CODE>KeyStore</CODE>
      * @param crls the certificate revocation list or <CODE>null</CODE>
-     * @param calendar the date or <CODE>null</CODE> for the current date
+     * @param calendar the date, shall not be null
      * @return <CODE>null</CODE> if the certificate chain could be validated or a
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
      */
     public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore, Collection<CRL> crls, Calendar calendar) {
         List<VerificationException> result = new ArrayList<>();
-        if (calendar == null)
-            calendar = new GregorianCalendar();
         for (int k = 0; k < certs.length; ++k) {
             X509Certificate cert = (X509Certificate)certs[k];
             String err = verifyCertificate(cert, crls, calendar);
@@ -168,10 +190,22 @@ public class CertificateVerification {
     }
 
     /**
+     * Verifies a certificate chain against a KeyStore for the current date.
+     * @param certs the certificate chain
+     * @param keystore the <CODE>KeyStore</CODE>
+     * @return <CODE>null</CODE> if the certificate chain could be validated or a
+     * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
+     * failed certificate and <CODE>error</CODE> is the error message
+     */
+    public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore) {
+        return verifyCertificates(certs, keystore, new GregorianCalendar());
+    }
+
+    /**
      * Verifies a certificate chain against a KeyStore.
      * @param certs the certificate chain
      * @param keystore the <CODE>KeyStore</CODE>
-     * @param calendar the date or <CODE>null</CODE> for the current date
+     * @param calendar the date, shall not be null
      * @return <CODE>null</CODE> if the certificate chain could be validated or a
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
