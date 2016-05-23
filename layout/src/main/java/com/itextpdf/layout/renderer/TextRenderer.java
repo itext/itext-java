@@ -217,7 +217,7 @@ public class TextRenderer extends AbstractRenderer {
                 if (noPrint(currentGlyph))
                     continue;
 
-                if (tabAnchorCharacter != null && tabAnchorCharacter == text.get(ind).getUnicode().intValue()) {
+                if (tabAnchorCharacter != null && tabAnchorCharacter == (int)text.get(ind).getUnicode()) {
                     tabAnchorCharacterPosition = currentLineWidth + nonBreakablePartFullWidth;
                     tabAnchorCharacter = null;
                 }
