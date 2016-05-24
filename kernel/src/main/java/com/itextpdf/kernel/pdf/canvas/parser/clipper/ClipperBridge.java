@@ -224,6 +224,7 @@ public class ClipperBridge {
         return fillType;
     }
 
+    @Deprecated
     public static void addContour(com.itextpdf.kernel.geom.Path path, List<Point.LongPoint> contour, Boolean close) {
         List<com.itextpdf.kernel.geom.Point> floatContour = convertToFloatPoints(contour);
         Iterator<com.itextpdf.kernel.geom.Point> iter = floatContour.iterator();
@@ -236,7 +237,7 @@ public class ClipperBridge {
             path.lineTo((float) point.getX(), (float) point.getY());
         }
 
-        if (close) {
+        if ((boolean) close) {
             path.closeSubpath();
         }
     }
