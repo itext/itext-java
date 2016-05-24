@@ -404,8 +404,8 @@ public class PdfReader implements Closeable, Serializable {
 
     public long getPermissions() {
         long perm = 0;
-        if (encrypted && decrypt.getPermissions()!= null) {
-            perm = decrypt.getPermissions();
+        if (encrypted && decrypt.getPermissions() != null) {
+            perm = (long) decrypt.getPermissions();
         }
         return perm;
     }

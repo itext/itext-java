@@ -264,9 +264,9 @@ public class PdfImageXObject extends PdfXObject {
                 Object value = entry.getValue();
                 String key = entry.getKey();
                 if (value instanceof Integer) {
-                    dictionary.put(new PdfName(key), new PdfNumber((Integer) value));
+                    dictionary.put(new PdfName(key), new PdfNumber((int) value));
                 } else if (value instanceof Float) {
-                    dictionary.put(new PdfName(key), new PdfNumber((Float) value));
+                    dictionary.put(new PdfName(key), new PdfNumber((float) value));
                 } else if (value instanceof String) {
                     if (value.equals("Mask")) {
                         dictionary.put(PdfName.Mask, new PdfLiteral((String) value));
@@ -284,7 +284,7 @@ public class PdfImageXObject extends PdfXObject {
                     globalsStream.getOutputStream().writeBytes((byte[]) value);
                     dictionary.put(PdfName.JBIG2Globals, globalsStream);
                 } else if (value instanceof Boolean) {
-                    dictionary.put(new PdfName(key), new PdfBoolean((Boolean) value));
+                    dictionary.put(new PdfName(key), new PdfBoolean((boolean) value));
                 } else if (value instanceof Object[]) {
                     dictionary.put(new PdfName(key), createArray(stream, (Object[]) value));
                 } else if (value instanceof float[]) {
@@ -298,20 +298,21 @@ public class PdfImageXObject extends PdfXObject {
 
     private static PdfArray createArray(PdfStream stream, Object[] objects) {
         PdfArray array = new PdfArray();
-        for (Object object : objects) {
-            if (object instanceof String) {
-                String str = (String) object;
+        for (Object obj : objects) {
+            if (obj instanceof String) {
+                String str = (String) obj;
                 if (str.indexOf('/') == 0) {
                     array.add(new PdfName(str.substring(1)));
                 } else {
                     array.add(new PdfString(str));
                 }
-            } else if (object instanceof Integer) {
-                array.add(new PdfNumber((Integer) object));
-            } else if (object instanceof Float) {
-                array.add(new PdfNumber((Float) object));
-            } else if (object instanceof Map) {
-                array.add(createDictionaryFromMap(stream, (Map<String, Object>) object));
+            } else if (obj instanceof Integer) {
+                array.add(new PdfNumber((int) obj));
+            } else if (obj instanceof Float) {
+                array.add(new PdfNumber((float) obj));
+            } else {
+                //TODO instance of was removed due to autoport
+                array.add(createDictionaryFromMap(stream, (Map<String, Object>) obj));
             }
         }
         return array;

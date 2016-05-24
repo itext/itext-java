@@ -78,10 +78,10 @@ public class Rectangle implements Serializable {
      * @return common rectangle.
      */
     public static Rectangle getCommonRectangle(Rectangle... rectangles) {
-        Float ury = -Float.MAX_VALUE;
-        Float llx = Float.MAX_VALUE;
-        Float lly = Float.MAX_VALUE;
-        Float urx = -Float.MAX_VALUE;
+        float ury = -Float.MAX_VALUE;
+        float llx = Float.MAX_VALUE;
+        float lly = Float.MAX_VALUE;
+        float urx = -Float.MAX_VALUE;
         for (Rectangle rectangle : rectangles) {
             if (rectangle == null)
                 continue;

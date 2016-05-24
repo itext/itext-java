@@ -389,16 +389,16 @@ public class CanvasGraphicsState {
     public void updateFromExtGState(PdfExtGState extGState) {
         Float lw = extGState.getLineWidth();
         if (lw != null)
-            lineWidth = lw;
+            lineWidth = (float) lw;
         Integer lc = extGState.getLineCapStyle();
         if (lc != null)
-            lineCapStyle = lc;
+            lineCapStyle = (int) lc;
         Integer lj = extGState.getLineJoinStyle();
         if (lj != null)
-            lineJoinStyle = lj;
+            lineJoinStyle = (int) lj;
         Float ml = extGState.getMiterLimit();
         if (ml != null)
-            miterLimit = ml;
+            miterLimit = (float) ml;
         PdfArray d = extGState.getDashPattern();
         if (d != null)
             dashPattern = d;
@@ -407,13 +407,13 @@ public class CanvasGraphicsState {
             renderingIntent = ri;
         Boolean op = extGState.getStrokeOverprintFlag();
         if (op != null)
-            strokeOverprint = op;
+            strokeOverprint = (boolean) op;
         op = extGState.getFillOverprintFlag();
         if (op != null)
-            fillOverprint = op;
+            fillOverprint = (boolean) op;
         Integer opm = extGState.getOverprintMode();
         if (opm != null)
-            overprintMode = opm;
+            overprintMode = (int) opm;
         PdfArray fnt = extGState.getFont();
         if (fnt != null) {
             PdfDictionary fontDictionary = fnt.getAsDictionary(0);
@@ -450,13 +450,13 @@ public class CanvasGraphicsState {
             this.htp = local_htp;
         Float fl = extGState.getFlatnessTolerance();
         if (fl != null)
-            flatnessTolerance = fl;
+            flatnessTolerance = (float) fl;
         Float sm = extGState.getSmothnessTolerance();
         if (sm != null)
             smoothnessTolerance = sm;
         Boolean sa = extGState.getAutomaticStrokeAdjustmentFlag();
         if (sa != null)
-            automaticStrokeAdjustment = sa;
+            automaticStrokeAdjustment = (boolean) sa;
         PdfObject bm = extGState.getBlendMode();
         if (bm != null)
             blendMode = bm;
@@ -465,16 +465,16 @@ public class CanvasGraphicsState {
             softMask = sMask;
         Float ca = extGState.getStrokeOpacity();
         if (ca != null)
-            strokeAlpha = ca;
+            strokeAlpha = (float) ca;
         ca = extGState.getFillOpacity();
         if (ca != null)
-            fillAlpha = ca;
+            fillAlpha = (float) ca;
         Boolean ais = extGState.getAlphaSourceFlag();
         if (ais != null)
-            alphaIsShape = ais;
+            alphaIsShape = (boolean) ais;
         Boolean tk = extGState.getTextKnockoutFlag();
         if (tk != null)
-            textKnockout = tk;
+            textKnockout = (boolean) tk;
     }
 
     private void copyFrom(CanvasGraphicsState source) {

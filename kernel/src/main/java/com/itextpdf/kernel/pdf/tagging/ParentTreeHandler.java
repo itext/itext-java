@@ -123,7 +123,7 @@ class ParentTreeHandler implements Serializable {
         if (pageMcrs == null || pageMcrs.size() == 0) {
             return 0;
         } else {
-            int lastKey = pageMcrs.lastEntry().getKey();
+            int lastKey = (int) pageMcrs.lastEntry().getKey();
             if (lastKey < 0) {
                 return 0;
             }
@@ -206,7 +206,7 @@ class ParentTreeHandler implements Serializable {
         return -structParentIndex - 1;
     }
 
-    private static int keyIntoStructParentIndex(Integer key) {
+    private static int keyIntoStructParentIndex(int key) {
         return -key - 1;
     }
 
@@ -218,7 +218,7 @@ class ParentTreeHandler implements Serializable {
         int maxStructParentIndex = -1;
         for (Map.Entry<Integer, PdfObject> entry : parentTreeEntries.entrySet()) {
             if (entry.getKey() > maxStructParentIndex) {
-                maxStructParentIndex = entry.getKey();
+                maxStructParentIndex = (int) entry.getKey();
             }
 
             PdfObject entryValue = entry.getValue();
@@ -253,7 +253,7 @@ class ParentTreeHandler implements Serializable {
         for (Map.Entry<Integer, PdfMcr> entry : mcrs.entrySet()) {
             PdfMcr mcr = entry.getValue();
             if (mcr instanceof PdfObjRef) {
-                Integer structParent = keyIntoStructParentIndex(entry.getKey());
+                int structParent = keyIntoStructParentIndex((int) entry.getKey());
                 parentTree.addEntry(structParent, ((PdfStructElem) mcr.getParent()).getPdfObject());
             } else {
                 // if for some reason some mcr where not registered or don't exist, we ensure that the rest

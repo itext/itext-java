@@ -149,7 +149,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                 if (longTag.contains(gi)) {
                     continue;
                 }
-                int c = e.getKey();
+                int c = (int) e.getKey();
                 boolean skip = true;
                 for (int k = 0; k < rg.length; k += 2) {
                     if (c >= rg[k] && c <= rg[k + 1]) {

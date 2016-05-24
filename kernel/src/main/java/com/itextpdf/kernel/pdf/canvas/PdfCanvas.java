@@ -1723,7 +1723,7 @@ public class PdfCanvas {
     public PdfCanvas endLayer() {
         int num;
         if (layerDepth != null && !layerDepth.isEmpty()) {
-            num = layerDepth.get(layerDepth.size() - 1);
+            num = (int) layerDepth.get(layerDepth.size() - 1);
             layerDepth.remove(layerDepth.size() - 1);
         } else {
             throw new PdfException(PdfException.UnbalancedLayerOperators);

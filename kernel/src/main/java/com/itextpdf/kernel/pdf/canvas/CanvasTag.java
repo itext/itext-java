@@ -123,7 +123,7 @@ public class CanvasTag {
     public int getMcid() {
         int mcid = -1;
         if (properties != null) {
-           mcid = properties.getAsInt(PdfName.MCID);
+           mcid = (int) properties.getAsInt(PdfName.MCID);
         }
         if (mcid == -1) {
             throw new IllegalStateException("CanvasTag has no MCID");

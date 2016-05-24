@@ -181,7 +181,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             createParentTreeEntryForPage(getDocument().getPage(i + 1));
         }
         getPdfObject().put(PdfName.ParentTree, getParentTreeHandler().buildParentTree());
-        getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber(getDocument().getNextStructParentIndex()));
+        getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber((int) getDocument().getNextStructParentIndex()));
         flushAllKids(this);
         super.flush();
     }

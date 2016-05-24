@@ -292,7 +292,7 @@ class StructureTreeCopier {
                             // Some link annotations may be not copied, because their destination page is not copied.
                             return null;
                         }
-                        contentItemObject.put(PdfName.StructParent, new PdfNumber(toDocument.getNextStructParentIndex()));
+                        contentItemObject.put(PdfName.StructParent, new PdfNumber((int) toDocument.getNextStructParentIndex()));
                     } else {
                         mcr = new PdfMcrDictionary(copiedKid, new PdfStructElem(copiedParent));
                     }

@@ -64,7 +64,7 @@ public class PdfFunction extends PdfObjectWrapper<PdfObject> {
     }
 
     public int getType() {
-        return ((PdfDictionary)getPdfObject()).getAsInt(PdfName.FunctionType);
+        return (int) ((PdfDictionary)getPdfObject()).getAsInt(PdfName.FunctionType);
     }
 
     public boolean checkCompatibilityWithColorSpace(PdfColorSpace alternateSpace) {

@@ -641,8 +641,8 @@ public class PdfType0Font extends PdfFont {
                 buf.append(size).append(" beginbfrange\n");
             }
             --size;
-            String fromTo = CMapContentParser.toHex(unicodeGlyphs.get(k));
-            Glyph glyph = fontProgram.getGlyphByCode(unicodeGlyphs.get(k));
+            String fromTo = CMapContentParser.toHex((int) unicodeGlyphs.get(k));
+            Glyph glyph = fontProgram.getGlyphByCode((int) unicodeGlyphs.get(k));
             if (glyph.getChars() != null) {
                 StringBuilder uni = new StringBuilder(glyph.getChars().length);
                 for (char ch : glyph.getChars()) {
@@ -676,7 +676,7 @@ public class PdfType0Font extends PdfFont {
                 if (longTag.containsKey(v[0])) {
                     continue;
                 }
-                int c = e.getKey();
+                int c = (int) e.getKey();
                 boolean skip = true;
                 for (int k = 0; k < rg.length; k += 2) {
                     if (c >= rg[k] && c <= rg[k + 1]) {

@@ -124,7 +124,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public int getShadingType() {
-        return getPdfObject().getAsInt(PdfName.ShadingType);
+        return (int) getPdfObject().getAsInt(PdfName.ShadingType);
     }
 
     public PdfObject getColorSpace() {
@@ -368,7 +368,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public int getBitsPerCoordinate() {
-            return getPdfObject().getAsInt(PdfName.BitsPerCoordinate);
+            return (int) getPdfObject().getAsInt(PdfName.BitsPerCoordinate);
         }
 
         public void setBitsPerCoordinate(int bitsPerCoordinate) {
@@ -377,7 +377,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public int getBitsPerComponent() {
-            return getPdfObject().getAsInt(PdfName.BitsPerComponent);
+            return (int) getPdfObject().getAsInt(PdfName.BitsPerComponent);
         }
 
         public void setBitsPerComponent(int bitsPerComponent) {
@@ -386,7 +386,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public int getBitsPerFlag() {
-            return getPdfObject().getAsInt(PdfName.BitsPerFlag);
+            return (int) getPdfObject().getAsInt(PdfName.BitsPerFlag);
         }
 
         public void setBitsPerFlag(int bitsPerFlag) {
@@ -429,7 +429,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public int getBitsPerCoordinate() {
-            return getPdfObject().getAsInt(PdfName.BitsPerCoordinate);
+            return (int) getPdfObject().getAsInt(PdfName.BitsPerCoordinate);
         }
 
         public void setBitsPerCoordinate(int bitsPerCoordinate) {
@@ -438,7 +438,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public int getBitsPerComponent() {
-            return getPdfObject().getAsInt(PdfName.BitsPerComponent);
+            return (int) getPdfObject().getAsInt(PdfName.BitsPerComponent);
         }
 
         public void setBitsPerComponent(int bitsPerComponent) {
@@ -447,7 +447,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public int getVerticesPerRow() {
-            return getPdfObject().getAsInt(PdfName.VerticesPerRow);
+            return (int) getPdfObject().getAsInt(PdfName.VerticesPerRow);
         }
 
         public void setVerticesPerRow(int verticesPerRow) {
@@ -489,7 +489,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public int getBitsPerCoordinate() {
-            return getPdfObject().getAsInt(PdfName.BitsPerCoordinate);
+            return (int) getPdfObject().getAsInt(PdfName.BitsPerCoordinate);
         }
 
         public void setBitsPerCoordinate(int bitsPerCoordinate) {
@@ -498,7 +498,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public int getBitsPerComponent() {
-            return getPdfObject().getAsInt(PdfName.BitsPerComponent);
+            return (int) getPdfObject().getAsInt(PdfName.BitsPerComponent);
         }
 
         public void setBitsPerComponent(int bitsPerComponent) {
@@ -507,7 +507,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public int getBitsPerFlag() {
-            return getPdfObject().getAsInt(PdfName.BitsPerFlag);
+            return (int) getPdfObject().getAsInt(PdfName.BitsPerFlag);
         }
 
         public void setBitsPerFlag(int bitsPerFlag) {
@@ -550,7 +550,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public int getBitsPerCoordinate() {
-            return getPdfObject().getAsInt(PdfName.BitsPerCoordinate);
+            return (int) getPdfObject().getAsInt(PdfName.BitsPerCoordinate);
         }
 
         public void setBitsPerCoordinate(int bitsPerCoordinate) {
@@ -559,7 +559,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public int getBitsPerComponent() {
-            return getPdfObject().getAsInt(PdfName.BitsPerComponent);
+            return (int) getPdfObject().getAsInt(PdfName.BitsPerComponent);
         }
 
         public void setBitsPerComponent(int bitsPerComponent) {
@@ -568,7 +568,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         public int getBitsPerFlag() {
-            return getPdfObject().getAsInt(PdfName.BitsPerFlag);
+            return (int) getPdfObject().getAsInt(PdfName.BitsPerFlag);
         }
 
         public void setBitsPerFlag(int bitsPerFlag) {

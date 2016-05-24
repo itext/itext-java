@@ -197,7 +197,7 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
 
         @Override
         public int getNumberOfComponents() {
-            return ((PdfArray)getPdfObject()).getAsStream(1).getAsInt(PdfName.N);
+            return (int) ((PdfArray)getPdfObject()).getAsStream(1).getAsInt(PdfName.N);
         }
 
         public static PdfStream getIccProfileStream(InputStream iccStream) {

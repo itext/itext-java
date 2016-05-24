@@ -64,7 +64,7 @@ public class PdfObjRef extends PdfMcr {
         ensureObjectIsAddedToDocument(parentObject);
 
         PdfDocument doc = parentObject.getIndirectReference().getDocument();
-        annot.getPdfObject().put(PdfName.StructParent, new PdfNumber(doc.getNextStructParentIndex()));
+        annot.getPdfObject().put(PdfName.StructParent, new PdfNumber((int) doc.getNextStructParentIndex()));
 
         PdfDictionary dict = (PdfDictionary) getPdfObject();
         dict.put(PdfName.Type, PdfName.OBJR);
