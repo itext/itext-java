@@ -1,18 +1,17 @@
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Random;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Random;
+
 @Category(IntegrationTest.class)
-public class PdfPrimitivesTest {
+public class PdfPrimitivesTest extends ExtendedITextTest{
 
     static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfPrimitivesTest/";
     static final PdfName TestArray = new PdfName("TestArray");
@@ -51,7 +50,7 @@ public class PdfPrimitivesTest {
 
     @Before
     public void setup() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test

@@ -1,23 +1,15 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.io.image.ImageData;
-import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.color.CalGray;
-import com.itextpdf.kernel.color.CalRgb;
+import com.itextpdf.kernel.color.*;
 import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.color.DeviceCmyk;
-import com.itextpdf.kernel.color.DeviceN;
-import com.itextpdf.kernel.color.DeviceRgb;
-import com.itextpdf.kernel.color.IccBased;
-import com.itextpdf.kernel.color.Indexed;
-import com.itextpdf.kernel.color.Lab;
-import com.itextpdf.kernel.color.Separation;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
@@ -26,28 +18,21 @@ import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-
-
-import java.awt.Toolkit;
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.awt.*;
+import java.io.*;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Category(IntegrationTest.class)
 public class PdfCanvasTest extends ExtendedITextTest {
@@ -1323,7 +1308,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
 
-        PdfSpecialCs.Indexed indexed = new PdfSpecialCs.Indexed(com.itextpdf.kernel.pdf.PdfName.DeviceRGB, 255, new PdfString(new String(bytes, Charset.forName("UTF-8"))));
+        PdfSpecialCs.Indexed indexed = new PdfSpecialCs.Indexed(com.itextpdf.kernel.pdf.PdfName.DeviceRGB, 255, new PdfString(new String(bytes, "UTF-8")));
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.setFillColor(new Indexed(indexed, 85)).rectangle(50, 500, 50, 50).fill();
         canvas.setFillColor(new Indexed(indexed, 127)).rectangle(150, 500, 50, 50).fill();
@@ -1646,31 +1631,31 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
-        InputStream stream = UrlUtil.toURL(sourceFolder + "Desert.jpg").openStream();
+        InputStream stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "Desert.jpg"));
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
         canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 700, 100, true);
-        stream = UrlUtil.toURL(sourceFolder + "bulb.gif").openStream();
+        stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "bulb.gif"));
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
         canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 600, 100, true);
-        stream = UrlUtil.toURL(sourceFolder + "smpl.bmp").openStream();
+        stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "smpl.bmp"));
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
         canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 500, 100, true);
-        stream = UrlUtil.toURL(sourceFolder + "itext.png").openStream();
+        stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "itext.png"));
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
         canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 460, 100, true);
-        stream = UrlUtil.toURL(sourceFolder + "0047478.jpg").openStream();
+        stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "0047478.jpg"));
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
         canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 300, 100, true);
-        stream = UrlUtil.toURL(sourceFolder + "map.jp2").openStream();
+        stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "map.jp2"));
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
         canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 200, 100, true);
-        stream = UrlUtil.toURL(sourceFolder + "amb.jb2").openStream();
+        stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "amb.jb2"));
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
         canvas.addImage(ImageDataFactory.create(baos.toByteArray()), 36, 30, 100, true);

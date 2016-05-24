@@ -121,4 +121,8 @@ public final class FileUtil {
         return new BufferedOutputStream(new FileOutputStream(filename));
     }
 
+    public static long getFileSize(String filePath) {
+        return new File(filePath).length();
+    }
+
 }

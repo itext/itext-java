@@ -13,19 +13,13 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
+import java.util.*;
 
 
 @Category(IntegrationTest.class)
@@ -36,7 +30,7 @@ public class HighlightItemsTest extends ExtendedITextTest {
 
     @Before
     public void setUp() {
-        new File(outputPath).mkdirs();
+        createDestinationFolder(outputPath);
     }
 
     @Test

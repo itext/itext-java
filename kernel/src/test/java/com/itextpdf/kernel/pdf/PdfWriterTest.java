@@ -1,23 +1,21 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.TreeMap;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfWriterTest extends ExtendedITextTest {
@@ -47,7 +45,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         Assert.assertNotNull(pdfDocument.getPage(1));
         String date = pdfDocument.getDocumentInfo().getPdfObject().getAsString(PdfName.CreationDate).getValue();
         Calendar cl = PdfDate.decode(date);
-        long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
+        double diff = DateTimeUtil.getTimeInMillis(null) - DateTimeUtil.getTimeInMillis(cl);
         String message = "Unexpected creation date. Different from now is " + (float)diff/1000 + "s";
         Assert.assertTrue(message, diff < 5000);
         reader.close();

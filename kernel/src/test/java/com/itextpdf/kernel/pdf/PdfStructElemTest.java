@@ -567,7 +567,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         String errorMessage = "";
         errorMessage += taggedStructureDifferences == null ? "" : taggedStructureDifferences + "\n";
         errorMessage += contentDifferences == null ? "" : contentDifferences;
-        if (!errorMessage.isEmpty()) {
+        if (errorMessage.length() > 0) {
             Assert.fail(errorMessage);
         }
     }

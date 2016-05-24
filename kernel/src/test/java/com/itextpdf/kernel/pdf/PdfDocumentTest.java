@@ -4,22 +4,19 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 @Category(IntegrationTest.class)
 public class PdfDocumentTest extends ExtendedITextTest {
@@ -84,8 +81,6 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDoc.addNamedDestination("test3", array1);
 
         PdfOutline root = pdfDoc.getOutlines(false);
-        if (root == null)
-            root = new PdfOutline(pdfDoc);
 
         PdfOutline firstOutline = root.addOutline("Test1");
         firstOutline.addDestination(PdfDestination.makeDestination(new PdfString("test1")));

@@ -1,22 +1,21 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.io.util.DateTimeUtil;
+import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Calendar;
 
 import static org.junit.Assert.*;
 
@@ -76,7 +75,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         assertEquals("%Hello World\n", new String(bytes));
         String date = document.getDocumentInfo().getPdfObject().getAsString(PdfName.ModDate).getValue();
         Calendar cl = PdfDate.decode(date);
-        long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
+        double diff = DateTimeUtil.getTimeInMillis(null) - DateTimeUtil.getTimeInMillis(cl);
         String message = "Unexpected creation date. Different from now is " + (float) diff / 1000 + "s";
         assertTrue(message, diff < 5000);
         reader.close();
@@ -866,7 +865,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         assertEquals("%Hello World\n", new String(bytes));
         String date = pdfDocument.getDocumentInfo().getPdfObject().getAsString(PdfName.ModDate).getValue();
         Calendar cl = PdfDate.decode(date);
-        long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
+        double diff = DateTimeUtil.getTimeInMillis(null) - DateTimeUtil.getTimeInMillis(cl);
         String message = "Unexpected creation date. Different from now is " + (float) diff / 1000 + "s";
         assertTrue(message, diff < 5000);
         reader.close();
@@ -1299,7 +1298,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(reader, new PdfWriter(destinationFolder + "stampingTestWithFullCompression01.pdf"));
 
         pdfDoc.close();
-        assertEquals(new File(destinationFolder + "stampingTestWithFullCompression01.pdf").length(), new File(sourceFolder + "cmp_stampingTestWithFullCompression01.pdf").length());
+        assertEquals(FileUtil.getFileSize(destinationFolder + "stampingTestWithFullCompression01.pdf"), FileUtil.getFileSize(sourceFolder + "cmp_stampingTestWithFullCompression01.pdf"));
     }
 
     @Test
@@ -1309,7 +1308,7 @@ public class PdfStampingTest extends ExtendedITextTest {
                 new WriterProperties().setFullCompressionMode(false)));
 
         pdfDoc.close();
-        assertEquals(new File(destinationFolder + "stampingTestWithFullCompression02.pdf").length(), new File(sourceFolder + "cmp_stampingTestWithFullCompression02.pdf").length());
+        assertEquals(FileUtil.getFileSize(destinationFolder + "stampingTestWithFullCompression02.pdf"), FileUtil.getFileSize(sourceFolder + "cmp_stampingTestWithFullCompression02.pdf"));
     }
 
     static void verifyPdfPagesCount(PdfObject root) {
