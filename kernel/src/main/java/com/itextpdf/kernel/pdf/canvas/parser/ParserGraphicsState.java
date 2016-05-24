@@ -202,7 +202,7 @@ public class ParserGraphicsState extends CanvasGraphicsState {
             return transformed;
 
         } catch (NoninvertibleTransformException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

@@ -199,8 +199,8 @@ public class MetaFont extends MetaObject {
             font = FontProgramFactory.createFont(fontName);
             encoding = FontEncoding.createFontEncoding(PdfEncodings.WINANSI);
         }
-        catch (Exception e) {
-            throw new RuntimeException(e);
+        catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
         }
 
         return font;
