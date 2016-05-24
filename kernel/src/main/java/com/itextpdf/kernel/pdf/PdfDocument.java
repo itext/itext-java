@@ -787,12 +787,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (structTreeRoot == null) {
             structTreeRoot = new PdfStructTreeRoot(this);
             catalog.getPdfObject().put(PdfName.StructTreeRoot, structTreeRoot.getPdfObject());
-            catalog.getPdfObject().put(PdfName.MarkInfo, new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
-                put(PdfName.Marked, PdfBoolean.TRUE);
-                if (userProperties) {
-                    put(PdfName.UserProperties, new PdfBoolean(true));
-                }
-            }}));
+            PdfDictionary markInfo = new PdfDictionary();
+            markInfo.put(PdfName.Marked, PdfBoolean.TRUE);
+            if (userProperties) {
+                markInfo.put(PdfName.UserProperties, new PdfBoolean(true));
+            }
+            catalog.getPdfObject().put(PdfName.MarkInfo, markInfo);
+
             structParentIndex = 0;
         }
     }
@@ -920,7 +921,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public List<PdfPage> copyPagesTo(List<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
         if (pagesToCopy.isEmpty()) {
-            return Collections.emptyList();
+            return Collections.<PdfPage>emptyList();
         }
 
         checkClosingStatus();
@@ -929,12 +930,12 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         Set<PdfOutline> outlinesToCopy = new HashSet<>();
 
         List<Map<PdfPage, PdfPage>> rangesOfPagesWithIncreasingNumbers = new ArrayList<>();
-        int lastCopiedPageNum = pagesToCopy.get(0);
+        int lastCopiedPageNum = (int) pagesToCopy.get(0);
 
         int pageInsertIndex = insertBeforePage;
         boolean insertInBetween = insertBeforePage < toDocument.getNumberOfPages() + 1;
         for (Integer pageNum : pagesToCopy) {
-            PdfPage page = getPage(pageNum);
+            PdfPage page = getPage((int) pageNum);
             PdfPage newPage = page.copyTo(toDocument, copier);
             copiedPages.add(newPage);
             if (!page2page.containsKey(page)) {
@@ -958,7 +959,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 if (pageOutlines != null)
                     outlinesToCopy.addAll(pageOutlines);
             }
-            lastCopiedPageNum = pageNum;
+            lastCopiedPageNum = (int) pageNum;
         }
 
         copyLinkAnnotations(toDocument, page2page);
@@ -1592,8 +1593,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         PdfOutline parent = outline.getParent();
         //note there's no need to continue recursion if the current outline parent is root (first condition) or
         // if it is already in the Set of outlines to be copied (second condition)
-        if (parent.getTitle().equals("Outlines") || !outlinesToCopy.add(parent))
+        if (parent.getTitle().equals("Outlines") || outlinesToCopy.contains(parent)) {
             return;
+        }
+        outlinesToCopy.add(parent);
         getAllOutlinesToCopy(parent, outlinesToCopy);
     }
 
