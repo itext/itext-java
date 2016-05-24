@@ -84,8 +84,8 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
      * Gets the text rise.
      * @return the vertical distance from the text's default base line, as a float.
      */
-    public float getTextRise() {
-        return getProperty(Property.TEXT_RISE);
+    public Float getTextRise() {
+        return this.<Float>getProperty(Property.TEXT_RISE);
     }
 
     /**
@@ -95,7 +95,7 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
      */
     public Text setTextRise(float textRise) {
         setProperty(Property.TEXT_RISE, textRise);
-        return this;
+        return (Text) (Object) this;
     }
 
     /**
@@ -104,7 +104,7 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
      * @return the horizontal spacing, as a <code>float</code>
      */
     public Float getHorizontalScaling() {
-        return getProperty(Property.HORIZONTAL_SCALING);
+        return this.<Float>getProperty(Property.HORIZONTAL_SCALING);
     }
 
 
@@ -133,7 +133,7 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
      */
     public Text setHorizontalScaling(float horizontalScaling) {
         setProperty(Property.HORIZONTAL_SCALING, horizontalScaling);
-        return this;
+        return (Text) (Object) this;
     }
 
     @Override

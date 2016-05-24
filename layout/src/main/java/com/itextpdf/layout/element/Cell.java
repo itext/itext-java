@@ -46,18 +46,17 @@ package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Cell} is one piece of data in an enclosing grid, the {@link Table}.
@@ -202,14 +201,14 @@ public class Cell extends BlockElement<Cell> {
     public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
             case Property.BORDER:
-                return (T1) DEFAULT_BORDER;
+                return (T1) (Object) DEFAULT_BORDER;
             case Property.PADDING_BOTTOM:
             case Property.PADDING_LEFT:
             case Property.PADDING_RIGHT:
             case Property.PADDING_TOP:
-                return (T1) Float.valueOf(2);
+                return (T1) (Object) 2f;
             default:
-                return super.getDefaultProperty(property);
+                return super.<T1>getDefaultProperty(property);
         }
     }
 

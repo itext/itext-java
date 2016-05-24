@@ -76,7 +76,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         int pageNumber = layoutContext.getArea().getPageNumber();
 
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
-        if (getProperty(Property.ROTATION_ANGLE) != null) {
+        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
 
@@ -92,14 +92,14 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         boolean isPositioned = isPositioned();
         if (isPositioned) {
-            float x = getPropertyAsFloat(Property.X);
+            float x = (float) getPropertyAsFloat(Property.X);
             float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
             parentBBox.setX(relativeX + x);
         }
 
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
-            parentBBox.setWidth(blockWidth);
+            parentBBox.setWidth((float) blockWidth);
         }
         float[] paddings = getPaddings();
         applyPaddings(parentBBox, paddings, false);
@@ -128,7 +128,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
                 }
 
-                if (childRenderer.getProperty(Property.WIDTH) != null) {
+                if (childRenderer.<Object>getProperty(Property.WIDTH) != null) {
                     alignChildHorizontally(childRenderer, layoutBox.getWidth());
                 }
 
@@ -211,7 +211,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
             if (result.getStatus() == LayoutResult.FULL) {
                 layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
-                if (childRenderer.getProperty(Property.WIDTH) != null) {
+                if (childRenderer.<Object>getProperty(Property.WIDTH) != null) {
                     alignChildHorizontally(childRenderer, layoutBox.getWidth());
                 }
             }
@@ -219,17 +219,17 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
-            occupiedArea.getBBox().moveDown(blockHeight - occupiedArea.getBBox().getHeight()).setHeight(blockHeight);
+            occupiedArea.getBBox().moveDown((float) blockHeight - occupiedArea.getBBox().getHeight()).setHeight((float) blockHeight);
         }
         if (isPositioned) {
-            float y = getPropertyAsFloat(Property.Y);
+            float y = (float) getPropertyAsFloat(Property.Y);
             float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
             move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
 
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         applyMargins(occupiedArea.getBBox(), margins, true);
-        if (getProperty(Property.ROTATION_ANGLE) != null) {
+        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingHeight(layoutContext.getArea())) {
                 if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
@@ -320,16 +320,16 @@ public abstract class BlockRenderer extends AbstractRenderer {
     @Override
     public Rectangle getOccupiedAreaBBox() {
         Rectangle bBox = occupiedArea.getBBox().clone();
-        Float rotationAngle = getProperty(Property.ROTATION_ANGLE);
+        Float rotationAngle = this.<Float>getProperty(Property.ROTATION_ANGLE);
         if (rotationAngle != null) {
-            bBox.setWidth(getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH));
-            bBox.setHeight(getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT));
+            bBox.setWidth((float) getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH));
+            bBox.setHeight((float) getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT));
         }
         return bBox;
     }
 
     protected void applyVerticalAlignment() {
-        VerticalAlignment verticalAlignment = getProperty(Property.VERTICAL_ALIGNMENT);
+        VerticalAlignment verticalAlignment = this.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT);
         if (verticalAlignment != null && verticalAlignment != VerticalAlignment.TOP && childRenderers.size() > 0) {
             float deltaY = childRenderers.get(childRenderers.size() - 1).getOccupiedArea().getBBox().getY() - getInnerAreaBBox().getY();
             switch (verticalAlignment) {
@@ -368,7 +368,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         if (!isPositioned()) {
             List<Point> rotatedPoints = new ArrayList<>();
-            getLayoutShiftAndRotatedPoints(rotatedPoints, rotationPointX, rotationPointY);
+            getLayoutShiftAndRotatedPoints(rotatedPoints, (float) rotationPointX, rotationPointY);
 
             Point clipLineBeg = new Point(layoutBox.getRight(), layoutBox.getTop());
             Point clipLineEnd = new Point(layoutBox.getRight(), layoutBox.getBottom());
@@ -402,19 +402,19 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
         AffineTransform transform = new AffineTransform();
-        transform.rotate(angle);
+        transform.rotate((float) angle);
         float[] ctm = new float[6];
         transform.getMatrix(ctm);
 
-        ctm[4] = getPropertyAsFloat(Property.ROTATION_POINT_X) + dx;
-        ctm[5] = getPropertyAsFloat(Property.ROTATION_POINT_Y) + dy;
+        ctm[4] = (float) getPropertyAsFloat(Property.ROTATION_POINT_X) + dx;
+        ctm[5] = (float) getPropertyAsFloat(Property.ROTATION_POINT_Y) + dy;
         return ctm;
     }
 
     private Point getLayoutShiftAndRotatedPoints(List<Point> rotatedPoints, float shiftX, float shiftY) {
-        float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
-        float width = getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH);
-        float height = getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT);
+        float angle = (float) getPropertyAsFloat(Property.ROTATION_ANGLE);
+        float width = (float) getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH);
+        float height = (float) getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT);
 
         float left = occupiedArea.getBBox().getX() - shiftX;
         float bottom = occupiedArea.getBBox().getY() - shiftY;
@@ -446,10 +446,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
     protected void beginRotationIfApplied(PdfCanvas canvas) {
         Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
-            float heightDiff = getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
+            float heightDiff = (float) getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
 
-            float shiftX = getPropertyAsFloat(Property.ROTATION_POINT_X);
-            float shiftY = getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
+            float shiftX = (float) getPropertyAsFloat(Property.ROTATION_POINT_X);
+            float shiftY = (float) getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
 
             move(-shiftX, -shiftY);
             float[] ctm = applyRotation();
@@ -460,10 +460,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
     protected void endRotationIfApplied(PdfCanvas canvas) {
         Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
-            float heightDiff = getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
+            float heightDiff = (float) getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
 
-            float shiftX = getPropertyAsFloat(Property.ROTATION_POINT_X);
-            float shiftY = getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
+            float shiftX = (float) getPropertyAsFloat(Property.ROTATION_POINT_X);
+            float shiftY = (float) getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
 
             canvas.restoreState();
             move(shiftX, shiftY);

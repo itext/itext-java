@@ -86,11 +86,11 @@ public class List extends BlockElement<List> {
     public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
             case Property.LIST_SYMBOL_PRE_TEXT:
-                return (T1) "";
+                return (T1) (Object) "";
             case Property.LIST_SYMBOL_POST_TEXT:
-                return (T1) ". ";
+                return (T1) (Object) ". ";
             default:
-                return super.getDefaultProperty(property);
+                return super.<T1>getDefaultProperty(property);
         }
     }
 
@@ -192,7 +192,7 @@ public class List extends BlockElement<List> {
      * @return the indent offset as a <code>float</code>.
      */
     public Float getSymbolIndent() {
-        return getProperty(Property.LIST_SYMBOL_INDENT);
+        return this.<Float>getProperty(Property.LIST_SYMBOL_INDENT);
     }
 
     /**
@@ -211,7 +211,7 @@ public class List extends BlockElement<List> {
      * @return the post symbol text
      */
     public String getPostSymbolText() {
-        return getProperty(Property.LIST_SYMBOL_POST_TEXT);
+        return this.<String>getProperty(Property.LIST_SYMBOL_POST_TEXT);
     }
 
     /**
@@ -227,7 +227,7 @@ public class List extends BlockElement<List> {
      * @return the pre symbol text
      */
     public String getPreSymbolText() {
-        return getProperty(Property.LIST_SYMBOL_PRE_TEXT);
+        return this.<String>getProperty(Property.LIST_SYMBOL_PRE_TEXT);
     }
 
     /**

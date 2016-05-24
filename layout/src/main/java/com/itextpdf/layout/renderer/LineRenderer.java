@@ -83,14 +83,14 @@ public class LineRenderer extends AbstractRenderer {
         maxDescent = 0;
         int childPos = 0;
 
-        BaseDirection baseDirection = getProperty(Property.BASE_DIRECTION);
+        BaseDirection baseDirection = this.<BaseDirection>getProperty(Property.BASE_DIRECTION);
         for (IRenderer renderer : childRenderers) {
             if (renderer instanceof TextRenderer) {
                 renderer.setParent(this);
                 ((TextRenderer) renderer).applyOtf();
                 renderer.setParent(null);
                 if (baseDirection == null || baseDirection == BaseDirection.NO_BIDI) {
-                    baseDirection = renderer.getOwnProperty(Property.BASE_DIRECTION);
+                    baseDirection = renderer.<BaseDirection>getOwnProperty(Property.BASE_DIRECTION);
                 }
             }
         }
@@ -382,7 +382,7 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     protected void justify(float width) {
-        float ratio = getPropertyAsFloat(Property.SPACING_RATIO);
+        float ratio = (float) getPropertyAsFloat(Property.SPACING_RATIO);
         float freeWidth = occupiedArea.getBBox().getX() + width -
                 getLastChildRenderer().getOccupiedArea().getBBox().getX() - getLastChildRenderer().getOccupiedArea().getBBox().getWidth();
         int numberOfSpaces = getNumberOfSpaces();
@@ -398,7 +398,7 @@ public class LineRenderer extends AbstractRenderer {
             child.move(lastRightPos - childX, 0);
             childX = lastRightPos;
             if (child instanceof TextRenderer) {
-                float childHSCale = ((TextRenderer) child).getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
+                float childHSCale = (float) ((TextRenderer) child).getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
                 child.setProperty(Property.CHARACTER_SPACING, characterSpacing / childHSCale);
                 child.setProperty(Property.WORD_SPACING, wordSpacing / childHSCale);
                 boolean isLastTextRenderer = !iterator.hasNext();
@@ -520,7 +520,7 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     private TabStop getNextTabStop(float curWidth) {
-        NavigableMap<Float, TabStop> tabStops = getProperty(Property.TAB_STOPS);
+        NavigableMap<Float, TabStop> tabStops = this.<NavigableMap<Float,TabStop>>getProperty(Property.TAB_STOPS);
 
         Map.Entry<Float, TabStop> nextTabStopEntry = null;
         TabStop nextTabStop = null;
@@ -598,7 +598,7 @@ public class LineRenderer extends AbstractRenderer {
         Float tabWidth = tabDefault - curWidth % tabDefault;
         if (curWidth + tabWidth > lineWidth)
             tabWidth = lineWidth - curWidth;
-        tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(tabWidth));
+        tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue((float)tabWidth));
         tabRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
     }
 

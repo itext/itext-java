@@ -109,11 +109,11 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
 
     @Override
     public <T1> T1 getProperty(int property) {
-        Object result = super.getProperty(property);
+        Object result = super.<T1>getProperty(property);
         if (styles != null && styles.size() > 0 && result == null && !super.hasProperty(property)) {
             for (Style style : styles) {
-                result = style.getProperty(property);
-                if (result != null || super.hasProperty(property)) {
+                result = style.<T1>getProperty(property);
+                if (result != null || super.<T1>hasProperty(property)) {
                     break;
                 }
             }
@@ -132,7 +132,7 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
             styles = new LinkedHashSet<>();
         }
         styles.add(style);
-        return (T)this;
+        return (T) (Object)this;
     }
 
     protected abstract IRenderer makeNewRenderer();
@@ -154,11 +154,11 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
 
     public T setAction(PdfAction action) {
         setProperty(Property.ACTION, action);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     public T setPageNumber(int pageNumber) {
         setProperty(Property.PAGE_NUMBER, pageNumber);
-        return (T) this;
+        return (T) (Object) this;
     }
 }

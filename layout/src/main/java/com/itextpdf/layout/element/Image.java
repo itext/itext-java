@@ -202,7 +202,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * @return the left margin width, as a <code>float</code>
      */
     public Float getMarginLeft() {
-        return getProperty(Property.MARGIN_LEFT);
+        return this.<Float>getProperty(Property.MARGIN_LEFT);
     }
 
     /**
@@ -220,7 +220,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * @return the right margin width, as a <code>float</code>
      */
     public Float getMarginRight() {
-        return getProperty(Property.MARGIN_RIGHT);
+        return this.<Float>getProperty(Property.MARGIN_RIGHT);
     }
 
     /**
@@ -238,7 +238,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * @return the top margin width, as a <code>float</code>
      */
     public Float getMarginTop() {
-        return getProperty(Property.MARGIN_TOP);
+        return this.<Float>getProperty(Property.MARGIN_TOP);
     }
     
     /**
@@ -256,7 +256,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * @return the bottom margin width, as a <code>float</code>
      */
     public Float getMarginBottom() {
-        return getProperty(Property.MARGIN_BOTTOM);
+        return this.<Float>getProperty(Property.MARGIN_BOTTOM);
     }
 
     /**
@@ -331,8 +331,8 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      */
     public Image setAutoScale(boolean autoScale) {
         if (hasProperty(Property.AUTO_SCALE_WIDTH) && hasProperty(Property.AUTO_SCALE_HEIGHT) && autoScale &&
-                ((Boolean) getProperty(Property.AUTO_SCALE_WIDTH) ||
-                        (Boolean) getProperty(Property.AUTO_SCALE_HEIGHT))) {
+                (this.<Boolean>getProperty(Property.AUTO_SCALE_WIDTH) ||
+                        this.<Boolean>getProperty(Property.AUTO_SCALE_HEIGHT))) {
             Logger logger = LoggerFactory.getLogger(Image.class);
             logger.warn(LogMessageConstant.IMAGE_HAS_AMBIGUOUS_SCALE);
         }
@@ -347,7 +347,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * @return this image
      */
     public Image setAutoScaleHeight(boolean autoScale) {
-        if (hasProperty(Property.AUTO_SCALE_WIDTH) && autoScale && (Boolean) getProperty(Property.AUTO_SCALE_WIDTH)) {
+        if (hasProperty(Property.AUTO_SCALE_WIDTH) && autoScale && this.<Boolean>getProperty(Property.AUTO_SCALE_WIDTH)) {
             setProperty(Property.AUTO_SCALE_WIDTH, false);
             setProperty(Property.AUTO_SCALE_HEIGHT, false);
             setProperty(Property.AUTO_SCALE, true);
@@ -364,7 +364,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * @return this image
      */
     public Image setAutoScaleWidth(boolean autoScale) {
-        if (hasProperty(Property.AUTO_SCALE_HEIGHT) && autoScale && (Boolean) getProperty(Property.AUTO_SCALE_HEIGHT)) {
+        if (hasProperty(Property.AUTO_SCALE_HEIGHT) && autoScale && this.<Boolean>getProperty(Property.AUTO_SCALE_HEIGHT)) {
             setProperty(Property.AUTO_SCALE_WIDTH, false);
             setProperty(Property.AUTO_SCALE_HEIGHT, false);
             setProperty(Property.AUTO_SCALE, true);
@@ -426,9 +426,9 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * @return the current scaled width
      */
     public float getImageScaledWidth() {
-        return null == getProperty(Property.HORIZONTAL_SCALING) ?
+        return null == this.<Float>getProperty(Property.HORIZONTAL_SCALING) ?
                 xObject.getWidth() :
-                xObject.getWidth() * (Float) getProperty(Property.HORIZONTAL_SCALING);
+                xObject.getWidth() * this.<Float>getProperty(Property.HORIZONTAL_SCALING);
     }
 
     /**
@@ -436,9 +436,9 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * @return the current scaled height
      */
     public float getImageScaledHeight() {
-        return null == getProperty(Property.VERTICAL_SCALING) ?
+        return null == this.<Float>getProperty(Property.VERTICAL_SCALING) ?
                 xObject.getHeight() :
-                xObject.getHeight() * (Float) getProperty(Property.VERTICAL_SCALING);
+                xObject.getHeight() * this.<Float>getProperty(Property.VERTICAL_SCALING);
     }
 
     @Override

@@ -97,12 +97,12 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
 
     @Override
     public <T1> T1 getProperty(int property) {
-        return getOwnProperty(property);
+        return (T1) this.<T1>getOwnProperty(property);
     }
 
     @Override
     public <T1> T1 getOwnProperty(int property) {
-        return (T1) properties.get(property);
+        return (T1) properties.<T1>get(property);
     }
 
     @Override
@@ -116,9 +116,9 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
             case Property.PADDING_RIGHT:
             case Property.PADDING_BOTTOM:
             case Property.PADDING_LEFT:
-                return (T1) Float.valueOf(0);
+                return (T1) (Object) (Float) 0f;
             default:
-                return null;
+                return (T1) (Object) null;
         }
     }
 
@@ -129,7 +129,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @see UnitValue
      */
     public UnitValue getWidth() {
-        return getProperty(Property.WIDTH);
+        return (UnitValue) this.<UnitValue>getProperty(Property.WIDTH);
     }
 
     /**
@@ -140,7 +140,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setWidth(float width) {
         setProperty(Property.WIDTH, UnitValue.createPointValue(width));
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -151,7 +151,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setWidthPercent(float widthPercent) {
         setProperty(Property.WIDTH, UnitValue.createPercentValue(widthPercent));
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -162,7 +162,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setWidth(UnitValue width) {
         setProperty(Property.WIDTH, width);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -171,7 +171,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @return the height of the element, as a floating point value.
      */
     public Float getHeight() {
-        return getProperty(Property.HEIGHT);
+        return this.<Float>getProperty(Property.HEIGHT);
     }
 
     /**
@@ -182,7 +182,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setHeight(float height) {
         setProperty(Property.HEIGHT, height);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -208,7 +208,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
         setProperty(Property.RIGHT, right);
         setProperty(Property.TOP, top);
         setProperty(Property.BOTTOM, bottom);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -223,7 +223,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setFixedPosition(float x, float y, float width) {
         setFixedPosition(x, y, UnitValue.createPointValue(width));
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -241,7 +241,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
         setProperty(Property.X, x);
         setProperty(Property.Y, y);
         setProperty(Property.WIDTH, width);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -258,7 +258,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     public T setFixedPosition(int pageNumber, float x, float y, float width) {
         setFixedPosition(x, y, width);
         setProperty(Property.PAGE_NUMBER, pageNumber);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -275,7 +275,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     public T setFixedPosition(int pageNumber, float x, float y, UnitValue width) {
         setFixedPosition(x, y, width);
         setProperty(Property.PAGE_NUMBER, pageNumber);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -286,7 +286,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setHorizontalAlignment(HorizontalAlignment horizontalAlignment) {
         setProperty(Property.HORIZONTAL_ALIGNMENT, horizontalAlignment);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -297,7 +297,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setFont(PdfFont font) {
         setProperty(Property.FONT, font);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -308,7 +308,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setFontColor(Color fontColor) {
         setProperty(Property.FONT_COLOR, fontColor);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -319,7 +319,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setFontSize(float fontSize) {
         setProperty(Property.FONT_SIZE, fontSize);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -330,7 +330,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setTextAlignment(TextAlignment alignment) {
         setProperty(Property.TEXT_ALIGNMENT, alignment);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -342,7 +342,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setCharacterSpacing(float charSpacing) {
         setProperty(Property.CHARACTER_SPACING, charSpacing);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -354,7 +354,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setWordSpacing(float wordSpacing) {
         setProperty(Property.WORD_SPACING, wordSpacing);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -367,7 +367,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setFontKerning(FontKerning fontKerning) {
         setProperty(Property.FONT_KERNING, fontKerning);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -393,7 +393,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setBackgroundColor(Color backgroundColor, float extraLeft, float extraTop, float extraRight, float extraBottom) {
         setProperty(Property.BACKGROUND, new Background(backgroundColor, extraLeft, extraTop, extraRight, extraBottom));
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -404,7 +404,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setBorder(Border border) {
         setProperty(Property.BORDER, border);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -415,7 +415,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setBorderTop(Border border) {
         setProperty(Property.BORDER_TOP, border);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -426,7 +426,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setBorderRight(Border border) {
         setProperty(Property.BORDER_RIGHT, border);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -437,7 +437,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setBorderBottom(Border border) {
         setProperty(Property.BORDER_BOTTOM, border);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -448,7 +448,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setBorderLeft(Border border) {
         setProperty(Property.BORDER_LEFT, border);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -460,7 +460,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setSplitCharacters(ISplitCharacters splitCharacters) {
         setProperty(Property.SPLIT_CHARACTERS, splitCharacters);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -469,7 +469,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @return the current string splitting rule, an implementation of {@link ISplitCharacters}
      */
     public ISplitCharacters getSplitCharacters() {
-        return getProperty(Property.SPLIT_CHARACTERS);
+        return this.<ISplitCharacters>getProperty(Property.SPLIT_CHARACTERS);
     }
 
     /**
@@ -481,7 +481,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @see com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode
      */
     public Integer getTextRenderingMode() {
-        return getProperty(Property.TEXT_RENDERING_MODE);
+        return this.<Integer>getProperty(Property.TEXT_RENDERING_MODE);
     }
 
     /**
@@ -495,7 +495,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setTextRenderingMode(int textRenderingMode) {
         setProperty(Property.TEXT_RENDERING_MODE, textRenderingMode);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -505,7 +505,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @return the current stroke color
      */
     public Color getStrokeColor() {
-        return getProperty(Property.STROKE_COLOR);
+        return this.<Color>getProperty(Property.STROKE_COLOR);
     }
 
     /**
@@ -517,7 +517,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setStrokeColor(Color strokeColor) {
         setProperty(Property.STROKE_COLOR, strokeColor);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -527,7 +527,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @return the current stroke width
      */
     public Float getStrokeWidth() {
-        return getProperty(Property.STROKE_WIDTH);
+        return this.<Float>getProperty(Property.STROKE_WIDTH);
     }
 
     /**
@@ -539,7 +539,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setStrokeWidth(float strokeWidth) {
         setProperty(Property.STROKE_WIDTH, strokeWidth);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -550,7 +550,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setBold() {
         setProperty(Property.BOLD_SIMULATION, true);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -561,7 +561,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setItalic() {
         setProperty(Property.ITALIC_SIMULATION, true);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -618,7 +618,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setUnderline(Color color, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {
         Underline newUnderline = new Underline(color, thickness, thicknessMul, yPosition, yPositionMul, lineCapStyle);
-        Object currentProperty = getProperty(Property.UNDERLINE);
+        Object currentProperty = this.<Object>getProperty(Property.UNDERLINE);
         if (currentProperty instanceof List) {
             ((List) currentProperty).add(newUnderline);
         } else if (currentProperty instanceof Underline) {
@@ -626,7 +626,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
         } else {
             setProperty(Property.UNDERLINE, newUnderline);
         }
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -639,7 +639,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setBaseDirection(BaseDirection baseDirection) {
         setProperty(Property.BASE_DIRECTION, baseDirection);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -651,7 +651,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setHyphenation(HyphenationConfig hyphenationConfig) {
         setProperty(Property.HYPHENATION, hyphenationConfig);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -662,7 +662,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setFontScript(Character.UnicodeScript script) {
         setProperty(Property.FONT_SCRIPT, script);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -673,6 +673,6 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setDestination(String destination) {
         setProperty(Property.DESTINATION, destination);
-        return (T) this;
+        return (T) (Object) this;
     }
 }

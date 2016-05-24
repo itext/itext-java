@@ -69,7 +69,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @return the left margin width, as a <code>float</code>
      */
     public Float getMarginLeft() {
-        return getProperty(Property.MARGIN_LEFT);
+        return this.<Float>getProperty(Property.MARGIN_LEFT);
     }
 
     /**
@@ -79,7 +79,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      */
     public T setMarginLeft(float value) {
         setProperty(Property.MARGIN_LEFT, value);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -87,7 +87,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @return the right margin width, as a <code>float</code>
      */
     public Float getMarginRight() {
-        return getProperty(Property.MARGIN_RIGHT);
+        return this.<Float>getProperty(Property.MARGIN_RIGHT);
     }
 
     /**
@@ -97,7 +97,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      */
     public T setMarginRight(float value) {
         setProperty(Property.MARGIN_RIGHT, value);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -105,7 +105,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @return the top margin width, as a <code>float</code>
      */
     public Float getMarginTop() {
-        return getProperty(Property.MARGIN_TOP);
+        return this.<Float>getProperty(Property.MARGIN_TOP);
     }
 
     /**
@@ -115,7 +115,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      */
     public T setMarginTop(float value) {
         setProperty(Property.MARGIN_TOP, value);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -123,7 +123,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @return the bottom margin width, as a <code>float</code>
      */
     public Float getMarginBottom() {
-        return getProperty(Property.MARGIN_BOTTOM);
+        return this.<Float>getProperty(Property.MARGIN_BOTTOM);
     }
 
     /**
@@ -133,7 +133,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      */
     public T setMarginBottom(float value) {
         setProperty(Property.MARGIN_BOTTOM, value);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -160,7 +160,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
         setMarginRight(marginRight);
         setMarginBottom(marginBottom);
         setMarginLeft(marginLeft);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -168,7 +168,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @return the left padding width, as a <code>float</code>
      */
     public Float getPaddingLeft() {
-        return getProperty(Property.PADDING_LEFT);
+        return this.<Float>getProperty(Property.PADDING_LEFT);
     }
 
     /**
@@ -178,7 +178,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      */
     public T setPaddingLeft(float value) {
         setProperty(Property.PADDING_LEFT, value);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -186,7 +186,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @return the right padding width, as a <code>float</code>
      */
     public Float getPaddingRight() {
-        return getProperty(Property.PADDING_RIGHT);
+        return this.<Float>getProperty(Property.PADDING_RIGHT);
     }
 
     /**
@@ -196,7 +196,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      */
     public T setPaddingRight(float value) {
         setProperty(Property.PADDING_RIGHT, value);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -204,7 +204,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @return the top padding width, as a <code>float</code>
      */
     public Float getPaddingTop() {
-        return getProperty(Property.PADDING_TOP);
+        return this.<Float>getProperty(Property.PADDING_TOP);
     }
 
     /**
@@ -214,7 +214,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      */
     public T setPaddingTop(float value) {
         setProperty(Property.PADDING_TOP, value);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -222,7 +222,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @return the bottom padding width, as a <code>float</code>
      */
     public Float getPaddingBottom() {
-        return getProperty(Property.PADDING_BOTTOM);
+        return this.<Float>getProperty(Property.PADDING_BOTTOM);
     }
 
     /**
@@ -232,7 +232,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      */
     public T setPaddingBottom(float value) {
         setProperty(Property.PADDING_BOTTOM, value);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -259,7 +259,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
         setPaddingRight(paddingRight);
         setPaddingBottom(paddingBottom);
         setPaddingLeft(paddingLeft);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -270,7 +270,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      */
     public T setVerticalAlignment(VerticalAlignment verticalAlignment) {
         setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -285,7 +285,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      */
     public T setSpacingRatio(float ratio) {
         setProperty(Property.SPACING_RATIO, ratio);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -294,7 +294,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      * @return the current value of the {@link Property#KEEP_TOGETHER} property
      */
     public Boolean isKeepTogether() {
-        return getProperty(Property.KEEP_TOGETHER);
+        return this.<Boolean>getProperty(Property.KEEP_TOGETHER);
     }
 
     /**
@@ -305,7 +305,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      */
     public T setKeepTogether(boolean keepTogether) {
         setProperty(Property.KEEP_TOGETHER, keepTogether);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -316,7 +316,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      */
     public T setRotationAngle(float radAngle) {
         setProperty(Property.ROTATION_ANGLE, radAngle);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -327,6 +327,6 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      */
     public T setRotationAngle(double angle) {
         setProperty(Property.ROTATION_ANGLE, (float) angle);
-        return (T) this;
+        return (T) (Object) this;
     }
 }

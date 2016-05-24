@@ -99,7 +99,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                         ((ImageRenderer)result.getOverflowRenderer()).autoScale(currentArea);
                     } else {
                         if (currentArea.isEmptyArea() && !(renderer instanceof AreaBreakRenderer)) {
-                            if (Boolean.TRUE.equals(result.getOverflowRenderer().getModelElement().getProperty(Property.KEEP_TOGETHER))) {
+                            if (Boolean.TRUE.equals(result.getOverflowRenderer().getModelElement().<Boolean>getProperty(Property.KEEP_TOGETHER))) {
                                 result.getOverflowRenderer().getModelElement().setProperty(Property.KEEP_TOGETHER, false);
                                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
                                 logger.warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "KeepTogether property will be ignored."));
@@ -143,10 +143,10 @@ public abstract class RootRenderer extends AbstractRenderer {
                 childRenderers.addAll(resultRenderers);
             }
         } else if (positionedRenderers.size() > 0 && positionedRenderers.get(positionedRenderers.size() - 1) == renderer) {
-            Integer positionedPageNumber = renderer.getProperty(Property.PAGE_NUMBER);
+            Integer positionedPageNumber = renderer.<Integer>getProperty(Property.PAGE_NUMBER);
             if (positionedPageNumber == null)
                 positionedPageNumber = currentPageNumber;
-            renderer.setParent(this).layout(new LayoutContext(new LayoutArea(positionedPageNumber, currentArea.getBBox().clone())));
+            renderer.setParent(this).layout(new LayoutContext(new LayoutArea((int) positionedPageNumber, currentArea.getBBox().clone())));
 
             if (immediateFlush) {
                 flushSingleRenderer(renderer);

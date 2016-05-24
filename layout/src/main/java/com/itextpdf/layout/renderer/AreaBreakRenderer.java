@@ -103,17 +103,17 @@ public class AreaBreakRenderer implements IRenderer {
 
     @Override
     public <T1> T1 getProperty(int key) {
-        return null;
+        return (T1) (Object) null;
     }
 
     @Override
     public <T1> T1 getOwnProperty(int property) {
-        return null;
+        return (T1) (Object) null;
     }
 
     @Override
     public <T1> T1 getDefaultProperty(int property) {
-        return null;
+        return (T1) (Object) null;
     }
 
     @Override

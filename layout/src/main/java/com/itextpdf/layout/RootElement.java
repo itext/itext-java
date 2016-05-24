@@ -49,16 +49,8 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
-import com.itextpdf.layout.element.BlockElement;
-import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.IElement;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.property.FontKerning;
-import com.itextpdf.layout.property.HorizontalAlignment;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.TextAlignment;
-import com.itextpdf.layout.property.VerticalAlignment;
+import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.property.*;
 import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
@@ -67,9 +59,7 @@ import com.itextpdf.layout.splitting.ISplitCharacters;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A generic abstract root element for a PDF layout object hierarchy.
@@ -98,7 +88,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
     public <T2 extends IElement> T add(BlockElement<T2> element) {
         childElements.add(element);
         ensureRootRendererNotNull().addChild(element.createRendererSubTree());
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -111,7 +101,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
     public T add(Image image) {
         childElements.add(image);
         ensureRootRendererNotNull().addChild(image.createRendererSubTree());
-        return (T) this;
+        return (T) (Object) this;
     }
 
     @Override
@@ -126,12 +116,12 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
 
     @Override
     public <T1> T1 getProperty(int property) {
-        return getOwnProperty(property);
+        return this.<T1>getOwnProperty(property);
     }
 
     @Override
     public <T1> T1 getOwnProperty(int property) {
-        return (T1) properties.get(property);
+        return (T1) properties.<T1>get(property);
     }
 
     @Override
@@ -142,22 +132,22 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
                     if (defaultFont == null) {
                         defaultFont = PdfFontFactory.createFont();
                     }
-                    return (T1) defaultFont;
+                    return (T1) (Object) defaultFont;
                 case Property.SPLIT_CHARACTERS:
                     if (defaultSplitCharacters == null) {
                         defaultSplitCharacters = new DefaultSplitCharacters();
                     }
-                    return (T1) defaultSplitCharacters;
+                    return (T1) (Object) defaultSplitCharacters;
                 case Property.FONT_SIZE:
-                    return (T1) Integer.valueOf(12);
+                    return (T1) (Object) 12;
                 case Property.TEXT_RENDERING_MODE:
-                    return (T1) Integer.valueOf(PdfCanvasConstants.TextRenderingMode.FILL);
+                    return (T1) (Object) PdfCanvasConstants.TextRenderingMode.FILL;
                 case Property.TEXT_RISE:
-                    return (T1) Float.valueOf(0);
+                    return (T1) (Object) 0f;
                 case Property.SPACING_RATIO:
-                    return (T1) Float.valueOf(0.75f);
+                    return (T1) (Object) 0.75f;
                 default:
-                    return null;
+                    return (T1) (Object) null;
             }
         } catch (IOException exc) {
             throw new RuntimeException(exc);
@@ -315,14 +305,14 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
         if (pageNumber == 0)
             pageNumber = 1;
         div.setFixedPosition(pageNumber, divX, divY, divWidth).setHeight(divHeight);
-        if (p.getProperty(Property.LEADING) == null) {
+        if (p.<Float>getProperty(Property.LEADING) == null) {
             p.setMultipliedLeading(1);
         }
         div.add(p.setMargins(0, 0, 0, 0));
         div.setRole(PdfName.Artifact);
         this.add(div);
 
-        return (T) this;
+        return (T) (Object) this;
     }
 
     protected abstract RootRenderer ensureRootRendererNotNull();

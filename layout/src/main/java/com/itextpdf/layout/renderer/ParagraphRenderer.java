@@ -73,7 +73,7 @@ public class ParagraphRenderer extends BlockRenderer {
         int pageNumber = layoutContext.getArea().getPageNumber();
 
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
-        if (getProperty(Property.ROTATION_ANGLE) != null) {
+        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
         float[] margins = getMargins();
@@ -84,14 +84,14 @@ public class ParagraphRenderer extends BlockRenderer {
         boolean isPositioned = isPositioned();
 
         if (isPositioned) {
-            float x = getPropertyAsFloat(Property.X);
+            float x = (float) getPropertyAsFloat(Property.X);
             float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
             parentBBox.setX(relativeX + x);
         }
 
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
-            parentBBox.setWidth(blockWidth);
+            parentBBox.setWidth((float) blockWidth);
         }
         float[] paddings = getPaddings();
         applyPaddings(parentBBox, paddings, false);
@@ -137,16 +137,16 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         float lastYLine = layoutBox.getY() + layoutBox.getHeight();
-        Leading leading = getProperty(Property.LEADING);
+        Leading leading = this.<Leading>getProperty(Property.LEADING);
         float leadingValue = 0;
 
         float lastLineHeight = 0;
 
         while (currentRenderer != null) {
             currentRenderer.setProperty(Property.TAB_DEFAULT, getPropertyAsFloat(Property.TAB_DEFAULT));
-            currentRenderer.setProperty(Property.TAB_STOPS, getProperty(Property.TAB_STOPS));
+            currentRenderer.setProperty(Property.TAB_STOPS, this.<Object>getProperty(Property.TAB_STOPS));
 
-            float lineIndent = anythingPlaced ? 0 : getPropertyAsFloat(Property.FIRST_LINE_INDENT);
+            float lineIndent = anythingPlaced ? 0 : (float) getPropertyAsFloat(Property.FIRST_LINE_INDENT);
             float availableWidth = layoutBox.getWidth() - lineIndent;
             Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), availableWidth, layoutBox.getHeight());
             LineLayoutResult result = ((LineRenderer)currentRenderer.setParent(this)).layout(new LayoutContext(new LayoutArea(pageNumber, childLayoutBox)));
@@ -158,7 +158,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 processedRenderer = (LineRenderer) result.getSplitRenderer();
             }
 
-            TextAlignment textAlignment = getProperty(Property.TEXT_ALIGNMENT);
+            TextAlignment textAlignment = this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT);
             if (result.getStatus() == LayoutResult.PARTIAL && textAlignment == TextAlignment.JUSTIFIED && !result.isSplitForcedByNewline() ||
                     textAlignment == TextAlignment.JUSTIFIED_ALL) {
                 if (processedRenderer != null) {
@@ -255,18 +255,18 @@ public class ParagraphRenderer extends BlockRenderer {
         Float blockHeight = getPropertyAsFloat(Property.HEIGHT);
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
-            occupiedArea.getBBox().moveDown(blockHeight - occupiedArea.getBBox().getHeight()).setHeight(blockHeight);
+            occupiedArea.getBBox().moveDown((float) blockHeight - occupiedArea.getBBox().getHeight()).setHeight((float) blockHeight);
             applyVerticalAlignment();
         }
         if (isPositioned) {
-            float y = getPropertyAsFloat(Property.Y);
+            float y = (float) getPropertyAsFloat(Property.Y);
             float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
             move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
 
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         applyMargins(occupiedArea.getBBox(), margins, true);
-        if (getProperty(Property.ROTATION_ANGLE) != null) {
+        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingHeight(layoutContext.getArea())) {
                 if (!layoutContext.getArea().isEmptyArea()) {
@@ -285,7 +285,7 @@ public class ParagraphRenderer extends BlockRenderer {
     @Override
     public <T1> T1 getDefaultProperty(int property) {
         if ((property == Property.MARGIN_TOP || property == Property.MARGIN_BOTTOM) && parent instanceof CellRenderer) {
-            return (T1) Float.valueOf(0);
+            return (T1) (Object) 0f;
         }
         return super.getDefaultProperty(property);
     }
@@ -293,7 +293,7 @@ public class ParagraphRenderer extends BlockRenderer {
     protected ParagraphRenderer createOverflowRenderer() {
         ParagraphRenderer overflowRenderer = (ParagraphRenderer) getNextRenderer();
         // Reset first line indent in case of overflow.
-        float firstLineIndent = getPropertyAsFloat(Property.FIRST_LINE_INDENT);
+        float firstLineIndent = (float) getPropertyAsFloat(Property.FIRST_LINE_INDENT);
         if (firstLineIndent != 0) {
             overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0);
         }

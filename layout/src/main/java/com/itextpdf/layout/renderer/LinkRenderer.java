@@ -73,7 +73,7 @@ public class LinkRenderer extends TextRenderer {
         PdfLinkAnnotation linkAnnotation = ((Link)modelElement).getLinkAnnotation();
         linkAnnotation.setRectangle(new PdfArray(occupiedArea.getBBox()));
 
-        Border border = getProperty(Property.BORDER);
+        Border border = this.<Border>getProperty(Property.BORDER);
         if (border != null) {
             linkAnnotation.setBorder(new PdfArray(new float[]{0, 0, border.getWidth()}));
         } else {

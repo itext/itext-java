@@ -58,7 +58,7 @@ public class LineSeparatorRenderer extends BlockRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        ILineDrawer lineDrawer = getProperty(Property.LINE_DRAWER);
+        ILineDrawer lineDrawer = this.<ILineDrawer>getProperty(Property.LINE_DRAWER);
         float height = lineDrawer != null ? lineDrawer.getLineWidth() : 0;
         occupiedArea = layoutContext.getArea().clone();
         applyMargins(occupiedArea.getBBox(), false);
@@ -78,7 +78,7 @@ public class LineSeparatorRenderer extends BlockRenderer {
     @Override
     public void draw(DrawContext drawContext) {
         super.draw(drawContext);
-        ILineDrawer lineDrawer = getProperty(Property.LINE_DRAWER);
+        ILineDrawer lineDrawer = this.<ILineDrawer>getProperty(Property.LINE_DRAWER);
         if (lineDrawer != null) {
             lineDrawer.draw(drawContext.getCanvas(), occupiedArea.getBBox());
         }

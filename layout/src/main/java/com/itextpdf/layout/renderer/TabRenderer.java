@@ -65,14 +65,14 @@ public class TabRenderer extends AbstractRenderer {
         Float width = retrieveWidth(area.getBBox().getWidth());
         Float height = getPropertyAsFloat(Property.HEIGHT);
         occupiedArea = new LayoutArea(area.getPageNumber(),
-                new Rectangle(area.getBBox().getX(), area.getBBox().getY() + area.getBBox().getHeight(), width, height));
+                new Rectangle(area.getBBox().getX(), area.getBBox().getY() + area.getBBox().getHeight(),(float)  width, height));
 
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
     @Override
     public void draw(DrawContext drawContext) {
-        ILineDrawer leader = getProperty(Property.TAB_LEADER);
+        ILineDrawer leader = this.<ILineDrawer>getProperty(Property.TAB_LEADER);
         if (leader == null)
             return;
 

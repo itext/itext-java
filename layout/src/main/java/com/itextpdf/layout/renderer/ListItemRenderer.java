@@ -69,7 +69,7 @@ public class ListItemRenderer extends DivRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        if (symbolRenderer != null && getProperty(Property.HEIGHT) == null) {
+        if (symbolRenderer != null && this.<Object>getProperty(Property.HEIGHT) == null) {
             // TODO this is actually MinHeight.
             setProperty(Property.HEIGHT, symbolRenderer.getOccupiedArea().getBBox().getHeight());
         }
@@ -106,9 +106,9 @@ public class ListItemRenderer extends DivRenderer {
                 Float yLine = ((AbstractRenderer) childRenderers.get(0)).getFirstYLineRecursively();
                 if (yLine != null) {
                     if (symbolRenderer instanceof TextRenderer) {
-                        ((TextRenderer) symbolRenderer).moveYLineTo(yLine);
+                        ((TextRenderer) symbolRenderer).moveYLineTo((float) yLine);
                     } else {
-                        symbolRenderer.move(0, yLine - symbolRenderer.getOccupiedArea().getBBox().getY());
+                        symbolRenderer.move(0, (float) yLine - symbolRenderer.getOccupiedArea().getBBox().getY());
                     }
                 } else {
                     symbolRenderer.move(0, occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() -
@@ -119,7 +119,7 @@ public class ListItemRenderer extends DivRenderer {
                         symbolRenderer.getOccupiedArea().getBBox().getHeight() - symbolRenderer.getOccupiedArea().getBBox().getY());
             }
 
-            ListSymbolAlignment listSymbolAlignment = parent.getProperty(Property.LIST_SYMBOL_ALIGNMENT);
+            ListSymbolAlignment listSymbolAlignment = parent.<ListSymbolAlignment>getProperty(Property.LIST_SYMBOL_ALIGNMENT);
             float xPosition = x - symbolRenderer.getOccupiedArea().getBBox().getX();
             if (listSymbolAlignment == null || listSymbolAlignment == ListSymbolAlignment.RIGHT) {
                 xPosition += symbolAreaWidth - symbolRenderer.getOccupiedArea().getBBox().getWidth();
@@ -156,7 +156,7 @@ public class ListItemRenderer extends DivRenderer {
             splitRenderer.symbolAreaWidth = symbolAreaWidth;
         }
         // TODO retain all the properties ?
-        splitRenderer.setProperty(Property.MARGIN_LEFT, getProperty(Property.MARGIN_LEFT));
+        splitRenderer.setProperty(Property.MARGIN_LEFT, this.<Object>getProperty(Property.MARGIN_LEFT));
         return splitRenderer;
     }
 
@@ -170,7 +170,7 @@ public class ListItemRenderer extends DivRenderer {
             overflowRenderer.symbolAreaWidth = symbolAreaWidth;
         }
         // TODO retain all the properties ?
-        overflowRenderer.setProperty(Property.MARGIN_LEFT, getProperty(Property.MARGIN_LEFT));
+        overflowRenderer.setProperty(Property.MARGIN_LEFT, this.<Object>getProperty(Property.MARGIN_LEFT));
         return overflowRenderer;
     }
 }

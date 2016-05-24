@@ -134,7 +134,7 @@ public class TableRenderer extends AbstractRenderer {
         applyBorderBox(layoutBox, false);
 
         if (isPositioned()) {
-            float x = getPropertyAsFloat(Property.X);
+            float x = (float) getPropertyAsFloat(Property.X);
             float relativeX = isFixedLayout() ? 0 : layoutBox.getX();
             layoutBox.setX(relativeX + x);
         }
@@ -146,7 +146,7 @@ public class TableRenderer extends AbstractRenderer {
             tableWidth = layoutBox.getWidth();
         }
         occupiedArea = new LayoutArea(area.getPageNumber(),
-                new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), tableWidth, 0));
+                new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), (float) tableWidth, 0));
 
         int numberOfColumns = ((Table) getModelElement()).getNumberOfColumns();
         horizontalBorders = new ArrayList<>();
@@ -177,7 +177,7 @@ public class TableRenderer extends AbstractRenderer {
             layoutBox.moveUp(footerHeight).decreaseHeight(footerHeight);
         }
 
-        columnWidths = calculateScaledColumnWidths(tableModel, tableWidth);
+        columnWidths = calculateScaledColumnWidths(tableModel, (float) tableWidth);
         LayoutResult[] splits = new LayoutResult[tableModel.getNumberOfColumns()];
         // This represents the target row index for the overflow renderer to be placed to.
         // Usually this is just the current row id of a cell, but it has valuable meaning when a cell has rowspan.
@@ -188,11 +188,11 @@ public class TableRenderer extends AbstractRenderer {
         for (int row = 0; row < rows.size(); row++) {
             // if forced placement was earlier set, this means the element did not fit into the area, and in this case
             // we only want to place the first row in a forced way, not the next ones, otherwise they will be invisible
-            if (row == 1 && Boolean.TRUE.equals(getOwnProperty(Property.FORCED_PLACEMENT))) {
+            if (row == 1 && Boolean.TRUE.equals(this.<Boolean>getOwnProperty(Property.FORCED_PLACEMENT))) {
                 deleteOwnProperty(Property.FORCED_PLACEMENT);
             }
 
-            VerticalAlignment verticalAlignment = null;
+            VerticalAlignment verticalAlignment = (VerticalAlignment) (Object) null;
             CellRenderer[] currentRow = rows.get(row);
             float rowHeight = 0;
             boolean split = false;
@@ -227,8 +227,8 @@ public class TableRenderer extends AbstractRenderer {
                 // This cell came from the future (split occurred and we need to place cell with big rowpsan into the current area)
                 boolean currentCellHasBigRowspan = (row != currentCellInfo.finishRowInd);
 
-                int colspan = cell.getPropertyAsInteger(Property.COLSPAN);
-                int rowspan = cell.getPropertyAsInteger(Property.ROWSPAN);
+                int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
+                int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
                 float cellWidth = 0, colOffset = 0;
                 for (int i = col; i < col + colspan; i++) {
                     cellWidth += columnWidths[i];
@@ -238,13 +238,13 @@ public class TableRenderer extends AbstractRenderer {
                 }
                 float rowspanOffset = 0;
                 for (int i = row - 1; i > currentCellInfo.finishRowInd - rowspan && i >= 0; i--) {
-                    rowspanOffset += heights.get(i);
+                    rowspanOffset += (float) heights.get(i);
                 }
                 float cellLayoutBoxHeight = rowspanOffset + (!currentCellHasBigRowspan || hasContent ? layoutBox.getHeight() : 0);
                 float cellLayoutBoxBottom = layoutBox.getY() + (!currentCellHasBigRowspan || hasContent ? 0 : layoutBox.getHeight());
                 Rectangle cellLayoutBox = new Rectangle(layoutBox.getX() + colOffset, cellLayoutBoxBottom, cellWidth, cellLayoutBoxHeight);
                 LayoutArea cellArea = new LayoutArea(layoutContext.getArea().getPageNumber(), cellLayoutBox);
-                verticalAlignment = cell.getProperty(Property.VERTICAL_ALIGNMENT);
+                verticalAlignment = cell.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT);
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, null);
                 LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea));
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
@@ -295,7 +295,7 @@ public class TableRenderer extends AbstractRenderer {
                                     for (int addRow = row + 1; addRow < rows.size(); addRow++) {
                                         if (rows.get(addRow)[addCol] != null) {
                                             CellRenderer addRenderer = rows.get(addRow)[addCol];
-                                            verticalAlignment = addRenderer.getProperty(Property.VERTICAL_ALIGNMENT);
+                                            verticalAlignment = addRenderer.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT);
                                             if (verticalAlignment != null && verticalAlignment.equals(VerticalAlignment.BOTTOM)) {
                                                 if (row + addRenderer.getPropertyAsInteger(Property.ROWSPAN) - 1 < addRow) {
                                                     cellProcessingQueue.add(new CellRendererInfo(addRenderer, addCol, addRow));
@@ -474,7 +474,7 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         if (isPositioned()) {
-            float y = getPropertyAsFloat(Property.Y);
+            float y = (float) getPropertyAsFloat(Property.Y);
             float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
             move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
@@ -667,7 +667,9 @@ public class TableRenderer extends AbstractRenderer {
         for (int i = 0; i < verticalBorders.size(); i++) {
             splitRenderer.verticalBorders.add(new ArrayList<Border>());
             for (int j = 0; j < rowN; j++) {
-                splitRenderer.verticalBorders.get(i).add(verticalBorders.get(i).get(j));
+                if (verticalBorders.get(i).size() != 0) {
+                    splitRenderer.verticalBorders.get(i).add(verticalBorders.get(i).get(j));
+                }
             }
         }
         splitRenderer.heights = heights;
@@ -787,7 +789,7 @@ public class TableRenderer extends AbstractRenderer {
                 lastBorder.drawCellBorder(drawContext.getCanvas(), x1, y1, x2, y1);
             }
             if (i < heights.size()) {
-                y1 -= heights.get(i);
+                y1 -= (float) heights.get(i);
             }
         }
         float x1 = startX;
@@ -796,7 +798,7 @@ public class TableRenderer extends AbstractRenderer {
             y1 = startY;
             float y2 = y1;
             if (!heights.isEmpty()) {
-                y2 = y1 - heights.get(0);
+                y2 = y1 - (float) heights.get(0);
             }
             int j;
             for (j = 1; j < borders.size(); j++) {
@@ -808,11 +810,11 @@ public class TableRenderer extends AbstractRenderer {
                         y1 = y2;
                     }
                 } else {
-                    y1 -= heights.get(j - 1);
+                    y1 -= (float) heights.get(j - 1);
                     y2 = y1;
                 }
                 if (curBorder != null) {
-                    y2 -= heights.get(j);
+                    y2 -= (float) heights.get(j);
                 }
             }
             if (borders.size() == 0) {
@@ -862,8 +864,8 @@ public class TableRenderer extends AbstractRenderer {
                     continue;
                 }
 
-                int colspan = cell.getPropertyAsInteger(Property.COLSPAN);
-                int rowspan = cell.getPropertyAsInteger(Property.ROWSPAN);
+                int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
+                int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
                 float cellWidth = 0, colOffset = 0;
                 for (int i = col; i < col + colspan; i++) {
                     cellWidth += columnWidths[i];
@@ -873,7 +875,7 @@ public class TableRenderer extends AbstractRenderer {
                 }
                 float rowspanOffset = 0;
                 for (int i = row - 1; i > row - rowspan && i >= 0; i--) {
-                    rowspanOffset += heights.get(i);
+                    rowspanOffset += (float) heights.get(i);
                 }
                 float cellLayoutBoxHeight = rowspanOffset + layoutArea.getBBox().getHeight();
                 Rectangle cellLayoutBox = new Rectangle(layoutArea.getBBox().getX() + colOffset, layoutArea.getBBox().getY(), cellWidth, cellLayoutBoxHeight);

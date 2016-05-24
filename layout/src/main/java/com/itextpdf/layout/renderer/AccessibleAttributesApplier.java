@@ -114,7 +114,7 @@ public class AccessibleAttributesApplier {
         PdfName attributesType = PdfName.List;
         attributes.put(PdfName.O, attributesType);
 
-        Object listSymbol = renderer.getProperty(Property.LIST_SYMBOL);
+        Object listSymbol = renderer.<Object>getProperty(Property.LIST_SYMBOL);
         if (listSymbol instanceof ListNumberingType) {
             ListNumberingType numberingType = (ListNumberingType) listSymbol;
             attributes.put(PdfName.ListNumbering, transformNumberingTypeToName(numberingType));
@@ -184,31 +184,31 @@ public class AccessibleAttributesApplier {
 
         Float spaceBefore = margins[marginsOrder[0]];
         if (spaceBefore != null && spaceBefore != 0) {
-            attributes.put(PdfName.SpaceBefore, new PdfNumber(spaceBefore));
+            attributes.put(PdfName.SpaceBefore, new PdfNumber((float) spaceBefore));
         }
 
         Float spaceAfter = margins[marginsOrder[1]];
         if (spaceAfter != null && spaceAfter != 0) {
-            attributes.put(PdfName.SpaceAfter, new PdfNumber(spaceAfter));
+            attributes.put(PdfName.SpaceAfter, new PdfNumber((float) spaceAfter));
         }
 
         Float startIndent = margins[marginsOrder[2]];
         if (startIndent != null && startIndent != 0) {
-            attributes.put(PdfName.StartIndent, new PdfNumber(startIndent));
+            attributes.put(PdfName.StartIndent, new PdfNumber((float) startIndent));
         }
 
         Float endIndent = margins[marginsOrder[3]];
         if (endIndent != null && endIndent != 0) {
-            attributes.put(PdfName.EndIndent, new PdfNumber(endIndent));
+            attributes.put(PdfName.EndIndent, new PdfNumber((float) endIndent));
         }
 
 
-        Float firstLineIndent = renderer.getProperty(Property.FIRST_LINE_INDENT);
+        Float firstLineIndent = renderer.<Float>getProperty(Property.FIRST_LINE_INDENT);
         if (firstLineIndent != null && firstLineIndent != 0) {
-            attributes.put(PdfName.TextIndent, new PdfNumber(firstLineIndent));
+            attributes.put(PdfName.TextIndent, new PdfNumber((float) firstLineIndent));
         }
 
-        TextAlignment textAlignment = renderer.getProperty(Property.TEXT_ALIGNMENT);
+        TextAlignment textAlignment = renderer.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT);
         if (textAlignment != null &&
                 //for table cells there is an InlineAlign attribute (see below)
                 (!role.equals(PdfName.TH) && !role.equals(PdfName.TD))) {
@@ -223,19 +223,19 @@ public class AccessibleAttributesApplier {
         }
 
         if (role.equals(PdfName.TH) || role.equals(PdfName.TD) || role.equals(PdfName.Table)) {
-            UnitValue width = renderer.getProperty(Property.WIDTH);
+            UnitValue width = renderer.<UnitValue>getProperty(Property.WIDTH);
             if (width != null && width.isPointValue()) {
                 attributes.put(PdfName.Width, new PdfNumber(width.getValue()));
             }
 
             Float height = renderer.getPropertyAsFloat(Property.HEIGHT);
             if (height != null) {
-                attributes.put(PdfName.Height, new PdfNumber(height));
+                attributes.put(PdfName.Height, new PdfNumber((float) height));
             }
         }
 
         if (role.equals(PdfName.TH) || role.equals(PdfName.TD)) {
-            HorizontalAlignment horizontalAlignment = renderer.getProperty(Property.HORIZONTAL_ALIGNMENT);
+            HorizontalAlignment horizontalAlignment = renderer.<HorizontalAlignment>getProperty(Property.HORIZONTAL_ALIGNMENT);
             if (horizontalAlignment != null) {
                 attributes.put(PdfName.BlockAlign, transformBlockAlignToName(horizontalAlignment));
             }
@@ -252,10 +252,10 @@ public class AccessibleAttributesApplier {
     private static void applyInlineLevelLayoutAttributes(AbstractRenderer renderer, PdfDictionary attributes) {
         Float textRise = renderer.getPropertyAsFloat(Property.TEXT_RISE);
         if (textRise != null && textRise != 0) {
-            attributes.put(PdfName.BaselineShift, new PdfNumber(textRise));
+            attributes.put(PdfName.BaselineShift, new PdfNumber((float) textRise));
         }
 
-        Object underlines = renderer.getProperty(Property.UNDERLINE);
+        Object underlines = renderer.<Object>getProperty(Property.UNDERLINE);
         if (underlines != null) {
             Float fontSize = renderer.getPropertyAsFloat(Property.FONT_SIZE);
             Underline underline = null;
@@ -268,12 +268,12 @@ public class AccessibleAttributesApplier {
                 underline = (Underline) underlines;
             }
             if (underline != null) {
-                attributes.put(PdfName.TextDecorationType, underline.getYPosition(fontSize) > 0 ? PdfName.LineThrough : PdfName.Underline);
+                attributes.put(PdfName.TextDecorationType, underline.getYPosition((float) fontSize) > 0 ? PdfName.LineThrough : PdfName.Underline);
                 if (underline.getColor() instanceof DeviceRgb) {
                     attributes.put(PdfName.TextDecorationColor, new PdfArray(underline.getColor().getColorValue()));
                 }
 
-                attributes.put(PdfName.TextDecorationThickness, new PdfNumber(underline.getThickness(fontSize)));
+                attributes.put(PdfName.TextDecorationThickness, new PdfNumber(underline.getThickness((float) fontSize)));
             }
         }
     }
@@ -282,7 +282,7 @@ public class AccessibleAttributesApplier {
         Rectangle bbox = renderer.getOccupiedArea().getBBox();
         attributes.put(PdfName.BBox, new PdfArray(bbox));
 
-        UnitValue width = renderer.getProperty(Property.WIDTH);
+        UnitValue width = renderer.<UnitValue>getProperty(Property.WIDTH);
         if (width != null && width.isPointValue()) {
             attributes.put(PdfName.Width, new PdfNumber(width.getValue()));
         } else {
@@ -291,7 +291,7 @@ public class AccessibleAttributesApplier {
 
         Float height = renderer.getPropertyAsFloat(Property.HEIGHT);
         if (height != null) {
-            attributes.put(PdfName.Height, new PdfNumber(height));
+            attributes.put(PdfName.Height, new PdfNumber((float) height));
         } else {
             attributes.put(PdfName.Height, new PdfNumber(bbox.getHeight()));
         }
@@ -299,10 +299,10 @@ public class AccessibleAttributesApplier {
 
     private static void applyPaddingAttribute(AbstractRenderer renderer, PdfDictionary attributes) {
         float[] paddings = {
-                renderer.getPropertyAsFloat(Property.PADDING_TOP),
-                renderer.getPropertyAsFloat(Property.PADDING_RIGHT),
-                renderer.getPropertyAsFloat(Property.PADDING_BOTTOM),
-                renderer.getPropertyAsFloat(Property.PADDING_LEFT),
+                (float) renderer.getPropertyAsFloat(Property.PADDING_TOP),
+                (float) renderer.getPropertyAsFloat(Property.PADDING_RIGHT),
+                (float) renderer.getPropertyAsFloat(Property.PADDING_BOTTOM),
+                (float) renderer.getPropertyAsFloat(Property.PADDING_LEFT),
         };
 
         PdfObject padding = null;
@@ -325,15 +325,15 @@ public class AccessibleAttributesApplier {
     }
 
     private static void applyBorderAttributes(AbstractRenderer renderer, PdfDictionary attributes) {
-        boolean specificBorderProperties = renderer.getProperty(Property.BORDER_TOP) != null
-                || renderer.getProperty(Property.BORDER_RIGHT) != null
-                || renderer.getProperty(Property.BORDER_BOTTOM) != null
-                || renderer.getProperty(Property.BORDER_LEFT) != null;
+        boolean specificBorderProperties = renderer.<Border>getProperty(Property.BORDER_TOP) != null
+                || renderer.<Border>getProperty(Property.BORDER_RIGHT) != null
+                || renderer.<Border>getProperty(Property.BORDER_BOTTOM) != null
+                || renderer.<Border>getProperty(Property.BORDER_LEFT) != null;
 
-        boolean generalBorderProperties = !specificBorderProperties && renderer.getProperty(Property.BORDER) != null;
+        boolean generalBorderProperties = !specificBorderProperties && renderer.<Object>getProperty(Property.BORDER) != null;
 
         if (generalBorderProperties) {
-            Border generalBorder = renderer.getProperty(Property.BORDER);
+            Border generalBorder = renderer.<Border>getProperty(Property.BORDER);
             Color generalBorderColor = generalBorder.getColor();
             int borderType = generalBorder.getType();
             float borderWidth = generalBorder.getWidth();

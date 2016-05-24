@@ -150,7 +150,7 @@ public class Paragraph extends BlockElement<Paragraph> {
      * @see TabStop
      */
     public Paragraph removeTabStop(float tabStopPosition) {
-        Map<Float, TabStop> tabStops = getProperty(Property.TAB_STOPS);
+        Map<Float, TabStop> tabStops = this.<Map<Float, TabStop>>getProperty(Property.TAB_STOPS);
         if (tabStops != null) {
             tabStops.remove(tabStopPosition);
         }
@@ -161,16 +161,16 @@ public class Paragraph extends BlockElement<Paragraph> {
     public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
             case Property.LEADING:
-                return (T1) new Leading(Leading.MULTIPLIED, childElements.size() == 1 && childElements.get(0) instanceof Image ? 1 : 1.35f);
+                return (T1) (Object) new Leading(Leading.MULTIPLIED, childElements.size() == 1 && childElements.get(0) instanceof Image ? 1 : 1.35f);
             case Property.FIRST_LINE_INDENT:
-                return (T1) Float.valueOf(0);
+                return (T1) (Object) 0f;
             case Property.MARGIN_TOP:
             case Property.MARGIN_BOTTOM:
-                return (T1) Float.valueOf(4);
+                return (T1) (Object) 4f;
             case Property.TAB_DEFAULT:
-                return (T1) Float.valueOf(50);
+                return (T1) (Object) 50f;
             default:
-                return super.getDefaultProperty(property);
+                return super.<T1>getDefaultProperty(property);
         }
     }
 
@@ -217,7 +217,7 @@ public class Paragraph extends BlockElement<Paragraph> {
     }
 
     private void addTabStopsAsProperty(java.util.List<TabStop> newTabStops) {
-        Map<Float, TabStop> tabStops = getProperty(Property.TAB_STOPS);
+        Map<Float, TabStop> tabStops = this.<Map<Float, TabStop>>getProperty(Property.TAB_STOPS);
         if (tabStops == null) {
             tabStops = new TreeMap<>();
             setProperty(Property.TAB_STOPS, tabStops);

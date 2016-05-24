@@ -585,9 +585,9 @@ public class Table extends BlockElement<Table> implements ILargeElement {
             for (int i = 0; i < lastAddedRow.length; i++) {
                 Cell cell = lastAddedRow[i];
                 if (cell != null) {
-                    Border border = cell.getProperty(Property.BORDER);
+                    Border border = cell.<Border>getProperty(Property.BORDER);
                     if (border == null) {
-                        border = cell.getProperty(Property.BORDER_BOTTOM);
+                        border = cell.<Border>getProperty(Property.BORDER_BOTTOM);
                     }
                     horizontalBorder.add(border);
                 }

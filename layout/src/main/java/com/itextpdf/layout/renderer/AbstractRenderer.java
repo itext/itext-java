@@ -66,16 +66,11 @@ import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.MessageFormat;
+import java.util.*;
 
 /**
  * Defines the most common properties and behavior that are shared by most
@@ -127,7 +122,7 @@ public abstract class AbstractRenderer implements IRenderer {
     public void addChild(IRenderer renderer) {
         // https://www.webkit.org/blog/116/webcore-rendering-iii-layout-basics
         // "The rules can be summarized as follows:"...
-        Integer positioning = renderer.getProperty(Property.POSITION);
+        Integer positioning = renderer.<Integer>getProperty(Property.POSITION);
         if (positioning == null || positioning == LayoutPosition.RELATIVE || positioning == LayoutPosition.STATIC) {
             childRenderers.add(renderer);
         } else if (positioning == LayoutPosition.FIXED) {
@@ -191,18 +186,18 @@ public abstract class AbstractRenderer implements IRenderer {
         if ((property = properties.get(key)) != null || properties.containsKey(key)) {
             return (T1) property;
         }
-        if (modelElement != null && ((property = modelElement.getProperty(key)) != null || modelElement.hasProperty(key))) {
+        if (modelElement != null && ((property = modelElement.<T1>getProperty(key)) != null || modelElement.hasProperty(key))) {
             return (T1) property;
         }
         // TODO in some situations we will want to check inheritance with additional info, such as parent and descendant.
-        if (parent != null && Property.isPropertyInherited(key) && (property = parent.getProperty(key)) != null) {
+        if (parent != null && Property.isPropertyInherited(key) && (property = parent.<T1>getProperty(key)) != null) {
             return (T1) property;
         }
-        property = getDefaultProperty(key);
+        property = this.<T1>getDefaultProperty(key);
         if (property != null) {
             return (T1) property;
         }
-        return modelElement != null ? (T1) modelElement.getDefaultProperty(key) : null;
+        return modelElement != null ? modelElement.<T1>getDefaultProperty(key) : (T1) (Object) null;
     }
 
     @Override
@@ -212,7 +207,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     @Override
     public <T1> T1 getProperty(int property, T1 defaultValue) {
-        T1 result = getProperty(property);
+        T1 result = this.<T1>getProperty(property);
         return result != null ? result : defaultValue;
     }
 
@@ -223,7 +218,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     @Override
     public <T1> T1 getDefaultProperty(int property) {
-        return null;
+        return (T1) (Object) null;
     }
 
     /**
@@ -233,7 +228,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link PdfFont}
      */
     public PdfFont getPropertyAsFont(int property) {
-        return getProperty(property);
+        return this.<PdfFont>getProperty(property);
     }
 
     /**
@@ -243,7 +238,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link Color}
      */
     public Color getPropertyAsColor(int property) {
-        return getProperty(property);
+        return this.<Color>getProperty(property);
     }
 
     /**
@@ -253,8 +248,8 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link Float}
      */
     public Float getPropertyAsFloat(int property) {
-        Number value = getProperty(property);
-        return value != null ? value.floatValue() : null;
+        Number value = this.<Number>getProperty(property);
+        return value != null ? (Float) value : (Float) (Object) null;
     }
 
     /**
@@ -265,8 +260,8 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link Float}
      */
     public Float getPropertyAsFloat(int property, Float defaultValue) {
-        Number value = getProperty(property, defaultValue);
-        return value != null ? value.floatValue() : null;
+        Number value = this.<Number>getProperty(property, defaultValue);
+        return value != null ? (Float) value : (Float) (Object) null;
     }
 
     /**
@@ -276,7 +271,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link Boolean}
      */
     public Boolean getPropertyAsBoolean(int property) {
-        return getProperty(property);
+        return this.<Boolean>getProperty(property);
     }
 
     /**
@@ -332,7 +327,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param drawContext the context (canvas, document, etc) of this drawing operation.
      */
     public void drawBackground(DrawContext drawContext) {
-        Background background = getProperty(Property.BACKGROUND);
+        Background background = this.<Background>getProperty(Property.BACKGROUND);
         if (background != null) {
 
             Rectangle bBox = getOccupiedAreaBBox();
@@ -501,11 +496,11 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected Float retrieveHeight() {
-        return getProperty(Property.HEIGHT);
+        return this.<Float>getProperty(Property.HEIGHT);
     }
 
     protected Float retrieveUnitValue(float basePercentValue, int property) {
-        UnitValue value = getProperty(property);
+        UnitValue value = this.<UnitValue>getProperty(property);
         if (value != null) {
             if (value.getUnitType() == UnitValue.POINT) {
                 return value.getValue();
@@ -542,24 +537,24 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected Rectangle applyMargins(Rectangle rect, boolean reverse) {
-        return applyMargins(rect, getMargins(), reverse);
+        return this.applyMargins(rect, getMargins(), reverse);
     }
 
     protected Rectangle applyMargins(Rectangle rect, float[] margins, boolean reverse) {
         if (isPositioned())
             return rect;
 
-        return rect.applyMargins(margins[0], margins[1], margins[2], margins[3], reverse);
+        return rect.<Rectangle>applyMargins(margins[0], margins[1], margins[2], margins[3], reverse);
     }
 
     protected float[] getMargins() {
-        return new float[] {getPropertyAsFloat(Property.MARGIN_TOP), getPropertyAsFloat(Property.MARGIN_RIGHT),
-                getPropertyAsFloat(Property.MARGIN_BOTTOM), getPropertyAsFloat(Property.MARGIN_LEFT)};
+        return new float[] {(float)getPropertyAsFloat(Property.MARGIN_TOP), (float)getPropertyAsFloat(Property.MARGIN_RIGHT),
+                (float)getPropertyAsFloat(Property.MARGIN_BOTTOM), (float)getPropertyAsFloat(Property.MARGIN_LEFT)};
     }
 
     protected float[] getPaddings() {
-        return new float[] {getPropertyAsFloat(Property.PADDING_TOP), getPropertyAsFloat(Property.PADDING_RIGHT),
-                getPropertyAsFloat(Property.PADDING_BOTTOM), getPropertyAsFloat(Property.PADDING_LEFT)};
+        return new float[] {(float) getPropertyAsFloat(Property.PADDING_TOP), (float) getPropertyAsFloat(Property.PADDING_RIGHT),
+                (float) getPropertyAsFloat(Property.PADDING_BOTTOM), (float) getPropertyAsFloat(Property.PADDING_LEFT)};
     }
 
     protected Rectangle applyPaddings(Rectangle rect, boolean reverse) {
@@ -567,7 +562,7 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected Rectangle applyPaddings(Rectangle rect, float[] paddings, boolean reverse) {
-        return rect.applyMargins(paddings[0], paddings[1], paddings[2], paddings[3], reverse);
+        return rect.<Rectangle>applyMargins(paddings[0], paddings[1], paddings[2], paddings[3], reverse);
     }
 
     protected Rectangle applyBorderBox(Rectangle rect, boolean reverse) {
@@ -580,14 +575,14 @@ public abstract class AbstractRenderer implements IRenderer {
         float rightWidth = borders[1] != null ? borders[1].getWidth() : 0;
         float bottomWidth = borders[2] != null ? borders[2].getWidth() : 0;
         float leftWidth = borders[3] != null ? borders[3].getWidth() : 0;
-        return rect.applyMargins(topWidth, rightWidth, bottomWidth, leftWidth, reverse);
+        return rect.<Rectangle>applyMargins(topWidth, rightWidth, bottomWidth, leftWidth, reverse);
     }
 
     protected void applyAbsolutePositioningTranslation(boolean reverse) {
-        float top = getPropertyAsFloat(Property.TOP);
-        float bottom = getPropertyAsFloat(Property.BOTTOM);
-        float left = getPropertyAsFloat(Property.LEFT);
-        float right = getPropertyAsFloat(Property.RIGHT);
+        float top = (float) getPropertyAsFloat(Property.TOP);
+        float bottom = (float) getPropertyAsFloat(Property.BOTTOM);
+        float left = (float) getPropertyAsFloat(Property.LEFT);
+        float right = (float) getPropertyAsFloat(Property.RIGHT);
 
         int reverseMultiplier = reverse ? -1 : 1;
 
@@ -599,7 +594,7 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void applyDestination(PdfDocument document) {
-        String destination = getProperty(Property.DESTINATION);
+        String destination = this.<String>getProperty(Property.DESTINATION);
         if (destination != null) {
             PdfArray array = new PdfArray();
             array.add(document.getPage(occupiedArea.getPageNumber()).getPdfObject());
@@ -614,11 +609,11 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void applyAction(PdfDocument document) {
-        PdfAction action = getProperty(Property.ACTION);
+        PdfAction action = this.<PdfAction>getProperty(Property.ACTION);
         if (action != null) {
             PdfLinkAnnotation link = new PdfLinkAnnotation(getOccupiedArea().getBBox());
             link.setAction(action);
-            Border border = getProperty(Property.BORDER);
+            Border border = this.<Border>getProperty(Property.BORDER);
             if (border != null) {
                 link.setBorder(new PdfArray(new float[]{0, 0, border.getWidth()}));
             } else {
@@ -635,12 +630,12 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected boolean isPositioned() {
-        Object positioning = getProperty(Property.POSITION);
+        Object positioning = this.<Object>getProperty(Property.POSITION);
         return Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
     }
 
     protected boolean isFixedLayout() {
-        Object positioning = getProperty(Property.POSITION);
+        Object positioning = this.<Object>getProperty(Property.POSITION);
         return Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
     }
 
@@ -654,7 +649,7 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void alignChildHorizontally(IRenderer childRenderer, float availableWidth) {
-        HorizontalAlignment horizontalAlignment = childRenderer.getProperty(Property.HORIZONTAL_ALIGNMENT);
+        HorizontalAlignment horizontalAlignment = childRenderer.<HorizontalAlignment>getProperty(Property.HORIZONTAL_ALIGNMENT);
         if (horizontalAlignment != null && horizontalAlignment != HorizontalAlignment.LEFT) {
             float freeSpace = availableWidth - childRenderer.getOccupiedArea().getBBox().getWidth();
             switch (horizontalAlignment) {
@@ -677,11 +672,11 @@ public abstract class AbstractRenderer implements IRenderer {
      * on position of this border
      */
     protected Border[] getBorders() {
-        Border border = getProperty(Property.BORDER);
-        Border topBorder = getProperty(Property.BORDER_TOP);
-        Border rightBorder = getProperty(Property.BORDER_RIGHT);
-        Border bottomBorder = getProperty(Property.BORDER_BOTTOM);
-        Border leftBorder = getProperty(Property.BORDER_LEFT);
+        Border border = this.<Border>getProperty(Property.BORDER);
+        Border topBorder = this.<Border>getProperty(Property.BORDER_TOP);
+        Border rightBorder = this.<Border>getProperty(Property.BORDER_RIGHT);
+        Border bottomBorder = this.<Border>getProperty(Property.BORDER_BOTTOM);
+        Border leftBorder = this.<Border>getProperty(Property.BORDER_LEFT);
 
         Border[] borders = {topBorder, rightBorder, bottomBorder, leftBorder};
 
