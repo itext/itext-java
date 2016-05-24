@@ -289,8 +289,8 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         if (indirectReference != null) {
             if (copyObjectKey == 0)
                 copyObjectKey = getCopyObjectKey(obj);
-            PdfIndirectReference in = newObject.makeIndirect(document).getIndirectReference();
-            copiedObjects.put(copyObjectKey, in);
+            PdfIndirectReference reference = newObject.makeIndirect(document).getIndirectReference();
+            copiedObjects.put(copyObjectKey, reference);
         }
         newObject.copyContent(obj, document);
 
@@ -300,18 +300,18 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     /**
      * Writes object to body of PDF document.
      *
-     * @param obj object to write.
+     * @param pdfObj object to write.
      * @throws IOException
      * @throws PdfException
      */
-    protected void writeToBody(PdfObject obj) throws IOException {
+    protected void writeToBody(PdfObject pdfObj) throws IOException {
         if (crypto != null) {
-            crypto.setHashKeyForNextObject(obj.getIndirectReference().getObjNumber(), obj.getIndirectReference().getGenNumber());
+            crypto.setHashKeyForNextObject(pdfObj.getIndirectReference().getObjNumber(), pdfObj.getIndirectReference().getGenNumber());
         }
-        writeInteger(obj.getIndirectReference().getObjNumber()).
+        writeInteger(pdfObj.getIndirectReference().getObjNumber()).
                 writeSpace().
-                writeInteger(obj.getIndirectReference().getGenNumber()).writeBytes(PdfWriter.obj);
-        write(obj);
+                writeInteger(pdfObj.getIndirectReference().getGenNumber()).writeBytes(obj);
+        write(pdfObj);
         writeBytes(endobj);
     }
 
