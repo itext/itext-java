@@ -144,7 +144,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
         PdfSplitter splitter = new PdfSplitter(inputPdfDoc);
-        List listTitles = new ArrayList();
+        List<String> listTitles = new ArrayList<>();
         listTitles.add("Syncing iPod Content from Your iTunes Library");
         listTitles.add("Restoring or Transferring Your iPhone Settings");
         List<PdfDocument> list = splitter.splitByOutlines(listTitles);
