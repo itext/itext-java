@@ -296,7 +296,7 @@ public class Barcode128 extends Barcode1D {
                 if (code.length() < k)
                     break;
                 Integer subcode = Integer.parseInt(code.substring(0, k));
-                n = ais.containsKey(subcode) ? ais.get(subcode) : 0;
+                n = ais.containsKey(subcode) ? (int)ais.get(subcode) : 0;
                 if (n != 0) {
                     idlen = k;
                     break;
@@ -686,7 +686,7 @@ public class Barcode128 extends Barcode1D {
                     throw new IllegalArgumentException("AI is too short");
                 }
                 int ai = Integer.parseInt(sai);
-                int len = ais.get(ai);
+                int len = (int)ais.get(ai);
                 if (len == 0) {
                     throw new IllegalArgumentException("AI not found");
                 }
