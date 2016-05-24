@@ -249,7 +249,7 @@ public abstract class AbstractRenderer implements IRenderer {
      */
     public Float getPropertyAsFloat(int property) {
         Number value = this.<Number>getProperty(property);
-        return value != null ? (Float) value : (Float) (Object) null;
+        return value != null ? value.floatValue() : null;
     }
 
     /**
@@ -261,7 +261,7 @@ public abstract class AbstractRenderer implements IRenderer {
      */
     public Float getPropertyAsFloat(int property, Float defaultValue) {
         Number value = this.<Number>getProperty(property, defaultValue);
-        return value != null ? (Float) value : (Float) (Object) null;
+        return value != null ? value.floatValue() : null;
     }
 
     /**
