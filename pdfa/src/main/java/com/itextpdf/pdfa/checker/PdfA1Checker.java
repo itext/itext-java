@@ -233,7 +233,7 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(PdfAConformanceException.AnImageDictionaryShallNotContainOpiKey);
         }
 
-        if (image.containsKey(PdfName.Interpolate) && image.getAsBool(PdfName.Interpolate)) {
+        if (image.containsKey(PdfName.Interpolate) && (boolean) image.getAsBool(PdfName.Interpolate)) {
             throw new PdfAConformanceException(PdfAConformanceException.TheValueOfInterpolateKeyShallNotBeTrue);
         }
 
@@ -378,7 +378,7 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(PdfAConformanceException.AnnotationShallContainKeyF);
         }
 
-        int flags = annotDic.getAsInt(PdfName.F);
+        int flags = (int) annotDic.getAsInt(PdfName.F);
         if (!checkFlag(flags, PdfAnnotation.PRINT) || checkFlag(flags, PdfAnnotation.HIDDEN) || checkFlag(flags, PdfAnnotation.INVISIBLE) ||
                 checkFlag(flags, PdfAnnotation.NO_VIEW)) {
             throw new PdfAConformanceException(PdfAConformanceException.TheFKeysPrintFlagBitShallBeSetTo1AndItsHiddenInvisibleAndNoviewFlagBitsShallBeSetTo0);

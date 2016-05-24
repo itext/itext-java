@@ -652,7 +652,7 @@ public class PdfA2Checker extends PdfA1Checker {
             throw new PdfAConformanceException(PdfAConformanceException.AnImageDictionaryShallNotContainOpiKey);
         }
 
-        if (image.containsKey(PdfName.Interpolate) && image.getAsBool(PdfName.Interpolate)) {
+        if (image.containsKey(PdfName.Interpolate) && (boolean) image.getAsBool(PdfName.Interpolate)) {
             throw new PdfAConformanceException(PdfAConformanceException.TheValueOfInterpolateKeyShallNotBeTrue);
         }
         checkRenderingIntent(image.getAsName(PdfName.Intent));
