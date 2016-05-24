@@ -12,6 +12,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -1298,7 +1299,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(reader, new PdfWriter(destinationFolder + "stampingTestWithFullCompression01.pdf"));
 
         pdfDoc.close();
-        assertEquals(FileUtil.getFileSize(destinationFolder + "stampingTestWithFullCompression01.pdf"), FileUtil.getFileSize(sourceFolder + "cmp_stampingTestWithFullCompression01.pdf"));
+        assertEquals(new File(destinationFolder + "stampingTestWithFullCompression01.pdf").length(), new File(sourceFolder + "cmp_stampingTestWithFullCompression01.pdf").length());
     }
 
     @Test
@@ -1308,7 +1309,7 @@ public class PdfStampingTest extends ExtendedITextTest {
                 new WriterProperties().setFullCompressionMode(false)));
 
         pdfDoc.close();
-        assertEquals(FileUtil.getFileSize(destinationFolder + "stampingTestWithFullCompression02.pdf"), FileUtil.getFileSize(sourceFolder + "cmp_stampingTestWithFullCompression02.pdf"));
+        assertEquals(new File(destinationFolder + "stampingTestWithFullCompression02.pdf").length(), new File(sourceFolder + "cmp_stampingTestWithFullCompression02.pdf").length());
     }
 
     static void verifyPdfPagesCount(PdfObject root) {

@@ -120,9 +120,4 @@ public final class FileUtil {
     public static java.io.OutputStream getBufferedOutputStream(String filename) throws FileNotFoundException {
         return new BufferedOutputStream(new FileOutputStream(filename));
     }
-
-    public static long getFileSize(String filePath) {
-        return new File(filePath).length();
-    }
-
 }

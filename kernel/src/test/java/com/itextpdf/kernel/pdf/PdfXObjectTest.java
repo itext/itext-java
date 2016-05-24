@@ -20,6 +20,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -69,7 +70,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
         page.flush();
         document.close();
 
-        Assert.assertTrue(FileUtil.getFileSize(destinationDocument) < 20 * 1024 * 1024);
+        Assert.assertTrue(new File(destinationDocument).length() < 20 * 1024 * 1024);
         Assert.assertNull(new CompareTool().compareByContent(destinationDocument, sourceFolder + "cmp_documentFromImages1.pdf", destinationFolder, "diff_"));
     }
 
