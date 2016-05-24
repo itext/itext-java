@@ -85,16 +85,16 @@ public class TextRenderInfo implements IEventData {
 
     /**
      * Creates a new TextRenderInfo object
-     * @param string the PDF string that should be displayed
+     * @param str the PDF string that should be displayed
      * @param gs the graphics state (note: at this time, this is not immutable, so don't cache it)
      * @param textMatrix the text matrix at the time of the render operation
      * @param canvasTagHierarchy the marked content tags sequence, if available
      */
-    public TextRenderInfo(PdfString string, CanvasGraphicsState gs, Matrix textMatrix, Stack<CanvasTag> canvasTagHierarchy) {
-        this.string = string;
+    public TextRenderInfo(PdfString str, CanvasGraphicsState gs, Matrix textMatrix, Stack<CanvasTag> canvasTagHierarchy) {
+        this.string = str;
         this.textToUserSpaceTransformMatrix = textMatrix.multiply(gs.getCtm());
         this.gs = gs;
-        this.canvasTagHierarchy = Collections.unmodifiableList(new ArrayList<>(canvasTagHierarchy));
+        this.canvasTagHierarchy = Collections.<CanvasTag>unmodifiableList(new ArrayList<>(canvasTagHierarchy));
         this.fontMatrix = gs.getFont().getFontMatrix();
     }
 

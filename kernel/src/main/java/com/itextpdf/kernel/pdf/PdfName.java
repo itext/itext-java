@@ -1024,7 +1024,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
                         buf.append('#');
                         if (c < 16)
                             buf.append('0');
-                        buf.append(Integer.toString(c, 16));
+                        buf.append(Integer.toHexString(c));
                     }
                     break;
             }
