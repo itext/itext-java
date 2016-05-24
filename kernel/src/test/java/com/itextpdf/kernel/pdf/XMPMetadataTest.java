@@ -21,13 +21,9 @@ public class XMPMetadataTest extends ExtendedITextTest{
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/XmpWriterTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/XmpWriterTest/";
 
-    static  public TimeZone CURRENT_USER_TIME_ZONE;
-
     @BeforeClass
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
-        CURRENT_USER_TIME_ZONE = TimeZone.getDefault();
-        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Brussels"));
     }
 
     @Test
@@ -38,9 +34,10 @@ public class XMPMetadataTest extends ExtendedITextTest{
         PdfWriter writer = new PdfWriter(fos,  new WriterProperties().addXmpMetadata());
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor("Alexander Chingarev").
-                setCreator("iText 6").
-                setTitle("Empty iText 6 Document");
+                setCreator("iText 7").
+                setTitle("Empty iText 7 Document");
         pdfDoc.getDocumentInfo().getPdfObject().remove(PdfName.CreationDate);
+        pdfDoc.getDocumentInfo().getPdfObject().remove(PdfName.ModDate);
         PdfPage page = pdfDoc.addNewPage();
         page.flush();
         pdfDoc.close();
@@ -59,9 +56,10 @@ public class XMPMetadataTest extends ExtendedITextTest{
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor("Alexander Chingarev").
-                setCreator("iText 6").
-                setTitle("Empty iText 6 Document");
+                setCreator("iText 7").
+                setTitle("Empty iText 7 Document");
         pdfDoc.getDocumentInfo().getPdfObject().remove(PdfName.CreationDate);
+        pdfDoc.getDocumentInfo().getPdfObject().remove(PdfName.ModDate);
         PdfPage page = pdfDoc.addNewPage();
         page.flush();
         pdfDoc.setXmpMetadata("abc".getBytes());
@@ -75,11 +73,4 @@ public class XMPMetadataTest extends ExtendedITextTest{
         reader.close();
 
     }
-
-    @AfterClass
-    public static void afterClass(){
-        TimeZone.setDefault(CURRENT_USER_TIME_ZONE);
-    }
-
-
 }

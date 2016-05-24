@@ -1,7 +1,6 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -40,7 +39,9 @@ public class PdfSplitterTest extends ExtendedITextTest{
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
 
-        List<Integer> pageNumbers = Arrays.asList(30, 100);
+        Integer splitByPage1 = 30;
+        Integer splitByPage2 = 100;
+        List<Integer> pageNumbers = Arrays.asList(splitByPage1, splitByPage2);
 
         List<PdfDocument> splitDocuments = new PdfSplitter(inputPdfDoc) {
             int partNumber = 1;
@@ -86,15 +87,11 @@ public class PdfSplitterTest extends ExtendedITextTest{
         }.splitByPageCount(60, new PdfSplitter.IDocumentReadyListener() {
             @Override
             public void documentReady(PdfDocument pdfDocument, PageRange pageRange) {
-                try {
-                    if (new PageRange("61-120").equals(pageRange)) {
-                        pdfDocument.getDocumentInfo().setAuthor("Modified Author");
-                    }
-
-                    pdfDocument.close();
-                } catch (PdfException e) {
-                    e.printStackTrace();
+                if (new PageRange("61-120").equals(pageRange)) {
+                    pdfDocument.getDocumentInfo().setAuthor("Modified Author");
                 }
+
+                pdfDocument.close();
             }
         });
 
