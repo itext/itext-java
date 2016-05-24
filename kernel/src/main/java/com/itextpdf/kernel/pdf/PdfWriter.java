@@ -47,6 +47,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.kernel.PdfException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +73,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     private static final byte[] endobj = getIsoBytes("\nendobj\n");
 
     private HashMap<ByteStore, PdfIndirectReference> streamMap = new HashMap<>();
-    private final HashMap<Integer, Integer> serialized = new HashMap<>();
+    private final IntHashtable serialized = new IntHashtable();
 
     // For internal usage only
     private PdfOutputStream duplicateStream = null;
@@ -494,21 +495,21 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         private final byte[] b;
         private final int hash;
         private MessageDigest md5;
-        private void serObject(PdfObject obj, int level, ByteBufferOutputStream bb, HashMap<Integer, Integer> serialized) {
+        private void serObject(PdfObject obj, int level, ByteBufferOutputStream bb, IntHashtable serialized) {
             if (level <= 0)
                 return;
             if (obj == null) {
                 bb.append("$Lnull");
                 return;
             }
-            PdfIndirectReference ref = null;
+            PdfIndirectReference reference = null;
             ByteBufferOutputStream savedBb = null;
 
             if (obj.isIndirectReference()) {
-                ref = (PdfIndirectReference)obj;
-                Integer key = getCopyObjectKey(obj);
+                reference = (PdfIndirectReference)obj;
+                int key = getCopyObjectKey(obj);
                 if (serialized.containsKey(key)) {
-                    bb.append(serialized.get(key));
+                    bb.append((int) serialized.get(key));
                     return;
                 }
                 else {
@@ -541,18 +542,19 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
                 bb.append("$L").append(obj.toString());
 
             if (savedBb != null) {
-                Integer key = getCopyObjectKey(ref);
+                int key = getCopyObjectKey(reference);
                 if (!serialized.containsKey(key))
                     serialized.put(key, calculateHash(bb.getBuffer()));
                 savedBb.append(bb);
             }
         }
 
-        private void serDic(PdfDictionary dic, int level, ByteBufferOutputStream bb, HashMap<Integer, Integer> serialized) {
+        private void serDic(PdfDictionary dic, int level, ByteBufferOutputStream bb, IntHashtable serialized) {
             bb.append("$D");
             if (level <= 0)
                 return;
-            Object[] keys = dic.keySet().toArray();
+            PdfName[] keys = new PdfName[dic.keySet().size()];
+            dic.keySet().toArray(keys);
             Arrays.sort(keys);
             for (Object key : keys) {
                 if (key.equals(PdfName.P) && (dic.get((PdfName) key).isIndirectReference() || dic.get((PdfName) key).isDictionary()) || key.equals(PdfName.Parent)) // ignore recursive call
@@ -563,7 +565,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             }
         }
 
-        private void serArray(PdfArray array, int level, ByteBufferOutputStream bb, HashMap<Integer, Integer> serialized) {
+        private void serArray(PdfArray array, int level, ByteBufferOutputStream bb, IntHashtable serialized) {
             bb.append("$A");
             if (level <= 0)
                 return;
@@ -572,7 +574,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             }
         }
 
-        ByteStore(PdfStream str, HashMap<Integer, Integer> serialized) {
+        ByteStore(PdfStream str, IntHashtable serialized) {
             try {
                 md5 = MessageDigest.getInstance("MD5");
             }
@@ -587,7 +589,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             md5 = null;
         }
 
-        ByteStore(PdfDictionary dict, HashMap<Integer, Integer> serialized) {
+        ByteStore(PdfDictionary dict, IntHashtable serialized) {
             try {
                 md5 = MessageDigest.getInstance("MD5");
             }
