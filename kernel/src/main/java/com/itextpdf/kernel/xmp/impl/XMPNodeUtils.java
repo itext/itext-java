@@ -419,19 +419,19 @@ public class XMPNodeUtils implements XMPConst
 		}
 		else if (value instanceof Boolean)
 		{
-			strValue = XMPUtils.convertFromBoolean(((Boolean) value).booleanValue());
+			strValue = XMPUtils.convertFromBoolean((boolean) value);
 		}
 		else if (value instanceof Integer)
 		{
-			strValue = XMPUtils.convertFromInteger(((Integer) value).intValue());
+			strValue = XMPUtils.convertFromInteger((int) value);
 		}
 		else if (value instanceof Long)
 		{
-			strValue = XMPUtils.convertFromLong(((Long) value).longValue());
+			strValue = XMPUtils.convertFromLong((long) value);
 		}
 		else if (value instanceof Double)
 		{
-			strValue = XMPUtils.convertFromDouble(((Double) value).doubleValue());
+			strValue = XMPUtils.convertFromDouble((double) value);
 		}
 		else if (value instanceof XMPDateTime)
 		{

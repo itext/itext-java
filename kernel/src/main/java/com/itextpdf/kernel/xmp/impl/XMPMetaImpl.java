@@ -419,7 +419,7 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 		}
 
 		Object[] result = XMPNodeUtils.chooseLocalizedText(arrayNode, genericLang, specificLang);
-		int match = ((Integer) result[0]).intValue();
+		int match = (int) result[0];
 		final XMPNode itemNode = (XMPNode) result[1];
 
 		if (match != XMPNodeUtils.CLT_NO_VALUES)
@@ -446,7 +446,7 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 
 				public String toString()
 				{
-					return itemNode.getValue().toString();
+					return itemNode.getValue();
 				}
 			};
 		}
@@ -526,7 +526,7 @@ public class XMPMetaImpl implements XMPConst, XMPMeta
 		// chooseLocalizedText will make sure the array is a language
 		// alternative.
 		Object[] result = XMPNodeUtils.chooseLocalizedText(arrayNode, genericLang, specificLang);
-		int match = ((Integer) result[0]).intValue();
+		int match = (int) result[0];
 		XMPNode itemNode = (XMPNode) result[1];
 
 		boolean specificXDefault = XMPConst.X_DEFAULT.equals(specificLang);
