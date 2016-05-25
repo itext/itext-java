@@ -116,7 +116,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
             case Property.PADDING_RIGHT:
             case Property.PADDING_BOTTOM:
             case Property.PADDING_LEFT:
-                return (T1) (Object) (Float) 0f;
+                return (T1) (Object) 0f;
             default:
                 return (T1) (Object) null;
         }

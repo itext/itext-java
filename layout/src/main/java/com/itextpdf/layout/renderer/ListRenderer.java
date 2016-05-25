@@ -115,14 +115,14 @@ public class ListRenderer extends BlockRenderer {
     @Override
     protected AbstractRenderer createSplitRenderer(int layoutResult) {
         AbstractRenderer splitRenderer = super.createSplitRenderer(layoutResult);
-        splitRenderer.setProperty(Property.LIST_SYMBOLS_INITIALIZED, Boolean.valueOf(true));
+        splitRenderer.setProperty(Property.LIST_SYMBOLS_INITIALIZED, true);
         return splitRenderer;
     }
 
     @Override
     protected AbstractRenderer createOverflowRenderer(int layoutResult) {
         AbstractRenderer overflowRenderer = super.createOverflowRenderer(layoutResult);
-        overflowRenderer.setProperty(Property.LIST_SYMBOLS_INITIALIZED, Boolean.valueOf(true));
+        overflowRenderer.setProperty(Property.LIST_SYMBOLS_INITIALIZED, true);
         return overflowRenderer;
     }
 
@@ -195,7 +195,7 @@ public class ListRenderer extends BlockRenderer {
                 };
                 try {
                     textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(constantFont));
-                } catch (IOException exc) {}
+                } catch (IOException ignored) {}
             } else {
                 textRenderer = new TextRenderer(textElement);
             }
