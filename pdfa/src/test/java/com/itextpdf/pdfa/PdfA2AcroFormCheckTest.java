@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class PdfA2AcroFormCheckTest extends ExtendedITextTest {
     @Rule
     public ExpectedException junitExpectedException = ExpectedException.none();
 
-    @Test(expected = PdfAConformanceException.class)
+    @Test
     public void acroFormCheck01() throws FileNotFoundException, XMPException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -49,8 +50,12 @@ public class PdfA2AcroFormCheckTest extends ExtendedITextTest {
         PdfDictionary acroForm = new PdfDictionary();
         acroForm.put(PdfName.NeedAppearances, new PdfBoolean(true));
         doc.getCatalog().put(PdfName.AcroForm, acroForm);
+        try {
+            doc.close();
+            Assert.fail("PdfAConformanceException expected");
+        } catch (com.itextpdf.pdfa.PdfAConformanceException ignored) {
 
-        doc.close();
+        }
     }
 
     @Test

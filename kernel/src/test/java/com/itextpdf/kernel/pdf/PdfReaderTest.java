@@ -720,7 +720,7 @@ public class PdfReaderTest extends ExtendedITextTest{
         document.close();
     }
 
-    @Test @Ignore //test with abnormal object declaration
+    @Test @Ignore("ignore") //test with abnormal object declaration
     public void correctSimpleDoc4() throws IOException {
         String filename = sourceFolder + "correctSimpleDoc4.pdf";
 

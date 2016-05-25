@@ -536,14 +536,19 @@ public class PdfWriterTest extends ExtendedITextTest {
         Assert.assertEquals(exceptionMessage, PdfException.DocumentToCopyToCannotBeNull);
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void closeStream1() throws IOException {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "closeStream1.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.addNewPage();
         pdfDoc.close();
-        fos.write(1);
+        try {
+            fos.write(1);
+            Assert.fail("IOException expected");
+        } catch (java.io.IOException ignored) {
+
+        }
     }
 
     @Test

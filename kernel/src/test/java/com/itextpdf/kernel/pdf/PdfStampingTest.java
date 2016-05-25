@@ -621,7 +621,7 @@ public class PdfStampingTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("ignore")
     public void stamping14() throws IOException {
         String filename1 = sourceFolder + "20000PagesDocument.pdf";
         String filename2 = destinationFolder + "stamping14.pdf";

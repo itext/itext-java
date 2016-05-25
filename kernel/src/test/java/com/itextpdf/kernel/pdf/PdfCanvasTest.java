@@ -1507,7 +1507,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gifImageTest03.pdf", sourceFolder + "cmp_gifImageTest03.pdf", destinationFolder, "diff_"));
     }
 
-    @Test(expected = com.itextpdf.io.IOException.class)
+    @Test
     public void gifImageTest04() throws IOException, InterruptedException {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "gifImageTest04.pdf");
         PdfWriter writer = new PdfWriter(fos);
@@ -1523,8 +1523,12 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
 
         PdfCanvas canvas = new PdfCanvas(page);
-        ImageData img = ImageDataFactory.createGifFrame(baos.toByteArray(), 3);
-        canvas.addImage(img, 100, 100, 200, false);
+        try {
+            ImageDataFactory.createGifFrame(baos.toByteArray(), 3);
+            Assert.fail("IOException expected");
+        } catch (com.itextpdf.io.IOException ignored) {
+
+        }
     }
 
     @Test

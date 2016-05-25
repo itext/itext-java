@@ -70,11 +70,16 @@ public class Barcode39Test extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void barcode03Test() {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         PdfDocument document = new PdfDocument(writer);
         Barcode39 barcode = new Barcode39(document);
-        barcode.getBarsCode39("9781935*182610");
+        try {
+            barcode.getBarsCode39("9781935*182610");
+            Assert.fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException ignored) {
+
+        }
     }
 }

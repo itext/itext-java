@@ -35,7 +35,7 @@ public class PdfA2EmbeddedFilesCheckTest extends ExtendedITextTest {
     public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
-    @Ignore
+    @Ignore("ignore")
     // According to spec, only pdfa-1 or pdfa-2 compliant pdf document are allowed to be added to the
     // conforming pdfa-2 document. We only check they mime type, to define embedded file type, but we don't check
     // the bytes of the file. That's why this test creates invalid pdfa document.
