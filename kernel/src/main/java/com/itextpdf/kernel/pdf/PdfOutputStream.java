@@ -311,8 +311,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                             assert pdfStream.getOutputStream() != null : "Error in outputStream";
                             ((ByteArrayOutputStream) pdfStream.getOutputStream().getOutputStream()).writeTo(zip);
                         }
-
-                        zip.close();
+                        zip.finish();
                     } else {
                         if (pdfStream instanceof PdfObjectStream) {
                             PdfObjectStream objectStream = (PdfObjectStream) pdfStream;
@@ -339,6 +338,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 this.write((PdfDictionary) pdfStream);
                 writeBytes(PdfOutputStream.stream);
                 byteArrayStream.writeTo(this);
+                byteArrayStream.close();
                 writeBytes(PdfOutputStream.endstream);
             }
         } catch (IOException e) {
