@@ -63,7 +63,7 @@ import java.io.Serializable;
  *
  * @see TIFFDirectory
  */
-public class TIFFField extends Object implements Comparable<TIFFField>, Serializable {
+public class TIFFField implements Comparable<TIFFField>, Serializable {
 
     private static final long serialVersionUID = 9088332901412823834L;
 
