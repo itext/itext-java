@@ -61,12 +61,18 @@ class TernaryTreeIterator implements Enumeration {
     TernaryTree tt;
 
     private class Item {
-        /** parent */
+        /**
+         * parent
+         */
         char parent;
-        /** child */
+        /**
+         * child
+         */
         char child;
 
-        /** default constructor */
+        /**
+         * default constructor
+         */
         public Item() {
             parent = 0;
             child = 0;
@@ -74,6 +80,7 @@ class TernaryTreeIterator implements Enumeration {
 
         /**
          * Construct item.
+         *
          * @param p a char
          * @param c a char
          */
@@ -98,24 +105,36 @@ class TernaryTreeIterator implements Enumeration {
      */
     StringBuffer ks;
 
-    /** default constructor */
+    /**
+     * default constructor
+     */
     public TernaryTreeIterator(TernaryTree tt) {
         this.tt = tt;
         cur = -1;
         ns = new Stack();
         ks = new StringBuffer();
-        rewind();
+        reset();
     }
 
-    /** rewind iterator */
+    /**
+     * rewind iterator
+     * @deprecated will be removed in 7.1. Use reset() instead
+     */
+    @Deprecated
     public void rewind() {
+        reset();
+    }
+
+    public void reset() {
         ns.removeAllElements();
         ks.setLength(0);
         cur = tt.root;
         run();
     }
 
-    /** @return next element */
+    /**
+     * @return next element
+     */
     public Object nextElement() {
         String res = curkey;
         cur = up();
@@ -123,15 +142,19 @@ class TernaryTreeIterator implements Enumeration {
         return res;
     }
 
-    /** @return value */
+    /**
+     * @return value
+     */
     public char getValue() {
         if (cur >= 0) {
             return tt.eq[cur];
         }
-        return (char)0;
+        return (char) 0;
     }
 
-    /** @return true if more elements */
+    /**
+     * @return true if more elements
+     */
     public boolean hasMoreElements() {
         return (cur != -1);
     }
@@ -154,10 +177,10 @@ class TernaryTreeIterator implements Enumeration {
         boolean climb = true;
 
         while (climb) {
-            i = (Item)ns.pop();
+            i = (Item) ns.pop();
             i.child++;
             switch (i.child) {
-                case (char)1:
+                case (char) 1:
                     if (tt.sc[i.parent] != 0) {
                         res = tt.eq[i.parent];
                         ns.push(new Item(i));
@@ -170,7 +193,7 @@ class TernaryTreeIterator implements Enumeration {
                     climb = false;
                     break;
 
-                case (char)2:
+                case (char) 2:
                     res = tt.hi[i.parent];
                     ns.push(new Item(i));
                     if (ks.length() > 0) {
@@ -206,7 +229,7 @@ class TernaryTreeIterator implements Enumeration {
                     leaf = true;
                     break;
                 }
-                ns.push(new Item((char)cur, '\u0000'));
+                ns.push(new Item((char) cur, '\u0000'));
                 if (tt.sc[cur] == 0) {
                     leaf = true;
                     break;
