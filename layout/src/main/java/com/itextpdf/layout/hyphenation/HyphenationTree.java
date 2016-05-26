@@ -17,13 +17,11 @@
 
 package com.itextpdf.layout.hyphenation;
 
-import java.io.BufferedInputStream;
-import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,7 +47,7 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
     /**
      * This map stores hyphenation exceptions
      */
-    protected Map stoplist;
+    protected Map<String, List> stoplist;
 
     /**
      * This map stores the character classes
@@ -63,7 +61,7 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
 
     /** Default constructor. */
     public HyphenationTree() {
-        stoplist = new HashMap(23);    // usually a small table
+        stoplist = new HashMap<>(23);
         classmap = new TernaryTree();
         vspace = new ByteVector();
         vspace.alloc(1);    // this reserves index 0, which we don't use
@@ -128,17 +126,8 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
      * @param filename the filename
      * @throws HyphenationException In case the parsing fails
      */
-    public void loadPatterns(String filename) throws HyphenationException {
-        File f = new File(filename);
-        try {
-            URL url = f.toURI().toURL();
-            loadPatterns(new BufferedInputStream(url.openStream()), url.toExternalForm());
-        } catch (MalformedURLException e) {
-            throw new HyphenationException("Error converting the File '" + f + "' to a URL: "
-                    + e.getMessage());
-        } catch (IOException e) {
-            throw new HyphenationException("Error opening the File '" + f + "'");
-        }
+    public void loadPatterns(String filename) throws HyphenationException, FileNotFoundException {
+        loadPatterns(new FileInputStream(filename), filename);
     }
 
     /**
@@ -355,7 +344,7 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
     private List<char[]> splitOnNonCharacters(char[] word) {
         List<Integer> breakPoints = getNonLetterBreaks(word);
         if (breakPoints.size() == 0) {
-            return Collections.emptyList();
+            return Collections.<char[]>emptyList();
         }
         List<char[]> words = new ArrayList<char[]>();
         for (int ibreak = 0; ibreak < breakPoints.size(); ibreak++) {

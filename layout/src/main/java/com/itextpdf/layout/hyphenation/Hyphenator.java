@@ -235,7 +235,7 @@ public final class Hyphenator {
             return getHyphenationTree(fis, name);
         } catch (IOException ioe) {
             if (log.isDebugEnabled()) {
-                log.debug("I/O problem while trying to load " + name, ioe);
+                log.debug("I/O problem while trying to load " + name + ": " + ioe.getMessage());
             }
             return null;
         }
