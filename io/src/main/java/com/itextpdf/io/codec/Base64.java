@@ -1,4 +1,3 @@
-/* $Id$ */
 package com.itextpdf.io.codec;
 
 /**
