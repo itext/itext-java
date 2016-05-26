@@ -120,8 +120,8 @@ class DocFontEncoding extends FontEncoding {
                     currentNumber = ((PdfNumber) obj).intValue();
                 } else {
                     String glyphName = ((PdfName) obj).getValue();
-                    Integer unicode = AdobeGlyphList.nameToUnicode(glyphName);
-                    if (unicode != null) {
+                    int unicode = (int) AdobeGlyphList.nameToUnicode(glyphName);
+                    if (unicode != -1) {
                         fontEncoding.codeToUnicode[currentNumber] = (int) unicode;
                         fontEncoding.unicodeToCode.put((int) unicode, currentNumber);
                         fontEncoding.differences[currentNumber] = glyphName;

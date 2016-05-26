@@ -234,7 +234,7 @@ public class FontEncoding implements Serializable {
                 String order = tok.nextToken();
                 String name = tok.nextToken();
                 char uni = (char) Integer.parseInt(tok.nextToken(), 16);
-                Integer uniName = AdobeGlyphList.nameToUnicode(name);
+                int uniName = (int) AdobeGlyphList.nameToUnicode(name);
                 int orderK;
                 if (order.startsWith("'")) {
                     orderK = order.charAt(1);
@@ -245,7 +245,7 @@ public class FontEncoding implements Serializable {
                 unicodeToCode.put(uni, orderK);
                 codeToUnicode[orderK] = (int) uni;
                 differences[orderK] = name;
-                unicodeDifferences.put(uni, uniName != null ? (int) uniName : -1);
+                unicodeDifferences.put(uni, uniName);
             }
         } else {
             int k = 0;

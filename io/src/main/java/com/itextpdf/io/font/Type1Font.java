@@ -167,11 +167,11 @@ public class Type1Font extends FontProgram {
      * @return Glyph instance if found, otherwise null.
      */
     public Glyph getGlyph(String name) {
-        Integer unicode = AdobeGlyphList.nameToUnicode(name);
-        if (unicode == null) {
-            return null;
-        } else {
+        int unicode = (int) AdobeGlyphList.nameToUnicode(name);
+        if (unicode != -1) {
             return getGlyph((int) unicode);
+        } else {
+            return null;
         }
     }
 
@@ -356,12 +356,12 @@ public class Type1Font extends FontProgram {
                         break;
                 }
             }
-            Integer unicode = AdobeGlyphList.nameToUnicode(N);
-            Glyph glyph = new Glyph((int) C, (int) WX, unicode != null ? (int) unicode : -1, B);
+            int unicode = (int) AdobeGlyphList.nameToUnicode(N);
+            Glyph glyph = new Glyph((int) C, (int) WX, unicode, B);
             if (C >= 0) {
                 codeToGlyph.put(C, glyph);
             }
-            if (unicode != null) {
+            if (unicode != -1) {
                 unicodeToGlyph.put(unicode, glyph);
             }
             avgWidth += (int) WX;
@@ -418,10 +418,10 @@ public class Type1Font extends FontProgram {
                     String second = tok.nextToken();
                     Integer width = (int) Float.parseFloat(tok.nextToken());
 
-                    Integer firstUni = AdobeGlyphList.nameToUnicode(first);
-                    Integer secondUni = AdobeGlyphList.nameToUnicode(second);
+                    int firstUni = (int) AdobeGlyphList.nameToUnicode(first);
+                    int secondUni = (int) AdobeGlyphList.nameToUnicode(second);
 
-                    if (firstUni != null && secondUni != null) {
+                    if (firstUni != -1 && secondUni != -1) {
                         Long record = ((long)firstUni << 32) + (int) secondUni;
                         kernPairs.put(record, width);
                     }
