@@ -39,9 +39,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
 
-        Integer splitByPage1 = 30;
-        Integer splitByPage2 = 100;
-        List<Integer> pageNumbers = Arrays.asList(splitByPage1, splitByPage2);
+        List<Integer> pageNumbers = Arrays.asList(30, 100);
 
         List<PdfDocument> splitDocuments = new PdfSplitter(inputPdfDoc) {
             int partNumber = 1;

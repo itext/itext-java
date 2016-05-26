@@ -104,7 +104,7 @@ public class CMapToUnicode extends AbstractCMap {
      */
     public char[] lookup(byte[] code, int offset, int length) {
         char[] result = null;
-        Integer key;
+        int key;
         if (length == 1) {
             key = code[offset] & 0xff;
             result = byteMappings.get(key);

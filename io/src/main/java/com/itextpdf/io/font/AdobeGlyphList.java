@@ -99,7 +99,7 @@ public class AdobeGlyphList {
                 if (t2.hasMoreTokens()) {
                     continue;
                 }
-                Integer num = Integer.valueOf(hex, 16);
+                int num = Integer.parseInt(hex, 16);
                 unicode2names.put(num, name);
                 names2unicode.put(name, num);
             }
@@ -123,7 +123,7 @@ public class AdobeGlyphList {
         }
         if (v == -1 && name.length() == 7 && name.toLowerCase().startsWith("uni")) {
             try {
-                return Integer.valueOf(name.substring(3), 16);
+                return Integer.parseInt(name.substring(3), 16);
             } catch (Exception ignored) {
             }
         }

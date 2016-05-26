@@ -137,7 +137,7 @@ public class Type1Font extends FontProgram {
     @Override
     public int getKerning(Glyph first, Glyph second) {
         if (first.hasValidUnicode() && second.hasValidUnicode()) {
-            Long record = ((long)first.getUnicode() << 32) + (int) second.getUnicode();
+            long record = ((long)first.getUnicode() << 32) + (int) second.getUnicode();
             if (kernPairs.containsKey(record)) {
                 return (int) kernPairs.get(record);
             } else {
@@ -156,7 +156,7 @@ public class Type1Font extends FontProgram {
      * @return {@code true} if the kerning was applied, {@code false} otherwise.
      */
     public boolean setKerning(int first, int second, int kern) {
-        Long record = ((long)first << 32) + second;
+        long record = ((long)first << 32) + second;
         kernPairs.put(record, kern);
         return true;
     }
@@ -325,8 +325,8 @@ public class Type1Font extends FontProgram {
                 startKernPairs = false;
                 break;
             }
-            Integer C = -1;
-            Integer WX = 250;
+            int C = -1;
+            int WX = 250;
             String N = "";
             int[] B = null;
             tok = new StringTokenizer(line, ";");
@@ -338,7 +338,7 @@ public class Type1Font extends FontProgram {
                 ident = tokc.nextToken();
                 switch (ident) {
                     case "C":
-                        C = Integer.valueOf(tokc.nextToken());
+                        C = Integer.parseInt(tokc.nextToken());
                         break;
                     case "WX":
                         WX = (int) Float.parseFloat(tokc.nextToken());
@@ -357,14 +357,14 @@ public class Type1Font extends FontProgram {
                 }
             }
             int unicode = (int) AdobeGlyphList.nameToUnicode(N);
-            Glyph glyph = new Glyph((int) C, (int) WX, unicode, B);
+            Glyph glyph = new Glyph(C, WX, unicode, B);
             if (C >= 0) {
                 codeToGlyph.put(C, glyph);
             }
             if (unicode != -1) {
                 unicodeToGlyph.put(unicode, glyph);
             }
-            avgWidth += (int) WX;
+            avgWidth += WX;
             widthCount++;
         }
         if (widthCount != 0) {
@@ -422,7 +422,7 @@ public class Type1Font extends FontProgram {
                     int secondUni = (int) AdobeGlyphList.nameToUnicode(second);
 
                     if (firstUni != -1 && secondUni != -1) {
-                        Long record = ((long)firstUni << 32) + (int) secondUni;
+                        long record = ((long)firstUni << 32) + secondUni;
                         kernPairs.put(record, width);
                     }
                 } else if (ident.equals("EndKernPairs")) {

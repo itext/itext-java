@@ -295,7 +295,7 @@ public class Barcode128 extends Barcode1D {
             for (int k = 2; k < 5; ++k) {
                 if (code.length() < k)
                     break;
-                Integer subcode = Integer.parseInt(code.substring(0, k));
+                int subcode = Integer.parseInt(code.substring(0, k));
                 n = ais.containsKey(subcode) ? (int)ais.get(subcode) : 0;
                 if (n != 0) {
                     idlen = k;

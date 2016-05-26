@@ -76,14 +76,14 @@ public class CMapCidByte extends AbstractCMap {
 
     public IntHashtable getReversMap() {
         IntHashtable code2cid = new IntHashtable(map.size());
-        for (Integer cid: map.keySet()) {
+        for (int cid : map.keySet()) {
             byte[] bytes = map.get(cid);
             int byteCode = 0;
             for (byte b: bytes) {
                 byteCode <<= 8;
                 byteCode += b & 0xff;
             }
-            code2cid.put(byteCode, (int) cid);
+            code2cid.put(byteCode, cid);
         }
         return code2cid;
     }

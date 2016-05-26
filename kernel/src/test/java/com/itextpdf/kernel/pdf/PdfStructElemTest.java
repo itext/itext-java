@@ -331,12 +331,12 @@ public class PdfStructElemTest extends ExtendedITextTest {
         destination.setTagged();
         destination.initializeOutlines();
 
-        source.copyPagesTo(new ArrayList<Integer>() {{
-            add(3);
-            add(4);
-            add(10);
-            add(11);
-        }}, destination);
+        ArrayList<Integer> pagesToCopy = new ArrayList<Integer>();
+        pagesToCopy.add(3);
+        pagesToCopy.add(4);
+        pagesToCopy.add(10);
+        pagesToCopy.add(11);
+        source.copyPagesTo(pagesToCopy, destination);
         source.copyPagesTo(50, 52, destination);
 
 

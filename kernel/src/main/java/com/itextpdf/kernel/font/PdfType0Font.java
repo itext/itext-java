@@ -672,11 +672,11 @@ public class PdfType0Font extends PdfFont {
             assert usemap != null;
             for (Map.Entry<Integer, int[]> e : usemap.entrySet()) {
                 int[] v = e.getValue();
-                Integer gi = v[0];
+                int gi = v[0];
                 if (longTag.containsKey(v[0])) {
                     continue;
                 }
-                int c = (int) e.getKey();
+                int c = e.getKey();
                 boolean skip = true;
                 for (int k = 0; k < rg.length; k += 2) {
                     if (c >= rg[k] && c <= rg[k + 1]) {

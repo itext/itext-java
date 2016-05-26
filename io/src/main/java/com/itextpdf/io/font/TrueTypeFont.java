@@ -308,14 +308,14 @@ public class TrueTypeFont extends FontProgram {
         unicodeToGlyph = new LinkedHashMap<>(cmap.size());
         codeToGlyph = new LinkedHashMap<>(glyphWidths.length);
         avgWidth = 0;
-        for (Integer charCode : cmap.keySet()) {
+        for (int charCode : cmap.keySet()) {
             int index = cmap.get(charCode)[0];
             if (index >= glyphWidths.length) {
                 Logger LOGGER = LoggerFactory.getLogger(TrueTypeFont.class);
                 LOGGER.warn(MessageFormat.format(LogMessageConstant.FONT_HAS_INVALID_GLYPH, getFontNames().getFontName(), index));
                 continue;
             }
-            Glyph glyph = new Glyph(index, glyphWidths[index], (int) charCode, bBoxes != null ? bBoxes[index] : null);
+            Glyph glyph = new Glyph(index, glyphWidths[index], charCode, bBoxes != null ? bBoxes[index] : null);
             unicodeToGlyph.put(charCode, glyph);
             codeToGlyph.put(index, glyph);
             avgWidth += glyph.getWidth();

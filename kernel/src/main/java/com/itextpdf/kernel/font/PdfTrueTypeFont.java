@@ -145,7 +145,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
             assert usemap != null;
             for (Map.Entry<Integer, int[]> e : usemap.entrySet()) {
                 int[] v = e.getValue();
-                Integer gi = v[0];
+                int gi = v[0];
                 if (longTag.contains(gi)) {
                     continue;
                 }

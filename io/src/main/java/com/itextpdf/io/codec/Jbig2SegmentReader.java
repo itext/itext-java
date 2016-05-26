@@ -157,7 +157,7 @@ public class Jbig2SegmentReader {
          */
         public byte[] getData(boolean for_embedding) throws java.io.IOException {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
-            for (Integer sn : segs.keySet()) {
+            for (int sn : segs.keySet()) {
                 Jbig2Segment s = segs.get(sn);
 
                 // pdf reference 1.4, section 3.3.6 Jbig2Decode Filter
