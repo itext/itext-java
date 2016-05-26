@@ -17,14 +17,11 @@
 
 package com.itextpdf.layout.hyphenation;
 
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
@@ -45,7 +42,7 @@ public class PatternParser extends DefaultHandler {
     private XMLReader parser;
     private int currElement;
     private IPatternConsumer consumer;
-    private StringBuffer token;
+    private StringBuilder token;
     private ArrayList exception;
     private char hyphenChar;
     private String errMsg;
@@ -61,7 +58,7 @@ public class PatternParser extends DefaultHandler {
      * @throws HyphenationException if a hyphenation exception is raised
      */
     private PatternParser() throws HyphenationException {
-        token = new StringBuffer();
+        token = new StringBuilder();
         parser = createParser();
         parser.setContentHandler(this);
         parser.setErrorHandler(this);
@@ -83,16 +80,8 @@ public class PatternParser extends DefaultHandler {
      * @param filename the filename
      * @throws HyphenationException In case of an exception while parsing
      */
-    public void parse(String filename) throws HyphenationException {
-        try {
-            URL url = new File(filename).toURI().toURL();
-            parse(url.openStream(), url.toExternalForm());
-        } catch (MalformedURLException e) {
-            throw new HyphenationException("Error converting the File '" + filename + "' to a URL: "
-                    + e.getMessage());
-        } catch (IOException e) {
-            throw new HyphenationException("Error opening the File '" + filename + "'");
-        }
+    public void parse(String filename) throws HyphenationException, FileNotFoundException {
+        parse(new FileInputStream(filename), filename);
     }
 
     /**
@@ -132,7 +121,7 @@ public class PatternParser extends DefaultHandler {
         }
     }
 
-    private String readToken(StringBuffer chars) {
+    private String readToken(StringBuilder chars) {
         String word;
         boolean space = false;
         int i;
@@ -178,7 +167,7 @@ public class PatternParser extends DefaultHandler {
     }
 
     private static String getPattern(String word) {
-        StringBuffer pat = new StringBuffer();
+        StringBuilder pat = new StringBuilder();
         int len = word.length();
         for (int i = 0; i < len; i++) {
             if (!Character.isDigit(word.charAt(i))) {
@@ -194,7 +183,7 @@ public class PatternParser extends DefaultHandler {
             Object item = ex.get(i);
             if (item instanceof String) {
                 String str = (String)item;
-                StringBuffer buf = new StringBuffer();
+                StringBuilder buf = new StringBuilder();
                 for (int j = 0; j < str.length(); j++) {
                     char c = str.charAt(j);
                     if (c != hyphenChar) {
@@ -220,7 +209,7 @@ public class PatternParser extends DefaultHandler {
     }
 
     private String getExceptionWord(ArrayList ex) {
-        StringBuffer res = new StringBuffer();
+        StringBuilder res = new StringBuilder();
         for (int i = 0; i < ex.size(); i++) {
             Object item = ex.get(i);
             if (item instanceof String) {
@@ -235,7 +224,7 @@ public class PatternParser extends DefaultHandler {
     }
 
     private static String getInterletterValues(String pat) {
-        StringBuffer il = new StringBuffer();
+        StringBuilder il = new StringBuilder();
         String word = pat + "a";    // add dummy letter to serve as sentinel
         int len = word.length();
         for (int i = 0; i < len; i++) {
@@ -353,7 +342,7 @@ public class PatternParser extends DefaultHandler {
      * {@inheritDoc}
      */
     public void characters(char[] ch, int start, int length) {
-        StringBuffer chars = new StringBuffer(length);
+        StringBuilder chars = new StringBuilder(length);
         chars.append(ch, start, length);
         String word = readToken(chars);
         while (word != null) {
@@ -413,7 +402,7 @@ public class PatternParser extends DefaultHandler {
      * Returns a string of the location.
      */
     private String getLocationString(SAXParseException ex) {
-        StringBuffer str = new StringBuffer();
+        StringBuilder str = new StringBuilder();
 
         String systemId = ex.getSystemId();
         if (systemId != null) {
