@@ -174,7 +174,7 @@ public class PdfString extends PdfPrimitiveObject {
         }
 
         byte[] b = PdfTokenizer.decodeStringContent(content, hexWriting);
-        if (b.length >= 2 && b[0] == -2 && b[1] == -1) {
+        if (b.length >= 2 && b[0] == (byte)0xfe && b[1] == (byte)0xff) {
             return PdfEncodings.convertToString(b, PdfEncodings.UNICODE_BIG);
         } else {
             return PdfEncodings.convertToString(b, PdfEncodings.PDF_DOC_ENCODING);
