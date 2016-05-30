@@ -1,16 +1,15 @@
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class PdfTokenizerTest {
@@ -89,7 +88,7 @@ public class PdfTokenizerTest {
         Assert.assertEquals("\r\n\tUser\u0090s Guide", pdfString.getValue());
 
         String testUnicodeString = "ΑΒΓΗ€•♣⋅";
-        pdfString = new PdfString(testUnicodeString.getBytes("UnicodeBig"), false);
+        pdfString = new PdfString(testUnicodeString.getBytes(PdfEncodings.UNICODE_BIG), false);
         Assert.assertEquals(testUnicodeString, pdfString.toUnicodeString());
 
         pdfString = new PdfString("FEFF041F04400438043204350442".getBytes(), true);
