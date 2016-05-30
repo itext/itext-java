@@ -276,11 +276,11 @@ public abstract class Options
 	 */
 	private String getOptionName(int option)
 	{
-		Map optionsNames = procureOptionNames();
+		HashMap optionsNames = procureOptionNames();
 		
 		Integer key = new Integer(option);
-		String result = (String) optionsNames.get(key);
-		if (result == null)
+		String result = null;
+		if (optionsNames.containsKey(key))
 		{
 			result = defineOptionName(option);
 			if (result != null)
@@ -300,12 +300,12 @@ public abstract class Options
 	/**
 	 * @return Returns the optionNames map and creates it if required.
 	 */
-	private Map procureOptionNames()
+	private HashMap procureOptionNames()
 	{
 		if (optionNames == null)
 		{	
 			optionNames = new HashMap();
 		}
-		return optionNames;
+		return (HashMap) optionNames;
 	}
 }

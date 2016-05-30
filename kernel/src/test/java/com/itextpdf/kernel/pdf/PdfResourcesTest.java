@@ -1,24 +1,15 @@
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfResources;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 import java.util.Set;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfResourcesTest {
@@ -64,8 +55,10 @@ public class PdfResourcesTest {
         Set<PdfName> names = resources.getResourceNames();
         Assert.assertEquals(2, names.size());
         Iterator<PdfName> iterator = names.iterator();
+        iterator.hasNext();
         PdfName n1 = iterator.next();
         Assert.assertEquals("Gs1", n1.getValue());
+        iterator.hasNext();
         PdfName n2 = iterator.next();
         Assert.assertEquals("Gs2", n2.getValue());
         PdfExtGState egs3 = new PdfExtGState();

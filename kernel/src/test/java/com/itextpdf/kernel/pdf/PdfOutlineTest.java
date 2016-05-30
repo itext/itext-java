@@ -81,6 +81,7 @@ public class PdfOutlineTest extends ExtendedITextTest{
         outlines.getAllChildren().get(0).getAllChildren().get(1).addOutline("testOutline", 1).addDestination(PdfExplicitDestination.createFit(pdfDoc.getPage(102)));
 
         pdfDoc.close();
+        fos.close();
     }
     @Test
     public void addOutlinesToDocumentTest() throws IOException, InterruptedException {
@@ -197,6 +198,7 @@ public class PdfOutlineTest extends ExtendedITextTest{
         secondOutline.addDestination(PdfExplicitDestination.createFit(secondPage));
 
         pdfDoc.close();
+        fos.close();
     }
 
     @Test

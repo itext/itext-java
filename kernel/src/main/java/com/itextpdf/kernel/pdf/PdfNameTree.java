@@ -79,14 +79,18 @@ public class PdfNameTree {
             dictionary = dictionary.getAsDictionary(treeType);
             if (dictionary != null) {
                 items = readTree(dictionary);
-                for (Iterator<Map.Entry<String, PdfObject>> it = items.entrySet().iterator(); it.hasNext(); ) {
-                    Map.Entry<String, PdfObject> entry = it.next();
-                    PdfArray arr = getNameArray(entry.getValue());
+                //@TODO It's done for auto porting to itextsharp, cuz u cannot change collection which you iterate
+                // in for loop (even if you change only value of a Map entry) in .NET. Java doesn't have such a problem.
+                // We should find a better solution in the future.
+                Set<String> keys = new HashSet<>();
+                keys.addAll(items.keySet());
+                for (String key : keys) {
+                    PdfArray arr = getNameArray(items.get(key));
                     if (arr != null) {
-                        items.put(entry.getKey(), arr);
+                        items.put(key, arr);
                     }
                     else
-                        items.remove(entry.getKey());
+                        items.remove(key);
                 }
             }
         }

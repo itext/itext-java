@@ -52,7 +52,6 @@ import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -332,7 +331,6 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
             for (PdfName resourceName : resources.keySet()) {
                 PdfObject resource = resources.get(resourceName, false);
                 resourceToName.put(resource, resourceName);
-                getPdfObject().getAsDictionary(resourceType).put(resourceName, resource);
             }
         }
     }

@@ -224,7 +224,7 @@ public class ByteUtils {
             int intLen = longSize(v);
             buf = buffer == null ? new ByteBuffer(intLen + (negative ? 1 : 0)) : buffer;
             for (int i = 0; i < intLen; i++) {
-                buf.prepend(bytes[(int) (v % 10)]);
+                buf.prepend(bytes[(int) Math.abs(v % 10)]);
                 v /= 10;
             }
             if (negative) {
