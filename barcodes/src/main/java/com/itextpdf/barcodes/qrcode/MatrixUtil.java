@@ -381,13 +381,13 @@ final class MatrixUtil {
     }
 
     // Check if "value" is empty.
-    private static boolean isEmpty(int value) {
-        return value == -1;
+    private static boolean isEmpty(byte value) {
+        return value == (byte)0xff;
     }
 
     // Check if "value" is valid.
-    private static boolean isValidValue(int value) {
-        return (value == -1 ||  // Empty.
+    private static boolean isValidValue(byte value) {
+        return (value == (byte)0xff ||  // Empty.
                 value == 0 ||  // Light (white).
                 value == 1);  // Dark (black).
     }
