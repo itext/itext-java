@@ -68,6 +68,7 @@ public class FontCache {
     /**
      * The path to the font resources.
      */
+    @Deprecated
     public static final String CMAP_RESOURCE_PATH = FontConstants.RESOURCE_PATH + "cmap/";
 
     private static final Map<String, Map<String, Object>> allFonts = new HashMap<>();
@@ -172,7 +173,7 @@ public class FontCache {
     }
 
     private static void loadRegistry() throws java.io.IOException {
-        InputStream resource = ResourceUtil.getResourceStream(CMAP_RESOURCE_PATH + CJK_REGISTRY_FILENAME);
+        InputStream resource = ResourceUtil.getResourceStream(FontConstants.CMAP_RESOURCE_PATH + CJK_REGISTRY_FILENAME);
         try {
             Properties p = new Properties();
             p.load(resource);
@@ -198,7 +199,7 @@ public class FontCache {
     }
 
     private static Map<String, Object> readFontProperties(String name) throws java.io.IOException {
-        InputStream resource = ResourceUtil.getResourceStream(CMAP_RESOURCE_PATH + name + ".properties");
+        InputStream resource = ResourceUtil.getResourceStream(FontConstants.CMAP_RESOURCE_PATH + name + ".properties");
 
         try {
             Properties p = new Properties();

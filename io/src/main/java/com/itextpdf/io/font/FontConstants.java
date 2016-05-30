@@ -71,6 +71,8 @@ public class FontConstants {
      * The path to the font resources.
      */
     public static final String RESOURCE_PATH = "com/itextpdf/io/font/";
+    public static final String AFM_RESOURCE_PATH = "com/itextpdf/io/font/afm/";
+    public static final String CMAP_RESOURCE_PATH = "com/itextpdf/io/font/cmap/";
 
     //-Font styles------------------------------------------------------------------------------------------------------
     public static final int UNDEFINED = -1;
