@@ -11,11 +11,16 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.util.*;
 
 @Category(IntegrationTest.class)
 public class TextRenderInfoTest extends ExtendedITextTest {
@@ -38,7 +43,6 @@ public class TextRenderInfoTest extends ExtendedITextTest {
      * @throws java.lang.Exception
      */
     @Test
-//    @Ignore("Seems to be a problem with decode")
     public void testUnicodeEmptyString() throws Exception {
         StringBuilder sb = new StringBuilder();
         String inFile = "japanese_text.pdf";
