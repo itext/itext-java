@@ -141,9 +141,9 @@ public abstract class AbstractCMap {
     protected String toUnicodeString(String value, boolean isHexWriting) {
         byte[] bytes = decodeStringToByte(value);
         if (isHexWriting) {
-            return PdfEncodings.convertToString(bytes, "UnicodeBigUnmarked");
+            return PdfEncodings.convertToString(bytes, PdfEncodings.UNICODE_BIG_UNMARKED);
         } else {
-            if (bytes.length >= 2 && bytes[0] == (byte)254 && bytes[1] == (byte)255) {
+            if (bytes.length >= 2 && bytes[0] == (byte)0xfe && bytes[1] == (byte)0xff) {
                 return PdfEncodings.convertToString(bytes, PdfEncodings.UNICODE_BIG);
             } else {
                 return PdfEncodings.convertToString(bytes, PdfEncodings.PDF_DOC_ENCODING);
