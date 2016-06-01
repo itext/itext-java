@@ -85,6 +85,8 @@ public final class Version {
      */
     private String key = null;
 
+    private static boolean expired;
+
     /**
      * Gets an instance of the iText version that is currently used.
      * Note that iText Group requests that you retain the iText producer line
@@ -106,6 +108,16 @@ public final class Version {
                             version.key += "unauthorised";
                         } else {
                             version.key += info[5];
+                        }
+                    }
+
+                    if ( info.length < 5 ) {
+                        if (info[6] != null && info[6].trim().length() > 0) {
+                            String versionToCheck = version.release.substring(0, version.release.lastIndexOf("."));
+
+                            if (! info[6].equalsIgnoreCase(versionToCheck)) {
+                                throw new Exception();
+                            }
                         }
                     }
 
@@ -133,6 +145,9 @@ public final class Version {
                     }
                 } catch (Exception e) {
                     version.iTextVersion += AGPL;
+                    if ( e.getCause().getMessage().contains("expired")) {
+                        version.expired = true;
+                    }
                 }
             }
         }
@@ -145,6 +160,14 @@ public final class Version {
      */
     public static boolean isAGPLVersion() {
         return getInstance().getVersion().indexOf(AGPL) > 0;
+    }
+
+    /**
+     * Is the license expired?
+     * @return true if expired
+     */
+    public static boolean isExpired() {
+        return expired;
     }
 
     /**

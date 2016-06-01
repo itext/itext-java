@@ -56,7 +56,7 @@ public class DefaultCounter implements Counter {
     private final int[] repeat = {10000, 5000, 1000};
     private int repeat_level = 10000;
 
-    private static byte[] message = Base64.decode(
+    private static byte[] message_1 = Base64.decode(
             "DQoNCllvdSBhcmUgdXNpbmcgaVRleHQgdW5kZXIgdGhlIEFHUEwuDQoNCklmIHR"
                     + "oaXMgaXMgeW91ciBpbnRlbnRpb24sIHlvdSBoYXZlIHB1Ymxpc2hlZCB5b3VyIG"
                     + "93biBzb3VyY2UgY29kZSBhcyBBR1BMIHNvZnR3YXJlIHRvby4NClBsZWFzZSBsZ"
@@ -73,6 +73,20 @@ public class DefaultCounter implements Counter {
                     + "gbGljZW5zZSBrZXkgdG8gYXZvaWQgdGhpcyBtZXNzYWdlLg0KSWYgeW91J3JlIG"
                     + "5vdCBhIGN1c3RvbWVyLCB3ZSdsbCBleHBsYWluIHRoZSBiZW5lZml0cyBvZiBiZ"
                     + "WNvbWluZyBhIGN1c3RvbWVyLg0KDQo=");
+
+    private static byte[] message_2 = Base64.decode(
+            "WW91ciBsaWNlbnNlIGhhcyBleHBpcmVkISBZb3UgYXJlIG5vdyB1c2luZyBpVGV" +
+                    "4dCB1bmRlciB0aGUgQUdQTC4NCg0KSWYgdGhpcyBpcyB5b3VyIGludGVudGlvbiwg" +
+                    "eW91IHNob3VsZCBoYXZlIHB1Ymxpc2hlZCB5b3VyIG93biBzb3VyY2UgY29kZSBhc" +
+                    "yBBR1BMIHNvZnR3YXJlIHRvby4NClBsZWFzZSBsZXQgdXMga25vdyB3aGVyZSB0by" +
+                    "BmaW5kIHlvdXIgc291cmNlIGNvZGUgYnkgc2VuZGluZyBhIG1haWwgdG8gYWdwbEB" +
+                    "pdGV4dHBkZi5jb20NCldlJ2QgYmUgaG9ub3JlZCB0byBhZGQgaXQgdG8gb3VyIGxp" +
+                    "c3Qgb2YgQUdQTCBwcm9qZWN0cyBidWlsdCBvbiB0b3Agb2YgaVRleHQgb3IgaVRle" +
+                    "HRTaGFycA0KYW5kIHdlJ2xsIGV4cGxhaW4gaG93IHRvIHJlbW92ZSB0aGlzIG1lc3" +
+                    "NhZ2UgZnJvbSB5b3VyIGVycm9yIGxvZ3MuDQoNCklmIHRoaXMgd2Fzbid0IHlvdXI" +
+                    "gaW50ZW50aW9uLCBwbGVhc2UgY29udGFjdCB1cyBieSBmaWxsaW5nIG91dCB0aGlz" +
+                    "IGZvcm06IGh0dHA6Ly9pdGV4dHBkZi5jb20vc2FsZXMgb3IgYnkgY29udGFjdGluZ" +
+                    "yBvdXIgc2FsZXMgZGVwYXJ0bWVudC4=");
 
     @Override
     public Counter getCounter(Class<?> cls) {
@@ -91,7 +105,13 @@ public class DefaultCounter implements Counter {
 
     private void plusOne() {
         if (++count > repeat_level) {
-            if (Version.isAGPLVersion()) {
+            if (Version.isAGPLVersion() || Version.isExpired() ) {
+                String message =  new String(message_1);
+
+                if ( Version.isExpired() ) {
+                    message = new String(message_2);
+                }
+
                 level++;
                 if (level == 1) {
                     repeat_level = repeat[1];
