@@ -111,7 +111,7 @@ public final class Version {
                         }
                     }
 
-                    if ( info.length < 5 ) {
+                    if ( info.length > 5 ) {
                         if (info[6] != null && info[6].trim().length() > 0) {
                             String versionToCheck = version.release.substring(0, version.release.lastIndexOf("."));
 
