@@ -23,6 +23,7 @@
             <plugin>
                 <groupId>org.pitest</groupId>
                 <artifactId>pitest-maven</artifactId>
+                <version>${pitest.version}</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
