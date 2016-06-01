@@ -2232,7 +2232,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(3, 0, Math.max(0, width - 6), Math.max(0, height - 2)));
         for (int index = 0; index < strings.size(); index++) {
             Boolean isFull = modelCanvas.getRenderer().getPropertyAsBoolean(Property.FULL);
-            if (isFull != null && isFull) {
+            if (Boolean.TRUE.equals(isFull)) {
                 break;
             }
             Paragraph paragraph = new Paragraph(strings.get(index)).setFont(font).setFontSize(fontSize).setMargins(0, 0, 0, 0).setMultipliedLeading(1);
