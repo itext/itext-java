@@ -46,10 +46,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.PdfTokenizer;
-import com.itextpdf.io.util.EncodingUtil;
 import com.itextpdf.io.util.StreamUtil;
-
-import java.nio.charset.Charset;
 
 /**
  * A {@code PdfString}-class is the PDF-equivalent of a
@@ -172,7 +169,6 @@ public class PdfString extends PdfPrimitiveObject {
         if (content == null) {
             generateContent();
         }
-
         byte[] b = PdfTokenizer.decodeStringContent(content, hexWriting);
         if (b.length >= 2 && b[0] == (byte)0xfe && b[1] == (byte)0xff) {
             return PdfEncodings.convertToString(b, PdfEncodings.UNICODE_BIG);
@@ -252,7 +248,7 @@ public class PdfString extends PdfPrimitiveObject {
     @Override
     public String toString() {
         if (value == null) {
-            return EncodingUtil.convertToString(content, Charset.forName(defaultCharset));
+            return new String(PdfTokenizer.decodeStringContent(content, hexWriting));
         } else {
             return getValue();
         }
@@ -260,7 +256,7 @@ public class PdfString extends PdfPrimitiveObject {
 
     protected void generateValue() {
         assert content != null : "No byte[] content to generate value";
-        value = convertBytesToString(PdfTokenizer.decodeStringContent(content, hexWriting));
+        value = PdfEncodings.convertToString(PdfTokenizer.decodeStringContent(content, hexWriting), null);
     }
 
     @Override
@@ -277,9 +273,7 @@ public class PdfString extends PdfPrimitiveObject {
             byte[] decodedContent = PdfTokenizer.decodeStringContent(content, hexWriting);
             content = null;
             decrypt.setHashKeyForNextObject(decryptInfoNum, decryptInfoGen);
-
-            value = EncodingUtil.convertToString(decrypt.decryptByteArray(decodedContent), Charset.forName(defaultCharset));
-            //value = new String(decrypt.decryptByteArray(decodedContent), Charset.forName(defaultCharset));
+            value = PdfEncodings.convertToString(decrypt.decryptByteArray(decodedContent), null);
         }
         return this;
     }
@@ -339,13 +333,5 @@ public class PdfString extends PdfPrimitiveObject {
 
     void setDecryptInfoGen(int decryptInfoGen) {
         this.decryptInfoGen = decryptInfoGen;
-    }
-
-    private String convertBytesToString(byte[] bytes) {
-        StringBuilder buffer = new StringBuilder(bytes.length);
-        for (byte b : bytes) {
-            buffer.append((char) (b & 0xff));
-        }
-        return buffer.toString();
     }
 }

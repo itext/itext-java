@@ -43,6 +43,7 @@
  */
 package com.itextpdf.io.util;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
@@ -66,7 +67,7 @@ public final class EncodingUtil {
         return br;
     }
 
-    public static String convertToString(byte[] bytes, Charset charset) {
-        return new String(bytes, charset);
+    public static String convertToString(byte[] bytes, String encoding) throws UnsupportedEncodingException {
+        return new String(bytes, encoding);
     }
 }

@@ -304,7 +304,7 @@ public class PdfEncodings {
             return new String(c);
         }
         try {
-            return new String(bytes, encoding);
+            return EncodingUtil.convertToString(bytes, encoding);
         } catch (UnsupportedEncodingException e) {
             throw new IOException(IOException.PdfEncodings, e);
         }
