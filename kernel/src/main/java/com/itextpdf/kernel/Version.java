@@ -111,12 +111,12 @@ public final class Version {
                         }
                     }
 
-                    if ( info.length > 5 ) {
+                    if (info.length > 5) {
                         if (info[6] != null && info[6].trim().length() > 0) {
                             String versionToCheck = version.release.substring(0, version.release.lastIndexOf("."));
 
                             if (! info[6].equalsIgnoreCase(versionToCheck)) {
-                                throw new Exception();
+                                throw new RuntimeException("Your license key version doesn't match the iText version.");
                             }
                         }
                     }
@@ -125,7 +125,7 @@ public final class Version {
                         version.iTextVersion = info[4];
                     } else if (info[2] != null && info[2].trim().length() > 0) {
                         version.iTextVersion += " (" + info[2];
-                        if (!version.key.toLowerCase().startsWith("trial")) {
+                        if (! version.key.toLowerCase().startsWith("trial")) {
                             version.iTextVersion += "; licensed version)";
                         } else {
                             version.iTextVersion += "; " + version.key + ")";
@@ -133,7 +133,7 @@ public final class Version {
                     } else if (info[0] != null && info[0].trim().length() > 0) {
                         // fall back to contact name, if company name is unavailable
                         version.iTextVersion += " (" + info[0];
-                        if (!version.key.toLowerCase().startsWith("trial")) {
+                        if (! version.key.toLowerCase().startsWith("trial")) {
                             // we shouldn't have a licensed version without company name,
                             // but let's account for it anyway
                             version.iTextVersion += "; licensed version)";
@@ -143,9 +143,12 @@ public final class Version {
                     } else {
                         throw new Exception();
                     }
+                } catch ( RuntimeException exc ) {
+                    throw exc;
                 } catch (Exception e) {
                     version.iTextVersion += AGPL;
-                    if ( e.getCause().getMessage().contains("expired")) {
+
+                    if ( e.getCause() != null  && e.getCause().getMessage() != null && e.getCause().getMessage().contains("expired")) {
                         version.expired = true;
                     }
                 }
