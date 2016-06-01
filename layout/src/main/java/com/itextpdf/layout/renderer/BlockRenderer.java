@@ -367,7 +367,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         if (!isPositioned()) {
             List<Point> rotatedPoints = new ArrayList<>();
-            getLayoutShiftAndRotatedPoints(rotatedPoints, (float) rotationPointX, rotationPointY);
+            getLayoutShiftAndRotatedPoints(rotatedPoints, (float) rotationPointX, (float) rotationPointY);
 
             Point clipLineBeg = new Point(layoutBox.getRight(), layoutBox.getTop());
             Point clipLineEnd = new Point(layoutBox.getRight(), layoutBox.getBottom());

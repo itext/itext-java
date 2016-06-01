@@ -259,7 +259,7 @@ public class AccessibleAttributesApplier {
             Float fontSize = renderer.getPropertyAsFloat(Property.FONT_SIZE);
             Underline underline = null;
             if (underlines instanceof List
-                    && !((List) underlines).isEmpty()
+                    && !((List<Object>) underlines).isEmpty()
                     && ((List) underlines).get(0) instanceof Underline) {
                 // in standard attributes only one text decoration could be described for an element. That's why we take only the first underline from the list.
                 underline = (Underline) ((List) underlines).get(0);

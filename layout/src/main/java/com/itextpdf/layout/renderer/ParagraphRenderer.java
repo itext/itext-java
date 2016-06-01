@@ -286,7 +286,7 @@ public class ParagraphRenderer extends BlockRenderer {
         if ((property == Property.MARGIN_TOP || property == Property.MARGIN_BOTTOM) && parent instanceof CellRenderer) {
             return (T1) (Object) 0f;
         }
-        return super.getDefaultProperty(property);
+        return super.<T1>getDefaultProperty(property);
     }
 
     protected ParagraphRenderer createOverflowRenderer() {

@@ -149,7 +149,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
                     return (T1) (Object) null;
             }
         } catch (IOException exc) {
-            throw new RuntimeException(exc);
+            throw new RuntimeException(exc.toString(), exc);
         }
     }
 

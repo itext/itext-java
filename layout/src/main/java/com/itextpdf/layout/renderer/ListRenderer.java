@@ -114,14 +114,14 @@ public class ListRenderer extends BlockRenderer {
     @Override
     protected AbstractRenderer createSplitRenderer(int layoutResult) {
         AbstractRenderer splitRenderer = super.createSplitRenderer(layoutResult);
-        splitRenderer.setProperty(Property.LIST_SYMBOLS_INITIALIZED, true);
+        splitRenderer.setProperty(Property.LIST_SYMBOLS_INITIALIZED, Boolean.TRUE);
         return splitRenderer;
     }
 
     @Override
     protected AbstractRenderer createOverflowRenderer(int layoutResult) {
         AbstractRenderer overflowRenderer = super.createOverflowRenderer(layoutResult);
-        overflowRenderer.setProperty(Property.LIST_SYMBOLS_INITIALIZED, true);
+        overflowRenderer.setProperty(Property.LIST_SYMBOLS_INITIALIZED, Boolean.TRUE);
         return overflowRenderer;
     }
 
@@ -157,16 +157,16 @@ public class ListRenderer extends BlockRenderer {
                     numberText = GreekAlphabetNumbering.toGreekAlphabetNumberUpperCase(index);
                     break;
                 case ZAPF_DINGBATS_1:
-                    numberText = String.valueOf((char)(index + 171));
+                    numberText = ((Character) (char) (index + 171)).toString();
                     break;
                 case ZAPF_DINGBATS_2:
-                    numberText = String.valueOf((char)(index + 181));
+                    numberText = ((Character) (char) (index + 181)).toString();
                     break;
                 case ZAPF_DINGBATS_3:
-                    numberText = String.valueOf((char)(index + 191));
+                    numberText = ((Character) (char) (index + 191)).toString();
                     break;
                 case ZAPF_DINGBATS_4:
-                    numberText = String.valueOf((char)(index + 201));
+                    numberText = ((Character) (char) (index + 201)).toString();
                     break;
                 default:
                     throw new IllegalStateException();
@@ -194,7 +194,7 @@ public class ListRenderer extends BlockRenderer {
                 };
                 try {
                     textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(constantFont));
-                } catch (IOException ignored) {}
+                } catch (IOException exc) {}
             } else {
                 textRenderer = new TextRenderer(textElement);
             }

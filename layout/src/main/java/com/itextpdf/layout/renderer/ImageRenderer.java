@@ -117,7 +117,7 @@ public class ImageRenderer extends AbstractRenderer {
         }
         if (verticalScaling != 1) {
             if (xObject instanceof PdfFormXObject) {
-                t.scale(1, verticalScaling);
+                t.scale(1, (float) verticalScaling);
             }
             height *= (float) verticalScaling;
         }
@@ -235,8 +235,8 @@ public class ImageRenderer extends AbstractRenderer {
             setProperty(Property.WIDTH, UnitValue.createPointValue(area.getBBox().getWidth()));
             // if still image is not scaled properly
             if (getPropertyAsFloat(Property.HEIGHT) > area.getBBox().getHeight()) {
-                setProperty(Property.WIDTH, UnitValue.createPointValue((float) area.getBBox().getHeight() / getPropertyAsFloat(Property.HEIGHT) * (this.<UnitValue>getProperty(Property.WIDTH)).getValue()));
-                setProperty(Property.HEIGHT, UnitValue.createPointValue((float) area.getBBox().getHeight()));
+                setProperty(Property.WIDTH, UnitValue.createPointValue(area.getBBox().getHeight() / (float) getPropertyAsFloat(Property.HEIGHT) * (this.<UnitValue>getProperty(Property.WIDTH)).getValue()));
+                setProperty(Property.HEIGHT, UnitValue.createPointValue(area.getBBox().getHeight()));
             }
         }
 

@@ -49,17 +49,15 @@ import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.Property;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class TypographyUtils {
 
@@ -189,7 +187,7 @@ class TypographyUtils {
     }
 
     private static Object callMethod(String className, String methodName, Class[] parameterTypes, Object... args) {
-        return callMethod(className, methodName, null, parameterTypes, args);
+        return callMethod(className, methodName, (Object) null, parameterTypes, args);
     }
 
     private static Object callMethod(String className, String methodName, Object target, Class[] parameterTypes, Object... args) {
@@ -200,10 +198,8 @@ class TypographyUtils {
             logger.warn(MessageFormat.format("Cannot find method {0} for class {1}", methodName, className));
         } catch (ClassNotFoundException e) {
             logger.warn(MessageFormat.format("Cannot find class {0}", className));
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e.getCause() != null ? e.getCause() : null);
-        } catch (Exception exc) {
-            throw new RuntimeException(exc);
+        } catch (Exception e) {
+            throw new RuntimeException(e.toString(), e);
         }
         return null;
     }
@@ -216,10 +212,8 @@ class TypographyUtils {
             logger.warn(MessageFormat.format("Cannot find constructor for class {0}", className));
         } catch (ClassNotFoundException e) {
             logger.warn(MessageFormat.format("Cannot find class {0}", className));
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e.getCause() != null ? e.getCause() : null);
         } catch (Exception exc) {
-            throw new RuntimeException(exc);
+            throw new RuntimeException(exc.toString(), exc);
         }
         return null;
     }

@@ -46,11 +46,11 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.Tab;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.Property;
 
 public class TabRenderer extends AbstractRenderer {
 
@@ -64,7 +64,7 @@ public class TabRenderer extends AbstractRenderer {
         Float width = retrieveWidth(area.getBBox().getWidth());
         Float height = getPropertyAsFloat(Property.HEIGHT);
         occupiedArea = new LayoutArea(area.getPageNumber(),
-                new Rectangle(area.getBBox().getX(), area.getBBox().getY() + area.getBBox().getHeight(),(float)  width, height));
+                new Rectangle(area.getBBox().getX(), area.getBBox().getY() + area.getBBox().getHeight(),(float)  width, (float) height));
 
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }

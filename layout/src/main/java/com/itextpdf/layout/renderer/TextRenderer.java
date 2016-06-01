@@ -248,7 +248,7 @@ public class TextRenderer extends AbstractRenderer {
 
                 if (splitCharacters.isSplitCharacter(text, ind) || ind + 1 == text.end ||
                         splitCharacters.isSplitCharacter(text, ind + 1) &&
-                                (Character.isWhitespace(text.get(ind + 1).getUnicode()) || Character.isSpaceChar(text.get(ind + 1).getUnicode()))) {
+                                (Character.isWhitespace((char) (int) text.get(ind + 1).getUnicode()) || Character.isSpaceChar((char) (int) text.get(ind + 1).getUnicode()))) {
                     nonBreakablePartEnd = ind;
                     break;
                 }
@@ -400,12 +400,12 @@ public class TextRenderer extends AbstractRenderer {
 
     public void applyOtf() {
         convertWaitingStringToGlyphLine();
-        Character.UnicodeScript script = getProperty(Property.FONT_SCRIPT);
+        Character.UnicodeScript script = this.<Character.UnicodeScript>getProperty(Property.FONT_SCRIPT);
         if (!otfFeaturesApplied) {
             if (script == null && TypographyUtils.isTypographyModuleInitialized()) {
                 // Try to autodetect complex script.
                 Collection<Character.UnicodeScript> supportedScripts = TypographyUtils.getSupportedScripts();
-                Map<Character.UnicodeScript, Integer> scriptFrequency = new EnumMap<>(Character.UnicodeScript.class);
+                Map<Character.UnicodeScript, Integer> scriptFrequency = new EnumMap<Character.UnicodeScript, Integer>(Character.UnicodeScript.class);
                 for (int i = text.start; i < text.end; i++) {
                     int unicode = text.get(i).getUnicode();
                     Character.UnicodeScript glyphScript = unicode > -1 ? Character.UnicodeScript.of(unicode) : null;
@@ -557,11 +557,11 @@ public class TextRenderer extends AbstractRenderer {
                 for (Map.Entry<GlyphLine, Boolean> output : outputs.entrySet()) {
                     GlyphLine o = output.getKey().filter(filter);
 
-                    if (output.getValue()) {
+                    if ((boolean) output.getValue()) {
                         canvas.openTag(new CanvasTag(PdfName.ReversedChars));
                     }
                     canvas.showText(o);
-                    if (output.getValue()) {
+                    if ((boolean) output.getValue()) {
                         canvas.closeTag();
                     }
                 }
@@ -611,9 +611,9 @@ public class TextRenderer extends AbstractRenderer {
                 canvas.openTag(new CanvasArtifact());
             }
             canvas.saveState().setFillColor(background.getColor());
-            canvas.rectangle(leftBBoxX - background.getExtraLeft(), (float) bottomBBoxY + textRise - background.getExtraBottom(),
+            canvas.rectangle(leftBBoxX - background.getExtraLeft(), bottomBBoxY + (float) textRise - background.getExtraBottom(),
                     occupiedArea.getBBox().getWidth() + background.getExtraLeft() + background.getExtraRight(),
-                    occupiedArea.getBBox().getHeight() - textRise + background.getExtraTop() + background.getExtraBottom());
+                    occupiedArea.getBBox().getHeight() - (float)textRise + background.getExtraTop() + background.getExtraBottom());
             canvas.fill().restoreState();
             if (isTagged) {
                 canvas.closeTag();
@@ -630,7 +630,7 @@ public class TextRenderer extends AbstractRenderer {
 
         if (text != null) {
             Glyph glyph;
-            while (text.start < text.end && (glyph = text.get(text.start)).hasValidUnicode() && Character.isWhitespace(glyph.getUnicode()) && !isNewLine(text, text.start)) {
+            while (text.start < text.end && (glyph = text.get(text.start)).hasValidUnicode() && Character.isWhitespace((char) (int) glyph.getUnicode()) && !isNewLine(text, text.start)) {
                 text.start++;
             }
         }
@@ -655,7 +655,7 @@ public class TextRenderer extends AbstractRenderer {
         int firstNonSpaceCharIndex = line.end - 1;
         while (firstNonSpaceCharIndex >= line.start) {
             Glyph currentGlyph = line.get(firstNonSpaceCharIndex);
-            if (!currentGlyph.hasValidUnicode() || !Character.isWhitespace(currentGlyph.getUnicode())) {
+            if (!currentGlyph.hasValidUnicode() || !Character.isWhitespace((char) (int) currentGlyph.getUnicode())) {
                 break;
             }
 
@@ -868,7 +868,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     protected float calculateLineWidth() {
-        return getGlyphLineWidth(line, getPropertyAsFloat(Property.FONT_SIZE), getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f),
+        return getGlyphLineWidth(line, (float) getPropertyAsFloat(Property.FONT_SIZE), getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f),
                 getPropertyAsFloat(Property.CHARACTER_SPACING), getPropertyAsFloat(Property.WORD_SPACING));
     }
 
@@ -915,10 +915,10 @@ public class TextRenderer extends AbstractRenderer {
 
         float resultWidth = g.getWidth() * fontSize * (float) hScale;
         if (characterSpacing != null) {
-            resultWidth += (float) characterSpacing * hScale * TEXT_SPACE_COEFF;
+            resultWidth += (float) characterSpacing * (float)hScale * TEXT_SPACE_COEFF;
         }
         if (wordSpacing != null && g.hasValidUnicode() && g.getUnicode() == ' ') {
-            resultWidth += (float) wordSpacing * hScale * TEXT_SPACE_COEFF;
+            resultWidth += (float) wordSpacing * (float) hScale * TEXT_SPACE_COEFF;
         }
         return resultWidth;
     }
@@ -958,8 +958,8 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private boolean isGlyphPartOfWordForHyphenation(Glyph g) {
-        return g.hasValidUnicode() && (Character.isLetter(g.getUnicode()) ||
-                Character.isDigit(g.getUnicode()) || '\u00ad' == g.getUnicode());
+        return g.hasValidUnicode() && (Character.isLetter((char) (int) g.getUnicode()) ||
+                Character.isDigit((char) (int) g.getUnicode()) || '\u00ad' == g.getUnicode());
     }
 
     private boolean isWhitespaceGlyph(Glyph g) {
