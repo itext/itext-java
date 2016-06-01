@@ -639,7 +639,7 @@ class TiffImageHelper {
                         dst[dstCount++] = data[srcCount++];
                     }
 
-                } else if (b <= -1 && b >= -127) {
+                } else if ((b & 0x80) != 0 && b != (byte) 0x80) {
                     // 2 byte encoded run packet
                     repeat = data[srcCount++];
                     for (int i = 0; i < (-b + 1); i++) {
