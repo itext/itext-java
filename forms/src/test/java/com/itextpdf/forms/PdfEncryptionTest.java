@@ -8,7 +8,6 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -16,7 +15,7 @@ import org.junit.experimental.categories.Category;
 public class PdfEncryptionTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfEncryptionTest/";
 
-    @Test@Ignore
+    @Test
     public void encryptedDocumentWithFormFields() throws IOException {
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "encryptedDocumentWithFormFields.pdf"),
                 new ReaderProperties().setPassword("12345".getBytes()));
@@ -24,7 +23,7 @@ public class PdfEncryptionTest {
 
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
 
-        acroForm.getField("name").getPdfObject();
+        acroForm.getField("personal.name").getPdfObject();
         pdfDocument.close();
     }
 }
