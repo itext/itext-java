@@ -547,13 +547,13 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected float[] getMargins() {
-        return new float[] {(float)getPropertyAsFloat(Property.MARGIN_TOP), (float)getPropertyAsFloat(Property.MARGIN_RIGHT),
-                (float)getPropertyAsFloat(Property.MARGIN_BOTTOM), (float)getPropertyAsFloat(Property.MARGIN_LEFT)};
+        return new float[] {(float) this.getPropertyAsFloat(Property.MARGIN_TOP), (float) this.getPropertyAsFloat(Property.MARGIN_RIGHT),
+                (float) this.getPropertyAsFloat(Property.MARGIN_BOTTOM), (float) this.getPropertyAsFloat(Property.MARGIN_LEFT)};
     }
 
     protected float[] getPaddings() {
-        return new float[] {(float) getPropertyAsFloat(Property.PADDING_TOP), (float) getPropertyAsFloat(Property.PADDING_RIGHT),
-                (float) getPropertyAsFloat(Property.PADDING_BOTTOM), (float) getPropertyAsFloat(Property.PADDING_LEFT)};
+        return new float[] {(float) this.getPropertyAsFloat(Property.PADDING_TOP), (float) this.getPropertyAsFloat(Property.PADDING_RIGHT),
+                (float) this.getPropertyAsFloat(Property.PADDING_BOTTOM), (float) this.getPropertyAsFloat(Property.PADDING_LEFT)};
     }
 
     protected Rectangle applyPaddings(Rectangle rect, boolean reverse) {
@@ -578,10 +578,10 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void applyAbsolutePositioningTranslation(boolean reverse) {
-        float top = (float) getPropertyAsFloat(Property.TOP);
-        float bottom = (float) getPropertyAsFloat(Property.BOTTOM);
-        float left = (float) getPropertyAsFloat(Property.LEFT);
-        float right = (float) getPropertyAsFloat(Property.RIGHT);
+        float top = (float) this.getPropertyAsFloat(Property.TOP);
+        float bottom = (float) this.getPropertyAsFloat(Property.BOTTOM);
+        float left = (float) this.getPropertyAsFloat(Property.LEFT);
+        float right = (float) this.getPropertyAsFloat(Property.RIGHT);
 
         int reverseMultiplier = reverse ? -1 : 1;
 

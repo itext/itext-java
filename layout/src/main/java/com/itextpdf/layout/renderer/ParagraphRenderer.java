@@ -83,7 +83,7 @@ public class ParagraphRenderer extends BlockRenderer {
         boolean isPositioned = isPositioned();
 
         if (isPositioned) {
-            float x = (float) getPropertyAsFloat(Property.X);
+            float x = (float) this.getPropertyAsFloat(Property.X);
             float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
             parentBBox.setX(relativeX + x);
         }
@@ -142,10 +142,10 @@ public class ParagraphRenderer extends BlockRenderer {
         float lastLineHeight = 0;
 
         while (currentRenderer != null) {
-            currentRenderer.setProperty(Property.TAB_DEFAULT, getPropertyAsFloat(Property.TAB_DEFAULT));
+            currentRenderer.setProperty(Property.TAB_DEFAULT, this.getPropertyAsFloat(Property.TAB_DEFAULT));
             currentRenderer.setProperty(Property.TAB_STOPS, this.<Object>getProperty(Property.TAB_STOPS));
 
-            float lineIndent = anythingPlaced ? 0 : (float) getPropertyAsFloat(Property.FIRST_LINE_INDENT);
+            float lineIndent = anythingPlaced ? 0 : (float) this.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
             float availableWidth = layoutBox.getWidth() - lineIndent;
             Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), availableWidth, layoutBox.getHeight());
             LineLayoutResult result = ((LineRenderer)currentRenderer.setParent(this)).layout(new LayoutContext(new LayoutArea(pageNumber, childLayoutBox)));
@@ -251,14 +251,14 @@ public class ParagraphRenderer extends BlockRenderer {
             occupiedArea.getBBox().moveDown(moveDown);
             occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
         }
-        Float blockHeight = getPropertyAsFloat(Property.HEIGHT);
+        Float blockHeight = this.getPropertyAsFloat(Property.HEIGHT);
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
             occupiedArea.getBBox().moveDown((float) blockHeight - occupiedArea.getBBox().getHeight()).setHeight((float) blockHeight);
             applyVerticalAlignment();
         }
         if (isPositioned) {
-            float y = (float) getPropertyAsFloat(Property.Y);
+            float y = (float) this.getPropertyAsFloat(Property.Y);
             float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
             move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
@@ -292,7 +292,7 @@ public class ParagraphRenderer extends BlockRenderer {
     protected ParagraphRenderer createOverflowRenderer() {
         ParagraphRenderer overflowRenderer = (ParagraphRenderer) getNextRenderer();
         // Reset first line indent in case of overflow.
-        float firstLineIndent = (float) getPropertyAsFloat(Property.FIRST_LINE_INDENT);
+        float firstLineIndent = (float) this.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
         if (firstLineIndent != 0) {
             overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0);
         }

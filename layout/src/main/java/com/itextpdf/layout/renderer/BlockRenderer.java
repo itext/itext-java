@@ -91,7 +91,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         boolean isPositioned = isPositioned();
         if (isPositioned) {
-            float x = (float) getPropertyAsFloat(Property.X);
+            float x = (float) this.getPropertyAsFloat(Property.X);
             float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
             parentBBox.setX(relativeX + x);
         }
@@ -221,7 +221,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             occupiedArea.getBBox().moveDown((float) blockHeight - occupiedArea.getBBox().getHeight()).setHeight((float) blockHeight);
         }
         if (isPositioned) {
-            float y = (float) getPropertyAsFloat(Property.Y);
+            float y = (float) this.getPropertyAsFloat(Property.Y);
             float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
             move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
@@ -321,8 +321,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
         Rectangle bBox = occupiedArea.getBBox().clone();
         Float rotationAngle = this.<Float>getProperty(Property.ROTATION_ANGLE);
         if (rotationAngle != null) {
-            bBox.setWidth((float) getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH));
-            bBox.setHeight((float) getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT));
+            bBox.setWidth((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH));
+            bBox.setHeight((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT));
         }
         return bBox;
     }
@@ -347,8 +347,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     protected void applyRotationLayout(Rectangle layoutBox) {
-        Float rotationPointX = getPropertyAsFloat(Property.ROTATION_POINT_X);
-        Float rotationPointY = getPropertyAsFloat(Property.ROTATION_POINT_Y);
+        Float rotationPointX = this.getPropertyAsFloat(Property.ROTATION_POINT_X);
+        Float rotationPointY = this.getPropertyAsFloat(Property.ROTATION_POINT_Y);
 
         if (rotationPointX == null || rotationPointY == null) {
             // if rotation point was not specified, the most bottom-left point is used
@@ -399,21 +399,21 @@ public abstract class BlockRenderer extends AbstractRenderer {
             dx = (float) shift.getX();
         }
 
-        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
+        Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         AffineTransform transform = new AffineTransform();
         transform.rotate((float) angle);
         float[] ctm = new float[6];
         transform.getMatrix(ctm);
 
-        ctm[4] = (float) getPropertyAsFloat(Property.ROTATION_POINT_X) + dx;
-        ctm[5] = (float) getPropertyAsFloat(Property.ROTATION_POINT_Y) + dy;
+        ctm[4] = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_X) + dx;
+        ctm[5] = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_Y) + dy;
         return ctm;
     }
 
     private Point getLayoutShiftAndRotatedPoints(List<Point> rotatedPoints, float shiftX, float shiftY) {
-        float angle = (float) getPropertyAsFloat(Property.ROTATION_ANGLE);
-        float width = (float) getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH);
-        float height = (float) getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT);
+        float angle = (float) this.getPropertyAsFloat(Property.ROTATION_ANGLE);
+        float width = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH);
+        float height = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT);
 
         float left = occupiedArea.getBBox().getX() - shiftX;
         float bottom = occupiedArea.getBBox().getY() - shiftY;
@@ -443,12 +443,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     protected void beginRotationIfApplied(PdfCanvas canvas) {
-        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
+        Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
-            float heightDiff = (float) getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
+            float heightDiff = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
 
-            float shiftX = (float) getPropertyAsFloat(Property.ROTATION_POINT_X);
-            float shiftY = (float) getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
+            float shiftX = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_X);
+            float shiftY = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
 
             move(-shiftX, -shiftY);
             float[] ctm = applyRotation();
@@ -457,12 +457,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     protected void endRotationIfApplied(PdfCanvas canvas) {
-        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
+        Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
-            float heightDiff = (float) getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
+            float heightDiff = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
 
-            float shiftX = (float) getPropertyAsFloat(Property.ROTATION_POINT_X);
-            float shiftY = (float) getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
+            float shiftX = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_X);
+            float shiftY = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
 
             canvas.restoreState();
             move(shiftX, shiftY);

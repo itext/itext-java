@@ -133,7 +133,7 @@ public class TableRenderer extends AbstractRenderer {
         applyBorderBox(layoutBox, false);
 
         if (isPositioned()) {
-            float x = (float) getPropertyAsFloat(Property.X);
+            float x = (float) this.getPropertyAsFloat(Property.X);
             float relativeX = isFixedLayout() ? 0 : layoutBox.getX();
             layoutBox.setX(relativeX + x);
         }
@@ -473,7 +473,7 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         if (isPositioned()) {
-            float y = (float) getPropertyAsFloat(Property.Y);
+            float y = (float) this.getPropertyAsFloat(Property.Y);
             float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
             move(0, relativeY + y - occupiedArea.getBBox().getY());
         }

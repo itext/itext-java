@@ -381,7 +381,7 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     protected void justify(float width) {
-        float ratio = (float) getPropertyAsFloat(Property.SPACING_RATIO);
+        float ratio = (float) this.getPropertyAsFloat(Property.SPACING_RATIO);
         float freeWidth = occupiedArea.getBBox().getX() + width -
                 getLastChildRenderer().getOccupiedArea().getBBox().getX() - getLastChildRenderer().getOccupiedArea().getBBox().getWidth();
         int numberOfSpaces = getNumberOfSpaces();
@@ -593,7 +593,7 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     private void processDefaultTab(IRenderer tabRenderer, float curWidth, float lineWidth) {
-        Float tabDefault = getPropertyAsFloat(Property.TAB_DEFAULT);
+        Float tabDefault = this.getPropertyAsFloat(Property.TAB_DEFAULT);
         Float tabWidth = tabDefault - curWidth % tabDefault;
         if (curWidth + tabWidth > lineWidth)
             tabWidth = lineWidth - curWidth;

@@ -145,10 +145,10 @@ public class TextRenderer extends AbstractRenderer {
         boolean anythingPlaced = false;
 
         int currentTextPos = text.start;
-        float fontSize = (float) getPropertyAsFloat(Property.FONT_SIZE);
-        float textRise = (float) getPropertyAsFloat(Property.TEXT_RISE);
-        Float characterSpacing = getPropertyAsFloat(Property.CHARACTER_SPACING);
-        Float wordSpacing = getPropertyAsFloat(Property.WORD_SPACING);
+        float fontSize = (float) this.getPropertyAsFloat(Property.FONT_SIZE);
+        float textRise = (float) this.getPropertyAsFloat(Property.TEXT_RISE);
+        Float characterSpacing = this.getPropertyAsFloat(Property.CHARACTER_SPACING);
+        Float wordSpacing = this.getPropertyAsFloat(Property.WORD_SPACING);
         PdfFont font = this.getPropertyAsFont(Property.FONT);
         Float hScale = this.<Float>getProperty(Property.HORIZONTAL_SCALING, 1f);
         ISplitCharacters splitCharacters = this.<ISplitCharacters>getProperty(Property.SPLIT_CHARACTERS);
@@ -483,12 +483,12 @@ public class TextRenderer extends AbstractRenderer {
 
         if (line.end > line.start) {
             PdfFont font = getPropertyAsFont(Property.FONT);
-            float fontSize = (float) getPropertyAsFloat(Property.FONT_SIZE);
+            float fontSize = (float) this.getPropertyAsFloat(Property.FONT_SIZE);
             Color fontColor = getPropertyAsColor(Property.FONT_COLOR);
             Integer textRenderingMode = this.<Integer>getProperty(Property.TEXT_RENDERING_MODE);
-            Float textRise = getPropertyAsFloat(Property.TEXT_RISE);
-            Float characterSpacing = getPropertyAsFloat(Property.CHARACTER_SPACING);
-            Float wordSpacing = getPropertyAsFloat(Property.WORD_SPACING);
+            Float textRise = this.getPropertyAsFloat(Property.TEXT_RISE);
+            Float characterSpacing = this.getPropertyAsFloat(Property.CHARACTER_SPACING);
+            Float wordSpacing = this.getPropertyAsFloat(Property.WORD_SPACING);
             Float horizontalScaling = this.<Float>getProperty(Property.HORIZONTAL_SCALING);
             Float[] skew = this.<Float[]>getProperty(Property.SKEW);
             boolean italicSimulation = Boolean.TRUE.equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION));
@@ -521,7 +521,7 @@ public class TextRenderer extends AbstractRenderer {
             }
             if (textRenderingMode == PdfCanvasConstants.TextRenderingMode.STROKE || textRenderingMode == PdfCanvasConstants.TextRenderingMode.FILL_STROKE) {
                 if (strokeWidth == null) {
-                    strokeWidth = getPropertyAsFloat(Property.STROKE_WIDTH);
+                    strokeWidth = this.getPropertyAsFloat(Property.STROKE_WIDTH);
                 }
                 if (strokeWidth != null && strokeWidth != 1f) {
                     canvas.setLineWidth((float) strokeWidth);
@@ -601,7 +601,7 @@ public class TextRenderer extends AbstractRenderer {
     @Override
     public void drawBackground(DrawContext drawContext) {
         Background background = this.<Background>getProperty(Property.BACKGROUND);
-        Float textRise = getPropertyAsFloat(Property.TEXT_RISE);
+        Float textRise = this.getPropertyAsFloat(Property.TEXT_RISE);
         float bottomBBoxY = occupiedArea.getBBox().getY();
         float leftBBoxX = occupiedArea.getBBox().getX();
         if (background != null) {
@@ -647,10 +647,10 @@ public class TextRenderer extends AbstractRenderer {
         if (line.end <= 0)
             return trimmedSpace;
 
-        float fontSize = (float) getPropertyAsFloat(Property.FONT_SIZE);
-        Float characterSpacing = getPropertyAsFloat(Property.CHARACTER_SPACING);
-        Float wordSpacing = getPropertyAsFloat(Property.WORD_SPACING);
-        Float hScale = getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
+        float fontSize = (float) this.getPropertyAsFloat(Property.FONT_SIZE);
+        Float characterSpacing = this.getPropertyAsFloat(Property.CHARACTER_SPACING);
+        Float wordSpacing = this.getPropertyAsFloat(Property.WORD_SPACING);
+        Float hScale = this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
 
         int firstNonSpaceCharIndex = line.end - 1;
         while (firstNonSpaceCharIndex >= line.start) {
@@ -685,7 +685,7 @@ public class TextRenderer extends AbstractRenderer {
      * @return the downwards vertical offset of this {@link Text}
      */
     public float getDescent() {
-        return -(occupiedArea.getBBox().getHeight() - yLineOffset - (float) getPropertyAsFloat(Property.TEXT_RISE));
+        return -(occupiedArea.getBBox().getHeight() - yLineOffset - (float) this.getPropertyAsFloat(Property.TEXT_RISE));
     }
 
     /**
@@ -694,7 +694,7 @@ public class TextRenderer extends AbstractRenderer {
      * @return the y position of this text on the {@link DrawContext}
      */
     public float getYLine() {
-        return occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - yLineOffset - (float) getPropertyAsFloat(Property.TEXT_RISE);
+        return occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - yLineOffset - (float) this.getPropertyAsFloat(Property.TEXT_RISE);
     }
 
     /**
@@ -868,8 +868,8 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     protected float calculateLineWidth() {
-        return getGlyphLineWidth(line, (float) getPropertyAsFloat(Property.FONT_SIZE), getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f),
-                getPropertyAsFloat(Property.CHARACTER_SPACING), getPropertyAsFloat(Property.WORD_SPACING));
+        return getGlyphLineWidth(line, (float) this.getPropertyAsFloat(Property.FONT_SIZE), this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f),
+                this.getPropertyAsFloat(Property.CHARACTER_SPACING), this.getPropertyAsFloat(Property.WORD_SPACING));
     }
 
     /**

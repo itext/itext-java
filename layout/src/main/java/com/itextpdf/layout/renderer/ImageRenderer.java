@@ -87,7 +87,7 @@ public class ImageRenderer extends AbstractRenderer {
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         width = retrieveWidth(layoutBox.getWidth());
-        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
+        Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
         PdfXObject xObject = ((Image) (getModelElement())).getXObject();
         imageWidth = xObject.getWidth();
@@ -96,11 +96,11 @@ public class ImageRenderer extends AbstractRenderer {
         width = width == null ? imageWidth : width;
         height = (float) width / imageWidth * imageHeight;
 
-        fixedXPosition = getPropertyAsFloat(Property.X);
-        fixedYPosition = getPropertyAsFloat(Property.Y);
+        fixedXPosition = this.getPropertyAsFloat(Property.X);
+        fixedYPosition = this.getPropertyAsFloat(Property.Y);
 
-        Float horizontalScaling = getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
-        Float verticalScaling = getPropertyAsFloat(Property.VERTICAL_SCALING, 1f);
+        Float horizontalScaling = this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
+        Float verticalScaling = this.getPropertyAsFloat(Property.VERTICAL_SCALING, 1f);
 
         AffineTransform t = new AffineTransform();
 
@@ -148,8 +148,8 @@ public class ImageRenderer extends AbstractRenderer {
         occupiedArea.getBBox().setHeight(height);
         occupiedArea.getBBox().setWidth((float) width);
 
-        float leftMargin = (float) getPropertyAsFloat(Property.MARGIN_LEFT);
-        float topMargin = (float) getPropertyAsFloat(Property.MARGIN_TOP);
+        float leftMargin = (float) this.getPropertyAsFloat(Property.MARGIN_LEFT);
+        float topMargin = (float) this.getPropertyAsFloat(Property.MARGIN_TOP);
         if (leftMargin != 0 || topMargin != 0) {
             translateImage(leftMargin, topMargin, t);
             getMatrix(t, imageItselfScaledWidth, imageItselfScaledHeight);
@@ -234,8 +234,8 @@ public class ImageRenderer extends AbstractRenderer {
             setProperty(Property.HEIGHT, area.getBBox().getWidth() / width * imageHeight);
             setProperty(Property.WIDTH, UnitValue.createPointValue(area.getBBox().getWidth()));
             // if still image is not scaled properly
-            if (getPropertyAsFloat(Property.HEIGHT) > area.getBBox().getHeight()) {
-                setProperty(Property.WIDTH, UnitValue.createPointValue(area.getBBox().getHeight() / (float) getPropertyAsFloat(Property.HEIGHT) * (this.<UnitValue>getProperty(Property.WIDTH)).getValue()));
+            if (this.getPropertyAsFloat(Property.HEIGHT) > area.getBBox().getHeight()) {
+                setProperty(Property.WIDTH, UnitValue.createPointValue(area.getBBox().getHeight() / (float) this.getPropertyAsFloat(Property.HEIGHT) * (this.<UnitValue>getProperty(Property.WIDTH)).getValue()));
                 setProperty(Property.HEIGHT, UnitValue.createPointValue(area.getBBox().getHeight()));
             }
         }
