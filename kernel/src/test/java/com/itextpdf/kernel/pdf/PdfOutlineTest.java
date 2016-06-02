@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertNull;
+
 @Category(IntegrationTest.class)
 public class PdfOutlineTest extends ExtendedITextTest{
 
@@ -301,11 +303,7 @@ public class PdfOutlineTest extends ExtendedITextTest{
         thirdOutline.addDestination(PdfDestination.makeDestination(new PdfString("test3")));
         pdfDoc.close();
 
-        CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_outlinesWithNamedDestinations01.pdf", destinationFolder, "diff_");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
+        assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_outlinesWithNamedDestinations01.pdf", destinationFolder, "diff_"));
     }
 
     @Test
