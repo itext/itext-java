@@ -118,7 +118,7 @@ public class DefaultCounter implements Counter {
                 } else {
                     repeat_level = repeat[2];
                 }
-                System.out.println(new String(message));
+                System.out.println(message);
             }
             count = 0;
         }

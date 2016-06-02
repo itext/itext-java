@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,8 +29,23 @@ public class PdfOutlineTest extends ExtendedITextTest{
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfOutlineTest/";
 
     @BeforeClass
-    public static void beforeClass() {
+    public static void beforeClass() throws FileNotFoundException {
         createDestinationFolder(destinationFolder);
+        FileOutputStream fos = new FileOutputStream(destinationFolder+"documentWithOutlines.pdf");
+        PdfWriter writer = new PdfWriter(fos);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getCatalog().setPageMode(PdfName.UseOutlines);
+
+        PdfPage firstPage = pdfDoc.addNewPage();
+        PdfPage secondPage = pdfDoc.addNewPage();
+
+        PdfOutline rootOutline = pdfDoc.getOutlines(false);
+        PdfOutline firstOutline = rootOutline.addOutline("First Page");
+        PdfOutline secondOutline = rootOutline.addOutline("Second Page");
+        firstOutline.addDestination(PdfExplicitDestination.createFit(firstPage));
+        secondOutline.addDestination(PdfExplicitDestination.createFit(secondPage));
+
+        pdfDoc.close();
     }
 
     @Test
@@ -194,27 +210,6 @@ public class PdfOutlineTest extends ExtendedITextTest{
         } finally {
             pdfDoc.close();
         }
-    }
-
-    @Before
-    public void setupCreateDocWithOutlines() throws IOException,  InterruptedException {
-
-        FileOutputStream fos = new FileOutputStream(destinationFolder+"documentWithOutlines.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getCatalog().setPageMode(PdfName.UseOutlines);
-
-        PdfPage firstPage = pdfDoc.addNewPage();
-        PdfPage secondPage = pdfDoc.addNewPage();
-
-        PdfOutline rootOutline = pdfDoc.getOutlines(false);
-        PdfOutline firstOutline = rootOutline.addOutline("First Page");
-        PdfOutline secondOutline = rootOutline.addOutline("Second Page");
-        firstOutline.addDestination(PdfExplicitDestination.createFit(firstPage));
-        secondOutline.addDestination(PdfExplicitDestination.createFit(secondPage));
-
-        pdfDoc.close();
-        fos.close();
     }
 
     @Test

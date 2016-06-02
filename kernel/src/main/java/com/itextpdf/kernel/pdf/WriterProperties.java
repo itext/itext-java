@@ -55,7 +55,7 @@ public class WriterProperties implements Serializable {
     /**
      * Indicates if to use full compression (using object streams).
      */
-    protected boolean isFullCompression;
+    protected Boolean isFullCompression;
 
     /**
      * Indicates if the writer copy objects in a smart mode. If so PdfDictionary and PdfStream will be hashed
@@ -71,7 +71,7 @@ public class WriterProperties implements Serializable {
         smartMode = false;
         debugMode = false;
         compressionLevel = CompressionConstants.DEFAULT_COMPRESSION;
-        isFullCompression = true;
+        isFullCompression = null;
         encryptionProperties = new EncryptionProperties();
     }
 
