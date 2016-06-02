@@ -48,14 +48,16 @@ public class PdfOutlineTest extends ExtendedITextTest{
     @Test
     public void outlinesWithPagesTest() throws IOException {
         PdfReader reader = new PdfReader(new FileInputStream(sourceFolder+"iphone_user_guide.pdf"));
-
         PdfDocument pdfDoc = new PdfDocument(reader);
         PdfPage page = pdfDoc.getPage(52);
         List<PdfOutline> pageOutlines = page.getOutlines(true);
-
-        Assert.assertEquals(3, pageOutlines.size());
-        Assert.assertTrue(pageOutlines.get(0).getTitle().equals("Safari"));
-        Assert.assertEquals(pageOutlines.get(0).getAllChildren().size(), 4);
+        try {
+            Assert.assertEquals(3, pageOutlines.size());
+            Assert.assertTrue(pageOutlines.get(0).getTitle().equals("Safari"));
+            Assert.assertEquals(pageOutlines.get(0).getAllChildren().size(), 4);
+        } finally {
+            pdfDoc.close();
+        }
     }
 
     @Before
@@ -89,10 +91,13 @@ public class PdfOutlineTest extends ExtendedITextTest{
 
         PdfReader reader = new PdfReader(new FileInputStream(filename));
         PdfDocument pdfDoc = new PdfDocument(reader);
-
         PdfOutline outlines = pdfDoc.getOutlines(false);
-        Assert.assertEquals(3, outlines.getAllChildren().size());
-        Assert.assertEquals("firstPageChild", outlines.getAllChildren().get(1).getAllChildren().get(0).getTitle());
+        try {
+            Assert.assertEquals(3, outlines.getAllChildren().size());
+            Assert.assertEquals("firstPageChild", outlines.getAllChildren().get(1).getAllChildren().get(0).getTitle());
+        } finally {
+            pdfDoc.close();
+        }
     }
 
     @Before
@@ -117,7 +122,11 @@ public class PdfOutlineTest extends ExtendedITextTest{
 
         PdfPage page = pdfDoc.getPage(102);
         List<PdfOutline> pageOutlines =  page.getOutlines(false);
-        Assert.assertEquals(4, pageOutlines.size());
+        try {
+            Assert.assertEquals(4, pageOutlines.size());
+        } finally {
+            pdfDoc.close();
+        }
     }
 
     @Before
@@ -142,8 +151,11 @@ public class PdfOutlineTest extends ExtendedITextTest{
 
         PdfOutline outlines = pdfDoc.getOutlines(false);
         PdfOutline outline = outlines.getAllChildren().get(0).getAllChildren().get(1);
-
-        Assert.assertEquals("New Title", outline.getTitle());
+        try {
+            Assert.assertEquals("New Title", outline.getTitle());
+        } finally {
+            pdfDoc.close();
+        }
     }
 
     @Before
@@ -177,7 +189,11 @@ public class PdfOutlineTest extends ExtendedITextTest{
         PdfDocument pdfDoc = new PdfDocument(reader);
 
         List<PdfOutline> pageOutlines = pdfDoc.getPage(102).getOutlines(true);
-        Assert.assertEquals(5, pageOutlines.size());
+        try {
+            Assert.assertEquals(5, pageOutlines.size());
+        } finally {
+            pdfDoc.close();
+        }
     }
 
     @Before
@@ -210,9 +226,12 @@ public class PdfOutlineTest extends ExtendedITextTest{
         PdfDocument pdfDoc = new PdfDocument(reader);
 
         PdfOutline outlines = pdfDoc.getOutlines(false);
-
-        Assert.assertEquals(2, outlines.getAllChildren().size());
-        Assert.assertEquals("First Page", outlines.getAllChildren().get(0).getTitle());
+        try {
+            Assert.assertEquals(2, outlines.getAllChildren().size());
+            Assert.assertEquals("First Page", outlines.getAllChildren().get(0).getTitle());
+        } finally {
+            pdfDoc.close();
+        }
     }
 
 
