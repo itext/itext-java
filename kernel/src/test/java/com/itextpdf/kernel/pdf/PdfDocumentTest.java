@@ -257,14 +257,14 @@ public class PdfDocumentTest extends ExtendedITextTest {
         ByteArrayOutputStream byteArrayStream1 = new com.itextpdf.io.source.ByteArrayOutputStream();
         DeflaterOutputStream zip = new DeflaterOutputStream(byteArrayStream1, 9);
         image.writeTo(zip);
-        zip.close();
 
         ByteArrayOutputStream byteArrayStream2 = new com.itextpdf.io.source.ByteArrayOutputStream();
         DeflaterOutputStream zip2 = new DeflaterOutputStream(byteArrayStream2, -1);
         image.writeTo(zip2);
-        zip2.close();
 
         Assert.assertTrue(byteArrayStream1.size() == byteArrayStream2.size());
+        zip.close();
+        zip2.close();
     }
 
     @Test
