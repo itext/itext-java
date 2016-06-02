@@ -126,8 +126,9 @@ class Xml2Som {
      * @return the stack as the sequence of elements separated by '.'
      */
     protected String printStack() {
-        if (stack.empty())
+        if (stack.size() == 0) {
             return "";
+        }
         StringBuilder s = new StringBuilder();
         for (int k = 0; k < stack.size(); ++k)
             s.append('.').append(stack.get(k));
@@ -204,8 +205,9 @@ class Xml2Som {
      * @return the full name or <CODE>null</CODE> if not found
      */
     public String inverseSearchGlobal(List<String> parts) {
-        if (parts.isEmpty())
+        if (parts.size() == 0) {
             return null;
+        }
         InverseStore store = inverseSearch.get(parts.get(parts.size() - 1));
         if (store == null)
             return null;
