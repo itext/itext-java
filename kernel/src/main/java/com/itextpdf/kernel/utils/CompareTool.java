@@ -45,6 +45,7 @@ package com.itextpdf.kernel.utils;
 
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
@@ -617,9 +618,14 @@ public class CompareTool {
         cmpDocument.close();
 
         if (generateCompareByContentXmlReport) {
+            String outPdfName = FileUtil.getFileName(outPdf);
+            FileOutputStream xml = new FileOutputStream(outPath + "/" + outPdfName.substring(0, outPdfName.length() - 3) + "report.xml");
             try {
-                compareResult.writeReportToXml(new FileOutputStream(outPath + "/report.xml"));
-            } catch (Exception exc) {}
+                compareResult.writeReportToXml(xml);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+
         }
 
         if (equalPages.size() == cmpPages.size() && compareResult.isOk()) {
