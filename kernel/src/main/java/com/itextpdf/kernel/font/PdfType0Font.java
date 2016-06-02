@@ -257,14 +257,7 @@ public class PdfType0Font extends PdfFont {
                 glyphs[i++] = (char)cmapEncoding.getCmapCode(glyph.getCode());
             }
         }
-
-        String s = new String(glyphs, 0, i);
-        try {
-            return s.getBytes(PdfEncodings.UNICODE_BIG_UNMARKED);
-        } catch (UnsupportedEncodingException e) {
-            throw new PdfException("TrueTypeFont", e);
-        }
-
+        return PdfEncodings.convertToBytes(new String(glyphs, 0, i), PdfEncodings.UNICODE_BIG_UNMARKED);
     }
 
     @Override
@@ -279,13 +272,7 @@ public class PdfType0Font extends PdfFont {
                     longTag.put(code, new int[]{code, glyph.getWidth(), glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
                 }
             }
-
-            String s = new String(glyphs, 0, glyphs.length);
-            try {
-                return s.getBytes(PdfEncodings.UNICODE_BIG_UNMARKED);
-            } catch (UnsupportedEncodingException e) {
-                throw new PdfException("TrueTypeFont", e);
-            }
+            return PdfEncodings.convertToBytes(new String(glyphs, 0, glyphs.length), PdfEncodings.UNICODE_BIG_UNMARKED);
         } else {
             return null;
         }
@@ -297,12 +284,7 @@ public class PdfType0Font extends PdfFont {
         if (longTag.get(code) == null) {
             longTag.put(code, new int[]{code, glyph.getWidth(), glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
         }
-        String s = new String(new char[]{(char) glyph.getCode()}, 0, 1);
-        try {
-            return s.getBytes(PdfEncodings.UNICODE_BIG_UNMARKED);
-        } catch (UnsupportedEncodingException e) {
-            throw new PdfException("PdfType0Font", e);
-        }
+        return PdfEncodings.convertToBytes(new String(new char[]{(char) glyph.getCode()}, 0, 1), PdfEncodings.UNICODE_BIG_UNMARKED);
     }
 
     @Override
@@ -317,11 +299,7 @@ public class PdfType0Font extends PdfFont {
             }
         }
         //TODO improve converting chars to hexed string
-        try {
-            StreamUtil.writeHexedString(stream, bytes.toString().getBytes(PdfEncodings.UNICODE_BIG_UNMARKED));
-        } catch (UnsupportedEncodingException e) {
-            throw new PdfException("PdfType0Font", e);
-        }
+        StreamUtil.writeHexedString(stream, PdfEncodings.convertToBytes(bytes.toString(), PdfEncodings.UNICODE_BIG_UNMARKED));
     }
 
     @Override
