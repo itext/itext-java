@@ -54,22 +54,22 @@ public class PdfResourcesTest {
         resources = page.getResources();
         Set<PdfName> names = resources.getResourceNames();
         Assert.assertEquals(2, names.size());
-        Iterator<PdfName> iterator = names.iterator();
-        iterator.hasNext();
-        PdfName n1 = iterator.next();
-        Assert.assertEquals("Gs1", n1.getValue());
-        iterator.hasNext();
-        PdfName n2 = iterator.next();
-        Assert.assertEquals("Gs2", n2.getValue());
+
+        String[] expectedNames = { "Gs1", "Gs2"};
+        int i = 0;
+        for (PdfName name : names) {
+            Assert.assertEquals(expectedNames[i++], name.getValue());
+        }
+
         PdfExtGState egs3 = new PdfExtGState();
         PdfName n3 = resources.addExtGState(egs3);
         Assert.assertEquals("Gs3", n3.getValue());
         PdfDictionary egsResources = page.getPdfObject().getAsDictionary(PdfName.Resources).getAsDictionary(PdfName.ExtGState);
         PdfObject e1 = egsResources.get(new PdfName("Gs1"), false);
-        n1 = resources.addExtGState(e1);
+        PdfName n1 = resources.addExtGState(e1);
         Assert.assertEquals("Gs1", n1.getValue());
         PdfObject e2 = egsResources.get(new PdfName("Gs2"));
-        n2 = resources.addExtGState(e2);
+        PdfName n2 = resources.addExtGState(e2);
         Assert.assertEquals("Gs2", n2.getValue());
         PdfObject e4 = (PdfObject) e2.clone();
         PdfName n4 = resources.addExtGState(e4);

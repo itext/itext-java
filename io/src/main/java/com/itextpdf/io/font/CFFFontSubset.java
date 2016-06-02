@@ -1170,15 +1170,11 @@ public class CFFFontSubset extends CFFFont {
         int[] currentOffset = new int[1];
         currentOffset[0] = 0;
         // Count and save the offset for each item
-        Iterator<Item> listIter = OutputList.iterator();
-        while (listIter.hasNext()) {
-            Item item = listIter.next();
+        for (Item item : OutputList) {
             item.increment(currentOffset);
         }
         // Compute the Xref for each of the offset items
-        listIter = OutputList.iterator();
-        while (listIter.hasNext()) {
-            Item item = listIter.next();
+        for (Item item : OutputList) {
             item.xref();
         }
 
@@ -1186,9 +1182,7 @@ public class CFFFontSubset extends CFFFont {
         byte[] b = new byte[size];
 
         // Emit all the items into the new byte array
-        listIter = OutputList.iterator();
-        while (listIter.hasNext()) {
-            Item item = listIter.next();
+        for (Item item : OutputList) {
             item.emit(b);
         }
         // Return the new stream

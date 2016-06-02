@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf.canvas;
 
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.otf.ActualTextIterator;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.image.ImageData;
@@ -673,7 +674,7 @@ public class PdfCanvas {
         float fontSize = currentGs.getFontSize() / 1000f;
         float charSpacing = currentGs.getCharSpacing();
         float scaling = currentGs.getHorizontalScaling() / 100f;
-        for (Iterator<GlyphLine.GlyphLinePart> iterator = text.iterator(); iterator.hasNext(); ) {
+        for (ActualTextIterator iterator = new ActualTextIterator(text); iterator.hasNext(); ) {
             GlyphLine.GlyphLinePart glyphLinePart = iterator.next();
             if (glyphLinePart.actualText != null) {
                 PdfDictionary properties = new PdfDictionary();

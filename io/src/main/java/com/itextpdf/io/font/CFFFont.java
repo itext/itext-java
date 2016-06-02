@@ -899,24 +899,18 @@ public class CFFFont {
         int[] currentOffset = new int[1];
         currentOffset[0] = 0;
 
-        Iterator<Item> listIter = l.iterator();
-        while ( listIter.hasNext() ) {
-            Item item = listIter.next();
+        for (Item item : l) {
             item.increment(currentOffset);
         }
 
-        listIter = l.iterator();
-        while ( listIter.hasNext() ) {
-            Item item = listIter.next();
+        for (Item item : l) {
             item.xref();
         }
 
         int size = currentOffset[0];
         byte[] b = new byte[size];
 
-        listIter = l.iterator();
-        while ( listIter.hasNext() ) {
-            Item item = listIter.next();
+        for (Item item : l) {
             item.emit(b);
         }
 

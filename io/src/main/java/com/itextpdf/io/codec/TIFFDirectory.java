@@ -438,11 +438,10 @@ public class TIFFDirectory implements Serializable {
      */
     public int[] getTags() {
         int[] tags = new int[fieldIndex.size()];
-        Iterator<Integer> e = fieldIndex.keySet().iterator();
         int i = 0;
 
-        while (e.hasNext()) {
-            tags[i++] = (int) e.next();
+        for (Integer integer : fieldIndex.keySet()) {
+            tags[i++] = (int) integer;
         }
 
         return tags;

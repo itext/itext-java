@@ -221,9 +221,8 @@ public class Jbig2SegmentReader {
                 tmp = readHeader();
                 segments.put(tmp.segmentNumber, tmp);
             } while (tmp.type != END_OF_FILE);
-            Iterator<Integer> segs = segments.keySet().iterator();
-            while (segs.hasNext()) {
-                readSegment(segments.get(segs.next()));
+            for (int integer : segments.keySet()) {
+                readSegment(segments.get(integer));
             }
         }
     }
