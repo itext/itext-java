@@ -122,14 +122,12 @@ public class XMPSerializerRDF
 		try
 		{
 			outputStream = new CountOutputStream(out); 
-			writer = new OutputStreamWriter(outputStream, options.getEncoding());
-			
 			this.xmp = (XMPMetaImpl) xmp;
 			this.options = options;
 			this.padding = options.getPadding();
 
 			writer = new OutputStreamWriter(outputStream, options.getEncoding());
-			
+
 			checkOptionsConsistence();
 			
 			// serializes the whole packet, but don't write the tail yet 
