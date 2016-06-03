@@ -113,7 +113,7 @@ public final class Version {
 
                     if (info.length > 6) {
                         if (info[6] != null && info[6].trim().length() > 0) {
-                            String versionToCheck = version.release.substring(0, version.release.lastIndexOf("."));
+                            String versionToCheck = release.substring(0, release.lastIndexOf("."));
 
                             if (! info[6].equalsIgnoreCase(versionToCheck)) {
                                 throw new RuntimeException("Your license key version doesn't match the iText version.");
@@ -143,13 +143,13 @@ public final class Version {
                     } else {
                         throw new Exception();
                     }
-                } catch ( RuntimeException exc ) {
+                } catch (RuntimeException exc) {
                     throw exc;
                 } catch (Exception e) {
                     version.iTextVersion += AGPL;
 
-                    if ( e.getCause() != null  && e.getCause().getMessage() != null && e.getCause().getMessage().contains("expired")) {
-                        version.expired = true;
+                    if (e.getCause() != null && e.getCause().getMessage() != null && e.getCause().getMessage().contains("expired")) {
+                        expired = true;
                     }
                 }
             }
