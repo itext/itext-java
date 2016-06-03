@@ -220,11 +220,17 @@ public class ByteUtils {
             }
         } else {
             d += 0.5;
-            long v = (long) d;
+            long v;
+            if (d > Long.MAX_VALUE) {
+                //by default cast logic do the same, but not in .NET
+                v = Long.MAX_VALUE;
+            } else {
+                v = (long) d;
+            }
             int intLen = longSize(v);
             buf = buffer == null ? new ByteBuffer(intLen + (negative ? 1 : 0)) : buffer;
             for (int i = 0; i < intLen; i++) {
-                buf.prepend(bytes[(int) Math.abs(v % 10)]);
+                buf.prepend(bytes[(int) (v % 10)]);
                 v /= 10;
             }
             if (negative) {
