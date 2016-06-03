@@ -161,7 +161,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     public void buttonFieldTest02() throws IOException, InterruptedException {
         String filename = destinationFolder + "buttonFieldTest02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(destinationFolder + "buttonFieldTest01.pdf"), new PdfWriter(new FileOutputStream(filename)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "buttonFieldTest02_input.pdf"), new PdfWriter(new FileOutputStream(filename)));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
