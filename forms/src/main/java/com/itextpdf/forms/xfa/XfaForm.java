@@ -44,7 +44,6 @@
 package com.itextpdf.forms.xfa;
 
 import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -61,6 +60,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
@@ -97,7 +97,7 @@ public class XfaForm {
      * An empty constructor to build on.
      */
     public XfaForm() {
-        this(ResourceUtil.getResourceStream(DEFAULT_XFA));
+        this(new ByteArrayInputStream("<?xml version=\"1.0\" encoding=\"UTF-8\"?><xdp:xdp xmlns:xdp=\"http://ns.adobe.com/xdp/\"><template xmlns=\"http://www.xfa.org/schema/xfa-template/3.3/\"></template><xfa:datasets xmlns:xfa=\"http://www.xfa.org/schema/xfa-data/1.0/\"><xfa:data></xfa:data></xfa:datasets></xdp:xdp>".getBytes(StandardCharsets.UTF_8)));
     }
 
     /**
