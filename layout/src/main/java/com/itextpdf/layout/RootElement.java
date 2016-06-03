@@ -304,7 +304,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
         if (pageNumber == 0)
             pageNumber = 1;
         div.setFixedPosition(pageNumber, divX, divY, divWidth).setHeight(divHeight);
-        if (p.<Float>getProperty(Property.LEADING) == null) {
+        if (p.<Leading>getProperty(Property.LEADING) == null) {
             p.setMultipliedLeading(1);
         }
         div.add(p.setMargins(0, 0, 0, 0));
