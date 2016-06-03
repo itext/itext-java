@@ -46,6 +46,55 @@ public class PdfDocumentTest extends ExtendedITextTest {
         assertPdfDoc.close();
     }
 
+    //We have this test in PdfOutlineTest as well, because we had some issues with outlines before. One test worked
+    // fine, while another one failed.
+    @Test
+    public void addOutlinesWithNamedDestinations01() throws IOException, InterruptedException {
+        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "iphone_user_guide.pdf"));
+        String filename = destinationFolder + "outlinesWithNamedDestinations01.pdf";
+
+        FileOutputStream fos = new FileOutputStream(filename);
+        PdfWriter writer = new PdfWriter(fos);
+
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        PdfArray array1 = new PdfArray();
+        array1.add(pdfDoc.getPage(2).getPdfObject());
+        array1.add(PdfName.XYZ);
+        array1.add(new PdfNumber(36));
+        array1.add(new PdfNumber(806));
+        array1.add(new PdfNumber(0));
+
+        PdfArray array2 = new PdfArray();
+        array2.add(pdfDoc.getPage(3).getPdfObject());
+        array2.add(PdfName.XYZ);
+        array2.add(new PdfNumber(36));
+        array2.add(new PdfNumber(806));
+        array2.add(new PdfNumber(1.25));
+
+        PdfArray array3 = new PdfArray();
+        array3.add(pdfDoc.getPage(4).getPdfObject());
+        array3.add(PdfName.XYZ);
+        array3.add(new PdfNumber(36));
+        array3.add(new PdfNumber(806));
+        array3.add(new PdfNumber(1));
+
+        pdfDoc.addNamedDestination("test1", array2);
+        pdfDoc.addNamedDestination("test2", array3);
+        pdfDoc.addNamedDestination("test3", array1);
+
+        PdfOutline root = pdfDoc.getOutlines(false);
+
+        PdfOutline firstOutline = root.addOutline("Test1");
+        firstOutline.addDestination(PdfDestination.makeDestination(new PdfString("test1")));
+        PdfOutline secondOutline = root.addOutline("Test2");
+        secondOutline.addDestination(PdfDestination.makeDestination(new PdfString("test2")));
+        PdfOutline thirdOutline = root.addOutline("Test3");
+        thirdOutline.addDestination(PdfDestination.makeDestination(new PdfString("test3")));
+        pdfDoc.close();
+
+        assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_outlinesWithNamedDestinations01.pdf", destinationFolder, "diff_"));
+    }
+
     @Test
     public void freeReferencesInObjectStream() throws IOException {
         PdfReader reader = new PdfReader(sourceFolder + "styledLineArts_Redacted.pdf");

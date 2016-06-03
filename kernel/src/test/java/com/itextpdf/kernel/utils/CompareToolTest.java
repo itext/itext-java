@@ -3,7 +3,7 @@ package com.itextpdf.kernel.utils;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -20,8 +20,8 @@ public class CompareToolTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/CompareToolTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/CompareToolTest/";
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUp() {
         createOrClearDestinationFolder(destinationFolder);
     }
 
