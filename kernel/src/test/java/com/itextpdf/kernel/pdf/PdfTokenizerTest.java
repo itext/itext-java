@@ -88,7 +88,7 @@ public class PdfTokenizerTest {
         Assert.assertEquals("\r\n\tUser\u0090s Guide", pdfString.getValue());
 
         String testUnicodeString = "ΑΒΓΗ€•♣⋅";
-        pdfString = new PdfString(testUnicodeString.getBytes(PdfEncodings.UNICODE_BIG), false);
+        pdfString = new PdfString(PdfEncodings.convertToBytes(testUnicodeString, PdfEncodings.UNICODE_BIG), false);
         Assert.assertEquals(testUnicodeString, pdfString.toUnicodeString());
 
         pdfString = new PdfString("FEFF041F04400438043204350442".getBytes(), true);
