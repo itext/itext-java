@@ -322,7 +322,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     }
 
     /**
-     * Sets the font size of this Element.
+     * Sets the text alignment of this Element.
      *
      * @param alignment an enum value of type {@link TextAlignment}
      * @return this Element.
