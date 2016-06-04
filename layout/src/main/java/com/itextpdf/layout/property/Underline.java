@@ -77,4 +77,8 @@ public class Underline {
     public float getYPositionMul() {
         return yPositionMul;
     }
+    
+    public int getLineCapStyle() {
+        return lineCapStyle;
+    }
 }

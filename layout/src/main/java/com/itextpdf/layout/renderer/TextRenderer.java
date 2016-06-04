@@ -853,6 +853,7 @@ public class TextRenderer extends AbstractRenderer {
         if (underlineColor != null) {
             canvas.setStrokeColor(underlineColor);
         }
+        canvas.setLineCapStyle(underline.getLineCapStyle());
         float underlineThickness = underline.getThickness(fontSize);
         if (underlineThickness != 0) {
             canvas.setLineWidth(underlineThickness);
