@@ -2,6 +2,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -18,7 +19,6 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -80,7 +80,7 @@ public class ImageTest extends ExtendedITextTest{
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createJpeg(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createJpeg(UrlUtil.toURL(sourceFolder+"Desert.jpg")));
         Image image = new Image(xObject, 100);
 
         Paragraph p = new Paragraph();
@@ -300,7 +300,7 @@ public class ImageTest extends ExtendedITextTest{
         String outFileName = destinationFolder + "flushOnDrawCheckCircularReferencesTest.pdf";
         String cmpFileName = sourceFolder + "cmp_flushOnDrawCheckCircularReferencesTest.pdf";
 
-        PdfDocument pdf = pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
         //Initialize document
         Document document = new Document(pdf);
 

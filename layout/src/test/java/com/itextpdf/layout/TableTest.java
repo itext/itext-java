@@ -2,6 +2,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -308,7 +309,7 @@ public class TableTest extends ExtendedITextTest{
 
         doc.add(new Paragraph("Table 3"));
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(new File(sourceFolder + "itext.png").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "itext.png")));
         Image image = new Image(xObject, 50);
 
         Table table3 = new Table(new float[]{100, 100})

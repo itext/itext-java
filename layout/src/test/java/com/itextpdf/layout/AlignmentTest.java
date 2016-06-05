@@ -1,6 +1,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -195,7 +196,7 @@ public class AlignmentTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         Div div = new Div();
-        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createJpeg(new File(sourceFolder + "Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createJpeg(UrlUtil.toURL(sourceFolder + "Desert.jpg")));
         Image image1 = new Image(xObject, 100).setHorizontalAlignment(HorizontalAlignment.RIGHT);
         Image image2 = new Image(xObject, 100).setHorizontalAlignment(HorizontalAlignment.CENTER);
         Image image3 = new Image(xObject, 100).setHorizontalAlignment(HorizontalAlignment.LEFT);
@@ -223,7 +224,7 @@ public class AlignmentTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createJpeg(new File(sourceFolder + "Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createJpeg(UrlUtil.toURL(sourceFolder + "Desert.jpg")));
         Image image = new Image(xObject, 100).setHorizontalAlignment(HorizontalAlignment.RIGHT);
 
         doc.add(image);
