@@ -164,7 +164,7 @@ public class PdfADocument extends PdfDocument {
         }
         switch (key) {
             case CANVAS_STACK:
-                checker.checkCanvasStack((Character) obj);
+                checker.checkCanvasStack((char) obj);
                 break;
             case PDF_OBJECT:
                 checker.checkPdfObject((PdfObject) obj);

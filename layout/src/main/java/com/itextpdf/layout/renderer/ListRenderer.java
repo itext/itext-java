@@ -44,6 +44,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.Property;
@@ -157,16 +158,16 @@ public class ListRenderer extends BlockRenderer {
                     numberText = GreekAlphabetNumbering.toGreekAlphabetNumberUpperCase(index);
                     break;
                 case ZAPF_DINGBATS_1:
-                    numberText = ((Character) (char) (index + 171)).toString();
+                    numberText = TextUtil.charToString((char) (index + 171));
                     break;
                 case ZAPF_DINGBATS_2:
-                    numberText = ((Character) (char) (index + 181)).toString();
+                    numberText = TextUtil.charToString((char) (index + 181));
                     break;
                 case ZAPF_DINGBATS_3:
-                    numberText = ((Character) (char) (index + 191)).toString();
+                    numberText = TextUtil.charToString((char) (index + 191));
                     break;
                 case ZAPF_DINGBATS_4:
-                    numberText = ((Character) (char) (index + 201)).toString();
+                    numberText = TextUtil.charToString((char) (index + 201));
                     break;
                 default:
                     throw new IllegalStateException();

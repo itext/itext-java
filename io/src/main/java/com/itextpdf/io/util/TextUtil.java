@@ -199,4 +199,8 @@ public final class TextUtil {
         codePoint -= 0x10000;
         return new char[]{(char) (codePoint / 0x400 + 0xd800), (char) (codePoint % 0x400 + 0xdc00)};
     }
+
+    public static String charToString(char ch) {
+        return String.valueOf(ch);
+    }
 }
