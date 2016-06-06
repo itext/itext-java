@@ -860,17 +860,26 @@ public class TableTest extends ExtendedITextTest{
                     .addCell(new Cell().add(new Paragraph(textContent1)))
                     .addCell(new Cell().add(new Paragraph(textContent3)));
         }
-        doc.setRenderer(new DocumentRenderer(doc) {
-            @Override
-            protected PageSize addNewPage(PageSize customPageSize) {
-                PageSize pageSize = currentPageNumber % 2 == 1 ? PageSize.A4 : PageSize.A4.rotate();
-                pdfDoc.addNewPage(pageSize);
-                return pageSize;
-            }
-        });
+        doc.setRenderer(new RotatedDocumentRenderer(doc, pdfDoc));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    private static class RotatedDocumentRenderer extends DocumentRenderer {
+        private final PdfDocument pdfDoc;
+
+        public RotatedDocumentRenderer(Document doc, PdfDocument pdfDoc) {
+            super(doc);
+            this.pdfDoc = pdfDoc;
+        }
+
+        @Override
+        protected PageSize addNewPage(PageSize customPageSize) {
+            PageSize pageSize = currentPageNumber % 2 == 1 ? PageSize.A4 : PageSize.A4.rotate();
+            pdfDoc.addNewPage(pageSize);
+            return pageSize;
+        }
     }
 
     @LogMessages(messages = {
@@ -992,6 +1001,4 @@ public class TableTest extends ExtendedITextTest{
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
-
-
 }
