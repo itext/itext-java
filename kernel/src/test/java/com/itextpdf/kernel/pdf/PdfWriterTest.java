@@ -155,15 +155,15 @@ public class PdfWriterTest extends ExtendedITextTest {
         page1.flush();
         PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
         PdfArray aDirect = new PdfArray();
-        aDirect.add(new PdfArray(new ArrayList<PdfObject>() {{
-            add(new PdfNumber(1));
-            add(new PdfNumber(2));
-        }}));
+        ArrayList<PdfObject> tmpArray = new ArrayList<PdfObject>(2);
+        tmpArray.add(new PdfNumber(1));
+        tmpArray.add(new PdfNumber(2));
+        aDirect.add(new PdfArray(tmpArray));
         aDirect.add(new PdfBoolean(true));
-        aDirect.add(new PdfDictionary(new TreeMap<PdfName, PdfObject>() {{
-            put(new PdfName("one"), new PdfNumber(1));
-            put(new PdfName("two"), new PdfNumber(2));
-        }}));
+        TreeMap<PdfName, PdfObject> tmpMap = new TreeMap<PdfName, PdfObject>();
+        tmpMap.put(new PdfName("one"), new PdfNumber(1));
+        tmpMap.put(new PdfName("two"), new PdfNumber(2));
+        aDirect.add(new PdfDictionary(tmpMap));
         aDirect.add(new PdfName("name"));
         aDirect.add(new PdfNull());
         aDirect.add(new PdfNumber(100));
@@ -216,15 +216,15 @@ public class PdfWriterTest extends ExtendedITextTest {
         PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
         PdfName aDirectName = new PdfName("aDirect");
         PdfArray aDirect = new PdfArray().makeIndirect(pdfDoc1);
-        aDirect.add(new PdfArray(new ArrayList<PdfObject>() {{
-            add(new PdfNumber(1));
-            add(new PdfNumber(2).makeIndirect(pdfDoc1));
-        }}));
+        ArrayList<PdfObject> tmpArray = new ArrayList<PdfObject>(2);
+        tmpArray.add(new PdfNumber(1));
+        tmpArray.add(new PdfNumber(2).makeIndirect(pdfDoc1));
+        aDirect.add(new PdfArray(tmpArray));
         aDirect.add(new PdfBoolean(true));
-        aDirect.add(new PdfDictionary(new TreeMap<PdfName, PdfObject>() {{
-            put(new PdfName("one"), new PdfNumber(1));
-            put(new PdfName("two"), new PdfNumber(2).makeIndirect(pdfDoc1));
-        }}));
+        TreeMap<PdfName, PdfObject> tmpMap = new TreeMap<PdfName, PdfObject>();
+        tmpMap.put(new PdfName("one"), new PdfNumber(1));
+        tmpMap.put(new PdfName("two"), new PdfNumber(2).makeIndirect(pdfDoc1));
+        aDirect.add(new PdfDictionary(tmpMap));
         aDirect.add(new PdfName("name"));
         aDirect.add(new PdfNull().makeIndirect(pdfDoc1));
         aDirect.add(new PdfNumber(100));
@@ -336,11 +336,11 @@ public class PdfWriterTest extends ExtendedITextTest {
         page1.flush();
         PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
         PdfStream stream1 = new PdfStream().makeIndirect(pdfDoc1);
-        stream1.getOutputStream().write(new PdfArray(new ArrayList<PdfObject>() {{
-            add(new PdfNumber(1));
-            add(new PdfNumber(2));
-            add(new PdfNumber(3));
-        }}));
+        ArrayList<PdfObject> tmpArray = new ArrayList<PdfObject>(3);
+        tmpArray.add(new PdfNumber(1));
+        tmpArray.add(new PdfNumber(2));
+        tmpArray.add(new PdfNumber(3));
+        stream1.getOutputStream().write(new PdfArray(tmpArray));
         catalog1.put(new PdfName("stream"), stream1);
         pdfDoc1.close();
 

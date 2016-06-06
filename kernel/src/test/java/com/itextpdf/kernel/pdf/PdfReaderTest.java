@@ -188,9 +188,7 @@ public class PdfReaderTest extends ExtendedITextTest{
         PdfDocument document = new PdfDocument(writer);
         document.addNewPage();
         PdfDictionary catalog = document.getCatalog().getPdfObject();
-        PdfObject pdfObject = new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
-            put(new PdfName("b"), new PdfName("c"));
-        }});
+        PdfObject pdfObject = getTestPdfDictionary();
         for (int i = 0; i < 5; i++) {
             pdfObject = pdfObject.makeIndirect(document).getIndirectReference();
         }
@@ -233,9 +231,7 @@ public class PdfReaderTest extends ExtendedITextTest{
         PdfDocument document = new PdfDocument(writer);
         document.addNewPage();
         PdfDictionary catalog = document.getCatalog().getPdfObject();
-        PdfObject pdfObject = new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
-            put(new PdfName("b"), new PdfName("c"));
-        }});
+        PdfObject pdfObject = getTestPdfDictionary();
         for (int i = 0; i < 100; i++) {
             pdfObject = pdfObject.makeIndirect(document).getIndirectReference();
         }
@@ -1562,5 +1558,11 @@ public class PdfReaderTest extends ExtendedITextTest{
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
+    }
+
+    private static PdfDictionary getTestPdfDictionary() {
+        HashMap<PdfName, PdfObject> tmpMap = new HashMap<PdfName, PdfObject>();
+        tmpMap.put(new PdfName("b"), new PdfName("c"));
+        return new PdfDictionary(tmpMap);
     }
 }

@@ -78,14 +78,16 @@ public class TagStructureContext implements Serializable {
 
     private static final long serialVersionUID = -7870069015800895036L;
 
-    private static final Set<PdfName> allowedRootTagRoles = new HashSet<PdfName>() {{
-        add(PdfName.Book);
-        add(PdfName.Document);
-        add(PdfName.Part);
-        add(PdfName.Art);
-        add(PdfName.Sect);
-        add(PdfName.Div);
-    }};
+    private static final Set<PdfName> allowedRootTagRoles = new HashSet<PdfName>();
+
+    static {
+        allowedRootTagRoles.add(PdfName.Book);
+        allowedRootTagRoles.add(PdfName.Document);
+        allowedRootTagRoles.add(PdfName.Part);
+        allowedRootTagRoles.add(PdfName.Art);
+        allowedRootTagRoles.add(PdfName.Sect);
+        allowedRootTagRoles.add(PdfName.Div);
+    }
 
     private PdfDocument document;
     private PdfStructElem rootTagElement;

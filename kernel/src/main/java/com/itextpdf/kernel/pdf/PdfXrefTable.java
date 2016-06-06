@@ -239,11 +239,11 @@ class PdfXrefTable implements Serializable {
             if (crypto != null)
                 xrefStream.put(PdfName.Encrypt, crypto);
             xrefStream.put(PdfName.Size, new PdfNumber(this.size()));
-            xrefStream.put(PdfName.W, new PdfArray(new ArrayList<PdfObject>() {{
-                add(new PdfNumber(1));
-                add(new PdfNumber(4));
-                add(new PdfNumber(2));
-            }}));
+            ArrayList<PdfObject> tmpArray = new ArrayList<PdfObject>(3);
+            tmpArray.add(new PdfNumber(1));
+            tmpArray.add(new PdfNumber(4));
+            tmpArray.add(new PdfNumber(2));
+            xrefStream.put(PdfName.W, new PdfArray(tmpArray));
             xrefStream.put(PdfName.Info, document.getDocumentInfo().getPdfObject());
             xrefStream.put(PdfName.Root, document.getCatalog().getPdfObject());
             PdfArray index = new PdfArray();

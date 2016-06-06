@@ -65,17 +65,19 @@ import java.util.Set;
  */
 class StructureTreeCopier {
 
-    private static List<PdfName> ignoreKeysForCopy = new ArrayList<PdfName>() {{
-        add(PdfName.K);
-        add(PdfName.P);
-        add(PdfName.Pg);
-        add(PdfName.Obj);
-    }};
+    private static List<PdfName> ignoreKeysForCopy = new ArrayList<PdfName>();
 
-    private static List<PdfName> ignoreKeysForClone = new ArrayList<PdfName>() {{
-        add(PdfName.K);
-        add(PdfName.P);
-    }};
+    private static List<PdfName> ignoreKeysForClone = new ArrayList<PdfName>();
+
+    static {
+        ignoreKeysForCopy.add(PdfName.K);
+        ignoreKeysForCopy.add(PdfName.P);
+        ignoreKeysForCopy.add(PdfName.Pg);
+        ignoreKeysForCopy.add(PdfName.Obj);
+
+        ignoreKeysForClone.add(PdfName.K);
+        ignoreKeysForClone.add(PdfName.P);
+    }
 
     /**
      * Copies structure to a {@code destDocument}.

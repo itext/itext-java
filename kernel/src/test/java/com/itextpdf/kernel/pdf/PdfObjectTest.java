@@ -21,9 +21,8 @@ public class PdfObjectTest {
         PdfDocument document = new PdfDocument(writer);
         document.addNewPage();
         PdfDictionary catalog = document.getCatalog().getPdfObject();
-        catalog.put(new PdfName("a"), new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
-            put(new PdfName("b"), new PdfName("c"));
-        }}).makeIndirect(document).getIndirectReference().makeIndirect(document).getIndirectReference().makeIndirect(document));
+        catalog.put(new PdfName("a"), getTestPdfDictionary()
+                .makeIndirect(document).getIndirectReference().makeIndirect(document).getIndirectReference().makeIndirect(document));
         PdfObject object = ((PdfIndirectReference)catalog.get(new PdfName("a"), false)).getRefersTo(true);
         Assert.assertTrue(object instanceof PdfDictionary);
         document.close();
@@ -36,9 +35,7 @@ public class PdfObjectTest {
         PdfDocument document = new PdfDocument(writer);
         document.addNewPage();
         PdfDictionary catalog = document.getCatalog().getPdfObject();
-        PdfDictionary dictionary = new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
-            put(new PdfName("b"), new PdfName("c"));
-        }});
+        PdfDictionary dictionary = getTestPdfDictionary();
         PdfObject object = dictionary;
         for (int i = 0; i < 200; i++) {
             object = object.makeIndirect(document).getIndirectReference();
@@ -56,9 +53,7 @@ public class PdfObjectTest {
         PdfDocument document = new PdfDocument(writer);
         document.addNewPage();
         PdfDictionary catalog = document.getCatalog().getPdfObject();
-        PdfDictionary dictionary = new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
-            put(new PdfName("b"), new PdfName("c"));
-        }});
+        PdfDictionary dictionary = getTestPdfDictionary();
         PdfObject object = dictionary;
         for (int i = 0; i < 31; i++) {
             object = object.makeIndirect(document).getIndirectReference();
@@ -77,9 +72,7 @@ public class PdfObjectTest {
         PdfDocument document = new PdfDocument(writer);
         document.addNewPage();
         PdfDictionary catalog = document.getCatalog().getPdfObject();
-        PdfDictionary dictionary = new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
-            put(new PdfName("b"), new PdfName("c"));
-        }});
+        PdfDictionary dictionary = getTestPdfDictionary();
         PdfObject object = dictionary;
         for (int i = 0; i < 31; i++) {
             object = object.makeIndirect(document).getIndirectReference();
@@ -246,5 +239,11 @@ public class PdfObjectTest {
         Assert.assertTrue(dict1 == dict);
 
         document.close();
+    }
+
+    private static PdfDictionary getTestPdfDictionary() {
+        HashMap<PdfName, PdfObject> tmpMap = new HashMap<PdfName, PdfObject>();
+        tmpMap.put(new PdfName("b"), new PdfName("c"));
+        return new PdfDictionary(tmpMap);
     }
 }

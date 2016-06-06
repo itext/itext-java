@@ -61,7 +61,6 @@ public class PdfCanvasTest extends ExtendedITextTest {
             "bulb.gif",
             "0047478.jpg",
             "itext.png"
-
     };
 
     @BeforeClass
@@ -1114,12 +1113,12 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
-        com.itextpdf.kernel.pdf.PdfDictionary tag2 = new com.itextpdf.kernel.pdf.PdfDictionary(new HashMap<com.itextpdf.kernel.pdf.PdfName, PdfObject>() {{
-            put(new com.itextpdf.kernel.pdf.PdfName("Tag"), new PdfNumber(2));
-        }});
-        com.itextpdf.kernel.pdf.PdfDictionary tag3 = new com.itextpdf.kernel.pdf.PdfDictionary(new HashMap<com.itextpdf.kernel.pdf.PdfName, PdfObject>() {{
-            put(new com.itextpdf.kernel.pdf.PdfName("Tag"), new PdfNumber(3).makeIndirect(document));
-        }});
+        HashMap<com.itextpdf.kernel.pdf.PdfName, PdfObject> tmpMap = new HashMap<com.itextpdf.kernel.pdf.PdfName, PdfObject>();
+        tmpMap.put(new com.itextpdf.kernel.pdf.PdfName("Tag"), new PdfNumber(2));
+        com.itextpdf.kernel.pdf.PdfDictionary tag2 = new com.itextpdf.kernel.pdf.PdfDictionary(tmpMap);
+        tmpMap = new HashMap<com.itextpdf.kernel.pdf.PdfName, PdfObject>();
+        tmpMap.put(new com.itextpdf.kernel.pdf.PdfName("Tag"), new PdfNumber(3).makeIndirect(document));
+        com.itextpdf.kernel.pdf.PdfDictionary tag3 = new com.itextpdf.kernel.pdf.PdfDictionary(tmpMap);
 
         canvas.beginMarkedContent(new com.itextpdf.kernel.pdf.PdfName("Tag1")).endMarkedContent().
                 beginMarkedContent(new com.itextpdf.kernel.pdf.PdfName("Tag2"), tag2).endMarkedContent().
@@ -1363,10 +1362,11 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
 
         com.itextpdf.kernel.pdf.function.PdfFunction.Type4 function = new com.itextpdf.kernel.pdf.function.PdfFunction.Type4(new PdfArray(new float[]{0, 1, 0, 1}), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0}".getBytes());
-        PdfSpecialCs.DeviceN deviceN = new PdfSpecialCs.DeviceN(new ArrayList<String>() {{
-            add("MyRed");
-            add("MyGreen");
-        }}, new PdfDeviceCs.Rgb(), function);
+
+        ArrayList<String> tmpArray = new ArrayList<String>(2);
+        tmpArray.add("MyRed");
+        tmpArray.add("MyGreen");
+        PdfSpecialCs.DeviceN deviceN = new PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function);
 
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.setFillColor(new DeviceN(deviceN, new float[]{0, 0})).rectangle(50, 500, 50, 50).fill();

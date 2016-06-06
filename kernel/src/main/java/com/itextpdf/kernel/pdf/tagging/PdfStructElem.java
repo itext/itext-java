@@ -76,68 +76,66 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     public static int InlineLevel = 3;
     public static int Illustration = 4;
 
-    public static Set<PdfName> groupingRoles = new HashSet<PdfName>() {{
-        add(PdfName.Document);
-        add(PdfName.Part);
-        add(PdfName.Art);
-        add(PdfName.Sect);
-        add(PdfName.Div);
-        add(PdfName.BlockQuote);
-        add(PdfName.Caption);
-        add(PdfName.Caption);
-        add(PdfName.TOC);
-        add(PdfName.TOCI);
-        add(PdfName.Index);
-        add(PdfName.NonStruct);
-        add(PdfName.Private);
-    }};
+    public static Set<PdfName> groupingRoles = new HashSet<PdfName>();
+    public static Set<PdfName> blockLevelRoles = new HashSet<PdfName>();
+    public static Set<PdfName> inlineLevelRoles = new HashSet<PdfName>();
+    public static Set<PdfName> illustrationRoles = new HashSet<PdfName>();
 
-    public static Set<PdfName> blockLevelRoles = new HashSet<PdfName>() {{
-        add(PdfName.P);
-        add(PdfName.H);
-        add(PdfName.H1);
-        add(PdfName.H2);
-        add(PdfName.H3);
-        add(PdfName.H4);
-        add(PdfName.H5);
-        add(PdfName.H6);
-        add(PdfName.L);
-        add(PdfName.Lbl);
-        add(PdfName.LI);
-        add(PdfName.LBody);
-        add(PdfName.Table);
+    static {
+        groupingRoles.add(PdfName.Document);
+        groupingRoles.add(PdfName.Part);
+        groupingRoles.add(PdfName.Art);
+        groupingRoles.add(PdfName.Sect);
+        groupingRoles.add(PdfName.Div);
+        groupingRoles.add(PdfName.BlockQuote);
+        groupingRoles.add(PdfName.Caption);
+        groupingRoles.add(PdfName.Caption);
+        groupingRoles.add(PdfName.TOC);
+        groupingRoles.add(PdfName.TOCI);
+        groupingRoles.add(PdfName.Index);
+        groupingRoles.add(PdfName.NonStruct);
+        groupingRoles.add(PdfName.Private);
 
-        add(PdfName.TR);
-        add(PdfName.TH);
-        add(PdfName.TD);
-        add(PdfName.THead);
-        add(PdfName.TBody);
-        add(PdfName.TFoot);
-    }};
+        blockLevelRoles.add(PdfName.P);
+        blockLevelRoles.add(PdfName.H);
+        blockLevelRoles.add(PdfName.H1);
+        blockLevelRoles.add(PdfName.H2);
+        blockLevelRoles.add(PdfName.H3);
+        blockLevelRoles.add(PdfName.H4);
+        blockLevelRoles.add(PdfName.H5);
+        blockLevelRoles.add(PdfName.H6);
+        blockLevelRoles.add(PdfName.L);
+        blockLevelRoles.add(PdfName.Lbl);
+        blockLevelRoles.add(PdfName.LI);
+        blockLevelRoles.add(PdfName.LBody);
+        blockLevelRoles.add(PdfName.Table);
+        blockLevelRoles.add(PdfName.TR);
+        blockLevelRoles.add(PdfName.TH);
+        blockLevelRoles.add(PdfName.TD);
+        blockLevelRoles.add(PdfName.THead);
+        blockLevelRoles.add(PdfName.TBody);
+        blockLevelRoles.add(PdfName.TFoot);
 
-    public static Set<PdfName> inlineLevelRoles = new HashSet<PdfName>() {{
-        add(PdfName.Span);
-        add(PdfName.Quote);
-        add(PdfName.Note);
-        add(PdfName.Reference);
-        add(PdfName.BibEntry);
-        add(PdfName.Code);
-        add(PdfName.Link);
-        add(PdfName.Annot);
-        add(PdfName.Ruby);
-        add(PdfName.Warichu);
-        add(PdfName.RB);
-        add(PdfName.RT);
-        add(PdfName.RP);
-        add(PdfName.WT);
-        add(PdfName.WP);
-    }};
+        inlineLevelRoles.add(PdfName.Span);
+        inlineLevelRoles.add(PdfName.Quote);
+        inlineLevelRoles.add(PdfName.Note);
+        inlineLevelRoles.add(PdfName.Reference);
+        inlineLevelRoles.add(PdfName.BibEntry);
+        inlineLevelRoles.add(PdfName.Code);
+        inlineLevelRoles.add(PdfName.Link);
+        inlineLevelRoles.add(PdfName.Annot);
+        inlineLevelRoles.add(PdfName.Ruby);
+        inlineLevelRoles.add(PdfName.Warichu);
+        inlineLevelRoles.add(PdfName.RB);
+        inlineLevelRoles.add(PdfName.RT);
+        inlineLevelRoles.add(PdfName.RP);
+        inlineLevelRoles.add(PdfName.WT);
+        inlineLevelRoles.add(PdfName.WP);
 
-    public static Set<PdfName> illustrationRoles = new HashSet<PdfName>() {{
-        add(PdfName.Figure);
-        add(PdfName.Formula);
-        add(PdfName.Form);
-    }};
+        illustrationRoles.add(PdfName.Figure);
+        illustrationRoles.add(PdfName.Formula);
+        illustrationRoles.add(PdfName.Form);
+    }
 
     protected int type = Unknown;
 
