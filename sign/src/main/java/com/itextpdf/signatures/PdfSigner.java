@@ -51,6 +51,7 @@ import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -213,29 +214,19 @@ public class PdfSigner {
     public PdfSigner(PdfReader reader, OutputStream outputStream, String path, boolean append) throws IOException {
         StampingProperties properties = new StampingProperties()
                 .preserveEncryption();
-        File tempFile = null;
-        if (path != null) {
-            tempFile = new File(path);
-        }
         if (append) {
             properties.useAppendMode();
         }
-        if (tempFile == null) {
+        if (path == null) {
             temporaryOS = new ByteArrayOutputStream();
             document = new PdfDocument(reader, new PdfWriter(temporaryOS), properties);
         } else {
-            if (tempFile.isDirectory()) {
-                tempFile = File.createTempFile("pdf", null, tempFile);
-            }
-
-            OutputStream os = new FileOutputStream(tempFile);
-            this.tempFile = tempFile;
-
-            document = new PdfDocument(reader, new PdfWriter(os), properties);
+            this.tempFile = FileUtil.createTempFile(path);
+            document = new PdfDocument(reader, new PdfWriter(FileUtil.getFileOutputStream(tempFile)), properties);
         }
 
         originalOS = outputStream;
-        signDate = new GregorianCalendar();
+        signDate = SignUtils.getCurrentTimeCalendar();
         fieldName = getNewSigFieldName();
         appearance = new PdfSignatureAppearance(document, new Rectangle(0, 0), 1);
         appearance.setSignDate(signDate);
@@ -503,7 +494,7 @@ public class PdfSigner {
         String hashAlgorithm = externalSignature.getHashAlgorithm();
         PdfPKCS7 sgn = new PdfPKCS7((PrivateKey) null, chain, hashAlgorithm, null, externalDigest, false);
         InputStream data = getRangeStream();
-        byte[] hash = DigestAlgorithms.digest(data, externalDigest.getMessageDigest(hashAlgorithm));
+        byte[] hash = DigestAlgorithms.digest(data, SignUtils.getMessageDigest(hashAlgorithm, externalDigest));
         byte[] ocsp = null;
         if (chain.length >= 2 && ocspClient != null) {
             ocsp = ocspClient.getEncoded((X509Certificate) chain[0], (X509Certificate) chain[1], null);
@@ -615,7 +606,7 @@ public class PdfSigner {
             tsToken = tsa.getTimeStampToken(tsImprint);
         }
         catch(Exception e) {
-            throw new GeneralSecurityException(e);
+            throw new GeneralSecurityException(e.getMessage(), e);
         }
 
         if (contentEstimated + 2 < tsToken.length)
@@ -818,7 +809,7 @@ public class PdfSigner {
         cryptoDictionary.put(PdfName.ByteRange, lit);
         for (Map.Entry<PdfName, Integer> entry: exclusionSizes.entrySet()) {
             PdfName key = entry.getKey();
-            lit = new PdfLiteral(entry.getValue());
+            lit = new PdfLiteral((int)entry.getValue());
             exclusionLocations.put(key, lit);
             cryptoDictionary.put(key, lit);
         }
@@ -865,7 +856,7 @@ public class PdfSigner {
             System.arraycopy(bos.toByteArray(), 0, bout, (int) byteRangePosition, bos.size());
         } else {
             try {
-                raf = new RandomAccessFile(tempFile, "rw");
+                raf = FileUtil.getRandomAccessFile(tempFile);
                 long len = raf.length();
                 range[range.length - 1] = len - range[range.length - 2];
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -876,7 +867,7 @@ public class PdfSigner {
                 }
                 os.write(']');
                 raf.seek(byteRangePosition);
-                raf.write(bos.toByteArray(), 0, bos.size());
+                raf.write(bos.toByteArray(), 0, (int) bos.size());
             }
             catch (IOException e) {
                 try { raf.close(); } catch (Exception ee) { }

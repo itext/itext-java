@@ -49,12 +49,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -129,7 +127,7 @@ public class CRLVerifier extends RootStoreVerifier {
      * @throws GeneralSecurityException
      */
     public boolean verify(X509CRL crl, X509Certificate signCert, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException {
-        if (crl == null || signDate == null)
+        if (crl == null || signDate == SignUtils.UNDEFINED_TIMESTAMP_DATE)
             return false;
         // We only check CRLs valid on the signing date for which the issuer matches
         if (crl.getIssuerX500Principal().equals(signCert.getIssuerX500Principal())
@@ -158,9 +156,7 @@ public class CRLVerifier extends RootStoreVerifier {
             if (crlurl == null)
                 return null;
             LOGGER.info("Getting CRL from " + crlurl);
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            // Creates the CRL
-            return (X509CRL) cf.generateCRL(new URL(crlurl).openStream());
+            return (X509CRL) SignUtils.parseCrlFromStream(new URL(crlurl).openStream());
         }
         catch(IOException e) {
             return null;
@@ -191,13 +187,9 @@ public class CRLVerifier extends RootStoreVerifier {
             return false;
         try {
             // loop over the certificate in the key store
-            for (Enumeration<String> aliases = rootStore.aliases(); aliases.hasMoreElements();) {
-                String alias = aliases.nextElement();
+            for (X509Certificate anchor : SignUtils.getCertificates(rootStore)) {
                 try {
-                    if (!rootStore.isCertificateEntry(alias))
-                        continue;
                     // check if the crl was signed by a trusted party (indirect CRLs)
-                    X509Certificate anchor = (X509Certificate)rootStore.getCertificate(alias);
                     crl.verify(anchor.getPublicKey());
                     return true;
                 } catch (GeneralSecurityException e) {

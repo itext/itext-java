@@ -119,4 +119,20 @@ public final class FileUtil {
     public static java.io.OutputStream getBufferedOutputStream(String filename) throws FileNotFoundException {
         return new BufferedOutputStream(new FileOutputStream(filename));
     }
+
+    public static File createTempFile(String path) throws IOException {
+        File tempFile = new File(path);
+        if (tempFile.isDirectory()) {
+            tempFile = File.createTempFile("pdf", null, tempFile);
+        }
+        return tempFile;
+    }
+
+    public static FileOutputStream getFileOutputStream(File tempFile) throws FileNotFoundException {
+        return new FileOutputStream(tempFile);
+    }
+
+    public static RandomAccessFile getRandomAccessFile(File tempFile) throws FileNotFoundException {
+        return new RandomAccessFile(tempFile, "rw");
+    }
 }

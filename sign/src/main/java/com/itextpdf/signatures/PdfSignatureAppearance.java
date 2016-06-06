@@ -591,8 +591,7 @@ public class PdfSignatureAppearance {
                 if (name == null)
                     name = "";
                 buf.append(name).append('\n');
-                SimpleDateFormat sd = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
-                buf.append("Date: ").append(sd.format(signDate.getTime()));
+                buf.append("Date: ").append(SignUtils.dateToString(signDate));
                 if (reason != null)
                     buf.append('\n').append(reasonCaption).append(reason);
                 if (location != null)

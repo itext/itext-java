@@ -44,8 +44,6 @@
 package com.itextpdf.signatures;
 
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
-import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.tsp.TimeStampToken;
 
 import java.security.KeyStore;
@@ -68,7 +66,7 @@ public class CertificateVerification {
      * if no error
      */
     public static String verifyCertificate(X509Certificate cert, Collection<CRL> crls) {
-        return verifyCertificate(cert, crls, new GregorianCalendar());
+        return verifyCertificate(cert, crls, SignUtils.getCurrentTimeCalendar());
     }
 
     /**
@@ -80,23 +78,8 @@ public class CertificateVerification {
      * if no error
      */
     public static String verifyCertificate(X509Certificate cert, Collection<CRL> crls, Calendar calendar) {
-        if (cert.hasUnsupportedCriticalExtension()) {
-            for (String oid : cert.getCriticalExtensionOIDs()) {
-                // KEY USAGE and DIGITAL SIGNING is ALLOWED
-                if ("2.5.29.15".equals(oid) && cert.getKeyUsage()[0]) {
-                    continue;
-                }
-                try {
-                    // EXTENDED KEY USAGE and TIMESTAMPING is ALLOWED
-                    if ("2.5.29.37".equals(oid) && cert.getExtendedKeyUsage().contains("1.3.6.1.5.5.7.3.8")) {
-                        continue;
-                    }
-                } catch (CertificateParsingException e) {
-                    // DO NOTHING;
-                }
-                return "Has unsupported critical extension";
-            }
-        }
+        if (SignUtils.hasUnsupportedCriticalExtension(cert))
+            return "Has unsupported critical extension";
         try {
             cert.checkValidity(calendar.getTime());
         }
@@ -113,7 +96,6 @@ public class CertificateVerification {
     }
 
 
-
     /**
      * Verifies a certificate chain against a KeyStore for the current date.
      * @param certs the certificate chain
@@ -124,7 +106,7 @@ public class CertificateVerification {
      * failed certificate and <CODE>error</CODE> is the error message
      */
     public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore, Collection<CRL> crls) {
-        return verifyCertificates(certs, keystore, crls, new GregorianCalendar());
+        return verifyCertificates(certs, keystore, crls, SignUtils.getCurrentTimeCalendar());
     }
 
     /**
@@ -145,12 +127,8 @@ public class CertificateVerification {
             if (err != null)
                 result.add(new VerificationException(cert, err));
             try {
-                for (Enumeration<String> aliases = keystore.aliases(); aliases.hasMoreElements();) {
+                for (X509Certificate certStoreX509 : SignUtils.getCertificates(keystore)) {
                     try {
-                        String alias = aliases.nextElement();
-                        if (!keystore.isCertificateEntry(alias))
-                            continue;
-                        X509Certificate certStoreX509 = (X509Certificate)keystore.getCertificate(alias);
                         if (verifyCertificate(certStoreX509, crls, calendar) != null)
                             continue;
                         try {
@@ -197,7 +175,7 @@ public class CertificateVerification {
      * failed certificate and <CODE>error</CODE> is the error message
      */
     public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore) {
-        return verifyCertificates(certs, keystore, new GregorianCalendar());
+        return verifyCertificates(certs, keystore, SignUtils.getCurrentTimeCalendar());
     }
 
     /**
@@ -221,17 +199,10 @@ public class CertificateVerification {
      * @return <CODE>true</CODE> is a certificate was found
      */
     public static boolean verifyOcspCertificates(BasicOCSPResp ocsp, KeyStore keystore, String provider) {
-        if (provider == null)
-            provider = "BC";
         try {
-            for (Enumeration<String> aliases = keystore.aliases(); aliases.hasMoreElements();) {
+            for (X509Certificate certStoreX509 : SignUtils.getCertificates(keystore)) {
                 try {
-                    String alias = aliases.nextElement();
-                    if (!keystore.isCertificateEntry(alias))
-                        continue;
-                    X509Certificate certStoreX509 = (X509Certificate)keystore.getCertificate(alias);
-                    if (ocsp.isSignatureValid(new JcaContentVerifierProviderBuilder().setProvider(provider).build(certStoreX509.getPublicKey())))
-                        return true;
+                    return SignUtils.isSignatureValid(ocsp, certStoreX509, provider);
                 }
                 catch (Exception ex) {
                 }
@@ -250,16 +221,10 @@ public class CertificateVerification {
      * @return <CODE>true</CODE> is a certificate was found
      */
     public static boolean verifyTimestampCertificates(TimeStampToken ts, KeyStore keystore, String provider) {
-        if (provider == null)
-            provider = "BC";
         try {
-            for (Enumeration<String> aliases = keystore.aliases(); aliases.hasMoreElements();) {
+            for (X509Certificate certStoreX509 : SignUtils.getCertificates(keystore)) {
                 try {
-                    String alias = aliases.nextElement();
-                    if (!keystore.isCertificateEntry(alias))
-                        continue;
-                    X509Certificate certStoreX509 = (X509Certificate)keystore.getCertificate(alias);
-                    ts.isSignatureValid(new JcaSimpleSignerInfoVerifierBuilder().setProvider(provider).build(certStoreX509));
+                    SignUtils.isSignatureValid(ts, certStoreX509, provider);
                     return true;
                 }
                 catch (Exception ex) {

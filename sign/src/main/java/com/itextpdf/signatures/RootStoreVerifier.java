@@ -101,13 +101,8 @@ public class RootStoreVerifier extends CertificateVerifier {
         try {
             List<VerificationOK> result = new ArrayList<>();
             // loop over the trusted anchors in the root store
-            for (Enumeration<String> aliases = rootStore.aliases(); aliases.hasMoreElements();) {
-                String alias = aliases.nextElement();
+            for (X509Certificate anchor : SignUtils.getCertificates(rootStore)) {
                 try {
-                    if (!rootStore.isCertificateEntry(alias))
-                        continue;
-                    X509Certificate anchor = (X509Certificate) rootStore
-                            .getCertificate(alias);
                     signCert.verify(anchor.getPublicKey());
                     result.add(new VerificationOK(signCert, this.getClass(), "Certificate verified against root store."));
                     result.addAll(super.verify(signCert, issuerCert, signDate));

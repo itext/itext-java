@@ -106,7 +106,7 @@ public class LtvVerifier extends RootStoreVerifier {
         this.sgnUtil = new SignatureUtil(document);
         List<String> names = sgnUtil.getSignatureNames();
         signatureName = names.get(names.size() - 1);
-        this.signDate = new Date();
+        this.signDate = SignUtils.getCurrentTimeDate();
         pkcs7 = coversWholeDocument();
         LOGGER.info(MessageFormat.format("Checking {0}signature {1}", pkcs7.isTsp() ? "document-level timestamp " : "", signatureName));
     }
@@ -279,7 +279,7 @@ public class LtvVerifier extends RootStoreVerifier {
         latestRevision = false;
         dss = document.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
         Calendar cal = pkcs7.getTimeStampDate();
-        if (cal == null)
+        if (cal == SignUtils.UNDEFINED_TIMESTAMP_DATE)
             cal = pkcs7.getSignDate();
         // TODO: get date from signature
         signDate = cal.getTime();

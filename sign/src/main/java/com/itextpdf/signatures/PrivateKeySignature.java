@@ -104,11 +104,10 @@ public class PrivateKeySignature implements IExternalSignature {
      */
     @Override
     public byte[] sign(byte[] message) throws GeneralSecurityException {
-        String signMode = hashAlgorithm + "with" + encryptionAlgorithm;
-        Signature sig = provider == null ? Signature.getInstance(signMode) : Signature.getInstance(signMode, provider);
+        String algorithm = hashAlgorithm + "with" + encryptionAlgorithm;
+        Signature sig = SignUtils.getSignatureHelper(algorithm, provider);
         sig.initSign(pk);
         sig.update(message);
-
         return sig.sign();
     }
 }
