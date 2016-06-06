@@ -69,8 +69,10 @@ class TypographyUtils {
     static {
         boolean moduleFound = false;
         try {
-            Class.forName("com.itextpdf.typography.shaping.Shaper");
-            moduleFound = true;
+            Class<?> type = Class.forName("com.itextpdf.typography.shaping.Shaper");
+            if (type != null) {
+                moduleFound = true;
+            }
         } catch (ClassNotFoundException ignored) {
         }
         TYPOGRAPHY_MODULE_INITIALIZED = moduleFound;
