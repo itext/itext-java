@@ -194,10 +194,10 @@ public class CertificateInfo {
          */
         public X500Name(ASN1Sequence seq) {
             @SuppressWarnings("unchecked")
-            Enumeration<ASN1Set> e = (Enumeration<ASN1Set>)seq.getObjects();
+            Enumeration e = seq.getObjects();
 
             while (e.hasMoreElements()) {
-                ASN1Set set = e.nextElement();
+                ASN1Set set = (ASN1Set)e.nextElement();
 
                 for (int i = 0; i < set.size(); i++) {
                     ASN1Sequence s = (ASN1Sequence)set.getObjectAt(i);
