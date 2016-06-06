@@ -89,41 +89,6 @@ public class PreLayoutTest extends ExtendedITextTest{
 
         document.add(new Paragraph("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
 
-        class TwoColumnParagraphRenderer extends ParagraphRenderer {
-
-            int oneColumnPage = -1;
-
-            public TwoColumnParagraphRenderer(Paragraph modelElement) {
-                super(modelElement);
-            }
-
-            public TwoColumnParagraphRenderer(Paragraph modelElement, int oneColumnPage) {
-                this(modelElement);
-                this.oneColumnPage = oneColumnPage;
-            }
-
-            @Override
-            public List<Rectangle> initElementAreas(LayoutArea area) {
-                List<Rectangle> areas = new ArrayList<Rectangle>();
-                if (area.getPageNumber() != oneColumnPage) {
-                    Rectangle firstArea = area.getBBox().clone();
-                    Rectangle secondArea = area.getBBox().clone();
-                    firstArea.setWidth(firstArea.getWidth() / 2 - 5);
-                    secondArea.setX(secondArea.getX() + secondArea.getWidth() / 2 + 5);
-                    secondArea.setWidth(firstArea.getWidth());
-                    areas.add(firstArea);
-                    areas.add(secondArea);
-                } else {
-                    areas.add(area.getBBox());
-                }
-                return areas;
-            }
-
-            @Override
-            public ParagraphRenderer getNextRenderer() {
-                return new TwoColumnParagraphRenderer((Paragraph) modelElement, oneColumnPage);
-            }
-        }
         StringBuilder text = new StringBuilder();
         for (int i = 0; i < 1200; i++) {
             text.append("A very long text is here...");
@@ -154,4 +119,39 @@ public class PreLayoutTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    static class TwoColumnParagraphRenderer extends ParagraphRenderer {
+
+        int oneColumnPage = -1;
+
+        public TwoColumnParagraphRenderer(Paragraph modelElement) {
+            super(modelElement);
+        }
+
+        public TwoColumnParagraphRenderer(Paragraph modelElement, int oneColumnPage) {
+            this(modelElement);
+            this.oneColumnPage = oneColumnPage;
+        }
+
+        @Override
+        public List<Rectangle> initElementAreas(LayoutArea area) {
+            List<Rectangle> areas = new ArrayList<Rectangle>();
+            if (area.getPageNumber() != oneColumnPage) {
+                Rectangle firstArea = area.getBBox().clone();
+                Rectangle secondArea = area.getBBox().clone();
+                firstArea.setWidth(firstArea.getWidth() / 2 - 5);
+                secondArea.setX(secondArea.getX() + secondArea.getWidth() / 2 + 5);
+                secondArea.setWidth(firstArea.getWidth());
+                areas.add(firstArea);
+                areas.add(secondArea);
+            } else {
+                areas.add(area.getBBox());
+            }
+            return areas;
+        }
+
+        @Override
+        public ParagraphRenderer getNextRenderer() {
+            return new TwoColumnParagraphRenderer((Paragraph) modelElement, oneColumnPage);
+        }
+    }
 }
