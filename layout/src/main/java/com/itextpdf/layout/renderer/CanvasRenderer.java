@@ -45,9 +45,11 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Canvas;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.Property;
+
+import org.slf4j.LoggerFactory;
 
 public class CanvasRenderer extends RootRenderer {
 
@@ -61,6 +63,15 @@ public class CanvasRenderer extends RootRenderer {
         this.canvas = canvas;
         this.modelElement = canvas;
         this.immediateFlush = immediateFlush;
+    }
+
+    @Override
+    public void addChild(IRenderer renderer) {
+        if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FULL))) {
+            LoggerFactory.getLogger(CanvasRenderer.class).warn("Canvas is already full. Element will be skipped.");
+        } else {
+            super.addChild(renderer);
+        }
     }
 
     @Override

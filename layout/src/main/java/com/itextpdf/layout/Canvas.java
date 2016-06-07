@@ -175,6 +175,14 @@ public class Canvas extends RootElement<Canvas> {
         }
     }
 
+    /**
+     * Forces all registered renderers (including child element renderers) to
+     * flush their contents to the content stream.
+     */
+    public void flush() {
+        rootRenderer.flush();
+    }
+
     @Override
     protected RootRenderer ensureRootRendererNotNull() {
         if (rootRenderer == null)
