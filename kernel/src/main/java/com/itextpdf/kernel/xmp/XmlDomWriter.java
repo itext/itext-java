@@ -43,10 +43,13 @@
  */
 package com.itextpdf.kernel.xmp;
 
-import org.w3c.dom.*;
-
-import java.io.*;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+
+import org.w3c.dom.*;
 
 /**
  * This class writes the DOM structure of the XML to the specified output.
@@ -56,7 +59,7 @@ public class XmlDomWriter {
     /**
      * Print writer.
      */
-    protected OutputStreamWriter fOut;
+    protected PrintWriter fOut;
 
     /**
      * Canonical output.
@@ -108,14 +111,29 @@ public class XmlDomWriter {
             encoding = "UTF8";
         }
 
-        fOut = new OutputStreamWriter(stream, Charset.forName(encoding));
+        OutputStreamWriter osw = new OutputStreamWriter(stream, Charset.forName(encoding));
+        fOut = new PrintWriter(osw);
 
     } // setOutput(OutputStream,String)
 
     /**
+     * Sets the output writer.
+     *
+     * @deprecated Try to use {@link XmlDomWriter#setOutput(java.io.OutputStream, String)} instead
+     */
+    @Deprecated
+    public void setOutput(java.io.Writer writer) {
+
+        fOut = writer instanceof PrintWriter
+                ? (PrintWriter) writer : new PrintWriter(writer);
+
+    } // setOutput(java.io.Writer)
+
+
+    /**
      * Writes the specified node, recursively.
      */
-    public void write(Node node) throws IOException {
+    public void write(Node node) {
 
         // is there anything to do?
         if (node == null) {
@@ -129,11 +147,11 @@ public class XmlDomWriter {
                 fXML11 = false; //"1.1".equals(getVersion(document));
                 if (!fCanonical) {
                     if (fXML11) {
-                        fOut.write("<?xml version=\"1.1\" encoding=\"UTF-8\"?>");
+                        fOut.print("<?xml version=\"1.1\" encoding=\"UTF-8\"?>");
                     } else {
-                        fOut.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                        fOut.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
                     }
-                    fOut.write("\n");
+                    fOut.print("\n");
                     fOut.flush();
                     write(document.getDoctype());
                 }
@@ -143,44 +161,44 @@ public class XmlDomWriter {
 
             case Node.DOCUMENT_TYPE_NODE: {
                 DocumentType doctype = (DocumentType) node;
-                fOut.write("<!DOCTYPE ");
-                fOut.write(doctype.getName());
+                fOut.print("<!DOCTYPE ");
+                fOut.print(doctype.getName());
                 String publicId = doctype.getPublicId();
                 String systemId = doctype.getSystemId();
                 if (publicId != null) {
-                    fOut.write(" PUBLIC '");
-                    fOut.write(publicId);
-                    fOut.write("' '");
-                    fOut.write(systemId);
-                    fOut.write('\'');
+                    fOut.print(" PUBLIC '");
+                    fOut.print(publicId);
+                    fOut.print("' '");
+                    fOut.print(systemId);
+                    fOut.print('\'');
                 } else if (systemId != null) {
-                    fOut.write(" SYSTEM '");
-                    fOut.write(systemId);
-                    fOut.write('\'');
+                    fOut.print(" SYSTEM '");
+                    fOut.print(systemId);
+                    fOut.print('\'');
                 }
                 String internalSubset = doctype.getInternalSubset();
                 if (internalSubset != null) {
-                    fOut.write(" [" + System.lineSeparator());
-                    fOut.write(internalSubset);
-                    fOut.write(']');
+                    fOut.println(" [");
+                    fOut.print(internalSubset);
+                    fOut.print(']');
                 }
-                fOut.write('>' + System.lineSeparator());
+                fOut.println('>');
                 break;
             }
 
             case Node.ELEMENT_NODE: {
-                fOut.write('<');
-                fOut.write(node.getNodeName());
+                fOut.print('<');
+                fOut.print(node.getNodeName());
                 Attr[] attrs = sortAttributes(node.getAttributes());
                 for (int i = 0; i < attrs.length; i++) {
                     Attr attr = attrs[i];
-                    fOut.write(' ');
-                    fOut.write(attr.getNodeName());
-                    fOut.write("=\"");
+                    fOut.print(' ');
+                    fOut.print(attr.getNodeName());
+                    fOut.print("=\"");
                     normalizeAndPrint(attr.getNodeValue(), true);
-                    fOut.write('"');
+                    fOut.print('"');
                 }
-                fOut.write('>');
+                fOut.print('>');
                 fOut.flush();
 
                 Node child = node.getFirstChild();
@@ -199,9 +217,9 @@ public class XmlDomWriter {
                         child = child.getNextSibling();
                     }
                 } else {
-                    fOut.write('&');
-                    fOut.write(node.getNodeName());
-                    fOut.write(';');
+                    fOut.print('&');
+                    fOut.print(node.getNodeName());
+                    fOut.print(';');
                     fOut.flush();
                 }
                 break;
@@ -211,9 +229,9 @@ public class XmlDomWriter {
                 if (fCanonical) {
                     normalizeAndPrint(node.getNodeValue(), false);
                 } else {
-                    fOut.write("<![CDATA[");
-                    fOut.write(node.getNodeValue());
-                    fOut.write("]]>");
+                    fOut.print("<![CDATA[");
+                    fOut.print(node.getNodeValue());
+                    fOut.print("]]>");
                 }
                 fOut.flush();
                 break;
@@ -226,35 +244,35 @@ public class XmlDomWriter {
             }
 
             case Node.PROCESSING_INSTRUCTION_NODE: {
-                fOut.write("<?");
-                fOut.write(node.getNodeName());
+                fOut.print("<?");
+                fOut.print(node.getNodeName());
                 String data = node.getNodeValue();
                 if (data != null && data.length() > 0) {
-                    fOut.write(' ');
-                    fOut.write(data);
+                    fOut.print(' ');
+                    fOut.print(data);
                 }
-                fOut.write("?>");
+                fOut.print("?>");
                 fOut.flush();
                 break;
             }
 
             case Node.COMMENT_NODE: {
                 if (!fCanonical) {
-                    fOut.write("<!--");
+                    fOut.print("<!--");
                     String comment = node.getNodeValue();
                     if (comment != null && comment.length() > 0) {
-                        fOut.write(comment);
+                        fOut.print(comment);
                     }
-                    fOut.write("-->");
+                    fOut.print("-->");
                     fOut.flush();
                 }
             }
         }
 
         if (type == Node.ELEMENT_NODE) {
-            fOut.write("</");
-            fOut.write(node.getNodeName());
-            fOut.write('>');
+            fOut.print("</");
+            fOut.print(node.getNodeName());
+            fOut.print('>');
             fOut.flush();
         }
 
@@ -298,7 +316,7 @@ public class XmlDomWriter {
     /**
      * Normalizes and prints the given string.
      */
-    protected void normalizeAndPrint(String s, boolean isAttValue) throws IOException {
+    protected void normalizeAndPrint(String s, boolean isAttValue) {
 
         int len = (s != null) ? s.length() : 0;
         for (int i = 0; i < len; i++) {
@@ -311,28 +329,28 @@ public class XmlDomWriter {
     /**
      * Normalizes and print the given character.
      */
-    protected void normalizeAndPrint(char c, boolean isAttValue) throws IOException {
+    protected void normalizeAndPrint(char c, boolean isAttValue) {
 
         switch (c) {
             case '<': {
-                fOut.write("&lt;");
+                fOut.print("&lt;");
                 break;
             }
             case '>': {
-                fOut.write("&gt;");
+                fOut.print("&gt;");
                 break;
             }
             case '&': {
-                fOut.write("&amp;");
+                fOut.print("&amp;");
                 break;
             }
             case '"': {
                 // A '"' that appears in character data
                 // does not need to be escaped.
                 if (isAttValue) {
-                    fOut.write("&quot;");
+                    fOut.print("&quot;");
                 } else {
-                    fOut.write("\"");
+                    fOut.print("\"");
                 }
                 break;
             }
@@ -341,12 +359,12 @@ public class XmlDomWriter {
                 // must not be printed as a literal otherwise
                 // it would be normalized to LF when the document
                 // is reparsed.
-                fOut.write("&#xD;");
+                fOut.print("&#xD;");
                 break;
             }
             case '\n': {
                 if (fCanonical) {
-                    fOut.write("&#xA;");
+                    fOut.print("&#xA;");
                     break;
                 }
                 // else, default print char
@@ -363,11 +381,11 @@ public class XmlDomWriter {
                 if (fXML11 && ((c >= 0x01 && c <= 0x1F && c != 0x09 && c != 0x0A)
                         || (c >= 0x7F && c <= 0x9F) || c == 0x2028)
                         || isAttValue && (c == 0x09 || c == 0x0A)) {
-                    fOut.write("&#x");
-                    fOut.write(Integer.toHexString(c).toUpperCase());
-                    fOut.write(";");
+                    fOut.print("&#x");
+                    fOut.print(Integer.toHexString(c).toUpperCase());
+                    fOut.print(";");
                 } else {
-                    fOut.write(c);
+                    fOut.print(c);
                 }
             }
         }

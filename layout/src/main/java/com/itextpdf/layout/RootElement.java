@@ -58,7 +58,9 @@ import com.itextpdf.layout.splitting.ISplitCharacters;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A generic abstract root element for a PDF layout object hierarchy.
@@ -71,6 +73,12 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
     protected PdfDocument pdfDocument;
 
     protected List<IElement> childElements = new ArrayList<>();
+
+    /**
+     * @deprecated This field just hides the same field from {@link ElementPropertyContainer}
+     */
+    @Deprecated
+    protected Map<Integer, Object> properties = new HashMap<>();
 
     protected PdfFont defaultFont;
     protected ISplitCharacters defaultSplitCharacters;

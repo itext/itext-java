@@ -97,7 +97,7 @@ public class ClipperBridge {
         for (Subpath subpath : path.getSubpaths()) {
             if (!subpath.isSinglePointClosed() && !subpath.isSinglePointOpen()) {
                 List<com.itextpdf.kernel.geom.Point> linearApproxPoints = subpath.getPiecewiseLinearApproximation();
-                clipper.addPath(convertToLongPoints(linearApproxPoints), polyType, subpath.isClosed());
+                clipper.addPath(new Path(convertToLongPoints(linearApproxPoints)), polyType, subpath.isClosed());
             }
         }
     }
@@ -128,7 +128,7 @@ public class ClipperBridge {
                 }
 
                 List<com.itextpdf.kernel.geom.Point> linearApproxPoints = subpath.getPiecewiseLinearApproximation();
-                offset.addPath(convertToLongPoints(linearApproxPoints), joinType, et);
+                offset.addPath(new Path(convertToLongPoints(linearApproxPoints)), joinType, et);
             }
         }
 
@@ -156,8 +156,8 @@ public class ClipperBridge {
      * Converts list of {@link com.itextpdf.kernel.geom.Point} objects into list of
      * {@link Point.LongPoint} objects.
      */
-    public static Path convertToLongPoints(List<com.itextpdf.kernel.geom.Point> points) {
-        Path convertedPoints = new Path(points.size());
+    public static List<Point.LongPoint> convertToLongPoints(List<com.itextpdf.kernel.geom.Point> points) {
+        List<Point.LongPoint> convertedPoints = new ArrayList<>(points.size());
 
         for (com.itextpdf.kernel.geom.Point point : points) {
             convertedPoints.add(new Point.LongPoint(
@@ -239,6 +239,6 @@ public class ClipperBridge {
     }
 
     public static void addRectToClipper(IClipper clipper, com.itextpdf.kernel.geom.Point[] rectVertices, IClipper.PolyType polyType) {
-        clipper.addPath(convertToLongPoints(new ArrayList<>(Arrays.asList(rectVertices))), polyType, true);
+        clipper.addPath(new Path(convertToLongPoints(new ArrayList<>(Arrays.asList(rectVertices)))), polyType, true);
     }
 }

@@ -83,8 +83,8 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
      * Gets the text rise.
      * @return the vertical distance from the text's default base line, as a float.
      */
-    public Float getTextRise() {
-        return this.<Float>getProperty(Property.TEXT_RISE);
+    public float getTextRise() {
+        return (float)this.<Float>getProperty(Property.TEXT_RISE);
     }
 
     /**
