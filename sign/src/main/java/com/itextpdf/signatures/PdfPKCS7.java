@@ -224,9 +224,9 @@ public class PdfPKCS7 {
 
             // the digestAlgorithms
             digestalgos = new HashSet<>();
-            Enumeration<ASN1Sequence> e = (Enumeration<ASN1Sequence>)((ASN1Set)content.getObjectAt(1)).getObjects();
+            Enumeration e = ((ASN1Set)content.getObjectAt(1)).getObjects();
             while (e.hasMoreElements()) {
-                ASN1Sequence s = e.nextElement();
+                ASN1Sequence s = (ASN1Sequence) e.nextElement();
                 ASN1ObjectIdentifier o = (ASN1ObjectIdentifier)s.getObjectAt(0);
                 digestalgos.add(o.getId());
             }
@@ -489,7 +489,7 @@ public class PdfPKCS7 {
      */
     public Calendar getSignDate() {
         Calendar dt = getTimeStampDate();
-        if (dt == null)
+        if (dt == SignUtils.UNDEFINED_TIMESTAMP_DATE)
             return this.signDate;
         else
             return dt;
