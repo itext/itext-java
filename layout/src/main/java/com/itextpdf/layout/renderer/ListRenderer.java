@@ -96,7 +96,7 @@ public class ListRenderer extends BlockRenderer {
             listItemNum = 0;
             for (IRenderer childRenderer : childRenderers) {
                 childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
-                childRenderer.setProperty(Property.MARGIN_LEFT, childRenderer.<Float>getProperty(Property.MARGIN_LEFT, 0f) + maxSymbolWidth + (symbolIndent != null ? symbolIndent : 0f));
+                childRenderer.setProperty(Property.MARGIN_LEFT, childRenderer.getProperty(Property.MARGIN_LEFT, (Float)0f) + maxSymbolWidth + (symbolIndent != null ? symbolIndent : 0f));
                 if (childRenderer.getModelElement() instanceof ListItem) {
                     IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
                     ((ListItemRenderer) childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);

@@ -150,7 +150,7 @@ public class TextRenderer extends AbstractRenderer {
         Float characterSpacing = this.getPropertyAsFloat(Property.CHARACTER_SPACING);
         Float wordSpacing = this.getPropertyAsFloat(Property.WORD_SPACING);
         PdfFont font = this.getPropertyAsFont(Property.FONT);
-        Float hScale = this.<Float>getProperty(Property.HORIZONTAL_SCALING, 1f);
+        Float hScale = this.getProperty(Property.HORIZONTAL_SCALING, (Float)1f);
         ISplitCharacters splitCharacters = this.<ISplitCharacters>getProperty(Property.SPLIT_CHARACTERS);
         float italicSkewAddition = Boolean.TRUE.equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION)) ? ITALIC_ANGLE * fontSize : 0;
         float boldSimulationAddition = Boolean.TRUE.equals(getPropertyAsBoolean(Property.BOLD_SIMULATION)) ? BOLD_SIMULATION_STROKE_COEFF * fontSize : 0;
@@ -439,7 +439,7 @@ public class TextRenderer extends AbstractRenderer {
                 TypographyUtils.applyOtfScript(font.getFontProgram(), text, script);
             }
 
-            FontKerning fontKerning = this.<FontKerning>getProperty(Property.FONT_KERNING);
+            FontKerning fontKerning = this.<FontKerning>getProperty(Property.FONT_KERNING, FontKerning.NO);
             if (fontKerning == FontKerning.YES) {
                 TypographyUtils.applyKerning(font.getFontProgram(), text);
             }
@@ -490,7 +490,7 @@ public class TextRenderer extends AbstractRenderer {
             Float characterSpacing = this.getPropertyAsFloat(Property.CHARACTER_SPACING);
             Float wordSpacing = this.getPropertyAsFloat(Property.WORD_SPACING);
             Float horizontalScaling = this.<Float>getProperty(Property.HORIZONTAL_SCALING);
-            Float[] skew = this.<Float[]>getProperty(Property.SKEW);
+            float[] skew = this.<float[]>getProperty(Property.SKEW);
             boolean italicSimulation = Boolean.TRUE.equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION));
             boolean boldSimulation = Boolean.TRUE.equals(getPropertyAsBoolean(Property.BOLD_SIMULATION));
             Float strokeWidth = null;
@@ -509,7 +509,7 @@ public class TextRenderer extends AbstractRenderer {
             canvas.saveState().beginText().setFontAndSize(font, fontSize);
 
             if (skew != null && skew.length == 2) {
-                canvas.setTextMatrix(1, (float) skew[0], (float) skew[1], 1, leftBBoxX, getYLine());
+                canvas.setTextMatrix(1, skew[0], skew[1], 1, leftBBoxX, getYLine());
             } else if (italicSimulation) {
                 canvas.setTextMatrix(1, 0, ITALIC_ANGLE, 1, leftBBoxX, getYLine());
             } else {

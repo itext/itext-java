@@ -118,7 +118,7 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
     public Text setSkew(float alpha, float beta){
         alpha = (float) Math.tan(alpha * Math.PI / 180);
         beta = (float) Math.tan(beta * Math.PI / 180);
-        setProperty(Property.SKEW, new Float[]{alpha, beta});
+        setProperty(Property.SKEW, new float[]{alpha, beta});
         return this;
     }
 

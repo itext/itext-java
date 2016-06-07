@@ -157,13 +157,13 @@ public class ParagraphRenderer extends BlockRenderer {
                 processedRenderer = (LineRenderer) result.getSplitRenderer();
             }
 
-            TextAlignment textAlignment = this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT);
+            TextAlignment textAlignment = (TextAlignment)this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT, TextAlignment.LEFT);
             if (result.getStatus() == LayoutResult.PARTIAL && textAlignment == TextAlignment.JUSTIFIED && !result.isSplitForcedByNewline() ||
                     textAlignment == TextAlignment.JUSTIFIED_ALL) {
                 if (processedRenderer != null) {
                     processedRenderer.justify(layoutBox.getWidth() - lineIndent);
                 }
-            } else if (textAlignment != null && textAlignment != TextAlignment.LEFT && processedRenderer != null) {
+            } else if (textAlignment != TextAlignment.LEFT && processedRenderer != null) {
                 float deltaX = availableWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
                 switch (textAlignment) {
                     case RIGHT:

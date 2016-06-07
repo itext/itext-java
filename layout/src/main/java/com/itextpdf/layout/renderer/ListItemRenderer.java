@@ -118,9 +118,10 @@ public class ListItemRenderer extends DivRenderer {
                         symbolRenderer.getOccupiedArea().getBBox().getHeight() - symbolRenderer.getOccupiedArea().getBBox().getY());
             }
 
-            ListSymbolAlignment listSymbolAlignment = parent.<ListSymbolAlignment>getProperty(Property.LIST_SYMBOL_ALIGNMENT);
+            ListSymbolAlignment listSymbolAlignment = (ListSymbolAlignment)parent.<ListSymbolAlignment>getProperty(Property.LIST_SYMBOL_ALIGNMENT,
+                    ListSymbolAlignment.RIGHT);
             float xPosition = x - symbolRenderer.getOccupiedArea().getBBox().getX();
-            if (listSymbolAlignment == null || listSymbolAlignment == ListSymbolAlignment.RIGHT) {
+            if (listSymbolAlignment == ListSymbolAlignment.RIGHT) {
                 xPosition += symbolAreaWidth - symbolRenderer.getOccupiedArea().getBBox().getWidth();
             }
             symbolRenderer.move(xPosition, 0);
