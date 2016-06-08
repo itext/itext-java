@@ -58,17 +58,12 @@ import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.tsp.MessageImprint;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.CertificateID;
 import org.bouncycastle.cert.ocsp.SingleResp;
 import org.bouncycastle.jce.X509Principal;
-import org.bouncycastle.jce.provider.X509CertParser;
-import org.bouncycastle.operator.DigestCalculator;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.tsp.TimeStampTokenInfo;
-import org.bouncycastle.x509.util.StreamParsingException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
