@@ -141,7 +141,7 @@ public class LtvVerifier extends RootStoreVerifier {
      * @throws GeneralSecurityException
      */
     protected PdfPKCS7 coversWholeDocument() throws GeneralSecurityException {
-        PdfPKCS7 pkcs7 = sgnUtil.verifySignature(signatureName);
+        PdfPKCS7 pkcs7 = sgnUtil.verifySignature(signatureName, null);
         if (sgnUtil.signatureCoversWholeDocument(signatureName)) {
             LOGGER.info("The timestamp covers whole document.");
         }
