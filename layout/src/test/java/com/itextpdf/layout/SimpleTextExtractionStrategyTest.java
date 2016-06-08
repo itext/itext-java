@@ -38,12 +38,12 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
     String TEXT1 = "TEXT1 TEXT1";
     String TEXT2 = "TEXT2 TEXT2";
 
-    public ITextExtractionStrategy createRenderListenerForTest(){
+    public ITextExtractionStrategy createRenderListenerForTest() {
         return new SimpleTextExtractionStrategy();
     }
 
     @Test
-    public void testCoLinnearText() throws Exception{
+    public void testCoLinnearText() throws Exception {
         byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, 0, false, 0);
 
         Assert.assertEquals(TEXT1 + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
@@ -51,7 +51,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testCoLinnearTextWithSpace() throws Exception{
+    public void testCoLinnearTextWithSpace() throws Exception {
         byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, 0, false, 2);
         //saveBytesToFile(bytes, new File("c:/temp/test.pdf"));
 
@@ -60,19 +60,19 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testCoLinnearTextEndingWithSpaceCharacter() throws Exception{
+    public void testCoLinnearTextEndingWithSpaceCharacter() throws Exception {
         // in this case, we shouldn't be inserting an extra space
-        TEXT1 = TEXT1 + " ";
-        byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, 0, false, 2);
+        byte[] bytes = createPdfWithRotatedText(TEXT1 + " ", TEXT2, 0, false, 2);
 
         //TestResourceUtils.openBytesAsPdf(bytes);
 
-        Assert.assertEquals(TEXT1 + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
+        Assert.assertEquals(TEXT1 + " " + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
                 createRenderListenerForTest()));
 
     }
+
     @Test
-    public void testUnRotatedText() throws Exception{
+    public void testUnRotatedText() throws Exception {
         byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, 0, true, -20);
 
         Assert.assertEquals(TEXT1 + "\n" + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
@@ -80,9 +80,8 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
 
     }
 
-
     @Test
-    public void testRotatedText() throws Exception{
+    public void testRotatedText() throws Exception {
         byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, -90, true, -20);
 
         Assert.assertEquals(TEXT1 + "\n" + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
@@ -91,7 +90,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testRotatedText2() throws Exception{
+    public void testRotatedText2() throws Exception {
         byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, 90, true, -20);
         //TestResourceUtils.saveBytesToFile(bytes, new File("C:/temp/out.pdf"));
 
@@ -101,7 +100,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testPartiallyRotatedText() throws Exception{
+    public void testPartiallyRotatedText() throws Exception {
         byte[] bytes = createPdfWithRotatedText(TEXT1, TEXT2, 33, true, -20);
 
         Assert.assertEquals(TEXT1 + "\n" + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
@@ -110,7 +109,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testWordSpacingCausedByExplicitGlyphPositioning() throws Exception{
+    public void testWordSpacingCausedByExplicitGlyphPositioning() throws Exception {
         byte[] bytes = createPdfWithArrayText(TEXT1, TEXT2, 250);
 
         Assert.assertEquals(TEXT1 + " " + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
@@ -119,7 +118,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
 
 
     @Test
-    public void testWordSpacingCausedByExplicitGlyphPositioning2() throws Exception{
+    public void testWordSpacingCausedByExplicitGlyphPositioning2() throws Exception {
         PdfTextArray textArray = new PdfTextArray();
         textArray.add(new PdfString("S"));
         textArray.add(3.2f);
@@ -153,7 +152,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
 
 
     @Test
-    public void testTrailingSpace() throws Exception{
+    public void testTrailingSpace() throws Exception {
         byte[] bytes = createPdfWithRotatedText(TEXT1 + " ", TEXT2, 0, false, 6);
 
         Assert.assertEquals(TEXT1 + " " + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
@@ -161,7 +160,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testLeadingSpace() throws Exception{
+    public void testLeadingSpace() throws Exception {
         byte[] bytes = createPdfWithRotatedText(TEXT1, " " + TEXT2, 0, false, 6);
 
         Assert.assertEquals(TEXT1 + " " + TEXT2, PdfTextExtractor.getTextFromPage(new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes))).getPage(1),
@@ -230,7 +229,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
         return byteStream.toByteArray();
     }
 
-    private static byte[] createPdfWithArrayText(PdfTextArray textArray) throws Exception{
+    private static byte[] createPdfWithArrayText(PdfTextArray textArray) throws Exception {
         final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
         PdfDocument document = new PdfDocument(new PdfWriter(byteStream));
@@ -252,7 +251,7 @@ public class SimpleTextExtractionStrategyTest extends ExtendedITextTest {
 
     }
 
-    private static byte[] createPdfWithArrayText(String text1, String text2, int spaceInPoints) throws Exception{
+    private static byte[] createPdfWithArrayText(String text1, String text2, int spaceInPoints) throws Exception {
         PdfTextArray textArray = new PdfTextArray();
         textArray.add(new PdfString(text1));
         textArray.add(-spaceInPoints);
