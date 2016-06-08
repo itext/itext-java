@@ -80,7 +80,9 @@ class RAFRandomAccessSource implements IRandomAccessSource {
             return -1;
 
         // Not thread safe!
-        raf.seek(position);
+        if (raf.getFilePointer() != position) {
+            raf.seek(position);
+        }
 
         return raf.read();
     }
@@ -93,7 +95,9 @@ class RAFRandomAccessSource implements IRandomAccessSource {
             return -1;
 
         // Not thread safe!
-        raf.seek(position);
+        if (raf.getFilePointer() != position) {
+            raf.seek(position);
+        }
 
         return raf.read(bytes, off, len);
     }
