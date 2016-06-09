@@ -77,6 +77,7 @@ public class IOException extends RuntimeException {
     public static final String CannotWriteFloatNumber = "cannot.write.float.number";
     public static final String CannotWriteIntNumber = "cannot.write.int.number";
     public static final String CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d = "ccitt.compression.type.must.be.ccittg4.ccittg3.1d.or.ccittg3.2d";
+    public static final String TheCmap1WasNotFound = "The CMap {0} was not found";
     public static final String ComponentsMustBe1_3Or4 = "components.must.be.1.3.or.4";
     public static final String Compression1IsNotSupported = "compression {0} is.not.supported";
     public static final String ColorDepthIsNotSupported = "the.color.depth {0} is.not.supported";

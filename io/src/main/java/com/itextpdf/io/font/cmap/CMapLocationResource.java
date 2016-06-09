@@ -61,7 +61,7 @@ public class CMapLocationResource implements ICMapLocation {
         String fullName = FontConstants.CMAP_RESOURCE_PATH + location;
         InputStream inp = ResourceUtil.getResourceStream(fullName);
         if (inp == null) {
-            throw new IOException("the.cmap.1.was.not.found").setMessageParams(fullName);
+            throw new IOException(IOException.TheCmap1WasNotFound).setMessageParams(fullName);
         }
         return new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(inp)));
     }
