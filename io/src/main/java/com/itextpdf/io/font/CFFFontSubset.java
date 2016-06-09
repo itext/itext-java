@@ -48,12 +48,9 @@ import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.util.GenericArray;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -100,7 +97,7 @@ public class CFFFontSubset extends CFFFont {
      * A Map containing the glyphs used in the text after being converted
      * to glyph number by the CMap
      */
-    Map<Integer, int[]> GlyphsUsed;
+    Set<Integer> GlyphsUsed;
     /**
      * The GlyphsUsed keys as an list
      */
@@ -112,7 +109,7 @@ public class CFFFontSubset extends CFFFont {
     /**
      * A Maps array for keeping the subroutines used in each FontDict
      */
-    GenericArray<HashMap<Integer, int[]>> hSubrsUsed;
+    GenericArray<Set<Integer>> hSubrsUsed;
     /**
      * The SubroutinesUsed Maps as lists
      */
@@ -120,7 +117,7 @@ public class CFFFontSubset extends CFFFont {
     /**
      * A Map for keeping the Global subroutines used in the font
      */
-    Map<Integer, int[]> hGSubrsUsed = new HashMap<>();
+    Set<Integer> hGSubrsUsed = new HashSet<>();
     /**
      * The Global SubroutinesUsed Maps as lists
      */
@@ -128,7 +125,7 @@ public class CFFFontSubset extends CFFFont {
     /**
      * A Map for keeping the subroutines used in a non-cid font
      */
-    Map<Integer, int[]> hSubrsUsedNonCID = new HashMap<>();
+    Set<Integer> hSubrsUsedNonCID = new HashSet<>();
     /**
      * The SubroutinesUsed Map as list
      */
@@ -171,13 +168,12 @@ public class CFFFontSubset extends CFFFont {
      * @param cff        - The font file
      * @param GlyphsUsed - a Map that contains the glyph used in the subset
      */
-    public CFFFontSubset(byte[] cff, Map<Integer, int[]> GlyphsUsed) {
+    public CFFFontSubset(byte[] cff, Set<Integer> GlyphsUsed) {
         // Use CFFFont c'tor in order to parse the font file.
         super(cff);
         this.GlyphsUsed = GlyphsUsed;
         //Put the glyphs into a list
-        glyphsInList = new ArrayList<>(GlyphsUsed.keySet());
-
+        glyphsInList = new ArrayList<>(GlyphsUsed);
 
         for (int i = 0; i < fonts.length; ++i) {
             // Read the number of glyphs in the font
@@ -449,7 +445,7 @@ public class CFFFontSubset extends CFFFont {
             for (int j = 0; j < FDInList.size(); j++) {
                 // The FDArray index,  Map, List to work on
                 int FD = (int) FDInList.get(j);
-                hSubrsUsed.set(FD, new HashMap<Integer, int[]>());
+                hSubrsUsed.set(FD, new HashSet<Integer>());
                 lSubrsUsed.set(FD, new ArrayList<Integer>());
                 //Reads the private dicts looking for the subr operator and
                 // store both the offset for the index and its offset array
@@ -518,7 +514,7 @@ public class CFFFontSubset extends CFFFont {
      * @param hSubr        Map of the subrs used
      * @param lSubr        list of the subrs used
      */
-    protected void BuildSubrUsed(int Font, int FD, int SubrOffset, int[] SubrsOffsets, Map<Integer, int[]> hSubr, List<Integer> lSubr) {
+    protected void BuildSubrUsed(int Font, int FD, int SubrOffset, int[] SubrsOffsets, Set<Integer> hSubr, List<Integer> lSubr) {
 
         // Calc the Bias for the subr index
         int LBias = CalcBias(SubrOffset, Font);
@@ -615,7 +611,7 @@ public class CFFFontSubset extends CFFFont {
      * @param hSubr the Map for the lSubrs
      * @param lSubr the list for the lSubrs
      */
-    protected void ReadASubr(int begin, int end, int GBias, int LBias, Map<Integer, int[]> hSubr, List<Integer> lSubr, int[] LSubrsOffsets) {
+    protected void ReadASubr(int begin, int end, int GBias, int LBias, Set<Integer> hSubr, List<Integer> lSubr, int[] LSubrsOffsets) {
         // Clear the stack for the subrs
         EmptyStack();
         NumOfHints = 0;
@@ -641,8 +637,8 @@ public class CFFFontSubset extends CFFFont {
                             // Calc the index of the Subrs
                             int Subr = (int) ((Integer) TopElement) + LBias;
                             // If the subr isn't in the Map -> Put in
-                            if (!hSubr.containsKey(Subr)) {
-                                hSubr.put(Subr, null);
+                            if (!hSubr.contains(Subr)) {
+                                hSubr.add(Subr);
                                 lSubr.add(Subr);
                             }
                             CalcHints(LSubrsOffsets[Subr], LSubrsOffsets[Subr + 1], LBias, GBias, LSubrsOffsets);
@@ -656,8 +652,8 @@ public class CFFFontSubset extends CFFFont {
                             // Calc the index of the Subrs
                             int Subr = (int) ((Integer) TopElement) + GBias;
                             // If the subr isn't in the Map -> Put in
-                            if (!hGSubrsUsed.containsKey(Subr)) {
-                                hGSubrsUsed.put(Subr, null);
+                            if (!hGSubrsUsed.contains(Subr)) {
+                                hGSubrsUsed.add(Subr);
                                 lGSubrsUsed.add(Subr);
                             }
                             CalcHints(gsubrOffsets[Subr], gsubrOffsets[Subr + 1], LBias, GBias, LSubrsOffsets);
@@ -874,6 +870,7 @@ public class CFFFontSubset extends CFFFont {
                 // a call to a Gsubr
                 case "callsubr":
                     if (NumOfArgs > 0) {
+                        assert TopElement instanceof Integer;
                         int Subr = (int) ((Integer) TopElement) + LBias;
                         CalcHints(LSubrsOffsets[Subr], LSubrsOffsets[Subr + 1], LBias, GBias, LSubrsOffsets);
                         seek(pos);
@@ -882,6 +879,7 @@ public class CFFFontSubset extends CFFFont {
                 // A call to "stem"
                 case "callgsubr":
                     if (NumOfArgs > 0) {
+                        assert TopElement instanceof Integer;
                         int Subr = (int) ((Integer) TopElement) + GBias;
                         CalcHints(gsubrOffsets[Subr], gsubrOffsets[Subr + 1], LBias, GBias, LSubrsOffsets);
                         seek(pos);
@@ -921,7 +919,7 @@ public class CFFFontSubset extends CFFFont {
      * @return the new index subset version
      * @throws java.io.IOException
      */
-    protected byte[] BuildNewIndex(int[] Offsets, Map<Integer, int[]> Used, byte OperatorForUnusedEntries) throws java.io.IOException {
+    protected byte[] BuildNewIndex(int[] Offsets, Set<Integer> Used, byte OperatorForUnusedEntries) throws java.io.IOException {
         int unusedCount = 0;
         int Offset = 0;
         int[] NewOffsets = new int[Offsets.length];
@@ -930,7 +928,7 @@ public class CFFFontSubset extends CFFFont {
             NewOffsets[i] = Offset;
             // If the object in the offset is also present in the used
             // Map then increment the offset var by its size
-            if (Used.containsKey(i)) {
+            if (Used.contains(i)) {
                 Offset += Offsets[i + 1] - Offsets[i];
             } else {
                 // Else the same offset is kept in i+1.
