@@ -354,6 +354,19 @@ public class PdfDictionary extends PdfObject {
         return map.values();
     }
 
+    public Collection<PdfObject> directValues() {
+        Collection<PdfObject> directValues = new ArrayList<>();
+        for (PdfObject value : map.values()) {
+            if (value.isIndirectReference()) {
+                directValues.add(((PdfIndirectReference)value).getRefersTo());
+            } else {
+                directValues.add(value);
+            }
+        }
+
+        return directValues;
+    }
+
     /**
      * Returns a Set holding the key-value pairs as Map#Entry objects.
      *
@@ -361,6 +374,19 @@ public class PdfDictionary extends PdfObject {
      */
     public Set<Map.Entry<PdfName, PdfObject>> entrySet() {
         return map.entrySet();
+    }
+
+    public Set<Map.Entry<PdfName, PdfObject>> directEntrySet() {
+        Map<PdfName, PdfObject> directMap = new HashMap<>();
+        for(Map.Entry<PdfName, PdfObject> entry : map.entrySet()) {
+            PdfObject value = entry.getValue();
+            if (value.isIndirectReference()) {
+                directMap.put(entry.getKey(), ((PdfIndirectReference)value).getRefersTo());
+            } else {
+                directMap.put(entry.getKey(), value);
+            }
+        }
+        return directMap.entrySet();
     }
 
     @Override

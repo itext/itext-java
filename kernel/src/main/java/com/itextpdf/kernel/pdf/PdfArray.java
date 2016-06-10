@@ -46,10 +46,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * A representation of an array as described in the PDF specification. A PdfArray can contain any
@@ -191,6 +188,10 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
 
     public Iterator<PdfObject> iterator() {
         return list.iterator();
+    }
+
+    public PdfArrayDirectIterator<PdfObject> directIterator() {
+        return new PdfArrayDirectIterator();
     }
 
     public void add(PdfObject pdfObject) {
@@ -511,5 +512,28 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      */
     protected void releaseContent() {
         list = null;
+    }
+
+    private class PdfArrayDirectIterator<E> implements Iterator<E> {
+        Iterator<PdfObject> parentIterator = list.iterator();
+
+        @Override
+        public boolean hasNext() {
+            return parentIterator.hasNext();
+        }
+
+        @Override
+        public E next() {
+            PdfObject obj = parentIterator.next();
+            if (obj.isIndirectReference()) {
+                obj = ((PdfIndirectReference) obj).getRefersTo(true);
+            }
+            return (E) obj;
+        }
+
+        @Override
+        public void remove() {
+            parentIterator.remove();
+        }
     }
 }
