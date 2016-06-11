@@ -51,6 +51,7 @@ import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.PdfException;
@@ -226,7 +227,7 @@ public class PdfSigner {
         }
 
         originalOS = outputStream;
-        signDate = SignUtils.getCurrentTimeCalendar();
+        signDate = DateTimeUtil.getCurrentTimeCalendar();
         fieldName = getNewSigFieldName();
         appearance = new PdfSignatureAppearance(document, new Rectangle(0, 0), 1);
         appearance.setSignDate(signDate);

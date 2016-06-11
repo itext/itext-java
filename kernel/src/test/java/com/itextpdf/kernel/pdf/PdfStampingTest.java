@@ -2,7 +2,6 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.DateTimeUtil;
-import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.test.ExtendedITextTest;
@@ -76,7 +75,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         assertEquals("%Hello World\n", new String(bytes));
         String date = document.getDocumentInfo().getPdfObject().getAsString(PdfName.ModDate).getValue();
         Calendar cl = PdfDate.decode(date);
-        double diff = DateTimeUtil.getTimeInMillis(null) - DateTimeUtil.getTimeInMillis(cl);
+        double diff = DateTimeUtil.getUtcMillisFromEpoch(null) - DateTimeUtil.getUtcMillisFromEpoch(cl);
         String message = "Unexpected creation date. Different from now is " + (float) diff / 1000 + "s";
         assertTrue(message, diff < 5000);
         reader.close();
@@ -869,7 +868,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         assertEquals("%Hello World\n", new String(bytes));
         String date = pdfDocument.getDocumentInfo().getPdfObject().getAsString(PdfName.ModDate).getValue();
         Calendar cl = PdfDate.decode(date);
-        double diff = DateTimeUtil.getTimeInMillis(null) - DateTimeUtil.getTimeInMillis(cl);
+        double diff = DateTimeUtil.getUtcMillisFromEpoch(null) - DateTimeUtil.getUtcMillisFromEpoch(cl);
         String message = "Unexpected creation date. Different from now is " + (float) diff / 1000 + "s";
         assertTrue(message, diff < 5000);
         reader.close();

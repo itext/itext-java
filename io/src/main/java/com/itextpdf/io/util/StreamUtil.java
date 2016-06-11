@@ -50,6 +50,10 @@ import com.itextpdf.io.source.IRandomAccessSource;
 
 import java.io.*;
 
+/**
+ * This file is a helper class for internal usage only.
+ * Be aware that it's API and functionality may be changed in future.
+ */
 public final class StreamUtil {
 
     private static final int TRANSFER_SIZE = 64 * 1024;

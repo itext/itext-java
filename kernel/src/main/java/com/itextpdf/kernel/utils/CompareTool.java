@@ -618,7 +618,7 @@ public class CompareTool {
         cmpDocument.close();
 
         if (generateCompareByContentXmlReport) {
-            String outPdfName = FileUtil.getFileName(outPdf);
+            String outPdfName = new File(outPdf).getName();
             FileOutputStream xml = new FileOutputStream(outPath + "/" + outPdfName.substring(0, outPdfName.length() - 3) + "report.xml");
             try {
                 compareResult.writeReportToXml(xml);

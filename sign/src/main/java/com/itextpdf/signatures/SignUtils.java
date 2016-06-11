@@ -287,14 +287,6 @@ class SignUtils {
         return false;
     }
 
-    static Calendar getCurrentTimeCalendar() {
-        return new GregorianCalendar();
-    }
-
-    static Date getCurrentTimeDate() {
-        return new Date();
-    }
-
     static Calendar getTimeStampDate(TimeStampToken timeStampToken) {
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(timeStampToken.getTimeStampInfo().getGenTime());

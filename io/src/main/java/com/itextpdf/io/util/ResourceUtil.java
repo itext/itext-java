@@ -45,6 +45,10 @@ package com.itextpdf.io.util;
 
 import java.io.InputStream;
 
+/**
+ * This file is a helper class for internal usage only.
+ * Be aware that it's API and functionality may be changed in future.
+ */
 public final class ResourceUtil {
 
     private ResourceUtil() {

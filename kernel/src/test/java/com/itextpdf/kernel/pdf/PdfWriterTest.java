@@ -45,7 +45,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         Assert.assertNotNull(pdfDocument.getPage(1));
         String date = pdfDocument.getDocumentInfo().getPdfObject().getAsString(PdfName.CreationDate).getValue();
         Calendar cl = PdfDate.decode(date);
-        double diff = DateTimeUtil.getTimeInMillis(null) - DateTimeUtil.getTimeInMillis(cl);
+        double diff = DateTimeUtil.getUtcMillisFromEpoch(null) - DateTimeUtil.getUtcMillisFromEpoch(cl);
         String message = "Unexpected creation date. Different from now is " + (float)diff/1000 + "s";
         Assert.assertTrue(message, diff < 5000);
         reader.close();

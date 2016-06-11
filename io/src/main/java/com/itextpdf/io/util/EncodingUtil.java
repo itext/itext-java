@@ -50,6 +50,10 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
 
+/**
+ * This file is a helper class for internal usage only.
+ * Be aware that it's API and functionality may be changed in future.
+ */
 public final class EncodingUtil {
 
     private EncodingUtil() {

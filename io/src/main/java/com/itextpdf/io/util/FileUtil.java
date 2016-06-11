@@ -47,6 +47,10 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This file is a helper class for internal usage only.
+ * Be aware that it's API and functionality may be changed in future.
+ */
 public final class FileUtil {
 
     private FileUtil() {
@@ -56,10 +60,6 @@ public final class FileUtil {
         String winDir = System.getenv("windir");
         String fileSeparator = System.getProperty("file.separator");
         return winDir + fileSeparator + "fonts";
-    }
-
-    public static String getFileName(String file) {
-        return new File(file).getName();
     }
 
     public static boolean fileExists(String path) {

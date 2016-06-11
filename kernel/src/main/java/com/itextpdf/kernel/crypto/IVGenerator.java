@@ -43,6 +43,8 @@
  */
 package com.itextpdf.kernel.crypto;
 
+import com.itextpdf.io.util.SystemUtil;
+
 /**
  * An initialization vector generator for a CBC block encryption. It's a random generator based on ARCFOUR.
  *
@@ -54,8 +56,8 @@ public final class IVGenerator {
 
     static {
         arcfour = new ARCFOUREncryption();
-        long time = SystemUtility.getCurrentTimeMillis();
-        long mem = SystemUtility.getFreeMemory();
+        long time = SystemUtil.getSystemTimeMillis();
+        long mem = SystemUtil.getFreeMemory();
         String s = time + "+" + mem;
         arcfour.prepareARCFOURKey(s.getBytes());
     }

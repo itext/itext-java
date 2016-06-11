@@ -43,6 +43,7 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.io.util.DateTimeUtil;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.tsp.TimeStampToken;
 
@@ -66,7 +67,7 @@ public class CertificateVerification {
      * if no error
      */
     public static String verifyCertificate(X509Certificate cert, Collection<CRL> crls) {
-        return verifyCertificate(cert, crls, SignUtils.getCurrentTimeCalendar());
+        return verifyCertificate(cert, crls, DateTimeUtil.getCurrentTimeCalendar());
     }
 
     /**
@@ -106,7 +107,7 @@ public class CertificateVerification {
      * failed certificate and <CODE>error</CODE> is the error message
      */
     public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore, Collection<CRL> crls) {
-        return verifyCertificates(certs, keystore, crls, SignUtils.getCurrentTimeCalendar());
+        return verifyCertificates(certs, keystore, crls, DateTimeUtil.getCurrentTimeCalendar());
     }
 
     /**
@@ -175,7 +176,7 @@ public class CertificateVerification {
      * failed certificate and <CODE>error</CODE> is the error message
      */
     public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore) {
-        return verifyCertificates(certs, keystore, SignUtils.getCurrentTimeCalendar());
+        return verifyCertificates(certs, keystore, DateTimeUtil.getCurrentTimeCalendar());
     }
 
     /**

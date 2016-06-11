@@ -44,14 +44,27 @@
 package com.itextpdf.io.util;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
+/**
+ * This file is a helper class for internal usage only.
+ * Be aware that it's API and functionality may be changed in future.
+ */
 public final class DateTimeUtil {
 
-    public static double getTimeInMillis(Calendar calendar) {
+    public static double getUtcMillisFromEpoch(Calendar calendar) {
         if (calendar == null) {
             calendar = new GregorianCalendar();
         }
         return calendar.getTimeInMillis();
+    }
+
+    public static Calendar getCurrentTimeCalendar() {
+        return new GregorianCalendar();
+    }
+
+    public static Date getCurrentTimeDate() {
+        return new Date();
     }
 }

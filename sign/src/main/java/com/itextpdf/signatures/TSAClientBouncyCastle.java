@@ -44,8 +44,8 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.io.codec.Base64;
+import com.itextpdf.io.util.SystemUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.crypto.SystemUtility;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.tsp.TSPException;
@@ -175,7 +175,7 @@ public class TSAClientBouncyCastle implements ITSAClient {
         TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
         tsqGenerator.setCertReq(true);
         // tsqGenerator.setReqPolicy("1.3.6.1.4.1.601.10.3.1");
-        BigInteger nonce = BigInteger.valueOf(SystemUtility.getCurrentTimeMillis());
+        BigInteger nonce = BigInteger.valueOf(SystemUtil.getSystemTimeMillis());
         TimeStampRequest request = tsqGenerator.generate(new ASN1ObjectIdentifier(DigestAlgorithms.getAllowedDigest(digestAlgorithm)), imprint, nonce);
         byte[] requestBytes = request.getEncoded();
 

@@ -43,10 +43,10 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.util.SystemUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
-import com.itextpdf.kernel.crypto.SystemUtility;
 import com.itextpdf.kernel.crypto.securityhandler.PubKeySecurityHandler;
 import com.itextpdf.kernel.crypto.securityhandler.PubSecHandlerUsingAes128;
 import com.itextpdf.kernel.crypto.securityhandler.PubSecHandlerUsingAes256;
@@ -79,7 +79,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     private static final int AES_128 = 4;
     private static final int AES_256 = 5;
 
-    private static long seq = SystemUtility.getCurrentTimeMillis();
+    private static long seq = SystemUtil.getSystemTimeMillis();
 
     private int cryptoMode;
 
@@ -235,8 +235,8 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         } catch (Exception e) {
             throw new PdfException(PdfException.PdfEncryption, e);
         }
-        long time = SystemUtility.getCurrentTimeMillis();
-        long mem = SystemUtility.getFreeMemory();
+        long time = SystemUtil.getSystemTimeMillis();
+        long mem = SystemUtil.getFreeMemory();
         String s = time + "+" + mem + "+" + (seq++);
 
         return md5.digest(s.getBytes());

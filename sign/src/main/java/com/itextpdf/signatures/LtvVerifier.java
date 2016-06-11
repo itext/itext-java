@@ -44,6 +44,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.kernel.pdf.*;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPException;
@@ -106,7 +107,7 @@ public class LtvVerifier extends RootStoreVerifier {
         this.sgnUtil = new SignatureUtil(document);
         List<String> names = sgnUtil.getSignatureNames();
         signatureName = names.get(names.size() - 1);
-        this.signDate = SignUtils.getCurrentTimeDate();
+        this.signDate = DateTimeUtil.getCurrentTimeDate();
         pkcs7 = coversWholeDocument();
         LOGGER.info(MessageFormat.format("Checking {0}signature {1}", pkcs7.isTsp() ? "document-level timestamp " : "", signatureName));
     }

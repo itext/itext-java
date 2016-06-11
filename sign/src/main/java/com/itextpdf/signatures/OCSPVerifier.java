@@ -43,6 +43,7 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.io.util.DateTimeUtil;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
@@ -264,7 +265,7 @@ public class OCSPVerifier extends RootStoreVerifier {
                 CRLVerifier crlVerifier = new CRLVerifier(null, null);
                 crlVerifier.setRootStore(rootStore);
                 crlVerifier.setOnlineCheckingAllowed(onlineCheckingAllowed);
-                crlVerifier.verify((X509CRL)crl, responderCert, issuerCert, SignUtils.getCurrentTimeDate());
+                crlVerifier.verify((X509CRL)crl, responderCert, issuerCert, DateTimeUtil.getCurrentTimeDate());
                 return;
             }
         }
