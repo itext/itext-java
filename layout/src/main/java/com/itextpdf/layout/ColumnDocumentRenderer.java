@@ -54,8 +54,8 @@ import com.itextpdf.layout.renderer.DocumentRenderer;
  */
 public class ColumnDocumentRenderer extends DocumentRenderer {
 
-    private Rectangle[] columns;
-    private int nextAreaNumber;
+    protected Rectangle[] columns;
+    protected int nextAreaNumber;
 
     public ColumnDocumentRenderer(Document document, Rectangle[] columns) {
         super(document);
@@ -76,5 +76,9 @@ public class ColumnDocumentRenderer extends DocumentRenderer {
             super.updateCurrentArea(overflowResult);
         }
         return (currentArea = new LayoutArea(currentPageNumber, columns[nextAreaNumber++ % columns.length].clone()));
+    }
+    
+    public int getNextAreaNumber() {
+        return nextAreaNumber;
     }
 }
