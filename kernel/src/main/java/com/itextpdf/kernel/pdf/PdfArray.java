@@ -190,7 +190,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         return list.iterator();
     }
 
-    public PdfArrayDirectIterator<PdfObject> directIterator() {
+    public Iterator<PdfObject> directIterator() {
         return new PdfArrayDirectIterator();
     }
 
@@ -514,7 +514,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         list = null;
     }
 
-    private class PdfArrayDirectIterator<E> implements Iterator<E> {
+    private class PdfArrayDirectIterator implements Iterator<PdfObject> {
         Iterator<PdfObject> parentIterator = list.iterator();
 
         @Override
@@ -523,12 +523,12 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         }
 
         @Override
-        public E next() {
+        public PdfObject next() {
             PdfObject obj = parentIterator.next();
             if (obj.isIndirectReference()) {
                 obj = ((PdfIndirectReference) obj).getRefersTo(true);
             }
-            return (E) obj;
+            return obj;
         }
 
         @Override
