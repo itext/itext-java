@@ -342,7 +342,7 @@ class PdfXrefTable implements Serializable {
         if (k == null) {
             k = "iText";
         }
-        writer.writeString(MessageFormat.format("%%{0}-{1}\n", k, version.getRelease()));
+        writer.writeString(MessageFormat.format("%{0}-{1}\n", k, version.getRelease()));
     }
 
     private void ensureCount(int count) {
