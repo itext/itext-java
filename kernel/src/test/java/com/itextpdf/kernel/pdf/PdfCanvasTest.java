@@ -968,7 +968,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             canvas.beginText();
             canvas.setFontAndSize(PdfFontFactory.createFont(FontConstants.COURIER), 12);
             canvas.setTextMatrix(1, 0, 0, 1, 100, 500);
-            canvas.showText(MessageFormat.format("Page_%d", i + 1));
+            canvas.showText(MessageFormat.format("Page_{0}", i + 1));
             canvas.endText();
             canvas.release();
             pdfDoc1.close();

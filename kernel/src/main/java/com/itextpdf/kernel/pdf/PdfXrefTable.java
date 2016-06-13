@@ -50,6 +50,7 @@ import com.itextpdf.kernel.Version;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
@@ -341,7 +342,7 @@ class PdfXrefTable implements Serializable {
         if (k == null) {
             k = "iText";
         }
-        writer.writeString(String.format("%%%s-%s\n", k, version.getRelease()));
+        writer.writeString(MessageFormat.format("%%{0}-{1}\n", k, version.getRelease()));
     }
 
     private void ensureCount(int count) {
