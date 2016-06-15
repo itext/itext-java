@@ -337,12 +337,13 @@ class PdfXrefTable implements Serializable {
     }
 
     protected static void writeKeyInfo(PdfWriter writer) throws IOException {
+        String platform = "";
         Version version = Version.getInstance();
         String k = version.getKey();
         if (k == null) {
             k = "iText";
         }
-        writer.writeString(MessageFormat.format("%{0}-{1}\n", k, version.getRelease()));
+        writer.writeString(MessageFormat.format("%{0}-{1}{2}\n", k, version.getRelease(), platform));
     }
 
     private void ensureCount(int count) {

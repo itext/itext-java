@@ -80,6 +80,7 @@ public final class Version {
      * in every PDF that is created or manipulated using iText.
      */
     private String iTextVersion = iText + " " + release + " \u00a92000-2016 iText Group NV";
+
     /**
      * The license key.
      */
@@ -97,8 +98,10 @@ public final class Version {
             version = new Version();
             synchronized (version) {
                 try {
-                    Class<?> klass = Class.forName("com.itextpdf.licensekey.LicenseKey");
-                    Method m = klass.getMethod("getLicenseeInfo");
+                    String licenseKeyClassFullName = "com.itextpdf.licensekey.LicenseKey";
+                    String licenseeInfoMethodName = "getLicenseeInfo";
+                    Class<?> klass = Class.forName(licenseKeyClassFullName);
+                    Method m = klass.getMethod(licenseeInfoMethodName);
                     String[] info = (String[]) m.invoke(klass.newInstance(), null);
                     if (info[3] != null && info[3].trim().length() > 0) {
                         version.key = info[3];
@@ -116,7 +119,7 @@ public final class Version {
                             String versionToCheck = release.substring(0, release.lastIndexOf("."));
 
                             if (! info[6].equalsIgnoreCase(versionToCheck)) {
-                                throw new RuntimeException("Your license key version doesn't match the iText version.");
+                                throw new IllegalArgumentException("Your license key version doesn't match the iText version.");
                             }
                         }
                     }
@@ -143,7 +146,7 @@ public final class Version {
                     } else {
                         throw new Exception();
                     }
-                } catch (RuntimeException exc) {
+                } catch (IllegalArgumentException exc) {
                     throw exc;
                 } catch (Exception e) {
                     version.iTextVersion += AGPL;
