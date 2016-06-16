@@ -48,6 +48,7 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.UnitValue;
 
 public class LineSeparatorRenderer extends BlockRenderer {
 
@@ -59,7 +60,14 @@ public class LineSeparatorRenderer extends BlockRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         ILineDrawer lineDrawer = this.<ILineDrawer>getProperty(Property.LINE_DRAWER);
         float height = lineDrawer != null ? lineDrawer.getLineWidth() : 0;
+
         occupiedArea = layoutContext.getArea().clone();
+
+        UnitValue widthProperty = ((LineSeparator)modelElement).getWidth();
+        if (widthProperty != null) {
+            occupiedArea.getBBox().setWidth(widthProperty.getValue());
+        }
+
         applyMargins(occupiedArea.getBBox(), false);
         if (occupiedArea.getBBox().getHeight() < height) {
             return new LayoutResult(LayoutResult.NOTHING, null, null, this);
