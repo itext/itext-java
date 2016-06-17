@@ -293,8 +293,8 @@ class PdfXrefTable implements Serializable {
 
                     StringBuilder off = new StringBuilder("0000000000").append(reference.getOffset());
                     StringBuilder gen = new StringBuilder("00000").append(reference.getGenNumber());
-                    writer.writeString(off.substring(0, off.length() - 10)).writeSpace().
-                            writeString(gen.substring(0, gen.length() - 5)).writeSpace();
+                    writer.writeString(off.substring(off.length() - 10, off.length())).writeSpace().
+                            writeString(gen.substring(gen.length() - 5, gen.length())).writeSpace();
                     if (reference.isFree()) {
                         writer.writeBytes(freeXRefEntry);
                     } else {
