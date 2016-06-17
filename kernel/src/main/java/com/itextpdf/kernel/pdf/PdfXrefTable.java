@@ -62,8 +62,6 @@ class PdfXrefTable implements Serializable {
     private static final int INITIAL_CAPACITY = 32;
     private static final int MAX_GENERATION = 65535;
 
-    private static final String objectOffsetFormatter = "0000000000";
-    private static final String objectGenerationFormatter = "00000";
     private static final byte[] freeXRefEntry = ByteUtils.getIsoBytes("f \n");
     private static final byte[] inUseXRefEntry = ByteUtils.getIsoBytes("n \n");
 
@@ -292,8 +290,11 @@ class PdfXrefTable implements Serializable {
                 writer.writeInteger(first).writeSpace().writeInteger(len).writeByte((byte) '\n');
                 for (int i = first; i < first + len; i++) {
                     PdfIndirectReference reference = xrefTable.get(i);
-                    writer.writeString(DecimalFormatUtil.formatNumber(reference.getOffset(), objectOffsetFormatter)).writeSpace().
-                            writeString(DecimalFormatUtil.formatNumber(reference.getGenNumber(), objectGenerationFormatter)).writeSpace();
+
+                    StringBuilder off = new StringBuilder("0000000000").append(reference.getOffset());
+                    StringBuilder gen = new StringBuilder("00000").append(reference.getGenNumber());
+                    writer.writeString(off.substring(0, off.length() - 10)).writeSpace().
+                            writeString(gen.substring(0, gen.length() - 5)).writeSpace();
                     if (reference.isFree()) {
                         writer.writeBytes(freeXRefEntry);
                     } else {
