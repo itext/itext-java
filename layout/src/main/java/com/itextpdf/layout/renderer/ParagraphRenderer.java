@@ -283,32 +283,6 @@ public class ParagraphRenderer extends BlockRenderer {
         return super.<T1>getDefaultProperty(property);
     }
 
-    protected ParagraphRenderer createOverflowRenderer() {
-        ParagraphRenderer overflowRenderer = (ParagraphRenderer) getNextRenderer();
-        // Reset first line indent in case of overflow.
-        float firstLineIndent = (float) this.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
-        if (firstLineIndent != 0) {
-            overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0);
-        }
-        return overflowRenderer;
-    }
-
-    protected ParagraphRenderer createSplitRenderer() {
-        return (ParagraphRenderer) getNextRenderer();
-    }
-
-    protected ParagraphRenderer[] split() {
-        ParagraphRenderer splitRenderer = createSplitRenderer();
-        splitRenderer.occupiedArea = occupiedArea.clone();
-        splitRenderer.parent = parent;
-        splitRenderer.isLastRendererForModelElement = false;
-
-        ParagraphRenderer overflowRenderer = createOverflowRenderer();
-        overflowRenderer.parent = parent;
-
-        return new ParagraphRenderer[] {splitRenderer, overflowRenderer};
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -348,5 +322,46 @@ public class ParagraphRenderer extends BlockRenderer {
             return null;
         }
         return lines.get(0).getFirstYLineRecursively();
+    }
+
+    @Deprecated
+    protected ParagraphRenderer createOverflowRenderer() {
+        return (ParagraphRenderer) getNextRenderer();
+    }
+
+    @Deprecated
+    protected ParagraphRenderer createSplitRenderer() {
+        return (ParagraphRenderer) getNextRenderer();
+    }
+
+    protected ParagraphRenderer createOverflowRenderer(IRenderer parent) {
+        ParagraphRenderer overflowRenderer = createOverflowRenderer();
+        overflowRenderer.parent = parent;
+        fixOverflowRenderer(overflowRenderer);
+        return overflowRenderer;
+    }
+
+    protected ParagraphRenderer createSplitRenderer(IRenderer parent) {
+        ParagraphRenderer splitRenderer = createSplitRenderer();
+        splitRenderer.parent = parent;
+        return splitRenderer;
+    }
+
+    protected ParagraphRenderer[] split() {
+        ParagraphRenderer splitRenderer = createSplitRenderer(parent);
+        splitRenderer.occupiedArea = occupiedArea.clone();
+        splitRenderer.isLastRendererForModelElement = false;
+
+        ParagraphRenderer overflowRenderer = createOverflowRenderer(parent);
+
+        return new ParagraphRenderer[] {splitRenderer, overflowRenderer};
+    }
+
+    private void fixOverflowRenderer(ParagraphRenderer overflowRenderer) {
+        // Reset first line indent in case of overflow.
+        float firstLineIndent = (float) overflowRenderer.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
+        if (firstLineIndent != 0) {
+            overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0);
+        }
     }
 }
