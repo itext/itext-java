@@ -104,7 +104,13 @@ public class CompareTool {
 
     public CompareTool() {
         gsExec = System.getProperty("gsExec");
+        if (gsExec == null) {
+            gsExec = System.getenv("gsExec");
+        }
         compareExec = System.getProperty("compareExec");
+        if (compareExec == null) {
+            compareExec = System.getenv("compareExec");
+        }
     }
 
     public CompareResult compareByCatalog(PdfDocument outDocument, PdfDocument cmpDocument) throws IOException {
