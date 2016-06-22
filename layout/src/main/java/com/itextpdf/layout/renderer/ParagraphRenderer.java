@@ -70,8 +70,25 @@ public class ParagraphRenderer extends BlockRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         int pageNumber = layoutContext.getArea().getPageNumber();
-
+        boolean anythingPlaced = false;
+        boolean firstLineInBox = true;
+        LineRenderer currentRenderer = (LineRenderer) new LineRenderer().setParent(this);
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
+
+        if (0 == childRenderers.size()) {
+            anythingPlaced = true;
+            currentRenderer = null;
+            setProperty(Property.MARGIN_TOP, 0);
+            setProperty(Property.MARGIN_RIGHT, 0);
+            setProperty(Property.MARGIN_BOTTOM, 0);
+            setProperty(Property.MARGIN_LEFT, 0);
+            setProperty(Property.PADDING_TOP, 0);
+            setProperty(Property.PADDING_RIGHT, 0);
+            setProperty(Property.PADDING_BOTTOM, 0);
+            setProperty(Property.PADDING_LEFT, 0);
+            setProperty(Property.BORDER, Border.NO_BORDER);
+        }
+
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
@@ -106,33 +123,9 @@ public class ParagraphRenderer extends BlockRenderer {
 
         int currentAreaPos = 0;
         Rectangle layoutBox = areas.get(0).clone();
-
-        boolean anythingPlaced = false;
-        boolean firstLineInBox = true;
-
         lines = new ArrayList<>();
-        LineRenderer currentRenderer = (LineRenderer) new LineRenderer().setParent(this);
         for (IRenderer child : childRenderers) {
             currentRenderer.addChild(child);
-        }
-
-        if (0 == childRenderers.size()) {
-            anythingPlaced = true;
-            currentRenderer = null;
-
-            // TODO is this really needed??
-            setProperty(Property.MARGIN_TOP, 0);
-            setProperty(Property.MARGIN_RIGHT, 0);
-            setProperty(Property.MARGIN_BOTTOM, 0);
-            setProperty(Property.MARGIN_LEFT, 0);
-            setProperty(Property.PADDING_TOP, 0);
-            setProperty(Property.PADDING_RIGHT, 0);
-            setProperty(Property.PADDING_BOTTOM, 0);
-            setProperty(Property.PADDING_LEFT, 0);
-            setProperty(Property.BORDER, Border.NO_BORDER);
-            margins = getMargins();
-            borders = getBorders();
-            paddings = getPaddings();
         }
 
         float lastYLine = layoutBox.getY() + layoutBox.getHeight();
@@ -220,6 +213,7 @@ public class ParagraphRenderer extends BlockRenderer {
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]);
                         } else {
                             if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+                                // occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), currentRenderer.getOccupiedArea().getBBox()));
                                 parent.setProperty(Property.FULL, true);
                                 lines.add(currentRenderer);
                                 return new LayoutResult(LayoutResult.FULL, occupiedArea, null, this);
