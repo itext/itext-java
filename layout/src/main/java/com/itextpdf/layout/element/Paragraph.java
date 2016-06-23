@@ -209,7 +209,6 @@ public class Paragraph extends BlockElement<Paragraph> {
         return this;
     }
 
-
     @Override
     protected IRenderer makeNewRenderer() {
         return new ParagraphRenderer(this);
