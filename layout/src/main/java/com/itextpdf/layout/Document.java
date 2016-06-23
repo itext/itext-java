@@ -110,8 +110,9 @@ public class Document extends RootElement<Document> {
      * Closes the document and associated PdfDocument.
      */
     public void close() {
-        if (rootRenderer != null && !immediateFlush)
-            rootRenderer.flush();
+        if (rootRenderer != null) {
+            rootRenderer.close();
+        }
         pdfDocument.close();
     }
 

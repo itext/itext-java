@@ -90,6 +90,7 @@ public final class Property {
     public static final int HYPHENATION = 30;
     public static final int ITALIC_SIMULATION = 31;
     public static final int KEEP_TOGETHER = 32;
+    public static final int KEEP_WITH_NEXT = 81;
     public static final int LEADING = 33;
     public static final int LEFT = 34;
     public static final int LINE_DRAWER = 35;

@@ -183,6 +183,16 @@ public class Canvas extends RootElement<Canvas> {
         rootRenderer.flush();
     }
 
+    /**
+     * Closes the {@link Canvas}. Although not completely necessary in all cases, it is still recommended to call this
+     * method when you are done working with {@link Canvas} object, as due to some properties set there might be some
+     * 'hanging' elements, which are waiting other elements to be added and processed. {@link #close()} tells the
+     * {@link Canvas} that no more elements will be added and it is time to finish processing all the elements.
+     */
+    public void close() {
+        rootRenderer.close();
+    }
+
     @Override
     protected RootRenderer ensureRootRendererNotNull() {
         if (rootRenderer == null)

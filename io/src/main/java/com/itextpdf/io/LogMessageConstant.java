@@ -68,6 +68,8 @@ public final class LogMessageConstant {
      */
     public static final String ELEMENT_DOES_NOT_FIT_AREA = "Element does not fit current area. {0}";
 
+    public static final String ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED = "Element was placed in a forced way. Keep with next property will be ignored";
+
     public static final String EXCEPTION_WHILE_UPDATING_XMPMETADATA = "Exception while updating XmpMetadata";
 
     /**
@@ -150,6 +152,8 @@ public final class LogMessageConstant {
      * Log message.
      */
     public static final String REGISTERING_DIRECTORY = "Registering directory";
+
+    public static final String RENDERER_WAS_NOT_ABLE_TO_PROCESS_KEEP_WITH_NEXT = "The renderer was not able to process keep with next property properly";
 
     /**
      * Log message.
