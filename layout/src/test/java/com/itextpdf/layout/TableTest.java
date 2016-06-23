@@ -22,7 +22,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -970,8 +969,8 @@ public class TableTest extends ExtendedITextTest{
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     @Test
-    public void splitTableOnLowPage() throws IOException, InterruptedException {
-        String testName = "splitTableOnLowPage.pdf";
+    public void splitTableOnShortPage() throws IOException, InterruptedException {
+        String testName = "splitTableOnShortPage.pdf";
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
