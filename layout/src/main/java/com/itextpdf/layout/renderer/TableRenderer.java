@@ -129,6 +129,11 @@ public class TableRenderer extends AbstractRenderer {
         if (rowRange.getStartRow() != 0) {
             setProperty(Property.MARGIN_TOP, 0);
         }
+
+        // we can invoke #layout() twice (processing KEEP_TOGETHER for instance)
+        // so we need to clear heights
+        heights.clear();
+
         applyMargins(layoutBox, false);
         applyBorderBox(layoutBox, false);
 
@@ -321,6 +326,13 @@ public class TableRenderer extends AbstractRenderer {
                                             break;
                                         }
                                     }
+                                } else {
+                                    // if cell in current row has big rowspan
+                                    // we need to process it specially too,
+                                    // because some problems (for instance, borders related) can occur
+                                    if (cell.getModelElement().getRowspan() > 1) {
+                                        cellWithBigRowspanAdded = true;
+                                    }
                                 }
                             }
                         }
@@ -409,7 +421,7 @@ public class TableRenderer extends AbstractRenderer {
                     }
                 }
 
-                for (int col = 0; col < columnsWithCellToBeSplitted.length; col++) {
+                for (int col = 0; col < numberOfColumns; col++) {
                     if (columnsWithCellToBeSplitted[col]) {
                         if (1 == minRowspan) {
                             // Here we use the same cell, but create a new renderer which doesn't have any children,
@@ -428,7 +440,7 @@ public class TableRenderer extends AbstractRenderer {
                                 rows.get(i + 1)[col] = null;
                             }
                             // the number of cells behind is less then minRowspan-1
-                            // so we should process the last cell in the columnt as in the case 1 == minRowspan
+                            // so we should process the last cell in the column as in the case 1 == minRowspan
                             if (i != row+minRowspan-1 && null != rows.get(i)[col]) {
                                 Cell overflowCell = rows.get(i)[col].getModelElement();
                                 rows.get(i)[col].isLastRendererForModelElement = false;
