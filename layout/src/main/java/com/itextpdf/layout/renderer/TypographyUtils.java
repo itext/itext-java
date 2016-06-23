@@ -62,14 +62,32 @@ import java.util.List;
 class TypographyUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(TypographyUtils.class);
+
     private static final String TYPOGRAPHY_PACKAGE = "com.itextpdf.typography.";
+
+    private static final String SHAPER = "shaping.Shaper";
+    private static final String BIDI_CHARACTER_MAP = "bidi.BidiCharacterMap";
+    private static final String BIDI_BRACKET_MAP = "bidi.BidiBracketMap";
+    private static final String BIDI_ALGORITHM = "bidi.BidiAlgorithm";
+
+    private static final String APPLY_OTF_SCRIPT = "applyOtfScript";
+    private static final String APPLY_KERNING = "applyKerning";
+    private static final String GET_SUPPORTED_SCRIPTS = "getSupportedScripts";
+
+    private static final String GET_CHARACTER_TYPES = "getCharacterTypes";
+    private static final String GET_BRACKET_TYPES = "getBracketTypes";
+    private static final String GET_BRACKET_VALUES = "getBracketValues";
+    private static final String GET_PAIRED_BRACKET = "getPairedBracket";
+    private static final String GET_LEVELS = "getLevels";
+    private static final String COMPUTE_REORDERING = "computeReordering";
+
     private static final Collection<Character.UnicodeScript> SUPPORTED_SCRIPTS;
     private static final boolean TYPOGRAPHY_MODULE_INITIALIZED;
 
     static {
         boolean moduleFound = false;
         try {
-            Class<?> type = Class.forName("com.itextpdf.typography.shaping.Shaper");
+            Class<?> type = Class.forName(TYPOGRAPHY_PACKAGE + SHAPER);
             if (type != null) {
                 moduleFound = true;
             }
@@ -87,7 +105,7 @@ class TypographyUtils {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
             logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
         } else {
-            callMethod(TYPOGRAPHY_PACKAGE + "shaping.Shaper", "applyOtfScript", new Class[]{TrueTypeFont.class, GlyphLine.class, Character.UnicodeScript.class},
+            callMethod(TYPOGRAPHY_PACKAGE + SHAPER, APPLY_OTF_SCRIPT, new Class[]{TrueTypeFont.class, GlyphLine.class, Character.UnicodeScript.class},
                     fontProgram, text, script);
             //Shaper.applyOtfScript((TrueTypeFont)font.getFontProgram(), text, script);
         }
@@ -97,7 +115,7 @@ class TypographyUtils {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
             logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
         } else {
-            callMethod(TYPOGRAPHY_PACKAGE + "shaping.Shaper", "applyKerning", new Class[]{FontProgram.class, GlyphLine.class},
+            callMethod(TYPOGRAPHY_PACKAGE + SHAPER, APPLY_KERNING, new Class[]{FontProgram.class, GlyphLine.class},
                     fontProgram, text);
             //Shaper.applyKerning(font.getFontProgram(), text);
         }
@@ -122,19 +140,19 @@ class TypographyUtils {
             }
 
             int len = unicodeIds.length;
-            byte[] types = (byte[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiCharacterMap", "getCharacterTypes", new Class[]{int[].class, int.class, int.class},
+            byte[] types = (byte[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_CHARACTER_MAP, GET_CHARACTER_TYPES, new Class[]{int[].class, int.class, int.class},
                     unicodeIds, 0, len);
             //byte[] types = BidiCharacterMap.getCharacterTypes(unicodeIds, 0, text.end - text.start;
-            byte[] pairTypes = (byte[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiBracketMap", "getBracketTypes", new Class[]{int[].class, int.class, int.class},
+            byte[] pairTypes = (byte[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_BRACKET_MAP, GET_BRACKET_TYPES, new Class[]{int[].class, int.class, int.class},
                     unicodeIds, 0, len);
             //byte[] pairTypes = BidiBracketMap.getBracketTypes(unicodeIds, 0, text.end - text.start);
-            int[] pairValues = (int[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiBracketMap", "getBracketValues", new Class[]{int[].class, int.class, int.class},
+            int[] pairValues = (int[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_BRACKET_MAP, GET_BRACKET_VALUES, new Class[]{int[].class, int.class, int.class},
                     unicodeIds, 0, len);
             //int[] pairValues = BidiBracketMap.getBracketValues(unicodeIds, 0, text.end - text.start);
-            Object bidiReorder = callConstructor(TYPOGRAPHY_PACKAGE + "bidi.BidiAlgorithm", new Class[]{byte[].class, byte[].class, int[].class, byte.class},
+            Object bidiReorder = callConstructor(TYPOGRAPHY_PACKAGE + BIDI_ALGORITHM, new Class[]{byte[].class, byte[].class, int[].class, byte.class},
                     types, pairTypes, pairValues, direction);
             //BidiAlgorithm bidiReorder = new BidiAlgorithm(types, pairTypes, pairValues, direction);
-            return (byte[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiAlgorithm", "getLevels", bidiReorder, new Class[]{int[].class},
+            return (byte[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_ALGORITHM, GET_LEVELS, bidiReorder, new Class[]{int[].class},
                     new int[]{len});
             //levels = bidiReorder.getLevels(new int[]{text.end - text.start});
         }
@@ -148,7 +166,7 @@ class TypographyUtils {
             if (levels == null) {
                 return null;
             }
-            int[] reorder = (int[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiAlgorithm", "computeReordering", new Class[]{byte[].class},
+            int[] reorder = (int[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_ALGORITHM, COMPUTE_REORDERING, new Class[]{byte[].class},
                     lineLevels);
             //int[] reorder = BidiAlgorithm.computeReordering(lineLevels);
             List<LineRenderer.RendererGlyph> reorderedLine = new ArrayList<>(lineLevels.length);
@@ -158,7 +176,7 @@ class TypographyUtils {
                 // Mirror RTL glyphs
                 if (levels[reorder[i]] % 2 == 1) {
                     if (reorderedLine.get(i).glyph.hasValidUnicode()) {
-                        int pairedBracket = (int) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiBracketMap", "getPairedBracket", new Class[]{int.class},
+                        int pairedBracket = (int) callMethod(TYPOGRAPHY_PACKAGE + BIDI_BRACKET_MAP, GET_PAIRED_BRACKET, new Class[]{int.class},
                                 reorderedLine.get(i).glyph.getUnicode());
                         PdfFont font = reorderedLine.get(i).renderer.getPropertyAsFont(Property.FONT);
                         //BidiBracketMap.getPairedBracket(reorderedLine.get(i).getUnicode())
@@ -180,7 +198,7 @@ class TypographyUtils {
         } else if (SUPPORTED_SCRIPTS != null) {
             return SUPPORTED_SCRIPTS;
         } else {
-            return (Collection<Character.UnicodeScript>) callMethod(TYPOGRAPHY_PACKAGE + "shaping.Shaper", "getSupportedScripts", new Class[]{});
+            return (Collection<Character.UnicodeScript>) callMethod(TYPOGRAPHY_PACKAGE + SHAPER, GET_SUPPORTED_SCRIPTS, new Class[]{});
         }
     }
 
