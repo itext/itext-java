@@ -146,7 +146,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                     keepWithNextHangingRenderer = renderer;
                     keepWithNextHangingRendererLayoutResult = result;
                 }
-            } else if (currentArea != null) {
+            } else {
                 updateCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
             }
         } else if (positionedRenderers.size() > 0 && positionedRenderers.get(positionedRenderers.size() - 1) == renderer) {
@@ -217,10 +217,12 @@ public abstract class RootRenderer extends AbstractRenderer {
     }
 
     private void updateCurrentAreaAndProcessRenderer(IRenderer renderer, List<IRenderer> resultRenderers, LayoutResult result) {
-        currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
-        currentArea.setEmptyArea(false);
-        if (renderer != null) {
-            processRenderer(renderer, resultRenderers);
+        if (currentArea != null) {
+            currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
+            currentArea.setEmptyArea(false);
+            if (renderer != null) {
+                processRenderer(renderer, resultRenderers);
+            }
         }
 
         if (!immediateFlush) {
