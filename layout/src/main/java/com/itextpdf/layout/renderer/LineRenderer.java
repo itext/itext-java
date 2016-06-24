@@ -172,12 +172,17 @@ public class LineRenderer extends AbstractRenderer {
                 childResult.getOccupiedArea().getBBox().moveRight(tabWidth);
                 if (childResult.getSplitRenderer() != null)
                     childResult.getSplitRenderer().getOccupiedArea().getBBox().moveRight(tabWidth);
+
+                float tabAndNextElemWidth = tabWidth + childResult.getOccupiedArea().getBBox().getWidth();
+                if (nextTabStop.getTabAlignment() == TabAlignment.RIGHT && curWidth + tabAndNextElemWidth < nextTabStop.getTabPosition()) {
+                    curWidth = nextTabStop.getTabPosition();
+                } else {
+                    curWidth += tabAndNextElemWidth;
+                }
                 nextTabStop = null;
-
-                curWidth += tabWidth;
+            } else {
+                curWidth += childResult.getOccupiedArea().getBBox().getWidth();
             }
-
-            curWidth += childResult.getOccupiedArea().getBBox().getWidth();
             occupiedArea.setBBox(new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight, curWidth, maxHeight));
 
             if (childResult.getStatus() != LayoutResult.FULL) {
