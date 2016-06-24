@@ -44,6 +44,7 @@
 package com.itextpdf.layout.property;
 
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 
 public class Underline {
     protected Color color;
@@ -51,7 +52,7 @@ public class Underline {
     protected float thicknessMul;
     protected float yPosition;
     protected float yPositionMul;
-    protected int lineCapStyle;
+    protected int lineCapStyle = PdfCanvasConstants.LineCapStyle.BUTT;
 
     public Underline(Color color, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {
         this.color = color;
