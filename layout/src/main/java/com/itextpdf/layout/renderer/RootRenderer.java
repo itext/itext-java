@@ -102,6 +102,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                             updateCurrentArea(result);
                         }
                         ((ImageRenderer)result.getOverflowRenderer()).autoScale(currentArea);
+                        result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
                     } else {
                         if (currentArea.isEmptyArea() && !(renderer instanceof AreaBreakRenderer)) {
                             if (Boolean.TRUE.equals(result.getOverflowRenderer().getModelElement().<Boolean>getProperty(Property.KEEP_TOGETHER))) {

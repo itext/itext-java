@@ -3,6 +3,7 @@ package com.itextpdf.layout;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -28,7 +29,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class ImageTest extends ExtendedITextTest{
+public class ImageTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/ImageTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/ImageTest/";
@@ -80,7 +81,7 @@ public class ImageTest extends ExtendedITextTest{
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createJpeg(UrlUtil.toURL(sourceFolder+"Desert.jpg")));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createJpeg(UrlUtil.toURL(sourceFolder + "Desert.jpg")));
         Image image = new Image(xObject, 100);
 
         Paragraph p = new Paragraph();
@@ -183,7 +184,6 @@ public class ImageTest extends ExtendedITextTest{
 
     @Test
     public void imageTest06() throws IOException, InterruptedException {
-
         String outFileName = destinationFolder + "imageTest06.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest06.pdf";
 
@@ -215,7 +215,6 @@ public class ImageTest extends ExtendedITextTest{
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void imageTest07() throws IOException, InterruptedException {
-
         String outFileName = destinationFolder + "imageTest07.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest07.pdf";
 
@@ -223,7 +222,6 @@ public class ImageTest extends ExtendedITextTest{
         PdfWriter writer = new PdfWriter(file);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
-
 
         Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
 
@@ -262,6 +260,63 @@ public class ImageTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void imageTest09() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest09.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest09.pdf";
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc, new PageSize(500, 300));
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        image.setWidthPercent(100);
+        doc.add(image);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void imageTest10() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest10.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest10.pdf";
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc, new PageSize(500, 300));
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        image.setAutoScale(true);
+        doc.add(image);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void imageTest11() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest11.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest11.pdf";
+
+        FileOutputStream file = new FileOutputStream(outFileName);
+        PdfWriter writer = new PdfWriter(file);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        image.setAutoScale(true);
+        doc.add(image);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
     /**
      * Image can be reused in layout, so flushing it on the very first draw is a bad thing.
      */
@@ -279,8 +334,9 @@ public class ImageTest extends ExtendedITextTest{
         Table table = new Table(8);
         table.setWidthPercent(100);
         for (int k = 0; k < rowCount; k++) {
-            for (int j = 0; j < 7; j++)
-            { table.addCell("Hello"); }
+            for (int j = 0; j < 7; j++) {
+                table.addCell("Hello");
+            }
             Cell c = new Cell().add(img.setWidthPercent(50));
             table.addCell(c);
         }
