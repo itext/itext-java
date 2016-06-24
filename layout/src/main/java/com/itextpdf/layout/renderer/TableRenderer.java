@@ -134,6 +134,11 @@ public class TableRenderer extends AbstractRenderer {
         // so we need to clear heights
         heights.clear();
 
+        // Cells' up moves occured while split processing
+        // key is column number (there can be only one move during one split
+        // value is the previous row number of the cell
+        Map<Integer, Integer> rowMoves =  new HashMap<Integer, Integer>();
+
         applyMargins(layoutBox, false);
         applyBorderBox(layoutBox, false);
 
@@ -264,6 +269,7 @@ public class TableRenderer extends AbstractRenderer {
                     } else {
                         rows.get(currentCellInfo.finishRowInd)[col] = null;
                         currentRow[col] = cell;
+                        rowMoves.put(col, currentCellInfo.finishRowInd);
                     }
                 } else {
                     if (cellResult.getStatus() != LayoutResult.FULL) {
@@ -465,6 +471,16 @@ public class TableRenderer extends AbstractRenderer {
 
                 applyBorderBox(occupiedArea.getBBox(), true);
                 applyMargins(occupiedArea.getBBox(), true);
+
+                // On the next page we need to process rows without any changes except moves connected to actual cell splitting
+                for (Map.Entry<Integer, Integer> entry : rowMoves.entrySet()) {
+                    // Move the cell back to its row if there was no actual split
+                    if (null == splitResult[1].rows.get(entry.getValue()-splitResult[0].rows.size())[entry.getKey()]) {
+                        splitResult[1].rows.get(entry.getValue() - splitResult[0].rows.size())[entry.getKey()] = splitResult[1].rows.get(row - splitResult[0].rows.size())[entry.getKey()];
+                        splitResult[1].rows.get(row - splitResult[0].rows.size())[entry.getKey()] = null;
+                    }
+                }
+
                 if (isKeepTogether() && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && !(this.parent instanceof CellRenderer)) {
                     return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
                 } else {

@@ -966,7 +966,7 @@ public class TableTest extends ExtendedITextTest{
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 9)
     })
     @Test
     public void splitTableOnShortPage() throws IOException, InterruptedException {
@@ -975,20 +975,24 @@ public class TableTest extends ExtendedITextTest{
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        Document doc = new Document(pdfDoc, new PageSize(300, 120));
+        Document doc = new Document(pdfDoc, new PageSize(300, 90));
 
         doc.add(new Paragraph("Table with setKeepTogether(true):"));
-        Table table = new Table(2);
+        Table table = new Table(3);
         table.setKeepTogether(true);
-        table.setMarginTop(10);
         Cell cell = new Cell(3, 1);
         cell.add("G");
         cell.add("R");
         cell.add("P");
         table.addCell(cell);
-        table.addCell("row 1");
-        table.addCell("row 2");
-        table.addCell("row 3");
+        table.addCell("middle row 1");
+        cell = new Cell(3, 1);
+        cell.add("A");
+        cell.add("B");
+        cell.add("C");
+        table.addCell(cell);
+        table.addCell("middle row 2");
+        table.addCell("middle row 3");
         doc.add(table);
 
         doc.add(new AreaBreak());
