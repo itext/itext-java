@@ -76,6 +76,7 @@ public class SolidLine implements ILineDrawer {
     public void draw(PdfCanvas canvas, Rectangle drawArea) {
         canvas.saveState()
                 .setStrokeColor(color)
+                .setLineWidth(lineWidth)
                 .moveTo(drawArea.getX(), drawArea.getY())
                 .lineTo(drawArea.getX() + drawArea.getWidth(), drawArea.getY())
                 .stroke()

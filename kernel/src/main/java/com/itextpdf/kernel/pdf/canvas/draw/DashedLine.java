@@ -84,6 +84,7 @@ public class DashedLine implements ILineDrawer {
      * Gets line width in points
      * @return line thickness
      */
+    @Override
     public float getLineWidth() {
         return lineWidth;
     }
@@ -92,6 +93,7 @@ public class DashedLine implements ILineDrawer {
      * Sets line width in points
      * @param lineWidth new line width
      */
+    @Override
     public void setLineWidth(float lineWidth) {
         this.lineWidth = lineWidth;
     }
