@@ -592,7 +592,8 @@ public class XfaForm {
         }
         if (xfaNodes.containsKey("datasets")) {
             datasetsNode = xfaNodes.get("datasets");
-            datasetsSom = new Xml2SomDatasets(datasetsNode.getFirstChild());
+            Node dataNode = findDataNode(datasetsNode);
+            datasetsSom = new Xml2SomDatasets(dataNode != null ? dataNode : datasetsNode.getFirstChild());
         }
         if (datasetsNode == null)
             createDatasetsNode(domDocument.getFirstChild());
@@ -626,4 +627,15 @@ public class XfaForm {
         }
         return result;
     }
+
+    private Node findDataNode(Node datasetsNode) {
+        NodeList childNodes = datasetsNode.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            if (childNodes.item(i).getNodeName().equals("xfa:data")) {
+                return childNodes.item(i);
+            }
+        }
+        return null;
+    }
+
 }
