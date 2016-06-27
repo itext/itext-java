@@ -124,6 +124,14 @@ public class ByteUtils {
 
     static byte[] getIsoBytes(double d, ByteBuffer buffer, boolean highPrecision) {
         if (highPrecision) {
+            if (Math.abs(d) < 0.000001) {
+                if (buffer != null) {
+                    buffer.prepend(zero);
+                    return null;
+                } else {
+                    return zero;
+                }
+            }
             byte[] result = DecimalFormatUtil.formatNumber(d, "0.######").getBytes();
             if (buffer != null) {
                 buffer.prepend(result);
