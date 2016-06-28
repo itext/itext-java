@@ -3,6 +3,7 @@ package com.itextpdf.layout;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.draw.DashedLine;
 import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -57,6 +58,8 @@ public class LineSeparatorTest extends ExtendedITextTest {
         style.setBackgroundColor(Color.YELLOW);
         style.setMargin(10);
         document.add(new LineSeparator(new SolidLine()).addStyle(style));
+
+        document.add(new LineSeparator(new DashedLine()).setBackgroundColor(Color.RED));
 
         document.close();
 
