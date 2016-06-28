@@ -43,12 +43,12 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.property.Property;
 
 public class LineSeparatorRenderer extends BlockRenderer {
 
@@ -63,9 +63,9 @@ public class LineSeparatorRenderer extends BlockRenderer {
 
         occupiedArea = layoutContext.getArea().clone();
 
-        UnitValue widthProperty = ((LineSeparator)modelElement).getWidth();
-        if (widthProperty != null) {
-            occupiedArea.getBBox().setWidth(widthProperty.getValue());
+        Float calculatedWidth = retrieveWidth(layoutContext.getArea().getBBox().getWidth());
+        if (calculatedWidth != null) {
+            occupiedArea.getBBox().setWidth(calculatedWidth);
         }
 
         applyMargins(occupiedArea.getBBox(), false);
@@ -87,7 +87,9 @@ public class LineSeparatorRenderer extends BlockRenderer {
         super.draw(drawContext);
         ILineDrawer lineDrawer = this.<ILineDrawer>getProperty(Property.LINE_DRAWER);
         if (lineDrawer != null) {
-            lineDrawer.draw(drawContext.getCanvas(), occupiedArea.getBBox());
+            Rectangle area = occupiedArea.getBBox().clone();
+            applyMargins(area, false);
+            lineDrawer.draw(drawContext.getCanvas(), area);
         }
     }
 }
