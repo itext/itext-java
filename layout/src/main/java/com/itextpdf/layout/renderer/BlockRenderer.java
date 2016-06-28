@@ -81,7 +81,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         Float blockHeight = retrieveHeight();
         if (!isFixedLayout() && blockHeight != null && blockHeight > parentBBox.getHeight()) {
-            return new LayoutResult(LayoutResult.NOTHING, null, null, this);
+            return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
         }
 
         float[] margins = getMargins();
@@ -116,7 +116,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
         Rectangle layoutBox = areas.get(0).clone();
 
         boolean anythingPlaced = false;
-
         for (int childPos = 0; childPos < childRenderers.size(); childPos++) {
             IRenderer childRenderer = childRenderers.get(childPos);
             LayoutResult result;
@@ -199,7 +198,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                             return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
                         } else {
-                            return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer);
+                            return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, LayoutResult.NOTHING == layoutResult ? result.getCauseOfNothing() : null);
                         }
                     }
                 }
@@ -232,7 +231,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingHeight(layoutContext.getArea())) {
                 if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
                 }
             }
         }

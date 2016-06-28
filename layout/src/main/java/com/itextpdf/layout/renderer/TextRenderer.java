@@ -273,7 +273,7 @@ public class TextRenderer extends AbstractRenderer {
                     TextRenderer[] splitResult = split(initialLineTextPos);
                     applyBorderBox(occupiedArea.getBBox(), borders, true);
                     applyMargins(occupiedArea.getBBox(), margins, true);
-                    return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1]);
+                    return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1], this);
                 } else {
                     // cannot fit a word as a whole
 
@@ -342,7 +342,7 @@ public class TextRenderer extends AbstractRenderer {
                         }
                     }
                     if (line.end <= 0) {
-                        result = new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                        result = new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
                     } else {
                         result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, null, null).setWordHasBeenSplit(wordSplit);
                     }
@@ -358,7 +358,7 @@ public class TextRenderer extends AbstractRenderer {
             if (currentLineHeight > layoutBox.getHeight() && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                 applyBorderBox(occupiedArea.getBBox(), borders, true);
                 applyMargins(occupiedArea.getBBox(), margins, true);
-                return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
             }
 
             yLineOffset = currentLineAscender * fontSize / TEXT_SPACE_COEFF;

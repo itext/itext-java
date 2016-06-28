@@ -441,6 +441,11 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     @Override
+    public IRenderer getParent() {
+        return parent;
+    }
+
+    @Override
     public void move(float dxRight, float dyUp) {
         occupiedArea.getBBox().moveRight(dxRight);
         occupiedArea.getBBox().moveUp(dyUp);

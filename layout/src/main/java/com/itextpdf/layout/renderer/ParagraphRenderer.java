@@ -191,7 +191,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 } else {
                     boolean keepTogether = isKeepTogether();
                     if (keepTogether) {
-                        return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                        return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
                     } else {
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
@@ -218,7 +218,7 @@ public class ParagraphRenderer extends BlockRenderer {
                                 lines.add(currentRenderer);
                                 return new LayoutResult(LayoutResult.FULL, occupiedArea, null, this);
                             } else {
-                                return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                                return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
                             }
                         }
                     }
@@ -263,7 +263,7 @@ public class ParagraphRenderer extends BlockRenderer {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingHeight(layoutContext.getArea())) {
                 if (!layoutContext.getArea().isEmptyArea()) {
-                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
                 }
             }
         }

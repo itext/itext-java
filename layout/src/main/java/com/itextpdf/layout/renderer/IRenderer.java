@@ -153,4 +153,6 @@ public interface IRenderer extends IPropertyContainer {
      * @return new renderer instance
      */
     IRenderer getNextRenderer();
+
+    IRenderer getParent();
 }

@@ -48,13 +48,12 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class RootRenderer extends AbstractRenderer {
 
@@ -115,7 +114,17 @@ public abstract class RootRenderer extends AbstractRenderer {
                                     currentPageNumber = storedArea.getPageNumber();
                                 }
                                 storedArea = currentArea;
-                            } else {
+                            } else if (null != result.getCauseOfNothing() && Boolean.TRUE.equals(result.getCauseOfNothing().getProperty(Property.KEEP_TOGETHER))) {
+                                // set KEEP_TOGETHER false on the deepest parent (maybe the element itself) to have KEEP_TOGETHER == true
+                                IRenderer theDeepestKeptTogether = result.getCauseOfNothing();
+                                while (null == theDeepestKeptTogether.getModelElement() || null == theDeepestKeptTogether.getModelElement().<Boolean>getOwnProperty(Property.KEEP_TOGETHER)) {
+                                    theDeepestKeptTogether = theDeepestKeptTogether.getParent();
+                                }
+                                theDeepestKeptTogether.getModelElement().setProperty(Property.KEEP_TOGETHER, false);
+                                Logger logger = LoggerFactory.getLogger(RootRenderer.class);
+                                logger.warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "KeepTogether property of inner element will be ignored."));
+                            } else
+                            {
                                 result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
                                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
                                 logger.warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));

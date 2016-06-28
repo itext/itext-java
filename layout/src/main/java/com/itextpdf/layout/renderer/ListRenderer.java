@@ -84,7 +84,7 @@ public class ListRenderer extends BlockRenderer {
                     LayoutResult listSymbolLayoutResult = currentSymbolRenderer.setParent(this).layout(layoutContext);
                     currentSymbolRenderer.setParent(null);
                     if (listSymbolLayoutResult.getStatus() != LayoutResult.FULL) {
-                        return new LayoutResult(LayoutResult.NOTHING, null, null, this);
+                        return new LayoutResult(LayoutResult.NOTHING, null, null, this, listSymbolLayoutResult.getCauseOfNothing());
                     }
                 }
             }

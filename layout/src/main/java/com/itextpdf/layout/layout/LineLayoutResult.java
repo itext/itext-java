@@ -53,6 +53,10 @@ public class LineLayoutResult extends LayoutResult {
         super(status, occupiedArea, splitRenderer, overflowRenderer);
     }
 
+    public LineLayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause) {
+        super(status, occupiedArea, splitRenderer, overflowRenderer, cause);
+    }
+
     public boolean isSplitForcedByNewline() {
         return splitForcedByNewline;
     }

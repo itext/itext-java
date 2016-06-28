@@ -141,7 +141,7 @@ public class ImageRenderer extends AbstractRenderer {
         getMatrix(t, imageItselfScaledWidth, imageItselfScaledHeight);
 
         if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && (width > layoutBox.getWidth() || height > layoutBox.getHeight())) {
-            return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+            return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
         }
 
         occupiedArea.getBBox().moveDown(height);

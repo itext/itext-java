@@ -70,7 +70,7 @@ public class LineSeparatorRenderer extends BlockRenderer {
 
         applyMargins(occupiedArea.getBBox(), false);
         if (occupiedArea.getBBox().getHeight() < height) {
-            return new LayoutResult(LayoutResult.NOTHING, null, null, this);
+            return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
         }
         occupiedArea.getBBox().moveUp(occupiedArea.getBBox().getHeight() - height).setHeight(height);
         applyMargins(occupiedArea.getBBox(), true);

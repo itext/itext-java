@@ -220,9 +220,11 @@ public class LineRenderer extends AbstractRenderer {
                     }
                 }
 
-                result = new LineLayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
-                if (childResult.getStatus() == LayoutResult.PARTIAL && childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isSplitForcedByNewline())
+                result = new LineLayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1],
+                        anythingPlaced ? null : (childResult.getStatus() == LayoutResult.NOTHING ? this : childResult.getCauseOfNothing()));
+                if (childResult.getStatus() == LayoutResult.PARTIAL && childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isSplitForcedByNewline()) {
                     result.setSplitForcedByNewline(true);
+                }
                 break;
             } else {
                 anythingPlaced = true;
@@ -234,7 +236,7 @@ public class LineRenderer extends AbstractRenderer {
             if (anythingPlaced) {
                 result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
             } else {
-                result = new LineLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                result = new LineLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
             }
         }
 

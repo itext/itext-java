@@ -58,11 +58,20 @@ public class LayoutResult {
     protected IRenderer overflowRenderer;
     protected AreaBreak areaBreak;
 
+    protected IRenderer causeOfNothing;
+
     public LayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer) {
         this.status = status;
         this.occupiedArea = occupiedArea;
         this.splitRenderer = splitRenderer;
         this.overflowRenderer = overflowRenderer;
+    }
+
+    public LayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause) {
+        this(status, occupiedArea, splitRenderer, overflowRenderer);
+        if (LayoutResult.NOTHING == status) {
+            causeOfNothing = cause;
+        }
     }
 
     public int getStatus() {
@@ -96,6 +105,10 @@ public class LayoutResult {
     public LayoutResult setAreaBreak(AreaBreak areaBreak) {
         this.areaBreak = areaBreak;
         return this;
+    }
+
+    public IRenderer getCauseOfNothing() {
+        return causeOfNothing;
     }
 
     @Override

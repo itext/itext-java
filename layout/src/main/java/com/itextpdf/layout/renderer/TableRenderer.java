@@ -131,8 +131,9 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         // we can invoke #layout() twice (processing KEEP_TOGETHER for instance)
-        // so we need to clear heights
+        // so we need to clear the results of previous #layout() invocation
         heights.clear();
+        childRenderers.clear();
 
         // Cells' up moves occured while split processing
         // key is column number (there can be only one move during one split
@@ -168,7 +169,7 @@ public class TableRenderer extends AbstractRenderer {
             headerRenderer = (TableRenderer) headerElement.createRendererSubTree().setParent(this);
             LayoutResult result = headerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             if (result.getStatus() != LayoutResult.FULL) {
-                return new LayoutResult(LayoutResult.NOTHING, null, null, this);
+                return new LayoutResult(LayoutResult.NOTHING, null, null, this, result.getCauseOfNothing());
             }
             float headerHeight = result.getOccupiedArea().getBBox().getHeight();
             layoutBox.decreaseHeight(headerHeight);
@@ -179,7 +180,7 @@ public class TableRenderer extends AbstractRenderer {
             footerRenderer = (TableRenderer) footerElement.createRendererSubTree().setParent(this);
             LayoutResult result = footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             if (result.getStatus() != LayoutResult.FULL) {
-                return new LayoutResult(LayoutResult.NOTHING, null, null, this);
+                return new LayoutResult(LayoutResult.NOTHING, null, null, this, result.getCauseOfNothing());
             }
             float footerHeight = result.getOccupiedArea().getBBox().getHeight();
             footerRenderer.move(0, -(layoutBox.getHeight() - footerHeight));
@@ -218,6 +219,9 @@ public class TableRenderer extends AbstractRenderer {
                     cellProcessingQueue.offer(new CellRendererInfo(currentRow[col], col, row));
                 }
             }
+            // the element which was the first to cause Layout.Nothing
+            IRenderer firstCauseOfNothing = null;
+
             while (!cellProcessingQueue.isEmpty()) {
                 CellRendererInfo currentCellInfo = cellProcessingQueue.poll();
                 int col = currentCellInfo.column;
@@ -256,9 +260,11 @@ public class TableRenderer extends AbstractRenderer {
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, null);
                 LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea));
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
-                //width of BlockRenderer depends on child areas, while in cell case it is hardly define.
+                // width of BlockRenderer depends on child areas, while in cell case it is hardly define.
                 if (cellResult.getStatus() != LayoutResult.NOTHING) {
                     cell.getOccupiedArea().getBBox().setWidth(cellWidth);
+                } else if (null == firstCauseOfNothing) {
+                    firstCauseOfNothing = cellResult.getCauseOfNothing();
                 }
 
                 if (currentCellHasBigRowspan) {
@@ -481,8 +487,8 @@ public class TableRenderer extends AbstractRenderer {
                     }
                 }
 
-                if (isKeepTogether() && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && !(this.parent instanceof CellRenderer)) {
-                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                if (isKeepTogether() && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, null == firstCauseOfNothing ? this : firstCauseOfNothing);
                 } else {
                     int status = (childRenderers.isEmpty() && footerRenderer == null)
                             ? LayoutResult.NOTHING
@@ -490,7 +496,7 @@ public class TableRenderer extends AbstractRenderer {
                     if (status == LayoutResult.NOTHING && Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
                     } else {
-                        return new LayoutResult(status, occupiedArea, splitResult[0], splitResult[1]);
+                        return new LayoutResult(status, occupiedArea, splitResult[0], splitResult[1], LayoutResult.NOTHING == status ? firstCauseOfNothing : null);
                     }
                 }
             } else {

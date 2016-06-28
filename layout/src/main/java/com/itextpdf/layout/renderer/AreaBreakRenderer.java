@@ -77,7 +77,7 @@ public class AreaBreakRenderer implements IRenderer {
         LayoutArea occupiedArea = layoutContext.getArea().clone();
         occupiedArea.getBBox().setHeight(0);
         occupiedArea.getBBox().setWidth(0);
-        return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, null).setAreaBreak(areaBreak);
+        return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, null, this).setAreaBreak(areaBreak);
     }
 
     @Override
@@ -156,6 +156,11 @@ public class AreaBreakRenderer implements IRenderer {
 
     @Override
     public IRenderer getNextRenderer() {
+        return null;
+    }
+
+    @Override
+    public IRenderer getParent() {
         return null;
     }
 }

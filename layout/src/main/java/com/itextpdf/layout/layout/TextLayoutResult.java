@@ -54,6 +54,10 @@ public class TextLayoutResult extends LayoutResult {
         super(status, occupiedArea, splitRenderer, overflowRenderer);
     }
 
+    public TextLayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause) {
+        super(status, occupiedArea, splitRenderer, overflowRenderer, cause);
+    }
+
     public boolean isWordHasBeenSplit() {
         return wordHasBeenSplit;
     }
