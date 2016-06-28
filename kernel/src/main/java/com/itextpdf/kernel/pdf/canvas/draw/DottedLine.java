@@ -96,8 +96,8 @@ public class DottedLine implements ILineDrawer {
                 .setStrokeColor(color)
                 .setLineDash(0, gap, gap / 2)
                 .setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND)
-                .moveTo(drawArea.getX(), drawArea.getY())
-                .lineTo(drawArea.getX() + drawArea.getWidth(), drawArea.getY())
+                .moveTo(drawArea.getX(), drawArea.getY() + lineWidth / 2)
+                .lineTo(drawArea.getX() + drawArea.getWidth(), drawArea.getY() + lineWidth / 2)
                 .stroke()
                 .restoreState();
     }

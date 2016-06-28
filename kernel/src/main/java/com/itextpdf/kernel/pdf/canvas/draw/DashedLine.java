@@ -74,8 +74,8 @@ public class DashedLine implements ILineDrawer {
                 .setLineWidth(lineWidth)
                 .setStrokeColor(color)
                 .setLineDash(2, 2)
-                .moveTo(drawArea.getX(), drawArea.getY() + drawArea.getHeight() / 2)
-                .lineTo(drawArea.getX() + drawArea.getWidth(), drawArea.getY() + drawArea.getHeight() / 2)
+                .moveTo(drawArea.getX(), drawArea.getY() + lineWidth / 2)
+                .lineTo(drawArea.getX() + drawArea.getWidth(), drawArea.getY() + lineWidth / 2)
                 .stroke()
                 .restoreState();
     }

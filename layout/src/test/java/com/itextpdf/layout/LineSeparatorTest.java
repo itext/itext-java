@@ -46,4 +46,21 @@ public class LineSeparatorTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void lineSeparatorBackgroundTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "lineSeparatorBackgroundTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_lineSeparatorBackgroundTest01.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+
+        Style style = new Style();
+        style.setBackgroundColor(Color.YELLOW);
+        style.setMargin(10);
+        document.add(new LineSeparator(new SolidLine()).addStyle(style));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
 }

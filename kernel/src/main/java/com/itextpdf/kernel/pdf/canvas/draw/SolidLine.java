@@ -77,8 +77,8 @@ public class SolidLine implements ILineDrawer {
         canvas.saveState()
                 .setStrokeColor(color)
                 .setLineWidth(lineWidth)
-                .moveTo(drawArea.getX(), drawArea.getY())
-                .lineTo(drawArea.getX() + drawArea.getWidth(), drawArea.getY())
+                .moveTo(drawArea.getX(), drawArea.getY() + lineWidth / 2)
+                .lineTo(drawArea.getX() + drawArea.getWidth(), drawArea.getY() + lineWidth / 2)
                 .stroke()
                 .restoreState();
     }
