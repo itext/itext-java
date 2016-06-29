@@ -43,6 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -59,10 +60,14 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class BlockRenderer extends AbstractRenderer {
 
@@ -320,8 +325,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
         Rectangle bBox = occupiedArea.getBBox().clone();
         Float rotationAngle = this.<Float>getProperty(Property.ROTATION_ANGLE);
         if (rotationAngle != null) {
-            bBox.setWidth((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH));
-            bBox.setHeight((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT));
+            if (!hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT) || !hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
+                Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+                logger.error(MessageFormat.format(LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, getClass().getSimpleName()));
+            } else {
+                bBox.setWidth((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH));
+                bBox.setHeight((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT));
+            }
         }
         return bBox;
     }
@@ -444,27 +454,37 @@ public abstract class BlockRenderer extends AbstractRenderer {
     protected void beginRotationIfApplied(PdfCanvas canvas) {
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
-            float heightDiff = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
+            if (!hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
+                Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+                logger.error(MessageFormat.format(LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, getClass().getSimpleName()));
+            } else {
+                float heightDiff = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
 
-            float shiftX = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_X);
-            float shiftY = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
+                float shiftX = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_X);
+                float shiftY = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
 
-            move(-shiftX, -shiftY);
-            float[] ctm = applyRotation();
-            canvas.saveState().concatMatrix(ctm[0], ctm[1], ctm[2], ctm[3], ctm[4], ctm[5]);
+                move(-shiftX, -shiftY);
+                float[] ctm = applyRotation();
+                canvas.saveState().concatMatrix(ctm[0], ctm[1], ctm[2], ctm[3], ctm[4], ctm[5]);
+            }
         }
     }
 
     protected void endRotationIfApplied(PdfCanvas canvas) {
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
-            float heightDiff = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
+            if (!hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
+                Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+                logger.error(MessageFormat.format(LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, getClass().getSimpleName()));
+            } else {
+                float heightDiff = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
 
-            float shiftX = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_X);
-            float shiftY = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
+                float shiftX = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_X);
+                float shiftY = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
 
-            canvas.restoreState();
-            move(shiftX, shiftY);
+                canvas.restoreState();
+                move(shiftX, shiftY);
+            }
         }
     }
 

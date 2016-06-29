@@ -8,6 +8,8 @@ import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.LineSeparator;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -60,6 +62,38 @@ public class LineSeparatorTest extends ExtendedITextTest {
         document.add(new LineSeparator(new SolidLine()).addStyle(style));
 
         document.add(new LineSeparator(new DashedLine()).setBackgroundColor(Color.RED));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+
+    @Test
+    public void rotatedLineSeparatorTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "rotatedLineSeparatorTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_rotatedLineSeparatorTest01.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+
+        document.add(new LineSeparator(new DashedLine()).setBackgroundColor(Color.RED).setRotationAngle(Math.PI / 2));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void rotatedLineSeparatorTest0() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "rotatedLineSeparatorTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_rotatedLineSeparatorTest02.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+
+        document.add(new Paragraph("Hello"));
+        document.add(new LineSeparator(new DashedLine()).setWidth(100).setHorizontalAlignment(HorizontalAlignment.CENTER).
+                setBackgroundColor(Color.GREEN).setRotationAngle(Math.PI / 4));
+        document.add(new Paragraph("World"));
 
         document.close();
 
