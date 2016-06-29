@@ -9,21 +9,18 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
-
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class TextWritingTest extends ExtendedITextTest {
@@ -41,7 +38,7 @@ public class TextWritingTest extends ExtendedITextTest {
         // CountryChunks example
         String outFileName = destinationFolder + "textRiseTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_textRiseTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -67,7 +64,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void textRenderingModeTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "textRenderingModeTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_textRenderingModeTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -100,7 +97,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void leadingTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "leadingTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_leadingTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -126,7 +123,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void firstLineIndentTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "firstLineIndentTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_firstLineIndentTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
         document.setProperty(Property.FIRST_LINE_INDENT, 25);
@@ -172,7 +169,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void charSpacingTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "charSpacingTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_charSpacingTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -195,7 +192,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void wordSpacingTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "wordSpacingTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_wordSpacingTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -219,7 +216,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void fontStyleSimulationTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fontStyleSimulationTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_fontStyleSimulationTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 

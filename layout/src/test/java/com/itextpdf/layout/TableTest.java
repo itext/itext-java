@@ -22,7 +22,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
@@ -49,9 +48,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{50, 50})
@@ -68,9 +65,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{50, 50})
@@ -91,9 +86,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent1 = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -119,9 +112,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -144,9 +135,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -169,9 +158,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -194,9 +181,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -219,9 +204,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -250,9 +233,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -284,9 +265,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.add(new Paragraph("Table 1"));
@@ -327,9 +306,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
@@ -362,9 +339,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
@@ -405,9 +380,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -438,9 +411,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -475,9 +446,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -515,9 +484,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -548,9 +515,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{50, 50, 50})
@@ -580,9 +545,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.add(new Paragraph(textContent));
@@ -614,9 +577,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{130, 130, 260})
@@ -647,9 +608,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{130, 130, 260})
@@ -676,9 +635,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -711,9 +668,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -743,9 +698,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -775,9 +728,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -804,9 +755,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -836,9 +785,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        final PdfDocument pdfDoc = new PdfDocument(writer);
+        final PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent1 = "Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add. You can also type a keyword to search online for the video that best fits your document.";
@@ -889,7 +836,7 @@ public class TableTest extends ExtendedITextTest{
         String testName = "toLargeElementWithKeepTogetherPropertyInTableTest01.pdf";
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(1);
@@ -905,7 +852,7 @@ public class TableTest extends ExtendedITextTest{
         table.addCell(cell);
         doc.add(table);
 
-        pdfDoc.close();
+        doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
@@ -917,7 +864,7 @@ public class TableTest extends ExtendedITextTest{
         String testName = "toLargeElementInTableTest01.pdf";
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "toLargeElementInTableTest01.pdf")));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "toLargeElementInTableTest01.pdf"));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{5});
@@ -927,7 +874,7 @@ public class TableTest extends ExtendedITextTest{
         table.addCell(cell);
         doc.add(table);
 
-        pdfDoc.close();
+        doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
@@ -937,9 +884,7 @@ public class TableTest extends ExtendedITextTest{
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        final PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(5);

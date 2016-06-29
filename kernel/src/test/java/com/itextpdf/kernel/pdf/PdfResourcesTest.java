@@ -8,7 +8,6 @@ import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
 import java.util.Set;
 
 @Category(IntegrationTest.class)
@@ -17,9 +16,7 @@ public class PdfResourcesTest {
 
     @Test
     public void resourcesTest1() throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter writer = new PdfWriter(baos);
-        final PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
         PdfPage page = document.addNewPage();
         PdfExtGState egs1 = new PdfExtGState();
@@ -38,8 +35,7 @@ public class PdfResourcesTest {
     @Test
     public void resourcesTest2() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter writer = new PdfWriter(baos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(baos));
         PdfPage page = document.addNewPage();
         PdfExtGState egs1 = new PdfExtGState();
         PdfExtGState egs2 = new PdfExtGState();

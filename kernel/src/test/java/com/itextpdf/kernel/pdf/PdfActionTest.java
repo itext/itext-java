@@ -1,15 +1,13 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.pdf.action.PdfAction;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
-
-import java.io.FileOutputStream;
-import java.text.MessageFormat;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.text.MessageFormat;
 
 @Category(IntegrationTest.class)
 public class PdfActionTest  extends ExtendedITextTest {
@@ -24,8 +22,7 @@ public class PdfActionTest  extends ExtendedITextTest {
 
     @Test
     public void actionTest01() throws Exception {
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "actionTest01.pdf"));
-        PdfDocument document = createDocument(writer, true);
+        PdfDocument document = createDocument(new PdfWriter(destinationFolder + "actionTest01.pdf"), true);
 
         document.getCatalog().setOpenAction(PdfAction.createURI("http://itextpdf.com/"));
 
@@ -36,9 +33,7 @@ public class PdfActionTest  extends ExtendedITextTest {
 
     @Test
     public void actionTest02() throws Exception {
-
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + "actionTest02.pdf"));
-        PdfDocument document = createDocument(writer, false);
+        PdfDocument document = createDocument(new PdfWriter(destinationFolder + "actionTest02.pdf"), false);
 
         document.getPage(2).setAdditionalAction(PdfName.O, PdfAction.createURI("http://itextpdf.com/"));
 

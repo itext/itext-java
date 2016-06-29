@@ -14,14 +14,12 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class KeepTogetherTest extends ExtendedITextTest {
@@ -39,7 +37,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_keepTogetherParagraphTest01.pdf";
         String outFile = destinationFolder + "keepTogetherParagraphTest01.pdf";
 
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outFile));
+        PdfWriter writer = new PdfWriter(outFile);
 
 
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -66,7 +64,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_keepTogetherParagraphTest02.pdf";
         String outFile = destinationFolder + "keepTogetherParagraphTest02.pdf";
 
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outFile));
+        PdfWriter writer = new PdfWriter(outFile);
 
 
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -94,9 +92,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_keepTogetherListTest01.pdf";
         String outFile = destinationFolder + "keepTogetherListTest01.pdf";
 
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outFile));
-
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         for (int i = 0; i < 28; i++) {
@@ -115,7 +111,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_keepTogetherDivTest01.pdf";
         String outFile = destinationFolder + "keepTogetherDivTest01.pdf";
 
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outFile));
+        PdfWriter writer = new PdfWriter(outFile);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
@@ -145,9 +141,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_keepTogetherDivTest02.pdf";
         String outFile = destinationFolder + "keepTogetherDivTest02.pdf";
 
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outFile));
-
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         Rectangle[] columns = {new Rectangle(100, 100, 100, 500), new Rectangle(400, 100, 100, 500)};

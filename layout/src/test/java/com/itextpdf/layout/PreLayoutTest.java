@@ -1,32 +1,29 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 import com.itextpdf.layout.renderer.TextRenderer;
 import com.itextpdf.test.ExtendedITextTest;
-
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Category(IntegrationTest.class)
 public class PreLayoutTest extends ExtendedITextTest{
@@ -43,7 +40,7 @@ public class PreLayoutTest extends ExtendedITextTest{
     public void preLayoutTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "preLayoutTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_preLayoutTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument, PageSize.Default, false);
 
@@ -83,7 +80,7 @@ public class PreLayoutTest extends ExtendedITextTest{
     public void preLayoutTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "preLayoutTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_preLayoutTest02.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDoc, PageSize.Default, false);
 

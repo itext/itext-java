@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Random;
 
@@ -56,9 +55,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     @Test
     public void primitivesFloatNumberTest() throws IOException {
         String filename = "primitivesFloatNumberTest.pdf";
-        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfArray array = generatePdfArrayWithFloatNumbers(null, false);
@@ -72,9 +69,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     @Test
     public void primitivesIntNumberTest() throws IOException {
         String filename = "primitivesIntNumberTest.pdf";
-        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfArray array = generatePdfArrayWithIntNumbers(null, false);
@@ -88,9 +83,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     @Test
     public void primitivesNameTest() throws IOException {
         String filename = "primitivesNameTest.pdf";
-        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfArray array = generatePdfArrayWithNames(null, false);
@@ -104,9 +97,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     @Test
     public void primitivesStringTest() throws IOException {
         String filename = "primitivesStringTest.pdf";
-        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfArray array = generatePdfArrayWithStrings(null, false);
@@ -120,9 +111,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     @Test
     public void primitivesBooleanTest() throws IOException {
         String filename = "primitivesBooleanTest.pdf";
-        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             page.getPdfObject().put(TestArray, generatePdfArrayWithBooleans(null, false));
@@ -134,9 +123,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     @Test
     public void primitivesFloatNumberIndirectTest() throws IOException {
         String filename = "primitivesFloatNumberIndirectTest.pdf";
-        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             page.getPdfObject().put(TestArray, generatePdfArrayWithFloatNumbers(pdfDoc, true));
@@ -148,9 +135,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     @Test
     public void primitivesIntNumberIndirectTest() throws IOException {
         String filename = "primitivesIntNumberIndirectTest.pdf";
-        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             page.getPdfObject().put(TestArray, generatePdfArrayWithIntNumbers(pdfDoc, true));
@@ -162,9 +147,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     @Test
     public void primitivesStringIndirectTest() throws IOException {
         String filename = "primitivesStringIndirectTest.pdf";
-        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             page.getPdfObject().put(TestArray, generatePdfArrayWithStrings(pdfDoc, true));
@@ -178,9 +161,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     @Test
     public void primitivesNameIndirectTest() throws IOException {
         String filename = "primitivesNameIndirectTest.pdf";
-        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             page.getPdfObject().put(TestArray, generatePdfArrayWithNames(pdfDoc, true));
@@ -192,9 +173,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     @Test
     public void primitivesBooleanIndirectTest() throws IOException {
         String filename = "primitivesBooleanIndirectTest.pdf";
-        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         for (int i = 0; i < PageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             page.getPdfObject().put(TestArray, generatePdfArrayWithBooleans(pdfDoc, true));

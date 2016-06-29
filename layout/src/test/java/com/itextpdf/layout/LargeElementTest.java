@@ -4,20 +4,18 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.test.ExtendedITextTest;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.MessageFormat;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
+import java.text.MessageFormat;
 
 @Category(IntegrationTest.class)
 public class LargeElementTest extends ExtendedITextTest {
@@ -36,9 +34,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(5, true);
@@ -69,9 +65,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(5, true).
@@ -98,9 +92,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream fos = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(5, true);
@@ -131,9 +123,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream fos = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(5, true);
@@ -167,9 +157,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream fos = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(5, true);
@@ -202,9 +190,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream fos = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(5, true);
@@ -237,9 +223,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        FileOutputStream fos = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(5, true);

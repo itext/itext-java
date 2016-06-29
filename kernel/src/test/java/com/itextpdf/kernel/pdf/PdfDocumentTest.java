@@ -12,8 +12,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import static org.junit.Assert.*;
@@ -50,13 +48,9 @@ public class PdfDocumentTest extends ExtendedITextTest {
     // fine, while another one failed.
     @Test
     public void addOutlinesWithNamedDestinations01() throws IOException, InterruptedException {
-        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "iphone_user_guide.pdf"));
         String filename = destinationFolder + "outlinesWithNamedDestinations01.pdf";
 
-        FileOutputStream fos = new FileOutputStream(filename);
-        PdfWriter writer = new PdfWriter(fos);
-
-        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "iphone_user_guide.pdf"), new PdfWriter(filename));
         PdfArray array1 = new PdfArray();
         array1.add(pdfDoc.getPage(2).getPdfObject());
         array1.add(PdfName.XYZ);
@@ -109,8 +103,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
     public void removeUnusedObjectsInWriterModeTest() throws IOException, InterruptedException {
         String filename = "removeUnusedObjectsInWriter.pdf";
 
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
-        PdfDocument pdfDocument = new PdfDocument(writer);
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + filename));
 
         pdfDocument.addNewPage();
 
@@ -126,8 +119,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.close();
 
 
-        PdfReader testerReader = new PdfReader(destinationFolder + filename);
-        PdfDocument testerDocument = new PdfDocument(testerReader);
+        PdfDocument testerDocument = new PdfDocument(new PdfReader(destinationFolder + filename));
         assertEquals(testerDocument.getXref().size(), 6);
         testerDocument.close();
     }
@@ -137,8 +129,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         String filenameIn = "docWithUnusedObjects_1.pdf";
         String filenameOut = "removeUnusedObjectsInStamping.pdf";
 
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filenameIn));
-        PdfDocument pdfDocument = new PdfDocument(writer);
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + filenameIn));
 
         pdfDocument.addNewPage();
 
@@ -151,15 +142,13 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.close();
 
 
-        PdfReader reader = new PdfReader(destinationFolder + filenameIn);
-        PdfDocument doc = new PdfDocument(reader, new PdfWriter(new FileOutputStream(destinationFolder + filenameOut)));
+        PdfDocument doc = new PdfDocument(new PdfReader(destinationFolder + filenameIn), new PdfWriter(destinationFolder + filenameOut));
         assertEquals(doc.getXref().size(), 8);
         //on closing, all unused objects shall not be written to resultant document
         doc.close();
 
 
-        PdfReader testerReader = new PdfReader(destinationFolder + filenameOut);
-        PdfDocument testerDocument = new PdfDocument(testerReader);
+        PdfDocument testerDocument = new PdfDocument(new PdfReader(destinationFolder + filenameOut));
         assertEquals(testerDocument.getXref().size(), 6);
         testerDocument.close();
     }
@@ -169,8 +158,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
     public void addUnusedObjectsInWriterModeTest() throws IOException, InterruptedException {
         String filename = "addUnusedObjectsInWriter.pdf";
 
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
-        PdfDocument pdfDocument = new PdfDocument(writer);
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + filename));
 
         pdfDocument.addNewPage();
 
@@ -186,8 +174,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.close();
 
 
-        PdfReader testerReader = new PdfReader(destinationFolder + filename);
-        PdfDocument testerDocument = new PdfDocument(testerReader);
+        PdfDocument testerDocument = new PdfDocument(new PdfReader(destinationFolder + filename));
         assertEquals(testerDocument.getXref().size(), 8);
         testerDocument.close();
     }
@@ -197,8 +184,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         String filenameIn = "docWithUnusedObjects_2.pdf";
         String filenameOut = "addUnusedObjectsInStamping.pdf";
 
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filenameIn));
-        PdfDocument pdfDocument = new PdfDocument(writer);
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + filenameIn));
 
         pdfDocument.addNewPage();
 
@@ -210,16 +196,12 @@ public class PdfDocumentTest extends ExtendedITextTest {
         unusedDictionary.makeIndirect(pdfDocument).flush();
         pdfDocument.close();
 
-
-        PdfReader reader = new PdfReader(destinationFolder + filenameIn);
-        PdfDocument doc = new PdfDocument(reader, new PdfWriter(new FileOutputStream(destinationFolder + filenameOut)));
+        PdfDocument doc = new PdfDocument(new PdfReader(destinationFolder + filenameIn), new PdfWriter(destinationFolder + filenameOut));
         assertEquals(doc.getXref().size(), 8);
         doc.setFlushUnusedObjects(true);
         doc.close();
 
-
-        PdfReader testerReader = new PdfReader(destinationFolder + filenameOut);
-        PdfDocument testerDocument = new PdfDocument(testerReader);
+        PdfDocument testerDocument = new PdfDocument(new PdfReader(destinationFolder + filenameOut));
         assertEquals(testerDocument.getXref().size(), 8);
         testerDocument.close();
     }
@@ -228,9 +210,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
     public void addUnusedStreamObjectsTest() throws IOException, InterruptedException {
         String filenameIn = "docWithUnusedObjects_3.pdf";
 
-
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filenameIn));
-        PdfDocument pdfDocument = new PdfDocument(writer);
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + filenameIn));
 
         pdfDocument.addNewPage();
 
@@ -244,8 +224,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         pdfDocument.setFlushUnusedObjects(true);
         pdfDocument.close();
 
-        PdfReader testerReader = new PdfReader(destinationFolder + filenameIn);
-        PdfDocument testerDocument = new PdfDocument(testerReader);
+        PdfDocument testerDocument = new PdfDocument(new PdfReader(destinationFolder + filenameIn));
         assertEquals(testerDocument.getXref().size(), 9);
         testerDocument.close();
     }
@@ -284,8 +263,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     public void checkAndResolveCircularReferences() throws IOException, InterruptedException {
-        PdfReader pdfReader = new PdfReader(sourceFolder + "datasheet.pdf");
-        PdfDocument pdfDocument = new PdfDocument(pdfReader, new PdfWriter(destinationFolder + "datasheet_mode.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "datasheet.pdf"), new PdfWriter(destinationFolder + "datasheet_mode.pdf"));
         PdfDictionary pdfObject = (PdfDictionary)pdfDocument.getPdfObject(53);
         pdfDocument.getPage(1).getResources().addForm(pdfObject);
         pdfDocument.close();
@@ -294,7 +272,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     public void readEncryptedDocumentWithFullCompression() throws IOException {
-        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "source.pdf"), new ReaderProperties().setPassword("123".getBytes()));
+        PdfReader reader = new PdfReader(sourceFolder + "source.pdf", new ReaderProperties().setPassword("123".getBytes()));
         PdfDocument pdfDocument = new PdfDocument(reader);
 
         PdfDictionary form = pdfDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);

@@ -14,14 +14,12 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class DefaultLayoutTest extends ExtendedITextTest {
@@ -38,7 +36,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
     public void multipleAdditionsOfSameModelElementTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "multipleAdditionsOfSameModelElementTest1.pdf";
         String cmpFileName = sourceFolder + "cmp_multipleAdditionsOfSameModelElementTest1.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -54,7 +52,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
     public void rendererTest01() throws IOException,  InterruptedException {
         String outFileName = destinationFolder + "rendererTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_rendererTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -76,7 +74,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
     public void emptyParagraphsTest01() throws IOException,  InterruptedException {
         String outFileName = destinationFolder + "emptyParagraphsTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_emptyParagraphsTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -98,7 +96,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
     public void emptyParagraphsTest02() throws IOException,  InterruptedException {
         String outFileName = destinationFolder + "emptyParagraphsTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_emptyParagraphsTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 

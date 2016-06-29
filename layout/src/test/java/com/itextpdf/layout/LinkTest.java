@@ -1,26 +1,20 @@
 package com.itextpdf.layout;
 
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Link;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class LinkTest extends ExtendedITextTest{
@@ -39,9 +33,7 @@ public class LinkTest extends ExtendedITextTest{
         String outFileName = destinationFolder+"linkTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_linkTest01.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
@@ -60,9 +52,7 @@ public class LinkTest extends ExtendedITextTest{
         String outFileName = destinationFolder+"linkTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_linkTest02.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         doc.add(new AreaBreak()).add(new AreaBreak());
 

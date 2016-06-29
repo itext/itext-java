@@ -2,25 +2,18 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
-
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
+import java.util.List;
 
 @Category(IntegrationTest.class)
 public class PdfLayerTest extends ExtendedITextTest{
@@ -35,16 +28,16 @@ public class PdfLayerTest extends ExtendedITextTest{
 
     @Test
     public void testInStamperMode1() throws IOException, InterruptedException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "input_layered.pdf")),
-                new PdfWriter(new FileOutputStream(destinationFolder + "output_copy_layered.pdf")));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "input_layered.pdf"),
+                new PdfWriter(destinationFolder + "output_copy_layered.pdf"));
         pdfDoc.close();
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "output_copy_layered.pdf", sourceFolder + "input_layered.pdf", destinationFolder, "diff"));
     }
 
     @Test
     public void testInStamperMode2() throws IOException, InterruptedException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "input_layered.pdf")),
-                new PdfWriter(new FileOutputStream(destinationFolder + "output_layered.pdf")));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "input_layered.pdf"),
+                new PdfWriter(destinationFolder + "output_layered.pdf"));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc, 1);
 

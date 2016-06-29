@@ -8,16 +8,8 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.color.CalGray;
-import com.itextpdf.kernel.color.CalRgb;
+import com.itextpdf.kernel.color.*;
 import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.color.DeviceCmyk;
-import com.itextpdf.kernel.color.DeviceN;
-import com.itextpdf.kernel.color.DeviceRgb;
-import com.itextpdf.kernel.color.IccBased;
-import com.itextpdf.kernel.color.Indexed;
-import com.itextpdf.kernel.color.Lab;
-import com.itextpdf.kernel.color.Separation;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
@@ -30,22 +22,17 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.awt.*;
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.awt.*;
+import java.io.*;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Category(IntegrationTest.class)
 public class PdfCanvasTest extends ExtendedITextTest {
@@ -75,9 +62,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "simpleCanvas.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "simpleCanvas.pdf"));
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
@@ -109,9 +94,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(destinationFolder + fileName);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + fileName));
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
@@ -176,7 +159,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
         Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        reader.close();
+        pdfDocument.close();
     }
 
     @Test
@@ -188,9 +171,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(destinationFolder + fileName);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + fileName));
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
@@ -263,7 +244,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
         Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        reader.close();
+        pdfDocument.close();
     }
 
     @Test
@@ -273,9 +254,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "simpleCanvasWithPageFlush.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "simpleCanvasWithPageFlush.pdf"));
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
@@ -296,7 +275,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
         Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        reader.close();
+        pdfDocument.close();
     }
 
     @Test
@@ -306,8 +285,8 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "simpleCanvasWithFullCompression.pdf");
-        PdfWriter writer = new PdfWriter(fos, new WriterProperties().setFullCompressionMode(true));
+        PdfWriter writer = new PdfWriter(destinationFolder + "simpleCanvasWithFullCompression.pdf",
+                new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -328,7 +307,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
         Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        reader.close();
+        pdfDocument.close();
     }
 
     @Test
@@ -338,8 +317,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "simpleCanvasWithPageFlushAndFullCompression.pdf");
-        PdfWriter writer = new PdfWriter(fos, new WriterProperties().setFullCompressionMode(true));
+        PdfWriter writer = new PdfWriter(destinationFolder + "simpleCanvasWithPageFlushAndFullCompression.pdf", new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -361,7 +339,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
         Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        reader.close();
+        pdfDocument.close();
     }
 
     @Test
@@ -373,9 +351,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
@@ -408,7 +384,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
             Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
-        reader.close();
+        pdfDocument.close();
     }
 
     @Test
@@ -420,9 +396,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
@@ -455,7 +429,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
             Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
-        reader.close();
+        pdfDocument.close();
     }
 
     @Test
@@ -467,9 +441,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
@@ -502,7 +474,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
             Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
-        reader.close();
+        pdfDocument.close();
     }
 
     @Test
@@ -514,9 +486,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
@@ -548,7 +518,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
             Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
-        reader.close();
+        pdfDocument.close();
     }
 
     @Test
@@ -560,8 +530,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(filename);
-        PdfWriter writer = new PdfWriter(fos, new WriterProperties().setFullCompressionMode(true));
+        PdfWriter writer = new PdfWriter(filename, new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -595,7 +564,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
             Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
-        reader.close();
+        pdfDocument.close();
     }
 
     @Test
@@ -607,8 +576,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(filename);
-        PdfWriter writer = new PdfWriter(fos, new WriterProperties().setFullCompressionMode(true));
+        PdfWriter writer = new PdfWriter(filename, new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -642,7 +610,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
             Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
-        reader.close();
+        pdfDocument.close();
     }
 
     @Test
@@ -654,8 +622,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(filename);
-        PdfWriter writer = new PdfWriter(fos, new WriterProperties().setFullCompressionMode(true));
+        PdfWriter writer = new PdfWriter(filename, new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -689,7 +656,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
             Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
-        reader.close();
+        pdfDocument.close();
     }
 
     @Test
@@ -701,8 +668,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         final String creator = "iText 6";
         final String title = "Empty iText 6 Document";
 
-        FileOutputStream fos = new FileOutputStream(filename);
-        PdfWriter writer = new PdfWriter(fos, new WriterProperties().setFullCompressionMode(true));
+        PdfWriter writer = new PdfWriter(filename, new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
@@ -736,7 +702,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
             Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
         }
-        reader.close();
+        pdfDocument.close();
     }
 
     @Test
@@ -744,8 +710,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         String file1 = destinationFolder + "copyPages1_1.pdf";
         String file2 = destinationFolder + "copyPages1_2.pdf";
 
-        PdfWriter writer1 = new PdfWriter(new FileOutputStream(file1));
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(file1));
 
         PdfPage page1 = pdfDoc1.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
@@ -761,13 +726,10 @@ public class PdfCanvasTest extends ExtendedITextTest {
         page1.flush();
         pdfDoc1.close();
 
-        PdfReader reader1 = new PdfReader(new FileInputStream(file1));
-        pdfDoc1 = new PdfDocument(reader1);
+        pdfDoc1 = new PdfDocument(new PdfReader(file1));
         page1 = pdfDoc1.getPage(1);
 
-        FileOutputStream fos2 = new FileOutputStream(file2);
-        PdfWriter writer2 = new PdfWriter(fos2);
-        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(file2));
         PdfPage page2 = page1.copyTo(pdfDoc2);
         pdfDoc2.addPage(page2);
 
@@ -786,7 +748,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
         Assert.assertNotNull(page.get(PdfName.Parent));
-        reader.close();
+        pdfDocument.close();
         Assert.assertNull(new CompareTool().compareByContent(file1, file2, destinationFolder, "diff_"));
     }
 
@@ -795,8 +757,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         String file1 = destinationFolder + "copyPages2_1.pdf";
         String file2 = destinationFolder + "copyPages2_2.pdf";
 
-        PdfWriter writer1 = new PdfWriter(new FileOutputStream(file1));
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(file1));
 
         for (int i = 0; i < 10; i++) {
             PdfPage page1 = pdfDoc1.addNewPage();
@@ -813,10 +774,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
         pdfDoc1.close();
 
-        pdfDoc1 = new PdfDocument(new PdfReader(new FileInputStream(file1)));
+        pdfDoc1 = new PdfDocument(new PdfReader(file1));
 
-        PdfWriter writer2 = new PdfWriter(new FileOutputStream(file2));
-        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(file2));
         for (int i = 9; i >= 0; i--) {
             PdfPage page2 = pdfDoc1.getPage(i + 1).copyTo(pdfDoc2);
             pdfDoc2.addPage(page2);
@@ -830,7 +790,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
         Assert.assertNotNull(page.get(PdfName.Parent));
-        reader.close();
+        pdfDocument.close();
 
         CompareTool cmpTool = new CompareTool();
         PdfDocument doc1 = new PdfDocument(new PdfReader(file1));
@@ -851,8 +811,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         String file1 = destinationFolder + "copyPages3_1.pdf";
         String file2 = destinationFolder + "copyPages3_2.pdf";
 
-        PdfWriter writer1 = new PdfWriter(new FileOutputStream(file1));
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(file1));
 
         PdfPage page1 = pdfDoc1.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
@@ -868,11 +827,10 @@ public class PdfCanvasTest extends ExtendedITextTest {
         page1.flush();
         pdfDoc1.close();
 
-        pdfDoc1 = new PdfDocument(new PdfReader(new FileInputStream(file1)));
+        pdfDoc1 = new PdfDocument(new PdfReader(file1));
         page1 = pdfDoc1.getPage(1);
 
-        PdfWriter writer2 = new PdfWriter(new FileOutputStream(file2));
-        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(file2));
         for (int i = 0; i < 10; i++) {
             PdfPage page2 = page1.copyTo(pdfDoc2);
             pdfDoc2.addPage(page2);
@@ -903,9 +861,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     @Test
     public void copyPagesTest4() throws IOException,  InterruptedException {
         String file1 = destinationFolder + "copyPages4_1.pdf";
-        FileOutputStream fos1 = new FileOutputStream(file1);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(file1));
 
         for (int i = 0; i < 5; i++) {
             PdfPage page1 = pdfDoc1.addNewPage();
@@ -921,12 +877,10 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
 
         pdfDoc1.close();
-        pdfDoc1 = new PdfDocument(new PdfReader(new FileInputStream(file1)));
+        pdfDoc1 = new PdfDocument(new PdfReader(file1));
 
         for (int i = 0; i < 5; i++) {
-            FileOutputStream fos2 = new FileOutputStream(destinationFolder + MessageFormat.format("copyPages4_{0}.pdf", i + 2));
-            PdfWriter writer2 = new PdfWriter(fos2);
-            PdfDocument pdfDoc2 = new PdfDocument(writer2);
+            PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + MessageFormat.format("copyPages4_{0}.pdf", i + 2)));
             PdfPage page2 = pdfDoc1.getPage(i + 1).copyTo(pdfDoc2);
             pdfDoc2.addPage(page2);
             pdfDoc2.close();
@@ -958,9 +912,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         int documentCount = 3;
 
         for (int i = 0; i < documentCount; i++) {
-            FileOutputStream fos1 = new FileOutputStream(destinationFolder + MessageFormat.format("copyPages5_{0}.pdf", i + 1));
-            PdfWriter writer1 = new PdfWriter(fos1);
-            PdfDocument pdfDoc1 = new PdfDocument(writer1);
+            PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + MessageFormat.format("copyPages5_{0}.pdf", i + 1)));
             PdfPage page1 = pdfDoc1.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page1);
             canvas.rectangle(100, 600, 100, 100);
@@ -976,14 +928,11 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         List<PdfDocument> docs = new ArrayList<PdfDocument>();
         for (int i = 0; i < documentCount; i++) {
-            FileInputStream fos1 = new FileInputStream(destinationFolder + MessageFormat.format("copyPages5_{0}.pdf", i + 1));
-            PdfDocument pdfDoc1 = new PdfDocument(new PdfReader(fos1));
+            PdfDocument pdfDoc1 = new PdfDocument(new PdfReader(destinationFolder + MessageFormat.format("copyPages5_{0}.pdf", i + 1)));
             docs.add(pdfDoc1);
         }
 
-        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyPages5_4.pdf");
-        PdfWriter writer2 = new PdfWriter(fos2);
-        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copyPages5_4.pdf"));
         for (int i = 0; i < 3; i++) {
             pdfDoc2.addPage(docs.get(i).getPage(1).copyTo(pdfDoc2));
         }
@@ -1016,9 +965,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         String file3 = destinationFolder + "copyPages6_3.pdf";
         String file1_upd = destinationFolder + "copyPages6_1_upd.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(file1);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(file1));
         PdfPage page1 = pdfDoc1.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.rectangle(100, 600, 100, 100);
@@ -1031,27 +978,23 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.release();
 
         pdfDoc1.close();
-        pdfDoc1 = new PdfDocument(new PdfReader(new FileInputStream(file1)));
+        pdfDoc1 = new PdfDocument(new PdfReader(file1));
 
-        FileOutputStream fos2 = new FileOutputStream(file2);
-        PdfWriter writer2 = new PdfWriter(fos2);
-        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(file2));
         pdfDoc2.addPage(pdfDoc1.getPage(1).copyTo(pdfDoc2));
 
         pdfDoc2.close();
-        pdfDoc2 = new PdfDocument(new PdfReader(new FileInputStream(file2)));
+        pdfDoc2 = new PdfDocument(new PdfReader(file2));
 
-        FileOutputStream fos3 = new FileOutputStream(file3);
-        PdfWriter writer3 = new PdfWriter(fos3);
-        PdfDocument pdfDoc3 = new PdfDocument(writer3);
+        PdfDocument pdfDoc3 = new PdfDocument(new PdfWriter(file3));
         pdfDoc3.addPage(pdfDoc2.getPage(1).copyTo(pdfDoc3));
 
         pdfDoc3.close();
-        pdfDoc3 = new PdfDocument(new PdfReader(new FileInputStream(file3)));
+        pdfDoc3 = new PdfDocument(new PdfReader(file3));
 
         pdfDoc1.close();
-        pdfDoc1 = new PdfDocument(new PdfReader(new FileInputStream(file1)),
-                new PdfWriter(new FileOutputStream(file1_upd)));
+        pdfDoc1 = new PdfDocument(new PdfReader(file1),
+                new PdfWriter(file1_upd));
 
         pdfDoc1.addPage(pdfDoc3.getPage(1).copyTo(pdfDoc1));
 
@@ -1088,9 +1031,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     @Test
     public void markedContentTest1() throws Exception {
         String message = "";
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter writer = new PdfWriter(baos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginMarkedContent(new com.itextpdf.kernel.pdf.PdfName("Tag1"));
@@ -1107,9 +1048,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void markedContentTest2() throws Exception {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "markedContentTest2.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        final PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "markedContentTest2.pdf"));
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
@@ -1132,9 +1071,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void graphicsStateTest1() throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter writer = new PdfWriter(baos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.setLineWidth(3);
@@ -1153,9 +1090,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void colorTest01() throws Exception {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest01.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        final PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "colorTest01.pdf"));
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
@@ -1176,10 +1111,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void colorTest02() throws Exception {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest02.pdf");
-        PdfWriter writer = new PdfWriter(fos);
+        PdfWriter writer = new PdfWriter(destinationFolder + "colorTest02.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
-        final PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
@@ -1210,10 +1144,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void colorTest03() throws Exception {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest03.pdf");
-        PdfWriter writer = new PdfWriter(fos);
+        PdfWriter writer = new PdfWriter(destinationFolder + "colorTest03.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
-        final PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
@@ -1268,8 +1201,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         byte[] bytes = baos.toByteArray();
         com.itextpdf.kernel.pdf.PdfReader reader = new com.itextpdf.kernel.pdf.PdfReader(new ByteArrayInputStream(bytes));
         document = new PdfDocument(reader);
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest04.pdf");
-        writer = new PdfWriter(fos);
+        writer = new PdfWriter(destinationFolder + "colorTest04.pdf");
         PdfDocument newDocument = new PdfDocument(writer);
         newDocument.addPage(document.getPage(1).copyTo(newDocument));
         newDocument.close();
@@ -1280,9 +1212,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void colorTest05() throws Exception {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest05.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "colorTest05.pdf"));
         PdfPage page = document.addNewPage();
         FileInputStream streamGray = new FileInputStream(sourceFolder + "BlackWhite.icc");
         FileInputStream streamRgb = new FileInputStream(sourceFolder + "CIERGB.icc");
@@ -1314,8 +1244,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             bytes[k++] = (byte) i;
         }
 
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest06.pdf");
-        PdfWriter writer = new PdfWriter(fos);
+        PdfWriter writer = new PdfWriter(destinationFolder + "colorTest06.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
@@ -1334,8 +1263,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void colorTest07() throws Exception {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest07.pdf");
-        PdfWriter writer = new PdfWriter(fos);
+        PdfWriter writer = new PdfWriter(destinationFolder + "colorTest07.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
@@ -1355,8 +1283,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void colorTest08() throws Exception {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "colorTest08.pdf");
-        PdfWriter writer = new PdfWriter(fos);
+        PdfWriter writer = new PdfWriter(destinationFolder + "colorTest08.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
@@ -1380,9 +1307,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void wmfImageTest01() throws IOException, InterruptedException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest01.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "wmfImageTest01.pdf"));
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
@@ -1396,9 +1321,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void wmfImageTest02() throws IOException, InterruptedException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest02.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "wmfImageTest02.pdf"));
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
@@ -1413,9 +1336,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void wmfImageTest03() throws IOException, InterruptedException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest03.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "wmfImageTest03.pdf"));
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
@@ -1429,9 +1350,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void wmfImageTest04() throws IOException, InterruptedException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "wmfImageTest04.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "wmfImageTest04.pdf"));
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
@@ -1445,9 +1364,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void gifImageTest01() throws IOException, InterruptedException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "gifImageTest01.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "gifImageTest01.pdf"));
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
@@ -1461,9 +1378,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void gifImageTest02() throws IOException, InterruptedException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "gifImageTest02.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "gifImageTest02.pdf"));
         PdfPage page = document.addNewPage();
 
         InputStream is = new FileInputStream(sourceFolder + "2-frames.gif");
@@ -1485,9 +1400,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void gifImageTest03() throws IOException, InterruptedException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "gifImageTest03.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "gifImageTest03.pdf"));
         PdfPage page = document.addNewPage();
 
         InputStream is = new FileInputStream(sourceFolder + "2-frames.gif");
@@ -1509,9 +1422,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void gifImageTest04() throws IOException, InterruptedException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "gifImageTest04.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "gifImageTest04.pdf"));
         PdfPage page = document.addNewPage();
 
         InputStream is = new FileInputStream(sourceFolder + "2-frames.gif");
@@ -1533,9 +1444,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void gifImageTest05() throws IOException, InterruptedException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "gifImageTest05.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "gifImageTest05.pdf"));
         PdfPage page = document.addNewPage();
 
         InputStream is = new FileInputStream(sourceFolder + "animated_fox_dog.gif");
@@ -1614,8 +1523,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     })
     public void inlineImagesTest01() throws IOException, InterruptedException {
         String filename = "inlineImages01.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + filename));
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -1642,8 +1550,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     })
     public void inlineImagesTest02() throws IOException, InterruptedException {
         String filename = "inlineImages02.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + filename));
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -1685,8 +1592,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     @Test
     public void awtImagesTest01() throws IOException, InterruptedException {
         String filename = "awtImagesTest01.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + filename));
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);

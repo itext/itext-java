@@ -3,23 +3,13 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
-
-import java.io.FileOutputStream;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -36,10 +26,8 @@ public class PdfExtGStateTest extends ExtendedITextTest{
 
     @Test
     public void egsTest1() throws Exception {
-        final String destinationDocument = destinationFolder + "egsTest1.pdf";
-        FileOutputStream fos = new FileOutputStream(destinationDocument);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument document = new PdfDocument(writer);
+        String destinationDocument = destinationFolder + "egsTest1.pdf";
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationDocument));
 
         //Create page and canvas
         PdfPage page = document.addNewPage();

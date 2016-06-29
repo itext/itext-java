@@ -11,28 +11,20 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.List;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.MessageFormat;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.text.MessageFormat;
 
 @Category(IntegrationTest.class)
 public class AutoTaggingTest extends ExtendedITextTest {
@@ -48,7 +40,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     @Test
     public void textInParagraphTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "textInParagraphTest01.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "textInParagraphTest01.pdf"));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -67,7 +59,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     @Test
     public void imageTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "imageTest01.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "imageTest01.pdf"));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -82,7 +74,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     @Test
     public void divTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "divTest01.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "divTest01.pdf"));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -106,7 +98,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     @Test
     public void tableTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "tableTest01.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest01.pdf"));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -134,7 +126,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     @Test
     public void tableTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "tableTest02.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest02.pdf"));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -155,7 +147,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     @Test
     public void tableTest03() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "tableTest03.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest03.pdf"));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -185,7 +177,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     @Test
     public void tableTest04() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "tableTest04.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest04.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -217,7 +209,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
     public void tableTest05() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String outFileName = destinationFolder + "tableTest05.pdf";
         String cmpFileName = sourceFolder + "cmp_tableTest05.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "tableTest05.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest05.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -249,7 +241,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     @Test
     public void tableTest06() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "tableTest06.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest06.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -286,7 +278,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     @Test
     public void listTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "listTest01.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "listTest01.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -304,7 +296,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     @Test
     public void artifactTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "artifactTest01.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "artifactTest01.pdf"));
         pdfDocument.setTagged();
         Document document = new Document(pdfDocument);
 
@@ -326,7 +318,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     @Test
     public void artifactTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "artifactTest02.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "artifactTest02.pdf"));
         pdfDocument.setTagged();
         Document document = new Document(pdfDocument);
 
@@ -350,7 +342,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
      */
     @Test
     public void flushingTest01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "flushingTest01.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "flushingTest01.pdf"));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -377,7 +369,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
      */
     @Test
     public void flushingTest02() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "flushingTest02.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "flushingTest02.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -414,7 +406,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
      */
     @Test
     public void flushingTest03() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "flushingTest03.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "flushingTest03.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);

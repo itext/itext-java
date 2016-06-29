@@ -11,14 +11,12 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class AreaBreakTest extends ExtendedITextTest {
@@ -35,7 +33,7 @@ public class AreaBreakTest extends ExtendedITextTest {
     public void pageBreakTest1() throws IOException,  InterruptedException {
         String outFileName = destinationFolder + "pageBreak1.pdf";
         String cmpFileName = sourceFolder + "cmp_pageBreak1.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
         document.add(new AreaBreak());
@@ -49,7 +47,7 @@ public class AreaBreakTest extends ExtendedITextTest {
     public void pageBreakTest2() throws IOException,  InterruptedException {
         String outFileName = destinationFolder + "pageBreak2.pdf";
         String cmpFileName = sourceFolder + "cmp_pageBreak2.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
         document.add(new Paragraph("Hello World!")).add(new AreaBreak(new PageSize(200, 200)));
@@ -63,7 +61,7 @@ public class AreaBreakTest extends ExtendedITextTest {
     public void pageBreakTest03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "pageBreak3.pdf";
         String cmpFileName = sourceFolder + "cmp_pageBreak3.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
         document.setRenderer(new ColumnDocumentRenderer(document, new Rectangle[] {new Rectangle(30, 30, 200, 600), new Rectangle(300, 30, 200, 600)}));

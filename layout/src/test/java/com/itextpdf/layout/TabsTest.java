@@ -16,16 +16,14 @@ import com.itextpdf.layout.element.TabStop;
 import com.itextpdf.layout.property.TabAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 
 @Category(IntegrationTest.class)
 public class TabsTest extends ExtendedITextTest {
@@ -63,9 +61,7 @@ public class TabsTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "defaultTabTest.pdf";
         String cmpFileName = sourceFolder + "cmp_defaultTabTest.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Paragraph p = new Paragraph();
@@ -210,9 +206,7 @@ public class TabsTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "outOfPageBoundsTest.pdf";
         String cmpFileName = sourceFolder + "cmp_outOfPageBoundsTest.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
 
@@ -270,9 +264,7 @@ public class TabsTest extends ExtendedITextTest {
     }
 
     private Document initDocument(String outFileName) throws FileNotFoundException {
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         pdfDoc.setDefaultPageSize(PageSize.A4.rotate());
         return new Document(pdfDoc);
     }

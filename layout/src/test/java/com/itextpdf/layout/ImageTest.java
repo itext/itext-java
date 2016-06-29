@@ -8,25 +8,17 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.List;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.element.*;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class ImageTest extends ExtendedITextTest {
@@ -45,9 +37,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest01.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -73,9 +63,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest02.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -101,9 +89,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest03.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -130,9 +116,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest04.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest04.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -159,9 +143,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest05.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest05.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -187,9 +169,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest06.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest06.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -218,8 +198,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest07.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest07.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -242,8 +221,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest08.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest08.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -265,8 +243,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest09.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest09.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc, new PageSize(500, 300));
 
@@ -284,8 +261,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest10.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest10.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc, new PageSize(500, 300));
 
@@ -303,8 +279,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest11.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest11.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -326,8 +301,7 @@ public class ImageTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_flushOnDrawTest.pdf";
 
         int rowCount = 60;
-        FileOutputStream fos = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(fos);
+        PdfWriter writer = new PdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));

@@ -1,30 +1,27 @@
 package com.itextpdf.layout;
 
-import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceGray;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.property.ListNumberingType;
-import com.itextpdf.layout.property.TextAlignment;
-import com.itextpdf.layout.property.VerticalAlignment;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
-
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class PositioningTest extends ExtendedITextTest {
@@ -41,7 +38,7 @@ public class PositioningTest extends ExtendedITextTest {
     public void relativePositioningTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "relativePositioningTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_relativePositioningTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -64,7 +61,7 @@ public class PositioningTest extends ExtendedITextTest {
     public void relativePositioningTest02() throws IOException, InterruptedException{
         String outFileName = destinationFolder + "relativePositioningTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_relativePositioningTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -88,7 +85,7 @@ public class PositioningTest extends ExtendedITextTest {
     public void fixedPositioningTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedPositioningTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_fixedPositioningTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -110,7 +107,7 @@ public class PositioningTest extends ExtendedITextTest {
     public void fixedPositioningTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedPositioningTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_fixedPositioningTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
         document.getPdfDocument().addNewPage();
@@ -131,7 +128,7 @@ public class PositioningTest extends ExtendedITextTest {
     public void showTextAlignedTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "showTextAlignedTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_showTextAlignedTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document document = new Document(pdfDocument);
 
         pdfDocument.addNewPage();
@@ -192,7 +189,7 @@ public class PositioningTest extends ExtendedITextTest {
     public void showTextAlignedTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "showTextAlignedTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_showTextAlignedTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document document = new Document(pdfDocument);
 
         String watermarkText = "WATERMARK";

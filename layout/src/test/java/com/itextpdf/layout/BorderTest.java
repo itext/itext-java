@@ -7,29 +7,19 @@ import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.layout.border.DashedBorder;
-import com.itextpdf.layout.border.DottedBorder;
-import com.itextpdf.layout.border.DoubleBorder;
-import com.itextpdf.layout.border.GrooveBorder;
-import com.itextpdf.layout.border.InsetBorder;
-import com.itextpdf.layout.border.OutsetBorder;
-import com.itextpdf.layout.border.RidgeBorder;
-import com.itextpdf.layout.border.RoundDotsBorder;
-import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.border.*;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class BorderTest extends ExtendedITextTest {
@@ -251,7 +241,7 @@ public class BorderTest extends ExtendedITextTest {
         outFileName = destinationFolder + fileName;
         cmpFileName = sourceFolder + cmpPrefix + fileName;
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         return new Document(pdfDocument);
     }

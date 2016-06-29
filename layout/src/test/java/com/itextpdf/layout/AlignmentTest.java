@@ -8,27 +8,19 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.TextAlignment;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.layout.border.SolidBorder;
-import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.List;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Text;
 import com.itextpdf.test.ExtendedITextTest;
-
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class AlignmentTest extends ExtendedITextTest {
@@ -46,7 +38,7 @@ public class AlignmentTest extends ExtendedITextTest {
     public void justifyAlignmentTest01() throws IOException,  InterruptedException {
         String outFileName = destinationFolder + "justifyAlignmentTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_justifyAlignmentTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -66,7 +58,7 @@ public class AlignmentTest extends ExtendedITextTest {
     public void justifyAlignmentTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "justifyAlignmentTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_justifyAlignmentTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -83,7 +75,7 @@ public class AlignmentTest extends ExtendedITextTest {
     public void justifyAlignmentTest03() throws IOException,  InterruptedException {
         String outFileName = destinationFolder + "justifyAlignmentTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_justifyAlignmentTest03.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -103,7 +95,7 @@ public class AlignmentTest extends ExtendedITextTest {
     public void justifyAlignmentTest04() throws IOException,  InterruptedException {
         String outFileName = destinationFolder + "justifyAlignmentTest04.pdf";
         String cmpFileName = sourceFolder + "cmp_justifyAlignmentTest04.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -123,7 +115,7 @@ public class AlignmentTest extends ExtendedITextTest {
     public void justifyAlignmentForcedNewlinesTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "justifyAlignmentForcedNewlinesTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_justifyAlignmentForcedNewlinesTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -144,7 +136,7 @@ public class AlignmentTest extends ExtendedITextTest {
     public void justifyAllTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "justifyAllTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_justifyAllTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -165,7 +157,7 @@ public class AlignmentTest extends ExtendedITextTest {
     public void blockAlignmentTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "blockAlignmentTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_blockAlignmentTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -191,7 +183,7 @@ public class AlignmentTest extends ExtendedITextTest {
     public void blockAlignmentTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "blockAlignmentTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_blockAlignmentTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -216,9 +208,7 @@ public class AlignmentTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageAlignmentTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_imageAlignmentTest01.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 

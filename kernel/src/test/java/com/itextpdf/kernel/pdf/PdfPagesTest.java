@@ -2,21 +2,19 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.ExtendedITextTest;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.Random;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Random;
 
 @Category(IntegrationTest.class)
 public class PdfPagesTest extends ExtendedITextTest{
@@ -35,9 +33,7 @@ public class PdfPagesTest extends ExtendedITextTest{
         String filename = "simplePagesTest.pdf";
         int pageCount = 111;
 
-        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
 
         for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
@@ -76,9 +72,7 @@ public class PdfPagesTest extends ExtendedITextTest{
         String filename = "reversePagesTest.pdf";
         int pageCount = 111;
 
-        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
 
         for (int i = pageCount; i > 0; i--) {
             PdfPage page = new PdfPage(pdfDoc, pdfDoc.getDefaultPageSize());
@@ -107,9 +101,7 @@ public class PdfPagesTest extends ExtendedITextTest{
             indexes[i] = a;
         }
 
-        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + filename));
         PdfPage[] pages = new PdfPage[pageCount];
 
         for (int i = 0; i < indexes.length; i++) {
@@ -150,9 +142,7 @@ public class PdfPagesTest extends ExtendedITextTest{
             indexes[i] = a;
         }
 
-        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
 
         for (int i = 0; i < indexes.length; i++) {
             PdfPage page = pdfDoc.addNewPage();
@@ -229,9 +219,7 @@ public class PdfPagesTest extends ExtendedITextTest{
         String filename = "removeFlushedPage.pdf";
         int pageCount = 10;
 
-        FileOutputStream fos = new FileOutputStream(destinationFolder + filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
 
         PdfPage removedPage = pdfDoc.addNewPage();
         int removedPageObjectNumber = removedPage.getPdfObject().getIndirectReference().getObjNumber();
@@ -265,7 +253,7 @@ public class PdfPagesTest extends ExtendedITextTest{
         }
 
         Assert.assertEquals("Number of pages", numOfPages, pdfDocument.getNumberOfPages());
-        reader.close();
+        pdfDocument.close();
     }
 
     int verifyIntegrity(PdfPagesTree pagesTree) {
@@ -353,6 +341,8 @@ public class PdfPagesTest extends ExtendedITextTest{
         PdfDictionary kid = (PdfDictionary) field.getAsArray(PdfName.Kids).get(0);
         Assert.assertEquals(6, kid.keySet().size());
         Assert.assertEquals(3, fields.size());
+
+        pdfDoc.close();
     }
 
 
