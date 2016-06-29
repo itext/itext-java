@@ -10,17 +10,15 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Map;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
+import java.util.Map;
 
 @Category(IntegrationTest.class)
 public class PdfFormFieldTest extends ExtendedITextTest {
@@ -35,8 +33,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
     @Test
     public void formFieldTest01() throws IOException {
-        PdfReader reader = new PdfReader(sourceFolder + "formFieldFile.pdf");
-        PdfDocument pdfDoc = new PdfDocument(reader);
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "formFieldFile.pdf"));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
 
@@ -51,8 +48,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     @Test
     public void formFieldTest02() throws IOException, InterruptedException {
         String filename = destinationFolder + "formFieldTest02.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(filename));
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         Rectangle rect = new Rectangle(210, 490, 150, 22);
@@ -70,10 +66,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
     @Test
     public void formFieldTest03() throws IOException, InterruptedException {
-        PdfReader reader = new PdfReader(sourceFolder + "formFieldFile.pdf");
         String filename = destinationFolder + "formFieldTest03.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(filename));
-        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "formFieldFile.pdf"), new PdfWriter(filename));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
@@ -96,8 +90,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     @Test
     public void choiceFieldTest01() throws IOException, InterruptedException {
         String filename = destinationFolder + "choiceFieldTest01.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(filename));
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
@@ -126,9 +119,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     @Test
     public void buttonFieldTest01() throws IOException, InterruptedException {
         String filename = destinationFolder + "buttonFieldTest01.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(filename));
-
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
@@ -160,8 +151,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     @Test
     public void buttonFieldTest02() throws IOException, InterruptedException {
         String filename = destinationFolder + "buttonFieldTest02.pdf";
-
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "buttonFieldTest02_input.pdf"), new PdfWriter(new FileOutputStream(filename)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "buttonFieldTest02_input.pdf"), new PdfWriter(filename));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 

@@ -4,17 +4,14 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class FormFieldFlatteningTest extends ExtendedITextTest {
@@ -32,7 +29,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         String srcFilename = sourceFolder + "formFlatteningSource.pdf";
         String filename = destinationFolder + "formFlatteningTest01.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfReader(new FileInputStream(srcFilename)), new PdfWriter(new FileOutputStream(filename)));
+        PdfDocument doc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(filename));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
         form.flattenFields();
