@@ -65,7 +65,7 @@ public final class PdfFontFactory {
     /**
      * This is the default value of the <VAR>embedded</VAR> variable.
      */
-    private static boolean DEFAULT_CACHED = false;
+    private static boolean DEFAULT_CACHED = true;
 
     public static PdfFont createFont() throws IOException {
         return createFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
