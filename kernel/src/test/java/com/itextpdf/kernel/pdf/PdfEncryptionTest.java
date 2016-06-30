@@ -3,20 +3,17 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
-
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.security.Security;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
+import java.security.Security;
 
 import static org.junit.Assert.fail;
 
@@ -99,7 +96,7 @@ public class PdfEncryptionTest extends ExtendedITextTest{
     public void encryptWithPassword(String filename, int encryptionType, int compression) throws XMPException, IOException, InterruptedException {
         String outFileName = destinationFolder + filename;
         int permissions = EncryptionConstants.ALLOW_SCREENREADERS;
-        com.itextpdf.kernel.pdf.PdfWriter writer = new com.itextpdf.kernel.pdf.PdfWriter(new FileOutputStream(outFileName),
+        PdfWriter writer = new PdfWriter(outFileName,
                 new WriterProperties().setStandardEncryption(USER, OWNER, permissions, encryptionType).addXmpMetadata());
         writer.setCompressionLevel(compression);
         PdfDocument document = new PdfDocument(writer);

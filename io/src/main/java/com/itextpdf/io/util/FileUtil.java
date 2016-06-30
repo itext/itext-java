@@ -120,6 +120,14 @@ public final class FileUtil {
         return new BufferedOutputStream(new FileOutputStream(filename));
     }
 
+    public static java.io.OutputStream wrapWithBufferedOutputStream(OutputStream outputStream) {
+        if (outputStream instanceof ByteArrayOutputStream || (outputStream instanceof BufferedOutputStream)) {
+            return outputStream;
+        } else {
+            return new BufferedOutputStream(outputStream);
+        }
+    }
+
     public static File createTempFile(String path) throws IOException {
         File tempFile = new File(path);
         if (tempFile.isDirectory()) {

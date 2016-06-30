@@ -3,7 +3,6 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -11,9 +10,7 @@ import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.TimeZone;
 
 @Category(IntegrationTest.class)
 public class XMPMetadataTest extends ExtendedITextTest{
@@ -30,8 +27,7 @@ public class XMPMetadataTest extends ExtendedITextTest{
     public void createEmptyDocumentWithXmp() throws Exception {
 
         String filename = "emptyDocumentWithXmp.pdf";
-        FileOutputStream fos = new FileOutputStream(destinationFolder +filename);
-        PdfWriter writer = new PdfWriter(fos,  new WriterProperties().addXmpMetadata());
+        PdfWriter writer = new PdfWriter(destinationFolder + filename,  new WriterProperties().addXmpMetadata());
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 7").

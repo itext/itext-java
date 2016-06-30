@@ -44,23 +44,16 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.source.ByteBuffer;
-import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.io.source.PdfTokenizer;
-import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.io.source.IRandomAccessSource;
-import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.io.source.WindowRandomAccessSource;
+import com.itextpdf.io.source.*;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
+import com.itextpdf.kernel.pdf.filters.IFilterHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.text.MessageFormat;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PdfReader implements Closeable, Serializable {
 
@@ -121,7 +114,6 @@ public class PdfReader implements Closeable, Serializable {
      *                   end but is not closed
      * @param properties properties of the created reader
      * @throws IOException                      on error
-     * @throws PdfException on error
      */
     public PdfReader(InputStream is, ReaderProperties properties) throws IOException {
         this(new RandomAccessSourceFactory().createSource(is), properties);
@@ -133,7 +125,6 @@ public class PdfReader implements Closeable, Serializable {
      * @param is the {@code InputStream} containing the document. Stream is closed automatically, when document is closed,
      *           if user doesn't want to close stream, he should set closeStream=false;
      * @throws IOException                      on error
-     * @throws PdfException on error
      */
     public PdfReader(InputStream is) throws IOException {
         this(is, new ReaderProperties());
@@ -301,7 +292,6 @@ public class PdfReader implements Closeable, Serializable {
      * @param decode true if to get decoded stream, false if to leave it originally encoded.
      * @return InputStream
      * @throws IOException
-     * @throws PdfException
      */
     public InputStream readStream(PdfStream stream, boolean decode) throws IOException {
         byte[] bytes = readStreamBytes(stream, decode);

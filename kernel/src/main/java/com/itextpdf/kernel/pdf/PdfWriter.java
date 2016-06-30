@@ -94,7 +94,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     }
 
     public PdfWriter(java.io.OutputStream os, WriterProperties properties) {
-        super(os);
+        super(FileUtil.wrapWithBufferedOutputStream(os));
         this.properties = properties;
         EncryptionProperties encryptProps = properties.encryptionProperties;
         if (properties.isStandardEncryptionUsed()) {
