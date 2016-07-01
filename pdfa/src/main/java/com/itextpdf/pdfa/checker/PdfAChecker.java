@@ -53,6 +53,20 @@ import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import java.util.*;
 import java.util.logging.Logger;
 
+/**
+ * An abstract class that will run through all necessary checks defined in the
+ * different PDF/A standards and levels. A number of common checks are executed
+ * in this class, while standard-dependent specifications are implemented in the
+ * available subclasses.
+ * 
+ * While it is possible to subclass this method and implement its abstract
+ * methods in client code, this is not encouraged and will have little effect.
+ * It is not possible to plug custom implementations into iText, because iText
+ * should always refuse to create non-compliant PDF/A, which would be possible
+ * with client code implementations. Any future generations of the PDF/A
+ * standard and its derivates will get their own implementation in the
+ * iText 7 - pdfa project.
+ */
 public abstract class PdfAChecker {
 
     /**
@@ -61,13 +75,43 @@ public abstract class PdfAChecker {
     @Deprecated
     protected Logger LOGGER = Logger.getLogger(getClass().getName());
 
+    /**
+     * The Red-Green-Blue color profile as defined by the International Color
+     * Consortium.
+     */
     public static final String ICC_COLOR_SPACE_RGB = "RGB ";
+    
+    /**
+     * The Cyan-Magenta-Yellow-Key (black) color profile as defined by the
+     * International Color Consortium.
+     */
     public static final String ICC_COLOR_SPACE_CMYK = "CMYK";
+    
+    /**
+     * The Grayscale color profile as defined by the International Color
+     * Consortium.
+     */
     public static final String ICC_COLOR_SPACE_GRAY = "GRAY";
 
+    /**
+     * The Output device class
+     */
     public static final String ICC_DEVICE_CLASS_OUTPUT_PROFILE = "prtr";
+    
+    /**
+     * The Monitor device class
+     */
     public static final String ICC_DEVICE_CLASS_MONITOR_PROFILE = "mntr";
 
+    /**
+     * The maximum Graphics State stack depth in PDF/A documents, i.e. the
+     * maximum number of graphics state operators with code <code>q</code> that
+     * may be opened (i.e. not yet closed by a corresponding <code>Q</code>) at
+     * any point in a content stream sequence.
+     * 
+     * Defined as 28 by PDF/A-1 section 6.1.12, by referring to the PDF spec
+     * Appendix C table 1 "architectural limits".
+     */
     public static final int maxGsStackDepth = 28;
 
     protected PdfAConformanceLevel conformanceLevel;
@@ -94,6 +138,14 @@ public abstract class PdfAChecker {
         this.conformanceLevel = conformanceLevel;
     }
 
+    /**
+     * This method checks a number of document-wide requirements of the PDF/A
+     * standard. The algorithms of some of these checks vary with the PDF/A
+     * level and thus are implemented in subclasses; others are implemented
+     * as private methods in this class.
+     * 
+     * @param catalog
+     */
     public void checkDocument(PdfCatalog catalog) {
         PdfDictionary catalogDict = catalog.getPdfObject();
         setPdfAOutputIntentColorSpace(catalogDict);
@@ -110,11 +162,21 @@ public abstract class PdfAChecker {
         checkColorsUsages();
     }
 
+    /**
+     * This method checks all requirements that must be fulfilled by a page in a
+     * PDF/A document.
+     * @param page the page that must be checked
+     */
     public void checkSinglePage(PdfPage page) {
         checkPage(page);
     }
 
 
+    /**
+     * This method checks the requirements that must be fulfilled by a COS
+     * object in a PDF/A document.
+     * @param obj the COS object that must be checked
+     */
     public void checkPdfObject(PdfObject obj) {
         switch (obj.getType()) {
             case PdfObject.NUMBER:
@@ -139,16 +201,51 @@ public abstract class PdfAChecker {
         }
     }
 
+    /**
+     * Gets the {@link PdfAConformanceLevel} for this file.
+     * 
+     * @return the defined conformance level for this document.
+     */
     public PdfAConformanceLevel getConformanceLevel() {
         return conformanceLevel;
     }
 
+    /**
+     * Remembers which objects have already been checked, in order to avoid
+     * redundant checks.
+     * 
+     * @param object the object to check
+     * @return whether or not the object has already been checked
+     */
     public boolean objectIsChecked(PdfObject object) {
         return checkedObjects.contains(object);
     }
 
+    /**
+     * This method checks compliance with the graphics state architectural
+     * limitation, explained by {@link PdfAChecker#maxGsStackDepth}.
+     * 
+     * @param stackOperation the operation to check the graphics state counter for
+     */
     public abstract void checkCanvasStack(char stackOperation);
+    
+    /**
+     * This method checks compliance with the inline image restrictions in the
+     * PDF/A specs, specifically filter parameters.
+     * 
+     * @param inlineImage a {@link PdfStream} containing the inline image
+     * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
+     */
     public abstract void checkInlineImage(PdfStream inlineImage, PdfDictionary currentColorSpaces);
+    
+    /**
+     * This method checks compliance with the color restrictions imposed by the
+     * available color spaces in the document.
+     * 
+     * @param color the color to check
+     * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
+     * @param fill
+     */
     public abstract void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill);
     public abstract void checkColorSpace(PdfColorSpace colorSpace, PdfDictionary currentColorSpaces, boolean checkAlternate, Boolean fill);
     public abstract void checkRenderingIntent(PdfName intent);
