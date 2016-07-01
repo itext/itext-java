@@ -46,6 +46,9 @@ package com.itextpdf.layout.hyphenation;
 import java.util.Enumeration;
 import java.util.Stack;
 
+/**
+ * An object that iterates over the {@link TernaryTree}.
+ */
 class TernaryTreeIterator implements Enumeration {
 
     /**
@@ -125,6 +128,9 @@ class TernaryTreeIterator implements Enumeration {
         reset();
     }
 
+    /**
+     * Resets the Iterator to its initial state.
+     */
     public void reset() {
         ns.removeAllElements();
         ks.setLength(0);
