@@ -309,6 +309,8 @@ public class PdfImageXObject extends PdfXObject {
                 array.add(new PdfNumber((int) obj));
             } else if (obj instanceof Float) {
                 array.add(new PdfNumber((float) obj));
+            } else if (obj instanceof Object[]){
+                array.add(createArray(stream, (Object[]) obj));
             } else {
                 //TODO instance of was removed due to autoport
                 array.add(createDictionaryFromMap(stream, (Map<String, Object>) obj));
