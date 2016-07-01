@@ -57,7 +57,9 @@ import java.util.logging.Logger;
  * An abstract class that will run through all necessary checks defined in the
  * different PDF/A standards and levels. A number of common checks are executed
  * in this class, while standard-dependent specifications are implemented in the
- * available subclasses.
+ * available subclasses. The standard that is followed is the series of ISO
+ * 19005 specifications, currently generations 1 through 3. The ZUGFeRD standard
+ * is derived from ISO 19005-3.
  * 
  * While it is possible to subclass this method and implement its abstract
  * methods in client code, this is not encouraged and will have little effect.
@@ -244,11 +246,36 @@ public abstract class PdfAChecker {
      * 
      * @param color the color to check
      * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
-     * @param fill
+     * @param fill whether the color is used for fill or stroke operations
      */
     public abstract void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill);
+    
+    /**
+     * This method performs a range of checks on the given color space, depending
+     * on the type and properties of that color space.
+     * 
+     * @param colorSpace the color space to check
+     * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
+     * @param checkAlternate whether or not to also check the parent color space
+     * @param fill whether the color space is used for fill or stroke operations
+     */
     public abstract void checkColorSpace(PdfColorSpace colorSpace, PdfDictionary currentColorSpaces, boolean checkAlternate, Boolean fill);
+
+    /**
+     * Checks whether the rendering intent of the document is within the allowed
+     * range of intents. This is defined in ISO 19005-1 section 6.2.9, and
+     * unchanged in newer generations of the PDF/A specification.
+     * 
+     * @param intent the intent to be analyzed
+     */
     public abstract void checkRenderingIntent(PdfName intent);
+    
+    /**
+     * Performs a number of checks on the graphics state, among others ISO
+     * 19005-1 section 6.2.8 and 6.4 and ISO 19005-2 section 6.2.5 and 6.2.10.
+     * 
+     * @param extGState the graphics state to be checked
+     */
     public abstract void checkExtGState(CanvasGraphicsState extGState);
 
     protected abstract Set<PdfName> getForbiddenActions();

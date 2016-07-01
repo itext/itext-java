@@ -66,6 +66,12 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * PdfA1Checker defines the requirements of the PDF/A-1 standard and contains
+ * method implementations from the abstract {@link PdfAChecker} class.
+ * 
+ * The specification implemented by this class is ISO 19005-1
+ */
 public class PdfA1Checker extends PdfAChecker {
 
     protected static final Set<PdfName> forbiddenAnnotations = new HashSet<>(Arrays.asList(PdfName.Sound, PdfName.Movie, PdfName.FileAttachment));
@@ -78,6 +84,12 @@ public class PdfA1Checker extends PdfAChecker {
     protected static final Set<PdfName> allowedRenderingIntents = new HashSet<>(Arrays.asList(PdfName.RelativeColorimetric,
             PdfName.AbsoluteColorimetric, PdfName.Perceptual, PdfName.Saturation));
 
+    /**
+     * Creates a PdfA1Checker with the required conformance level
+     * 
+     * @param conformanceLevel the required conformance level, <code>a</code> or
+     * <code>b</code>
+     */
     public PdfA1Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
     }

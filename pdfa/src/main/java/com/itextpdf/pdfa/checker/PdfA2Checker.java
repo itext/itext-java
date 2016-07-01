@@ -77,6 +77,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * PdfA2Checker defines the requirements of the PDF/A-2 standard and contains a
+ * number of methods that override the implementations of its superclass
+ * {@link PdfA1Checker}.
+ * 
+ * The specification implemented by this class is ISO 19005-2
+ */
 public class PdfA2Checker extends PdfA1Checker {
 
     protected static final Set<PdfName> forbiddenAnnotations = new HashSet<>(Arrays.asList(PdfName._3D, PdfName.Sound, PdfName.Screen, PdfName.Movie));
@@ -98,6 +105,12 @@ public class PdfA2Checker extends PdfA1Checker {
     private Map<PdfName, PdfArray> separationColorSpaces = new HashMap<>();
 
 
+    /**
+     * Creates a PdfA2Checker with the required conformance level
+     * 
+     * @param conformanceLevel the required conformance level, <code>a</code> or
+     * <code>u</code> or <code>b</code>
+     */
     public PdfA2Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
     }
