@@ -78,21 +78,55 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class PdfADocument extends PdfDocument {
+/**
+ * This class extends {@link PdfDocument} and is in charge of creating files
+ * that comply with the PDF/A standard.
+ * 
+ * Client code is still responsible for making sure the file is actually PDF/A
+ * compliant: multiple steps must be undertaken (depending on the
+ * {@link PdfAConformanceLevel}) to ensure that the PDF/A standard is followed.
+ * 
+ * This class will throw exceptions, mostly {@link PdfAConformanceException}, 
+ * and thus refuse to output a PDF/A file if at any point the document does not
+ * adhere to the PDF/A guidelines specified by the {@link PdfAConformanceLevel}.
+ */
+public final class PdfADocument extends PdfDocument {
 
     private static final long serialVersionUID = -5908390625367471894L;
     protected PdfAChecker checker;
 
+    /**
+     * Constructs a new PdfADocument for writing purposes, i.e. from scratch. A
+     * PDF/A file has a conformance level, and must have an explicit output
+     * intent.
+     * 
+     * @param writer the {@link PdfWriter} object to write to
+     * @param conformanceLevel the generation and strictness level of the PDF/A that must be followed.
+     * @param outputIntent a {@link PdfOutputIntent}
+     */
     public PdfADocument(PdfWriter writer, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {
         super(writer);
         setChecker(conformanceLevel);
         addOutputIntent(outputIntent);
     }
 
+    /**
+     * Opens a PDF/A document in the stamping mode.
+     * 
+     * @param reader PDF reader.
+     * @param writer PDF writer.
+     */
     public PdfADocument(PdfReader reader, PdfWriter writer) {
         this(reader, writer, new StampingProperties());
     }
 
+    /**
+     * Open a PDF/A document in stamping mode.
+     *
+     * @param reader PDF reader.
+     * @param writer PDF writer.
+     * @param properties properties of the stamping process
+     */
     public PdfADocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
         super(reader, writer, properties);
 
@@ -200,6 +234,12 @@ public class PdfADocument extends PdfDocument {
         }
     }
 
+    /**
+     * Gets the PdfAConformanceLevel set in the constructor or in the metadata
+     * of the {@link PdfReader}.
+     * 
+     * @return a {@link PdfAConformanceLevel}
+     */
     public PdfAConformanceLevel getConformanceLevel() {
         return checker.getConformanceLevel();
     }
