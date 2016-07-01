@@ -90,7 +90,7 @@ import java.io.IOException;
  * and thus refuse to output a PDF/A file if at any point the document does not
  * adhere to the PDF/A guidelines specified by the {@link PdfAConformanceLevel}.
  */
-public final class PdfADocument extends PdfDocument {
+public class PdfADocument extends PdfDocument {
 
     private static final long serialVersionUID = -5908390625367471894L;
     protected PdfAChecker checker;
