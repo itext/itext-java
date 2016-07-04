@@ -71,10 +71,19 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
         this.text = text;
     }
 
+    /**
+     * Gets the contents of the Text object that will be rendered.
+     * 
+     * @return the string with the contents
+     */
     public String getText() {
         return text;
     }
 
+    /**
+     * Sets the contents of the Text object.
+     * @param text the new contents
+     */
     public void setText(String text) {
         this.text = text;
     }
