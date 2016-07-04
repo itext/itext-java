@@ -46,6 +46,12 @@ package com.itextpdf.layout.property;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 
+/**
+ * A POJO that describes the underline of a layout element.
+ * 
+ * This class is to be used as a property for an element or renderer,
+ * as the value for {@link com.itextpdf.layout.property.Property#UNDERLINE}
+ */
 public class Underline {
     protected Color color;
     protected float thickness;
@@ -54,6 +60,22 @@ public class Underline {
     protected float yPositionMul;
     protected int lineCapStyle = PdfCanvasConstants.LineCapStyle.BUTT;
 
+    /**
+     * Creates an Underline. Both the thickness and vertical positioning under
+     * the text element's base line can be set to a fixed value, or a variable
+     * one depending on the element's font size.
+     * If you want a fixed-width thickness, set <code>thicknessMul</code> to 0;
+     * if you want a thickness solely dependent on the font size, set
+     * <code>thickness</code> to 0.
+     * Mutatis mutandis for the y-position.
+     * 
+     * @param color the {@link Color} of the underline
+     * @param thickness  a float defining the minimum thickness in points of the underline
+     * @param thicknessMul  a float defining the font size dependent component of the thickness of the underline
+     * @param yPosition a float defining the default absolute vertical distance in points from the text's base line
+     * @param yPositionMul  a float defining the font size dependent component of the vertical positioning of the underline
+     * @param lineCapStyle the way the underline finishes at its edges. {@link PdfCanvasConstants.LineCapStyle}
+     */
     public Underline(Color color, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {
         this.color = color;
         this.thickness = thickness;
@@ -63,22 +85,45 @@ public class Underline {
         this.lineCapStyle = lineCapStyle;
     }
 
+    /**
+     * Gets the color of the underline.
+     * @return a {@link Color}
+     */
     public Color getColor() {
         return color;
     }
 
+    /**
+     * Gets the total thickness of the underline (fixed + variable part).
+     * @param fontSize the font size for which to calculate the variable thickness
+     * @return the total thickness, as a <code>float</code>, in points
+     */
     public float getThickness(float fontSize) {
         return thickness + thicknessMul * fontSize;
     }
 
+    /**
+     * Gets the vertical position of the underline (fixed + variable part).
+     * @param fontSize the font size for which to calculate the variable position
+     * @return the y-position, as a <code>float</code>, in points
+     */
     public float getYPosition(float fontSize) {
         return yPosition + yPositionMul * fontSize;
     }
 
+    /**
+     * Gets the multiplier for the vertical positioning of the text underline.
+     * @return the Y-position multiplier, as a <code>float</code>
+     */
     public float getYPositionMul() {
         return yPositionMul;
     }
     
+    /**
+     * Gets the {@link PdfCanvasConstants.LineCapStyle} of the text underline.
+     * @return the line cap style, as an <code>int</code> referring to
+     * the values of {@link PdfCanvasConstants.LineCapStyle}
+     */
     public int getLineCapStyle() {
         return lineCapStyle;
     }

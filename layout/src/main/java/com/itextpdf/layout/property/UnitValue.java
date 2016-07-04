@@ -81,26 +81,50 @@ public class UnitValue {
         return new UnitValue(PERCENT, value);
     }
 
+    /**
+     * Returns the unit this value is stored in, either points (pt) or percent(%)
+     * @return either 1 for {@link UnitValue#POINT} or 2 for {@link UnitValue#PERCENT}
+     */
     public int getUnitType() {
         return unitType;
     }
 
+    /**
+     * Sets the unit this value is stored in, either points (pt) or percent(%)
+     * @param unitType either {@link UnitValue#POINT} or {@link UnitValue#PERCENT}
+     */
     public void setUnitType(int unitType) {
         this.unitType = unitType;
     }
 
+    /**
+     * Gets the measured value stored in this object
+     * @return the value, as a <code>float</code>
+     */
     public float getValue() {
         return value;
     }
 
+    /**
+     * Sets the measured value stored in this object
+     * @param value a <code>float</code>
+     */
     public void setValue(float value) {
         this.value = value;
     }
 
+    /**
+     * Returns whether or not the value is stored in points (pt)
+     * @return <code>true</code> if stored in points
+     */
     public boolean isPointValue() {
         return unitType == POINT;
     }
 
+    /**
+     * Returns whether or not the value is stored in percent (%)
+     * @return <code>true</code> if stored in percent
+     */
     public boolean isPercentValue() {
         return unitType == PERCENT;
     }

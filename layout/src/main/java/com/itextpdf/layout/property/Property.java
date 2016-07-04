@@ -184,6 +184,15 @@ public final class Property {
         INHERITED_PROPERTIES[Property.WORD_SPACING] = true;
     }
 
+    /**
+     * This method checks whether a Property, in order to be picked up by the
+     * rendering engine, must be defined on the current element or renderer 
+     * (<code>return false</code>), or may be defined in one of its parent
+     * elements or renderers (<code>return true</code>). 
+     * 
+     * @param property the ID, defined in this class, of the property to check
+     * @return whether the property type is inheritable
+     */
     public static boolean isPropertyInherited(int property) {
         return property >= 0 && property < MAX_INHERITED_PROPERTY_ID && INHERITED_PROPERTIES[property];
     }
