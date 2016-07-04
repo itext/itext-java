@@ -107,7 +107,7 @@ class TypographyUtils {
         } else {
             callMethod(TYPOGRAPHY_PACKAGE + SHAPER, APPLY_OTF_SCRIPT, new Class[]{TrueTypeFont.class, GlyphLine.class, Character.UnicodeScript.class},
                     fontProgram, text, script);
-            //Shaper.applyOtfScript((TrueTypeFont)font.getFontProgram(), text, script);
+//            Shaper.applyOtfScript((TrueTypeFont)fontProgram, text, script);
         }
     }
 
@@ -117,7 +117,7 @@ class TypographyUtils {
         } else {
             callMethod(TYPOGRAPHY_PACKAGE + SHAPER, APPLY_KERNING, new Class[]{FontProgram.class, GlyphLine.class},
                     fontProgram, text);
-            //Shaper.applyKerning(font.getFontProgram(), text);
+//            Shaper.applyKerning(fontProgram, text);
         }
     }
 
@@ -142,19 +142,19 @@ class TypographyUtils {
             int len = unicodeIds.length;
             byte[] types = (byte[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_CHARACTER_MAP, GET_CHARACTER_TYPES, new Class[]{int[].class, int.class, int.class},
                     unicodeIds, 0, len);
-            //byte[] types = BidiCharacterMap.getCharacterTypes(unicodeIds, 0, text.end - text.start;
+//            byte[] types = BidiCharacterMap.getCharacterTypes(unicodeIds, 0, len);
             byte[] pairTypes = (byte[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_BRACKET_MAP, GET_BRACKET_TYPES, new Class[]{int[].class, int.class, int.class},
                     unicodeIds, 0, len);
-            //byte[] pairTypes = BidiBracketMap.getBracketTypes(unicodeIds, 0, text.end - text.start);
+//            byte[] pairTypes = BidiBracketMap.getBracketTypes(unicodeIds, 0, len);
             int[] pairValues = (int[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_BRACKET_MAP, GET_BRACKET_VALUES, new Class[]{int[].class, int.class, int.class},
                     unicodeIds, 0, len);
-            //int[] pairValues = BidiBracketMap.getBracketValues(unicodeIds, 0, text.end - text.start);
+//            int[] pairValues = BidiBracketMap.getBracketValues(unicodeIds, 0, len);
             Object bidiReorder = callConstructor(TYPOGRAPHY_PACKAGE + BIDI_ALGORITHM, new Class[]{byte[].class, byte[].class, int[].class, byte.class},
                     types, pairTypes, pairValues, direction);
-            //BidiAlgorithm bidiReorder = new BidiAlgorithm(types, pairTypes, pairValues, direction);
+//            BidiAlgorithm bidiReorder = new BidiAlgorithm(types, pairTypes, pairValues, direction);
             return (byte[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_ALGORITHM, GET_LEVELS, bidiReorder, new Class[]{int[].class},
                     new int[]{len});
-            //levels = bidiReorder.getLevels(new int[]{text.end - text.start});
+//            return bidiReorder.getLevels(new int[]{len});
         }
         return null;
     }
@@ -168,7 +168,7 @@ class TypographyUtils {
             }
             int[] reorder = (int[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_ALGORITHM, COMPUTE_REORDERING, new Class[]{byte[].class},
                     lineLevels);
-            //int[] reorder = BidiAlgorithm.computeReordering(lineLevels);
+//            int[] reorder = BidiAlgorithm.computeReordering(lineLevels);
             List<LineRenderer.RendererGlyph> reorderedLine = new ArrayList<>(lineLevels.length);
             for (int i = 0; i < line.size(); i++) {
                 reorderedLine.add(line.get(reorder[i]));
@@ -178,8 +178,8 @@ class TypographyUtils {
                     if (reorderedLine.get(i).glyph.hasValidUnicode()) {
                         int pairedBracket = (int) callMethod(TYPOGRAPHY_PACKAGE + BIDI_BRACKET_MAP, GET_PAIRED_BRACKET, new Class[]{int.class},
                                 reorderedLine.get(i).glyph.getUnicode());
+//                        int pairedBracket = BidiBracketMap.getPairedBracket(reorderedLine.get(i).glyph.getUnicode());
                         PdfFont font = reorderedLine.get(i).renderer.getPropertyAsFont(Property.FONT);
-                        //BidiBracketMap.getPairedBracket(reorderedLine.get(i).getUnicode())
                         reorderedLine.set(i, new LineRenderer.RendererGlyph(font.getGlyph(pairedBracket), reorderedLine.get(i).renderer));
                     }
                 }
@@ -199,6 +199,7 @@ class TypographyUtils {
             return SUPPORTED_SCRIPTS;
         } else {
             return (Collection<Character.UnicodeScript>) callMethod(TYPOGRAPHY_PACKAGE + SHAPER, GET_SUPPORTED_SCRIPTS, new Class[]{});
+//            return (Collection<Character.UnicodeScript>) Shaper.getSupportedScripts();
         }
     }
 
