@@ -53,11 +53,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class TypographyUtils {
 
@@ -83,6 +87,9 @@ class TypographyUtils {
 
     private static final Collection<Character.UnicodeScript> SUPPORTED_SCRIPTS;
     private static final boolean TYPOGRAPHY_MODULE_INITIALIZED;
+
+    private static Map<String, Class<?>> cachedClasses = new HashMap<>();
+    private static Map<TypographyMethodSignature, Executable> cachedMethods = new HashMap<>();
 
     static {
         boolean moduleFound = false;
@@ -213,7 +220,7 @@ class TypographyUtils {
 
     private static Object callMethod(String className, String methodName, Object target, Class[] parameterTypes, Object... args) {
         try {
-            Method method = Class.forName(className).getMethod(methodName, parameterTypes);
+            Method method = findMethod(className, methodName, parameterTypes);
             return method.invoke(target, args);
         } catch (NoSuchMethodException e) {
             logger.warn(MessageFormat.format("Cannot find method {0} for class {1}", methodName, className));
@@ -227,7 +234,7 @@ class TypographyUtils {
 
     private static Object callConstructor(String className, Class[] parameterTypes, Object... args) {
         try {
-            Constructor constructor = Class.forName(className).getConstructor(parameterTypes);
+            Constructor<?> constructor = findConstructor(className, parameterTypes);
             return constructor.newInstance(args);
         } catch (NoSuchMethodException e) {
             logger.warn(MessageFormat.format("Cannot find constructor for class {0}", className));
@@ -239,4 +246,69 @@ class TypographyUtils {
         return null;
     }
 
+    private static Method findMethod(String className, String methodName, Class[] parameterTypes) throws NoSuchMethodException, ClassNotFoundException {
+        TypographyMethodSignature tm = new TypographyMethodSignature(className, parameterTypes, methodName);
+        Method m = (Method) cachedMethods.get(tm);
+        if (m == null) {
+            m = findClass(className).getMethod(methodName, parameterTypes);
+            cachedMethods.put(tm, m);
+        }
+        return m;
+    }
+
+    private static Constructor<?> findConstructor(String className, Class[] parameterTypes) throws NoSuchMethodException, ClassNotFoundException {
+        TypographyMethodSignature tc = new TypographyMethodSignature(className, parameterTypes);
+        Constructor<?> c = (Constructor<?>) cachedMethods.get(tc);
+        if (c == null) {
+            c = findClass(className).getConstructor(parameterTypes);
+            cachedMethods.put(tc, c);
+        }
+        return c;
+    }
+
+    private static Class<?> findClass(String className) throws ClassNotFoundException {
+        Class<?> c = cachedClasses.get(className);
+        if (c == null) {
+            c = Class.forName(className);
+            cachedClasses.put(className, c);
+        }
+        return c;
+    }
+
+    private static class TypographyMethodSignature {
+        protected String className;
+        protected Class[] parameterTypes;
+        private String methodName;
+
+        TypographyMethodSignature(String className, Class[] parameterTypes) {
+            this(className, parameterTypes, null);
+        }
+
+        TypographyMethodSignature(String className, Class[] parameterTypes, String methodName) {
+            this.methodName = methodName;
+            this.className = className;
+            this.parameterTypes = parameterTypes;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            TypographyMethodSignature that = (TypographyMethodSignature) o;
+
+            if (!className.equals(that.className)) return false;
+            if (!Arrays.equals(parameterTypes, that.parameterTypes)) return false;
+            return methodName != null ? methodName.equals(that.methodName) : that.methodName == null;
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = className.hashCode();
+            result = 31 * result + Arrays.hashCode(parameterTypes);
+            result = 31 * result + (methodName != null ? methodName.hashCode() : 0);
+            return result;
+        }
+    }
 }
