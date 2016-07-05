@@ -322,6 +322,8 @@ public abstract class PdfAChecker {
         if (xObjects != null) {
             for (PdfObject xObject : xObjects.values()) {
                 PdfStream xObjStream = (PdfStream) xObject;
+                if (checkedObjects.contains(xObjStream))
+                    continue;
                 PdfObject subtype = xObjStream.get(PdfName.Subtype);
                 if (PdfName.Image.equals(subtype)) {
                     checkImage(xObjStream, resources.getAsDictionary(PdfName.ColorSpace));

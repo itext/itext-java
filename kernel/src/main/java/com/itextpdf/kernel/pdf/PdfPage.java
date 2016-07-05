@@ -800,6 +800,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     private void flushXObjects(Collection<PdfObject> xObjects) {
         for (PdfObject obj : xObjects) {
+            if (obj.isFlushed())
+                continue;
+
             PdfStream xObject = (PdfStream) obj;
 
             PdfDictionary innerResources = xObject.getAsDictionary(PdfName.Resources);
