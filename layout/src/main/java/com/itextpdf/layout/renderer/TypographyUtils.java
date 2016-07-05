@@ -52,8 +52,8 @@ import com.itextpdf.layout.property.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -89,7 +89,7 @@ class TypographyUtils {
     private static final boolean TYPOGRAPHY_MODULE_INITIALIZED;
 
     private static Map<String, Class<?>> cachedClasses = new HashMap<>();
-    private static Map<TypographyMethodSignature, Executable> cachedMethods = new HashMap<>();
+    private static Map<TypographyMethodSignature, AccessibleObject> cachedMethods = new HashMap<>();
 
     static {
         boolean moduleFound = false;
