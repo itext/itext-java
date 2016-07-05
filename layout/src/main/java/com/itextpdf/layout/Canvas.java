@@ -163,6 +163,13 @@ public class Canvas extends RootElement<Canvas> {
         return page != null;
     }
 
+    /**
+     * Performs an entire recalculation of the element flow on the canvas,
+     * taking into account all its current child elements. May become very
+     * resource-intensive for large documents.
+     * 
+     * Do not use when you have set {@link #immediateFlush} to <code>true</code>.
+     */
     public void relayout() {
         if (immediateFlush) {
             throw new IllegalStateException("Operation not supported with immediate flush");

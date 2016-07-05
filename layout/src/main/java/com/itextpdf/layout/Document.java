@@ -193,34 +193,66 @@ public class Document extends RootElement<Document> {
         return rootRenderer;
     }
 
+    /**
+     * Gets the left margin, measured in points
+     * @return a <code>float</code> containing the left margin value
+     */
     public float getLeftMargin() {
         return leftMargin;
     }
 
+    /**
+     * Sets the left margin, measured in points
+     * @param leftMargin a <code>float</code> containing the new left margin value
+     */
     public void setLeftMargin(float leftMargin) {
         this.leftMargin = leftMargin;
     }
 
+    /**
+     * Gets the right margin, measured in points
+     * @return a <code>float</code> containing the right margin value
+     */
     public float getRightMargin() {
         return rightMargin;
     }
 
+    /**
+     * Sets the right margin, measured in points
+     * @param rightMargin a <code>float</code> containing the new right margin value
+     */
     public void  setRightMargin(float rightMargin) {
         this.rightMargin = rightMargin;
     }
 
+    /**
+     * Gets the top margin, measured in points
+     * @return a <code>float</code> containing the top margin value
+     */
     public float getTopMargin() {
         return topMargin;
     }
 
+    /**
+     * Sets the top margin, measured in points
+     * @param topMargin a <code>float</code> containing the new top margin value
+     */
     public void  setTopMargin(float topMargin) {
         this.topMargin = topMargin;
     }
 
+    /**
+     * Gets the bottom margin, measured in points
+     * @return a <code>float</code> containing the bottom margin value
+     */
     public float getBottomMargin() {
         return bottomMargin;
     }
 
+    /**
+     * Sets the bottom margin, measured in points
+     * @param bottomMargin a <code>float</code> containing the new bottom margin value
+     */
     public void setBottomMargin(float bottomMargin) {
         this.bottomMargin = bottomMargin;
     }
