@@ -53,4 +53,5 @@ public enum IsoKey {
     PAGE,
     PDF_OBJECT,
     RENDERING_INTENT,
+    TAG_STRUCTURE_ELEMENT,
 }

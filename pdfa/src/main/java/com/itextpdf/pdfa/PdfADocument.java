@@ -231,6 +231,10 @@ public class PdfADocument extends PdfDocument {
                 break;
             case PAGE:
                 checker.checkSinglePage((PdfPage) obj);
+                break;
+            case TAG_STRUCTURE_ELEMENT:
+                checker.checkTagStructureElement((PdfObject) obj);
+                break;
         }
     }
 

@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf.tagging;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
@@ -268,6 +269,7 @@ class ParentTreeHandler implements Serializable {
         if (parentsOfPageMcrs.size() > 0) {
             parentsOfPageMcrs.makeIndirect(structTreeRoot.getDocument());
             parentTree.addEntry(pageStructParentIndex, parentsOfPageMcrs);
+            structTreeRoot.getDocument().checkIsoConformance(parentsOfPageMcrs, IsoKey.TAG_STRUCTURE_ELEMENT);
             parentsOfPageMcrs.flush();
         }
     }

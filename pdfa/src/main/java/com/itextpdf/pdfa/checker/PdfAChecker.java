@@ -224,6 +224,18 @@ public abstract class PdfAChecker {
     }
 
     /**
+     * This method checks compliance of the tag structure elements, such as struct elements
+     * or parent tree entries.
+     *
+     * @param obj an object that represents tag structure element.
+     */
+    public void checkTagStructureElement(PdfObject obj) {
+        // We don't check tag structure as there are no strict constraints,
+        // so we just mark tag structure elements to be able to flush them
+        checkedObjects.add(obj);
+    }
+
+    /**
      * This method checks compliance with the graphics state architectural
      * limitation, explained by {@link PdfAChecker#maxGsStackDepth}.
      * 

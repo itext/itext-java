@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf.tagging;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -57,7 +58,6 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -362,7 +362,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     @Override
     public void flush() {
-        //TODO log that to prevent undefined behaviour, use StructTreeRoot#flushStructElem method
+        getDocument().checkIsoConformance(getPdfObject(), IsoKey.TAG_STRUCTURE_ELEMENT);
         super.flush();
     }
 
