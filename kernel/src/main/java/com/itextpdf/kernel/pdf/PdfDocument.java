@@ -1281,7 +1281,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         (PdfDictionary) infoDict : new PdfDictionary(), this);
 
                 PdfDictionary str = catalog.getPdfObject().getAsDictionary(PdfName.StructTreeRoot);
-                if (str != null) {
+                //Add a check to the structTreeRoot since the dictionary can be present while the tree is null
+                if (str != null && structTreeRoot != null) {
                     structTreeRoot = new PdfStructTreeRoot(str);
                     structParentIndex = getStructTreeRoot().getParentTreeNextKey();
                 }
