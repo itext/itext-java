@@ -49,6 +49,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class PdfException extends RuntimeException {
+    private static final long serialVersionUID = 4348832109324449091L;
 
     public static final String _1IsAnUnknownGraphicsStateDictionary = "{0} is.an.unknown.graphics.state.dictionary";
     public static final String _1IsNotAValidPlaceableWindowsMetafile = "{0} is.not.a.valid.placeable.windows.metafile";
