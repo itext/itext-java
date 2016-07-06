@@ -43,8 +43,25 @@
  */
 package com.itextpdf.test.annotations;
 
-
+/**
+ * An annotation to be used in a {@link LogMessages} wrapper, which signifies
+ * a particular log message that must appear in a test a specific number of
+ * times.
+ */
 public @interface LogMessage {
+    /**
+     * Defines the parameterized log message to look for in the logs. 
+     * @return the message template that must be checked for
+     */
     String messageTemplate();
+    
+    /**
+     * A certain message may have to be called several times, and the {@link
+     * LogListener} algorithm checks whether it has been called the correct
+     * number of times.
+     * Defaults to once.
+     * 
+     * @return the number of times a message template must appear in the logs
+     */
     int count() default 1;
 }

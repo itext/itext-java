@@ -49,8 +49,21 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * This annotation can be used to run a class that contains a <code>public
+ * static void main</code> method as a test in the JUnit test runner.
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WrapToTest {
+    /**
+     * Makes the test runner ignore the annotated class if a non-empty String is
+     * specified. The text should contain a reason for ignoring this test, as it
+     * is fed to the test runner.
+     * 
+     * Defaults to the empty String, which does not trigger ignoring the test.
+     * 
+     * @return the log message
+     */
     String ignoreWithMessage() default "";
 }

@@ -161,21 +161,19 @@ public class LogListener extends TestWatcher {
                 for (LogMessage logMessage : messages) {
                     int foundedCount = contains(logMessage.messageTemplate());
                     if (foundedCount != logMessage.count()) {
-                        Assert.assertTrue(MessageFormat.format("{0}.{1}: Some log messages are not found in test execution - {2} messages",
+                        Assert.fail(MessageFormat.format("{0}.{1}: Some log messages are not found in test execution - {2} messages",
                                         description.getClassName(),
                                         description.getMethodName(),
-                                        logMessage.count() - foundedCount),
-                                false);
+                                        logMessage.count() - foundedCount));
                     }
                 }
             }
         } else {
             if (getSize() > 0) {
-                Assert.assertTrue(MessageFormat.format("{0}.{1}: The test does not check the message logging - {2} messages",
+                Assert.fail(MessageFormat.format("{0}.{1}: The test does not check the message logging - {2} messages",
                                 description.getClassName(),
                                 description.getMethodName(),
-                                getSize()),
-                        false);
+                                getSize()));
             }
         }
     }

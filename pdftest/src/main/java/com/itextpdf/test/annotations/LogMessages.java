@@ -49,9 +49,27 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Container annotation for {@link LogMessage} objects. This type triggers the
+ * {@link LogListener} algorithm which checks whether log messages were called
+ * the required number of times.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface LogMessages {
+    /**
+     * Container for the log messages.
+     * @return an array of {@link LogMessage} objects
+     */
     LogMessage[] messages();
+    
+    /**
+     * Whether or not the {@link LogListener} algorithm should be ignored. If
+     * ignored, no checks will be done on the log messages for this test.
+     * 
+     * Defaults to false.
+     * 
+     * @return whether to ignore the {@link LogListener} algorithm
+     */
     boolean ignore() default false;
 }
