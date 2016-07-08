@@ -92,7 +92,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * Is used in smart mode to store serialized objects content.
      */
     private HashMap<SerializedPdfObject, PdfIndirectReference> serializedContentToObjectRef = new HashMap<>();
-    private IntHashtable objectRefToSerializedContent = new IntHashtable();
+    private HashMap<Integer, byte[]> objectRefToSerializedContent = new HashMap<>();
 
     //forewarned is forearmed
     protected boolean isUserWarnedAboutAcroFormCopying;
@@ -495,13 +495,15 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     static class SerializedPdfObject {
         private final byte[] serializedContent;
-        private MessageDigest md5;
-
         private final int hash;
 
-        SerializedPdfObject(PdfObject obj, IntHashtable serialized) {
+        private MessageDigest md5;
+        private HashMap<Integer, byte[]> objToSerializedContent;
+
+        SerializedPdfObject(PdfObject obj, HashMap<Integer, byte[]> objToSerializedContent) {
             assert obj.isDictionary() || obj.isStream();
 
+            this.objToSerializedContent = objToSerializedContent;
             try {
                 md5 = MessageDigest.getInstance("MD5");
             } catch (Exception e) {
@@ -509,16 +511,15 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             }
             ByteBufferOutputStream bb = new ByteBufferOutputStream();
             int level = 100;
-            serObject(obj, level, bb, serialized);
+            serObject(obj, level, bb);
             this.serializedContent = bb.toByteArray();
             hash = calculateHash(this.serializedContent);
             md5 = null;
         }
 
-        // TODO 1: objToSerialized contains hashes while on first run we append value itself
-        // TODO 2: object is not checked if it was alreadry serialized on start, double work could be done
+        // TODO 2: object is not checked if it was already serialized on start, double work could be done
         // TODO 3: indirect objects often stored multiple times as parts of the other objects
-        private void serObject(PdfObject obj, int level, ByteBufferOutputStream bb, IntHashtable serialized) {
+        private void serObject(PdfObject obj, int level, ByteBufferOutputStream bb) {
             if (level <= 0)
                 return;
             if (obj == null) {
@@ -527,12 +528,14 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             }
             PdfIndirectReference reference = null;
             ByteBufferOutputStream savedBb = null;
+            int indRefKey = -1;
 
             if (obj.isIndirectReference()) {
                 reference = (PdfIndirectReference) obj;
-                int key = calculateIndRefKey(reference);
-                if (serialized.containsKey(key)) {
-                    bb.append((int) serialized.get(key));
+                indRefKey = calculateIndRefKey(reference);
+                byte[] cached = objToSerializedContent.get(indRefKey);
+                if (cached != null) {
+                    bb.append(cached);
                     return;
                 } else {
                     savedBb = bb;
@@ -543,31 +546,29 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
             if (obj.isStream()) {
                 bb.append("$B");
-                serDic((PdfDictionary) obj, level - 1, bb, serialized);
+                serDic((PdfDictionary) obj, level - 1, bb);
                 if (level > 0) {
                     md5.reset();
                     bb.append(md5.digest(((PdfStream)obj).getBytes(false)));
                 }
             } else if (obj.isDictionary()) {
-                serDic((PdfDictionary) obj, level - 1, bb, serialized);
+                serDic((PdfDictionary) obj, level - 1, bb);
             } else if (obj.isArray()) {
-                serArray((PdfArray) obj, level - 1, bb, serialized);
+                serArray((PdfArray) obj, level - 1, bb);
             } else if (obj.isString()) {
                 bb.append("$S").append(obj.toString());
             } else if (obj.isName()) {
                 bb.append("$N").append(obj.toString());
             } else
-                bb.append("$L").append(obj.toString());
+                bb.append("$L").append(obj.toString()); // PdfNull case is also here
 
             if (savedBb != null) {
-                int key = calculateIndRefKey(reference);
-                if (!serialized.containsKey(key))
-                    serialized.put(key, calculateHash(bb.getBuffer()));
+                objToSerializedContent.put(indRefKey, bb.getBuffer());
                 savedBb.append(bb);
             }
         }
 
-        private void serDic(PdfDictionary dic, int level, ByteBufferOutputStream bb, IntHashtable serialized) {
+        private void serDic(PdfDictionary dic, int level, ByteBufferOutputStream bb) {
             bb.append("$D");
             if (level <= 0)
                 return;
@@ -577,18 +578,18 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             for (Object key : keys) {
                 if (key.equals(PdfName.P) && (dic.get((PdfName) key).isIndirectReference() || dic.get((PdfName) key).isDictionary()) || key.equals(PdfName.Parent)) // ignore recursive call
                     continue;
-                serObject((PdfObject) key, level, bb, serialized);
-                serObject(dic.get((PdfName) key, false), level, bb, serialized);
+                serObject((PdfObject) key, level, bb);
+                serObject(dic.get((PdfName) key, false), level, bb);
 
             }
         }
 
-        private void serArray(PdfArray array, int level, ByteBufferOutputStream bb, IntHashtable serialized) {
+        private void serArray(PdfArray array, int level, ByteBufferOutputStream bb) {
             bb.append("$A");
             if (level <= 0)
                 return;
             for (int k = 0; k < array.size(); ++k) {
-                serObject(array.get(k, false), level, bb, serialized);
+                serObject(array.get(k, false), level, bb);
             }
         }
 
