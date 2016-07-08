@@ -70,9 +70,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     private static final byte[] obj = getIsoBytes(" obj\n");
     private static final byte[] endobj = getIsoBytes("\nendobj\n");
 
-    private HashMap<ByteStore, PdfIndirectReference> streamMap = new HashMap<>();
-    private final IntHashtable serialized = new IntHashtable();
-
     // For internal usage only
     private PdfOutputStream duplicateStream = null;
 
@@ -84,7 +81,18 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      */
     PdfObjectStream objectStream = null;
 
+    /**
+     * Is used to avoid duplications on object copying.
+     * It stores hashes of the indirect reference from the source document and the corresponding
+     * indirect references of the copied objects from the new document.
+     */
     protected Map<Integer, PdfIndirectReference> copiedObjects = new HashMap<>();
+
+    /**
+     * Is used in smart mode to store serialized objects content.
+     */
+    private HashMap<SerializedPdfObject, PdfIndirectReference> serializedContentToObjectRef = new HashMap<>();
+    private IntHashtable objectRefToSerializedContent = new IntHashtable();
 
     //forewarned is forearmed
     protected boolean isUserWarnedAboutAcroFormCopying;
@@ -267,29 +275,31 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         }
 
         PdfIndirectReference indirectReference = obj.getIndirectReference();
-        PdfIndirectReference copiedIndirectReference;
 
         int copyObjectKey = 0;
-        if (!allowDuplicating && indirectReference != null) {
-            copyObjectKey = getCopyObjectKey(obj);
-            copiedIndirectReference = copiedObjects.get(copyObjectKey);
+        boolean tryToFindDuplicate = !allowDuplicating && indirectReference != null;
+        if (tryToFindDuplicate) {
+            copyObjectKey = calculateIndRefKey(indirectReference);
+            PdfIndirectReference copiedIndirectReference = copiedObjects.get(copyObjectKey);
             if (copiedIndirectReference != null)
                 return copiedIndirectReference.getRefersTo();
         }
 
-        if (properties.smartMode && !checkTypeOfPdfDictionary(obj, PdfName.Page)) {
-            PdfObject copiedObject = smartCopyObject(obj);
-            if (copiedObject != null) {
-                return copiedObjects.get(getCopyObjectKey(copiedObject)).getRefersTo();
+        if (properties.smartMode && tryToFindDuplicate && !checkTypeOfPdfDictionary(obj, PdfName.Page)) {
+            PdfIndirectReference copiedObjectRef = tryToFindPreviouslyCopiedEqualObject(obj);
+            if (copiedObjectRef != null) {
+                PdfIndirectReference copiedIndirectReference = copiedObjects.get(calculateIndRefKey(copiedObjectRef));
+                copiedObjects.put(copyObjectKey, copiedIndirectReference);
+                return copiedIndirectReference.getRefersTo();
             }
         }
 
         PdfObject newObject = obj.newInstance();
         if (indirectReference != null) {
             if (copyObjectKey == 0)
-                copyObjectKey = getCopyObjectKey(obj);
-            PdfIndirectReference reference = newObject.makeIndirect(document).getIndirectReference();
-            copiedObjects.put(copyObjectKey, reference);
+                copyObjectKey = calculateIndRefKey(indirectReference);
+            PdfIndirectReference indRef = newObject.makeIndirect(document).getIndirectReference();
+            copiedObjects.put(copyObjectKey, indRef);
         }
         newObject.copyContent(obj, document);
 
@@ -376,22 +386,37 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     }
 
     /**
-     * Calculates hash code for object to be copied.
-     * The hash code and the copied object is the stored in @{link copiedObjects} hash map to avoid duplications.
+     * Calculates hash code for the indirect reference taking into account the document it belongs to.
      *
-     * @param obj object to be copied.
+     * @param indRef object to be hashed.
      * @return calculated hash code.
      */
-    protected int getCopyObjectKey(PdfObject obj) {
-        PdfIndirectReference reference;
-        if (obj.isIndirectReference()) {
-            reference = (PdfIndirectReference) obj;
-        } else {
-            reference = obj.getIndirectReference();
-        }
-        int result = reference.hashCode();
-        result = 31 * result + reference.getDocument().hashCode();
+    protected static int calculateIndRefKey(PdfIndirectReference indRef) {
+        int result = indRef.hashCode();
+        result = 31 * result + indRef.getDocument().hashCode();
         return result;
+    }
+
+    /**
+     * Used in the smart mode.
+     * It serializes given object content and tries to find previously copied object with the same content.
+     * If already copied object is not found, it saves current object serialized content into the map.
+     *
+     * @param object an object to check if some other object with the same content was already copied.
+     * @return indirect reference of the object with the same content, which already has a copy in the new document.
+     */
+    private PdfIndirectReference tryToFindPreviouslyCopiedEqualObject(PdfObject object) {
+        SerializedPdfObject objectKey;
+        if (object.isStream() || object.isDictionary()) {
+            objectKey = new SerializedPdfObject(object, objectRefToSerializedContent);
+            PdfIndirectReference objectRef = serializedContentToObjectRef.get(objectKey);
+            if (objectRef != null) {
+                return objectRef;
+            }
+            serializedContentToObjectRef.put(objectKey, object.getIndirectReference());
+        }
+
+        return null;
     }
 
     private void markArrayContentToFlush(PdfArray array) {
@@ -432,27 +457,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         return this;
     }
 
-    private PdfObject smartCopyObject(PdfObject obj) {
-        ByteStore streamKey;
-        if (obj.isStream()) {
-            streamKey = new ByteStore((PdfStream) obj, serialized);
-            PdfIndirectReference streamRef = streamMap.get(streamKey);
-            if (streamRef != null) {
-                return streamRef;
-            }
-            streamMap.put(streamKey, obj.getIndirectReference());
-        } else if (obj.isDictionary()) {
-            streamKey = new ByteStore((PdfDictionary) obj, serialized);
-            PdfIndirectReference streamRef = streamMap.get(streamKey);
-            if (streamRef != null) {
-                return streamRef.getRefersTo();
-            }
-            streamMap.put(streamKey, obj.getIndirectReference());
-        }
-
-        return null;
-    }
-
     private byte[] getDebugBytes() throws IOException {
         if (duplicateStream != null) {
             duplicateStream.flush();
@@ -489,10 +493,31 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         outputStream = tempOutputStream;
     }
 
-    static class ByteStore {
-        private final byte[] b;
-        private final int hash;
+    static class SerializedPdfObject {
+        private final byte[] serializedContent;
         private MessageDigest md5;
+
+        private final int hash;
+
+        SerializedPdfObject(PdfObject obj, IntHashtable serialized) {
+            assert obj.isDictionary() || obj.isStream();
+
+            try {
+                md5 = MessageDigest.getInstance("MD5");
+            } catch (Exception e) {
+                throw new PdfException(e);
+            }
+            ByteBufferOutputStream bb = new ByteBufferOutputStream();
+            int level = 100;
+            serObject(obj, level, bb, serialized);
+            this.serializedContent = bb.toByteArray();
+            hash = calculateHash(this.serializedContent);
+            md5 = null;
+        }
+
+        // TODO 1: objToSerialized contains hashes while on first run we append value itself
+        // TODO 2: object is not checked if it was alreadry serialized on start, double work could be done
+        // TODO 3: indirect objects often stored multiple times as parts of the other objects
         private void serObject(PdfObject obj, int level, ByteBufferOutputStream bb, IntHashtable serialized) {
             if (level <= 0)
                 return;
@@ -504,15 +529,15 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             ByteBufferOutputStream savedBb = null;
 
             if (obj.isIndirectReference()) {
-                reference = (PdfIndirectReference)obj;
-                int key = getCopyObjectKey(obj);
+                reference = (PdfIndirectReference) obj;
+                int key = calculateIndRefKey(reference);
                 if (serialized.containsKey(key)) {
                     bb.append((int) serialized.get(key));
                     return;
-                }
-                else {
+                } else {
                     savedBb = bb;
                     bb = new ByteBufferOutputStream();
+                    obj = reference.getRefersTo();
                 }
             }
 
@@ -523,24 +548,19 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
                     md5.reset();
                     bb.append(md5.digest(((PdfStream)obj).getBytes(false)));
                 }
-            }
-            else if (obj.isDictionary()) {
-                serDic((PdfDictionary)obj, level - 1, bb, serialized);
-            }
-            else if (obj.isArray()) {
-                serArray((PdfArray)obj, level - 1, bb, serialized);
-            }
-            else if (obj.isString()) {
+            } else if (obj.isDictionary()) {
+                serDic((PdfDictionary) obj, level - 1, bb, serialized);
+            } else if (obj.isArray()) {
+                serArray((PdfArray) obj, level - 1, bb, serialized);
+            } else if (obj.isString()) {
                 bb.append("$S").append(obj.toString());
-            }
-            else if (obj.isName()) {
+            } else if (obj.isName()) {
                 bb.append("$N").append(obj.toString());
-            }
-            else
+            } else
                 bb.append("$L").append(obj.toString());
 
             if (savedBb != null) {
-                int key = getCopyObjectKey(reference);
+                int key = calculateIndRefKey(reference);
                 if (!serialized.containsKey(key))
                     serialized.put(key, calculateHash(bb.getBuffer()));
                 savedBb.append(bb);
@@ -572,36 +592,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             }
         }
 
-        ByteStore(PdfStream str, IntHashtable serialized) {
-            try {
-                md5 = MessageDigest.getInstance("MD5");
-            }
-            catch (Exception e) {
-                throw new PdfException(e);
-            }
-            ByteBufferOutputStream bb = new ByteBufferOutputStream();
-            int level = 100;
-            serObject(str, level, bb, serialized);
-            this.b = bb.toByteArray();
-            hash = calculateHash(this.b);
-            md5 = null;
-        }
-
-        ByteStore(PdfDictionary dict, IntHashtable serialized) {
-            try {
-                md5 = MessageDigest.getInstance("MD5");
-            }
-            catch (Exception e) {
-                throw new PdfException(e);
-            }
-            ByteBufferOutputStream bb = new ByteBufferOutputStream();
-            int level = 100;
-            serObject(dict, level, bb, serialized);
-            this.b = bb.toByteArray();
-            hash = calculateHash(this.b);
-            md5 = null;
-        }
-
         private static int calculateHash(byte[] b) {
             int hash = 0;
             int len = b.length;
@@ -613,25 +603,12 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
         @Override
         public boolean equals(Object obj) {
-            return obj instanceof ByteStore &&
-                    hashCode() == obj.hashCode() && Arrays.equals(b, ((ByteStore) obj).b);
+            return obj instanceof SerializedPdfObject && hashCode() == obj.hashCode() && Arrays.equals(serializedContent, ((SerializedPdfObject) obj).serializedContent);
         }
 
         @Override
         public int hashCode() {
             return hash;
-        }
-
-        protected int getCopyObjectKey(PdfObject obj) {
-            PdfIndirectReference reference;
-            if (obj.isIndirectReference()) {
-                reference = (PdfIndirectReference) obj;
-            } else {
-                reference = obj.getIndirectReference();
-            }
-            int result = reference.hashCode();
-            result = 31 * result + reference.getDocument().hashCode();
-            return result;
         }
     }
 }
