@@ -156,10 +156,7 @@ public class FontCache {
     public static FontProgram getFont(String fontName) {
         String key = getFontCacheKey(fontName);
         FontProgram font = null;
-        if (fontCache.containsKey(key)) {
-            font = fontCache.get(key);
-        }
-        return font;
+        return fontCache.get(key);
     }
 
     public static FontProgram saveFont(FontProgram font, String fontName) {
