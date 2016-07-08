@@ -966,18 +966,23 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         // It's important to copy tag structure after link annotations were copied, because object content items in tag
         // structure are not copied in case if their's OBJ key is annotation and doesn't contain /P entry.
         if (toDocument.isTagged()) {
-            if (tagStructureContext != null) {
-                tagStructureContext.actualizeTagsProperties();
-            }
-            for (Map<PdfPage, PdfPage> increasingPagesRange : rangesOfPagesWithIncreasingNumbers) {
-                if (insertInBetween) {
-                    getStructTreeRoot().copyTo(toDocument, insertBeforePage, increasingPagesRange);
-                } else {
-                    getStructTreeRoot().copyTo(toDocument, increasingPagesRange);
+            if (isTagged()) {
+                if (tagStructureContext != null) {
+                    tagStructureContext.actualizeTagsProperties();
                 }
-                insertBeforePage += increasingPagesRange.size();
+                for (Map<PdfPage, PdfPage> increasingPagesRange : rangesOfPagesWithIncreasingNumbers) {
+                    if (insertInBetween) {
+                        getStructTreeRoot().copyTo(toDocument, insertBeforePage, increasingPagesRange);
+                    } else {
+                        getStructTreeRoot().copyTo(toDocument, increasingPagesRange);
+                    }
+                    insertBeforePage += increasingPagesRange.size();
+                }
+                toDocument.getTagStructureContext().normalizeDocumentRootTag();
+            } else {
+                Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+                logger.error(LogMessageConstant.NOT_TAGGED_PAGES_IN_TAGGED_DOCUMENT);
             }
-            toDocument.getTagStructureContext().normalizeDocumentRootTag();
         }
         if (catalog.isOutlineMode()) {
             copyOutlines(outlinesToCopy, toDocument, page2page);
