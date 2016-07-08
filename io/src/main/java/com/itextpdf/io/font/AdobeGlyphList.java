@@ -116,8 +116,11 @@ public class AdobeGlyphList {
     }
 
     public static Integer nameToUnicode(String name) {
-        Integer v = names2unicode.get(name);
-        if (v == null && name.length() == 7 && name.toLowerCase().startsWith("uni")) {
+        int v = -1;
+        if (names2unicode.containsKey(name)) {
+            v = (int) names2unicode.get(name);
+        }
+        if (v == -1 && name.length() == 7 && name.toLowerCase().startsWith("uni")) {
             try {
                 return Integer.parseInt(name.substring(3), 16);
             } catch (Exception ignored) {
