@@ -40,7 +40,9 @@ public class XMPMetadataTest extends ExtendedITextTest{
         PdfReader reader = new PdfReader(destinationFolder +filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        Assert.assertEquals(readFile(sourceFolder + "emptyDocumentWithXmp.xml").length, pdfDocument.getXmpMetadata().length);
+        int delta = readFile(sourceFolder + "emptyDocumentWithXmp.xml").length - pdfDocument.getXmpMetadata().length;
+        //Difference could be because of -SNAPSHOT postfix.
+        Assert.assertTrue("Unexpected length delta", delta == 0 || delta == 9);
         Assert.assertNotNull(reader.pdfDocument.getPage(1));
         reader.close();
     }
