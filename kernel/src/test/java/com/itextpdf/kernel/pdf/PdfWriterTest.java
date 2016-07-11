@@ -5,10 +5,6 @@ import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
@@ -16,6 +12,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TreeMap;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfWriterTest extends ExtendedITextTest {
@@ -398,7 +399,7 @@ public class PdfWriterTest extends ExtendedITextTest {
 
         pdfDoc = new PdfDocument(new PdfReader(destinationFolder + "copyObject6_1.pdf"));
         helloWorld = (PdfDictionary) pdfDoc.getPage(1).getPdfObject().get(new PdfName("HelloWorld"));
-        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "copyObject6_2.pdf")));
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject6_2.pdf"));
         PdfPage page1 = pdfDoc1.addNewPage();
 
         page1.getPdfObject().put(new PdfName("HelloWorldCopy1"), helloWorld.copyTo(pdfDoc1));

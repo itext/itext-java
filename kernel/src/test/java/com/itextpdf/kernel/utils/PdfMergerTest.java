@@ -4,18 +4,15 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 
-
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Assert;
@@ -25,7 +22,7 @@ import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
 
 @Category(IntegrationTest.class)
-public class PdfMergerTest extends ExtendedITextTest{
+public class PdfMergerTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/PdfMergerTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/PdfMergerTest/";
@@ -40,11 +37,11 @@ public class PdfMergerTest extends ExtendedITextTest{
         String filename = sourceFolder + "courierTest.pdf";
         String filename1 = sourceFolder + "helveticaTest.pdf";
         String filename2 = sourceFolder + "timesRomanTest.pdf";
-        String resultFile = destinationFolder+"mergedResult01.pdf";
+        String resultFile = destinationFolder + "mergedResult01.pdf";
 
-        PdfReader reader = new PdfReader(new FileInputStream(filename));
-        PdfReader reader1 = new PdfReader(new FileInputStream(filename1));
-        PdfReader reader2 = new PdfReader(new FileInputStream(filename2));
+        PdfReader reader = new PdfReader(filename);
+        PdfReader reader1 = new PdfReader(filename1);
+        PdfReader reader2 = new PdfReader(filename2);
 
         FileOutputStream fos1 = new FileOutputStream(resultFile);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -73,11 +70,11 @@ public class PdfMergerTest extends ExtendedITextTest{
         String filename = sourceFolder + "doc1.pdf";
         String filename1 = sourceFolder + "doc2.pdf";
         String filename2 = sourceFolder + "doc3.pdf";
-        String resultFile = destinationFolder+"mergedResult02.pdf";
+        String resultFile = destinationFolder + "mergedResult02.pdf";
 
-        PdfReader reader = new PdfReader(new FileInputStream(filename));
-        PdfReader reader1 = new PdfReader(new FileInputStream(filename1));
-        PdfReader reader2 = new PdfReader(new FileInputStream(filename2));
+        PdfReader reader = new PdfReader(filename);
+        PdfReader reader1 = new PdfReader(filename1);
+        PdfReader reader2 = new PdfReader(filename2);
 
         FileOutputStream fos1 = new FileOutputStream(resultFile);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -100,13 +97,13 @@ public class PdfMergerTest extends ExtendedITextTest{
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
     })
-    public void mergeDocumentTest03() throws IOException, InterruptedException,  ParserConfigurationException, SAXException {
+    public void mergeDocumentTest03() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String filename = sourceFolder + "pdf_open_parameters.pdf";
         String filename1 = sourceFolder + "iphone_user_guide.pdf";
-        String resultFile = destinationFolder+"mergedResult03.pdf";
+        String resultFile = destinationFolder + "mergedResult03.pdf";
 
-        PdfReader reader = new PdfReader(new FileInputStream(filename));
-        PdfReader reader1 = new PdfReader(new FileInputStream(filename1));
+        PdfReader reader = new PdfReader(filename);
+        PdfReader reader1 = new PdfReader(filename1);
 
         FileOutputStream fos1 = new FileOutputStream(resultFile);
         PdfWriter writer1 = new PdfWriter(fos1);
@@ -139,13 +136,13 @@ public class PdfMergerTest extends ExtendedITextTest{
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
     })
-    public void mergeDocumentTest04() throws IOException, InterruptedException,  ParserConfigurationException, SAXException {
+    public void mergeDocumentTest04() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String filename = sourceFolder + "pdf_open_parameters.pdf";
         String filename1 = sourceFolder + "iphone_user_guide.pdf";
-        String resultFile = destinationFolder+"mergedResult04.pdf";
+        String resultFile = destinationFolder + "mergedResult04.pdf";
 
-        PdfReader reader = new PdfReader(new FileInputStream(filename));
-        PdfReader reader1 = new PdfReader(new FileInputStream(filename1));
+        PdfReader reader = new PdfReader(filename);
+        PdfReader reader1 = new PdfReader(filename1);
 
         FileOutputStream fos1 = new FileOutputStream(resultFile);
         PdfWriter writer1 = new PdfWriter(fos1);

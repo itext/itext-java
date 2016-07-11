@@ -8,8 +8,16 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.color.*;
+import com.itextpdf.kernel.color.CalGray;
+import com.itextpdf.kernel.color.CalRgb;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.DeviceCmyk;
+import com.itextpdf.kernel.color.DeviceN;
+import com.itextpdf.kernel.color.DeviceRgb;
+import com.itextpdf.kernel.color.IccBased;
+import com.itextpdf.kernel.color.Indexed;
+import com.itextpdf.kernel.color.Lab;
+import com.itextpdf.kernel.color.Separation;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
@@ -22,17 +30,21 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.awt.*;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfCanvasTest extends ExtendedITextTest {
@@ -1489,7 +1501,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     /*@Test
     public void ccittImageTest01() throws IOException, InterruptedException {
         String filename = "ccittImage01.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();

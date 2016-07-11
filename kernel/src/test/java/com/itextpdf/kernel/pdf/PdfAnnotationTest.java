@@ -6,7 +6,25 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
-import com.itextpdf.kernel.pdf.annot.*;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfCaretAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfCircleAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfFileAttachmentAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfFixedPrint;
+import com.itextpdf.kernel.pdf.annot.PdfFreeTextAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfInkAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfPopupAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfPrinterMarkAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfRedactAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfScreenAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfSoundAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfSquareAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfStampAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfTextMarkupAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfTrapNetworkAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfWatermarkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
@@ -15,14 +33,18 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.*;
-import java.util.List;
 
 @Category(IntegrationTest.class)
 public class PdfAnnotationTest extends ExtendedITextTest {
@@ -132,7 +154,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "linkAnnotation03.pdf", sourceFolder + "cmp_linkAnnotation03.pdf", destinationFolder, "diff_"));
 
 
-        document = new PdfDocument(new PdfReader(new FileInputStream(destinationFolder + "linkAnnotation03.pdf")));
+        document = new PdfDocument(new PdfReader(destinationFolder + "linkAnnotation03.pdf"));
         page = document.getPage(1);
         Assert.assertEquals(3, page.getAnnotsSize());
         List<PdfAnnotation> annotations = page.getAnnotations();

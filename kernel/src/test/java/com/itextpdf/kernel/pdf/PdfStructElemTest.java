@@ -16,15 +16,18 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.util.ArrayList;
 
 @Category(IntegrationTest.class)
 public class PdfStructElemTest extends ExtendedITextTest {
@@ -206,7 +209,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         byte[] bytes = baos.toByteArray();
 
         PdfReader reader = new PdfReader(new ByteArrayInputStream(bytes));
-        writer = new PdfWriter(new FileOutputStream(destinationFolder + "structElemTest04.pdf"));
+        writer = new PdfWriter(destinationFolder + "structElemTest04.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         document = new PdfDocument(reader, writer);
 
