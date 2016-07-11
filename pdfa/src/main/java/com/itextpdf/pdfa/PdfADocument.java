@@ -73,10 +73,11 @@ import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.checker.PdfA2Checker;
 import com.itextpdf.pdfa.checker.PdfA3Checker;
 import com.itextpdf.pdfa.checker.PdfAChecker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class extends {@link PdfDocument} and is in charge of creating files
@@ -249,15 +250,25 @@ public class PdfADocument extends PdfDocument {
     }
 
     @Override
+    protected void addCustomMetadataExtensions(XMPMeta xmpMeta) {
+        if (this.isTagged()) {
+            try {
+                XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
+                XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
+            } catch (XMPException exc) {
+                Logger logger = LoggerFactory.getLogger(PdfADocument.class);
+                logger.error(LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, exc);
+            }
+        }
+    }
+
+    @Override
     protected void updateXmpMetadata() {
         try {
             XMPMeta xmpMeta = updateDefaultXmpMetadata();
             xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, checker.getConformanceLevel().getPart());
             xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, checker.getConformanceLevel().getConformance());
-            if (this.isTagged()) {
-                XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
-                XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
-            }
+            addCustomMetadataExtensions(xmpMeta);
             setXmpMetadata(xmpMeta);
         } catch (XMPException e) {
             Logger logger = LoggerFactory.getLogger(PdfADocument.class);

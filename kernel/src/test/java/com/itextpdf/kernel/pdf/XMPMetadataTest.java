@@ -3,14 +3,15 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class XMPMetadataTest extends ExtendedITextTest{
@@ -25,7 +26,6 @@ public class XMPMetadataTest extends ExtendedITextTest{
 
     @Test
     public void createEmptyDocumentWithXmp() throws Exception {
-
         String filename = "emptyDocumentWithXmp.pdf";
         PdfWriter writer = new PdfWriter(destinationFolder + filename,  new WriterProperties().addXmpMetadata());
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -69,6 +69,5 @@ public class XMPMetadataTest extends ExtendedITextTest{
         Assert.assertArrayEquals("abc".getBytes(), pdfDocument.getXmpMetadata());
         Assert.assertNotNull(pdfDocument.getPage(1));
         reader.close();
-
     }
 }

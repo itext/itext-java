@@ -68,17 +68,30 @@ import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
-import com.itextpdf.kernel.xmp.*;
+import com.itextpdf.kernel.xmp.PdfConst;
+import com.itextpdf.kernel.xmp.XMPConst;
+import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPMeta;
+import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
@@ -277,6 +290,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             XMPMeta xmpMeta = XMPMetaFactory.create();
             xmpMeta.setObjectName(XMPConst.TAG_XMPMETA);
             xmpMeta.setObjectName("");
+            addCustomMetadataExtensions(xmpMeta);
             try {
                 xmpMeta.setProperty(XMPConst.NS_DC, PdfConst.Format, "application/pdf");
                 xmpMeta.setProperty(XMPConst.NS_PDF, PdfConst.Producer, Version.getInstance().getVersion());
@@ -1379,6 +1393,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotOpenDocument, e, this);
         }
+    }
+
+    protected void addCustomMetadataExtensions(XMPMeta xmpMeta) {
     }
 
     protected void updateXmpMetadata() {
