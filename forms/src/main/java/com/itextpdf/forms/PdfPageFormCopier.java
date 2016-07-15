@@ -82,14 +82,14 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
         if (documentTo != toPage.getDocument()) {
             documentTo = toPage.getDocument();
             formTo = PdfAcroForm.getAcroForm(documentTo, true);
-            if (formFrom != null) {
-                //duplicate AcroForm dictionary
-                List<PdfName> excludedKeys = new ArrayList<>();
-                excludedKeys.add(PdfName.Fields);
-                excludedKeys.add(PdfName.DR);
-                PdfDictionary dict = formFrom.getPdfObject().copyTo(documentTo, excludedKeys, false);
-                formTo.getPdfObject().mergeDifferent(dict);
-            }
+        }
+        if (formFrom != null) {
+            //duplicate AcroForm dictionary
+            List<PdfName> excludedKeys = new ArrayList<>();
+            excludedKeys.add(PdfName.Fields);
+            excludedKeys.add(PdfName.DR);
+            PdfDictionary dict = formFrom.getPdfObject().copyTo(documentTo, excludedKeys, false);
+            formTo.getPdfObject().mergeDifferent(dict);
         }
 
         List<PdfDictionary> usedParents = new ArrayList<>();
@@ -106,13 +106,15 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                             if (parentName == null) {
                                 continue;
                             }
-                            if (!usedParents.contains(parent)) {
+                            if (!fieldsTo.containsKey(parentName.toUnicodeString())) {
                                 PdfFormField field = PdfFormField.makeFormField(parent, toPage.getDocument());
                                 field.getKids().clear();
                                 formTo.addField(field, toPage);
-                                usedParents.add(parent);
+                                fieldsTo.put(parentName.toUnicodeString(), new PdfFormField(parent));
                                 field.addKid((PdfWidgetAnnotation) annot);
                             } else {
+                                parent = fieldsTo.get(parentName.toUnicodeString()).getPdfObject();
+                                annot.getPdfObject().put(PdfName.Parent, fieldsTo.get(parentName.toUnicodeString()).getPdfObject());
                                 parent.getAsArray(PdfName.Kids).add(annot.getPdfObject());
                             }
                         } else {

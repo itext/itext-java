@@ -12,7 +12,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -151,7 +150,9 @@ public class PdfFormCopyTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-720")
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 13)
+    })
     public void copyFieldsTest06() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "datasheet.pdf";
         String destFilename = destinationFolder + "copyFields06.pdf";
@@ -171,7 +172,9 @@ public class PdfFormCopyTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-720")
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 13)
+    })
     public void copyFieldsTest07() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "datasheet.pdf";
         String destFilename = destinationFolder + "copyFields07.pdf";
@@ -191,7 +194,6 @@ public class PdfFormCopyTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-720")
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 13)
     })
