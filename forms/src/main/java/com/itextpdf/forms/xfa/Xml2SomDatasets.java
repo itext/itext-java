@@ -148,7 +148,7 @@ class Xml2SomDatasets extends Xml2Som {
                     else
                         i = i + 1;
                     ss.put(s, i);
-                    stack.push(s + "[" + i.toString() + "]");
+                    stack.push(String.format("%s[%s]", s, i.toString()));
                     if (hasChildren(n2)) {
                         processDatasetsInternal(n2);
                     }
