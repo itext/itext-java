@@ -213,17 +213,17 @@ public class TableRenderer extends AbstractRenderer {
             boolean cellWithBigRowspanAdded = false;
             List<CellRenderer> currChildRenderers = new ArrayList<>();
             // Process in a queue, because we might need to add a cell from the future, i.e. having big rowspan in case of split.
-            Queue<CellRendererInfo> cellProcessingQueue = new ArrayDeque<CellRendererInfo>();
+            Deque<CellRendererInfo> cellProcessingQueue = new ArrayDeque<CellRendererInfo>();
             for (int col = 0; col < currentRow.length; col++) {
                 if (currentRow[col] != null) {
-                    cellProcessingQueue.offer(new CellRendererInfo(currentRow[col], col, row));
+                    cellProcessingQueue.addLast(new CellRendererInfo(currentRow[col], col, row));
                 }
             }
             // the element which was the first to cause Layout.Nothing
             IRenderer firstCauseOfNothing = null;
 
-            while (!cellProcessingQueue.isEmpty()) {
-                CellRendererInfo currentCellInfo = cellProcessingQueue.poll();
+            while (cellProcessingQueue.size() > 0) {
+                CellRendererInfo currentCellInfo = cellProcessingQueue.pop();
                 int col = currentCellInfo.column;
                 CellRenderer cell = currentCellInfo.cellRenderer;
                 if (cell != null) {
@@ -293,7 +293,7 @@ public class TableRenderer extends AbstractRenderer {
                                     cellProcessingQueue.clear();
                                     for (int addCol = 0; addCol < currentRow.length; addCol++) {
                                         if (currentRow[addCol] != null) {
-                                            cellProcessingQueue.offer(new CellRendererInfo(currentRow[addCol], addCol, row));
+                                            cellProcessingQueue.addLast(new CellRendererInfo(currentRow[addCol], addCol, row));
                                         }
                                     }
                                     footerRenderer = null;
@@ -313,7 +313,7 @@ public class TableRenderer extends AbstractRenderer {
                                             verticalAlignment = addRenderer.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT);
                                             if (verticalAlignment != null && verticalAlignment.equals(VerticalAlignment.BOTTOM)) {
                                                 if (row + addRenderer.getPropertyAsInteger(Property.ROWSPAN) - 1 < addRow) {
-                                                    cellProcessingQueue.offer(new CellRendererInfo(addRenderer, addCol, addRow));
+                                                    cellProcessingQueue.addLast(new CellRendererInfo(addRenderer, addCol, addRow));
                                                     cellWithBigRowspanAdded = true;
                                                 } else {
                                                     horizontalBorders.get(row + 1).set(addCol, addRenderer.getBorders()[2]);
@@ -332,7 +332,7 @@ public class TableRenderer extends AbstractRenderer {
                                                     }
                                                 }
                                             } else if (row + addRenderer.getPropertyAsInteger(Property.ROWSPAN) - 1 >= addRow) {
-                                                cellProcessingQueue.offer(new CellRendererInfo(addRenderer, addCol, addRow));
+                                                cellProcessingQueue.addLast(new CellRendererInfo(addRenderer, addCol, addRow));
                                                 cellWithBigRowspanAdded = true;
                                             }
                                             break;
@@ -481,8 +481,8 @@ public class TableRenderer extends AbstractRenderer {
                 // On the next page we need to process rows without any changes except moves connected to actual cell splitting
                 for (Map.Entry<Integer, Integer> entry : rowMoves.entrySet()) {
                     // Move the cell back to its row if there was no actual split
-                    if (null == splitResult[1].rows.get(entry.getValue()-splitResult[0].rows.size())[entry.getKey()]) {
-                        splitResult[1].rows.get(entry.getValue() - splitResult[0].rows.size())[entry.getKey()] = splitResult[1].rows.get(row - splitResult[0].rows.size())[entry.getKey()];
+                    if (null == splitResult[1].rows.get((int) entry.getValue()-splitResult[0].rows.size())[entry.getKey()]) {
+                        splitResult[1].rows.get((int) entry.getValue() - splitResult[0].rows.size())[entry.getKey()] = splitResult[1].rows.get(row - splitResult[0].rows.size())[entry.getKey()];
                         splitResult[1].rows.get(row - splitResult[0].rows.size())[entry.getKey()] = null;
                     }
                 }

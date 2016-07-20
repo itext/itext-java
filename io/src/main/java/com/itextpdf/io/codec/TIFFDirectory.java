@@ -418,7 +418,7 @@ public class TIFFDirectory implements Serializable {
         if (i == null) {
             return null;
         } else {
-            return fields[i];
+            return fields[(int) i];
         }
     }
 

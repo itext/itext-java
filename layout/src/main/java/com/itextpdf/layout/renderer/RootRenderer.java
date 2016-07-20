@@ -114,7 +114,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                                     currentPageNumber = storedArea.getPageNumber();
                                 }
                                 storedArea = currentArea;
-                            } else if (null != result.getCauseOfNothing() && Boolean.TRUE.equals(result.getCauseOfNothing().getProperty(Property.KEEP_TOGETHER))) {
+                            } else if (null != result.getCauseOfNothing() && Boolean.TRUE.equals(result.getCauseOfNothing().<Boolean>getProperty(Property.KEEP_TOGETHER))) {
                                 // set KEEP_TOGETHER false on the deepest parent (maybe the element itself) to have KEEP_TOGETHER == true
                                 IRenderer theDeepestKeptTogether = result.getCauseOfNothing();
                                 while (null == theDeepestKeptTogether.getModelElement() || null == theDeepestKeptTogether.getModelElement().<Boolean>getOwnProperty(Property.KEEP_TOGETHER)) {
@@ -147,8 +147,8 @@ public abstract class RootRenderer extends AbstractRenderer {
             }
 
             // Keep renderer until next element is added for future keep with next adjustments
-            if (renderer != null && Boolean.TRUE.equals(renderer.getProperty(Property.KEEP_WITH_NEXT))) {
-                if (Boolean.TRUE.equals(renderer.getProperty(Property.FORCED_PLACEMENT))) {
+            if (renderer != null && Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.KEEP_WITH_NEXT))) {
+                if (Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
                     Logger logger = LoggerFactory.getLogger(RootRenderer.class);
                     logger.warn(LogMessageConstant.ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED);
                     updateCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);

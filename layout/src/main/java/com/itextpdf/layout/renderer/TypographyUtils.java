@@ -276,9 +276,9 @@ class TypographyUtils {
     }
 
     private static class TypographyMethodSignature {
-        protected String className;
+        protected final String className;
         protected Class[] parameterTypes;
-        private String methodName;
+        private final String methodName;
 
         TypographyMethodSignature(String className, Class[] parameterTypes) {
             this(className, parameterTypes, null);
