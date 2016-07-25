@@ -320,7 +320,7 @@ public abstract class PdfAChecker {
         PdfDictionary shadings = resources.getAsDictionary(PdfName.Shading);
 
         if (xObjects != null) {
-            for (PdfObject xObject : xObjects.values()) {
+            for (PdfObject xObject : xObjects.directValues()) {
                 PdfStream xObjStream = (PdfStream) xObject;
                 if (checkedObjects.contains(xObjStream))
                     continue;
@@ -334,7 +334,7 @@ public abstract class PdfAChecker {
         }
 
         if (shadings != null) {
-            for (PdfObject shading : shadings.values()) {
+            for (PdfObject shading : shadings.directValues()) {
                 PdfDictionary shadingDict = (PdfDictionary) shading;
                 checkColorSpace(PdfColorSpace.makeColorSpace(shadingDict.get(PdfName.ColorSpace)), resources.getAsDictionary(PdfName.ColorSpace), true, null);
             }

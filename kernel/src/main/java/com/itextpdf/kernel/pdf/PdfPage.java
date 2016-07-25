@@ -400,7 +400,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 getPdfObject().remove(PdfName.Resources);
             } else if (flushXObjects) {
                 PdfDictionary xObjectsDict = getPdfObject().getAsDictionary(PdfName.Resources).getAsDictionary(PdfName.XObject);
-                xObjects = xObjectsDict != null ? xObjectsDict.values() : null;
+                xObjects = xObjectsDict != null ? xObjectsDict.directValues() : null;
             }
         }
 
@@ -809,7 +809,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             Collection<PdfObject> innerXObjects = null;
             if (innerResources != null) {
                 PdfDictionary innerXObjectsDict = innerResources.getAsDictionary(PdfName.XObject);
-                innerXObjects = innerXObjectsDict != null ? innerXObjectsDict.values() : null;
+                innerXObjects = innerXObjectsDict != null ? innerXObjectsDict.directValues() : null;
             }
 
             obj.flush();

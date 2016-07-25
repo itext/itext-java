@@ -347,6 +347,10 @@ public class PdfDictionary extends PdfObject {
 
     /**
      * Returns all the values of this map in a Collection.
+     * <br/>
+     * NOTE: returned collection will contain {@link PdfIndirectReference} instances
+     * for the indirect objects in dictionary.
+     * Use {@link PdfDictionary#directValues()} to get the collection of the actual objects.
      *
      * @return a Collection holding all the values
      */
@@ -354,6 +358,12 @@ public class PdfDictionary extends PdfObject {
         return map.values();
     }
 
+    /**
+     * Returns all the values of this map in a Collection. In opposite to {@link PdfDictionary#values()} method,
+     * this method will resolve all indirect references in the dictionary and return actual objects in collection.
+     *
+     * @return a Collection holding all the values
+     */
     public Collection<PdfObject> directValues() {
         Collection<PdfObject> directValues = new ArrayList<>();
         for (PdfObject value : map.values()) {
@@ -369,6 +379,10 @@ public class PdfDictionary extends PdfObject {
 
     /**
      * Returns a Set holding the key-value pairs as Map#Entry objects.
+     * <br/>
+     * NOTE: returned collection will contain {@link PdfIndirectReference} instances
+     * for the values that are indirect objects.
+     * Use {@link PdfDictionary#directEntrySet()} to get the collection of the entries with actual objects as values.
      *
      * @return a Set of Map.Entry objects
      */
@@ -376,8 +390,15 @@ public class PdfDictionary extends PdfObject {
         return map.entrySet();
     }
 
+    /**
+     * Returns a Set holding the key-value pairs as Map#Entry objects. In opposite to {@link PdfDictionary#entrySet()}
+     * method, this method will resolve all indirect references in the dictionary and return actual objects as values of
+     * entries in the collection.
+     *
+     * @return a Set of Map.Entry objects
+     */
     public Set<Map.Entry<PdfName, PdfObject>> directEntrySet() {
-        Map<PdfName, PdfObject> directMap = new HashMap<>();
+        Map<PdfName, PdfObject> directMap = new TreeMap<>();
         for(Map.Entry<PdfName, PdfObject> entry : map.entrySet()) {
             PdfObject value = entry.getValue();
             if (value.isIndirectReference()) {
