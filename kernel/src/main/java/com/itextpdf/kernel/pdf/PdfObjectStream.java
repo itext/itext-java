@@ -70,7 +70,8 @@ class PdfObjectStream extends PdfStream {
 
     public PdfObjectStream(PdfDocument doc) {
         super();
-        makeIndirect(doc);
+        //avoid reuse existed references
+        makeIndirect(doc, doc.getXref().createNewIndirectReference(doc));
         getOutputStream().document = doc;
         put(PdfName.Type, PdfName.ObjStm);
         put(PdfName.N, size);

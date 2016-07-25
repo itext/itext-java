@@ -133,6 +133,13 @@ class PdfXrefTable implements Serializable {
         return reference.setState(PdfObject.MODIFIED);
     }
 
+    //For Object streams
+    PdfIndirectReference createNewIndirectReference(PdfDocument document) {
+        PdfIndirectReference reference = new PdfIndirectReference(document, ++count);
+        add(reference);
+        return reference.setState(PdfObject.MODIFIED);
+    }
+
     protected void freeReference(PdfIndirectReference reference) {
         reference.setOffset(0);
         reference.setState(PdfObject.FREE);
