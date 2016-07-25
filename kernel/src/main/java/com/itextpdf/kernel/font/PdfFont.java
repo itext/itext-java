@@ -94,9 +94,20 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.Type, PdfName.Font);
     }
 
+    /**
+     * Get glyph by unicode
+     * @param unicode a unicode code point
+     * @return {@see Glyph} if it exists or .NOTDEF if supported, otherwise {@code null}.
+     */
     public abstract Glyph getGlyph(int unicode);
 
-    public boolean containsGlyph(char unicode) {
+    /**
+     * Check whether font contains glyph with specified unicode.
+     * @param unicode a unicode code point
+     * @return true if font contains glyph, represented with the unicode code point,
+     *  otherwise false.
+     */
+    public boolean containsGlyph(int unicode) {
         Glyph glyph = getGlyph(unicode);
         if (glyph != null) {
             if (getFontProgram() != null && getFontProgram().isFontSpecific()) {
