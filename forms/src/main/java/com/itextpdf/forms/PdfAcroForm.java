@@ -66,6 +66,7 @@ import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -939,7 +940,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
         PdfArray kids = field.getAsArray(PdfName.Kids);
         if (kids != null) {
-            for (PdfObject kid : kids) {
+            for (Iterator<PdfObject> iterator = kids.directIterator(); iterator.hasNext(); ) {
+                PdfObject kid = iterator.next();
                 resources.addAll(getResources((PdfDictionary) kid));
             }
         }

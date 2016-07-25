@@ -62,6 +62,7 @@ import com.itextpdf.pdfa.PdfAConformanceException;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -507,10 +508,8 @@ public class PdfA1Checker extends PdfAChecker {
 
     private PdfArray getFormFields(PdfArray array) {
         PdfArray fields = new PdfArray();
-        // explicit iteration to resolve indirect references on get().
-        // TODO DEVSIX-591
-        for (int i = 0; i < array.size(); i++) {
-            PdfDictionary field = array.getAsDictionary(i);
+        for (Iterator<PdfObject> iterator = array.directIterator(); iterator.hasNext(); ) {
+            PdfDictionary field = (PdfDictionary) iterator.next();
             PdfArray kids = field.getAsArray(PdfName.Kids);
             fields.add(field);
             if (kids != null) {

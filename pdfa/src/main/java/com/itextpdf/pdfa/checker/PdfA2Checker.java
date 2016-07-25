@@ -73,6 +73,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -444,7 +445,8 @@ public class PdfA2Checker extends PdfA1Checker {
             }
             PdfArray configs = oCProperties.getAsArray(PdfName.Configs);
             if (configs != null) {
-                for (PdfObject config : configs) {
+                for (Iterator<PdfObject> iterator = configs.directIterator(); iterator.hasNext(); ) {
+                    PdfObject config = iterator.next();
                     configList.add((PdfDictionary) config);
                 }
             }
@@ -452,7 +454,8 @@ public class PdfA2Checker extends PdfA1Checker {
             Set<PdfObject> ocgs = new HashSet<>();
             PdfArray ocgsArray = oCProperties.getAsArray(PdfName.OCGs);
             if (ocgsArray != null) {
-                for (PdfObject ocg : ocgsArray) {
+                for (Iterator<PdfObject> iterator = ocgsArray.directIterator(); iterator.hasNext(); ) {
+                    PdfObject ocg = iterator.next();
                     ocgs.add(ocg);
                 }
             }
@@ -834,7 +837,8 @@ public class PdfA2Checker extends PdfA1Checker {
     }
 
     private void fillOrderRecursively(PdfArray orderArray, Set<PdfObject> order) {
-        for (PdfObject orderItem : orderArray) {
+        for (Iterator<PdfObject> iterator = orderArray.directIterator(); iterator.hasNext(); ) {
+            PdfObject orderItem = iterator.next();
             if (!orderItem.isArray()) {
                 order.add(orderItem);
             } else {
