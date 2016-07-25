@@ -642,7 +642,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                     }
                 }
 
-                if (xObject != null) {
+                // Subtype is required key, if there is no Subtype it is invalid XObject. DEVSIX-725
+                if (xObject != null && xObject.getPdfObject().get(PdfName.Subtype) != null) {
                     Rectangle box = fieldObject.getAsRectangle(PdfName.Rect);
                     if (page.isFlushed()) {
                         throw new PdfException(PdfException.PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
