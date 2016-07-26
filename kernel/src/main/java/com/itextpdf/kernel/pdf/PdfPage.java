@@ -825,7 +825,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (obj.isFlushed())
                 continue;
             flushContentStreams(((PdfDictionary) obj).getAsDictionary(PdfName.Resources));
-            obj.flush();
+            flushMustBeIndirectObject(obj);
         }
     }
 
@@ -836,10 +836,15 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 if (ap.isDictionary()) {
                     flushAppearanceStreams(ap);
                 } else if (ap.isStream()) {
-                    ap.flush();
+                    flushMustBeIndirectObject(ap);
                 }
             }
         }
+    }
+
+    private void flushMustBeIndirectObject(PdfObject obj) {
+        // TODO DEVSIX-744
+        obj.makeIndirect(getDocument()).flush();
     }
 
     /*

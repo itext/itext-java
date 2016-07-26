@@ -130,6 +130,8 @@ public abstract class PdfObject implements Serializable {
      */
     public final void flush(boolean canBeInObjStm) {
         if (isFlushed() || getIndirectReference() == null) {
+            // TODO here we should take into account and log the case when object is MustBeIndirect, but has no indirect reference
+            // TODO DEVSIX-744
 //            Logger logger = LoggerFactory.getLogger(PdfObject.class);
 //            if (isFlushed()) {
 //                logger.warn("Meaningless call, the object has already flushed");
