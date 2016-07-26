@@ -360,6 +360,8 @@ public class PdfA2Checker extends PdfA1Checker {
                 if (n == null || !n.isStream())
                     throw new PdfAConformanceException(PdfAConformanceException.AppearanceDictionaryShallContainOnlyTheNKeyWithStreamValue);
             }
+
+            checkResourcesOfAppearanceStreams(ap);
         } else {
             boolean isCorrectRect = false;
             PdfArray rect = annotDic.getAsArray(PdfName.Rect);
@@ -388,6 +390,16 @@ public class PdfA2Checker extends PdfA1Checker {
             }
             if (form.containsKey(PdfName.XFA)) {
                 throw new PdfAConformanceException(PdfAConformanceException.TheInteractiveFormDictionaryShallNotContainTheXfaKey);
+            }
+            checkResources(form.getAsDictionary(PdfName.DR));
+
+            PdfArray fields = form.getAsArray(PdfName.Fields);
+            if (fields != null) {
+                fields = getFormFields(fields);
+                for (PdfObject field : fields) {
+                    PdfDictionary fieldDic = (PdfDictionary) field;
+                    checkResources(fieldDic.getAsDictionary(PdfName.DR));
+                }
             }
         }
     }
@@ -784,6 +796,8 @@ public class PdfA2Checker extends PdfA1Checker {
                 checkColorSpace(PdfColorSpace.makeColorSpace(cs), currentColorSpaces, true, null);
             }
         }
+
+        checkResources(form.getAsDictionary(PdfName.Resources));
     }
 
     private void checkBlendMode(PdfName blendMode) {

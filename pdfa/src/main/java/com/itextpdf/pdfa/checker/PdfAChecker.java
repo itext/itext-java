@@ -185,10 +185,7 @@ public abstract class PdfAChecker {
                 checkPdfNumber((PdfNumber) obj);
                 break;
             case PdfObject.STREAM:
-                PdfStream stream = (PdfStream) obj;
-                //form xObjects, annotation appearance streams, patterns and type3 glyphs may have their own resources dictionary
-                checkResources(stream.getAsDictionary(PdfName.Resources));
-                checkPdfStream(stream);
+                checkPdfStream((PdfStream) obj);
                 break;
             case PdfObject.STRING:
                 checkPdfString((PdfString) obj);
@@ -318,14 +315,19 @@ public abstract class PdfAChecker {
 
         PdfDictionary xObjects = resources.getAsDictionary(PdfName.XObject);
         PdfDictionary shadings = resources.getAsDictionary(PdfName.Shading);
+        PdfDictionary patterns = resources.getAsDictionary(PdfName.Pattern);
 
         if (xObjects != null) {
             for (PdfObject xObject : xObjects.directValues()) {
                 PdfStream xObjStream = (PdfStream) xObject;
-                if (checkedObjects.contains(xObjStream))
-                    continue;
-                PdfObject subtype = xObjStream.get(PdfName.Subtype);
-                if (PdfName.Image.equals(subtype)) {
+                PdfObject subtype = null;
+                boolean isFlushed = xObjStream.isFlushed();
+                if (!isFlushed) {
+                    subtype = xObjStream.get(PdfName.Subtype);
+                }
+
+                if (PdfName.Image.equals(subtype)
+                        || isFlushed) { // if flushed still may be need to check colorspace in given context
                     checkImage(xObjStream, resources.getAsDictionary(PdfName.ColorSpace));
                 } else if (PdfName.Form.equals(subtype)) {
                     checkFormXObject(xObjStream);
@@ -337,6 +339,17 @@ public abstract class PdfAChecker {
             for (PdfObject shading : shadings.directValues()) {
                 PdfDictionary shadingDict = (PdfDictionary) shading;
                 checkColorSpace(PdfColorSpace.makeColorSpace(shadingDict.get(PdfName.ColorSpace)), resources.getAsDictionary(PdfName.ColorSpace), true, null);
+            }
+        }
+
+        if (patterns != null) {
+            for (PdfObject p : patterns.directValues()) {
+                if (p.isStream()) {
+                    PdfStream pStream = (PdfStream) p;
+                    if (!isAlreadyChecked(pStream)) {
+                        checkResources(pStream.getAsDictionary(PdfName.Resources));
+                    }
+                }
             }
         }
     }
@@ -357,6 +370,21 @@ public abstract class PdfAChecker {
         }
         checkedObjects.add(dictionary);
         return false;
+    }
+
+    protected void checkResourcesOfAppearanceStreams(PdfDictionary appearanceStreamsDict) {
+        for (PdfObject val : appearanceStreamsDict.directValues()) {
+            if (val instanceof PdfDictionary) {
+                PdfDictionary ap = (PdfDictionary) val;
+                if (ap.isDictionary()) {
+                    checkResourcesOfAppearanceStreams(ap);
+                } else if (ap.isStream()) {
+                    if (!isAlreadyChecked(ap)) {
+                        checkResources(ap.getAsDictionary(PdfName.Resources));
+                    }
+                }
+            }
+        }
     }
 
     private void checkPages(PdfDocument document) {
@@ -400,8 +428,6 @@ public abstract class PdfAChecker {
     private void checkAnnotations(PdfDictionary page) {
         PdfArray annots = page.getAsArray(PdfName.Annots);
         if (annots != null) {
-            // explicit iteration to resolve indirect references on get().
-            // TODO DEVSIX-591
             for (int i = 0; i < annots.size(); i++) {
                 PdfDictionary annot = annots.getAsDictionary(i);
                 checkAnnotation(annot);

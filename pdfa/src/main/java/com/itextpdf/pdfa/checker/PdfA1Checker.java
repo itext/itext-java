@@ -277,6 +277,8 @@ public class PdfA1Checker extends PdfAChecker {
         if (form.containsKey(PdfName.Group) && PdfName.Transparency.equals(form.getAsDictionary(PdfName.Group).getAsName(PdfName.S))) {
             throw new PdfAConformanceException(PdfAConformanceException.AGroupObjectWithAnSKeyWithAValueOfTransparencyShallNotBeIncludedInAFormXobject);
         }
+
+        checkResources(form.getAsDictionary(PdfName.Resources));
     }
 
     @Override
@@ -413,6 +415,8 @@ public class PdfA1Checker extends PdfAChecker {
             if (n == null) {
                 throw new PdfAConformanceException(PdfAConformanceException.AppearanceDictionaryShallContainOnlyTheNKeyWithStreamValue);
             }
+
+            checkResourcesOfAppearanceStreams(ap);
         }
 
         if (PdfName.Widget.equals(subtype) && (annotDic.containsKey(PdfName.AA) || annotDic.containsKey(PdfName.A))) {
@@ -440,6 +444,8 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(PdfAConformanceException.NeedAppearancesFlagOfTheInteractiveFormDictionaryShallEitherNotBePresentedOrShallBeFalse);
         }
 
+        checkResources(form.getAsDictionary(PdfName.DR));
+
         PdfArray fields = form.getAsArray(PdfName.Fields);
         if (fields != null) {
             fields = getFormFields(fields);
@@ -448,6 +454,7 @@ public class PdfA1Checker extends PdfAChecker {
                 if (fieldDic.containsKey(PdfName.A) || fieldDic.containsKey(PdfName.AA)) {
                     throw new PdfAConformanceException(PdfAConformanceException.WidgetAnnotationDictionaryOrFieldDictionaryShallNotIncludeAOrAAEntry);
                 }
+                checkResources(fieldDic.getAsDictionary(PdfName.DR));
             }
         }
     }
@@ -506,7 +513,7 @@ public class PdfA1Checker extends PdfAChecker {
         }
     }
 
-    private PdfArray getFormFields(PdfArray array) {
+    protected PdfArray getFormFields(PdfArray array) {
         PdfArray fields = new PdfArray();
         for (Iterator<PdfObject> iterator = array.directIterator(); iterator.hasNext(); ) {
             PdfDictionary field = (PdfDictionary) iterator.next();

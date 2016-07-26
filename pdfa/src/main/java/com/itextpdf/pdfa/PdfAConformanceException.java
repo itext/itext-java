@@ -78,7 +78,7 @@ public class PdfAConformanceException extends PdfException {
     public static final String CatalogDictionaryShallNotContainOCPropertiesKey = "catalog.dictionary.shall.not.contain.the.ocproperties.key";
     public static final String CatalogDictionaryShallNotContainRequirementsEntry = "catalog.dictionary.shall.not.contain.a.requirements.entry";
     public static final String CatalogShallIncludeMarkInfoDictionaryWithMarkedTrueValue = "catalog.dictionary.shall.include.a.markinfo.dictionary.whose.entry.marked.shall.have.a.value.of.true";
-    public static final String CatalogShallContainLangEntry = "catalog.dictionary.shall.contain.lang.entry";
+    public static final String CatalogShallContainLangEntry = "catalog.dictionary.should.contain.lang.entry";
     public static final String CatalogShallContainMetadataEntry = "catalog.dictionary.shall.contain.metadata.entry";
     public static final String ColorSpace1ShallBeDeviceIndependent = "color.space.1.shall.be.device.independent";
     public static final String ColorSpace1ShallHave2Components = "color.space.1.shall.have.2.components";

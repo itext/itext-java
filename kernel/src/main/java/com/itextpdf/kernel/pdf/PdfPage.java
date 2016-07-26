@@ -366,17 +366,20 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Flushes page and its content stream. If <code>flushXObjects</code> is true the images and FormXObjects
-     * associated with this page will also be flushed.
+     * Flushes page and its content stream. If <code>flushContentStreams</code> is true, all content streams that are
+     * rendered on this page (like FormXObjects, annotation appearance streams, patterns) and also all images associated
+     * with this page will also be flushed.
      * <br>
      * For notes about tag structure flushing see {@link PdfPage#flush() PdfPage#flush() method}.
      * <br>
      * <br>
-     * If <code>PdfADocument</code> is used, flushing will be applied only if <code>flushXObjects</code> is true.
+     * If <code>PdfADocument</code> is used, flushing will be applied only if <code>flushContentStreams</code> is true.
      *
-     * @param flushXObjects if true the images and FormXObjects associated with this page will also be flushed.
+     * @param flushContentStreams if true all content streams that are rendered on this page (like form xObjects,
+     *                            annotation appearance streams, patterns) and also all images associated with this page
+     *                            will be flushed.
      */
-    public void flush(boolean flushXObjects) {
+    public void flush(boolean flushContentStreams) {
         // TODO log warning in case of failed flush in pdfa document case
         if (isFlushed()) {
             return;
@@ -386,30 +389,23 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             getDocument().getStructTreeRoot().createParentTreeEntryForPage(this);
         }
         getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_PAGE, this));
-        if (flushXObjects) {
+        if (flushContentStreams) {
             getDocument().checkIsoConformance(this, IsoKey.PAGE);
+            flushContentStreams();
         }
         int contentStreamCount = getContentStreamCount();
         for (int i = 0; i < contentStreamCount; i++) {
             getContentStream(i).flush(false);
         }
 
-        Collection<PdfObject> xObjects = null;
         if (resources != null) {
             if (resources.isReadOnly() && !resources.isModified()) {
                 getPdfObject().remove(PdfName.Resources);
-            } else if (flushXObjects) {
-                PdfDictionary xObjectsDict = getPdfObject().getAsDictionary(PdfName.Resources).getAsDictionary(PdfName.XObject);
-                xObjects = xObjectsDict != null ? xObjectsDict.directValues() : null;
             }
         }
 
         resources = null;
         super.flush();
-
-        if (flushXObjects && xObjects != null) {
-            flushXObjects(xObjects);
-        }
     }
 
     public Rectangle getMediaBox() {
@@ -798,23 +794,50 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return contentStream;
     }
 
-    private void flushXObjects(Collection<PdfObject> xObjects) {
-        for (PdfObject obj : xObjects) {
+    private void flushContentStreams() {
+        flushContentStreams(getPdfObject().getAsDictionary(PdfName.Resources));
+
+        PdfArray annots = getAnnots(false);
+        if (annots != null) {
+            for (int i = 0; i < annots.size(); ++i) {
+                PdfDictionary apDict = annots.getAsDictionary(i).getAsDictionary(PdfName.AP);
+                if (apDict != null) {
+                    flushAppearanceStreams(apDict);
+                }
+            }
+        }
+    }
+
+    private void flushContentStreams(PdfDictionary resources) {
+        if (resources != null) {
+            flushWithResources(resources.getAsDictionary(PdfName.XObject));
+            flushWithResources(resources.getAsDictionary(PdfName.Pattern));
+            flushWithResources(resources.getAsDictionary(PdfName.Shading));
+        }
+    }
+
+    private void flushWithResources(PdfDictionary objsCollection) {
+        if (objsCollection == null) {
+            return;
+        }
+
+        for (PdfObject obj : objsCollection.directValues()) {
             if (obj.isFlushed())
                 continue;
-
-            PdfStream xObject = (PdfStream) obj;
-
-            PdfDictionary innerResources = xObject.getAsDictionary(PdfName.Resources);
-            Collection<PdfObject> innerXObjects = null;
-            if (innerResources != null) {
-                PdfDictionary innerXObjectsDict = innerResources.getAsDictionary(PdfName.XObject);
-                innerXObjects = innerXObjectsDict != null ? innerXObjectsDict.directValues() : null;
-            }
-
+            flushContentStreams(((PdfDictionary) obj).getAsDictionary(PdfName.Resources));
             obj.flush();
-            if (innerXObjects != null) {
-                flushXObjects(innerXObjects);
+        }
+    }
+
+    private void flushAppearanceStreams(PdfDictionary appearanceStreamsDict) {
+        for (PdfObject val : appearanceStreamsDict.directValues()) {
+            if (val instanceof PdfDictionary) {
+                PdfDictionary ap = (PdfDictionary) val;
+                if (ap.isDictionary()) {
+                    flushAppearanceStreams(ap);
+                } else if (ap.isStream()) {
+                    ap.flush();
+                }
             }
         }
     }
