@@ -50,41 +50,102 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.function.PdfFunction;
 
+/**
+ * Graphics state parameter dictionary wrapper
+ */
 public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = 5205219918362853395L;
-	
     /**
-     * Blend mode constants
+     * Standard separable blend mode. See ISO-320001, table 136
      */
     public static PdfName BM_NORMAL = PdfName.Normal;
+    /**
+     * Standard separable blend mode. See ISO-320001, table 136
+     */
     public static PdfName BM_MULTIPLY = PdfName.Multiply;
+    /**
+     * Standard separable blend mode. See ISO-320001, table 136
+     */
     public static PdfName BM_SCREEN = PdfName.Screen;
+    /**
+     * Standard separable blend mode. See ISO-320001, table 136
+     */
     public static PdfName BM_OVERLAY = PdfName.Overlay;
+    /**
+     * Standard separable blend mode. See ISO-320001, table 136
+     */
     public static PdfName BM_DARKEN = PdfName.Darken;
+    /**
+     * Standard separable blend mode. See ISO-320001, table 136
+     */
     public static PdfName BM_LIGHTEN = PdfName.Lighten;
+    /**
+     * Standard separable blend mode. See ISO-320001, table 136
+     */
     public static PdfName BM_COLOR_DODGE = PdfName.ColorDodge;
+    /**
+     * Standard separable blend mode. See ISO-320001, table 136
+     */
     public static PdfName BM_COLOR_BURN = PdfName.ColorBurn;
+    /**
+     * Standard separable blend mode. See ISO-320001, table 136
+     */
     public static PdfName BM_HARD_LIGHT = PdfName.HardLight;
+    /**
+     * Standard separable blend mode. See ISO-320001, table 136
+     */
     public static PdfName BM_SOFT_LIGHT = PdfName.SoftLight;
+    /**
+     * Standard separable blend mode. See ISO-320001, table 136
+     */
     public static PdfName BM_DIFFERENCE = PdfName.Difference;
+    /**
+     * Standard separable blend mode. See ISO-320001, table 136
+     */
     public static PdfName BM_EXCLUSION = PdfName.Exclusion;
 
+    /**
+     * Standard nonseparable blend mode. See ISO-320001, table 137
+     */
     public static PdfName BM_HUE = PdfName.Hue;
+    /**
+     * Standard nonseparable blend mode. See ISO-320001, table 137
+     */
     public static PdfName BM_SATURATION = PdfName.Saturation;
+    /**
+     * Standard nonseparable blend mode. See ISO-320001, table 137
+     */
     public static PdfName BM_COLOR = PdfName.Color;
+    /**
+     * Standard nonseparable blend mode. See ISO-320001, table 137
+     */
     public static PdfName BM_LUMINOSITY = PdfName.Luminosity;
 
+    /**
+     * Create instance of graphics state parameter dictionary wrapper
+     * by existed {@see PdfDictionary} object
+     * @param pdfObject instance of graphics state parameter dictionary
+     */
     public PdfExtGState(PdfDictionary pdfObject) {
         super(pdfObject);
         markObjectAsIndirect(getPdfObject());
     }
 
+    /**
+     * Create default instance of graphics state parameter dictionary
+     */
     public PdfExtGState() {
         this(new PdfDictionary());
     }
 
+    /**
+     * Gets line width value, {@code LW} key.
+     * @return a {@code float} value if exist, otherwise {@code null}.
+     */
     public Float getLineWidth() {
         return getPdfObject().getAsFloat(PdfName.LW);
     }
@@ -93,16 +154,22 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.LW, new PdfNumber(lineWidth));
     }
 
-
+    /**
+     * Gets line gap style value, {@code LC} key.
+     * @return 0 - butt cap, 1 - round cap, 2 - projecting square cap.
+     */
     public Integer getLineCapStyle() {
         return getPdfObject().getAsInt(PdfName.LC);
     }
 
-    public PdfExtGState setLineCapStryle(int lineCapStyle) {
+    public PdfExtGState setLineCapStyle(int lineCapStyle) {
         return put(PdfName.LC, new PdfNumber(lineCapStyle));
     }
 
-
+    /**
+     * Gets line join style value, {@code LJ} key.
+     * @return 0 - miter join (see also miter limit), 1 - round join, 2 - bevel join.
+     */
     public Integer getLineJoinStyle() {
         return getPdfObject().getAsInt(PdfName.LJ);
     }
@@ -111,7 +178,10 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.LJ, new PdfNumber(lineJoinStyle));
     }
 
-
+    /**
+     * Gets miter limit value, {@code ML key}. See also line join style.
+     * @return a {@code float} value if exist, otherwise {@code null}.
+     */
     public Float getMiterLimit() {
         return getPdfObject().getAsFloat(PdfName.ML);
     }
@@ -120,7 +190,10 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.ML, new PdfNumber(miterLimit));
     }
 
-
+    /**
+     * Gets line dash pattern value, {@code D} key.
+     * @return a {@code PdfArray}, that represents line dash pattern.
+     */
     public PdfArray getDashPattern() {
         return getPdfObject().getAsArray(PdfName.D);
     }
@@ -129,7 +202,12 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.D, dashPattern);
     }
 
-
+    /**
+     * Gets rendering intent value, {@code RI} key.
+     * Valid values are: {@code AbsoluteColorimetric}, {@code RelativeColorimetric},
+     * {@code Saturation}, {@code Perceptual}.
+     * @return a {@code PdfName} instance.
+     */
     public PdfName getRenderingIntent() {
         return getPdfObject().getAsName(PdfName.RI);
     }
@@ -138,25 +216,10 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.RI, renderingIntent);
     }
 
-
-    public Integer getOverprintMode() {
-        return getPdfObject().getAsInt(PdfName.OPM);
-    }
-
-    public PdfExtGState setOverprintMode(int overprintMode) {
-        return put(PdfName.OPM, new PdfNumber(overprintMode));
-    }
-
-
-    public Boolean getFillOverprintFlag() {
-        return getPdfObject().getAsBool(PdfName.op);
-    }
-
-    public PdfExtGState setFillOverPrintFlag(boolean fillOverprintFlag) {
-        return put(PdfName.op, new PdfBoolean(fillOverprintFlag));
-    }
-
-
+    /**
+     * Get overprint flag value for stroke operations, {@code OP} key.
+     * @return a {@code boolean} value if exist, otherwise {@code null}.
+     */
     public Boolean getStrokeOverprintFlag() {
         return getPdfObject().getAsBool(PdfName.OP);
     }
@@ -165,7 +228,34 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.OP, new PdfBoolean(strokeOverPrintFlag));
     }
 
+    /**
+     * Gets overprint flag value, {@code op} key.
+     * @return a {@code boolean} value if exist, otherwise {@code null}.
+     */
+    public Boolean getFillOverprintFlag() {
+        return getPdfObject().getAsBool(PdfName.op);
+    }
 
+    public PdfExtGState setFillOverPrintFlag(boolean fillOverprintFlag) {
+        return put(PdfName.op, new PdfBoolean(fillOverprintFlag));
+    }
+
+    /**
+     * Get overprint control mode, {@code OPM} key.
+     * @return a {@code int} value if exist, otherwise {@code null}.
+     */
+    public Integer getOverprintMode() {
+        return getPdfObject().getAsInt(PdfName.OPM);
+    }
+
+    public PdfExtGState setOverprintMode(int overprintMode) {
+        return put(PdfName.OPM, new PdfNumber(overprintMode));
+    }
+
+    /**
+     * Gets font, {@code Font} key.
+     * @return a {@see PdfFont} instance.
+     */
     public PdfArray getFont() {
         return getPdfObject().getAsArray(PdfName.Font);
     }
@@ -174,6 +264,10 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.Font, font);
     }
 
+    /**
+     * Gets the black-generation function value, {@code BG}.
+     * @return a {@link PdfObject}, represents {@link PdfFunction}.
+     */
     public PdfObject getBlackGenerationFunction() {
         return getPdfObject().get(PdfName.BG);
     }
@@ -182,14 +276,28 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.BG, blackGenerationFunction);
     }
 
+    /**
+     * Gets the black-generation function value or {@code Default}, {@code BG2} key.
+     * @return {@link PdfObject} value, represents either {@link PdfFunction} or {@link PdfName}.
+     */
     public PdfObject getBlackGenerationFunction2() {
         return getPdfObject().get(PdfName.BG2);
     }
 
+    /**
+     * Note, if both {@code BG} and {@code BG2} are present in the same graphics state parameter dictionary,
+     * {@code BG2} takes precedence.
+     * @param blackGenerationFunction2
+     * @return
+     */
     public PdfExtGState setBlackGenerationFunction2(PdfObject blackGenerationFunction2) {
         return put(PdfName.BG2, blackGenerationFunction2);
     }
 
+    /**
+     * Gets the undercolor-removal function, {@code UCR} key.
+     * @return a {@link PdfObject}, represents {@link PdfFunction}.
+     */
     public PdfObject getUndercolorRemovalFunction() {
         return getPdfObject().get(PdfName.UCR);
     }
@@ -198,15 +306,29 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.UCR, undercolorRemovalFunction);
     }
 
+    /**
+     * Gets the undercolor-removal function value or {@code Default}, {@code UCR2} key.
+     * @return {@link PdfObject} value, represents either {@link PdfFunction} or {@link PdfName}.
+     */
     public PdfObject getUndercolorRemovalFunction2() {
         return getPdfObject().get(PdfName.UCR2);
     }
 
+    /**
+     * Note, if both {@code UCR} and {@code UCR2} are present in the same graphics state parameter dictionary,
+     * {@code UCR2} takes precedence.
+     * @param undercolorRemovalFunction2
+     * @return
+     */
     public PdfExtGState setUndercolorRemovalFunction2(PdfObject undercolorRemovalFunction2) {
         return put(PdfName.UCR2, undercolorRemovalFunction2);
     }
 
-
+    /**
+     * Gets the transfer function value, {@code TR} key.
+     * @return a {@link PdfObject}, represents either {@link PdfFunction},
+     * {@link PdfArray} or {@link PdfName}.
+     */
     public PdfObject getTransferFunction() {
         return getPdfObject().get(PdfName.TR);
     }
@@ -215,16 +337,30 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.TR, transferFunction);
     }
 
-
+    /**
+     * Gets the transfer function value or {@code Default}, {@code TR2} key.
+     * @return a {@link PdfObject}, represents either {@link PdfFunction},
+     * {@link PdfArray} or {@link PdfName}.
+     */
     public PdfObject getTransferFunction2() {
         return getPdfObject().get(PdfName.TR2);
     }
 
+    /**
+     * Note, if both {@code TR} and {@code TR2} are present in the same graphics state parameter dictionary,
+     * {@code TR2} takes precedence.
+     * @param transferFunction
+     * @return
+     */
     public PdfExtGState setTransferFunction2(PdfObject transferFunction) {
         return put(PdfName.TR2, transferFunction);
     }
 
-
+    /**
+     * Gets the halftone dictionary or stream or {@code Default}, {@code HT} key.
+     * @return a {@link PdfObject}, represents either {@link PdfDictionary},
+     * {@link PdfStream} or {@link PdfName}.
+     */
     public PdfObject getHalftone() {
         return getPdfObject().get(PdfName.HT);
     }
@@ -233,25 +369,35 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.HT, halftone);
     }
 
-
+    /**
+     * Gets {@code HTP} key.
+     */
+    @Deprecated
     public PdfObject getHTP() {
         return getPdfObject().get(PdfName.HTP);
     }
 
+    @Deprecated
     public PdfExtGState setHTP(PdfObject htp) {
         return put(PdfName.HTP, htp);
     }
 
-
+    /**
+     * Gets the flatness tolerance value, {@code FL} key.
+     * @return a {@code float} value if exist, otherwise {@code null}.
+     */
     public Float getFlatnessTolerance() {
-        return getPdfObject().getAsFloat(PdfName.FT);
+        return getPdfObject().getAsFloat(PdfName.FL);
     }
 
     public PdfExtGState setFlatnessTolerance(float flatnessTolerance) {
-        return put(PdfName.FT, new PdfNumber(flatnessTolerance));
+        return put(PdfName.FL, new PdfNumber(flatnessTolerance));
     }
 
-
+    /**
+     * Gets the smoothness tolerance value, {@code SM} key.
+     * @return a {@code float} value if exist, otherwise {@code null}.
+     */
     public Float getSmothnessTolerance() {
         return getPdfObject().getAsFloat(PdfName.SM);
     }
@@ -260,7 +406,10 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.SM, new PdfNumber(smoothnessTolerance));
     }
 
-
+    /**
+     * Gets value of an automatic stroke adjustment flag, {@code SA} key.
+     * @return a {@code boolean} value if exist, otherwise {@code null}.
+     */
     public Boolean getAutomaticStrokeAdjustmentFlag() {
         return getPdfObject().getAsBool(PdfName.SA);
     }
@@ -269,7 +418,10 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.SA, new PdfBoolean(strokeAdjustment));
     }
 
-
+    /**
+     * Gets the current blend mode for the transparent imaging model, {@code BM} key.
+     * @return a {@link PdfObject}, represents either {@link PdfName} or {@link PdfArray}.
+     */
     public PdfObject getBlendMode() {
         return getPdfObject().get(PdfName.BM);
     }
@@ -278,7 +430,10 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.BM, blendMode);
     }
 
-
+    /**
+     * Gets the current soft mask, {@code SMask} key.
+     * @return a {@link PdfObject}, represents either {@link PdfName} or {@link PdfDictionary}.
+     */
     public PdfObject getSoftMask() {
         return getPdfObject().get(PdfName.SMask);
     }
@@ -287,7 +442,11 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.SMask, sMask);
     }
 
-
+    /**
+     * Gets the current alpha constant, specifying the constant shape or constant opacity value
+     * for <b>stroking</b> operations in the transparent imaging model, {@code CA} key.
+     * @return a {@code float} value if exist, otherwise {@code null}.
+     */
     public Float getStrokeOpacity() {
         return getPdfObject().getAsFloat(PdfName.CA);
     }
@@ -296,7 +455,11 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.CA, new PdfNumber(strokingAlphaConstant));
     }
 
-
+    /**
+     * Gets the current alpha constant, specifying the constant shape or constant opacity value
+     * for <b>nonstroking</b> operations in the transparent imaging model, {@code ca} key.
+     * @return a {@code float} value if exist, otherwise {@code null}.
+     */
     public Float getFillOpacity() {
         return getPdfObject().getAsFloat(PdfName.ca);
     }
@@ -305,7 +468,11 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.ca, new PdfNumber(fillingAlphaConstant));
     }
 
-
+    /**
+     * Gets the alpha source flag (“alpha is shape”), specifying whether the current soft mask and alpha constant
+     * shall be interpreted as shape values ({@code true}) or opacity values ({@code false}), {@code AIS} key.
+     * @return a {@code boolean} value if exist, otherwise {@code null}.
+     */
     public Boolean getAlphaSourceFlag() {
         return getPdfObject().getAsBool(PdfName.AIS);
     }
@@ -314,7 +481,11 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
         return put(PdfName.AIS, new PdfBoolean(alphaSourceFlag));
     }
 
-
+    /**
+     * Gets the text knockout flag, which determine the behaviour of overlapping glyphs
+     * within a text object in the transparent imaging model, {@code TK} key.
+     * @return a {@code boolean} value if exist, otherwise {@code null}.
+     */
     public Boolean getTextKnockoutFlag() {
         return getPdfObject().getAsBool(PdfName.TK);
     }
