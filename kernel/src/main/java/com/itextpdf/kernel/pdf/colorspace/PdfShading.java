@@ -46,6 +46,7 @@ package com.itextpdf.kernel.pdf.colorspace;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -146,6 +147,18 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
         getPdfObject().put(PdfName.Function, arr);
         setModified();
+    }
+
+    /**
+     * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure
+     * that this object is added to the document, i.e. it has an indirect reference.
+     * Basically this means that before flushing you need to explicitly call {@link #makeIndirect(PdfDocument)}.
+     * For example: wrapperInstance.makeIndirect(document).flush();
+     * Note that not every wrapper require this, only those that have such warning in documentation.
+     */
+    @Override
+    public void flush() {
+        super.flush();
     }
 
     @Override

@@ -111,6 +111,13 @@ public class PdfFormXObject extends PdfXObject {
         return resources;
     }
 
+    /**
+     * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure
+     * that this object is added to the document, i.e. it has an indirect reference.
+     * Basically this means that before flushing you need to explicitly call {@link #makeIndirect(PdfDocument)}.
+     * For example: wrapperInstance.makeIndirect(document).flush();
+     * Note that not every wrapper require this, only those that have such warning in documentation.
+     */
     @Override
     public void flush() {
         resources = null;

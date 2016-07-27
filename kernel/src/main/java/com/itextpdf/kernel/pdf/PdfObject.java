@@ -135,8 +135,11 @@ public abstract class PdfObject implements Serializable {
 //            Logger logger = LoggerFactory.getLogger(PdfObject.class);
 //            if (isFlushed()) {
 //                logger.warn("Meaningless call, the object has already flushed");
+//            } else if (isIndirect()){
+//                logger.warn("Meaningless call, the object will be transformed into indirect on closing, but at the moment it doesn't have an indirect reference and therefore couldn't be flushed. " +
+//                        "To flush it now call makeIndirect(PdfDocument) method before calling flush() method.");
 //            } else {
-//                logger.warn("Meaningless call, the object is direct object.");
+//                logger.warn("Meaningless call, the object is direct object. It will be flushed along with the indirect object that contains it.");
 //            }
             return;
         }

@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf.action;
 
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -71,6 +72,18 @@ public class PdfMediaClipData extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.CT, new PdfString(mimeType));
         getPdfObject().put(PdfName.P, dic);
         getPdfObject().put(PdfName.D, fs.getPdfObject());
+    }
+
+    /**
+     * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure
+     * that this object is added to the document, i.e. it has an indirect reference.
+     * Basically this means that before flushing you need to explicitly call {@link #makeIndirect(PdfDocument)}.
+     * For example: wrapperInstance.makeIndirect(document).flush();
+     * Note that not every wrapper require this, only those that have such warning in documentation.
+     */
+    @Override
+    public void flush() {
+        super.flush();
     }
 
     @Override

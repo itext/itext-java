@@ -116,9 +116,9 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         return null;
     }
 
-    //TODO make subtype class member and simplify this method
     @Override
     public void flush() {
+        //TODO make subtype class member and simplify this method
         if (newFont) {
             PdfName subtype;
             String fontName;
