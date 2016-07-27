@@ -133,7 +133,6 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfExtGState(PdfDictionary pdfObject) {
         super(pdfObject);
-        markObjectAsIndirect(getPdfObject());
     }
 
     /**
