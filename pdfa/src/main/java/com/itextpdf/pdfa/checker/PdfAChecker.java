@@ -412,16 +412,8 @@ public abstract class PdfAChecker {
     }
 
     private void checkOpenAction(PdfObject openAction) {
-        if (openAction == null)
-            return;
-
-        if (openAction.isDictionary()) {
+        if (openAction != null && openAction.isDictionary()) {
             checkAction((PdfDictionary) openAction);
-        } else if (openAction.isArray()) {
-            PdfArray actions = (PdfArray) openAction;
-            for (PdfObject action : actions) {
-                checkAction((PdfDictionary) action);
-            }
         }
     }
 
