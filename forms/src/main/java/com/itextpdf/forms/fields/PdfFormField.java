@@ -43,7 +43,14 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.io.codec.Base64;
+import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.source.PdfTokenizer;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceCmyk;
@@ -52,34 +59,16 @@ import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfIndirectReference;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfObjectWrapper;
-import com.itextpdf.kernel.pdf.PdfResources;
-import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
-import com.itextpdf.io.codec.Base64;
-import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.image.ImageData;
-import com.itextpdf.io.source.PdfTokenizer;
-import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.layout.Canvas;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
 
@@ -1619,6 +1608,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfName type = getFormType();
         String value = getValueAsString();
 
+        PdfPage page = null;
+        if (getWidgets().size() > 0) {
+            page = getWidgets().get(0).getPage();
+        }
+
         if (PdfName.Tx.equals(type) || PdfName.Ch.equals(type)) {
             try {
                 PdfDictionary apDic = getPdfObject().getAsDictionary(PdfName.AP);
@@ -1642,6 +1636,20 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     fontSz = DEFAULT_FONT_SIZE;
                 }
 
+                int rotation = 0;
+                if (page != null) {
+                    rotation = page.getRotation();
+                }
+                PdfArray matrix = null;
+                if (rotation != 0 && rotation % 90 == 0) {
+                    double angle = Math.PI * rotation / 180;
+                    matrix = new PdfArray(new double[]{Math.cos(angle), Math.sin(angle), -Math.sin(angle), Math.cos(angle), 0, 0});
+                    Rectangle rect = bBox.toRectangle();
+                    rect.setWidth(bBox.toRectangle().getHeight());
+                    rect.setHeight(bBox.toRectangle().getWidth());
+                    bBox = new PdfArray(rect);
+                }
+
                 PdfFormXObject appearance = null;
                 if (asNormal != null) {
                     appearance = new PdfFormXObject(asNormal);
@@ -1649,6 +1657,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
                 if (appearance == null) {
                     appearance = new PdfFormXObject(new Rectangle(0, 0, bBox.toRectangle().getWidth(), bBox.toRectangle().getHeight()));
+                }
+                if (matrix != null) {
+                    appearance.put(PdfName.Matrix, matrix);
                 }
 
                 if (PdfName.Tx.equals(type)) {

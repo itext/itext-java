@@ -43,19 +43,9 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfBoolean;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfIndirectReference;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfObjectWrapper;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.layer.IPdfOCG;
 
@@ -232,6 +222,27 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfPage getPage() {
+        if (page == null && getPdfObject().isIndirect()) {
+            PdfIndirectReference annotationIndirectReference = getPdfObject().getIndirectReference();
+            PdfDocument doc = annotationIndirectReference.getDocument();
+
+            PdfDictionary pageDictionary = getPageObject();
+            if (pageDictionary != null) {
+                page = doc.getPage(pageDictionary);
+            } else {
+                for (int i = 1; i <= doc.getNumberOfPages(); i++) {
+                    PdfPage docPage = doc.getPage(i);
+                    for (PdfAnnotation annot : docPage.getAnnotations()) {
+                        if (annot.getPdfObject().getIndirectReference().equals(annotationIndirectReference)) {
+                            page = docPage;
+                            break;
+                        }
+                    }
+                }
+            }
+
+
+        }
         return page;
     }
 
