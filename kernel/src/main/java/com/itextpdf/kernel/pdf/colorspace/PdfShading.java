@@ -241,8 +241,10 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         public Axial(PdfColorSpace cs, float x0, float y0, float[] color0, float x1, float y1, float[] color1, boolean[] extend) {
             this(cs, x0, y0, color0, x1, y1, color1);
 
-            if (extend != null)
-                setExtend(extend[0], extend[1]);
+            if (extend == null || extend.length != 2)
+                throw new IllegalArgumentException("extend");
+
+            setExtend(extend[0], extend[1]);
         }
 
         public Axial(PdfColorSpace cs, PdfArray coords, PdfFunction function) {
@@ -279,7 +281,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         public boolean[] getExtend() {
             PdfArray extend = getPdfObject().getAsArray(PdfName.Extend);
             if (extend == null)
-                return new boolean[] {true, true};
+                return new boolean[] {false, false};
             return new boolean[] {extend.getAsBoolean(0).getValue(), extend.getAsBoolean(1).getValue()};
         }
 
