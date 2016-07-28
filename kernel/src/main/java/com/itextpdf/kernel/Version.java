@@ -86,7 +86,7 @@ public final class Version {
      */
     private String key = null;
 
-    private static boolean expired;
+    private boolean expired;
 
     /**
      * Gets an instance of the iText version that is currently used.
@@ -163,7 +163,7 @@ public final class Version {
      * @return true if expired
      */
     public static boolean isExpired() {
-        return expired;
+        return getInstance().expired;
     }
 
     /**
