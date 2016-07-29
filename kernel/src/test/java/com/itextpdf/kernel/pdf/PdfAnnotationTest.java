@@ -21,10 +21,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
 
 @Category(IntegrationTest.class)
@@ -817,9 +814,18 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .restoreState();
         PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
 
-        PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDoc, "../../../../../../../src/test/resources/com/itextpdf/kernel/pdf/PdfAnnotationTest/" + "sample.wav", true);
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "sample.wav");
+        FileInputStream fis = new FileInputStream(sourceFolder + "sample.wav");
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = fis.read(buffer)) > 0) {
+            fos.write(buffer, 0, length);
+        }
+        fos.close();
+        fis.close();
+        PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDoc, "sample.wav", true);
 
-        PdfAction action = PdfAction.createRendition(sourceFolder+"sample.wav",
+        PdfAction action = PdfAction.createRendition("sample.wav",
                 spec, "audio/x-wav", screen);
 
         screen.setAction(action);
