@@ -660,8 +660,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 PdfObject crypto = null;
                 if (properties.appendMode) {
                     if (structTreeRoot != null && structTreeRoot.getPdfObject().isModified()) {
-                        getTagStructureContext().removeAllConnectionsToTags();
-                        structTreeRoot.flush();
+                        tryFlushTagStructure();
                     }
                     if (catalog.isOCPropertiesMayHaveChanged() && catalog.getOCProperties(false).getPdfObject().isModified()) {
                         catalog.getOCProperties(false).flush();
@@ -695,8 +694,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     }
                 } else {
                     if (structTreeRoot != null) {
-                        getTagStructureContext().removeAllConnectionsToTags();
-                        structTreeRoot.flush();
+                        tryFlushTagStructure();
                     }
                     if (catalog.isOCPropertiesMayHaveChanged()) {
                         catalog.getPdfObject().put(PdfName.OCProperties, catalog.getOCProperties(false).getPdfObject());
@@ -984,15 +982,19 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 if (tagStructureContext != null) {
                     tagStructureContext.actualizeTagsProperties();
                 }
-                for (Map<PdfPage, PdfPage> increasingPagesRange : rangesOfPagesWithIncreasingNumbers) {
-                    if (insertInBetween) {
-                        getStructTreeRoot().copyTo(toDocument, insertBeforePage, increasingPagesRange);
-                    } else {
-                        getStructTreeRoot().copyTo(toDocument, increasingPagesRange);
+                try {
+                    for (Map<PdfPage, PdfPage> increasingPagesRange : rangesOfPagesWithIncreasingNumbers) {
+                        if (insertInBetween) {
+                            getStructTreeRoot().copyTo(toDocument, insertBeforePage, increasingPagesRange);
+                        } else {
+                            getStructTreeRoot().copyTo(toDocument, increasingPagesRange);
+                        }
+                        insertBeforePage += increasingPagesRange.size();
                     }
-                    insertBeforePage += increasingPagesRange.size();
+                    toDocument.getTagStructureContext().normalizeDocumentRootTag();
+                } catch (Exception ex) {
+                    throw new PdfException(PdfException.TagStructureCopyingFailedItMightBeCorruptedInOneOfTheDocuments, ex);
                 }
-                toDocument.getTagStructureContext().normalizeDocumentRootTag();
             } else {
                 Logger logger = LoggerFactory.getLogger(PdfDocument.class);
                 logger.error(LogMessageConstant.NOT_TAGGED_PAGES_IN_TAGGED_DOCUMENT);
@@ -1300,10 +1302,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         (PdfDictionary) infoDict : new PdfDictionary(), this);
 
                 PdfDictionary str = catalog.getPdfObject().getAsDictionary(PdfName.StructTreeRoot);
-                //Add a check to make sure that the StructTreeRoot dictionary has an indirect reference.  If it does not it will throw an exception when creating the PdfStructTreeRoot
-                if (str != null && str.indirectReference != null) {
-                    structTreeRoot = new PdfStructTreeRoot(str);
-                    structParentIndex = getStructTreeRoot().getParentTreeNextKey();
+                if (str != null) {
+                    tryInitTagStructure(str);
                 }
                 if (properties.appendMode && (reader.hasRebuiltXref() || reader.hasFixedXref()))
                     throw new PdfException(PdfException.AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible);
@@ -1507,6 +1507,27 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     protected Counter getCounter() {
         return CounterFactory.getCounter(PdfDocument.class);
+    }
+
+    private void tryInitTagStructure(PdfDictionary str) {
+        try {
+            structTreeRoot = new PdfStructTreeRoot(str);
+            structParentIndex = getStructTreeRoot().getParentTreeNextKey();
+        } catch (Exception ex) {
+            structTreeRoot = null;
+            structParentIndex = -1;
+            Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+            logger.error(LogMessageConstant.TAG_STRUCTURE_INIT_FAILED, ex);
+        }
+    }
+
+    private void tryFlushTagStructure() {
+        try {
+            getTagStructureContext().removeAllConnectionsToTags();
+            structTreeRoot.flush();
+        } catch (Exception ex) {
+            throw new PdfException(PdfException.TagStructureFlushingFailedItMightBeCorrupted, ex);
+        }
     }
 
     /**

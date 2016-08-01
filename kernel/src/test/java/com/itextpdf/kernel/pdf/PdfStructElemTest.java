@@ -2,6 +2,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
@@ -28,6 +29,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
 public class PdfStructElemTest extends ExtendedITextTest {
@@ -526,6 +532,63 @@ public class PdfStructElemTest extends ExtendedITextTest {
         compareResult("structTreeCopyingTest10.pdf", "cmp_structTreeCopyingTest10.pdf", "diff_copying_10_");
     }
 
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ENCOUNTERED_INVALID_MCR, count = 72)
+    })
+    public void corruptedTagStructureTest01() throws IOException {
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "cocacola_corruptedTagStruct.pdf"));
+        assertTrue(document.isTagged());
+        document.close();
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.TAG_STRUCTURE_INIT_FAILED)
+    })
+    public void corruptedTagStructureTest02() throws IOException {
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "directStructElem01.pdf"));
+        assertFalse(document.isTagged());
+        document.close();
+    }
+
+    @Test
+    public void corruptedTagStructureTest03() throws IOException {
+        PdfReader reader = new PdfReader(sourceFolder + "directStructElem02.pdf");
+        PdfWriter writer = new PdfWriter(new ByteBufferOutputStream());
+        PdfDocument document = new PdfDocument(reader, writer);
+        assertTrue(document.isTagged());
+        boolean isThrown = false;
+        try {
+            document.close();
+        } catch (PdfException ex) {
+            assertEquals(ex.getMessage(), PdfException.TagStructureFlushingFailedItMightBeCorrupted);
+            isThrown = true;
+        }
+        if (!isThrown) {
+            fail("Exception is expected.");
+        }
+    }
+
+    @Test
+    public void corruptedTagStructureTest04() throws IOException {
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "directStructElem03.pdf"));
+        assertTrue(document.isTagged());
+        boolean isThrown = false;
+        try {
+            PdfDocument docToCopyTo = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+            docToCopyTo.setTagged();
+            document.copyPagesTo(1, 1, docToCopyTo);
+        } catch (PdfException ex) {
+            assertEquals(ex.getMessage(), PdfException.TagStructureCopyingFailedItMightBeCorruptedInOneOfTheDocuments);
+            isThrown = true;
+        }
+        document.close();
+        if (!isThrown) {
+            fail("Exception is expected.");
+        }
+    }
+
     private void compareResult(String outFileName, String cmpFileName, String diffNamePrefix)
             throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         CompareTool compareTool = new CompareTool();
@@ -540,7 +603,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         errorMessage += taggedStructureDifferences == null ? "" : taggedStructureDifferences + "\n";
         errorMessage += contentDifferences == null ? "" : contentDifferences;
         if (errorMessage.length() > 0) {
-            Assert.fail(errorMessage);
+            fail(errorMessage);
         }
     }
 

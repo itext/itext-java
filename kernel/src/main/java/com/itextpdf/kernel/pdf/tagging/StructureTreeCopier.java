@@ -275,7 +275,7 @@ class StructureTreeCopier {
         if (kid.isNumber()) {
             toDocument.getStructTreeRoot().getParentTreeHandler()
                     .registerMcr(new PdfMcrNumber((PdfNumber) kid, new PdfStructElem(copiedParent)));
-            return kid; // TODO do we always copy numbers?
+            return kid; // TODO do we always copy numbers? don't we need to check if it is supposed to be copied like objs in objectsToCopy?
         } else if (kid.isDictionary()) {
             PdfDictionary kidAsDict = (PdfDictionary) kid;
             if (objectsToCopy.contains(kidAsDict)) {

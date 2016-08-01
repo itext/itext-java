@@ -384,8 +384,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             return;
         }
         if (getDocument().isTagged() && !getDocument().getStructTreeRoot().isFlushed()) {
-            getDocument().getTagStructureContext().flushPageTags(this);
-            getDocument().getStructTreeRoot().createParentTreeEntryForPage(this);
+            tryFlushPageTags();
         }
         getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_PAGE, this));
         if (flushContentStreams) {
@@ -796,6 +795,15 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             setModified();
         }
         return contentStream;
+    }
+
+    private void tryFlushPageTags() {
+        try {
+            getDocument().getTagStructureContext().flushPageTags(this);
+            getDocument().getStructTreeRoot().createParentTreeEntryForPage(this);
+        } catch (Exception ex) {
+            throw new PdfException(PdfException.TagStructureFlushingFailedItMightBeCorrupted, ex);
+        }
     }
 
     private void flushContentStreams() {

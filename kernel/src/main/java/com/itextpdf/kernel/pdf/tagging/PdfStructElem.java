@@ -421,10 +421,6 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     private IPdfStructElem convertPdfObjectToIPdfStructElem(PdfObject obj) {
-        if (obj.isIndirectReference()) {
-            obj = ((PdfIndirectReference)obj).getRefersTo();
-        }
-
         IPdfStructElem elem = null;
         switch (obj.getType()) {
             case PdfObject.DICTIONARY:

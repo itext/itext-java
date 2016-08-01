@@ -280,6 +280,7 @@ public abstract class PdfObject implements Serializable {
             throw new PdfException(PdfException.DocumentToCopyToCannotBeNull);
 
         if (indirectReference != null) {
+            // TODO checkState(MUST_BE_INDIRECT) now is always false, because indirectReference != null. See also DEVSIX-602
             if (indirectReference.getWriter() != null || checkState(MUST_BE_INDIRECT)) {
                 throw new PdfException(PdfException.CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten);
             }

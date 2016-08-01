@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -60,6 +61,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Internal helper class which is used to effectively build parent tree and also find marked content references:
@@ -151,10 +154,16 @@ class ParentTreeHandler implements Serializable {
     }
 
     public void registerMcr(PdfMcr mcr) {
-        TreeMap<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(mcr.getPageObject().getIndirectReference());
+        PdfDictionary mcrPageObject = mcr.getPageObject();
+        if (mcrPageObject == null || (!(mcr instanceof PdfObjRef) && mcr.getMcid() < 0)) {
+            Logger logger = LoggerFactory.getLogger(ParentTreeHandler.class);
+            logger.error(LogMessageConstant.ENCOUNTERED_INVALID_MCR);
+            return;
+        }
+        TreeMap<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(mcrPageObject.getIndirectReference());
         if (pageMcrs == null) {
             pageMcrs = new TreeMap<>();
-            pageToPageMcrs.put(mcr.getPageObject().getIndirectReference(), pageMcrs);
+            pageToPageMcrs.put(mcrPageObject.getIndirectReference(), pageMcrs);
         }
         if (mcr instanceof PdfObjRef) {
             PdfDictionary obj = ((PdfDictionary) mcr.getPdfObject()).getAsDictionary(PdfName.Obj);
@@ -174,6 +183,9 @@ class ParentTreeHandler implements Serializable {
 
     public void unregisterMcr(PdfMcr mcrToUnregister) {
         PdfDictionary pageDict = mcrToUnregister.getPageObject();
+        if (pageDict == null) { // invalid mcr, ignore
+            return;
+        }
         if (pageDict.isFlushed()) {
             throw new PdfException(PdfException.CannotRemoveMarkedContentReferenceBecauseItsPageWasAlreadyFlushed);
         }

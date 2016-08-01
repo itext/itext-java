@@ -61,6 +61,8 @@ import org.slf4j.helpers.SubstituteLoggerFactory;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.IThrowableProxy;
+import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import ch.qos.logback.core.read.ListAppender;
 
 
@@ -181,7 +183,18 @@ public class LogListener extends TestWatcher {
     private class CustomListAppender<E> extends ListAppender<ILoggingEvent> {
         protected void append(ILoggingEvent e) {
             System.out.println(e.getLoggerName() + " " + e.getLevel() + " " + e.getMessage());
+            printStackTraceIfAny(e);
             this.list.add(e);
+        }
+
+        private void printStackTraceIfAny(ILoggingEvent e) {
+            IThrowableProxy throwableProxy = e.getThrowableProxy();
+            if (throwableProxy != null) {
+                System.out.println(throwableProxy.getMessage());
+                for (StackTraceElementProxy el : throwableProxy.getStackTraceElementProxyArray()) {
+                    System.out.println("\t" + el);
+                }
+            }
         }
     }
 
