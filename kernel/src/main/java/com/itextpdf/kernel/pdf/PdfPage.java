@@ -481,7 +481,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             for (int i = 0; i < streamCount; i++) {
                 streamBytes = getStreamBytes(i);
                 baos.write(streamBytes);
-                if (streamBytes[streamBytes.length-1] != '\n') {
+                if (0 != streamBytes.length && !Character.isWhitespace(streamBytes[streamBytes.length-1])) {
                     baos.write('\n');
                 }
             }
