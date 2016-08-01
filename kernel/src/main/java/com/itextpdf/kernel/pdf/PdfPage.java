@@ -66,7 +66,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
@@ -478,8 +477,13 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             int streamCount = getContentStreamCount();
+            byte[] streamBytes;
             for (int i = 0; i < streamCount; i++) {
-                baos.write(getStreamBytes(i));
+                streamBytes = getStreamBytes(i);
+                baos.write(streamBytes);
+                if (streamBytes[streamBytes.length-1] != '\n') {
+                    baos.write('\n');
+                }
             }
             return baos.toByteArray();
         } catch (IOException ioe) {

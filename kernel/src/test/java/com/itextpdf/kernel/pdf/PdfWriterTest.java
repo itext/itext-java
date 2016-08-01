@@ -5,6 +5,10 @@ import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
@@ -12,11 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TreeMap;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfWriterTest extends ExtendedITextTest {
@@ -376,9 +375,11 @@ public class PdfWriterTest extends ExtendedITextTest {
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         Assert.assertEquals(8, reader.trailer.getAsNumber(PdfName.Size).intValue());
         byte[] bytes = pdfDocument.getPage(1).getContentBytes();
-        Assert.assertArrayEquals(ByteUtils.getIsoBytes("%Page_1"), bytes);
+        // getting content bytes results in adding '\n' for each content stream
+        // so we should compare String with '\n' at the end
+        Assert.assertArrayEquals(ByteUtils.getIsoBytes("%Page_1\n"), bytes);
         bytes = pdfDocument.getPage(2).getContentBytes();
-        Assert.assertArrayEquals(ByteUtils.getIsoBytes("%Page_2"), bytes);
+        Assert.assertArrayEquals(ByteUtils.getIsoBytes("%Page_2\n"), bytes);
         pdfDocument.close();
     }
 
