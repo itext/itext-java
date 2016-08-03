@@ -567,8 +567,10 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         public Radial(PdfColorSpace cs, float x0, float y0, float r0, float[] color0, float x1, float y1, float r1, float[] color1, boolean[] extend) {
             this(cs, x0, y0, r0, color0, x1, y1, r1, color1);
 
-            if (extend != null)
-                setExtend(extend[0], extend[1]);
+            if (extend == null || extend.length != 2)
+                throw new IllegalArgumentException("extend");
+
+            setExtend(extend[0], extend[1]);
         }
 
         /**
