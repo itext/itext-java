@@ -61,6 +61,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = 4781809723744243508L;
 
+    /**constants of shading type {@see ISO-320001 Table 78} */
 	private static class ShadingType {
         /** The int value of function-based shading type*/
         public static final int FUNCTION_BASED = 1;
@@ -79,7 +80,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Creates the type specific {@link PdfShading} object from the given {@link PdfDictionary}.
+     * Creates the {@link PdfShading} object from the existing {@link PdfDictionary} with corresponding type.
      *
      * @param shadingDictionary {@link PdfDictionary} from which the {@link PdfShading} object will be created.
      * @return Created {@link PdfShading} object.
@@ -211,37 +212,41 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * The class that extends {@link PdfShading} class and is in charge of Shading Dictionary with function-based type
+     * The class that extends {@link PdfShading} class and is in charge of Shading Dictionary with function-based type,
+     * that defines color at every point in the domain by a specified mathematical function.
      */
     public static class FunctionBased extends PdfShading {
 
         private static final long serialVersionUID = -4459197498902558052L;
 
         /**
-         * Creates the new instance of the class from the given {@link PdfDictionary} object.
+         * Creates the new instance of the class from the existing {@link PdfDictionary} object.
+         *
+         * @deprecated Intended only for private use.
+         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
          *
          * @param pdfDictionary {@link PdfDictionary} from which the instance is created.
          */
+        @Deprecated
 		public FunctionBased(PdfDictionary pdfDictionary) {
             super(pdfDictionary);
         }
 
         /**
-         * Creates the new instance of the class from the given {@link PdfColorSpace} and {@link PdfFunction} objects.
+         * Creates the new instance of the class.
          *
-         * @param colorSpace the {@link PdfColorSpace} that will be used for shading.
-         * @param function the {@link PdfFunction} that will be used for shading.
+         * @param colorSpace the {@link PdfColorSpace} object in which colour values shall be expressed.
+         * @param function the {@link PdfFunction}, that is used to calculate color transitions.
          */
         public FunctionBased(PdfColorSpace colorSpace, PdfFunction function) {
             this(colorSpace.getPdfObject(), function);
         }
 
         /**
-         * Creates the new instance of the class from the given {@link PdfObject} color space object
-         * and {@link PdfFunction} object.
+         * Creates the new instance of the class.
          *
-         * @param colorSpace the {@link PdfObject} that will be used for shading.
-         * @param function the {@link PdfFunction} that will be used for shading.
+         * @param colorSpace the {@link PdfObject}, that represents color space in which colour values shall be expressed.
+         * @param function the {@link PdfFunction}, that is used to calculate color transitions.
          */
         public FunctionBased(PdfObject colorSpace, PdfFunction function) {
             super(new PdfDictionary(), ShadingType.FUNCTION_BASED, colorSpace);
@@ -323,17 +328,23 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * The class that extends {@link PdfShading} class and is in charge of Shading Dictionary with axial type
+     * The class that extends {@link PdfShading} class and is in charge of Shading Dictionary with axial type,
+     * that define a colour blend that varies along a linear axis between two endpoints
+     * and extends indefinitely perpendicular to that axis.
      */
     public static class Axial extends PdfShading {
 
         private static final long serialVersionUID = 5504688740677023792L;
 
         /**
-         * Creates the new instance of the class from the given {@link PdfDictionary} object.
+         * Creates the new instance of the class from the existing {@link PdfDictionary} object.
+         *
+         * @deprecated Intended only for private use.
+         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
          *
          * @param pdfDictionary {@link PdfDictionary} from which the instance is created.
          */
+        @Deprecated
 		public Axial(PdfDictionary pdfDictionary) {
             super(pdfDictionary);
         }
@@ -341,13 +352,14 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         /**
          * Creates the new instance of the class.
          *
-         * @param cs {@link PdfColorSpace} object. The special Pattern space isn't excepted.
+         * @param cs the {@link PdfColorSpace} object in which colour values shall be expressed.
+         *           The special Pattern space isn't excepted.
          * @param x0 the start coordinate of X axis expressed in the shading's target coordinate space.
          * @param y0 the start coordinate of Y axis expressed in the shading's target coordinate space.
-         * @param color0 the {@code float[]} that represents start color of function.
+         * @param color0 the {@code float[]} that represents the color in the start point.
          * @param x1 the end coordinate of X axis expressed in the shading's target coordinate space.
          * @param y1 the end coordinate of Y axis expressed in the shading's target coordinate space.
-         * @param color1 the {@code float[]} that represents end color of function.
+         * @param color1 the {@code float[]} that represents the color in the end point.
          */
         public Axial(PdfColorSpace cs, float x0, float y0, float[] color0, float x1, float y1, float[] color1) {
             super(new PdfDictionary(), ShadingType.AXIAL, cs.getPdfObject());
@@ -364,15 +376,16 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         /**
          * Creates the new instance of the class.
          *
-         * @param cs {@link PdfColorSpace} object.
+         * @param cs the {@link PdfColorSpace} object in which colour values shall be expressed.
+         *           The special Pattern space isn't excepted.
          * @param x0 the start coordinate of X axis expressed in the shading's target coordinate space.
          * @param y0 the start coordinate of Y axis expressed in the shading's target coordinate space.
-         * @param color0 the {@code float[]} that represents start color of function.
+         * @param color0 the {@code float[]} that represents the color in the start point.
          * @param x1 the end coordinate of X axis expressed in the shading's target coordinate space.
          * @param y1 the end coordinate of Y axis expressed in the shading's target coordinate space.
-         * @param color1 the {@code float[]} that represents end color of function.
+         * @param color1 the {@code float[]} that represents the color in the end point.
          * @param extend the array of two booleans that specified whether to extend the shading
-         * beyond the starting and ending points of the axis, respectively.
+         *               beyond the starting and ending points of the axis, respectively.
          */
         public Axial(PdfColorSpace cs, float x0, float y0, float[] color0, float x1, float y1, float[] color1, boolean[] extend) {
             this(cs, x0, y0, color0, x1, y1, color1);
@@ -386,8 +399,10 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         /**
          * Creates the new instance of the class.
          *
-         * @param cs the {@link PdfColorSpace} object. The special Pattern space isn't excepted.
-         * @param coords the {@link PdfArray} of four number that specified the starting and the ending points.
+         * @param cs the {@link PdfColorSpace} object in which colour values shall be expressed.
+         *           The special Pattern space isn't excepted.
+         * @param coords the {@link PdfArray} of four number four numbers [x0 y0 x1 y1] that specified the starting
+         *               and the endings coordinates of thew axis, expressed in the shading's target coordinate space.
          * @param function the {@link PdfFunction} object, that is used to calculate color transitions.
          */
         public Axial(PdfColorSpace cs, PdfArray coords, PdfFunction function) {
@@ -398,7 +413,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
 
         /**
-         * Gets {@link PdfArray} of four numbers [x0 y0 x1 y1] that specified the starting
+         * Gets the Coords object - a {@link PdfArray} of four numbers [x0 y0 x1 y1] that specified the starting
          * and the endings coordinates of thew axis, expressed in the shading's target coordinate space.
          *
          * @return the {@link PdfArray} Coords object.
@@ -432,7 +447,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         /**
-         * Gets the array of two floats [t0, t1] that represent the limiting values of a parametric
+         * Gets the array of two {@code float} [t0, t1] that represent the limiting values of a parametric
          * variable t, that becomes an input of color function(s).
          *
          * @return {@code float[]} of Domain object ([0.0 1.0] by default)
@@ -445,7 +460,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         /**
-         * Sets the Domain with the array of two floats [t0, t1] that represent the limiting values
+         * Sets the Domain with the array of two {@code float} [t0, t1] that represent the limiting values
          * of a parametric variable t, that becomes an input of color function(s).
          *
          * @param t0 first limit of variable t
@@ -457,7 +472,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         /**
-         * Gets the array of two booleans that specified whether to extend the shading
+         * Gets the array of two {@code boolean} that specified whether to extend the shading
          * beyond the starting and ending points of the axis, respectively.
          *
          * @return {@code boolean[]} of Extended object ([false false] by default)
@@ -470,7 +485,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
 
         /**
-         * Sets the Extend object with the two booleans value.
+         * Sets the Extend object with the two {@code boolean} value.
          *
          * @param extendStart if true will extend shading beyond the starting point of Coords
          * @param extendEnd if true will extend shading beyond the ending point of Coords
@@ -481,14 +496,45 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * The class that extends {@link PdfShading} class and is in charge of Shading Dictionary with radial type,
+     * that define a colour blend that varies between two circles.
+     * This type of shading shall not be used with an Indexed colour space
+     */
     public static class Radial extends PdfShading {
 
         private static final long serialVersionUID = -5012819396006804845L;
 
+        /**
+         * Creates the new instance of the class from the existing {@link PdfDictionary} object.
+         *
+         * @deprecated Intended only for private use.
+         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
+         *
+         * @param pdfDictionary - {@link PdfDictionary} from which the instance is created.
+         */
         public Radial(PdfDictionary pdfDictionary) {
             super(pdfDictionary);
         }
 
+        /**
+         * Creates the new instance of the class.         *
+         *
+         * @param cs the {@link PdfColorSpace} object in which colour values shall be expressed.
+         *           The Indexed color space isn't excepted.
+         * @param x0 the X coordinate of starting circle's centre, expressed in in the shading’s target coordinate space.
+         * @param y0 the Y coordinate of starting circle's centre, expressed in in the shading’s target coordinate space.
+         * @param r0 the radius of starting circle's centre, should be greater or equal to 0.
+         *           If 0 then starting circle is treated as point.
+         *           If both radii are 0, nothing shall be painted.
+         * @param color0 the {@code float[]} that represents the color in the start circle.
+         * @param x1 the X coordinate of ending circle's centre, expressed in in the shading’s target coordinate space.
+         * @param y1 the Y coordinate of ending circle's centre, expressed in in the shading’s target coordinate space.
+         * @param r1 the radius of ending circle's centre, should be greater or equal to 0.
+         *           If 0 then ending circle is treated as point.
+         *           If both radii are 0, nothing shall be painted.
+         * @param color1 the {@code float[]} that represents the color in the end circle.
+         */
         public Radial(PdfColorSpace cs, float x0, float y0, float r0, float[] color0, float x1, float y1, float r1, float[] color1) {
             super(new PdfDictionary(), ShadingType.RADIAL, cs.getPdfObject());
 
@@ -498,6 +544,26 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
             setFunction(func);
         }
 
+        /**
+         * Creates the new instance of the class.         *
+         *
+         * @param cs the {@link PdfColorSpace} object in which colour values shall be expressed.
+         *           The Indexed color space isn't excepted.
+         * @param x0 the X coordinate of starting circle's centre, expressed in in the shading’s target coordinate space.
+         * @param y0 the Y coordinate of starting circle's centre, expressed in in the shading’s target coordinate space.
+         * @param r0 the radius of starting circle's centre, should be greater or equal to 0.
+         *           If 0 then starting circle is treated as point.
+         *           If both radii are 0, nothing shall be painted.
+         * @param color0 the {@code float[]} that represents the color in the start circle.
+         * @param x1 the X coordinate of ending circle's centre, expressed in in the shading’s target coordinate space.
+         * @param y1 the Y coordinate of ending circle's centre, expressed in in the shading’s target coordinate space.
+         * @param r1 the radius of ending circle's centre, should be greater or equal to 0.
+         *           If 0 then ending circle is treated as point.
+         *           If both radii are 0, nothing shall be painted.
+         * @param color1 the {@code float[]} that represents the color in the end circle.
+         * @param extend the array of two {@code boolean} that specified whether to extend the shading
+         *               beyond the starting and ending points of the axis, respectively.
+         */
         public Radial(PdfColorSpace cs, float x0, float y0, float r0, float[] color0, float x1, float y1, float r1, float[] color1, boolean[] extend) {
             this(cs, x0, y0, r0, color0, x1, y1, r1, color1);
 
@@ -505,25 +571,78 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
                 setExtend(extend[0], extend[1]);
         }
 
+        /**
+         * Creates the new instance of the class.
+         *
+         * @param cs the {@link PdfColorSpace} object in which colour values shall be expressed.
+         *           The Indexed color space isn't excepted.
+         * @param coords the {@link PdfArray} of of six numbers [x0 y0 r0 x1 y1 r1],
+         *               specifying the centres and radii of the starting and ending circles,
+         *               expressed in the shading’s target coordinate space.
+         *               The radii r0 and r1 shall both be greater than or equal to 0.
+         *               If one radius is 0, the corresponding circle shall be treated as a point;
+         *               if both are 0, nothing shall be painted.
+         * @param function the {@link PdfFunction} object, that is used to calculate color transitions.
+         */
         public Radial(PdfColorSpace cs, PdfArray coords, PdfFunction function) {
             super(new PdfDictionary(), ShadingType.RADIAL, cs.getPdfObject());
             setCoords(coords);
             setFunction(function);
         }
 
+        /**
+         * Gets the coords {@link PdfArray} object - an array of six numbers [x0 y0 r0 x1 y1 r1],
+         * specifying the centres and radii of the starting and ending circles,
+         * expressed in the shading’s target coordinate space.
+         * The radii r0 and r1 shall both be greater than or equal to 0.
+         * If one radius is 0, the corresponding circle shall be treated as a point;
+         * if both are 0, nothing shall be painted.
+         *
+         * @return the {@link PdfArray} coords object.
+         */
         public PdfArray getCoords() {
             return getPdfObject().getAsArray(PdfName.Coords);
         }
 
+        /**
+         * Sets the coords object.
+         *
+         * @param x0 the X coordinate of starting circle's centre, expressed in in the shading’s target coordinate space.
+         * @param y0 the Y coordinate of starting circle's centre, expressed in in the shading’s target coordinate space.
+         * @param r0 the radius of starting circle's centre, should be greater or equal to 0.
+         *           If 0 then starting circle is treated as point.
+         *           If both radii are 0, nothing shall be painted.
+         * @param x1 the X coordinate of ending circle's centre, expressed in in the shading’s target coordinate space.
+         * @param y1 the Y coordinate of ending circle's centre, expressed in in the shading’s target coordinate space.
+         * @param r1 the radius of ending circle's centre, should be greater or equal to 0.
+         *           If 0 then ending circle is treated as point.
+         *           If both radii are 0, nothing shall be painted.
+         */
         public void setCoords(float x0, float y0, float r0, float x1, float y1, float r1) {
             setCoords(new PdfArray(new float[] {x0, y0, r0, x1, y1, r1}));
         }
 
+        /**
+         * Sets the coords {@link PdfArray} object - an array of six numbers [x0 y0 r0 x1 y1 r1],
+         * specifying the centres and radii of the starting and ending circles,
+         * expressed in the shading’s target coordinate space.
+         * The radii r0 and r1 shall both be greater than or equal to 0.
+         * If one radius is 0, the corresponding circle shall be treated as a point;
+         * if both are 0, nothing shall be painted.
+         *
+         * @param coords - {@link PdfArray} choords object to be set.
+         */
         public void setCoords(PdfArray coords) {
             getPdfObject().put(PdfName.Coords, coords);
             setModified();
         }
 
+        /**
+         * Gets the array of two {@code float} [t0, t1] that represent the limiting values of a parametric
+         * variable t, that becomes an input of color function(s).
+         *
+         * @return {@code float[]} of Domain object ([0.0 1.0] by default)
+         */
         public float[] getDomain() {
             PdfArray domain = getPdfObject().getAsArray(PdfName.Domain);
             if (domain == null)
@@ -531,11 +650,24 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
             return new float[]{domain.getAsNumber(0).floatValue(), domain.getAsNumber(1).floatValue()};
         }
 
+        /**
+         * Sets the Domain with the array of two {@code float} [t0, t1] that represent the limiting values
+         * of a parametric variable t, that becomes an input of color function(s).
+         *
+         * @param t0 first limit of variable t
+         * @param t1 second limit of variable t
+         */
         public void setDomain(float t0, float t1) {
             getPdfObject().put(PdfName.Domain, new PdfArray(new float[] {t0, t1}));
             setModified();
         }
 
+        /**
+         * Gets the array of two {@code boolean} that specified whether to extend the shading
+         * beyond the starting and ending circles of the axis, respectively.
+         *
+         * @return {@code boolean[]} of Extended object ([false false] by default)
+         */
         public boolean[] getExtend() {
             PdfArray extend = getPdfObject().getAsArray(PdfName.Extend);
             if (extend == null)
@@ -543,16 +675,37 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
             return new boolean[] {extend.getAsBoolean(0).getValue(), extend.getAsBoolean(1).getValue()};
         }
 
+        /**
+         * Sets the Extend object with the two {@code boolean} value.
+         *
+         * @param extendStart if true will extend shading beyond the starting circle of Coords.
+         * @param extendEnd if true will extend shading beyond the ending circle of Coords.
+         */
         public void setExtend(boolean extendStart, boolean extendEnd) {
             getPdfObject().put(PdfName.Extend, new PdfArray(new boolean[] {extendStart, extendEnd}));
             setModified();
         }
     }
 
+    /**
+     * The class that extends {@link PdfShading} class and is in charge of Shading Dictionary with
+     * free-form Gouraud-shaded triangle mesh type.
+     * The area to be shaded is defined by a path composed entirely of triangles.
+     * The colour at each vertex of the triangles is specified,
+     * and a technique known as Gouraud interpolation is used to colour the interiors.
+     */
     public static class FreeFormGouraudShadedTriangleMesh extends PdfShading {
         
     	private static final long serialVersionUID = -2690557760051875972L;
 
+        /**
+         * Creates the new instance of the class from the existing {@link PdfStream} object.
+         *
+         * @deprecated Intended only for private use.
+         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
+         *
+         * @param pdfStream - {@link PdfStream} from which the instance is created.
+         */
 		public FreeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
@@ -614,6 +767,14 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         
     	private static final long serialVersionUID = -8776232978423888214L;
 
+        /**
+         * Creates the new instance of the class from the existing {@link PdfStream} object.
+         *
+         * @deprecated Intended only for private use.
+         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
+         *
+         * @param pdfStream - {@link PdfStream} from which the instance is created.
+         */
 		public LatticeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
@@ -675,6 +836,14 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         
     	private static final long serialVersionUID = 7296891352801419708L;
 
+        /**
+         * Creates the new instance of the class from the existing {@link PdfStream} object.
+         *
+         * @deprecated Intended only for private use.
+         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
+         *
+         * @param pdfStream - {@link PdfStream} from which the instance is created.
+         */
 		public CoonsPatchMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
@@ -735,6 +904,14 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
        
     	private static final long serialVersionUID = -2750695839303504742L;
 
+        /**
+         * Creates the new instance of the class from the existing {@link PdfStream} object.
+         *
+         * @deprecated Intended only for private use.
+         * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
+         *
+         * @param pdfStream - {@link PdfStream} from which the instance is created.
+         */
 		public TensorProductPatchMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
