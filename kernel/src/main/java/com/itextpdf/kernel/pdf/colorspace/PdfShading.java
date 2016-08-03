@@ -539,7 +539,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         public boolean[] getExtend() {
             PdfArray extend = getPdfObject().getAsArray(PdfName.Extend);
             if (extend == null)
-                return new boolean[] {true, true};
+                return new boolean[] {false, false};
             return new boolean[] {extend.getAsBoolean(0).getValue(), extend.getAsBoolean(1).getValue()};
         }
 
