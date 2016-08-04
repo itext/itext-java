@@ -48,17 +48,27 @@ import com.itextpdf.layout.property.Property;
 
 public class CellRenderer extends BlockRenderer {
 
+    /**
+     * Creates a CellRenderer from its corresponding layout object.
+     * @param modelElement the {@link com.itextpdf.layout.element.Cell} which this object should manage
+     */
     public CellRenderer(Cell modelElement) {
         super(modelElement);
         setProperty(Property.ROWSPAN, modelElement.getRowspan());
         setProperty(Property.COLSPAN, modelElement.getColspan());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Cell getModelElement() {
         return (Cell) super.getModelElement();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected CellRenderer createSplitRenderer(int layoutResult) {
         CellRenderer splitRenderer = (CellRenderer) getNextRenderer();
@@ -70,6 +80,9 @@ public class CellRenderer extends BlockRenderer {
         return splitRenderer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected CellRenderer createOverflowRenderer(int layoutResult) {
         CellRenderer overflowRenderer = (CellRenderer) getNextRenderer();
@@ -79,11 +92,17 @@ public class CellRenderer extends BlockRenderer {
         return overflowRenderer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void drawBorder(DrawContext drawContext) {
         // Do nothing here. Border drawing for tables is done on TableRenderer.
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRenderer getNextRenderer() {
         return new CellRenderer(getModelElement());

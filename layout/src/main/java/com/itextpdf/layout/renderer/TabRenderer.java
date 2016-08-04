@@ -53,7 +53,11 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
 
 public class TabRenderer extends AbstractRenderer {
-
+    /**
+     * Creates a TabRenderer from its corresponding layout object
+     *
+     * @param tab the {@link Tab} which this object should manage
+     */
     public TabRenderer(Tab tab) {
         super(tab);
     }

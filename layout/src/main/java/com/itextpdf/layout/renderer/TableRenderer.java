@@ -106,6 +106,9 @@ public class TableRenderer extends AbstractRenderer {
         this(modelElement, new Table.RowRange(0, modelElement.getNumberOfRows() - 1));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addChild(IRenderer renderer) {
         if (renderer instanceof CellRenderer) {
@@ -119,6 +122,9 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea();
@@ -520,6 +526,9 @@ public class TableRenderer extends AbstractRenderer {
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void draw(DrawContext drawContext) {
         PdfDocument document = drawContext.getDocument();
@@ -560,6 +569,9 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void drawChildren(DrawContext drawContext) {
         Table modelElement = (Table) getModelElement();
@@ -646,6 +658,9 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRenderer getNextRenderer() {
         TableRenderer nextTable = new TableRenderer();
@@ -653,6 +668,9 @@ public class TableRenderer extends AbstractRenderer {
         return nextTable;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void move(float dxRight, float dyUp) {
         super.move(dxRight, dyUp);

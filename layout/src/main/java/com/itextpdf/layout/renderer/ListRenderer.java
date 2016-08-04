@@ -63,6 +63,10 @@ import java.util.List;
 
 public class ListRenderer extends BlockRenderer {
 
+    /**
+     * Creates a ListRenderer from its corresponding layout object.
+     * @param modelElement the {@link com.itextpdf.layout.element.List} which this object should manage
+     */
     public ListRenderer(com.itextpdf.layout.element.List modelElement) {
         super(modelElement);
     }

@@ -53,10 +53,17 @@ import com.itextpdf.layout.property.Property;
 
 public class LineSeparatorRenderer extends BlockRenderer {
 
+    /**
+     * Creates a LineSeparatorRenderer from its corresponding layout object.
+     * @param lineSeparator the {@link com.itextpdf.layout.element.LineSeparator} which this object should manage
+     */
     public LineSeparatorRenderer(LineSeparator lineSeparator) {
         super(lineSeparator);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
@@ -94,11 +101,17 @@ public class LineSeparatorRenderer extends BlockRenderer {
         return new LayoutResult(LayoutResult.FULL, occupiedArea, this, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRenderer getNextRenderer() {
         return new LineSeparatorRenderer((LineSeparator) modelElement);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void drawChildren(DrawContext drawContext) {
         ILineDrawer lineDrawer = this.<ILineDrawer>getProperty(Property.LINE_DRAWER);

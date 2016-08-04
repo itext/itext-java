@@ -58,15 +58,26 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * This class represents the {@link IRenderer renderer} object for a {@link Paragraph}
+ * object. It will draw the glyphs of the textual content on the {@link DrawContext}.
+ */
 public class ParagraphRenderer extends BlockRenderer {
 
     protected float previousDescent = 0;
     protected List<LineRenderer> lines = null;
 
+    /**
+     * Creates a ParagraphRenderer from its corresponding layout object.
+     * @param modelElement the {@link com.itextpdf.layout.element.Paragraph} which this object should manage
+     */
     public ParagraphRenderer(Paragraph modelElement) {
         super(modelElement);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         int pageNumber = layoutContext.getArea().getPageNumber();
@@ -270,11 +281,17 @@ public class ParagraphRenderer extends BlockRenderer {
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRenderer getNextRenderer() {
         return new ParagraphRenderer((Paragraph) modelElement);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T1> T1 getDefaultProperty(int property) {
         if ((property == Property.MARGIN_TOP || property == Property.MARGIN_BOTTOM) && parent instanceof CellRenderer) {
@@ -283,6 +300,9 @@ public class ParagraphRenderer extends BlockRenderer {
         return super.<T1>getDefaultProperty(property);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -298,6 +318,9 @@ public class ParagraphRenderer extends BlockRenderer {
         return sb.toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void drawChildren(DrawContext drawContext) {
         if (lines != null) {
@@ -307,6 +330,9 @@ public class ParagraphRenderer extends BlockRenderer {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void move(float dxRight, float dyUp) {
         occupiedArea.getBBox().moveRight(dxRight);

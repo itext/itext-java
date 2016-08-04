@@ -75,6 +75,10 @@ public class ImageRenderer extends AbstractRenderer {
 
     float[] matrix = new float[6];
 
+    /**
+     * Creates an ImageRenderer from its corresponding layout object.
+     * @param image the {@link com.itextpdf.layout.element.Image} which this object should manage
+     */
     public ImageRenderer(Image image) {
         super(image);
     }

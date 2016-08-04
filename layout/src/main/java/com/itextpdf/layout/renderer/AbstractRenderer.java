@@ -78,7 +78,14 @@ import java.util.*;
  */
 public abstract class AbstractRenderer implements IRenderer {
 
+    /**
+     * The maximum difference between {@link Rectangle} coordinates to consider rectangles equal
+     */
     public static final float EPS = 1e-4f;
+
+    /**
+     * The infinity value which is used while layouting
+     */
     public static final float INF = 1e6f;
 
     // TODO linkedList?
@@ -117,6 +124,9 @@ public abstract class AbstractRenderer implements IRenderer {
         this.isLastRendererForModelElement = other.isLastRendererForModelElement;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addChild(IRenderer renderer) {
         // https://www.webkit.org/blog/116/webcore-rendering-iii-layout-basics
@@ -137,16 +147,25 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IPropertyContainer getModelElement() {
         return modelElement;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<IRenderer> getChildRenderers() {
         return childRenderers;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasProperty(int property) {
         return hasOwnProperty(property)
@@ -154,11 +173,17 @@ public abstract class AbstractRenderer implements IRenderer {
                 || (parent != null && Property.isPropertyInherited(property) && parent.hasProperty(property));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasOwnProperty(int property) {
         return properties.containsKey(property);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void deleteOwnProperty(int property) {
         properties.remove(property);
@@ -179,6 +204,9 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T1> T1 getProperty(int key) {
         Object property;
@@ -199,22 +227,34 @@ public abstract class AbstractRenderer implements IRenderer {
         return modelElement != null ? modelElement.<T1>getDefaultProperty(key) : (T1) (Object) null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T1> T1 getOwnProperty(int property) {
         return (T1) properties.get(property);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T1> T1 getProperty(int property, T1 defaultValue) {
         T1 result = this.<T1>getProperty(property);
         return result != null ? result : defaultValue;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setProperty(int property, Object value) {
         properties.put(property, value);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T1> T1 getDefaultProperty(int property) {
         return (T1) (Object) null;
@@ -284,6 +324,12 @@ public abstract class AbstractRenderer implements IRenderer {
         return value != null ? value.intValue() : null;
     }
 
+    /**
+     * Returns a string representation of the renderer.
+     *
+     * @return a {@link String}
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -293,11 +339,17 @@ public abstract class AbstractRenderer implements IRenderer {
         return sb.toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LayoutArea getOccupiedArea() {
         return occupiedArea;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void draw(DrawContext drawContext) {
         applyDestination(drawContext.getDocument());
@@ -429,22 +481,37 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    /**
+     * Indicates whether this renderer is flushed or not, i.e. if {@link #draw(DrawContext)} has already
+     * been called.
+     * @return whether the renderer has been flushed
+     * @see #draw
+     */
     @Override
     public boolean isFlushed() {
         return flushed;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRenderer setParent(IRenderer parent) {
         this.parent = parent;
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRenderer getParent() {
         return parent;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void move(float dxRight, float dyUp) {
         occupiedArea.getBBox().moveRight(dxRight);
@@ -540,10 +607,28 @@ public abstract class AbstractRenderer implements IRenderer {
         return ((AbstractRenderer) childRenderers.get(0)).getFirstYLineRecursively();
     }
 
+    /**
+     * Applies margins of the renderer on the given rectangle
+     *
+     * @param rect a rectangle margins will be applied on.
+     * @param reverse indicates whether margins will be applied
+     *                inside (in case of false) or outside (in case of false) the rectangle.
+     * @return a {@link Rectangle border box} of the renderer
+     * @see #getMargins
+     */
     protected Rectangle applyMargins(Rectangle rect, boolean reverse) {
         return this.applyMargins(rect, getMargins(), reverse);
     }
 
+    /**
+     * Applies given margins on the given rectangle
+     *
+     * @param rect a rectangle margins will be applied on.
+     * @param margins the margins to be applied on the given rectangle
+     * @param reverse indicates whether margins will be applied
+     *                inside (in case of false) or outside (in case of false) the rectangle.
+     * @return a {@link Rectangle border box} of the renderer
+     */
     protected Rectangle applyMargins(Rectangle rect, float[] margins, boolean reverse) {
         if (isPositioned())
             return rect;
@@ -551,29 +636,76 @@ public abstract class AbstractRenderer implements IRenderer {
         return rect.<Rectangle>applyMargins(margins[0], margins[1], margins[2], margins[3], reverse);
     }
 
+    /**
+     * Returns margins of the renderer
+     *
+     * @return a {@link float[] margins} of the renderer
+     */
     protected float[] getMargins() {
         return new float[] {(float) this.getPropertyAsFloat(Property.MARGIN_TOP), (float) this.getPropertyAsFloat(Property.MARGIN_RIGHT),
                 (float) this.getPropertyAsFloat(Property.MARGIN_BOTTOM), (float) this.getPropertyAsFloat(Property.MARGIN_LEFT)};
     }
 
+    /**
+     * Returns paddings of the renderer
+     *
+     * @return a {@link float[] paddings} of the renderer
+     */
     protected float[] getPaddings() {
         return new float[] {(float) this.getPropertyAsFloat(Property.PADDING_TOP), (float) this.getPropertyAsFloat(Property.PADDING_RIGHT),
                 (float) this.getPropertyAsFloat(Property.PADDING_BOTTOM), (float) this.getPropertyAsFloat(Property.PADDING_LEFT)};
     }
 
+    /**
+     * Applies paddings of the renderer on the given rectangle
+     *
+     * @param rect a rectangle paddings will be applied on.
+     * @param reverse indicates whether paddings will be applied
+     *                inside (in case of false) or outside (in case of false) the rectangle.
+     * @return a {@link Rectangle border box} of the renderer
+     * @see #getPaddings
+     */
     protected Rectangle applyPaddings(Rectangle rect, boolean reverse) {
         return applyPaddings(rect, getPaddings(), reverse);
     }
 
+    /**
+     * Applies given paddings on the given rectangle
+     *
+     * @param rect a rectangle paddings will be applied on.
+     * @param paddings the paddings to be applied on the given rectangle
+     * @param reverse indicates whether paddings will be applied
+     *                inside (in case of false) or outside (in case of false) the rectangle.
+     * @return a {@link Rectangle border box} of the renderer
+     */
     protected Rectangle applyPaddings(Rectangle rect, float[] paddings, boolean reverse) {
         return rect.<Rectangle>applyMargins(paddings[0], paddings[1], paddings[2], paddings[3], reverse);
     }
 
+    /**
+     * Applies the border box of the renderer on the given rectangle
+     * If the border of a certain side is null, the side will remain as it was.
+     *
+     * @param rect a rectangle the border box will be applied on.
+     * @param reverse indicates whether the border box will be applied
+     *                inside (in case of false) or outside (in case of false) the rectangle.
+     * @return a {@link Rectangle border box} of the renderer
+     * @see #getBorders
+     */
     protected Rectangle applyBorderBox(Rectangle rect, boolean reverse) {
         Border[] borders = getBorders();
         return applyBorderBox(rect, borders, reverse);
     }
 
+    /**
+     * Applies the given border box (borders) on the given rectangle
+     *
+     * @param rect a rectangle paddings will be applied on.
+     * @param borders the {@link Border borders} to be applied on the given rectangle
+     * @param reverse indicates whether the border box will be applied
+                      * inside (in case of false) or outside (in case of false) the rectangle.
+     * @return a {@link Rectangle border box} of the renderer
+     */
     protected Rectangle applyBorderBox(Rectangle rect, Border[] borders, boolean reverse) {
         float topWidth = borders[0] != null ? borders[0].getWidth() : 0;
         float rightWidth = borders[1] != null ? borders[1].getWidth() : 0;
@@ -633,11 +765,21 @@ public abstract class AbstractRenderer implements IRenderer {
         return !isPositioned() && occupiedArea.getBBox().getHeight() > area.getHeight();
     }
 
+    /**
+     * Indicates whether the renderer's position is fixed or not.
+     *
+     * @return a {@link boolean}
+     */
     protected boolean isPositioned() {
         Object positioning = this.<Object>getProperty(Property.POSITION);
         return Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
     }
 
+    /**
+     * Indicates whether the renderer's position is fixed or not.
+     *
+     * @return a {@link boolean}
+     */
     protected boolean isFixedLayout() {
         Object positioning = this.<Object>getProperty(Property.POSITION);
         return Integer.valueOf(LayoutPosition.FIXED).equals(positioning);

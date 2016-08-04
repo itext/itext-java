@@ -46,17 +46,21 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.property.ListSymbolAlignment;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.ListSymbolAlignment;
+import com.itextpdf.layout.property.Property;
 
 public class ListItemRenderer extends DivRenderer {
 
     protected IRenderer symbolRenderer;
     protected float symbolAreaWidth;
 
+    /**
+     * Creates a ListItemRenderer from its corresponding layout object.
+     * @param modelElement the {@link com.itextpdf.layout.element.ListItem} which this object should manage
+     */
     public ListItemRenderer(ListItem modelElement) {
         super(modelElement);
     }

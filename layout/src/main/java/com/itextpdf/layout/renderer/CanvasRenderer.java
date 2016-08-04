@@ -55,10 +55,23 @@ public class CanvasRenderer extends RootRenderer {
 
     protected Canvas canvas;
 
+    /**
+     * Creates a CanvasRenderer from its corresponding layout object.
+     * Sets {@link #immediateFlush} to true.
+     *
+     * @param canvas the {@link com.itextpdf.layout.Canvas} which this object should manage
+     */
     public CanvasRenderer(Canvas canvas) {
         this(canvas, true);
     }
 
+    /**
+     * Creates a CanvasRenderer from its corresponding layout object.
+     * Defines whether the content should be flushed immediately after addition {@link #addChild(IRenderer)} or not
+     *
+     * @param canvas the {@link com.itextpdf.layout.Canvas} which this object should manage
+     * @param immediateFlush the value which stands for immediate flushing
+     */
     public CanvasRenderer(Canvas canvas, boolean immediateFlush) {
         this.canvas = canvas;
         this.modelElement = canvas;
@@ -74,6 +87,9 @@ public class CanvasRenderer extends RootRenderer {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void flushSingleRenderer(IRenderer resultRenderer) {
         if (!resultRenderer.isFlushed()) {
@@ -91,6 +107,9 @@ public class CanvasRenderer extends RootRenderer {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
         if (currentArea == null) {
@@ -102,6 +121,9 @@ public class CanvasRenderer extends RootRenderer {
         return currentArea;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRenderer getNextRenderer() {
         return null;

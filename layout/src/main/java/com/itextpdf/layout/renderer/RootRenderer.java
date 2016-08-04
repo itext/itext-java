@@ -172,7 +172,12 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
     }
 
-    // Drawing of content. Might need to rename.
+    // TODO Drawing of content. Might need to rename.
+    /**
+     * Draws (flushes) the content.
+     *
+     * @see #draw(com.itextpdf.layout.renderer.DrawContext)
+     */
     public void flush() {
         for (IRenderer resultRenderer: childRenderers) {
             flushSingleRenderer(resultRenderer);
@@ -201,6 +206,9 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         throw new IllegalStateException("Layout is not supported for root renderers.");

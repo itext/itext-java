@@ -52,10 +52,21 @@ import com.itextpdf.layout.property.Property;
 
 public class LinkRenderer extends TextRenderer {
 
+    /**
+     * Creates a LinkRenderer from its corresponding layout object.
+     * @param link the {@link com.itextpdf.layout.element.Link} which this object should manage
+     */
     public LinkRenderer(Link link) {
         this (link, link.getText());
     }
 
+    /**
+     * Creates a LinkRenderer from its corresponding layout object, with a custom
+     * text to replace the contents of the {@link com.itextpdf.layout.element.Link}.
+     *
+     * @param linkElement the {@link com.itextpdf.layout.element.Link} which this object should manage
+     * @param text the replacement text
+     */
     public LinkRenderer(Link linkElement, String text) {
         super(linkElement, text);
     }
