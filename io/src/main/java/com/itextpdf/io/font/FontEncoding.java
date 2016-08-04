@@ -336,6 +336,8 @@ public class FontEncoding implements Serializable {
             case "macroman":
             case "macromanencoding":
                 return PdfEncodings.MACROMAN;
+            case "zapfdingbatsencoding":
+                return PdfEncodings.ZAPFDINGBATS;
             default:
                 return enc;
         }
