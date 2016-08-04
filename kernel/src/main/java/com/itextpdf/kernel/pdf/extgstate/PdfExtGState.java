@@ -481,7 +481,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      * Sets the halftone or {@code Default}, {@code HT} key.
      *
      * @param halftone a {@link PdfObject}, shall be either {@link PdfDictionary},
-     * {@link PdfStream} or {@link PdfName}.
+     *                 {@link PdfStream} or {@link PdfName}.
      * @return object itself.
      */
     public PdfExtGState setHalftone(PdfObject halftone) {
@@ -690,7 +690,7 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      * Inserts the value into Graphics state parameter dictionary and associates it with the specified key.
      * If the key is already present, it will override the old value with the specified one.
      *
-     * @param key key to insert or to override
+     * @param key   key to insert or to override
      * @param value the value to associate with the specified key
      * @return the previous PdfObject associated with this key
      */
