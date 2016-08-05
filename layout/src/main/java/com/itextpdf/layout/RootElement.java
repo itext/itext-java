@@ -56,6 +56,7 @@ import com.itextpdf.layout.renderer.RootRenderer;
 import com.itextpdf.layout.splitting.DefaultSplitCharacters;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,7 +68,7 @@ import java.util.Map;
  *
  * @param <T> this type
  */
-public abstract class RootElement<T extends IPropertyContainer> extends ElementPropertyContainer<T> {
+public abstract class RootElement<T extends IPropertyContainer> extends ElementPropertyContainer<T> implements Closeable{
 
     protected boolean immediateFlush = true;
     protected PdfDocument pdfDocument;

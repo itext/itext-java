@@ -43,6 +43,10 @@
  */
 package com.itextpdf.io.source;
 
+import com.itextpdf.io.LogMessageConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A RandomAccessSource that is based on a set of underlying sources,
  * treating the sources as if they were a contiguous block of data.
@@ -201,11 +205,28 @@ class GroupedRandomAccessSource implements IRandomAccessSource {
 
     /**
      * {@inheritDoc}
-     * Closes all of the underlying sources
+     * <br/>
+     * Closes all of the underlying sources.
      */
     public void close() throws java.io.IOException {
+        java.io.IOException firstThrownIOExc = null;
         for (SourceEntry entry : sources) {
-            entry.source.close();
+            try {
+                entry.source.close();
+            } catch (java.io.IOException ex) {
+                if (firstThrownIOExc == null) {
+                    firstThrownIOExc = ex;
+                } else {
+                    Logger logger = LoggerFactory.getLogger(GroupedRandomAccessSource.class);
+                    logger.error(LogMessageConstant.ONE_OF_GROUPED_SOURCES_CLOSING_FAILED, ex);
+                }
+            } catch (Exception ex) {
+                Logger logger = LoggerFactory.getLogger(GroupedRandomAccessSource.class);
+                logger.error(LogMessageConstant.ONE_OF_GROUPED_SOURCES_CLOSING_FAILED, ex);
+            }
+        }
+        if (firstThrownIOExc != null) {
+            throw firstThrownIOExc;
         }
     }
 

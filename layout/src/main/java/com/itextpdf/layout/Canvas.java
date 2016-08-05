@@ -196,6 +196,7 @@ public class Canvas extends RootElement<Canvas> {
      * 'hanging' elements, which are waiting other elements to be added and processed. {@link #close()} tells the
      * {@link Canvas} that no more elements will be added and it is time to finish processing all the elements.
      */
+    @Override
     public void close() {
         rootRenderer.close();
     }

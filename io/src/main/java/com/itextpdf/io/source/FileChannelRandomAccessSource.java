@@ -43,8 +43,11 @@
  */
 package com.itextpdf.io.source;
 
+import com.itextpdf.io.LogMessageConstant;
 import java.io.Serializable;
 import java.nio.channels.FileChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A RandomAccessSource that is based on an underlying {@link java.nio.channels.FileChannel}.
@@ -82,8 +85,16 @@ public class FileChannelRandomAccessSource implements IRandomAccessSource, Seria
      * Cleans the mapped byte buffers and closes the channel
      */
     public void close() throws java.io.IOException {
-        source.close();
-        channel.close();
+        try {
+            source.close();
+        } finally {
+            try {
+                channel.close();
+            } catch (Exception ex) {
+                Logger logger = LoggerFactory.getLogger(FileChannelRandomAccessSource.class);
+                logger.error(LogMessageConstant.FILE_CHANNEL_CLOSING_FAILED, ex);
+            }
+        }
     }
 
     /**

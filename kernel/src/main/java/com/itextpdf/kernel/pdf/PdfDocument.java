@@ -632,6 +632,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Close PDF document.
      */
+    @Override
     public void close() {
         if (closed) {
             return;
@@ -766,9 +767,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
                 xref.writeXrefTableAndTrailer(this, fileId, crypto);
                 writer.flush();
-                if (isCloseWriter()) {
-                    writer.close();
-                }
                 Counter counter = getCounter();
                 if (counter != null) {
                     counter.onDocumentWritten(writer.getCurrentPos());
@@ -776,11 +774,28 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             }
             catalog.getPageTree().clearPageRefs();
             removeAllHandlers();
-            if (reader != null && isCloseReader()) {
-                reader.close();
-            }
         } catch (IOException e) {
             throw new PdfException(PdfException.CannotCloseDocument, e, this);
+        } finally {
+
+            if (writer != null && isCloseWriter()) {
+                try {
+                    writer.close();
+                } catch (Exception e) {
+                    Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+                    logger.error(LogMessageConstant.PDF_WRITER_CLOSING_FAILED, e);
+                }
+            }
+
+            if (reader != null && isCloseReader()) {
+                try {
+                    reader.close();
+                } catch (Exception e) {
+                    Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+                    logger.error(LogMessageConstant.PDF_READER_CLOSING_FAILED, e);
+                }
+            }
+
         }
         closed = true;
     }
@@ -997,7 +1012,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 }
             } else {
                 Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-                logger.error(LogMessageConstant.NOT_TAGGED_PAGES_IN_TAGGED_DOCUMENT);
+                logger.warn(LogMessageConstant.NOT_TAGGED_PAGES_IN_TAGGED_DOCUMENT);
             }
         }
         if (catalog.isOutlineMode()) {

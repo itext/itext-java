@@ -109,6 +109,7 @@ public class Document extends RootElement<Document> {
     /**
      * Closes the document and associated PdfDocument.
      */
+    @Override
     public void close() {
         if (rootRenderer != null) {
             rootRenderer.close();

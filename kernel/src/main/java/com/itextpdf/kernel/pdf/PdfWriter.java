@@ -46,7 +46,6 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.FileUtil;
-import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.kernel.PdfException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -195,9 +194,17 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     @Override
     public void close() throws IOException {
-        super.close();
-        if (duplicateStream != null) {
-            duplicateStream.close();
+        try {
+            super.close();
+        } finally {
+            try {
+                if (duplicateStream != null) {
+                    duplicateStream.close();
+                }
+            } catch (Exception ex) {
+                Logger logger = LoggerFactory.getLogger(PdfWriter.class);
+                logger.error("Closing of the duplicatedStream failed.", ex);
+            }
         }
     }
 

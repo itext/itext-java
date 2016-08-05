@@ -193,4 +193,8 @@ public final class LogMessageConstant {
     public static final String WRITER_ENCRYPTION_IS_IGNORED_PRESERVE = "Writer encryption will be ignored, because preservation of encryption is enabled. Document will preserve the original encryption (or will stay unencrypted)";
 
     public static final String XREF_ERROR = "Error occurred while reading cross reference table. Cross reference table will be rebuilt.";
+    public static final String PDF_WRITER_CLOSING_FAILED = "PdfWriter closing failed due to the error occurred!";
+    public static final String PDF_READER_CLOSING_FAILED = "PdfReader closing failed due to the error occurred!";
+    public static final String FILE_CHANNEL_CLOSING_FAILED = "Closing of the file channel this source is based on failed.";
+    public static final String ONE_OF_GROUPED_SOURCES_CLOSING_FAILED = "Closing of one of the grouped sources failed.";
 }

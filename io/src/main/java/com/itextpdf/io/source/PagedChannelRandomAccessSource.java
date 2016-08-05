@@ -43,9 +43,12 @@
  */
 package com.itextpdf.io.source;
 
+import com.itextpdf.io.LogMessageConstant;
 import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.LinkedList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A RandomAccessSource that is based on an underlying {@link java.nio.channels.FileChannel}.  The channel is mapped into memory using a paging scheme to allow for efficient reads of very large files.
@@ -121,42 +124,50 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
         return sources;
     }
 
-    @Override
     /**
      * {@inheritDoc}
      */
+    @Override
     protected int getStartingSourceIndex(long offset) {
         return (int) (offset / bufferSize);
     }
 
-    @Override
     /**
      * {@inheritDoc}
      * For now, close the source that is no longer being used.  In the future, we may implement an MRU that allows multiple pages to be opened at a time
      */
+    @Override
     protected void sourceReleased(IRandomAccessSource source) throws java.io.IOException {
         IRandomAccessSource old = mru.enqueue(source);
         if (old != null)
             old.close();
     }
 
-    @Override
     /**
      * {@inheritDoc}
      * Ensure that the source is mapped.  In the future, we may implement an MRU that allows multiple pages to be opened at a time
      */
+    @Override
     protected void sourceInUse(IRandomAccessSource source) throws java.io.IOException {
         ((MappedChannelRandomAccessSource)source).open();
     }
 
-    @Override
     /**
      * {@inheritDoc}
      * Cleans the mapped bytebuffers and closes the channel
      */
+    @Override
     public void close() throws java.io.IOException {
-        super.close();
-        channel.close();
+        try {
+            super.close();
+        } finally {
+            try {
+                channel.close();
+            } catch (Exception ex) {
+                Logger logger = LoggerFactory.getLogger(PagedChannelRandomAccessSource.class);
+                logger.error(LogMessageConstant.FILE_CHANNEL_CLOSING_FAILED, ex);
+            }
+        }
     }
 
     private static class MRU<E>{
