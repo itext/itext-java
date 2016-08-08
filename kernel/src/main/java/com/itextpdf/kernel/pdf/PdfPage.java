@@ -383,10 +383,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (isFlushed()) {
             return;
         }
+        getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_PAGE, this));
+
         if (getDocument().isTagged() && !getDocument().getStructTreeRoot().isFlushed()) {
             tryFlushPageTags();
         }
-        getDocument().dispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_PAGE, this));
         if (flushContentStreams) {
             getDocument().checkIsoConformance(this, IsoKey.PAGE);
             flushContentStreams();
@@ -401,8 +402,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 getPdfObject().remove(PdfName.Resources);
             }
         }
-
         resources = null;
+
         super.flush();
     }
 
@@ -807,7 +808,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private void flushContentStreams() {
-        flushContentStreams(getPdfObject().getAsDictionary(PdfName.Resources));
+        flushContentStreams(getResources().getPdfObject());
 
         PdfArray annots = getAnnots(false);
         if (annots != null) {
