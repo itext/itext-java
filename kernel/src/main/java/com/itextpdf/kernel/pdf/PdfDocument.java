@@ -1481,7 +1481,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     protected void flushFonts() {
         if (properties.appendMode) {
             for (PdfFont font : getDocumentFonts()) {
-                if (font.getPdfObject().getIndirectReference().checkState(PdfObject.MODIFIED)) {
+                if (font.getPdfObject().checkState(PdfObject.MUST_BE_INDIRECT) || font.getPdfObject().getIndirectReference().checkState(PdfObject.MODIFIED)) {
                     font.flush();
                 }
             }
