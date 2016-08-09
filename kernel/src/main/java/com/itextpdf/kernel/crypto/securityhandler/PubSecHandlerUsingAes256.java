@@ -62,6 +62,11 @@ public class PubSecHandlerUsingAes256 extends PubSecHandlerUsingAes128 {
     }
 
     @Override
+    public void setHashKeyForNextObject(int objNumber, int objGeneration) {
+        // in AES256 we don't recalculate nextObjectKey
+    }
+
+    @Override
     protected String getDigestAlgorithm() {
         return "SHA-256";
     }

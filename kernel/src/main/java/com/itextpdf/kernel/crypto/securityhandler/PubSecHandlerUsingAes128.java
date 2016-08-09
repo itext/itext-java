@@ -58,6 +58,9 @@ import java.security.Key;
 import java.security.cert.Certificate;
 
 public class PubSecHandlerUsingAes128 extends PubKeySecurityHandler {
+    private static final byte[] salt = {(byte) 0x73, (byte) 0x41, (byte) 0x6c,
+            (byte) 0x54};
+
     public PubSecHandlerUsingAes128(PdfDictionary encryptionDictionary, Certificate[] certs, int[] permissions, boolean encryptMetadata, boolean embeddedFilesOnly) {
         initKeyAndFillDictionary(encryptionDictionary, certs, permissions, encryptMetadata, embeddedFilesOnly);
     }
@@ -75,6 +78,23 @@ public class PubSecHandlerUsingAes128 extends PubKeySecurityHandler {
     @Override
     public IDecryptor getDecryptor() {
         return new AesDecryptor(nextObjectKey, 0, nextObjectKeySize);
+    }
+
+    @Override
+    public void setHashKeyForNextObject(int objNumber, int objGeneration) {
+        md5.reset(); // added by ujihara
+        extra[0] = (byte) objNumber;
+        extra[1] = (byte) (objNumber >> 8);
+        extra[2] = (byte) (objNumber >> 16);
+        extra[3] = (byte) objGeneration;
+        extra[4] = (byte) (objGeneration >> 8);
+        md5.update(mkey);
+        md5.update(extra);
+        md5.update(salt);
+        nextObjectKey = md5.digest();
+        nextObjectKeySize = mkey.length + 5;
+        if (nextObjectKeySize > 16)
+            nextObjectKeySize = 16;
     }
 
     protected String getDigestAlgorithm() {
