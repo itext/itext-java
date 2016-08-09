@@ -192,7 +192,15 @@ public class PdfException extends RuntimeException {
     public static final String PdfPagesTreeCouldBeGeneratedOnlyOnce = "pdf.pages.tree.could.be.generated.only.once";
     public static final String PdfStartxrefIsNotFollowedByANumber = "pdf.startxref.is.not.followed.by.a.number";
     public static final String PdfStartxrefNotFound = "pdf.startxref.not.found";
+    /**
+     * @deprecated Will be removed in iText 7.1.0.
+     *
+     * There is a typo in the name of the constant.
+     * Use {@link PdfException#PdfIndirectObjectBelongToOtherPdfDocument} instead.
+     */
+    @Deprecated
     public static final String PdfInderectObjectBelongToOtherPdfDocument = "pdf.inderect.object.belong.to.other.pdf.document.Copy.object.to.current.pdf.document";
+    public static final String PdfIndirectObjectBelongToOtherPdfDocument = "pdf.indirect.object.belong.to.other.pdf.document.Copy.object.to.current.pdf.document";
     public static final String PdfVersionNotValid = "pdf.version.not.valid";
     public static final String PngFilterUnknown = "png.filter.unknown";
     public static final String ResourcesCannotBeNull = "resources.cannot.be.null";

@@ -180,7 +180,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
     private void write(PdfIndirectReference indirectReference) {
         if (document != null && !indirectReference.getDocument().equals(document)) {
-            throw new PdfException(PdfException.PdfInderectObjectBelongToOtherPdfDocument);
+            throw new PdfException(PdfException.PdfIndirectObjectBelongToOtherPdfDocument);
         }
         if (indirectReference.getRefersTo() == null) {
             write(PdfNull.PDF_NULL);
