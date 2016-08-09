@@ -75,6 +75,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotCreatePdfStreamByInputStreamWithoutPdfDocument = "cannot.create.pdfstream.by.inputstream.without.pdfdocument";
     public static final String CannotGetContentBytes = "cannot.get.content.bytes";
     public static final String CannotGetPdfStreamBytes = "cannot.get.pdfstream.bytes";
+    public static final String CannotRetrieveMediaBoxAttribute = "Invalid pdf. There is no media box attribute for page or its parents.";
     public static final String CannotFindImageDataOrEI = "cannot.find.image.data.or.EI";
     public static final String CannotFlushDocumentRootTagBeforeDocumentIsClosed = "cannot.flush.document.root.tag.before.document.is.closed";
     public static final String CannotFlushObject = "cannot.flush.object";
@@ -148,6 +149,7 @@ public class PdfException extends RuntimeException {
     public static final String InvalidCodewordSize = "invalid.codeword.size";
     public static final String InvalidCrossReferenceEntryInThisXrefSubsection = "invalid.cross.reference.entry.in.this.xref.subsection";
     public static final String InvalidIndirectReference1 = "invalid.indirect.reference {0}";
+    public static final String InvalidMediaBoxValue = "Tne media box object has incorrect values";
     public static final String InvalidPageStructure1 = "invalid.page.structure {0}";
     public static final String InvalidPageStructurePagesPagesMustBePdfDictionary = "invalid.page.structure.pages.must.be.pdfdictionary";
     public static final String InvalidRangeArray = "invalid.range.array";
@@ -249,6 +251,7 @@ public class PdfException extends RuntimeException {
     public static final String WhitePointIsIncorrectlySpecified = "white.point.is.incorrectly.specified";
     public static final String WmfImageException = "wmf.image.exception";
     public static final String WrongFormFieldAddAnnotationToTheField = "wrong.form.field.add.annotation.to.the.field";
+    public static final String WrongMediaBoxSize = "Wrong media box size: {0}";
     public static final String XrefSubsectionNotFound = "xref.subsection.not.found";
     public static final String YouCannotFlushPdfCatalogManually = "you.cannot.flush.pdf.catalog.manually";
     public static final String YouHaveToDefineABooleanArrayForThisCollectionSortDictionary = "you.have.to.define.a.boolean.array.for.this.collection.sort.dictionary";

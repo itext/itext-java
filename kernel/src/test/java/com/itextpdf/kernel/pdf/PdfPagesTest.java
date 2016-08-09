@@ -345,5 +345,20 @@ public class PdfPagesTest extends ExtendedITextTest{
         pdfDoc.close();
     }
 
+    @Test
+    public void getPageSizeWithInheritedMediaBox() throws IOException {
+        double eps = 0.0000001;
+        String filename = sourceFolder + "inheritedMediaBox.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
+
+        Assert.assertEquals(0, pdfDoc.getPage(1).getPageSize().getLeft(), eps);
+        Assert.assertEquals(0, pdfDoc.getPage(1).getPageSize().getBottom(), eps);
+        Assert.assertEquals(595, pdfDoc.getPage(1).getPageSize().getRight(), eps);
+        Assert.assertEquals(842, pdfDoc.getPage(1).getPageSize().getTop(), eps);
+
+        pdfDoc.close();
+    }
+
 
 }

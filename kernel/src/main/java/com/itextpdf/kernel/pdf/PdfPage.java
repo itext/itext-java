@@ -116,21 +116,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public Rectangle getPageSize() {
-        PdfArray box = getPdfObject().getAsArray(PdfName.MediaBox);
-        if (box == null || box.size() != 4) {
-            throw new IllegalArgumentException("MediaBox");
-        }
-        PdfNumber llx = box.getAsNumber(0);
-        PdfNumber lly = box.getAsNumber(1);
-        PdfNumber urx = box.getAsNumber(2);
-        PdfNumber ury = box.getAsNumber(3);
-        if (llx == null || lly == null || urx == null || ury == null) {
-            throw new IllegalArgumentException("MediaBox");
-        }
-        return new Rectangle(Math.min(llx.floatValue(), urx.floatValue()),
-                Math.min(lly.floatValue(), ury.floatValue()),
-                Math.abs(urx.floatValue() - llx.floatValue()),
-                Math.abs(ury.floatValue() - lly.floatValue()));
+        return getMediaBox();
     }
 
     /**
@@ -413,7 +399,23 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (mediaBox == null) {
             mediaBox = (PdfArray) getParentValue(parentPages, PdfName.MediaBox);
         }
-        return mediaBox.toRectangle();
+        if (mediaBox == null) {
+            throw new PdfException(PdfException.CannotRetrieveMediaBoxAttribute);
+        }
+        if (mediaBox.size() != 4) {
+            throw new PdfException(PdfException.WrongMediaBoxSize).setMessageParams(mediaBox.size());
+        }
+        PdfNumber llx = mediaBox.getAsNumber(0);
+        PdfNumber lly = mediaBox.getAsNumber(1);
+        PdfNumber urx = mediaBox.getAsNumber(2);
+        PdfNumber ury = mediaBox.getAsNumber(3);
+        if (llx == null || lly == null || urx == null || ury == null) {
+            throw new PdfException(PdfException.InvalidMediaBoxValue);
+        }
+        return new Rectangle(Math.min(llx.floatValue(), urx.floatValue()),
+                Math.min(lly.floatValue(), ury.floatValue()),
+                Math.abs(urx.floatValue() - llx.floatValue()),
+                Math.abs(ury.floatValue() - lly.floatValue()));
     }
 
     public PdfPage setMediaBox(Rectangle rectangle) {
@@ -428,7 +430,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (cropBox == null) {
             cropBox = (PdfArray) getParentValue(parentPages, PdfName.CropBox);
             if (cropBox == null) {
-                cropBox = new PdfArray(getMediaBox());
+                return getMediaBox();
             }
         }
         return cropBox.toRectangle();
