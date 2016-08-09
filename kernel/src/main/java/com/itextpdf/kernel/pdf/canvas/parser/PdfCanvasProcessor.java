@@ -166,7 +166,7 @@ public class PdfCanvasProcessor {
     private Stack<CanvasTag> markedContentStack = new Stack<>();
 
     /**
-     * Creates a new PDF Content Stream Processor that will send it's output to the
+     * Creates a new PDF Content Stream Processor that will send its output to the
      * designated render listener.
      *
      * @param eventListener the {@link IEventListener} that will receive rendering notifications
@@ -179,6 +179,22 @@ public class PdfCanvasProcessor {
         xobjectDoHandlers = new HashMap<>();
         populateXObjectDoHandlers();
         reset();
+    }
+    
+    /**
+     * Creates a new PDF Content Stream Processor that will send its output to the
+     * designated render listener.
+     * Also allows registration of custom IContentOperators that can influence
+     * how (and whether or not) the PDF instructions will be parsed.
+     *
+     * @param eventListener the {@link IEventListener} that will receive rendering notifications
+     * @param additionalContentOperators an optional map of custom {@link IContentOperator}s for rendering instructions
+     */
+    public PdfCanvasProcessor(IEventListener eventListener, Map<String, IContentOperator> additionalContentOperators) {
+        this(eventListener);
+        for (Map.Entry<String, IContentOperator> entry : additionalContentOperators.entrySet()) {
+            registerContentOperator(entry.getKey(), entry.getValue());
+        }
     }
 
     /**
