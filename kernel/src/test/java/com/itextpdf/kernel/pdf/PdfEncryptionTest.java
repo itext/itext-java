@@ -47,7 +47,7 @@ public class PdfEncryptionTest extends ExtendedITextTest{
     public static byte[] OWNER = "World".getBytes();
 
     static final String author = "Alexander Chingarev";
-    static final String creator = "iText 6";
+    static final String creator = "iText 7";
 
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfEncryptionTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfEncryptionTest/";
@@ -335,6 +335,7 @@ public class PdfEncryptionTest extends ExtendedITextTest{
         PdfDocument document = new PdfDocument(reader, new PdfWriter(outFileName), new StampingProperties().useAppendMode());
         PdfPage newPage = document.addNewPage();
         newPage.put(PdfName.Default, new PdfString("Hello world string"));
+        writeTextBytesOnPageContent(newPage, "Hello world page_2!");
         document.close();
 
         CompareTool compareTool = new CompareTool().enableEncryptionCompare();
