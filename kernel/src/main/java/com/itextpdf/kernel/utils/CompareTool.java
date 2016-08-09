@@ -149,6 +149,9 @@ public class CompareTool {
     private String outPdfName;
     private String outImage;
 
+    private ReaderProperties outProps;
+    private ReaderProperties cmpProps;
+
     private List<PdfIndirectReference> outPagesRef;
     private List<PdfIndirectReference> cmpPagesRef;
 
@@ -242,6 +245,19 @@ public class CompareTool {
         return this;
     }
 
+    public ReaderProperties getOutReaderProperties() {
+        if (outProps == null) {
+            outProps = new ReaderProperties();
+        }
+        return outProps;
+    }
+
+    public ReaderProperties getCmpReaderProperties() {
+        if (cmpProps == null) {
+            cmpProps = new ReaderProperties();
+        }
+        return cmpProps;
+    }
 
     /**
      * Compares two documents visually. For the comparison two external tools are used: Ghostscript and ImageMagick.
@@ -370,7 +386,7 @@ public class CompareTool {
      */
     public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
         init(outPdf, cmpPdf);
-        return compareByContent(outPath, differenceImagePrefix, ignoredAreas, null, null);
+        return compareByContent(outPath, differenceImagePrefix, ignoredAreas);
     }
 
     /**
@@ -403,7 +419,8 @@ public class CompareTool {
      */
     public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas, byte[] outPass, byte[] cmpPass) throws InterruptedException, IOException {
         init(outPdf, cmpPdf);
-        return compareByContent(outPath, differenceImagePrefix, ignoredAreas, outPass, cmpPass);
+        setPassword(outPass, cmpPass);
+        return compareByContent(outPath, differenceImagePrefix, ignoredAreas);
     }
 
     /**
@@ -589,8 +606,9 @@ public class CompareTool {
     public String compareDocumentInfo(String outPdf, String cmpPdf, byte[] outPass, byte[] cmpPass) throws IOException {
         System.out.print("[itext] INFO  Comparing document info.......");
         String message = null;
-        PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf, new ReaderProperties().setPassword(outPass)));
-        PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmpPdf, new ReaderProperties().setPassword(cmpPass)));
+        setPassword(outPass, cmpPass);
+        PdfDocument outDocument = new PdfDocument(new PdfReader(outPdf, getOutReaderProperties()));
+        PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmpPdf, getCmpReaderProperties()));
         String[] cmpInfo = convertInfo(cmpDocument.getDocumentInfo());
         String[] outInfo = convertInfo(outDocument.getDocumentInfo());
         for (int i = 0; i < cmpInfo.length; ++i) {
@@ -711,6 +729,15 @@ public class CompareTool {
         outImage = outPdfName + "-%03d.png";
         if (cmpPdfName.startsWith("cmp_")) cmpImage = cmpPdfName + "-%03d.png";
         else cmpImage = "cmp_" + cmpPdfName + "-%03d.png";
+    }
+
+    private void setPassword(byte[] outPass, byte[] cmpPass) {
+        if (outPass != null) {
+            getOutReaderProperties().setPassword(outPass);
+        }
+        if (cmpPass != null) {
+            getCmpReaderProperties().setPassword(outPass);
+        }
     }
 
     private String compareVisually(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
@@ -920,15 +947,10 @@ public class CompareTool {
     }
 
     private String compareByContent(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
-        return compareByContent(outPath, differenceImagePrefix, ignoredAreas, null, null);
-    }
-
-
-    private String compareByContent(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas, byte[] outPass, byte[] cmpPass) throws InterruptedException, IOException {
         System.out.print("[itext] INFO  Comparing by content..........");
         PdfDocument outDocument;
         try {
-            outDocument = new PdfDocument(new PdfReader(outPdf, new ReaderProperties().setPassword(outPass)));
+            outDocument = new PdfDocument(new PdfReader(outPdf, getOutReaderProperties()));
         } catch (IOException e) {
             throw new IOException("File \"" + outPdf + "\" not found", e);
         }
@@ -938,7 +960,7 @@ public class CompareTool {
 
         PdfDocument cmpDocument;
         try {
-            cmpDocument = new PdfDocument(new PdfReader(cmpPdf, new ReaderProperties().setPassword(cmpPass)));
+            cmpDocument = new PdfDocument(new PdfReader(cmpPdf, getCmpReaderProperties()));
         } catch (IOException e) {
             throw new IOException("File \"" + cmpPdf + "\" not found", e);
         }
@@ -1024,9 +1046,26 @@ public class CompareTool {
             return;
         }
 
-        Set<PdfName> ignoredEncryptEntries = new LinkedHashSet<>(Arrays.asList(PdfName.O, PdfName.U, PdfName.OE, PdfName.UE, PdfName.Perms));
+        Set<PdfName> ignoredEncryptEntries = new LinkedHashSet<>(Arrays.asList(PdfName.O, PdfName.U, PdfName.OE, PdfName.UE, PdfName.Perms, PdfName.CF, PdfName.Recipients));
         ObjectPath objectPath = new ObjectPath(outEncrypt.getIndirectReference(), cmpEncrypt.getIndirectReference());
         compareDictionariesExtended(outEncrypt, cmpEncrypt, objectPath, compareResult, ignoredEncryptEntries);
+
+        PdfDictionary outCfDict = outEncrypt.getAsDictionary(PdfName.CF);
+        PdfDictionary cmpCfDict = cmpEncrypt.getAsDictionary(PdfName.CF);
+        if (cmpCfDict != null || outCfDict != null) {
+            if (cmpCfDict != null && outCfDict == null || cmpCfDict == null) {
+                compareResult.addError(objectPath, "One of the dictionaries is null, the other is not.");
+            } else {
+                Set<PdfName> mergedKeys = new TreeSet<>(outCfDict.keySet());
+                mergedKeys.addAll(cmpCfDict.keySet());
+                for (PdfName key : mergedKeys) {
+                    objectPath.pushDictItemToPath(key);
+                    LinkedHashSet<PdfName> excludedKeys = new LinkedHashSet<>(Arrays.asList(PdfName.Recipients));
+                    compareDictionariesExtended(outCfDict.getAsDictionary(key), cmpCfDict.getAsDictionary(key), objectPath, compareResult, excludedKeys);
+                    objectPath.pop();
+                }
+            }
+        }
     }
 
     private boolean compareStreams(InputStream is1, InputStream is2) throws IOException {
