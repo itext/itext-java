@@ -128,7 +128,13 @@ public class IOException extends RuntimeException {
     public static final String MissingTagSForOjpegCompression = "missing.tag.s.for.ojpeg.compression";
     public static final String NValueIsNotSupported = "N.value.1.is.not.supported";
     public static final String PageNumberMustBeGtEq1 = "page.number.must.be.gt.eq {0}";
+    /**
+     * @deprecated because naming clash with {@link com.itextpdf.io.font.PdfEncodings}
+     *             may produce confusion with imports. Superseded by {@link #PdfEncodingsException}
+     */
+    @Deprecated
     public static final String PdfEncodings = "pdf.encodings";
+    public static final String PdfEncodingsException = "pdf.encodings";
     public static final String PdfHeaderNotFound = "pdf.header.not.found";
     public static final String PdfStartxrefNotFound = "pdf.startxref.not.found";
     public static final String Photometric1IsNotSupported = "photometric.1.is.not.supported";
