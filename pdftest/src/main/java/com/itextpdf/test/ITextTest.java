@@ -48,6 +48,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +81,50 @@ public abstract class ITextTest {
                 }
             }
             fpath.delete();
+        }
+    }
+
+    /**
+     * Due to import control restrictions by the governments of a few countries,
+     * the encryption libraries shipped by default with the Java SDK restrict the
+     * length, and as a result the strength, of encryption keys. Be aware that by
+     * using this method we remove cryptography restrictions via reflection for
+     * testing purposes.
+     * <br/>
+     * For more conventional way of solving this problem you need to replace the
+     * default security JARs in your Java installation with the Java Cryptography
+     * Extension (JCE) Unlimited Strength Jurisdiction Policy Files. These JARs
+     * are available for download from http://java.oracle.com/ in eligible countries.
+     */
+    public static void removeCryptographyRestrictions() {
+        try {
+            Field field = Class.forName("javax.crypto.JceSecurity").
+                    getDeclaredField("isRestricted");
+            field.setAccessible(true);
+            if (field.getBoolean(null)) {
+                field.set(null, java.lang.Boolean.FALSE);
+            } else {
+                field.setAccessible(false);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * By using this method we restore cryptography restrictions via reflection.
+     * This method is opposite to {@link ITextTest#removeCryptographyRestrictions()}.
+     */
+    public static void restoreCryptographyRestrictions() {
+        try {
+            Field field = Class.forName("javax.crypto.JceSecurity").
+                    getDeclaredField("isRestricted");
+            if (field.isAccessible()) {
+                field.set(null, java.lang.Boolean.TRUE);
+                field.setAccessible(false);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
