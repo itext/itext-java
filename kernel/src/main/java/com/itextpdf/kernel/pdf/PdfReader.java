@@ -457,6 +457,9 @@ public class PdfReader implements Closeable, Serializable {
 
         PdfName filter = enc.getAsName(PdfName.Filter);
         if (PdfName.Adobe_PubSec.equals(filter)) {
+            if (properties.certificate == null) {
+                throw new PdfException(PdfException.CertificateIsNotProvidedDocumentIsEncryptedWithPublicKeyCertificate);
+            }
             decrypt = new PdfEncryption(enc, properties.certificateKey, properties.certificate,
                     properties.certificateKeyProvider, properties.externalDecryptionProcess);
         } else if (PdfName.Standard.equals(filter)) {

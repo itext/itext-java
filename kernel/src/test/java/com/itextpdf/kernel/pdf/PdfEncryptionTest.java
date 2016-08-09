@@ -2,6 +2,8 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.util.CryptoUtil;
+import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.crypto.BadPasswordException;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -11,8 +13,11 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -56,6 +61,9 @@ public class PdfEncryptionTest extends ExtendedITextTest{
     public static final String PRIVATE_KEY = sourceFolder + "test.p12";
     public static final char[] PRIVATE_KEY_PASS = "kspass".toCharArray();
     private PrivateKey privateKey;
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() {
@@ -174,6 +182,99 @@ public class PdfEncryptionTest extends ExtendedITextTest{
         String filename = "encryptWithCertificateAes256NoCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
+    }
+
+    @Test
+    public void openEncryptedDocWithoutPassword() throws IOException {
+        junitExpectedException.expect(BadPasswordException.class);
+        junitExpectedException.expectMessage(BadPasswordException.BadUserPassword);
+
+        PdfDocument doc = new PdfDocument(new PdfReader(sourceFolder + "encryptedWithPasswordStandard40.pdf"));
+        doc.close();
+    }
+
+    @Test
+    public void openEncryptedDocWithWrongPassword() throws IOException {
+        junitExpectedException.expect(BadPasswordException.class);
+        junitExpectedException.expectMessage(BadPasswordException.BadUserPassword);
+
+        PdfReader reader = new PdfReader(sourceFolder + "encryptedWithPasswordStandard40.pdf",
+                new ReaderProperties().setPassword("wrong_password".getBytes()));
+        PdfDocument doc = new PdfDocument(reader);
+        doc.close();
+    }
+
+    @Test
+    public void openEncryptedDocWithoutCertificate() throws IOException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(PdfException.CertificateIsNotProvidedDocumentIsEncryptedWithPublicKeyCertificate);
+
+        PdfDocument doc = new PdfDocument(new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf"));
+        doc.close();
+    }
+
+    @Test
+    public void openEncryptedDocWithoutPrivateKey() throws IOException, CertificateException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(PdfException.BadCertificateAndKey);
+
+        PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
+                new ReaderProperties()
+                        .setPublicKeySecurityParams(
+                                getPublicCertificate(sourceFolder + "wrong.cer"),
+                                null,
+                                "BC",
+                                null));
+        PdfDocument doc = new PdfDocument(reader);
+        doc.close();
+    }
+
+    @Test
+    public void openEncryptedDocWithWrongCertificate() throws IOException, GeneralSecurityException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(PdfException.BadCertificateAndKey);
+
+        PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
+                new ReaderProperties()
+                        .setPublicKeySecurityParams(
+                                getPublicCertificate(sourceFolder + "wrong.cer"),
+                                getPrivateKey(),
+                                "BC",
+                                null));
+        PdfDocument doc = new PdfDocument(reader);
+        doc.close();
+    }
+
+    @Test
+    public void openEncryptedDocWithWrongPrivateKey() throws IOException, GeneralSecurityException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(PdfException.PdfDecryption);
+
+        PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
+                new ReaderProperties()
+                        .setPublicKeySecurityParams(
+                                getPublicCertificate(CERT),
+                                CryptoUtil.readPrivateKeyFromPKCS12KeyStore(new FileInputStream(sourceFolder + "wrong.p12"), "demo", "password".toCharArray()),
+                                "BC",
+                                null));
+        PdfDocument doc = new PdfDocument(reader);
+        doc.close();
+    }
+
+    @Test
+    public void openEncryptedDocWithWrongCertificateAndPrivateKey() throws IOException, GeneralSecurityException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(PdfException.BadCertificateAndKey);
+
+        PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
+                new ReaderProperties()
+                        .setPublicKeySecurityParams(
+                                getPublicCertificate(sourceFolder + "wrong.cer"),
+                                CryptoUtil.readPrivateKeyFromPKCS12KeyStore(new FileInputStream(sourceFolder + "wrong.p12"), "demo", "password".toCharArray()),
+                                "BC",
+                                null));
+        PdfDocument doc = new PdfDocument(reader);
+        doc.close();
     }
 
     public void encryptWithPassword(String filename, int encryptionType, int compression) throws XMPException, IOException, InterruptedException {

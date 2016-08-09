@@ -58,8 +58,8 @@ public class PdfException extends RuntimeException {
     public static final String AppendModeRequiresADocumentWithoutErrorsEvenIfRecoveryWasPossible = "append.mode.requires.a.document.without.errors.even.if.recovery.was.possible";
     public static final String AuthenticatedAttributeIsMissingTheDigest = "authenticated.attribute.is.missing.the.digest";
     public static final String AvailableSpaceIsNotEnoughForSignature = "available.space.is.not.enough.for.signature";
-    public static final String BadCertificateAndKey = "bad.certificate.and.key";
-    public static final String BadUserPassword = "bad.user.password";
+    public static final String BadCertificateAndKey = "Bad public key certificate and/or private key.";
+    public static final String BadUserPassword = "Bad user password. Password is not provided or provided wrong password. Correct password should be passed to PdfReader constructor with properties. See ReaderProperties.setPassword method.";
 
     public static final String CannotAddKidToTheFlushedElement = "cannot.add.kid.to.the.flushed.element";
     public static final String CannotCloseDocument = "cannot.close.document";
@@ -95,6 +95,7 @@ public class PdfException extends RuntimeException {
     public static final String CannotWriteObjectAfterItWasReleased = "Cannot write object after it was released. In normal situation the object must be read once again before being written";
     public static final String CantDecodePkcs7SigneddataObject = "can.t.decode.pkcs7signeddata.object";
     public static final String CantFindSigningCertificateWithSerial1 = "can.t.find.signing.certificate.with.serial {0}";
+    public static final String CertificateIsNotProvidedDocumentIsEncryptedWithPublicKeyCertificate = "Certificate is not provided. Document is encrypted with public key certificate, it should be passed to PdfReader constructor with properties. See ReaderProperties.setPublicKeySecurityParams method.";
     public static final String CfNotFoundEncryption = "cf.not.found.encryption";
     public static final String CodabarCharacterOneIsIllegal = "the.character {0} is.illegal.in.codabar";
     public static final String CodabarMustHaveAtLeastAStartAndStopCharacter = "codabar.must.have.at.least.a.start.and.stop.character";
@@ -186,7 +187,7 @@ public class PdfException extends RuntimeException {
     public static final String PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing = "the.page.was.already.flushed.use.add.field.appearance.to.page.method.before.page.flushing";
     public static final String PdfEncodings = "pdf.encodings";
     public static final String PdfEncryption = "pdf.encryption";
-    public static final String PdfDecryption = "pdf.decryption";
+    public static final String PdfDecryption = "Exception occurred with pdf document decryption. One of the possible reasons is wrong password or wrong public key certificate and private key.";
     public static final String PdfDocumentMustBeOpenedInStampingMode = "pdf.document.must.be.opened.in.stamping.mode";
     public static final String PdfFormXobjectHasInvalidBbox = "pdf.form.xobject.has.invalid.bbox";
     public static final String PdfObjectStreamReachMaxSize = "pdf.object.stream.reach.max.size";
