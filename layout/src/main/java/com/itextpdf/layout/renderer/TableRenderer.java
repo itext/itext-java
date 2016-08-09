@@ -828,8 +828,8 @@ public class TableRenderer extends AbstractRenderer {
 
             Border lastBorder = borders.size() > j - 1 ? borders.get(j - 1) : null;
             if (lastBorder != null) {
-                if (verticalBorders.get(j).size() > 0) {
-                    if (i == 0) {
+                if (verticalBorders != null && verticalBorders.get(j) != null && verticalBorders.get(j).size() > 0) {
+                    if (i == 0 && verticalBorders.get(j).get(i) != null) {
                         x2 += verticalBorders.get(j).get(i).getWidth() / 2;
                     } else if(i == horizontalBorders.size() - 1 && verticalBorders.get(j).size() >= i - 1 && verticalBorders.get(j).get(i - 1) != null) {
                         x2 += verticalBorders.get(j).get(i - 1).getWidth() / 2;
