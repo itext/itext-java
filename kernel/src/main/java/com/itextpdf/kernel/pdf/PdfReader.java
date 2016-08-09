@@ -565,7 +565,7 @@ public class PdfReader implements Closeable, Serializable {
                     pdfString.setDecryptInfoNum(currentIndirectReference.getObjNumber());
                     pdfString.setDecryptInfoGen(currentIndirectReference.getGenNumber());
                 }
-                return properties.password == null || objStm ? pdfString : pdfString.decrypt(decrypt);
+                return !isEncrypted() || objStm ? pdfString : pdfString.decrypt(decrypt);
             }
             case Name:
                 return readPdfName(readAsDirect);
