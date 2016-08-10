@@ -50,27 +50,56 @@ import com.itextpdf.kernel.color.DeviceRgb;
 
 public class OutsetBorder extends Border3D {
 
+    /**
+     * Creates a OutsetBorder instance with the specified width. The color is set to the default: {@link Border3D#GRAY gray}.
+     *
+     * @param width width of the border
+     */
     public OutsetBorder(float width) {
         super(width);
     }
 
+    /**
+     * Creates a OutsetBorder instance with the specified width and the {@link DeviceRgb rgb color}.
+     *
+     * @param width width of the border
+     * @param color the {@link DeviceRgb rgb color} of the border
+     */
     public OutsetBorder(DeviceRgb color, float width) {
         super(color, width);
     }
 
+    /**
+     * Creates a OutsetBorder instance with the specified width and the {@link DeviceCmyk cmyk color}.
+     *
+     * @param width width of the border
+     * @param color the {@link DeviceCmyk cmyk color} of the border
+     */
     public OutsetBorder(DeviceCmyk color, float width) {
         super(color, width);
     }
 
+    /**
+     * Creates a OutsetBorder instance with the specified width and the {@link DeviceGray gray color}.
+     *
+     * @param width width of the border
+     * @param color the {@link DeviceGray gray color} of the border
+     */
     public OutsetBorder(DeviceGray color, float width) {
         super(color, width);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getType(){
         return Border._3D_OUTSET;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void setInnerHalfColor(PdfCanvas canvas, Border.Side side) {
         switch (side) {
@@ -85,6 +114,9 @@ public class OutsetBorder extends Border3D {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void setOuterHalfColor(PdfCanvas canvas, Border.Side side) {
         switch (side) {

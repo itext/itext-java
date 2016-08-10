@@ -74,11 +74,17 @@ public class DoubleBorder extends Border{
         super(color, width);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getType() {
         return Border.DOUBLE;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
         float x3 = 0, y3 = 0;
@@ -165,6 +171,9 @@ public class DoubleBorder extends Border{
         canvas.moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).lineTo(x4, y4).lineTo(x1, y1).fill();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
         float thirdOfWidth = width / 3;

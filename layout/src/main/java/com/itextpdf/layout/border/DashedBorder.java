@@ -51,7 +51,13 @@ import com.itextpdf.kernel.color.Color;
  */
 public class DashedBorder extends Border {
 
+    /**
+     * The modifier to be applied on the width to have the dash size
+     */
     private static final float DASH_MODIFIER = 5f;
+    /**
+     * The modifier to be applied on the width to have the initial gap size
+     */
     private static final float GAP_MODIFIER = 3.5f;
 
     /**
@@ -73,11 +79,17 @@ public class DashedBorder extends Border {
         super(color, width);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getType() {
         return Border.DASHED;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
         float initialGap = width * GAP_MODIFIER;
@@ -121,6 +133,9 @@ public class DashedBorder extends Border {
                 .stroke();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
         float initialGap = width * GAP_MODIFIER;
@@ -145,6 +160,13 @@ public class DashedBorder extends Border {
                 restoreState();
     }
 
+    /**
+     * Adjusts the size of the gap between dots
+     *
+     * @param distance the {@link Border border} length
+     * @param initialGap the initial size of the gap
+     * @return the adjusted size of the gap
+     */
     protected float getDotsGap(double distance, float initialGap) {
         double gapsNum = Math.ceil(distance / initialGap);
         return (float) (distance / gapsNum);

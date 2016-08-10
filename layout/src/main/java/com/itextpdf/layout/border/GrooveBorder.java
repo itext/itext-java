@@ -50,27 +50,56 @@ import com.itextpdf.kernel.color.DeviceRgb;
 
 public class GrooveBorder extends Border3D {
 
+    /**
+     * Creates a GrooveBorder instance with the specified width. The color is set to the default: {@link Border3D#GRAY gray}.
+     *
+     * @param width width of the border
+     */
     public GrooveBorder(float width) {
         super(width);
     }
 
+    /**
+     * Creates a GrooveBorder instance with the specified width and the {@link DeviceRgb rgb color}.
+     *
+     * @param width width of the border
+     * @param color the {@link DeviceRgb rgb color} of the border
+     */
     public GrooveBorder(DeviceRgb color, float width) {
         super(color, width);
     }
 
+    /**
+     * Creates a GrooveBorder instance with the specified width and the {@link DeviceCmyk cmyk color}.
+     *
+     * @param width width of the border
+     * @param color the {@link DeviceCmyk cmyk color} of the border
+     */
     public GrooveBorder(DeviceCmyk color, float width) {
         super(color, width);
     }
 
+    /**
+     * Creates a GrooveBorder instance with the specified width and the {@link DeviceGray gray color}.
+     *
+     * @param width width of the border
+     * @param color the {@link DeviceGray gray color} of the border
+     */
     public GrooveBorder(DeviceGray color, float width) {
         super(color, width);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getType(){
         return Border._3D_GROOVE;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void setInnerHalfColor(PdfCanvas canvas, Side side) {
         switch (side) {
@@ -85,6 +114,9 @@ public class GrooveBorder extends Border3D {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void setOuterHalfColor(PdfCanvas canvas, Side side) {
         switch (side) {

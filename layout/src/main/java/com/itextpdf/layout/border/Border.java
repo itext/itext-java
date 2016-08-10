@@ -122,6 +122,8 @@ public abstract class Border {
 
     /**
      * Creates a {@link Border border} with the given width.
+     * The {@link Color color} to be set by default is black
+     *
      * @param width the width which the border should have
      */
     protected Border(float width) {
@@ -130,6 +132,7 @@ public abstract class Border {
 
     /**
      * Creates a {@link Border border} with given width and {@link Color color}.
+     *
      * @param color the color which the border should have
      * @param width the width which the border should have
      */
