@@ -8,9 +8,11 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.*;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -233,6 +235,40 @@ public class BorderTest extends ExtendedITextTest {
         doc.add(p);
 
         doc.add(new Paragraph(textAfter).setBorder(new DottedBorder(Color.BLACK, 3)).setBorderRight(new DottedBorder(Color.BLACK, 12)));
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void noVerticalBorderTest() throws IOException, InterruptedException {
+        fileName = "noVerticalBorderTest.pdf";
+        Document doc = createDocument();
+
+        Table mainTable = new Table(1);
+        Cell cell = new Cell()
+                .setBorder(Border.NO_BORDER)
+                .setBorderTop(new SolidBorder(Color.BLACK, 0.5f));
+        cell.add("TESCHTINK");
+        mainTable.addCell(cell);
+        doc.add(mainTable);
+        doc.close();
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void noHorizontalBorderTest() throws IOException, InterruptedException {
+        fileName = "noHorizontalBorderTest.pdf";
+        Document doc = createDocument();
+
+        Table mainTable = new Table(1);
+        Cell cell = new Cell()
+                .setBorder(Border.NO_BORDER)
+                .setBorderRight(new SolidBorder(Color.BLACK, 0.5f));
+        cell.add("TESCHTINK");
+        mainTable.addCell(cell);
+        doc.add(mainTable);
+        doc.close();
 
         closeDocumentAndCompareOutputs(doc);
     }
