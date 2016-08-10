@@ -44,17 +44,28 @@
 package com.itextpdf.layout.layout;
 
 public class LayoutContext {
-
+    
+    /**
+     * The {@link LayoutArea area} the content to be placed on.
+     */
     protected LayoutArea area;
 
     public LayoutContext(LayoutArea area) {
         this.area = area;
     }
 
+    /**
+     * Gets the {@link LayoutArea area} the content to be placed on.
+     *
+     * @return the area for content layouting.
+     */
     public LayoutArea getArea() {
         return area;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return area.toString();
