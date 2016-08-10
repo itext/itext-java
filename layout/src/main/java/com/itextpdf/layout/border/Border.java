@@ -45,29 +45,94 @@ package com.itextpdf.layout.border;
 
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.layout.renderer.IRenderer;
 
+/**
+ * Represents a border.
+ */
 public abstract class Border {
 
+    /**
+     * The null Border, i.e. the presence of such border is equivalent to the absence of the border
+     */
     public static final Border NO_BORDER = null;
+    /**
+     * The solid border.
+     * @see SolidBorder
+     */
     public static final int SOLID = 0;
+    /**
+     * The dashed border.
+     * @see DashedBorder
+     */
     public static final int DASHED = 1;
+    /**
+     * The dotted border.
+     * @see DottedBorder
+     */
     public static final int DOTTED = 2;
+    /**
+     * The double border.
+     * @see DoubleBorder
+     */
     public static final int DOUBLE = 3;
+    /**
+     * The round-dots border.
+     * @see RoundDotsBorder
+     */
     public static final int ROUND_DOTS = 4;
+    /**
+     * The 3D groove border.
+     * @see GrooveBorder
+     */
     public static final int _3D_GROOVE = 5;
+    /**
+     * The 3D inset border.
+     * @see InsetBorder
+     */
     public static final int _3D_INSET = 6;
+    /**
+     * The 3D outset border.
+     * @see OutsetBorder
+     */
     public static final int _3D_OUTSET = 7;
+    /**
+     * The 3D ridge border.
+     * @see RidgeBorder
+     */
     public static final int _3D_RIDGE = 8;
 
+    /**
+     * The color of the border.
+     * @see Color
+     */
     protected Color color;
+    /**
+     * The width of the border.
+     */
     protected float width;
+    /**
+     * The type of the border.
+     */
     protected int type;
+    /**
+     * The hash value for the border.
+     */
     private int hash;
 
+    /**
+     * Creates a {@link Border border} with the given width.
+     * @param width the width which the border should have
+     */
     protected Border(float width) {
         this(Color.BLACK, width);
     }
 
+    /**
+     * Creates a {@link Border border} with given width and {@link Color color}.
+     * @param color the color which the border should have
+     * @param width the width which the border should have
+     */
     protected Border(Color color, float width) {
         this.color = color;
         this.width = width;
@@ -99,18 +164,44 @@ public abstract class Border {
      */
     public abstract void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter);
 
+    /**
+     * Draws the border of a cell.
+     *
+     * @param canvas PdfCanvas to be written to
+     * @param x1 x coordinate of the beginning point of the element side, that should be bordered
+     * @param y1 y coordinate of the beginning point of the element side, that should be bordered
+     * @param x2 x coordinate of the ending point of the element side, that should be bordered
+     * @param y2 y coordinate of the ending point of the element side, that should be bordered
+     */
     public abstract void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2);
 
+    /**
+     * Returns the type of the {@link Border border}
+     */
     public abstract int getType();
 
+    /**
+     * Gets the {@link Color color} of the {@link Border border}
+     *
+     * @return the {@link Color color}
+     */
     public Color getColor() {
         return color;
     }
 
+    /**
+     * Gets the width of the {@link Border border}
+     *
+     * @return the width
+     */
     public float getWidth() {
         return width;
     }
 
+    /**
+     * Indicates whether the border is equal to the given border.
+     * The border type, width and color are considered during the comparison.
+     */
     @Override
     public boolean equals(Object anObject) {
         if (this == anObject) {
@@ -129,6 +220,9 @@ public abstract class Border {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         int h = hash;
@@ -141,6 +235,18 @@ public abstract class Border {
         return h;
     }
 
+    /**
+     * Returns the {@link Side side} corresponded to the line between two points.
+     * Notice that we consider the rectangle traversal to be clockwise.
+     * If the rectangle sides are not parallel to the corresponding page sides
+     * the result is Side.NONE
+     *
+     * @param x1 the abscissa of the left-bottom point
+     * @param y1 the ordinate of the left-bottom point
+     * @param x2 the abscissa of the right-top point
+     * @param y1 the ordinate of the right-top point
+     * @return the corresponded {@link Side side}
+     */
     protected Side getBorderSide(float x1, float y1, float x2, float y2) {
         boolean isLeft = false;
         boolean isRight = false;
@@ -169,5 +275,10 @@ public abstract class Border {
         return Side.NONE;
     }
 
+    /**
+     * Enumerates the different sides of the rectangle.
+     * The rectangle sides are expected to be parallel to corresponding page sides
+     * Otherwise the result is Side.NONE
+     */
     protected enum Side {NONE, TOP, RIGHT, BOTTOM, LEFT}
 }
