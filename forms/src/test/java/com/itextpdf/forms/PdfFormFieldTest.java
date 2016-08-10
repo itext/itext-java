@@ -12,13 +12,14 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.IOException;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.IOException;
-import java.util.Map;
 
 @Category(IntegrationTest.class)
 public class PdfFormFieldTest extends ExtendedITextTest {
@@ -164,5 +165,25 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
+    }
+
+    @Test
+    public void realFontSizeRegenerateAppearanceTest() throws IOException, InterruptedException {
+        String sourceFilename = sourceFolder + "defaultAppearanceRealFontSize.pdf";
+        String destFilename = destinationFolder + "realFontSizeRegenerateAppearance.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFilename), new PdfWriter(destFilename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        form.getField("fieldName").regenerateField();
+
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(destFilename, sourceFolder + "cmp_realFontSizeRegenerateAppearance.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+
     }
 }

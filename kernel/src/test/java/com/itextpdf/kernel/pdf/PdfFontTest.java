@@ -1,26 +1,40 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.font.*;
+import com.itextpdf.io.font.CidFont;
+import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.FontProgramFactory;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.TrueTypeCollection;
+import com.itextpdf.io.font.TrueTypeFont;
+import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.color.DeviceRgb;
-import com.itextpdf.kernel.font.*;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfTrueTypeFont;
+import com.itextpdf.kernel.font.PdfType0Font;
+import com.itextpdf.kernel.font.PdfType1Font;
+import com.itextpdf.kernel.font.PdfType3Font;
+import com.itextpdf.kernel.font.Type3Glyph;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.List;
 
 @Category(IntegrationTest.class)
 public class PdfFontTest extends ExtendedITextTest {
@@ -1291,10 +1305,10 @@ public class PdfFontTest extends ExtendedITextTest {
     @Test
     public void testSplitString() throws IOException {
         PdfFont font = PdfFontFactory.createFont();
-        List<String> list1 = font.splitString("Hello", 12, 10);
+        List<String> list1 = font.splitString("Hello", 12f, 10);
         Assert.assertTrue(list1.size() == 2);
 
-        List<String> list2 = font.splitString("Digitally signed by Dmitry Trusevich\nDate: 2015.10.25 14:43:56 MSK\nReason: Test 1\nLocation: Ghent", 12, 176);
+        List<String> list2 = font.splitString("Digitally signed by Dmitry Trusevich\nDate: 2015.10.25 14:43:56 MSK\nReason: Test 1\nLocation: Ghent", 12f, 176);
         Assert.assertTrue(list2.size() == 5);
     }
 

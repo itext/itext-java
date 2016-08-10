@@ -148,7 +148,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected String text;
     protected ImageData img;
     protected PdfFont font;
-    protected int fontSize;
+    protected float fontSize;
     protected Color color;
     protected int checkType;
     protected float borderWidth = 1;
@@ -362,7 +362,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name, String value) {
         try {
-            return createText(doc, rect, name, value, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE);
+            return createText(doc, rect, name, value, PdfFontFactory.createFont(), (float)DEFAULT_FONT_SIZE);
         } catch (IOException e) {
             throw new PdfException(e);
         }
@@ -377,11 +377,29 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param name     the name of the form field
      * @param value    the initial value
      * @param font     a {@link PdfFont}
-     * @param fontSize a positive integer
+     * @param fontSize the size of the font
      * @return a new {@link PdfTextFormField}
      */
-    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize) {
+    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, float fontSize) {
         return createText(doc, rect, name, value, font, fontSize, false);
+    }
+
+    /**
+     * Creates a named {@link PdfTextFormField text form field} with an initial
+     * value, with a specified font and font size.
+     *
+     * @param doc      the {@link PdfDocument} to create the text field in
+     * @param rect     the location on the page for the text field
+     * @param name     the name of the form field
+     * @param value    the initial value
+     * @param font     a {@link PdfFont}
+     * @param fontSize the size of the font
+     * @return a new {@link PdfTextFormField}
+     * @deprecated Will be removed in 7.1. Use {@link #createText(PdfDocument, Rectangle, String, String, PdfFont, float)} instead.
+     */
+    @Deprecated
+    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize) {
+        return createText(doc, rect, name, value, font, (float)fontSize, false);
     }
 
     /**
@@ -393,11 +411,30 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param name      the name of the form field
      * @param value     the initial value
      * @param font      a {@link PdfFont}
-     * @param fontSize  a positive integer
+     * @param fontSize  the size of the font
+     * @param multiline true for multiline text field
+     * @return a new {@link PdfTextFormField}
+     * @deprecated Will be removed in 7.1. Use {@link #createText(PdfDocument, Rectangle, String, String, PdfFont, float, boolean)} instead.
+     */
+    @Deprecated
+    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize, boolean multiline) {
+        return createText(doc, rect, name, value, font, (float)fontSize, multiline);
+    }
+
+    /**
+     * Creates a named {@link PdfTextFormField text form field} with an initial
+     * value, with a specified font and font size.
+     *
+     * @param doc       the {@link PdfDocument} to create the text field in
+     * @param rect      the location on the page for the text field
+     * @param name      the name of the form field
+     * @param value     the initial value
+     * @param font      a {@link PdfFont}
+     * @param fontSize  the size of the font
      * @param multiline true for multiline text field
      * @return a new {@link PdfTextFormField}
      */
-    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize, boolean multiline) {
+    public static PdfTextFormField createText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, float fontSize, boolean multiline) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfTextFormField field = new PdfTextFormField(annot, doc);
         field.setMultiline(multiline);
@@ -418,11 +455,29 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param name     the name of the form field
      * @param value    the initial value
      * @param font     a {@link PdfFont}
-     * @param fontSize a positive integer
+     * @param fontSize the size of the font
      * @return a new {@link PdfTextFormField}
      */
-    public static PdfTextFormField createMultilineText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize) {
+    public static PdfTextFormField createMultilineText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, float fontSize) {
         return createText(doc, rect, name, value, font, fontSize, true);
+    }
+
+    /**
+     * Creates a named {@link PdfTextFormField multilined text form field} with an initial
+     * value, with a specified font and font size.
+     *
+     * @param doc      the {@link PdfDocument} to create the text field in
+     * @param rect     the location on the page for the text field
+     * @param name     the name of the form field
+     * @param value    the initial value
+     * @param font     a {@link PdfFont}
+     * @param fontSize the size of the font
+     * @return a new {@link PdfTextFormField}
+     * @deprecated use {@link #createMultilineText(PdfDocument, Rectangle, String, String, PdfFont, float)} instead
+     */
+    @Deprecated
+    public static PdfTextFormField createMultilineText(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize) {
+        return createText(doc, rect, name, value, font, (float)fontSize, true);
     }
 
     /**
@@ -438,7 +493,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfTextFormField createMultilineText(PdfDocument doc, Rectangle rect, String name, String value) {
         try {
-            return createText(doc, rect, name, value, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE, true);
+            return createText(doc, rect, name, value, PdfFontFactory.createFont(), (float)DEFAULT_FONT_SIZE, true);
         } catch (IOException e) {
             throw new PdfException(e);
         }
@@ -494,7 +549,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, String name, String value, PdfArray options, int flags) {
         try {
-            return createChoice(doc, rect, name, value, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE, options, flags);
+            return createChoice(doc, rect, name, value, PdfFontFactory.createFont(), (float)DEFAULT_FONT_SIZE, options, flags);
         } catch (IOException e) {
             throw new PdfException(e);
         }
@@ -509,7 +564,30 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param name     the name of the form field
      * @param value    the initial value
      * @param font     a {@link PdfFont}
-     * @param fontSize a positive integer
+     * @param fontSize the size of the font
+     * @param options  an array of {@link PdfString} objects that each represent
+     *                 the 'on' state of one of the choices.
+     * @param flags    an <code>int</code>, containing a set of binary behavioral
+     *                 flags. Do binary <code>OR</code> on this <code>int</code> to set the
+     *                 flags you require.
+     * @deprecated Will be removed in 7.1. Use {@link #createChoice(PdfDocument, Rectangle, String, String, PdfFont, float, PdfArray, int)} instead
+     * @return a new {@link PdfChoiceFormField}
+     */
+    @Deprecated
+    public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize, PdfArray options, int flags) {
+        return createChoice(doc, rect, name, value, font, (float)fontSize, options, flags);
+    }
+
+    /**
+     * Creates a {@link PdfChoiceFormField choice form field} with custom
+     * behavior and layout, on a specified location.
+     *
+     * @param doc      the {@link PdfDocument} to create the choice field in
+     * @param rect     the location on the page for the choice field
+     * @param name     the name of the form field
+     * @param value    the initial value
+     * @param font     a {@link PdfFont}
+     * @param fontSize the size of the font
      * @param options  an array of {@link PdfString} objects that each represent
      *                 the 'on' state of one of the choices.
      * @param flags    an <code>int</code>, containing a set of binary behavioral
@@ -517,7 +595,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *                 flags you require.
      * @return a new {@link PdfChoiceFormField}
      */
-    public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, int fontSize, PdfArray options, int flags) {
+    public static PdfChoiceFormField createChoice(PdfDocument doc, Rectangle rect, String name, String value, PdfFont font, float fontSize, PdfArray options, int flags) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfFormField field = new PdfChoiceFormField(annot, doc);
         field.font = font;
@@ -574,7 +652,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         radio.put(PdfName.V, new PdfName(value));
         return radio;
     }
-
 
     /**
      * Creates a generic {@link PdfFormField} that is added to a radio group.
@@ -646,7 +723,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public static PdfButtonFormField createPushButton(PdfDocument doc, Rectangle rect, String name, String caption) {
         PdfButtonFormField field;
         try {
-            field = createPushButton(doc, rect, name, caption, PdfFontFactory.createFont(), DEFAULT_FONT_SIZE);
+            field = createPushButton(doc, rect, name, caption, PdfFontFactory.createFont(), (float)DEFAULT_FONT_SIZE);
         } catch (IOException e) {
             throw new PdfException(e);
         }
@@ -662,10 +739,28 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param name     the name of the form field
      * @param caption  the text to display on the button
      * @param font     a {@link PdfFont}
-     * @param fontSize a positive integer
+     * @param fontSize the size of the font
+     * @return a new {@link PdfButtonFormField}
+     * @deprecated Will be removed in 7.1. Use {@link #createPushButton(PdfDocument, Rectangle, String, String, PdfFont, float)} instead.
+     */
+    @Deprecated
+    public static PdfButtonFormField createPushButton(PdfDocument doc, Rectangle rect, String name, String caption, PdfFont font, int fontSize) {
+        return createPushButton(doc, rect, name, caption, font, (float)fontSize);
+    }
+
+    /**
+     * Creates a {@link PdfButtonFormField} as a push button without data, with
+     * its caption in a custom font.
+     *
+     * @param doc      the {@link PdfDocument} to create the radio group in
+     * @param rect     the location on the page for the field
+     * @param name     the name of the form field
+     * @param caption  the text to display on the button
+     * @param font     a {@link PdfFont}
+     * @param fontSize the size of the font
      * @return a new {@link PdfButtonFormField}
      */
-    public static PdfButtonFormField createPushButton(PdfDocument doc, Rectangle rect, String name, String caption, PdfFont font, int fontSize) {
+    public static PdfButtonFormField createPushButton(PdfDocument doc, Rectangle rect, String name, String caption, PdfFont font, float fontSize) {
         PdfWidgetAnnotation annot = new PdfWidgetAnnotation(rect);
         PdfButtonFormField field = new PdfButtonFormField(annot, doc);
         field.setPushButton(true);
@@ -929,15 +1024,30 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+
     /**
      * Set text field value with given font and size
      *
      * @param value    text value
      * @param font     a {@link PdfFont}
-     * @param fontSize a positive integer
+     * @param fontSize the size of the font
+     * @return the edited field
+     * @deprecated Use {@link #setValue(String, PdfFont, float)} instead
+     */
+    @Deprecated
+    public PdfFormField setValue(String value, PdfFont font, int fontSize) {
+        return setValue(value, font, (float)fontSize);
+    }
+
+    /**
+     * Set text field value with given font and size
+     *
+     * @param value    text value
+     * @param font     a {@link PdfFont}
+     * @param fontSize the size of the font
      * @return the edited field
      */
-    public PdfFormField setValue(String value, PdfFont font, int fontSize) {
+    public PdfFormField setValue(String value, PdfFont font, float fontSize) {
         PdfName formType = getFormType();
         if (!formType.equals(PdfName.Tx) && !formType.equals(PdfName.Ch)) {
             return setValue(value);
@@ -950,7 +1060,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             }
             bBox = ((PdfDictionary) kids.get(0)).getAsArray(PdfName.Rect);
         }
-
 
         PdfFormXObject appearance = new PdfFormXObject(new Rectangle(0, 0, bBox.toRectangle().getWidth(), bBox.toRectangle().getHeight()));
         if (formType.equals(PdfName.Tx)) {
@@ -1477,9 +1586,19 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param fontSize the new font size to be set
      */
-    public void setFontSize(int fontSize) {
+    public void setFontSize(float fontSize) {
         this.fontSize = fontSize;
         regenerateField();
+    }
+
+    /**
+     * Basic setter for the <code>fontSize</code> property. Regenerates the
+     * field appearance after setting the new value.
+     *
+     * @param fontSize the new font size to be set
+     */
+    public void setFontSize(int fontSize) {
+        setFontSize((float)fontSize);
     }
 
     /**
@@ -1631,9 +1750,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
                 Object[] fontAndSize = getFontAndSize(asNormal);
                 PdfFont localFont = (PdfFont) fontAndSize[0];
-                int fontSz = (int) fontAndSize[1];
-                if (fontSz == 0) {
-                    fontSz = DEFAULT_FONT_SIZE;
+                float fontSize = (float) fontAndSize[1];
+                if (fontSize == 0) {
+                    fontSize = (float)DEFAULT_FONT_SIZE;
                 }
 
                 int rotation = 0;
@@ -1664,9 +1783,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
                 if (PdfName.Tx.equals(type)) {
                     if (!isMultiline()) {
-                        drawTextAppearance(bBox.toRectangle(), localFont, fontSz, value, appearance);
+                        drawTextAppearance(bBox.toRectangle(), localFont, fontSize, value, appearance);
                     } else {
-                        drawMultiLineTextAppearance(bBox.toRectangle(), localFont, fontSz, value, appearance);
+                        drawMultiLineTextAppearance(bBox.toRectangle(), localFont, fontSize, value, appearance);
                     }
 
                 } else {
@@ -1680,7 +1799,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         }
                         value = optionsArrayToString(options);
                     }
-                    drawMultiLineTextAppearance(bBox.toRectangle(), localFont, fontSz, value, appearance);
+                    drawMultiLineTextAppearance(bBox.toRectangle(), localFont, fontSize, value, appearance);
                 }
 
                 appearance.getResources().addFont(getDocument(), localFont);
@@ -1718,8 +1837,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         }
                         Object[] fontAndSize = getFontAndSize(asNormal);
                         PdfFont localFont = (PdfFont) fontAndSize[0];
-                        int fontSz = (int) fontAndSize[1];
-                        appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value, localFont, fontSz);
+                        float fontSize = (float) fontAndSize[1];
+                        appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), value, localFont, fontSize);
                         appearance.getResources().addFont(getDocument(), localFont);
                     }
 
@@ -2048,7 +2167,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return array;
     }
 
-    protected String generateDefaultAppearanceString(PdfFont font, int fontSize, PdfResources res) {
+    protected String generateDefaultAppearanceString(PdfFont font, float fontSize, PdfResources res) {
         PdfStream stream = new PdfStream();
         PdfCanvas canvas = new PdfCanvas(stream, res, getDocument());
         canvas.setFontAndSize(font, fontSize).resetFillColorRgb();
@@ -2089,7 +2208,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 if (fontSize != 0) {
                     fontAndSize[1] = fontSize;
                 } else {
-                    fontAndSize[1] = DEFAULT_FONT_SIZE;
+                    fontAndSize[1] = (float)DEFAULT_FONT_SIZE;
                 }
             }
         } else {
@@ -2101,7 +2220,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             if (fontSize != 0) {
                 fontAndSize[1] = fontSize;
             } else {
-                fontAndSize[1] = DEFAULT_FONT_SIZE;
+                fontAndSize[1] = (float)DEFAULT_FONT_SIZE;
             }
         }
 
@@ -2121,7 +2240,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     if (operator.equals("Tf")) {
                         if (stack.size() >= 2) {
                             ret[DA_FONT] = stack.get(stack.size() - 2);
-                            ret[DA_SIZE] = new Integer(stack.get(stack.size() - 1));
+                            ret[DA_SIZE] = new Float(stack.get(stack.size() - 1));
                         }
                     } else if (operator.equals("g")) {
                         if (stack.size() >= 1) {
@@ -2162,11 +2281,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param rect     the location on the page for the list field
      * @param font     a {@link PdfFont}
-     * @param fontSize a positive integer
+     * @param fontSize the size of the font
      * @param value    the initial value
      * @return the {@link PdfFormXObject Form XObject} that was drawn
      */
-    protected void drawTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value, PdfFormXObject appearance) {
+    protected void drawTextAppearance(Rectangle rect, PdfFont font, float fontSize, String value, PdfFormXObject appearance) {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
         PdfResources resources = appearance.getResources();
         PdfCanvas canvas = new PdfCanvas(stream, resources, getDocument());
@@ -2217,10 +2336,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param rect     the location on the page for the list field
      * @param font     a {@link PdfFont}
-     * @param fontSize a positive integer
+     * @param fontSize the size of the font
      * @param value    the initial value
      */
-    protected void drawMultiLineTextAppearance(Rectangle rect, PdfFont font, int fontSize, String value, PdfFormXObject appearance) {
+    protected void drawMultiLineTextAppearance(Rectangle rect, PdfFont font, float fontSize, String value, PdfFormXObject appearance) {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
         PdfResources resources = appearance.getResources();
         PdfCanvas canvas = new PdfCanvas(stream, resources, getDocument());
@@ -2400,18 +2519,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfFormXObject xObjectOff = new PdfFormXObject(rect);
 
         drawBorder(canvasOn, xObjectOn, width, height);
-        drawCheckBox(canvasOn, width, height, DEFAULT_FONT_SIZE, true);
+        drawCheckBox(canvasOn, width, height, (float)DEFAULT_FONT_SIZE, true);
 
         PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
         drawBorder(canvasOff, xObjectOff, width, height);
-        drawCheckBox(canvasOff, width, height, DEFAULT_FONT_SIZE, false);
+        drawCheckBox(canvasOff, width, height, (float)DEFAULT_FONT_SIZE, false);
 
         PdfWidgetAnnotation widget = getWidgets().get(0);
 
         xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
         xObjectOn.getResources().addFont(getDocument(), getFont());
-        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize == 0 ? DEFAULT_FONT_SIZE : fontSize, xObjectOn.getResources()));
+        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize == 0 ? (float)DEFAULT_FONT_SIZE : fontSize, xObjectOn.getResources()));
 
         xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
         xObjectOff.getResources().addFont(getDocument(), getFont());
@@ -2487,10 +2606,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param height   the width of the pushbutton
      * @param text     the text to display on the button
      * @param font     a {@link PdfFont}
-     * @param fontSize a positive integer
+     * @param fontSize the size of the font
      * @return a new {@link PdfFormXObject}
      */
-    protected PdfFormXObject drawPushButtonAppearance(float width, float height, String text, PdfFont font, int fontSize) {
+    protected PdfFormXObject drawPushButtonAppearance(float width, float height, String text, PdfFont font, float fontSize) {
         PdfStream stream = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
 
@@ -2527,9 +2646,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param height   the width of the button
      * @param text     the text to display on the button
      * @param font     a {@link PdfFont}
-     * @param fontSize a positive integer
+     * @param fontSize the size of the font
      */
-    protected void drawButton(PdfCanvas canvas, float x, float y, float width, float height, String text, PdfFont font, int fontSize) {
+    protected void drawButton(PdfCanvas canvas, float x, float y, float width, float height, String text, PdfFont font, float fontSize) {
         if (color == null) {
             color = Color.BLACK;
         }
@@ -2545,10 +2664,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param canvas   the {@link PdfCanvas} of the page to draw on.
      * @param width    the width of the button
      * @param height   the width of the button
-     * @param fontSize a positive integer
+     * @param fontSize the size of the font
      * @param on       the boolean value of the checkbox
      */
-    protected void drawCheckBox(PdfCanvas canvas, float width, float height, int fontSize, boolean on) {
+    protected void drawCheckBox(PdfCanvas canvas, float width, float height, float fontSize, boolean on) {
         if (!on) {
             return;
         }
