@@ -3,14 +3,15 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.text.MessageFormat;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.text.MessageFormat;
-
 @Category(IntegrationTest.class)
-public class PdfActionTest  extends ExtendedITextTest {
+public class PdfActionTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfActionTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfActionTest/";

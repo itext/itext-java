@@ -53,35 +53,41 @@ import java.lang.reflect.Field;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This is a generic class for testing. Subclassing it, or its subclasses is considered a good practice of
+ * creating your own tests.
+ */
 public abstract class ITextTest {
 
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
+    /**
+     * Creates a folder with a given path, including all necessary nonexistent parent directories.
+     * If a folder is already present, no action is performed.
+     * @param path the path of the folder to create
+     */
     public static void createDestinationFolder(String path) {
         File fpath = new File(path);
         fpath.mkdirs();
     }
 
+    /**
+     * Creates a directory with given path if it does not exist and clears the contents
+     * of the directory in case it exists.
+     * @param path the path of the directory to be created/cleared
+     */
     public static void createOrClearDestinationFolder(String path) {
         File fpath = new File(path);
         fpath.mkdirs();
-        for (File file : fpath.listFiles())
-            file.delete();
+        deleteDirectoryContents(path, false);
     }
 
+    /**
+     * Removes the directory with given path along with its content including all the subdirectories.
+     * @param path the path of the directory to be removed
+     */
     public static void deleteDirectory(String path) {
-        File fpath = new File(path);
-        if (fpath.exists() && fpath.listFiles() != null) {
-            for (File f : fpath.listFiles()) {
-                if (f.isDirectory()) {
-                    deleteDirectory(f.getPath());
-                    f.delete();
-                } else {
-                    f.delete();
-                }
-            }
-            fpath.delete();
-        }
+        deleteDirectoryContents(path, true);
     }
 
     /**
@@ -125,6 +131,23 @@ public abstract class ITextTest {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    private static void deleteDirectoryContents(String path, boolean removeParentDirectory) {
+        File file = new File(path);
+        if (file.exists() && file.listFiles() != null) {
+            for (File f : file.listFiles()) {
+                if (f.isDirectory()) {
+                    deleteDirectoryContents(f.getPath(), false);
+                    f.delete();
+                } else {
+                    f.delete();
+                }
+            }
+            if (removeParentDirectory) {
+                file.delete();
+            }
         }
     }
 
