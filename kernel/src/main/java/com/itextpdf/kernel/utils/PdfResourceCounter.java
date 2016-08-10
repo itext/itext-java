@@ -51,8 +51,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfOutputStream;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -144,7 +142,6 @@ public class PdfResourceCounter {
      *
      * @param res The resources that can be excluded when counting the bytes.
      * @return The number of bytes needed for an object.
-     * @throws java.io.IOException
      */
     public long getLength(Map<Integer, PdfObject> res) {
         long length = 0;

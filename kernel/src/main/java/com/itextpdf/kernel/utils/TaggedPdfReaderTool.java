@@ -72,18 +72,44 @@ public class TaggedPdfReaderTool {
     protected OutputStreamWriter out;
     protected String rootTag;
 
-    // key - page dictionary; value pairs of mcid and text in them
+    // key - page dictionary; value - a mapping of mcids to text in them
     protected Map<PdfDictionary, Map<Integer, String>> parsedTags = new HashMap<>();
 
+    /**
+     * Constructs a {@link TaggedPdfReaderTool} via a given {@link PdfDocument}.
+     * @param document the document to read tag structure from
+     */
     public TaggedPdfReaderTool(PdfDocument document) {
         this.document = document;
     }
 
+    /**
+     * Checks if a character value should be escaped/unescaped.
+     *
+     * @param    c    a character value
+     * @return true if it's OK to escape or unescape this value
+     */
+    public static boolean isValidCharacterValue(int c) {
+        return (c == 0x9 || c == 0xA || c == 0xD
+                || c >= 0x20 && c <= 0xD7FF
+                || c >= 0xE000 && c <= 0xFFFD
+                || c >= 0x10000 && c <= 0x10FFFF);
+    }
+
+    /**
+     * Converts the current tag structure into an XML file with default encoding (UTF-8).
+     * @param os the output stream to save XML file to
+     */
     public void convertToXml(OutputStream os)
             throws IOException {
         convertToXml(os, "UTF-8");
     }
 
+    /**
+     * Converts the current tag structure into an XML file with provided encoding.
+     * @param os the output stream to save XML file to
+     * @param charset the charset of the resultant XML file
+     */
     public void convertToXml(OutputStream os, String charset)
             throws IOException {
         out = new OutputStreamWriter(os, Charset.forName(charset));
@@ -103,6 +129,11 @@ public class TaggedPdfReaderTool {
         out.close();
     }
 
+    /**
+     * Sets the name of the root tag of the resultant XML file
+     * @param rootTagName the name of the root tag
+     * @return this object
+     */
     public TaggedPdfReaderTool setRootTag(String rootTagName) {
         this.rootTag = rootTagName;
         return this;
@@ -242,13 +273,12 @@ public class TaggedPdfReaderTool {
 
     /**
      * NOTE: copied from itext5 XMLUtils class
-     * <p>
+     *
      * Escapes a string with the appropriated XML codes.
      *
      * @param s         the string to be escaped
      * @param onlyASCII codes above 127 will always be escaped with &amp;#nn; if <CODE>true</CODE>
      * @return the escaped string
-     * @since 5.0.6
      */
     protected static String escapeXML(String s, boolean onlyASCII) {
         char[] cc = s.toCharArray();
@@ -282,19 +312,6 @@ public class TaggedPdfReaderTool {
             }
         }
         return sb.toString();
-    }
-
-    /**
-     * Checks if a character value should be escaped/unescaped.
-     *
-     * @param    c    a character value
-     * @return true if it's OK to escape or unescape this value
-     */
-    public static boolean isValidCharacterValue(int c) {
-        return (c == 0x9 || c == 0xA || c == 0xD
-                || c >= 0x20 && c <= 0xD7FF
-                || c >= 0xE000 && c <= 0xFFFD
-                || c >= 0x10000 && c <= 0x10FFFF);
     }
 
     private class MarkedContentEventListener implements IEventListener {
