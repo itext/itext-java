@@ -45,14 +45,35 @@ package com.itextpdf.layout.layout;
 
 import com.itextpdf.layout.renderer.IRenderer;
 
+/**
+ * Represents the result of a line {@link com.itextpdf.layout.renderer.LineRenderer#layout(LayoutContext) layouting}.
+ */
 public class LineLayoutResult extends LayoutResult {
 
     protected boolean splitForcedByNewline;
 
+    /**
+     * Creates the {@link LayoutResult result of {@link com.itextpdf.layout.renderer.LineRenderer#layout(LayoutContext) layouting}}.
+     * The {@link LayoutResult#causeOfNothing} will be set as null.
+     *
+     * @param status the status of {@link com.itextpdf.layout.renderer.LineRenderer#layout(LayoutContext)}
+     * @param occupiedArea the area occupied by the content
+     * @param splitRenderer the renderer to draw the splitted part of the content
+     * @param overflowRenderer the renderer to draw the overflowed part of the content
+     */
     public LineLayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer) {
         super(status, occupiedArea, splitRenderer, overflowRenderer);
     }
 
+    /**
+     * Creates the {@link LayoutResult result of {@link com.itextpdf.layout.renderer.LineRenderer#layout(LayoutContext) layouting}}.
+     *
+     * @param status the status of {@link com.itextpdf.layout.renderer.LineRenderer#layout(LayoutContext)}
+     * @param occupiedArea the area occupied by the content
+     * @param splitRenderer the renderer to draw the splitted part of the content
+     * @param overflowRenderer the renderer to draw the overflowed part of the content
+     * @param cause the first renderer to produce {@link LayoutResult#NOTHING}
+     */
     public LineLayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause) {
         super(status, occupiedArea, splitRenderer, overflowRenderer, cause);
     }
