@@ -692,9 +692,21 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
     /**
      * The class that extends {@link PdfShading} class and is in charge of Shading Dictionary with
      * free-form Gouraud-shaded triangle mesh type.
+     *
      * The area to be shaded is defined by a path composed entirely of triangles.
      * The colour at each vertex of the triangles is specified,
      * and a technique known as Gouraud interpolation is used to colour the interiors.
+     *
+     * The object shall be represented as stream containing a sequence of vertex data.
+     * Each vertex is specified by the following values, in the order shown:
+     * f x y c1 … cn where:
+     * f -  the vertex’s edge flag, that determines the vertex is connected to other vertices of the triangle mesh.
+     *      For full description {@see ISO-320001 Paragph 8.7.4.5.5}
+     * x, y - vertex’s horizontal and vertical coordinates, expressed in the shading’s target coordinate space.
+     * c1…cn - vertex’s colour components.
+     *
+     * If the shading dictionary includes a Function entry, only a single parametric value, t,
+     * shall be specified for each vertex in place of the colour components c1…cn.
      */
     public static class FreeFormGouraudShadedTriangleMesh extends PdfShading {
         
@@ -706,16 +718,52 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @deprecated Intended only for private use.
          * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
          *
-         * @param pdfStream - {@link PdfStream} from which the instance is created.
+         * @param pdfStream {@link PdfStream} from which the instance is created.
          */
 		public FreeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
 
+        /**
+         * Creates the new instance of the class.
+         *
+         * @param cs the {@link PdfColorSpace} object in which colour values shall be expressed.
+         *           The special Pattern space isn't excepted.
+         * @param bitsPerCoordinate the number of bits used to represent each vertex coordinate.
+         *                          The value shall be 1, 2, 4, 8, 12, 16, 24, or 32.
+         * @param bitsPerComponent the number of bits used to represent each colour component.
+         *                         The value shall be 1, 2, 4, 8, 12, or 16.
+         * @param bitsPerFlag the number of bits used to represent the edge flag for each vertex.
+         *                    The value of BitsPerFlag shall be 2, 4, or 8,
+         *                    but only the least significant 2 bits in each flag value shall be used.
+         *                    The value for the edge flag shall be 0, 1, or 2.
+         * @param decode the {@code int[]} of numbers specifying how to map vertex coordinates and colour components
+         *               into the appropriate ranges of values. The ranges shall be specified as follows:
+         *               [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         *               Only one pair of color values shall be specified if a Function entry is present.
+         */
         public FreeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, float[] decode) {
             this(cs, bitsPerCoordinate, bitsPerComponent, bitsPerFlag, new PdfArray(decode));
         }
 
+        /**
+         * Creates the new instance of the class.
+         *
+         * @param cs the {@link PdfColorSpace} object in which colour values shall be expressed.
+         *           The special Pattern space isn't excepted.
+         * @param bitsPerCoordinate the number of bits used to represent each vertex coordinate.
+         *                          The value shall be 1, 2, 4, 8, 12, 16, 24, or 32.
+         * @param bitsPerComponent the number of bits used to represent each colour component.
+         *                         The value shall be 1, 2, 4, 8, 12, or 16.
+         * @param bitsPerFlag the number of bits used to represent the edge flag for each vertex.
+         *                    The value of BitsPerFlag shall be 2, 4, or 8,
+         *                    but only the least significant 2 bits in each flag value shall be used.
+         *                    The value for the edge flag shall be 0, 1, or 2.
+         * @param decode the {@link PdfArray} of numbers specifying how to map vertex coordinates and colour components
+         *               into the appropriate ranges of values. The ranges shall be specified as follows:
+         *               [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         *               Only one pair of color values shall be specified if a Function entry is present.
+         */
         public FreeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, PdfArray decode) {
             super(new PdfStream(), ShadingType.FREE_FORM_GOURAUD_SHADED_TRIANGLE_MESH, cs.getPdfObject());
 
@@ -725,46 +773,116 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
             setDecode(decode);
         }
 
+        /**
+         * Gets the number of bits used to represent each vertex coordinate.
+         *
+         * @return the number of bits. Can be 1, 2, 4, 8, 12, 16, 24, or 32.
+         */
         public int getBitsPerCoordinate() {
             return (int) getPdfObject().getAsInt(PdfName.BitsPerCoordinate);
         }
 
+        /**
+         * Sets the number of bits used to represent each vertex coordinate.
+         *
+         * @param bitsPerCoordinate the number of bits to be set. Shall be 1, 2, 4, 8, 12, 16, 24, or 32.
+         */
         public void setBitsPerCoordinate(int bitsPerCoordinate) {
             getPdfObject().put(PdfName.BitsPerCoordinate, new PdfNumber(bitsPerCoordinate));
             setModified();
         }
 
+        /**
+         * Gets the number of bits used to represent each colour component.
+         *
+         * @return the number of bits. Can be 1, 2, 4, 8, 12, or 16.
+         */
         public int getBitsPerComponent() {
             return (int) getPdfObject().getAsInt(PdfName.BitsPerComponent);
         }
 
+        /**
+         * Sets the number of bits used to represent each colour component.
+         *
+         * @param bitsPerComponent the number of bits to be set. Shall be 1, 2, 4, 8, 12, or 16.
+         */
         public void setBitsPerComponent(int bitsPerComponent) {
             getPdfObject().put(PdfName.BitsPerComponent, new PdfNumber(bitsPerComponent));
             setModified();
         }
 
+        /**
+         * Gets the number of bits used to represent the edge flag for each vertex.
+         * But only the least significant 2 bits in each flag value shall be used.
+         * The valid flag values are 0, 1 or 2.
+         *
+         * @return the number of bits. Can be 2, 4 or 8.
+         */
         public int getBitsPerFlag() {
             return (int) getPdfObject().getAsInt(PdfName.BitsPerFlag);
         }
 
+        /**
+         * Sets the number of bits used to represent the edge flag for each vertex.
+         * But only the least significant 2 bits in each flag value shall be used.
+         * The valid flag values are 0, 1 or 2.
+         *
+         * @param bitsPerFlag the number of bits to be set. Shall be 2, 4 or 8.
+         */
         public void setBitsPerFlag(int bitsPerFlag) {
             getPdfObject().put(PdfName.BitsPerFlag, new PdfNumber(bitsPerFlag));
             setModified();
         }
 
+        /**
+         * Gets the {@link PdfArray} of numbers specifying how to map vertex coordinates and colour components
+         * into the appropriate ranges of values. The ranges shall be specified as follows:
+         * [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         * Only one pair of color values shall be specified if a Function entry is present.
+         *
+         * @return the {@link PdfArray} Decode object.
+         */
         public PdfArray getDecode() {
             return getPdfObject().getAsArray(PdfName.Decode);
         }
 
+        /**
+         * Sets the {@code float[]} of numbers specifying how to map vertex coordinates and colour components
+         * into the appropriate ranges of values. The ranges shall be specified as follows:
+         * [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         * Only one pair of color values shall be specified if a Function entry is present.
+         *
+         * @param decode the {@code float[]} of Decode object to set.
+         */
         public void setDecode(float[] decode) {
             getPdfObject().put(PdfName.Decode, new PdfArray(decode));
         }
 
+        /**
+         * Sets the {@link PdfArray} of numbers specifying how to map vertex coordinates and colour components
+         * into the appropriate ranges of values. The ranges shall be specified as follows:
+         * [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         * Only one pair of color values shall be specified if a Function entry is present.
+         *
+         * @param decode the {@link PdfArray} Decode object to set.
+         */
         public void setDecode(PdfArray decode) {
             getPdfObject().put(PdfName.Decode, decode);
         }
     }
 
+    /**
+     * The class that extends {@link PdfShading} class and is in charge of Shading Dictionary with
+     * lattice-form Gouraud-shaded triangle mesh type.
+     *
+     * This type is similar to {@link FreeFormGouraudShadedTriangleMesh} but instead of using free-form geometry,
+     * the vertices are arranged in a pseudorectangular lattice,
+     * which is topologically equivalent to a rectangular grid.
+     * The vertices are organized into rows, which need not be geometrically linear.
+     *
+     * The verticals data in stream is similar to {@link FreeFormGouraudShadedTriangleMesh},
+     * except there is no edge flag.
+     */
     public static class LatticeFormGouraudShadedTriangleMesh extends PdfShading {
         
     	private static final long serialVersionUID = -8776232978423888214L;
@@ -775,16 +893,48 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @deprecated Intended only for private use.
          * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
          *
-         * @param pdfStream - {@link PdfStream} from which the instance is created.
+         * @param pdfStream {@link PdfStream} from which the instance is created.
          */
 		public LatticeFormGouraudShadedTriangleMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
 
+        /**
+         * Creates the new instance of the class.
+         *
+         * @param cs the {@link PdfColorSpace} object in which colour values shall be expressed.
+         *           The special Pattern space isn't excepted.
+         * @param bitsPerCoordinate the number of bits used to represent each vertex coordinate.
+         *                          The value shall be 1, 2, 4, 8, 12, 16, 24, or 32.
+         * @param bitsPerComponent the number of bits used to represent each colour component.
+         *                         The value shall be 1, 2, 4, 8, 12, or 16.
+         * @param verticesPerRow the number of vertices in each row of the lattice (shall be > 1).
+         *                       The number of rows need not be specified.
+         * @param decode the {@code int[]} of numbers specifying how to map vertex coordinates and colour components
+         *               into the appropriate ranges of values. The ranges shall be specified as follows:
+         *               [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         *               Only one pair of color values shall be specified if a Function entry is present.
+         */
         public LatticeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int verticesPerRow, float[] decode) {
             this(cs, bitsPerCoordinate, bitsPerComponent, verticesPerRow, new PdfArray(decode));
         }
 
+        /**
+         * Creates the new instance of the class.
+         *
+         * @param cs the {@link PdfColorSpace} object in which colour values shall be expressed.
+         *           The special Pattern space isn't excepted.
+         * @param bitsPerCoordinate the number of bits used to represent each vertex coordinate.
+         *                          The value shall be 1, 2, 4, 8, 12, 16, 24, or 32.
+         * @param bitsPerComponent the number of bits used to represent each colour component.
+         *                         The value shall be 1, 2, 4, 8, 12, or 16.
+         * @param verticesPerRow the number of vertices in each row of the lattice (shall be > 1).
+         *                       The number of rows need not be specified.
+         * @param decode the {@link PdfArray} of numbers specifying how to map vertex coordinates and colour components
+         *               into the appropriate ranges of values. The ranges shall be specified as follows:
+         *               [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         *               Only one pair of color values shall be specified if a Function entry is present.
+         */
         public LatticeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int verticesPerRow, PdfArray decode) {
             super(new PdfStream(), ShadingType.LATTICE_FORM_GOURAUD_SHADED_TRIANGLE_MESH, cs.getPdfObject());
 
@@ -794,46 +944,123 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
             setDecode(decode);
         }
 
+        /**
+         * Gets the number of bits used to represent each vertex coordinate.
+         *
+         * @return the number of bits. Can be 1, 2, 4, 8, 12, 16, 24, or 32.
+         */
         public int getBitsPerCoordinate() {
             return (int) getPdfObject().getAsInt(PdfName.BitsPerCoordinate);
         }
 
+        /**
+         * Sets the number of bits used to represent each vertex coordinate.
+         *
+         * @param bitsPerCoordinate the number of bits to be set. Shall be 1, 2, 4, 8, 12, 16, 24, or 32.
+         */
         public void setBitsPerCoordinate(int bitsPerCoordinate) {
             getPdfObject().put(PdfName.BitsPerCoordinate, new PdfNumber(bitsPerCoordinate));
             setModified();
         }
 
+        /**
+         * Gets the number of bits used to represent each colour component.
+         *
+         * @return the number of bits. Can be 1, 2, 4, 8, 12, or 16.
+         */
         public int getBitsPerComponent() {
             return (int) getPdfObject().getAsInt(PdfName.BitsPerComponent);
         }
 
+        /**
+         * Sets the number of bits used to represent each colour component.
+         *
+         * @param bitsPerComponent the number of bits to be set. Shall be 1, 2, 4, 8, 12, or 16.
+         */
         public void setBitsPerComponent(int bitsPerComponent) {
             getPdfObject().put(PdfName.BitsPerComponent, new PdfNumber(bitsPerComponent));
             setModified();
         }
 
+        /**
+         * Gets the number of vertices in each row of the lattice.
+         *
+         * @return the number of vertices. Can only be greater than 1.
+         */
         public int getVerticesPerRow() {
             return (int) getPdfObject().getAsInt(PdfName.VerticesPerRow);
         }
 
+        /**
+         * Sets the number of vertices in each row of the lattice.
+         * The number of rows need not be specified.
+         *
+         * @param verticesPerRow the number of vertices to be set. Shall be greater than 1.
+         */
         public void setVerticesPerRow(int verticesPerRow) {
             getPdfObject().put(PdfName.VerticesPerRow, new PdfNumber(verticesPerRow));
             setModified();
         }
 
+        /**
+         * Gets the {@link PdfArray} of numbers specifying how to map vertex coordinates and colour components
+         * into the appropriate ranges of values. The ranges shall be specified as follows:
+         * [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         * Only one pair of color values shall be specified if a Function entry is present.
+         *
+         * @return the {@link PdfArray} Decode object.
+         */
         public PdfArray getDecode() {
             return getPdfObject().getAsArray(PdfName.Decode);
         }
 
+        /**
+         * Sets the {@code float[]} of numbers specifying how to map vertex coordinates and colour components
+         * into the appropriate ranges of values. The ranges shall be specified as follows:
+         * [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         * Only one pair of color values shall be specified if a Function entry is present.
+         *
+         * @param decode the {@code float[]} of Decode object to set.
+         */
         public void setDecode(float[] decode) {
             getPdfObject().put(PdfName.Decode, new PdfArray(decode));
         }
 
+        /**
+         * Sets the {@link PdfArray} of numbers specifying how to map vertex coordinates and colour components
+         * into the appropriate ranges of values. The ranges shall be specified as follows:
+         * [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         * Only one pair of color values shall be specified if a Function entry is present.
+         *
+         * @param decode the {@link PdfArray} Decode object to set.
+         */
         public void setDecode(PdfArray decode) {
             getPdfObject().put(PdfName.Decode, decode);
         }
     }
 
+    /**
+     * The class that extends {@link PdfShading} class and is in charge of Shading Dictionary with
+     * Coons Patch mesh type.
+     *
+     * This type of shading is constructed from one or more colour patches, each bounded by four cubic Bézier curves.
+     * Degenerate Bézier curves are allowed and are useful for certain graphical effects.
+     * At least one complete patch shall be specified.
+     *
+     * The shape of patch is defined by 12 control points.
+     *
+     * Colours are specified for each corner of the unit square,
+     * and bilinear interpolation is used to fill in colours over the entire unit square.
+     *
+     * Coordinates are mapped from the unit square into a four-sided patch whose sides are not necessarily linear.
+     * The mapping is continuous: the corners of the unit square map to corners of the patch
+     * and the sides of the unit square map to sides of the patch.
+     *
+     * For the format of data stream, that defines patches {@see ISO-320001 Table 85}.
+     *
+     * If the shading dictionary contains a Function entry, the colour data for each corner of a patch
+     * shall be specified by a single parametric value t rather than by n separate colour components c1…cn.
+     */
     public static class CoonsPatchMesh extends PdfShading {
         
     	private static final long serialVersionUID = 7296891352801419708L;
@@ -844,16 +1071,52 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @deprecated Intended only for private use.
          * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
          *
-         * @param pdfStream - {@link PdfStream} from which the instance is created.
+         * @param pdfStream {@link PdfStream} from which the instance is created.
          */
 		public CoonsPatchMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
 
+        /**
+         * Creates the new instance of the class.
+         *
+         * @param cs the {@link PdfColorSpace} object in which colour values shall be expressed.
+         *           The special Pattern space isn't excepted.
+         * @param bitsPerCoordinate the number of bits used to represent each vertex coordinate.
+         *                          The value shall be 1, 2, 4, 8, 12, 16, 24, or 32.
+         * @param bitsPerComponent the number of bits used to represent each colour component.
+         *                         The value shall be 1, 2, 4, 8, 12, or 16.
+         * @param bitsPerFlag the number of bits used to represent the edge flag for each vertex.
+         *                    The value of BitsPerFlag shall be 2, 4, or 8,
+         *                    but only the least significant 2 bits in each flag value shall be used.
+         *                    The value for the edge flag shall be 0, 1, 2 or 3.
+         * @param decode the {@code int[]} of numbers specifying how to map vertex coordinates and colour components
+         *               into the appropriate ranges of values. The ranges shall be specified as follows:
+         *               [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         *               Only one pair of color values shall be specified if a Function entry is present.
+         */
         public CoonsPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, float[] decode) {
             this(cs, bitsPerCoordinate, bitsPerComponent, bitsPerFlag, new PdfArray(decode));
         }
 
+        /**
+         * Creates the new instance of the class.
+         *
+         * @param cs the {@link PdfColorSpace} object in which colour values shall be expressed.
+         *           The special Pattern space isn't excepted.
+         * @param bitsPerCoordinate the number of bits used to represent each vertex coordinate.
+         *                          The value shall be 1, 2, 4, 8, 12, 16, 24, or 32.
+         * @param bitsPerComponent the number of bits used to represent each colour component.
+         *                         The value shall be 1, 2, 4, 8, 12, or 16.
+         * @param bitsPerFlag the number of bits used to represent the edge flag for each vertex.
+         *                    The value of BitsPerFlag shall be 2, 4, or 8,
+         *                    but only the least significant 2 bits in each flag value shall be used.
+         *                    The value for the edge flag shall be 0, 1, 2 or 3.
+         * @param decode the {@link PdfArray} of numbers specifying how to map vertex coordinates and colour components
+         *               into the appropriate ranges of values. The ranges shall be specified as follows:
+         *               [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         *               Only one pair of color values shall be specified if a Function entry is present.
+         */
         public CoonsPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, PdfArray decode) {
             super(new PdfStream(), ShadingType.COONS_PATCH_MESH, cs.getPdfObject());
             setBitsPerCoordinate(bitsPerCoordinate);
@@ -862,46 +1125,113 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
             setDecode(decode);
         }
 
+        /**
+         * Gets the number of bits used to represent each vertex coordinate.
+         *
+         * @return the number of bits. Can be 1, 2, 4, 8, 12, 16, 24, or 32.
+         */
         public int getBitsPerCoordinate() {
             return (int) getPdfObject().getAsInt(PdfName.BitsPerCoordinate);
         }
 
+        /**
+         * Sets the number of bits used to represent each vertex coordinate.
+         *
+         * @param bitsPerCoordinate the number of bits to be set. Shall be 1, 2, 4, 8, 12, 16, 24, or 32.
+         */
         public void setBitsPerCoordinate(int bitsPerCoordinate) {
             getPdfObject().put(PdfName.BitsPerCoordinate, new PdfNumber(bitsPerCoordinate));
             setModified();
         }
 
+        /**
+         * Gets the number of bits used to represent each colour component.
+         *
+         * @return the number of bits. Can be 1, 2, 4, 8, 12, or 16.
+         */
         public int getBitsPerComponent() {
             return (int) getPdfObject().getAsInt(PdfName.BitsPerComponent);
         }
 
+        /**
+         * Sets the number of bits used to represent each colour component.
+         *
+         * @param bitsPerComponent the number of bits to be set. Shall be 1, 2, 4, 8, 12, or 16.
+         */
         public void setBitsPerComponent(int bitsPerComponent) {
             getPdfObject().put(PdfName.BitsPerComponent, new PdfNumber(bitsPerComponent));
             setModified();
         }
 
+        /**
+         * Gets the number of bits used to represent the edge flag for each vertex.
+         * But only the least significant 2 bits in each flag value shall be used.
+         * The valid flag values are 0, 1, 2 or 3.
+         *
+         * @return the number of bits. Can be 2, 4 or 8.
+         */
         public int getBitsPerFlag() {
             return (int) getPdfObject().getAsInt(PdfName.BitsPerFlag);
         }
 
+        /**
+         * Sets the number of bits used to represent the edge flag for each vertex.
+         * But only the least significant 2 bits in each flag value shall be used.
+         * The valid flag values are 0, 1, 2 or 3.
+         *
+         * @param bitsPerFlag the number of bits to be set. Shall be 2, 4 or 8.
+         */
         public void setBitsPerFlag(int bitsPerFlag) {
             getPdfObject().put(PdfName.BitsPerFlag, new PdfNumber(bitsPerFlag));
             setModified();
         }
 
+        /**
+         * Gets the {@link PdfArray} of numbers specifying how to map vertex coordinates and colour components
+         * into the appropriate ranges of values. The ranges shall be specified as follows:
+         * [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         * Only one pair of color values shall be specified if a Function entry is present.
+         *
+         * @return the {@link PdfArray} Decode object.
+         */
         public PdfArray getDecode() {
             return getPdfObject().getAsArray(PdfName.Decode);
         }
 
+        /**
+         * Sets the {@code float[]} of numbers specifying how to map vertex coordinates and colour components
+         * into the appropriate ranges of values. The ranges shall be specified as follows:
+         * [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         * Only one pair of color values shall be specified if a Function entry is present.
+         *
+         * @param decode the {@code float[]} of Decode object to set.
+         */
         public void setDecode(float[] decode) {
             getPdfObject().put(PdfName.Decode, new PdfArray(decode));
         }
 
+        /**
+         * Sets the {@link PdfArray} of numbers specifying how to map vertex coordinates and colour components
+         * into the appropriate ranges of values. The ranges shall be specified as follows:
+         * [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         * Only one pair of color values shall be specified if a Function entry is present.
+         *
+         * @param decode the {@link PdfArray} Decode object to set.
+         */
         public void setDecode(PdfArray decode) {
             getPdfObject().put(PdfName.Decode, decode);
         }
     }
 
+    /**
+     * The class that extends {@link PdfShading} class and is in charge of Shading Dictionary with
+     * Tensor-Product Patch mesh type.
+     *
+     * This type of shading is identical to {@link CoonsPatchMesh}, except that it's based on a
+     * bicubic tensor-product patch defined by 16 control points.
+     *
+     * For the format of data stream, that defines patches {@see ISO-320001 Table 86}.
+     */
     public static class TensorProductPatchMesh extends PdfShading {
        
     	private static final long serialVersionUID = -2750695839303504742L;
@@ -912,16 +1242,52 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @deprecated Intended only for private use.
          * You should use {@link PdfShading#makeShading(PdfDictionary)} instead.
          *
-         * @param pdfStream - {@link PdfStream} from which the instance is created.
+         * @param pdfStream {@link PdfStream} from which the instance is created.
          */
 		public TensorProductPatchMesh(PdfStream pdfStream) {
             super(pdfStream);
         }
 
+        /**
+         * Creates the new instance of the class.
+         *
+         * @param cs the {@link PdfColorSpace} object in which colour values shall be expressed.
+         *           The special Pattern space isn't excepted.
+         * @param bitsPerCoordinate the number of bits used to represent each vertex coordinate.
+         *                          The value shall be 1, 2, 4, 8, 12, 16, 24, or 32.
+         * @param bitsPerComponent the number of bits used to represent each colour component.
+         *                         The value shall be 1, 2, 4, 8, 12, or 16.
+         * @param bitsPerFlag the number of bits used to represent the edge flag for each vertex.
+         *                    The value of BitsPerFlag shall be 2, 4, or 8,
+         *                    but only the least significant 2 bits in each flag value shall be used.
+         *                    The value for the edge flag shall be 0, 1, 2 or 3.
+         * @param decode the {@code int[]} of numbers specifying how to map vertex coordinates and colour components
+         *               into the appropriate ranges of values. The ranges shall be specified as follows:
+         *               [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         *               Only one pair of color values shall be specified if a Function entry is present.
+         */
         public TensorProductPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, float[] decode) {
             this(cs, bitsPerCoordinate, bitsPerComponent, bitsPerFlag, new PdfArray(decode));
         }
 
+        /**
+         * Creates the new instance of the class.
+         *
+         * @param cs the {@link PdfColorSpace} object in which colour values shall be expressed.
+         *           The special Pattern space isn't excepted.
+         * @param bitsPerCoordinate the number of bits used to represent each vertex coordinate.
+         *                          The value shall be 1, 2, 4, 8, 12, 16, 24, or 32.
+         * @param bitsPerComponent the number of bits used to represent each colour component.
+         *                         The value shall be 1, 2, 4, 8, 12, or 16.
+         * @param bitsPerFlag the number of bits used to represent the edge flag for each vertex.
+         *                    The value of BitsPerFlag shall be 2, 4, or 8,
+         *                    but only the least significant 2 bits in each flag value shall be used.
+         *                    The value for the edge flag shall be 0, 1, 2 or 3.
+         * @param decode the {@link PdfArray} of numbers specifying how to map vertex coordinates and colour components
+         *               into the appropriate ranges of values. The ranges shall be specified as follows:
+         *               [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         *               Only one pair of color values shall be specified if a Function entry is present.
+         */
         public TensorProductPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, PdfArray decode) {
             super(new PdfStream(), ShadingType.TENSOR_PRODUCT_PATCH_MESH, cs.getPdfObject());
 
@@ -931,41 +1297,99 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
             setDecode(decode);
         }
 
+        /**
+         * Gets the number of bits used to represent each vertex coordinate.
+         *
+         * @return the number of bits. Can be 1, 2, 4, 8, 12, 16, 24, or 32.
+         */
         public int getBitsPerCoordinate() {
             return (int) getPdfObject().getAsInt(PdfName.BitsPerCoordinate);
         }
 
+        /**
+         * Sets the number of bits used to represent each vertex coordinate.
+         *
+         * @param bitsPerCoordinate the number of bits to be set. Shall be 1, 2, 4, 8, 12, 16, 24, or 32.
+         */
         public void setBitsPerCoordinate(int bitsPerCoordinate) {
             getPdfObject().put(PdfName.BitsPerCoordinate, new PdfNumber(bitsPerCoordinate));
             setModified();
         }
 
+        /**
+         * Gets the number of bits used to represent each colour component.
+         *
+         * @return the number of bits. Can be 1, 2, 4, 8, 12, or 16.
+         */
         public int getBitsPerComponent() {
             return (int) getPdfObject().getAsInt(PdfName.BitsPerComponent);
         }
 
+        /**
+         * Sets the number of bits used to represent each colour component.
+         *
+         * @param bitsPerComponent the number of bits to be set. Shall be 1, 2, 4, 8, 12, or 16.
+         */
         public void setBitsPerComponent(int bitsPerComponent) {
             getPdfObject().put(PdfName.BitsPerComponent, new PdfNumber(bitsPerComponent));
             setModified();
         }
 
+        /**
+         * Gets the number of bits used to represent the edge flag for each vertex.
+         * But only the least significant 2 bits in each flag value shall be used.
+         * The valid flag values are 0, 1, 2 or 3.
+         *
+         * @return the number of bits. Can be 2, 4 or 8.
+         */
         public int getBitsPerFlag() {
             return (int) getPdfObject().getAsInt(PdfName.BitsPerFlag);
         }
 
+        /**
+         * Sets the number of bits used to represent the edge flag for each vertex.
+         * But only the least significant 2 bits in each flag value shall be used.
+         * The valid flag values are 0, 1, 2 or 3.
+         *
+         * @param bitsPerFlag the number of bits to be set. Shall be 2, 4 or 8.
+         */
         public void setBitsPerFlag(int bitsPerFlag) {
             getPdfObject().put(PdfName.BitsPerFlag, new PdfNumber(bitsPerFlag));
             setModified();
         }
 
+        /**
+         * Gets the {@link PdfArray} of numbers specifying how to map vertex coordinates and colour components
+         * into the appropriate ranges of values. The ranges shall be specified as follows:
+         * [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         * Only one pair of color values shall be specified if a Function entry is present.
+         *
+         * @return the {@link PdfArray} Decode object.
+         */
         public PdfArray getDecode() {
             return getPdfObject().getAsArray(PdfName.Decode);
         }
 
+        /**
+         * Sets the {@code float[]} of numbers specifying how to map vertex coordinates and colour components
+         * into the appropriate ranges of values. The ranges shall be specified as follows:
+         * [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         * Only one pair of color values shall be specified if a Function entry is present.
+         *
+         * @param decode the {@code float[]} of Decode object to set.
+         */
         public void setDecode(float[] decode) {
             getPdfObject().put(PdfName.Decode, new PdfArray(decode));
         }
 
+        /**
+         * Sets the {@link PdfArray} of numbers specifying how to map vertex coordinates and colour components
+         * into the appropriate ranges of values. The ranges shall be specified as follows:
+         * [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
+         * Only one pair of color values shall be specified if a Function entry is present.
+         *
+         * @param decode the {@link PdfArray} Decode object to set.
+         */
         public void setDecode(PdfArray decode) {
             getPdfObject().put(PdfName.Decode, decode);
         }
