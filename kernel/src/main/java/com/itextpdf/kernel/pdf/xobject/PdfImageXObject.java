@@ -52,17 +52,28 @@ import com.itextpdf.io.image.RawImageData;
 import com.itextpdf.io.image.RawImageHelper;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.Version;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.CompressionConstants;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfBoolean;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfLiteral;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
 import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 
-import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.imageio.ImageIO;
 
 public class PdfImageXObject extends PdfXObject {
 
@@ -163,6 +174,78 @@ public class PdfImageXObject extends PdfXObject {
             }
         }
         return bytes;
+    }
+
+    /**
+     * Identifies the type of the image that is stored in the bytes of this {@link PdfImageXObject}.
+     * Note that this has nothing to do with the original type of the image. For instance, the return value
+     * of this method will never be {@link ImageType#PNG} as we loose this information when converting a
+     * PNG image into something that can be put into a PDF file.
+     * The possible values are: {@link ImageType#JPEG}, {@link ImageType#JPEG2000}, {@link ImageType#JBIG2},
+     * {@link ImageType#TIFF}, {@link ImageType#PNG}
+     * @return the identified type of image
+     */
+    public ImageType identifyImageType() {
+        ImageType result = null;
+        PdfObject filter = getPdfObject().get(PdfName.Filter);
+        PdfArray filters = new PdfArray();
+        if (filter != null) {
+            if (filter.getType() == PdfObject.NAME) {
+                filters.add(filter);
+            } else if (filter.getType() == PdfObject.ARRAY) {
+                filters = ((PdfArray) filter);
+            }
+        }
+        for (int i = filters.size() - 1; i >= 0; i--) {
+            PdfName filterName = (PdfName) filters.get(i);
+            if (PdfName.DCTDecode.equals(filterName)) {
+                result = ImageType.JPEG;
+                break;
+            } else if (PdfName.JBIG2Decode.equals(filterName)) {
+                result = ImageType.JBIG2;
+                break;
+            } else if (PdfName.JPXDecode.equals(filterName)) {
+                result = ImageType.JPEG2000;
+                break;
+            }
+        }
+
+        if (result == null) {
+            PdfObject colorspace = getPdfObject().get(PdfName.ColorSpace);
+            prepareAndFindColorspace(colorspace);
+            if (pngColorType < 0) {
+                result = ImageType.TIFF;
+            } else {
+                result = ImageType.PNG;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Identifies recommended file extension to store the bytes of this {@link PdfImageXObject}.
+     * Possible values are: 'png', 'jpg', 'jp2', 'tif', 'jbig2'.
+     * This extension can later be used together with the result of {@link #getImageBytes()}.
+     * @see #identifyImageType()
+     * @return a {@link String} with recommended file extension
+     */
+    public String identifyImageFileExtension() {
+        ImageType bytesType = identifyImageType();
+        switch (bytesType) {
+            case PNG:
+                return "png";
+            case JPEG:
+                return "jpg";
+            case JPEG2000:
+                return "jp2";
+            case TIFF:
+                return "tif";
+            case JBIG2:
+                return "jbig2";
+            default:
+                throw new IllegalStateException("Should have never happened. This type of image is not allowed for ImageXObject");
+        }
     }
 
     public PdfImageXObject put(PdfName key, PdfObject value) {
@@ -326,20 +409,22 @@ public class PdfImageXObject extends PdfXObject {
         return array;
     }
 
-    private byte[] decodeTiffAndPngBytes(byte[] imageBytes) throws IOException {
-
+    private void prepareAndFindColorspace(PdfObject colorspace) {
         pngColorType = -1;
-        PdfArray decode = getPdfObject().getAsArray(PdfName.Decode);
         width = getPdfObject().getAsNumber(PdfName.Width).intValue();
         height = getPdfObject().getAsNumber(PdfName.Height).intValue();
         bpc = getPdfObject().getAsNumber(PdfName.BitsPerComponent).intValue();
         pngBitDepth = bpc;
-        PdfObject colorspace = getPdfObject().get(PdfName.ColorSpace);
 
         palette = null;
         icc = null;
         stride = 0;
         findColorspace(colorspace, true);
+    }
+
+    private byte[] decodeTiffAndPngBytes(byte[] imageBytes) throws IOException {
+        PdfObject colorspace = getPdfObject().get(PdfName.ColorSpace);
+        prepareAndFindColorspace(colorspace);
         java.io.ByteArrayOutputStream ms = new java.io.ByteArrayOutputStream();
         if (pngColorType < 0) {
             if (bpc != 8)
@@ -387,6 +472,7 @@ public class PdfImageXObject extends PdfXObject {
             return imageBytes;
         } else {
             PngWriter png = new PngWriter(ms);
+            PdfArray decode = getPdfObject().getAsArray(PdfName.Decode);
             if (decode != null) {
                 if (pngBitDepth == 1) {
                     // if the decode array is 1,0, then we need to invert the image
