@@ -44,7 +44,6 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
@@ -52,9 +51,18 @@ import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Document outline object
+ * See ISO-320001, 12.3.3 Document Outline.
+ */
 public class PdfOutline {
-
+    /**
+     * A flag for displaying the outline item’s text with italic font.
+     */
     public static int FLAG_ITALIC = 1;
+    /**
+     * A flag for displaying the outline item’s text with bold font.
+     */
     public static int FLAG_BOLD = 2;
 
     private List<PdfOutline> children = new ArrayList<>();
@@ -64,12 +72,27 @@ public class PdfOutline {
     private PdfOutline parent;
     private PdfDocument pdfDoc;
 
-    public PdfOutline(String title, PdfDictionary content, PdfDocument pdfDocument){
+    /**
+     * Create instance of document outline.
+     *
+     * @param title       the text that shall be displayed on the screen for this item.
+     * @param content     Outline dictionary
+     * @param pdfDocument {@link PdfDocument} the outline belongs to.
+     */
+    public PdfOutline(String title, PdfDictionary content, PdfDocument pdfDocument) {
         this.title = title;
         this.content = content;
+
         this.pdfDoc = pdfDocument;
     }
 
+    /**
+     * Create instance of document outline.
+     *
+     * @param title   the text that shall be displayed on the screen for this item.
+     * @param content Outline dictionary
+     * @param parent  parent outline.
+     */
     public PdfOutline(String title, PdfDictionary content, PdfOutline parent) {
         this.title = title;
         this.content = content;
@@ -80,8 +103,8 @@ public class PdfOutline {
 
     /**
      * This constructor creates root outline in the document.
-     * @param doc
-     * @throws PdfException
+     *
+     * @param doc {@link PdfDocument}
      */
     protected PdfOutline(PdfDocument doc) {
         content = new PdfDictionary();
@@ -91,69 +114,109 @@ public class PdfOutline {
         doc.getCatalog().addRootOutline(this);
     }
 
+    /**
+     * Gets title of the outline.
+     *
+     * @return String value.
+     */
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title){
+    /**
+     * Sets title of the outline with {@link PdfEncodings#UNICODE_BIG} encoding,
+     * {@code Title} key.
+     *
+     * @param title String value.
+     */
+    public void setTitle(String title) {
         this.title = title;
         this.content.put(PdfName.Title, new PdfString(title, PdfEncodings.UNICODE_BIG));
     }
 
+    /**
+     * Sets color for the outline entry’s text, {@code C} key.
+     *
+     * @param color {@link Color}
+     */
     public void setColor(Color color) {
         content.put(PdfName.C, new PdfArray(color.getColorValue()));
     }
 
+    /**
+     * Sets text style for the outline entry’s text, {@code F} key.
+     *
+     * @param style Could be either {@link #FLAG_BOLD} or {@link #FLAG_ITALIC}. Default value is {@code 0}.
+     */
     public void setStyle(int style) {
-        if (style == FLAG_BOLD || style == FLAG_ITALIC ) {
+        if (style == FLAG_BOLD || style == FLAG_ITALIC) {
             content.put(PdfName.F, new PdfNumber(style));
         }
     }
 
+    /**
+     * Gets content dictionary.
+     *
+     * @return {@link PdfDictionary}.
+     */
     public PdfDictionary getContent() {
         return content;
     }
 
-    public List<PdfOutline> getAllChildren(){
+    /**
+     * Gets list of children outlines.
+     *
+     * @return List of {@link PdfOutline}.
+     */
+    public List<PdfOutline> getAllChildren() {
         return children;
     }
 
-    public PdfOutline getParent(){
+    /**
+     * Gets parent outline.
+     *
+     * @return {@link PdfOutline}.
+     */
+    public PdfOutline getParent() {
         return parent;
     }
 
+    /**
+     * Gets {@link PdfDestination}.
+     *
+     * @return {@link PdfDestination}.
+     */
     public PdfDestination getDestination() {
         return destination;
     }
 
-    public void addDestination(PdfDestination destination){
+    /**
+     * Adds {@link PdfDestination} for the outline, {@code Dest} key.
+     *
+     * @param destination instance of {@link PdfDestination}.
+     */
+    public void addDestination(PdfDestination destination) {
         setDestination(destination);
         content.put(PdfName.Dest, destination.getPdfObject());
     }
 
+    /**
+     * Adds {@link PdfAction} for the outline, {@code A} key.
+     *
+     * @param action instance of {@link PdfAction}.
+     */
     public void addAction(PdfAction action) {
         content.put(PdfName.A, action.getPdfObject());
     }
 
     /**
-     * Adds an <CODE>PdfOutline</CODE> as a child to existing <CODE>PdfOutline</CODE>
-     * and put it in the end of the existing <CODE>PdfOutline</CODE> children list
-     * @param title an outline title
-     * @return a created outline
-     * @throws PdfException
-     */
-    public PdfOutline addOutline(String title) {
-        return addOutline(title, -1);
-    }
-
-    /**
-     * Adds an {@code PdfOutline} as a child to existing <CODE>PdfOutline</CODE>
-     * and put it to specified position in the existing <CODE>PdfOutline</CODE> children list
-     * @param title an outline title
+     * Adds a new {@code PdfOutline} with specified parameters as a child to existing {@code PdfOutline}
+     * and put it to specified position in the existing {@code PdfOutline} children list.
+     *
+     * @param title    an outline title
      * @param position a position in the current outline child List where a new outline should be added.
      *                 If the position equals -1, then the outline will be put in the end of children list.
-     * @return created outline
-     * @throws PdfException
+     * @return just created outline
      */
     public PdfOutline addOutline(String title, int position) {
         if (position == -1)
@@ -162,9 +225,9 @@ public class PdfOutline {
         PdfOutline outline = new PdfOutline(title, dictionary, this);
         dictionary.put(PdfName.Title, new PdfString(title, PdfEncodings.UNICODE_BIG));
         dictionary.put(PdfName.Parent, content);
-        if (children.size() > 0){
-            if (position != 0){
-                PdfDictionary prevContent = children.get(position-1).getContent();
+        if (children.size() > 0) {
+            if (position != 0) {
+                PdfDictionary prevContent = children.get(position - 1).getContent();
                 dictionary.put(PdfName.Prev, prevContent);
                 prevContent.put(PdfName.Next, dictionary);
             }
@@ -180,33 +243,67 @@ public class PdfOutline {
         if (position == children.size())
             content.put(PdfName.Last, dictionary);
 
-        if (children.size() > 0){
+        if (children.size() > 0) {
             int count = (int) this.content.getAsInt(PdfName.Count);
             if (count > 0)
                 content.put(PdfName.Count, new PdfNumber(count++));
             else
                 content.put(PdfName.Count, new PdfNumber(count--));
-        }
-
-        else
+        } else
             this.content.put(PdfName.Count, new PdfNumber(-1));
         children.add(position, outline);
-
 
         return outline;
     }
 
-    void clear(){
+    /**
+     * Adds an {@code PdfOutline} as a child to existing {@code PdfOutline}
+     * and put it in the end of the existing {@code PdfOutline} children list.
+     *
+     * @param title an outline title
+     * @return just created outline
+     */
+    public PdfOutline addOutline(String title) {
+        return addOutline(title, -1);
+    }
+
+    /**
+     * Adds an {@code PdfOutline} as a child to existing {@code PdfOutline}
+     * and put it to the end of the existing {@code PdfOutline} children list.
+     *
+     * @param outline an outline to add.
+     * @return just created outline
+     */
+    public PdfOutline addOutline(PdfOutline outline) {
+        PdfOutline newOutline = addOutline(outline.getTitle());
+        newOutline.addDestination(outline.getDestination());
+
+        List<PdfOutline> children = outline.getAllChildren();
+        for (PdfOutline child : children) {
+            newOutline.addOutline(child);
+        }
+
+        return newOutline;
+    }
+
+    /**
+     * Clear list of children.
+     */
+    void clear() {
         children.clear();
     }
 
-    void setDestination(PdfDestination destination){
+    /**
+     * Sets {@link PdfDestination}.
+     *
+     * @param destination instance of {@link PdfDestination}.
+     */
+    void setDestination(PdfDestination destination) {
         this.destination = destination;
     }
 
     /**
-     * remove this outline from the document.
-      * @throws PdfException
+     * Remove this outline from the document.
      */
     void removeOutline() {
         PdfName type = content.getAsName(PdfName.Type);
@@ -218,9 +315,9 @@ public class PdfOutline {
         List<PdfOutline> children = parent.children;
         children.remove(this);
         PdfDictionary parentContent = parent.content;
-        if (children.size() > 0){
+        if (children.size() > 0) {
             parentContent.put(PdfName.First, children.get(0).content);
-            parentContent.put(PdfName.Last, children.get(children.size()-1).content);
+            parentContent.put(PdfName.Last, children.get(children.size() - 1).content);
         } else {
             parent.removeOutline();
             return;
@@ -228,29 +325,15 @@ public class PdfOutline {
 
         PdfDictionary next = content.getAsDictionary(PdfName.Next);
         PdfDictionary prev = content.getAsDictionary(PdfName.Prev);
-        if (prev != null){
-            if (next != null){
+        if (prev != null) {
+            if (next != null) {
                 prev.put(PdfName.Next, next);
                 next.put(PdfName.Prev, prev);
-            }
-            else {
+            } else {
                 prev.remove(PdfName.Next);
             }
-        }
-        else if (next != null){
+        } else if (next != null) {
             next.remove(PdfName.Prev);
         }
-    }
-
-    public PdfOutline addOutline(PdfOutline outline) {
-        PdfOutline newOutline = addOutline(outline.getTitle());
-        newOutline.addDestination(outline.getDestination());
-
-        List<PdfOutline> children = outline.getAllChildren();
-        for(PdfOutline child : children){
-            newOutline.addOutline(child);
-        }
-
-        return newOutline;
     }
 }
