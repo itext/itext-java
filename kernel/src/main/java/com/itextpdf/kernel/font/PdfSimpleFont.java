@@ -199,7 +199,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             int uni = fontEncoding.getUnicode(b & 0xff);
             if (uni > -1) {
                 builder.append((char) (int) uni);
-            } else {
+            } else if (fontEncoding.getBaseEncoding() == null) {
                 Glyph glyph = fontProgram.getGlyphByCode(b & 0xff);
                 if (glyph != null && glyph.getChars() != null) {
                     builder.append(glyph.getChars());
@@ -214,7 +214,13 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         float width = 0;
         byte[] contentBytes = content.getValueBytes();
         for (byte b : contentBytes) {
-            Glyph glyph = fontProgram.getGlyphByCode(b & 0xff);
+            Glyph glyph = null;
+            int uni = fontEncoding.getUnicode(b & 0xff);
+            if (uni > -1) {
+                glyph = getGlyph(uni);
+            } else if (fontEncoding.getBaseEncoding() == null) {
+                glyph = fontProgram.getGlyphByCode(b & 0xff);
+            }
             width += glyph != null ? glyph.getWidth() : 0;
         }
         return width;

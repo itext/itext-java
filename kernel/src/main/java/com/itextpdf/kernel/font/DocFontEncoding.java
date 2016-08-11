@@ -48,7 +48,11 @@ import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
 
 /**
  * This class allow to parse document font's encoding.
@@ -104,8 +108,6 @@ class DocFontEncoding extends FontEncoding {
             }
             fontEncoding.baseEncoding = enc;
             fontEncoding.fillNamedEncoding();
-        } else {
-            fontEncoding.fillStandardEncoding();
         }
     }
 

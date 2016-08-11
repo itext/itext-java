@@ -417,6 +417,11 @@ public class IntHashtable implements Cloneable, Serializable {
         protected Object clone() throws CloneNotSupportedException {
             return new Entry(key, value, next != null ? (Entry)next.clone() : null);
         }
+
+        @Override
+        public String toString() {
+            return MessageFormat.format("{0}={1}", key, value);
+        }
     }
 
     public int[] toOrderedKeys() {
