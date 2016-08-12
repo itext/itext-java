@@ -208,6 +208,21 @@ public class PdfOutline {
     public void addAction(PdfAction action) {
         content.put(PdfName.A, action.getPdfObject());
     }
+    
+    /**
+     * Defines if the outline needs to be closed or not.
+     * By default, outlines are open.
+     *
+     * @param open    if false, the outline will be closed by default
+     */
+    public void setOpen(boolean open) {
+        if (!open)
+            content.put(PdfName.Count, new PdfNumber(-1));
+        else if (children.size() > 0)
+            content.put(PdfName.Count, new PdfNumber(children.size()));
+        else
+            content.remove(PdfName.Count);
+    }
 
     /**
      * Adds a new {@code PdfOutline} with specified parameters as a child to existing {@code PdfOutline}
@@ -243,14 +258,10 @@ public class PdfOutline {
         if (position == children.size())
             content.put(PdfName.Last, dictionary);
 
-        if (children.size() > 0) {
-            int count = (int) this.content.getAsInt(PdfName.Count);
-            if (count > 0)
-                content.put(PdfName.Count, new PdfNumber(count++));
-            else
-                content.put(PdfName.Count, new PdfNumber(count--));
-        } else
-            this.content.put(PdfName.Count, new PdfNumber(-1));
+        PdfNumber count = this.content.getAsNumber(PdfName.Count);
+        if (count == null || count.getValue() != -1){
+            content.put(PdfName.Count, new PdfNumber(children.size() + 1));
+        }
         children.add(position, outline);
 
         return outline;
