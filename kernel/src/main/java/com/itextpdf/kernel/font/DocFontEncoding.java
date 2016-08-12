@@ -64,16 +64,14 @@ class DocFontEncoding extends FontEncoding {
     protected DocFontEncoding() {
     }
 
-    public static FontEncoding createDocFontEncoding(PdfObject encoding, CMapToUnicode toUnicode, boolean fillBaseEncoding) {
+    public static FontEncoding createDocFontEncoding(PdfObject encoding, CMapToUnicode toUnicode, boolean fillStandardEncoding) {
         if (encoding != null) {
             if (encoding.isName()) {
                 return FontEncoding.createFontEncoding(((PdfName) encoding).getValue());
             } else if (encoding.isDictionary()) {
                 DocFontEncoding fontEncoding = new DocFontEncoding();
                 fontEncoding.differences = new String[256];
-                if (fillBaseEncoding) {
-                    fillBaseEncoding(fontEncoding, ((PdfDictionary) encoding).getAsName(PdfName.BaseEncoding));
-                }
+                fillBaseEncoding(fontEncoding, ((PdfDictionary) encoding).getAsName(PdfName.BaseEncoding), fillStandardEncoding);
                 fillDifferences(fontEncoding, ((PdfDictionary) encoding).getAsArray(PdfName.Differences), toUnicode);
                 return fontEncoding;
             }
@@ -88,11 +86,7 @@ class DocFontEncoding extends FontEncoding {
         }
     }
 
-    public static FontEncoding createDocFontEncoding(PdfObject encoding, CMapToUnicode toUnicode) {
-        return createDocFontEncoding(encoding, toUnicode, true);
-    }
-
-    private static void fillBaseEncoding(DocFontEncoding fontEncoding, PdfName baseEncodingName) {
+    private static void fillBaseEncoding(DocFontEncoding fontEncoding, PdfName baseEncodingName, boolean fillStandardEncoding) {
         if (baseEncodingName != null) {
             fontEncoding.baseEncoding = baseEncodingName.getValue();
         }
@@ -108,6 +102,8 @@ class DocFontEncoding extends FontEncoding {
             }
             fontEncoding.baseEncoding = enc;
             fontEncoding.fillNamedEncoding();
+        } else if (fillStandardEncoding) {
+            fontEncoding.fillStandardEncoding();
         }
     }
 
