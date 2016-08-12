@@ -186,7 +186,6 @@ public class PdfImageXObject extends PdfXObject {
      * @return the identified type of image
      */
     public ImageType identifyImageType() {
-        ImageType result = null;
         PdfObject filter = getPdfObject().get(PdfName.Filter);
         PdfArray filters = new PdfArray();
         if (filter != null) {
@@ -199,28 +198,22 @@ public class PdfImageXObject extends PdfXObject {
         for (int i = filters.size() - 1; i >= 0; i--) {
             PdfName filterName = (PdfName) filters.get(i);
             if (PdfName.DCTDecode.equals(filterName)) {
-                result = ImageType.JPEG;
-                break;
+                return ImageType.JPEG;
             } else if (PdfName.JBIG2Decode.equals(filterName)) {
-                result = ImageType.JBIG2;
-                break;
+                return ImageType.JBIG2;
             } else if (PdfName.JPXDecode.equals(filterName)) {
-                result = ImageType.JPEG2000;
-                break;
+                return ImageType.JPEG2000;
             }
         }
 
-        if (result == null) {
-            PdfObject colorspace = getPdfObject().get(PdfName.ColorSpace);
-            prepareAndFindColorspace(colorspace);
-            if (pngColorType < 0) {
-                result = ImageType.TIFF;
-            } else {
-                result = ImageType.PNG;
-            }
+        // None of the previous types match
+        PdfObject colorspace = getPdfObject().get(PdfName.ColorSpace);
+        prepareAndFindColorspace(colorspace);
+        if (pngColorType < 0) {
+            return ImageType.TIFF;
+        } else {
+            return ImageType.PNG;
         }
-
-        return result;
     }
 
     /**
