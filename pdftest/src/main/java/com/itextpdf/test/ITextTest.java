@@ -65,7 +65,7 @@ public abstract class ITextTest {
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Rule
-    public Timeout testTimeout = new Timeout(60, TimeUnit.SECONDS);
+    public Timeout testTimeout = new Timeout(5, TimeUnit.MINUTES);
 
     /**
      * Creates a folder with a given path, including all necessary nonexistent parent directories.
