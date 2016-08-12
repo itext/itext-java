@@ -69,7 +69,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
     private static final long serialVersionUID = -8152778382960290571L;
 
-	PdfTrueTypeFont(TrueTypeFont ttf, String encoding, boolean embedded) {
+    PdfTrueTypeFont(TrueTypeFont ttf, String encoding, boolean embedded) {
         super();
         setFontProgram(ttf);
         this.embedded = embedded;
@@ -212,6 +212,9 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
             }
             if (fontStream != null) {
                 fontDescriptor.put(fontFileName, fontStream);
+                if (fontStream.getIndirectReference() != null) {
+                    fontStream.flush();
+                }
             }
         }
     }

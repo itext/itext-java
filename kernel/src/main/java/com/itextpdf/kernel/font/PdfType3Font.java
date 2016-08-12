@@ -226,6 +226,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
             if (fontEncoding.canDecode(i)) {
                 Type3Glyph glyph = getType3Glyph(fontEncoding.getUnicode(i));
                 charProcs.put(new PdfName(fontEncoding.getDifference(i)), glyph.getContentStream());
+                glyph.getContentStream().flush();
             }
         }
         getPdfObject().put(PdfName.CharProcs, charProcs);

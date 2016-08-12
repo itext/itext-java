@@ -332,7 +332,9 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         PdfDictionary fontDescriptor = !isBuiltInFont() ? getFontDescriptor(fontName) : null;
         if (fontDescriptor != null) {
             getPdfObject().put(PdfName.FontDescriptor, fontDescriptor);
-            fontDescriptor.flush();
+            if (fontDescriptor.getIndirectReference() != null) {
+                fontDescriptor.flush();
+            }
         }
     }
 
@@ -349,7 +351,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         FontMetrics fontMetrics = fontProgram.getFontMetrics();
         FontNames fontNames = fontProgram.getFontNames();
         PdfDictionary fontDescriptor = new PdfDictionary();
-        markObjectAsIndirect(fontDescriptor);
+        makeObjectIndirect(fontDescriptor);
         fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
         fontDescriptor.put(PdfName.FontName, new PdfName(fontName));
         fontDescriptor.put(PdfName.Ascent, new PdfNumber(fontMetrics.getTypoAscender()));
@@ -367,10 +369,10 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         if (fontNames.getFontWeight() > 0) {
             fontDescriptor.put(PdfName.FontWeight, new PdfNumber(fontNames.getFontWeight()));
         }
-
         if (fontNames.getFamilyName() != null && fontNames.getFamilyName().length > 0 && fontNames.getFamilyName()[0].length >= 4) {
             fontDescriptor.put(PdfName.FontFamily, new PdfString(fontNames.getFamilyName()[0][3]));
         }
+        //add font stream and flush it immediately
         addFontStream(fontDescriptor);
         int flags = fontProgram.getPdfFontFlags();
         if (!fontEncoding.isFontSpecific()) {

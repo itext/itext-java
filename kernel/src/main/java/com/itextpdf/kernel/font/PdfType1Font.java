@@ -56,7 +56,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
     private static final long serialVersionUID = 7009919945291639441L;
 
-	PdfType1Font(Type1Font type1Font, String encoding, boolean embedded) {
+    PdfType1Font(Type1Font type1Font, String encoding, boolean embedded) {
         super();
         setFontProgram(type1Font);
         this.embedded = embedded && !type1Font.isBuiltInFont();
@@ -139,9 +139,10 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
     protected void addFontStream(PdfDictionary fontDescriptor) {
         if (embedded) {
             if (fontProgram instanceof IDocFontProgram) {
-                IDocFontProgram docType1Font = (IDocFontProgram)fontProgram;
+                IDocFontProgram docType1Font = (IDocFontProgram) fontProgram;
                 fontDescriptor.put(docType1Font.getFontFileName(),
                         docType1Font.getFontFile());
+                docType1Font.getFontFile().flush();
                 if (docType1Font.getSubtype() != null) {
                     fontDescriptor.put(PdfName.Subtype, docType1Font.getSubtype());
                 }
@@ -154,6 +155,9 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
                         fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
                     }
                     fontDescriptor.put(PdfName.FontFile, fontStream);
+                    if (makeObjectIndirect(fontStream)) {
+                        fontStream.flush();
+                    }
                 }
             }
         }

@@ -53,6 +53,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfOutputStream;
 import com.itextpdf.kernel.pdf.PdfStream;
@@ -96,7 +97,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     protected PdfFont() {
         super(new PdfDictionary());
-        markObjectAsIndirect(getPdfObject());
         getPdfObject().put(PdfName.Type, PdfName.Font);
     }
 
@@ -463,6 +463,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             throw new PdfException(PdfException.FontEmbeddingIssue);
         }
         PdfStream fontStream = new PdfStream(fontStreamBytes);
+        makeObjectIndirect(fontStream);
         for (int k = 0; k < fontStreamLengths.length; ++k) {
             fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
         }
@@ -495,5 +496,22 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             s[k * 2 + 1] = r[1];
         }
         return s;
+    }
+
+    /**
+     * Helper method for making an object indirect, if the object already is indirect.
+     * Useful for FontDescriptor and FontFile to make possible immediate flushing.
+     * If there is no PdfDocument, mark the object as {@code MUST_BE_INDIRECT}.
+     * @param obj an object to make indirect.
+     * @return if current object isn't indirect, returns {@code false}, otherwise {@code tree}
+     */
+    boolean makeObjectIndirect(PdfObject obj) {
+        if (getPdfObject().getIndirectReference() != null) {
+            obj.makeIndirect(getPdfObject().getIndirectReference().getDocument());
+            return true;
+        } else {
+            markObjectAsIndirect(obj);
+            return false;
+        }
     }
 }
