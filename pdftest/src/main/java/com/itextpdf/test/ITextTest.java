@@ -49,7 +49,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.concurrent.TimeUnit;
 
+import org.junit.Rule;
+import org.junit.rules.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +63,9 @@ import org.slf4j.LoggerFactory;
 public abstract class ITextTest {
 
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    @Rule
+    public Timeout testTimeout = new Timeout(60, TimeUnit.SECONDS);
 
     /**
      * Creates a folder with a given path, including all necessary nonexistent parent directories.
