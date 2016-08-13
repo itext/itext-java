@@ -47,23 +47,11 @@ import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.property.BaseDirection;
-import com.itextpdf.layout.property.Leading;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.TabStop;
-import com.itextpdf.layout.layout.LayoutArea;
-import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.layout.LineLayoutResult;
-import com.itextpdf.layout.layout.TextLayoutResult;
-import com.itextpdf.layout.property.TabAlignment;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.layout.*;
+import com.itextpdf.layout.property.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
+import java.util.*;
 
 public class LineRenderer extends AbstractRenderer {
 
@@ -145,7 +133,7 @@ public class LineRenderer extends AbstractRenderer {
             }
 
             if (nextTabStop != null && nextTabStop.getTabAlignment() == TabAlignment.ANCHOR
-                                               && childRenderer instanceof TextRenderer) {
+                    && childRenderer instanceof TextRenderer) {
                 childRenderer.setProperty(Property.TAB_ANCHOR, nextTabStop.getTabAnchor());
             }
 
@@ -206,8 +194,8 @@ public class LineRenderer extends AbstractRenderer {
                         anythingPlaced = true;
                     }
 
-                    if (childResult.getStatus() == LayoutResult.PARTIAL && childResult.getOverflowRenderer() instanceof ImageRenderer){
-                        ((ImageRenderer)childResult.getOverflowRenderer()).autoScale(layoutContext.getArea());
+                    if (childResult.getStatus() == LayoutResult.PARTIAL && childResult.getOverflowRenderer() instanceof ImageRenderer) {
+                        ((ImageRenderer) childResult.getOverflowRenderer()).autoScale(layoutContext.getArea());
                     }
 
                     if (null != childResult.getOverflowRenderer()) {
@@ -221,7 +209,7 @@ public class LineRenderer extends AbstractRenderer {
                 }
 
                 result = new LineLayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1],
-                        anythingPlaced ? null : (childResult.getStatus() == LayoutResult.NOTHING ? this : childResult.getCauseOfNothing()));
+                        childResult.getStatus() == LayoutResult.NOTHING ? childResult.getCauseOfNothing() : this);
                 if (childResult.getStatus() == LayoutResult.PARTIAL && childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isSplitForcedByNewline()) {
                     result.setSplitForcedByNewline(true);
                 }
@@ -410,7 +398,7 @@ public class LineRenderer extends AbstractRenderer {
                 boolean isLastTextRenderer = !iterator.hasNext();
                 float widthAddition = (isLastTextRenderer ? (((TextRenderer) child).lineLength() - 1) : ((TextRenderer) child).lineLength()) * characterSpacing +
                         wordSpacing * ((TextRenderer) child).getNumberOfSpaces();
-                        child.getOccupiedArea().getBBox().setWidth(child.getOccupiedArea().getBBox().getWidth() + widthAddition);
+                child.getOccupiedArea().getBBox().setWidth(child.getOccupiedArea().getBBox().getWidth() + widthAddition);
             }
             lastRightPos = childX + child.getOccupiedArea().getBBox().getWidth();
         }
@@ -458,7 +446,7 @@ public class LineRenderer extends AbstractRenderer {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (IRenderer renderer: childRenderers) {
+        for (IRenderer renderer : childRenderers) {
             sb.append(renderer.toString());
         }
         return sb.toString();
@@ -486,7 +474,7 @@ public class LineRenderer extends AbstractRenderer {
         overflowRenderer.levels = levels;
         overflowRenderer.addAllProperties(getOwnProperties());
 
-        return new LineRenderer[] {splitRenderer, overflowRenderer};
+        return new LineRenderer[]{splitRenderer, overflowRenderer};
     }
 
     protected LineRenderer adjustChildrenYLine() {
@@ -494,8 +482,8 @@ public class LineRenderer extends AbstractRenderer {
         for (IRenderer renderer : childRenderers) {
             if (renderer instanceof TextRenderer) {
                 ((TextRenderer) renderer).moveYLineTo(actualYLine);
-            } else if (renderer instanceof ImageRenderer){
-                renderer.getOccupiedArea().getBBox().setY(occupiedArea.getBBox().getY()- maxDescent);
+            } else if (renderer instanceof ImageRenderer) {
+                renderer.getOccupiedArea().getBBox().setY(occupiedArea.getBBox().getY() - maxDescent);
             } else {
                 renderer.getOccupiedArea().getBBox().setY(occupiedArea.getBBox().getY());
             }
@@ -512,9 +500,9 @@ public class LineRenderer extends AbstractRenderer {
         return this;
     }
 
-    protected boolean containsImage(){
-        for (IRenderer renderer : childRenderers){
-            if (renderer instanceof ImageRenderer){
+    protected boolean containsImage() {
+        for (IRenderer renderer : childRenderers) {
+            if (renderer instanceof ImageRenderer) {
                 return true;
             }
         }
@@ -526,7 +514,7 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     private TabStop getNextTabStop(float curWidth) {
-        NavigableMap<Float, TabStop> tabStops = this.<NavigableMap<Float,TabStop>>getProperty(Property.TAB_STOPS);
+        NavigableMap<Float, TabStop> tabStops = this.<NavigableMap<Float, TabStop>>getProperty(Property.TAB_STOPS);
 
         Map.Entry<Float, TabStop> nextTabStopEntry = null;
         TabStop nextTabStop = null;
@@ -578,12 +566,12 @@ public class LineRenderer extends AbstractRenderer {
                 tabWidth = tabStop.getTabPosition() - curWidth - childWidth;
                 break;
             case CENTER:
-                tabWidth = tabStop.getTabPosition() - curWidth - childWidth/2;
+                tabWidth = tabStop.getTabPosition() - curWidth - childWidth / 2;
                 break;
             case ANCHOR:
                 float anchorPosition = -1;
                 if (nextElementRenderer instanceof TextRenderer)
-                    anchorPosition = ((TextRenderer)nextElementRenderer).getTabAnchorCharacterPosition();
+                    anchorPosition = ((TextRenderer) nextElementRenderer).getTabAnchorCharacterPosition();
                 if (anchorPosition == -1)
                     anchorPosition = childWidth;
                 tabWidth = tabStop.getTabPosition() - curWidth - anchorPosition;
@@ -604,7 +592,7 @@ public class LineRenderer extends AbstractRenderer {
         Float tabWidth = tabDefault - curWidth % tabDefault;
         if (curWidth + tabWidth > lineWidth)
             tabWidth = lineWidth - curWidth;
-        tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue((float)tabWidth));
+        tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue((float) tabWidth));
         tabRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
     }
 

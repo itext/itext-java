@@ -69,6 +69,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
     /**
      * Creates a ParagraphRenderer from its corresponding layout object.
+     *
      * @param modelElement the {@link com.itextpdf.layout.element.Paragraph} which this object should manage
      */
     public ParagraphRenderer(Paragraph modelElement) {
@@ -152,7 +153,7 @@ public class ParagraphRenderer extends BlockRenderer {
             float lineIndent = anythingPlaced ? 0 : (float) this.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
             float availableWidth = layoutBox.getWidth() - lineIndent;
             Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), availableWidth, layoutBox.getHeight());
-            LineLayoutResult result = ((LineRenderer)currentRenderer.setParent(this)).layout(new LayoutContext(new LayoutArea(pageNumber, childLayoutBox)));
+            LineLayoutResult result = ((LineRenderer) currentRenderer.setParent(this)).layout(new LayoutContext(new LayoutArea(pageNumber, childLayoutBox)));
 
             LineRenderer processedRenderer = null;
             if (result.getStatus() == LayoutResult.FULL) {
@@ -161,7 +162,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 processedRenderer = (LineRenderer) result.getSplitRenderer();
             }
 
-            TextAlignment textAlignment = (TextAlignment)this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT, TextAlignment.LEFT);
+            TextAlignment textAlignment = (TextAlignment) this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT, TextAlignment.LEFT);
             if (result.getStatus() == LayoutResult.PARTIAL && textAlignment == TextAlignment.JUSTIFIED && !result.isSplitForcedByNewline() ||
                     textAlignment == TextAlignment.JUSTIFIED_ALL) {
                 if (processedRenderer != null) {
@@ -180,7 +181,7 @@ public class ParagraphRenderer extends BlockRenderer {
             }
 
             leadingValue = processedRenderer != null && leading != null ? processedRenderer.getLeadingValue(leading) : 0;
-            if (processedRenderer != null && processedRenderer.containsImage()){
+            if (processedRenderer != null && processedRenderer.containsImage()) {
                 leadingValue -= previousDescent;
             }
             boolean doesNotFit = result.getStatus() == LayoutResult.NOTHING;
@@ -227,7 +228,16 @@ public class ParagraphRenderer extends BlockRenderer {
                                 occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), currentRenderer.getOccupiedArea().getBBox()));
                                 parent.setProperty(Property.FULL, true);
                                 lines.add(currentRenderer);
-                                return new LayoutResult(LayoutResult.FULL, occupiedArea, null, this);
+                                // Force placement of children we have and do not force placement of the others
+                                if (LayoutResult.PARTIAL == result.getStatus()) {
+                                    IRenderer childNotRendered = result.getCauseOfNothing();
+                                    int firstNotRendered = currentRenderer.childRenderers.indexOf(childNotRendered);
+                                    currentRenderer.childRenderers.retainAll(currentRenderer.childRenderers.subList(0, firstNotRendered));
+                                    split[1].childRenderers.removeAll(split[1].childRenderers.subList(0, firstNotRendered));
+                                    return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, this, split[1]);
+                                } else {
+                                    return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, this);
+                                }
                             } else {
                                 return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
                             }
@@ -380,7 +390,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
         ParagraphRenderer overflowRenderer = createOverflowRenderer(parent);
 
-        return new ParagraphRenderer[] {splitRenderer, overflowRenderer};
+        return new ParagraphRenderer[]{splitRenderer, overflowRenderer};
     }
 
     private void fixOverflowRenderer(ParagraphRenderer overflowRenderer) {

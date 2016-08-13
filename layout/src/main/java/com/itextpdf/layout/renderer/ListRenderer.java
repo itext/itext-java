@@ -46,16 +46,17 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.layout.property.ListNumberingType;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.ListItem;
-import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
 import com.itextpdf.kernel.numbering.GreekAlphabetNumbering;
 import com.itextpdf.kernel.numbering.RomanNumbering;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.ListItem;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.Property;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,6 +66,7 @@ public class ListRenderer extends BlockRenderer {
 
     /**
      * Creates a ListRenderer from its corresponding layout object.
+     *
      * @param modelElement the {@link com.itextpdf.layout.element.List} which this object should manage
      */
     public ListRenderer(com.itextpdf.layout.element.List modelElement) {
@@ -100,15 +102,23 @@ public class ListRenderer extends BlockRenderer {
             listItemNum = 0;
             for (IRenderer childRenderer : childRenderers) {
                 childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
-                childRenderer.setProperty(Property.MARGIN_LEFT, childRenderer.getProperty(Property.MARGIN_LEFT, (Float)0f) + maxSymbolWidth + (symbolIndent != null ? symbolIndent : 0f));
+                childRenderer.setProperty(Property.MARGIN_LEFT, childRenderer.getProperty(Property.MARGIN_LEFT, (Float) 0f) + maxSymbolWidth + (symbolIndent != null ? symbolIndent : 0f));
                 if (childRenderer.getModelElement() instanceof ListItem) {
                     IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
                     ((ListItemRenderer) childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);
                 }
             }
         }
-
-        return super.layout(layoutContext);
+        LayoutResult result = super.layout(layoutContext);
+        // cannot place even the first ListItemRenderer
+        if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && null != result.getCauseOfNothing()) {
+            if (LayoutResult.FULL == result.getStatus()) {
+                result = correctListSplitting(this, null, result.getCauseOfNothing(), result.getOccupiedArea());
+            } else if (LayoutResult.PARTIAL == result.getStatus()) {
+                result = correctListSplitting(result.getSplitRenderer(), result.getOverflowRenderer(), result.getCauseOfNothing(), result.getOccupiedArea());
+            }
+        }
+        return result;
     }
 
     @Override
@@ -193,19 +203,64 @@ public class ListRenderer extends BlockRenderer {
                     public void draw(DrawContext drawContext) {
                         try {
                             setProperty(Property.FONT, PdfFontFactory.createFont(constantFont));
-                        } catch (IOException ignored) {}
+                        } catch (IOException ignored) {
+                        }
                         super.draw(drawContext);
                     }
                 };
                 try {
                     textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(constantFont));
-                } catch (IOException exc) {}
+                } catch (IOException exc) {
+                }
             } else {
                 textRenderer = new TextRenderer(textElement);
             }
             return textRenderer;
         } else {
             throw new IllegalStateException();
+        }
+    }
+
+    private LayoutResult correctListSplitting(IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer causeOfNothing, LayoutArea occupiedArea) {
+        // the first not rendered child
+        int firstNotRendered = splitRenderer.getChildRenderers().get(0).getChildRenderers().indexOf(causeOfNothing);
+
+        if (-1 == firstNotRendered) {
+            return new LayoutResult(null == overflowRenderer ? LayoutResult.FULL : LayoutResult.PARTIAL,
+                    occupiedArea, splitRenderer, overflowRenderer, this);
+        }
+
+        // Notice that placed item is a son of the first ListItemRenderer (otherwise there would be now FORCED_PLACEMENT applied)
+        IRenderer firstListItemRenderer = splitRenderer.getChildRenderers().get(0);
+
+        ListRenderer newOverflowRenderer = (ListRenderer) createOverflowRenderer(LayoutResult.PARTIAL);
+        newOverflowRenderer.deleteOwnProperty(Property.FORCED_PLACEMENT);
+        // ListItemRenderer for not rendered children of firstListItemRenderer
+        newOverflowRenderer.childRenderers.add(new ListItemRenderer((ListItem) firstListItemRenderer.getModelElement()));
+        newOverflowRenderer.childRenderers.addAll(splitRenderer.getChildRenderers().subList(1, splitRenderer.getChildRenderers().size()));
+
+        List<IRenderer> childrenStillRemainingToRender =
+                new ArrayList<>(firstListItemRenderer.getChildRenderers().subList(firstNotRendered + 1, firstListItemRenderer.getChildRenderers().size()));
+
+        // 'this' renderer will become split renderer
+        splitRenderer.getChildRenderers().removeAll(splitRenderer.getChildRenderers().subList(1, splitRenderer.getChildRenderers().size()));
+
+        if (0 != childrenStillRemainingToRender.size()) {
+            newOverflowRenderer.getChildRenderers().get(0).getChildRenderers().addAll(childrenStillRemainingToRender);
+            splitRenderer.getChildRenderers().get(0).getChildRenderers().removeAll(childrenStillRemainingToRender);
+            newOverflowRenderer.getChildRenderers().get(0).setProperty(Property.MARGIN_LEFT, splitRenderer.getChildRenderers().get(0).getProperty(Property.MARGIN_LEFT));
+        } else {
+            newOverflowRenderer.childRenderers.remove(0);
+        }
+
+        if (null != overflowRenderer) {
+            newOverflowRenderer.childRenderers.addAll(overflowRenderer.getChildRenderers());
+        }
+
+        if (0 != newOverflowRenderer.childRenderers.size()) {
+            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, newOverflowRenderer, this);
+        } else {
+            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, this);
         }
     }
 }

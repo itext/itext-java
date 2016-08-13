@@ -59,15 +59,11 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.MessageFormat;
+import java.util.*;
 
 public abstract class BlockRenderer extends AbstractRenderer {
 
@@ -85,7 +81,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         Float blockHeight = retrieveHeight();
-        if (!isFixedLayout() && blockHeight != null && blockHeight > parentBBox.getHeight()) {
+        if (!isFixedLayout() && blockHeight != null && blockHeight > parentBBox.getHeight() && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
             return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
         }
 
@@ -120,6 +116,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         Rectangle layoutBox = areas.get(0).clone();
 
+        // the first renderer (one of childRenderers or their children) to produce LayoutResult.NOTHING
+        IRenderer causeOfNothing = null;
         boolean anythingPlaced = false;
         for (int childPos = 0; childPos < childRenderers.size(); childPos++) {
             IRenderer childRenderer = childRenderers.get(childPos);
@@ -133,6 +131,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
                 if (childRenderer.<Object>getProperty(Property.WIDTH) != null) {
                     alignChildHorizontally(childRenderer, layoutBox.getWidth());
+                }
+
+                // Save the first renderer to produce LayoutResult.NOTHING
+                if (null == causeOfNothing && null != result.getCauseOfNothing()) {
+                    causeOfNothing = result.getCauseOfNothing();
                 }
 
                 // have more areas
@@ -159,6 +162,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             splitRenderer.occupiedArea = occupiedArea;
 
                             AbstractRenderer overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
+                            // Apply forced placement only on split renderer
+                            overflowRenderer.deleteOwnProperty(Property.FORCED_PLACEMENT);
                             List<IRenderer> overflowRendererChildren = new ArrayList<>();
                             overflowRendererChildren.add(result.getOverflowRenderer());
                             overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
@@ -167,7 +172,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             applyPaddings(occupiedArea.getBBox(), paddings, true);
                             applyBorderBox(occupiedArea.getBBox(), borders, true);
                             applyMargins(occupiedArea.getBBox(), margins, true);
-                            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer);
+                            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer, causeOfNothing);
                         } else {
                             childRenderers.set(childPos, result.getSplitRenderer());
                             childRenderers.add(childPos + 1, result.getOverflowRenderer());
@@ -218,6 +223,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     alignChildHorizontally(childRenderer, layoutBox.getWidth());
                 }
             }
+
+            // Save the first renderer to produce LayoutResult.NOTHING
+            if (null == causeOfNothing && null != result.getCauseOfNothing()) {
+                causeOfNothing = result.getCauseOfNothing();
+            }
         }
 
         applyPaddings(occupiedArea.getBBox(), paddings, true);
@@ -241,7 +251,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
         applyVerticalAlignment();
-        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, causeOfNothing);
     }
 
     protected AbstractRenderer createSplitRenderer(int layoutResult) {
@@ -257,7 +267,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         AbstractRenderer overflowRenderer = (AbstractRenderer) getNextRenderer();
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
-        overflowRenderer.properties = properties;
+        overflowRenderer.properties = new HashMap<>(properties);
         return overflowRenderer;
     }
 
@@ -385,8 +395,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
             double maxX = -Double.MAX_VALUE;
             double minY = Double.MAX_VALUE;
             for (Point point : newOccupiedBox) {
-                if (point.getX() > maxX)  maxX = point.getX();
-                if (point.getY() < minY)  minY = point.getY();
+                if (point.getX() > maxX) maxX = point.getX();
+                if (point.getY() < minY) minY = point.getY();
             }
 
             float newHeight = (float) (occupiedArea.getBBox().getTop() - minY);
@@ -437,8 +447,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
         double minX = Double.MAX_VALUE;
         double maxY = -Double.MAX_VALUE;
         for (Point point : rotatedPoints) {
-            if (point.getX() < minX)  minX = point.getX();
-            if (point.getY() > maxY)  maxY = point.getY();
+            if (point.getX() < minX) minX = point.getX();
+            if (point.getY() > maxY) maxY = point.getY();
         }
 
         float dx = (float) (left - minX);
@@ -536,7 +546,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         x2 = clipLineEnd.getX() - clipLineBeg.getX();
         y1 = filteredPoint.getY() - clipLineBeg.getY();
 
-        double sgn = x1*y2 - x2*y1;
+        double sgn = x1 * y2 - x2 * y1;
 
         if (Math.abs(sgn) < 0.001) return 0;
         if (sgn > 0) return 1;

@@ -77,6 +77,7 @@ public class ImageRenderer extends AbstractRenderer {
 
     /**
      * Creates an ImageRenderer from its corresponding layout object.
+     *
      * @param image the {@link com.itextpdf.layout.element.Image} which this object should manage
      */
     public ImageRenderer(Image image) {
@@ -144,8 +145,14 @@ public class ImageRenderer extends AbstractRenderer {
 
         getMatrix(t, imageItselfScaledWidth, imageItselfScaledHeight);
 
-        if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && (width > layoutBox.getWidth() || height > layoutBox.getHeight())) {
-            return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
+        // indicates whether the placement is forced
+        boolean isPlacingForced = false;
+        if (width > layoutBox.getWidth() || height > layoutBox.getHeight()) {
+            if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+                isPlacingForced = true;
+            } else {
+                return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
+            }
         }
 
         occupiedArea.getBBox().moveDown(height);
@@ -160,7 +167,8 @@ public class ImageRenderer extends AbstractRenderer {
         }
 
         applyMargins(occupiedArea.getBBox(), true);
-        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null,
+                isPlacingForced ? this : null);
     }
 
     @Override
