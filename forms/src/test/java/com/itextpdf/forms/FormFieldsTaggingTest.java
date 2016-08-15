@@ -13,6 +13,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
@@ -55,7 +56,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
     /**
      * Form fields copying from the tagged document.
      */
-    @Test
+    @Test@Ignore("DEVSIX-786")
     public void formFieldTaggingTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String outFileName = destinationFolder + "taggedPdfWithForms02.pdf";
         String cmpFileName = sourceFolder + "cmp_taggedPdfWithForms02.pdf";
