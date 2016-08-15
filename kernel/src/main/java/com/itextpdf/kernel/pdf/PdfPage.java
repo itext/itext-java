@@ -403,7 +403,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             throw new PdfException(PdfException.CannotRetrieveMediaBoxAttribute);
         }
         if (mediaBox.size() != 4) {
-            throw new PdfException(PdfException.WrongMediaBoxSize).setMessageParams(mediaBox.size());
+            throw new PdfException(PdfException.WrongMediaBoxSize1).setMessageParams(mediaBox.size());
         }
         PdfNumber llx = mediaBox.getAsNumber(0);
         PdfNumber lly = mediaBox.getAsNumber(1);

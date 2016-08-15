@@ -87,8 +87,12 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfShading makeShading(PdfDictionary shadingDictionary) {
         if (!shadingDictionary.containsKey(PdfName.ShadingType)) {
-            throw new PdfException(PdfException.UnexpectedShadingType);
+            throw new PdfException(PdfException.ShadingTypeNotFound);
         }
+        if (!shadingDictionary.containsKey(PdfName.ColorSpace)) {
+            throw new PdfException(PdfException.ColorSpaceNotFound);
+        }
+
         PdfShading shading;
         switch (shadingDictionary.getAsNumber(PdfName.ShadingType).intValue()) {
             case ShadingType.FUNCTION_BASED:
@@ -134,10 +138,13 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
         super(pdfObject);
     }
 
-    protected PdfShading(PdfDictionary pdfObject, int type, PdfObject colorSpace) {
+    protected PdfShading(PdfDictionary pdfObject, int type, PdfColorSpace colorSpace) {
         super(pdfObject);
         getPdfObject().put(PdfName.ShadingType, new PdfNumber(type));
-        getPdfObject().put(PdfName.ColorSpace, colorSpace);
+        if (colorSpace instanceof PdfSpecialCs.Pattern) {
+            throw new IllegalArgumentException("colorSpace");
+        }
+        getPdfObject().put(PdfName.ColorSpace, colorSpace.getPdfObject());
     }
 
     /**
@@ -249,7 +256,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @param function the {@link PdfFunction}, that is used to calculate color transitions.
          */
         public FunctionBased(PdfObject colorSpace, PdfFunction function) {
-            super(new PdfDictionary(), ShadingType.FUNCTION_BASED, colorSpace);
+            super(new PdfDictionary(), ShadingType.FUNCTION_BASED, PdfColorSpace.makeColorSpace(colorSpace));
 
             setFunction(function);
         }
@@ -362,10 +369,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @param color1 the {@code float[]} that represents the color in the end point.
          */
         public Axial(PdfColorSpace cs, float x0, float y0, float[] color0, float x1, float y1, float[] color1) {
-            super(new PdfDictionary(), ShadingType.AXIAL, cs.getPdfObject());
-
-            if (cs instanceof PdfSpecialCs.Pattern)
-                throw new IllegalArgumentException("colorSpace");
+            super(new PdfDictionary(), ShadingType.AXIAL, cs);
 
             setCoords(x0, y0, x1, y1);
             PdfFunction func = new PdfFunction.Type2(new PdfArray(new float[] {0, 1}), null,
@@ -406,7 +410,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @param function the {@link PdfFunction} object, that is used to calculate color transitions.
          */
         public Axial(PdfColorSpace cs, PdfArray coords, PdfFunction function) {
-            super(new PdfDictionary(), ShadingType.AXIAL, cs.getPdfObject());
+            super(new PdfDictionary(), ShadingType.AXIAL, cs);
             setCoords(coords);
             setFunction(function);
         }
@@ -536,7 +540,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @param color1 the {@code float[]} that represents the color in the end circle.
          */
         public Radial(PdfColorSpace cs, float x0, float y0, float r0, float[] color0, float x1, float y1, float r1, float[] color1) {
-            super(new PdfDictionary(), ShadingType.RADIAL, cs.getPdfObject());
+            super(new PdfDictionary(), ShadingType.RADIAL, cs);
 
             setCoords(x0, y0, r0, x1, y1, r1);
             PdfFunction func = new PdfFunction.Type2(new PdfArray(new float[] {0, 1}), null,
@@ -587,7 +591,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @param function the {@link PdfFunction} object, that is used to calculate color transitions.
          */
         public Radial(PdfColorSpace cs, PdfArray coords, PdfFunction function) {
-            super(new PdfDictionary(), ShadingType.RADIAL, cs.getPdfObject());
+            super(new PdfDictionary(), ShadingType.RADIAL, cs);
             setCoords(coords);
             setFunction(function);
         }
@@ -765,7 +769,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          *               Only one pair of color values shall be specified if a Function entry is present.
          */
         public FreeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, PdfArray decode) {
-            super(new PdfStream(), ShadingType.FREE_FORM_GOURAUD_SHADED_TRIANGLE_MESH, cs.getPdfObject());
+            super(new PdfStream(), ShadingType.FREE_FORM_GOURAUD_SHADED_TRIANGLE_MESH, cs);
 
             setBitsPerCoordinate(bitsPerCoordinate);
             setBitsPerComponent(bitsPerComponent);
@@ -936,7 +940,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          *               Only one pair of color values shall be specified if a Function entry is present.
          */
         public LatticeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int verticesPerRow, PdfArray decode) {
-            super(new PdfStream(), ShadingType.LATTICE_FORM_GOURAUD_SHADED_TRIANGLE_MESH, cs.getPdfObject());
+            super(new PdfStream(), ShadingType.LATTICE_FORM_GOURAUD_SHADED_TRIANGLE_MESH, cs);
 
             setBitsPerCoordinate(bitsPerCoordinate);
             setBitsPerComponent(bitsPerComponent);
@@ -1118,7 +1122,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          *               Only one pair of color values shall be specified if a Function entry is present.
          */
         public CoonsPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, PdfArray decode) {
-            super(new PdfStream(), ShadingType.COONS_PATCH_MESH, cs.getPdfObject());
+            super(new PdfStream(), ShadingType.COONS_PATCH_MESH, cs);
             setBitsPerCoordinate(bitsPerCoordinate);
             setBitsPerComponent(bitsPerComponent);
             setBitsPerFlag(bitsPerFlag);
@@ -1289,7 +1293,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          *               Only one pair of color values shall be specified if a Function entry is present.
          */
         public TensorProductPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, PdfArray decode) {
-            super(new PdfStream(), ShadingType.TENSOR_PRODUCT_PATCH_MESH, cs.getPdfObject());
+            super(new PdfStream(), ShadingType.TENSOR_PRODUCT_PATCH_MESH, cs);
 
             setBitsPerCoordinate(bitsPerCoordinate);
             setBitsPerComponent(bitsPerComponent);

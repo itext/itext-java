@@ -102,6 +102,7 @@ public class PdfException extends RuntimeException {
     public static final String CodabarMustHaveOneAbcdAsStartStopCharacter = "codabar.must.have.one.of.abcd.as.start.stop.character";
     public static final String CodabarStartStopCharacterAreOnlyExtremes = "in.codabar.start.stop.characters.are.only.allowed.at.the.extremes";
     public static final String ColorNotFound = "color.not.found";
+    public static final String ColorSpaceNotFound = "color.space.not.found";
     public static final String ContentStreamMustNotInvokeOperatorsThatSpecifyColorsOrOtherColorRelatedParameters = "content.stream.must.not.invoke.operators.that.specify.colors.or.other.color.related.parameters.in.the.graphics.state";
     public static final String DecodeParameterType1IsNotSupported = "decode.parameter.type {0} is.not.supported";
     public static final String DefaultcryptfilterNotFoundEncryption = "defaultcryptfilter.not.found.encryption";
@@ -209,6 +210,7 @@ public class PdfException extends RuntimeException {
     public static final String ResourcesCannotBeNull = "resources.cannot.be.null";
     public static final String ResourcesDoNotContainExtgstateEntryUnableToProcessOperator1 = "resources.do.not.contain.extgstate.entry.unable.to.process.operator {0}";
     public static final String RoleIsNotMappedWithAnyStandardRole = "role.is.not.mapped.with.any.standard.role";
+    public static final String ShadingTypeNotFound = "shading.type.not.found";
     public static final String SignatureWithName1IsNotTheLastItDoesntCoverWholeDocument = "signature.with.name.1.is.not.the.last.it.doesnt.cover.whole.document";
     public static final String StdcfNotFoundEncryption = "stdcf.not.found.encryption";
     public static final String StructParentIndexNotFoundInTaggedObject = "struct.parent.index.not.found.in.tagged.object";
@@ -252,7 +254,7 @@ public class PdfException extends RuntimeException {
     public static final String WhitePointIsIncorrectlySpecified = "white.point.is.incorrectly.specified";
     public static final String WmfImageException = "wmf.image.exception";
     public static final String WrongFormFieldAddAnnotationToTheField = "wrong.form.field.add.annotation.to.the.field";
-    public static final String WrongMediaBoxSize = "Wrong media box size: {0}";
+    public static final String WrongMediaBoxSize1 = "Wrong media box size: {0}";
     public static final String XrefSubsectionNotFound = "xref.subsection.not.found";
     public static final String YouCannotFlushPdfCatalogManually = "you.cannot.flush.pdf.catalog.manually";
     public static final String YouHaveToDefineABooleanArrayForThisCollectionSortDictionary = "you.have.to.define.a.boolean.array.for.this.collection.sort.dictionary";
