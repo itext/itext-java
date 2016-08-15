@@ -1,13 +1,17 @@
 package com.itextpdf.layout;
 
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
@@ -208,6 +212,32 @@ public class PositioningTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
 
     }
+
+    @Test
+    public void showTextAlignedTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "showTextAlignedTest03.pdf";
+        String cmpFileName = sourceFolder + "cmp_showTextAlignedTest03.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "bruno.jpg"));
+        float width = img.getImageScaledWidth();
+        float height = img.getImageScaledHeight();
+        PdfFormXObject template = new PdfFormXObject(new Rectangle(width, height));
+
+        Canvas canvas = new Canvas(template, pdfDoc);
+        canvas
+                .add(img)
+                .showTextAligned("HELLO BRUNO", width / 2, height / 2, TextAlignment.CENTER);
+
+        doc.add(new Image(template));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
 
     private void drawCross(PdfCanvas canvas, float x, float y) {
         drawLine(canvas, x - 50, y, x + 50, y);

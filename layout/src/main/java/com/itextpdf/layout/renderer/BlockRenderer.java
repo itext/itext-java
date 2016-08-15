@@ -75,8 +75,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         int pageNumber = layoutContext.getArea().getPageNumber();
 
+        boolean isPositioned = isPositioned();
+
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
-        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
+        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null || isPositioned) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
 
@@ -90,7 +92,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
         Border[] borders = getBorders();
         applyBorderBox(parentBBox, borders, false);
 
-        boolean isPositioned = isPositioned();
         if (isPositioned) {
             float x = (float) this.getPropertyAsFloat(Property.X);
             float relativeX = isFixedLayout() ? 0 : parentBBox.getX();

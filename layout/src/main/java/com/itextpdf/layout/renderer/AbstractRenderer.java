@@ -771,8 +771,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link boolean}
      */
     protected boolean isPositioned() {
-        Object positioning = this.<Object>getProperty(Property.POSITION);
-        return Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
+        return isFixedLayout();
     }
 
     /**
