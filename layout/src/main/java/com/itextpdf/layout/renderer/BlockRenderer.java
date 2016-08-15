@@ -430,38 +430,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
         return ctm;
     }
 
-    private Point getLayoutShiftAndRotatedPoints(List<Point> rotatedPoints, float shiftX, float shiftY) {
-        float angle = (float) this.getPropertyAsFloat(Property.ROTATION_ANGLE);
-        float width = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH);
-        float height = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT);
-
-        float left = occupiedArea.getBBox().getX() - shiftX;
-        float bottom = occupiedArea.getBBox().getY() - shiftY;
-        float right = left + width;
-        float top = bottom + height;
-
-        AffineTransform rotateTransform = new AffineTransform();
-        rotateTransform.rotate(angle);
-
-        transformBBox(left, bottom, right, top, rotateTransform, rotatedPoints);
-
-        double minX = Double.MAX_VALUE;
-        double maxY = -Double.MAX_VALUE;
-        for (Point point : rotatedPoints) {
-            if (point.getX() < minX) minX = point.getX();
-            if (point.getY() > maxY) maxY = point.getY();
-        }
-
-        float dx = (float) (left - minX);
-        float dy = (float) (top - maxY);
-
-        for (Point point : rotatedPoints) {
-            point.setLocation(point.getX() + dx + shiftX, point.getY() + dy + shiftY);
-        }
-
-        return new Point(dx, dy);
-    }
-
     protected void beginRotationIfApplied(PdfCanvas canvas) {
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
@@ -497,6 +465,38 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 move(shiftX, shiftY);
             }
         }
+    }
+
+    private Point getLayoutShiftAndRotatedPoints(List<Point> rotatedPoints, float shiftX, float shiftY) {
+        float angle = (float) this.getPropertyAsFloat(Property.ROTATION_ANGLE);
+        float width = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH);
+        float height = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT);
+
+        float left = occupiedArea.getBBox().getX() - shiftX;
+        float bottom = occupiedArea.getBBox().getY() - shiftY;
+        float right = left + width;
+        float top = bottom + height;
+
+        AffineTransform rotateTransform = new AffineTransform();
+        rotateTransform.rotate(angle);
+
+        transformBBox(left, bottom, right, top, rotateTransform, rotatedPoints);
+
+        double minX = Double.MAX_VALUE;
+        double maxY = -Double.MAX_VALUE;
+        for (Point point : rotatedPoints) {
+            if (point.getX() < minX) minX = point.getX();
+            if (point.getY() > maxY) maxY = point.getY();
+        }
+
+        float dx = (float) (left - minX);
+        float dy = (float) (top - maxY);
+
+        for (Point point : rotatedPoints) {
+            point.setLocation(point.getX() + dx + shiftX, point.getY() + dy + shiftY);
+        }
+
+        return new Point(dx, dy);
     }
 
     private List<Point> transformBBox(float left, float bottom, float right, float top, AffineTransform transform, List<Point> bBoxPoints) {

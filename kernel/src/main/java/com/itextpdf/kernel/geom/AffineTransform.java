@@ -49,19 +49,58 @@ public class AffineTransform implements Serializable {
 
     private static final long serialVersionUID = 1330973210523860834L;
 
+    /**
+     * The type of affine transformation. See {@link AffineTransform#getType()}.
+     */
     public static final int TYPE_IDENTITY = 0;
+
+    /**
+     * The type of affine transformation. See {@link AffineTransform#getType()}.
+     */
     public static final int TYPE_TRANSLATION = 1;
+
+    /**
+     * The type of affine transformation. See {@link AffineTransform#getType()}.
+     */
     public static final int TYPE_UNIFORM_SCALE = 2;
+
+    /**
+     * The type of affine transformation. See {@link AffineTransform#getType()}.
+     */
     public static final int TYPE_GENERAL_SCALE = 4;
+
+    /**
+     * The type of affine transformation. See {@link AffineTransform#getType()}.
+     */
     public static final int TYPE_QUADRANT_ROTATION = 8;
+
+    /**
+     * The type of affine transformation. See {@link AffineTransform#getType()}.
+     */
     public static final int TYPE_GENERAL_ROTATION = 16;
+
+    /**
+     * The type of affine transformation. See {@link AffineTransform#getType()}.
+     */
     public static final int TYPE_GENERAL_TRANSFORM = 32;
+
+    /**
+     * The type of affine transformation. See {@link AffineTransform#getType()}.
+     */
     public static final int TYPE_FLIP = 64;
+
+    /**
+     * The type of affine transformation. See {@link AffineTransform#getType()}.
+     */
     public static final int TYPE_MASK_SCALE = TYPE_UNIFORM_SCALE | TYPE_GENERAL_SCALE;
+
+    /**
+     * The type of affine transformation. See {@link AffineTransform#getType()}.
+     */
     public static final int TYPE_MASK_ROTATION = TYPE_QUADRANT_ROTATION | TYPE_GENERAL_ROTATION;
 
     /**
-     * The <code>TYPE_UNKNOWN</code> is an initial type value
+     * The <code>TYPE_UNKNOWN</code> is an initial type value.
      */
     static final int TYPE_UNKNOWN = -1;
 
@@ -135,7 +174,7 @@ public class AffineTransform implements Serializable {
         }
     }
 
-    /*
+    /**
      * Method returns type of affine transformation.
      *
      * Transform matrix is
@@ -145,14 +184,16 @@ public class AffineTransform implements Serializable {
      * According analytic geometry new basis vectors are (m00, m01) and (m10, m11),
      * translation vector is (m02, m12). Original basis vectors are (1, 0) and (0, 1).
      * Type transformations classification:
-     *   TYPE_IDENTITY - new basis equals original one and zero translation
-     *   TYPE_TRANSLATION - translation vector isn't zero
-     *   TYPE_UNIFORM_SCALE - vectors length of new basis equals
-     *   TYPE_GENERAL_SCALE - vectors length of new basis doesn't equal
-     *   TYPE_FLIP - new basis vector orientation differ from original one
-     *   TYPE_QUADRANT_ROTATION - new basis is rotated by 90, 180, 270, or 360 degrees
-     *   TYPE_GENERAL_ROTATION - new basis is rotated by arbitrary angle
-     *   TYPE_GENERAL_TRANSFORM - transformation can't be inversed
+     * <ul>
+     *   <li>{@link AffineTransform#TYPE_IDENTITY} - new basis equals original one and zero translation</li>
+     *   <li>{@link AffineTransform#TYPE_TRANSLATION} - translation vector isn't zero</li>
+     *   <li>{@link AffineTransform#TYPE_UNIFORM_SCALE} - vectors length of new basis equals</li>
+     *   <li>{@link AffineTransform#TYPE_GENERAL_SCALE} - vectors length of new basis doesn't equal</li>
+     *   <li>{@link AffineTransform#TYPE_FLIP} - new basis vector orientation differ from original one</li>
+     *   <li>{@link AffineTransform#TYPE_QUADRANT_ROTATION} - new basis is rotated by 90, 180, 270, or 360 degrees</li>
+     *   <li>{@link AffineTransform#TYPE_GENERAL_ROTATION} - new basis is rotated by arbitrary angle</li>
+     *   <li>{@link AffineTransform#TYPE_GENERAL_TRANSFORM} - transformation can't be inversed</li>
+     * </ul>
      */
     public int getType() {
         if (this.type != TYPE_UNKNOWN) {

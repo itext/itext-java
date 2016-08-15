@@ -72,7 +72,7 @@ public class LinkRenderer extends TextRenderer {
     }
 
     @Override
-    public void draw(DrawContext drawContext){
+    public void draw(DrawContext drawContext) {
         super.draw(drawContext);
 
         boolean isRelativePosition = isRelativePosition();
