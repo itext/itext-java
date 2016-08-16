@@ -46,6 +46,8 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -860,5 +862,39 @@ public abstract class AbstractRenderer implements IRenderer {
         }
 
         return this;
+    }
+
+    /**
+     * Calculates bounding box around points.
+     * @param points list of the points calculated bbox will enclose.
+     * @return array of float values which denote left, bottom, right, top lines of bbox in this specific order
+     */
+    protected Rectangle calculateBBox(List<Point> points) {
+        double minX = Double.MAX_VALUE;
+        double minY = Double.MAX_VALUE;
+        double maxX = -Double.MAX_VALUE;
+        double maxY = -Double.MAX_VALUE;
+        for (Point p : points) {
+            minX = Math.min(p.getX(), minX);
+            minY = Math.min(p.getY(), minY);
+            maxX = Math.max(p.getX(), maxX);
+            maxY = Math.max(p.getY(), maxY);
+        }
+        return new Rectangle((float) minX, (float) minY, (float) (maxX - minX), (float) (maxY - minY));
+    }
+
+    protected List<Point> rectangleToPointsList(Rectangle rect) {
+        List<Point> points = new ArrayList<>();
+        points.addAll(Arrays.asList(new Point(rect.getLeft(), rect.getBottom()), new Point(rect.getRight(), rect.getBottom()),
+                new Point(rect.getRight(), rect.getTop()), new Point(rect.getLeft(), rect.getTop())));
+        return points;
+    }
+
+    protected List<Point> transformPoints(List<Point> points, AffineTransform transform) {
+        for (Point point : points) {
+            transform.transform(point, point);
+        }
+
+        return points;
     }
 }

@@ -84,7 +84,7 @@ public class LineSeparatorTest extends ExtendedITextTest {
     }
 
     @Test
-    public void rotatedLineSeparatorTest0() throws IOException, InterruptedException {
+    public void rotatedLineSeparatorTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "rotatedLineSeparatorTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_rotatedLineSeparatorTest02.pdf";
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));

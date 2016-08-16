@@ -131,7 +131,7 @@ public final class Property {
     public static final int TAB_STOPS = 69;
     public static final int TEXT_ALIGNMENT = 70;
     /**
-     * Use values from .
+     * Use values from {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode}.
      */
     public static final int TEXT_RENDERING_MODE = 71;
     public static final int TEXT_RISE = 72;

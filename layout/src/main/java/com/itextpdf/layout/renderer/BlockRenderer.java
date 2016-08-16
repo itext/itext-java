@@ -367,67 +367,94 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     protected void applyRotationLayout(Rectangle layoutBox) {
-        Float rotationPointX = this.getPropertyAsFloat(Property.ROTATION_POINT_X);
-        Float rotationPointY = this.getPropertyAsFloat(Property.ROTATION_POINT_Y);
+        float angle = (float) this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
-        if (rotationPointX == null || rotationPointY == null) {
-            // if rotation point was not specified, the most bottom-left point is used
-            rotationPointX = occupiedArea.getBBox().getX();
-            rotationPointY = occupiedArea.getBBox().getY();
-            setProperty(Property.ROTATION_POINT_X, rotationPointX);
-            setProperty(Property.ROTATION_POINT_Y, rotationPointY);
-        }
-
+        float x = occupiedArea.getBBox().getX();
+        float y = occupiedArea.getBBox().getY();
         float height = occupiedArea.getBBox().getHeight();
         float width = occupiedArea.getBBox().getWidth();
 
         setProperty(Property.ROTATION_INITIAL_WIDTH, width);
         setProperty(Property.ROTATION_INITIAL_HEIGHT, height);
 
+        AffineTransform rotationTransform = new AffineTransform();
 
-        if (!isPositioned()) {
-            List<Point> rotatedPoints = new ArrayList<>();
-            getLayoutShiftAndRotatedPoints(rotatedPoints, (float) rotationPointX, (float) rotationPointY);
+        // here we calculate and set the actual occupied area of the rotated content
+        if (isPositioned()) {
+            Float rotationPointX = this.getPropertyAsFloat(Property.ROTATION_POINT_X);
+            Float rotationPointY = this.getPropertyAsFloat(Property.ROTATION_POINT_Y);
 
-            Point clipLineBeg = new Point(layoutBox.getRight(), layoutBox.getTop());
-            Point clipLineEnd = new Point(layoutBox.getRight(), layoutBox.getBottom());
-            List<Point> newOccupiedBox = clipBBox(rotatedPoints, clipLineBeg, clipLineEnd);
-
-            double maxX = -Double.MAX_VALUE;
-            double minY = Double.MAX_VALUE;
-            for (Point point : newOccupiedBox) {
-                if (point.getX() > maxX) maxX = point.getX();
-                if (point.getY() < minY) minY = point.getY();
+            if (rotationPointX == null || rotationPointY == null) {
+                // if rotation point was not specified, the most bottom-left point is used
+                rotationPointX = x;
+                rotationPointY = y;
             }
 
-            float newHeight = (float) (occupiedArea.getBBox().getTop() - minY);
-            float newWidth = (float) (maxX - occupiedArea.getBBox().getLeft());
+            // transforms apply from bottom to top
+            rotationTransform.translate((float)rotationPointX, (float)rotationPointY); // move point back at place
+            rotationTransform.rotate(angle); // rotate
+            rotationTransform.translate((float)-rotationPointX, (float)-rotationPointY); // move rotation point to origin
 
-            occupiedArea.getBBox().setWidth(newWidth);
-            occupiedArea.getBBox().setHeight(newHeight);
+            List<Point> rotatedPoints = transformPoints(rectangleToPointsList(occupiedArea.getBBox()), rotationTransform);
+            Rectangle newBBox = calculateBBox(rotatedPoints);
 
-            move(0, height - newHeight);
+            // make occupied area be of size and position of actual content
+            occupiedArea.getBBox().setWidth(newBBox.getWidth());
+            occupiedArea.getBBox().setHeight(newBBox.getHeight());
+            float occupiedAreaShiftX = newBBox.getX() - x;
+            float occupiedAreaShiftY = newBBox.getY() - y;
+            move(occupiedAreaShiftX, occupiedAreaShiftY);
+        } else {
+            rotationTransform = AffineTransform.getRotateInstance(angle);
+            List<Point> rotatedPoints = transformPoints(rectangleToPointsList(occupiedArea.getBBox()), rotationTransform);
+            float[] shift = calculateShiftToPositionBBoxOfPointsAt(x, y + height, rotatedPoints);
+
+            for (Point point : rotatedPoints) {
+                point.setLocation(point.getX() + shift[0], point.getY() + shift[1]);
+            }
+
+            // clip bounding box on the right side to make it fit in the layout area width
+            Point clipLineBeg = new Point(layoutBox.getRight(), layoutBox.getTop());
+            Point clipLineEnd = new Point(layoutBox.getRight(), layoutBox.getBottom());
+            List<Point> newOccupiedAreaPoints = clipPolygon(rotatedPoints, clipLineBeg, clipLineEnd);
+            Rectangle newBBox = calculateBBox(newOccupiedAreaPoints);
+
+            occupiedArea.getBBox().setWidth(newBBox.getWidth());
+            occupiedArea.getBBox().setHeight(newBBox.getHeight());
+
+            float heightDiff = height - newBBox.getHeight();
+            move(0, heightDiff);
         }
     }
 
+    /**
+     * @deprecated Will be removed in iText 7.1
+     */
+    @Deprecated
     protected float[] applyRotation() {
-        float dx = 0, dy = 0;
-        if (!isPositioned()) {
-            Point shift = getLayoutShiftAndRotatedPoints(new ArrayList<Point>(), 0, 0);
-
-            dy = (float) shift.getY();
-            dx = (float) shift.getX();
-        }
-
-        Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
-        AffineTransform transform = new AffineTransform();
-        transform.rotate((float) angle);
         float[] ctm = new float[6];
-        transform.getMatrix(ctm);
-
-        ctm[4] = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_X) + dx;
-        ctm[5] = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_Y) + dy;
+        createRotationTransformInsideOccupiedArea().getMatrix(ctm);
         return ctm;
+    }
+
+    /**
+     * This method creates {@link AffineTransform} instance that could be used
+     * to rotate content inside the occupied area. Be aware that it should be used only after
+     * layout rendering is finished and correct occupied area for the rotated element is calculated.
+     * @return {@link AffineTransform} that rotates the content and places it inside occupied area.
+     */
+    protected AffineTransform createRotationTransformInsideOccupiedArea() {
+        Float angle = this.<Float>getProperty(Property.ROTATION_ANGLE);
+        AffineTransform rotationTransform = AffineTransform.getRotateInstance((float)angle);
+
+        Rectangle contentBox = this.getOccupiedAreaBBox();
+        List<Point> rotatedContentBoxPoints = transformPoints(rectangleToPointsList(contentBox), rotationTransform);
+        // Occupied area for rotated elements is already calculated on layout in such way to enclose rotated content;
+        // therefore we can simply rotate content as is and then shift it to the occupied area.
+        float[] shift = calculateShiftToPositionBBoxOfPointsAt(occupiedArea.getBBox().getLeft(), occupiedArea.getBBox().getTop(), rotatedContentBoxPoints);
+        rotationTransform.preConcatenate(AffineTransform.getTranslateInstance(shift[0], shift[1]));
+
+        return rotationTransform;
     }
 
     protected void beginRotationIfApplied(PdfCanvas canvas) {
@@ -437,14 +464,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
                 logger.error(MessageFormat.format(LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, getClass().getSimpleName()));
             } else {
-                float heightDiff = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
-
-                float shiftX = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_X);
-                float shiftY = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
-
-                move(-shiftX, -shiftY);
-                float[] ctm = applyRotation();
-                canvas.saveState().concatMatrix(ctm[0], ctm[1], ctm[2], ctm[3], ctm[4], ctm[5]);
+                AffineTransform transform = createRotationTransformInsideOccupiedArea();
+                canvas.saveState().concatMatrix(transform);
             }
         }
     }
@@ -452,65 +473,33 @@ public abstract class BlockRenderer extends AbstractRenderer {
     protected void endRotationIfApplied(PdfCanvas canvas) {
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
-            if (!hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
-                Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-                logger.error(MessageFormat.format(LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, getClass().getSimpleName()));
-            } else {
-                float heightDiff = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
-
-                float shiftX = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_X);
-                float shiftY = (float) this.getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
-
-                canvas.restoreState();
-                move(shiftX, shiftY);
-            }
+            canvas.restoreState();
         }
     }
 
-    private Point getLayoutShiftAndRotatedPoints(List<Point> rotatedPoints, float shiftX, float shiftY) {
-        float angle = (float) this.getPropertyAsFloat(Property.ROTATION_ANGLE);
-        float width = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH);
-        float height = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT);
-
-        float left = occupiedArea.getBBox().getX() - shiftX;
-        float bottom = occupiedArea.getBBox().getY() - shiftY;
-        float right = left + width;
-        float top = bottom + height;
-
-        AffineTransform rotateTransform = new AffineTransform();
-        rotateTransform.rotate(angle);
-
-        transformBBox(left, bottom, right, top, rotateTransform, rotatedPoints);
-
+    /**
+     * This method calculates the shift needed to be applied to the points in order to position
+     * upper and left borders of their bounding box at the given lines.
+     * @param left x coordinate at which points bbox left border is to be aligned
+     * @param top y coordinate at which points bbox upper border is to be aligned
+     * @param points the points, which bbox will be aligned at the given position
+     * @return array of two floats, where first element denotes x-coordinate shift and the second
+     * element denotes y-coordinate shift which are needed to align points bbox at the given lines.
+     */
+    private float[] calculateShiftToPositionBBoxOfPointsAt(float left, float top, List<Point> points) {
         double minX = Double.MAX_VALUE;
         double maxY = -Double.MAX_VALUE;
-        for (Point point : rotatedPoints) {
-            if (point.getX() < minX) minX = point.getX();
-            if (point.getY() > maxY) maxY = point.getY();
+        for (Point point : points) {
+            minX = Math.min(point.getX(), minX);
+            maxY = Math.max(point.getY(), maxY);
         }
 
         float dx = (float) (left - minX);
         float dy = (float) (top - maxY);
-
-        for (Point point : rotatedPoints) {
-            point.setLocation(point.getX() + dx + shiftX, point.getY() + dy + shiftY);
-        }
-
-        return new Point(dx, dy);
+        return new float[] {dx, dy};
     }
 
-    private List<Point> transformBBox(float left, float bottom, float right, float top, AffineTransform transform, List<Point> bBoxPoints) {
-        bBoxPoints.addAll(Arrays.asList(new Point(left, bottom), new Point(right, bottom),
-                new Point(right, top), new Point(left, top)));
-
-        for (Point point : bBoxPoints) {
-            transform.transform(point, point);
-        }
-
-        return bBoxPoints;
-    }
-
-    private List<Point> clipBBox(List<Point> points, Point clipLineBeg, Point clipLineEnd) {
+    private List<Point> clipPolygon(List<Point> points, Point clipLineBeg, Point clipLineEnd) {
         List<Point> filteredPoints = new ArrayList<>();
 
         boolean prevOnRightSide = false;
