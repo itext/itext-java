@@ -47,6 +47,11 @@ import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 
 public class OtfClass {
+
+    public static final int GLYPH_BASE = 1;
+    public static final int GLYPH_LIGATURE = 2;
+    public static final int GLYPH_MARK = 3;
+
     //key is glyph, value is class inside all 2
     private IntHashtable mapClass = new IntHashtable();
     

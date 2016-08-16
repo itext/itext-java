@@ -50,13 +50,14 @@ import com.itextpdf.io.font.otf.GlyphPositioningTableReader;
 import com.itextpdf.io.font.otf.GlyphSubstitutionTableReader;
 import com.itextpdf.io.font.otf.OpenTypeGdefTableReader;
 import com.itextpdf.io.util.IntHashtable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TrueTypeFont extends FontProgram {
 
@@ -195,6 +196,10 @@ public class TrueTypeFont extends FontProgram {
         return gposTable;
     }
 
+    public OpenTypeGdefTableReader getGdefTable() {
+        return gdefTable;
+    }
+
     public byte[] getSubset(Set<Integer> glyphs, boolean subset) {
         try {
             return fontParser.getSubset(glyphs, subset);
@@ -210,6 +215,7 @@ public class TrueTypeFont extends FontProgram {
         } else {
             gdefTable = new OpenTypeGdefTableReader(fontParser.raf, 0);
         }
+        gdefTable.readTable();
     }
 
     protected void readGsubTable() throws java.io.IOException {

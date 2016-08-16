@@ -47,9 +47,6 @@ import com.itextpdf.io.source.RandomAccessFileOrArray;
 
 public class OpenTypeGdefTableReader {
 
-    private final int GLYPH_SKIP_BASE = 1;
-    private final int GLYPH_SKIP_MARK = 2;
-    private final int GLYPH_SKIP_LIGATURE = 3;
     private final int FLAG_IGNORE_BASE = 2;
     private final int FLAG_IGNORE_LIGATURE = 4;
     private final int FLAG_IGNORE_MARK = 8;
@@ -84,13 +81,13 @@ public class OpenTypeGdefTableReader {
     public boolean isSkip(int glyph, int flag) {
         if (glyphClass != null && (flag & (FLAG_IGNORE_BASE | FLAG_IGNORE_LIGATURE | FLAG_IGNORE_MARK)) != 0) {
             int cla = glyphClass.getOtfClass(glyph);
-            if (cla == GLYPH_SKIP_BASE && (flag & FLAG_IGNORE_BASE) != 0) {
+            if (cla == OtfClass.GLYPH_BASE && (flag & FLAG_IGNORE_BASE) != 0) {
                 return true;
             }
-            if (cla == GLYPH_SKIP_MARK && (flag & FLAG_IGNORE_MARK) != 0) {
+            if (cla == OtfClass.GLYPH_MARK && (flag & FLAG_IGNORE_MARK) != 0) {
                 return true;
             }
-            if (cla == GLYPH_SKIP_LIGATURE && (flag & FLAG_IGNORE_LIGATURE) != 0) {
+            if (cla == OtfClass.GLYPH_LIGATURE && (flag & FLAG_IGNORE_LIGATURE) != 0) {
                 return true;
             }
         }
@@ -98,5 +95,9 @@ public class OpenTypeGdefTableReader {
             return markAttachmentClass.getOtfClass(glyph) != (flag >> 8);
         }
         return false;
+    }
+
+    public OtfClass getGlyphClassTable() {
+        return glyphClass;
     }
 }
