@@ -382,7 +382,7 @@ public class TextRenderer extends AbstractRenderer {
             TextRenderer[] split;
             if (isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol) {
                 // ignore '\n'
-                split = split(currentTextPos + 1);
+                split = splitIgnoreFirstNewLine(currentTextPos);
             } else {
                 split = split(currentTextPos);
             }
@@ -781,8 +781,21 @@ public class TextRenderer extends AbstractRenderer {
         return new TextRenderer((Text) modelElement, null);
     }
 
-    private boolean isNewLine(GlyphLine text, int ind) {
-        return text.get(ind).hasValidUnicode() && text.get(ind).getUnicode() == '\n';
+    protected static boolean isNewLine(GlyphLine text, int ind) {
+        return text.get(ind).hasValidUnicode() && (text.get(ind).getUnicode() == '\n' || text.get(ind).getUnicode() == '\r');
+    }
+
+    private TextRenderer[] splitIgnoreFirstNewLine(int currentTextPos) {
+        if (text.get(currentTextPos).hasValidUnicode() && text.get(currentTextPos).getUnicode() == '\r') {
+            int next = currentTextPos + 1 < text.end ? text.get(currentTextPos + 1).getUnicode() : -1;
+            if (next == '\n') {
+                return split(currentTextPos + 2);
+            } else {
+                return split(currentTextPos + 1);
+            }
+        } else {
+            return split(currentTextPos + 1);
+        }
     }
 
     private GlyphLine convertToGlyphLine(String text) {
