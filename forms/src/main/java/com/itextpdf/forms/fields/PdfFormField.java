@@ -2180,11 +2180,21 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (asNormal != null) {
             resources = asNormal.getAsDictionary(PdfName.Resources);
         }
+        if (resources == null) {
+            PdfDocument document = getDocument();
+            if (document != null) {
+                PdfDictionary acroformDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
+                if (acroformDictionary != null) {
+                    resources = acroformDictionary.getAsDictionary(PdfName.DR);
+                }
+            }
+
+        }
         if (resources != null) {
             PdfDictionary fontDic = resources.getAsDictionary(PdfName.Font);
-            if (fontDic != null) {
-                String str = getDefaultAppearance().toUnicodeString();
-                Object[] dab = splitDAelements(str);
+            PdfString defaultAppearance = getDefaultAppearance();
+            if (fontDic != null && defaultAppearance != null) {
+                Object[] dab = splitDAelements(defaultAppearance.toUnicodeString());
                 PdfName fontName = new PdfName(dab[DA_FONT].toString());
                 if (font != null) {
                     fontAndSize[0] = font;
