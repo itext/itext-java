@@ -79,7 +79,7 @@ public class PdfOutline {
      * @param content     Outline dictionary
      * @param pdfDocument {@link PdfDocument} the outline belongs to.
      */
-    public PdfOutline(String title, PdfDictionary content, PdfDocument pdfDocument) {
+    PdfOutline(String title, PdfDictionary content, PdfDocument pdfDocument) {
         this.title = title;
         this.content = content;
 
@@ -93,7 +93,7 @@ public class PdfOutline {
      * @param content Outline dictionary
      * @param parent  parent outline.
      */
-    public PdfOutline(String title, PdfDictionary content, PdfOutline parent) {
+    PdfOutline(String title, PdfDictionary content, PdfOutline parent) {
         this.title = title;
         this.content = content;
         this.parent = parent;
@@ -106,7 +106,7 @@ public class PdfOutline {
      *
      * @param doc {@link PdfDocument}
      */
-    protected PdfOutline(PdfDocument doc) {
+    PdfOutline(PdfDocument doc) {
         content = new PdfDictionary();
         content.put(PdfName.Type, PdfName.Outlines);
         this.pdfDoc = doc;
