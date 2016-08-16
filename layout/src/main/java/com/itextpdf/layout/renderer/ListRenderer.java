@@ -248,7 +248,7 @@ public class ListRenderer extends BlockRenderer {
         if (0 != childrenStillRemainingToRender.size()) {
             newOverflowRenderer.getChildRenderers().get(0).getChildRenderers().addAll(childrenStillRemainingToRender);
             splitRenderer.getChildRenderers().get(0).getChildRenderers().removeAll(childrenStillRemainingToRender);
-            newOverflowRenderer.getChildRenderers().get(0).setProperty(Property.MARGIN_LEFT, splitRenderer.getChildRenderers().get(0).getProperty(Property.MARGIN_LEFT));
+            newOverflowRenderer.getChildRenderers().get(0).setProperty(Property.MARGIN_LEFT, splitRenderer.getChildRenderers().get(0).<Float>getProperty(Property.MARGIN_LEFT));
         } else {
             newOverflowRenderer.childRenderers.remove(0);
         }

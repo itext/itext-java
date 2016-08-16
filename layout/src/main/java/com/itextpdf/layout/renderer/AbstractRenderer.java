@@ -188,7 +188,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return {@code true} if this instance or its model element have given own property, {@code false} otherwise
      */
     public boolean hasOwnOrModelProperty(int property) {
-        return properties.containsKey(property) || (null != getModelElement() && getModelElement().hasOwnProperty(property));
+        return properties.containsKey(property) || (null != getModelElement() && getModelElement().hasProperty(property));
     }
 
     /**

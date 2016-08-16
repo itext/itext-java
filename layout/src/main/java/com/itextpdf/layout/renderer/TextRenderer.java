@@ -354,7 +354,7 @@ public class TextRenderer extends AbstractRenderer {
             }
         }
 
-        // indicates whether the placing forced while the layout result is LayoutResult.NOTHING
+        // indicates whether the placing is forced while the layout result is LayoutResult.NOTHING
         boolean isPlacingForcedWhileNothing = false;
         if (currentLineHeight > layoutBox.getHeight()) {
             if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
