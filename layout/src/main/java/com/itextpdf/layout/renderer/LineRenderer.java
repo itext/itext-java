@@ -82,21 +82,30 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
 
+        List<Integer> unicodeIdsReorderingList = null;
         if (levels == null && baseDirection != null && baseDirection != BaseDirection.NO_BIDI) {
-            List<Integer> unicodeIdsLst = new ArrayList<>();
+            unicodeIdsReorderingList = new ArrayList<>();
+            boolean newLineFound = false;
             for (IRenderer child : childRenderers) {
+                if (newLineFound) {
+                    break;
+                }
                 if (child instanceof TextRenderer) {
                     GlyphLine text = ((TextRenderer) child).getText();
                     for (int i = text.start; i < text.end; i++) {
                         assert text.get(i).getChars().length > 0;
+                        if (TextRenderer.isNewLine(text, i)) {
+                            newLineFound = true;
+                            break;
+                        }
                         // we assume all the chars will have the same bidi group
                         // we also assume pairing symbols won't get merged with other ones
                         int unicode = text.get(i).getChars()[0];
-                        unicodeIdsLst.add(unicode);
+                        unicodeIdsReorderingList.add(unicode);
                     }
                 }
             }
-            levels = TypographyUtils.getBidiLevels(baseDirection, ArrayUtil.toArray(unicodeIdsLst));
+            levels = unicodeIdsReorderingList.size() > 0 ? TypographyUtils.getBidiLevels(baseDirection, ArrayUtil.toArray(unicodeIdsReorderingList)) : null;
         }
 
         boolean anythingPlaced = false;
@@ -329,6 +338,13 @@ public class LineRenderer extends AbstractRenderer {
                     if (levels != null) {
                         overflow.levels = new byte[levels.length - lineLevels.length];
                         System.arraycopy(levels, lineLevels.length, overflow.levels, 0, overflow.levels.length);
+                        if (overflow.levels.length == 0) {
+                            overflow.levels = null;
+                        }
+                    }
+                } else if (result.getStatus() == LayoutResult.NOTHING) {
+                    if (levels != null) {
+                        ((LineRenderer)result.getOverflowRenderer()).levels = levels;
                     }
                 }
             }
@@ -471,7 +487,6 @@ public class LineRenderer extends AbstractRenderer {
 
         LineRenderer overflowRenderer = createOverflowRenderer();
         overflowRenderer.parent = parent;
-        overflowRenderer.levels = levels;
         overflowRenderer.addAllProperties(getOwnProperties());
 
         return new LineRenderer[]{splitRenderer, overflowRenderer};
