@@ -182,6 +182,16 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
+     * Checks if this renderer or its model element have the specified property,
+     * i.e. if it was set to this very element or its very model element earlier.
+     * @param property the property to be checked
+     * @return {@code true} if this instance or its model element have given own property, {@code false} otherwise
+     */
+    public boolean hasOwnOrModelProperty(int property) {
+        return properties.containsKey(property) || (null != getModelElement() && getModelElement().hasOwnProperty(property));
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -825,9 +835,17 @@ public abstract class AbstractRenderer implements IRenderer {
 
         Border[] borders = {topBorder, rightBorder, bottomBorder, leftBorder};
 
-        for (int i = 0; i < borders.length; ++i) {
-            if (borders[i] == null)
-                borders[i] = border;
+        if (!hasOwnOrModelProperty(Property.BORDER_TOP)) {
+            borders[0] = border;
+        }
+        if (!hasOwnOrModelProperty(Property.BORDER_RIGHT)) {
+            borders[1] = border;
+        }
+        if (!hasOwnOrModelProperty(Property.BORDER_BOTTOM)) {
+            borders[2] = border;
+        }
+        if (!hasOwnOrModelProperty(Property.BORDER_LEFT)) {
+            borders[3] = border;
         }
 
         return borders;
