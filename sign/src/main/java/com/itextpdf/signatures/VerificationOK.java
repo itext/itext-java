@@ -73,7 +73,7 @@ public class VerificationOK {
     }
 
     /**
-     * A single String explaining which certificate was verified, how and why.
+     * Return a single String explaining which certificate was verified, how and why.
      * @see java.lang.Object#toString()
      */
     public String toString() {

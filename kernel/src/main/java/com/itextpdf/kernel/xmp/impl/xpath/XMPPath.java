@@ -96,11 +96,11 @@ public class XMPPath
 	{
 		return segments.size();
 	}
-	
-	
+
+
 	/**
-	 * Serializes the normalized XMP-path.
-	 * @see Object#toString()
+	 * Return a single String explaining which certificate was verified, how and why.
+	 * @see java.lang.Object#toString()
 	 */
 	public String toString()
 	{

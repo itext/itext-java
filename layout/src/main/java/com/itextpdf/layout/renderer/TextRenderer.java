@@ -817,7 +817,9 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     /**
-     * Returns the length of the {@see line} which is the result of the layout call.
+     * Returns the length of the {@link com.itextpdf.layout.renderer.TextRenderer#line line} which is the result of the layout call.
+     *
+     * @return the length of the line
      */
     protected int lineLength() {
         return line.end > 0 ? line.end - line.start : 0;
