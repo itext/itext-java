@@ -84,6 +84,10 @@ public class OtfClass {
     public int getOtfClass(int glyph) {
         return mapClass.get(glyph);
     }
+
+    public boolean isMarkOtfClass(int glyph) {
+        return hasClass(glyph) && getOtfClass(glyph) == GLYPH_MARK;
+    }
     
     public boolean hasClass(int glyph) {
         return mapClass.containsKey(glyph);
