@@ -43,6 +43,9 @@
  */
 package com.itextpdf.layout.layout;
 
+/**
+ * Represents the context for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
+ */
 public class LayoutContext {
     
     /**

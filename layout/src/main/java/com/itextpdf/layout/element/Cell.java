@@ -119,18 +119,34 @@ public class Cell extends BlockElement<Cell> {
         return cellRenderer == null ? makeNewRenderer() : cellRenderer;
     }
 
+    /**
+     * Gets {@link #row the number of the row} in which the cell is located.
+     * @return the row number
+     */
     public int getRow() {
         return row;
     }
 
+    /**
+     * Gets {@link #row the number of the column} in which the cell is located.
+     * @return the column number
+     */
     public int getCol() {
         return col;
     }
 
+    /**
+     * Gets the {@link #rowspan rowspan} of the cell.
+     * @return the rowspan
+     */
     public int getRowspan() {
         return rowspan;
     }
 
+    /**
+     * Gets the {@link #colspan colspan} of the cell.
+     * @return the colspan
+     */
     public int getColspan() {
         return colspan;
     }
