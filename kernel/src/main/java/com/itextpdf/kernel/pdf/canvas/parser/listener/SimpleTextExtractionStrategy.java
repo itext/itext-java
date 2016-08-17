@@ -58,7 +58,7 @@ public class SimpleTextExtractionStrategy implements ITextExtractionStrategy {
     private Vector lastEnd;
 
     /** used to store the resulting String. */
-    private final StringBuilder result = new StringBuilder();;
+    private final StringBuilder result = new StringBuilder();
 
     @Override
     public void eventOccurred(IEventData data, EventType type) {

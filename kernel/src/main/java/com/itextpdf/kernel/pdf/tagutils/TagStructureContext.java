@@ -412,7 +412,7 @@ public class TagStructureContext implements Serializable {
      * @return parent of the flushed tag
      */
     IPdfStructElem flushTag(PdfStructElem tagStruct) {
-        IAccessibleElement modelElement = connectedStructToModel.remove(tagStruct.getPdfObject());;
+        IAccessibleElement modelElement = connectedStructToModel.remove(tagStruct.getPdfObject());
         if (modelElement != null) {
             connectedModelToStruct.remove(modelElement);
         }
