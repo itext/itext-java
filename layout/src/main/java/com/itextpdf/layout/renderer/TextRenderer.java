@@ -479,6 +479,8 @@ public class TextRenderer extends AbstractRenderer {
             }
         }
 
+        applyBorderBox(occupiedArea.getBBox(), false);
+
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
             applyAbsolutePositioningTranslation(false);
@@ -594,6 +596,8 @@ public class TextRenderer extends AbstractRenderer {
         if (isRelativePosition) {
             applyAbsolutePositioningTranslation(false);
         }
+
+        applyBorderBox(occupiedArea.getBBox(), true);
 
         if (isTagged) {
             tagPointer.moveToParent();

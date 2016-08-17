@@ -1,12 +1,15 @@
 package com.itextpdf.layout;
 
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Link;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -14,10 +17,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class LinkTest extends ExtendedITextTest{
+public class LinkTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/LinkTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/LinkTest/";
@@ -30,7 +34,7 @@ public class LinkTest extends ExtendedITextTest{
     @Test
     public void linkTest01() throws IOException, InterruptedException {
 
-        String outFileName = destinationFolder+"linkTest01.pdf";
+        String outFileName = destinationFolder + "linkTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_linkTest01.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
@@ -49,7 +53,7 @@ public class LinkTest extends ExtendedITextTest{
     @Test
     public void linkTest02() throws IOException, InterruptedException {
 
-        String outFileName = destinationFolder+"linkTest02.pdf";
+        String outFileName = destinationFolder + "linkTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_linkTest02.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
@@ -74,4 +78,22 @@ public class LinkTest extends ExtendedITextTest{
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
+
+    @Test
+    public void borderedLinkTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "borderedLinkTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_borderedLinkTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+
+        Link link = new Link("Link with orange border", PdfAction.createURI("http://itextpdf.com"));
+        link.setBorder(new SolidBorder(Color.ORANGE, 5));
+        doc.add(new Paragraph(link));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
 }
