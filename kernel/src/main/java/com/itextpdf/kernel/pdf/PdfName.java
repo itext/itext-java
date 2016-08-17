@@ -571,6 +571,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Part = createDirectName("Part");
     public static final PdfName Pattern = createDirectName("Pattern");
     public static final PdfName PatternType = createDirectName("PatternType");
+    public static final PdfName Pause = createDirectName("Pause");
     public static final PdfName Perceptual = createDirectName("Perceptual");
     public static final PdfName Perms = createDirectName("Perms");
     public static final PdfName PC = createDirectName("PC");
@@ -585,6 +586,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName PI = createDirectName("PI");
     public static final PdfName PickTrayByPDFSize = createDirectName("PickTrayByPDFSize");
     public static final PdfName Placement = createDirectName("Placement");
+    public static final PdfName Play = createDirectName("Play");
     public static final PdfName PO = createDirectName("PO");
     public static final PdfName Polygon = createDirectName("Polygon");
     public static final PdfName PolyLine = createDirectName("PolyLine");
@@ -633,6 +635,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Rendition = createDirectName("Rendition");
     public static final PdfName Repeat = createDirectName("Repeat");
     public static final PdfName ResetForm = createDirectName("ResetForm");
+    public static final PdfName Resume = createDirectName("Resume");
     public static final PdfName Requirements = createDirectName("Requirements");
     public static final PdfName Resources = createDirectName("Resources");
     public static final PdfName ReversedChars = createDirectName("ReversedChars");
@@ -697,6 +700,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName StdCF = createDirectName("StdCF");
     public static final PdfName StemV = createDirectName("StemV");
     public static final PdfName StemH = createDirectName("StemH");
+    public static final PdfName Stop = createDirectName("Stop");
     public static final PdfName Stm = createDirectName("Stm");
     public static final PdfName StmF = createDirectName("StmF");
     public static final PdfName StrF = createDirectName("StrF");
