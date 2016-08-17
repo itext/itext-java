@@ -199,6 +199,19 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return newContentStream(false);
     }
 
+    /**
+     * Gets the {@link PdfResources} wrapper object for this page resources.
+     * If page doesn't have resource object, then it will be inherited from page's parents.
+     * If neither parents nor page has the resource object, then the new one is created and added to page dictionary.
+     * <br/><br/>
+     * NOTE: If you'll try to modify the inherited resources, then the new resources object will be created,
+     * so you won't change the parent's resources.
+     * This new object under the wrapper will be added to page dictionary on {@link PdfPage#flush()},
+     * or you can add it manually with this line, if needed:
+     * {@code getPdfObject().put(PdfName.Resources, getResources().getPdfObject());}
+     *
+     * @return {@link PdfResources} wrapper of the page.
+     */
     public PdfResources getResources() {
 
         if (this.resources == null) {
@@ -374,6 +387,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (getDocument().isTagged() && !getDocument().getStructTreeRoot().isFlushed()) {
             tryFlushPageTags();
         }
+        if (resources != null && resources.isModified() && !resources.isReadOnly()) {
+            getPdfObject().put(PdfName.Resources, resources.getPdfObject());
+        }
         if (flushContentStreams) {
             getDocument().checkIsoConformance(this, IsoKey.PAGE);
             flushContentStreams();
@@ -383,11 +399,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             getContentStream(i).flush(false);
         }
 
-        if (resources != null) {
-            if (resources.isReadOnly() && !resources.isModified()) {
-                getPdfObject().remove(PdfName.Resources);
-            }
-        }
         resources = null;
 
         super.flush();
