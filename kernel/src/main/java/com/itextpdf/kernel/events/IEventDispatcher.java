@@ -54,14 +54,14 @@ public interface IEventDispatcher {
      * @param type    a type of event to be handled.
      * @param handler event handler.
      */
-    public void addEventHandler(String type, IEventHandler handler);
+    void addEventHandler(String type, IEventHandler handler);
 
     /**
      * Dispatches an event.
      *
      * @param event
      */
-    public void dispatchEvent(Event event);
+    void dispatchEvent(Event event);
 
     /**
      * Dispatches a delayed event.
@@ -71,7 +71,7 @@ public interface IEventDispatcher {
      * @param event
      * @param delayed
      */
-    public void dispatchEvent(Event event, boolean delayed);
+    void dispatchEvent(Event event, boolean delayed);
 
     /**
      * Checks if event dispatcher as an event handler assigned for a certain event type.
@@ -79,7 +79,7 @@ public interface IEventDispatcher {
      * @param type
      * @return
      */
-    public boolean hasEventHandler(String type);
+    boolean hasEventHandler(String type);
 
     /**
      * Removes event handler.
@@ -87,11 +87,11 @@ public interface IEventDispatcher {
      * @param type
      * @param handler
      */
-    public void removeEventHandler(String type, IEventHandler handler);
+    void removeEventHandler(String type, IEventHandler handler);
 
     /**
      * Remove all event handlers.
      */
-    public void removeAllHandlers();
+    void removeAllHandlers();
 
 }

@@ -54,6 +54,6 @@ public interface IEventHandler {
      *
      * @param event the Event that needs to be processed
      */
-    public void handleEvent(Event event);
+    void handleEvent(Event event);
 
 }

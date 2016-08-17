@@ -49,11 +49,11 @@ import java.util.List;
 
 public interface IPdfStructElem {
 
-    public IPdfStructElem getParent();
+    IPdfStructElem getParent();
 
-    public List<IPdfStructElem> getKids();
+    List<IPdfStructElem> getKids();
 
-    public PdfName getRole();
+    PdfName getRole();
 
 
 }
