@@ -45,6 +45,8 @@ package com.itextpdf.layout.property;
 
 import com.itextpdf.layout.IPropertyContainer;
 
+import java.util.Objects;
+
 /**
  * A specialized class that specifies the leading, "the vertical distance between
  * the baselines of adjacent lines of text" (ISO-32000-1, section 9.3.5).
@@ -100,5 +102,10 @@ public class Leading {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof Leading && type == ((Leading) obj).type && value == ((Leading) obj).value;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, value);
     }
 }
