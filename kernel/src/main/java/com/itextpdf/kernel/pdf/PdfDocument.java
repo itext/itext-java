@@ -860,7 +860,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
      * @return list of copied pages
-     * @throws PdfException
      */
     public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage) {
         return copyPagesTo(pageFrom, pageTo, toDocument, insertBeforePage, null);
@@ -877,7 +876,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param insertBeforePage a position where to insert copied pages.
      * @param copier           a copier which bears a special copy logic. May be NULL
      * @return list of copied pages
-     * @throws PdfException
      */
     public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
         List<Integer> pages = new ArrayList<>();
@@ -896,7 +894,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param pageTo
      * @param toDocument
      * @return list of copied pages
-     * @throws PdfException
      */
     public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument) {
         return copyPagesTo(pageFrom, pageTo, toDocument, null);
@@ -912,7 +909,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param toDocument
      * @param copier a copier which bears a special copy logic. May be NULL
      * @return list of copied pages
-     * @throws PdfException
      */
     public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, IPdfPageExtraCopier copier) {
         return copyPagesTo(pageFrom, pageTo, toDocument, toDocument.getNumberOfPages() + 1, copier);
@@ -927,7 +923,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param toDocument       a document to copy pages to.
      * @param insertBeforePage a position where to insert copied pages.
      * @return list of copied pages
-     * @throws PdfException
      */
     public List<PdfPage> copyPagesTo(List<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage) {
         return copyPagesTo(pagesToCopy, toDocument, insertBeforePage, null);
@@ -943,7 +938,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param insertBeforePage a position where to insert copied pages.
      * @param copier           a copier which bears a special copy logic. May be NULL
      * @return list of copied pages
-     * @throws PdfException
      */
     public List<PdfPage> copyPagesTo(List<Integer> pagesToCopy, PdfDocument toDocument, int insertBeforePage, IPdfPageExtraCopier copier) {
         if (pagesToCopy.isEmpty()) {
@@ -1029,7 +1023,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param pagesToCopy list of pages to be copied. TreeSet for the order of the pages to be natural.
      * @param toDocument  a document to copy pages to.
      * @return list of copied pages
-     * @throws PdfException
      */
     public List<PdfPage> copyPagesTo(List<Integer> pagesToCopy, PdfDocument toDocument) {
         return copyPagesTo(pagesToCopy, toDocument, null);
@@ -1044,7 +1037,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param toDocument  a document to copy pages to.
      * @param copier      a copier which bears a special copy logic
      * @return list of copied pages
-     * @throws PdfException
      */
     public List<PdfPage> copyPagesTo(List<Integer> pagesToCopy, PdfDocument toDocument, IPdfPageExtraCopier copier) {
         return copyPagesTo(pagesToCopy, toDocument, toDocument.getNumberOfPages() + 1, copier);
@@ -1094,7 +1086,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param key   Name of the destination.
      * @param value An object destination refers to. Must be an array or a dictionary with key /D and array.
      *              See PdfSpec 12.3.2.3 for more info.
-     * @throws PdfException
      */
     public void addNamedDestination(String key, PdfObject value) {
         checkClosingStatus();
@@ -1284,7 +1275,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      *
      * @param newPdfVersion new pdf version of the resultant file if stamper is used and the version needs to be changed,
      *                      or {@code null} otherwise
-     * @throws PdfException
      */
     protected void open(PdfVersion newPdfVersion) {
         try {
@@ -1512,7 +1502,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * checks whether a method is invoked at the closed document
-     * @throws PdfException
      */
     protected void checkClosingStatus() {
         if (closed) {
@@ -1619,7 +1608,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      *
      * @param outlines      outlines to be copied
      * @param toDocument    document where outlines should be copied
-     * @throws PdfException
      */
     private void copyOutlines(Set<PdfOutline> outlines, PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
 
@@ -1662,7 +1650,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param outlinesToCopy - Set of outlines to be copied
      * @param newParent      - new parent outline
      * @param oldParent      - old parent outline
-     * @throws PdfException
      */
     private void cloneOutlines(Set<PdfOutline> outlinesToCopy, PdfOutline newParent, PdfOutline oldParent, Map<PdfPage, PdfPage> page2page, PdfDocument toDocument) {
         if (null == oldParent) {
