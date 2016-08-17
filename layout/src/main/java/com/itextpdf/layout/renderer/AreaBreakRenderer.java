@@ -158,9 +158,4 @@ public class AreaBreakRenderer implements IRenderer {
     public IRenderer getNextRenderer() {
         return null;
     }
-
-    @Override
-    public IRenderer getParent() {
-        return null;
-    }
 }

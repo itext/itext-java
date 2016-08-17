@@ -118,7 +118,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 // set KEEP_TOGETHER false on the deepest parent (maybe the element itself) to have KEEP_TOGETHER == true
                                 IRenderer theDeepestKeptTogether = result.getCauseOfNothing();
                                 while (null == theDeepestKeptTogether.getModelElement() || null == theDeepestKeptTogether.getModelElement().<Boolean>getOwnProperty(Property.KEEP_TOGETHER)) {
-                                    theDeepestKeptTogether = theDeepestKeptTogether.getParent();
+                                    theDeepestKeptTogether = ((AbstractRenderer)theDeepestKeptTogether).parent;
                                 }
                                 theDeepestKeptTogether.getModelElement().setProperty(Property.KEEP_TOGETHER, false);
                                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
