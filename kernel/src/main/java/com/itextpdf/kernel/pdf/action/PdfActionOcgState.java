@@ -51,30 +51,52 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * USed in Set OCG State actions.
+ * This is a helper class for optional content states use in Set-OCG-State actions.
+ * See {@link PdfAction#createSetOcgState}
  */
 public class PdfActionOcgState {
 
     /**
-     * Can be: OFF, ON, Toggle
+     * Can be: {@link PdfName#OFF}, {@link PdfName#ON}, {@link PdfName#Toggle}
      */
     private PdfName state;
 
+    /**
+     * Optional content group dictionaries
+     */
     private List<PdfDictionary> ocgs;
 
+    /**
+     * Constructs an optional content state object.
+     * @param state a {@link PdfName} describing the state. Shall be one of the following:
+     *              {@link PdfName#OFF}, {@link PdfName#ON}, {@link PdfName#Toggle}
+     * @param ocgs a list of the OCG dictionaries
+     */
     public PdfActionOcgState(PdfName state, List<PdfDictionary> ocgs) {
         this.state = state;
         this.ocgs = ocgs;
     }
 
+    /**
+     * Gets the state the optional content groups should be switched to
+     * @return the state, one of the following: {@link PdfName#OFF}, {@link PdfName#ON}, {@link PdfName#Toggle}
+     */
     public PdfName getState() {
         return state;
     }
 
+    /**
+     * Gets a list of optional content groups that shall have the state changed
+     * @return the list of optional content groups
+     */
     public List<PdfDictionary> getOcgs() {
         return ocgs;
     }
 
+    /**
+     * Gets a list of {@link PdfObject} that is describing this particular optional content group states.
+     * @return a list of {@link PdfObject} for construction of a {@link com.itextpdf.kernel.pdf.PdfArray}
+     */
     public List<PdfObject> getObjectList() {
         List<PdfObject> states = new ArrayList<>();
         states.add(state);

@@ -376,16 +376,48 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         return new PdfAction().put(PdfName.S, PdfName.URI).put(PdfName.URI, new PdfString(uri)).put(PdfName.IsMap, new PdfBoolean(isMap));
     }
 
+    /**
+     * Creates a Sound action (section 12.6.4.8 of ISO 32000-1).
+     *
+     * @param sound a sound object defining the sound that shall be played (see section 13.3 of ISO 32000-1)
+     * @return created action
+     */
     public static PdfAction createSound(PdfStream sound) {
         return new PdfAction().put(PdfName.S, PdfName.Sound).put(PdfName.Sound, sound);
     }
 
+    /**
+     * Creates a Sound action (section 12.6.4.8 of ISO 32000-1).
+     *
+     * @param sound       a sound object defining the sound that shall be played (see section 13.3 of ISO 32000-1)
+     * @param volume      the volume at which to play the sound, in the range -1.0 to 1.0. Default value: 1.0
+     * @param synchronous a flag specifying whether to play the sound synchronously or asynchronously.
+     *                    If this flag is <code>true</code>, the conforming reader retains control, allowing no further user
+     *                    interaction other than canceling the sound, until the sound has been completely played.
+     *                    Default value: <code>false</code>
+     * @param repeat      a flag specifying whether to repeat the sound indefinitely
+     *                    If this entry is present, the Synchronous entry shall be ignored. Default value: <code>false</code>
+     * @param mix         a flag specifying whether to mix this sound with any other sound already playing
+     * @return created action
+     */
     public static PdfAction createSound(PdfStream sound, float volume, boolean synchronous, boolean repeat, boolean mix) {
+        if (volume < -1 || volume > 1) {
+            throw new IllegalArgumentException("volume");
+        }
         return new PdfAction().put(PdfName.S, PdfName.Sound).put(PdfName.Sound, sound).
                 put(PdfName.Volume, new PdfNumber(volume)).put(PdfName.Synchronous, new PdfBoolean(synchronous)).
                 put(PdfName.Repeat, new PdfBoolean(repeat)).put(PdfName.Mix, new PdfBoolean(mix));
     }
 
+    /**
+     * Creates a Movie annotation (section 12.6.4.9 of ISO 32000-1).
+     *
+     * @param annotation a movie annotation identifying the movie that shall be played
+     * @param title      the title of a movie annotation identifying the movie that shall be played
+     * @param operation  the operation that shall be performed on the movie. Shall be one of the following:
+     *                   {@link PdfName#Play}, {@link PdfName#Stop}, {@link PdfName#Pause}, {@link PdfName#Resume}
+     * @return created annotation
+     */
     public static PdfAction createMovie(PdfAnnotation annotation, String title, PdfName operation) {
         PdfAction action = new PdfAction().put(PdfName.S, PdfName.Movie).put(PdfName.T, new PdfString(title))
                 .put(PdfName.Operation, operation);
@@ -395,34 +427,85 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         return action;
     }
 
+    /**
+     * Creates a Hide action (section 12.6.4.10 of ISO 32000-1).
+     *
+     * @param annotation the annotation to be hidden or shown
+     * @param hidden     a flag indicating whether to hide the annotation (<code>true</code>) or show it (<code>false</code>)
+     * @return created action
+     */
     public static PdfAction createHide(PdfAnnotation annotation, boolean hidden) {
         return new PdfAction().put(PdfName.S, PdfName.Hide).put(PdfName.T, annotation.getPdfObject()).
                 put(PdfName.H, new PdfBoolean(hidden));
     }
 
+    /**
+     * Creates a Hide action (section 12.6.4.10 of ISO 32000-1).
+     *
+     * @param annotations the annotations to be hidden or shown
+     * @param hidden      a flag indicating whether to hide the annotation (<code>true</code>) or show it (<code>false</code>)
+     * @return created action
+     */
     public static PdfAction createHide(PdfAnnotation[] annotations, boolean hidden) {
         return new PdfAction().put(PdfName.S, PdfName.Hide).put(PdfName.T, getPdfArrayFromAnnotationsList(annotations)).
                 put(PdfName.H, new PdfBoolean(hidden));
     }
 
+    /**
+     * Creates a Hide action (section 12.6.4.10 of ISO 32000-1).
+     *
+     * @param text   a text string giving the fully qualified field name of an interactive form field whose
+     *               associated widget annotation or annotations are to be affected
+     * @param hidden a flag indicating whether to hide the annotation (<code>true</code>) or show it (<code>false</code>)
+     * @return created action
+     */
     public static PdfAction createHide(String text, boolean hidden) {
         return new PdfAction().put(PdfName.S, PdfName.Hide).put(PdfName.T, new PdfString(text)).
                 put(PdfName.H, new PdfBoolean(hidden));
     }
 
+    /**
+     * Creates a Hide action (section 12.6.4.10 of ISO 32000-1).
+     *
+     * @param text   a text string array giving the fully qualified field names of interactive form fields whose
+     *               associated widget annotation or annotations are to be affected
+     * @param hidden a flag indicating whether to hide the annotation (<code>true</code>) or show it (<code>false</code>)
+     * @return created action
+     */
     public static PdfAction createHide(String[] text, boolean hidden) {
         return new PdfAction().put(PdfName.S, PdfName.Hide).put(PdfName.T, getArrayFromStringList(text)).
                 put(PdfName.H, new PdfBoolean(hidden));
     }
 
+    /**
+     * Creates a Named action (section 12.6.4.11 of ISO 32000-1).
+     *
+     * @param namedAction the name of the action that shall be performed. Shall be one of the following:
+     *                    {@link PdfName#NextPage}, {@link PdfName#PrevPage}, {@link PdfName#FirstPage}, {@link PdfName#LastPage}
+     * @return created action
+     */
     public static PdfAction createNamed(PdfName namedAction) {
         return new PdfAction().put(PdfName.S, PdfName.Named).put(PdfName.N, namedAction);
     }
 
+    /**
+     * Creates a Set-OCG-State action (section 12.6.4.12 of ISO 32000-1).
+     *
+     * @param states a list of {@link PdfActionOcgState} state descriptions
+     * @return created action
+     */
     public static PdfAction createSetOcgState(List<PdfActionOcgState> states) {
         return createSetOcgState(states, false);
     }
 
+    /**
+     * Creates a Set-OCG-State action (section 12.6.4.12 of ISO 32000-1).
+     *
+     * @param states     states a list of {@link PdfActionOcgState} state descriptions
+     * @param preserveRb If true, indicates that radio-button state relationships between optional content groups
+     *                   should be preserved when the states are applied
+     * @return created action
+     */
     public static PdfAction createSetOcgState(List<PdfActionOcgState> states, boolean preserveRb) {
         PdfArray stateArr = new PdfArray();
         for (PdfActionOcgState state : states)
@@ -475,25 +558,32 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         wrapper.getPdfObject().put(PdfName.AA, dic);
     }
 
-
     /**
      * Add a chained action.
      *
-     * @param na
+     * @param nextAction the next action or sequence of actions that shall be performed after the current action
      */
-    public void next(PdfAction na) {
-        PdfObject nextAction = getPdfObject().get(PdfName.Next);
-        if (nextAction == null) {
-            put(PdfName.Next, na.getPdfObject());
-        } else if (nextAction.isDictionary()) {
-            PdfArray array = new PdfArray(nextAction);
-            array.add(na.getPdfObject());
+    public void next(PdfAction nextAction) {
+        PdfObject currentNextAction = getPdfObject().get(PdfName.Next);
+        if (currentNextAction == null) {
+            put(PdfName.Next, nextAction.getPdfObject());
+        } else if (currentNextAction.isDictionary()) {
+            PdfArray array = new PdfArray(currentNextAction);
+            array.add(nextAction.getPdfObject());
             put(PdfName.Next, array);
         } else {
-            ((PdfArray) nextAction).add(na.getPdfObject());
+            ((PdfArray) currentNextAction).add(nextAction.getPdfObject());
         }
     }
 
+    /**
+     * Inserts the value into the underlying object of this {@link PdfAction} and associates it with the specified key.
+     * If the key is already present in this {@link PdfAction}, this method will override the old value with the specified one.
+     *
+     * @param key   key to insert or to override
+     * @param value the value to associate with the specified key
+     * @return the previous {@link PdfObject} associated with this key
+     */
     public PdfAction put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
         return this;
@@ -511,6 +601,9 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         super.flush();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;
