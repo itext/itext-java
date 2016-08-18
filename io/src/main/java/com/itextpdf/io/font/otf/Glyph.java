@@ -74,7 +74,7 @@ public class Glyph implements Serializable {
     short yAdvance = 0;
 
     // Index delta to base glyph. If after a glyph there are several anchored glyphs we should know we to find base glyph.
-    byte anchorDelta = 0;
+    short anchorDelta = 0;
 
     public Glyph(int code, int width, int unicode) {
         this(code, width, unicode, null, false);
@@ -122,7 +122,7 @@ public class Glyph implements Serializable {
         this.yPlacement = (short) yPlacement;
         this.xAdvance = (short) xAdvance;
         this.yAdvance = (short) yAdvance;
-        this.anchorDelta = (byte) anchorDelta;
+        this.anchorDelta = (short) anchorDelta;
     }
 
     public Glyph(Glyph glyph, int unicode) {
@@ -198,7 +198,7 @@ public class Glyph implements Serializable {
         this.yAdvance = yAdvance;
     }
 
-    public byte getAnchorDelta() {
+    public short getAnchorDelta() {
         return anchorDelta;
     }
 
