@@ -115,7 +115,7 @@ public class AdobeGlyphList {
         }
     }
 
-    public static Integer nameToUnicode(String name) {
+    public static int nameToUnicode(String name) {
         int v = -1;
         if (names2unicode.containsKey(name)) {
             v = (int) names2unicode.get(name);

@@ -117,7 +117,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         setFontMatrix(fontMatrix);
 
         for (PdfName glyphName : charProcsDic.keySet()) {
-            int unicode = (int) AdobeGlyphList.nameToUnicode(glyphName.getValue());
+            int unicode = AdobeGlyphList.nameToUnicode(glyphName.getValue());
             if (unicode != -1 && fontEncoding.canEncode(unicode)) {
                 int code = fontEncoding.convertToByte(unicode);
                 getFontProgram().addGlyph(code, unicode, widths[code], null, new Type3Glyph(charProcsDic.getAsStream(glyphName), getDocument()));

@@ -233,7 +233,7 @@ public class FontEncoding implements Serializable {
                 String order = tok.nextToken();
                 String name = tok.nextToken();
                 char uni = (char) Integer.parseInt(tok.nextToken(), 16);
-                int uniName = (int) AdobeGlyphList.nameToUnicode(name);
+                int uniName = AdobeGlyphList.nameToUnicode(name);
                 int orderK;
                 if (order.startsWith("'")) {
                     orderK = order.charAt(1);
