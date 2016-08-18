@@ -58,7 +58,7 @@ public class PdfVersion implements Comparable<PdfVersion>, Serializable {
     private static final List<PdfVersion> values = new ArrayList<>();
 
     public static final PdfVersion PDF_1_0 = createPdfVersion(1, 0);
-    public static final PdfVersion PDF_1_1 = createPdfVersion(1, 0);
+    public static final PdfVersion PDF_1_1 = createPdfVersion(1, 1);
     public static final PdfVersion PDF_1_2 = createPdfVersion(1, 2);
     public static final PdfVersion PDF_1_3 = createPdfVersion(1, 3);
     public static final PdfVersion PDF_1_4 = createPdfVersion(1, 4);
