@@ -405,6 +405,19 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     }
 
     /**
+     * Calculates hash code for object to be copied.
+     * The hash code and the copied object is the stored in @{link copiedObjects} hash map to avoid duplications.
+     *
+     * @param object object to be copied.
+     * @return calculated hash code.
+     * @deprecated Functionality has been moved.
+     */
+    @Deprecated
+    protected int getCopyObjectKey(PdfObject object) {
+        throw new java.lang.IllegalStateException("Functionality has been moved");
+    }
+
+    /**
      * Used in the smart mode.
      * It serializes given object content and tries to find previously copied object with the same content.
      * If already copied object is not found, it saves current object serialized content into the map.
