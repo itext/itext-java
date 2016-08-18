@@ -24,7 +24,7 @@ public class PropertyTest extends ExtendedITextTest {
                 int value = (int) field.get(null);
                 maxFieldValue = Math.max(maxFieldValue, value);
                 if (fieldValues.contains(value)) {
-                    Assert.fail("Multiple fields with same value");
+                    Assert.fail(String.format("Multiple fields with same value: %s", value));
                 }
                 fieldValues.add(value);
             }
