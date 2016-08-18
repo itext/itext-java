@@ -214,7 +214,7 @@ class ParentTreeHandler implements Serializable {
         }
     }
 
-    private static Integer structParentIndexIntoKey(int structParentIndex) {
+    private static int structParentIndexIntoKey(int structParentIndex) {
         return -structParentIndex - 1;
     }
 
