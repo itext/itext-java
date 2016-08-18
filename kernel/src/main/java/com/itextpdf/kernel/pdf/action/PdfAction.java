@@ -582,7 +582,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param key   key to insert or to override
      * @param value the value to associate with the specified key
-     * @return the previous {@link PdfObject} associated with this key
+     * @return this {@link PdfAction} instance
      */
     public PdfAction put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);

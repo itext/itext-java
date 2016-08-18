@@ -275,7 +275,7 @@ public abstract class PdfObject implements Serializable {
      *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
      * @return copied object.
      */
-    public  PdfObject copyTo(PdfDocument document, boolean allowDuplicating) {
+    public PdfObject copyTo(PdfDocument document, boolean allowDuplicating) {
         if (document == null)
             throw new PdfException(PdfException.DocumentToCopyToCannotBeNull);
 

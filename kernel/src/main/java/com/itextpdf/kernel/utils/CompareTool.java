@@ -205,7 +205,24 @@ public class CompareTool {
         return compareResult;
     }
 
-    // TODO to document
+    /**
+     * Disables the default logic of pages comparison.
+     * This option makes sense only for {@link CompareTool#compareByCatalog(PdfDocument, PdfDocument)} method.
+     * <p>
+     * By default, pages are treated as special objects and if they are met in the process of comparison, then they are
+     * not checked as objects, but rather simply checked that they has same page numbers in both documents.
+     * This behaviour is intended for the {@link CompareTool#compareByContent}
+     * set of methods, because in them documents are compared in page by page basis. Thus, we don't need to check if pages
+     * are of the same content when they are met in comparison process, we are sure that we will compare their content or
+     * we have already compared them.
+     * <p>
+     * However, if you would use {@link CompareTool#compareByCatalog} with default behaviour
+     * of pages comparison, pages won't be checked at all, every time when reference to the page dictionary is met,
+     * only page numbers will be compared for both documents. You can say that in this case, comparison will be performed
+     * for all document's catalog entries except /Pages (However in fact, document's page tree structures will be compared,
+     * but pages themselves - won't).
+     * @return this {@link CompareTool} instance.
+     */
     public CompareTool disableCachedPagesComparison() {
         this.useCachedPagesForComparison = false;
         return this;
@@ -245,6 +262,14 @@ public class CompareTool {
         return this;
     }
 
+    /**
+     * Documents for comparison are opened in reader mode. This method is intended to alter {@link ReaderProperties}
+     * which are used to open output document. This is particularly useful for comparison of encrypted documents.
+     * <p>
+     * For more explanations about what is outDoc and cmpDoc see last paragraph of the {@link CompareTool}
+     * class description.
+     * @return {@link ReaderProperties} instance which will be later passed to the output document {@link PdfReader}.
+     */
     public ReaderProperties getOutReaderProperties() {
         if (outProps == null) {
             outProps = new ReaderProperties();
@@ -252,6 +277,14 @@ public class CompareTool {
         return outProps;
     }
 
+    /**
+     * Documents for comparison are opened in reader mode. This method is intended to alter {@link ReaderProperties}
+     * which are used to open cmp document. This is particularly useful for comparison of encrypted documents.
+     * <p>
+     * For more explanations about what is outDoc and cmpDoc see last paragraph of the {@link CompareTool}
+     * class description.
+     * @return {@link ReaderProperties} instance which will be later passed to the cmp document {@link PdfReader}.
+     */
     public ReaderProperties getCmpReaderProperties() {
         if (cmpProps == null) {
             cmpProps = new ReaderProperties();
@@ -1655,7 +1688,15 @@ public class CompareTool {
     }
 
     /**
-     * Class that encapsulates information about paths to the objects from the certain base or root object.
+     * Class that helps to find two corresponding objects in the comparing documents and also keeps track of the
+     * already met in comparing process parent indirect objects.
+     * <p>
+     *     You could say that ObjectPath instance consists of two parts: direct path and indirect path. Direct path defines
+     *     path to the currently comparing objects in relation to base objects. It could be empty, which would mean that
+     *     currently comparing objects are base objects themselves. Base objects are the two indirect objects from the comparing
+     *     documents which are in the same position in the pdf trees. Another part, indirect path, defines which indirect
+     *     objects were met during comparison process to get to the current base objects. Indirect path is needed to avoid
+     *     infinite loops during comparison.
      */
     public class ObjectPath {
         protected PdfIndirectReference baseCmpObject;
@@ -1670,9 +1711,9 @@ public class CompareTool {
         }
 
         /**
-         * Creates ObjectPath with corresponding root objects in two documents.
-         * @param baseCmpObject root object in cmp document.
-         * @param baseOutObject root object in out document.
+         * Creates ObjectPath with corresponding base objects in two documents.
+         * @param baseCmpObject base object in cmp document.
+         * @param baseOutObject base object in out document.
          */
         protected ObjectPath(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject) {
             this.baseCmpObject = baseCmpObject;
@@ -1687,7 +1728,19 @@ public class CompareTool {
             this.indirects = indirects;
         }
 
-
+        /**
+         * Creates a new ObjectPath instance with two new given base objects, which are supposed to be nested in the base
+         * objects of the current instance of the ObjectPath. This method is used to avoid infinite loop in case of
+         * circular references in pdf documents objects structure.
+         * <br/>
+         * Basically, this method creates copy of the current ObjectPath instance, but resets information of the direct
+         * paths, and also adds current ObjectPath instance base objects to the indirect references chain that denotes
+         * a path to the new base objects.
+         * @param baseCmpObject new base object in cmp document.
+         * @param baseOutObject new base object in out document.
+         * @return new ObjectPath instance, which stores chain of the indirect references which were already met to get
+         * to the new base objects.
+         */
         public ObjectPath resetDirectPath(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject) {
             ObjectPath newPath = new ObjectPath(baseCmpObject, baseOutObject);
             newPath.indirects = (Stack<IndirectPathItem>) indirects.clone();
@@ -1695,42 +1748,86 @@ public class CompareTool {
             return newPath;
         }
 
-        public boolean isComparing(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject) {
-            return indirects.contains(new IndirectPathItem(baseCmpObject, baseOutObject));
+        /**
+         * This method is used to define if given objects were already met in the path to the current base objects.
+         * If this method returns true it basically means that we found a loop in the objects structure and that we
+         * already compared these objects.
+         * @param cmpObject cmp object to check if it was already met in base objects path.
+         * @param outObject out object to check if it was already met in base objects path.
+         * @return true if given objects are contained in the path and therefore were already compared.
+         */
+        public boolean isComparing(PdfIndirectReference cmpObject, PdfIndirectReference outObject) {
+            return indirects.contains(new IndirectPathItem(cmpObject, outObject));
         }
 
+        /**
+         * Adds array item to the direct path. See {@link ArrayPathItem}.
+         * @param index index in the array of the direct object to be compared.
+         */
         public void pushArrayItemToPath(int index) {
             path.add(new ArrayPathItem(index));
         }
 
+        /**
+         * Adds dictionary item to the direct path. See {@link DictPathItem}.
+         * @param key key in the dictionary to which corresponds direct object to be compared.
+         */
         public void pushDictItemToPath(PdfName key) {
             path.add(new DictPathItem(key));
         }
 
+        /**
+         * Adds offset item to the direct path. See {@link OffsetPathItem}.
+         * @param offset offset to the specific byte in the stream that is compared.
+         */
         public void pushOffsetToPath(int offset) {
             path.add(new OffsetPathItem(offset));
         }
 
+        /**
+         * Removes the last path item from the direct path.
+         */
         public void pop() {
             path.pop();
         }
 
+        /**
+         * Gets local (or direct) path that denotes sequence of the path items from base object to the comparing
+         * direct object.
+         * @return direct path to the comparing object.
+         */
         public Stack<LocalPathItem> getLocalPath() {
             return path;
         }
 
+        /**
+         * Gets indirect path which denotes sequence of the indirect references that were passed in comparing process
+         * to get to the current base objects.
+         * @return indirect path to the current base objects.
+         */
         public Stack<IndirectPathItem> getIndirectPath() {
             return indirects;
         }
 
+        /**
+         * @return current base object in the cmp document.
+         */
         public PdfIndirectReference getBaseCmpObject() {
             return baseCmpObject;
         }
 
+        /**
+         * @return current base object in the out document.
+         */
         public PdfIndirectReference getBaseOutObject() {
             return baseOutObject;
         }
 
+        /**
+         * Creates an xml node that describes a direct path stored in this ObjectPath instance.
+         * @param document xml document, to which this xml node will be added.
+         * @return an xml node describing direct path.
+         */
         public Node toXmlNode(Document document) {
             Element element = document.createElement("path");
             Element baseNode = document.createElement("base");
@@ -1743,6 +1840,9 @@ public class CompareTool {
             return element;
         }
 
+        /**
+         * @return string representation of the direct path stored in this ObjectPath instance.
+         */
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
@@ -1776,19 +1876,34 @@ public class CompareTool {
                     (Stack<IndirectPathItem>) indirects.clone());
         }
 
+        /**
+         * An item in the indirect path (see {@link ObjectPath}. It encapsulates two corresponding objects from the two
+         * comparing documents that were met to get to the path base objects during comparing process.
+         */
         public class IndirectPathItem {
             private PdfIndirectReference cmpObject;
             private PdfIndirectReference outObject;
 
+            /**
+             * Creates IndirectPathItem instance for two corresponding objects from two comparing documents.
+             * @param cmpObject an object from the cmp document.
+             * @param outObject an object from the out document.
+             */
             public IndirectPathItem(PdfIndirectReference cmpObject, PdfIndirectReference outObject) {
                 this.cmpObject = cmpObject;
                 this.outObject = outObject;
             }
 
+            /**
+             * @return an object from the cmp object that was met to get to the path base objects during comparing process.
+             */
             public PdfIndirectReference getCmpObject() {
                 return cmpObject;
             }
 
+            /**
+             * @return an object from the out object that was met to get to the path base objects during comparing process.
+             */
             public PdfIndirectReference getOutObject() {
                 return outObject;
             }
@@ -1805,12 +1920,31 @@ public class CompareTool {
             }
         }
 
+        /**
+         * An abstract class for the items in the direct path (see {@link ObjectPath}.
+         */
         public abstract class LocalPathItem {
+
+            /**
+             * Creates an xml node that describes this direct path item.
+             * @param document xml document, to which this xml node will be added.
+             * @return an xml node describing direct path item.
+             */
             protected abstract Node toXmlNode(Document document);
         }
 
+        /**
+         * Direct path item (see {@link ObjectPath}, which describes transition to the
+         * {@link PdfDictionary} entry which value is now a currently comparing direct object.
+         */
         public class DictPathItem extends LocalPathItem {
             PdfName key;
+
+            /**
+             * Creates an instance of the {@link DictPathItem}.
+             * @param key the key which defines to which entry of the {@link PdfDictionary}
+             *            the transition was performed.
+             */
             public DictPathItem(PdfName key) {
                 this.key = key;
             }
@@ -1837,13 +1971,29 @@ public class CompareTool {
                 return element;
             }
 
+            /**
+             * The key which defines to which entry of the {@link PdfDictionary} the transition was performed.
+             * See {@link DictPathItem} for more info.
+             * @return a {@link PdfName} which is the key which defines to which entry of the dictionary
+             * the transition was performed.
+             */
             public PdfName getKey() {
                 return key;
             }
         }
 
+        /**
+         * Direct path item (see {@link ObjectPath}, which describes transition to the
+         * {@link PdfArray} element which is now a currently comparing direct object.
+         */
         public class ArrayPathItem extends LocalPathItem {
             int index;
+
+            /**
+             * Creates an instance of the {@link ArrayPathItem}.
+             * @param index the index which defines element of the {@link PdfArray} to which
+             *              the transition was performed.
+             */
             public ArrayPathItem(int index) {
                 this.index = index;
             }
@@ -1870,17 +2020,36 @@ public class CompareTool {
                 return element;
             }
 
+            /**
+             * The index which defines element of the {@link PdfArray} to which the transition was performed.
+             * See {@link ArrayPathItem} for more info.
+             * @return the index which defines element of the array to which the transition was performed
+             */
             public int getIndex() {
                 return index;
             }
         }
 
+        /**
+         * Direct path item (see {@link ObjectPath}, which describes transition to the
+         * specific position in {@link PdfStream}.
+         */
         public class OffsetPathItem extends LocalPathItem {
             int offset;
+
+            /**
+             * Creates an instance of the {@link OffsetPathItem}.
+             * @param offset bytes offset to the specific position in {@link PdfStream}.
+             */
             public OffsetPathItem(int offset) {
                 this.offset = offset;
             }
 
+            /**
+             * The bytes offset of the stream which defines specific position in the {@link PdfStream}, to which transition
+             * was performed.
+             * @return an integer defining bytes offset to the specific position in stream.
+             */
             public int getOffset() {
                 return offset;
             }
