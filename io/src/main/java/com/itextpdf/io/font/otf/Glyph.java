@@ -202,6 +202,10 @@ public class Glyph implements Serializable {
         return anchorDelta;
     }
 
+    public void setAnchorDelta(short anchorDelta) {
+        this.anchorDelta = anchorDelta;
+    }
+
     public boolean hasOffsets() {
         return xPlacement != 0 || yPlacement != 0 || xAdvance != 0 || yAdvance != 0;
     }
