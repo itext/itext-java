@@ -293,26 +293,25 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
         div.setProperty(Property.ROTATION_POINT_X, x);
         div.setProperty(Property.ROTATION_POINT_Y, y);
 
-        float divWidth = AbstractRenderer.INF;
-        float divHeight = AbstractRenderer.INF;
+        float divSize = 5e3f;
         float divX = x, divY = y;
         if (textAlign == TextAlignment.CENTER) {
-            divX = x - divWidth / 2;
+            divX = x - divSize / 2;
             p.setHorizontalAlignment(HorizontalAlignment.CENTER);
         } else if (textAlign == TextAlignment.RIGHT) {
-            divX = x - divWidth;
+            divX = x - divSize;
             p.setHorizontalAlignment(HorizontalAlignment.RIGHT);
         }
 
         if (vertAlign == VerticalAlignment.MIDDLE) {
-            divY = y - divHeight / 2;
+            divY = y - divSize / 2;
         } else if (vertAlign == VerticalAlignment.TOP) {
-            divY = y - divHeight;
+            divY = y - divSize;
         }
 
         if (pageNumber == 0)
             pageNumber = 1;
-        div.setFixedPosition(pageNumber, divX, divY, divWidth).setHeight(divHeight);
+        div.setFixedPosition(pageNumber, divX, divY, divSize).setHeight(divSize);
         if (p.<Leading>getProperty(Property.LEADING) == null) {
             p.setMultipliedLeading(1);
         }
