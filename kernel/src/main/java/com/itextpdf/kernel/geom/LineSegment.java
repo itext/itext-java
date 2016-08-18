@@ -93,7 +93,7 @@ public class LineSegment {
      * @deprecated Use getBoundingRectangle(). Will be removed in 7.1
      */
     @Deprecated
-    public Rectangle getBoundingRectange(){
+    public Rectangle getBoundingRectange() {
         return getBoundingRectangle();
     }
 

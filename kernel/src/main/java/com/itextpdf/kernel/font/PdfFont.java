@@ -114,6 +114,19 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param unicode a unicode code point
      * @return true if font contains glyph, represented with the unicode code point,
      * otherwise false.
+     * @deprecated Use {@link PdfFont#containsGlyph(int)} instead.
+     */
+    @Deprecated
+    public boolean containsGlyph(char unicode) {
+        return containsGlyph((int) unicode);
+    }
+
+    /**
+     * Check whether font contains glyph with specified unicode.
+     *
+     * @param unicode a unicode code point
+     * @return true if font contains glyph, represented with the unicode code point,
+     * otherwise false.
      */
     public boolean containsGlyph(int unicode) {
         Glyph glyph = getGlyph(unicode);

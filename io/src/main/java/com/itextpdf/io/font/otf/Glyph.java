@@ -145,7 +145,7 @@ public class Glyph implements Serializable {
         return unicode > -1;
     }
 
-    public Integer getUnicode() {
+    public int getUnicode() {
         return unicode;
     }
 

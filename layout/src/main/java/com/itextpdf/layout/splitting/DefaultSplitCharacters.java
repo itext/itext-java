@@ -55,7 +55,7 @@ public class DefaultSplitCharacters implements ISplitCharacters {
         if (!text.get(glyphPos).hasValidUnicode()) {
             return false;
         }
-        int charCode = (int)text.get(glyphPos).getUnicode();
+        int charCode = text.get(glyphPos).getUnicode();
         return (charCode <= ' ' || charCode == '-' || charCode == '\u2010'
                 || (charCode >= 0x2002 && charCode <= 0x200b)
                 || (charCode >= 0x2e80 && charCode < 0xd7a0)

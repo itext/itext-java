@@ -210,7 +210,7 @@ public class TextRenderer extends AbstractRenderer {
                 if (noPrint(currentGlyph))
                     continue;
 
-                if (tabAnchorCharacter != null && tabAnchorCharacter == (int) text.get(ind).getUnicode()) {
+                if (tabAnchorCharacter != null && tabAnchorCharacter == text.get(ind).getUnicode()) {
                     tabAnchorCharacterPosition = currentLineWidth + nonBreakablePartFullWidth;
                     tabAnchorCharacter = (Character) (Object) null;
                 }
@@ -242,7 +242,7 @@ public class TextRenderer extends AbstractRenderer {
 
                 if (splitCharacters.isSplitCharacter(text, ind) || ind + 1 == text.end ||
                         splitCharacters.isSplitCharacter(text, ind + 1) &&
-                                (Character.isWhitespace((char) (int) text.get(ind + 1).getUnicode()) || Character.isSpaceChar((char) (int) text.get(ind + 1).getUnicode()))) {
+                                (Character.isWhitespace((char) text.get(ind + 1).getUnicode()) || Character.isSpaceChar((char) text.get(ind + 1).getUnicode()))) {
                     nonBreakablePartEnd = ind;
                     break;
                 }
@@ -639,7 +639,7 @@ public class TextRenderer extends AbstractRenderer {
 
         if (text != null) {
             Glyph glyph;
-            while (text.start < text.end && (glyph = text.get(text.start)).hasValidUnicode() && Character.isWhitespace((char) (int) glyph.getUnicode()) && !isNewLine(text, text.start)) {
+            while (text.start < text.end && (glyph = text.get(text.start)).hasValidUnicode() && Character.isWhitespace((char) glyph.getUnicode()) && !isNewLine(text, text.start)) {
                 text.start++;
             }
         }
@@ -665,7 +665,7 @@ public class TextRenderer extends AbstractRenderer {
         int firstNonSpaceCharIndex = line.end - 1;
         while (firstNonSpaceCharIndex >= line.start) {
             Glyph currentGlyph = line.get(firstNonSpaceCharIndex);
-            if (!currentGlyph.hasValidUnicode() || !Character.isWhitespace((char) (int) currentGlyph.getUnicode())) {
+            if (!currentGlyph.hasValidUnicode() || !Character.isWhitespace((char) currentGlyph.getUnicode())) {
                 break;
             }
 
@@ -990,8 +990,8 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private boolean isGlyphPartOfWordForHyphenation(Glyph g) {
-        return g.hasValidUnicode() && (Character.isLetter((char) (int) g.getUnicode()) ||
-                Character.isDigit((char) (int) g.getUnicode()) || '\u00ad' == g.getUnicode());
+        return g.hasValidUnicode() && (Character.isLetter((char) g.getUnicode()) ||
+                Character.isDigit((char) g.getUnicode()) || '\u00ad' == g.getUnicode());
     }
 
     private boolean isWhitespaceGlyph(Glyph g) {
