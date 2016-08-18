@@ -557,6 +557,8 @@ public class TextRenderer extends AbstractRenderer {
                 }
             };
 
+            boolean appearanceStreamLayout = Boolean.TRUE.equals (getPropertyAsBoolean(Property.APPEARANCE_STREAM_LAYOUT));
+
             if (hasOwnProperty(Property.REVERSED)) {
                 //We should mark a RTL written text
                 Map<GlyphLine, Boolean> outputs = getOutputChunks();
@@ -564,15 +566,23 @@ public class TextRenderer extends AbstractRenderer {
                 for (Map.Entry<GlyphLine, Boolean> output : outputs.entrySet()) {
                     GlyphLine o = output.getKey().filter(filter);
 
-                    if ((boolean) output.getValue()) {
+
+                    boolean writeReversedChars = !appearanceStreamLayout && (boolean) output.getValue();
+                    if (writeReversedChars) {
                         canvas.openTag(new CanvasTag(PdfName.ReversedChars));
                     }
+                    if (appearanceStreamLayout) {
+                        o.setActualText(o.start, o.end, null);
+                    }
                     canvas.showText(o);
-                    if ((boolean) output.getValue()) {
+                    if (writeReversedChars) {
                         canvas.closeTag();
                     }
                 }
             } else {
+                if (appearanceStreamLayout) {
+                    line.setActualText(line.start, line.end, null);
+                }
                 canvas.showText(line.filter(filter));
             }
 

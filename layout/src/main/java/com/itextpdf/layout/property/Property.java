@@ -56,6 +56,7 @@ public final class Property {
     }
 
     public static final int ACTION = 1;
+    public static final int APPEARANCE_STREAM_LAYOUT = 82;
     public static final int AREA_BREAK_TYPE = 2;
     public static final int AUTO_SCALE = 3;
     public static final int AUTO_SCALE_HEIGHT = 4;
@@ -152,11 +153,12 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 80;
+    private static final int MAX_INHERITED_PROPERTY_ID = 82;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
 
+        INHERITED_PROPERTIES[Property.APPEARANCE_STREAM_LAYOUT] = true;
         INHERITED_PROPERTIES[Property.BASE_DIRECTION] = true;
         INHERITED_PROPERTIES[Property.BOLD_SIMULATION] = true;
         INHERITED_PROPERTIES[Property.CHARACTER_SPACING] = true;
@@ -194,6 +196,6 @@ public final class Property {
      * @return whether the property type is inheritable
      */
     public static boolean isPropertyInherited(int property) {
-        return property >= 0 && property < MAX_INHERITED_PROPERTY_ID && INHERITED_PROPERTIES[property];
+        return property >= 0 && property <= MAX_INHERITED_PROPERTY_ID && INHERITED_PROPERTIES[property];
     }
 }

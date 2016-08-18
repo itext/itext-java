@@ -2339,7 +2339,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             textAlignment = TextAlignment.CENTER;
             x = rect.getWidth() / 2;
         }
-        new Canvas(canvas, getDocument(), new Rectangle(0, -height, 0, 2 * height)).showTextAligned(paragraph, x, rect.getHeight() / 2, textAlignment, VerticalAlignment.MIDDLE);
+        Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(0, -height, 0, 2 * height));
+        modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
+        modelCanvas.showTextAligned(paragraph, x, rect.getHeight() / 2, textAlignment, VerticalAlignment.MIDDLE);
 
         canvas.
                 restoreState().
@@ -2391,6 +2393,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 newPath();
 
         Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(3, 0, Math.max(0, width - 6), Math.max(0, height - 2)));
+        modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
         for (int index = 0; index < strings.size(); index++) {
             Boolean isFull = modelCanvas.getRenderer().getPropertyAsBoolean(Property.FULL);
             if (Boolean.TRUE.equals(isFull)) {
@@ -2716,7 +2719,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         Paragraph paragraph = new Paragraph(text).setFont(font).setFontSize(fontSize).setMargin(0).setMultipliedLeading(1).
                 setVerticalAlignment(VerticalAlignment.MIDDLE);
-        new Canvas(canvas, getDocument(), new Rectangle(0, -height, width, 2 * height)).showTextAligned(paragraph, width / 2, height / 2, TextAlignment.CENTER, VerticalAlignment.MIDDLE);
+        Canvas modelCanvas = new Canvas(canvas, getDocument(), new Rectangle(0, -height, width, 2 * height));
+        modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
+        modelCanvas.showTextAligned(paragraph, width / 2, height / 2, TextAlignment.CENTER, VerticalAlignment.MIDDLE);
     }
 
     /**
