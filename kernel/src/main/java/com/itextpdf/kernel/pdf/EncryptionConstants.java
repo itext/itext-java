@@ -45,6 +45,9 @@ package com.itextpdf.kernel.pdf;
 
 import java.io.Serializable;
 
+/**
+ * Encryption constants for {@link WriterProperties#setStandardEncryption(byte[], byte[], int, int)}.
+ */
 public class EncryptionConstants implements Serializable {
 
     private static final long serialVersionUID = 6234590207803219761L;

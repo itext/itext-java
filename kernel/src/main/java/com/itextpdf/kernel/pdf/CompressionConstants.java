@@ -43,6 +43,9 @@
  */
 package com.itextpdf.kernel.pdf;
 
+/**
+ * Compression constants for {@link PdfStream}.
+ */
 public class CompressionConstants {
     /**
      * A possible compression level.
