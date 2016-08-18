@@ -588,18 +588,26 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfAnnotation resetFlag(int flag) {
         int flags = getFlags();
-        flags = flags & (~flag & 0xff);
+        flags = flags & ~flag;
         return setFlags(flags);
     }
 
     /**
      * Checks if the certain flag that specifies a characteristic of the annotation
      * is in enabled state (see ISO-320001 12.5.3, “Annotation Flags”).
-     * This method allows only one flag to be checked at once. Use constants listed in {@link PdfAnnotation#setFlag(int)}.
-     * @param flag an integer interpreted as set of one-bit flags. Only one bit must be set in this integer.
+     * This method allows only one flag to be checked at once, use constants listed in {@link PdfAnnotation#setFlag(int)}.
+     * @param flag an integer interpreted as set of one-bit flags. Only one bit must be set in this integer, otherwise
+     *             exception is thrown.
      * @return true if the given flag is in enabled state.
      */
     public boolean hasFlag(int flag) {
+        if (flag == 0) {
+            return false;
+        }
+        if ((flag & flag-1) != 0) {
+            throw new IllegalArgumentException("Only one flag must be checked at once.");
+        }
+
         int flags = getFlags();
         return (flags & flag) != 0;
     }
@@ -626,7 +634,10 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     public PdfDictionary getAppearanceObject(PdfName appearanceType) {
         PdfDictionary ap = getAppearanceDictionary();
         if (ap != null) {
-            return ap.getAsDictionary(appearanceType);
+            PdfObject apObject = ap.get(appearanceType);
+            if (apObject instanceof PdfDictionary) {
+                return (PdfDictionary) apObject;
+            }
         }
         return null;
     }
