@@ -336,7 +336,8 @@ public final class PdfFontFactory {
         return FontProgramFactory.isRegisteredFont(fontname);
     }
 
-    static boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType, boolean isException) {
+    @Deprecated
+    protected static boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType, boolean isException) {
         if (fontDic == null || fontDic.get(PdfName.Subtype) == null
                 || !fontDic.get(PdfName.Subtype).equals(fontType)) {
             if (isException) {
