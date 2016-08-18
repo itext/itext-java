@@ -71,7 +71,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Defines the most common properties and behavior that are shared by most
@@ -862,6 +867,33 @@ public abstract class AbstractRenderer implements IRenderer {
         }
 
         return this;
+    }
+
+    /**
+     * Calculates the bounding box of the content in the coordinate system of the pdf entity on which content is placed,
+     * e.g. document page or form xObject. This is particularly useful for the cases when element is nested in the rotated
+     * element.
+     * @return a {@link Rectangle} which is a bbox of the content not relative to the parent's layout area but rather to
+     * the some pdf entity coordinate system.
+     */
+    protected Rectangle calculateAbsolutePdfBBox() {
+        Rectangle contentBox = getOccupiedAreaBBox();
+        List<Point> contentBoxPoints = rectangleToPointsList(contentBox);
+        AbstractRenderer renderer = this;
+        while (renderer.parent != null) {
+            if (renderer instanceof BlockRenderer) {
+                Float angle = renderer.getProperty(Property.ROTATION_ANGLE);
+                if (angle != null) {
+                    BlockRenderer blockRenderer = (BlockRenderer) renderer;
+                    AffineTransform rotationTransform = blockRenderer.createRotationTransformInsideOccupiedArea();
+                    transformPoints(contentBoxPoints, rotationTransform);
+                }
+            }
+
+            renderer = (AbstractRenderer) renderer.parent;
+        }
+
+        return calculateBBox(contentBoxPoints);
     }
 
     /**
