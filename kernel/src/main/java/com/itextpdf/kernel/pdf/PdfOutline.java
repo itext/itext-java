@@ -50,6 +50,7 @@ import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Document outline object
@@ -78,8 +79,10 @@ public class PdfOutline {
      * @param title       the text that shall be displayed on the screen for this item.
      * @param content     Outline dictionary
      * @param pdfDocument {@link PdfDocument} the outline belongs to.
+     * @deprecated Use {@link PdfCatalog#getOutlines(boolean)} instead.
      */
-    PdfOutline(String title, PdfDictionary content, PdfDocument pdfDocument) {
+    @Deprecated
+    public PdfOutline(String title, PdfDictionary content, PdfDocument pdfDocument) {
         this.title = title;
         this.content = content;
 
@@ -92,8 +95,11 @@ public class PdfOutline {
      * @param title   the text that shall be displayed on the screen for this item.
      * @param content Outline dictionary
      * @param parent  parent outline.
+     * @deprecated Use {@link PdfCatalog#getNextItem(PdfDictionary, PdfOutline, Map)},
+     * {@link #addOutline(String, int)} and {@link #addOutline(String)} instead.
      */
-    PdfOutline(String title, PdfDictionary content, PdfOutline parent) {
+    @Deprecated
+    public PdfOutline(String title, PdfDictionary content, PdfOutline parent) {
         this.title = title;
         this.content = content;
         this.parent = parent;
@@ -105,8 +111,10 @@ public class PdfOutline {
      * This constructor creates root outline in the document.
      *
      * @param doc {@link PdfDocument}
+     * @deprecated Use {@link PdfCatalog#getOutlines(boolean)} instead.
      */
-    PdfOutline(PdfDocument doc) {
+    @Deprecated
+    protected PdfOutline(PdfDocument doc) {
         content = new PdfDictionary();
         content.put(PdfName.Type, PdfName.Outlines);
         this.pdfDoc = doc;
