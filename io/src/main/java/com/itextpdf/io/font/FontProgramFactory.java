@@ -111,11 +111,11 @@ public final class FontProgramFactory {
      * createFont(name, null, true);
      * </PRE>
      *
-     * @param name the name of the font or its location on file
+     * @param fontProgram the name of the font or its location on file
      * @return returns a new font. This font may come from the cache
      */
-    public static FontProgram createFont(String name) throws java.io.IOException {
-        return createFont(name, null, true);
+    public static FontProgram createFont(String fontProgram) throws java.io.IOException {
+        return createFont(fontProgram, null, true);
     }
 
     /**
@@ -160,13 +160,13 @@ public final class FontProgramFactory {
      * createFont(name, encoding, embedded, true, null, null);
      * </PRE>
      *
-     * @param font   the name of the font or its location on file
+     * @param fontProgram   the name of the font or its location on file
      * @param cached ttrue if the font comes from the cache or is added to
      *               the cache if new, false if the font is always created new
      * @return returns a new font. This font may come from the cache
      */
-    public static FontProgram createFont(String font, boolean cached) throws java.io.IOException {
-        return createFont(font, null, cached);
+    public static FontProgram createFont(String fontProgram, boolean cached) throws java.io.IOException {
+        return createFont(fontProgram, null, cached);
     }
 
     /**
@@ -203,14 +203,14 @@ public final class FontProgramFactory {
      * "# full 'A' nottriangeqlleft 0041 'B' dividemultiply 0042 32 space 0020"
      * </PRE>
      *
-     * @param font the true type font or the afm in a byte array
+     * @param fontProgram the true type font or the afm in a byte array
      *             an exception if the font is not recognized. Note that even if true an exception may be thrown in some circumstances.
      *             This parameter is useful for FontProgramFactory that may have to check many invalid font names before finding the right one
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
-    public static FontProgram createFont(byte[] font) throws java.io.IOException {
-        return createFont(null, font, false);
+    public static FontProgram createFont(byte[] fontProgram) throws java.io.IOException {
+        return createFont(null, fontProgram, false);
     }
 
     /**
@@ -422,22 +422,22 @@ public final class FontProgramFactory {
      * "# full 'A' nottriangeqlleft 0041 'B' dividemultiply 0042 32 space 0020"
      * </PRE>
      *
-     * @param ttcPath  location  of true type collection file (*.ttc)
+     * @param ttc  location  of true type collection file (*.ttc)
      * @param ttcIndex the encoding to be applied to this font
      * @param cached   true if the font comes from the cache or is added to
      *                 the cache if new, false if the font is always created new
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
-    public static FontProgram createFont(String ttcPath, int ttcIndex, boolean cached) throws java.io.IOException {
+    public static FontProgram createFont(String ttc, int ttcIndex, boolean cached) throws java.io.IOException {
         if (cached) {
-            FontProgram fontFound = FontCache.getFont(ttcPath + ttcIndex);
+            FontProgram fontFound = FontCache.getFont(ttc + ttcIndex);
             if (fontFound != null) {
                 return fontFound;
             }
         }
-        FontProgram fontBuilt = new TrueTypeFont(ttcPath, ttcIndex);
-        return cached ? FontCache.saveFont(fontBuilt, ttcPath + ttcIndex) : fontBuilt;
+        FontProgram fontBuilt = new TrueTypeFont(ttc, ttcIndex);
+        return cached ? FontCache.saveFont(fontBuilt, ttc + ttcIndex) : fontBuilt;
     }
 
     public static FontProgram createFont(byte[] ttc, int ttcIndex, boolean cached) throws java.io.IOException {

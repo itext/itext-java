@@ -85,12 +85,12 @@ public final class PdfFontFactory {
         }
     }
 
-    public static PdfFont createFont(String path) throws IOException {
-        return createFont(path, DEFAULT_ENCODING);
+    public static PdfFont createFont(String fontProgram) throws IOException {
+        return createFont(fontProgram, DEFAULT_ENCODING);
     }
 
-    public static PdfFont createFont(String path, String encoding) throws IOException {
-        return createFont(path, encoding, DEFAULT_EMBEDDING);
+    public static PdfFont createFont(String fontProgram, String encoding) throws IOException {
+        return createFont(fontProgram, encoding, DEFAULT_EMBEDDING);
     }
 
     public static PdfFont createTtcFont(byte[] ttc, int ttcIndex, String encoding, boolean embedded, boolean cached) throws IOException {
@@ -98,22 +98,22 @@ public final class PdfFontFactory {
         return createFont(fontProgram, encoding, embedded);
     }
 
-    public static PdfFont createTtcFont(String ttcPath, int ttcIndex, String encoding, boolean embedded, boolean cached) throws IOException {
-        FontProgram fontProgram = FontProgramFactory.createFont(ttcPath, ttcIndex, cached);
+    public static PdfFont createTtcFont(String ttc, int ttcIndex, String encoding, boolean embedded, boolean cached) throws IOException {
+        FontProgram fontProgram = FontProgramFactory.createFont(ttc, ttcIndex, cached);
         return createFont(fontProgram, encoding, embedded);
     }
 
-    public static PdfFont createFont(String path, boolean embedded) throws IOException {
-        return createFont(path, DEFAULT_ENCODING, embedded);
+    public static PdfFont createFont(String fontProgram, boolean embedded) throws IOException {
+        return createFont(fontProgram, DEFAULT_ENCODING, embedded);
     }
 
-    public static PdfFont createFont(String path, String encoding, boolean embedded) throws IOException {
-        return createFont(path, encoding, embedded, DEFAULT_CACHED);
+    public static PdfFont createFont(String fontProgram, String encoding, boolean embedded) throws IOException {
+        return createFont(fontProgram, encoding, embedded, DEFAULT_CACHED);
     }
 
-    public static PdfFont createFont(String path, String encoding, boolean embedded, boolean cached) throws IOException {
-        FontProgram fontProgram = FontProgramFactory.createFont(path, cached);
-        return createFont(fontProgram, encoding, embedded);
+    public static PdfFont createFont(String fontProgram, String encoding, boolean embedded, boolean cached) throws IOException {
+        FontProgram fp = FontProgramFactory.createFont(fontProgram, cached);
+        return createFont(fp, encoding, embedded);
     }
 
     public static PdfFont createFont(FontProgram fontProgram, String encoding, boolean embedded) throws IOException {
@@ -146,48 +146,114 @@ public final class PdfFontFactory {
         return createFont(fontProgram, DEFAULT_ENCODING);
     }
 
-    public static PdfFont createFont(byte[] font, String encoding) throws IOException {
-        return createFont(font, encoding, DEFAULT_EMBEDDING);
+    public static PdfFont createFont(byte[] fontProgram, String encoding) throws IOException {
+        return createFont(fontProgram, encoding, DEFAULT_EMBEDDING);
     }
 
-    public static PdfFont createFont(byte[] font, boolean embedded) throws IOException {
-        return createFont(font, null, embedded);
+    public static PdfFont createFont(byte[] fontProgram, boolean embedded) throws IOException {
+        return createFont(fontProgram, null, embedded);
     }
 
-    public static PdfFont createFont(byte[] font, String encoding, boolean embedded) throws IOException {
-        return createFont(font, encoding, embedded, DEFAULT_CACHED);
+    public static PdfFont createFont(byte[] fontProgram, String encoding, boolean embedded) throws IOException {
+        return createFont(fontProgram, encoding, embedded, DEFAULT_CACHED);
     }
 
-    public static PdfFont createFont(byte[] font, String encoding, boolean embedded, boolean cached) throws IOException {
-        FontProgram fontProgram = FontProgramFactory.createFont(null, font, cached);
-        return createFont(fontProgram, encoding, embedded);
+    public static PdfFont createFont(byte[] fontProgram, String encoding, boolean embedded, boolean cached) throws IOException {
+        FontProgram fp = FontProgramFactory.createFont(null, fontProgram, cached);
+        return createFont(fp, encoding, embedded);
     }
 
     public static PdfType3Font createType3Font(PdfDocument document, boolean colorized) throws IOException {
         return new PdfType3Font(document, colorized);
     }
 
-    public static PdfFont createRegisteredFont(String font, String encoding, boolean embedded, int style, boolean cached) throws IOException {
-        FontProgram fontProgram = FontProgramFactory.createRegisteredFont(font, style, cached);
-        return createFont(fontProgram, encoding, embedded);
+    /**
+     * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
+     *
+     * @see PdfFontFactory#register(String)
+     * @see PdfFontFactory#register(String, String)
+     * @see PdfFontFactory#registerFamily(String, String, String)
+     * @see PdfFontFactory#registerDirectory(String)
+     * @see PdfFontFactory#registerSystemDirectories()
+     * @see PdfFontFactory#getRegisteredFamilies()
+     * @see PdfFontFactory#getRegisteredFonts()
+     */
+    public static PdfFont createRegisteredFont(String fontName, String encoding, boolean embedded, int style, boolean cached) throws IOException {
+        FontProgram fp = FontProgramFactory.createRegisteredFont(fontName, style, cached);
+        return createFont(fp, encoding, embedded);
     }
 
-    public static PdfFont createRegisteredFont(String font, String encoding, boolean embedded, boolean cached) throws IOException {
-        return createRegisteredFont(font, encoding, embedded, FontConstants.UNDEFINED, cached);
+    /**
+     * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
+     *
+     * @see PdfFontFactory#register(String)
+     * @see PdfFontFactory#register(String, String)
+     * @see PdfFontFactory#registerFamily(String, String, String)
+     * @see PdfFontFactory#registerDirectory(String)
+     * @see PdfFontFactory#registerSystemDirectories()
+     * @see PdfFontFactory#getRegisteredFamilies()
+     * @see PdfFontFactory#getRegisteredFonts()
+     */
+    public static PdfFont createRegisteredFont(String fontName, String encoding, boolean embedded, boolean cached) throws IOException {
+        return createRegisteredFont(fontName, encoding, embedded, FontConstants.UNDEFINED, cached);
     }
 
-    public static PdfFont createRegisteredFont(String font, String encoding, boolean embedded) throws IOException {
-        return createRegisteredFont(font, encoding, embedded, FontConstants.UNDEFINED);
+    /**
+     * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
+     *
+     * @see PdfFontFactory#register(String)
+     * @see PdfFontFactory#register(String, String)
+     * @see PdfFontFactory#registerFamily(String, String, String)
+     * @see PdfFontFactory#registerDirectory(String)
+     * @see PdfFontFactory#registerSystemDirectories()
+     * @see PdfFontFactory#getRegisteredFamilies()
+     * @see PdfFontFactory#getRegisteredFonts()
+     */
+    public static PdfFont createRegisteredFont(String fontName, String encoding, boolean embedded) throws IOException {
+        return createRegisteredFont(fontName, encoding, embedded, FontConstants.UNDEFINED);
     }
 
-    public static PdfFont createRegisteredFont(String font, String encoding, boolean embedded, int style) throws IOException {
-        return createRegisteredFont(font, encoding, embedded, style, DEFAULT_CACHED);
+    /**
+     * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
+     *
+     * @see PdfFontFactory#register(String)
+     * @see PdfFontFactory#register(String, String)
+     * @see PdfFontFactory#registerFamily(String, String, String)
+     * @see PdfFontFactory#registerDirectory(String)
+     * @see PdfFontFactory#registerSystemDirectories()
+     * @see PdfFontFactory#getRegisteredFamilies()
+     * @see PdfFontFactory#getRegisteredFonts()
+     */
+    public static PdfFont createRegisteredFont(String fontName, String encoding, boolean embedded, int style) throws IOException {
+        return createRegisteredFont(fontName, encoding, embedded, style, DEFAULT_CACHED);
     }
 
-    public static PdfFont createRegisteredFont(String font, String encoding) throws IOException {
-        return createRegisteredFont(font, encoding, false, FontConstants.UNDEFINED);
+    /**
+     * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
+     *
+     * @see PdfFontFactory#register(String)
+     * @see PdfFontFactory#register(String, String)
+     * @see PdfFontFactory#registerFamily(String, String, String)
+     * @see PdfFontFactory#registerDirectory(String)
+     * @see PdfFontFactory#registerSystemDirectories()
+     * @see PdfFontFactory#getRegisteredFamilies()
+     * @see PdfFontFactory#getRegisteredFonts()
+     */
+    public static PdfFont createRegisteredFont(String fontName, String encoding) throws IOException {
+        return createRegisteredFont(fontName, encoding, false, FontConstants.UNDEFINED);
     }
 
+    /**
+     * Creates {@link PdfFont} based on registered {@link FontProgram}'s.
+     *
+     * @see PdfFontFactory#register(String)
+     * @see PdfFontFactory#register(String, String)
+     * @see PdfFontFactory#registerFamily(String, String, String)
+     * @see PdfFontFactory#registerDirectory(String)
+     * @see PdfFontFactory#registerSystemDirectories()
+     * @see PdfFontFactory#getRegisteredFamilies()
+     * @see PdfFontFactory#getRegisteredFonts()
+     */
     public static PdfFont createRegisteredFont(String fontName) throws IOException {
         return createRegisteredFont(fontName, null, false, FontConstants.UNDEFINED);
     }
@@ -270,7 +336,7 @@ public final class PdfFontFactory {
         return FontProgramFactory.isRegisteredFont(fontname);
     }
 
-    protected static boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType, boolean isException) {
+    static boolean checkFontDictionary(PdfDictionary fontDic, PdfName fontType, boolean isException) {
         if (fontDic == null || fontDic.get(PdfName.Subtype) == null
                 || !fontDic.get(PdfName.Subtype).equals(fontType)) {
             if (isException) {
