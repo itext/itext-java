@@ -75,10 +75,13 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
 
+/**
+ * A wrapper for Image XObject. ISO 32000-1, 8.9 Images.
+ */
 public class PdfImageXObject extends PdfXObject {
 
     private static final long serialVersionUID = -205889576153966580L;
-	
+
     private float width;
     private float height;
     private boolean mask;
@@ -90,34 +93,64 @@ public class PdfImageXObject extends PdfXObject {
     private byte[] icc;
     private int stride;
 
+    /**
+     * Creates Image XObject by image.
+     *
+     * @param image {@link ImageData} with actual image data.
+     */
     public PdfImageXObject(ImageData image) {
         this(image, null);
     }
 
+    /**
+     * Creates Image XObject by image.
+     *
+     * @param image     {@link ImageData} with actual image data.
+     * @param imageMask {@link PdfImageXObject} with image mask.
+     */
     public PdfImageXObject(ImageData image, PdfImageXObject imageMask) {
         this(createPdfStream(checkImageType(image), imageMask));
         mask = image.isMask();
         softMask = image.isSoftMask();
     }
 
-    public PdfImageXObject(PdfStream pdfObject) {
-        super(pdfObject);
+    /**
+     * Create {@link PdfImageXObject} instance by {@link PdfStream}.
+     * Note, this constructor doesn't perform any additional checks
+     *
+     * @param pdfStream {@link PdfStream} with Image XObject.
+     * @see PdfXObject#makeXObject(PdfStream)
+     */
+    public PdfImageXObject(PdfStream pdfStream) {
+        super(pdfStream);
     }
 
+    /**
+     * Gets width of image, {@code Width} key.
+     *
+     * @return float value.
+     */
     @Override
     public float getWidth() {
-        if (!isFlushed())
+        if (!isFlushed()) {
             return getPdfObject().getAsNumber(PdfName.Width).floatValue();
-        else
+        } else {
             return width;
+        }
     }
 
+    /**
+     * Gets height of image, {@code Height} key.
+     *
+     * @return float value.
+     */
     @Override
     public float getHeight() {
-        if (!isFlushed())
+        if (!isFlushed()) {
             return getPdfObject().getAsNumber(PdfName.Height).floatValue();
-        else
+        } else {
             return height;
+        }
     }
 
     /**
@@ -125,7 +158,7 @@ public class PdfImageXObject extends PdfXObject {
      * that this object is added to the document, i.e. it has an indirect reference.
      * Basically this means that before flushing you need to explicitly call {@link #makeIndirect(PdfDocument)}.
      * For example: wrapperInstance.makeIndirect(document).flush();
-     * Note that not every wrapper require this, only those that have such warning in documentation.
+     * Note, that not every wrapper require this, only those that have such warning in documentation.
      */
     @Override
     public void flush() {
@@ -136,6 +169,12 @@ public class PdfImageXObject extends PdfXObject {
         }
     }
 
+    /**
+     * Copy Image XObject to the specified document.
+     *
+     * @param document target document
+     * @return just created instance of {@link PdfImageXObject}.
+     */
     public PdfImageXObject copyTo(PdfDocument document) {
         PdfImageXObject image = new PdfImageXObject(getPdfObject().copyTo(document));
         image.width = width;
@@ -145,15 +184,34 @@ public class PdfImageXObject extends PdfXObject {
         return image;
     }
 
+    /**
+     * Gets image bytes, wrapped with buffered image.
+     *
+     * @return {@link java.awt.image.BufferedImage} image.
+     * @throws IOException if an error occurs during reading.
+     */
     public java.awt.image.BufferedImage getBufferedImage() throws IOException {
         byte[] img = getImageBytes();
         return ImageIO.read(new ByteArrayInputStream(img));
     }
 
+    /**
+     * Gets decoded image bytes.
+     *
+     * @return byte array.
+     */
     public byte[] getImageBytes() {
         return getImageBytes(true);
     }
 
+    /**
+     * Gets image bytes.
+     * Note, {@link PdfName#DCTDecode}, {@link PdfName#JBIG2Decode} and {@link PdfName#JPXDecode}
+     * filters will be ignored.
+     *
+     * @param decoded if {@code true}, decodes stream bytes.
+     * @return byte array.
+     */
     public byte[] getImageBytes(boolean decoded) {
         byte[] bytes;
         bytes = getPdfObject().getBytes(false);
@@ -183,6 +241,7 @@ public class PdfImageXObject extends PdfXObject {
      * PNG image into something that can be put into a PDF file.
      * The possible values are: {@link ImageType#JPEG}, {@link ImageType#JPEG2000}, {@link ImageType#JBIG2},
      * {@link ImageType#TIFF}, {@link ImageType#PNG}
+     *
      * @return the identified type of image
      */
     public ImageType identifyImageType() {
@@ -220,8 +279,9 @@ public class PdfImageXObject extends PdfXObject {
      * Identifies recommended file extension to store the bytes of this {@link PdfImageXObject}.
      * Possible values are: 'png', 'jpg', 'jp2', 'tif', 'jbig2'.
      * This extension can later be used together with the result of {@link #getImageBytes()}.
-     * @see #identifyImageType()
+     *
      * @return a {@link String} with recommended file extension
+     * @see #identifyImageType()
      */
     public String identifyImageFileExtension() {
         ImageType bytesType = identifyImageType();
@@ -241,11 +301,20 @@ public class PdfImageXObject extends PdfXObject {
         }
     }
 
+    /**
+     * Puts the value into Image XObject dictionary and associates it with the specified key.
+     * If the key is already present, it will override the old value with the specified one.
+     *
+     * @param key   key to insert or to override
+     * @param value the value to associate with the specified key
+     * @return object itself.
+     */
     public PdfImageXObject put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
         return this;
     }
 
+    @Deprecated
     protected static PdfStream createPdfStream(ImageData image, PdfImageXObject imageMask) {
         PdfStream stream;
         if (image.getOriginalType() == ImageType.RAW) {
@@ -392,7 +461,7 @@ public class PdfImageXObject extends PdfXObject {
                 array.add(new PdfNumber((int) obj));
             } else if (obj instanceof Float) {
                 array.add(new PdfNumber((float) obj));
-            } else if (obj instanceof Object[]){
+            } else if (obj instanceof Object[]) {
                 array.add(createArray(stream, (Object[]) obj));
             } else {
                 //TODO instance of was removed due to autoport
@@ -559,6 +628,4 @@ public class PdfImageXObject extends PdfXObject {
         }
         return image;
     }
-
-
 }

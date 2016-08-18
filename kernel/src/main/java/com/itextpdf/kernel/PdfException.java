@@ -249,6 +249,7 @@ public class PdfException extends RuntimeException {
     public static final String UnknownHashAlgorithm1 = "unknown.hash.algorithm {0}";
     public static final String UnknownKeyAlgorithm1 = "unknown.key.algorithm {0}";
     public static final String UnknownColorFormatMustBeRGBorRRGGBB = "unknown.color.format.must.be.rgb.or.rrggbb";
+    public static final String UnsupportedXObjectType = "Unsupported XObject type";
     public static final String VerificationAlreadyOutput = "verification.already.output";
     public static final String WhenAddingObjectReferenceToTheTagTreeItMustBeConnectedToNotFlushedObject = "when.adding.object.reference.to.the.tag.tree.it.must.be.connected.to.not.flushed.object";
     public static final String WhitePointIsIncorrectlySpecified = "white.point.is.incorrectly.specified";
