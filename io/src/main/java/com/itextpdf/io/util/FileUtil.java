@@ -43,7 +43,17 @@
  */
 package com.itextpdf.io.util;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +70,11 @@ public final class FileUtil {
         String winDir = System.getenv("windir");
         String fileSeparator = System.getProperty("file.separator");
         return winDir + fileSeparator + "fonts";
+    }
+
+    @Deprecated
+    public static String getFileName(String file) {
+        return new File(file).getName();
     }
 
     public static boolean fileExists(String path) {
