@@ -2,6 +2,8 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -267,17 +269,16 @@ public class PdfPagesTest extends ExtendedITextTest{
         return -1;
     }
 
-//    @Test@Ignore
-//    public void testInheritedResources() throws IOException {
-//        String inputFileName1 = sourceFolder + "veraPDF-A003-a-pass.pdf";
-//        PdfReader reader1 = new PdfReader(inputFileName1);
-//        PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
-//        PdfPage page = inputPdfDoc1.getPage(1);
-//        List<PdfFont> list = page.getResources().getFonts(true);
-//        Assert.assertEquals(1, list.size());
-//        Assert.assertEquals("ASJKFO+Arial-BoldMT", list.get(0).getFontProgram().getFontNames().getFontName());
-//    }
-//
+    @Test
+    public void testInheritedResources() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "simpleInheritedResources.pdf"));
+        PdfPage page = pdfDocument.getPage(1);
+        PdfDictionary dict = page.getResources().getResource(PdfName.ExtGState);
+        Assert.assertEquals(2, dict.size());
+        PdfExtGState gState = new PdfExtGState((PdfDictionary) dict.get(new PdfName("Gs1")));
+        Assert.assertEquals(10, gState.getLineWidth().intValue());
+    }
+
 //    @Test(expected = PdfException.class)
 //    public void testCircularReferencesInResources() throws IOException {
 //        String inputFileName1 = sourceFolder + "circularReferencesInResources.pdf";
@@ -287,24 +288,24 @@ public class PdfPagesTest extends ExtendedITextTest{
 //        List<PdfFont> list = page.getResources().getFonts(true);
 //    }
 //
-//    @Test@Ignore
-//    public void testInheritedResourcesUpdate() throws IOException {
-//        String inputFileName1 = sourceFolder + "veraPDF-A003-a-pass.pdf";
-//        PdfReader reader1 = new PdfReader(inputFileName1);
-//
-//        FileOutputStream fos = new FileOutputStream(destinationFolder + "veraPDF-A003-a-pass_new.pdf");
-//        PdfWriter writer = new PdfWriter(fos);
-//        writer.setCompressionLevel(PdfOutputStream.NO_COMPRESSION);
-//        PdfDocument pdfDoc = new PdfDocument(reader1, writer);
-//        pdfDoc.getPage(1).getResources().getFonts(true);
-//        PdfFont f = PdfFont.createFont((PdfDictionary) pdfDoc.getPdfObject(6));
-//        pdfDoc.getPage(1).getResources().addFont(pdfDoc, f);
-//        int fontCount = pdfDoc.getPage(1).getResources().getFonts(false).size();
-//        pdfDoc.getPage(1).flush();
-//        pdfDoc.close();
-//
-//        Assert.assertEquals(2, fontCount);
-//    }
+    @Test
+    public void testInheritedResourcesUpdate() throws IOException, InterruptedException {
+        PdfDocument pdfDoc = new PdfDocument(
+                new PdfReader(sourceFolder + "simpleInheritedResources.pdf"),
+                new PdfWriter(destinationFolder + "updateInheritedResources.pdf")
+                        .setCompressionLevel(CompressionConstants.NO_COMPRESSION));
+        PdfName newGsName = pdfDoc.getPage(1).getResources().addExtGState(new PdfExtGState().setLineWidth(30));
+        int gsCount = pdfDoc.getPage(1).getResources().getResource(PdfName.ExtGState).size();
+        pdfDoc.close();
+        String compareResult = new CompareTool().compareByContent(
+                destinationFolder + "updateInheritedResources.pdf",
+                sourceFolder + "cmp_" + "updateInheritedResources.pdf",
+                destinationFolder, "diff");
+
+        Assert.assertEquals(3, gsCount);
+        Assert.assertEquals("Gs3", newGsName.getValue());
+        Assert.assertNull(compareResult);
+    }
 
     @Test
     public void getPageByDictionary() throws IOException {

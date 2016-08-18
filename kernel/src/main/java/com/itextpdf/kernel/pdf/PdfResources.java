@@ -53,6 +53,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -285,7 +286,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
             checkAndResolveCircularReferences(resource);
         }
         if (readOnly) {
-            setPdfObject(new PdfDictionary(getPdfObject()));
+            setPdfObject(getPdfObject().clone(Collections.EMPTY_LIST));
             buildResources(getPdfObject());
             isModified = true;
             readOnly = false;
