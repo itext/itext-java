@@ -687,12 +687,12 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Inserts the value into Graphics state parameter dictionary and associates it with the specified key.
+     * Puts the value into Graphics state parameter dictionary and associates it with the specified key.
      * If the key is already present, it will override the old value with the specified one.
      *
      * @param key   key to insert or to override
      * @param value the value to associate with the specified key
-     * @return the previous PdfObject associated with this key
+     * @return object itself.
      */
     public PdfExtGState put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
