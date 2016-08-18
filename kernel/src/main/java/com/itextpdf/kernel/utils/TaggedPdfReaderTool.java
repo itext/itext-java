@@ -52,7 +52,11 @@ import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
-import com.itextpdf.kernel.pdf.tagging.*;
+import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfMcr;
+import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -139,7 +143,7 @@ public class TaggedPdfReaderTool {
         return this;
     }
 
-    protected void inspectKids(List<IPdfStructElem> kids) throws IOException {
+    protected void inspectKids(List<IPdfStructElem> kids) {
         if (kids == null)
             return;
 
@@ -148,39 +152,43 @@ public class TaggedPdfReaderTool {
         }
     }
 
-    protected void inspectKid(IPdfStructElem kid) throws IOException {
-        if (kid instanceof PdfStructElem) {
-            PdfStructElem structElemKid = (PdfStructElem) kid;
-            PdfName s = structElemKid.getRole();
-            String tagN = s.getValue();
-            String tag = fixTagName(tagN);
-            out.write("<");
-            out.write(tag);
+    protected void inspectKid(IPdfStructElem kid) {
+        try {
+            if (kid instanceof PdfStructElem) {
+                PdfStructElem structElemKid = (PdfStructElem) kid;
+                PdfName s = structElemKid.getRole();
+                String tagN = s.getValue();
+                String tag = fixTagName(tagN);
+                out.write("<");
+                out.write(tag);
 
-            inspectAttributes(structElemKid);
+                inspectAttributes(structElemKid);
 
-            out.write(">" + System.lineSeparator());
+                out.write(">" + System.lineSeparator());
 
-            PdfString alt = (structElemKid).getAlt();
+                PdfString alt = (structElemKid).getAlt();
 
-            if (alt != null) {
-                out.write("<alt><![CDATA[");
-                out.write(alt.getValue().replaceAll("[\\000]*", ""));
-                out.write("]]></alt>" + System.lineSeparator());
+                if (alt != null) {
+                    out.write("<alt><![CDATA[");
+                    out.write(alt.getValue().replaceAll("[\\000]*", ""));
+                    out.write("]]></alt>" + System.lineSeparator());
+                }
+
+                inspectKids(structElemKid.getKids());
+                out.write("</");
+                out.write(tag);
+                out.write(">" + System.lineSeparator());
+            } else if (kid instanceof PdfMcr) {
+                parseTag((PdfMcr) kid);
+            } else {
+                out.write(" <flushedKid/> ");
             }
-
-            inspectKids(structElemKid.getKids());
-            out.write("</");
-            out.write(tag);
-            out.write(">" + System.lineSeparator());
-        } else if (kid instanceof PdfMcr) {
-            parseTag((PdfMcr) kid);
-        } else {
-            out.write(" <flushedKid/> ");
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.UnknownIOException, e);
         }
     }
 
-    protected void inspectAttributes(PdfStructElem kid) throws IOException {
+    protected void inspectAttributes(PdfStructElem kid) {
         PdfObject attrObj = kid.getAttributes(false);
 
         if (attrObj != null) {
@@ -190,18 +198,22 @@ public class TaggedPdfReaderTool {
             } else {
                 attrDict = (PdfDictionary) attrObj;
             }
-            for (Map.Entry<PdfName, PdfObject> entry : attrDict.entrySet()) {
-                out.write(' ');
-                String attrName = entry.getKey().getValue();
-                out.write(Character.toLowerCase(attrName.charAt(0)) + attrName.substring(1));
-                out.write("=\"");
-                out.write(entry.getValue().toString());
-                out.write("\"");
+            try {
+                for (Map.Entry<PdfName, PdfObject> entry : attrDict.entrySet()) {
+                    out.write(' ');
+                    String attrName = entry.getKey().getValue();
+                    out.write(Character.toLowerCase(attrName.charAt(0)) + attrName.substring(1));
+                    out.write("=\"");
+                    out.write(entry.getValue().toString());
+                    out.write("\"");
+                }
+            } catch (java.io.IOException e) {
+                throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.UnknownIOException, e);
             }
         }
     }
 
-    protected void parseTag(PdfMcr kid) throws IOException {
+    protected void parseTag(PdfMcr kid) {
         int mcid = kid.getMcid();
         PdfDictionary pageDic = kid.getPageObject();
 
@@ -228,7 +240,11 @@ public class TaggedPdfReaderTool {
                 tagContent = subtype.toString();
             }
         }
-        out.write(escapeXML(tagContent, true));
+        try {
+            out.write(escapeXML(tagContent, true));
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.UnknownIOException, e);
+        }
     }
 
     protected static String fixTagName(String tag) {
