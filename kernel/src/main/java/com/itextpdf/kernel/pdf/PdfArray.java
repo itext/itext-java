@@ -249,7 +249,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     }
 
     /**
-     * Adds the specified PdfObject qt the specified index. All objects after this index will be shifted by 1.
+     * Adds the specified PdfObject at the specified index. All objects after this index will be shifted by 1.
      *
      * @param index position to insert the PdfObject
      * @param element PdfObject to be added

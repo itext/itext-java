@@ -115,14 +115,19 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         this(pdfDocument, pdfDocument.getDefaultPageSize());
     }
 
+    /**
+     * Gets page size, defined by media box object. This method doesn't take page rotation into account.
+     *
+     * @return {@link Rectangle} that specify page size.
+     */
     public Rectangle getPageSize() {
         return getMediaBox();
     }
 
     /**
-     * Gets the rotated page.
+     * Gets page size, considering page rotation.
      *
-     * @return the rotated rectangle
+     * @return {@link Rectangle} that specify size of rotated page.
      */
     public Rectangle getPageSizeWithRotation() {
         PageSize rect = new PageSize(getPageSize());
@@ -134,6 +139,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return rect;
     }
 
+    /**
+     * Gets the number of degrees by which the page shall be rotated clockwise when displayed or printed.
+     * Shall be a multiple of 90.
+     *
+     * @return {@code int} number of degrees. Default value: 0
+     */
     public int getRotation() {
         PdfNumber rotate = getPdfObject().getAsNumber(PdfName.Rotate);
 
@@ -146,11 +157,26 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Sets the page rotation.
+     *
+     * @param degAngle the {@code int}  number of degrees by which the page shall be rotated clockwise
+     *                 when displayed or printed. Shall be a multiple of 90.
+     * @return this {@link PdfPage} instance.
+     */
     public PdfPage setRotation(int degAngle) {
         getPdfObject().put(PdfName.Rotate, new PdfNumber(degAngle));
         return this;
     }
 
+    /**
+     * Gets the content stream at specified 0-based index in the Contents object {@link PdfArray}.
+     * The situation when Contents object is a {@link PdfStream} is treated like a one element array.
+     *
+     * @param index the {@code int} index of returned {@link PdfStream}.
+     * @return {@link PdfStream} object at specified index.
+     * @throws IndexOutOfBoundsException if the index is out of range
+     */
     public PdfStream getContentStream(int index) {
         int count = getContentStreamCount();
         if (index >= count)
@@ -166,6 +192,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Gets the size of Contents object {@link PdfArray}.
+     * The situation when Contents object is a {@link PdfStream} is treated like a one element array.
+     *
+     * @return the {@code int} size of Contents object, or 1 if Contents object is a {@link PdfStream}.
+     */
     public int getContentStreamCount() {
         PdfObject contents = getPdfObject().get(PdfName.Contents);
         if (contents instanceof PdfStream)
@@ -177,12 +209,22 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Returns the Contents object if it is {@link PdfStream}, or first stream in the array if it is {@link PdfArray}.
+     *
+     * @return first {@link PdfStream} in Contents object, or {@code null} if Contents is empty.
+     */
     public PdfStream getFirstContentStream() {
         if (getContentStreamCount() > 0)
             return getContentStream(0);
         return null;
     }
 
+    /**
+     * Returns the Contents object if it is {@link PdfStream}, or last stream in the array if it is {@link PdfArray}.
+     *
+     * @return first {@link PdfStream} in Contents object, or {@code null} if Contents is empty.
+     */
     public PdfStream getLastContentStream() {
         int count = getContentStreamCount();
         if (count > 0)
@@ -190,11 +232,22 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return null;
     }
 
-
+    /**
+     * Creates new {@link PdfStream} object and puts it at the beginning of Contents array
+     * (if Contents object is {@link PdfStream} it will be replaced with one-element array).
+     *
+     * @return Created {@link PdfStream} object.
+     */
     public PdfStream newContentStreamBefore() {
         return newContentStream(true);
     }
 
+    /**
+     * Creates new {@link PdfStream} object and puts it at the end of Contents array
+     * (if Contents object is {@link PdfStream} it will be replaced with one-element array).
+     *
+     * @return Created {@link PdfStream} object.
+     */
     public PdfStream newContentStreamAfter() {
         return newContentStream(false);
     }
@@ -207,7 +260,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * NOTE: If you'll try to modify the inherited resources, then the new resources object will be created,
      * so you won't change the parent's resources.
      * This new object under the wrapper will be added to page dictionary on {@link PdfPage#flush()},
-     * or you can add it manually with this line, if needed:
+     * or you can add it manually with this line, if needed:<br/>
      * {@code getPdfObject().put(PdfName.Resources, getResources().getPdfObject());}
      *
      * @return {@link PdfResources} wrapper of the page.
@@ -234,6 +287,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return this.resources;
     }
 
+    /**
+     * Sets {@link PdfResources} object.
+     *
+     * @param pdfResources {@link PdfResources} to set.
+     * @return this {@link PdfPage} instance.
+     */
     public PdfPage setResources(PdfResources pdfResources) {
         getPdfObject().put(PdfName.Resources, pdfResources.getPdfObject());
         this.resources = pdfResources;
@@ -242,10 +301,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
 
     /**
-     * Use this method to set the XMP Metadata for each page.
+     * Sets the XMP Metadata.
      *
-     * @param xmpMetadata The xmpMetadata to set.
-     * @throws IOException
+     * @param xmpMetadata the {@code byte[]} of XMP Metadata to set.
+     * @throws IOException in case of writing error.
      */
     public void setXmpMetadata(byte[] xmpMetadata) throws IOException {
         PdfStream xmp = new PdfStream().makeIndirect(getDocument());
@@ -255,17 +314,37 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.Metadata, xmp);
     }
 
+    /**
+     * Serializes XMP Metadata to byte array and sets it.
+     *
+     * @param xmpMeta the {@link XMPMeta} object to set.
+     * @param serializeOptions the {@link SerializeOptions} used while serialization.
+     * @throws XMPException in case of XMP Metadata serialization error.
+     * @throws IOException in case of writing error.
+     */
     public void setXmpMetadata(XMPMeta xmpMeta, SerializeOptions serializeOptions) throws XMPException, IOException {
         setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
     }
 
+    /**
+     * Serializes XMP Metadata to byte array and sets it. Uses padding equals to 2000.
+     *
+     * @param xmpMeta the {@link XMPMeta} object to set.
+     * @throws XMPException in case of XMP Metadata serialization error.
+     * @throws IOException in case of writing error.
+     */
     public void setXmpMetadata(XMPMeta xmpMeta) throws XMPException, IOException {
         SerializeOptions serializeOptions = new SerializeOptions();
         serializeOptions.setPadding(2000);
         setXmpMetadata(xmpMeta, serializeOptions);
     }
 
-
+    /**
+     * Gets the XMP Metadata object.
+     *
+     * @return {@link PdfStream} object, that represent XMP Metadata.
+     * @throws XMPException
+     */
     public PdfStream getXmpMetadata() throws XMPException {
         return getPdfObject().getAsStream(PdfName.Metadata);
     }
@@ -276,7 +355,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * NOTE: Works only for pages from the document opened in reading mode, otherwise an exception is thrown.
      *
      * @param toDocument a document to copy page to.
-     * @return copied page.
+     * @return copied {@link PdfPage}.
      */
     public PdfPage copyTo(PdfDocument toDocument) {
         return copyTo(toDocument, null);
@@ -288,8 +367,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * NOTE: Works only for pages from the document opened in reading mode, otherwise an exception is thrown.
      *
      * @param toDocument a document to copy page to.
-     * @param copier     a copier which bears a specific copy logic. May be NULL
-     * @return copied page.
+     * @param copier     a copier which bears a specific copy logic. May be {@code null}
+     * @return copied {@link PdfPage}.
      */
     public PdfPage copyTo(PdfDocument toDocument, IPdfPageExtraCopier copier) {
         PdfDictionary dictionary = getPdfObject().copyTo(toDocument, excludedKeys, true);
@@ -325,7 +404,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Copies page as FormXObject to the specified document.
      *
      * @param toDocument a document to copy to.
-     * @return resultant XObject.
+     * @return copied {@link PdfFormXObject} object.
      */
     public PdfFormXObject copyAsFormXObject(PdfDocument toDocument) throws IOException {
         PdfFormXObject xObject = new PdfFormXObject(getCropBox());
@@ -341,6 +420,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return xObject;
     }
 
+    /**
+     * Gets the {@link PdfDocument} that owns that page, or {@code null} if such document isn't exist.
+     *
+     * @return {@link PdfDocument} that owns that page, or {@code null} if such document isn't exist.
+     */
     public PdfDocument getDocument() {
         if (getPdfObject().getIndirectReference() != null)
             return getPdfObject().getIndirectReference().getDocument();
@@ -484,7 +568,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Get decoded bytes for the whole page content.
      *
      * @return byte array.
-     * @throws PdfException in case any @see IOException.
+     * @throws PdfException in case of any {@link IOException).
      */
     public byte[] getContentBytes() {
         try {
@@ -509,7 +593,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param index index of stream inside Content.
      * @return byte array.
-     * @throws PdfException in case any @see IOException.
+     * @throws PdfException in case of any {@link IOException).
      */
     public byte[] getStreamBytes(int index) {
         return getContentStream(index).getBytes();
@@ -519,7 +603,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Calculates and returns next available MCID reference.
      *
      * @return calculated MCID reference.
-     * @throws PdfException
+     * @throws PdfException in case of not tagged document.
      */
     public int getNextMcid() {
         if (!getDocument().isTagged()) {
@@ -604,7 +688,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * NOTE: If document is tagged, PdfDocument's PdfTagStructure instance will point at annotation tag parent after method call.
      *
      * @param annotation an annotation to be removed.
-     * @return this PdfPage instance.
+     * @return this {@link PdfPage} instance.
      */
     public PdfPage removeAnnotation(PdfAnnotation annotation) {
         PdfArray annots = getAnnots(false);
@@ -676,7 +760,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @param numberingStyle The numbering style that shall be used for the numeric portion of each page label.
      *                       May be NULL
      * @param labelPrefix The label prefix for page labels in this range. May be NULL
-     * @return
+     * @return this {@link PdfPage} instance.
      */
     public PdfPage setPageLabel(PageLabelNumberingStyleConstants numberingStyle, String labelPrefix) {
         return setPageLabel(numberingStyle, labelPrefix, 1);
@@ -689,7 +773,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @param labelPrefix The label prefix for page labels in this range. May be NULL
      * @param firstPage The value of the numeric portion for the first page label in the range. Must be greater or
      *                  equal 1.
-     * @return
+     * @return this {@link PdfPage} instance.
      */
     public PdfPage setPageLabel(PageLabelNumberingStyleConstants numberingStyle, String labelPrefix, int firstPage) {
         if (firstPage < 1)
