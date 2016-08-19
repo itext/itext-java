@@ -45,12 +45,11 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
+import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.Property;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
@@ -62,6 +61,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class TypographyUtils {
 
@@ -84,6 +86,7 @@ class TypographyUtils {
     private static final String GET_PAIRED_BRACKET = "getPairedBracket";
     private static final String GET_LEVELS = "getLevels";
     private static final String COMPUTE_REORDERING = "computeReordering";
+    private static final String INVERSE_REORDERING = "inverseReordering";
 
     private static final Collection<Character.UnicodeScript> SUPPORTED_SCRIPTS;
     private static final boolean TYPOGRAPHY_MODULE_INITIALIZED;
@@ -176,6 +179,8 @@ class TypographyUtils {
             int[] reorder = (int[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_ALGORITHM, COMPUTE_REORDERING, new Class[]{byte[].class},
                     lineLevels);
 //            int[] reorder = BidiAlgorithm.computeReordering(lineLevels);
+            int[] inverseReorder = (int[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_ALGORITHM, INVERSE_REORDERING, new Class[] {int[].class}, reorder);
+//            int[] inverseReorder = BidiAlgorithm.inverseReordering(reorder);
             List<LineRenderer.RendererGlyph> reorderedLine = new ArrayList<>(lineLevels.length);
             for (int i = 0; i < line.size(); i++) {
                 reorderedLine.add(line.get(reorder[i]));
@@ -183,14 +188,29 @@ class TypographyUtils {
                 // Mirror RTL glyphs
                 if (levels[reorder[i]] % 2 == 1) {
                     if (reorderedLine.get(i).glyph.hasValidUnicode()) {
+                        int unicode = reorderedLine.get(i).glyph.getUnicode();
                         int pairedBracket = (int) callMethod(TYPOGRAPHY_PACKAGE + BIDI_BRACKET_MAP, GET_PAIRED_BRACKET, new Class[]{int.class},
-                                reorderedLine.get(i).glyph.getUnicode());
+                                unicode);
 //                        int pairedBracket = BidiBracketMap.getPairedBracket(reorderedLine.get(i).glyph.getUnicode());
-                        PdfFont font = reorderedLine.get(i).renderer.getPropertyAsFont(Property.FONT);
-                        reorderedLine.set(i, new LineRenderer.RendererGlyph(font.getGlyph(pairedBracket), reorderedLine.get(i).renderer));
+                        if (pairedBracket != unicode) {
+                            PdfFont font = reorderedLine.get(i).renderer.getPropertyAsFont(Property.FONT);
+                            reorderedLine.set(i, new LineRenderer.RendererGlyph(font.getGlyph(pairedBracket), reorderedLine.get(i).renderer));
+                        }
                     }
                 }
             }
+
+            // fix anchorDelta
+            for (int i = 0; i < reorderedLine.size(); i++) {
+                Glyph glyph = reorderedLine.get(i).glyph;
+                if (glyph.hasPlacement()) {
+                    int oldAnchor = reorder[i] + glyph.getAnchorDelta();
+                    int newPos = inverseReorder[oldAnchor];
+                    int newAnchorDelta = newPos - i;
+                    glyph.setAnchorDelta((short) newAnchorDelta);
+                }
+            }
+
             line.clear();
             line.addAll(reorderedLine);
             return reorder;
