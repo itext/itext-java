@@ -666,7 +666,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                         canvas.openTag(tagRef);
                     }
                     canvas.addXObject(xObject, box.getX(), box.getY());
-                    if (document.isTagged()) {
+                    if (document.isTagged() && tagPointer != null) {
                         canvas.closeTag();
                     }
 
