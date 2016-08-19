@@ -290,6 +290,23 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore("borders shouldn't be layouted outside the layout area")
+    public void wideBorderTest02() throws IOException, InterruptedException {
+        fileName = "wideBorderTest02.pdf";
+        Document doc = createDocument();
+
+        Table table = new Table(1);
+        table.setWidthPercent(50);
+        Cell cell;
+        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell.setBorder(new SolidBorder(Color.RED, 100f));
+        table.addCell(cell);
+
+        doc.add(table);
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
     public void noHorizontalBorderTest() throws IOException, InterruptedException {
         fileName = "noHorizontalBorderTest.pdf";
         Document doc = createDocument();
