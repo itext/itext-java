@@ -7,7 +7,16 @@ import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.border.*;
+import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.border.DashedBorder;
+import com.itextpdf.layout.border.DottedBorder;
+import com.itextpdf.layout.border.DoubleBorder;
+import com.itextpdf.layout.border.GrooveBorder;
+import com.itextpdf.layout.border.InsetBorder;
+import com.itextpdf.layout.border.OutsetBorder;
+import com.itextpdf.layout.border.RidgeBorder;
+import com.itextpdf.layout.border.RoundDotsBorder;
+import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
@@ -17,6 +26,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -36,14 +46,14 @@ public class BorderTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void beforeClass() {
-       createDestinationFolder(destinationFolder);
+        createDestinationFolder(destinationFolder);
     }
 
     @Test
     public void simpleBordersTest() throws IOException, InterruptedException {
         fileName = "simpleBordersTest.pdf";
         Document doc = createDocument();
-        
+
         List list = new List();
 
         ListItem solidBorderItem = new ListItem("solid");
@@ -105,9 +115,6 @@ public class BorderTest extends ExtendedITextTest {
         doc.add(emptyParagraph);
 
 
-
-
-
         DeviceRgb blueRgb = new DeviceRgb(0, 0, 200);
         DeviceRgb greenRgb = new DeviceRgb(0, 255, 0);
         DeviceCmyk magentaCmyk = new DeviceCmyk(0, 100, 0, 0);
@@ -135,10 +142,6 @@ public class BorderTest extends ExtendedITextTest {
 
         emptyParagraph = new Paragraph("\n");
         doc.add(emptyParagraph);
-
-
-
-
 
 
         list = new List();
@@ -171,15 +174,15 @@ public class BorderTest extends ExtendedITextTest {
 
         String text =
                 "<p class=\"none\"  >No border.</p>\n" +
-                "<p class=\"dotted\">A dotted border.</p>\n" +
-                "<p class=\"dashed\">A dashed border.</p>\n" +
-                "<p class=\"solid\" >A solid border.</p>\n" +
-                "<p class=\"double\">A double border.</p>\n" +
-                "<p class=\"groove\">A groove border.</p>\n" +
-                "<p class=\"ridge\" >A ridge border.</p>\n" +
-                "<p class=\"inset\" >An inset border.</p>\n" +
-                "<p class=\"outset\">An outset border.</p>\n" +
-                "<p class=\"hidden\">A hidden border.</p>";
+                        "<p class=\"dotted\">A dotted border.</p>\n" +
+                        "<p class=\"dashed\">A dashed border.</p>\n" +
+                        "<p class=\"solid\" >A solid border.</p>\n" +
+                        "<p class=\"double\">A double border.</p>\n" +
+                        "<p class=\"groove\">A groove border.</p>\n" +
+                        "<p class=\"ridge\" >A ridge border.</p>\n" +
+                        "<p class=\"inset\" >An inset border.</p>\n" +
+                        "<p class=\"outset\">An outset border.</p>\n" +
+                        "<p class=\"hidden\">A hidden border.</p>";
         Paragraph p = new Paragraph(text);
 
         p.setBorderTop(new SolidBorder(DeviceCmyk.MAGENTA, 4));
@@ -253,6 +256,36 @@ public class BorderTest extends ExtendedITextTest {
         doc.add(mainTable);
         doc.close();
 
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    @Ignore("bugs in TableRenderer#buildBordersArrays")
+    public void wideBorderTest01() throws IOException, InterruptedException {
+        fileName = "wideBorderTest01.pdf";
+        Document doc = createDocument();
+
+        doc.add(new Paragraph("ROWS SHOULD BE THE SAME"));
+
+        Table table = new Table(new float[]{1, 3});
+        table.setWidthPercent(50);
+        Cell cell;
+        // row 21, cell 1
+        cell = new Cell().add("BORDERS");
+        table.addCell(cell);
+        // row 1, cell 2
+        cell = new Cell().add("ONE");
+        cell.setBorderLeft(new SolidBorder(Color.RED, 16f));
+        table.addCell(cell);
+        // row 2, cell 1
+        cell = new Cell().add("BORDERS");
+        table.addCell(cell);
+        // row 2, cell 2
+        cell = new Cell().add("TWO");
+        cell.setBorderLeft(new SolidBorder(Color.RED, 16f));
+        table.addCell(cell);
+
+        doc.add(table);
         closeDocumentAndCompareOutputs(doc);
     }
 
