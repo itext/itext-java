@@ -295,10 +295,7 @@ public class PdfADocument extends PdfDocument {
     @Override
     protected void flushFonts() {
         for (PdfFont pdfFont : getDocumentFonts()) {
-            if (!pdfFont.isEmbedded()) {
-                throw new PdfAConformanceException(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1)
-                        .setMessageParams(pdfFont.getFontProgram().getFontNames().getFontName());
-            }
+            checker.checkFont(pdfFont);
         }
         super.flushFonts();
     }

@@ -45,6 +45,8 @@ package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.io.color.IccProfile;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
@@ -287,6 +289,15 @@ public abstract class PdfAChecker {
      */
     public abstract void checkExtGState(CanvasGraphicsState extGState);
 
+    /**
+     * Performs a number of checks on the font. See ISO 19005-1 section 6.3,
+     * ISO 19005-2 and ISO 19005-3 section 6.2.11.
+     * Be aware that not all constraints defined in the ISO are checked in this method,
+     * for most of them we consider that iText always creates valid fonts.
+     * @param pdfFont font to be checked
+     */
+    public abstract void checkFont(PdfFont pdfFont);
+
     protected abstract Set<PdfName> getForbiddenActions();
     protected abstract Set<PdfName> getAllowedNamedActions();
     protected abstract void checkAction(PdfDictionary action);
@@ -299,12 +310,14 @@ public abstract class PdfAChecker {
     protected abstract void checkFormXObject(PdfStream form);
     protected abstract void checkLogicalStructure(PdfDictionary catalog);
     protected abstract void checkMetaData(PdfDictionary catalog);
+    protected abstract void checkNonSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont);
     protected abstract void checkOutputIntents(PdfDictionary catalog);
     protected abstract void checkPageObject(PdfDictionary page, PdfDictionary pageResources);
     protected abstract void checkPageSize(PdfDictionary page);
     protected abstract void checkPdfNumber(PdfNumber number);
     protected abstract void checkPdfStream(PdfStream stream);
     protected abstract void checkPdfString(PdfString string);
+    protected abstract void checkSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont);
     protected abstract void checkTrailer(PdfDictionary trailer);
 
 

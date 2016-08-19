@@ -44,6 +44,9 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.io.color.IccProfile;
+import com.itextpdf.io.font.AdobeGlyphList;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.image.Jpeg2000ImageData;
@@ -290,6 +293,17 @@ public class PdfA2Checker extends PdfA1Checker {
                 checkBlendMode((PdfName) bm);
             }
         }
+    }
+
+    @Override
+    protected void checkNonSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
+        String encoding = trueTypeFont.getFontEncoding().getBaseEncoding();
+        // non-symbolic true type font will always has an encoding entry in font dictionary in itext7
+        if (!PdfEncodings.WINANSI.equals(encoding) && !encoding.equals(PdfEncodings.MACROMAN)) {
+            throw new PdfAConformanceException(PdfAConformanceException.AllNonSymbolicTrueTypeFontShallSpecifyMacRomanEncodingOrWinAnsiEncoding, trueTypeFont);
+        }
+
+        // if font has differences array, itext7 ensures that all names in it are listed in AdobeGlyphList
     }
 
     @Override

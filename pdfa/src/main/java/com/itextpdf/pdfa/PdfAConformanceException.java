@@ -148,6 +148,9 @@ public class PdfAConformanceException extends PdfException {
     public static final String TransparencyIsNotAllowedCaShallBeEqualTo1 = "transparency.is.not.allowed.ca.shall.be.equal.to.1";
     public static final String ValueOfNameEntryShallBeUniqueAmongAllOptionalContentConfigurationDictionaries = "value.of.name.entry.shall.be.unique.among.all.optional.content.configuration.dictionaries";
     public static final String WidgetAnnotationDictionaryOrFieldDictionaryShallNotIncludeAOrAAEntry = "widget.annotation.dictionary.or.field.dictionary.shall.not.include.a.or.aa.entry";
+    public static final String AllNonSymbolicTrueTypeFontShallSpecifyMacRomanEncodingOrWinAnsiEncoding = "All non-symbolic TrueType fonts shall specify MacRomanEncoding or WinAnsiEncoding as the value of the Encoding entry in the font dictionary.";
+    public static final String AllNonSymbolicTrueTypeFontShallSpecifyMacRomanOrWinAnsiEncodingAsTheEncodingEntry = "All non-symbolic TrueType fonts shall specify MacRomanEncoding or WinAnsiEncoding as the value of the Encoding entry in the font dictionary. This also means that Encoding entry in the font dictionary shall not be an encoding dictionary.";
+    public static final String AllSymbolicTrueTypeFontsShallNotSpecifyEncoding = "All symbolic TrueType fonts shall not specify an Encoding entry in the font dictionary.";
 
     /**
      * Creates a PdfAConformanceException.

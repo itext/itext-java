@@ -375,8 +375,9 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         //add font stream and flush it immediately
         addFontStream(fontDescriptor);
         int flags = fontProgram.getPdfFontFlags();
-        if (!fontEncoding.isFontSpecific()) {
-            flags &= ~64;
+        if (fontProgram.isFontSpecific() != fontEncoding.isFontSpecific()) {
+            flags &= ~(4 | 32); // reset both flags
+            flags |= fontEncoding.isFontSpecific() ? 4 : 32; // set based on font encoding
         }
         fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
         return fontDescriptor;

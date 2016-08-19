@@ -43,6 +43,10 @@
  */
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
@@ -221,6 +225,42 @@ public class PdfA1Checker extends PdfAChecker {
         if (!allowedRenderingIntents.contains(intent)) {
             throw new PdfAConformanceException(PdfAConformanceException.IfSpecifiedRenderingShallBeOneOfTheFollowingRelativecolorimetricAbsolutecolorimetricPerceptualOrSaturation);
         }
+    }
+
+    @Override
+    public void checkFont(PdfFont pdfFont) {
+        if (!pdfFont.isEmbedded()) {
+            throw new PdfAConformanceException(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1)
+                    .setMessageParams(pdfFont.getFontProgram().getFontNames().getFontName());
+        }
+
+        if (pdfFont instanceof PdfTrueTypeFont) {
+            PdfTrueTypeFont trueTypeFont = (PdfTrueTypeFont) pdfFont;
+            boolean symbolic = trueTypeFont.getFontEncoding().isFontSpecific();
+            if (symbolic) {
+                checkSymbolicTrueTypeFont(trueTypeFont);
+            } else {
+                checkNonSymbolicTrueTypeFont(trueTypeFont);
+            }
+        }
+    }
+
+    @Override
+    protected void checkNonSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
+        String encoding = trueTypeFont.getFontEncoding().getBaseEncoding();
+        // non-symbolic true type font will always has an encoding entry in font dictionary in itext7
+        if (!PdfEncodings.WINANSI.equals(encoding) && !encoding.equals(PdfEncodings.MACROMAN) || trueTypeFont.getFontEncoding().hasDifferences()) {
+            throw new PdfAConformanceException(PdfAConformanceException.AllNonSymbolicTrueTypeFontShallSpecifyMacRomanOrWinAnsiEncodingAsTheEncodingEntry, trueTypeFont);
+        }
+    }
+
+    @Override
+    protected void checkSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
+        if (trueTypeFont.getFontEncoding().hasDifferences()) {
+            throw new PdfAConformanceException(PdfAConformanceException.AllSymbolicTrueTypeFontsShallNotSpecifyEncoding);
+        }
+
+        // if symbolic font encoding doesn't have differences, itext7 won't write encoding for such font
     }
 
     @Override
