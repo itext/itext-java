@@ -426,7 +426,8 @@ public class TextRenderer extends AbstractRenderer {
                 Character.UnicodeScript selectScript = null;
                 for (Map.Entry<Character.UnicodeScript, Integer> entry : scriptFrequency.entrySet()) {
                     Character.UnicodeScript entryScript = entry.getKey();
-                    if (entry.getValue() > max && !Character.UnicodeScript.COMMON.equals(entryScript) && !Character.UnicodeScript.UNKNOWN.equals(entryScript)) {
+                    if (entry.getValue() > max && !Character.UnicodeScript.COMMON.equals(entryScript) && !Character.UnicodeScript.UNKNOWN.equals(entryScript)
+                            && !Character.UnicodeScript.INHERITED.equals(entryScript)) {
                         max = entry.getValue();
                         selectScript = entryScript;
                     }
