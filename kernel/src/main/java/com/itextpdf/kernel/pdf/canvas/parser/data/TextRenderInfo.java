@@ -472,6 +472,11 @@ public class TextRenderInfo implements IEventData {
         float ascent = gs.getFont().getFontProgram().getFontMetrics().getTypoAscender();
         float descent = gs.getFont().getFontProgram().getFontMetrics().getTypoDescender();
 
+        // If descent is positive, we consider it a bug and fix it
+        if (descent > 0) {
+            descent = -descent;
+        }
+
         float scale = ascent - descent < 700 ? ascent - descent : 1000;
         descent = descent / scale * gs.getFontSize();
         ascent = ascent / scale * gs.getFontSize();
