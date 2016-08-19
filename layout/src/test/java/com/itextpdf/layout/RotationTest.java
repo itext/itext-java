@@ -17,6 +17,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -312,6 +313,28 @@ public class RotationTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    @Ignore("fix background rotation")
+    public void cellRotationTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "cellRotationTest01.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "cellRotationTest01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(1)
+                .setWidth(50)
+                .addCell(new Cell()
+                        .add(new Paragraph("Helloo"))
+                        .setRotationAngle(Math.toRadians(70))
+                        .setBackgroundColor(Color.GREEN));
+        doc.add(table);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+    
     @Test
     public void divRotationTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "divRotationTest01.pdf";
