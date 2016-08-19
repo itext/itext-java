@@ -1,7 +1,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.io.util.CryptoUtil;
+import com.itextpdf.kernel.crypto.CryptoUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.BadPasswordException;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -13,7 +13,6 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -22,12 +21,10 @@ import org.junit.rules.ExpectedException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 
 import static org.junit.Assert.fail;
 

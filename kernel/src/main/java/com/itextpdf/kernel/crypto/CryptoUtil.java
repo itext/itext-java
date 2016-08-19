@@ -40,7 +40,7 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.io.util;
+package com.itextpdf.kernel.crypto;
 
 import java.io.IOException;
 import java.io.InputStream;

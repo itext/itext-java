@@ -110,6 +110,7 @@ public class PubSecHandlerUsingAes128 extends PubKeySecurityHandler {
     protected void setPubSecSpecificHandlerDicEntries(PdfDictionary encryptionDictionary, boolean encryptMetadata, boolean embeddedFilesOnly) {
         encryptionDictionary.put(PdfName.Filter, PdfName.Adobe_PubSec);
         encryptionDictionary.put(PdfName.SubFilter, PdfName.Adbe_pkcs7_s5);
+
         encryptionDictionary.put(PdfName.R, new PdfNumber(4));
         encryptionDictionary.put(PdfName.V, new PdfNumber(4));
 
@@ -120,6 +121,7 @@ public class PubSecHandlerUsingAes128 extends PubKeySecurityHandler {
             stdcf.put(PdfName.EncryptMetadata, PdfBoolean.FALSE);
         }
         stdcf.put(PdfName.CFM, PdfName.AESV2);
+        stdcf.put(PdfName.Length, new PdfNumber(128));
         PdfDictionary cf = new PdfDictionary();
         cf.put(PdfName.DefaultCryptFilter, stdcf);
         encryptionDictionary.put(PdfName.CF, cf);
