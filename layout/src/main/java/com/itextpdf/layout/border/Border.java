@@ -43,9 +43,8 @@
  */
 package com.itextpdf.layout.border;
 
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.color.Color;
-import com.itextpdf.layout.renderer.IRenderer;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
 /**
  * Represents a border.
@@ -199,6 +198,20 @@ public abstract class Border {
      */
     public float getWidth() {
         return width;
+    }
+
+    /**
+     * Sets the {@link Color color} of the {@link Border border}
+     */
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    /**
+     * Sets the width of the {@link Border border}
+     */
+    public void setWidth(float width) {
+        this.width = width;
     }
 
     /**

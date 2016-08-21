@@ -314,7 +314,7 @@ public class RotationTest extends ExtendedITextTest{
     }
 
     @Test
-    @Ignore("fix background rotation")
+    @Ignore("DEVSIX-797")
     public void cellRotationTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "cellRotationTest01.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "cellRotationTest01.pdf";

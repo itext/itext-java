@@ -43,6 +43,8 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.property.Property;
 
@@ -98,6 +100,15 @@ public class CellRenderer extends BlockRenderer {
     @Override
     public void drawBorder(DrawContext drawContext) {
         // Do nothing here. Border drawing for tables is done on TableRenderer.
+    }
+
+    @Override
+    protected Rectangle applyBorderBox(Rectangle rect, Border[] borders, boolean reverse) {
+        float topWidth = borders[0] != null ? borders[0].getWidth() : 0;
+        float rightWidth = borders[1] != null ? borders[1].getWidth() : 0;
+        float bottomWidth = borders[2] != null ? borders[2].getWidth() : 0;
+        float leftWidth = borders[3] != null ? borders[3].getWidth() : 0;
+        return rect.<Rectangle>applyMargins(topWidth / 2, rightWidth / 2, bottomWidth / 2, leftWidth / 2, reverse);
     }
 
     /**

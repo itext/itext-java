@@ -260,7 +260,7 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("bugs in TableRenderer#buildBordersArrays")
+    @Ignore("DEVSIX-796")
     public void wideBorderTest01() throws IOException, InterruptedException {
         fileName = "wideBorderTest01.pdf";
         Document doc = createDocument();
@@ -290,7 +290,7 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("borders shouldn't be layouted outside the layout area")
+    @Ignore("DEVSIX-798")
     public void wideBorderTest02() throws IOException, InterruptedException {
         fileName = "wideBorderTest02.pdf";
         Document doc = createDocument();
