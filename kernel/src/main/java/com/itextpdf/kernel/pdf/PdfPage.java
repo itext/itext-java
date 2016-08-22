@@ -378,7 +378,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (annot.getSubtype().equals(PdfName.Link)) {
                 getDocument().storeLinkAnnotation(this, (PdfLinkAnnotation) annot);
             } else {
-                page.addAnnotation(-1, PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(toDocument, true)), false);
+                page.addAnnotation(-1, PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(toDocument, false)), false);
             }
         }
         if (toDocument.isTagged()) {
