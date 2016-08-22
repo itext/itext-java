@@ -9,10 +9,12 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -171,6 +173,23 @@ public class PdfCopyTest extends ExtendedITextTest {
 
         sourceDoc.initializeOutlines();
         sourceDoc.copyPagesTo(1, sourceDoc.getNumberOfPages(), pdfDoc);
+
+        sourceDoc.close();
+        pdfDoc.close();
+
+        assertNull(new CompareTool().compareByContent(destinationFolder + "copyDocumentsWithFormFields.pdf", sourceFolder + "cmp_copyDocumentsWithFormFields.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    @Ignore
+    public void copySamePageWithAnnotationsSeveralTimes() throws IOException, InterruptedException {
+        String filename = sourceFolder + "rotated_annotation.pdf";
+
+        PdfDocument sourceDoc = new PdfDocument(new PdfReader(filename));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "copySamePageWithAnnotationsSeveralTimes.pdf"));
+
+        sourceDoc.initializeOutlines();
+        sourceDoc.copyPagesTo(Arrays.asList(1, 1, 1), pdfDoc);
 
         sourceDoc.close();
         pdfDoc.close();
