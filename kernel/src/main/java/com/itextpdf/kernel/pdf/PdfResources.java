@@ -286,7 +286,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
             checkAndResolveCircularReferences(resource);
         }
         if (readOnly) {
-            setPdfObject(getPdfObject().clone(Collections.EMPTY_LIST));
+            setPdfObject(getPdfObject().clone(Collections.<PdfName>emptyList()));
             buildResources(getPdfObject());
             isModified = true;
             readOnly = false;
