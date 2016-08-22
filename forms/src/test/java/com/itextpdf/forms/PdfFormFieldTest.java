@@ -4,6 +4,7 @@ import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -184,6 +185,26 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
+    }
 
+    @Test
+    public void addFieldWithKidsTest() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+        PdfFormField root = PdfFormField.createEmptyField(pdfDoc);
+        root.setFieldName("root");
+
+        PdfFormField child = PdfFormField.createEmptyField(pdfDoc);
+        child.setFieldName("child");
+        root.addKid(child);
+
+        PdfTextFormField text1 = PdfFormField.createText(pdfDoc, new Rectangle(100, 700, 200, 20), "text1", "test");
+        child.addKid(text1);
+
+        form.addField(root);
+
+        Assert.assertEquals(3, form.getFormFields().size());
     }
 }

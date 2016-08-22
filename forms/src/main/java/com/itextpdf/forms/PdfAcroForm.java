@@ -220,6 +220,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
         getFields().add(fieldDic);
         fields.put(field.getFieldName().toUnicodeString(), field);
+        if (field.getKids() != null) {
+            iterateFields(field.getKids(), fields);
+        }
 
         if (field.getFormType() != null && (field.getFormType().equals(PdfName.Tx) || field.getFormType().equals(PdfName.Ch))) {
             List<PdfDictionary> resources = getResources(field.getPdfObject());
@@ -809,9 +812,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return false;
     }
 
-    private Map<String, PdfFormField> iterateFields(PdfArray array) {
-        Map<String, PdfFormField> fields = new LinkedHashMap<>();
-
+    private Map<String, PdfFormField> iterateFields(PdfArray array, Map<String, PdfFormField> fields) {
         int index = 1;
         for (PdfObject field : array) {
             PdfFormField formField = PdfFormField.makeFormField(field, document);
@@ -832,11 +833,15 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             }
             fields.put(name, formField);
             if (formField.getKids() != null) {
-                fields.putAll(iterateFields(formField.getKids()));
+                iterateFields(formField.getKids(), fields);
             }
         }
 
         return fields;
+    }
+
+    private Map<String, PdfFormField> iterateFields(PdfArray array) {
+        return iterateFields(array, new LinkedHashMap<String, PdfFormField>());
     }
 
     private PdfDictionary processKids(PdfArray kids, PdfDictionary parent, PdfPage page){
