@@ -326,7 +326,7 @@ public class RotationTest extends ExtendedITextTest{
                 .setWidth(50)
                 .addCell(new Cell()
                         .add(new Paragraph("Helloo"))
-                        .setRotationAngle(Math.toRadians(70))
+                        .setRotationAngle(Math.PI * 70 / 180.0)
                         .setBackgroundColor(Color.GREEN));
         doc.add(table);
 
