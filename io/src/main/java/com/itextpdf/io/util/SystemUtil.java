@@ -42,6 +42,11 @@
  */
 package com.itextpdf.io.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
 /**
  * This file is a helper class for internal usage only.
  * Be aware that it's API and functionality may be changed in future.
@@ -53,5 +58,45 @@ public final class SystemUtil {
 
     public static long getFreeMemory() {
         return Runtime.getRuntime().freeMemory();
+    }
+
+    /**
+     * Gets either java property or environment variable with given name.
+     * @param name the name of either java property or environment variable.
+     * @return property or variable value or null if there is no such.
+     */
+    public static String getPropertyOrEnvironmentVariable(String name) {
+        String s = null;
+        s = System.getProperty(name);
+        if (s == null) {
+            s = System.getenv(name);
+        }
+        return s;
+    }
+
+    public static boolean runProcessAndWait(String execPath, String params) throws IOException, InterruptedException {
+        StringTokenizer st = new StringTokenizer(params);
+        String[] cmdArray = new String[st.countTokens() + 1];
+        cmdArray[0] = execPath;
+        for (int i = 1; st.hasMoreTokens(); ++i)
+            cmdArray[i] = st.nextToken();
+
+        Process p = Runtime.getRuntime().exec(cmdArray);
+        printProcessOutput(p);
+        return p.waitFor() == 0;
+    }
+
+    private static void printProcessOutput(Process p) throws IOException {
+        BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+        String line;
+        while ((line = bri.readLine()) != null) {
+            System.out.println(line);
+        }
+        bri.close();
+        while ((line = bre.readLine()) != null) {
+            System.out.println(line);
+        }
+        bre.close();
     }
 }

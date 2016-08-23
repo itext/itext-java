@@ -45,6 +45,8 @@ package com.itextpdf.kernel.utils;
 
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.io.util.SystemUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -166,14 +168,8 @@ public class CompareTool {
      * Creates an instance of the CompareTool.
      */
     public CompareTool() {
-        gsExec = System.getProperty("gsExec");
-        if (gsExec == null) {
-            gsExec = System.getenv("gsExec");
-        }
-        compareExec = System.getProperty("compareExec");
-        if (compareExec == null) {
-            compareExec = System.getenv("compareExec");
-        }
+        gsExec = SystemUtil.getPropertyOrEnvironmentVariable("gsExec");
+        compareExec = SystemUtil.getPropertyOrEnvironmentVariable("compareExec");
     }
 
     /**
@@ -580,13 +576,7 @@ public class CompareTool {
             if (!compareXmls(cmpBytes, outBytes)) {
                 return "The XMP packages different!";
             }
-        } catch (XMPException xmpExc) {
-            return "XMP parsing failure!";
-        } catch (IOException ioExc) {
-            return "XMP parsing failure!";
-        } catch (ParserConfigurationException parseExc)  {
-            return "XMP parsing failure!";
-        } catch (SAXException parseExc)  {
+        } catch (Exception ex) {
             return "XMP parsing failure!";
         }
         finally {
@@ -608,7 +598,7 @@ public class CompareTool {
      * @throws IOException
      */
     public boolean compareXmls(byte[] xml1, byte[] xml2) throws ParserConfigurationException, SAXException, IOException {
-        return compareXmls(new ByteArrayInputStream(xml1), new ByteArrayInputStream(xml2));
+        return XmlUtils.compareXmls(new ByteArrayInputStream(xml1), new ByteArrayInputStream(xml2));
     }
 
     /**
@@ -621,7 +611,7 @@ public class CompareTool {
      * @throws IOException
      */
     public boolean compareXmls(String xmlFilePath1, String xmlFilePath2) throws ParserConfigurationException, SAXException, IOException {
-        return compareXmls(new FileInputStream(xmlFilePath1), new FileInputStream(xmlFilePath2));
+        return XmlUtils.compareXmls(new FileInputStream(xmlFilePath1), new FileInputStream(xmlFilePath2));
     }
 
     /**
@@ -799,9 +789,8 @@ public class CompareTool {
     }
 
     private String compareImagesOfPdfs(String outPath, String differenceImagePrefix, List<Integer> equalPages) throws IOException, InterruptedException {
-        File outputDir = new File(outPath);
-        File[] imageFiles = outputDir.listFiles(new PngFileFilter());
-        File[] cmpImageFiles = outputDir.listFiles(new CmpPngFileFilter());
+        File[] imageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new PngFileFilter());
+        File[] cmpImageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new CmpPngFileFilter());
         boolean bUnexpectedNumberOfPages = false;
         if (imageFiles.length != cmpImageFiles.length) {
             bUnexpectedNumberOfPages = true;
@@ -820,8 +809,8 @@ public class CompareTool {
             if (equalPages != null && equalPages.contains(i))
                 continue;
             System.out.print("Comparing page " + Integer.toString(i + 1) + " (" + imageFiles[i].getAbsolutePath() + ")...");
-            FileInputStream is1 = new FileInputStream(imageFiles[i]);
-            FileInputStream is2 = new FileInputStream(cmpImageFiles[i]);
+            FileInputStream is1 = new FileInputStream(imageFiles[i].getAbsolutePath());
+            FileInputStream is2 = new FileInputStream(cmpImageFiles[i].getAbsolutePath());
             boolean cmpResult = compareStreams(is1, is2);
             is1.close();
             is2.close();
@@ -832,7 +821,7 @@ public class CompareTool {
                 String currCompareParams = compareParams.replace("<image1>", imageFiles[i].getAbsolutePath())
                             .replace("<image2>", cmpImageFiles[i].getAbsolutePath())
                             .replace("<difference>", outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png");
-                    if (runProcessAndWait(compareExec, currCompareParams))
+                    if (SystemUtil.runProcessAndWait(compareExec, currCompareParams))
                         differentPagesFail += "\nPlease, examine " + outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png for more details.";
                 }
                 System.out.println(differentPagesFail);
@@ -841,7 +830,7 @@ public class CompareTool {
             }
         }
         if (differentPagesFail != null) {
-            String errorMessage = differentPages.replace("<filename>", outPdf).replace("<pagenumber>", diffPages.toString());
+            String errorMessage = differentPages.replace("<filename>", outPdf).replace("<pagenumber>", listDiffPagesAsString(diffPages));
             if (!compareExecIsOk) {
                 errorMessage += "\nYou can optionally specify path to ImageMagick compare tool (e.g. -DcompareExec=\"C:/Program Files/ImageMagick-6.5.4-2/compare.exe\") to visualize differences.";
             }
@@ -852,6 +841,18 @@ public class CompareTool {
         }
 
         return null;
+    }
+
+    private String listDiffPagesAsString(List<Integer> diffPages) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < diffPages.size(); i++) {
+            sb.append(diffPages.get(i));
+            if (i < diffPages.size() - 1) {
+                sb.append(", ");
+            }
+        }
+        sb.append("]");
+        return diffPages.toString();
     }
 
     private void createIgnoredAreasPdfs(String outPath, Map<Integer, List<Rectangle>> ignoredAreas) throws IOException {
@@ -903,24 +904,23 @@ public class CompareTool {
     }
 
     private void prepareOutputDirs(String outPath, String differenceImagePrefix) {
-        File outputDir = new File(outPath);
         File[] imageFiles;
         File[] cmpImageFiles;
         File[] diffFiles;
 
-        if (!outputDir.exists()) {
-            outputDir.mkdirs();
+        if (!FileUtil.directoryExists(outPath)) {
+            FileUtil.createDirectories(outPath);
         } else {
-            imageFiles = outputDir.listFiles(new PngFileFilter());
+            imageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new PngFileFilter());
             for (File file : imageFiles) {
                 file.delete();
             }
-            cmpImageFiles = outputDir.listFiles(new CmpPngFileFilter());
+            cmpImageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new CmpPngFileFilter());
             for (File file : cmpImageFiles) {
                 file.delete();
             }
 
-            diffFiles = outputDir.listFiles(new DiffPngFileFilter(differenceImagePrefix));
+            diffFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new DiffPngFileFilter(differenceImagePrefix));
             for (File file : diffFiles) {
                 file.delete();
             }
@@ -936,47 +936,19 @@ public class CompareTool {
      * @throws InterruptedException
      */
     private String runGhostScriptImageGeneration(String outPath) throws IOException, InterruptedException {
-        File outputDir = new File(outPath);
-        if (!outputDir.exists()) {
+        if (!FileUtil.directoryExists(outPath)) {
             return cannotOpenOutputDirectory.replace("<filename>", outPdf);
         }
 
         String currGsParams = gsParams.replace("<outputfile>", outPath + cmpImage).replace("<inputfile>", cmpPdf);
-        if (!runProcessAndWait(gsExec, currGsParams)) {
+        if (!SystemUtil.runProcessAndWait(gsExec, currGsParams)) {
             return gsFailed.replace("<filename>", cmpPdf);
         }
         currGsParams = gsParams.replace("<outputfile>", outPath + outImage).replace("<inputfile>", outPdf);
-        if (!runProcessAndWait(gsExec, currGsParams)) {
+        if (!SystemUtil.runProcessAndWait(gsExec, currGsParams)) {
             return gsFailed.replace("<filename>", outPdf);
         }
         return null;
-    }
-
-
-    private boolean runProcessAndWait(String execPath, String params) throws IOException, InterruptedException {
-        StringTokenizer st = new StringTokenizer(params);
-        String[] cmdArray = new String[st.countTokens() + 1];
-        cmdArray[0] = execPath;
-        for (int i = 1; st.hasMoreTokens(); ++i)
-            cmdArray[i] = st.nextToken();
-
-        Process p = Runtime.getRuntime().exec(cmdArray);
-        printProcessOutput(p);
-        return p.waitFor() == 0;
-    }
-
-    private void printProcessOutput(Process p) throws IOException {
-        BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-        String line;
-        while ((line = bri.readLine()) != null) {
-            System.out.println(line);
-        }
-        bri.close();
-        while ((line = bre.readLine()) != null) {
-            System.out.println(line);
-        }
-        bre.close();
     }
 
     private String compareByContent(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
@@ -1032,6 +1004,8 @@ public class CompareTool {
                 compareResult.writeReportToXml(xml);
             } catch (Exception e) {
                 throw new RuntimeException(e.getMessage(), e);
+            } finally {
+                xml.close();
             }
 
         }
@@ -1417,23 +1391,6 @@ public class CompareTool {
         }
     }
 
-    private boolean compareXmls(InputStream xml1, InputStream xml2) throws ParserConfigurationException, SAXException, IOException {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        dbf.setCoalescing(true);
-        dbf.setIgnoringElementContentWhitespace(true);
-        dbf.setIgnoringComments(true);
-        DocumentBuilder db = dbf.newDocumentBuilder();
-
-        Document doc1 = db.parse(xml1);
-        doc1.normalizeDocument();
-
-        Document doc2 = db.parse(xml2);
-        doc2.normalizeDocument();
-
-        return doc2.isEqualNode(doc1);
-    }
-
     private List<PdfLinkAnnotation> getLinkAnnotations(int pageNum, PdfDocument document) {
         List<PdfLinkAnnotation> linkAnnotations = new ArrayList<>();
         List<PdfAnnotation> annotations = document.getPage(pageNum).getAnnotations();
@@ -1652,7 +1609,7 @@ public class CompareTool {
          * @throws TransformerException
          */
         public void writeReportToXml(OutputStream stream) throws ParserConfigurationException, TransformerException {
-            Document xmlReport = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            Document xmlReport = XmlUtils.initNewXmlDocument();
             Element root = xmlReport.createElement("report");
             Element errors = xmlReport.createElement("errors");
             errors.setAttribute("count", String.valueOf(differences.size()));
@@ -1668,12 +1625,7 @@ public class CompareTool {
             }
             xmlReport.appendChild(root);
 
-            TransformerFactory tFactory = TransformerFactory.newInstance();
-            Transformer transformer = tFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            DOMSource source = new DOMSource(xmlReport);
-            StreamResult result = new StreamResult(stream);
-            transformer.transform(source, result);
+            XmlUtils.writeXmlDocToStream(xmlReport, stream);
         }
 
         protected boolean isMessageLimitReached() {
@@ -1744,7 +1696,7 @@ public class CompareTool {
         public ObjectPath resetDirectPath(PdfIndirectReference baseCmpObject, PdfIndirectReference baseOutObject) {
             ObjectPath newPath = new ObjectPath(baseCmpObject, baseOutObject);
             newPath.indirects = (Stack<IndirectPathItem>) indirects.clone();
-            newPath.indirects.add(new IndirectPathItem(baseCmpObject, baseOutObject));
+            newPath.indirects.push(new IndirectPathItem(baseCmpObject, baseOutObject));
             return newPath;
         }
 
@@ -1765,7 +1717,7 @@ public class CompareTool {
          * @param index index in the array of the direct object to be compared.
          */
         public void pushArrayItemToPath(int index) {
-            path.add(new ArrayPathItem(index));
+            path.push(new ArrayPathItem(index));
         }
 
         /**
@@ -1773,7 +1725,7 @@ public class CompareTool {
          * @param key key in the dictionary to which corresponds direct object to be compared.
          */
         public void pushDictItemToPath(PdfName key) {
-            path.add(new DictPathItem(key));
+            path.push(new DictPathItem(key));
         }
 
         /**
@@ -1781,7 +1733,7 @@ public class CompareTool {
          * @param offset offset to the specific byte in the stream that is compared.
          */
         public void pushOffsetToPath(int offset) {
-            path.add(new OffsetPathItem(offset));
+            path.push(new OffsetPathItem(offset));
         }
 
         /**

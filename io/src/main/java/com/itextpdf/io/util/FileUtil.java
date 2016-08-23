@@ -46,6 +46,7 @@ package com.itextpdf.io.util;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -114,6 +115,14 @@ public final class FileUtil {
         return null;
     }
 
+    public static File[] listFilesInDirectoryByFilter(String outPath, FileFilter fileFilter) {
+        if (outPath != null && !outPath.isEmpty()) {
+            return new File(outPath).listFiles(fileFilter);
+        } else {
+            return null;
+        }
+    }
+
     private static void listAllFiles(String dir, List<String> list) {
         File[] files = new File(dir).listFiles();
         if (files != null) {
@@ -157,5 +166,9 @@ public final class FileUtil {
 
     public static RandomAccessFile getRandomAccessFile(File tempFile) throws FileNotFoundException {
         return new RandomAccessFile(tempFile, "rw");
+    }
+
+    public static void createDirectories(String outPath) {
+        new File(outPath).mkdirs();
     }
 }
