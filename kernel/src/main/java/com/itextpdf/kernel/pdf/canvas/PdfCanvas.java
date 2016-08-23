@@ -76,16 +76,15 @@ import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfShading;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.layer.IPdfOCG;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.layer.PdfLayerMembership;
-import com.itextpdf.kernel.pdf.layer.IPdfOCG;
 import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -698,8 +697,39 @@ public class PdfCanvas {
                     float xPlacement = Float.NaN;
                     float yPlacement = Float.NaN;
                     if (glyph.hasPlacement()) {
-                        xPlacement = -getSubrangeWidth(text, i + glyph.getAnchorDelta(), i) + glyph.getXPlacement() * fontSize;
-                        yPlacement = glyph.getYAdvance() * fontSize;
+
+                        {
+                            float xPlacementAddition = 0;
+                            int currentGlyphIndex = i;
+                            Glyph currentGlyph = text.get(i);
+                            while (currentGlyph != null && currentGlyph.getXPlacement() != 0) {
+                                xPlacementAddition += currentGlyph.getXPlacement();
+                                if (currentGlyph.getAnchorDelta() == 0) {
+                                    break;
+                                } else {
+                                    currentGlyphIndex += currentGlyph.getAnchorDelta();
+                                    currentGlyph = text.get(currentGlyphIndex);
+                                }
+                            }
+                            xPlacement = -getSubrangeWidth(text, currentGlyphIndex, i) + xPlacementAddition * fontSize;
+                        }
+
+                        {
+                            float yPlacementAddition = 0;
+                            int currentGlyphIndex = i;
+                            Glyph currentGlyph = text.get(i);
+                            while (currentGlyph != null && currentGlyph.getYPlacement() != 0) {
+                                yPlacementAddition += currentGlyph.getYPlacement();
+                                if (currentGlyph.getAnchorDelta() == 0) {
+                                    break;
+                                } else {
+                                    currentGlyph = text.get(currentGlyphIndex + currentGlyph.getAnchorDelta());
+                                    currentGlyphIndex += currentGlyph.getAnchorDelta();
+                                }
+                            }
+                            yPlacement = glyph.getYAdvance() * fontSize + yPlacementAddition * fontSize;
+                        }
+
                         contentStream.getOutputStream()
                                 .writeFloat(xPlacement, true)
                                 .writeSpace()

@@ -53,7 +53,7 @@ import java.util.Map;
  */
 public class GposLookupType6 extends OpenTableLookup {
 
-    private final List<MarkToBase> marksbases;
+    private final List<MarkToBaseMark> marksbases;
 
     public GposLookupType6(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
         super(openReader, lookupFlag, subTableLocations);
@@ -72,7 +72,7 @@ public class GposLookupType6 extends OpenTableLookup {
 
         boolean changed = false;
         GlyphIndexer gi = null;
-        for (MarkToBase mb : marksbases) {
+        for (MarkToBaseMark mb : marksbases) {
             OtfMarkRecord omr = mb.marks.get(line.get(line.idx).getCode());
             if (omr == null)
                 continue;
@@ -81,16 +81,31 @@ public class GposLookupType6 extends OpenTableLookup {
                 gi.idx = line.idx;
                 gi.line = line;
                 while (true) {
+                    int prev = gi.idx;
+                    // avoid attaching this mark glyph to another very distant mark glyph
+                    boolean foundBaseGlyph = false;
                     gi.previousGlyph(openReader, lookupFlag);
+                    if (gi.idx != -1) {
+                        for (int i = gi.idx; i < prev; i++) {
+                            if (openReader.getGlyphClass(line.get(i).getCode()) == OtfClass.GLYPH_BASE) {
+                                foundBaseGlyph = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (foundBaseGlyph) {
+                        gi.glyph = null;
+                        break;
+                    }
                     if (gi.glyph == null)
                         break;
-                    if (mb.marks.containsKey(gi.glyph.getCode()))
+                    if (mb.baseMarks.containsKey(gi.glyph.getCode()))
                         break;
                 }
                 if (gi.glyph == null)
                     break;
             }
-            GposAnchor[] gpas = mb.bases.get(gi.glyph.getCode());
+            GposAnchor[] gpas = mb.baseMarks.get(gi.glyph.getCode());
             if (gpas == null)
                 continue;
             int markClass = omr.markClass;
@@ -120,20 +135,20 @@ public class GposLookupType6 extends OpenTableLookup {
         List<Integer> markCoverage = openReader.readCoverageFormat(markCoverageLocation);
         List<Integer> baseCoverage = openReader.readCoverageFormat(baseCoverageLocation);
         List<OtfMarkRecord> markRecords = OtfReadCommon.readMarkArray(openReader, markArrayLocation);
-        MarkToBase markToBase = new MarkToBase();
+        MarkToBaseMark markToBaseMark = new MarkToBaseMark();
         for (int k = 0; k < markCoverage.size(); ++k) {
-            markToBase.marks.put(markCoverage.get(k), markRecords.get(k));
+            markToBaseMark.marks.put(markCoverage.get(k), markRecords.get(k));
         }
         List<GposAnchor[]> baseArray = OtfReadCommon.readBaseArray(openReader, classCount, baseArrayLocation);
         for (int k = 0; k < baseCoverage.size(); ++k) {
-            markToBase.bases.put(baseCoverage.get(k), baseArray.get(k));
+            markToBaseMark.baseMarks.put(baseCoverage.get(k), baseArray.get(k));
         }
-        marksbases.add(markToBase);
+        marksbases.add(markToBaseMark);
     }
 
-    private static class MarkToBase {
+    private static class MarkToBaseMark {
         public final Map<Integer, OtfMarkRecord> marks = new HashMap<>();
-        public final Map<Integer, GposAnchor[]> bases = new HashMap<>();
+        public final Map<Integer, GposAnchor[]> baseMarks = new HashMap<>();
     }
 
 }

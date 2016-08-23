@@ -161,6 +161,10 @@ public abstract class OpenTypeFontTableReader {
         return gdef.isSkip(glyph, flag);
     }
 
+    public int getGlyphClass(int glyphCode) {
+        return gdef.getGlyphClassTable().getOtfClass(glyphCode);
+    }
+
     public int getUnitsPerEm() {
         return unitsPerEm;
     }

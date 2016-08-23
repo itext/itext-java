@@ -13,6 +13,5 @@ public class AdobeGlyphListTest {
     public void testGlyphListCount() {
         Assert.assertEquals(4200, AdobeGlyphList.getNameToUnicodeLength());
         Assert.assertEquals(3680, AdobeGlyphList.getUnicodeToNameLength());
-
     }
 }
