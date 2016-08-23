@@ -68,30 +68,17 @@ import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
-import com.itextpdf.kernel.xmp.PdfConst;
-import com.itextpdf.kernel.xmp.XMPConst;
-import com.itextpdf.kernel.xmp.XMPException;
-import com.itextpdf.kernel.xmp.XMPMeta;
-import com.itextpdf.kernel.xmp.XMPMetaFactory;
+import com.itextpdf.kernel.xmp.*;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
@@ -1555,7 +1542,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         excludedKeys.add(PdfName.Dest);
         excludedKeys.add(PdfName.A);
         for (Map.Entry<PdfPage, List<PdfLinkAnnotation>> entry : linkAnnotations.entrySet()) {
-            // We don't want to copy those link annotations, which reference to not copied pages.
+            // We don't want to copy those link annotations, which reference to pages which weren't copied.
             for (PdfLinkAnnotation annot : entry.getValue()) {
                 boolean toCopyAnnot = true;
                 PdfDestination copiedDest = null;
@@ -1589,14 +1576,14 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 }
 
                 if (toCopyAnnot) {
-                    PdfLinkAnnotation newAnnot = (PdfLinkAnnotation) PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(toDocument, excludedKeys, false));
+                    PdfLinkAnnotation newAnnot = (PdfLinkAnnotation) PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(toDocument, excludedKeys, true));
                     if (copiedDest != null) {
                         newAnnot.setDestination(copiedDest);
                     }
                     if (copiedAction != null) {
                         newAnnot.setAction(copiedAction);
                     }
-                    page2page.get(entry.getKey()).addAnnotation(-1, newAnnot, false);
+                    entry.getKey().addAnnotation(-1, newAnnot, false);
                 }
             }
         }

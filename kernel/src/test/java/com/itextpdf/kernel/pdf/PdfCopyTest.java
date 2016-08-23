@@ -9,7 +9,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -181,7 +180,6 @@ public class PdfCopyTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore
     public void copySamePageWithAnnotationsSeveralTimes() throws IOException, InterruptedException {
         String filename = sourceFolder + "rotated_annotation.pdf";
 
@@ -194,7 +192,7 @@ public class PdfCopyTest extends ExtendedITextTest {
         sourceDoc.close();
         pdfDoc.close();
 
-        assertNull(new CompareTool().compareByContent(destinationFolder + "copyDocumentsWithFormFields.pdf", sourceFolder + "cmp_copyDocumentsWithFormFields.pdf", destinationFolder, "diff_"));
+        assertNull(new CompareTool().compareByContent(destinationFolder + "copySamePageWithAnnotationsSeveralTimes.pdf", sourceFolder + "cmp_copySamePageWithAnnotationsSeveralTimes.pdf", destinationFolder, "diff_"));
     }
 
 }

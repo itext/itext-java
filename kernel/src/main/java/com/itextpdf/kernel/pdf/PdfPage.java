@@ -376,9 +376,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         copyInheritedProperties(page, toDocument);
         for (PdfAnnotation annot : getAnnotations()) {
             if (annot.getSubtype().equals(PdfName.Link)) {
-                getDocument().storeLinkAnnotation(this, (PdfLinkAnnotation) annot);
+                getDocument().storeLinkAnnotation(page, (PdfLinkAnnotation) annot);
+            } else if (annot.getSubtype().equals(PdfName.Widget)){
+                page.addAnnotation(-1, PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(toDocument, false)), false);
             } else {
-                page.addAnnotation(-1, PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(toDocument)), false);
+                page.addAnnotation(-1, PdfAnnotation.makeAnnotation(annot.getPdfObject().copyTo(toDocument, true)), false);
             }
         }
         if (toDocument.isTagged()) {
