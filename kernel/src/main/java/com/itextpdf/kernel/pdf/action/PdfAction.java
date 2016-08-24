@@ -513,23 +513,51 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         return new PdfAction().put(PdfName.S, PdfName.SetOCGState).put(PdfName.State, stateArr).put(PdfName.PreserveRB, new PdfBoolean(preserveRb));
     }
 
+    /**
+     * Creates a Rendition action (section 12.6.4.13 of ISO 32000-1).
+     *
+     * @param file             the name of the media clip, for use in the user interface.
+     * @param fileSpec         a full file specification or form XObject that specifies the actual media data
+     * @param mimeType         an ASCII string identifying the type of data
+     * @param screenAnnotation a screen annotation
+     * @return created action
+     */
     public static PdfAction createRendition(String file, PdfFileSpec fileSpec, String mimeType, PdfAnnotation screenAnnotation) {
         return new PdfAction().put(PdfName.S, PdfName.Rendition).
                 put(PdfName.OP, new PdfNumber(0)).put(PdfName.AN, screenAnnotation.getPdfObject()).
                 put(PdfName.R, new PdfRendition(file, fileSpec, mimeType).getPdfObject());
     }
 
+    /**
+     * Creates a JavaScript action (section 12.6.4.16 of ISO 32000-1).
+     *
+     * @param javaScript a text string containing the JavaScript script to be executed.
+     * @return created action
+     */
     public static PdfAction createJavaScript(String javaScript) {
         return new PdfAction().put(PdfName.S, PdfName.JavaScript).put(PdfName.JS, new PdfString(javaScript));
     }
 
+    /**
+     * Creates a Submit-Form Action (section 12.7.5.2 of ISO 32000-1).
+     *
+     * @param file  a uniform resource locator, as described in 7.11.5, "URL Specifications"
+     * @param names an array identifying which fields to include in the submission or which to exclude,
+     *              depending on the setting of the Include/Exclude flag in the Flags entry.
+     *              This is an optional parameter and can be <code>null</code>
+     * @param flags a set of flags specifying various characteristics of the action (see Table 237 of ISO 32000-1).
+     *              Default value to be passed: 0.
+     * @return created action
+     */
     public static PdfAction createSubmitForm(String file, Object[] names, int flags) {
         PdfAction action = new PdfAction();
         action.put(PdfName.S, PdfName.SubmitForm);
-        PdfDictionary dic = new PdfDictionary();
-        dic.put(PdfName.F, new PdfString(file));
-        dic.put(PdfName.FS, PdfName.URL);
-        action.put(PdfName.F, dic);
+
+        PdfDictionary urlFileSpec = new PdfDictionary();
+        urlFileSpec.put(PdfName.F, new PdfString(file));
+        urlFileSpec.put(PdfName.FS, PdfName.URL);
+        action.put(PdfName.F, urlFileSpec);
+
         if (names != null) {
             action.put(PdfName.Fields, buildArray(names));
         }
@@ -537,6 +565,15 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         return action;
     }
 
+    /**
+     * Creates a Reset-Form Action (section 12.7.5.3 of ISO 32000-1).
+     *
+     * @param names an array identifying which fields to reset or which to exclude from resetting,
+     *              depending on the setting of the Include/Exclude flag in the Flags entry (see Table 239 of ISO 32000-1).
+     * @param flags a set of flags specifying various characteristics of the action (see Table 239 of ISO 32000-1).
+     *              Default value to be passed: 0.
+     * @return created action
+     */
     public static PdfAction createResetForm(Object[] names, int flags) {
         PdfAction action = new PdfAction();
         action.put(PdfName.S, PdfName.ResetForm);
@@ -547,19 +584,27 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         return action;
     }
 
+    /**
+     * Adds an additional action to the provided {@link PdfObjectWrapper<PdfDictionary>} wrapper.
+     *
+     * @param wrapper the wrapper to add an additional action to
+     * @param key     a {@link PdfName} specifying the name of an additional action
+     * @param action  the {@link PdfAction} to add as an additional action
+     */
     public static void setAdditionalAction(PdfObjectWrapper<PdfDictionary> wrapper, PdfName key, PdfAction action) {
         PdfDictionary dic;
         PdfObject obj = wrapper.getPdfObject().get(PdfName.AA);
-        if (obj != null && obj.isDictionary())
+        if (obj != null && obj.isDictionary()) {
             dic = (PdfDictionary) obj;
-        else
+        } else {
             dic = new PdfDictionary();
+        }
         dic.put(key, action.getPdfObject());
         wrapper.getPdfObject().put(PdfName.AA, dic);
     }
 
     /**
-     * Add a chained action.
+     * Adds a chained action.
      *
      * @param nextAction the next action or sequence of actions that shall be performed after the current action
      */
