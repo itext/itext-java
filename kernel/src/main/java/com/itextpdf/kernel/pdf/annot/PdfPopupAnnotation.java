@@ -70,6 +70,9 @@ public class PdfPopupAnnotation extends PdfAnnotation {
     }
 
     public PdfAnnotation getParent() {
+        if (parent == null) {
+            parent = makeAnnotation(getParentObject());
+        }
         return parent;
     }
 

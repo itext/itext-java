@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceCmyk;
 import com.itextpdf.kernel.color.DeviceGray;
@@ -54,6 +55,8 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class PdfMarkupAnnotation extends PdfAnnotation {
 
@@ -107,6 +110,9 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
     }
 
     public PdfAnnotation getInReplyTo() {
+        if (inReplyTo == null) {
+            inReplyTo = makeAnnotation(getInReplyToObject());
+        }
         return inReplyTo;
     }
 
@@ -117,7 +123,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
 
     public PdfMarkupAnnotation setPopup(PdfPopupAnnotation popup) {
         this.popup = popup;
-        popup.put(PdfName.Parent, getPdfObject());
+        popup.setParent(this);
         return (PdfMarkupAnnotation) put(PdfName.Popup, popup.getPdfObject());
     }
 
@@ -126,6 +132,15 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
     }
 
     public PdfPopupAnnotation getPopup() {
+        if (popup == null) {
+            PdfAnnotation annotation = makeAnnotation(getPopupObject());
+            if (!(annotation instanceof PdfPopupAnnotation)) {
+                Logger logger = LoggerFactory.getLogger(PdfMarkupAnnotation.class);
+                logger.warn(LogMessageConstant.POPUP_ENTRY_IS_NOT_POPUP_ANNOTATION);
+                return null;
+            }
+            popup = (PdfPopupAnnotation) annotation;
+        }
         return popup;
     }
 
