@@ -64,7 +64,7 @@ public final class FilterHandlers {
         Map<PdfName, IFilterHandler> map = new HashMap<>();
 
         map.put(PdfName.FlateDecode, new FlateDecodeFilter());
-        map.put(PdfName.FL, new FlateDecodeFilter());
+        map.put(PdfName.Fl, new FlateDecodeFilter());
         map.put(PdfName.ASCIIHexDecode, new ASCIIHexDecodeFilter());
         map.put(PdfName.AHx, new ASCIIHexDecodeFilter());
         map.put(PdfName.ASCII85Decode, new ASCII85DecodeFilter());

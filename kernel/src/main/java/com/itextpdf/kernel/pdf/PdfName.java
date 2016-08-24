@@ -334,6 +334,13 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName FitV = createDirectName("FitV");
     public static final PdfName FitWindow = createDirectName("FitWindow");
     public static final PdfName FixedPrint = createDirectName("FixedPrint");
+    /**
+     * PdfName for the abbreviation of FlateDecode. For the Flatness Tolerance PdfName use {@link PdfName#FL} (Uppercase 'L')
+     */
+    public static final PdfName Fl = createDirectName("Fl");
+    /**
+     * PdfName for Flatness Tolerance. For the PdfName with the FlateDecode abbreviation use {@link PdfName#Fl} (Lowercase 'L')
+     */
     public static final PdfName FL = createDirectName("FL");
     public static final PdfName Flags = createDirectName("Flags");
     public static final PdfName FlateDecode = createDirectName("FlateDecode");
