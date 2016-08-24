@@ -48,6 +48,7 @@ import com.itextpdf.kernel.PdfException;
  * Exception that is thrown when the PDF Document doesn't adhere to the PDF/A specification.
  */
 public class PdfAConformanceException extends PdfException {
+
     private static final long serialVersionUID = -5951503441486657717L;
 
     public static final String _1ActionsAreNotAllowed = "1.actions.are.not.allowed";

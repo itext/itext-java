@@ -53,7 +53,6 @@ import java.text.MessageFormat;
  */
 public class VerificationException extends GeneralSecurityException {
 
-    /** A Serial Version UID */
     private static final long serialVersionUID = 2978604513926438256L;
 
     /**

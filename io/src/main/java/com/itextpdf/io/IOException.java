@@ -48,6 +48,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Exception class for exceptions in io module.
+ */
 public class IOException extends RuntimeException {
 
     public static final String _1BitSamplesAreNotSupportedForHorizontalDifferencingPredictor = "{0} bit samples are not supported for horizontal differencing predictor.";
@@ -147,7 +150,7 @@ public class IOException extends RuntimeException {
     public static final String PageNumberMustBeGtEq1 = "Page number must be >= 1.";
     /**
      * @deprecated because naming clash with {@link com itextpdf io font PdfEncodings}
-     *             may produce confusion with imports  Superseded by {@link #CharacterCodeException}
+     * may produce confusion with imports  Superseded by {@link #CharacterCodeException}
      */
     @Deprecated
     public static final String PdfEncodings = "Pdf encodings.";
@@ -191,28 +194,60 @@ public class IOException extends RuntimeException {
     protected Object obj;
     private List<Object> messageParams;
 
+    /**
+     * Creates a new IOException.
+     *
+     * @param message the detail message.
+     */
     public IOException(String message) {
         super(message);
     }
 
+    /**
+     * Creates a new IOException.
+     *
+     * @param cause the cause (which is saved for later retrieval by {@link #getCause()} method).
+     */
     public IOException(Throwable cause) {
         this(UnknownIOException, cause);
     }
 
+    /**
+     * Creates a new IOException.
+     *
+     * @param message the detail message.
+     * @param obj     an object for more details.
+     */
     public IOException(String message, Object obj) {
         this(message);
         this.obj = obj;
     }
 
+    /**
+     * Creates a new IOException.
+     *
+     * @param message the detail message.
+     * @param cause   the cause (which is saved for later retrieval by {@link #getCause()} method).
+     */
     public IOException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * Creates a new IOException.
+     *
+     * @param message the detail message.
+     * @param cause   the cause (which is saved for later retrieval by {@link #getCause()} method).
+     * @param obj     an object for more details.
+     */
     public IOException(String message, Throwable cause, Object obj) {
         this(message, cause);
         this.obj = obj;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getMessage() {
         if (messageParams == null || messageParams.size() == 0) {
@@ -222,12 +257,21 @@ public class IOException extends RuntimeException {
         }
     }
 
+    /**
+     * Sets additional params for Exception message.
+     *
+     * @param messageParams additional params.
+     * @return object itself.
+     */
     public IOException setMessageParams(Object... messageParams) {
         this.messageParams = new ArrayList<>();
         Collections.addAll(this.messageParams, messageParams);
         return this;
     }
 
+    /**
+     * Gets additional params for Exception message.
+     */
     protected Object[] getMessageParams() {
         Object[] parameters = new Object[messageParams.size()];
         for (int i = 0; i < messageParams.size(); i++) {

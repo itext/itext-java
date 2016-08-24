@@ -51,19 +51,13 @@ package com.itextpdf.barcodes.qrcode;
  */
 public final class WriterException extends Exception {
 
-    /**
-     * A serial version UID.
-     */
     private static final long serialVersionUID = -7600391573888999764L;
 
     /**
      * Creates a WriterException.
      */
-
     public WriterException() {
-
         super();
-
     }
 
     /**
@@ -74,6 +68,5 @@ public final class WriterException extends Exception {
     public WriterException(String message) {
         super(message);
     }
-
 }
 
