@@ -225,7 +225,7 @@ public class PdfEncodings {
         try {
             return EncodingUtil.convertToBytes(text.toCharArray(), encoding);
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.PdfEncodingsException, e);
+            throw new IOException(IOException.CharacterCodeException, e);
         }
     }
 
@@ -261,7 +261,7 @@ public class PdfEncodings {
         try {
             return EncodingUtil.convertToBytes(new char[]{ch}, encoding);
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.PdfEncodingsException, e);
+            throw new IOException(IOException.CharacterCodeException, e);
         }
     }
 
@@ -306,7 +306,7 @@ public class PdfEncodings {
         try {
             return EncodingUtil.convertToString(bytes, encoding);
         } catch (UnsupportedEncodingException e) {
-            throw new IOException(IOException.PdfEncodingsException, e);
+            throw new IOException(IOException.UnsupportedEncodingException, e);
         }
     }
 

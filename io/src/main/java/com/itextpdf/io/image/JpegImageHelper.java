@@ -174,7 +174,7 @@ class JpegImageHelper {
         while (true) {
             int v = jpegStream.read();
             if (v < 0)
-                throw new IOException(IOException.PrematureEofWhileReadingJpg);
+                throw new IOException(IOException.PrematureEofWhileReadingJpeg);
             if (v == 0xFF) {
                 int marker = jpegStream.read();
                 if (firstPass && marker == M_APP0) {

@@ -615,7 +615,7 @@ class PngImageHelper {
                     break;
                 default:
                     // Error -- uknown filter type
-                    throw new IOException(IOException.PngFilterUnknown);
+                    throw new IOException(IOException.UnknownPngFilter);
             }
 
             processPixels(curr, xOffset, xStep, dstY, passWidth, png);

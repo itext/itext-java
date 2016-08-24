@@ -402,7 +402,7 @@ class TiffImageHelper {
                 // is often missing
 
                 if ((!dir.isTagPresent(TIFFConstants.TIFFTAG_JPEGIFOFFSET))) {
-                    throw new IOException(IOException.MissingTagSForOjpegCompression);
+                    throw new IOException(IOException.MissingTagsForOjpegCompression);
                 }
                 int jpegOffset = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_JPEGIFOFFSET);
                 int jpegLength = (int) s.length() - jpegOffset;

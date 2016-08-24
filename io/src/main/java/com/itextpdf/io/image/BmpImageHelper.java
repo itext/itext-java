@@ -142,7 +142,7 @@ final class BmpImageHelper {
             // Start File Header
             if (!(readUnsignedByte(bmp.inputStream) == 'B' &&
                     readUnsignedByte(bmp.inputStream) == 'M')) {
-                throw new IOException(IOException.InvalidMagicValueForBmpFile);
+                throw new IOException(IOException.InvalidMagicValueForBmpFileMustBeBM);
             }
 
             // Read file size

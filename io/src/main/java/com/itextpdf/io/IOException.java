@@ -50,111 +50,143 @@ import java.util.List;
 
 public class IOException extends RuntimeException {
 
-    public static final String _1BitSamplesAreNotSupportedForHorizontalDifferencingPredictor = "{0} bit.samples.are.not.supported.for.horizontal.differencing.predictor";
-    public static final String _1CorruptedJfifMarker = "{0} corrupted.jfif.marker";
-    public static final String _1IsNotAValidJpegFile = "{0} is.not.a.valid.jpeg.file";
-    public static final String _1MustHave8BitsPerComponent = "{0} must.have.8.bits.per.component";
-    public static final String _1UnsupportedJpegMarker2 = "{0} unsupported.jpeg.marker {1}";
-    public static final String _1IsNotAnAfmOrPfmFontFile = "{0} is.not.an.afm.or.pfm.font.file";
+    public static final String _1BitSamplesAreNotSupportedForHorizontalDifferencingPredictor = "{0} bit samples are not supported for horizontal differencing predictor.";
+    public static final String _1CorruptedJfifMarker = "{0} corrupted jfif marker.";
+    public static final String _1IsNotAValidJpegFile = "{0} is not a valid jpeg file.";
+    public static final String _1MustHave8BitsPerComponent = "{0} must have 8 bits per component.";
+    public static final String _1UnsupportedJpegMarker2 = "{0} unsupported jpeg marker {1}.";
+    public static final String _1IsNotAnAfmOrPfmFontFile = "{0} is not an afm or pfm font file.";
     public static final String _1NotFoundAsFileOrResource = "{0} not found as file or resource.";
 
-    public static final String AllFillBitsPrecedingEolCodeMustBe0 = "all.fill.bits.preceding.eol.code.must.be.0";
-    public static final String BadEndiannessTagNot0x4949Or0x4d4d = "bad.endianness.tag.not.0x4949.or.0x4d4d";
-    public static final String BadMagicNumberShouldBe42 = "bad.magic.number.should.be.42";
-    public static final String BitsPerComponentMustBe1_2_4or8 = "bits.per.component.must.be.1.2.4.or.8";
-    public static final String BitsPerSample1IsNotSupported = "bits.per.sample {0} is.not.supported";
-    public static final String BmpImageException = "bmp.image.exception";
-    public static final String BytesCanBeAssignedToByteArrayOutputStreamOnly = "bytes.can.be.assigned.to.bytearrayoutputstream.only";
-    public static final String BytesCanBeResetInByteArrayOutputStreamOnly = "bytes.can.be.reset.in.bytearrayoutputstream.only";
+    public static final String AllFillBitsPrecedingEolCodeMustBe0 = "All fill bits preceding eol code must be 0.";
+    @Deprecated
+    public static final String BadEndiannessTagNot0x4949Or0x4d4d = "Bad endianness tag not 0x4949 or 0x4d4d.";
+    public static final String BadEndiannessTag0x4949Or0x4d4d = "Bad endianness tag: 0x4949 or 0x4d4d.";
+    public static final String BadMagicNumberShouldBe42 = "Bad magic number. Should be 42.";
+    public static final String BitsPerComponentMustBe1_2_4or8 = "Bits per component must be 1, 2, 4 or 8.";
+    public static final String BitsPerSample1IsNotSupported = "Bits per sample {0} is not supported.";
+    public static final String BmpImageException = "Bmp image exception.";
+    public static final String BytesCanBeAssignedToByteArrayOutputStreamOnly = "Bytes can be assigned to ByteArrayOutputStream only.";
+    public static final String BytesCanBeResetInByteArrayOutputStreamOnly = "Bytes can be reset in ByteArrayOutputStream only.";
 
-    public static final String CannotGetTiffImageColor = "cannot.get.tiff.image.color";
-    public static final String CannotFind1Frame = "cannot.find {0} frame";
-    public static final String CannotHandleBoxSizesHigherThan2_32 = "cannot.handle.box.sizes.higher.than.2.32";
-    public static final String CannotInflateTiffImage = "cannot.inflate.tiff.image";
-    public static final String CannotReadTiffImage = "cannot.read.tiff.image";
-    public static final String CannotWriteByte = "cannot.write.byte";
-    public static final String CannotWriteBytes = "cannot.write.bytes";
-    public static final String CannotWriteFloatNumber = "cannot.write.float.number";
-    public static final String CannotWriteIntNumber = "cannot.write.int.number";
-    public static final String CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d = "ccitt.compression.type.must.be.ccittg4.ccittg3.1d.or.ccittg3.2d";
+    public static final String CannotGetTiffImageColor = "Cannot get TIFF image color.";
+    public static final String CannotFind1Frame = "Cannot find {0} frame.";
+    public static final String CannotHandleBoxSizesHigherThan2_32 = "Cannot handle box sizes higher than 2^32.";
+    public static final String CannotInflateTiffImage = "Cannot inflate TIFF image.";
+    public static final String CannotReadTiffImage = "Cannot read TIFF image.";
+    public static final String CannotWriteByte = "Cannot write byte.";
+    public static final String CannotWriteBytes = "Cannot write bytes.";
+    public static final String CannotWriteFloatNumber = "Cannot write float number.";
+    public static final String CannotWriteIntNumber = "Cannot write int number.";
+    public static final String CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d = "CCITT compression type must be CCITTG4, CCITTG3_1D or CCITTG3_2D.";
+    @Deprecated
     public static final String TheCmap1WasNotFound = "The CMap {0} was not found";
-    public static final String ComponentsMustBe1_3Or4 = "components.must.be.1.3.or.4";
-    public static final String Compression1IsNotSupported = "compression {0} is.not.supported";
-    public static final String ColorDepthIsNotSupported = "the.color.depth {0} is.not.supported";
-    public static final String ColorSpaceIsNotSupported = "the.color.space {0} is.not.supported";
-    public static final String CompressionJpegIsOnlySupportedWithASingleStripThisImageHas1Strips = "compression.jpeg.is.only.supported.with.a.single.strip.this.image.has {0} strips";
+    public static final String Cmap1WasNotFound = "The CMap {0} was not found.";
+    public static final String ComponentsMustBe1_3Or4 = "Components must be 1, 3 or 4.";
+    public static final String Compression1IsNotSupported = "Compression {0} is not supported.";
+    public static final String ColorDepthIsNotSupported = "The color depth {0} is not supported.";
+    public static final String ColorSpaceIsNotSupported = "The color space {0} is not supported.";
+    public static final String CompressionJpegIsOnlySupportedWithASingleStripThisImageHas1Strips = "Compression jpeg is only supported with a single strip. This image has {0} strips.";
+    @Deprecated
     public static final String DirectoryNumberTooLarge = "directory.number.too.large";
-    public static final String EolCodeWordEncounteredInBlackRun = "eol.code.word.encountered.in.black.run";
-    public static final String EolCodeWordEncounteredInWhiteRun = "eol.code.word.encountered.in.white.run";
-    public static final String ErrorAtFilePointer1 = "error.at.file.pointer {0}";
-    public static final String ErrorReadingString = "error.reading.string";
-    public static final String ErrorWithJpMarker = "error.with.jp.marker";
+    public static final String DirectoryNumberIsTooLarge = "Directory number is too large.";
+    public static final String EolCodeWordEncounteredInBlackRun = "EOL code word encountered in Black run.";
+    public static final String EolCodeWordEncounteredInWhiteRun = "EOL code word encountered in White run.";
+    public static final String ErrorAtFilePointer1 = "Error at file pointer {0}.";
+    public static final String ErrorReadingString = "Error reading string.";
+    public static final String ErrorWithJpMarker = "Error with JP marker.";
 
-    public static final String ExpectedFtypMarker = "expected.ftyp.marker";
-    public static final String ExpectedIhdrMarker = "expected.ihdr.marker";
-    public static final String ExpectedJpMarker = "expected.jp.marker";
-    public static final String ExpectedJp2hMarker = "expected.jp2h.marker";
+    public static final String ExpectedFtypMarker = "Expected FTYP marker.";
+    public static final String ExpectedIhdrMarker = "Expected IHDR marker.";
+    public static final String ExpectedJpMarker = "Expected JP marker.";
+    public static final String ExpectedJp2hMarker = "Expected JP2H marker.";
 
-    public static final String ExtraSamplesAreNotSupported = "extra.samples.are.not.supported";
-    public static final String FdfStartxrefNotFound = "fdf.startxref.not.found";
+    public static final String ExtraSamplesAreNotSupported = "Extra samples are not supported.";
+    public static final String FdfStartxrefNotFound = "FDF startxref not found.";
 
-    public static final String FirstScanlineMustBe1dEncoded = "first.scanline.must.be.1d.encoded";
-    public static final String FontFile1NotFound = "font.file {0} not.found";
-    public static final String ImageFormatCannotBeRecognized = "image.format.cannot.be.recognized";
-    public static final String GifImageException = "gif.image.exception";
-    public static final String GtNotExpected = "gt.not.expected";
-    public static final String GifSignatureNotFound = "gif.signature.not.found";
-    public static final String IllegalValueForPredictorInTiffFile = "illegal.value.for.predictor.in.tiff.file";
-    public static final String Font1IsNotRecognized = "font {0} is.not.recognized";
-    public static final String FontIsNotRecognized = "font.is.not.recognized";
+    public static final String FirstScanlineMustBe1dEncoded = "First scanline must be 1D encoded.";
+    public static final String FontFile1NotFound = "Font file {0} not found.";
+    public static final String ImageFormatCannotBeRecognized = "Image format cannot be recognized.";
+    public static final String GifImageException = "GIF image exception.";
+    public static final String GtNotExpected = "'>' not expected.";
+    public static final String GifSignatureNotFound = "GIF signature not found.";
+    public static final String IllegalValueForPredictorInTiffFile = "Illegal value for predictor in TIFF file.";
+    @Deprecated
+    public static final String Font1IsNotRecognized = "Font {0} is not recognized";
+    @Deprecated
+    public static final String FontIsNotRecognized = "Font is not recognized";
 
-    public static final String ImageCanNotBeAnImageMask = "image.can.not.be.an.image.mask";
-    public static final String ImageMaskCannotContainAnotherImageMask = "image.mask.cannot.contain.another.image.mask";
-    public static final String ImageMaskIsNotAMaskDidYouDoMakeMask = "image.mask.is.not.a.mask.did.you.do.makemask";
-    public static final String IncompletePalette = "incomplete.palette";
+    @Deprecated
+    public static final String ImageCanNotBeAnImageMask = "Image can not be an image mask.";
+    public static final String ImageIsNotMaskYouMustCallImageDataMakeMask = "Image is not a mask. You must call ImageData#makeMask().";
+    public static final String ImageMaskCannotContainAnotherImageMask = "Image mask cannot contain another image mask.";
+    @Deprecated
+    public static final String ImageMaskIsNotAMaskDidYouDoMakeMask = "Image is not a mask. You must call ImageData#makeMask().";
+    public static final String IncompletePalette = "Incomplete palette.";
 
-    public static final String InvalidTTCFile = "{0} is.not.a.valid.ttc.file";
-    public static final String InvalidBmpFileCompression = "invalid.bmp.file.compression";
-    public static final String InvalidCodeEncountered = "invalid.code.encountered";
-    public static final String InvalidCodeEncounteredWhileDecoding2dGroup3CompressedData = "invalid.code.encountered.while.decoding.2d.group.3.compressed.data";
-    public static final String InvalidCodeEncounteredWhileDecoding2dGroup4CompressedData = "invalid.code.encountered.while.decoding.2d.group.4.compressed.data";
-    public static final String InvalidIccProfile = "invalid.icc.profile";
-    public static final String InvalidJpeg2000File = "invalid.jpeg2000.file";
-    public static final String InvalidMagicValueForBmpFile = "invalid.magic.value.for.bmp.file";
-    public static final String IoException = "io.exception";
-    public static final String Jbig2ImageException = "jbig2.image.exception";
-    public static final String JpegImageException = "jpeg.image.exception";
-    public static final String Jpeg2000ImageException = "jpeg2000.image.exception";
-    public static final String MissingTagSForOjpegCompression = "missing.tag.s.for.ojpeg.compression";
-    public static final String NValueIsNotSupported = "N.value.1.is.not.supported";
-    public static final String PageNumberMustBeGtEq1 = "page.number.must.be.gt.eq {0}";
+    @Deprecated
+    public static final String InvalidTTCFile = "{0} is not a valid TTC file.";
+    public static final String InvalidTtcFile = "{0} is not a valid TTC file.";
+    public static final String InvalidBmpFileCompression = "Invalid BMP file compression.";
+    public static final String InvalidCodeEncountered = "Invalid code encountered.";
+    public static final String InvalidCodeEncounteredWhileDecoding2dGroup3CompressedData = "Invalid code encountered while decoding 2D group 3 compressed data.";
+    public static final String InvalidCodeEncounteredWhileDecoding2dGroup4CompressedData = "Invalid code encountered while decoding 2D group 4 compressed data.";
+    public static final String InvalidIccProfile = "Invalid ICC profile.";
+    public static final String InvalidJpeg2000File = "Invalid JPEG2000 file.";
+    @Deprecated
+    public static final String InvalidMagicValueForBmp = "Invalid magic value for bmp file. Must be 'BM'";
+    public static final String InvalidMagicValueForBmpFileMustBeBM = "Invalid magic value for bmp file. Must be 'BM'";
+    public static final String IoException = "I/O exception.";
+    public static final String Jbig2ImageException = "JBIG2 image exception.";
+    public static final String JpegImageException = "JPEG image exception.";
+    public static final String Jpeg2000ImageException = "JPEG2000 image exception.";
+    @Deprecated
+    public static final String MissingTagSForOjpegCompression = "Missing tag(s) for OJPEG compression";
+    public static final String MissingTagsForOjpegCompression = "Missing tag(s) for OJPEG compression";
+    public static final String NValueIsNotSupported = "N value {1} is not supported.";
+    public static final String PageNumberMustBeGtEq1 = "Page number must be >= 1.";
     /**
-     * @deprecated because naming clash with {@link com.itextpdf.io.font.PdfEncodings}
-     *             may produce confusion with imports. Superseded by {@link #PdfEncodingsException}
+     * @deprecated because naming clash with {@link com itextpdf io font PdfEncodings}
+     *             may produce confusion with imports  Superseded by {@link #CharacterCodeException}
      */
     @Deprecated
-    public static final String PdfEncodings = "pdf.encodings";
-    public static final String PdfEncodingsException = "pdf.encodings";
-    public static final String PdfHeaderNotFound = "pdf.header.not.found";
-    public static final String PdfStartxrefNotFound = "pdf.startxref.not.found";
-    public static final String Photometric1IsNotSupported = "photometric.1.is.not.supported";
-    public static final String PlanarImagesAreNotSupported = "planar.images.are.not.supported";
-    public static final String PngFilterUnknown = "png.filter.unknown";
-    public static final String PngImageException = "png.image.exception";
-    public static final String PrematureEofWhileReadingJpg = "premature.eof.while.reading.jpg";
-    public static final String ScanlineMustBeginWithEolCodeWord = "scanline.must.begin.with.eol.code.word";
-    public static final String Tiff50StyleLzwCodesAreNotSupported = "tiff.5.0.style.lzw.codes.are.not.supported";
-    public static final String TiffFillOrderTagMustBeEither1Or2 = "tiff.fill.order.tag.must.be.either.1.or.2";
-    public static final String TiffImageException = "tiff.image.exception";
-    public static final String TTCIndexDoesNotExistInFile = "ttc.index.doesn't.exist.in.ttc.file";
-    public static final String TilesAreNotSupported = "tiles.are.not.supported";
-    public static final String TransparencyLengthMustBeEqualTo2WithCcittImages = "transparency.length.must.be.equal.to.2.with.ccitt.images";
-    public static final String UnexpectedCloseBracket = "unexpected.close.bracket";
-    public static final String UnexpectedGtGt = "unexpected.gt.gt";
-    public static final String UnknownCompressionType1 = "unknown.compression.type {0}";
-    public static final String UnknownIOException = "unknown.io.exception";
-    public static final String UnsupportedBoxSizeEqEq0 = "unsupported.box.size.eq.eq.0";
-    public static final String WrongNumberOfComponentsInIccProfile = "icc.profile.contains {0} components.the.image.data.contains {2} components";
+    public static final String PdfEncodings = "Pdf encodings.";
+    public static final String CharacterCodeException = "Character code exception.";
+    public static final String PdfHeaderNotFound = "PDF header not found.";
+    public static final String PdfStartxrefNotFound = "PDF startxref not found.";
+    public static final String Photometric1IsNotSupported = "Photometric {0} is not supported.";
+    public static final String PlanarImagesAreNotSupported = "Planar images are not supported.";
+    @Deprecated
+    public static final String PngFilterUnknown = "PNG filter unknown.";
+    public static final String UnknownPngFilter = "Unknown PNG filter.";
+    public static final String PngImageException = "PNG image exception.";
+    @Deprecated
+    public static final String PrematureEofWhileReadingJpg = "Premature EOF while reading JPEG.";
+    public static final String PrematureEofWhileReadingJpeg = "Premature EOF while reading JPEG.";
+
+    public static final String ScanlineMustBeginWithEolCodeWord = "Scanline must begin with EOL code word.";
+
+    public static final String ThisImageCanNotBeAnImageMask = "This image can not be an image mask.";
+    public static final String Tiff50StyleLzwCodesAreNotSupported = "TIFF 5.0-style LZW codes are not supported.";
+    public static final String TiffFillOrderTagMustBeEither1Or2 = "TIFF_FILL_ORDER tag must be either 1 or 2.";
+    public static final String TiffImageException = "TIFF image exception.";
+    @Deprecated
+    public static final String TTCIndexDoesNotExistInFile = "TTC index doesn't exist in ttc file.";
+    public static final String TtcIndexDoesNotExistInThisTtcFile = "TTC index doesn't exist in this TTC file.";
+    public static final String TilesAreNotSupported = "Tiles are not supported.";
+    public static final String TransparencyLengthMustBeEqualTo2WithCcittImages = "Transparency length must be equal to 2 with CCITT images";
+    public static final String TypeOfFont1IsNotRecognized = "Type of font {0} is not recognized.";
+    public static final String TypeOfFontIsNotRecognized = "Type of font is not recognized.";
+
+    public static final String UnexpectedCloseBracket = "Unexpected close bracket.";
+    public static final String UnexpectedGtGt = "Unexpected '>>'.";
+    public static final String UnknownCompressionType1 = "Unknown compression type {0}.";
+    public static final String UnknownIOException = "Unknown I/O exception.";
+    public static final String UnsupportedBoxSizeEqEq0 = "Unsupported box size == 0.";
+    public static final String UnsupportedEncodingException = "Unsupported encoding exception.";
+    @Deprecated
+    public static final String WrongNumberOfComponentsInIccProfile = "ICC profile contains {0} components the image data contains {1} components.";
+    public static final String IccProfileContains0ComponentsWhileImageDataContains1Components = "ICC profile contains {0} components, while the image data contains {1} components.";
 
     protected Object obj;
     private List<Object> messageParams;

@@ -85,7 +85,7 @@ public class TrueTypeCollection {
      */
     public FontProgram getFontByTccIndex(int ttcIndex) throws java.io.IOException {
         if (ttcIndex > TTCSize - 1) {
-            throw new IOException(IOException.TTCIndexDoesNotExistInFile);
+            throw new IOException(IOException.TtcIndexDoesNotExistInThisTtcFile);
         }
 
         if (ttcPath != null) {

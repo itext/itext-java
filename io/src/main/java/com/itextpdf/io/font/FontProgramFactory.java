@@ -287,7 +287,7 @@ public final class FontProgramFactory {
                 } catch (Exception ignored) {
                 }
             }
-            throw new IOException(IOException.FontIsNotRecognized);
+            throw new IOException(IOException.TypeOfFontIsNotRecognized);
         }
 
         FontProgram fontBuilt;
@@ -303,7 +303,7 @@ public final class FontProgramFactory {
         } else if (isCidFont) {
             fontBuilt = new CidFont(name, FontCache.getCompatibleCmaps(baseName));
         } else {
-            throw new IOException(IOException.Font1IsNotRecognized).setMessageParams(name);
+            throw new IOException(IOException.TypeOfFont1IsNotRecognized).setMessageParams(name);
         }
         return cached ? FontCache.saveFont(fontBuilt, name) : fontBuilt;
     }

@@ -72,7 +72,7 @@ public class IccProfile {
         icc.numComponents = nc;
         // invalid ICC
         if (nc != numComponents) {
-            throw new com.itextpdf.io.IOException(IOException.WrongNumberOfComponentsInIccProfile).setMessageParams(nc, numComponents);
+            throw new com.itextpdf.io.IOException(IOException.IccProfileContains0ComponentsWhileImageDataContains1Components).setMessageParams(nc, numComponents);
         }
         return icc;
     }
