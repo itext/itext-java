@@ -797,7 +797,8 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     protected static boolean isNewLine(GlyphLine text, int ind) {
-        return text.get(ind).hasValidUnicode() && (text.get(ind).getUnicode() == '\n' || text.get(ind).getUnicode() == '\r');
+        int unicode = text.get(ind).getUnicode();
+        return unicode == '\n' || unicode == '\r';
     }
 
     private TextRenderer[] splitIgnoreFirstNewLine(int currentTextPos) {

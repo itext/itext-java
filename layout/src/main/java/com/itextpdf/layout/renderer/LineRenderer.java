@@ -93,15 +93,13 @@ public class LineRenderer extends AbstractRenderer {
                 if (child instanceof TextRenderer) {
                     GlyphLine text = ((TextRenderer) child).getText();
                     for (int i = text.start; i < text.end; i++) {
-                        assert text.get(i).getChars().length > 0;
                         if (TextRenderer.isNewLine(text, i)) {
                             newLineFound = true;
                             break;
                         }
                         // we assume all the chars will have the same bidi group
                         // we also assume pairing symbols won't get merged with other ones
-                        int unicode = text.get(i).getChars()[0];
-                        unicodeIdsReorderingList.add(unicode);
+                        unicodeIdsReorderingList.add(text.get(i).getUnicode());
                     }
                 }
             }
