@@ -549,7 +549,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public Rectangle getArtBox() {
-        return getPdfObject().getAsRectangle(PdfName.ArtBox);
+        Rectangle artBox = getPdfObject().getAsRectangle(PdfName.ArtBox);
+        return artBox == null ? getCropBox() : artBox;
     }
 
     public PdfPage setTrimBox(Rectangle rectangle) {
@@ -563,7 +564,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public Rectangle getTrimBox() {
-        return getPdfObject().getAsRectangle(PdfName.TrimBox);
+        Rectangle trimBox = getPdfObject().getAsRectangle(PdfName.TrimBox);
+        return trimBox == null ? getCropBox() : trimBox;
     }
 
     /**
