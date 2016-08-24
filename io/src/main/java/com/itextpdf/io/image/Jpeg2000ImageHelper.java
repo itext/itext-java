@@ -53,19 +53,20 @@ import java.util.ArrayList;
 final class Jpeg2000ImageHelper {
 
     private static class Jpeg2000Box {
-
         int length;
         int type;
     }
-    private static class ZeroBoxSizeException extends java.io.IOException {
 
-        public ZeroBoxSizeException(String s) {
+    private static class ZeroBoxSizeException extends java.io.IOException {
+        ZeroBoxSizeException(String s) {
             super(s);
         }
     }
+
+    private static final int JPIP_JPIP = 0x6a706970;
+
     private static final int JP2_JP = 0x6a502020;
     private static final int JP2_IHDR = 0x69686472;
-    private static final int JPIP_JPIP = 0x6a706970;
     private static final int JP2_FTYP = 0x66747970;
     private static final int JP2_JP2H = 0x6a703268;
     private static final int JP2_COLR = 0x636f6c72;
@@ -80,7 +81,7 @@ final class Jpeg2000ImageHelper {
     public static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.JPEG2000)
             throw new IllegalArgumentException("JPEG2000 image expected");
-        processParameters((Jpeg2000ImageData)image);
+        processParameters((Jpeg2000ImageData) image);
         image.setFilter("JPXDecode");
     }
 
