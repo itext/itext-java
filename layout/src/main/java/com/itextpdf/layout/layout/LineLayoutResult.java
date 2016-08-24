@@ -50,6 +50,9 @@ import com.itextpdf.layout.renderer.IRenderer;
  */
 public class LineLayoutResult extends LayoutResult {
 
+    /**
+     * Indicates whether split was forced by new line symbol or not.
+     */
     protected boolean splitForcedByNewline;
 
     /**
@@ -78,10 +81,24 @@ public class LineLayoutResult extends LayoutResult {
         super(status, occupiedArea, splitRenderer, overflowRenderer, cause);
     }
 
+    /**
+     * Indicates whether split was forced by new line symbol in rendered text.
+     * The value will be set as true if, for example,
+     * the rendered text of one of the child renderers contains '\n' symbol.
+     *
+     * @return whether split was forced by new line or not
+     */
     public boolean isSplitForcedByNewline() {
         return splitForcedByNewline;
     }
 
+    /**
+     * Sets {@link #setSplitForcedByNewline}
+     *
+     * @param isSplitForcedByNewline indicates that split was forced by new line symbol in rendered text.
+     * @return {@link com.itextpdf.layout.layout.LineLayoutResult this layout result} the setting was applied on.
+     * @see #setSplitForcedByNewline
+     */
     public LineLayoutResult setSplitForcedByNewline(boolean isSplitForcedByNewline) {
         this.splitForcedByNewline = isSplitForcedByNewline;
         return this;

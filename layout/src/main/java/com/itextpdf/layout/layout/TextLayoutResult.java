@@ -45,9 +45,18 @@ package com.itextpdf.layout.layout;
 
 import com.itextpdf.layout.renderer.IRenderer;
 
+/**
+ * Represents the result of a text {@link com.itextpdf.layout.renderer.TextRenderer#layout(LayoutContext) layout}.
+ */
 public class TextLayoutResult extends LayoutResult {
 
+    /**
+     * Indicates whether some word was splitted during {@link com.itextpdf.layout.renderer.TextRenderer#layout(LayoutContext) layout}.
+     */
     protected boolean wordHasBeenSplit;
+    /**
+     * Indicates whether split was forced by new line symbol in text or not.
+     */
     protected boolean splitForcedByNewline;
 
     /**
@@ -76,19 +85,44 @@ public class TextLayoutResult extends LayoutResult {
         super(status, occupiedArea, splitRenderer, overflowRenderer, cause);
     }
 
+    /**
+     * Indicates whether some word in a rendered text was splitted during {@link com.itextpdf.layout.renderer.IRenderer#layout layout}.
+     * The value will be set as true if, for example, the rendered words width is bigger than the width of layout area.
+     *
+     * @return whether some word was splitted or not.
+     */
     public boolean isWordHasBeenSplit() {
         return wordHasBeenSplit;
     }
 
+    /**
+     * Sets {@link #wordHasBeenSplit}
+     * @param wordHasBeenSplit indicates that some word was splitted during {@link com.itextpdf.layout.renderer.IRenderer#layout layout}.
+     * @return {@link com.itextpdf.layout.layout.TextLayoutResult this layout result} the setting was applied on
+     * @see #wordHasBeenSplit
+     */
     public TextLayoutResult setWordHasBeenSplit(boolean wordHasBeenSplit) {
         this.wordHasBeenSplit = wordHasBeenSplit;
         return this;
     }
 
+    /**
+     * Indicates whether split was forced by new line symbol in rendered text.
+     * The value will be set as true if, for example, the rendered text contains '\n' symbol.
+     *
+     * @return whether split was forced by new line or not.
+     */
     public boolean isSplitForcedByNewline() {
         return splitForcedByNewline;
     }
 
+    /**
+     * Sets {@link #setSplitForcedByNewline}
+     *
+     * @param isSplitForcedByNewline indicates that split was forced by new line symbol in rendered text.
+     * @return {@link com.itextpdf.layout.layout.TextLayoutResult this layout result} the setting was applied on.
+     * @see #setSplitForcedByNewline
+     */
     public TextLayoutResult setSplitForcedByNewline(boolean isSplitForcedByNewline) {
         this.splitForcedByNewline = isSplitForcedByNewline;
         return this;
