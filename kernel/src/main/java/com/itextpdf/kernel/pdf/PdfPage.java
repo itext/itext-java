@@ -299,7 +299,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
-
     /**
      * Sets the XMP Metadata.
      *
@@ -490,6 +489,13 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         super.flush();
     }
 
+    /**
+     * Gets {@link Rectangle} object specified by page's Media Box, that defines the boundaries of the physical medium
+     * on which the page shall be displayed or printed
+     *
+     * @return {@link Rectangle} object specified by page Media Box, expressed in default user space units.
+     * @throws PdfException in case of any error while reading MediaBox object.
+     */
     public Rectangle getMediaBox() {
         initParentPages();
         PdfArray mediaBox = getPdfObject().getAsArray(PdfName.MediaBox);
@@ -515,12 +521,26 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 Math.abs(ury.floatValue() - lly.floatValue()));
     }
 
+    /**
+     * Sets the Media Box object, that defines the boundaries of the physical medium
+     * on which the page shall be displayed or printed.
+     *
+     * @param rectangle the {@link Rectangle} object to set, expressed in default user space units.
+     * @return this {@link PdfPage} instance.
+     */
     public PdfPage setMediaBox(Rectangle rectangle) {
         getPdfObject().put(PdfName.MediaBox, new PdfArray(rectangle));
         return this;
     }
 
-
+    /**
+     * Gets the {@link Rectangle} specified by page's CropBox, that defines the visible region of default user space.
+     * When the page is displayed or printed, its contents shall be clipped (cropped) to this rectangle
+     * and then shall be imposed on the output medium in some implementation-defined manner.
+     *
+     * @return the {@link Rectangle} object specified by pages's CropBox, expressed in default user space units.
+     *         MediaBox by default.
+     */
     public Rectangle getCropBox() {
         initParentPages();
         PdfArray cropBox = getPdfObject().getAsArray(PdfName.CropBox);
@@ -533,11 +553,26 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return cropBox.toRectangle();
     }
 
+    /**
+     * Sets the CropBox object, that defines the visible region of default user space.
+     * When the page is displayed or printed, its contents shall be clipped (cropped) to this rectangle
+     * and then shall be imposed on the output medium in some implementation-defined manner.
+     *
+     * @param rectangle the {@link Rectangle} object to set, expressed in default user space units.
+     * @return this {@link PdfPage} instance.
+     */
     public PdfPage setCropBox(Rectangle rectangle) {
         getPdfObject().put(PdfName.CropBox, new PdfArray(rectangle));
         return this;
     }
 
+    /**
+     * Sets the ArtBox object, that define the extent of the page’s meaningful content
+     * (including potential white space) as intended by the page’s creator.
+     *
+     * @param rectangle the {@link Rectangle} object to set, expressed in default user space units.
+     * @return this {@link PdfPage} instance.
+     */
     public PdfPage setArtBox(Rectangle rectangle) {
         if (getPdfObject().getAsRectangle(PdfName.TrimBox) != null) {
             getPdfObject().remove(PdfName.TrimBox);
@@ -548,11 +583,24 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    /**
+     * Gets the {@link Rectangle} object specified by page's ArtBox, that define the extent of the page’s
+     * meaningful content (including potential white space) as intended by the page’s creator.
+     *
+     * @return the {@link Rectangle} object specified by page's ArtBox, expressed in default user space units.
+     *         CropBox by default.
+     */
     public Rectangle getArtBox() {
         Rectangle artBox = getPdfObject().getAsRectangle(PdfName.ArtBox);
         return artBox == null ? getCropBox() : artBox;
     }
 
+    /**
+     * Sets the TrimBox object, that define the intended dimensions of the finished page after trimming.
+     *
+     * @param rectangle the {@link Rectangle} object to set, expressed in default user space units.
+     * @return this {@link PdfPage} instance.
+     */
     public PdfPage setTrimBox(Rectangle rectangle) {
         if (getPdfObject().getAsRectangle(PdfName.ArtBox) != null) {
             getPdfObject().remove(PdfName.ArtBox);
@@ -563,6 +611,13 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    /**
+     * Gets the {@link Rectangle} object specified by page's TrimBox object,
+     * that define the intended dimensions of the finished page after trimming.
+     *
+     * @return the {@link Rectangle} object specified by page's TrimBox, expressed in default user space units.
+     *         CropBox by default.
+     */
     public Rectangle getTrimBox() {
         Rectangle trimBox = getPdfObject().getAsRectangle(PdfName.TrimBox);
         return trimBox == null ? getCropBox() : trimBox;
@@ -620,6 +675,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return mcid++;
     }
 
+    /**
+     * Gets {@link Integer} key of the page’s entry in the structural parent tree.
+     *
+     * @return {@link Integer} key of the page’s entry in the structural parent tree.
+     */
     public Integer getStructParentIndex() {
         if (structParents == -1) {
             PdfNumber n = getPdfObject().getAsNumber(PdfName.StructParents);
@@ -632,11 +692,25 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return structParents;
     }
 
+    /**
+     * Helper method to add an additional action to this page.
+     * May be used in chain.
+     *
+     * @param key     a {@link PdfName} specifying the name of an additional action
+     * @param action  the {@link PdfAction} to add as an additional action
+     * @return this {@link PdfPage} instance.
+     */
     public PdfPage setAdditionalAction(PdfName key, PdfAction action) {
         PdfAction.setAdditionalAction(this, key, action);
         return this;
     }
 
+    /**
+     * Gets array of annotation dictionaries that shall contain indirect references
+     * to all annotations associated with the page.
+     *
+     * @return the {@link List<PdfAnnotation>} containing all page's annotations.
+     */
     public List<PdfAnnotation> getAnnotations() {
         List<PdfAnnotation> annotations = new ArrayList<>();
         PdfArray annots = getPdfObject().getAsArray(PdfName.Annots);
@@ -649,6 +723,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return annotations;
     }
 
+    /**
+     * Checks if page contains the specified annotation.
+     *
+     * @param annotation the {@link PdfAnnotation} to check.
+     * @return {@code true} if page contains specified annotation and {@code false} otherwise.
+     */
     public boolean containsAnnotation(PdfAnnotation annotation) {
         for (PdfAnnotation a : getAnnotations()) {
             if (a.getPdfObject().equals(annotation.getPdfObject())) {
@@ -658,10 +738,28 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return false;
     }
 
+    /**
+     * Adds specified annotation to the end of annotations array and tagged it.
+     * May be used in chain.
+     *
+     * @param annotation the {@link PdfAnnotation} to add.
+     * @return this {@link PdfPage} instance.
+     */
     public PdfPage addAnnotation(PdfAnnotation annotation) {
         return addAnnotation(-1, annotation, true);
     }
 
+    /**
+     * Adds specified {@link PdfAnnotation} to specified index in annotations array with or without autotagging.
+     * May be used in chain.
+     *
+     * @param index the index at which specified annotation will be added. If {@code -1} then annotation will be added
+     *              to the end of array.
+     * @param annotation the {@link PdfAnnotation} to add.
+     * @param tagAnnotation if {@code true} the added annotation will be autotagged. <br/>
+     *                      (see {@link com.itextpdf.kernel.pdf.tagutils.TagStructureContext#getAutoTaggingPointer()})
+     * @return this {@link PdfPage} instance.
+     */
     public PdfPage addAnnotation(int index, PdfAnnotation annotation, boolean tagAnnotation) {
         if (getDocument().isTagged() && tagAnnotation) {
             TagTreePointer tagPointer = getDocument().getTagStructureContext().getAutoTaggingPointer();
@@ -721,6 +819,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    /**
+     * Gets the number of {@link PdfAnnotation} associated with this page.
+     *
+     * @return the {@code int} number of {@link PdfAnnotation} associated with this page.
+     */
     public int getAnnotsSize() {
         PdfArray annots = getAnnots(false);
         if (annots == null)
@@ -814,6 +917,14 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    /**
+     * Helper method that associate specified value with specified key in the underlined {@link PdfDictionary}.
+     * May be used in chain.
+     *
+     * @param key the {@link PdfName} key with which the specified value is to be associated.
+     * @param value the {@link PdfObject} value to be associated with the specified key.
+     * @return this {@link PdfPage} object.
+     */
     public PdfPage put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
         return this;
