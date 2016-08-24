@@ -48,19 +48,46 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 
+/**
+ * This class is a wrapper around a Windows launch parameter dictionary.
+ */
 public class PdfWin extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -3057526285278565800L;
 
-	public PdfWin(PdfDictionary pdfObject) {
+    /**
+     * Creates a new wrapper around an existing Windows launch parameter dictionary.
+     *
+     * @param pdfObject the dictionary to create a wrapper for
+     */
+    public PdfWin(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
+    /**
+     * Creates a new wrapper around a newly created Windows launch parameter dictionary.
+     *
+     * @param f the file name of the application that shall be launched or the document that shall be opened or printed,
+     *          in standard Windows pathname format. If the name string includes a backslash character (\),
+     *          the backslash shall itself be preceded by a backslash.
+     */
     public PdfWin(PdfString f) {
         this(new PdfDictionary());
         getPdfObject().put(PdfName.F, f);
     }
 
+    /**
+     * Creates a new wrapper around a newly created Windows launch parameter dictionary.
+     *
+     * @param f the file name of the application that shall be launched or the document that shall be opened or printed,
+     *          in standard Windows pathname format. If the name string includes a backslash character (\),
+     *          the backslash shall itself be preceded by a backslash
+     * @param d a bye string specifying the default directory in standard DOS syntax
+     * @param o an ASCII string specifying the operation to perform on the file. Shall be one of the following:
+     *          "open", "print"
+     * @param p a parameter string that shall be passed to the application.
+     *          This entry shall be omitted if a document is abound to be opened
+     */
     public PdfWin(PdfString f, PdfString d, PdfString o, PdfString p) {
         this(new PdfDictionary());
         getPdfObject().put(PdfName.F, f);

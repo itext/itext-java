@@ -52,15 +52,30 @@ import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 
 import java.text.MessageFormat;
 
+/**
+ * This class is a wrapper of media clip data dictionary that defines the data for a media object that can be played.
+ */
 public class PdfMediaClipData extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -7030377585169961523L;
-	private static final PdfString TEMPACCESS = new PdfString("TEMPACCESS");
+    private static final PdfString TEMPACCESS = new PdfString("TEMPACCESS");
 
+    /**
+     * Constructs a new {@link PdfMediaClipData} wrapper using an existing dictionary.
+     *
+     * @param pdfObject the dictionary to construct the wrapper from
+     */
     public PdfMediaClipData(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
+    /**
+     * Constructs a new {@link PdfMediaClipData} wrapper around a newly created dictionary.
+     *
+     * @param file     the name of the file to create a media clip for
+     * @param fs       a file specification that specifies the actual media data
+     * @param mimeType an ASCII string identifying the type of data
+     */
     public PdfMediaClipData(String file, PdfFileSpec fs, String mimeType) {
         this(new PdfDictionary());
         PdfDictionary dic = new PdfDictionary();
@@ -86,6 +101,9 @@ public class PdfMediaClipData extends PdfObjectWrapper<PdfDictionary> {
         super.flush();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;
