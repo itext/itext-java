@@ -593,7 +593,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
             if (level <= 0)
                 return;
             PdfName[] keys = new PdfName[dic.keySet().size()];
-            dic.keySet().toArray(keys);
+            keys = dic.keySet().toArray(keys);
             Arrays.sort(keys);
             for (Object key : keys) {
                 if (key.equals(PdfName.P) && (dic.get((PdfName) key).isIndirectReference() || dic.get((PdfName) key).isDictionary()) || key.equals(PdfName.Parent)) // ignore recursive call
