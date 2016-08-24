@@ -79,6 +79,9 @@ public class PdfRendition extends PdfObjectWrapper<PdfDictionary> {
         super.flush();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;

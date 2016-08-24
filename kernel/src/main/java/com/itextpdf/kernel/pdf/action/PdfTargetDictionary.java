@@ -153,6 +153,9 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return false;

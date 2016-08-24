@@ -69,6 +69,9 @@ public class PdfWin extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.P, p);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return false;

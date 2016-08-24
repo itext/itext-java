@@ -48,8 +48,8 @@ package com.itextpdf.io.font.otf;
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
  */
 public class FontReadingException extends java.io.IOException {
-    
-    private static final long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = -7058811479423740467L;
 
     public FontReadingException(String message) {
         super(message);
