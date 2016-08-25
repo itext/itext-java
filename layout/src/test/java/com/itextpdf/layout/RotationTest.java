@@ -321,7 +321,7 @@ public class RotationTest extends ExtendedITextTest{
     }
 
     @Test
-    @Ignore
+    @Ignore("DEVSIX-815")
     public void tableRotationTest03() throws IOException,InterruptedException {
         String outFileName = destinationFolder + "tableRotationTest03.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "tableRotationTest03.pdf";
