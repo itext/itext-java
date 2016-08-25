@@ -479,6 +479,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Marked = createDirectName("Marked");
     public static final PdfName MarkInfo = createDirectName("MarkInfo");
     public static final PdfName Markup = createDirectName("Markup");
+    public static final PdfName Markup3D = createDirectName("Markup3D");
     public static final PdfName MarkStyle = createDirectName("MarkStyle");
     public static final PdfName Mask = createDirectName("Mask");
     public static final PdfName Matrix = createDirectName("Matrix");

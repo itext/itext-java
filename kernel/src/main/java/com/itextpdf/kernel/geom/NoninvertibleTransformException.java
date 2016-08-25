@@ -30,7 +30,7 @@ public class NoninvertibleTransformException extends java.lang.Exception {
     private static final long serialVersionUID = 6137225240503990466L;
 
     /**
-     * Creates a new MapFailedException.
+     * Creates a new NoninvertibleTransformException.
      * @param message the detail message.
      */
     public NoninvertibleTransformException(String message) {

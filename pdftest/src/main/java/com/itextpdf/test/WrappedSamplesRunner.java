@@ -163,7 +163,6 @@ public abstract class WrappedSamplesRunner {
 
     /**
      * Creates a Class object for the example you want to test.
-     * @param	className	the class you want to test
      */
     protected void initClass() {
         if (sampleClass == null) {
