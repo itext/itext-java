@@ -43,10 +43,16 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.Matrix;
+import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.Property;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 public class CellRenderer extends BlockRenderer {
 
@@ -94,12 +100,41 @@ public class CellRenderer extends BlockRenderer {
         return overflowRenderer;
     }
 
+    @Override
+    public void drawBackground(DrawContext drawContext) {
+        PdfCanvas canvas = drawContext.getCanvas();
+        Matrix ctm = canvas.getGraphicsState().getCtm();
+
+        // Avoid rotation
+        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
+        boolean avoidRotation = null != angle && null != getProperty(Property.BACKGROUND);
+        if (avoidRotation) {
+            AffineTransform transform = new AffineTransform(ctm.get(0), ctm.get(1), ctm.get(3), ctm.get(4), ctm.get(6), ctm.get(7));
+            try {
+                transform = transform.createInverse();
+            } catch (NoninvertibleTransformException e) {
+                throw new RuntimeException(e);
+            }
+            transform.concatenate(AffineTransform.getRotateInstance(0));
+            canvas.concatMatrix(transform);
+            deleteProperty(Property.ROTATION_ANGLE);
+        }
+
+        super.drawBackground(drawContext);
+
+        // restore concat matrix and rotation angle
+        if (avoidRotation) {
+            setProperty(Property.ROTATION_ANGLE, angle);
+            canvas.concatMatrix(new AffineTransform(ctm.get(0), ctm.get(1), ctm.get(3), ctm.get(4), ctm.get(6), ctm.get(7)));
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void drawBorder(DrawContext drawContext) {
-        // Do nothing here. Border drawing for tables is done on TableRenderer.
+        // Do nothing here. Border drawing for cells is done on TableRenderer.
     }
 
     @Override

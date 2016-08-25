@@ -342,7 +342,6 @@ public class RotationTest extends ExtendedITextTest{
     }
 
     @Test
-    @Ignore("DEVSIX-797")
     public void cellRotationTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "cellRotationTest01.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "cellRotationTest01.pdf";
@@ -353,7 +352,7 @@ public class RotationTest extends ExtendedITextTest{
         Table table = new Table(1)
                 .setWidth(50)
                 .addCell(new Cell()
-                        .add(new Paragraph("Helloo"))
+                        .add(new Paragraph("Hello"))
                         .setRotationAngle(Math.PI * 70 / 180.0)
                         .setBackgroundColor(Color.GREEN));
         doc.add(table);
