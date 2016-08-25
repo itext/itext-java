@@ -28,6 +28,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.junit.Assert;
@@ -1095,12 +1096,13 @@ public class PdfFontTest extends ExtendedITextTest {
     @Test
     public void createWrongAfm2() throws IOException, InterruptedException {
         String message = "";
+        String font = fontsFolder + "cmr10.pfb";
         try {
-            FontProgramFactory.createType1Font(fontsFolder + "cmr10.pfb", null);
+            FontProgramFactory.createType1Font(font, null);
         } catch (com.itextpdf.io.IOException e) {
             message = e.getMessage();
         }
-        Assert.assertEquals("./src/test/resources/com/itextpdf/kernel/pdf/fonts/cmr10.pfb is.not.an.afm.or.pfm.font.file", message);
+        Assert.assertEquals(MessageFormat.format(com.itextpdf.io.IOException._1IsNotAnAfmOrPfmFontFile, font), message);
 
     }
 
