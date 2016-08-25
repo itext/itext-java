@@ -8,20 +8,27 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
-import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.List;
+import com.itextpdf.layout.element.ListItem;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class RotationTest extends ExtendedITextTest{
@@ -305,6 +312,27 @@ public class RotationTest extends ExtendedITextTest{
                 .addCell(new Cell().add(new Paragraph("cell 1, 1").setRotationAngle((Math.PI / 2))))
                 .addCell(new Cell().add(new Paragraph("cell 1, 2").setRotationAngle((Math.PI / 3))))
                 .addCell(new Cell().add(new Paragraph("cell 2, 1").setRotationAngle((Math.PI / 3))))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2").setRotationAngle((Math.PI))));
+        doc.add(table);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore
+    public void tableRotationTest03() throws IOException,InterruptedException {
+        String outFileName = destinationFolder + "tableRotationTest03.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "tableRotationTest03.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(new float[]{25, 50})
+                .addCell(new Cell().add(new Paragraph("cell 1, 1").setRotationAngle((Math.PI / 2))))
+                .addCell(new Cell().add(new Paragraph("cell 1, 2").setRotationAngle((Math.PI / 3))))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1").setRotationAngle(-(Math.PI / 2))))
                 .addCell(new Cell().add(new Paragraph("cell 2, 2").setRotationAngle((Math.PI))));
         doc.add(table);
 
