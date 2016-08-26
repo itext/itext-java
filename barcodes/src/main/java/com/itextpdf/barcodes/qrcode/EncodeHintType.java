@@ -60,6 +60,11 @@ public final class EncodeHintType {
      */
     public static final EncodeHintType CHARACTER_SET = new EncodeHintType();
 
+    /**
+    * Specifies the minimal version level to use, for example in QR Codes (type Integer).
+    */
+    public static final EncodeHintType MIN_VERSION_NR = new EncodeHintType();
+
     private EncodeHintType() {
     }
 

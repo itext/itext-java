@@ -13,6 +13,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,10 +63,27 @@ public class BarcodeQRCodeTest extends ExtendedITextTest {
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
         BarcodeQRCode barcode1 = new BarcodeQRCode("дима", hints);
         barcode1.placeBarcode(canvas, Color.GRAY, 12);
-
         document.close();
-
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void barcodeVersioningTest() throws IOException, PdfException, InterruptedException{
+        String filename = "barcodeQRCodeVersioning.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfDocument document = new PdfDocument(writer);
+        for(int i = -9; i<42;i+=10) {
+            PdfPage page1 = document.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page1);
+            Map<EncodeHintType, Object> hints = new HashMap<>();
+            hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+            hints.put(EncodeHintType.MIN_VERSION_NR, i);
+            BarcodeQRCode barcode1 = new BarcodeQRCode("дима", hints);
+            barcode1.placeBarcode(canvas, Color.GRAY, 3);
+        }
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+
     }
 
 }

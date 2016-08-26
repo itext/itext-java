@@ -75,6 +75,8 @@ public final class QRCodeWriter {
         ErrorCorrectionLevel errorCorrectionLevel = ErrorCorrectionLevel.L;
         if (hints != null) {
             ErrorCorrectionLevel requestedECLevel = (ErrorCorrectionLevel) hints.get(EncodeHintType.ERROR_CORRECTION);
+
+
             if (requestedECLevel != null) {
                 errorCorrectionLevel = requestedECLevel;
             }
@@ -84,6 +86,7 @@ public final class QRCodeWriter {
         Encoder.encode(contents, errorCorrectionLevel, hints, code);
         return renderResult(code, width, height);
     }
+
 
     // Note that the input matrix uses 0 == white, 1 == black, while the output matrix uses
     // 0 == black, 255 == white (i.e. an 8 bit greyscale bitmap).

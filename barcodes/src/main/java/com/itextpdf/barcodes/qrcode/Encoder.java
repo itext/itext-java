@@ -103,7 +103,10 @@ final class Encoder {
         if (encoding == null) {
             encoding = DEFAULT_BYTE_MODE_ENCODING;
         }
-
+        int desiredMinVersion = (hints == null || hints.get(EncodeHintType.MIN_VERSION_NR) == null) ? 1 : (int) hints.get(EncodeHintType.MIN_VERSION_NR);
+        //Check if desired level is within bounds of [1,40]
+        if(desiredMinVersion<1)desiredMinVersion = 1;
+        if(desiredMinVersion>40)desiredMinVersion = 40;
         // Step 1: Choose the mode (encoding).
         Mode mode = chooseMode(content, encoding);
 
@@ -112,7 +115,7 @@ final class Encoder {
         appendBytes(content, mode, dataBits, encoding);
         // Step 3: Initialize QR code that can contain "dataBits".
         int numInputBytes = dataBits.sizeInBytes();
-        initQRCode(numInputBytes, ecLevel, mode, qrCode);
+        initQRCode(numInputBytes, ecLevel, desiredMinVersion, mode, qrCode);
 
         // Step 4: Build another bit vector that contains header and data.
         BitVector headerAndDataBits = new BitVector();
@@ -239,13 +242,13 @@ final class Encoder {
      * Initialize "qrCode" according to "numInputBytes", "ecLevel", and "mode". On success,
      * modify "qrCode".
      */
-    private static void initQRCode(int numInputBytes, ErrorCorrectionLevel ecLevel, Mode mode,
+    private static void initQRCode(int numInputBytes, ErrorCorrectionLevel ecLevel, int desiredMinVersion, Mode mode,
                                    QRCode qrCode) throws WriterException {
         qrCode.setECLevel(ecLevel);
         qrCode.setMode(mode);
 
         // In the following comments, we use numbers of Version 7-H.
-        for (int versionNum = 1; versionNum <= 40; versionNum++) {
+        for (int versionNum = desiredMinVersion; versionNum <= 40; versionNum++) {
             Version version = Version.getVersionForNumber(versionNum);
             // numBytes = 196
             int numBytes = version.getTotalCodewords();
