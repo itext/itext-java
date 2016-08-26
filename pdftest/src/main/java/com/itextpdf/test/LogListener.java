@@ -159,18 +159,14 @@ public class LogListener extends TestWatcher {
         int checkedMessages = 0;
         if (annotation != null) {
             LogMessages logMessages = (LogMessages) annotation;
-            if (!logMessages.ignore()) {
-                LogMessage[] messages = logMessages.messages();
-                for (LogMessage logMessage : messages) {
-                    int foundedCount = contains(logMessage.messageTemplate());
-                    if (foundedCount != logMessage.count()) {
-                        Assert.fail(MessageFormat.format("{0}.{1}: Some log messages are not found in test execution - {2} messages",
-                                        description.getClassName(),
-                                        description.getMethodName(),
-                                        logMessage.count() - foundedCount));
-                    } else {
-                        checkedMessages += logMessage.count();
-                    }
+            LogMessage[] messages = logMessages.messages();
+            for (LogMessage logMessage : messages) {
+                int foundCount = contains(logMessage.messageTemplate());
+                if (foundCount != logMessage.count() && !logMessages.ignore()) {
+                    Assert.fail(MessageFormat.format("{0}:{1} Expected to find {2}, but found {3} messages with the following content: \"{4}\"",
+                                    description.getClassName(), description.getMethodName(), logMessage.count(), foundCount, logMessage.messageTemplate()));
+                } else {
+                    checkedMessages += foundCount;
                 }
             }
         }
