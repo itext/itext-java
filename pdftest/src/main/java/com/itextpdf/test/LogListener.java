@@ -68,7 +68,6 @@ import ch.qos.logback.core.read.ListAppender;
 
 public class LogListener extends TestWatcher {
 
-
     private static final String ROOT_ITEXT_PACKAGE = "com.itextpdf";
 
     private final ListAppender<ILoggingEvent> listAppender = new CustomListAppender<ILoggingEvent>();
@@ -156,6 +155,7 @@ public class LogListener extends TestWatcher {
 
     private void checkLogMessages(Description description) {
         Annotation annotation = description.getAnnotation(LogMessages.class);
+        int checkedMessages = 0;
         if (annotation != null) {
             LogMessages logMessages = (LogMessages) annotation;
             if (!logMessages.ignore()) {
@@ -167,16 +167,17 @@ public class LogListener extends TestWatcher {
                                         description.getClassName(),
                                         description.getMethodName(),
                                         logMessage.count() - foundedCount));
+                    } else {
+                        checkedMessages += logMessage.count();
                     }
                 }
             }
-        } else {
-            if (getSize() > 0) {
-                Assert.fail(MessageFormat.format("{0}.{1}: The test does not check the message logging - {2} messages",
-                                description.getClassName(),
-                                description.getMethodName(),
-                                getSize()));
-            }
+        }
+        if (getSize() > checkedMessages) {
+            Assert.fail(MessageFormat.format("{0}.{1}: The test does not check the message logging - {2} messages",
+                            description.getClassName(),
+                            description.getMethodName(),
+                            getSize() - checkedMessages));
         }
     }
 
