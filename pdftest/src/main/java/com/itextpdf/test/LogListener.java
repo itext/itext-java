@@ -58,6 +58,7 @@ import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.SubstituteLoggerFactory;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -185,7 +186,9 @@ public class LogListener extends TestWatcher {
         protected void append(ILoggingEvent e) {
             System.out.println(e.getLoggerName() + " " + e.getLevel() + " " + e.getMessage());
             printStackTraceIfAny(e);
-            this.list.add(e);
+            if (e.getLevel().isGreaterOrEqual(Level.WARN)) {
+                this.list.add(e);
+            }
         }
 
         private void printStackTraceIfAny(ILoggingEvent e) {

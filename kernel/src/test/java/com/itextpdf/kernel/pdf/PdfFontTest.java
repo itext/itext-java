@@ -1273,9 +1273,6 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.REGISTERING_DIRECTORY)
-    })
     public void testFontDirectoryRegister() throws IOException {
         PdfFontFactory.registerDirectory(sourceFolder);
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
