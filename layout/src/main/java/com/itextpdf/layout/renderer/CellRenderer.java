@@ -115,7 +115,7 @@ public class CellRenderer extends BlockRenderer {
             } catch (NoninvertibleTransformException e) {
                 throw new RuntimeException(e);
             }
-            transform.concatenate(AffineTransform.getRotateInstance(0));
+            transform.concatenate(new AffineTransform());
             canvas.concatMatrix(transform);
             deleteProperty(Property.ROTATION_ANGLE);
         }

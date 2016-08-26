@@ -233,12 +233,18 @@ public class TableRenderer extends AbstractRenderer {
                 int col = currentCellInfo.column;
                 CellRenderer cell = currentCellInfo.cellRenderer;
                 if (cell != null) {
-                    buildBordersArrays(cell, row, cell.getModelElement().getRowspan(), cell.getModelElement().getColspan(), true);
+                    buildBordersArrays(cell, row, true);
                 }
                 if (row + 1 < rows.size()) {
                     CellRenderer nextCell = rows.get(row + 1)[col];
                     if (nextCell != null) {
-                        buildBordersArrays(nextCell, row + 1, nextCell.getModelElement().getRowspan(), nextCell.getModelElement().getColspan(), true);
+                        buildBordersArrays(nextCell, row + 1, true);
+                    }
+                }
+                if (col + 1 < rows.get(row).length) {
+                    CellRenderer nextCell = rows.get(row)[col+1];
+                    if (nextCell != null) {
+                        buildBordersArrays(nextCell, row, true);
                     }
                 }
                 targetOverflowRowIndex[col] = currentCellInfo.finishRowInd;
@@ -944,7 +950,9 @@ public class TableRenderer extends AbstractRenderer {
         return true;
     }
 
-    private void buildBordersArrays(CellRenderer cell, int row, int rowspan, int colspan, boolean hasContent) {
+    private void buildBordersArrays(CellRenderer cell, int row, boolean hasContent) {
+        int colspan = cell.getPropertyAsInteger(Property.COLSPAN);
+        int rowspan = cell.getPropertyAsInteger(Property.ROWSPAN);
         int colN = cell.getModelElement().getCol();
         Border[] cellBorders = cell.getBorders();
         if (row + 1 - rowspan < 0) {
