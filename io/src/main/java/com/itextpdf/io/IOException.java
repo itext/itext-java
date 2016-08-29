@@ -137,7 +137,7 @@ public class IOException extends RuntimeException {
     public static final String InvalidIccProfile = "Invalid ICC profile.";
     public static final String InvalidJpeg2000File = "Invalid JPEG2000 file.";
     @Deprecated
-    public static final String InvalidMagicValueForBmp = "Invalid magic value for bmp file. Must be 'BM'";
+    public static final String InvalidMagicValueForBmpFile = "Invalid magic value for bmp file. Must be 'BM'";
     public static final String InvalidMagicValueForBmpFileMustBeBM = "Invalid magic value for bmp file. Must be 'BM'";
     public static final String IoException = "I/O exception.";
     public static final String Jbig2ImageException = "JBIG2 image exception.";
