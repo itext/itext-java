@@ -428,7 +428,9 @@ public class TableRenderer extends AbstractRenderer {
                         if (hasContent || cellWithBigRowspanAdded || splits[col].getStatus() == LayoutResult.NOTHING) {
                             currentRow[col] = null;
                             CellRenderer cellOverflow = (CellRenderer) splits[col].getOverflowRenderer();
-                            cellOverflow.setBorders(cellOverflow.getBorders()[2], 0);
+                            if (splits[col].getStatus() != LayoutResult.NOTHING) {
+                                cellOverflow.setBorders(cellOverflow.getBorders()[2], 0);
+                            }
                             rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) cellOverflow.setParent(splitResult[1]);
                         } else {
                             rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) currentRow[col].setParent(splitResult[1]);

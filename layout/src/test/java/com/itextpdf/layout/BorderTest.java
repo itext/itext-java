@@ -306,7 +306,6 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-818")
     public void infiniteLoopTest01() throws IOException, InterruptedException {
         fileName = "infiniteLoopTest01.pdf";
         Document doc = createDocument();
@@ -317,7 +316,7 @@ public class BorderTest extends ExtendedITextTest {
 
         // row 1, cell 1
         cell = new Cell().add("1ORD");
-        cell.setBorderLeft(new SolidBorder(Color.BLUE, 7)); // 5,6,7,8,9 - cycle
+        cell.setBorderLeft(new SolidBorder(Color.BLUE, 5));
         table.addCell(cell);
         // row 1, cell 2
         cell = new Cell().add("ONE");
@@ -396,7 +395,6 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-818")
     public void forcedPlacementTest01() throws IOException, InterruptedException {
         fileName = "forcedPlacementTest01.pdf";
         Document doc = createDocument();

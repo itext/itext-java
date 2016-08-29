@@ -263,17 +263,15 @@ public class TextRenderer extends AbstractRenderer {
             } else {
                 // check if line height exceeds the allowed height
                 if (Math.max(currentLineHeight, nonBreakablePartMaxHeight) > layoutBox.getHeight()) {
-                    // Force to place what we can
-                    if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                        if (line.start == -1) {
-                            line.start = currentTextPos;
-                        }
-                        line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth - 1);
-                    }
-                    // the line does not fit because of height - full overflow
-                    TextRenderer[] splitResult = split(initialLineTextPos);
                     applyBorderBox(occupiedArea.getBBox(), borders, true);
                     applyMargins(occupiedArea.getBBox(), margins, true);
+                    // Force to place what we can
+                    if (line.start == -1) {
+                       line.start = currentTextPos;
+                    }
+                    line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth - 1);
+                    // the line does not fit because of height - full overflow
+                    TextRenderer[] splitResult = split(initialLineTextPos);
                     return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1], this);
                 } else {
                     // cannot fit a word as a whole
@@ -342,8 +340,8 @@ public class TextRenderer extends AbstractRenderer {
                             currentLineWidth += getCharWidth(line.get(0), fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
                         }
                     }
-                    if (line.end <= 0) {
-                        return new TextLayoutResult(Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) ? LayoutResult.FULL : LayoutResult.NOTHING,
+                    if (line.end <= line.start) {
+                        return new TextLayoutResult(LayoutResult.NOTHING,
                                 occupiedArea, null, this, this);
                     } else {
                         result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, null, null).setWordHasBeenSplit(wordSplit);
