@@ -88,6 +88,18 @@ public class PdfPagesTest extends ExtendedITextTest{
     }
 
     @Test
+    public void reversePagesTest2() throws Exception {
+        String filename = "1000PagesDocument_reversed.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "1000PagesDocument.pdf"), new PdfWriter(destinationFolder + filename));
+        for (int i = pdfDoc.getNumberOfPages() - 1; i > 0; i--) {
+            PdfPage page = pdfDoc.removePage(i);
+            pdfDoc.addPage(page);
+        }
+        pdfDoc.close();
+        new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff");
+    }
+
+    @Test
     public void randomObjectPagesTest() throws IOException {
         String filename = "randomObjectPagesTest.pdf";
         int pageCount = 10000;
