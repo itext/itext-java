@@ -116,15 +116,18 @@ class FontUtil {
         return s.toString();
     }
 
-    static int[] convertSimpleWidthsArray(PdfArray widthsArray, int first) {
+    static int[] convertSimpleWidthsArray(PdfArray widthsArray, int first, int missingWidth) {
         int[] res = new int[256];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = missingWidth;
+        }
         if (widthsArray == null) {
             return res;
         }
 
         for (int i = 0; i < widthsArray.size() && first + i < 256; i++) {
             PdfNumber number = widthsArray.getAsNumber(i);
-            res[first + i] = number != null ? number.intValue() : 0;
+            res[first + i] = number != null ? number.intValue() : missingWidth;
         }
         return res;
     }
