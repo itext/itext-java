@@ -800,7 +800,12 @@ public class PdfSigner {
 
             ap.put(PdfName.N, appearance.getAppearance().getPdfObject());
             acroForm.addField(sigField, document.getPage(pagen));
-            acroForm.setModified(); // TODO: test this (ain't sure whether I need this)
+            if(acroForm.getPdfObject().isIndirect()) {
+                acroForm.setModified(); // TODO: test this (ain't sure whether I need this)
+            }else{
+                //Acroform dictionary is a Direct dictionary, for proper flushing, catalog needs to be marked as modified
+                document.getCatalog().setModified();
+            }
         }
 
         exclusionLocations = new HashMap<>();
