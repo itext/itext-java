@@ -69,11 +69,31 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
         super(pdfObject);
     }
 
+    /**
+     * Creates a new {@link PdfTargetDictionary} object given its type. The type must be either
+     * {@link PdfName#P}, or {@link PdfName#C}. If it is {@link PdfName#C}, additional entries must be specified
+     * according to the spec.
+     * @param r the relationship between the current document and the target
+     */
     public PdfTargetDictionary(PdfName r) {
         this(new PdfDictionary());
         put(PdfName.R, r);
     }
 
+    /**
+     * Creates a new {@link PdfTargetDictionary} object.
+     * @param r the relationship between the current document and the target
+     * @param n the name of the file in the EmbeddedFiles name tree
+     * @param p if the value is an integer, it specifies the page number (zero-based) in the current
+     *          document containing the file attachment annotation. If the value is a string,
+     *          it specifies a named destination in the current document that provides the page
+     *          number of the file attachment annotation
+     * @param a If the value is an integer, it specifies the index (zero-based) of the annotation in the
+     *          Annots array of the page specified by P. If the value is a text string,
+     *          it specifies the value of NM in the annotation dictionary
+     * @param t A target dictionary specifying additional path information to the target document.
+     *          If this entry is absent, the current document is the target file containing the destination
+     */
     public PdfTargetDictionary(PdfName r, PdfString n, PdfObject p, PdfObject a, PdfTargetDictionary t) {
         this(new PdfDictionary());
         put(PdfName.R, r).
@@ -81,6 +101,49 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
                 put(PdfName.P, p).
                 put(PdfName.A, a).
                 put(PdfName.T, t.getPdfObject());
+    }
+
+    /**
+     * Creates a new target object pointing to the parent of the current document.
+     * @return created {@link PdfTargetDictionary}
+     */
+    public static PdfTargetDictionary createParentTarget() {
+        return new PdfTargetDictionary(PdfName.P);
+    }
+
+    /**
+     * Creates a new target object pointing to a file in the EmbeddedFiles name tree.
+     * @param embeddedFileName the name of the file in the EmbeddedFiles name tree
+     * @return created object
+     */
+    public static PdfTargetDictionary createChildTarget(String embeddedFileName) {
+        return new PdfTargetDictionary(PdfName.C).
+                put(PdfName.N, new PdfString(embeddedFileName));
+    }
+
+    /**
+     * Creates a new target object pointing to a file attachment annotation.
+     * @param namedDestination a named destination in the current document that
+     *                         provides the page number of the file attachment annotation
+     * @param annotationIdentifier a unique annotation identifier ({@link PdfName#NM} entry) of the annotation
+     * @return created object
+     */
+    public static PdfTargetDictionary createChildTarget(String namedDestination, String annotationIdentifier) {
+        return new PdfTargetDictionary(PdfName.C).
+                put(PdfName.P, new PdfString(namedDestination)).
+                put(PdfName.A, new PdfString(annotationIdentifier));
+    }
+
+    /**
+     * Creates a new target object pointing to a file attachment annotation.
+     * @param pageNumber the number of the page in the current document, one-based
+     * @param annotationIndex the index of the annotation in the Annots entry of the page, zero-based
+     * @return created object
+     */
+    public static PdfTargetDictionary createChildTarget(int pageNumber, int annotationIndex) {
+        return new PdfTargetDictionary(PdfName.C).
+                put(PdfName.P, new PdfNumber(pageNumber - 1)).
+                put(PdfName.A, new PdfNumber(annotationIndex));
     }
 
     /**
@@ -108,12 +171,12 @@ public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
      * Sets the page number in the current document containing the file attachment annotation for the
      * child target associates with a file attachment annotation.
      *
-     * @param pageNumber the page number (zero-based) in the current document containing
+     * @param pageNumber the page number (one-based) in the current document containing
      *                   the file attachment annotation
      * @return this object wrapper
      */
     public PdfTargetDictionary setPage(int pageNumber) {
-        return put(PdfName.P, new PdfNumber(pageNumber));
+        return put(PdfName.P, new PdfNumber(pageNumber - 1));
     }
 
     /**
