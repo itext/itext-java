@@ -70,7 +70,8 @@ public class PdfTextFormField extends PdfFormField {
 
     protected PdfTextFormField(PdfDictionary pdfObject) {
         super(pdfObject);
-        setBorderWidth(0);
+        if (null == pdfObject.get(PdfName.BS))
+            setBorderWidth(0);
     }
 
     /**
