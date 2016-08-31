@@ -59,6 +59,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * Wrapper class that represent resource dictionary - that define named resources
+ * used by content streams operators. (ISO 32000-1, 7.8.3 Resource Dictionaries)
+ */
 public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = 7160318458835945391L;
@@ -86,32 +90,44 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private boolean readOnly = false;
     private boolean isModified = false;
 
+    /**
+     * Creates new instance from given dictionary.
+     * @param pdfObject the {@link PdfDictionary} object from which the resource object will be created.
+     */
     public PdfResources(PdfDictionary pdfObject) {
         super(pdfObject);
         buildResources(pdfObject);
     }
 
-
+    /**
+     * Creates new instance from empty dictionary.
+     */
     public PdfResources() {
         this(new PdfDictionary());
     }
 
     /**
-     * Add font to resources and register PdfFont in the document for further flushing.
+     * Adds font to resources and register PdfFont in the document for further flushing.
      *
-     * @return font resource name.
+     * @return added font resource name.
      */
     public PdfName addFont(PdfDocument pdfDocument, PdfFont font) {
         pdfDocument.getDocumentFonts().add(font);
         return addResource(font, fontNamesGen);
     }
 
+    /**
+     * Adds {@link PdfImageXObject} object to the resources.
+     *
+     * @param image the {@link PdfImageXObject} to add.
+     * @return added image resource name.
+     */
     public PdfName addImage(PdfImageXObject image) {
         return addResource(image, imageNamesGen);
     }
 
     /**
-     * Add {@link PdfStream} to the resources as image.
+     * Adds {@link PdfStream} to the resources as image.
      *
      * @param image the {@link PdfStream} to add.
      * @return added image resources name.
@@ -121,7 +137,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Add {@link PdfObject} to the resources as image.
+     * Adds {@link PdfObject} to the resources as image.
      *
      * @param image the {@link PdfObject} to add. Should be {@link PdfStream}.
      * @return added image resources name.
@@ -137,12 +153,18 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(image, imageNamesGen);
     }
 
+    /**
+     * Adds {@link PdfFormXObject} object to the resources.
+     *
+     * @param form the {@link PdfFormXObject} to add.
+     * @return added form resource name.
+     */
     public PdfName addForm(PdfFormXObject form) {
         return addResource(form, formNamesGen);
     }
 
     /**
-     * Add {@link PdfStream} to the resources as form.
+     * Adds {@link PdfStream} to the resources as form.
      *
      * @param form the {@link PdfStream} to add.
      * @return added form resources name.
@@ -152,7 +174,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Add {@link PdfObject} to the resources as form.
+     * Adds {@link PdfObject} to the resources as form.
      *
      * @param form the {@link PdfObject} to add. Should be {@link PdfStream}.
      * @return added form resources name.
@@ -185,14 +207,34 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return name;
     }
 
+    /**
+     * Adds {@link PdfExtGState} object to the resources.
+     *
+     * @param extGState the {@link PdfExtGState} to add.
+     * @return added graphics state parameter dictionary resource name.
+     */
     public PdfName addExtGState(PdfExtGState extGState) {
         return addResource(extGState, egsNamesGen);
     }
 
+    /**
+     * Adds {@link PdfDictionary} to the resources as graphics state parameter dictionary.
+     *
+     * @param extGState the {@link PdfDictionary} to add.
+     * @return added graphics state parameter dictionary resources name.
+     */
     public PdfName addExtGState(PdfDictionary extGState) {
         return addResource(extGState, egsNamesGen);
     }
 
+    /**
+     * Adds {@link PdfObject} to the resources as graphics state parameter dictionary.
+     *
+     * @param extGState the {@link PdfObject} to add. Should be {@link PdfDictionary}.
+     * @return added graphics state parameter dictionary resources name.
+     *
+     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addExtGState(PdfDictionary)} instead.
+     */
     @Deprecated
     public PdfName addExtGState(PdfObject extGState) {
         if (extGState.getType() != PdfObject.DICTIONARY) {
@@ -202,10 +244,24 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(extGState, egsNamesGen);
     }
 
+    /**
+     * Adds {@link PdfDictionary} to the resources as properties list.
+     *
+     * @param properties the {@link PdfDictionary} to add.
+     * @return added properties list resources name.
+     */
     public PdfName addProperties(PdfDictionary properties) {
         return addResource(properties, propNamesGen);
     }
 
+    /**
+     * Adds {@link PdfObject} to the resources as properties list.
+     *
+     * @param properties the {@link PdfObject} to add. Should be {@link PdfDictionary}.
+     * @return added properties list resources name.
+     *
+     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addProperties(PdfDictionary)} instead.
+     */
     @Deprecated
     public PdfName addProperties(PdfObject properties) {
         if (properties.getType() != PdfObject.DICTIONARY) {
@@ -215,22 +271,54 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(properties, propNamesGen);
     }
 
+    /**
+     * Adds {@link PdfColorSpace} object to the resources.
+     *
+     * @param cs the {@link PdfColorSpace} to add.
+     * @return added color space resource name.
+     */
     public PdfName addColorSpace(PdfColorSpace cs) {
         return addResource(cs, csNamesGen);
     }
 
+    /**
+     * Adds {@link PdfObject} to the resources as color space.
+     *
+     * @param colorSpace the {@link PdfObject} to add.
+     * @return added color space resources name.
+     */
     public PdfName addColorSpace(PdfObject colorSpace) {
         return addResource(colorSpace, csNamesGen);
     }
 
+    /**
+     * Adds {@link PdfPattern} object to the resources.
+     *
+     * @param pattern the {@link PdfPattern} to add.
+     * @return added pattern resource name.
+     */
     public PdfName addPattern(PdfPattern pattern) {
         return addResource(pattern, patternNamesGen);
     }
 
+    /**
+     * Adds {@link PdfDictionary} to the resources as pattern.
+     *
+     * @param pattern the {@link PdfDictionary} to add.
+     * @return added pattern resources name.
+     */
     public PdfName addPattern(PdfDictionary pattern) {
         return addResource(pattern, patternNamesGen);
     }
 
+    /**
+     * Adds {@link PdfObject} to the resources as pattern.
+     *
+     * @param pattern the {@link PdfObject} to add. Should be {@link PdfDictionary} or {@link PdfStream}.
+     * @return added pattern resources name.
+     *
+     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addPattern(PdfDictionary)} instead.
+     */
     @Deprecated
     public PdfName addPattern(PdfObject pattern) {
         if (pattern instanceof PdfDictionary) {
@@ -240,14 +328,34 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(pattern, patternNamesGen);
     }
 
+    /**
+     * Adds {@link PdfShading} object to the resources.
+     *
+     * @param shading the {@link PdfShading} to add.
+     * @return added shading resource name.
+     */
     public PdfName addShading(PdfShading shading) {
         return addResource(shading, shadingNamesGen);
     }
 
+    /**
+     * Adds {@link PdfDictionary} to the resources as shading dictionary.
+     *
+     * @param shading the {@link PdfDictionary} to add.
+     * @return added shading dictionary resources name.
+     */
     public PdfName addShading(PdfDictionary shading) {
         return addResource(shading, shadingNamesGen);
     }
 
+    /**
+     * Adds {@link PdfObject} to the resources as shading dictionary.
+     *
+     * @param shading the {@link PdfObject} to add. Should be {@link PdfDictionary} or {@link PdfStream}.
+     * @return added shading dictionary resources name.
+     *
+     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addShading(PdfDictionary)} instead.
+     */
     @Deprecated
     public PdfName addShading(PdfObject shading) {
         if (shading instanceof PdfDictionary) {
