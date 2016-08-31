@@ -1928,6 +1928,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary mk = getWidgets().get(0).getAppearanceCharacteristics();
         if (mk == null) {
             mk = new PdfDictionary();
+            put(PdfName.MK, mk);
         }
         mk.put(PdfName.BC, new PdfArray(color.getColorValue()));
         regenerateField();
