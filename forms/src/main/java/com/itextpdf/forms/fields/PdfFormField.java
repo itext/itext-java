@@ -2185,10 +2185,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return array;
     }
 
-    protected String generateDefaultAppearanceString(PdfFont font, float fontSize, PdfResources res) {
+    protected String generateDefaultAppearanceString(PdfFont font, float fontSize, Color color, PdfResources res) {
         PdfStream stream = new PdfStream();
         PdfCanvas canvas = new PdfCanvas(stream, res, getDocument());
-        canvas.setFontAndSize(font, fontSize).resetFillColorRgb();
+        canvas.setFontAndSize(font, fontSize);
+        if (color != null)
+            canvas.setColor(color, true);
         return new String(stream.getBytes());
     }
 
@@ -2197,7 +2199,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     @Deprecated
     protected String generateDefaultAppearanceString(PdfFont font, int fontSize, PdfResources res) {
-        return generateDefaultAppearanceString(font, (float) fontSize, res);
+        return generateDefaultAppearanceString(font, (float) fontSize, color, res);
     }
 
     protected Object[] getFontAndSize(PdfDictionary asNormal) throws IOException {
@@ -2325,7 +2327,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfResources resources = appearance.getResources();
         PdfCanvas canvas = new PdfCanvas(stream, resources, getDocument());
 
-        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, resources));
+        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, color, resources));
 
         float height = rect.getHeight();
         float width = rect.getWidth();
@@ -2395,7 +2397,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfResources resources = appearance.getResources();
         PdfCanvas canvas = new PdfCanvas(stream, resources, getDocument());
 
-        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, resources));
+        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, color, resources));
 
         float width = rect.getWidth();
         float height = rect.getHeight();
@@ -2596,7 +2598,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
         xObjectOn.getResources().addFont(getDocument(), getFont());
-        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize == 0 ? (float)DEFAULT_FONT_SIZE : fontSize, xObjectOn.getResources()));
+        setDefaultAppearance(generateDefaultAppearanceString(font, fontSize == 0 ? (float)DEFAULT_FONT_SIZE : fontSize, color, xObjectOn.getResources()));
 
         xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
         xObjectOff.getResources().addFont(getDocument(), getFont());
@@ -2694,7 +2696,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             xObject.getResources().addForm(form);
         } else {
             drawButton(canvas, 0, 0, width, height, text, font, fontSize);
-            setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, new PdfResources()));
+            setDefaultAppearance(generateDefaultAppearanceString(font, fontSize, color, new PdfResources()));
             xObject.getResources().addFont(getDocument(), font);
         }
         xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
