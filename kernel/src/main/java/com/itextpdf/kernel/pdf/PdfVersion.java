@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Enum listing all official PDF versions.
+ * This class represents all official PDF versions.
  */
 public class PdfVersion implements Comparable<PdfVersion>, Serializable {
 
@@ -71,7 +71,7 @@ public class PdfVersion implements Comparable<PdfVersion>, Serializable {
     private int minor;
 
     /**
-     * Creates a PdfVersion enum.
+     * Creates a PdfVersion class.
      * @param major major version number
      * @param minor minor version number
      */
@@ -90,7 +90,7 @@ public class PdfVersion implements Comparable<PdfVersion>, Serializable {
     }
 
     /**
-     * Creates a PdfVersion enum from a String object if the specified version
+     * Creates a PdfVersion class from a String object if the specified version
      * can be found.
      *
      * @param value version number
@@ -106,7 +106,7 @@ public class PdfVersion implements Comparable<PdfVersion>, Serializable {
     }
 
     /**
-     * Creates a PdfVersion enum from a {@link PdfName} object if the specified version
+     * Creates a PdfVersion class from a {@link PdfName} object if the specified version
      * can be found.
      *
      * @param name version number
