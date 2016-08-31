@@ -1914,9 +1914,26 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param borderWidth the new border width.
      */
     public void setBorderWidth(float borderWidth) {
+        PdfDictionary bs = getWidgets().get(0).getBorderStyle();
+        if (bs == null) {
+            bs = new PdfDictionary();
+            put(PdfName.BS, bs);
+        }
+        bs.put(PdfName.W, new PdfNumber(borderWidth));
         this.borderWidth = borderWidth;
+        regenerateField();
     }
 
+    public void setBorderStyle(PdfName style) {
+        PdfDictionary bs = getWidgets().get(0).getBorderStyle();
+        if (bs == null) {
+            bs = new PdfDictionary();
+            put(PdfName.BS, bs);
+        }
+        bs.put(PdfName.S, style);
+        regenerateField();
+    }
+    
     /**
      * Sets the Border Color.
      *
