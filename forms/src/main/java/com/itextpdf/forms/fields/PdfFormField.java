@@ -1913,7 +1913,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param borderWidth the new border width.
      */
-    public void setBorderWidth(float borderWidth) {
+    public PdfFormField setBorderWidth(float borderWidth) {
         PdfDictionary bs = getWidgets().get(0).getBorderStyle();
         if (bs == null) {
             bs = new PdfDictionary();
@@ -1922,9 +1922,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         bs.put(PdfName.W, new PdfNumber(borderWidth));
         this.borderWidth = borderWidth;
         regenerateField();
+        return this;
     }
 
-    public void setBorderStyle(PdfName style) {
+    public PdfFormField setBorderStyle(PdfName style) {
         PdfDictionary bs = getWidgets().get(0).getBorderStyle();
         if (bs == null) {
             bs = new PdfDictionary();
@@ -1932,6 +1933,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
         bs.put(PdfName.S, style);
         regenerateField();
+        return this;
     }
     
     /**
