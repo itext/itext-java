@@ -59,7 +59,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-
 public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = 7160318458835945391L;
@@ -251,27 +250,6 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsDictionary(pdfName);
     }
 
-//    public List<PdfDictionary> getFonts(boolean updateFonts) throws IOException {
-//        if (updateFonts) {
-//            getPdfObject().remove(PdfName.Font);
-//            PdfDictionary fMap = getResource(PdfName.Font);
-//            if (fMap != null) {
-//                addFont(fMap.entrySet());
-//            }
-//            PdfDictionary xMap = getResource(PdfName.XObject);
-//            if (xMap != null && !xMap.isEmpty()) {
-//                callXObjectFont(xMap.entrySet(), new HashSet<PdfDictionary>());
-//            }
-//        }
-//        List<PdfDictionary> fonts = new ArrayList<>();
-//        for (PdfObject fontDict : getPdfObject().getAsDictionary(PdfName.Font).values()) {
-//            if (fontDict.isDictionary()) {
-//                fonts.add((PdfDictionary) fontDict);
-//            }
-//        }
-//        return fonts;
-//    }
-
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return false;
@@ -335,50 +313,6 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
             }
         }
     }
-
-//    private void addFont(Collection<PdfObject> entrySet) throws IOException {
-//        for (PdfObject entry : entrySet) {
-//            PdfDictionary fonts = getPdfObject().getAsDictionary(PdfName.Font);
-//            if (entry.isIndirectReference() && !fonts.containsValue(entry)) {
-//                fonts.put((PdfIndirectReference) entry.getValue(),
-//                        PdfFont.createFont((PdfDictionary) ((PdfIndirectReference) entry.getValue()).getRefersTo()));
-//            } else if (entry.getValue().isDictionary()) {
-//                PdfFont font = PdfFont.createFont((PdfDictionary) entry.getValue());
-//                fontsMap.put(font.getPdfObject().getIndirectReference(), font);
-//            }
-//        }
-//    }
-
-//    private void addFontFromXObject(Set<Map.Entry<PdfName, PdfObject>> entrySet, Set<PdfDictionary> visitedResources) throws IOException {
-//        PdfDictionary xObject = new PdfDictionary(entrySet);
-//        PdfDictionary resources = xObject.getAsDictionary(PdfName.Resources);
-//        if (resources == null)
-//            return;
-//        PdfDictionary font = resources.getAsDictionary(PdfName.Font);
-//
-//        if (font != null) {
-//            addFont(font.values());
-//        }
-//        PdfDictionary xobj = resources.getAsDictionary(PdfName.XObject);
-//        if (xobj != null) {
-//            if (visitedResources.add(xobj)) {
-//                callXObjectFont(xobj.entrySet(), visitedResources);
-//                visitedResources.remove(xobj);
-//            } else {
-//                throw new IOException(IOException.IllegalResourceTree);
-//            }
-//        }
-//    }
-
-//    private void callXObjectFont(Set<Map.Entry<PdfName, PdfObject>> entrySet, Set<PdfDictionary> visitedResources) throws IOException {
-//        for (Map.Entry<PdfName, PdfObject> entry : entrySet) {
-//            if (entry.getValue().isIndirectReference()) {
-//                if (((PdfIndirectReference) entry.getValue()).getRefersTo().isStream()) {
-//                    addFontFromXObject(((PdfStream) ((PdfIndirectReference) entry.getValue()).getRefersTo()).entrySet(), visitedResources);
-//                }
-//            }
-//        }
-//    }
 
     private void checkAndResolveCircularReferences(PdfObject pdfObject) {
         // Consider the situation when an XObject references the resources of the first page.
