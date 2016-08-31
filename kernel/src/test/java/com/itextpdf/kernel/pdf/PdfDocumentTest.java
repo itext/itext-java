@@ -265,7 +265,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
     public void checkAndResolveCircularReferences() throws IOException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "datasheet.pdf"), new PdfWriter(destinationFolder + "datasheet_mode.pdf"));
         PdfDictionary pdfObject = (PdfDictionary)pdfDocument.getPdfObject(53);
-        pdfDocument.getPage(1).getResources().addForm(pdfObject);
+        pdfDocument.getPage(1).getResources().addForm((PdfStream) pdfObject);
         pdfDocument.close();
         assertNull(new CompareTool().compareByContent(destinationFolder + "datasheet_mode.pdf", sourceFolder + "cmp_datasheet_mode.pdf", "d:/", "diff_"));
     }

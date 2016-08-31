@@ -61,13 +61,13 @@ public class PdfResourcesTest {
         PdfName n3 = resources.addExtGState(egs3);
         Assert.assertEquals("Gs3", n3.getValue());
         PdfDictionary egsResources = page.getPdfObject().getAsDictionary(PdfName.Resources).getAsDictionary(PdfName.ExtGState);
-        PdfObject e1 = egsResources.get(new PdfName("Gs1"), false);
+        PdfDictionary e1 = egsResources.getAsDictionary(new PdfName("Gs1"));
         PdfName n1 = resources.addExtGState(e1);
         Assert.assertEquals("Gs1", n1.getValue());
-        PdfObject e2 = egsResources.get(new PdfName("Gs2"));
+        PdfDictionary e2 = egsResources.getAsDictionary(new PdfName("Gs2"));
         PdfName n2 = resources.addExtGState(e2);
         Assert.assertEquals("Gs2", n2.getValue());
-        PdfObject e4 = (PdfObject) e2.clone();
+        PdfDictionary e4 = (PdfDictionary) e2.clone();
         PdfName n4 = resources.addExtGState(e4);
         Assert.assertEquals("Gs4", n4.getValue());
         document.close();

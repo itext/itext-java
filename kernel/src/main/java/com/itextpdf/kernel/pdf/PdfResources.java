@@ -110,7 +110,30 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(image, imageNamesGen);
     }
 
+    /**
+     * Add {@link PdfStream} to the resources as image.
+     *
+     * @param image the {@link PdfStream} to add.
+     * @return added image resources name.
+     */
+    public PdfName addImage(PdfStream image) {
+        return addResource(image, imageNamesGen);
+    }
+
+    /**
+     * Add {@link PdfObject} to the resources as image.
+     *
+     * @param image the {@link PdfObject} to add. Should be {@link PdfStream}.
+     * @return added image resources name.
+     *
+     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addImage(PdfStream)} instead.
+     */
+    @Deprecated
     public PdfName addImage(PdfObject image) {
+        if (image.getType() != PdfObject.STREAM) {
+            throw new PdfException(PdfException.CannotAddNonStreamImageToResources1)
+                    .setMessageParams(image.getClass().toString());
+        }
         return addResource(image, imageNamesGen);
     }
 
@@ -118,7 +141,30 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(form, formNamesGen);
     }
 
+    /**
+     * Add {@link PdfStream} to the resources as form.
+     *
+     * @param form the {@link PdfStream} to add.
+     * @return added form resources name.
+     */
+    public PdfName addForm(PdfStream form) {
+        return addResource(form, formNamesGen);
+    }
+
+    /**
+     * Add {@link PdfObject} to the resources as form.
+     *
+     * @param form the {@link PdfObject} to add. Should be {@link PdfStream}.
+     * @return added form resources name.
+     *
+     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addForm(PdfStream)} instead.
+     */
+    @Deprecated
     public PdfName addForm(PdfObject form) {
+        if (form.getType() != PdfObject.STREAM) {
+            throw new PdfException(PdfException.CannotAddNonStreamFormToResources1)
+                    .setMessageParams(form.getClass().toString());
+        }
         return addResource(form, formNamesGen);
     }
 
@@ -143,11 +189,29 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(extGState, egsNamesGen);
     }
 
-    public PdfName addExtGState(PdfObject extGState) {
+    public PdfName addExtGState(PdfDictionary extGState) {
         return addResource(extGState, egsNamesGen);
     }
 
+    @Deprecated
+    public PdfName addExtGState(PdfObject extGState) {
+        if (extGState.getType() != PdfObject.DICTIONARY) {
+            throw new PdfException(PdfException.CannotAddNonDictionaryExtGStateToResources1)
+                    .setMessageParams(extGState.getClass().toString());
+        }
+        return addResource(extGState, egsNamesGen);
+    }
+
+    public PdfName addProperties(PdfDictionary properties) {
+        return addResource(properties, propNamesGen);
+    }
+
+    @Deprecated
     public PdfName addProperties(PdfObject properties) {
+        if (properties.getType() != PdfObject.DICTIONARY) {
+            throw new PdfException(PdfException.CannotAddNonDictionaryPropertiesToResources1)
+                    .setMessageParams(properties.getClass().toString());
+        }
         return addResource(properties, propNamesGen);
     }
 
@@ -163,7 +227,16 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(pattern, patternNamesGen);
     }
 
+    public PdfName addPattern(PdfDictionary pattern) {
+        return addResource(pattern, patternNamesGen);
+    }
+
+    @Deprecated
     public PdfName addPattern(PdfObject pattern) {
+        if (pattern instanceof PdfDictionary) {
+            throw new PdfException(PdfException.CannotAddNonDictionaryPatternToResources1)
+                    .setMessageParams(pattern.getClass().toString());
+        }
         return addResource(pattern, patternNamesGen);
     }
 
@@ -171,7 +244,16 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(shading, shadingNamesGen);
     }
 
+    public PdfName addShading(PdfDictionary shading) {
+        return addResource(shading, shadingNamesGen);
+    }
+
+    @Deprecated
     public PdfName addShading(PdfObject shading) {
+        if (shading instanceof PdfDictionary) {
+            throw new PdfException(PdfException.CannotAddNonDictionaryShadingToResources1)
+                    .setMessageParams(shading.getClass().toString());
+        }
         return addResource(shading, shadingNamesGen);
     }
 

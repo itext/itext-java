@@ -62,6 +62,12 @@ public class PdfException extends RuntimeException {
     public static final String BadUserPassword = "Bad user password. Password is not provided or provided wrong password. Correct password should be passed to PdfReader constructor with properties. See ReaderProperties.setPassword method.";
 
     public static final String CannotAddKidToTheFlushedElement = "cannot.add.kid.to.the.flushed.element";
+    public static final String CannotAddNonDictionaryExtGStateToResources1 = "Cannot add graphic state to resources. The PdfObject type is {0}, but should be PdfDictionary";
+    public static final String CannotAddNonDictionaryPatternToResources1 = "Cannot add pattern to resources. The PdfObject type is {0}, but should be PdfDictionary or PdfStream";
+    public static final String CannotAddNonDictionaryPropertiesToResources1 = "Cannot add properties to resources. The PdfObject type is {0}, but should be PdfDictionary";
+    public static final String CannotAddNonDictionaryShadingToResources1 = "Cannot add shading to resources. The PdfObject type is {0}, but should be PdfDictionary or PdfStream";
+    public static final String CannotAddNonStreamFormToResources1 = "Cannot add form to resources. The PdfObject type is {0}, but should be PdfStream";
+    public static final String CannotAddNonStreamImageToResources1 = "Cannot add image to resources. The PdfObject type is {0}, but should be PdfStream";
     public static final String CannotCloseDocument = "cannot.close.document";
     public static final String CannotCloseDocumentWithAlreadyFlushedPdfCatalog = "cannot.close.document.with.already.flushed.pdf.catalog";
     public static final String CannotConvertPdfArrayToRectanle = "cannot.convert.pdfarray.to.rectangle";
