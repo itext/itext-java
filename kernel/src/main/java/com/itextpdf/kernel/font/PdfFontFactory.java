@@ -43,8 +43,14 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.io.font.CidFont;
+import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.FontProgramFactory;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.TrueTypeFont;
+import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.font.*;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -63,7 +69,7 @@ public final class PdfFontFactory {
      */
     private static boolean DEFAULT_EMBEDDING = false;
     /**
-     * This is the default value of the <VAR>embedded</VAR> variable.
+     * This is the default value of the <VAR>cached</VAR> variable.
      */
     private static boolean DEFAULT_CACHED = true;
 
