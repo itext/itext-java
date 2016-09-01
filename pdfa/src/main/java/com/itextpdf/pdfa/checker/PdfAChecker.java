@@ -340,7 +340,7 @@ public abstract class PdfAChecker {
         PdfDictionary patterns = resources.getAsDictionary(PdfName.Pattern);
 
         if (xObjects != null) {
-            for (PdfObject xObject : xObjects.directValues()) {
+            for (PdfObject xObject : xObjects.values()) {
                 PdfStream xObjStream = (PdfStream) xObject;
                 PdfObject subtype = null;
                 boolean isFlushed = xObjStream.isFlushed();
@@ -358,7 +358,7 @@ public abstract class PdfAChecker {
         }
 
         if (shadings != null) {
-            for (PdfObject shading : shadings.directValues()) {
+            for (PdfObject shading : shadings.values()) {
                 PdfDictionary shadingDict = (PdfDictionary) shading;
                 if (!isAlreadyChecked(shadingDict)) {
                     checkColorSpace(PdfColorSpace.makeColorSpace(shadingDict.get(PdfName.ColorSpace)), resources.getAsDictionary(PdfName.ColorSpace), true, null);
@@ -367,7 +367,7 @@ public abstract class PdfAChecker {
         }
 
         if (patterns != null) {
-            for (PdfObject p : patterns.directValues()) {
+            for (PdfObject p : patterns.values()) {
                 if (p.isStream()) {
                     PdfStream pStream = (PdfStream) p;
                     if (!isAlreadyChecked(pStream)) {
@@ -397,7 +397,7 @@ public abstract class PdfAChecker {
     }
 
     protected void checkResourcesOfAppearanceStreams(PdfDictionary appearanceStreamsDict) {
-        for (PdfObject val : appearanceStreamsDict.directValues()) {
+        for (PdfObject val : appearanceStreamsDict.values()) {
             if (val instanceof PdfDictionary) {
                 PdfDictionary ap = (PdfDictionary) val;
                 if (ap.isDictionary()) {

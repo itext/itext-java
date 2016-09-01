@@ -446,7 +446,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     }
 
     private void markDictionaryContentToFlush(PdfDictionary dictionary) {
-        for (PdfObject item : dictionary.values()) {
+        for (PdfObject item : dictionary.values(false)) {
             markObjectToFlush(item);
         }
     }

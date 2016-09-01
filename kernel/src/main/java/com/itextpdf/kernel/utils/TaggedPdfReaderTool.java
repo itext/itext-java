@@ -199,12 +199,12 @@ public class TaggedPdfReaderTool {
                 attrDict = (PdfDictionary) attrObj;
             }
             try {
-                for (Map.Entry<PdfName, PdfObject> entry : attrDict.entrySet()) {
+                for (PdfName key : attrDict.keySet()) {
                     out.write(' ');
-                    String attrName = entry.getKey().getValue();
+                    String attrName = key.getValue();
                     out.write(Character.toLowerCase(attrName.charAt(0)) + attrName.substring(1));
                     out.write("=\"");
-                    out.write(entry.getValue().toString());
+                    out.write(attrDict.get(key, false).toString());
                     out.write("\"");
                 }
             } catch (java.io.IOException e) {

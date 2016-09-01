@@ -187,7 +187,7 @@ public class PdfA2Checker extends PdfA1Checker {
             PdfDictionary attributes = ((PdfArray) deviceN.getPdfObject()).getAsDictionary(4);
             PdfDictionary colorants = attributes.getAsDictionary(PdfName.Colorants);
             if (colorants != null) {
-                for (Map.Entry<PdfName, PdfObject> entry : colorants.directEntrySet()) {
+                for (Map.Entry<PdfName, PdfObject> entry : colorants.entrySet()) {
                     PdfArray separation = (PdfArray) entry.getValue();
                     checkSeparationInsideDeviceN(separation, ((PdfArray) deviceN.getPdfObject()).get(2), ((PdfArray) deviceN.getPdfObject()).get(3).getIndirectReference());
                 }

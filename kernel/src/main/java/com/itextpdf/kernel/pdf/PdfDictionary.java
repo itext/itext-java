@@ -347,15 +347,39 @@ public class PdfDictionary extends PdfObject {
 
     /**
      * Returns all the values of this map in a Collection.
+     *
+     * @param asDirects if false, collection will contain {@link PdfIndirectReference} instances
+     * for the indirect objects in dictionary, otherwise it will contain collection of direct objects.
+     * @return a Collection holding all the values
+     */
+    public Collection<PdfObject> values(boolean asDirects) {
+        if (asDirects) {
+            return values();
+        } else {
+            return map.values();
+        }
+    }
+
+    /**
+     * Returns all the values of this map in a Collection.
      * <br/>
-     * NOTE: returned collection will contain {@link PdfIndirectReference} instances
-     * for the indirect objects in dictionary.
-     * Use {@link PdfDictionary#directValues()} to get the collection of the actual objects.
+     * <b>NOTE:</b> since 7.0.1 it returns collection of direct objects.
+     * If you want to get {@link PdfIndirectReference} instances for the indirect objects value,
+     * you shall use {@link #values(boolean)} method.
      *
      * @return a Collection holding all the values
      */
     public Collection<PdfObject> values() {
-        return map.values();
+        Collection<PdfObject> directValues = new ArrayList<>();
+        for (PdfObject value : map.values()) {
+            if (value.isIndirectReference()) {
+                directValues.add(((PdfIndirectReference)value).getRefersTo());
+            } else {
+                directValues.add(value);
+            }
+        }
+
+        return directValues;
     }
 
     /**
@@ -363,7 +387,9 @@ public class PdfDictionary extends PdfObject {
      * this method will resolve all indirect references in the dictionary and return actual objects in collection.
      *
      * @return a Collection holding all the values
+     * @deprecated Use {@link #values()} instead.
      */
+    @Deprecated
     public Collection<PdfObject> directValues() {
         Collection<PdfObject> directValues = new ArrayList<>();
         for (PdfObject value : map.values()) {
@@ -380,14 +406,23 @@ public class PdfDictionary extends PdfObject {
     /**
      * Returns a Set holding the key-value pairs as Map#Entry objects.
      * <br/>
-     * NOTE: returned collection will contain {@link PdfIndirectReference} instances
-     * for the values that are indirect objects.
-     * Use {@link PdfDictionary#directEntrySet()} to get the collection of the entries with actual objects as values.
+     * <b>NOTE:</b> since 7.0.1 it returns collection of direct objects.
+     * If you want to get {@link PdfIndirectReference} instances for the indirect objects value,
+     * you shall use {@link #get(PdfName, boolean)} method.
      *
      * @return a Set of Map.Entry objects
      */
     public Set<Map.Entry<PdfName, PdfObject>> entrySet() {
-        return map.entrySet();
+        Map<PdfName, PdfObject> directMap = new TreeMap<>();
+        for(Map.Entry<PdfName, PdfObject> entry : map.entrySet()) {
+            PdfObject value = entry.getValue();
+            if (value.isIndirectReference()) {
+                directMap.put(entry.getKey(), ((PdfIndirectReference)value).getRefersTo());
+            } else {
+                directMap.put(entry.getKey(), value);
+            }
+        }
+        return directMap.entrySet();
     }
 
     /**
@@ -396,7 +431,9 @@ public class PdfDictionary extends PdfObject {
      * entries in the collection.
      *
      * @return a Set of Map.Entry objects
+     * @deprecated Use {@link #entrySet()} instead.
      */
+    @Deprecated
     public Set<Map.Entry<PdfName, PdfObject>> directEntrySet() {
         Map<PdfName, PdfObject> directMap = new TreeMap<>();
         for(Map.Entry<PdfName, PdfObject> entry : map.entrySet()) {
@@ -419,7 +456,7 @@ public class PdfDictionary extends PdfObject {
     public String toString() {
         if (!isFlushed()) {
             String string = "<<";
-            for (Map.Entry<PdfName, PdfObject> entry : entrySet()) {
+            for (Map.Entry<PdfName, PdfObject> entry : map.entrySet()) {
                 PdfIndirectReference indirectReference = entry.getValue().getIndirectReference();
                 string = string + entry.getKey().toString() + " " + (indirectReference == null ? entry.getValue().toString() : indirectReference.toString()) + " ";
             }
@@ -562,7 +599,7 @@ public class PdfDictionary extends PdfObject {
     protected void copyContent(PdfObject from, PdfDocument document) {
         super.copyContent(from, document);
         PdfDictionary dictionary = (PdfDictionary) from;
-        for (Map.Entry<PdfName, PdfObject> entry : dictionary.entrySet()) {
+        for (Map.Entry<PdfName, PdfObject> entry : dictionary.map.entrySet()) {
             map.put(entry.getKey(), entry.getValue().processCopying(document, false));
         }
     }

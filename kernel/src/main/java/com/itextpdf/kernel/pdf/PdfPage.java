@@ -1046,7 +1046,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             return;
         }
 
-        for (PdfObject obj : objsCollection.directValues()) {
+        for (PdfObject obj : objsCollection.values()) {
             if (obj.isFlushed())
                 continue;
             flushContentStreams(((PdfDictionary) obj).getAsDictionary(PdfName.Resources));
@@ -1055,7 +1055,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private void flushAppearanceStreams(PdfDictionary appearanceStreamsDict) {
-        for (PdfObject val : appearanceStreamsDict.directValues()) {
+        for (PdfObject val : appearanceStreamsDict.values()) {
             if (val instanceof PdfDictionary) {
                 PdfDictionary ap = (PdfDictionary) val;
                 if (ap.isDictionary()) {

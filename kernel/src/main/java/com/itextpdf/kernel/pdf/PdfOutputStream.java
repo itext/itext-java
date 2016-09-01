@@ -55,6 +55,7 @@ import com.itextpdf.kernel.pdf.filters.FlateDecodeFilter;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,13 +147,13 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
     private void write(PdfDictionary pdfDictionary) {
         writeBytes(openDict);
-        for (Map.Entry<PdfName, PdfObject> entry : pdfDictionary.entrySet()) {
+        for (PdfName key : pdfDictionary.keySet()) {
             boolean isAlreadyWriteSpace = false;
-            write(entry.getKey());
-            PdfObject value = entry.getValue();
+            write(key);
+            PdfObject value = pdfDictionary.get(key, false);
             if (value == null) {
                 Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
-                logger.warn(MessageFormat.format(LogMessageConstant.INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE, entry.getKey()));
+                logger.warn(MessageFormat.format(LogMessageConstant.INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE, key));
                 value = PdfNull.PDF_NULL;
             }
             if ((value.getType() == PdfObject.NUMBER

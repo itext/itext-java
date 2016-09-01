@@ -2160,7 +2160,7 @@ public class PdfCanvas {
         concatMatrix(a, b, c, d, e, f);
         PdfOutputStream os = contentStream.getOutputStream();
         os.writeBytes(BI);
-        for (Map.Entry<PdfName, PdfObject> entry : imageXObject.getPdfObject().directEntrySet()) {
+        for (Map.Entry<PdfName, PdfObject> entry : imageXObject.getPdfObject().entrySet()) {
             PdfName key = entry.getKey();
             if (!PdfName.Type.equals(key) && !PdfName.Subtype.equals(key) && !PdfName.Length.equals(key)) {
                 os.write(entry.getKey()).writeSpace();
