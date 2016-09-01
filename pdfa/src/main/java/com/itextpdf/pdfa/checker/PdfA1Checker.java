@@ -43,7 +43,6 @@
  */
 package com.itextpdf.pdfa.checker;
 
-import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
@@ -66,7 +65,6 @@ import com.itextpdf.pdfa.PdfAConformanceException;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +72,7 @@ import org.slf4j.LoggerFactory;
 /**
  * PdfA1Checker defines the requirements of the PDF/A-1 standard and contains
  * method implementations from the abstract {@link PdfAChecker} class.
- * 
+ * <p>
  * The specification implemented by this class is ISO 19005-1
  */
 public class PdfA1Checker extends PdfAChecker {
@@ -91,9 +89,9 @@ public class PdfA1Checker extends PdfAChecker {
 
     /**
      * Creates a PdfA1Checker with the required conformance level
-     * 
+     *
      * @param conformanceLevel the required conformance level, <code>a</code> or
-     * <code>b</code>
+     *                         <code>b</code>
      */
     public PdfA1Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
@@ -336,7 +334,7 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
-    protected  void checkMetaData(PdfDictionary catalog){
+    protected void checkMetaData(PdfDictionary catalog) {
         if (!catalog.containsKey(PdfName.Metadata)) {
             throw new PdfAConformanceException(PdfAConformanceException.CatalogShallContainMetadataEntry);
         }
@@ -403,7 +401,7 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
-    protected  void checkPageSize(PdfDictionary  page){
+    protected void checkPageSize(PdfDictionary page) {
 
     }
 
@@ -555,9 +553,8 @@ public class PdfA1Checker extends PdfAChecker {
 
     protected PdfArray getFormFields(PdfArray array) {
         PdfArray fields = new PdfArray();
-        for (Iterator<PdfObject> iterator = array.directIterator(); iterator.hasNext(); ) {
-            PdfDictionary field = (PdfDictionary) iterator.next();
-            PdfArray kids = field.getAsArray(PdfName.Kids);
+        for (PdfObject field : array) {
+            PdfArray kids = ((PdfDictionary) field).getAsArray(PdfName.Kids);
             fields.add(field);
             if (kids != null) {
                 fields.addAll(getFormFields(kids));

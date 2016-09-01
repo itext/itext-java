@@ -45,9 +45,19 @@ package com.itextpdf.kernel.pdf.layer;
 
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfObjectWrapper;
+import com.itextpdf.kernel.pdf.PdfString;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * This class represents /OCProperties entry if pdf catalog and manages
@@ -294,14 +304,16 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         if (d != null && !d.isEmpty()) {
             PdfArray off = d.getAsArray(PdfName.OFF);
             if (off != null) {
-                for (PdfObject offLayer : off) {
+                for (int i = 0; i < off.size(); i++) {
+                    PdfObject offLayer = off.get(i, false);
                     layerMap.get((PdfIndirectReference) offLayer).on = false;
                 }
             }
 
             PdfArray locked = d.getAsArray(PdfName.Locked);
             if (locked != null) {
-                for (PdfObject lockedLayer : locked) {
+                for (int i = 0; i < locked.size(); i++) {
+                    PdfObject lockedLayer = locked.get(i, false);
                     layerMap.get((PdfIndirectReference) lockedLayer).locked = true;
                 }
             }

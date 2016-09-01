@@ -46,7 +46,10 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A representation of an array as described in the PDF specification. A PdfArray can contain any
@@ -55,7 +58,7 @@ import java.util.*;
 public class PdfArray extends PdfObject implements Iterable<PdfObject> {
 
     private static final long serialVersionUID = 1617495612878046869L;
-	
+
     protected List<PdfObject> list;
 
     /**
@@ -186,10 +189,25 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         return list.contains(o);
     }
 
+    /**
+     * Returns an iterator over an array of PdfObject elements.
+     * <br/>
+     * <b>NOTE:</b> since 7.0.1 it returns collection of direct objects.
+     * If you want to get {@link PdfIndirectReference} instances for the indirect objects value,
+     * you shall use {@link #get(int, boolean)} method.
+     *
+     * @return an Iterator.
+     */
     public Iterator<PdfObject> iterator() {
-        return list.iterator();
+        return new PdfArrayDirectIterator();
     }
 
+    /**
+     * Returns an iterator over an array of PdfObject elements.
+     *
+     * @deprecated Use {@link #iterator()} instead.
+     */
+    @Deprecated
     public Iterator<PdfObject> directIterator() {
         return new PdfArrayDirectIterator();
     }
@@ -239,7 +257,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     /**
      * Sets the PdfObject at the specified index in the PdfArray.
      *
-     * @param index the position to set the PdfObject
+     * @param index   the position to set the PdfObject
      * @param element PdfObject to be added
      * @return true if the operation changed the PdfArray
      * @see java.util.List#set(int, Object)
@@ -251,7 +269,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     /**
      * Adds the specified PdfObject at the specified index. All objects after this index will be shifted by 1.
      *
-     * @param index position to insert the PdfObject
+     * @param index   position to insert the PdfObject
      * @param element PdfObject to be added
      * @see java.util.List#add(int, Object)
      */
@@ -285,7 +303,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      * Returns a sublist of this PdfArray, starting at fromIndex (inclusive) and ending at toIndex (exclusive).
      *
      * @param fromIndex the position of the first element in the sublist (inclusive)
-     * @param toIndex the position of the last element in the sublist (exclusive)
+     * @param toIndex   the position of the last element in the sublist (exclusive)
      * @return List of PdfObjects
      * @see java.util.List#subList(int, int)
      */

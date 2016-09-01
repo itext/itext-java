@@ -440,8 +440,8 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     }
 
     private void markArrayContentToFlush(PdfArray array) {
-        for (PdfObject item : array) {
-            markObjectToFlush(item);
+        for (int i = 0; i < array.size(); i++) {
+            markObjectToFlush(array.get(i, false));
         }
     }
 
@@ -480,14 +480,14 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     private byte[] getDebugBytes() throws IOException {
         if (duplicateStream != null) {
             duplicateStream.flush();
-            return ((ByteArrayOutputStream)(duplicateStream.getOutputStream())).toByteArray();
+            return ((ByteArrayOutputStream) (duplicateStream.getOutputStream())).toByteArray();
         } else {
             return null;
         }
     }
 
     private static boolean checkTypeOfPdfDictionary(PdfObject dictionary, PdfName expectedType) {
-        return dictionary.isDictionary() && expectedType.equals(((PdfDictionary)dictionary).getAsName(PdfName.Type));
+        return dictionary.isDictionary() && expectedType.equals(((PdfDictionary) dictionary).getAsName(PdfName.Type));
     }
 
     /**
@@ -569,7 +569,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
                 serDic((PdfDictionary) obj, level - 1, bb);
                 if (level > 0) {
                     md5.reset();
-                    bb.append(md5.digest(((PdfStream)obj).getBytes(false)));
+                    bb.append(md5.digest(((PdfStream) obj).getBytes(false)));
                 }
             } else if (obj.isDictionary()) {
                 serDic((PdfDictionary) obj, level - 1, bb);

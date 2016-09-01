@@ -44,7 +44,6 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.io.color.IccProfile;
-import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -76,7 +75,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -85,7 +83,7 @@ import java.util.Set;
  * PdfA2Checker defines the requirements of the PDF/A-2 standard and contains a
  * number of methods that override the implementations of its superclass
  * {@link PdfA1Checker}.
- * 
+ * <p>
  * The specification implemented by this class is ISO 19005-2
  */
 public class PdfA2Checker extends PdfA1Checker {
@@ -111,9 +109,9 @@ public class PdfA2Checker extends PdfA1Checker {
 
     /**
      * Creates a PdfA2Checker with the required conformance level
-     * 
+     *
      * @param conformanceLevel the required conformance level, <code>a</code> or
-     * <code>u</code> or <code>b</code>
+     *                         <code>u</code> or <code>b</code>
      */
     public PdfA2Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
@@ -166,7 +164,7 @@ public class PdfA2Checker extends PdfA1Checker {
     @Override
     public void checkColorSpace(PdfColorSpace colorSpace, PdfDictionary currentColorSpaces, boolean checkAlternate, Boolean fill) {
         if (fill != null) {
-            if ((boolean)fill) {
+            if ((boolean) fill) {
                 currentFillCsIsIccBasedCMYK = false;
             } else {
                 currentStrokeCsIsIccBasedCMYK = false;
@@ -224,7 +222,7 @@ public class PdfA2Checker extends PdfA1Checker {
         if (fill != null && colorSpace instanceof PdfCieBasedCs.IccBased) {
             byte[] iccBytes = ((PdfArray) colorSpace.getPdfObject()).getAsStream(1).getBytes();
             if (ICC_COLOR_SPACE_CMYK.equals(IccProfile.getIccColorSpaceName(iccBytes))) {
-                if ((boolean)fill) {
+                if ((boolean) fill) {
                     currentFillCsIsIccBasedCMYK = true;
                 } else {
                     currentStrokeCsIsIccBasedCMYK = true;
@@ -471,8 +469,7 @@ public class PdfA2Checker extends PdfA1Checker {
             }
             PdfArray configs = oCProperties.getAsArray(PdfName.Configs);
             if (configs != null) {
-                for (Iterator<PdfObject> iterator = configs.directIterator(); iterator.hasNext(); ) {
-                    PdfObject config = iterator.next();
+                for (PdfObject config : configs) {
                     configList.add((PdfDictionary) config);
                 }
             }
@@ -480,8 +477,7 @@ public class PdfA2Checker extends PdfA1Checker {
             Set<PdfObject> ocgs = new HashSet<>();
             PdfArray ocgsArray = oCProperties.getAsArray(PdfName.OCGs);
             if (ocgsArray != null) {
-                for (Iterator<PdfObject> iterator = ocgsArray.directIterator(); iterator.hasNext(); ) {
-                    PdfObject ocg = iterator.next();
+                for (PdfObject ocg : ocgsArray) {
                     ocgs.add(ocg);
                 }
             }
@@ -865,8 +861,7 @@ public class PdfA2Checker extends PdfA1Checker {
     }
 
     private void fillOrderRecursively(PdfArray orderArray, Set<PdfObject> order) {
-        for (Iterator<PdfObject> iterator = orderArray.directIterator(); iterator.hasNext(); ) {
-            PdfObject orderItem = iterator.next();
+        for (PdfObject orderItem : orderArray) {
             if (!orderItem.isArray()) {
                 order.add(orderItem);
             } else {
