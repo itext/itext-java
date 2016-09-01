@@ -1928,7 +1928,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
         bs.put(PdfName.W, new PdfNumber(borderWidth));
         this.borderWidth = borderWidth;
-        regenerateField();
+        //regenerateField();
         return this;
     }
 
