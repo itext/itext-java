@@ -91,7 +91,7 @@ public class LineSeparatorRenderer extends BlockRenderer {
 
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
-            if (isNotFittingHeight(layoutContext.getArea())) {
+            if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                     return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
                 }

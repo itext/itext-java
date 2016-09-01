@@ -282,8 +282,8 @@ public class ParagraphRenderer extends BlockRenderer {
         applyMargins(occupiedArea.getBBox(), margins, true);
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
-            if (isNotFittingHeight(layoutContext.getArea())) {
-                if (!layoutContext.getArea().isEmptyArea()) {
+            if (isNotFittingLayoutArea(layoutContext.getArea())) {
+                if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                     return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
                 }
             }

@@ -245,7 +245,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         applyMargins(occupiedArea.getBBox(), margins, true);
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
-            if (isNotFittingHeight(layoutContext.getArea())) {
+            if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                     return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
                 }
@@ -413,11 +413,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 point.setLocation(point.getX() + shift[0], point.getY() + shift[1]);
             }
 
-            // clip bounding box on the right side to make it fit in the layout area width
-            Point clipLineBeg = new Point(layoutBox.getRight(), layoutBox.getTop());
-            Point clipLineEnd = new Point(layoutBox.getRight(), layoutBox.getBottom());
-            List<Point> newOccupiedAreaPoints = clipPolygon(rotatedPoints, clipLineBeg, clipLineEnd);
-            Rectangle newBBox = calculateBBox(newOccupiedAreaPoints);
+            Rectangle newBBox = calculateBBox(rotatedPoints);
 
             occupiedArea.getBBox().setWidth(newBBox.getWidth());
             occupiedArea.getBBox().setHeight(newBBox.getHeight());
