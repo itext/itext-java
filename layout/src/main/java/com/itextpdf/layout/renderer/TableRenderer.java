@@ -410,7 +410,7 @@ public class TableRenderer extends AbstractRenderer {
             if (split) {
                 TableRenderer[] splitResult = split(row, hasContent);
                 int[] rowspans = new int[currentRow.length];
-                boolean[] columnsWithCellToBeSplitted = new boolean[currentRow.length];
+                boolean[] columnsWithCellToBeEnlarged = new boolean[currentRow.length];
                 for (int col = 0; col < currentRow.length; col++) {
                     if (splits[col] != null) {
                         CellRenderer cellSplit;
@@ -429,14 +429,18 @@ public class TableRenderer extends AbstractRenderer {
                             currentRow[col] = null;
                             CellRenderer cellOverflow = (CellRenderer) splits[col].getOverflowRenderer();
                             if (splits[col].getStatus() != LayoutResult.NOTHING) {
-                                cellOverflow.setBorders(cellOverflow.getBorders()[2], 0);
+                                cellOverflow.setBorders((Border)this.getProperty(Property.BORDER), 0);
+                                horizontalBorders.get(row+1).set(col, (Border)this.getProperty(Property.BORDER));
                             }
                             rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) cellOverflow.setParent(splitResult[1]);
                         } else {
                             rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) currentRow[col].setParent(splitResult[1]);
                         }
                     } else if (hasContent && currentRow[col] != null) {
-                        columnsWithCellToBeSplitted[col] = true;
+                        columnsWithCellToBeEnlarged[col] = true;
+                        horizontalBorders.get(row+1).set(col, (Border) new Cell().getDefaultProperty(Property.BORDER));
+                        // for the future
+                        currentRow[col].getModelElement().setBorderTop((Border)this.getProperty(Property.BORDER));
                     }
                 }
 
@@ -448,7 +452,7 @@ public class TableRenderer extends AbstractRenderer {
                 }
 
                 for (int col = 0; col < numberOfColumns; col++) {
-                    if (columnsWithCellToBeSplitted[col]) {
+                    if (columnsWithCellToBeEnlarged[col]) {
                         if (1 == minRowspan) {
                             // Here we use the same cell, but create a new renderer which doesn't have any children,
                             // therefore it won't have any content.
@@ -798,21 +802,17 @@ public class TableRenderer extends AbstractRenderer {
             ArrayList<Border> borders = horizontalBorders.get(i);
             float x1 = startX;
             float x2 = x1 + columnWidths[0];
+
             if (i == 0) {
-                if (verticalBorders != null && verticalBorders.size() > 0 && verticalBorders.get(0).size() > 0 && verticalBorders.get(verticalBorders.size() - 1).size() > 0) {
-                    Border firstBorder = verticalBorders.get(0).get(0);
-                    if (firstBorder != null) {
-                        x1 -= firstBorder.getWidth() / 2;
-                    }
+                Border border = borders.get(0);
+                if (border != null) {
+                    y1 -= border.getWidth() / 2;
                 }
-            } else if (i == horizontalBorders.size() - 1) {
-                if (verticalBorders != null && verticalBorders.size() > 0 && verticalBorders.get(0).size() > 0 &&
-                        verticalBorders.get(verticalBorders.size() - 1) != null && verticalBorders.get(verticalBorders.size() - 1).size() > 0
-                        && verticalBorders.get(0) != null) {
-                    Border firstBorder = verticalBorders.get(0).get(verticalBorders.get(0).size() - 1);
-                    if (firstBorder != null) {
-                        x1 -= firstBorder.getWidth() / 2;
-                    }
+            }
+            else if (i == horizontalBorders.size() - 1) {
+                Border border = borders.get(0);
+                if (border != null) {
+                    y1 += border.getWidth() / 2;
                 }
             }
 
@@ -837,12 +837,12 @@ public class TableRenderer extends AbstractRenderer {
             Border lastBorder = borders.size() > j - 1 ? borders.get(j - 1) : null;
             if (lastBorder != null) {
                 if (verticalBorders != null && verticalBorders.get(j) != null && verticalBorders.get(j).size() > 0) {
-                    if (i == 0) {
-                        if (verticalBorders.get(j).get(i) != null)
-                            x2 += verticalBorders.get(j).get(i).getWidth() / 2;
-                    } else if(i == horizontalBorders.size() - 1 && verticalBorders.get(j).size() >= i - 1 && verticalBorders.get(j).get(i - 1) != null) {
-                        x2 += verticalBorders.get(j).get(i - 1).getWidth() / 2;
-                    }
+//                    if (i == 0) {
+//                        if (verticalBorders.get(j).get(i) != null)
+//                            x2 += verticalBorders.get(j).get(i).getWidth() / 2;
+//                    } else if(i == horizontalBorders.size() - 1 && verticalBorders.get(j).size() >= i - 1 && verticalBorders.get(j).get(i - 1) != null) {
+//                        x2 += verticalBorders.get(j).get(i - 1).getWidth() / 2;
+//                    }
                 }
 
                 lastBorder.drawCellBorder(drawContext.getCanvas(), x1, y1, x2, y1);
@@ -850,7 +850,14 @@ public class TableRenderer extends AbstractRenderer {
             if (i < heights.size()) {
                 y1 -= (float) heights.get(i);
             }
+            if (i == 0) {
+                Border border = borders.get(0);
+                if (border != null) {
+                    y1 += border.getWidth() / 2;
+                }
+            }
         }
+
         float x1 = startX;
         for (int i = 0; i < verticalBorders.size(); i++) {
             ArrayList<Border> borders = verticalBorders.get(i);
@@ -858,6 +865,17 @@ public class TableRenderer extends AbstractRenderer {
             float y2 = y1;
             if (!heights.isEmpty()) {
                 y2 = y1 - (float) heights.get(0);
+            }
+            if (i == 0) {
+                Border firstBorder = borders.get(0);
+                if (firstBorder != null) {
+                    x1 += firstBorder.getWidth() / 2;
+                }
+            } else if (i == verticalBorders.size() - 1) {
+                Border firstBorder = borders.get(0);
+                if (firstBorder != null) {
+                    x1 -= firstBorder.getWidth() / 2;
+                }
             }
             int j;
             for (j = 1; j < borders.size(); j++) {
@@ -886,6 +904,12 @@ public class TableRenderer extends AbstractRenderer {
             }
             if (i < columnWidths.length) {
                 x1 += columnWidths[i];
+            }
+            if (i == 0) {
+                Border firstBorder = borders.get(0);
+                if (firstBorder != null) {
+                    x1 -= firstBorder.getWidth() / 2;
+                }
             }
         }
 

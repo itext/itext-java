@@ -143,7 +143,13 @@ public class CellRenderer extends BlockRenderer {
         float rightWidth = borders[1] != null ? borders[1].getWidth() : 0;
         float bottomWidth = borders[2] != null ? borders[2].getWidth() : 0;
         float leftWidth = borders[3] != null ? borders[3].getWidth() : 0;
-        return rect.<Rectangle>applyMargins(topWidth / 2, rightWidth / 2, bottomWidth / 2, leftWidth / 2, reverse);
+
+        float topWidthFactor = this.getModelElement().getRow() == 0 ? 1 : 2;
+        float rightWidthFactor = this.getModelElement().getCol() == ((TableRenderer)this.parent).rows.get(this.getModelElement().getRow()).length-1 ? 1 : 2;
+        float bottomWidthFactor = this.getModelElement().getRow() == ((TableRenderer)this.parent).rows.size()-1 ? 1 : 2;
+        float leftWidthFactor = this.getModelElement().getCol() == 0 ? 1 : 2;
+
+        return rect.<Rectangle>applyMargins(topWidth / topWidthFactor, rightWidth / rightWidthFactor, bottomWidth / bottomWidthFactor, leftWidth / leftWidthFactor, reverse);
     }
 
     /**
