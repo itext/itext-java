@@ -1575,9 +1575,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param font the new font to be set
      */
-    public void setFont(PdfFont font) {
+    public PdfFormField setFont(PdfFont font) {
         this.font = font;
         regenerateField();
+        return this;
     }
 
     /**
@@ -1586,9 +1587,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param fontSize the new font size to be set
      */
-    public void setFontSize(float fontSize) {
+    public PdfFormField setFontSize(float fontSize) {
         this.fontSize = fontSize;
         regenerateField();
+        return this;
     }
 
     /**
@@ -1597,8 +1599,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param fontSize the new font size to be set
      */
-    public void setFontSize(int fontSize) {
+    public PdfFormField setFontSize(int fontSize) {
         setFontSize((float)fontSize);
+        return this;
     }
 
     /**
@@ -1608,10 +1611,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @param font     the new font to be set
      * @param fontSize the new font size to be set
      */
-    public void setFontAndSize(PdfFont font, int fontSize) {
+    public PdfFormField setFontAndSize(PdfFont font, int fontSize) {
         this.font = font;
         this.fontSize = fontSize;
         regenerateField();
+        return this;
     }
 
     /**
@@ -1620,7 +1624,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param backgroundColor the new color to be set
      */
-    public void setBackgroundColor(Color backgroundColor) {
+    public PdfFormField setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
         PdfDictionary mk = getWidgets().get(0).getAppearanceCharacteristics();
         if (mk == null) {
@@ -1628,6 +1632,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
         mk.put(PdfName.BG, new PdfArray(backgroundColor.getColorValue()));
         regenerateField();
+        return this;
     }
 
     /**
@@ -1636,7 +1641,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param degRotation the new degRotation to be set
      */
-    public void setRotation(int degRotation) {
+    public PdfFormField setRotation(int degRotation) {
         if(degRotation % 90 != 0) {
             throw new IllegalArgumentException("degRotation.must.be.a.multiple.of.90");
         } else {
@@ -1654,6 +1659,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         mk.put(PdfName.R, new PdfNumber(degRotation));
         this.rotation = degRotation;
         regenerateField();
+        return this;
     }
 
     /**
@@ -1679,20 +1685,21 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param checkType the new checkbox marker
      */
-    public void setCheckType(int checkType) {
+    public PdfFormField setCheckType(int checkType) {
         if (checkType < TYPE_CHECK || checkType > TYPE_STAR) {
             checkType = TYPE_CROSS;
         }
         this.checkType = checkType;
         text = typeChars[checkType - 1];
         if (pdfAConformanceLevel != null) {
-            return;
+            return this;
         }
         try {
             font = PdfFontFactory.createFont(FontConstants.ZAPFDINGBATS);
         } catch (IOException e) {
             throw new PdfException(e);
         }
+        return this;
     }
 
     /**
@@ -2352,7 +2359,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         if (justification == null) {
             justification = 0;
         }
-        float x = 0;
+        float x = 2;
         TextAlignment textAlignment = TextAlignment.LEFT;
         if (justification == ALIGN_RIGHT) {
             textAlignment = TextAlignment.RIGHT;
