@@ -920,8 +920,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfFormField makeFormField(PdfObject pdfObject, PdfDocument document) {
         PdfFormField field = null;
-        if (pdfObject.isIndirectReference())
-            pdfObject = ((PdfIndirectReference) pdfObject).getRefersTo();
         if (pdfObject.isDictionary()) {
             PdfDictionary dictionary = (PdfDictionary) pdfObject;
             PdfName formType = dictionary.getAsName(PdfName.FT);
@@ -2060,7 +2058,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             if (arrayOpt != null) {
                 for (PdfObject pdfObject : arrayOpt) {
                     PdfString valStr = null;
-
                     if (pdfObject.isArray()) {
                         valStr = ((PdfArray) pdfObject).getAsString(1);
                     } else if (pdfObject.isString()) {
@@ -2088,13 +2085,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfArray kids = getKids();
         if (kids != null) {
             for (PdfObject kid : kids) {
-                PdfDictionary kidDic;
-                if (kid.isIndirectReference()) {
-                    kidDic = (PdfDictionary) ((PdfIndirectReference) kid).getRefersTo();
-                } else {
-                    kidDic = (PdfDictionary) kid;
-                }
-                PdfFormField fld = new PdfFormField(kidDic);
+                PdfFormField fld = new PdfFormField((PdfDictionary) kid);
                 String[] states = fld.getAppearanceStates();
                 for (String state : states) {
                     names.add(state);

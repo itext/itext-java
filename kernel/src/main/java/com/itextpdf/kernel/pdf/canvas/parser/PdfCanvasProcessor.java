@@ -598,7 +598,6 @@ public class PdfCanvasProcessor {
                     processor.applyTextAdjust(tj);
                 }
             }
-
         }
     }
 

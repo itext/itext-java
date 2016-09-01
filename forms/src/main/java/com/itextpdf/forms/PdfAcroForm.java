@@ -1051,13 +1051,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         PdfArray kids = field.getKids();
         if (kids != null) {
             for (PdfObject kid : kids) {
-                PdfDictionary fieldDict;
-                if (kid.isIndirectReference()) {
-                    fieldDict = (PdfDictionary) ((PdfIndirectReference) kid).getRefersTo();
-                } else {
-                    fieldDict = (PdfDictionary) kid;
-                }
-                PdfFormField kidField = new PdfFormField(fieldDict);
+                PdfFormField kidField = new PdfFormField((PdfDictionary) kid);
                 preparedFields.add(kidField);
                 if (kidField.getKids() != null) {
                     preparedFields.addAll(prepareFieldsForFlattening(kidField));

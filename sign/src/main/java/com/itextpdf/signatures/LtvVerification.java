@@ -345,8 +345,8 @@ public class LtvVerification {
     private static void deleteOldReferences(PdfArray all, PdfArray toDelete) {
         if (all == null || toDelete == null)
             return;
-        for (PdfObject pi : toDelete) {
-            PdfIndirectReference pir = pi.getIndirectReference();
+        for (int i = 0; i < toDelete.size(); i++) {
+            PdfIndirectReference pir = toDelete.get(i, false).getIndirectReference();
 
             if (pir == null) {
                 continue;
