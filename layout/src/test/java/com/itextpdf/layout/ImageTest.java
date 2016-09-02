@@ -9,6 +9,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -285,6 +286,63 @@ public class ImageTest extends ExtendedITextTest {
 
         Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         image.setAutoScale(true);
+        doc.add(image);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void imageTest12_HorizontalAlignment_CENTER() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest12.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest12.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg"));
+        image.setHorizontalAlignment(HorizontalAlignment.CENTER);
+
+        doc.add(image);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void imageTest13_HorizontalAlignment_RIGHT() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest13.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest13.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg"));
+        image.setHorizontalAlignment(HorizontalAlignment.RIGHT);
+
+        doc.add(image);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void imageTest14_HorizontalAlignment_LEFT() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest14.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest14.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg"));
+        image.setHorizontalAlignment(HorizontalAlignment.LEFT);
+
         doc.add(image);
 
         doc.close();

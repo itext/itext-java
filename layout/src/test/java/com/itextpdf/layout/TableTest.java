@@ -11,6 +11,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.test.ExtendedITextTest;
@@ -944,6 +945,34 @@ public class TableTest extends ExtendedITextTest{
 
         doc.add(new Paragraph("Table with setKeepTogether(false):"));
         table.setKeepTogether(false);
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void imageInTableTest_HA() throws IOException, InterruptedException {
+        String testName = "imageInTableTest_HA.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "itext.png")));
+        Image imageL = new Image(xObject);
+        imageL.setHorizontalAlignment(HorizontalAlignment.LEFT);
+        Image imageC = new Image(xObject);
+        imageC.setHorizontalAlignment(HorizontalAlignment.CENTER);
+        Image imageR = new Image(xObject);
+        imageR.setHorizontalAlignment(HorizontalAlignment.RIGHT);
+
+        doc.add(new Paragraph("Table"));
+        Table table = new Table(1)
+                .addCell(new Cell().add(imageL))
+                .addCell(new Cell().add(imageC))
+                .addCell(new Cell().add(imageR));
         doc.add(table);
 
         doc.close();
