@@ -312,6 +312,7 @@ public class PdfTokenizer implements Closeable, Serializable {
 
         if (level == 1) { // if the level 1 check returns EOF, then we are still looking at a number - set the type back to Number
             type = TokenType.Number;
+            outBuf.reset().append(n1);
         }
         // if we hit here, the file is either corrupt (stream ended unexpectedly),
         // or the last token ended exactly at the end of a stream.  This last

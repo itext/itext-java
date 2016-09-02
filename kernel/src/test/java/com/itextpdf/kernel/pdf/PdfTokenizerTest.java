@@ -26,6 +26,17 @@ public class PdfTokenizerTest {
         }
     }
 
+    private void checkTokenValues(String data, byte[]... expectedValues) throws Exception {
+        RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
+        PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(data.getBytes())));
+
+        for (int i = 0; i < expectedValues.length; i++) {
+            tok.nextValidToken();
+            //System.out.println(tok.getTokenType() + " -> " + tok.getStringValue());
+            Assert.assertArrayEquals("Position " + i, expectedValues[i], tok.getByteContent());
+        }
+    }
+
     @Test
     public void testOneNumber() throws Exception {
         checkTokenTypes(
@@ -71,6 +82,14 @@ public class PdfTokenizerTest {
         );
     }
 
+    @Test
+    public void numberValueInTheEndTest() throws Exception {
+        checkTokenValues(
+                "123",
+                new byte[]{49, 50, 51},
+                new byte[]{} //EndOfFile buffer
+        );
+    }
 
     @Test
     public void encodingTest() throws IOException {
