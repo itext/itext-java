@@ -175,7 +175,7 @@ public class PdfCanvasParser {
             PdfObject obj = readObject();
             if (tokeniser.getTokenType() == PdfTokenizer.TokenType.EndArray)
                 break;
-            if (tokeniser.getTokenType() == PdfTokenizer.TokenType.EndDic)
+            if (tokeniser.getTokenType() == PdfTokenizer.TokenType.EndDic && obj.getType() != PdfObject.DICTIONARY)
                 tokeniser.throwError(PdfException.UnexpectedGtGt);
             array.add(obj);
         }
