@@ -222,6 +222,9 @@ public class ClipperBridge {
         return fillType;
     }
 
+    /**
+     * @deprecated close will be {@code boolean}. Visibility will be changed to internal.
+     */
     @Deprecated
     public static void addContour(com.itextpdf.kernel.geom.Path path, List<Point.LongPoint> contour, Boolean close) {
         List<com.itextpdf.kernel.geom.Point> floatContour = convertToFloatPoints(contour);
