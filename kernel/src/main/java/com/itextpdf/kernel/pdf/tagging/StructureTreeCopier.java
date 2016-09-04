@@ -87,7 +87,6 @@ class StructureTreeCopier {
      *
      * @param destDocument document to copy structure to. Shall not be current document.
      * @param page2page  association between original page and copied page.
-     * @throws PdfException
      */
     public static void copyTo(PdfDocument destDocument, Map<PdfPage, PdfPage> page2page, PdfDocument callingDocument) {
         if (!destDocument.isTagged())
@@ -108,7 +107,6 @@ class StructureTreeCopier {
      * @param destDocument       document to copy structure to.
      * @param insertBeforePage indicates where the structure to be inserted.
      * @param page2page        association between original page and copied page.
-     * @throws PdfException
      */
     public static void copyTo(PdfDocument destDocument, int insertBeforePage, Map<PdfPage, PdfPage> page2page, PdfDocument callingDocument) {
         if (!destDocument.isTagged())
@@ -172,7 +170,6 @@ class StructureTreeCopier {
      * @param destDocument document to cpt structure to.
      * @param page2page  association between original page and copied page.
      * @param copyFromDestDocument indicates if <code>page2page</code> keys and values represent pages from {@code destDocument}.
-     * @throws PdfException
      */
     private static void copyTo(PdfDocument destDocument, Map<PdfPage, PdfPage> page2page, PdfDocument callingDocument, boolean copyFromDestDocument) {
         copyTo(destDocument, page2page, callingDocument, copyFromDestDocument, -1);

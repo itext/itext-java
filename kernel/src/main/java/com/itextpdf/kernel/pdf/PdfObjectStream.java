@@ -97,7 +97,6 @@ class PdfObjectStream extends PdfStream {
      * Adds object to the object stream.
      *
      * @param object object to add.
-     * @throws PdfException
      */
     public void addObject(PdfObject object) {
         if (size.intValue() == MAX_OBJ_STREAM_SIZE) {

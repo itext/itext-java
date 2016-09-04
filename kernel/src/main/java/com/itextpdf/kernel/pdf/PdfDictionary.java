@@ -473,7 +473,6 @@ public class PdfDictionary extends PdfObject {
      *
      * @param excludeKeys list of objects to exclude when cloning dictionary.
      * @return cloned dictionary.
-     * @throws PdfException
      */
     public PdfDictionary clone(List<PdfName> excludeKeys) {
         Map<PdfName, PdfObject> excluded = new TreeMap<>();
@@ -548,7 +547,6 @@ public class PdfDictionary extends PdfObject {
      * @param excludeKeys list of objects to exclude when copying dictionary.
      * @param allowDuplicating {@link PdfObject#copyTo(PdfDocument, boolean)}
      * @return copied dictionary.
-     * @throws PdfException
      */
     public PdfDictionary copyTo(PdfDocument document, List<PdfName> excludeKeys, boolean allowDuplicating) {
         Map<PdfName, PdfObject> excluded = new TreeMap<>();
@@ -565,7 +563,6 @@ public class PdfDictionary extends PdfObject {
     /**
      *
      * @param asDirect true is to extract direct object always.
-     * @throws PdfException
      */
     public PdfObject get(PdfName key, boolean asDirect) {
         if (!asDirect)

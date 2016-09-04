@@ -54,7 +54,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 
 public class BarcodeCodabar extends Barcode1D {
 
-     /**
+    /**
      * The index chars to <CODE>BARS</CODE>.
      */
     private static final String CHARS = "0123456789-$:/.+ABCD";
@@ -119,19 +119,19 @@ public class BarcodeCodabar extends Barcode1D {
         text = text.toUpperCase();
         int len = text.length();
         if (len < 2) {
-            throw new IllegalArgumentException(PdfException.CodabarMustHaveAtLeastAStartAndStopCharacter);
+            throw new IllegalArgumentException(PdfException.CodabarMustHaveAtLeastStartAndStopCharacter);
         }
         if (CHARS.indexOf(text.charAt(0)) < START_STOP_IDX || CHARS.indexOf(text.charAt(len - 1)) < START_STOP_IDX) {
             throw new IllegalArgumentException(PdfException.CodabarMustHaveOneAbcdAsStartStopCharacter);
         }
-        byte[] bars= new byte[text.length() * 8 - 1];
+        byte[] bars = new byte[text.length() * 8 - 1];
         for (int k = 0; k < len; ++k) {
             int idx = CHARS.indexOf(text.charAt(k));
             if (idx >= START_STOP_IDX && k > 0 && k < len - 1) {
-                throw new IllegalArgumentException(PdfException.CodabarStartStopCharacterAreOnlyExtremes);
+                throw new IllegalArgumentException(PdfException.InCodabarStartStopCharactersAreOnlyAllowedAtTheExtremes);
             }
             if (idx < 0) {
-                throw new IllegalArgumentException(PdfException.CodabarCharacterOneIsIllegal);
+                throw new IllegalArgumentException(PdfException.IllegalCharacterInCodabarBarcode);
             }
             System.arraycopy(BARS[idx], 0, bars, k * 8, 7);
         }

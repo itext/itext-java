@@ -83,7 +83,6 @@ public class WmfImageHelper {
 
     /**
      * This method checks if the image is a valid WMF and processes some parameters.
-     * @throws PdfException
      */
     private void processParameters() {
         InputStream is = null;

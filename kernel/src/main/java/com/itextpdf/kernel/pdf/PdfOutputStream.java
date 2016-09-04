@@ -181,7 +181,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
     private void write(PdfIndirectReference indirectReference) {
         if (document != null && !indirectReference.getDocument().equals(document)) {
-            throw new PdfException(PdfException.PdfIndirectObjectBelongToOtherPdfDocument);
+            throw new PdfException(PdfException.PdfIndirectObjectBelongsToOtherPdfDocument);
         }
         if (indirectReference.getRefersTo() == null) {
             write(PdfNull.PDF_NULL);
@@ -342,7 +342,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 writeBytes(PdfOutputStream.endstream);
             }
         } catch (IOException e) {
-            throw new PdfException(PdfException.CannotWritePdfStream, e, pdfStream);
+            throw new PdfException(PdfException.CannotWriteToPdfStream, e, pdfStream);
         }
     }
 
@@ -508,7 +508,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
         java.io.OutputStream tempOutputStream = outputStream;
         if (outputStream instanceof java.io.ByteArrayOutputStream) {
-            duplicateContentBuffer = ((java.io.ByteArrayOutputStream)outputStream).toByteArray();
+            duplicateContentBuffer = ((java.io.ByteArrayOutputStream) outputStream).toByteArray();
         }
         outputStream = null;
         out.defaultWriteObject();

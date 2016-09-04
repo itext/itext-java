@@ -193,7 +193,6 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      *
      * @param destDocument document to copy structure to. Shall not be current document.
      * @param page2page  association between original page and copied page.
-     * @throws PdfException
      */
     public void copyTo(PdfDocument destDocument, Map<PdfPage, PdfPage> page2page) {
         StructureTreeCopier.copyTo(destDocument, page2page, getDocument());
@@ -208,7 +207,6 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * @param destDocument       document to copy structure to.
      * @param insertBeforePage indicates where the structure to be inserted.
      * @param page2page        association between original page and copied page.
-     * @throws PdfException
      */
     public void copyTo(PdfDocument destDocument, int insertBeforePage, Map<PdfPage, PdfPage> page2page) {
         StructureTreeCopier.copyTo(destDocument, insertBeforePage, page2page, getDocument());

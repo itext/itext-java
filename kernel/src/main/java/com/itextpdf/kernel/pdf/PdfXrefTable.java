@@ -166,7 +166,6 @@ class PdfXrefTable implements Serializable {
      * Writes cross reference table and trailer to PDF.
      *
      * @throws IOException
-     * @throws PdfException
      */
     protected void writeXrefTableAndTrailer(PdfDocument document, PdfObject fileId, PdfObject crypto) throws IOException {
         PdfWriter writer = document.getWriter();

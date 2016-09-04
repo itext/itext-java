@@ -218,8 +218,8 @@ public class PdfCanvas {
      */
     public PdfCanvas(PdfPage page) {
         this(page, (page.getDocument().getReader() != null && page.getDocument().getWriter() != null
-                        && page.getContentStreamCount() > 0 && page.getLastContentStream().getLength() > 0)
-                   || (page.getRotation() != 0 && page.isIgnorePageRotationForContent()));
+                && page.getContentStreamCount() > 0 && page.getLastContentStream().getLength() > 0)
+                || (page.getRotation() != 0 && page.isIgnorePageRotationForContent()));
     }
 
     /**
@@ -414,7 +414,7 @@ public class PdfCanvas {
      */
     public PdfCanvas setFontAndSize(PdfFont font, float size) {
         if (size < 0.0001f && size > -0.0001f)
-            throw new PdfException(PdfException.FontSizeTooSmall, size);
+            throw new PdfException(PdfException.FontSizeIsTooSmall, size);
         currentGs.setFontSize(size);
         font.makeIndirect(document);
         PdfName fontName = resources.addFont(document, font);
@@ -1020,8 +1020,8 @@ public class PdfCanvas {
         double kappa = Math.abs(4.0 / 3.0 * (1.0 - Math.cos(halfAng)) / Math.sin(halfAng));
         List<double[]> pointList = new ArrayList<>();
         for (int iter = 0; iter < Nfrag; ++iter) {
-            double theta0 =  ((startAng + iter * fragAngle) * Math.PI / 180.0);
-            double theta1 =  ((startAng + (iter + 1) * fragAngle) * Math.PI / 180.0);
+            double theta0 = ((startAng + iter * fragAngle) * Math.PI / 180.0);
+            double theta1 = ((startAng + (iter + 1) * fragAngle) * Math.PI / 180.0);
             double cos0 = Math.cos(theta0);
             double cos1 = Math.cos(theta1);
             double sin0 = Math.sin(theta0);
@@ -1818,7 +1818,6 @@ public class PdfCanvas {
      * @param rect
      * @param asInline true if to add image as in-line.
      * @return created XObject or null in case of in-line image (asInline = true).
-     * @throws PdfException
      */
     public PdfXObject addImage(ImageData image, Rectangle rect, boolean asInline) {
         return addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY(), asInline);
@@ -1832,7 +1831,6 @@ public class PdfCanvas {
      * @param y
      * @param asInline true if to add image as in-line.
      * @return created XObject or null in case of in-line image (asInline = true).
-     * @throws PdfException
      */
     public PdfXObject addImage(ImageData image, float x, float y, boolean asInline) {
         if (image.getOriginalType() == ImageType.WMF) {
@@ -1891,7 +1889,6 @@ public class PdfCanvas {
      * @param asInline true if to add image as in-line.
      * @param dummy
      * @return created XObject or null in case of in-line image (asInline = true).
-     * @throws PdfException
      */
     public PdfXObject addImage(ImageData image, float x, float y, float height, boolean asInline, boolean dummy) {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y, asInline);
@@ -2200,7 +2197,6 @@ public class PdfCanvas {
      * @param x
      * @param y
      * @return current canvas.
-     * @throws PdfException
      */
     private PdfCanvas addForm(PdfFormXObject form, float x, float y) {
         return addForm(form, 1, 0, 0, 1, x, y);
@@ -2212,7 +2208,6 @@ public class PdfCanvas {
      * @param form
      * @param rect
      * @return current canvas.
-     * @throws PdfException
      */
     private PdfCanvas addForm(PdfFormXObject form, Rectangle rect) {
         return addForm(form, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY());
@@ -2226,7 +2221,6 @@ public class PdfCanvas {
      * @param y
      * @param width
      * @return current canvas.
-     * @throws PdfException
      */
     private PdfCanvas addForm(PdfFormXObject form, float x, float y, float width) {
         PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);

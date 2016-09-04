@@ -213,7 +213,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      *
      * @return object stream.
      * @throws IOException
-     * @throws PdfException
      */
     PdfObjectStream getObjectStream() throws IOException {
         if (!isFullCompression())
@@ -233,7 +232,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * @param pdfObject     object to flush.
      * @param canBeInObjStm indicates whether object can be placed into object stream.
      * @throws IOException
-     * @throws PdfException
      */
     protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
         PdfIndirectReference indirectReference = pdfObject.getIndirectReference();
@@ -318,7 +316,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      *
      * @param pdfObj object to write.
      * @throws IOException
-     * @throws PdfException
      */
     protected void writeToBody(PdfObject pdfObj) throws IOException {
         if (crypto != null) {
@@ -333,8 +330,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * Writes PDF header.
-     *
-     * @throws PdfException
      */
     protected void writeHeader() {
         writeByte('%').
@@ -344,8 +339,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * Flushes all objects which have not been flushed yet.
-     *
-     * @throws PdfException
      */
     protected void flushWaitingObjects() {
         PdfXrefTable xref = document.getXref();
@@ -372,8 +365,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
     /**
      * Flushes all modified objects which have not been flushed yet. Used in case incremental updates.
-     *
-     * @throws PdfException
      */
     protected void flushModifiedWaitingObjects() {
         PdfXrefTable xref = document.getXref();

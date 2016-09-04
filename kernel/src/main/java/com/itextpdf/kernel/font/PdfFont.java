@@ -378,7 +378,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      */
     @Deprecated
     public List<String> splitString(String text, int fontSize, float maxWidth) {
-        return splitString(text, (float)fontSize, maxWidth);
+        return splitString(text, (float) fontSize, maxWidth);
     }
 
     public List<String> splitString(String text, float fontSize, float maxWidth) {
@@ -443,7 +443,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         if (fontDic == null || fontDic.get(PdfName.Subtype) == null
                 || !(fontDic.get(PdfName.Subtype).equals(PdfName.TrueType) || fontDic.get(PdfName.Subtype).equals(PdfName.Type1))) {
             if (isException) {
-                throw new PdfException(PdfException.DictionaryNotContainFontData).setMessageParams(PdfName.TrueType.getValue());
+                throw new PdfException(PdfException.DictionaryDoesntHave1FontData).setMessageParams(PdfName.TrueType.getValue());
             }
             return false;
         }
@@ -515,6 +515,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * Helper method for making an object indirect, if the object already is indirect.
      * Useful for FontDescriptor and FontFile to make possible immediate flushing.
      * If there is no PdfDocument, mark the object as {@code MUST_BE_INDIRECT}.
+     *
      * @param obj an object to make indirect.
      * @return if current object isn't indirect, returns {@code false}, otherwise {@code tree}
      */

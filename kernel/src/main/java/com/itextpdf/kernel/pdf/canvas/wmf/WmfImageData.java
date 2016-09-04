@@ -79,19 +79,20 @@ public class WmfImageData extends ImageData {
         super(url, ImageType.WMF);
         byte[] imageType = readImageType(url);
         if (!imageTypeIs(imageType, wmf)) {
-            throw new PdfException(PdfException.IsNotWmfImage);
+            throw new PdfException(PdfException.NotAWmfImage);
         }
     }
 
     /**
      * Creates a WmfImage from a byte[].
+     *
      * @param bytes the image bytes
      */
     public WmfImageData(byte[] bytes) {
         super(bytes, ImageType.WMF);
         byte[] imageType = readImageType(url);
         if (!imageTypeIs(imageType, wmf)) {
-            throw new PdfException(PdfException.IsNotWmfImage);
+            throw new PdfException(PdfException.NotAWmfImage);
         }
     }
 
@@ -116,7 +117,8 @@ public class WmfImageData extends ImageData {
             if (is != null) {
                 try {
                     is.close();
-                } catch (IOException ignored) { }
+                } catch (IOException ignored) {
+                }
             }
         }
 

@@ -59,7 +59,6 @@ public class PdfVisibilityExpression extends PdfObjectWrapper<PdfArray> {
 	/**
      * Constructs a new PdfVisibilityExpression instance by its raw PdfArray.
      * @param visibilityExpressionArray the array representing the visibility expression
-     * @throws PdfException
      */
     public PdfVisibilityExpression(PdfArray visibilityExpressionArray) {
         super(visibilityExpressionArray);

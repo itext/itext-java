@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
 public class PdfStream extends PdfDictionary {
 
     private static final long serialVersionUID = -8259929152054328141L;
-	
+
     protected int compressionLevel;
     // Output stream associated with PDF stream.
     private PdfOutputStream outputStream;
@@ -70,7 +70,6 @@ public class PdfStream extends PdfDictionary {
      *
      * @param bytes            initial content of {@see PdfOutputStream}.
      * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
-     * @throws PdfException on error.
      */
     public PdfStream(byte[] bytes, int compressionLevel) {
         super();
@@ -108,7 +107,6 @@ public class PdfStream extends PdfDictionary {
      *
      * @param inputStream      the data to write to this stream
      * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
-     * @throws PdfException on error.
      */
     public PdfStream(PdfDocument doc, InputStream inputStream, int compressionLevel) {
         super();
@@ -137,7 +135,6 @@ public class PdfStream extends PdfDictionary {
      * </pre>
      *
      * @param inputStream the data to write to this stream
-     * @throws PdfException on error.
      */
     public PdfStream(PdfDocument doc, InputStream inputStream) {
         this(doc, inputStream, CompressionConstants.UNDEFINED_COMPRESSION);
@@ -147,7 +144,6 @@ public class PdfStream extends PdfDictionary {
      * Constructs a {@code PdfStream}-object.
      *
      * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
-     * @throws PdfException on error.
      */
     public PdfStream(int compressionLevel) {
         this(null, compressionLevel);
@@ -216,7 +212,6 @@ public class PdfStream extends PdfDictionary {
      * Gets decoded stream bytes.
      *
      * @return byte[]
-     * @throws PdfException
      */
     public byte[] getBytes() {
         return getBytes(true);
@@ -227,8 +222,7 @@ public class PdfStream extends PdfDictionary {
      *
      * @param decoded true if to get decoded stream bytes, otherwise false.
      * @return byte content of the {@code PdfStream}. Byte content will be {@code null},
-     *          if the {@code PdfStream} was created by {@code InputStream}.
-     * @on error.
+     * if the {@code PdfStream} was created by {@code InputStream}.
      */
     public byte[] getBytes(boolean decoded) {
         if (inputStream != null) {
@@ -246,7 +240,7 @@ public class PdfStream extends PdfDictionary {
             } catch (IOException ioe) {
                 throw new PdfException(PdfException.CannotGetPdfStreamBytes, ioe, this);
             }
-        } else if (getIndirectReference() != null){
+        } else if (getIndirectReference() != null) {
             // This logic makes sense only for the case when PdfStream was created by reader and in this
             // case PdfStream instance always has indirect reference and is never in the MustBeIndirect state
             PdfReader reader = getIndirectReference().getReader();
@@ -264,6 +258,7 @@ public class PdfStream extends PdfDictionary {
     /**
      * Sets <code>bytes</code> as stream's content.
      * Could not be used with streams which were created by <code>InputStream</code>.
+     *
      * @param bytes new content for stream; if <code>null</code> then stream's content will be discarded
      */
     public void setData(byte[] bytes) {
@@ -273,14 +268,15 @@ public class PdfStream extends PdfDictionary {
     /**
      * Sets or appends <code>bytes</code> to stream content.
      * Could not be used with streams which were created by <code>InputStream</code>.
-     * @param bytes new content for stream; if <code>null</code> and <code>append</code> is false then
-     *              stream's content will be discarded
+     *
+     * @param bytes  new content for stream; if <code>null</code> and <code>append</code> is false then
+     *               stream's content will be discarded
      * @param append if set to true then <code>bytes</code> will be appended to the end,
      *               rather then replace original content
      */
     public void setData(byte[] bytes, boolean append) {
         if (inputStream != null) {
-            throw new PdfException(PdfException.CannotSetDataToPdfstreamWhichWasCreatedByInputstream);
+            throw new PdfException(PdfException.CannotSetDataToPdfstreamWhichWasCreatedByInputStream);
         }
 
         boolean outputStreamIsUninitialized = outputStream == null;
@@ -383,7 +379,6 @@ public class PdfStream extends PdfDictionary {
 
     /**
      * Update length manually in case its correction. {@see PdfReader.checkPdfStreamLength()} method.
-     * @on error.
      */
     protected void updateLength(int length) {
         this.length = length;
@@ -422,7 +417,7 @@ public class PdfStream extends PdfDictionary {
         }
     }
 
-    protected InputStream getInputStream(){
+    protected InputStream getInputStream() {
         return inputStream;
     }
 }

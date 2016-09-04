@@ -44,14 +44,24 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.source.*;
+import com.itextpdf.io.source.ByteBuffer;
+import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.io.source.IRandomAccessSource;
+import com.itextpdf.io.source.PdfTokenizer;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.source.WindowRandomAccessSource;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Map;
 
@@ -113,7 +123,7 @@ public class PdfReader implements Closeable, Serializable {
      * @param is         the {@code InputStream} containing the document. The stream is read to the
      *                   end but is not closed
      * @param properties properties of the created reader
-     * @throws IOException                      on error
+     * @throws IOException on error
      */
     public PdfReader(InputStream is, ReaderProperties properties) throws IOException {
         this(new RandomAccessSourceFactory().createSource(is), properties);
@@ -124,7 +134,7 @@ public class PdfReader implements Closeable, Serializable {
      *
      * @param is the {@code InputStream} containing the document. Stream is closed automatically, when document is closed,
      *           if user doesn't want to close stream, he should set closeStream=false;
-     * @throws IOException                      on error
+     * @throws IOException on error
      */
     public PdfReader(InputStream is) throws IOException {
         this(is, new ReaderProperties());
@@ -143,7 +153,7 @@ public class PdfReader implements Closeable, Serializable {
                         .setForceRead(false)
                         .createBestSource(filename),
                 properties
-                );
+        );
         this.sourcePath = filename;
     }
 
@@ -227,7 +237,6 @@ public class PdfReader implements Closeable, Serializable {
      * @param decode true if to get decoded stream bytes, false if to leave it originally encoded.
      * @return byte[]
      * @throws IOException
-     * @throws PdfException
      */
     public byte[] readStreamBytes(PdfStream stream, boolean decode) throws IOException {
         byte[] b = readStreamBytesRaw(stream);
@@ -370,8 +379,10 @@ public class PdfReader implements Closeable, Serializable {
         return b;
     }
 
-    /** Gets a new file instance of the original PDF
+    /**
+     * Gets a new file instance of the original PDF
      * document.
+     *
      * @return a new file instance of the original PDF document
      */
     public RandomAccessFileOrArray getSafeFile() {
@@ -380,6 +391,7 @@ public class PdfReader implements Closeable, Serializable {
 
     /**
      * Provides the size of the opened file.
+     *
      * @return The size of the opened file.
      * @throws IOException
      */
@@ -419,6 +431,7 @@ public class PdfReader implements Closeable, Serializable {
 
     /**
      * Computes user password if standard encryption handler is used with Standard40, Standard128 or AES128 encryption algorithm.
+     *
      * @return user password, or null if not a standard encryption handler was used or if ownerPasswordUsed wasn't use to open the document.
      */
     public byte[] computeUserPassword() {
@@ -497,7 +510,7 @@ public class PdfReader implements Closeable, Serializable {
                 address[k] = tokens.getIntValue() + first;
             }
             if (!ok)
-                throw new PdfException(PdfException.ErrorReadingObjectStream);
+                throw new PdfException(PdfException.ErrorWhileReadingObjectStream);
             for (int k = 0; k < n; ++k) {
                 tokens.seek(address[k]);
                 tokens.nextToken();
@@ -564,7 +577,7 @@ public class PdfReader implements Closeable, Serializable {
                 return new PdfNumber(tokens.getByteContent());
             case String: {
                 PdfString pdfString = new PdfString(tokens.getByteContent(), tokens.isHexString());
-                if(currentIndirectReference != null) {
+                if (currentIndirectReference != null) {
                     pdfString.setDecryptInfoNum(currentIndirectReference.getObjNumber());
                     pdfString.setDecryptInfoGen(currentIndirectReference.getGenNumber());
                 }
@@ -655,7 +668,7 @@ public class PdfReader implements Closeable, Serializable {
         PdfArray array = new PdfArray();
         while (true) {
             PdfObject obj = readObject(true, objStm);
-             if (obj == null) {
+            if (obj == null) {
                 if (tokens.getTokenType() == PdfTokenizer.TokenType.EndArray)
                     break;
                 if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
@@ -749,7 +762,7 @@ public class PdfReader implements Closeable, Serializable {
                 if (tokens.tokenValueEqualsTo(PdfTokenizer.N)) {
                     if (xref.get(num) == null) {
                         if (pos == 0)
-                            tokens.throwError(PdfException.FilePosition0CrossReferenceEntryInThisXrefSubsection);
+                            tokens.throwError(PdfException.FilePosition1CrossReferenceEntryInThisXrefSubsection);
                         xref.add(reference);
                     }
                 } else if (tokens.tokenValueEqualsTo(PdfTokenizer.F)) {
@@ -1068,7 +1081,7 @@ public class PdfReader implements Closeable, Serializable {
                 if (!tokens.readLineSegment(line, false)) // added boolean because of mailing list issue (17 Feb. 2014)
                     break;
                 if (line.startsWith(endstream)) {
-                    streamLength = (int)(pos - start);
+                    streamLength = (int) (pos - start);
                     break;
                 } else if (line.startsWith(endobj)) {
                     tokens.seek(pos - 16);
@@ -1076,7 +1089,7 @@ public class PdfReader implements Closeable, Serializable {
                     int index = s.indexOf(endstream1);
                     if (index >= 0)
                         pos = pos - 16 + index;
-                    streamLength = (int)(pos - start);
+                    streamLength = (int) (pos - start);
                     break;
                 }
             }

@@ -386,7 +386,6 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param defaultCsKey
      * @param defaultCsValue
-     * @throws PdfException
      */
     public void setDefaultColorSpace(PdfName defaultCsKey, PdfColorSpace defaultCsValue) {
         addResource(defaultCsValue.getPdfObject(), PdfName.ColorSpace, defaultCsKey);

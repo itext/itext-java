@@ -191,7 +191,11 @@ public class IOException extends RuntimeException {
     public static final String WrongNumberOfComponentsInIccProfile = "ICC profile contains {0} components the image data contains {1} components.";
     public static final String IccProfileContains0ComponentsWhileImageDataContains1Components = "ICC profile contains {0} components, while the image data contains {1} components.";
 
+    /**
+     * Object for more details
+     */
     protected Object obj;
+
     private List<Object> messageParams;
 
     /**
@@ -234,7 +238,7 @@ public class IOException extends RuntimeException {
     }
 
     /**
-     * Creates a new IOException.
+     * Creates a new instance of IOException.
      *
      * @param message the detail message.
      * @param cause   the cause (which is saved for later retrieval by {@link #getCause()} method).

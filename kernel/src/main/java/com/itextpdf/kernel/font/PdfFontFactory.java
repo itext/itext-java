@@ -87,7 +87,7 @@ public final class PdfFontFactory {
         } else if (checkFontDictionary(fontDictionary, PdfName.Type3, false)) {
             return new PdfType3Font(fontDictionary);
         } else {
-            throw new PdfException(PdfException.DictionaryNotContainFontData);
+            throw new PdfException(PdfException.DictionaryDoesntHaveSupportedFontData);
         }
     }
 
@@ -347,7 +347,7 @@ public final class PdfFontFactory {
         if (fontDic == null || fontDic.get(PdfName.Subtype) == null
                 || !fontDic.get(PdfName.Subtype).equals(fontType)) {
             if (isException) {
-                throw new PdfException(PdfException.DictionaryNotContainFontData).setMessageParams(fontType.getValue());
+                throw new PdfException(PdfException.DictionaryDoesntHave1FontData).setMessageParams(fontType.getValue());
             }
             return false;
         }

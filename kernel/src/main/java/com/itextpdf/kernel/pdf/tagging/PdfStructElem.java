@@ -48,7 +48,6 @@ import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -69,7 +68,7 @@ import java.util.Set;
 public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
 
     private static final long serialVersionUID = 7204356181229674005L;
-	
+
     public static int Unknown = 0;
     public static int Grouping = 1;
     public static int BlockLevel = 2;
@@ -156,7 +155,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     public PdfStructElem(PdfDocument document, PdfName role, PdfAnnotation annot) {
         this(document, role);
         if (annot.getPage() == null)
-            throw new PdfException(PdfException.AnnotShallHaveReferenceToPage);
+            throw new PdfException(PdfException.AnnotationShallHaveReferenceToPage);
         getPdfObject().put(PdfName.Pg, annot.getPage().getPdfObject());
     }
 
@@ -181,7 +180,6 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
      *                        Pass {@code true} if you want to create empty dictionary in such case.
      *                        The attributes dictionary will be stored inside element.
      * @return attributes dictionary.
-     * @throws PdfException
      */
     public PdfObject getAttributes(boolean createNewIfNull) {
         PdfObject attributes = getPdfObject().get(PdfName.A);
@@ -288,7 +286,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
             PdfMcr mcr = (PdfMcr) kid;
             getDocument().getStructTreeRoot().getParentTreeHandler().unregisterMcr(mcr);
             return removeKidObject(mcr.getPdfObject());
-        } else if (kid instanceof PdfStructElem){
+        } else if (kid instanceof PdfStructElem) {
             return removeKidObject(((PdfStructElem) kid).getPdfObject());
         }
         return -1;
@@ -316,6 +314,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     /**
      * Gets list of the direct kids of structure element.
      * If certain kid is flushed, there will be a {@code null} in the list on it's place.
+     *
      * @return list of the direct kids of structure element.
      */
     @Override
@@ -457,7 +456,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
                 getPdfObject().remove(PdfName.K);
             }
         }
-        if (!k.isArray()|| k.isArray() && ((PdfArray)k).isEmpty()) {
+        if (!k.isArray() || k.isArray() && ((PdfArray) k).isEmpty()) {
             getPdfObject().remove(PdfName.K);
             removedIndex = 0;
         }

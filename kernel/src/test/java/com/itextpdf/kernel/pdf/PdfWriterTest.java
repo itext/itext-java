@@ -44,7 +44,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         String date = pdfDocument.getDocumentInfo().getPdfObject().getAsString(PdfName.CreationDate).getValue();
         Calendar cl = PdfDate.decode(date);
         double diff = DateTimeUtil.getUtcMillisFromEpoch(null) - DateTimeUtil.getUtcMillisFromEpoch(cl);
-        String message = "Unexpected creation date. Different from now is " + (float)diff/1000 + "s";
+        String message = "Unexpected creation date. Different from now is " + (float) diff / 1000 + "s";
         Assert.assertTrue(message, diff < 5000);
         pdfDocument.close();
 
@@ -134,7 +134,6 @@ public class PdfWriterTest extends ExtendedITextTest {
      * Copying direct objects. Objects of all types are added into document catalog.
      *
      * @throws IOException
-     * @throws PdfException
      */
     @Test
     public void copyObject1() throws IOException {
@@ -190,7 +189,6 @@ public class PdfWriterTest extends ExtendedITextTest {
      * Copying objects, some of those are indirect. Objects of all types are added into document catalog.
      *
      * @throws IOException
-     * @throws PdfException
      */
     @Test
     public void copyObject2() throws IOException {
@@ -251,7 +249,6 @@ public class PdfWriterTest extends ExtendedITextTest {
      * Copy objects recursively.
      *
      * @throws IOException
-     * @throws PdfException
      */
     @Test
     public void copyObject3() throws IOException {
@@ -303,7 +300,6 @@ public class PdfWriterTest extends ExtendedITextTest {
      * Copies stream.
      *
      * @throws IOException
-     * @throws PdfException
      */
     @Test
     public void copyObject4() throws IOException {
@@ -336,7 +332,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
-        PdfStream stream = (PdfStream)catalog.getAsStream(new PdfName("stream"));
+        PdfStream stream = (PdfStream) catalog.getAsStream(new PdfName("stream"));
         byte[] bytes = stream.getBytes();
         Assert.assertArrayEquals(ByteUtils.getIsoBytes("[1 2 3]"), bytes);
         pdfDocument.close();
@@ -346,7 +342,6 @@ public class PdfWriterTest extends ExtendedITextTest {
      * Copies page.
      *
      * @throws IOException
-     * @throws PdfException
      */
     @Test
     public void copyObject5() throws IOException {
@@ -424,13 +419,13 @@ public class PdfWriterTest extends ExtendedITextTest {
 
         PdfObject obj2 = pdfDocument.getPage(1).getPdfObject().get(new PdfName("HelloWorldCopy2"));
 
-        PdfIndirectReference ref2 =  obj2.getIndirectReference();
+        PdfIndirectReference ref2 = obj2.getIndirectReference();
         Assert.assertEquals(7, ref2.getObjNumber());
         Assert.assertEquals(0, ref2.getGenNumber());
 
         PdfObject obj3 = pdfDocument.getPage(1).getPdfObject().get(new PdfName("HelloWorldCopy3"));
 
-        PdfIndirectReference ref3 =  obj3.getIndirectReference();
+        PdfIndirectReference ref3 = obj3.getIndirectReference();
         Assert.assertEquals(7, ref3.getObjNumber());
         Assert.assertEquals(0, ref3.getGenNumber());
 
@@ -494,7 +489,7 @@ public class PdfWriterTest extends ExtendedITextTest {
             pdfDoc.close();
         }
 
-        Assert.assertEquals(exceptionMessage, PdfException.DocumentToCopyToCannotBeNull);
+        Assert.assertEquals(exceptionMessage, PdfException.DocumentForCopyToCannotBeNull);
     }
 
     @Test

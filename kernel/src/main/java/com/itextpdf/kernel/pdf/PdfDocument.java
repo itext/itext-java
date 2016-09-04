@@ -155,8 +155,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
 
     /**
-    * flag determines whether to write unused objects to result document
-    */
+     * flag determines whether to write unused objects to result document
+     */
     protected boolean flushUnusedObjects = false;
 
     protected Set<PdfFont> documentFonts = new HashSet<>();
@@ -202,7 +202,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Opens PDF document in the stamping mode.
      * <br/>
-
+     *
      * @param reader PDF reader.
      * @param writer PDF writer.
      */
@@ -213,8 +213,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Open PDF document in stamping mode.
      *
-     * @param reader PDF reader.
-     * @param writer PDF writer.
+     * @param reader     PDF reader.
+     * @param writer     PDF writer.
      * @param properties properties of the stamping process
      */
     public PdfDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
@@ -269,6 +269,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Gets XMPMetadata or create a new one.
+     *
      * @param createNew if true, create a new empty XMPMetadata if it did not present.
      * @return existed or newly created XMPMetadata byte array.
      */
@@ -701,7 +702,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         }
                     }
 
-                    for(int pageNum = 1; pageNum <= getNumberOfPages(); pageNum++) {
+                    for (int pageNum = 1; pageNum <= getNumberOfPages(); pageNum++) {
                         getPage(pageNum).flush();
                     }
                     catalog.getPdfObject().flush(false);
@@ -822,6 +823,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * Gets document {@code TagStructureContext}.
      * The document must be tagged, otherwise an exception will be thrown.
+     *
      * @return document {@code TagStructureContext}.
      */
     public TagStructureContext getTagStructureContext() {
@@ -894,7 +896,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @param pageFrom
      * @param pageTo
      * @param toDocument
-     * @param copier a copier which bears a special copy logic. May be NULL
+     * @param copier     a copier which bears a special copy logic. May be NULL
      * @return list of copied pages
      */
     public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, IPdfPageExtraCopier copier) {
@@ -1145,6 +1147,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * This method retrieves the page labels from a document as an array of String objects.
+     *
      * @return {@link String} list of page labels if they were found, or {@code null} otherwise
      */
     public String[] getPageLabels() {
@@ -1208,6 +1211,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Indicates if the document has any outlines
+     *
      * @return {@code true}, if there are outlines and {@code false} otherwise.
      */
     public boolean hasOutlines() {
@@ -1216,6 +1220,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * Sets the flag indicating the presence of structure elements that contain user properties attributes.
+     *
      * @param userProperties the user properties flag
      */
     public void setUserProperties(boolean userProperties) {
@@ -1247,7 +1252,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     protected void checkIsoConformance() {
     }
 
-    protected void markObjectAsMustBeFlushed(PdfObject pdfObject){
+    protected void markObjectAsMustBeFlushed(PdfObject pdfObject) {
         if (pdfObject.isIndirect()) {
             pdfObject.getIndirectReference().setState(PdfObject.MUST_BE_FLUSHED);
         }
@@ -1287,7 +1292,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     xmpMetadata = catalog.getPdfObject().getAsStream(PdfName.Metadata).getBytes();
                     try {
                         reader.pdfAConformanceLevel = PdfAConformanceLevel.getConformanceLevel(XMPMetaFactory.parseFromBuffer(xmpMetadata));
-                    } catch (XMPException ignored) {}
+                    } catch (XMPException ignored) {
+                    }
                 }
                 PdfObject infoDict = trailer.get(PdfName.Info, true);
                 info = new PdfDocumentInfo(infoDict instanceof PdfDictionary ?
@@ -1492,7 +1498,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     protected void checkClosingStatus() {
         if (closed) {
-            throw new PdfException(PdfException.DocumentClosedImpossibleExecuteAction);
+            throw new PdfException(PdfException.DocumentClosedItIsImpossibleToExecuteAction);
         }
     }
 
@@ -1523,16 +1529,17 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     /**
      * This method removes all annotation entries from form fields associated with a given page.
+     *
      * @param page
      */
-    private void removeUnusedWidgetsFromFields(PdfPage page){
+    private void removeUnusedWidgetsFromFields(PdfPage page) {
         if (page.isFlushed()) {
             return;
         }
         List<PdfAnnotation> annots = page.getAnnotations();
         for (PdfAnnotation annot : annots) {
             if (annot.getSubtype().equals(PdfName.Widget)) {
-                ((PdfWidgetAnnotation)annot).releaseFormFieldFromWidgetAnnotation();
+                ((PdfWidgetAnnotation) annot).releaseFormFieldFromWidgetAnnotation();
             }
         }
     }
@@ -1593,8 +1600,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     /**
      * This method copies all given outlines
      *
-     * @param outlines      outlines to be copied
-     * @param toDocument    document where outlines should be copied
+     * @param outlines   outlines to be copied
+     * @param toDocument document where outlines should be copied
      */
     private void copyOutlines(Set<PdfOutline> outlines, PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
 
@@ -1648,13 +1655,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
             if (outlinesToCopy.contains(outline)) {
                 PdfDestination dest = outline.getDestination();
                 if (dest instanceof PdfStringDestination) {
-                    String name = ((PdfString)dest.getPdfObject()).toUnicodeString();
+                    String name = ((PdfString) dest.getPdfObject()).toUnicodeString();
                     if (!names.contains(name)) {
                         PdfArray array = new PdfArray();
                         array.addAll((PdfArray) srcNamedDestinations.get(name));
                         PdfObject pageObject = array.get(0);
                         if (!pageObject.isNumber()) {
-                            PdfPage oldPage = catalog.getPageTree().getPage((PdfDictionary)pageObject);
+                            PdfPage oldPage = catalog.getPageTree().getPage((PdfDictionary) pageObject);
                             PdfPage newPage = page2page.get(oldPage);
                             if (oldPage == null || newPage == null) {
                                 dest = null;
@@ -1671,7 +1678,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     destArray.addAll((PdfArray) dest.getPdfObject());
                     PdfObject pageObject = destArray.get(0);
                     if (!pageObject.isNumber()) {
-                        PdfPage oldPage = catalog.getPageTree().getPage((PdfDictionary)pageObject);
+                        PdfPage oldPage = catalog.getPageTree().getPage((PdfDictionary) pageObject);
                         PdfPage newPage = page2page.get(oldPage);
                         if (oldPage == null || newPage == null) {
                             dest = null;

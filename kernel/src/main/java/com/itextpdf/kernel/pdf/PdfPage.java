@@ -836,7 +836,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param updateOutlines
      * @return return all outlines of a current page
-     * @throws PdfException
      */
     public List<PdfOutline> getOutlines(boolean updateOutlines) {
         getDocument().getOutlines(updateOutlines);
