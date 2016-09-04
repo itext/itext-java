@@ -71,7 +71,7 @@ public class FontCache {
     @Deprecated
     public static final String CMAP_RESOURCE_PATH = FontConstants.RESOURCE_PATH + "cmap/";
 
-    private static final Map<String, Map<String, Object>> allFonts = new HashMap<>();
+    private static final Map<String, Map<String, Object>> allCidFonts = new HashMap<>();
     private static final Map<String, Set<String>> registryNames = new HashMap<>();
 
     private static final String CJK_REGISTRY_FILENAME = "cjk_registry.properties";
@@ -86,7 +86,7 @@ public class FontCache {
         try {
             loadRegistry();
             for (String font : registryNames.get(FONTS_PROP)) {
-                allFonts.put(font, readFontProperties(font));
+                allCidFonts.put(font, readFontProperties(font));
             }
         } catch (Exception ignored) {
         }
@@ -111,7 +111,7 @@ public class FontCache {
         for (Map.Entry<String, Set<String>> e : registryNames.entrySet()) {
             if (e.getValue().contains(cmap)) {
                 String registry = e.getKey();
-                for (Map.Entry<String, Map<String, Object>> e1 : allFonts.entrySet()) {
+                for (Map.Entry<String, Map<String, Object>> e1 : allCidFonts.entrySet()) {
                     if (registry.equals(e1.getValue().get(REGISTRY_PROP)))
                         return e1.getKey();
                 }
@@ -125,8 +125,16 @@ public class FontCache {
         return registryNames.get(registry);
     }
 
+    public static Map<String, Map<String, Object>> getAllPredefinedCidFonts() {
+        return allCidFonts;
+    }
+
+    /**
+     * @deprecated Use {@link #getAllPredefinedCidFonts()} instead.
+     */
+    @Deprecated
     public static Map<String, Map<String, Object>> getAllFonts() {
-        return allFonts;
+        return allCidFonts;
     }
 
     public static Map<String, Set<String>> getRegistryNames() {

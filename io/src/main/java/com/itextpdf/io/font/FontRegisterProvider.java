@@ -59,7 +59,7 @@ import java.util.Set;
  * If you are using True Type fonts, you can declare the paths of the different ttf- and ttc-files
  * to this class first and then create fonts in your code using one of the getFont method
  * without having to enter a path as parameter.
-  */
+ */
 class FontRegisterProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FontRegisterProvider.class);
@@ -83,7 +83,7 @@ class FontRegisterProvider {
     /**
      * Creates new FontRegisterProvider
      */
-    public FontRegisterProvider() {
+    FontRegisterProvider() {
         fontNames.put(FontConstants.COURIER.toLowerCase(), FontConstants.COURIER);
         fontNames.put(FontConstants.COURIER_BOLD.toLowerCase(), FontConstants.COURIER_BOLD);
         fontNames.put(FontConstants.COURIER_OBLIQUE.toLowerCase(), FontConstants.COURIER_OBLIQUE);
@@ -134,7 +134,7 @@ class FontRegisterProvider {
      * @param style    the style of this font
      * @return the Font constructed based on the parameters
      */
-    public FontProgram getFont(String fontName, int style) throws java.io.IOException {
+    FontProgram getFont(String fontName, int style) throws java.io.IOException {
         return getFont(fontName, style, true);
     }
 
@@ -148,7 +148,7 @@ class FontRegisterProvider {
      *                 the cache if new, false if the font is always created new
      * @return the Font constructed based on the parameters
      */
-    public FontProgram getFont(String fontName, int style, boolean cached) throws java.io.IOException {
+    FontProgram getFont(String fontName, int style, boolean cached) throws java.io.IOException {
         if (fontName == null)
             return null;
         String lowerCaseFontName = fontName.toLowerCase();
@@ -203,36 +203,36 @@ class FontRegisterProvider {
      * @param fullName   the font name
      * @param path       the font path
      */
-    public void registerFontFamily(String familyName, String fullName, String path) {
+    void registerFontFamily(String familyName, String fullName, String path) {
         if (path != null)
             fontNames.put(fullName, path);
-        List<String> tmp;
+        List<String> family;
         synchronized (fontFamilies) {
-            tmp = fontFamilies.get(familyName);
-            if (tmp == null) {
-                tmp = new ArrayList<>();
-                fontFamilies.put(familyName, tmp);
+            family = fontFamilies.get(familyName);
+            if (family == null) {
+                family = new ArrayList<>();
+                fontFamilies.put(familyName, family);
             }
         }
-        synchronized (tmp) {
-            if (!tmp.contains(fullName)) {
+        synchronized (family) {
+            if (!family.contains(fullName)) {
                 int fullNameLength = fullName.length();
                 boolean inserted = false;
-                for (int j = 0; j < tmp.size(); ++j) {
-                    if (tmp.get(j).length() >= fullNameLength) {
-                        tmp.add(j, fullName);
+                for (int j = 0; j < family.size(); ++j) {
+                    if (family.get(j).length() >= fullNameLength) {
+                        family.add(j, fullName);
                         inserted = true;
                         break;
                     }
                 }
                 if (!inserted) {
-                    tmp.add(fullName);
+                    family.add(fullName);
                     String newFullName = fullName.toLowerCase();
                     if (newFullName.endsWith("regular")) {
                         //remove "regular" at the end of the font name
                         newFullName = newFullName.substring(0, newFullName.length() - 7).trim();
                         //insert this font name at the first position for higher priority
-                        tmp.add(0, fullName.substring(0, newFullName.length()));
+                        family.add(0, fullName.substring(0, newFullName.length()));
                     }
                 }
             }
@@ -244,8 +244,7 @@ class FontRegisterProvider {
      *
      * @param path the path to a ttf- or ttc-file
      */
-
-    public void registerFont(String path) {
+    void registerFont(String path) {
         registerFont(path, null);
     }
 
@@ -255,8 +254,7 @@ class FontRegisterProvider {
      * @param path  the path to a font file
      * @param alias the alias you want to use for the font
      */
-
-    public void registerFont(String path, String alias) {
+    void registerFont(String path, String alias) {
         try {
             if (path.toLowerCase().endsWith(".ttf") || path.toLowerCase().endsWith(".otf") || path.toLowerCase().indexOf(".ttc,") > 0) {
                 FontProgram fontProgram = FontProgramFactory.createFont(path);
@@ -320,13 +318,13 @@ class FontRegisterProvider {
                 FontProgram fontProgram = FontProgramFactory.createFont(path, false);
                 String fullName = fontProgram.getFontNames().getFullName()[0][3].toLowerCase();
                 String familyName = fontProgram.getFontNames().getFamilyName()[0][3].toLowerCase();
-                String psName =fontProgram.getFontNames().getFontName().toLowerCase();
+                String psName = fontProgram.getFontNames().getFontName().toLowerCase();
                 registerFontFamily(familyName, fullName, null);
                 fontNames.put(psName, path);
                 fontNames.put(fullName, path);
             }
             LOGGER.trace(MessageFormat.format("Registered {0}", path));
-        } catch (java.io.IOException e){
+        } catch (java.io.IOException e) {
             throw new IOException(e);
         }
     }
@@ -334,7 +332,7 @@ class FontRegisterProvider {
     // remove regular and correct last symbol
     // do this job to give higher priority to regular fonts in comparison with light, narrow, etc
     // Don't use this method for not regular fonts!
-    protected boolean saveCopyOfRegularFont(String regularFontName, String path) {
+    boolean saveCopyOfRegularFont(String regularFontName, String path) {
         //remove "regular" at the end of the font name
         String alias = regularFontName.substring(0, regularFontName.length() - 7).trim();
         if (!fontNames.containsKey(alias)) {
@@ -350,7 +348,7 @@ class FontRegisterProvider {
      * @param dir the directory
      * @return the number of fonts registered
      */
-    public int registerFontDirectory(String dir) {
+    int registerFontDirectory(String dir) {
         return registerFontDirectory(dir, false);
     }
 
@@ -361,7 +359,7 @@ class FontRegisterProvider {
      * @param scanSubdirectories recursively scan subdirectories if <code>true</true>
      * @return the number of fonts registered
      */
-    public int registerFontDirectory(String dir, boolean scanSubdirectories) {
+    int registerFontDirectory(String dir, boolean scanSubdirectories) {
         LOGGER.debug(MessageFormat.format("Registering directory {0}, looking for fonts", dir));
         int count = 0;
         try {
@@ -398,7 +396,7 @@ class FontRegisterProvider {
      *
      * @return the number of fonts registered
      */
-    public int registerSystemFontDirectories() {
+    int registerSystemFontDirectories() {
         int count = 0;
         String[] withSubDirs = {
                 FileUtil.getFontsDir(),
@@ -428,8 +426,7 @@ class FontRegisterProvider {
      *
      * @return a set of registered fonts
      */
-
-    public Set<String> getRegisteredFonts() {
+    Set<String> getRegisteredFonts() {
         return fontNames.keySet();
     }
 
@@ -438,17 +435,17 @@ class FontRegisterProvider {
      *
      * @return a set of registered font families
      */
-
-    public Set<String> getRegisteredFontFamilies() {
+    Set<String> getRegisteredFontFamilies() {
         return fontFamilies.keySet();
     }
 
     /**
      * Checks if a certain font is registered.
+     *
      * @param fontname the name of the font that has to be checked.
      * @return true if the font is found
      */
-    public boolean isRegisteredFont(String fontname) {
+    boolean isRegisteredFont(String fontname) {
         return fontNames.containsKey(fontname.toLowerCase());
     }
 }
