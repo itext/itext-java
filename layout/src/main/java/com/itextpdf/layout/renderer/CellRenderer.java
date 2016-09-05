@@ -106,14 +106,14 @@ public class CellRenderer extends BlockRenderer {
         Matrix ctm = canvas.getGraphicsState().getCtm();
 
         // Avoid rotation
-        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
-        boolean avoidRotation = null != angle && null != getProperty(Property.BACKGROUND);
+        Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
+        boolean avoidRotation = null != angle && null != this.<Background>getProperty(Property.BACKGROUND);
         if (avoidRotation) {
             AffineTransform transform = new AffineTransform(ctm.get(0), ctm.get(1), ctm.get(3), ctm.get(4), ctm.get(6), ctm.get(7));
             try {
                 transform = transform.createInverse();
             } catch (NoninvertibleTransformException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException(e.getMessage(), e);
             }
             transform.concatenate(new AffineTransform());
             canvas.concatMatrix(transform);
