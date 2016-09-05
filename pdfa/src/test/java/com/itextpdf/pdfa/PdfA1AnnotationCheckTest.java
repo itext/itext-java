@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -134,7 +135,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
         PdfAnnotation annot = new PdfWidgetAnnotation(rect);
         annot.setFlag(PdfAnnotation.PRINT);
 
-        PdfStream s = new PdfStream("Hello World".getBytes());
+        PdfStream s = new PdfStream("Hello World".getBytes(StandardCharsets.ISO_8859_1));
         annot.setDownAppearance(new PdfDictionary());
         annot.setNormalAppearance(s);
 

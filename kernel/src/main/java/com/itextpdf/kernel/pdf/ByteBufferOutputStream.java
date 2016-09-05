@@ -50,6 +50,7 @@ import com.itextpdf.io.util.DecimalFormatUtil;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Acts like a <CODE>StringBuffer</CODE> but works with <CODE>byte</CODE> arrays.
@@ -231,7 +232,7 @@ public class ByteBufferOutputStream extends OutputStream {
      */
     public ByteBufferOutputStream append(String str) {
         if (str != null)
-            return append(str.getBytes());
+            return append(str.getBytes(StandardCharsets.ISO_8859_1));
         return this;
     }
     

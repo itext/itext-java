@@ -46,6 +46,7 @@ package com.itextpdf.io.codec;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.TreeMap;
 
 /**
@@ -243,8 +244,8 @@ public class TiffWriter {
      */
     public static class FieldAscii extends FieldBase {
         public FieldAscii(int tag, String values) {
-            super(tag, 2, values.getBytes().length + 1);
-            byte[] b = values.getBytes();
+            super(tag, 2, values.getBytes(StandardCharsets.US_ASCII).length + 1);
+            byte[] b = values.getBytes(StandardCharsets.US_ASCII);
             data = new byte[b.length + 1];
             System.arraycopy(b, 0, data, 0, b.length);
         }

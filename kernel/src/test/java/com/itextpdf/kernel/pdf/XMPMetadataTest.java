@@ -7,6 +7,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -60,13 +61,13 @@ public class XMPMetadataTest extends ExtendedITextTest{
         pdfDoc.getDocumentInfo().getPdfObject().remove(PdfName.ModDate);
         PdfPage page = pdfDoc.addNewPage();
         page.flush();
-        pdfDoc.setXmpMetadata("abc".getBytes());
+        pdfDoc.setXmpMetadata("abc".getBytes(StandardCharsets.ISO_8859_1));
         pdfDoc.close();
 
         PdfReader reader = new PdfReader(new ByteArrayInputStream(fos.toByteArray()));
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        Assert.assertArrayEquals("abc".getBytes(), pdfDocument.getXmpMetadata());
+        Assert.assertArrayEquals("abc".getBytes(StandardCharsets.ISO_8859_1), pdfDocument.getXmpMetadata());
         Assert.assertNotNull(pdfDocument.getPage(1));
         reader.close();
     }

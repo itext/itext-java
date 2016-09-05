@@ -62,6 +62,7 @@ import com.itextpdf.kernel.security.IExternalDecryptionProcess;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.cert.Certificate;
@@ -239,7 +240,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         long mem = SystemUtil.getFreeMemory();
         String s = time + "+" + mem + "+" + (seq++);
 
-        return md5.digest(s.getBytes());
+        return md5.digest(s.getBytes(StandardCharsets.ISO_8859_1));
     }
 
     public static PdfObject createInfoId(byte[] id, boolean modified) {

@@ -73,6 +73,7 @@ import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -1291,7 +1292,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * If true, the field can contain multiple lines of text; if false, the field???s text is restricted to a single line.
+     * If true, the field can contain multiple lines of text; if false, the field's text is restricted to a single line.
      *
      * @return whether the field can span over multiple lines.
      */
@@ -1463,7 +1464,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets default appearance string containing a sequence of valid page-content graphics or text state operators that
-     * define such properties as the field???s text size and color.
+     * define such properties as the field's text size and color.
      *
      * @return the default appearance graphics, as a {@link PdfString}
      */
@@ -1473,13 +1474,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets default appearance string containing a sequence of valid page-content graphics or text state operators that
-     * define such properties as the field???s text size and color.
+     * define such properties as the field's text size and color.
      *
      * @param defaultAppearance a valid sequence of PDF content stream syntax
      * @return the edited field
      */
     public PdfFormField setDefaultAppearance(String defaultAppearance) {
-        byte[] b = defaultAppearance.getBytes();
+        byte[] b = defaultAppearance.getBytes(StandardCharsets.UTF_8);
         int len = b.length;
         for (int k = 0; k < len; ++k) {
             if (b[k] == '\n')
@@ -2195,7 +2196,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * @deprecated Will be removed in 7.1. Use {@link #generateDefaultAppearanceString(PdfFont, float, PdfResources)} instead.
+     * @deprecated Will be removed in 7.1. Use {@link #generateDefaultAppearanceString(PdfFont, float, Color, PdfResources)} instead.
      */
     @Deprecated
     protected String generateDefaultAppearanceString(PdfFont font, int fontSize, PdfResources res) {
@@ -2839,7 +2840,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         canvas.saveState();
         canvas.resetFillColorRgb();
         canvas.concatMatrix(width, 0, 0, height, 0, 0);
-        canvas.getContentStream().getOutputStream().writeBytes(appearanceString.getBytes());
+        canvas.getContentStream().getOutputStream().writeBytes(appearanceString.getBytes(StandardCharsets.ISO_8859_1));
         canvas.restoreState();
     }
 

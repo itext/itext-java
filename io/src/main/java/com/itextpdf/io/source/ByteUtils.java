@@ -45,6 +45,8 @@ package com.itextpdf.io.source;
 
 import com.itextpdf.io.util.DecimalFormatUtil;
 
+import java.nio.charset.StandardCharsets;
+
 public class ByteUtils {
 
     static boolean HighPrecision = false;
@@ -132,7 +134,7 @@ public class ByteUtils {
                     return zero;
                 }
             }
-            byte[] result = DecimalFormatUtil.formatNumber(d, "0.######").getBytes();
+            byte[] result = DecimalFormatUtil.formatNumber(d, "0.######").getBytes(StandardCharsets.ISO_8859_1);
             if (buffer != null) {
                 buffer.prepend(result);
                 return null;

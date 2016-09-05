@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Category(IntegrationTest.class)
 public class PdfEncryptionTest {
@@ -16,7 +17,7 @@ public class PdfEncryptionTest {
     @Test
     public void encryptedDocumentWithFormFields() throws IOException {
         PdfReader reader = new PdfReader(sourceFolder + "encryptedDocumentWithFormFields.pdf",
-                new ReaderProperties().setPassword("12345".getBytes()));
+                new ReaderProperties().setPassword("12345".getBytes(StandardCharsets.ISO_8859_1)));
         PdfDocument pdfDocument = new PdfDocument(reader);
 
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, false);

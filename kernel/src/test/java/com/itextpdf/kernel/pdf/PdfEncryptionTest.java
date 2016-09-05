@@ -20,6 +20,7 @@ import org.junit.rules.ExpectedException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
@@ -44,9 +45,9 @@ import static org.junit.Assert.fail;
 public class PdfEncryptionTest extends ExtendedITextTest{
 
     /** User password. */
-    public static byte[] USER = "Hello".getBytes();
+    public static byte[] USER = "Hello".getBytes(StandardCharsets.ISO_8859_1);
     /** Owner password. */
-    public static byte[] OWNER = "World".getBytes();
+    public static byte[] OWNER = "World".getBytes(StandardCharsets.ISO_8859_1);
 
     static final String author = "Alexander Chingarev";
     static final String creator = "iText 7";
@@ -196,7 +197,7 @@ public class PdfEncryptionTest extends ExtendedITextTest{
         junitExpectedException.expectMessage(BadPasswordException.BadUserPassword);
 
         PdfReader reader = new PdfReader(sourceFolder + "encryptedWithPasswordStandard40.pdf",
-                new ReaderProperties().setPassword("wrong_password".getBytes()));
+                new ReaderProperties().setPassword("wrong_password".getBytes(StandardCharsets.ISO_8859_1)));
         PdfDocument doc = new PdfDocument(reader);
         doc.close();
     }
@@ -347,7 +348,7 @@ public class PdfEncryptionTest extends ExtendedITextTest{
                 "(" + text + ")Tj\n" +
                 "0 0 Td\n" +
                 "ET\n" +
-                "Q ").getBytes());
+                "Q ").getBytes(StandardCharsets.ISO_8859_1));
         page.getResources().addFont(page.getDocument(), PdfFontFactory.createFont(FontConstants.HELVETICA));
     }
 
