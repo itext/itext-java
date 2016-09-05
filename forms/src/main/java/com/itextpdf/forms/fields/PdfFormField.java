@@ -152,9 +152,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected float fontSize;
     protected Color color;
     protected int checkType;
-    protected float borderWidth = 1;
+    protected float borderWidth = 0;
     protected Color backgroundColor;
-    protected Color borderColor = Color.BLACK;
+    protected Color borderColor;
     protected int rotation = 0;
     protected PdfFormXObject form;
     protected PdfAConformanceLevel pdfAConformanceLevel;
@@ -1911,6 +1911,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the current border width.
      */
     public float getBorderWidth() {
+        PdfDictionary bs = getWidgets().get(0).getBorderStyle();
+        if (bs != null) {
+            PdfNumber w = bs.getAsNumber(PdfName.W);
+            if (w != null ) {
+                borderWidth = w.floatValue();
+            }
+        }
         return borderWidth;
     }
 
@@ -1927,17 +1934,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         }
         bs.put(PdfName.W, new PdfNumber(borderWidth));
         this.borderWidth = borderWidth;
-        //regenerateField();
+        regenerateField();
         return this;
     }
 
-    public PdfFormField setBorderStyle(PdfName style) {
-        PdfDictionary bs = getWidgets().get(0).getBorderStyle();
-        if (bs == null) {
-            bs = new PdfDictionary();
-            put(PdfName.BS, bs);
-        }
-        bs.put(PdfName.S, style);
+    public PdfFormField setBorderStyle(PdfDictionary style) {
+        //PdfDictionary bs = getWidgets().get(0).getBorderStyle();
+        getWidgets().get(0).setBorderStyle(style);
+//        if (bs == null) {
+//            bs = new PdfDictionary();
+//            put(PdfName.BS, bs);
+//        }
+//        bs.put(PdfName.S, style);
         regenerateField();
         return this;
     }
@@ -2469,6 +2477,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
          */
     protected void drawBorder(PdfCanvas canvas, PdfFormXObject xObject, float width, float height) {
         canvas.saveState();
+        float borderWidth = getBorderWidth();
+        PdfDictionary bs = getWidgets().get(0).getBorderStyle();
         if (borderWidth < 0) {
             borderWidth = 0;
         }
@@ -2487,8 +2497,50 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             borderWidth = Math.max(1, borderWidth);
             canvas.
                     setStrokeColor(borderColor).
-                    setLineWidth(borderWidth).
+                    setLineWidth(borderWidth);
+            if (bs != null) {
+                PdfName borderType = bs.getAsName(PdfName.S);
+                if (borderType != null && borderType.equals(PdfName.D)) {
+                    PdfArray dashArray = bs.getAsArray(PdfName.D);
+                    if (dashArray != null) {
+                        int unitsOn = dashArray.getAsNumber(0) != null ? dashArray.getAsNumber(0).intValue() : 0;
+                        int unitsOff = dashArray.getAsNumber(1) != null ? dashArray.getAsNumber(1).intValue() : 0;
+                        canvas.setLineDash(unitsOn, unitsOff, 0);
+                    }
+                }
+            }
+            canvas.
                     rectangle(0, 0, width, height).
+                    stroke();
+        }
+
+        applyRotation(xObject, height, width);
+        canvas.restoreState();
+    }
+
+    protected void drawRadioBorder(PdfCanvas canvas, PdfFormXObject xObject, float width, float height) {
+        canvas.saveState();
+        float borderWidth = getBorderWidth();
+        float cx = width /2;
+        float cy = height/2;
+        if (borderWidth < 0) {
+            borderWidth = 0;
+        }
+        float r = (Math.min(width, height) - borderWidth) / 2;
+
+        if (backgroundColor != null) {
+            canvas.
+                    setFillColor(backgroundColor).
+                    circle(cx, cy, r + borderWidth / 2).
+                    fill();
+        }
+
+        if (borderWidth > 0 && borderColor != null) {
+            borderWidth = Math.max(1, borderWidth);
+            canvas.
+                    setStrokeColor(borderColor).
+                    setLineWidth(borderWidth).
+                    circle(cx, cy, r).
                     stroke();
         }
 
@@ -2510,12 +2562,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfFormXObject xObjectOn = new PdfFormXObject(rect);
         PdfFormXObject xObjectOff = new PdfFormXObject(rect);
 
-        drawBorder(canvasOn, xObjectOn, width, height);
+        drawRadioBorder(canvasOn, xObjectOn, width, height);
         drawRadioField(canvasOn, width, height, true);
 
         PdfStream streamOff = new PdfStream().makeIndirect(getDocument());
         PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
-        drawBorder(canvasOff, xObjectOff, width, height);
+        drawRadioBorder(canvasOff, xObjectOff, width, height);
         if (pdfAConformanceLevel != null && (pdfAConformanceLevel.getPart().equals("2") || pdfAConformanceLevel.getPart().equals("3"))) {
             xObjectOn.getResources();
             xObjectOff.getResources();

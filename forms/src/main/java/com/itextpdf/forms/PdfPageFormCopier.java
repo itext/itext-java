@@ -68,6 +68,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
     PdfAcroForm formTo;
     PdfDocument documentFrom;
     PdfDocument documentTo;
+    Logger logger = LoggerFactory.getLogger(PdfPageFormCopier.class);
 
     @Override
     public void copy(PdfPage fromPage, PdfPage toPage) {
@@ -146,7 +147,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                                     toPage.getPdfObject().getAsArray(PdfName.Annots).add(clonedAnnot);
                                     toPage.removeAnnotation(annot);
                                     field = mergeFieldsWithTheSameName(field, PdfFormField.makeFormField(clonedAnnot, toPage.getDocument()));
-                                    Logger logger = LoggerFactory.getLogger(PdfPageFormCopier.class);
+
                                     logger.warn(MessageFormat.format(LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, annotNameString));
                                     PdfArray kids  = field.getKids();
                                     field.getPdfObject().remove(PdfName.Kids);
@@ -166,18 +167,20 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
     private PdfFormField mergeFieldsWithTheSameName(PdfFormField existingField, PdfFormField newField) {
         String fullFieldName = newField.getFieldName().toUnicodeString();
         PdfString fieldName = newField.getPdfObject().getAsString(PdfName.T);
-        existingField.getPdfObject().remove(PdfName.T);
-        existingField.getPdfObject().remove(PdfName.P);
-        PdfFormField mergedField = formTo.getField(fullFieldName);
-        PdfArray kids = mergedField.getKids();
-        if (kids != null && !kids.isEmpty()) {
-            mergedField.addKid(existingField);
-            return mergedField;
-        }
-        formTo.getFields().remove(existingField.getPdfObject());
+
         newField.getPdfObject().remove(PdfName.T);
         newField.getPdfObject().remove(PdfName.P);
-        mergedField = PdfFormField.createEmptyField(documentTo);
+        existingField = formTo.getField(fullFieldName);
+        PdfArray kids = existingField.getKids();
+        if (kids != null && !kids.isEmpty()) {
+            existingField.addKid(newField);
+            return existingField;
+        }
+
+        existingField.getPdfObject().remove(PdfName.T);
+        existingField.getPdfObject().remove(PdfName.P);
+        formTo.getFields().remove(existingField.getPdfObject());
+        PdfFormField mergedField = PdfFormField.createEmptyField(documentTo);
         mergedField.
                 put(PdfName.FT, existingField.getFormType()).
                 put(PdfName.T, fieldName);
