@@ -91,7 +91,7 @@ public class OpenTypeGdefTableReader {
                 return true;
             }
         }
-        if (markAttachmentClass != null && (flag >> 8) > 0) {
+        if (markAttachmentClass != null && markAttachmentClass.getOtfClass(glyph) > 0 && (flag >> 8) > 0) {
             return markAttachmentClass.getOtfClass(glyph) != (flag >> 8);
         }
         return false;
