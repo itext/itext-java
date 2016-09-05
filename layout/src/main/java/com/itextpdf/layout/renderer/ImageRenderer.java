@@ -166,18 +166,9 @@ public class ImageRenderer extends AbstractRenderer {
             getMatrix(t, imageItselfScaledWidth, imageItselfScaledHeight);
         }
 
-        //Add properties after calculation
-        addLayoutProperties();
-
         applyMargins(occupiedArea.getBBox(), true);
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null,
                 isPlacingForced ? this : null);
-    }
-
-    private void addLayoutProperties(){
-        //Add properties after calculation
-        setProperty(Property.HEIGHT, height);
-        setProperty(Property.WIDTH, width);
     }
 
     @Override

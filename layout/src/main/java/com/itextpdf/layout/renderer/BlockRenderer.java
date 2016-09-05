@@ -130,7 +130,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
                 }
 
-                if (childRenderer.<Object>getProperty(Property.WIDTH) != null) {
+                if (childRenderer.getOccupiedArea() != null) {
                     alignChildHorizontally(childRenderer, layoutBox.getWidth());
                 }
 
@@ -220,7 +220,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
             if (result.getStatus() == LayoutResult.FULL) {
                 layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
-                if (childRenderer.<Object>getProperty(Property.WIDTH) != null) {
+                if (childRenderer.getOccupiedArea() != null) {
                     alignChildHorizontally(childRenderer, layoutBox.getWidth());
                 }
             }
