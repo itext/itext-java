@@ -768,6 +768,14 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    /**
+     * @deprecated Use {@link #isNotFittingLayoutArea(LayoutArea)} instead.
+     */
+    @Deprecated
+    protected boolean isNotFittingHeight(LayoutArea layoutArea) {
+        return isNotFittingLayoutArea(layoutArea);
+    }
+
     protected boolean isNotFittingLayoutArea(LayoutArea layoutArea) {
         Rectangle area = applyMargins(layoutArea.getBBox().clone(), false);
         area = applyPaddings(area, false);
