@@ -953,8 +953,8 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     private void buildBordersArrays(CellRenderer cell, int row, boolean hasContent) {
-        int colspan = cell.getPropertyAsInteger(Property.COLSPAN);
-        int rowspan = cell.getPropertyAsInteger(Property.ROWSPAN);
+        int colspan = (int)cell.getPropertyAsInteger(Property.COLSPAN);
+        int rowspan = (int)cell.getPropertyAsInteger(Property.ROWSPAN);
         int colN = cell.getModelElement().getCol();
         Border[] cellBorders = cell.getBorders();
         if (row + 1 - rowspan < 0) {
