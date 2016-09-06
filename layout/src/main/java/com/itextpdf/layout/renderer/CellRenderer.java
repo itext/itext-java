@@ -52,7 +52,6 @@ import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.Property;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 public class CellRenderer extends BlockRenderer {
 
