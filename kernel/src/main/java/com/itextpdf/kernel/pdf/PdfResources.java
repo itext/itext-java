@@ -384,23 +384,32 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the default color space.
      *
-     * @param defaultCsKey
-     * @param defaultCsValue
+     * @deprecated Will be removed in iText 7.1.0. Use {@link #setDefaultGray(PdfColorSpace)},
+     *             {@link #setDefaultRgb(PdfColorSpace)} or {@link #setDefaultCmyk(PdfColorSpace)} instead.
+     *
+     * @param defaultCsKey the name of Default Color Space. Should be {@link PdfName#DefaultGray},
+     *                     {@link PdfName#DefaultRGB}, or {@link PdfName#DefaultCMYK}.
+     * @param defaultCsValue the value of the default color space to be set.
      */
+    @Deprecated
     public void setDefaultColorSpace(PdfName defaultCsKey, PdfColorSpace defaultCsValue) {
+        if (!defaultCsKey.equals(PdfName.DefaultCMYK) && !defaultCsKey.equals(PdfName.DefaultGray) &&
+                !defaultCsKey.equals(PdfName.DefaultRGB)) {
+            throw new PdfException(PdfException.UnsupportedDefaultColorSpaceName);
+        }
         addResource(defaultCsValue.getPdfObject(), PdfName.ColorSpace, defaultCsKey);
     }
 
     public void setDefaultGray(PdfColorSpace defaultCs) {
-        setDefaultColorSpace(PdfName.DefaultGray, defaultCs);
+        addResource(defaultCs.getPdfObject(), PdfName.ColorSpace, PdfName.DefaultGray);
     }
 
     public void setDefaultRgb(PdfColorSpace defaultCs) {
-        setDefaultColorSpace(PdfName.DefaultRGB, defaultCs);
+        addResource(defaultCs.getPdfObject(), PdfName.ColorSpace, PdfName.DefaultRGB);
     }
 
     public void setDefaultCmyk(PdfColorSpace defaultCs) {
-        setDefaultColorSpace(PdfName.DefaultCMYK, defaultCs);
+        addResource(defaultCs.getPdfObject(), PdfName.ColorSpace, PdfName.DefaultCMYK);
     }
 
     public <T extends PdfObject> PdfName getResourceName(PdfObjectWrapper<T> resource) {
