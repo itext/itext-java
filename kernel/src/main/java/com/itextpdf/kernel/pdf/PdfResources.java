@@ -413,7 +413,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public <T extends PdfObject> PdfName getResourceName(PdfObjectWrapper<T> resource) {
-        return resourceToName.get(resource.getPdfObject());
+        return getResourceName(resource.getPdfObject());
     }
 
     public PdfName getResourceName(PdfObject resource) {
