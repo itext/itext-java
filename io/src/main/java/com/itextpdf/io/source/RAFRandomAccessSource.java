@@ -76,7 +76,7 @@ class RAFRandomAccessSource implements IRandomAccessSource {
      */
     // TODO: test to make sure we are handling the length properly (i.e. is raf.length() the last byte in the file, or one past the last byte?)
     public int get(long position) throws java.io.IOException {
-        if (position > raf.length())
+        if (position > length)
             return -1;
 
         // Not thread safe!
