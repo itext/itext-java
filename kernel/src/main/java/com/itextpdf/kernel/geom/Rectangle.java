@@ -73,6 +73,7 @@ public class Rectangle implements Serializable {
 
     /**
      * Calculates the common rectangle which includes all the input rectangles.
+     *
      * @param rectangles list of input rectangles.
      * @return common rectangle.
      */
@@ -98,6 +99,19 @@ public class Rectangle implements Serializable {
         return new Rectangle(llx, lly, urx-llx, ury-lly);
     }
 
+    /**
+     * Sets the rectangle by the coordinates, specifying its lower left and upper right points. May be used in chain.
+     * <br/>
+     * <br/>
+     * Note: this method will normalize coordinates, so the rectangle will have non negative width and height,
+     * and its x and y coordinates specified lower left point.
+     *
+     * @param llx the X coordinate of lower left point
+     * @param lly the Y coordinate of lower left point
+     * @param urx the X coordinate of upper right point
+     * @param ury the Y coordinate of upper right point
+     * @return this {@link Rectangle} instance.
+     */
     public Rectangle setBbox(float llx, float lly, float urx, float ury) {
         // If llx is greater than urx, swap them (normalize)
         if (llx > urx) {
@@ -118,75 +132,139 @@ public class Rectangle implements Serializable {
         return this;
     }
 
+    /**
+     * Gets the X coordinate of lower left point.
+     *
+     * @return the X coordinate of lower left point.
+     */
     public float getX() {
         return x;
     }
 
+    /**
+     * Sets the X coordinate of lower left point. May be used in chain.
+     *
+     * @param x the X coordinate of lower left point to be set.
+     * @return this {@link Rectangle} instance.
+     */
     public Rectangle setX(float x) {
         this.x = x;
         return this;
     }
 
+    /**
+     * Gets the Y coordinate of lower left point.
+     *
+     * @return the Y coordinate of lower left point.
+     */
     public float getY() {
         return y;
     }
 
+    /**
+     * Sets the Y coordinate of lower left point. May be used in chain.
+     *
+     * @param y the Y coordinate of lower left point to be set.
+     * @return this {@link Rectangle} instance.
+     */
     public Rectangle setY(float y) {
         this.y = y;
         return this;
     }
 
+    /**
+     * Gets the width of rectangle.
+     *
+     * @return the width of rectangle.
+     */
     public float getWidth() {
         return width;
     }
 
+    /**
+     * Sets the width of rectangle. May be used in chain.
+     *
+     * @param width the the width of rectangle to be set.
+     * @return this {@link Rectangle} instance.
+     */
     public Rectangle setWidth(float width) {
         this.width = width;
         return this;
     }
 
+    /**
+     * Gets the height of rectangle.
+     *
+     * @return the height of rectangle.
+     */
     public float getHeight() {
         return height;
     }
 
+    /**
+     * Sets the height of rectangle. May be used in chain.
+     *
+     * @param height the the width of rectangle to be set.
+     * @return this {@link Rectangle} instance.
+     */
     public Rectangle setHeight(float height) {
         this.height = height;
         return this;
     }
 
+    /**
+     * Increases the height of rectangle by the given value. May be used in chain.
+     *
+     * @param extra the value of the extra height to be added.
+     * @return this {@link Rectangle} instance.
+     */
     public Rectangle increaseHeight(float extra) {
         this.height += extra;
         return this;
     }
 
+    /**
+     * Decreases the height of rectangle by the given value. May be used in chain.
+     *
+     * @param extra the value of the extra height to be subtracted.
+     * @return this {@link Rectangle} instance.
+     */
     public Rectangle decreaseHeight(float extra) {
         this.height -= extra;
         return this;
     }
 
     /**
-     *  Gets llx, the same: {@code getX()}.
+     *  Gets the X coordinate of the left edge of the rectangle. Same as: {@code getX()}.
+     *
+     *  @return the X coordinate of the left edge of the rectangle.
      */
     public float getLeft() {
         return x;
     }
 
     /**
-     * Gets urx, the same to {@code getX() + getWidth()}.
+     * Gets the X coordinate of the right edge of the rectangle. Same as: {@code getX() + getWidth()}.
+     *
+     * @return the X coordinate of the right edge of the rectangle.
      */
     public float getRight() {
         return x + width;
     }
 
     /**
-     * Gets ury, the same to {@code getY() + getHeight()}.
+     * Gets the Y coordinate of the upper edge of the rectangle. Same as: {@code getY() + getHeight()}.
+     *
+     * @return the Y coordinate of the upper edge of the rectangle.
      */
     public float getTop() {
         return y + height;
     }
 
     /**
-     * Gets lly, the same to {@code getY()}.
+     * Gets the Y coordinate of the lower edge of the rectangle. Same as: {@code getY()}.
+     *
+     * @return the Y coordinate of the lower edge of the rectangle.
      */
     public float getBottom() {
         return y;
@@ -239,6 +317,11 @@ public class Rectangle implements Serializable {
                 getHeight();
     }
 
+    /**
+     * Gets the copy of this rectangle.
+     *
+     * @return the copied rectangle.
+     */
     public Rectangle clone() {
         return new Rectangle(x, y, width, height);
     }
