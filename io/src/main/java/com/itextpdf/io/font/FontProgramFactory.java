@@ -165,9 +165,9 @@ public final class FontProgramFactory {
      * createFont(name, encoding, embedded, true, null, null);
      * </PRE>
      *
-     * @param fontProgram   the name of the font or its location on file
-     * @param cached ttrue if the font comes from the cache or is added to
-     *               the cache if new, false if the font is always created new
+     * @param fontProgram the name of the font or its location on file
+     * @param cached      <code>true</code> if the font comes from the cache or is added to
+     *                    the cache if new, false if the font is always created new
      * @return returns a new font. This font may come from the cache
      */
     public static FontProgram createFont(String fontProgram, boolean cached) throws java.io.IOException {
@@ -209,8 +209,8 @@ public final class FontProgramFactory {
      * </PRE>
      *
      * @param fontProgram the true type font or the afm in a byte array
-     *             an exception if the font is not recognized. Note that even if true an exception may be thrown in some circumstances.
-     *             This parameter is useful for FontProgramFactory that may have to check many invalid font names before finding the right one
+     *                    an exception if the font is not recognized. Note that even if true an exception may be thrown in some circumstances.
+     *                    This parameter is useful for FontProgramFactory that may have to check many invalid font names before finding the right one
      * @return returns a new font. This font may come from the cache but only if cached
      * is true, otherwise it will always be created new
      */
@@ -442,7 +442,7 @@ public final class FontProgramFactory {
      * "# full 'A' nottriangeqlleft 0041 'B' dividemultiply 0042 32 space 0020"
      * </PRE>
      *
-     * @param ttc  location  of true type collection file (*.ttc)
+     * @param ttc      location  of true type collection file (*.ttc)
      * @param ttcIndex the encoding to be applied to this font
      * @param cached   true if the font comes from the cache or is added to
      *                 the cache if new, false if the font is always created new

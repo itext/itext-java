@@ -69,6 +69,7 @@ public class TrueTypeCollection {
 
     /**
      * Creates a new {@link TrueTypeCollection} instance by its bytes.
+     *
      * @param ttc the byte contents of the collection
      * @throws java.io.IOException in case the input in mal-formatted
      */
@@ -88,6 +89,7 @@ public class TrueTypeCollection {
 
     /**
      * Creates a new {@link TrueTypeCollection} instance by its file path.
+     *
      * @param ttcPath the path of the collection
      * @throws java.io.IOException in case the input in mal-formatted
      */
@@ -129,6 +131,7 @@ public class TrueTypeCollection {
 
     /**
      * Indicates if fonts created by the call to {@link #getFontByTccIndex(int)} will be cached or not.
+     *
      * @return <code>true</code> if the created fonts will be cached, <code>false</code> otherwise
      */
     public boolean isCached() {
@@ -137,6 +140,7 @@ public class TrueTypeCollection {
 
     /**
      * Sets if fonts created by the call to {@link #getFontByTccIndex(int)} will be cached or not.
+     *
      * @param cached <code>true</code> if the created fonts will be cached, <code>false</code> otherwise
      */
     public void setCached(boolean cached) {
