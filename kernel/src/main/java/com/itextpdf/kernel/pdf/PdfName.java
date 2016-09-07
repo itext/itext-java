@@ -162,6 +162,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Bounds = createDirectName("Bounds");
     public static final PdfName BS = createDirectName("BS");
     public static final PdfName Btn = createDirectName("Btn");
+    public static final PdfName Butt = createDirectName("Butt");
     public static final PdfName ByteRange = createDirectName("ByteRange");
     public static final PdfName C = createDirectName("C");
     public static final PdfName C0 = createDirectName("C0");
@@ -254,6 +255,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName DeviceN = createDirectName("DeviceN");
     public static final PdfName DeviceRGB = createDirectName("DeviceRGB");
     public static final PdfName DeviceRGBK = createDirectName("DeviceRGBK");
+    public static final PdfName Diamond = createDirectName("Diamond");
     public static final PdfName Difference = createDirectName("Difference");
     public static final PdfName Differences = createDirectName("Differences");
     public static final PdfName Div = createDirectName("Div");
@@ -463,6 +465,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName ListMode = createDirectName("ListMode");
     public static final PdfName ListNumbering = createDirectName("ListNumbering");
     public static final PdfName LJ = createDirectName("LJ");
+    public static final PdfName LL = createDirectName("LL");
     public static final PdfName LLE = createDirectName("LLE");
     public static final PdfName LLO = createDirectName("LLO");
     public static final PdfName Lock = createDirectName("Lock");
@@ -631,6 +634,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName RB = createDirectName("RB");
     public static final PdfName RBGroups = createDirectName("RBGroups");
     public static final PdfName RC = createDirectName("RC");
+    public static final PdfName RClosedArrow = createDirectName("RClosedArrow");
     public static final PdfName RD = createDirectName("RD");
     public static final PdfName Reason = createDirectName("Reason");
     public static final PdfName Recipients = createDirectName("Recipients");
@@ -652,6 +656,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Ridge = createDirectName("Ridge");
     public static final PdfName RO = createDirectName("RO");
     public static final PdfName RoleMap = createDirectName("RoleMap");
+    public static final PdfName ROpenArrow = createDirectName("ROpenArrow");
     public static final PdfName Root = createDirectName("Root");
     public static final PdfName Rotate = createDirectName("Rotate");
     public static final PdfName Rows = createDirectName("Rows");
@@ -684,6 +689,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Simplex = createDirectName("Simplex");
     public static final PdfName SinglePage = createDirectName("SinglePage");
     public static final PdfName Size = createDirectName("Size");
+    public static final PdfName Slash = createDirectName("Slash");
     public static final PdfName SM = createDirectName("SM");
     public static final PdfName SMask = createDirectName("SMask");
     public static final PdfName SMaskInData = createDirectName("SMaskInData");
@@ -756,6 +762,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName TOC = createDirectName("TOC");
     public static final PdfName TOCI = createDirectName("TOCI");
     public static final PdfName Toggle = createDirectName("Toggle");
+    public static final PdfName Top = createDirectName("Top");
     public static final PdfName TopSecret = createDirectName("TopSecret");
     public static final PdfName ToUnicode = createDirectName("ToUnicode");
     public static final PdfName TR = createDirectName("TR");

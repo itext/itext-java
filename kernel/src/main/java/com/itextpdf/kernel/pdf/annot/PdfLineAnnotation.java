@@ -81,12 +81,12 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
     }
 
     public float getLeaderLine() {
-        PdfNumber n = getPdfObject().getAsNumber(PdfName.LE);
+        PdfNumber n = getPdfObject().getAsNumber(PdfName.LL);
         return n == null ? 0 : n.floatValue();
     }
 
     public PdfLineAnnotation setLeaderLine(float leaderLine) {
-        return (PdfLineAnnotation) put(PdfName.LE, new PdfNumber(leaderLine));
+        return (PdfLineAnnotation) put(PdfName.LL, new PdfNumber(leaderLine));
     }
 
     public float getLeaderLineExtension() {
