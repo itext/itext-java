@@ -45,8 +45,6 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.util.FileUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -54,6 +52,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * If you are using True Type fonts, you can declare the paths of the different ttf- and ttc-files
@@ -307,15 +308,17 @@ class FontRegisterProvider {
                     }
                 }
             } else if (path.toLowerCase().endsWith(".ttc")) {
-                if (alias != null) {
-                    LOGGER.error("You can't define an alias for a true type collection.");
-                }
-                TrueTypeCollection ttc = new TrueTypeCollection(path, PdfEncodings.WINANSI);
+                TrueTypeCollection ttc = new TrueTypeCollection(path);
                 for (int i = 0; i < ttc.getTTCSize(); i++) {
-                    registerFont(path + "," + i);
+                    String fullPath = path + "," + i;
+                    if (alias != null) {
+                        registerFont(fullPath, alias + "," + i);
+                    } else {
+                        registerFont(fullPath);
+                    }
                 }
             } else if (path.toLowerCase().endsWith(".afm") || path.toLowerCase().endsWith(".pfm")) {
-                FontProgram fontProgram = FontProgramFactory.createFont(path, false);
+                FontProgram fontProgram = FontProgramFactory.createFont(path);
                 String fullName = fontProgram.getFontNames().getFullName()[0][3].toLowerCase();
                 String familyName = fontProgram.getFontNames().getFamilyName()[0][3].toLowerCase();
                 String psName = fontProgram.getFontNames().getFontName().toLowerCase();

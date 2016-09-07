@@ -54,26 +54,49 @@ import com.itextpdf.io.util.FileUtil;
 public class TrueTypeCollection {
 
     protected RandomAccessFileOrArray raf;
-    String encoding;
-    int TTCSize = 0;
-    String ttcPath;
-    byte[] ttc;
-    boolean cached = false;
+    private int TTCSize = 0;
+    private String ttcPath;
+    private byte[] ttc;
+    private boolean cached = true;
 
+    /**
+     * @deprecated Will be removed in 7.1. Use {@link #TrueTypeCollection(byte[])} instead
+     */
+    @Deprecated
     public TrueTypeCollection(byte[] ttc, String encoding) throws java.io.IOException {
+        this(ttc);
+    }
+
+    /**
+     * Creates a new {@link TrueTypeCollection} instance by its bytes.
+     * @param ttc the byte contents of the collection
+     * @throws java.io.IOException in case the input in mal-formatted
+     */
+    public TrueTypeCollection(byte[] ttc) throws java.io.IOException {
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(ttc));
         this.ttc = ttc;
-        this.encoding = encoding;
         initFontSize();
     }
 
+    /**
+     * @deprecated Will be removed in 7.1. Use {@link #TrueTypeCollection(String)} instead
+     */
+    @Deprecated
     public TrueTypeCollection(String ttcPath, String encoding) throws java.io.IOException {
+        this(ttcPath);
+    }
+
+    /**
+     * Creates a new {@link TrueTypeCollection} instance by its file path.
+     * @param ttcPath the path of the collection
+     * @throws java.io.IOException in case the input in mal-formatted
+     */
+    public TrueTypeCollection(String ttcPath) throws java.io.IOException {
         if (!FileUtil.fileExists(ttcPath)) {
             throw new IOException(IOException.FontFile1NotFound).setMessageParams(ttcPath);
         }
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(ttcPath));
         this.ttcPath = ttcPath;
-        this.encoding = encoding;
         initFontSize();
     }
 
@@ -104,10 +127,18 @@ public class TrueTypeCollection {
         return TTCSize;
     }
 
+    /**
+     * Indicates if fonts created by the call to {@link #getFontByTccIndex(int)} will be cached or not.
+     * @return <code>true</code> if the created fonts will be cached, <code>false</code> otherwise
+     */
     public boolean isCached() {
         return cached;
     }
 
+    /**
+     * Sets if fonts created by the call to {@link #getFontByTccIndex(int)} will be cached or not.
+     * @param cached <code>true</code> if the created fonts will be cached, <code>false</code> otherwise
+     */
     public void setCached(boolean cached) {
         this.cached = cached;
     }

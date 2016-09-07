@@ -1268,7 +1268,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
     @Test
     public void testCheckTTCSize() throws IOException {
-        TrueTypeCollection collection = new TrueTypeCollection(fontsFolder + "uming.ttc", "WinAnsi");
+        TrueTypeCollection collection = new TrueTypeCollection(fontsFolder + "uming.ttc");
         Assert.assertTrue(collection.getTTCSize() == 4);
     }
 
