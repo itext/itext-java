@@ -382,7 +382,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Sets the default color space.
+     * Sets the default color space (see ISO-320001 Paragraph 8.6.5.6).
      *
      * @deprecated Will be removed in iText 7.1.0. Use {@link #setDefaultGray(PdfColorSpace)},
      *             {@link #setDefaultRgb(PdfColorSpace)} or {@link #setDefaultCmyk(PdfColorSpace)} instead.
@@ -400,22 +400,56 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         addResource(defaultCsValue.getPdfObject(), PdfName.ColorSpace, defaultCsKey);
     }
 
+    /**
+     * Sets the value of default Gray Color Space (see ISO-320001 Paragraph 8.6.5.6).
+     *
+     * @param defaultCs the color space to set.
+     */
     public void setDefaultGray(PdfColorSpace defaultCs) {
         addResource(defaultCs.getPdfObject(), PdfName.ColorSpace, PdfName.DefaultGray);
     }
 
+    /**
+     * Sets the value of default RGB Color Space (see ISO-320001 Paragraph 8.6.5.6).
+     *
+     * @param defaultCs the color space to set.
+     */
     public void setDefaultRgb(PdfColorSpace defaultCs) {
         addResource(defaultCs.getPdfObject(), PdfName.ColorSpace, PdfName.DefaultRGB);
     }
 
+    /**
+     * Sets the value of default CMYK Color Space (see ISO-320001 Paragraph 8.6.5.6).
+     *
+     * @param defaultCs the color space to set.
+     */
     public void setDefaultCmyk(PdfColorSpace defaultCs) {
         addResource(defaultCs.getPdfObject(), PdfName.ColorSpace, PdfName.DefaultCMYK);
     }
 
+    /**
+     * Gets the mapped resource name of the {@link PdfObject} under the given wrapper.
+     * </br>
+     * </br>
+     * Note: if the name for the object won't be found, then the name of object's Indirect Reference will be searched.
+     *
+     * @param resource the wrapper of the {@link PdfObject}, for which the name will be searched.
+     * @param <T> the type of the underlined {@link PdfObject} in wrapper.
+     * @return the mapped resource name or {@code null} if object isn't added to resources.
+     */
     public <T extends PdfObject> PdfName getResourceName(PdfObjectWrapper<T> resource) {
         return getResourceName(resource.getPdfObject());
     }
 
+    /**
+     * Gets the mapped resource name of the given {@link PdfObject}.
+     * </br>
+     * </br>
+     * Note: if the name for the object won't be found, then the name of object's Indirect Reference will be searched.
+     *
+     * @param resource the object, for which the name will be searched.
+     * @return the mapped resource name or {@code null} if object isn't added to resources.
+     */
     public PdfName getResourceName(PdfObject resource) {
         PdfName resName = resourceToName.get(resource);
         if (resName == null)
@@ -423,6 +457,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return resName;
     }
 
+    /**
+     * Gets the names of all the added resources.
+     *
+     * @return the name of all the added resources.
+     */
     public Set<PdfName> getResourceNames() {
         Set<PdfName> names = new TreeSet<>(); // TODO: isn't it better to use HashSet? Do we really need certain order?
         for (PdfName resType : getPdfObject().keySet()) {
@@ -431,21 +470,47 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return names;
     }
 
+    /**
+     * Gets the array of predefined procedure set names (see ISO-320001 Paragraph 14.2).
+     *
+     * @return the array of predefined procedure set names.
+     */
     public PdfArray getProcSet() {
         return getPdfObject().getAsArray(PdfName.ProcSet);
     }
 
+    /**
+     * Sets the array of predefined procedure set names (see ISO-320001 Paragraph 14.2).
+     *
+     * @param array the array of predefined procedure set names to be set.
+     */
     public void setProcSet(PdfArray array) {
         getPdfObject().put(PdfName.ProcSet, array);
     }
 
+    /**
+     * Gets the names of all resources of specified type.
+     *
+     * @param resType the resource type. Should be {@link PdfName#ColorSpace}, {@link PdfName#ExtGState},
+     *                {@link PdfName#Pattern}, {@link PdfName#Shading}, {@link PdfName#XObject}, {@link PdfName#Font}.
+     * @return set of resources name of corresponding type. May be empty.
+     *         Will be empty in case of incorrect resource type.
+     */
     public Set<PdfName> getResourceNames(PdfName resType) {
         PdfDictionary resourceCategory = getPdfObject().getAsDictionary(resType);
         return resourceCategory == null ? new TreeSet<PdfName>() : resourceCategory.keySet(); // TODO: TreeSet or HashSet enough?
     }
 
-    public PdfDictionary getResource(PdfName pdfName) {
-        return getPdfObject().getAsDictionary(pdfName);
+    /**
+     * Get the {@link PdfDictionary} object that that contain resources of specified type.
+     *
+     * @param resType the resource type. Should be {@link PdfName#ColorSpace}, {@link PdfName#ExtGState},
+     *                {@link PdfName#Pattern}, {@link PdfName#Shading}, {@link PdfName#XObject}, {@link PdfName#Font}.
+     * @return the {@link PdfDictionary} object containing all resources of specified type,
+     *         or {@code null} in case of incorrect resource type.
+     */
+    public PdfDictionary getResource(PdfName resType) {
+        return getPdfObject().getAsDictionary(resType);
     }
 
     @Override
@@ -549,7 +614,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         /**
          * Constructs an instance of {@link ResourceNameGenerator} class.
          *
-         * @param resourceType Type of resource ({@link PdfName#XObject}, {@link PdfName#Font} etc).
+         * @param resourceType Type of resource. Should be {@link PdfName#ColorSpace}, {@link PdfName#ExtGState},
+         *                     {@link PdfName#Pattern}, {@link PdfName#Shading}, {@link PdfName#XObject}, {@link PdfName#Font}.
          * @param prefix       Prefix used for generating names.
          * @param seed         Seed for the value which is appended to the number each time
          *                     new name is generated.
@@ -563,13 +629,20 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         /**
          * Constructs an instance of {@link ResourceNameGenerator} class.
          *
-         * @param resourceType Type of resource ({@link PdfName#XObject}, {@link PdfName#Font} etc).
+         * @param resourceType Type of resource. Should be {@link PdfName#ColorSpace}, {@link PdfName#ExtGState},
+         *                     {@link PdfName#Pattern}, {@link PdfName#Shading}, {@link PdfName#XObject}, {@link PdfName#Font}.
          * @param prefix       Prefix used for generating names.
          */
         public ResourceNameGenerator(PdfName resourceType, String prefix) {
             this(resourceType, prefix, 1);
         }
 
+        /**
+         * Gets the resource type of generator.
+         *
+         * @return Type of resource. May be {@link PdfName#ColorSpace}, {@link PdfName#ExtGState},
+         *         {@link PdfName#Pattern}, {@link PdfName#Shading}, {@link PdfName#XObject}, {@link PdfName#Font}.
+         */
         public PdfName getResourceType() {
             return resourceType;
         }
@@ -577,7 +650,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         /**
          * Generates new (unique) resource name.
          *
-         * @return New (unique) resource name.
+         * @param resources the {@link PdfResources} object for which name will be generated.
+         * @return new (unique) resource name.
          */
         public PdfName generate(PdfResources resources) {
             PdfName newName = new PdfName(prefix + counter++);
