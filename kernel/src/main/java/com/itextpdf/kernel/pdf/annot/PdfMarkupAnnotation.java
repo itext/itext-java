@@ -81,7 +81,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
     }
 
     /**
-     * The text label that will be displayed in the title bar of the annotation’s pop-up window
+     * The text label that will be displayed in the title bar of the annotation's pop-up window
      * when open and active. This entry shall identify the user who added the annotation.
      * @return {@link PdfString} which value is an annotation text label content
      * or null if text is not specified.
@@ -91,7 +91,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
     }
 
     /**
-     * Sets the text label that will be displayed in the title bar of the annotation’s pop-up window
+     * Sets the text label that will be displayed in the title bar of the annotation's pop-up window
      * when open and active. This entry shall identify the user who added the annotation.
      * @param text {@link PdfString} which value is an annotation text label content.
      * @return this {@link PdfMarkupAnnotation} instance.
@@ -346,7 +346,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      * the Rect entry of the annotation and another rectangle within that one, which
      * meaning depends on the type of the annotation:
      * <ul>
-     *     <li> for {@link PdfFreeTextAnnotation} the inner rectangle is where the annotation’s text should be displayed;</li>
+     *     <li> for {@link PdfFreeTextAnnotation} the inner rectangle is where the annotation's text should be displayed;</li>
      *     <li>
      *         for {@link PdfSquareAnnotation} and {@link PdfCircleAnnotation} the inner rectangle is the actual boundaries
      *         of the underlying square or circle;
@@ -425,7 +425,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
     /**
      * An array of numbers in the range 0.0 to 1.0 specifying the interior color which is used to fill areas specific
      * for different types of annotation. For {@link PdfLineAnnotation} and polyline annotation ({@link PdfPolyGeomAnnotation} -
-     * the annotation’s line endings, for {@link PdfSquareAnnotation} and {@link PdfCircleAnnotation} - the annotation’s
+     * the annotation's line endings, for {@link PdfSquareAnnotation} and {@link PdfCircleAnnotation} - the annotation's
      * rectangle or ellipse, for {@link PdfRedactAnnotation} - the redacted region after the affected content has been removed.
      * @param interiorColor a {@link PdfArray} of numbers in the range 0.0 to 1.0. The number of array elements determines
      *                      the colour space in which the colour is defined: 0 - No colour, transparent; 1 - DeviceGray,
@@ -491,7 +491,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
     }
 
     /**
-     * A code specifying the form of quadding (justification) that is used in displaying the annotation’s text:
+     * A code specifying the form of quadding (justification) that is used in displaying the annotation's text:
      * 0 - Left-justified, 1 - Centered, 2 - Right-justified. Default value: 0 (left-justified).
      * @return a code specifying the form of quadding (justification), returns the default value if not explicitly specified.
      */
@@ -501,7 +501,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
     }
 
     /**
-     * A code specifying the form of quadding (justification) that is used in displaying the annotation’s text:
+     * A code specifying the form of quadding (justification) that is used in displaying the annotation's text:
      * 0 - Left-justified, 1 - Centered, 2 - Right-justified. Default value: 0 (left-justified).
      * @param justification a code specifying the form of quadding (justification).
      * @return this {@link PdfMarkupAnnotation} instance.
