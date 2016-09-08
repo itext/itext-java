@@ -143,7 +143,9 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
      * when traversing the line from its starting point to its ending point (as specified by {@link PdfName#L} (see {@link #getLine()});
      * a negative value indicates the opposite direction.
      * @return a float specifying the length of leader lines in default user space.
+     * @deprecated use {@link #getLeaderLineLength()} instead.
      */
+    @Deprecated
     public float getLeaderLine() {
         PdfNumber n = getPdfObject().getAsNumber(PdfName.LL);
         return n == null ? 0 : n.floatValue();
@@ -156,9 +158,35 @@ public class PdfLineAnnotation extends PdfMarkupAnnotation {
      * a negative value indicates the opposite direction.
      * @param leaderLine a float specifying the length of leader lines in default user space.
      * @return this {@link PdfLineAnnotation} instance.
+     * @deprecated use {@link #setLeaderLineLength(float)} instead.
      */
+    @Deprecated
     public PdfLineAnnotation setLeaderLine(float leaderLine) {
         return (PdfLineAnnotation) put(PdfName.LL, new PdfNumber(leaderLine));
+    }
+
+    /**
+     * The length of leader lines in default user space that extend from each endpoint of the line perpendicular
+     * to the line itself. A positive value means that the leader lines appear in the direction that is clockwise
+     * when traversing the line from its starting point to its ending point (as specified by {@link PdfName#L} (see {@link #getLine()});
+     * a negative value indicates the opposite direction.
+     * @return a float specifying the length of leader lines in default user space.
+     */
+    public float getLeaderLineLength() {
+        PdfNumber n = getPdfObject().getAsNumber(PdfName.LL);
+        return n == null ? 0 : n.floatValue();
+    }
+
+    /**
+     * Sets the length of leader lines in default user space that extend from each endpoint of the line perpendicular
+     * to the line itself. A positive value means that the leader lines appear in the direction that is clockwise
+     * when traversing the line from its starting point to its ending point (as specified by {@link PdfName#L} (see {@link #getLine()});
+     * a negative value indicates the opposite direction.
+     * @param leaderLineLength a float specifying the length of leader lines in default user space.
+     * @return this {@link PdfLineAnnotation} instance.
+     */
+    public PdfLineAnnotation setLeaderLineLength(float leaderLineLength) {
+        return (PdfLineAnnotation) put(PdfName.LL, new PdfNumber(leaderLineLength));
     }
 
     /**
