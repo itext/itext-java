@@ -65,6 +65,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.xmp.PdfConst;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -852,7 +853,7 @@ public class CompareTool {
             }
         }
         sb.append("]");
-        return diffPages.toString();
+        return sb.toString();
     }
 
     private void createIgnoredAreasPdfs(String outPath, Map<Integer, List<Rectangle>> ignoredAreas) throws IOException {
@@ -867,28 +868,17 @@ public class CompareTool {
             List<Rectangle> rectangles = entry.getValue();
 
             if (rectangles != null && !rectangles.isEmpty()) {
-                //drawing rectangles manually, because we don't want to create dependency on itextpdf.canvas module for itextpdf.kernel
-                PdfStream outStream = getPageContentStream(pdfOutDoc.getPage(pageNumber));
-                PdfStream cmpStream = getPageContentStream(pdfCmpDoc.getPage(pageNumber));
+                PdfCanvas outCanvas = new PdfCanvas(pdfOutDoc.getPage(pageNumber));
+                PdfCanvas cmpCanvas = new PdfCanvas(pdfCmpDoc.getPage(pageNumber));
 
-                outStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("q\n"));
-                outStream.getOutputStream().writeFloats(new float[]{0.0f, 0.0f, 0.0f}).writeSpace().writeBytes(ByteUtils.getIsoBytes("rg\n"));
-                cmpStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("q\n"));
-                cmpStream.getOutputStream().writeFloats(new float[]{0.0f, 0.0f, 0.0f}).writeSpace().writeBytes(ByteUtils.getIsoBytes("rg\n"));
-
+                outCanvas.saveState();
+                cmpCanvas.saveState();
                 for (Rectangle rect : rectangles) {
-                    outStream.getOutputStream().writeFloats(new float[]{rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight()}).
-                            writeSpace().
-                            writeBytes(ByteUtils.getIsoBytes("re\n")).
-                            writeBytes(ByteUtils.getIsoBytes("f\n"));
-
-                    cmpStream.getOutputStream().writeFloats(new float[]{rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight()}).
-                            writeSpace().
-                            writeBytes(ByteUtils.getIsoBytes("re\n")).
-                            writeBytes(ByteUtils.getIsoBytes("f\n"));
+                    outCanvas.rectangle(rect).fill();
+                    cmpCanvas.rectangle(rect).fill();
                 }
-                outStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("Q\n"));
-                cmpStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("Q\n"));
+                outCanvas.restoreState();
+                cmpCanvas.restoreState();
             }
         }
 
@@ -896,11 +886,6 @@ public class CompareTool {
         pdfCmpDoc.close();
 
         init(outPath + ignoredAreasPrefix + outPdfName, outPath + ignoredAreasPrefix + cmpPdfName);
-    }
-
-    private PdfStream getPageContentStream(PdfPage page) {
-        PdfStream stream = page.getContentStream(page.getContentStreamCount() - 1);
-        return stream.getOutputStream() == null ? page.newContentStreamAfter() : stream;
     }
 
     private void prepareOutputDirs(String outPath, String differenceImagePrefix) {
