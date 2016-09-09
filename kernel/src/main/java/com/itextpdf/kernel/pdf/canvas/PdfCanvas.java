@@ -355,6 +355,27 @@ public class PdfCanvas {
     }
 
     /**
+     * Concatenates the 2x3 affine transformation matrix to the current matrix
+     * in the content stream managed by this Canvas.
+     * If an array not containing the 6 values of the matrix is passed,
+     * The current canvas is returned unchanged.
+     * @param array affine transformation stored as a PdfArray with 6 values
+     * @return current canvas
+     */
+    public PdfCanvas concatMatrix(PdfArray array){
+        if(array.size() != 6 ){
+            //Throw exception or warning here
+            return this;
+        }
+        for(int i=0; i<array.size();i++){
+            if(!array.get(i).isNumber()){
+                return this;
+            }
+        }
+        return concatMatrix(array.getAsNumber(0).doubleValue(),array.getAsNumber(1).doubleValue(),array.getAsNumber(2).doubleValue(),array.getAsNumber(3).doubleValue(),array.getAsNumber(4).doubleValue(),array.getAsNumber(5).doubleValue());
+    }
+
+    /**
      * Concatenates the affine transformation matrix to the current matrix
      * in the content stream managed by this Canvas.
      * See also {@link #concatMatrix(double, double, double, double, double, double)}

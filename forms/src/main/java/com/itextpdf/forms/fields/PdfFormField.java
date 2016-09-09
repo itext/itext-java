@@ -58,6 +58,8 @@ import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.action.PdfAction;
@@ -1654,8 +1656,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary mk = getWidgets().get(0).getAppearanceCharacteristics();
         if (mk == null) {
             mk = new PdfDictionary();
+            this.put(PdfName.MK,mk);
         }
         mk.put(PdfName.R, new PdfNumber(degRotation));
+
         this.rotation = degRotation;
         regenerateField();
         return this;
@@ -1761,17 +1765,74 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     fontSize = (float)DEFAULT_FONT_SIZE;
                 }
 
-                int rotation = 0;
+                //Apply Page rotation, clockwise
+                int pageRotation = 0;
                 if (page != null) {
-                    rotation = page.getRotation();
+                    pageRotation = page.getRotation();
                 }
                 PdfArray matrix = null;
-                if (rotation != 0 && rotation % 90 == 0) {
-                    double angle = Math.PI * rotation / 180;
-                    matrix = new PdfArray(new double[]{Math.cos(angle), Math.sin(angle), -Math.sin(angle), Math.cos(angle), 0, 0});
+                if (pageRotation % 90 == 0) {
+                    //Cast angle to [0, 360]
+                    double angle = pageRotation%360;
+                    //Get angle in radians
+                    angle = Math.PI * angle / 180;
+                    //Calculate origin offset
+                    double translationWidth = 0;
+                    double translationHeight = 0;
+                    if(angle >= Math.PI/2 && angle <= Math.PI){
+                        translationWidth = bBox.toRectangle().getWidth();
+                    }
+                    if(angle >= Math.PI){
+                        translationHeight = bBox.toRectangle().getHeight();
+                    }
+                    //Store rotation and translation in the matrix
+                    matrix = new PdfArray(new double[]{Math.cos(angle), Math.sin(angle), -Math.sin(angle), Math.cos(angle),translationWidth, translationHeight});
                     Rectangle rect = bBox.toRectangle();
-                    rect.setWidth(bBox.toRectangle().getHeight());
-                    rect.setHeight(bBox.toRectangle().getWidth());
+                    //If the angle is 90 or 270, height and width of the bounding box need to be switched
+                    if(angle == Math.PI/2 || angle == 3*Math.PI/2){
+                        rect.setWidth(bBox.toRectangle().getHeight());
+                        rect.setHeight(bBox.toRectangle().getWidth());
+                    }
+                    //Copy Bounding box
+                    bBox = new PdfArray(rect);
+                }
+                //Apply field rotation
+                float rotation = 0;
+                if(this.getPdfObject().getAsDictionary(PdfName.MK)!= null
+                        && this.getPdfObject().getAsDictionary(PdfName.MK).get(PdfName.R) != null){
+                    rotation = this.getPdfObject().getAsDictionary(PdfName.MK).getAsFloat(PdfName.R);
+                }
+                //rotation = this.rotation;
+                //Field rotation is specified as counterclockwise
+                //rotation *=-1;
+                if (rotation % 90 == 0) {
+                    //Cast angle to [0, 360]
+                    double angle = rotation%360;
+                    //Get angle in radians
+                    angle = Math.PI * angle / 180;
+                    //Calculate origin offset
+                    double translationWidth = 0;
+                    double translationHeight = 0;
+                    if(angle >= Math.PI/2 && angle <= Math.PI){
+                        translationWidth = bBox.toRectangle().getWidth();
+                    }
+                    if(angle >= Math.PI){
+                        translationHeight = bBox.toRectangle().getHeight();
+                    }
+                    //Concatenate rotation and translation into the matrix
+                    Matrix currentMatrix = new Matrix(matrix.getAsNumber(0).floatValue(),matrix.getAsNumber(1).floatValue(),matrix.getAsNumber(2).floatValue(),matrix.getAsNumber(3).floatValue(),matrix.getAsNumber(4).floatValue(),matrix.getAsNumber(5).floatValue());
+                    Matrix toConcatenate = new Matrix((float)Math.cos(angle), (float)Math.sin(angle),(float) (-Math.sin(angle)), (float)(Math.cos(angle)),(float)translationWidth, (float)translationHeight);
+                    currentMatrix = currentMatrix.multiply(toConcatenate);
+
+                    matrix = new PdfArray(new float[]{currentMatrix.get(0), currentMatrix.get(1), currentMatrix.get(3), currentMatrix.get(4),currentMatrix.get(6), currentMatrix.get(7)});
+
+                    Rectangle rect = bBox.toRectangle();
+                    //If the angle is 90 or 270, height and width of the bounding box need to be switched
+                    if(angle == Math.PI/2 || angle == 3*Math.PI/2){
+                        rect.setWidth(bBox.toRectangle().getHeight());
+                        rect.setHeight(bBox.toRectangle().getWidth());
+                    }
+                    //Copy Bounding box
                     bBox = new PdfArray(rect);
                 }
 

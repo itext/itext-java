@@ -1,5 +1,6 @@
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -41,5 +42,117 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
+    }
+
+    @Test
+    public void formFlatteningTest_DefaultAppearanceGeneration_Rot0() throws IOException, InterruptedException {
+        String srcFilePattern = "FormFlatteningDefaultAppearance_0.0_";
+        String destPattern = "FormFlatteningDefaultAppearance_0.0_";
+
+        for(float i = 0; i<360;i+=90){
+            String src = sourceFolder + srcFilePattern + i+".pdf";
+            String dest = destinationFolder + destPattern + i +"_flattened.pdf";
+            String cmp = sourceFolder + "cmp_" + srcFilePattern + i + ".pdf";
+            PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+
+            PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+            for(PdfFormField field: form.getFormFields().values()){
+                field.setValue("Test");
+            }
+            form.flattenFields();
+
+            doc.close();
+
+            CompareTool compareTool = new CompareTool();
+            String errorMessage = compareTool.compareByContent(dest, cmp, destinationFolder, "diff_");
+            if (errorMessage != null) {
+                Assert.fail(errorMessage);
+            }
+        }
+
+    }
+
+    @Test
+    public void formFlatteningTest_DefaultAppearanceGeneration_Rot90() throws IOException, InterruptedException {
+        String srcFilePattern = "FormFlatteningDefaultAppearance_90.0_";
+        String destPattern = "FormFlatteningDefaultAppearance_90.0_";
+
+        for(float i = 0; i<360;i+=90){
+            String src = sourceFolder + srcFilePattern + i+".pdf";
+            String dest = destinationFolder + destPattern + i +"_flattened.pdf";
+            String cmp = sourceFolder + "cmp_" + srcFilePattern + i + ".pdf";
+            PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+
+            PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+            for(PdfFormField field: form.getFormFields().values()){
+                field.setValue("Test");
+            }
+            form.flattenFields();
+
+            doc.close();
+
+            CompareTool compareTool = new CompareTool();
+            String errorMessage = compareTool.compareByContent(dest, cmp, destinationFolder, "diff_");
+            if (errorMessage != null) {
+                Assert.fail(errorMessage);
+            }
+        }
+
+    }
+
+    @Test
+    public void formFlatteningTest_DefaultAppearanceGeneration_Rot180() throws IOException, InterruptedException {
+        String srcFilePattern = "FormFlatteningDefaultAppearance_180.0_";
+        String destPattern = "FormFlatteningDefaultAppearance_180.0_";
+
+        for(float i = 0; i<360;i+=90){
+            String src = sourceFolder + srcFilePattern + i+".pdf";
+            String dest = destinationFolder + destPattern + i +"_flattened.pdf";
+            String cmp = sourceFolder + "cmp_" + srcFilePattern + i + ".pdf";
+            PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+
+            PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+            for(PdfFormField field: form.getFormFields().values()){
+                field.setValue("Test");
+            }
+            form.flattenFields();
+
+            doc.close();
+
+            CompareTool compareTool = new CompareTool();
+            String errorMessage = compareTool.compareByContent(dest, cmp, destinationFolder, "diff_");
+            if (errorMessage != null) {
+                Assert.fail(errorMessage);
+            }
+        }
+
+    }
+
+    @Test
+    public void formFlatteningTest_DefaultAppearanceGeneration_Rot270() throws IOException, InterruptedException {
+        String srcFilePattern = "FormFlatteningDefaultAppearance_270.0_";
+        String destPattern = "FormFlatteningDefaultAppearance_270.0_";
+
+        for(float i = 0; i<360;i+=90){
+            String src = sourceFolder + srcFilePattern + i+".pdf";
+            String dest = destinationFolder + destPattern + i +"_flattened.pdf";
+            String cmp = sourceFolder + "cmp_" + srcFilePattern + i + ".pdf";
+            PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+
+            PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+            for(PdfFormField field: form.getFormFields().values()){
+                field.setValue("Test");
+            }
+            form.flattenFields();
+
+            doc.close();
+
+            CompareTool compareTool = new CompareTool();
+            String errorMessage = compareTool.compareByContent(dest, cmp, destinationFolder, "diff_");
+            if (errorMessage != null) {
+                Assert.fail(errorMessage);
+            }
+        }
+
     }
 }
