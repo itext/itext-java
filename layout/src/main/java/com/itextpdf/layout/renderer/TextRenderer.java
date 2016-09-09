@@ -55,7 +55,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
-import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
@@ -68,10 +67,20 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
-import com.itextpdf.layout.property.*;
+import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.FontKerning;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
@@ -242,7 +251,7 @@ public class TextRenderer extends AbstractRenderer {
 
                 if (splitCharacters.isSplitCharacter(text, ind) || ind + 1 == text.end ||
                         splitCharacters.isSplitCharacter(text, ind + 1) &&
-                                (Character.isWhitespace((char) text.get(ind + 1).getUnicode()) || Character.isSpaceChar((char) text.get(ind + 1).getUnicode()))) {
+                                isSpaceGlyph(text.get(ind + 1))) {
                     nonBreakablePartEnd = ind;
                     break;
                 }
@@ -559,24 +568,34 @@ public class TextRenderer extends AbstractRenderer {
             boolean appearanceStreamLayout = Boolean.TRUE.equals (getPropertyAsBoolean(Property.APPEARANCE_STREAM_LAYOUT));
 
             if (hasOwnProperty(Property.REVERSED)) {
-                //We should mark a RTL written text
-                Map<GlyphLine, Boolean> outputs = getOutputChunks();
-
-                for (Map.Entry<GlyphLine, Boolean> output : outputs.entrySet()) {
-                    GlyphLine o = output.getKey().filter(filter);
-
-
-                    boolean writeReversedChars = !appearanceStreamLayout && (boolean) output.getValue();
-                    if (writeReversedChars) {
-                        canvas.openTag(new CanvasTag(PdfName.ReversedChars));
+                boolean writeReversedChars = !appearanceStreamLayout;
+                List<int[]> reversedRanges = (List<int[]>) getOwnProperty(Property.REVERSED);
+                List<Integer> removedIds = new ArrayList<>();
+                for (int i = line.start; i < line.end; i++) {
+                    if (!filter.accept(line.get(i))) {
+                        removedIds.add(i);
                     }
-                    if (appearanceStreamLayout) {
-                        o.setActualText(o.start, o.end, null);
+                }
+                if (reversedRanges != null) {
+                    for (int[] range : reversedRanges) {
+                        int shift = Collections.binarySearch(removedIds, range[0]);
+                        if (shift < 0) {
+                            shift = -shift - 1;
+                        }
+                        range[0] -= shift;
+                        shift = Collections.binarySearch(removedIds, range[1] - 1);
+                        if (shift < 0) {
+                            shift = -shift - 1;
+                        }
+                        range[1] -= shift;
                     }
-                    canvas.showText(o);
-                    if (writeReversedChars) {
-                        canvas.closeTag();
-                    }
+                }
+                line = line.filter(filter);
+                if (writeReversedChars) {
+                    canvas.showText(line, new ReversedCharsIterator(reversedRanges, line).
+                            setUseReversed(writeReversedChars));
+                } else {
+                    canvas.showText(line);
                 }
             } else {
                 if (appearanceStreamLayout) {
@@ -799,6 +818,10 @@ public class TextRenderer extends AbstractRenderer {
         return unicode == '\n' || unicode == '\r';
     }
 
+    static boolean isSpaceGlyph(Glyph glyph) {
+        return Character.isWhitespace((char) glyph.getUnicode()) || Character.isSpaceChar((char) glyph.getUnicode());
+    }
+
     private TextRenderer[] splitIgnoreFirstNewLine(int currentTextPos) {
         if (text.get(currentTextPos).hasValidUnicode() && text.get(currentTextPos).getUnicode() == '\r') {
             int next = currentTextPos + 1 < text.end ? text.get(currentTextPos + 1).getUnicode() : -1;
@@ -914,35 +937,6 @@ public class TextRenderer extends AbstractRenderer {
                 this.getPropertyAsFloat(Property.CHARACTER_SPACING), this.getPropertyAsFloat(Property.WORD_SPACING));
     }
 
-    /**
-     * This method return a LinkedHashMap with glyphlines as its keys. Values are boolean flags indicating if a
-     * glyphline is written in a reversed order (right to left text).
-     */
-    private Map<GlyphLine, Boolean> getOutputChunks() {
-        List<int[]> reversedRange = this.<List<int[]>>getProperty(Property.REVERSED);
-        Map<GlyphLine, Boolean> outputs = new LinkedHashMap<>();
-        if (reversedRange != null) {
-            if (reversedRange.get(0)[0] > 0) {
-                outputs.put(line.copy(0, reversedRange.get(0)[0]), false);
-            }
-            for (int i = 0; i < reversedRange.size(); i++) {
-                int[] range = reversedRange.get(i);
-                outputs.put(line.copy(range[0], range[1] + 1), true);
-                if (i != reversedRange.size() - 1) {
-                    outputs.put(line.copy(range[1] + 1, reversedRange.get(i + 1)[0]), false);
-                }
-            }
-            int lastIndex = reversedRange.get(reversedRange.size() - 1)[1];
-            if (lastIndex < line.size()) {
-                outputs.put(line.copy(lastIndex + 1, line.size()), false);
-            }
-        } else {
-            outputs.put(line, false);
-        }
-
-        return outputs;
-    }
-
     private static boolean noPrint(Glyph g) {
         if (!g.hasValidUnicode()) {
             return false;
@@ -1015,4 +1009,71 @@ public class TextRenderer extends AbstractRenderer {
             strToBeConverted = null;
         }
     }
+
+    private static class ReversedCharsIterator implements Iterator<GlyphLine.GlyphLinePart> {
+        private List<Integer> outStart;
+        private List<Integer> outEnd;
+        private List<Boolean> reversed;
+        private int currentInd = 0;
+        private boolean useReversed;
+
+        public ReversedCharsIterator(List<int[]> reversedRange, GlyphLine line) {
+            outStart = new ArrayList<>();
+            outEnd = new ArrayList<>();
+            reversed = new ArrayList<>();
+            if (reversedRange != null) {
+                if (reversedRange.get(0)[0] > 0) {
+                    outStart.add(0);
+                    outEnd.add(reversedRange.get(0)[0]);
+                    reversed.add(false);
+                }
+                for (int i = 0; i < reversedRange.size(); i++) {
+                    int[] range = reversedRange.get(i);
+                    outStart.add(range[0]);
+                    outEnd.add(range[1] + 1);
+                    reversed.add(true);
+                    if (i != reversedRange.size() - 1) {
+                        outStart.add(range[1] + 1);
+                        outEnd.add(reversedRange.get(i + 1)[0]);
+                        reversed.add(false);
+                    }
+                }
+                int lastIndex = reversedRange.get(reversedRange.size() - 1)[1];
+                if (lastIndex < line.size() - 1) {
+                    outStart.add(lastIndex + 1);
+                    outEnd.add(line.size());
+                    reversed.add(false);
+                }
+            } else {
+                outStart.add(line.start);
+                outEnd.add(line.end);
+                reversed.add(false);
+            }
+        }
+
+        public ReversedCharsIterator setUseReversed(boolean useReversed) {
+            this.useReversed = useReversed;
+            return this;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return currentInd < outStart.size();
+        }
+
+        @Override
+        public GlyphLine.GlyphLinePart next() {
+            GlyphLine.GlyphLinePart part = new GlyphLine.GlyphLinePart(outStart.get(currentInd), outEnd.get(currentInd)).
+                    setReversed(useReversed && reversed.get(currentInd));
+            currentInd++;
+            return part;
+        }
+
+        @Override
+        public void remove() {
+            throw new IllegalStateException("Operation not supported");
+        }
+
+    }
+
 }

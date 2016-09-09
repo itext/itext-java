@@ -85,6 +85,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -665,6 +666,18 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas showText(GlyphLine text) {
+        return showText(text, new ActualTextIterator(text));
+    }
+
+    /**
+     * Shows text (operator Tj).
+     *
+     * @param text     text to show.
+     * @param iterator iterator over parts of the glyph line that should be wrapped into some marked content groups,
+     *                 e.g. /ActualText or /ReversedChars
+     * @return current canvas.
+     */
+    public PdfCanvas showText(GlyphLine text, Iterator<GlyphLine.GlyphLinePart> iterator) {
         document.checkShowTextIsoConformance(currentGs, resources);
         PdfFont font;
         if ((font = currentGs.getFont()) == null) {
@@ -673,12 +686,14 @@ public class PdfCanvas {
         float fontSize = currentGs.getFontSize() / 1000f;
         float charSpacing = currentGs.getCharSpacing();
         float scaling = currentGs.getHorizontalScaling() / 100f;
-        for (ActualTextIterator iterator = new ActualTextIterator(text); iterator.hasNext(); ) {
+        for (; iterator.hasNext(); ) {
             GlyphLine.GlyphLinePart glyphLinePart = iterator.next();
             if (glyphLinePart.actualText != null) {
                 PdfDictionary properties = new PdfDictionary();
                 properties.put(PdfName.ActualText, new PdfString(glyphLinePart.actualText, PdfEncodings.UNICODE_BIG).setHexWriting(true));
                 beginMarkedContent(PdfName.Span, properties);
+            } else if (glyphLinePart.reversed) {
+                beginMarkedContent(PdfName.ReversedChars);
             }
             int sub = glyphLinePart.start;
             for (int i = glyphLinePart.start; i < glyphLinePart.end; i++) {
@@ -752,7 +767,7 @@ public class PdfCanvas {
                         contentStream.getOutputStream()
                                 .writeFloat(((glyph.getWidth() + glyph.getXAdvance()) * fontSize + charSpacing) * scaling, true)
                                 .writeSpace()
-                                .writeFloat(glyph.getYAdvance() * fontSize, true)// TODO shall previous y position been restored?
+                                .writeFloat(glyph.getYAdvance() * fontSize, true) // TODO shall previous y position been restored?
                                 .writeSpace()
                                 .writeBytes(Td);
                     }
@@ -764,6 +779,8 @@ public class PdfCanvas {
                 contentStream.getOutputStream().writeBytes(Tj);
             }
             if (glyphLinePart.actualText != null) {
+                endMarkedContent();
+            } else if (glyphLinePart.reversed) {
                 endMarkedContent();
             }
             if (glyphLinePart.end > sub && iterator.hasNext()) {
