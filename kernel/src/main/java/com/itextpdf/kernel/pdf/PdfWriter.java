@@ -283,6 +283,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
 
         int copyObjectKey = 0;
         boolean tryToFindDuplicate = !allowDuplicating && indirectReference != null;
+
         if (tryToFindDuplicate) {
             copyObjectKey = calculateIndRefKey(indirectReference);
             PdfIndirectReference copiedIndirectReference = copiedObjects.get(copyObjectKey);
@@ -290,6 +291,13 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
                 return copiedIndirectReference.getRefersTo();
         }
 
+        if (obj.isDictionary()) {
+            PdfName subtype = ((PdfDictionary)obj).getAsName(PdfName.Subtype);
+            if (subtype != null && subtype.equals(PdfName.Widget)) {
+                tryToFindDuplicate = false;
+            }
+
+        }
         if (properties.smartMode && tryToFindDuplicate && !checkTypeOfPdfDictionary(obj, PdfName.Page)) {
             PdfIndirectReference copiedObjectRef = tryToFindPreviouslyCopiedEqualObject(obj);
             if (copiedObjectRef != null) {
