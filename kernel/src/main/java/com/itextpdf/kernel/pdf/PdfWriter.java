@@ -231,7 +231,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      *
      * @param pdfObject     object to flush.
      * @param canBeInObjStm indicates whether object can be placed into object stream.
-     * @throws IOException
+     * @throws IOException on error.
      */
     protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
         PdfIndirectReference indirectReference = pdfObject.getIndirectReference();

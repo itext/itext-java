@@ -93,5 +93,4 @@ public interface IEventDispatcher {
      * Remove all event handlers.
      */
     void removeAllHandlers();
-
 }

@@ -53,9 +53,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Algorithm for construction {@see PdfPages} tree
+ * Algorithm for construction {@link PdfPages} tree
  */
-class PdfPagesTree implements Serializable{
+class PdfPagesTree implements Serializable {
 
     private static final long serialVersionUID = 4189501363348296036L;
 
@@ -99,7 +99,7 @@ class PdfPagesTree implements Serializable{
     /**
      * Returns the {@see PdfPage} at the specified position in this list.
      *
-     * @param  pageNum one-based index of the element to return
+     * @param pageNum one-based index of the element to return
      * @return the {@see PdfPage} at the specified position in this list
      */
     public PdfPage getPage(int pageNum) {
@@ -133,6 +133,7 @@ class PdfPagesTree implements Serializable{
 
     /**
      * Gets total number of @see PdfPages.
+     *
      * @return total number of pages
      */
     public int getNumberOfPages() {
@@ -201,8 +202,8 @@ class PdfPagesTree implements Serializable{
     /**
      * Insert {@see PdfPage} into specific one-based position.
      *
-     * @param index one-base index of the page
-     * @param pdfPage {@see PdfPage}
+     * @param index   one-base index of the page
+     * @param pdfPage {@link PdfPage} to insert.
      */
     public void addPage(int index, PdfPage pdfPage) {
         --index;
@@ -247,10 +248,10 @@ class PdfPagesTree implements Serializable{
     /**
      * Generate PdfPages tree.
      *
-     * @return root {@see PdfPages}
+     * @return root {@link PdfPages}
      * @throws PdfException in case empty document
      */
-    protected  PdfObject generateTree() {
+    protected PdfObject generateTree() {
         if (pageRefs.size() == 0)
             throw new PdfException(PdfException.DocumentHasNoPages);
         if (generated)
@@ -313,7 +314,7 @@ class PdfPagesTree implements Serializable{
         PdfPages parent = parents.get(parentIndex);
         PdfArray kids = parent.getKids();
         if (kids == null) {
-            throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum+1);
+            throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum + 1);
         }
         int kidsCount = parent.getCount();
         // we should handle separated pages, it means every PdfArray kids must contain either PdfPage or PdfPages,
@@ -323,14 +324,14 @@ class PdfPagesTree implements Serializable{
         for (int i = 0; i < kids.size(); i++) {
             PdfDictionary page = kids.getAsDictionary(i);
             if (page == null) {                                             // null values not allowed in pages tree.
-                throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum+1);
+                throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum + 1);
             }
             PdfObject pageKids = page.get(PdfName.Kids);
             if (pageKids != null) {
                 if (pageKids.getType() == PdfObject.ARRAY) {
                     findPdfPages = true;
                 } else {                                                    // kids must be of type array
-                    throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum+1);
+                    throw new PdfException(PdfException.InvalidPageStructure1).setMessageParams(pageNum + 1);
                 }
             }
         }

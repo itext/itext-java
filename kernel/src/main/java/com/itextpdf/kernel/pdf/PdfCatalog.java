@@ -326,7 +326,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param key   Name of the destination.
      * @param value An object destination refers to. Must be an array or a dictionary with key /D and array.
-     *              See PdfSpec 12.3.2.3 for more info.
+     *              See ISO 32000-1 12.3.2.3 for more info.
      */
     void addNamedDestination(String key, PdfObject value) {
         addNameToNameTree(key, value, PdfName.Dests);
@@ -346,9 +346,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This method returns a complete outline tree of the whole document.
      *
-     * @param updateOutlines - if this flag is true, the method read the whole document and creates outline tree.
+     * @param updateOutlines if the flag is true, the method read the whole document and creates outline tree.
      *                       If false the method gets cached outline tree (if it was cached via calling getOutlines method before).
-     * @return
+     * @return fully initialized {@link PdfOutline} object.
      */
     PdfOutline getOutlines(boolean updateOutlines) {
         if (outlines != null && !updateOutlines)
