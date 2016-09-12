@@ -43,6 +43,7 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.codec.Base64;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.PdfEncodings;
@@ -73,6 +74,8 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -160,6 +163,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected int rotation = 0;
     protected PdfFormXObject form;
     protected PdfAConformanceLevel pdfAConformanceLevel;
+    protected Logger formFieldLogger;
 
     protected static final String check = "0.8 0 0 0.8 0.3 0.5 cm 0 0 m\n" +
             "0.066 -0.026 l\n" +
@@ -235,6 +239,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         super(pdfObject);
         ensureObjectIsAddedToDocument(pdfObject);
         setForbidRelease();
+        formFieldLogger = LoggerFactory.getLogger(this.getClass());
     }
 
     /**
@@ -1795,6 +1800,11 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     }
                     //Copy Bounding box
                     bBox = new PdfArray(rect);
+                }
+                //Avoid NPE when handling corrupt pdfs
+                if(matrix == null){
+                    formFieldLogger.error(LogMessageConstant.INCORRECT_PAGEROTATION);
+                    matrix = new PdfArray(new double[]{1,0,0,1,0,0});
                 }
                 
                 //Apply field rotation
