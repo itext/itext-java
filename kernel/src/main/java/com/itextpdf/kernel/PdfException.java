@@ -305,7 +305,7 @@ public class PdfException extends RuntimeException {
     public static final String UnknownHashAlgorithm1 = "Unknown hash algorithm: {0}.";
     public static final String UnknownKeyAlgorithm1 = "Unknown key algorithm: {0}.";
     public static final String UnknownColorFormatMustBeRGBorRRGGBB = "Unknown color format: must be rgb or rrggbb.";
-    public static final String UnsupportedDefaultColorSpaceName = "Unsupported default color space name.";
+    public static final String UnsupportedDefaultColorSpaceName1 = "Unsupported default color space name. Was {0}, but should be DefaultCMYK, DefaultGray or DefaultRGB";
     public static final String UnsupportedXObjectType = "Unsupported XObject type.";
     public static final String VerificationAlreadyOutput = "Verification already output.";
     public static final String WhenAddingObjectReferenceToTheTagTreeItMustBeConnectedToNotFlushedObject = "When adding object reference to the tag tree, it must be connected to not flushed object.";

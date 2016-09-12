@@ -395,7 +395,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     public void setDefaultColorSpace(PdfName defaultCsKey, PdfColorSpace defaultCsValue) {
         if (!defaultCsKey.equals(PdfName.DefaultCMYK) && !defaultCsKey.equals(PdfName.DefaultGray) &&
                 !defaultCsKey.equals(PdfName.DefaultRGB)) {
-            throw new PdfException(PdfException.UnsupportedDefaultColorSpaceName);
+            throw new PdfException(PdfException.UnsupportedDefaultColorSpaceName1).setMessageParams(defaultCsKey.toString());
         }
         addResource(defaultCsValue.getPdfObject(), PdfName.ColorSpace, defaultCsKey);
     }
