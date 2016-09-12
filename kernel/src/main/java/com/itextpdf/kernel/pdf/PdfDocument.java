@@ -1403,7 +1403,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
-     * Save link annotation in temporary storage for further coping.
+     * Save the link annotation in a temporary storage for further copying.
      *
      * @param page       just copied {@link PdfPage} link annotation belongs to.
      * @param annotation {@link PdfLinkAnnotation} itself.
