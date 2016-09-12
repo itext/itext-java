@@ -1796,18 +1796,18 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     //Copy Bounding box
                     bBox = new PdfArray(rect);
                 }
+                
                 //Apply field rotation
-                float rotation = 0;
+                float fieldRotation = 0;
                 if(this.getPdfObject().getAsDictionary(PdfName.MK)!= null
                         && this.getPdfObject().getAsDictionary(PdfName.MK).get(PdfName.R) != null){
-                    rotation = this.getPdfObject().getAsDictionary(PdfName.MK).getAsFloat(PdfName.R);
+                    fieldRotation = this.getPdfObject().getAsDictionary(PdfName.MK).getAsFloat(PdfName.R);
                 }
-                //rotation = this.rotation;
+                
                 //Field rotation is specified as counterclockwise
-                //rotation *=-1;
-                if (rotation % 90 == 0) {
+                if (fieldRotation % 90 == 0) {
                     //Cast angle to [0, 360]
-                    double angle = rotation%360;
+                    double angle = fieldRotation%360;
                     //Get angle in radians
                     angle = Math.PI * angle / 180;
                     //Calculate origin offset
