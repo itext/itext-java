@@ -1800,9 +1800,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     }
                     //Copy Bounding box
                     bBox = new PdfArray(rect);
-                }
-                //Avoid NPE when handling corrupt pdfs
-                if(matrix == null){
+                }else{
+                    //Avoid NPE when handling corrupt pdfs
                     formFieldLogger.error(LogMessageConstant.INCORRECT_PAGEROTATION);
                     matrix = new PdfArray(new double[]{1,0,0,1,0,0});
                 }
