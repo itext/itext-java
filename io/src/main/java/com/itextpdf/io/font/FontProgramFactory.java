@@ -46,7 +46,6 @@ package com.itextpdf.io.font;
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.util.ArrayUtil;
 
-import java.text.MessageFormat;
 import java.util.Set;
 
 /**
@@ -277,7 +276,7 @@ public final class FontProgramFactory {
             if (name != null) {
                 fontKey = name;
             } else {
-                fontKey = MessageFormat.format("{0}", ArrayUtil.hashCode(font));
+                fontKey = Integer.toString(ArrayUtil.hashCode(font));
             }
             fontFound = FontCache.getFont(fontKey);
             if (fontFound != null) {
@@ -378,7 +377,7 @@ public final class FontProgramFactory {
             if (name != null) {
                 fontKey = name;
             } else {
-                fontKey = MessageFormat.format("{0}", ArrayUtil.hashCode(afm));
+                fontKey = Integer.toString(ArrayUtil.hashCode(afm));
             }
             fontProgram = FontCache.getFont(fontKey);
             if (fontProgram != null) {
@@ -463,7 +462,7 @@ public final class FontProgramFactory {
     public static FontProgram createFont(byte[] ttc, int ttcIndex, boolean cached) throws java.io.IOException {
         String fontKey = null;
         if (cached) {
-            fontKey = MessageFormat.format("{0}{1}", ArrayUtil.hashCode(ttc), ttcIndex);
+            fontKey = Integer.toString(ArrayUtil.hashCode(ttc)) + Integer.toString(ttcIndex);
             FontProgram fontFound = FontCache.getFont(fontKey);
             if (fontFound != null) {
                 return fontFound;
