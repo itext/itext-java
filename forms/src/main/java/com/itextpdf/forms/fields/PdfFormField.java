@@ -1974,9 +1974,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     widget.setAppearanceState(new PdfName("Off"));
                 }
             }
-
-            return true;
         }
+        return true;
+    }
+
 
         /**
          * Calculate the necessary height offset after applying field rotation
