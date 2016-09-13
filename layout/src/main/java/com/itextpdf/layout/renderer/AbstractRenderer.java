@@ -1,5 +1,5 @@
 /*
-    $Id$
+    $Id: d358ee4cb87c8f576c0babb72d280efaac05e27b $
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -250,7 +250,19 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link Color}
      */
     public Color getPropertyAsColor(int property) {
-        return getProperty(property);
+        Object object = getProperty(property);
+
+        if(object == null) {
+            return null;
+        }
+
+        if(object instanceof Color) {
+            return (Color) object;
+        } else if (object instanceof Background) {
+            return ((Background)object).getColor();
+        }
+
+        throw new IllegalStateException("The type of property is unexpected.. property: " + property + ", class: " + object.getClass());
     }
 
     /**
