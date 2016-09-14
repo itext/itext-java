@@ -48,8 +48,8 @@ import com.itextpdf.io.font.CFFFontSubset;
 import com.itextpdf.io.font.CMapEncoding;
 import com.itextpdf.io.font.CidFont;
 import com.itextpdf.io.font.CidFontProperties;
-import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.cmap.CMapContentParser;
@@ -70,7 +70,6 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -645,7 +644,7 @@ public class PdfType0Font extends PdfFont {
         return toUnicode;
     }
 
-    //TODO optimize memory ussage
+    //TODO optimize memory usage
     private static String toHex4(char ch) {
         String s = "0000" + Integer.toHexString(ch);
         return s.substring(s.length() - 4);
