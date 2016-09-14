@@ -160,12 +160,18 @@
                                     <artifactId>${project.artifactId}</artifactId>
                                     <version>${project.version}</version>
                                     <type>${project.packaging}</type>
+                                    <destFileName>itext7-${project.artifactId}-${project.version}</destFileName>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>../target</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
             </plugin>
             <!-- Run unit tests -->
             <plugin>
