@@ -186,7 +186,18 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     }
 
     public boolean contains(PdfObject o) {
-        return list.contains(o);
+        if (list.contains(o))
+            return true;
+        if (o != null) {
+            if (o.getIndirectReference() != null
+                    && list.contains(o.getIndirectReference())) {
+                return true;
+            } else if (o.isIndirectReference()
+                    && list.contains(((PdfIndirectReference) o).getRefersTo())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -217,7 +228,14 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     }
 
     public void remove(PdfObject o) {
-        list.remove(o);
+        if (list.remove(o))
+            return;
+        if (o != null) {
+            if (o.getIndirectReference() != null && list.remove(o.getIndirectReference()))
+                return;
+            if (o.isIndirectReference())
+                list.remove(((PdfIndirectReference) o).getRefersTo());
+        }
     }
 
     /**
