@@ -43,7 +43,6 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 
 import java.util.*;
@@ -370,16 +369,7 @@ public class PdfDictionary extends PdfObject {
      * @return a Collection holding all the values
      */
     public Collection<PdfObject> values() {
-        Collection<PdfObject> directValues = new ArrayList<>();
-        for (PdfObject value : map.values()) {
-            if (value.isIndirectReference()) {
-                directValues.add(((PdfIndirectReference)value).getRefersTo());
-            } else {
-                directValues.add(value);
-            }
-        }
-
-        return directValues;
+        return new PdfDictionaryValues(map.values());
     }
 
     /**
@@ -413,16 +403,7 @@ public class PdfDictionary extends PdfObject {
      * @return a Set of Map.Entry objects
      */
     public Set<Map.Entry<PdfName, PdfObject>> entrySet() {
-        Map<PdfName, PdfObject> directMap = new TreeMap<>();
-        for(Map.Entry<PdfName, PdfObject> entry : map.entrySet()) {
-            PdfObject value = entry.getValue();
-            if (value.isIndirectReference()) {
-                directMap.put(entry.getKey(), ((PdfIndirectReference)value).getRefersTo());
-            } else {
-                directMap.put(entry.getKey(), value);
-            }
-        }
-        return directMap.entrySet();
+        return new PdfDictionaryEntrySet(map.entrySet());
     }
 
     /**
