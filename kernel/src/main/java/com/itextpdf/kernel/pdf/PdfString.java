@@ -69,8 +69,6 @@ public class PdfString extends PdfPrimitiveObject {
 
     private static final long serialVersionUID = 390789504287887010L;
 
-	private static String defaultCharset = "UTF-8";
-
     protected String value;
     protected String encoding;
     protected boolean hexWriting = false;
@@ -97,8 +95,8 @@ public class PdfString extends PdfPrimitiveObject {
         super();
         if (content != null && content.length > 0) {
             StringBuilder str = new StringBuilder(content.length);
-            for (byte b: content) {
-                str.append((char)(b & 0xff));
+            for (byte b : content) {
+                str.append((char) (b & 0xff));
             }
             this.value = str.toString();
         } else {
@@ -152,10 +150,15 @@ public class PdfString extends PdfPrimitiveObject {
     /**
      * Sets the encoding of this string.
      * NOTE. Byte content will be removed.
+     * @deprecated Create a new instance with {@link PdfString#PdfString(String, String)} instead.
      */
+    @Deprecated
     public void setEncoding(String encoding) {
+        if (value == null) {
+            generateValue();
+            this.content = null;
+        }
         this.encoding = encoding;
-        this.content = null;
     }
 
     /**
@@ -170,7 +173,7 @@ public class PdfString extends PdfPrimitiveObject {
             generateContent();
         }
         byte[] b = PdfTokenizer.decodeStringContent(content, hexWriting);
-        if (b.length >= 2 && b[0] == (byte)0xFE && b[1] == (byte)0xFF) {
+        if (b.length >= 2 && b[0] == (byte) 0xFE && b[1] == (byte) 0xFF) {
             return PdfEncodings.convertToString(b, PdfEncodings.UNICODE_BIG);
         } else {
             return PdfEncodings.convertToString(b, PdfEncodings.PDF_DOC_ENCODING);
@@ -246,12 +249,40 @@ public class PdfString extends PdfPrimitiveObject {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        PdfString that = (PdfString) o;
+        String v1 = getValue();
+        String v2 = that.getValue();
+        if (v1 != null && v1.equals(v2)) {
+            String e1 = getEncoding();
+            String e2 = that.getEncoding();
+            if ((e1 == null && e2 == null)
+                    || (e1 != null && e1.equals(e2))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public String toString() {
         if (value == null) {
             return new String(PdfTokenizer.decodeStringContent(content, hexWriting));
         } else {
             return getValue();
         }
+    }
+
+    @Override
+    public int hashCode() {
+        String v = getValue();
+        String e = getEncoding();
+        int result = v != null ? v.hashCode() : 0;
+        return 31 * result + (e != null ? e.hashCode() : 0);
     }
 
     protected void generateValue() {

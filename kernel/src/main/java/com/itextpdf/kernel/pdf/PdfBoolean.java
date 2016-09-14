@@ -152,4 +152,15 @@ public class PdfBoolean extends PdfPrimitiveObject {
         PdfBoolean bool = (PdfBoolean)from;
         value = bool.value;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this == obj ||
+                !(obj == null || getClass() != obj.getClass()) && value == ((PdfBoolean) obj).value;
+    }
+
+    @Override
+    public int hashCode() {
+        return (value ? 1 : 0);
+    }
 }

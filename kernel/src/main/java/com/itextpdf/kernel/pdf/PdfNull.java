@@ -144,4 +144,14 @@ public class PdfNull extends PdfPrimitiveObject {
     protected void copyContent(PdfObject from, PdfDocument document) {
 
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this == obj || !(obj == null || getClass() != obj.getClass());
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
 }

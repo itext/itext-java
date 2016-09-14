@@ -103,6 +103,17 @@ public class PdfLiteral extends PdfPrimitiveObject {
     }
 
     @Override
+    public boolean equals(Object o) {
+        return this == o ||
+                !(o == null || getClass() != o.getClass()) && Arrays.equals(content, ((PdfLiteral) o).content);
+    }
+
+    @Override
+    public int hashCode() {
+        return content == null ? 0 : Arrays.hashCode(content);
+    }
+
+    @Override
     protected PdfLiteral newInstance() {
         return new PdfLiteral();
     }
