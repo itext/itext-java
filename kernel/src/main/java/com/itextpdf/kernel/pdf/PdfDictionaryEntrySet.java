@@ -57,6 +57,16 @@ class PdfDictionaryEntrySet extends AbstractSet<Map.Entry<PdfName, PdfObject>> {
     }
 
     @Override
+    public boolean contains(Object o) {
+        return set.contains(o) || super.contains(o);
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        return set.remove(o) || super.remove(o);
+    }
+
+    @Override
     public Iterator<Map.Entry<PdfName, PdfObject>> iterator() {
         return new DirectIterator();
     }

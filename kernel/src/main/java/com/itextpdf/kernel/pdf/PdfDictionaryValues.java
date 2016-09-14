@@ -63,29 +63,26 @@ class PdfDictionaryValues extends AbstractCollection<PdfObject> {
     public boolean contains(Object o) {
         if (collection.contains(o))
             return true;
-        if (o != null) {
-            if (((PdfObject) o).getIndirectReference() != null
-                && collection.contains(((PdfObject) o).getIndirectReference())) {
-                return true;
-            } else if (((PdfObject) o).isIndirectReference()
-                    && collection.contains(((PdfIndirectReference) o).getRefersTo())) {
+        if (o == null)
+            return false;
+        for (PdfObject pdfObject : this) {
+            if (equalObjects((PdfObject) o, pdfObject)) {
                 return true;
             }
         }
         return false;
-
     }
 
     @Override
     public boolean remove(Object o) {
         if (collection.remove(o))
             return true;
-        if (o != null) {
-            if (((PdfObject) o).getIndirectReference() != null
-                    && collection.remove(((PdfObject) o).getIndirectReference())) {
-                return true;
-            } else if (((PdfObject) o).isIndirectReference()
-                    && collection.remove(((PdfIndirectReference) o).getRefersTo())) {
+        if (o == null)
+            return false;
+        Iterator<PdfObject> it = iterator();
+        while (it.hasNext()) {
+            if (equalObjects((PdfObject) o, it.next())) {
+                it.remove();
                 return true;
             }
         }
@@ -128,5 +125,15 @@ class PdfDictionaryValues extends AbstractCollection<PdfObject> {
         public void remove() {
             parentIterator.remove();
         }
+    }
+
+    private static boolean equalObjects(PdfObject obj1, PdfObject obj2) {
+        PdfObject direct1 = obj1 != null && obj1.isIndirectReference()
+                ? ((PdfIndirectReference)obj1).getRefersTo(true)
+                : obj1;
+        PdfObject direct2 = obj2 != null && obj2.isIndirectReference()
+                ? ((PdfIndirectReference)obj2).getRefersTo(true)
+                : obj2;
+        return direct1 != null && direct1.equals(direct2);
     }
 }

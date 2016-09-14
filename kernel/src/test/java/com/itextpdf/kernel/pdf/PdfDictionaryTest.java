@@ -2,7 +2,6 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -74,7 +73,7 @@ public class PdfDictionaryTest {
         Assert.assertEquals(0, dict.size());
     }
 
-    @Test @Ignore("DEVSIX-851")
+    @Test
     public void testEntrySetRemove2() {
         PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
@@ -94,10 +93,10 @@ public class PdfDictionaryTest {
         dict2.put(new PdfName("5"), new PdfNumber(5));
         dict2.put(new PdfName("6"), new PdfNumber(6));
 
-        for (Map.Entry<PdfName, PdfObject> e: dict.entrySet()) {
-            if (e.getValue().getIndirectReference() != null) continue;
-            Assert.assertTrue(dict2.entrySet().remove(e));
+        for (Map.Entry<PdfName, PdfObject> e: dict2.entrySet()) {
+            dict.entrySet().remove(e);
         }
+
         Assert.assertEquals(0, dict.entrySet().size());
         Assert.assertEquals(0, dict.values().size());
         Assert.assertEquals(0, dict.size());
@@ -126,7 +125,7 @@ public class PdfDictionaryTest {
         Assert.assertEquals(0, dict.size());
     }
 
-    @Test @Ignore("DEVSIX-851")
+    @Test
     public void testEntrySetRemoveAll2() {
         PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
@@ -297,7 +296,7 @@ public class PdfDictionaryTest {
         Assert.assertEquals(2, dict.size());
     }
 
-    @Test @Ignore("DEVSIX-851")
+    @Test
     public void testValuesRemove2() {
         PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
@@ -318,7 +317,7 @@ public class PdfDictionaryTest {
         dict2.put(new PdfName("6"), new PdfNumber(6));
 
         for (PdfObject v: dict2.values()) {
-            Assert.assertTrue(dict.values().remove(v));
+            dict.values().remove(v);
         }
         Assert.assertEquals(0, dict.entrySet().size());
         Assert.assertEquals(0, dict.values().size());
@@ -350,7 +349,7 @@ public class PdfDictionaryTest {
 
     }
 
-    @Test @Ignore("DEVSIX-851")
+    @Test
     public void testValuesRemoveAll2() {
         PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
@@ -371,6 +370,7 @@ public class PdfDictionaryTest {
         dict2.put(new PdfName("6"), new PdfNumber(6));
 
         dict.values().removeAll(dict2.values());
+
         Assert.assertEquals(0, dict.entrySet().size());
         Assert.assertEquals(0, dict.values().size());
         Assert.assertEquals(0, dict.size());
