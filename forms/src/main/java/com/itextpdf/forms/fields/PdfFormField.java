@@ -1790,7 +1790,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     //Cast angle to [-360, 360]
                     double angle = pageRotation % 360;
                     //Get angle in radians
-                    angle = Math.toRadians(angle);
+                    angle = degreeToRadians(angle);
                     //rotate the bounding box
                     Rectangle rect = bBox.toRectangle();
                     //Calculate origin offset
@@ -1833,10 +1833,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     //Cast angle to [-360, 360]
                     double angle = fieldRotation % 360;
                     //Get angle in radians
-                    angle = Math.toRadians(angle);
+                    angle = degreeToRadians(angle);
                     //Calculate origin offset
-                    double translationWidth = calculateTranslationWidthAfterFieldRot(bBox.toRectangle(), Math.toRadians(pageRotation), angle);
-                    double translationHeight = calculateTranslationHeightAfterFieldRot(bBox.toRectangle(), Math.toRadians(pageRotation), angle);
+                    double translationWidth = calculateTranslationWidthAfterFieldRot(bBox.toRectangle(), degreeToRadians(pageRotation), angle);
+                    double translationHeight = calculateTranslationHeightAfterFieldRot(bBox.toRectangle(), degreeToRadians(pageRotation), angle);
 
                     //Concatenate rotation and translation into the matrix
                     Matrix currentMatrix = new Matrix(matrix.getAsNumber(0).floatValue(), matrix.getAsNumber(1).floatValue(), matrix.getAsNumber(2).floatValue(), matrix.getAsNumber(3).floatValue(), matrix.getAsNumber(4).floatValue(), matrix.getAsNumber(5).floatValue());
@@ -3136,5 +3136,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         value = value.substring(0, value.length() - 1);
 
         return value;
+    }
+
+    private static double degreeToRadians(double angle) {
+        return Math.PI * angle / 180.0;
     }
 }
