@@ -56,6 +56,7 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.Property;
@@ -154,9 +155,9 @@ public class AccessibleAttributesApplier {
     }
 
     private static void applyCommonLayoutAttributes(AbstractRenderer renderer, PdfDictionary attributes) {
-        Color backgroundColor = renderer.getPropertyAsColor(Property.BACKGROUND);
-        if (backgroundColor != null && backgroundColor instanceof DeviceRgb) {
-            attributes.put(PdfName.BackgroundColor, new PdfArray(backgroundColor.getColorValue()));
+        Background background = renderer.<Background>getProperty(Property.BACKGROUND);
+        if (background != null && background.getColor() instanceof DeviceRgb) {
+            attributes.put(PdfName.BackgroundColor, new PdfArray(background.getColor().getColorValue()));
         }
 
         //TODO NOTE: applying border attributes for cells is temporarily turned off on purpose. Remove this 'if' in future.

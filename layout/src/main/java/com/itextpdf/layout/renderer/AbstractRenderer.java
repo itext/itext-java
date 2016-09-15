@@ -294,19 +294,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link Color}
      */
     public Color getPropertyAsColor(int property) {
-        Object object = getProperty(property);
-
-        if(object == null) {
-            return null;
-        }
-
-        if(object instanceof Color) {
-            return (Color) object;
-        } else if (object instanceof Background) {
-            return ((Background)object).getColor();
-        }
-
-        throw new IllegalStateException("The type of property is unexpected.. property: " + property + ", class: " + object.getClass());
+        return this.<Color>getProperty(property);
     }
 
     /**

@@ -37,9 +37,6 @@ public class BackgroundColorTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     public void shouldAddBackgroundColorAttributeToAccessiblityWhenBackgroundColorIsSet() throws IOException, XMPException, InterruptedException {
         fileName = "simpleBackgroundColorTest.pdf";
