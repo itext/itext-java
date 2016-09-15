@@ -61,7 +61,19 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfObjectWrapper;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfResources;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
@@ -162,7 +174,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     protected int rotation = 0;
     protected PdfFormXObject form;
     protected PdfAConformanceLevel pdfAConformanceLevel;
-    protected Logger formFieldLogger;
 
     protected static final String check = "0.8 0 0 0.8 0.3 0.5 cm 0 0 m\n" +
             "0.066 -0.026 l\n" +
@@ -238,7 +249,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         super(pdfObject);
         ensureObjectIsAddedToDocument(pdfObject);
         setForbidRelease();
-        formFieldLogger = LoggerFactory.getLogger(this.getClass());
     }
 
     /**
@@ -1807,7 +1817,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                     bBox = new PdfArray(rect);
                 } else {
                     //Avoid NPE when handling corrupt pdfs
-                    formFieldLogger.error(LogMessageConstant.INCORRECT_PAGEROTATION);
+                    Logger logger = LoggerFactory.getLogger(PdfFormField.class);
+                    logger.error(LogMessageConstant.INCORRECT_PAGEROTATION);
                     matrix = new PdfArray(new double[]{1, 0, 0, 1, 0, 0});
                 }
                 //Apply field rotation
