@@ -49,6 +49,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.LineSegment;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Vector;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
@@ -118,7 +119,15 @@ public class TextRenderInfo implements IEventData {
     public String getText() {
         if (text == null) {
             GlyphLine gl = gs.getFont().decodeIntoGlyphLine(string);
-            text = gl.toUnicodeString(gl.start, gl.end);
+            if (!isReversedChars()) {
+                text = gl.toUnicodeString(gl.start, gl.end);
+            } else {
+                StringBuilder sb = new StringBuilder(gl.end - gl.start);
+                for (int i = gl.end - 1; i >= gl.start; i--) {
+                    sb.append(gl.get(i).getUnicodeString());
+                }
+                text = sb.toString();
+            }
         }
         return text;
     }
@@ -303,7 +312,7 @@ public class TextRenderInfo implements IEventData {
 
     /**
      * Gets /ActualText tag entry value if this text chunk is marked content.
-     * @return /ActualText value
+     * @return /ActualText value or <code>null</code> if none found
      */
     public String getActualText() {
         String lastActualText = null;
@@ -314,6 +323,22 @@ public class TextRenderInfo implements IEventData {
             }
         }
         return lastActualText;
+    }
+
+    /**
+     * Determines if the text represented by this {@link TextRenderInfo} instance is written in a text showing operator
+     * wrapped by /ReversedChars marked content sequence
+     * @return <code>true</code> if this text block lies within /ReversedChars block, <code>false</code> otherwise
+     */
+    public boolean isReversedChars() {
+        for (CanvasTag tag : canvasTagHierarchy) {
+            if (tag != null) {
+                if (PdfName.ReversedChars.equals(tag.getRole())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

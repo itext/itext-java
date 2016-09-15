@@ -238,6 +238,20 @@ public class Glyph implements Serializable {
         return Arrays.equals(chars, other.chars) && code == other.code && width == other.width;
     }
 
+    /**
+     * Gets a Unicode string corresponding to this glyph. In general case it might consist of many characters.
+     * If this glyph does not have a valid unicode ({@see #hasValidUnicode()}, then a string consisting of a special
+     * Unicode '\ufffd' character is returned.
+     * @return the Unicode string that corresponds to this glyph
+     */
+    public String getUnicodeString() {
+        if (chars != null) {
+            return String.valueOf(chars);
+        } else {
+            return String.valueOf('\ufffd');
+        }
+    }
+
     public String toString() {
         return MessageFormat.format("[id={0}, chars={1}, uni={2}, width={3}]",
                 toHex(code), chars != null ? Arrays.toString(chars) : "null", toHex(unicode), width);

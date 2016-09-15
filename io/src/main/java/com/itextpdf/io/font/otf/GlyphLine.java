@@ -104,13 +104,7 @@ public class GlyphLine {
                 str.append(part.actualText);
             } else {
                 for (int i = part.start; i < part.end; i++) {
-                    if (glyphs.get(i).getChars() != null) {
-                        str.append(glyphs.get(i).getChars());
-                    } else if (glyphs.get(i).hasValidUnicode()) {
-                        str.append(TextUtil.convertFromUtf32(glyphs.get(i).getUnicode()));
-                    } else {
-                        str.append('\ufffd');
-                    }
+                    str.append(glyphs.get(i).getUnicodeString());
                 }
             }
         }
