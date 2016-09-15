@@ -376,7 +376,7 @@ public class PdfType0Font extends PdfFont {
             if (glyph != null && glyph.getChars() != null) {
                 builder.append(glyph.getChars());
             } else {
-                builder.append('?');
+                builder.append('\ufffd');
             }
         }
         return builder.toString();
