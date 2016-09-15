@@ -240,7 +240,12 @@ public class Glyph implements Serializable {
 
     public String toString() {
         return MessageFormat.format("[id={0}, chars={1}, uni={2}, width={3}]",
-                code, chars != null ? Arrays.toString(chars) : "null", unicode, width);
+                toHex(code), chars != null ? Arrays.toString(chars) : "null", toHex(unicode), width);
+    }
+
+    private static String toHex(int ch) {
+        String s = "0000" + Integer.toHexString(ch);
+        return s.substring(Math.min(4, s.length() - 4));
     }
 
     private static int codePoint(char[] a) {
