@@ -108,6 +108,8 @@ public class GlyphLine {
                         str.append(glyphs.get(i).getChars());
                     } else if (glyphs.get(i).hasValidUnicode()) {
                         str.append(TextUtil.convertFromUtf32(glyphs.get(i).getUnicode()));
+                    } else {
+                        str.append('\ufffd');
                     }
                 }
             }

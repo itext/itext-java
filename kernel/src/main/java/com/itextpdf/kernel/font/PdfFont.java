@@ -158,6 +158,13 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public abstract String decode(PdfString content);
 
+    /**
+     * Decodes a given {@link PdfString} containing encoded string (e.g. from content stream) into a {@link GlyphLine}
+     * @param content the encoded string
+     * @return the {@link GlyphLine} containing the glyphs encoded by the passed string
+     */
+    public abstract GlyphLine decodeIntoGlyphLine(PdfString content);
+
     public abstract float getContentWidth(PdfString content);
 
     public abstract byte[] convertToBytes(Glyph glyph);

@@ -73,6 +73,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -373,6 +374,7 @@ public class PdfType0Font extends PdfFont {
     }
 
     @Override
+    // TODO refactor using decodeIntoGlyphLine?
     public String decode(PdfString content) {
         String cids = content.getValue();
         if (cids.length() == 1) {
@@ -392,7 +394,31 @@ public class PdfType0Font extends PdfFont {
         return builder.toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    public GlyphLine decodeIntoGlyphLine(PdfString content) {
+        String cids = content.getValue();
+        if (cids.length() == 1) {
+            return new GlyphLine((List)Collections.emptyList());
+        }
+        List<Glyph> glyphs = new ArrayList<>();
+        //number of cids must be even. With i < cids.length() - 1 we garantee, that we will not process the last odd index.
+        for (int i = 0; i < cids.length() - 1; i += 2) {
+            int code = (cids.charAt(i) << 8) + cids.charAt(i + 1);
+            Glyph glyph = fontProgram.getGlyphByCode(cmapEncoding.getCidCode(code));
+            if (glyph != null && glyph.getChars() != null) {
+                glyphs.add(glyph);
+            } else {
+                glyphs.add(new Glyph(0, -1));
+            }
+        }
+        return new GlyphLine(glyphs);
+    }
+
+    @Override
+    // TODO refactor using decodeIntoGlyphLine?
     public float getContentWidth(PdfString content) {
         String cids = content.getValue();
         Glyph notdef = fontProgram.getGlyphByCode(0);

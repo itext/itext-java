@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.data;
 
+import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.LineSegment;
@@ -114,9 +115,11 @@ public class TextRenderInfo implements IEventData {
     /**
      * @return the text to render
      */
-    public String getText(){
-        if (text == null)
-            text = gs.getFont().decode(string);
+    public String getText() {
+        if (text == null) {
+            GlyphLine gl = gs.getFont().decodeIntoGlyphLine(string);
+            text = gl.toUnicodeString(gl.start, gl.end);
+        }
         return text;
     }
 
