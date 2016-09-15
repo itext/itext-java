@@ -829,10 +829,11 @@ public class PdfSigner {
 
             ap.put(PdfName.N, appearance.getAppearance().getPdfObject());
             acroForm.addField(sigField, document.getPage(pagen));
-            if(acroForm.getPdfObject().isIndirect()) {
-                acroForm.setModified(); // TODO: test this (ain't sure whether I need this)
-            }else{
-                //Acroform dictionary is a Direct dictionary, for proper flushing, catalog needs to be marked as modified
+            if (acroForm.getPdfObject().isIndirect()) {
+                acroForm.setModified();
+            } else {
+                //Acroform dictionary is a Direct dictionary,
+                //for proper flushing, catalog needs to be marked as modified
                 document.getCatalog().setModified();
             }
         }
@@ -851,18 +852,21 @@ public class PdfSigner {
         if (certificationLevel > 0) {
             addDocMDP(cryptoDictionary);
         }
-        if (fieldLock != null)
+        if (fieldLock != null) {
             addFieldMDP(cryptoDictionary, fieldLock);
-        if (signatureEvent != null)
+        }
+        if (signatureEvent != null) {
             signatureEvent.getSignatureDictionary(cryptoDictionary);
+        }
 
         if (certificationLevel > 0) {
             // add DocMDP entry to root
             PdfDictionary docmdp = new PdfDictionary();
             docmdp.put(PdfName.DocMDP, cryptoDictionary.getPdfObject());
-            document.getCatalog().put(PdfName.Perms, docmdp); // TODO: setModified?
+            document.getCatalog().put(PdfName.Perms, docmdp);
+            document.getCatalog().setModified();
         }
-
+        cryptoDictionary.getPdfObject().flush(false);
         document.close();
 
         range = new long[exclusionLocations.size() * 2];
@@ -906,11 +910,11 @@ public class PdfSigner {
             } catch (IOException e) {
                 try {
                     raf.close();
-                } catch (Exception ee) {
+                } catch (Exception ignored) {
                 }
                 try {
                     tempFile.delete();
-                } catch (Exception ee) {
+                } catch (Exception ignored) {
                 }
                 throw e;
             }
