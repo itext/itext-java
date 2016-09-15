@@ -515,4 +515,14 @@ public abstract class PdfObject implements Serializable {
             return obj.clone();
         }
     }
+
+    static boolean equalContent(PdfObject obj1, PdfObject obj2) {
+        PdfObject direct1 = obj1 != null && obj1.isIndirectReference()
+                ? ((PdfIndirectReference)obj1).getRefersTo(true)
+                : obj1;
+        PdfObject direct2 = obj2 != null && obj2.isIndirectReference()
+                ? ((PdfIndirectReference)obj2).getRefersTo(true)
+                : obj2;
+        return direct1 != null && direct1.equals(direct2);
+    }
 }

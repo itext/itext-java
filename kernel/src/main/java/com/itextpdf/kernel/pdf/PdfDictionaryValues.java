@@ -66,7 +66,7 @@ class PdfDictionaryValues extends AbstractCollection<PdfObject> {
         if (o == null)
             return false;
         for (PdfObject pdfObject : this) {
-            if (equalObjects((PdfObject) o, pdfObject)) {
+            if (PdfObject.equalContent((PdfObject) o, pdfObject)) {
                 return true;
             }
         }
@@ -81,7 +81,7 @@ class PdfDictionaryValues extends AbstractCollection<PdfObject> {
             return false;
         Iterator<PdfObject> it = iterator();
         while (it.hasNext()) {
-            if (equalObjects((PdfObject) o, it.next())) {
+            if (PdfObject.equalContent((PdfObject) o, it.next())) {
                 it.remove();
                 return true;
             }
@@ -125,15 +125,5 @@ class PdfDictionaryValues extends AbstractCollection<PdfObject> {
         public void remove() {
             parentIterator.remove();
         }
-    }
-
-    private static boolean equalObjects(PdfObject obj1, PdfObject obj2) {
-        PdfObject direct1 = obj1 != null && obj1.isIndirectReference()
-                ? ((PdfIndirectReference)obj1).getRefersTo(true)
-                : obj1;
-        PdfObject direct2 = obj2 != null && obj2.isIndirectReference()
-                ? ((PdfIndirectReference)obj2).getRefersTo(true)
-                : obj2;
-        return direct1 != null && direct1.equals(direct2);
     }
 }

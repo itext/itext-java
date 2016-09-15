@@ -188,12 +188,10 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     public boolean contains(PdfObject o) {
         if (list.contains(o))
             return true;
-        if (o != null) {
-            if (o.getIndirectReference() != null
-                    && list.contains(o.getIndirectReference())) {
-                return true;
-            } else if (o.isIndirectReference()
-                    && list.contains(((PdfIndirectReference) o).getRefersTo())) {
+        if (o == null)
+            return false;
+        for (PdfObject pdfObject : this) {
+            if (PdfObject.equalContent(o, pdfObject)) {
                 return true;
             }
         }
@@ -230,11 +228,14 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     public void remove(PdfObject o) {
         if (list.remove(o))
             return;
-        if (o != null) {
-            if (o.getIndirectReference() != null && list.remove(o.getIndirectReference()))
+        if (o == null)
+            return;
+        Iterator<PdfObject> it = iterator();
+        while (it.hasNext()) {
+            if (PdfObject.equalContent(o, it.next())) {
+                it.remove();
                 return;
-            if (o.isIndirectReference())
-                list.remove(((PdfIndirectReference) o).getRefersTo());
+            }
         }
     }
 
@@ -314,7 +315,16 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      * @see java.util.List#indexOf(Object)
      */
     public int indexOf(PdfObject o) {
-        return list.indexOf(o);
+        if (o == null)
+            return list.indexOf(null);
+        int index = 0;
+        for (PdfObject pdfObject : this) {
+            if (PdfObject.equalContent(o, pdfObject)) {
+                return index;
+            }
+            index++;
+        }
+        return -1;
     }
 
     /**
