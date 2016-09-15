@@ -154,7 +154,7 @@ public class PdfResourceCounter {
             PdfOutputStream os = new PdfOutputStream(new IdelOutputStream());
 
             os.write(resources.get(ref).clone());
-            length += os.getCurrentPos() - 1;
+            length += os.getCurrentPos();
         }
 
         return length;
