@@ -119,7 +119,7 @@ class PdfDictionaryValues extends AbstractCollection<PdfObject> {
         @Override
         public PdfObject next() {
             PdfObject obj = parentIterator.next();
-            if (obj.isIndirectReference()) {
+            if (obj != null && obj.isIndirectReference()) {
                 obj = ((PdfIndirectReference) obj).getRefersTo(true);
             }
             return obj;

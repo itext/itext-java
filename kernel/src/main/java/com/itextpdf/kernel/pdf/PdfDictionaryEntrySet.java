@@ -120,7 +120,7 @@ class PdfDictionaryEntrySet extends AbstractSet<Map.Entry<PdfName, PdfObject>> {
         @Override
         public PdfObject getValue() {
             PdfObject obj = entry.getValue();
-            if (obj.isIndirectReference()) {
+            if (obj != null && obj.isIndirectReference()) {
                 obj = ((PdfIndirectReference) obj).getRefersTo(true);
             }
             return obj;
