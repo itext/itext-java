@@ -1825,7 +1825,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 float fieldRotation = 0;
                 if (this.getPdfObject().getAsDictionary(PdfName.MK) != null
                         && this.getPdfObject().getAsDictionary(PdfName.MK).get(PdfName.R) != null) {
-                    fieldRotation = this.getPdfObject().getAsDictionary(PdfName.MK).getAsFloat(PdfName.R);
+                    fieldRotation = (float) this.getPdfObject().getAsDictionary(PdfName.MK).getAsFloat(PdfName.R);
                     //Get relative field rotation
                     fieldRotation += pageRotation;
                 }
