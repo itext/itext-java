@@ -105,7 +105,7 @@ public class PdfLiteral extends PdfPrimitiveObject {
     @Override
     public boolean equals(Object o) {
         return this == o ||
-                !(o == null || getClass() != o.getClass()) && Arrays.equals(content, ((PdfLiteral) o).content);
+                o != null && getClass() == o.getClass() && Arrays.equals(content, ((PdfLiteral) o).content);
     }
 
     @Override

@@ -156,7 +156,7 @@ public class PdfBoolean extends PdfPrimitiveObject {
     @Override
     public boolean equals(Object obj) {
         return this == obj ||
-                !(obj == null || getClass() != obj.getClass()) && value == ((PdfBoolean) obj).value;
+                obj != null && getClass() == obj.getClass() && value == ((PdfBoolean) obj).value;
     }
 
     @Override

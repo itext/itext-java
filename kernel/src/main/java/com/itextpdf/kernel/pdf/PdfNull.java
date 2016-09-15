@@ -147,7 +147,7 @@ public class PdfNull extends PdfPrimitiveObject {
 
     @Override
     public boolean equals(Object obj) {
-        return this == obj || !(obj == null || getClass() != obj.getClass());
+        return this == obj || obj != null && getClass() == obj.getClass();
     }
 
     @Override

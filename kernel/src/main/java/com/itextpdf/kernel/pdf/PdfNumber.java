@@ -191,7 +191,7 @@ public class PdfNumber extends PdfPrimitiveObject {
     @Override
     public boolean equals(Object o) {
         return this == o ||
-                !(o == null || getClass() != o.getClass()) && Double.compare(((PdfNumber) o).value, value) == 0;
+                o != null && getClass() == o.getClass() && Double.compare(((PdfNumber) o).value, value) == 0;
     }
 
     @Override
