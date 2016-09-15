@@ -68,7 +68,7 @@ class PdfDictionaryEntrySet extends AbstractSet<Map.Entry<PdfName, PdfObject>> {
 
     @Override
     public Iterator<Map.Entry<PdfName, PdfObject>> iterator() {
-        return new DirectIterator();
+        return new DirectIterator(set.iterator());
     }
 
     @Override
@@ -81,8 +81,12 @@ class PdfDictionaryEntrySet extends AbstractSet<Map.Entry<PdfName, PdfObject>> {
         set.clear();
     }
 
-    private class DirectIterator implements Iterator<Map.Entry<PdfName, PdfObject>> {
-        Iterator<Map.Entry<PdfName, PdfObject>> parentIterator = set.iterator();
+    private static class DirectIterator implements Iterator<Map.Entry<PdfName, PdfObject>> {
+        Iterator<Map.Entry<PdfName, PdfObject>> parentIterator;
+
+        public DirectIterator(Iterator<Map.Entry<PdfName, PdfObject>> parentIterator) {
+            this.parentIterator = parentIterator;
+        }
 
         @Override
         public boolean hasNext() {
@@ -100,11 +104,11 @@ class PdfDictionaryEntrySet extends AbstractSet<Map.Entry<PdfName, PdfObject>> {
         }
     }
 
-    private class DirectEntry implements Map.Entry<PdfName, PdfObject> {
+    private static class DirectEntry implements Map.Entry<PdfName, PdfObject> {
 
         Map.Entry<PdfName, PdfObject> entry;
 
-        public DirectEntry(Map.Entry<PdfName, PdfObject> entry) {
+        DirectEntry(Map.Entry<PdfName, PdfObject> entry) {
             this.entry = entry;
         }
 

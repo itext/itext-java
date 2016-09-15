@@ -101,11 +101,15 @@ class PdfDictionaryValues extends AbstractCollection<PdfObject> {
 
     @Override
     public Iterator<PdfObject> iterator() {
-        return new DirectIterator();
+        return new DirectIterator(collection.iterator());
     }
 
-    private class DirectIterator implements Iterator<PdfObject> {
-        Iterator<PdfObject> parentIterator = collection.iterator();
+    private static class DirectIterator implements Iterator<PdfObject> {
+        Iterator<PdfObject> parentIterator;
+
+        DirectIterator(Iterator<PdfObject> parentIterator) {
+            this.parentIterator = parentIterator;
+        }
 
         @Override
         public boolean hasNext() {
