@@ -47,6 +47,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -76,6 +77,26 @@ public final class UrlUtil {
             url = new File(filename).toURI().toURL();
         }
         return url;
+    }
+
+    /**
+     * This method makes a normalized URI from a given filename.
+     *
+     * @param filename a given filename
+     * @return a valid URI
+     */
+    public static URI toNormalizedURI(String filename) {
+        return toNormalizedURI(new File(filename));
+    }
+
+    /**
+     * This method makes a normalized URI from a given file.
+     *
+     * @param file a given filename
+     * @return a valid URI
+     */
+    public static URI toNormalizedURI(File file) {
+        return file.toURI().normalize();
     }
 
     public static InputStream openStream(URL url) throws IOException {

@@ -44,9 +44,9 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.SystemUtil;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -57,7 +57,6 @@ import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -68,13 +67,11 @@ import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.xmp.PdfConst;
 import com.itextpdf.kernel.xmp.XMPConst;
-import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.XMPUtils;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -82,7 +79,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -94,17 +90,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import java.util.StringTokenizer;
 import java.util.TreeSet;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -134,7 +122,7 @@ public class CompareTool {
     private static final String cannotOpenOutputDirectory = "Cannot open output directory for <filename>.";
     private static final String gsFailed = "GhostScript failed for <filename>.";
     private static final String unexpectedNumberOfPages = "Unexpected number of pages for <filename>.";
-    private static final String differentPages = "File <filename> differs on page <pagenumber>.";
+    private static final String differentPages = "File file:///<filename> differs on page <pagenumber>.";
     private static final String undefinedGsPath = "Path to GhostScript is not specified. Please use -DgsExec=<path_to_ghostscript> (e.g. -DgsExec=\"C:/Program Files/gs/gs9.14/bin/gswin32c.exe\")";
     private static final String ignoredAreasPrefix = "ignored_areas_";
 
@@ -778,6 +766,8 @@ public class CompareTool {
             outPath = outPath + "/";
         prepareOutputDirs(outPath, differenceImagePrefix);
 
+        System.out.println("Comparing visually..........");
+
         if (ignoredAreas != null && !ignoredAreas.isEmpty()) {
             createIgnoredAreasPdfs(outPath, ignoredAreas);
         }
@@ -809,14 +799,14 @@ public class CompareTool {
         for (int i = 0; i < cnt; i++) {
             if (equalPages != null && equalPages.contains(i))
                 continue;
-            System.out.print("Comparing page " + Integer.toString(i + 1) + " (" + imageFiles[i].getAbsolutePath() + ")...");
+            System.out.println("Comparing page " + Integer.toString(i + 1) + ": file:///" + UrlUtil.toNormalizedURI(imageFiles[i]).getPath() + " ...");
             FileInputStream is1 = new FileInputStream(imageFiles[i].getAbsolutePath());
             FileInputStream is2 = new FileInputStream(cmpImageFiles[i].getAbsolutePath());
             boolean cmpResult = compareStreams(is1, is2);
             is1.close();
             is2.close();
             if (!cmpResult) {
-                differentPagesFail = " Page is different!";
+                differentPagesFail = "Page is different!";
                 diffPages.add(i + 1);
                 if (compareExecIsOk) {
                 String currCompareParams = compareParams.replace("<image1>", imageFiles[i].getAbsolutePath())
@@ -831,7 +821,7 @@ public class CompareTool {
             }
         }
         if (differentPagesFail != null) {
-            String errorMessage = differentPages.replace("<filename>", outPdf).replace("<pagenumber>", listDiffPagesAsString(diffPages));
+            String errorMessage = differentPages.replace("<filename>", UrlUtil.toNormalizedURI(outPdf).getPath()).replace("<pagenumber>", listDiffPagesAsString(diffPages));
             if (!compareExecIsOk) {
                 errorMessage += "\nYou can optionally specify path to ImageMagick compare tool (e.g. -DcompareExec=\"C:/Program Files/ImageMagick-6.5.4-2/compare.exe\") to visualize differences.";
             }
@@ -936,8 +926,14 @@ public class CompareTool {
         return null;
     }
 
+    private void printOutCmpDirectories() {
+        System.out.println("Out file folder: file:///" + UrlUtil.toNormalizedURI(new File(outPdf).getParentFile()).getPath());
+        System.out.println("Cmp file folder: file:///" + UrlUtil.toNormalizedURI(new File(cmpPdf).getParentFile()).getPath());
+    }
+
     private String compareByContent(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
-        System.out.print("[itext] INFO  Comparing by content..........");
+        printOutCmpDirectories();
+        System.out.print("Comparing by content..........");
         PdfDocument outDocument;
         try {
             outDocument = new PdfDocument(new PdfReader(outPdf, getOutReaderProperties()));
@@ -1078,11 +1074,11 @@ public class CompareTool {
         return true;
     }
 
-    private boolean compareDictionariesExtended(PdfDictionary outDict, PdfDictionary cmpDict, ObjectPath currentPath, CompareResult compareResult) throws IOException {
+    private boolean compareDictionariesExtended(PdfDictionary outDict, PdfDictionary cmpDict, ObjectPath currentPath, CompareResult compareResult) {
         return compareDictionariesExtended(outDict, cmpDict, currentPath, compareResult, null);
     }
 
-    private boolean compareDictionariesExtended(PdfDictionary outDict, PdfDictionary cmpDict, ObjectPath currentPath, CompareResult compareResult, Set<PdfName> excludedKeys) throws IOException {
+    private boolean compareDictionariesExtended(PdfDictionary outDict, PdfDictionary cmpDict, ObjectPath currentPath, CompareResult compareResult, Set<PdfName> excludedKeys) {
         if (cmpDict != null && outDict == null || outDict != null && cmpDict == null) {
             compareResult.addError(currentPath, "One of the dictionaries is null, the other is not.");
             return false;
@@ -1128,7 +1124,7 @@ public class CompareTool {
         return dictsAreSame;
     }
 
-    private boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath, CompareResult compareResult) throws IOException {
+    private boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath, CompareResult compareResult) {
         PdfObject outDirectObj = null;
         PdfObject cmpDirectObj = null;
         if (outObj != null)
@@ -1220,7 +1216,7 @@ public class CompareTool {
         return true;
     }
 
-    private boolean compareStreamsExtended(PdfStream outStream, PdfStream cmpStream, ObjectPath currentPath, CompareResult compareResult) throws IOException {
+    private boolean compareStreamsExtended(PdfStream outStream, PdfStream cmpStream, ObjectPath currentPath, CompareResult compareResult) {
         boolean toDecode = PdfName.FlateDecode.equals(outStream.get(PdfName.Filter));
         byte[] outStreamBytes = outStream.getBytes(toDecode);
         byte[] cmpStreamBytes = cmpStream.getBytes(toDecode);
@@ -1282,7 +1278,7 @@ public class CompareTool {
         return errorMessage;
     }
 
-    private boolean compareArraysExtended(PdfArray outArray, PdfArray cmpArray, ObjectPath currentPath, CompareResult compareResult) throws IOException {
+    private boolean compareArraysExtended(PdfArray outArray, PdfArray cmpArray, ObjectPath currentPath, CompareResult compareResult) {
         if (outArray == null) {
             if (compareResult != null && currentPath != null)
                 compareResult.addError(currentPath, "Found null. Expected PdfArray.");
