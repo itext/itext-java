@@ -460,10 +460,14 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
 
             int result;
             result = Integer.compare(orientationMagnitude(), other.orientationMagnitude());
-            if (result != 0) return result;
+            if (result != 0) {
+                return result;
+            }
 
-            result = Integer.compare(distPerpendicular(), other.distPerpendicular());
-            if (result != 0) return result;
+            int distPerpendicularDiff = distPerpendicular() - other.distPerpendicular();
+            if (Math.abs(distPerpendicularDiff) > DIACRITICAL_MARKS_ALLOWED_VERTICAL_DEVIATION || distPerpendicularDiff != 0 && (mySegment.getLength() > 0 && otherSegment.getLength() > 0)) {
+                return distPerpendicularDiff;
+            }
 
             return Float.compare(distParallelStart(), other.distParallelStart());
         }
