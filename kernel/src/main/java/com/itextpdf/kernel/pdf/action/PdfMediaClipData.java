@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -45,6 +44,7 @@
 package com.itextpdf.kernel.pdf.action;
 
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -52,15 +52,30 @@ import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 
 import java.text.MessageFormat;
 
+/**
+ * This class is a wrapper of media clip data dictionary that defines the data for a media object that can be played.
+ */
 public class PdfMediaClipData extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -7030377585169961523L;
-	private static final PdfString TEMPACCESS = new PdfString("TEMPACCESS");
+    private static final PdfString TEMPACCESS = new PdfString("TEMPACCESS");
 
+    /**
+     * Constructs a new {@link PdfMediaClipData} wrapper using an existing dictionary.
+     *
+     * @param pdfObject the dictionary to construct the wrapper from
+     */
     public PdfMediaClipData(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
+    /**
+     * Constructs a new {@link PdfMediaClipData} wrapper around a newly created dictionary.
+     *
+     * @param file     the name of the file to create a media clip for
+     * @param fs       a file specification that specifies the actual media data
+     * @param mimeType an ASCII string identifying the type of data
+     */
     public PdfMediaClipData(String file, PdfFileSpec fs, String mimeType) {
         this(new PdfDictionary());
         PdfDictionary dic = new PdfDictionary();
@@ -74,6 +89,21 @@ public class PdfMediaClipData extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.D, fs.getPdfObject());
     }
 
+    /**
+     * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure
+     * that this object is added to the document, i.e. it has an indirect reference.
+     * Basically this means that before flushing you need to explicitly call {@link #makeIndirect(PdfDocument)}.
+     * For example: wrapperInstance.makeIndirect(document).flush();
+     * Note that not every wrapper require this, only those that have such warning in documentation.
+     */
+    @Override
+    public void flush() {
+        super.flush();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;

@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.util.SystemUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
@@ -62,6 +62,7 @@ import com.itextpdf.kernel.security.IExternalDecryptionProcess;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.cert.Certificate;
@@ -79,7 +80,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     private static final int AES_128 = 4;
     private static final int AES_256 = 5;
 
-    private static long seq = System.currentTimeMillis();
+    private static long seq = SystemUtil.getSystemTimeMillis();
 
     private int cryptoMode;
 
@@ -235,11 +236,11 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         } catch (Exception e) {
             throw new PdfException(PdfException.PdfEncryption, e);
         }
-        long time = System.currentTimeMillis();
-        long mem = Runtime.getRuntime().freeMemory();
+        long time = SystemUtil.getSystemTimeMillis();
+        long mem = SystemUtil.getFreeMemory();
         String s = time + "+" + mem + "+" + (seq++);
 
-        return md5.digest(s.getBytes());
+        return md5.digest(s.getBytes(StandardCharsets.ISO_8859_1));
     }
 
     public static PdfObject createInfoId(byte[] id, boolean modified) {
@@ -338,6 +339,18 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
             userPassword = ((StandardHandlerUsingStandard40) securityHandler).computeUserPassword(ownerPassword, getPdfObject());
         }
         return userPassword;
+    }
+
+    /**
+     * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure
+     * that this object is added to the document, i.e. it has an indirect reference.
+     * Basically this means that before flushing you need to explicitly call {@link #makeIndirect(PdfDocument)}.
+     * For example: wrapperInstance.makeIndirect(document).flush();
+     * Note that not every wrapper require this, only those that have such warning in documentation.
+     */
+    @Override
+    public void flush() {
+        super.flush();
     }
 
     @Override

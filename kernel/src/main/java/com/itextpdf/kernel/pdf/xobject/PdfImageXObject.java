@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -67,8 +66,8 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
 import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
-import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
+import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -76,10 +75,13 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
 
+/**
+ * A wrapper for Image XObject. ISO 32000-1, 8.9 Images.
+ */
 public class PdfImageXObject extends PdfXObject {
 
     private static final long serialVersionUID = -205889576153966580L;
-	
+
     private float width;
     private float height;
     private boolean mask;
@@ -91,36 +93,73 @@ public class PdfImageXObject extends PdfXObject {
     private byte[] icc;
     private int stride;
 
+    /**
+     * Creates Image XObject by image.
+     *
+     * @param image {@link ImageData} with actual image data.
+     */
     public PdfImageXObject(ImageData image) {
         this(image, null);
     }
 
+    /**
+     * Creates Image XObject by image.
+     *
+     * @param image     {@link ImageData} with actual image data.
+     * @param imageMask {@link PdfImageXObject} with image mask.
+     */
     public PdfImageXObject(ImageData image, PdfImageXObject imageMask) {
         this(createPdfStream(checkImageType(image), imageMask));
         mask = image.isMask();
         softMask = image.isSoftMask();
     }
 
-    public PdfImageXObject(PdfStream pdfObject) {
-        super(pdfObject);
+    /**
+     * Create {@link PdfImageXObject} instance by {@link PdfStream}.
+     * Note, this constructor doesn't perform any additional checks
+     *
+     * @param pdfStream {@link PdfStream} with Image XObject.
+     * @see PdfXObject#makeXObject(PdfStream)
+     */
+    public PdfImageXObject(PdfStream pdfStream) {
+        super(pdfStream);
     }
 
+    /**
+     * Gets width of image, {@code Width} key.
+     *
+     * @return float value.
+     */
     @Override
     public float getWidth() {
-        if (!isFlushed())
+        if (!isFlushed()) {
             return getPdfObject().getAsNumber(PdfName.Width).floatValue();
-        else
+        } else {
             return width;
+        }
     }
 
+    /**
+     * Gets height of image, {@code Height} key.
+     *
+     * @return float value.
+     */
     @Override
     public float getHeight() {
-        if (!isFlushed())
+        if (!isFlushed()) {
             return getPdfObject().getAsNumber(PdfName.Height).floatValue();
-        else
+        } else {
             return height;
+        }
     }
 
+    /**
+     * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure
+     * that this object is added to the document, i.e. it has an indirect reference.
+     * Basically this means that before flushing you need to explicitly call {@link #makeIndirect(PdfDocument)}.
+     * For example: wrapperInstance.makeIndirect(document).flush();
+     * Note, that not every wrapper require this, only those that have such warning in documentation.
+     */
     @Override
     public void flush() {
         if (!isFlushed()) {
@@ -130,6 +169,12 @@ public class PdfImageXObject extends PdfXObject {
         }
     }
 
+    /**
+     * Copy Image XObject to the specified document.
+     *
+     * @param document target document
+     * @return just created instance of {@link PdfImageXObject}.
+     */
     public PdfImageXObject copyTo(PdfDocument document) {
         PdfImageXObject image = new PdfImageXObject(getPdfObject().copyTo(document));
         image.width = width;
@@ -139,15 +184,34 @@ public class PdfImageXObject extends PdfXObject {
         return image;
     }
 
+    /**
+     * Gets image bytes, wrapped with buffered image.
+     *
+     * @return {@link java.awt.image.BufferedImage} image.
+     * @throws IOException if an error occurs during reading.
+     */
     public java.awt.image.BufferedImage getBufferedImage() throws IOException {
         byte[] img = getImageBytes();
         return ImageIO.read(new ByteArrayInputStream(img));
     }
 
+    /**
+     * Gets decoded image bytes.
+     *
+     * @return byte array.
+     */
     public byte[] getImageBytes() {
         return getImageBytes(true);
     }
 
+    /**
+     * Gets image bytes.
+     * Note, {@link PdfName#DCTDecode}, {@link PdfName#JBIG2Decode} and {@link PdfName#JPXDecode}
+     * filters will be ignored.
+     *
+     * @param decoded if {@code true}, decodes stream bytes.
+     * @return byte array.
+     */
     public byte[] getImageBytes(boolean decoded) {
         byte[] bytes;
         bytes = getPdfObject().getBytes(false);
@@ -163,18 +227,94 @@ public class PdfImageXObject extends PdfXObject {
                 try {
                     bytes = decodeTiffAndPngBytes(bytes);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException("IO exception in PdfImageXObject", e);
                 }
             }
         }
         return bytes;
     }
 
+    /**
+     * Identifies the type of the image that is stored in the bytes of this {@link PdfImageXObject}.
+     * Note that this has nothing to do with the original type of the image. For instance, the return value
+     * of this method will never be {@link ImageType#PNG} as we loose this information when converting a
+     * PNG image into something that can be put into a PDF file.
+     * The possible values are: {@link ImageType#JPEG}, {@link ImageType#JPEG2000}, {@link ImageType#JBIG2},
+     * {@link ImageType#TIFF}, {@link ImageType#PNG}
+     *
+     * @return the identified type of image
+     */
+    public ImageType identifyImageType() {
+        PdfObject filter = getPdfObject().get(PdfName.Filter);
+        PdfArray filters = new PdfArray();
+        if (filter != null) {
+            if (filter.getType() == PdfObject.NAME) {
+                filters.add(filter);
+            } else if (filter.getType() == PdfObject.ARRAY) {
+                filters = ((PdfArray) filter);
+            }
+        }
+        for (int i = filters.size() - 1; i >= 0; i--) {
+            PdfName filterName = (PdfName) filters.get(i);
+            if (PdfName.DCTDecode.equals(filterName)) {
+                return ImageType.JPEG;
+            } else if (PdfName.JBIG2Decode.equals(filterName)) {
+                return ImageType.JBIG2;
+            } else if (PdfName.JPXDecode.equals(filterName)) {
+                return ImageType.JPEG2000;
+            }
+        }
+
+        // None of the previous types match
+        PdfObject colorspace = getPdfObject().get(PdfName.ColorSpace);
+        prepareAndFindColorspace(colorspace);
+        if (pngColorType < 0) {
+            return ImageType.TIFF;
+        } else {
+            return ImageType.PNG;
+        }
+    }
+
+    /**
+     * Identifies recommended file extension to store the bytes of this {@link PdfImageXObject}.
+     * Possible values are: 'png', 'jpg', 'jp2', 'tif', 'jbig2'.
+     * This extension can later be used together with the result of {@link #getImageBytes()}.
+     *
+     * @return a {@link String} with recommended file extension
+     * @see #identifyImageType()
+     */
+    public String identifyImageFileExtension() {
+        ImageType bytesType = identifyImageType();
+        switch (bytesType) {
+            case PNG:
+                return "png";
+            case JPEG:
+                return "jpg";
+            case JPEG2000:
+                return "jp2";
+            case TIFF:
+                return "tif";
+            case JBIG2:
+                return "jbig2";
+            default:
+                throw new IllegalStateException("Should have never happened. This type of image is not allowed for ImageXObject");
+        }
+    }
+
+    /**
+     * Puts the value into Image XObject dictionary and associates it with the specified key.
+     * If the key is already present, it will override the old value with the specified one.
+     *
+     * @param key   key to insert or to override
+     * @param value the value to associate with the specified key
+     * @return object itself.
+     */
     public PdfImageXObject put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
         return this;
     }
 
+    @Deprecated
     protected static PdfStream createPdfStream(ImageData image, PdfImageXObject imageMask) {
         PdfStream stream;
         if (image.getOriginalType() == ImageType.RAW) {
@@ -275,9 +415,9 @@ public class PdfImageXObject extends PdfXObject {
                 Object value = entry.getValue();
                 String key = entry.getKey();
                 if (value instanceof Integer) {
-                    dictionary.put(new PdfName(key), new PdfNumber((Integer) value));
+                    dictionary.put(new PdfName(key), new PdfNumber((int) value));
                 } else if (value instanceof Float) {
-                    dictionary.put(new PdfName(key), new PdfNumber((Float) value));
+                    dictionary.put(new PdfName(key), new PdfNumber((float) value));
                 } else if (value instanceof String) {
                     if (value.equals("Mask")) {
                         dictionary.put(PdfName.Mask, new PdfLiteral((String) value));
@@ -295,7 +435,7 @@ public class PdfImageXObject extends PdfXObject {
                     globalsStream.getOutputStream().writeBytes((byte[]) value);
                     dictionary.put(PdfName.JBIG2Globals, globalsStream);
                 } else if (value instanceof Boolean) {
-                    dictionary.put(new PdfName(key), new PdfBoolean((Boolean) value));
+                    dictionary.put(new PdfName(key), new PdfBoolean((boolean) value));
                 } else if (value instanceof Object[]) {
                     dictionary.put(new PdfName(key), createArray(stream, (Object[]) value));
                 } else if (value instanceof float[]) {
@@ -309,39 +449,44 @@ public class PdfImageXObject extends PdfXObject {
 
     private static PdfArray createArray(PdfStream stream, Object[] objects) {
         PdfArray array = new PdfArray();
-        for (Object object : objects) {
-            if (object instanceof String) {
-                String str = (String) object;
+        for (Object obj : objects) {
+            if (obj instanceof String) {
+                String str = (String) obj;
                 if (str.indexOf('/') == 0) {
                     array.add(new PdfName(str.substring(1)));
                 } else {
                     array.add(new PdfString(str));
                 }
-            } else if (object instanceof Integer) {
-                array.add(new PdfNumber((Integer) object));
-            } else if (object instanceof Float) {
-                array.add(new PdfNumber((Float) object));
-            } else if (object instanceof Map) {
-                array.add(createDictionaryFromMap(stream, (Map<String, Object>) object));
+            } else if (obj instanceof Integer) {
+                array.add(new PdfNumber((int) obj));
+            } else if (obj instanceof Float) {
+                array.add(new PdfNumber((float) obj));
+            } else if (obj instanceof Object[]) {
+                array.add(createArray(stream, (Object[]) obj));
+            } else {
+                //TODO instance of was removed due to autoport
+                array.add(createDictionaryFromMap(stream, (Map<String, Object>) obj));
             }
         }
         return array;
     }
 
-    private byte[] decodeTiffAndPngBytes(byte[] imageBytes) throws IOException {
-
+    private void prepareAndFindColorspace(PdfObject colorspace) {
         pngColorType = -1;
-        PdfArray decode = getPdfObject().getAsArray(PdfName.Decode);
         width = getPdfObject().getAsNumber(PdfName.Width).intValue();
         height = getPdfObject().getAsNumber(PdfName.Height).intValue();
         bpc = getPdfObject().getAsNumber(PdfName.BitsPerComponent).intValue();
         pngBitDepth = bpc;
-        PdfObject colorspace = getPdfObject().get(PdfName.ColorSpace);
 
         palette = null;
         icc = null;
         stride = 0;
         findColorspace(colorspace, true);
+    }
+
+    private byte[] decodeTiffAndPngBytes(byte[] imageBytes) throws IOException {
+        PdfObject colorspace = getPdfObject().get(PdfName.ColorSpace);
+        prepareAndFindColorspace(colorspace);
         java.io.ByteArrayOutputStream ms = new java.io.ByteArrayOutputStream();
         if (pngColorType < 0) {
             if (bpc != 8)
@@ -389,6 +534,7 @@ public class PdfImageXObject extends PdfXObject {
             return imageBytes;
         } else {
             PngWriter png = new PngWriter(ms);
+            PdfArray decode = getPdfObject().getAsArray(PdfName.Decode);
             if (decode != null) {
                 if (pngBitDepth == 1) {
                     // if the decode array is 1,0, then we need to invert the image
@@ -482,6 +628,4 @@ public class PdfImageXObject extends PdfXObject {
         }
         return image;
     }
-
-
 }

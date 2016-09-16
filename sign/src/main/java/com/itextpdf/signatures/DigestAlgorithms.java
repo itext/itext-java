@@ -1,5 +1,4 @@
     /*
- * $Id$
  *
  * This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -180,13 +179,8 @@ public class DigestAlgorithms {
      */
     public static MessageDigest getMessageDigest(String hashAlgorithm, String provider)
             throws NoSuchAlgorithmException, NoSuchProviderException {
-        if (provider == null || provider.startsWith("SunPKCS11") || provider.startsWith("SunMSCAPI")) {
-            return MessageDigest.getInstance(DigestAlgorithms.normalizeDigestName(hashAlgorithm));
-        } else {
-            return MessageDigest.getInstance(hashAlgorithm, provider);
-        }
+        return SignUtils.getMessageDigest(hashAlgorithm, provider);
     }
-
 
     /**
      * Creates a hash using a specific digest algorithm and a provider.

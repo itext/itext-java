@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -47,6 +46,10 @@ package com.itextpdf.io.util;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This file is a helper class for internal usage only.
+ * Be aware that it's API and functionality may be changed in future.
+ */
 public final class TextUtil {
 
     private TextUtil() {
@@ -199,5 +202,9 @@ public final class TextUtil {
         }
         codePoint -= 0x10000;
         return new char[]{(char) (codePoint / 0x400 + 0xd800), (char) (codePoint % 0x400 + 0xdc00)};
+    }
+
+    public static String charToString(char ch) {
+        return String.valueOf(ch);
     }
 }

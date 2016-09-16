@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,7 +43,9 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
@@ -60,6 +61,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Internal helper class which is used to effectively build parent tree and also find marked content references:
@@ -120,10 +123,10 @@ class ParentTreeHandler implements Serializable {
 
     public int getNextMcidForPage(PdfPage page) {
         TreeMap<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(page.getPdfObject().getIndirectReference());
-        if (pageMcrs == null || pageMcrs.isEmpty()) {
+        if (pageMcrs == null || pageMcrs.size() == 0) {
             return 0;
         } else {
-            int lastKey = pageMcrs.lastKey();
+            int lastKey = (int) pageMcrs.lastEntry().getKey();
             if (lastKey < 0) {
                 return 0;
             }
@@ -151,10 +154,16 @@ class ParentTreeHandler implements Serializable {
     }
 
     public void registerMcr(PdfMcr mcr) {
-        TreeMap<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(mcr.getPageObject().getIndirectReference());
+        PdfDictionary mcrPageObject = mcr.getPageObject();
+        if (mcrPageObject == null || (!(mcr instanceof PdfObjRef) && mcr.getMcid() < 0)) {
+            Logger logger = LoggerFactory.getLogger(ParentTreeHandler.class);
+            logger.error(LogMessageConstant.ENCOUNTERED_INVALID_MCR);
+            return;
+        }
+        TreeMap<Integer, PdfMcr> pageMcrs = pageToPageMcrs.get(mcrPageObject.getIndirectReference());
         if (pageMcrs == null) {
             pageMcrs = new TreeMap<>();
-            pageToPageMcrs.put(mcr.getPageObject().getIndirectReference(), pageMcrs);
+            pageToPageMcrs.put(mcrPageObject.getIndirectReference(), pageMcrs);
         }
         if (mcr instanceof PdfObjRef) {
             PdfDictionary obj = ((PdfDictionary) mcr.getPdfObject()).getAsDictionary(PdfName.Obj);
@@ -174,6 +183,9 @@ class ParentTreeHandler implements Serializable {
 
     public void unregisterMcr(PdfMcr mcrToUnregister) {
         PdfDictionary pageDict = mcrToUnregister.getPageObject();
+        if (pageDict == null) { // invalid mcr, ignore
+            return;
+        }
         if (pageDict.isFlushed()) {
             throw new PdfException(PdfException.CannotRemoveMarkedContentReferenceBecauseItsPageWasAlreadyFlushed);
         }
@@ -190,15 +202,11 @@ class ParentTreeHandler implements Serializable {
                     }
                 }
 
-                Integer keyToRemove = null;
                 for (Map.Entry<Integer, PdfMcr> entry : pageMcrs.entrySet()) {
                     if (entry.getValue().getPdfObject() == mcrToUnregister.getPdfObject()) {
-                        keyToRemove = entry.getKey();
+                        pageMcrs.remove(entry.getKey());
                         break;
                     }
-                }
-                if (keyToRemove != null) {
-                    pageMcrs.remove(keyToRemove);
                 }
             } else {
                 pageMcrs.remove(mcrToUnregister.getMcid());
@@ -206,11 +214,11 @@ class ParentTreeHandler implements Serializable {
         }
     }
 
-    private static Integer structParentIndexIntoKey(int structParentIndex) {
+    private static int structParentIndexIntoKey(int structParentIndex) {
         return -structParentIndex - 1;
     }
 
-    private static int keyIntoStructParentIndex(Integer key) {
+    private static int keyIntoStructParentIndex(int key) {
         return -key - 1;
     }
 
@@ -222,7 +230,7 @@ class ParentTreeHandler implements Serializable {
         int maxStructParentIndex = -1;
         for (Map.Entry<Integer, PdfObject> entry : parentTreeEntries.entrySet()) {
             if (entry.getKey() > maxStructParentIndex) {
-                maxStructParentIndex = entry.getKey();
+                maxStructParentIndex = (int) entry.getKey();
             }
 
             PdfObject entryValue = entry.getValue();
@@ -257,7 +265,7 @@ class ParentTreeHandler implements Serializable {
         for (Map.Entry<Integer, PdfMcr> entry : mcrs.entrySet()) {
             PdfMcr mcr = entry.getValue();
             if (mcr instanceof PdfObjRef) {
-                Integer structParent = keyIntoStructParentIndex(entry.getKey());
+                int structParent = keyIntoStructParentIndex((int) entry.getKey());
                 parentTree.addEntry(structParent, ((PdfStructElem) mcr.getParent()).getPdfObject());
             } else {
                 // if for some reason some mcr where not registered or don't exist, we ensure that the rest
@@ -270,9 +278,10 @@ class ParentTreeHandler implements Serializable {
         }
 
 
-        if (!parentsOfPageMcrs.isEmpty()) {
+        if (parentsOfPageMcrs.size() > 0) {
             parentsOfPageMcrs.makeIndirect(structTreeRoot.getDocument());
             parentTree.addEntry(pageStructParentIndex, parentsOfPageMcrs);
+            structTreeRoot.getDocument().checkIsoConformance(parentsOfPageMcrs, IsoKey.TAG_STRUCTURE_ELEMENT);
             parentsOfPageMcrs.flush();
         }
     }

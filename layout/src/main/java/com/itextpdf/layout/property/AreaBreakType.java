@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,6 +43,10 @@
  */
 package com.itextpdf.layout.property;
 
+/**
+ * The possibile values for the type of break that is executed by an {@link
+ * com.itextpdf.layout.element.AreaBreak}.
+ */
 public enum AreaBreakType {
     NEXT_AREA,
     NEXT_PAGE,

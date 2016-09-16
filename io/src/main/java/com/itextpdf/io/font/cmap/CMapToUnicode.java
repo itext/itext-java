@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,12 +43,13 @@
  */
 package com.itextpdf.io.font.cmap;
 
-import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.util.TextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -61,13 +61,13 @@ import java.util.Set;
  */
 public class CMapToUnicode extends AbstractCMap {
 
-//    public static CMapToUnicode EmptyCMapToUnicodeMap = new CMapToUnicode(true);
+    public static CMapToUnicode EmptyCMapToUnicodeMap = new CMapToUnicode(true);
 
     private Map<Integer, char[]> byteMappings;
 
-//    private CMapToUnicode(boolean emptyCMap) {
-//        byteMappings = Collections.emptyMap();
-//    }
+    private CMapToUnicode(boolean emptyCMap) {
+        byteMappings = Collections.<Integer, char[]>emptyMap();
+    }
 
     /**
      * Creates a new instance of CMap.
@@ -103,7 +103,7 @@ public class CMapToUnicode extends AbstractCMap {
      */
     public char[] lookup(byte[] code, int offset, int length) {
         char[] result = null;
-        Integer key;
+        int key;
         if (length == 1) {
             key = code[offset] & 0xff;
             result = byteMappings.get(key);
@@ -133,7 +133,7 @@ public class CMapToUnicode extends AbstractCMap {
         IntHashtable result = new IntHashtable();
         for (Map.Entry<Integer, char[]> entry : byteMappings.entrySet()) {
             if (entry.getValue().length <= 2) {
-                result.put(entry.getKey(), convertToInt(entry.getValue()));
+                result.put((int) entry.getKey(), convertToInt(entry.getValue()));
             }
         }
         return result;

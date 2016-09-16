@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -48,12 +47,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.DocumentType;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 /**
  * This class writes the DOM structure of the XML to the specified output.
@@ -115,20 +111,24 @@ public class XmlDomWriter {
             encoding = "UTF8";
         }
 
-        java.io.Writer writer = new OutputStreamWriter(stream, encoding);
-        fOut = new PrintWriter(writer);
+        OutputStreamWriter osw = new OutputStreamWriter(stream, Charset.forName(encoding));
+        fOut = new PrintWriter(osw);
 
     } // setOutput(OutputStream,String)
 
     /**
      * Sets the output writer.
+     *
+     * @deprecated Try to use {@link XmlDomWriter#setOutput(java.io.OutputStream, String)} instead
      */
+    @Deprecated
     public void setOutput(java.io.Writer writer) {
 
         fOut = writer instanceof PrintWriter
                 ? (PrintWriter) writer : new PrintWriter(writer);
 
     } // setOutput(java.io.Writer)
+
 
     /**
      * Writes the specified node, recursively.

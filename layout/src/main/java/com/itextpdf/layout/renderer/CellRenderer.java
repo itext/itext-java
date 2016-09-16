@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,29 +43,39 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.Matrix;
+import com.itextpdf.kernel.geom.NoninvertibleTransformException;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.Property;
 
 public class CellRenderer extends BlockRenderer {
 
+    /**
+     * Creates a CellRenderer from its corresponding layout object.
+     * @param modelElement the {@link com.itextpdf.layout.element.Cell} which this object should manage
+     */
     public CellRenderer(Cell modelElement) {
         super(modelElement);
         setProperty(Property.ROWSPAN, modelElement.getRowspan());
         setProperty(Property.COLSPAN, modelElement.getColspan());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Cell getModelElement() {
         return (Cell) super.getModelElement();
     }
 
-    @Override
-    public LayoutResult layout(LayoutContext layoutContext) {
-        return super.layout(layoutContext);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected CellRenderer createSplitRenderer(int layoutResult) {
         CellRenderer splitRenderer = (CellRenderer) getNextRenderer();
@@ -78,6 +87,9 @@ public class CellRenderer extends BlockRenderer {
         return splitRenderer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected CellRenderer createOverflowRenderer(int layoutResult) {
         CellRenderer overflowRenderer = (CellRenderer) getNextRenderer();
@@ -88,10 +100,54 @@ public class CellRenderer extends BlockRenderer {
     }
 
     @Override
-    public void drawBorder(DrawContext drawContext) {
-        // Do nothing here. Border drawing for tables is done on TableRenderer.
+    public void drawBackground(DrawContext drawContext) {
+        PdfCanvas canvas = drawContext.getCanvas();
+        Matrix ctm = canvas.getGraphicsState().getCtm();
+
+        // Avoid rotation
+        Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
+        boolean avoidRotation = null != angle && null != this.<Background>getProperty(Property.BACKGROUND);
+        if (avoidRotation) {
+            AffineTransform transform = new AffineTransform(ctm.get(0), ctm.get(1), ctm.get(3), ctm.get(4), ctm.get(6), ctm.get(7));
+            try {
+                transform = transform.createInverse();
+            } catch (NoninvertibleTransformException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+            transform.concatenate(new AffineTransform());
+            canvas.concatMatrix(transform);
+            deleteProperty(Property.ROTATION_ANGLE);
+        }
+
+        super.drawBackground(drawContext);
+
+        // restore concat matrix and rotation angle
+        if (avoidRotation) {
+            setProperty(Property.ROTATION_ANGLE, angle);
+            canvas.concatMatrix(new AffineTransform(ctm.get(0), ctm.get(1), ctm.get(3), ctm.get(4), ctm.get(6), ctm.get(7)));
+        }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void drawBorder(DrawContext drawContext) {
+        // Do nothing here. Border drawing for cells is done on TableRenderer.
+    }
+
+    @Override
+    protected Rectangle applyBorderBox(Rectangle rect, Border[] borders, boolean reverse) {
+        float topWidth = borders[0] != null ? borders[0].getWidth() : 0;
+        float rightWidth = borders[1] != null ? borders[1].getWidth() : 0;
+        float bottomWidth = borders[2] != null ? borders[2].getWidth() : 0;
+        float leftWidth = borders[3] != null ? borders[3].getWidth() : 0;
+        return rect.<Rectangle>applyMargins(topWidth / 2, rightWidth / 2, bottomWidth / 2, leftWidth / 2, reverse);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRenderer getNextRenderer() {
         return new CellRenderer(getModelElement());

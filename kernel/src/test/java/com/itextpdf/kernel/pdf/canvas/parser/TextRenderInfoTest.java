@@ -2,13 +2,13 @@ package com.itextpdf.kernel.pdf.canvas.parser;
 
 import com.itextpdf.kernel.geom.LineSegment;
 import com.itextpdf.kernel.geom.Vector;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -43,7 +43,6 @@ public class TextRenderInfoTest extends ExtendedITextTest {
      * @throws java.lang.Exception
      */
     @Test
-//    @Ignore("Seems to be a problem with decode")
     public void testUnicodeEmptyString() throws Exception {
         StringBuilder sb = new StringBuilder();
         String inFile = "japanese_text.pdf";
@@ -53,7 +52,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
 
         sb.append(PdfTextExtractor.getTextFromPage(pdfDocument.getPage(FIRST_PAGE), start));
 
-        String result = sb.substring(0, sb.indexOf("\n"));
+        String result = sb.substring(0, sb.toString().indexOf("\n"));
         String origText =
                 "\u76f4\u8fd1\u306e\u0053\uff06\u0050\u0035\u0030\u0030"
                         + "\u914d\u5f53\u8cb4\u65cf\u6307\u6570\u306e\u30d1\u30d5"

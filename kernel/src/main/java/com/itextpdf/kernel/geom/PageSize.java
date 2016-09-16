@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -59,6 +58,27 @@ public class PageSize extends Rectangle implements Serializable {
     public static PageSize A6 = new PageSize(298, 420);
     public static PageSize A7 = new PageSize(210, 298);
     public static PageSize A8 = new PageSize(148, 210);
+    public static PageSize A9 = new PageSize(105, 547);
+    public static PageSize A10 = new PageSize(74, 105);
+
+    public static PageSize B0 = new PageSize(2834, 4008);
+    public static PageSize B1 = new PageSize(2004, 2834);
+    public static PageSize B2 = new PageSize(1417, 2004);
+    public static PageSize B3 = new PageSize(1000, 1417);
+    public static PageSize B4 = new PageSize(708, 1000);
+    public static PageSize B5 = new PageSize(498, 708);
+    public static PageSize B6 = new PageSize(354, 498);
+    public static PageSize B7 = new PageSize(249, 354);
+    public static PageSize B8 = new PageSize(175, 249);
+    public static PageSize B9 = new PageSize(124, 175);
+    public static PageSize B10 = new PageSize(88, 124);
+
+    public static PageSize LETTER = new PageSize(612, 792);
+    public static PageSize LEGAL = new PageSize(612, 1008);
+    public static PageSize TABLOID = new PageSize(792, 1224);
+    public static PageSize LEDGER = new PageSize(1224, 792);
+    public static PageSize EXECUTIVE = new PageSize(522, 756);
+
     public static PageSize Default = A4;
 
     public PageSize(float width, float height) {

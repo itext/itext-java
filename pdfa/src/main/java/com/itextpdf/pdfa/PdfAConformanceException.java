@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -50,6 +49,8 @@ import com.itextpdf.kernel.PdfException;
  */
 public class PdfAConformanceException extends PdfException {
 
+    private static final long serialVersionUID = -5951503441486657717L;
+
     public static final String _1ActionsAreNotAllowed = "1.actions.are.not.allowed";
     public static final String AllFontsMustBeEmbeddedThisOneIsnt1 = "all.the.fonts.must.be.embedded.this.one.isn.t.1";
     public static final String AFormXobjectDictionaryShallNotContainOpiKey = "a.form.xobject.dictionary.shall.not.contain.opi.key";
@@ -78,7 +79,7 @@ public class PdfAConformanceException extends PdfException {
     public static final String CatalogDictionaryShallNotContainOCPropertiesKey = "catalog.dictionary.shall.not.contain.the.ocproperties.key";
     public static final String CatalogDictionaryShallNotContainRequirementsEntry = "catalog.dictionary.shall.not.contain.a.requirements.entry";
     public static final String CatalogShallIncludeMarkInfoDictionaryWithMarkedTrueValue = "catalog.dictionary.shall.include.a.markinfo.dictionary.whose.entry.marked.shall.have.a.value.of.true";
-    public static final String CatalogShallContainLangEntry = "catalog.dictionary.shall.contain.lang.entry";
+    public static final String CatalogShallContainLangEntry = "catalog.dictionary.should.contain.lang.entry";
     public static final String CatalogShallContainMetadataEntry = "catalog.dictionary.shall.contain.metadata.entry";
     public static final String ColorSpace1ShallBeDeviceIndependent = "color.space.1.shall.be.device.independent";
     public static final String ColorSpace1ShallHave2Components = "color.space.1.shall.have.2.components";
@@ -148,6 +149,9 @@ public class PdfAConformanceException extends PdfException {
     public static final String TransparencyIsNotAllowedCaShallBeEqualTo1 = "transparency.is.not.allowed.ca.shall.be.equal.to.1";
     public static final String ValueOfNameEntryShallBeUniqueAmongAllOptionalContentConfigurationDictionaries = "value.of.name.entry.shall.be.unique.among.all.optional.content.configuration.dictionaries";
     public static final String WidgetAnnotationDictionaryOrFieldDictionaryShallNotIncludeAOrAAEntry = "widget.annotation.dictionary.or.field.dictionary.shall.not.include.a.or.aa.entry";
+    public static final String AllNonSymbolicTrueTypeFontShallSpecifyMacRomanEncodingOrWinAnsiEncoding = "All non-symbolic TrueType fonts shall specify MacRomanEncoding or WinAnsiEncoding as the value of the Encoding entry in the font dictionary.";
+    public static final String AllNonSymbolicTrueTypeFontShallSpecifyMacRomanOrWinAnsiEncodingAsTheEncodingEntry = "All non-symbolic TrueType fonts shall specify MacRomanEncoding or WinAnsiEncoding as the value of the Encoding entry in the font dictionary. This also means that Encoding entry in the font dictionary shall not be an encoding dictionary.";
+    public static final String AllSymbolicTrueTypeFontsShallNotSpecifyEncoding = "All symbolic TrueType fonts shall not specify an Encoding entry in the font dictionary.";
 
     /**
      * Creates a PdfAConformanceException.

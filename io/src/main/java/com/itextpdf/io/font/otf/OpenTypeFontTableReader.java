@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -160,6 +159,10 @@ public abstract class OpenTypeFontTableReader {
     
     public boolean isSkip(int glyph, int flag) {
         return gdef.isSkip(glyph, flag);
+    }
+
+    public int getGlyphClass(int glyphCode) {
+        return gdef.getGlyphClassTable().getOtfClass(glyphCode);
     }
 
     public int getUnitsPerEm() {

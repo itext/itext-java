@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -48,11 +47,15 @@ import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 
 import java.io.InputStream;
 
+/**
+ * Specify the colour characteristics of output devices on which the document might be rendered
+ * See ISO 32000-1 14.11.5: Output Intents.
+ */
 public class PdfOutputIntent extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -3814334679568337730L;
 
-	/**
+    /**
      * Creates output intent dictionary. Null values are allowed to
      * suppress any key.
      * By default output intent subtype is GTS_PDFA1, use setter to change it.

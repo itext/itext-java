@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -59,16 +58,16 @@ import java.util.List;
 
 public final class ImageDataFactory {
 
-    private static final byte[] gif = new byte[]{'G', 'I', 'F'};
+    private static final byte[] gif = new byte[]{(byte) 'G', (byte) 'I', (byte) 'F'};
     private static final byte[] jpeg = new byte[]{(byte) 0xFF, (byte) 0xD8};
     private static final byte[] jpeg2000_1 = new byte[]{0x00, 0x00, 0x00, 0x0c};
     private static final byte[] jpeg2000_2 = new byte[]{(byte) 0xff, (byte) 0x4f, (byte) 0xff, 0x51};
     private static final byte[] png = new byte[]{(byte) 137, 80, 78, 71};
     private static final byte[] wmf = new byte[]{(byte) 0xD7, (byte) 0xCD};
-    private static final byte[] bmp = new byte[]{'B', 'M'};
-    private static final byte[] tiff_1 = new byte[]{'M', 'M', 0, 42};
-    private static final byte[] tiff_2 = new byte[]{'I', 'I', 42, 0};
-    private static final byte[] jbig2 = new byte[]{(byte) 0x97, 'J', 'B', '2', '\r', '\n', 0x1a, '\n'};
+    private static final byte[] bmp = new byte[]{(byte) 'B', (byte) 'M'};
+    private static final byte[] tiff_1 = new byte[]{(byte) 'M', (byte) 'M', 0, 42};
+    private static final byte[] tiff_2 = new byte[]{(byte) 'I', (byte) 'I', 42, 0};
+    private static final byte[] jbig2 = new byte[]{(byte) 0x97, (byte) 'J', (byte) 'B', (byte) '2', (byte) '\r', (byte) '\n', 0x1a, (byte) '\n'};
 
     private ImageDataFactory() {
     }

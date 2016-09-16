@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -45,10 +44,10 @@
 package com.itextpdf.kernel.pdf.tagging;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -58,7 +57,6 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -70,75 +68,73 @@ import java.util.Set;
 public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IPdfStructElem {
 
     private static final long serialVersionUID = 7204356181229674005L;
-	
+
     public static int Unknown = 0;
     public static int Grouping = 1;
     public static int BlockLevel = 2;
     public static int InlineLevel = 3;
     public static int Illustration = 4;
 
-    public static Set<PdfName> groupingRoles = new HashSet<PdfName>() {{
-        add(PdfName.Document);
-        add(PdfName.Part);
-        add(PdfName.Art);
-        add(PdfName.Sect);
-        add(PdfName.Div);
-        add(PdfName.BlockQuote);
-        add(PdfName.Caption);
-        add(PdfName.Caption);
-        add(PdfName.TOC);
-        add(PdfName.TOCI);
-        add(PdfName.Index);
-        add(PdfName.NonStruct);
-        add(PdfName.Private);
-    }};
+    public static Set<PdfName> groupingRoles = new HashSet<PdfName>();
+    public static Set<PdfName> blockLevelRoles = new HashSet<PdfName>();
+    public static Set<PdfName> inlineLevelRoles = new HashSet<PdfName>();
+    public static Set<PdfName> illustrationRoles = new HashSet<PdfName>();
 
-    public static Set<PdfName> blockLevelRoles = new HashSet<PdfName>() {{
-        add(PdfName.P);
-        add(PdfName.H);
-        add(PdfName.H1);
-        add(PdfName.H2);
-        add(PdfName.H3);
-        add(PdfName.H4);
-        add(PdfName.H5);
-        add(PdfName.H6);
-        add(PdfName.L);
-        add(PdfName.Lbl);
-        add(PdfName.LI);
-        add(PdfName.LBody);
-        add(PdfName.Table);
+    static {
+        groupingRoles.add(PdfName.Document);
+        groupingRoles.add(PdfName.Part);
+        groupingRoles.add(PdfName.Art);
+        groupingRoles.add(PdfName.Sect);
+        groupingRoles.add(PdfName.Div);
+        groupingRoles.add(PdfName.BlockQuote);
+        groupingRoles.add(PdfName.Caption);
+        groupingRoles.add(PdfName.Caption);
+        groupingRoles.add(PdfName.TOC);
+        groupingRoles.add(PdfName.TOCI);
+        groupingRoles.add(PdfName.Index);
+        groupingRoles.add(PdfName.NonStruct);
+        groupingRoles.add(PdfName.Private);
 
-        add(PdfName.TR);
-        add(PdfName.TH);
-        add(PdfName.TD);
-        add(PdfName.THead);
-        add(PdfName.TBody);
-        add(PdfName.TFoot);
-    }};
+        blockLevelRoles.add(PdfName.P);
+        blockLevelRoles.add(PdfName.H);
+        blockLevelRoles.add(PdfName.H1);
+        blockLevelRoles.add(PdfName.H2);
+        blockLevelRoles.add(PdfName.H3);
+        blockLevelRoles.add(PdfName.H4);
+        blockLevelRoles.add(PdfName.H5);
+        blockLevelRoles.add(PdfName.H6);
+        blockLevelRoles.add(PdfName.L);
+        blockLevelRoles.add(PdfName.Lbl);
+        blockLevelRoles.add(PdfName.LI);
+        blockLevelRoles.add(PdfName.LBody);
+        blockLevelRoles.add(PdfName.Table);
+        blockLevelRoles.add(PdfName.TR);
+        blockLevelRoles.add(PdfName.TH);
+        blockLevelRoles.add(PdfName.TD);
+        blockLevelRoles.add(PdfName.THead);
+        blockLevelRoles.add(PdfName.TBody);
+        blockLevelRoles.add(PdfName.TFoot);
 
-    public static Set<PdfName> inlineLevelRoles = new HashSet<PdfName>() {{
-        add(PdfName.Span);
-        add(PdfName.Quote);
-        add(PdfName.Note);
-        add(PdfName.Reference);
-        add(PdfName.BibEntry);
-        add(PdfName.Code);
-        add(PdfName.Link);
-        add(PdfName.Annot);
-        add(PdfName.Ruby);
-        add(PdfName.Warichu);
-        add(PdfName.RB);
-        add(PdfName.RT);
-        add(PdfName.RP);
-        add(PdfName.WT);
-        add(PdfName.WP);
-    }};
+        inlineLevelRoles.add(PdfName.Span);
+        inlineLevelRoles.add(PdfName.Quote);
+        inlineLevelRoles.add(PdfName.Note);
+        inlineLevelRoles.add(PdfName.Reference);
+        inlineLevelRoles.add(PdfName.BibEntry);
+        inlineLevelRoles.add(PdfName.Code);
+        inlineLevelRoles.add(PdfName.Link);
+        inlineLevelRoles.add(PdfName.Annot);
+        inlineLevelRoles.add(PdfName.Ruby);
+        inlineLevelRoles.add(PdfName.Warichu);
+        inlineLevelRoles.add(PdfName.RB);
+        inlineLevelRoles.add(PdfName.RT);
+        inlineLevelRoles.add(PdfName.RP);
+        inlineLevelRoles.add(PdfName.WT);
+        inlineLevelRoles.add(PdfName.WP);
 
-    public static Set<PdfName> illustrationRoles = new HashSet<PdfName>() {{
-        add(PdfName.Figure);
-        add(PdfName.Formula);
-        add(PdfName.Form);
-    }};
+        illustrationRoles.add(PdfName.Figure);
+        illustrationRoles.add(PdfName.Formula);
+        illustrationRoles.add(PdfName.Form);
+    }
 
     protected int type = Unknown;
 
@@ -159,7 +155,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     public PdfStructElem(PdfDocument document, PdfName role, PdfAnnotation annot) {
         this(document, role);
         if (annot.getPage() == null)
-            throw new PdfException(PdfException.AnnotShallHaveReferenceToPage);
+            throw new PdfException(PdfException.AnnotationShallHaveReferenceToPage);
         getPdfObject().put(PdfName.Pg, annot.getPage().getPdfObject());
     }
 
@@ -184,7 +180,6 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
      *                        Pass {@code true} if you want to create empty dictionary in such case.
      *                        The attributes dictionary will be stored inside element.
      * @return attributes dictionary.
-     * @throws PdfException
      */
     public PdfObject getAttributes(boolean createNewIfNull) {
         PdfObject attributes = getPdfObject().get(PdfName.A);
@@ -291,7 +286,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
             PdfMcr mcr = (PdfMcr) kid;
             getDocument().getStructTreeRoot().getParentTreeHandler().unregisterMcr(mcr);
             return removeKidObject(mcr.getPdfObject());
-        } else if (kid instanceof PdfStructElem){
+        } else if (kid instanceof PdfStructElem) {
             return removeKidObject(((PdfStructElem) kid).getPdfObject());
         }
         return -1;
@@ -319,6 +314,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     /**
      * Gets list of the direct kids of structure element.
      * If certain kid is flushed, there will be a {@code null} in the list on it's place.
+     *
      * @return list of the direct kids of structure element.
      */
     @Override
@@ -365,7 +361,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     @Override
     public void flush() {
-        //TODO log that to prevent undefined behaviour, use StructTreeRoot#flushStructElem method
+        getDocument().checkIsoConformance(getPdfObject(), IsoKey.TAG_STRUCTURE_ELEMENT);
         super.flush();
     }
 
@@ -424,10 +420,6 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     private IPdfStructElem convertPdfObjectToIPdfStructElem(PdfObject obj) {
-        if (obj.isIndirectReference()) {
-            obj = ((PdfIndirectReference)obj).getRefersTo();
-        }
-
         IPdfStructElem elem = null;
         switch (obj.getType()) {
             case PdfObject.DICTIONARY:
@@ -464,7 +456,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
                 getPdfObject().remove(PdfName.K);
             }
         }
-        if (!k.isArray()|| k.isArray() && ((PdfArray)k).isEmpty()) {
+        if (!k.isArray() || k.isArray() && ((PdfArray) k).isEmpty()) {
             getPdfObject().remove(PdfName.K);
             removedIndex = 0;
         }

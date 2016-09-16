@@ -1,16 +1,16 @@
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Category(IntegrationTest.class)
 public class PdfTokenizerTest {
@@ -18,12 +18,23 @@ public class PdfTokenizerTest {
 
     private void checkTokenTypes(String data, PdfTokenizer.TokenType... expectedTypes) throws Exception {
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
-        PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(data.getBytes())));
+        PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
         for (int i = 0; i < expectedTypes.length; i++) {
             tok.nextValidToken();
             //System.out.println(tok.getTokenType() + " -> " + tok.getStringValue());
             Assert.assertEquals("Position " + i, expectedTypes[i], tok.getTokenType());
+        }
+    }
+
+    private void checkTokenValues(String data, byte[]... expectedValues) throws Exception {
+        RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
+        PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
+
+        for (int i = 0; i < expectedValues.length; i++) {
+            tok.nextValidToken();
+            //System.out.println(tok.getTokenType() + " -> " + tok.getStringValue());
+            Assert.assertArrayEquals("Position " + i, expectedValues[i], tok.getByteContent());
         }
     }
 
@@ -72,6 +83,14 @@ public class PdfTokenizerTest {
         );
     }
 
+    @Test
+    public void numberValueInTheEndTest() throws Exception {
+        checkTokenValues(
+                "123",
+                new byte[]{49, 50, 51},
+                new byte[]{} //EndOfFile buffer
+        );
+    }
 
     @Test
     public void encodingTest() throws IOException {
@@ -83,45 +102,45 @@ public class PdfTokenizerTest {
         // hex string parse and check
         String testHexString = "<0D0A09557365729073204775696465>";
         factory = new RandomAccessSourceFactory();
-        tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(testHexString.getBytes())));
+        tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(testHexString.getBytes(StandardCharsets.ISO_8859_1))));
         tok.nextToken();
         pdfString = new PdfString(tok.getByteContent(), tok.isHexString());
         Assert.assertEquals("\r\n\tUser\u0090s Guide", pdfString.getValue());
 
         String testUnicodeString = "ΑΒΓΗ€•♣⋅";
-        pdfString = new PdfString(testUnicodeString.getBytes("UnicodeBig"), false);
+        pdfString = new PdfString(PdfEncodings.convertToBytes(testUnicodeString, PdfEncodings.UNICODE_BIG), false);
         Assert.assertEquals(testUnicodeString, pdfString.toUnicodeString());
 
-        pdfString = new PdfString("FEFF041F04400438043204350442".getBytes(), true);
+        pdfString = new PdfString("FEFF041F04400438043204350442".getBytes(StandardCharsets.ISO_8859_1), true);
         Assert.assertEquals("\u041F\u0440\u0438\u0432\u0435\u0442", pdfString.toUnicodeString());
 
-        pdfString = new PdfString("FEFF041F04400438043204350442".getBytes(), false);
+        pdfString = new PdfString("FEFF041F04400438043204350442".getBytes(StandardCharsets.ISO_8859_1), false);
         Assert.assertEquals("FEFF041F04400438043204350442", pdfString.toUnicodeString());
 
         String specialCharacter = "\r\n\t\\n\\r\\t\\f";
-        pdfString = new PdfString(specialCharacter.getBytes(),false);
+        pdfString = new PdfString(specialCharacter.getBytes(StandardCharsets.ISO_8859_1), false);
         Assert.assertEquals("\n\t\n\r\t\f", pdfString.toUnicodeString());
 
         String symbol = "\u0001\u0004\u0006\u000E\u001F";
-        pdfString = new PdfString(symbol.getBytes(),false);
+        pdfString = new PdfString(symbol.getBytes(StandardCharsets.ISO_8859_1), false);
         Assert.assertEquals(symbol, pdfString.toUnicodeString());
 
 
         String testString1 ="These\\\n two\\\r strings\\\n are the same";
-        pdfString = new PdfString(testString1.getBytes(),false);
+        pdfString = new PdfString(testString1.getBytes(StandardCharsets.ISO_8859_1), false);
         Assert.assertEquals("These two strings are the same", pdfString.getValue());
 
         String testString2 ="This string contains \\245two octal characters\\307";
-        pdfString = new PdfString(testString2.getBytes(),false);
+        pdfString = new PdfString(testString2.getBytes(StandardCharsets.ISO_8859_1), false);
         Assert.assertEquals("This string contains \u00A5two octal characters\u00C7", pdfString.getValue());
 
 
         String testString3 ="\\0053";
-        pdfString = new PdfString(testString3.getBytes(),false);
+        pdfString = new PdfString(testString3.getBytes(StandardCharsets.ISO_8859_1), false);
         Assert.assertEquals("\u00053", pdfString.getValue());
 
         String testString4 ="\\053";
-        pdfString = new PdfString(testString4.getBytes(),false);
+        pdfString = new PdfString(testString4.getBytes(StandardCharsets.ISO_8859_1), false);
         Assert.assertEquals("+", pdfString.getValue());
 
         byte[] b = new byte[]{(byte)46,(byte)56,(byte)40};
@@ -160,7 +179,7 @@ public class PdfTokenizerTest {
                 "/Name1 --15" +
                 "/Prev ---116.23 >>";
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
-        PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(data.getBytes())));
+        PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
         tok.nextValidToken();
         Assert.assertSame(tok.getTokenType(), PdfTokenizer.TokenType.StartDic);
@@ -269,8 +288,8 @@ public class PdfTokenizerTest {
     public void tokenValueEqualsToTest() throws IOException {
         String data = "SomeString";
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
-        PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(data.getBytes())));
+        PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
         tok.nextToken();
-        Assert.assertTrue(tok.tokenValueEqualsTo(data.getBytes()));
+        Assert.assertTrue(tok.tokenValueEqualsTo(data.getBytes(StandardCharsets.ISO_8859_1)));
     }
 }

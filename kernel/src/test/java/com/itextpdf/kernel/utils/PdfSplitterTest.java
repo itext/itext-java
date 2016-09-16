@@ -1,7 +1,6 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -9,17 +8,17 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfSplitterTest extends ExtendedITextTest{
@@ -48,7 +47,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
             @Override
             protected PdfWriter getNextPdfWriter(PageRange documentPageRange) {
                 try {
-                    return new PdfWriter(new FileOutputStream(destinationFolder + "splitDocument1_" + String.valueOf(partNumber++) + ".pdf"));
+                    return new PdfWriter(destinationFolder + "splitDocument1_" + String.valueOf(partNumber++) + ".pdf");
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException();
                 }
@@ -78,7 +77,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
             @Override
             protected PdfWriter getNextPdfWriter(PageRange documentPageRange) {
                 try {
-                    return new PdfWriter(new FileOutputStream(destinationFolder + "splitDocument2_" + String.valueOf(partNumber++) + ".pdf"));
+                    return new PdfWriter(destinationFolder + "splitDocument2_" + String.valueOf(partNumber++) + ".pdf");
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException();
                 }
@@ -86,15 +85,11 @@ public class PdfSplitterTest extends ExtendedITextTest{
         }.splitByPageCount(60, new PdfSplitter.IDocumentReadyListener() {
             @Override
             public void documentReady(PdfDocument pdfDocument, PageRange pageRange) {
-                try {
-                    if (new PageRange("61-120").equals(pageRange)) {
-                        pdfDocument.getDocumentInfo().setAuthor("Modified Author");
-                    }
-
-                    pdfDocument.close();
-                } catch (PdfException e) {
-                    e.printStackTrace();
+                if (new PageRange("61-120").equals(pageRange)) {
+                    pdfDocument.getDocumentInfo().setAuthor("Modified Author");
                 }
+
+                pdfDocument.close();
             }
         });
 
@@ -121,7 +116,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
             @Override
             protected PdfWriter getNextPdfWriter(PageRange documentPageRange) {
                 try {
-                    return new PdfWriter(new FileOutputStream(destinationFolder + "splitDocument3_" + String.valueOf(partNumber++) + ".pdf"));
+                    return new PdfWriter(destinationFolder + "splitDocument3_" + String.valueOf(partNumber++) + ".pdf");
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException();
                 }
@@ -147,7 +142,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
         String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
         PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
         PdfSplitter splitter = new PdfSplitter(inputPdfDoc);
-        List listTitles = new ArrayList();
+        List<String> listTitles = new ArrayList<>();
         listTitles.add("Syncing iPod Content from Your iTunes Library");
         listTitles.add("Restoring or Transferring Your iPhone Settings");
         List<PdfDocument> list = splitter.splitByOutlines(listTitles);
@@ -168,7 +163,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
             @Override
             protected PdfWriter getNextPdfWriter(PageRange documentPageRange) {
                 try {
-                    return new PdfWriter(new FileOutputStream(destinationFolder + "splitBySize_part" + String.valueOf(partNumber++) + ".pdf"));
+                    return new PdfWriter(destinationFolder + "splitBySize_part" + String.valueOf(partNumber++) + ".pdf");
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException();
                 }

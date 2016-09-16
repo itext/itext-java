@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -132,7 +131,7 @@ public class AccessibilityProperties implements Serializable {
         }
 
         List<PdfDictionary> newAttributesList = getAttributesList();
-        if (!newAttributesList.isEmpty()) {
+        if (newAttributesList.size() > 0) {
             PdfObject attributesObject = elem.getAttributes(false);
 
             PdfObject combinedAttributes = combineAttributesList(attributesObject, newAttributesList, elem.getPdfObject().getAsNumber(PdfName.R));

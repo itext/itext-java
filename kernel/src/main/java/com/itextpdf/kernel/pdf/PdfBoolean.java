@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -152,5 +151,16 @@ public class PdfBoolean extends PdfPrimitiveObject {
         super.copyContent(from, document);
         PdfBoolean bool = (PdfBoolean)from;
         value = bool.value;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this == obj ||
+                obj != null && getClass() == obj.getClass() && value == ((PdfBoolean) obj).value;
+    }
+
+    @Override
+    public int hashCode() {
+        return (value ? 1 : 0);
     }
 }

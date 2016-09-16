@@ -18,8 +18,7 @@
 package com.itextpdf.layout.hyphenation;
 
 /**
- * <p>An hyphenation exception.</p>
- *
+ * A hyphenation exception.
  * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
  */
 public class HyphenationException extends Exception {
@@ -27,7 +26,6 @@ public class HyphenationException extends Exception {
     /**
      * Construct a hyphenation exception.
      * @param msg a message string
-     * @see java.lang.Throwable#Throwable(String)
      */
     public HyphenationException(String msg) {
         super(msg);

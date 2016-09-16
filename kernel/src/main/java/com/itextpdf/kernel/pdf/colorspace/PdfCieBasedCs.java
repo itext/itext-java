@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -48,6 +47,7 @@ import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.color.IccProfile;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -59,6 +59,18 @@ import java.util.ArrayList;
 public abstract class PdfCieBasedCs extends PdfColorSpace {
 
     private static final long serialVersionUID = 7803780450619297557L;
+
+    /**
+     * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure
+     * that this object is added to the document, i.e. it has an indirect reference.
+     * Basically this means that before flushing you need to explicitly call {@link #makeIndirect(PdfDocument)}.
+     * For example: wrapperInstance.makeIndirect(document).flush();
+     * Note that not every wrapper require this, only those that have such warning in documentation.
+     */
+    @Override
+    public void flush() {
+        super.flush();
+    }
 
 	@Override
     protected boolean isWrappedObjectMustBeIndirect() {
@@ -78,10 +90,7 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         }
 
         public CalGray(float[] whitePoint) {
-            this(new PdfArray(new ArrayList<PdfObject>() {{
-                add(PdfName.CalGray);
-                add(new PdfDictionary());
-            }}));
+            this(getInitialPdfArray());
             if (whitePoint == null || whitePoint.length != 3)
                 throw new PdfException(PdfException.WhitePointIsIncorrectlySpecified, this);
             PdfDictionary d = ((PdfArray)getPdfObject()).getAsDictionary(1);
@@ -101,6 +110,13 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         public int getNumberOfComponents() {
             return 1;
         }
+
+        private static PdfArray getInitialPdfArray() {
+            ArrayList<PdfObject> tempArray = new ArrayList<PdfObject>(2);
+            tempArray.add(PdfName.CalGray);
+            tempArray.add(new PdfDictionary());
+            return new PdfArray(tempArray);
+        }
     }
 
     public static class CalRgb extends PdfCieBasedCs {
@@ -112,10 +128,7 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         }
 
         public CalRgb(float[] whitePoint) {
-            this(new PdfArray(new ArrayList<PdfObject>() {{
-                add(PdfName.CalRGB);
-                add(new PdfDictionary());
-            }}));
+            this(getInitialPdfArray());
             if (whitePoint == null || whitePoint.length != 3)
                 throw new PdfException(PdfException.WhitePointIsIncorrectlySpecified, this);
             PdfDictionary d = ((PdfArray)getPdfObject()).getAsDictionary(1);
@@ -137,6 +150,13 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         public int getNumberOfComponents() {
             return 3;
         }
+
+        private static PdfArray getInitialPdfArray() {
+            ArrayList<PdfObject> tempArray = new ArrayList<PdfObject>(2);
+            tempArray.add(PdfName.CalRGB);
+            tempArray.add(new PdfDictionary());
+            return new PdfArray(tempArray);
+        }
     }
 
     public static class Lab extends PdfCieBasedCs {
@@ -148,10 +168,7 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         }
 
         public Lab(float[] whitePoint) {
-            this(new PdfArray(new ArrayList<PdfObject>() {{
-                add(PdfName.Lab);
-                add(new PdfDictionary());
-            }}));
+            this(getInitialPdfArray());
             if (whitePoint == null || whitePoint.length != 3)
                 throw new PdfException(PdfException.WhitePointIsIncorrectlySpecified, this);
             PdfDictionary d = ((PdfArray)getPdfObject()).getAsDictionary(1);
@@ -171,6 +188,13 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         public int getNumberOfComponents() {
             return 3;
         }
+
+        private static PdfArray getInitialPdfArray() {
+            ArrayList<PdfObject> tempArray = new ArrayList<PdfObject>(2);
+            tempArray.add(PdfName.Lab);
+            tempArray.add(new PdfDictionary());
+            return new PdfArray(tempArray);
+        }
     }
 
     public static class IccBased extends PdfCieBasedCs {
@@ -182,22 +206,16 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         }
 
         public IccBased(final InputStream iccStream) {
-            this(new PdfArray(new ArrayList<PdfObject>() {{
-                add(PdfName.ICCBased);
-                add(getIccProfileStream(iccStream));
-            }}));
+            this(getInitialPdfArray(iccStream, null));
         }
 
         public IccBased(final InputStream iccStream, final float[] range) {
-            this(new PdfArray(new ArrayList<PdfObject>() {{
-                add(PdfName.ICCBased);
-                add(getIccProfileStream(iccStream, range));
-            }}));
+            this(getInitialPdfArray(iccStream, range));
         }
 
         @Override
         public int getNumberOfComponents() {
-            return ((PdfArray)getPdfObject()).getAsStream(1).getAsInt(PdfName.N);
+            return (int) ((PdfArray)getPdfObject()).getAsStream(1).getAsInt(PdfName.N);
         }
 
         public static PdfStream getIccProfileStream(InputStream iccStream) {
@@ -224,6 +242,13 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
             PdfStream stream = getIccProfileStream(iccStream);
             stream.put(PdfName.Range, new PdfArray(range));
             return stream;
+        }
+
+        private static PdfArray getInitialPdfArray(final InputStream iccStream, final float[] range) {
+            ArrayList<PdfObject> tempArray = new ArrayList<PdfObject>(2);
+            tempArray.add(PdfName.ICCBased);
+            tempArray.add(range == null ? getIccProfileStream(iccStream) : getIccProfileStream(iccStream, range));
+            return new PdfArray(tempArray);
         }
     }
 }

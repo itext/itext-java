@@ -3,14 +3,12 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.File;
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class PdfStringTest extends ExtendedITextTest {
@@ -20,7 +18,7 @@ public class PdfStringTest extends ExtendedITextTest {
 
     @Before
     public void before() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test

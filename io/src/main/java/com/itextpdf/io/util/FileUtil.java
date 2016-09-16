@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,10 +43,25 @@
  */
 package com.itextpdf.io.util;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This file is a helper class for internal usage only.
+ * Be aware that it's API and functionality may be changed in future.
+ */
 public final class FileUtil {
 
     private FileUtil() {
@@ -59,6 +73,7 @@ public final class FileUtil {
         return winDir + fileSeparator + "fonts";
     }
 
+    @Deprecated
     public static String getFileName(String file) {
         return new File(file).getName();
     }
@@ -93,11 +108,19 @@ public final class FileUtil {
                             list.add(file.getAbsolutePath());
                         }
                     }
-                    return list.toArray(new String[] {});
+                    return list.toArray(new String[list.size()]);
                 }
             }
         }
         return null;
+    }
+
+    public static File[] listFilesInDirectoryByFilter(String outPath, FileFilter fileFilter) {
+        if (outPath != null && !outPath.isEmpty()) {
+            return new File(outPath).listFiles(fileFilter);
+        } else {
+            return null;
+        }
     }
 
     private static void listAllFiles(String dir, List<String> list) {
@@ -117,4 +140,35 @@ public final class FileUtil {
         return new PrintWriter(new OutputStreamWriter(output, encoding));
     }
 
+    public static java.io.OutputStream getBufferedOutputStream(String filename) throws FileNotFoundException {
+        return new BufferedOutputStream(new FileOutputStream(filename));
+    }
+
+    public static java.io.OutputStream wrapWithBufferedOutputStream(OutputStream outputStream) {
+        if (outputStream instanceof ByteArrayOutputStream || (outputStream instanceof BufferedOutputStream)) {
+            return outputStream;
+        } else {
+            return new BufferedOutputStream(outputStream);
+        }
+    }
+
+    public static File createTempFile(String path) throws IOException {
+        File tempFile = new File(path);
+        if (tempFile.isDirectory()) {
+            tempFile = File.createTempFile("pdf", null, tempFile);
+        }
+        return tempFile;
+    }
+
+    public static FileOutputStream getFileOutputStream(File tempFile) throws FileNotFoundException {
+        return new FileOutputStream(tempFile);
+    }
+
+    public static RandomAccessFile getRandomAccessFile(File tempFile) throws FileNotFoundException {
+        return new RandomAccessFile(tempFile, "rw");
+    }
+
+    public static void createDirectories(String outPath) {
+        new File(outPath).mkdirs();
+    }
 }

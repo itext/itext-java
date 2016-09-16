@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -78,7 +77,7 @@ public class AreaBreakRenderer implements IRenderer {
         LayoutArea occupiedArea = layoutContext.getArea().clone();
         occupiedArea.getBBox().setHeight(0);
         occupiedArea.getBBox().setWidth(0);
-        return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, null).setAreaBreak(areaBreak);
+        return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, null, this).setAreaBreak(areaBreak);
     }
 
     @Override
@@ -103,17 +102,17 @@ public class AreaBreakRenderer implements IRenderer {
 
     @Override
     public <T1> T1 getProperty(int key) {
-        return null;
+        return (T1) (Object) null;
     }
 
     @Override
     public <T1> T1 getOwnProperty(int property) {
-        return null;
+        return (T1) (Object) null;
     }
 
     @Override
     public <T1> T1 getDefaultProperty(int property) {
-        return null;
+        return (T1) (Object) null;
     }
 
     @Override

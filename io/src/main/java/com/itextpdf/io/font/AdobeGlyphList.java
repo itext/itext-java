@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -99,7 +98,7 @@ public class AdobeGlyphList {
                 if (t2.hasMoreTokens()) {
                     continue;
                 }
-                Integer num = Integer.valueOf(hex, 16);
+                int num = Integer.parseInt(hex, 16);
                 unicode2names.put(num, name);
                 names2unicode.put(name, num);
             }
@@ -116,11 +115,14 @@ public class AdobeGlyphList {
         }
     }
 
-    public static Integer nameToUnicode(String name) {
-        Integer v = names2unicode.get(name);
-        if (v == null && name.length() == 7 && name.toLowerCase().startsWith("uni")) {
+    public static int nameToUnicode(String name) {
+        int v = -1;
+        if (names2unicode.containsKey(name)) {
+            v = (int) names2unicode.get(name);
+        }
+        if (v == -1 && name.length() == 7 && name.toLowerCase().startsWith("uni")) {
             try {
-                return Integer.valueOf(name.substring(3), 16);
+                return Integer.parseInt(name.substring(3), 16);
             } catch (Exception ignored) {
             }
         }

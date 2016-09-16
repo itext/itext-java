@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -80,13 +79,18 @@ public class PdfNameTree {
             dictionary = dictionary.getAsDictionary(treeType);
             if (dictionary != null) {
                 items = readTree(dictionary);
-                for (Iterator<Map.Entry<String, PdfObject>> it = items.entrySet().iterator(); it.hasNext(); ) {
-                    Map.Entry<String, PdfObject> entry = it.next();
-                    PdfArray arr = getNameArray(entry.getValue());
-                    if (arr != null)
-                        entry.setValue(arr);
+                //@TODO It's done for auto porting to itextsharp, cuz u cannot change collection which you iterate
+                // in for loop (even if you change only value of a Map entry) in .NET. Java doesn't have such a problem.
+                // We should find a better solution in the future.
+                Set<String> keys = new HashSet<>();
+                keys.addAll(items.keySet());
+                for (String key : keys) {
+                    PdfArray arr = getNameArray(items.get(key));
+                    if (arr != null) {
+                        items.put(key, arr);
+                    }
                     else
-                        it.remove();
+                        items.remove(key);
                 }
             }
         }
@@ -127,9 +131,9 @@ public class PdfNameTree {
         if (names.length <= NODE_SIZE) {
             PdfDictionary dic = new PdfDictionary();
             PdfArray ar = new PdfArray();
-            for (int k = 0; k < names.length; ++k) {
-                ar.add(new PdfString(names[k], null));
-                ar.add(items.get(names[k]));
+            for (String name : names) {
+                ar.add(new PdfString(name, null));
+                ar.add(items.get(name));
             }
             dic.put(PdfName.Names, ar);
             return dic;
@@ -157,28 +161,28 @@ public class PdfNameTree {
         while (true) {
             if (top <= NODE_SIZE) {
                 PdfArray arr = new PdfArray();
-                for (int k = 0; k < top; ++k)
-                    arr.add(kids[k]);
+                for (int i = 0; i < top; ++i)
+                    arr.add(kids[i]);
                 PdfDictionary dic = new PdfDictionary();
                 dic.put(PdfName.Kids, arr);
                 return dic;
             }
             skip *= NODE_SIZE;
             int tt = (names.length + skip - 1 )/ skip;
-            for (int k = 0; k < tt; ++k) {
-                int offset = k * NODE_SIZE;
+            for (int i = 0; i < tt; ++i) {
+                int offset = i * NODE_SIZE;
                 int end = Math.min(offset + NODE_SIZE, top);
                 PdfDictionary dic = new PdfDictionary().makeIndirect(catalog.getDocument());
                 PdfArray arr = new PdfArray();
-                arr.add(new PdfString(names[k * skip], null));
-                arr.add(new PdfString(names[Math.min((k + 1) * skip, names.length) - 1], null));
+                arr.add(new PdfString(names[i * skip], null));
+                arr.add(new PdfString(names[Math.min((i + 1) * skip, names.length) - 1], null));
                 dic.put(PdfName.Limits, arr);
                 arr = new PdfArray();
                 for (; offset < end; ++offset) {
                     arr.add(kids[offset]);
                 }
                 dic.put(PdfName.Kids, arr);
-                kids[k] = dic;
+                kids[i] = dic;
             }
             top = tt;
         }

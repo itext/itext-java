@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -77,8 +76,9 @@ public class SolidLine implements ILineDrawer {
     public void draw(PdfCanvas canvas, Rectangle drawArea) {
         canvas.saveState()
                 .setStrokeColor(color)
-                .moveTo(drawArea.getX(), drawArea.getY())
-                .lineTo(drawArea.getX() + drawArea.getWidth(), drawArea.getY())
+                .setLineWidth(lineWidth)
+                .moveTo(drawArea.getX(), drawArea.getY() + lineWidth / 2)
+                .lineTo(drawArea.getX() + drawArea.getWidth(), drawArea.getY() + lineWidth / 2)
                 .stroke()
                 .restoreState();
     }

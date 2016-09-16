@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -58,19 +57,19 @@ public class RunLengthDecodeFilter implements IFilterHandler {
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte dupCount = -1;
-        for(int i = 0; i < b.length; i++){
+        byte dupCount;
+        for (int i = 0; i < b.length; i++) {
             dupCount = b[i];
-            if (dupCount == -128) { // this is implicit end of data
+            if (dupCount == (byte) 0x80) { // this is implicit end of data
                 break;
             }
             if (dupCount >= 0) {
-                int bytesToCopy = dupCount+1;
+                int bytesToCopy = dupCount + 1;
                 baos.write(b, i, bytesToCopy);
-                i+=bytesToCopy;
+                i += bytesToCopy;
             } else {                // make dupcount copies of the next byte
                 i++;
-                for(int j = 0; j < 1 - (int)(dupCount); j++){
+                for (int j = 0; j < 1 - (int) (dupCount); j++) {
                     baos.write(b[i]);
                 }
             }

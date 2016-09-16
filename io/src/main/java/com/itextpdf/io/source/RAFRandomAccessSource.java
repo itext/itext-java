@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -77,11 +76,13 @@ class RAFRandomAccessSource implements IRandomAccessSource {
      */
     // TODO: test to make sure we are handling the length properly (i.e. is raf.length() the last byte in the file, or one past the last byte?)
     public int get(long position) throws java.io.IOException {
-        if (position > raf.length())
+        if (position > length)
             return -1;
 
         // Not thread safe!
-        raf.seek(position);
+        if (raf.getFilePointer() != position) {
+            raf.seek(position);
+        }
 
         return raf.read();
     }
@@ -94,7 +95,9 @@ class RAFRandomAccessSource implements IRandomAccessSource {
             return -1;
 
         // Not thread safe!
-        raf.seek(position);
+        if (raf.getFilePointer() != position) {
+            raf.seek(position);
+        }
 
         return raf.read(bytes, off, len);
     }

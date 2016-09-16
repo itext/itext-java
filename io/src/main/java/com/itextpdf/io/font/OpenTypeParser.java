@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -50,6 +49,7 @@ import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.IntHashtable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -248,7 +248,7 @@ class OpenTypeParser {
             if (names != null && names.size() > 0) {
                 fontName = names.get(0)[3];
             } else {
-                fontName = FileUtil.getFileName(fileName).replace(' ', '-');
+                fontName = new File(fileName).getName().replace(' ', '-');
             }
         }
         return fontName;

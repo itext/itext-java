@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -47,6 +46,9 @@ package com.itextpdf.io.font;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Font constants for {@link FontProgramFactory} and PdfFontFactory.
+ */
 public class FontConstants {
 
     static final Set<String> BUILTIN_FONTS_14 = new HashSet<>();
@@ -72,31 +74,36 @@ public class FontConstants {
      * The path to the font resources.
      */
     public static final String RESOURCE_PATH = "com/itextpdf/io/font/";
+    public static final String AFM_RESOURCE_PATH = "com/itextpdf/io/font/afm/";
+    public static final String CMAP_RESOURCE_PATH = "com/itextpdf/io/font/cmap/";
 
     //-Font styles------------------------------------------------------------------------------------------------------
+    /**
+     * Undefined font style.
+     */
     public static final int UNDEFINED = -1;
     /**
-     * this is a possible style.
+     * Normal font style.
      */
     public static final int NORMAL = 0;
     /**
-     * this is a possible style.
+     * Bold font style.
      */
     public static final int BOLD = 1;
     /**
-     * this is a possible style.
+     * Italic font style.
      */
     public static final int ITALIC = 2;
     /**
-     * this is a possible style.
+     * Underline font style.
      */
     public static final int UNDERLINE = 4;
     /**
-     * this is a possible style.
+     * Strikethru font style.
      */
     public static final int STRIKETHRU = 8;
     /**
-     * this is a possible style.
+     * Bold-Italic font style.
      */
     public static final int BOLDITALIC = BOLD | ITALIC;
 
@@ -388,5 +395,4 @@ public class FontConstants {
             "850 WE/Latin 1",
             "437 US"
     };
-
 }

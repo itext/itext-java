@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -55,6 +54,9 @@ import com.itextpdf.kernel.color.DeviceRgb;
  */
 public abstract class Border3D extends Border {
 
+    /**
+     * Predefined gray {@link DeviceRgb RGB-color}
+     */
     private static final DeviceRgb GRAY = new DeviceRgb(212, 208, 200);
 
     /**
@@ -96,6 +98,9 @@ public abstract class Border3D extends Border {
         super(color, width);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
         float x3 = 0, y3 = 0;
@@ -166,6 +171,9 @@ public abstract class Border3D extends Border {
         canvas.moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).lineTo(x4, y4).lineTo(x1, y1).fill();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
         canvas.
@@ -178,6 +186,9 @@ public abstract class Border3D extends Border {
                 restoreState();
     }
 
+    /**
+     * Makes the {@link Border#color color of the border } darker and returns the result
+     */
     protected Color getDarkerColor() {
         if (color instanceof DeviceRgb)
             return DeviceRgb.makeDarker((DeviceRgb) color);
@@ -189,7 +200,19 @@ public abstract class Border3D extends Border {
         return color;
     }
 
+    /**
+     * Sets the fill color for the inner half of {@link Border3D 3D Border}
+     *
+     * @param canvas PdfCanvas the color will be applied on
+     * @param side the {@link Side side} the color will be applied on
+     */
     protected abstract void setInnerHalfColor(PdfCanvas canvas, Side side);
 
+    /**
+     * Sets the fill color for the outer half of {@link Border3D 3D Border}
+     *
+     * @param canvas PdfCanvas the color will be applied on
+     * @param side the {@link Side side} the color will be applied on
+     */
     protected abstract void setOuterHalfColor(PdfCanvas canvas, Side side);
 }

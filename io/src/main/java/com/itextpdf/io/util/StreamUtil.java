@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -49,12 +48,12 @@ import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.IRandomAccessSource;
 
-import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
+/**
+ * This file is a helper class for internal usage only.
+ * Be aware that it's API and functionality may be changed in future.
+ */
 public final class StreamUtil {
 
     private static final int TRANSFER_SIZE = 64 * 1024;
@@ -127,24 +126,24 @@ public final class StreamUtil {
         buf.append('(');
         for (byte b : bytes) {
             switch (b) {
-                case '\r':
+                case (byte) '\r':
                     buf.append(escR);
                     break;
-                case '\n':
+                case (byte) '\n':
                     buf.append(escN);
                     break;
-                case '\t':
+                case (byte) '\t':
                     buf.append(escT);
                     break;
-                case '\b':
+                case (byte) '\b':
                     buf.append(escB);
                     break;
-                case '\f':
+                case (byte) '\f':
                     buf.append(escF);
                     break;
-                case '(':
-                case ')':
-                case '\\':
+                case (byte) '(':
+                case (byte) ')':
+                case (byte) '\\':
                     buf.append('\\').append(b);
                     break;
                 default:

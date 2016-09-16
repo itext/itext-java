@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,13 +43,13 @@
  */
 package com.itextpdf.io.font.otf.lookuptype5;
 
-import com.itextpdf.io.font.otf.ContextualSubstRule;
 import com.itextpdf.io.font.otf.ContextualSubTable;
+import com.itextpdf.io.font.otf.ContextualSubstRule;
 import com.itextpdf.io.font.otf.OpenTypeFontTableReader;
 import com.itextpdf.io.font.otf.OtfClass;
 import com.itextpdf.io.font.otf.SubstLookupRecord;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -79,8 +78,7 @@ public class SubTableLookup5Format2 extends ContextualSubTable {
             int gClass = classDefinition.getOtfClass(startId);
             return subClassSets.get(gClass);
         }
-        //return Collections.emptyList();
-        return new ArrayList<>(0);
+        return Collections.<ContextualSubstRule>emptyList();
     }
 
     public static class SubstRuleFormat2 extends ContextualSubstRule {

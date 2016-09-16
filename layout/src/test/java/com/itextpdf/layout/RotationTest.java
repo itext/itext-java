@@ -1,15 +1,12 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.property.HorizontalAlignment;
-import com.itextpdf.layout.property.TextAlignment;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
@@ -18,13 +15,15 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
+import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -57,7 +56,7 @@ public class RotationTest extends ExtendedITextTest{
     public void fixedTextRotationTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedTextRotationTest01.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "fixedTextRotationTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -87,7 +86,7 @@ public class RotationTest extends ExtendedITextTest{
     public void fixedTextRotationTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedTextRotationTest02.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "fixedTextRotationTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -105,7 +104,7 @@ public class RotationTest extends ExtendedITextTest{
     public void fixedTextRotationTest03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedTextRotationTest03.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "fixedTextRotationTest03.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -128,7 +127,7 @@ public class RotationTest extends ExtendedITextTest{
     public void fixedTextRotationTest04() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedTextRotationTest04.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "fixedTextRotationTest04.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -146,11 +145,14 @@ public class RotationTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
     @Test
     public void staticTextRotationTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "staticTextRotationTest01.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "staticTextRotationTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -158,18 +160,21 @@ public class RotationTest extends ExtendedITextTest{
         for (int i = 0; i < 7; ++i)
             p.add(para2Text);
         document.add(p.setRotationAngle((68 * Math.PI / 180)).setBackgroundColor(Color.BLUE));
-        document.add(new Paragraph("text line text line text line text line text line text line text line text line text line text line text line text line text line"));
+        document.add(new Paragraph("text line text line text line text line text line text line text line text line text line text line text line"));
 
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+    })
     @Test
     public void staticTextRotationTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "staticTextRotationTest02.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "staticTextRotationTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -188,7 +193,7 @@ public class RotationTest extends ExtendedITextTest{
     public void staticTextRotationTest03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "staticTextRotationTest03.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "staticTextRotationTest03.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -206,7 +211,7 @@ public class RotationTest extends ExtendedITextTest{
     public void staticTextRotationTest04() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "staticTextRotationTest04.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "staticTextRotationTest04.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -223,7 +228,7 @@ public class RotationTest extends ExtendedITextTest{
     public void splitTextRotationTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "splitTextRotationTest01.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "splitTextRotationTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -238,11 +243,14 @@ public class RotationTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+    })
     @Test
     public void splitTextRotationTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "splitTextRotationTest02.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "splitTextRotationTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -263,12 +271,15 @@ public class RotationTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
     @Test
     public void rotationInfiniteLoopTest01() throws IOException, InterruptedException {
         String fileName = "rotationInfiniteLoopTest01.pdf";
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + cmpPrefix + fileName;
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         pdfDocument.setDefaultPageSize(PageSize.A5.rotate());
 
         Document document = new Document(pdfDocument);
@@ -281,14 +292,14 @@ public class RotationTest extends ExtendedITextTest{
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     @Test
     public void rotationInfiniteLoopTest02() throws IOException, InterruptedException {
         String fileName = "rotationInfiniteLoopTest02.pdf";
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + cmpPrefix + fileName;
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         pdfDocument.setDefaultPageSize(PageSize.A5.rotate());
 
         Document document = new Document(pdfDocument);
@@ -305,9 +316,7 @@ public class RotationTest extends ExtendedITextTest{
         String outFileName = destinationFolder + "tableRotationTest02.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "tableRotationTest02.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{50, 50})
@@ -322,14 +331,58 @@ public class RotationTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+    })
+    @Test
+    public void tableRotationTest03() throws IOException,InterruptedException {
+        String outFileName = destinationFolder + "tableRotationTest03.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "tableRotationTest03.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(new float[]{25, 50})
+                .addCell(new Cell().add(new Paragraph("cell 1, 1").setRotationAngle((Math.PI / 2))))
+                .addCell(new Cell().add(new Paragraph("cell 1, 2").setRotationAngle((Math.PI / 3))))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1")))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2")))
+                .addCell(new Cell().add(new Paragraph("cell 3, 1").setRotationAngle(-(Math.PI / 2))))
+                .addCell(new Cell().add(new Paragraph("cell 3, 2").setRotationAngle((Math.PI))));
+        doc.add(table);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void cellRotationTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "cellRotationTest01.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "cellRotationTest01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(1)
+                .setWidth(50)
+                .addCell(new Cell()
+                        .add(new Paragraph("Hello"))
+                        .setRotationAngle(Math.PI * 70 / 180.0)
+                        .setBackgroundColor(Color.GREEN));
+        doc.add(table);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+    
     @Test
     public void divRotationTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "divRotationTest01.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "divRotationTest01.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Div div = new Div().setBackgroundColor(Color.GREEN);
@@ -346,16 +399,14 @@ public class RotationTest extends ExtendedITextTest{
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
     })
     @Test
     public void divRotationTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "divRotationTest02.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "divRotationTest02.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.add(new Paragraph(para1Text));
@@ -379,9 +430,7 @@ public class RotationTest extends ExtendedITextTest{
         String outFileName = destinationFolder + "listRotationTest01.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "listRotationTest01.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.add(new Paragraph(para1Text));
@@ -404,9 +453,7 @@ public class RotationTest extends ExtendedITextTest{
         String outFileName = destinationFolder + "listRotationTest02.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "listRotationTest02.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.add(new Paragraph(para1Text));
@@ -432,9 +479,7 @@ public class RotationTest extends ExtendedITextTest{
         String outFileName = destinationFolder + "alignedTextRotationTest01.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "alignedTextRotationTest01.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.add(new Paragraph(para1Text));
@@ -456,9 +501,7 @@ public class RotationTest extends ExtendedITextTest{
         String outFileName = destinationFolder + "innerRotationTest01.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "innerRotationTest01.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.add(new Div().
@@ -477,15 +520,16 @@ public class RotationTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
     @Test
     public void innerRotationTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "innerRotationTest02.pdf";
         String cmpFileName = sourceFolder + cmpPrefix + "innerRotationTest02.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
-        Document doc = new Document(pdfDoc);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(6400, 6400));
 
         String longText = para1Text + para2Text + para3Text;
         String extremeLongText = longText + longText + longText;

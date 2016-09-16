@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -54,7 +53,6 @@ import java.text.MessageFormat;
  */
 public class VerificationException extends GeneralSecurityException {
 
-    /** A Serial Version UID */
     private static final long serialVersionUID = 2978604513926438256L;
 
     /**

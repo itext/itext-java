@@ -17,6 +17,8 @@
 
 package com.itextpdf.layout.hyphenation;
 
+import com.itextpdf.io.util.ResourceUtil;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.itextpdf.io.util.ResourceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -230,11 +231,11 @@ public final class Hyphenator {
         // try the raw XML file
         String name = key + ".xml";
         try {
-            InputStream fis = new FileInputStream(new File(new File(searchDirectory), name));
+            InputStream fis = new FileInputStream(searchDirectory + File.separator + name);
             return getHyphenationTree(fis, name);
         } catch (IOException ioe) {
             if (log.isDebugEnabled()) {
-                log.debug("I/O problem while trying to load " + name, ioe);
+                log.debug("I/O problem while trying to load " + name + ": " + ioe.getMessage());
             }
             return null;
         }

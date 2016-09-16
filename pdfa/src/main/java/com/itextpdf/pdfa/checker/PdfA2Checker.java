@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -45,6 +44,8 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.io.color.IccProfile;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.image.Jpeg2000ImageData;
@@ -78,6 +79,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * PdfA2Checker defines the requirements of the PDF/A-2 standard and contains a
+ * number of methods that override the implementations of its superclass
+ * {@link PdfA1Checker}.
+ * <p>
+ * The specification implemented by this class is ISO 19005-2
+ */
 public class PdfA2Checker extends PdfA1Checker {
 
     protected static final Set<PdfName> forbiddenAnnotations = new HashSet<>(Arrays.asList(PdfName._3D, PdfName.Sound, PdfName.Screen, PdfName.Movie));
@@ -99,6 +107,12 @@ public class PdfA2Checker extends PdfA1Checker {
     private Map<PdfName, PdfArray> separationColorSpaces = new HashMap<>();
 
 
+    /**
+     * Creates a PdfA2Checker with the required conformance level
+     *
+     * @param conformanceLevel the required conformance level, <code>a</code> or
+     *                         <code>u</code> or <code>b</code>
+     */
     public PdfA2Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
     }
@@ -150,7 +164,7 @@ public class PdfA2Checker extends PdfA1Checker {
     @Override
     public void checkColorSpace(PdfColorSpace colorSpace, PdfDictionary currentColorSpaces, boolean checkAlternate, Boolean fill) {
         if (fill != null) {
-            if (fill) {
+            if ((boolean) fill) {
                 currentFillCsIsIccBasedCMYK = false;
             } else {
                 currentStrokeCsIsIccBasedCMYK = false;
@@ -208,7 +222,7 @@ public class PdfA2Checker extends PdfA1Checker {
         if (fill != null && colorSpace instanceof PdfCieBasedCs.IccBased) {
             byte[] iccBytes = ((PdfArray) colorSpace.getPdfObject()).getAsStream(1).getBytes();
             if (ICC_COLOR_SPACE_CMYK.equals(IccProfile.getIccColorSpaceName(iccBytes))) {
-                if (fill) {
+                if ((boolean) fill) {
                     currentFillCsIsIccBasedCMYK = true;
                 } else {
                     currentStrokeCsIsIccBasedCMYK = true;
@@ -280,6 +294,17 @@ public class PdfA2Checker extends PdfA1Checker {
     }
 
     @Override
+    protected void checkNonSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
+        String encoding = trueTypeFont.getFontEncoding().getBaseEncoding();
+        // non-symbolic true type font will always has an encoding entry in font dictionary in itext7
+        if (!PdfEncodings.WINANSI.equals(encoding) && !encoding.equals(PdfEncodings.MACROMAN)) {
+            throw new PdfAConformanceException(PdfAConformanceException.AllNonSymbolicTrueTypeFontShallSpecifyMacRomanEncodingOrWinAnsiEncoding, trueTypeFont);
+        }
+
+        // if font has differences array, itext7 ensures that all names in it are listed in AdobeGlyphList
+    }
+
+    @Override
     protected double getMaxRealValue() {
         return Float.MAX_VALUE;
     }
@@ -347,6 +372,8 @@ public class PdfA2Checker extends PdfA1Checker {
                 if (n == null || !n.isStream())
                     throw new PdfAConformanceException(PdfAConformanceException.AppearanceDictionaryShallContainOnlyTheNKeyWithStreamValue);
             }
+
+            checkResourcesOfAppearanceStreams(ap);
         } else {
             boolean isCorrectRect = false;
             PdfArray rect = annotDic.getAsArray(PdfName.Rect);
@@ -375,6 +402,16 @@ public class PdfA2Checker extends PdfA1Checker {
             }
             if (form.containsKey(PdfName.XFA)) {
                 throw new PdfAConformanceException(PdfAConformanceException.TheInteractiveFormDictionaryShallNotContainTheXfaKey);
+            }
+            checkResources(form.getAsDictionary(PdfName.DR));
+
+            PdfArray fields = form.getAsArray(PdfName.Fields);
+            if (fields != null) {
+                fields = getFormFields(fields);
+                for (PdfObject field : fields) {
+                    PdfDictionary fieldDic = (PdfDictionary) field;
+                    checkResources(fieldDic.getAsDictionary(PdfName.DR));
+                }
             }
         }
     }
@@ -445,8 +482,8 @@ public class PdfA2Checker extends PdfA1Checker {
                 }
             }
 
-            Set<String> names = new HashSet<>();
-            Set<PdfObject> order = new HashSet<>();
+            HashSet<String> names = new HashSet<>();
+            HashSet<PdfObject> order = new HashSet<>();
             for (PdfDictionary config : configList) {
                 PdfString name = config.getAsString(PdfName.Name);
                 if (name == null) {
@@ -652,7 +689,7 @@ public class PdfA2Checker extends PdfA1Checker {
             throw new PdfAConformanceException(PdfAConformanceException.AnImageDictionaryShallNotContainOpiKey);
         }
 
-        if (image.containsKey(PdfName.Interpolate) && image.getAsBool(PdfName.Interpolate)) {
+        if (image.containsKey(PdfName.Interpolate) && (boolean) image.getAsBool(PdfName.Interpolate)) {
             throw new PdfAConformanceException(PdfAConformanceException.TheValueOfInterpolateKeyShallNotBeTrue);
         }
         checkRenderingIntent(image.getAsName(PdfName.Intent));
@@ -769,6 +806,8 @@ public class PdfA2Checker extends PdfA1Checker {
                 checkColorSpace(PdfColorSpace.makeColorSpace(cs), currentColorSpaces, true, null);
             }
         }
+
+        checkResources(form.getAsDictionary(PdfName.Resources));
     }
 
     private void checkBlendMode(PdfName blendMode) {

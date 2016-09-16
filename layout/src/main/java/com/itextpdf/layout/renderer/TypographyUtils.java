@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -46,18 +45,22 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
+import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.Property;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,16 +68,56 @@ import org.slf4j.LoggerFactory;
 class TypographyUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(TypographyUtils.class);
+
     private static final String TYPOGRAPHY_PACKAGE = "com.itextpdf.typography.";
-    private static final boolean TYPOGRAPHY_MODULE_INITIALIZED = checkTypographyModulePresence();
+
+    private static final String SHAPER = "shaping.Shaper";
+    private static final String BIDI_CHARACTER_MAP = "bidi.BidiCharacterMap";
+    private static final String BIDI_BRACKET_MAP = "bidi.BidiBracketMap";
+    private static final String BIDI_ALGORITHM = "bidi.BidiAlgorithm";
+
+    private static final String APPLY_OTF_SCRIPT = "applyOtfScript";
+    private static final String APPLY_KERNING = "applyKerning";
+    private static final String GET_SUPPORTED_SCRIPTS = "getSupportedScripts";
+
+    private static final String GET_CHARACTER_TYPES = "getCharacterTypes";
+    private static final String GET_BRACKET_TYPES = "getBracketTypes";
+    private static final String GET_BRACKET_VALUES = "getBracketValues";
+    private static final String GET_PAIRED_BRACKET = "getPairedBracket";
+    private static final String GET_LEVELS = "getLevels";
+    private static final String COMPUTE_REORDERING = "computeReordering";
+    private static final String INVERSE_REORDERING = "inverseReordering";
+
+    private static final Collection<Character.UnicodeScript> SUPPORTED_SCRIPTS;
+    private static final boolean TYPOGRAPHY_MODULE_INITIALIZED;
+
+    private static Map<String, Class<?>> cachedClasses = new HashMap<>();
+    private static Map<TypographyMethodSignature, AccessibleObject> cachedMethods = new HashMap<>();
+
+    static {
+        boolean moduleFound = false;
+        try {
+            Class<?> type = Class.forName(TYPOGRAPHY_PACKAGE + SHAPER);
+            if (type != null) {
+                moduleFound = true;
+            }
+        } catch (ClassNotFoundException ignored) {
+        }
+        TYPOGRAPHY_MODULE_INITIALIZED = moduleFound;
+        if (moduleFound) {
+            SUPPORTED_SCRIPTS = getSupportedScripts();
+        } else {
+            SUPPORTED_SCRIPTS = null;
+        }
+    }
 
     static void applyOtfScript(FontProgram fontProgram, GlyphLine text, Character.UnicodeScript script) {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
             logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
         } else {
-            callMethod(TYPOGRAPHY_PACKAGE + "shaping.Shaper", "applyOtfScript", new Class[]{TrueTypeFont.class, GlyphLine.class, Character.UnicodeScript.class},
+            callMethod(TYPOGRAPHY_PACKAGE + SHAPER, APPLY_OTF_SCRIPT, new Class[]{TrueTypeFont.class, GlyphLine.class, Character.UnicodeScript.class},
                     fontProgram, text, script);
-            //Shaper.applyOtfScript((TrueTypeFont)font.getFontProgram(), text, script);
+//            Shaper.applyOtfScript((TrueTypeFont)fontProgram, text, script);
         }
     }
 
@@ -82,9 +125,9 @@ class TypographyUtils {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
             logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
         } else {
-            callMethod(TYPOGRAPHY_PACKAGE + "shaping.Shaper", "applyKerning", new Class[]{FontProgram.class, GlyphLine.class},
+            callMethod(TYPOGRAPHY_PACKAGE + SHAPER, APPLY_KERNING, new Class[]{FontProgram.class, GlyphLine.class},
                     fontProgram, text);
-            //Shaper.applyKerning(font.getFontProgram(), text);
+//            Shaper.applyKerning(fontProgram, text);
         }
     }
 
@@ -107,21 +150,21 @@ class TypographyUtils {
             }
 
             int len = unicodeIds.length;
-            byte[] types = (byte[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiCharacterMap", "getCharacterTypes", new Class[]{int[].class, int.class, int.class},
+            byte[] types = (byte[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_CHARACTER_MAP, GET_CHARACTER_TYPES, new Class[]{int[].class, int.class, int.class},
                     unicodeIds, 0, len);
-            //byte[] types = BidiCharacterMap.getCharacterTypes(unicodeIds, 0, text.end - text.start;
-            byte[] pairTypes = (byte[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiBracketMap", "getBracketTypes", new Class[]{int[].class, int.class, int.class},
+//            byte[] types = BidiCharacterMap.getCharacterTypes(unicodeIds, 0, len);
+            byte[] pairTypes = (byte[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_BRACKET_MAP, GET_BRACKET_TYPES, new Class[]{int[].class, int.class, int.class},
                     unicodeIds, 0, len);
-            //byte[] pairTypes = BidiBracketMap.getBracketTypes(unicodeIds, 0, text.end - text.start);
-            int[] pairValues = (int[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiBracketMap", "getBracketValues", new Class[]{int[].class, int.class, int.class},
+//            byte[] pairTypes = BidiBracketMap.getBracketTypes(unicodeIds, 0, len);
+            int[] pairValues = (int[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_BRACKET_MAP, GET_BRACKET_VALUES, new Class[]{int[].class, int.class, int.class},
                     unicodeIds, 0, len);
-            //int[] pairValues = BidiBracketMap.getBracketValues(unicodeIds, 0, text.end - text.start);
-            Object bidiReorder = callConstructor(TYPOGRAPHY_PACKAGE + "bidi.BidiAlgorithm", new Class[]{byte[].class, byte[].class, int[].class, byte.class},
+//            int[] pairValues = BidiBracketMap.getBracketValues(unicodeIds, 0, len);
+            Object bidiReorder = callConstructor(TYPOGRAPHY_PACKAGE + BIDI_ALGORITHM, new Class[]{byte[].class, byte[].class, int[].class, byte.class},
                     types, pairTypes, pairValues, direction);
-            //BidiAlgorithm bidiReorder = new BidiAlgorithm(types, pairTypes, pairValues, direction);
-            return (byte[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiAlgorithm", "getLevels", bidiReorder, new Class[]{int[].class},
+//            BidiAlgorithm bidiReorder = new BidiAlgorithm(types, pairTypes, pairValues, direction);
+            return (byte[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_ALGORITHM, GET_LEVELS, bidiReorder, new Class[]{int[].class},
                     new int[]{len});
-            //levels = bidiReorder.getLevels(new int[]{text.end - text.start});
+//            return bidiReorder.getLevels(new int[]{len});
         }
         return null;
     }
@@ -133,9 +176,11 @@ class TypographyUtils {
             if (levels == null) {
                 return null;
             }
-            int[] reorder = (int[]) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiAlgorithm", "computeReordering", new Class[]{byte[].class},
+            int[] reorder = (int[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_ALGORITHM, COMPUTE_REORDERING, new Class[]{byte[].class},
                     lineLevels);
-            //int[] reorder = BidiAlgorithm.computeReordering(lineLevels);
+//            int[] reorder = BidiAlgorithm.computeReordering(lineLevels);
+            int[] inverseReorder = (int[]) callMethod(TYPOGRAPHY_PACKAGE + BIDI_ALGORITHM, INVERSE_REORDERING, new Class[] {int[].class}, reorder);
+//            int[] inverseReorder = BidiAlgorithm.inverseReordering(reorder);
             List<LineRenderer.RendererGlyph> reorderedLine = new ArrayList<>(lineLevels.length);
             for (int i = 0; i < line.size(); i++) {
                 reorderedLine.add(line.get(reorder[i]));
@@ -143,14 +188,29 @@ class TypographyUtils {
                 // Mirror RTL glyphs
                 if (levels[reorder[i]] % 2 == 1) {
                     if (reorderedLine.get(i).glyph.hasValidUnicode()) {
-                        int pairedBracket = (int) callMethod(TYPOGRAPHY_PACKAGE + "bidi.BidiBracketMap", "getPairedBracket", new Class[]{int.class},
-                                reorderedLine.get(i).glyph.getUnicode());
-                        PdfFont font = reorderedLine.get(i).renderer.getPropertyAsFont(Property.FONT);
-                        //BidiBracketMap.getPairedBracket(reorderedLine.get(i).getUnicode())
-                        reorderedLine.set(i, new LineRenderer.RendererGlyph(font.getGlyph(pairedBracket), reorderedLine.get(i).renderer));
+                        int unicode = reorderedLine.get(i).glyph.getUnicode();
+                        int pairedBracket = (int) callMethod(TYPOGRAPHY_PACKAGE + BIDI_BRACKET_MAP, GET_PAIRED_BRACKET, new Class[]{int.class},
+                                unicode);
+//                        int pairedBracket = BidiBracketMap.getPairedBracket(reorderedLine.get(i).glyph.getUnicode());
+                        if (pairedBracket != unicode) {
+                            PdfFont font = reorderedLine.get(i).renderer.getPropertyAsFont(Property.FONT);
+                            reorderedLine.set(i, new LineRenderer.RendererGlyph(font.getGlyph(pairedBracket), reorderedLine.get(i).renderer));
+                        }
                     }
                 }
             }
+
+            // fix anchorDelta
+            for (int i = 0; i < reorderedLine.size(); i++) {
+                Glyph glyph = reorderedLine.get(i).glyph;
+                if (glyph.hasPlacement()) {
+                    int oldAnchor = reorder[i] + glyph.getAnchorDelta();
+                    int newPos = inverseReorder[oldAnchor];
+                    int newAnchorDelta = newPos - i;
+                    glyph.setAnchorDelta((short) newAnchorDelta);
+                }
+            }
+
             line.clear();
             line.addAll(reorderedLine);
             return reorder;
@@ -162,8 +222,11 @@ class TypographyUtils {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
             logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
             return null;
+        } else if (SUPPORTED_SCRIPTS != null) {
+            return SUPPORTED_SCRIPTS;
         } else {
-            return (Collection<Character.UnicodeScript>)callMethod(TYPOGRAPHY_PACKAGE + "shaping.Shaper", "getSupportedScripts", new Class[] {});
+            return (Collection<Character.UnicodeScript>) callMethod(TYPOGRAPHY_PACKAGE + SHAPER, GET_SUPPORTED_SCRIPTS, new Class[]{});
+//            return (Collection<Character.UnicodeScript>) Shaper.getSupportedScripts();
         }
     }
 
@@ -171,51 +234,101 @@ class TypographyUtils {
         return TYPOGRAPHY_MODULE_INITIALIZED;
     }
 
-    private static boolean checkTypographyModulePresence() {
-        boolean moduleFound = false;
-        try {
-            Class.forName("com.itextpdf.typography.shaping.Shaper");
-            moduleFound = true;
-        } catch (ClassNotFoundException ignored) {
-        }
-        return moduleFound;
-    }
-
     private static Object callMethod(String className, String methodName, Class[] parameterTypes, Object... args) {
-        return callMethod(className, methodName, null, parameterTypes, args);
+        return callMethod(className, methodName, (Object) null, parameterTypes, args);
     }
 
     private static Object callMethod(String className, String methodName, Object target, Class[] parameterTypes, Object... args) {
         try {
-            Method method = Class.forName(className).getMethod(methodName, parameterTypes);
+            Method method = findMethod(className, methodName, parameterTypes);
             return method.invoke(target, args);
         } catch (NoSuchMethodException e) {
             logger.warn(MessageFormat.format("Cannot find method {0} for class {1}", methodName, className));
         } catch (ClassNotFoundException e) {
             logger.warn(MessageFormat.format("Cannot find class {0}", className));
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e.getCause() != null ? e.getCause() : null);
-        } catch (Exception exc) {
-            throw new RuntimeException(exc);
+        } catch (Exception e) {
+            throw new RuntimeException(e.toString(), e);
         }
         return null;
     }
 
     private static Object callConstructor(String className, Class[] parameterTypes, Object... args) {
-        Constructor constructor = null;
         try {
-            constructor = Class.forName(className).getConstructor(parameterTypes);
+            Constructor<?> constructor = findConstructor(className, parameterTypes);
             return constructor.newInstance(args);
         } catch (NoSuchMethodException e) {
             logger.warn(MessageFormat.format("Cannot find constructor for class {0}", className));
         } catch (ClassNotFoundException e) {
             logger.warn(MessageFormat.format("Cannot find class {0}", className));
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e.getCause() != null ? e.getCause() : null);
         } catch (Exception exc) {
-            throw new RuntimeException(exc);
+            throw new RuntimeException(exc.toString(), exc);
         }
         return null;
     }
 
+    private static Method findMethod(String className, String methodName, Class[] parameterTypes) throws NoSuchMethodException, ClassNotFoundException {
+        TypographyMethodSignature tm = new TypographyMethodSignature(className, parameterTypes, methodName);
+        Method m = (Method) cachedMethods.get(tm);
+        if (m == null) {
+            m = findClass(className).getMethod(methodName, parameterTypes);
+            cachedMethods.put(tm, m);
+        }
+        return m;
+    }
+
+    private static Constructor<?> findConstructor(String className, Class[] parameterTypes) throws NoSuchMethodException, ClassNotFoundException {
+        TypographyMethodSignature tc = new TypographyMethodSignature(className, parameterTypes);
+        Constructor<?> c = (Constructor<?>) cachedMethods.get(tc);
+        if (c == null) {
+            c = findClass(className).getConstructor(parameterTypes);
+            cachedMethods.put(tc, c);
+        }
+        return c;
+    }
+
+    private static Class<?> findClass(String className) throws ClassNotFoundException {
+        Class<?> c = cachedClasses.get(className);
+        if (c == null) {
+            c = Class.forName(className);
+            cachedClasses.put(className, c);
+        }
+        return c;
+    }
+
+    private static class TypographyMethodSignature {
+        protected final String className;
+        protected Class[] parameterTypes;
+        private final String methodName;
+
+        TypographyMethodSignature(String className, Class[] parameterTypes) {
+            this(className, parameterTypes, null);
+        }
+
+        TypographyMethodSignature(String className, Class[] parameterTypes, String methodName) {
+            this.methodName = methodName;
+            this.className = className;
+            this.parameterTypes = parameterTypes;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            TypographyMethodSignature that = (TypographyMethodSignature) o;
+
+            if (!className.equals(that.className)) return false;
+            if (!Arrays.equals(parameterTypes, that.parameterTypes)) return false;
+            return methodName != null ? methodName.equals(that.methodName) : that.methodName == null;
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = className.hashCode();
+            result = 31 * result + Arrays.hashCode(parameterTypes);
+            result = 31 * result + (methodName != null ? methodName.hashCode() : 0);
+            return result;
+        }
+    }
 }

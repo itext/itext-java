@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -45,13 +44,20 @@
 package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfObjectWrapper;
+import com.itextpdf.kernel.pdf.PdfOutputStream;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,7 +71,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     protected FontProgram fontProgram;
 
-	protected static final byte[] emptyBytes = new byte[0];
+    protected static final byte[] emptyBytes = new byte[0];
 
     protected Map<Integer, Glyph> notdefGlyphs = new HashMap<>();
 
@@ -91,13 +97,38 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     protected PdfFont() {
         super(new PdfDictionary());
-        markObjectAsIndirect(getPdfObject());
         getPdfObject().put(PdfName.Type, PdfName.Font);
     }
 
+    /**
+     * Get glyph by unicode
+     *
+     * @param unicode a unicode code point
+     * @return {@see Glyph} if it exists or .NOTDEF if supported, otherwise {@code null}.
+     */
     public abstract Glyph getGlyph(int unicode);
 
+    /**
+     * Check whether font contains glyph with specified unicode.
+     *
+     * @param unicode a unicode code point
+     * @return true if font contains glyph, represented with the unicode code point,
+     * otherwise false.
+     * @deprecated Use {@link PdfFont#containsGlyph(int)} instead.
+     */
+    @Deprecated
     public boolean containsGlyph(char unicode) {
+        return containsGlyph((int) unicode);
+    }
+
+    /**
+     * Check whether font contains glyph with specified unicode.
+     *
+     * @param unicode a unicode code point
+     * @return true if font contains glyph, represented with the unicode code point,
+     * otherwise false.
+     */
+    public boolean containsGlyph(int unicode) {
         Glyph glyph = getGlyph(unicode);
         if (glyph != null) {
             if (getFontProgram() != null && getFontProgram().isFontSpecific()) {
@@ -157,7 +188,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Returns the width of a certain character of this font in points.
      *
-     * @param unicode a certain character.
+     * @param unicode  a certain character.
      * @param fontSize the font size.
      * @return a width in points.
      */
@@ -204,7 +235,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * Gets the descent of a {@code String} in points. The descent will always be
      * less than or equal to zero even if all the characters have an higher descent.
      *
-     * @param text the {@code String} to get the descent of
+     * @param text     the {@code String} to get the descent of
      * @param fontSize the font size
      * @return the descent in points
      */
@@ -232,7 +263,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * Gets the descent of a char code in points. The descent will always be
      * less than or equal to zero even if all the characters have an higher descent.
      *
-     * @param unicode the char code to get the descent of
+     * @param unicode  the char code to get the descent of
      * @param fontSize the font size
      * @return the descent in points
      */
@@ -252,7 +283,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * Gets the ascent of a {@code String} in points. The ascent will always be
      * greater than or equal to zero even if all the characters have a lower ascent.
      *
-     * @param text the {@code String} to get the ascent of
+     * @param text     the {@code String} to get the ascent of
      * @param fontSize the font size
      * @return the ascent in points
      */
@@ -281,7 +312,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * Gets the ascent of a char code in normalized 1000 units. The ascent will always be
      * greater than or equal to zero even if all the characters have a lower ascent.
      *
-     * @param unicode the char code to get the ascent of
+     * @param unicode  the char code to get the ascent of
      * @param fontSize the font size
      * @return the ascent in points
      */
@@ -342,7 +373,15 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         subsetRanges.add(range);
     }
 
+    /**
+     * @deprecated Will be removed in 7.1. Use {@link #splitString(String, float, float)} instead
+     */
+    @Deprecated
     public List<String> splitString(String text, int fontSize, float maxWidth) {
+        return splitString(text, (float) fontSize, maxWidth);
+    }
+
+    public List<String> splitString(String text, float fontSize, float maxWidth) {
         List<String> resultString = new ArrayList<>();
         int lastWhiteSpace = 0;
         int startPos = 0;
@@ -355,22 +394,34 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             }
             tokenLength += getWidth(ch, fontSize);
             if (tokenLength >= maxWidth || ch == '\n') {
-                if(startPos < lastWhiteSpace) {
+                if (startPos < lastWhiteSpace) {
                     resultString.add(text.substring(startPos, lastWhiteSpace));
                     startPos = lastWhiteSpace + 1;
                     tokenLength = 0;
                     i = lastWhiteSpace;
-                }else{
-                    resultString.add(text.substring(startPos, i+1));
-                    startPos = i+1;
+                } else {
+                    resultString.add(text.substring(startPos, i + 1));
+                    startPos = i + 1;
                     tokenLength = 0;
-                    i=i+1;
+                    i = i + 1;
                 }
             }
         }
 
         resultString.add(text.substring(startPos));
         return resultString;
+    }
+
+    /**
+     * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure
+     * that this object is added to the document, i.e. it has an indirect reference.
+     * Basically this means that before flushing you need to explicitly call {@link #makeIndirect(PdfDocument)}.
+     * For example: wrapperInstance.makeIndirect(document).flush();
+     * Note that not every wrapper require this, only those that have such warning in documentation.
+     */
+    @Override
+    public void flush() {
+        super.flush();
     }
 
     protected abstract PdfDictionary getFontDescriptor(String fontName);
@@ -392,7 +443,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         if (fontDic == null || fontDic.get(PdfName.Subtype) == null
                 || !(fontDic.get(PdfName.Subtype).equals(PdfName.TrueType) || fontDic.get(PdfName.Subtype).equals(PdfName.Type1))) {
             if (isException) {
-                throw new PdfException(PdfException.DictionaryNotContainFontData).setMessageParams(PdfName.TrueType.getValue());
+                throw new PdfException(PdfException.DictionaryDoesntHave1FontData).setMessageParams(PdfName.TrueType.getValue());
             }
             return false;
         }
@@ -415,16 +466,17 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Create {@code PdfStream} based on {@code fontStreamBytes}.
      *
-     * @param fontStreamBytes original font data, must be not null.
+     * @param fontStreamBytes   original font data, must be not null.
      * @param fontStreamLengths array to generate {@code Length*} keys, must be not null.
      * @return the PdfStream containing the font or {@code null}, if there is an error reading the font.
-     * @exception PdfException Method will throw exception if {@code fontStreamBytes} is {@code null}.
+     * @throws PdfException Method will throw exception if {@code fontStreamBytes} is {@code null}.
      */
     protected PdfStream getPdfFontStream(byte[] fontStreamBytes, int[] fontStreamLengths) {
         if (fontStreamBytes == null) {
             throw new PdfException(PdfException.FontEmbeddingIssue);
         }
         PdfStream fontStream = new PdfStream(fontStreamBytes);
+        makeObjectIndirect(fontStream);
         for (int k = 0; k < fontStreamLengths.length; ++k) {
             fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
         }
@@ -457,5 +509,23 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             s[k * 2 + 1] = r[1];
         }
         return s;
+    }
+
+    /**
+     * Helper method for making an object indirect, if the object already is indirect.
+     * Useful for FontDescriptor and FontFile to make possible immediate flushing.
+     * If there is no PdfDocument, mark the object as {@code MUST_BE_INDIRECT}.
+     *
+     * @param obj an object to make indirect.
+     * @return if current object isn't indirect, returns {@code false}, otherwise {@code tree}
+     */
+    boolean makeObjectIndirect(PdfObject obj) {
+        if (getPdfObject().getIndirectReference() != null) {
+            obj.makeIndirect(getPdfObject().getIndirectReference().getDocument());
+            return true;
+        } else {
+            markObjectAsIndirect(obj);
+            return false;
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.itextpdf.layout;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceCmyk;
 import com.itextpdf.kernel.color.DeviceGray;
@@ -7,7 +8,7 @@ import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.border.DashedBorder;
 import com.itextpdf.layout.border.DottedBorder;
 import com.itextpdf.layout.border.DoubleBorder;
@@ -17,19 +18,23 @@ import com.itextpdf.layout.border.OutsetBorder;
 import com.itextpdf.layout.border.RidgeBorder;
 import com.itextpdf.layout.border.RoundDotsBorder;
 import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.test.ExtendedITextTest;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class BorderTest extends ExtendedITextTest {
@@ -44,14 +49,14 @@ public class BorderTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void beforeClass() {
-       createDestinationFolder(destinationFolder);
+        createDestinationFolder(destinationFolder);
     }
 
     @Test
     public void simpleBordersTest() throws IOException, InterruptedException {
         fileName = "simpleBordersTest.pdf";
         Document doc = createDocument();
-        
+
         List list = new List();
 
         ListItem solidBorderItem = new ListItem("solid");
@@ -113,9 +118,6 @@ public class BorderTest extends ExtendedITextTest {
         doc.add(emptyParagraph);
 
 
-
-
-
         DeviceRgb blueRgb = new DeviceRgb(0, 0, 200);
         DeviceRgb greenRgb = new DeviceRgb(0, 255, 0);
         DeviceCmyk magentaCmyk = new DeviceCmyk(0, 100, 0, 0);
@@ -143,10 +145,6 @@ public class BorderTest extends ExtendedITextTest {
 
         emptyParagraph = new Paragraph("\n");
         doc.add(emptyParagraph);
-
-
-
-
 
 
         list = new List();
@@ -179,15 +177,15 @@ public class BorderTest extends ExtendedITextTest {
 
         String text =
                 "<p class=\"none\"  >No border.</p>\n" +
-                "<p class=\"dotted\">A dotted border.</p>\n" +
-                "<p class=\"dashed\">A dashed border.</p>\n" +
-                "<p class=\"solid\" >A solid border.</p>\n" +
-                "<p class=\"double\">A double border.</p>\n" +
-                "<p class=\"groove\">A groove border.</p>\n" +
-                "<p class=\"ridge\" >A ridge border.</p>\n" +
-                "<p class=\"inset\" >An inset border.</p>\n" +
-                "<p class=\"outset\">An outset border.</p>\n" +
-                "<p class=\"hidden\">A hidden border.</p>";
+                        "<p class=\"dotted\">A dotted border.</p>\n" +
+                        "<p class=\"dashed\">A dashed border.</p>\n" +
+                        "<p class=\"solid\" >A solid border.</p>\n" +
+                        "<p class=\"double\">A double border.</p>\n" +
+                        "<p class=\"groove\">A groove border.</p>\n" +
+                        "<p class=\"ridge\" >A ridge border.</p>\n" +
+                        "<p class=\"inset\" >An inset border.</p>\n" +
+                        "<p class=\"outset\">An outset border.</p>\n" +
+                        "<p class=\"hidden\">A hidden border.</p>";
         Paragraph p = new Paragraph(text);
 
         p.setBorderTop(new SolidBorder(DeviceCmyk.MAGENTA, 4));
@@ -247,11 +245,206 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
+    @Test
+    public void noVerticalBorderTest() throws IOException, InterruptedException {
+        fileName = "noVerticalBorderTest.pdf";
+        Document doc = createDocument();
+
+        Table mainTable = new Table(1);
+        Cell cell = new Cell()
+                .setBorder(Border.NO_BORDER)
+                .setBorderTop(new SolidBorder(Color.BLACK, 0.5f));
+        cell.add("TESCHTINK");
+        mainTable.addCell(cell);
+        doc.add(mainTable);
+        doc.close();
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void wideBorderTest01() throws IOException, InterruptedException {
+        fileName = "wideBorderTest01.pdf";
+        Document doc = createDocument();
+
+        doc.add(new Paragraph("ROWS SHOULD BE THE SAME"));
+
+        Table table = new Table(new float[]{1, 3});
+        table.setWidthPercent(50);
+        Cell cell;
+        // row 21, cell 1
+        cell = new Cell().add("BORDERS");
+        table.addCell(cell);
+        // row 1, cell 2
+        cell = new Cell().add("ONE");
+        cell.setBorderLeft(new SolidBorder(Color.RED, 16f));
+        table.addCell(cell);
+        // row 2, cell 1
+        cell = new Cell().add("BORDERS");
+        table.addCell(cell);
+        // row 2, cell 2
+        cell = new Cell().add("TWO");
+        cell.setBorderLeft(new SolidBorder(Color.RED, 16f));
+        table.addCell(cell);
+
+        doc.add(table);
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    @Ignore("DEVSIX-798")
+    public void wideBorderTest02() throws IOException, InterruptedException {
+        fileName = "wideBorderTest02.pdf";
+        Document doc = createDocument();
+
+        Table table = new Table(1);
+        table.setWidthPercent(50);
+        Cell cell;
+        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell.setBorder(new SolidBorder(Color.RED, 100f));
+        table.addCell(cell);
+
+        doc.add(table);
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void infiniteLoopTest01() throws IOException, InterruptedException {
+        fileName = "infiniteLoopTest01.pdf";
+        Document doc = createDocument();
+
+        Table table = new Table(new float[]{1, 3});
+        table.setWidthPercent(50);
+        Cell cell;
+
+        // row 1, cell 1
+        cell = new Cell().add("1ORD");
+        cell.setBorderLeft(new SolidBorder(Color.BLUE, 5));
+        table.addCell(cell);
+        // row 1, cell 2
+        cell = new Cell().add("ONE");
+        cell.setBorderLeft(new SolidBorder(Color.RED, 100f));
+        table.addCell(cell);
+        // row 2, cell 1
+        cell = new Cell().add("2ORD");
+        cell.setBorderTop(new SolidBorder(Color.YELLOW, 100f));
+        table.addCell(cell);
+        // row 2, cell 2
+        cell = new Cell().add("TWO");
+        cell.setBorderLeft(new SolidBorder(Color.RED, 0.5f));
+        table.addCell(cell);
+
+
+        doc.add(table);
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    @Ignore("DEVSIX-818")
+    public void splitCellsTest01() throws IOException, InterruptedException {
+        fileName = "splitCellsTest01.pdf";
+        Document doc = createDocument();
+
+        String longText = "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
+                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.";
+        Table table = new Table(2);
+        Cell cell;
+        cell = new Cell().add("Some text");
+        cell.setBorderRight(new SolidBorder(Color.RED, 2f));
+        table.addCell(cell);
+        cell = new Cell().add("Some text");
+        cell.setBorderLeft(new SolidBorder(Color.GREEN, 4f));
+        table.addCell(cell);
+        cell = new Cell().add(longText);
+        cell.setBorderBottom(new SolidBorder(Color.RED, 5f));
+        table.addCell(cell);
+        table.addCell(new Cell().add("Hello").setBorderBottom(new SolidBorder(Color.BLUE, 5f)));
+        cell = new Cell().add("Some text.");
+        cell.setBorderTop(new SolidBorder(Color.GREEN, 6f));
+        table.addCell(cell);
+        table.addCell(new Cell().add("World").setBorderTop(new SolidBorder(Color.YELLOW, 6f)));
+        doc.add(table);
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+    })
+    public void forcedPlacementTest01() throws IOException, InterruptedException {
+        fileName = "forcedPlacementTest01.pdf";
+        Document doc = createDocument();
+
+        Table table = new Table(1);
+        table.setWidth(10);
+        Cell cell;
+        // row 1, cell 1
+        cell = new Cell().add("1ORD");
+        table.addCell(cell);
+        // row 2, cell 1
+        cell = new Cell().add("2ORD");
+        cell.setBorderTop(new SolidBorder(Color.YELLOW, 100f));
+        table.addCell(cell);
+
+        doc.add(table);
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void noHorizontalBorderTest() throws IOException, InterruptedException {
+        fileName = "noHorizontalBorderTest.pdf";
+        Document doc = createDocument();
+
+        Table mainTable = new Table(1);
+        Cell cell = new Cell()
+                .setBorder(Border.NO_BORDER)
+                .setBorderRight(new SolidBorder(Color.BLACK, 0.5f));
+        cell.add("TESCHTINK");
+        mainTable.addCell(cell);
+        doc.add(mainTable);
+        doc.close();
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
     private Document createDocument() throws FileNotFoundException {
         outFileName = destinationFolder + fileName;
         cmpFileName = sourceFolder + cmpPrefix + fileName;
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         return new Document(pdfDocument);
     }

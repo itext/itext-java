@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,6 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -52,18 +52,18 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.text.MessageFormat;
+import java.util.*;
 
 public abstract class BlockRenderer extends AbstractRenderer {
 
@@ -75,33 +75,38 @@ public abstract class BlockRenderer extends AbstractRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         int pageNumber = layoutContext.getArea().getPageNumber();
 
+        boolean isPositioned = isPositioned();
+
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
-        if (getProperty(Property.ROTATION_ANGLE) != null) {
+        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null || isPositioned) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
 
         Float blockHeight = retrieveHeight();
-        if (!isFixedLayout() && blockHeight != null && blockHeight > parentBBox.getHeight()) {
-            return new LayoutResult(LayoutResult.NOTHING, null, null, this);
+        if (!isFixedLayout() && blockHeight != null && blockHeight > parentBBox.getHeight() && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+            return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
         }
 
-        applyMargins(parentBBox, false);
-        applyBorderBox(parentBBox, false);
+        float[] margins = getMargins();
+        applyMargins(parentBBox, margins, false);
+        Border[] borders = getBorders();
+        applyBorderBox(parentBBox, borders, false);
 
-        if (isPositioned()) {
-            float x = getPropertyAsFloat(Property.X);
+        if (isPositioned) {
+            float x = (float) this.getPropertyAsFloat(Property.X);
             float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
             parentBBox.setX(relativeX + x);
         }
 
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
-        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned())) {
-            parentBBox.setWidth(blockWidth);
+        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
+            parentBBox.setWidth((float) blockWidth);
         }
-        applyPaddings(parentBBox, false);
+        float[] paddings = getPaddings();
+        applyPaddings(parentBBox, paddings, false);
 
         List<Rectangle> areas;
-        if (isPositioned()) {
+        if (isPositioned) {
             areas = Collections.singletonList(parentBBox);
         } else {
             areas = initElementAreas(new LayoutArea(pageNumber, parentBBox));
@@ -112,19 +117,26 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         Rectangle layoutBox = areas.get(0).clone();
 
+        // the first renderer (one of childRenderers or their children) to produce LayoutResult.NOTHING
+        IRenderer causeOfNothing = null;
         boolean anythingPlaced = false;
-
         for (int childPos = 0; childPos < childRenderers.size(); childPos++) {
             IRenderer childRenderer = childRenderers.get(childPos);
             LayoutResult result;
-            while ((result = childRenderer.layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox)))).getStatus() != LayoutResult.FULL) {
+            childRenderer.setParent(this);
+            while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox)))).getStatus() != LayoutResult.FULL) {
                 if (result.getOccupiedArea() != null) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
                     layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
                 }
 
-                if (childRenderer.getProperty(Property.WIDTH) != null) {
+                if (childRenderer.getOccupiedArea() != null) {
                     alignChildHorizontally(childRenderer, layoutBox.getWidth());
+                }
+
+                // Save the first renderer to produce LayoutResult.NOTHING
+                if (null == causeOfNothing && null != result.getCauseOfNothing()) {
+                    causeOfNothing = result.getCauseOfNothing();
                 }
 
                 // have more areas
@@ -151,15 +163,17 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             splitRenderer.occupiedArea = occupiedArea;
 
                             AbstractRenderer overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
+                            // Apply forced placement only on split renderer
+                            overflowRenderer.deleteOwnProperty(Property.FORCED_PLACEMENT);
                             List<IRenderer> overflowRendererChildren = new ArrayList<>();
                             overflowRendererChildren.add(result.getOverflowRenderer());
                             overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                             overflowRenderer.childRenderers = overflowRendererChildren;
 
-                            applyPaddings(occupiedArea.getBBox(), true);
-                            applyBorderBox(occupiedArea.getBBox(), true);
-                            applyMargins(occupiedArea.getBBox(), true);
-                            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer);
+                            applyPaddings(occupiedArea.getBBox(), paddings, true);
+                            applyBorderBox(occupiedArea.getBBox(), borders, true);
+                            applyMargins(occupiedArea.getBBox(), margins, true);
+                            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer, causeOfNothing);
                         } else {
                             childRenderers.set(childPos, result.getSplitRenderer());
                             childRenderers.add(childPos + 1, result.getOverflowRenderer());
@@ -167,19 +181,20 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             break;
                         }
                     } else if (result.getStatus() == LayoutResult.NOTHING) {
-                        boolean keepTogether = getPropertyAsBoolean(Property.KEEP_TOGETHER);
+                        boolean keepTogether = isKeepTogether();
                         int layoutResult = anythingPlaced && !keepTogether ? LayoutResult.PARTIAL : LayoutResult.NOTHING;
 
                         AbstractRenderer splitRenderer = createSplitRenderer(layoutResult);
                         splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
+                        for (IRenderer renderer : splitRenderer.childRenderers) {
+                            renderer.setParent(splitRenderer);
+                        }
 
                         AbstractRenderer overflowRenderer = createOverflowRenderer(layoutResult);
                         List<IRenderer> overflowRendererChildren = new ArrayList<>();
                         overflowRendererChildren.add(result.getOverflowRenderer());
                         overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
-                        for (IRenderer renderer : overflowRendererChildren) {
-                            renderer.setParent(overflowRenderer);
-                        }
+
                         overflowRenderer.childRenderers = overflowRendererChildren;
                         if (keepTogether) {
                             splitRenderer = null;
@@ -187,14 +202,14 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
                         }
 
-                        applyPaddings(occupiedArea.getBBox(), true);
-                        applyBorderBox(occupiedArea.getBBox(), true);
-                        applyMargins(occupiedArea.getBBox(), true);
+                        applyPaddings(occupiedArea.getBBox(), paddings, true);
+                        applyBorderBox(occupiedArea.getBBox(), borders, true);
+                        applyMargins(occupiedArea.getBBox(), margins, true);
 
-                        if (getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                        if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                             return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
                         } else {
-                            return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer);
+                            return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, LayoutResult.NOTHING == layoutResult ? result.getCauseOfNothing() : null);
                         }
                     }
                 }
@@ -205,34 +220,39 @@ public abstract class BlockRenderer extends AbstractRenderer {
             occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
             if (result.getStatus() == LayoutResult.FULL) {
                 layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
-                if (childRenderer.getProperty(Property.WIDTH) != null) {
+                if (childRenderer.getOccupiedArea() != null) {
                     alignChildHorizontally(childRenderer, layoutBox.getWidth());
                 }
             }
+
+            // Save the first renderer to produce LayoutResult.NOTHING
+            if (null == causeOfNothing && null != result.getCauseOfNothing()) {
+                causeOfNothing = result.getCauseOfNothing();
+            }
         }
 
-        applyPaddings(occupiedArea.getBBox(), true);
+        applyPaddings(occupiedArea.getBBox(), paddings, true);
         if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
-            occupiedArea.getBBox().moveDown(blockHeight - occupiedArea.getBBox().getHeight()).setHeight(blockHeight);
+            occupiedArea.getBBox().moveDown((float) blockHeight - occupiedArea.getBBox().getHeight()).setHeight((float) blockHeight);
         }
-        if (isPositioned()) {
-            float y = getPropertyAsFloat(Property.Y);
+        if (isPositioned) {
+            float y = (float) this.getPropertyAsFloat(Property.Y);
             float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
             move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
 
-        applyBorderBox(occupiedArea.getBBox(), true);
-        applyMargins(occupiedArea.getBBox(), true);
-        if (getProperty(Property.ROTATION_ANGLE) != null) {
+        applyBorderBox(occupiedArea.getBBox(), borders, true);
+        applyMargins(occupiedArea.getBBox(), margins, true);
+        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
-            if (isNotFittingHeight(layoutContext.getArea())) {
-                if (!getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
-                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+            if (isNotFittingLayoutArea(layoutContext.getArea())) {
+                if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
                 }
             }
         }
         applyVerticalAlignment();
-        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, causeOfNothing);
     }
 
     protected AbstractRenderer createSplitRenderer(int layoutResult) {
@@ -248,7 +268,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         AbstractRenderer overflowRenderer = (AbstractRenderer) getNextRenderer();
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
-        overflowRenderer.properties = properties;
+        overflowRenderer.properties = new HashMap<>(properties);
         return overflowRenderer;
     }
 
@@ -284,8 +304,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
 
-        int position = getPropertyAsInteger(Property.POSITION);
-        if (position == LayoutPosition.RELATIVE) {
+        boolean isRelativePosition = isRelativePosition();
+        if (isRelativePosition) {
             applyAbsolutePositioningTranslation(false);
         }
 
@@ -297,7 +317,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         endRotationIfApplied(drawContext.getCanvas());
 
-        if (position == LayoutPosition.RELATIVE) {
+        if (isRelativePosition) {
             applyAbsolutePositioningTranslation(true);
         }
 
@@ -314,16 +334,21 @@ public abstract class BlockRenderer extends AbstractRenderer {
     @Override
     public Rectangle getOccupiedAreaBBox() {
         Rectangle bBox = occupiedArea.getBBox().clone();
-        Float rotationAngle = getProperty(Property.ROTATION_ANGLE);
+        Float rotationAngle = this.<Float>getProperty(Property.ROTATION_ANGLE);
         if (rotationAngle != null) {
-            bBox.setWidth(getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH));
-            bBox.setHeight(getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT));
+            if (!hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT) || !hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
+                Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+                logger.error(MessageFormat.format(LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, getClass().getSimpleName()));
+            } else {
+                bBox.setWidth((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH));
+                bBox.setHeight((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT));
+            }
         }
         return bBox;
     }
 
     protected void applyVerticalAlignment() {
-        VerticalAlignment verticalAlignment = getProperty(Property.VERTICAL_ALIGNMENT);
+        VerticalAlignment verticalAlignment = this.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT);
         if (verticalAlignment != null && verticalAlignment != VerticalAlignment.TOP && childRenderers.size() > 0) {
             float deltaY = childRenderers.get(childRenderers.size() - 1).getOccupiedArea().getBBox().getY() - getInnerAreaBBox().getY();
             switch (verticalAlignment) {
@@ -342,140 +367,135 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     protected void applyRotationLayout(Rectangle layoutBox) {
-        Float rotationPointX = getPropertyAsFloat(Property.ROTATION_POINT_X);
-        Float rotationPointY = getPropertyAsFloat(Property.ROTATION_POINT_Y);
+        float angle = (float) this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
-        if (rotationPointX == null || rotationPointY == null) {
-            // if rotation point was not specified, the most bottom-left point is used
-            rotationPointX = occupiedArea.getBBox().getX();
-            rotationPointY = occupiedArea.getBBox().getY();
-            setProperty(Property.ROTATION_POINT_X, rotationPointX);
-            setProperty(Property.ROTATION_POINT_Y, rotationPointY);
-        }
-
+        float x = occupiedArea.getBBox().getX();
+        float y = occupiedArea.getBBox().getY();
         float height = occupiedArea.getBBox().getHeight();
         float width = occupiedArea.getBBox().getWidth();
 
         setProperty(Property.ROTATION_INITIAL_WIDTH, width);
         setProperty(Property.ROTATION_INITIAL_HEIGHT, height);
 
+        AffineTransform rotationTransform = new AffineTransform();
 
-        if (!isPositioned()) {
-            List<Point> rotatedPoints = new ArrayList<>();
-            getLayoutShiftAndRotatedPoints(rotatedPoints, rotationPointX, rotationPointY);
+        // here we calculate and set the actual occupied area of the rotated content
+        if (isPositioned()) {
+            Float rotationPointX = this.getPropertyAsFloat(Property.ROTATION_POINT_X);
+            Float rotationPointY = this.getPropertyAsFloat(Property.ROTATION_POINT_Y);
 
-            Point clipLineBeg = new Point(layoutBox.getRight(), layoutBox.getTop());
-            Point clipLineEnd = new Point(layoutBox.getRight(), layoutBox.getBottom());
-            List<Point> newOccupiedBox = clipBBox(rotatedPoints, clipLineBeg, clipLineEnd);
-
-            double maxX = -Double.MAX_VALUE;
-            double minY = Double.MAX_VALUE;
-            for (Point point : newOccupiedBox) {
-                if (point.getX() > maxX)  maxX = point.getX();
-                if (point.getY() < minY)  minY = point.getY();
+            if (rotationPointX == null || rotationPointY == null) {
+                // if rotation point was not specified, the most bottom-left point is used
+                rotationPointX = x;
+                rotationPointY = y;
             }
 
-            float newHeight = (float) (occupiedArea.getBBox().getTop() - minY);
-            float newWidth = (float) (maxX - occupiedArea.getBBox().getLeft());
+            // transforms apply from bottom to top
+            rotationTransform.translate((float)rotationPointX, (float)rotationPointY); // move point back at place
+            rotationTransform.rotate(angle); // rotate
+            rotationTransform.translate((float)-rotationPointX, (float)-rotationPointY); // move rotation point to origin
 
-            occupiedArea.getBBox().setWidth(newWidth);
-            occupiedArea.getBBox().setHeight(newHeight);
+            List<Point> rotatedPoints = transformPoints(rectangleToPointsList(occupiedArea.getBBox()), rotationTransform);
+            Rectangle newBBox = calculateBBox(rotatedPoints);
 
-            move(0, height - newHeight);
+            // make occupied area be of size and position of actual content
+            occupiedArea.getBBox().setWidth(newBBox.getWidth());
+            occupiedArea.getBBox().setHeight(newBBox.getHeight());
+            float occupiedAreaShiftX = newBBox.getX() - x;
+            float occupiedAreaShiftY = newBBox.getY() - y;
+            move(occupiedAreaShiftX, occupiedAreaShiftY);
+        } else {
+            rotationTransform = AffineTransform.getRotateInstance(angle);
+            List<Point> rotatedPoints = transformPoints(rectangleToPointsList(occupiedArea.getBBox()), rotationTransform);
+            float[] shift = calculateShiftToPositionBBoxOfPointsAt(x, y + height, rotatedPoints);
+
+            for (Point point : rotatedPoints) {
+                point.setLocation(point.getX() + shift[0], point.getY() + shift[1]);
+            }
+
+            Rectangle newBBox = calculateBBox(rotatedPoints);
+
+            occupiedArea.getBBox().setWidth(newBBox.getWidth());
+            occupiedArea.getBBox().setHeight(newBBox.getHeight());
+
+            float heightDiff = height - newBBox.getHeight();
+            move(0, heightDiff);
         }
     }
 
+    /**
+     * @deprecated Will be removed in iText 7.1
+     */
+    @Deprecated
     protected float[] applyRotation() {
-        float dx = 0, dy = 0;
-        if (!isPositioned()) {
-            Point shift = getLayoutShiftAndRotatedPoints(new ArrayList<Point>(), 0, 0);
-
-            dy = (float) shift.getY();
-            dx = (float) shift.getX();
-        }
-
-        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
-        AffineTransform transform = new AffineTransform();
-        transform.rotate(angle);
         float[] ctm = new float[6];
-        transform.getMatrix(ctm);
-
-        ctm[4] = getPropertyAsFloat(Property.ROTATION_POINT_X) + dx;
-        ctm[5] = getPropertyAsFloat(Property.ROTATION_POINT_Y) + dy;
+        createRotationTransformInsideOccupiedArea().getMatrix(ctm);
         return ctm;
     }
 
-    private Point getLayoutShiftAndRotatedPoints(List<Point> rotatedPoints, float shiftX, float shiftY) {
-        float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
-        float width = getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH);
-        float height = getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT);
+    /**
+     * This method creates {@link AffineTransform} instance that could be used
+     * to rotate content inside the occupied area. Be aware that it should be used only after
+     * layout rendering is finished and correct occupied area for the rotated element is calculated.
+     * @return {@link AffineTransform} that rotates the content and places it inside occupied area.
+     */
+    protected AffineTransform createRotationTransformInsideOccupiedArea() {
+        Float angle = this.<Float>getProperty(Property.ROTATION_ANGLE);
+        AffineTransform rotationTransform = AffineTransform.getRotateInstance((float)angle);
 
-        float left = occupiedArea.getBBox().getX() - shiftX;
-        float bottom = occupiedArea.getBBox().getY() - shiftY;
-        float right = left + width;
-        float top = bottom + height;
+        Rectangle contentBox = this.getOccupiedAreaBBox();
+        List<Point> rotatedContentBoxPoints = transformPoints(rectangleToPointsList(contentBox), rotationTransform);
+        // Occupied area for rotated elements is already calculated on layout in such way to enclose rotated content;
+        // therefore we can simply rotate content as is and then shift it to the occupied area.
+        float[] shift = calculateShiftToPositionBBoxOfPointsAt(occupiedArea.getBBox().getLeft(), occupiedArea.getBBox().getTop(), rotatedContentBoxPoints);
+        rotationTransform.preConcatenate(AffineTransform.getTranslateInstance(shift[0], shift[1]));
 
-        AffineTransform rotateTransform = new AffineTransform();
-        rotateTransform.rotate(angle);
-
-        transformBBox(left, bottom, right, top, rotateTransform, rotatedPoints);
-
-        double minX = Double.MAX_VALUE;
-        double maxY = -Double.MAX_VALUE;
-        for (Point point : rotatedPoints) {
-            if (point.getX() < minX)  minX = point.getX();
-            if (point.getY() > maxY)  maxY = point.getY();
-        }
-
-        float dx = (float) (left - minX);
-        float dy = (float) (top - maxY);
-
-        for (Point point : rotatedPoints) {
-            point.setLocation(point.getX() + dx + shiftX, point.getY() + dy + shiftY);
-        }
-
-        return new Point(dx, dy);
+        return rotationTransform;
     }
 
     protected void beginRotationIfApplied(PdfCanvas canvas) {
-        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
+        Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
-            float heightDiff = getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
-
-            float shiftX = getPropertyAsFloat(Property.ROTATION_POINT_X);
-            float shiftY = getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
-
-            move(-shiftX, -shiftY);
-            float[] ctm = applyRotation();
-            canvas.saveState().concatMatrix(ctm[0], ctm[1], ctm[2], ctm[3], ctm[4], ctm[5]);
+            if (!hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
+                Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+                logger.error(MessageFormat.format(LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, getClass().getSimpleName()));
+            } else {
+                AffineTransform transform = createRotationTransformInsideOccupiedArea();
+                canvas.saveState().concatMatrix(transform);
+            }
         }
     }
 
     protected void endRotationIfApplied(PdfCanvas canvas) {
-        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
+        Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
-            float heightDiff = getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT) - occupiedArea.getBBox().getHeight();
-
-            float shiftX = getPropertyAsFloat(Property.ROTATION_POINT_X);
-            float shiftY = getPropertyAsFloat(Property.ROTATION_POINT_Y) + heightDiff;
-
             canvas.restoreState();
-            move(shiftX, shiftY);
         }
     }
 
-    private List<Point> transformBBox(float left, float bottom, float right, float top, AffineTransform transform, List<Point> bBoxPoints) {
-        bBoxPoints.addAll(Arrays.asList(new Point(left, bottom), new Point(right, bottom),
-                new Point(right, top), new Point(left, top)));
-
-        for (Point point : bBoxPoints) {
-            transform.transform(point, point);
+    /**
+     * This method calculates the shift needed to be applied to the points in order to position
+     * upper and left borders of their bounding box at the given lines.
+     * @param left x coordinate at which points bbox left border is to be aligned
+     * @param top y coordinate at which points bbox upper border is to be aligned
+     * @param points the points, which bbox will be aligned at the given position
+     * @return array of two floats, where first element denotes x-coordinate shift and the second
+     * element denotes y-coordinate shift which are needed to align points bbox at the given lines.
+     */
+    private float[] calculateShiftToPositionBBoxOfPointsAt(float left, float top, List<Point> points) {
+        double minX = Double.MAX_VALUE;
+        double maxY = -Double.MAX_VALUE;
+        for (Point point : points) {
+            minX = Math.min(point.getX(), minX);
+            maxY = Math.max(point.getY(), maxY);
         }
 
-        return bBoxPoints;
+        float dx = (float) (left - minX);
+        float dy = (float) (top - maxY);
+        return new float[] {dx, dy};
     }
 
-    private List<Point> clipBBox(List<Point> points, Point clipLineBeg, Point clipLineEnd) {
+    private List<Point> clipPolygon(List<Point> points, Point clipLineBeg, Point clipLineEnd) {
         List<Point> filteredPoints = new ArrayList<>();
 
         boolean prevOnRightSide = false;
@@ -512,7 +532,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         x2 = clipLineEnd.getX() - clipLineBeg.getX();
         y1 = filteredPoint.getY() - clipLineBeg.getY();
 
-        double sgn = x1*y2 - x2*y1;
+        double sgn = x1 * y2 - x2 * y1;
 
         if (Math.abs(sgn) < 0.001) return 0;
         if (sgn > 0) return 1;

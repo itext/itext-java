@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -66,11 +65,11 @@ public class TextMarginFinder implements IEventListener {
         if (type == EventType.RENDER_TEXT) {
             TextRenderInfo info = (TextRenderInfo) data;
             if (textRectangle == null) {
-                textRectangle = info.getDescentLine().getBoundingRectange();
+                textRectangle = info.getDescentLine().getBoundingRectangle();
             } else {
-                textRectangle = Rectangle.getCommonRectangle(textRectangle, info.getDescentLine().getBoundingRectange());
+                textRectangle = Rectangle.getCommonRectangle(textRectangle, info.getDescentLine().getBoundingRectangle());
             }
-            textRectangle = Rectangle.getCommonRectangle(textRectangle, info.getAscentLine().getBoundingRectange());
+            textRectangle = Rectangle.getCommonRectangle(textRectangle, info.getAscentLine().getBoundingRectangle());
         } else {
             throw new IllegalStateException(MessageFormat.format("Event type not supported: {0}", type));
         }

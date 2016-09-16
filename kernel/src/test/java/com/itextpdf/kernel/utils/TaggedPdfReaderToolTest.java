@@ -2,6 +2,7 @@ package com.itextpdf.kernel.utils;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
@@ -17,20 +18,13 @@ import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
 
 @Category(IntegrationTest.class)
-public class TaggedPdfReaderToolTest {
+public class TaggedPdfReaderToolTest extends ExtendedITextTest{
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/TaggedPdfReaderToolTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/TaggedPdfReaderToolTest/";
 
     @Before
     public void setUp() {
-        File dest = new File(destinationFolder);
-        dest.mkdirs();
-        File[] files = dest.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                file.delete();
-            }
-        }
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test

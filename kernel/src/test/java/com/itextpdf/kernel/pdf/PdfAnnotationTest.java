@@ -1,53 +1,28 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
-import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfCaretAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfCircleAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfFileAttachmentAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfFixedPrint;
-import com.itextpdf.kernel.pdf.annot.PdfFreeTextAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfInkAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfPopupAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfPrinterMarkAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfRedactAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfScreenAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfSoundAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfSquareAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfStampAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfTextMarkupAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfTrapNetworkAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfWatermarkAnnotation;
+import com.itextpdf.kernel.pdf.annot.*;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
-
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
-import javax.sound.sampled.UnsupportedAudioFileException;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.*;
+import java.util.List;
 
 @Category(IntegrationTest.class)
 public class PdfAnnotationTest extends ExtendedITextTest {
@@ -62,7 +37,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
     @Test
     public void addLinkAnnotation01() throws Exception {
-        PdfDocument document = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "linkAnnotation01.pdf")));
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "linkAnnotation01.pdf"));
 
         PdfPage page1 = document.addNewPage();
         PdfPage page2 = document.addNewPage();
@@ -96,7 +71,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
     @Test
     public void addLinkAnnotation02() throws Exception {
-        PdfDocument document = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "linkAnnotation02.pdf")));
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "linkAnnotation02.pdf"));
 
         PdfPage page = document.addNewPage();
 
@@ -122,7 +97,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
     @Test
     public void addAndGetLinkAnnotations() throws Exception {
-        PdfDocument document = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "linkAnnotation03.pdf")));
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "linkAnnotation03.pdf"));
 
         PdfPage page = document.addNewPage();
 
@@ -157,7 +132,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "linkAnnotation03.pdf", sourceFolder + "cmp_linkAnnotation03.pdf", destinationFolder, "diff_"));
 
 
-        document = new PdfDocument(new PdfReader(new FileInputStream(destinationFolder + "linkAnnotation03.pdf")));
+        document = new PdfDocument(new PdfReader(destinationFolder + "linkAnnotation03.pdf"));
         page = document.getPage(1);
         Assert.assertEquals(3, page.getAnnotsSize());
         List<PdfAnnotation> annotations = page.getAnnotations();
@@ -170,7 +145,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
     @Test
     public void addTextAnnotation01() throws Exception {
-        PdfDocument document = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "textAnnotation01.pdf")));
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "textAnnotation01.pdf"));
 
         PdfPage page = document.addNewPage();
 
@@ -193,11 +168,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     public void caretTest() throws IOException,  InterruptedException {
         String filename =  destinationFolder + "caretAnnotation.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas
@@ -230,7 +203,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         page1.addAnnotation(caret);
         page1.addAnnotation(popup);
         page1.flush();
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_CaretAnnotation.pdf", destinationFolder, "diff_");
@@ -241,7 +214,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
     @Test
     public void addFreeTextAnnotation01() throws Exception {
-        PdfDocument document = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "freeTextAnnotation01.pdf")));
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "freeTextAnnotation01.pdf"));
 
         PdfPage page = document.addNewPage();
 
@@ -261,7 +234,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
     @Test
     public void addSquareAndCircleAnnotations01() throws Exception {
-        PdfDocument document = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "squareAndCircleAnnotations01.pdf")));
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "squareAndCircleAnnotations01.pdf"));
 
         PdfPage page = document.addNewPage();
 
@@ -282,21 +255,20 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     public void fileAttachmentTest() throws IOException,  InterruptedException {
         String filename = destinationFolder + "fileAttachmentAnnotation.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        writer1.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfWriter writer = new PdfWriter(filename);
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, sourceFolder + "sample.wav", null, "sample.wav", null, null, true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc, sourceFolder + "sample.wav", null, "sample.wav", null, null, true);
 
         PdfFileAttachmentAnnotation fileAttach = new PdfFileAttachmentAnnotation(new Rectangle(100, 100), spec);
         fileAttach.setIconName(PdfName.Paperclip);
         page1.addAnnotation(fileAttach);
 
         page1.flush();
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_fileAttachmentAnnotation.pdf", destinationFolder, "diff_");
@@ -309,11 +281,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     public void rubberStampTest() throws  IOException, InterruptedException{
         String filename =  destinationFolder + "rubberStampAnnotation01.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
         PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(0, 0, 100, 50));
         stamp.setStampName(PdfName.Approved);
         PdfStampAnnotation stamp1 = new PdfStampAnnotation(new Rectangle(0, 50, 100, 50));
@@ -358,7 +328,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         page1.addAnnotation(stamp13);
         page1.flush();
 
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_rubberStampAnnotation01.pdf", destinationFolder, "diff_");
@@ -371,11 +341,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     public void rubberStampWrongStampTest() throws  IOException, InterruptedException{
         String filename =  destinationFolder + "rubberStampAnnotation02.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
         PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(0, 0, 100, 50));
 
         stamp.setStampName(PdfName.StrikeOut);
@@ -383,7 +351,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         page1.addAnnotation(stamp);
         page1.flush();
 
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_rubberStampAnnotation02.pdf", destinationFolder, "diff_");
@@ -396,11 +364,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     public void inkTest() throws IOException,  InterruptedException {
         String filename = destinationFolder + "inkAnnotation01.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
         float[] array1 = {100, 100, 100, 200, 200, 200, 300, 300};
         PdfArray firstPoint = new PdfArray(array1);
@@ -420,7 +386,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         page1.addAnnotation(ink);
 
         page1.flush();
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_inkAnnotation01.pdf", destinationFolder, "diff_");
@@ -433,11 +399,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     public void textMarkupTest01() throws IOException,  InterruptedException {
         String filename =  destinationFolder + "textMarkupAnnotation01.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page1);
         //Initialize canvas and write text to it
@@ -458,7 +422,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         markup.setColor(colors);
         page1.addAnnotation(markup);
         page1.flush();
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation01.pdf", destinationFolder, "diff_");
@@ -471,11 +435,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     public void textMarkupTest02() throws IOException,  InterruptedException {
         String filename =  destinationFolder + "textMarkupAnnotation02.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page1);
         //Initialize canvas and write text to it
@@ -496,7 +458,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         markup.setColor(colors);
         page1.addAnnotation(markup);
         page1.flush();
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation02.pdf", destinationFolder, "diff_");
@@ -509,11 +471,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     public void textMarkupTest03() throws IOException,  InterruptedException {
         String filename =  destinationFolder + "textMarkupAnnotation03.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page1);
         //Initialize canvas and write text to it
@@ -534,7 +494,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         markup.setColor(colors);
         page1.addAnnotation(markup);
         page1.flush();
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation03.pdf", destinationFolder, "diff_");
@@ -547,11 +507,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     public void textMarkupTest04() throws IOException,  InterruptedException {
         String filename =  destinationFolder + "textMarkupAnnotation04.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page1);
         //Initialize canvas and write text to it
@@ -572,7 +530,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         markup.setColor(colors);
         page1.addAnnotation(markup);
         page1.flush();
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_textMarkupAnnotation04.pdf", destinationFolder, "diff_");
@@ -585,10 +543,8 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     public void printerMarkText() throws IOException, InterruptedException {
         String filename =  destinationFolder + "printerMarkAnnotation01.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfPage page1 = pdfDoc.addNewPage();
 
         PdfCanvas canvasText = new PdfCanvas(page1);
         canvasText
@@ -601,7 +557,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .restoreState();
         PdfFormXObject form = new PdfFormXObject(PageSize.A4);
 
-        PdfCanvas canvas = new PdfCanvas(form, pdfDoc1);
+        PdfCanvas canvas = new PdfCanvas(form, pdfDoc);
         canvas
                 .saveState()
                 .circle(265, 795, 5)
@@ -614,7 +570,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         page1.addAnnotation(printer);
         page1.flush();
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_printerMarkAnnotation01.pdf", destinationFolder, "diff_");
@@ -627,11 +583,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     public void trapNetworkText() throws IOException, InterruptedException {
         String filename = destinationFolder + "trapNetworkAnnotation01.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page = pdfDoc1.addNewPage();
+        PdfPage page = pdfDoc.addNewPage();
 
         PdfCanvas canvasText = new PdfCanvas(page);
 
@@ -645,7 +599,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .restoreState();
 
         PdfFormXObject form = new PdfFormXObject(PageSize.A4);
-        PdfCanvas canvas = new PdfCanvas(form, pdfDoc1);
+        PdfCanvas canvas = new PdfCanvas(form, pdfDoc);
         canvas
                 .saveState()
                 .circle(272, 795, 5)
@@ -659,7 +613,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         page.addAnnotation(trap);
         page.flush();
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_trapNetworkAnnotation01.pdf", destinationFolder, "diff_");
@@ -673,11 +627,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         String filename = destinationFolder + "soundAnnotation02.pdf";
         String audioFile = sourceFolder + "sample.aif";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
         InputStream is = new FileInputStream(audioFile);
         String string = "";
@@ -691,7 +643,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
             is = new FileInputStream(audioFile);
         }
 
-        PdfStream sound1 = new PdfStream(pdfDoc1, is);
+        PdfStream sound1 = new PdfStream(pdfDoc, is);
         sound1.put(PdfName.R, new PdfNumber(32117));
         sound1.put(PdfName.E, PdfName.Signed);
         sound1.put(PdfName.B, new PdfNumber(16));
@@ -702,7 +654,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         page1.addAnnotation(sound);
         page1.flush();
 
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_soundAnnotation02.pdf", destinationFolder, "diff_");
@@ -716,11 +668,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         String filename = destinationFolder + "soundAnnotation03.pdf";
         String audioFile = sourceFolder + "sample.aiff";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
         InputStream is = new FileInputStream(audioFile);
         String string = "";
@@ -734,7 +684,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
             is = new FileInputStream(audioFile);
         }
 
-        PdfStream sound1 = new PdfStream(pdfDoc1, is);
+        PdfStream sound1 = new PdfStream(pdfDoc, is);
         sound1.put(PdfName.R, new PdfNumber(44100));
         sound1.put(PdfName.E, PdfName.Signed);
         sound1.put(PdfName.B, new PdfNumber(16));
@@ -745,7 +695,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         page1.addAnnotation(sound);
         page1.flush();
 
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_soundAnnotation03.pdf", destinationFolder, "diff_");
@@ -759,20 +709,18 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         String filename = destinationFolder + "soundAnnotation04.pdf";
         String audioFile = sourceFolder + "sample.snd";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
         InputStream is = new FileInputStream(audioFile);
 
-        PdfSoundAnnotation sound = new PdfSoundAnnotation(pdfDoc1, new Rectangle(100, 100, 100, 100), is, 44100, PdfName.Signed, 2, 16);
+        PdfSoundAnnotation sound = new PdfSoundAnnotation(pdfDoc, new Rectangle(100, 100, 100, 100), is, 44100, PdfName.Signed, 2, 16);
 
         page1.addAnnotation(sound);
         page1.flush();
 
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_soundAnnotation04.pdf", destinationFolder, "diff_");
@@ -786,19 +734,17 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         String filename = destinationFolder + "soundAnnotation01.pdf";
         String audioFile = sourceFolder + "sample.wav";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
         InputStream is = new FileInputStream(audioFile);
-        PdfSoundAnnotation sound = new PdfSoundAnnotation(pdfDoc1, new Rectangle(100, 100, 100, 100), is, 48000, PdfName.Signed, 2, 16);
+        PdfSoundAnnotation sound = new PdfSoundAnnotation(pdfDoc, new Rectangle(100, 100, 100, 100), is, 48000, PdfName.Signed, 2, 16);
 
         page1.addAnnotation(sound);
         page1.flush();
 
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_soundAnnotation01.pdf", destinationFolder, "diff_");
@@ -812,11 +758,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         String filename = destinationFolder + "soundAnnotation05.pdf";
         String audioFile = sourceFolder + "sample.wav";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
         InputStream is = new FileInputStream(audioFile);
         String header = "";
@@ -830,7 +774,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
             is = new FileInputStream(audioFile);
         }
 
-        PdfStream soundStream = new PdfStream(pdfDoc1, is);
+        PdfStream soundStream = new PdfStream(pdfDoc, is);
 
         soundStream.put(PdfName.R, new PdfNumber(48000));
         soundStream.put(PdfName.E, PdfName.Signed);
@@ -842,7 +786,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         page1.addAnnotation(sound);
         page1.flush();
 
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_soundAnnotation05.pdf", destinationFolder, "diff_");
@@ -855,11 +799,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     public void screenTestExternalWavFile() throws IOException,  InterruptedException {
         String filename = destinationFolder + "screenAnnotation01.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas
@@ -872,9 +814,18 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .restoreState();
         PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
 
-        PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDoc1, "c:\\morph\\itext6\\itextpdf\\canvas\\src\\test\\resources\\com\\itextpdf\\canvas\\PdfAnnotationTest\\" + "sample.wav", true);
+        FileOutputStream fos = new FileOutputStream(destinationFolder + "sample.wav");
+        FileInputStream fis = new FileInputStream(sourceFolder + "sample.wav");
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = fis.read(buffer)) > 0) {
+            fos.write(buffer, 0, length);
+        }
+        fos.close();
+        fis.close();
+        PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDoc, "sample.wav", true);
 
-        PdfAction action = PdfAction.createRendition(sourceFolder+"sample.wav",
+        PdfAction action = PdfAction.createRendition("sample.wav",
                 spec, "audio/x-wav", screen);
 
         screen.setAction(action);
@@ -882,24 +833,22 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         page1.addAnnotation(screen);
         page1.flush();
 
-        pdfDoc1.close();
+        pdfDoc.close();
 
-//        CompareTool compareTool = new CompareTool();
-//        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_screenAnnotation01.pdf", destinationFolder, "diff_");
-//        if (errorMessage != null) {
-//            Assert.fail(errorMessage);
-//        }
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_screenAnnotation01.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 
     @Test
     public void screenTestEmbeddedWavFile01() throws IOException, InterruptedException {
         String filename = destinationFolder + "screenAnnotation02.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas
@@ -912,7 +861,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .restoreState();
         PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, sourceFolder + "sample.wav", null, "sample.wav", null, null, true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc, sourceFolder + "sample.wav", null, "sample.wav", null, null, true);
 
         PdfAction action = PdfAction.createRendition(sourceFolder+"sample.wav",
                 spec, "audio/x-wav", screen);
@@ -922,7 +871,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         page1.addAnnotation(screen);
         page1.flush();
 
-        pdfDoc1.close();
+        pdfDoc.close();
 
 //        CompareTool compareTool = new CompareTool();
 //        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_screenAnnotation02.pdf", destinationFolder, "diff_");
@@ -935,11 +884,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     public void screenTestEmbeddedWavFile02() throws IOException, InterruptedException {
         String filename = destinationFolder + "screenAnnotation03.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas
@@ -952,7 +899,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
                 .restoreState();
         PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, new FileInputStream(sourceFolder + "sample.wav"), null, "sample.wav", null, null, true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc, new FileInputStream(sourceFolder + "sample.wav"), null, "sample.wav", null, null, true);
 
         PdfAction action = PdfAction.createRendition(sourceFolder+"sample.wav",
                 spec, "audio/x-wav", screen);
@@ -962,7 +909,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         page1.addAnnotation(screen);
         page1.flush();
 
-        pdfDoc1.close();
+        pdfDoc.close();
 
 //        CompareTool compareTool = new CompareTool();
 //        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_screenAnnotation03.pdf", destinationFolder, "diff_");
@@ -975,11 +922,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     public void screenTestEmbeddedWavFile03() throws IOException, InterruptedException {
         String filename = destinationFolder + "screenAnnotation04.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas
@@ -1001,7 +946,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
             reads = is.read();
         }
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc1, baos.toByteArray(), null, "sample.wav", null, null, null, true);
+        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc, baos.toByteArray(), null, "sample.wav", null, null, null, true);
 
         PdfAction action = PdfAction.createRendition(sourceFolder+"sample.wav",
                 spec, "audio/x-wav", screen);
@@ -1011,7 +956,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         page1.addAnnotation(screen);
         page1.flush();
 
-        pdfDoc1.close();
+        pdfDoc.close();
 
 //        CompareTool compareTool = new CompareTool();
 //        String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_screenAnnotation04.pdf", destinationFolder, "diff_");
@@ -1024,11 +969,9 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     public void waterMarkTest() throws IOException,  InterruptedException {
         String filename = destinationFolder + "waterMarkAnnotation01.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
         PdfWatermarkAnnotation watermark = new PdfWatermarkAnnotation(new Rectangle(400, 400, 200, 200));
 
@@ -1043,7 +986,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         PdfFormXObject form = new PdfFormXObject(new Rectangle(200, 200));
 
-        PdfCanvas canvas = new PdfCanvas(form, pdfDoc1);
+        PdfCanvas canvas = new PdfCanvas(form, pdfDoc);
         canvas
                 .saveState()
                 .circle(100, 100, 50)
@@ -1057,7 +1000,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
 
         page1.addAnnotation(watermark);
         page1.flush();
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_watermarkAnnotation01.pdf", destinationFolder, "diff_");
@@ -1070,18 +1013,16 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     public void redactionTest() throws IOException,  InterruptedException {
         String filename = destinationFolder + "redactionAnnotation01.pdf";
 
-        FileOutputStream fos1 = new FileOutputStream(filename);
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfPage page1 = pdfDoc1.addNewPage();
+        PdfPage page1 = pdfDoc.addNewPage();
 
         float[] rgb = { 0, 0, 0};
         float[] rgb1 = { 1, 0, 0};
         PdfRedactAnnotation redact = new PdfRedactAnnotation(new Rectangle(180, 531, 120, 49));
 
         PdfFormXObject formD = new PdfFormXObject(new Rectangle(180, 531, 120, 49));
-        PdfCanvas canvasD = new PdfCanvas(formD, pdfDoc1);
+        PdfCanvas canvasD = new PdfCanvas(formD, pdfDoc);
         canvasD
                 .setFillColorGray(0)
                 .rectangle(180, 531, 120, 48)
@@ -1089,7 +1030,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         redact.setDownAppearance(formD.getPdfObject());
 
         PdfFormXObject formN = new PdfFormXObject(new Rectangle(179, 530, 122, 51));
-        PdfCanvas canvasN = new PdfCanvas(formN, pdfDoc1);
+        PdfCanvas canvasN = new PdfCanvas(formN, pdfDoc);
         canvasN
                 .setColor(Color.RED, true)
                 .setLineWidth(1.5f)
@@ -1101,7 +1042,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         redact.setNormalAppearance(formN.getPdfObject());
 
         PdfFormXObject formR = new PdfFormXObject(new Rectangle(180, 531, 120, 49));
-        PdfCanvas canvasR = new PdfCanvas(formR, pdfDoc1);
+        PdfCanvas canvasR = new PdfCanvas(formR, pdfDoc);
         canvasR
                 .saveState()
                 .rectangle(180, 531, 120, 48)
@@ -1111,7 +1052,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         redact.setRolloverAppearance(formR.getPdfObject());
 
         PdfFormXObject formRO = new PdfFormXObject(new Rectangle(180, 531, 120, 49));
-        PdfCanvas canvasRO = new PdfCanvas(formRO, pdfDoc1);
+        PdfCanvas canvasRO = new PdfCanvas(formRO, pdfDoc);
         canvasRO
                 .saveState()
                 .rectangle(180, 531, 120, 48)
@@ -1127,7 +1068,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         redact.setInteriorColor(rgb);
         page1.addAnnotation(redact);
         page1.flush();
-        pdfDoc1.close();
+        pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_redactionAnnotation01.pdf", destinationFolder, "diff_");

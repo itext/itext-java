@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -65,7 +64,7 @@ public final class FilterHandlers {
         Map<PdfName, IFilterHandler> map = new HashMap<>();
 
         map.put(PdfName.FlateDecode, new FlateDecodeFilter());
-        map.put(PdfName.FL, new FlateDecodeFilter());
+        map.put(PdfName.Fl, new FlateDecodeFilter());
         map.put(PdfName.ASCIIHexDecode, new ASCIIHexDecodeFilter());
         map.put(PdfName.AHx, new ASCIIHexDecodeFilter());
         map.put(PdfName.ASCII85Decode, new ASCII85DecodeFilter());

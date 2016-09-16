@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -46,38 +45,25 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.PdfEncryption;
 
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.math.BigInteger;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
-import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.asn1.x509.Extensions;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.CertificateID;
 import org.bouncycastle.cert.ocsp.CertificateStatus;
 import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPReq;
-import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
 import org.bouncycastle.cert.ocsp.OCSPResp;
 import org.bouncycastle.cert.ocsp.SingleResp;
 import org.bouncycastle.ocsp.OCSPRespStatus;
 import org.bouncycastle.operator.OperatorException;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -174,17 +160,10 @@ public class OcspClientBouncyCastle implements IOcspClient {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
         // Generate the id for the certificate we are looking for
-        CertificateID id = new CertificateID(
-                new JcaDigestCalculatorProviderBuilder().build().get(CertificateID.HASH_SHA1),
-                new JcaX509CertificateHolder(issuerCert), serialNumber);
+        CertificateID id = SignUtils.generateCertificateId(issuerCert, serialNumber, CertificateID.HASH_SHA1);
 
         // basic request generation with nonce
-        OCSPReqBuilder gen = new OCSPReqBuilder();
-        gen.addRequest(id);
-
-        Extension ext = new Extension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, false, new DEROctetString(new DEROctetString(PdfEncryption.generateNewDocumentId()).getEncoded()));
-        gen.setRequestExtensions(new Extensions(new Extension[]{ext}));
-        return gen.build();
+        return SignUtils.generateOcspRequestWithNonce(id);
     }
 
     private OCSPResp getOcspResponse(X509Certificate checkCert, X509Certificate rootCert, String url) throws GeneralSecurityException, OCSPException, IOException, OperatorException {
@@ -199,20 +178,7 @@ public class OcspClientBouncyCastle implements IOcspClient {
         OCSPReq request = generateOCSPRequest(rootCert, checkCert.getSerialNumber());
         byte[] array = request.getEncoded();
         URL urlt = new URL(url);
-        HttpURLConnection con = (HttpURLConnection) urlt.openConnection();
-        con.setRequestProperty("Content-Type", "application/ocsp-request");
-        con.setRequestProperty("Accept", "application/ocsp-response");
-        con.setDoOutput(true);
-        OutputStream out = con.getOutputStream();
-        DataOutputStream dataOut = new DataOutputStream(new BufferedOutputStream(out));
-        dataOut.write(array);
-        dataOut.flush();
-        dataOut.close();
-        if (con.getResponseCode() / 100 != 2) {
-            throw new PdfException(PdfException.InvalidHttpResponse1).setMessageParams(con.getResponseCode());
-        }
-        //Get Response
-        InputStream in = (InputStream) con.getContent();
+        InputStream in = SignUtils.getHttpResponseForOcspRequest(array, urlt);
         return new OCSPResp(StreamUtil.inputStreamToArray(in));
     }
 }

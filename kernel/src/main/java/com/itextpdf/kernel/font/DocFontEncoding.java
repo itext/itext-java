@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -49,7 +48,11 @@ import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
 
 /**
  * This class allow to parse document font's encoding.
@@ -61,16 +64,14 @@ class DocFontEncoding extends FontEncoding {
     protected DocFontEncoding() {
     }
 
-    public static FontEncoding createDocFontEncoding(PdfObject encoding, CMapToUnicode toUnicode, boolean fillBaseEncoding) {
+    public static FontEncoding createDocFontEncoding(PdfObject encoding, CMapToUnicode toUnicode, boolean fillStandardEncoding) {
         if (encoding != null) {
             if (encoding.isName()) {
                 return FontEncoding.createFontEncoding(((PdfName) encoding).getValue());
             } else if (encoding.isDictionary()) {
                 DocFontEncoding fontEncoding = new DocFontEncoding();
                 fontEncoding.differences = new String[256];
-                if (fillBaseEncoding) {
-                    fillBaseEncoding(fontEncoding, ((PdfDictionary) encoding).getAsName(PdfName.BaseEncoding));
-                }
+                fillBaseEncoding(fontEncoding, ((PdfDictionary) encoding).getAsName(PdfName.BaseEncoding), fillStandardEncoding);
                 fillDifferences(fontEncoding, ((PdfDictionary) encoding).getAsArray(PdfName.Differences), toUnicode);
                 return fontEncoding;
             }
@@ -85,11 +86,7 @@ class DocFontEncoding extends FontEncoding {
         }
     }
 
-    public static FontEncoding createDocFontEncoding(PdfObject encoding, CMapToUnicode toUnicode) {
-        return createDocFontEncoding(encoding, toUnicode, true);
-    }
-
-    private static void fillBaseEncoding(DocFontEncoding fontEncoding, PdfName baseEncodingName) {
+    private static void fillBaseEncoding(DocFontEncoding fontEncoding, PdfName baseEncodingName, boolean fillStandardEncoding) {
         if (baseEncodingName != null) {
             fontEncoding.baseEncoding = baseEncodingName.getValue();
         }
@@ -105,7 +102,7 @@ class DocFontEncoding extends FontEncoding {
             }
             fontEncoding.baseEncoding = enc;
             fontEncoding.fillNamedEncoding();
-        } else {
+        } else if (fillStandardEncoding) {
             fontEncoding.fillStandardEncoding();
         }
     }
@@ -120,19 +117,19 @@ class DocFontEncoding extends FontEncoding {
                     currentNumber = ((PdfNumber) obj).intValue();
                 } else {
                     String glyphName = ((PdfName) obj).getValue();
-                    Integer unicode = AdobeGlyphList.nameToUnicode(glyphName);
-                    if (unicode != null) {
-                        fontEncoding.codeToUnicode[currentNumber] = unicode;
-                        fontEncoding.unicodeToCode.put(unicode, currentNumber);
+                    int unicode = AdobeGlyphList.nameToUnicode(glyphName);
+                    if (unicode != -1) {
+                        fontEncoding.codeToUnicode[currentNumber] = (int) unicode;
+                        fontEncoding.unicodeToCode.put((int) unicode, currentNumber);
                         fontEncoding.differences[currentNumber] = glyphName;
-                        fontEncoding.unicodeDifferences.put(unicode, unicode);
+                        fontEncoding.unicodeDifferences.put((int) unicode, (int) unicode);
                     } else {
                         if (byte2uni.contains(currentNumber)) {
                             unicode = byte2uni.get(currentNumber);
-                            fontEncoding.codeToUnicode[currentNumber] = unicode;
-                            fontEncoding.unicodeToCode.put(unicode, currentNumber);
+                            fontEncoding.codeToUnicode[currentNumber] = (int) unicode;
+                            fontEncoding.unicodeToCode.put((int) unicode, currentNumber);
                             fontEncoding.differences[currentNumber] = glyphName;
-                            fontEncoding.unicodeDifferences.put(unicode, unicode);
+                            fontEncoding.unicodeDifferences.put((int) unicode, (int) unicode);
                         }
                     }
                     currentNumber++;
@@ -144,11 +141,11 @@ class DocFontEncoding extends FontEncoding {
     private static void fillDifferences(DocFontEncoding fontEncoding, CMapToUnicode toUnicode) {
         IntHashtable byte2uni = toUnicode.createDirectMapping();
         for(Integer code : byte2uni.getKeys()) {
-            int unicode = byte2uni.get(code);
+            int unicode = byte2uni.get((int) code);
             String glyphName = AdobeGlyphList.unicodeToName(unicode);
-            fontEncoding.codeToUnicode[code] = unicode;
-            fontEncoding.unicodeToCode.put(unicode, code);
-            fontEncoding.differences[code] = glyphName;
+            fontEncoding.codeToUnicode[(int) code] = unicode;
+            fontEncoding.unicodeToCode.put(unicode, (int) code);
+            fontEncoding.differences[(int) code] = glyphName;
             fontEncoding.unicodeDifferences.put(unicode, unicode);
         }
     }

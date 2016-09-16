@@ -3,45 +3,40 @@ package com.itextpdf.barcodes;
 import com.itextpdf.barcodes.qrcode.EncodeHintType;
 import com.itextpdf.barcodes.qrcode.ErrorCorrectionLevel;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 
-
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.io.InterruptedIOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class BarcodeQRCodeTest {
+public class BarcodeQRCodeTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
     public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodeQRCode/";
 
     @BeforeClass
     public static void beforeClass() {
-        File dir = new File(destinationFolder);
-        dir.mkdirs();
-        for (File file : dir.listFiles())
-            file.delete();
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeQRCode01.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -58,8 +53,8 @@ public class BarcodeQRCodeTest {
 
     @Test
     public void barcode02Test() throws IOException, PdfException, InterruptedException {
-        String filename ="barcodeQRCode02.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream( destinationFolder + filename));
+        String filename = "barcodeQRCode02.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page1 = document.addNewPage();
@@ -68,11 +63,26 @@ public class BarcodeQRCodeTest {
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
         BarcodeQRCode barcode1 = new BarcodeQRCode("дима", hints);
         barcode1.placeBarcode(canvas, Color.GRAY, 12);
-
         document.close();
-
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
 
+    @Test
+    public void barcodeVersioningTest() throws IOException, PdfException, InterruptedException{
+        String filename = "barcodeQRCodeVersioning.pdf";
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfDocument document = new PdfDocument(writer);
+        for(int i = -9; i<42;i+=10) {
+            PdfPage page1 = document.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page1);
+            Map<EncodeHintType, Object> hints = new HashMap<>();
+            hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+            hints.put(EncodeHintType.MIN_VERSION_NR, i);
+            BarcodeQRCode barcode1 = new BarcodeQRCode("дима", hints);
+            barcode1.placeBarcode(canvas, Color.GRAY, 3);
+        }
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
 
     }
 

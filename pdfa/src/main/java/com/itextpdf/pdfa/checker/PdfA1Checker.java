@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,6 +43,9 @@
  */
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
@@ -64,7 +66,15 @@ import com.itextpdf.pdfa.PdfAConformanceException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * PdfA1Checker defines the requirements of the PDF/A-1 standard and contains
+ * method implementations from the abstract {@link PdfAChecker} class.
+ * <p>
+ * The specification implemented by this class is ISO 19005-1
+ */
 public class PdfA1Checker extends PdfAChecker {
 
     protected static final Set<PdfName> forbiddenAnnotations = new HashSet<>(Arrays.asList(PdfName.Sound, PdfName.Movie, PdfName.FileAttachment));
@@ -77,6 +87,12 @@ public class PdfA1Checker extends PdfAChecker {
     protected static final Set<PdfName> allowedRenderingIntents = new HashSet<>(Arrays.asList(PdfName.RelativeColorimetric,
             PdfName.AbsoluteColorimetric, PdfName.Perceptual, PdfName.Saturation));
 
+    /**
+     * Creates a PdfA1Checker with the required conformance level
+     *
+     * @param conformanceLevel the required conformance level, <code>a</code> or
+     *                         <code>b</code>
+     */
     public PdfA1Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
     }
@@ -210,6 +226,42 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
+    public void checkFont(PdfFont pdfFont) {
+        if (!pdfFont.isEmbedded()) {
+            throw new PdfAConformanceException(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1)
+                    .setMessageParams(pdfFont.getFontProgram().getFontNames().getFontName());
+        }
+
+        if (pdfFont instanceof PdfTrueTypeFont) {
+            PdfTrueTypeFont trueTypeFont = (PdfTrueTypeFont) pdfFont;
+            boolean symbolic = trueTypeFont.getFontEncoding().isFontSpecific();
+            if (symbolic) {
+                checkSymbolicTrueTypeFont(trueTypeFont);
+            } else {
+                checkNonSymbolicTrueTypeFont(trueTypeFont);
+            }
+        }
+    }
+
+    @Override
+    protected void checkNonSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
+        String encoding = trueTypeFont.getFontEncoding().getBaseEncoding();
+        // non-symbolic true type font will always has an encoding entry in font dictionary in itext7
+        if (!PdfEncodings.WINANSI.equals(encoding) && !encoding.equals(PdfEncodings.MACROMAN) || trueTypeFont.getFontEncoding().hasDifferences()) {
+            throw new PdfAConformanceException(PdfAConformanceException.AllNonSymbolicTrueTypeFontShallSpecifyMacRomanOrWinAnsiEncodingAsTheEncodingEntry, trueTypeFont);
+        }
+    }
+
+    @Override
+    protected void checkSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
+        if (trueTypeFont.getFontEncoding().hasDifferences()) {
+            throw new PdfAConformanceException(PdfAConformanceException.AllSymbolicTrueTypeFontsShallNotSpecifyEncoding);
+        }
+
+        // if symbolic font encoding doesn't have differences, itext7 won't write encoding for such font
+    }
+
+    @Override
     protected void checkImage(PdfStream image, PdfDictionary currentColorSpaces) {
         PdfColorSpace colorSpace = null;
         if (isAlreadyChecked(image)) {
@@ -231,7 +283,7 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(PdfAConformanceException.AnImageDictionaryShallNotContainOpiKey);
         }
 
-        if (image.containsKey(PdfName.Interpolate) && image.getAsBool(PdfName.Interpolate)) {
+        if (image.containsKey(PdfName.Interpolate) && (boolean) image.getAsBool(PdfName.Interpolate)) {
             throw new PdfAConformanceException(PdfAConformanceException.TheValueOfInterpolateKeyShallNotBeTrue);
         }
 
@@ -263,6 +315,8 @@ public class PdfA1Checker extends PdfAChecker {
         if (form.containsKey(PdfName.Group) && PdfName.Transparency.equals(form.getAsDictionary(PdfName.Group).getAsName(PdfName.S))) {
             throw new PdfAConformanceException(PdfAConformanceException.AGroupObjectWithAnSKeyWithAValueOfTransparencyShallNotBeIncludedInAFormXobject);
         }
+
+        checkResources(form.getAsDictionary(PdfName.Resources));
     }
 
     @Override
@@ -273,13 +327,14 @@ public class PdfA1Checker extends PdfAChecker {
                 throw new PdfAConformanceException(PdfAConformanceException.CatalogShallIncludeMarkInfoDictionaryWithMarkedTrueValue);
             }
             if (!catalog.containsKey(PdfName.Lang)) {
-                LOGGER.warning(PdfAConformanceException.CatalogShallContainLangEntry);
+                Logger logger = LoggerFactory.getLogger(PdfAChecker.class);
+                logger.warn(PdfAConformanceException.CatalogShallContainLangEntry);
             }
         }
     }
 
     @Override
-    protected  void checkMetaData(PdfDictionary catalog){
+    protected void checkMetaData(PdfDictionary catalog) {
         if (!catalog.containsKey(PdfName.Metadata)) {
             throw new PdfAConformanceException(PdfAConformanceException.CatalogShallContainMetadataEntry);
         }
@@ -336,7 +391,7 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     protected void checkPdfString(PdfString string) {
-        if (string.getValue().getBytes().length > getMaxStringLength()) {
+        if (string.getValueBytes().length > getMaxStringLength()) {
             throw new PdfAConformanceException(PdfAConformanceException.PdfStringIsTooLong);
         }
     }
@@ -346,7 +401,7 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
-    protected  void checkPageSize(PdfDictionary  page){
+    protected void checkPageSize(PdfDictionary page) {
 
     }
 
@@ -375,7 +430,7 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(PdfAConformanceException.AnnotationShallContainKeyF);
         }
 
-        int flags = annotDic.getAsInt(PdfName.F);
+        int flags = (int) annotDic.getAsInt(PdfName.F);
         if (!checkFlag(flags, PdfAnnotation.PRINT) || checkFlag(flags, PdfAnnotation.HIDDEN) || checkFlag(flags, PdfAnnotation.INVISIBLE) ||
                 checkFlag(flags, PdfAnnotation.NO_VIEW)) {
             throw new PdfAConformanceException(PdfAConformanceException.TheFKeysPrintFlagBitShallBeSetTo1AndItsHiddenInvisibleAndNoviewFlagBitsShallBeSetTo0);
@@ -398,6 +453,8 @@ public class PdfA1Checker extends PdfAChecker {
             if (n == null) {
                 throw new PdfAConformanceException(PdfAConformanceException.AppearanceDictionaryShallContainOnlyTheNKeyWithStreamValue);
             }
+
+            checkResourcesOfAppearanceStreams(ap);
         }
 
         if (PdfName.Widget.equals(subtype) && (annotDic.containsKey(PdfName.AA) || annotDic.containsKey(PdfName.A))) {
@@ -425,6 +482,8 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(PdfAConformanceException.NeedAppearancesFlagOfTheInteractiveFormDictionaryShallEitherNotBePresentedOrShallBeFalse);
         }
 
+        checkResources(form.getAsDictionary(PdfName.DR));
+
         PdfArray fields = form.getAsArray(PdfName.Fields);
         if (fields != null) {
             fields = getFormFields(fields);
@@ -433,6 +492,7 @@ public class PdfA1Checker extends PdfAChecker {
                 if (fieldDic.containsKey(PdfName.A) || fieldDic.containsKey(PdfName.AA)) {
                     throw new PdfAConformanceException(PdfAConformanceException.WidgetAnnotationDictionaryOrFieldDictionaryShallNotIncludeAOrAAEntry);
                 }
+                checkResources(fieldDic.getAsDictionary(PdfName.DR));
             }
         }
     }
@@ -491,13 +551,10 @@ public class PdfA1Checker extends PdfAChecker {
         }
     }
 
-    private PdfArray getFormFields(PdfArray array) {
+    protected PdfArray getFormFields(PdfArray array) {
         PdfArray fields = new PdfArray();
-        // explicit iteration to resolve indirect references on get().
-        // TODO DEVSIX-591
-        for (int i = 0; i < array.size(); i++) {
-            PdfDictionary field = array.getAsDictionary(i);
-            PdfArray kids = field.getAsArray(PdfName.Kids);
+        for (PdfObject field : array) {
+            PdfArray kids = ((PdfDictionary) field).getAsArray(PdfName.Kids);
             fields.add(field);
             if (kids != null) {
                 fields.addAll(getFormFields(kids));

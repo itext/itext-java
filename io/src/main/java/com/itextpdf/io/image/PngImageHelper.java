@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -616,7 +615,7 @@ class PngImageHelper {
                     break;
                 default:
                     // Error -- uknown filter type
-                    throw new IOException(IOException.PngFilterUnknown);
+                    throw new IOException(IOException.UnknownPngFilter);
             }
 
             processPixels(curr, xOffset, xStep, dstY, passWidth, png);

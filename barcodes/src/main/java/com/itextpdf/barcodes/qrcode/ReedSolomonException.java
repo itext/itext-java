@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -52,9 +51,6 @@ package com.itextpdf.barcodes.qrcode;
  */
 final class ReedSolomonException extends Exception {
 
-    /**
-     * Serial version UID.
-     */
     private static final long serialVersionUID = 2168232776886684292L;
 
     /**

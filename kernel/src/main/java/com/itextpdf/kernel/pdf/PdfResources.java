@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -53,14 +52,17 @@ import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 
-
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-
+/**
+ * Wrapper class that represent resource dictionary - that define named resources
+ * used by content streams operators. (ISO 32000-1, 7.8.3 Resource Dictionaries)
+ */
 public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = 7160318458835945391L;
@@ -88,39 +90,103 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private boolean readOnly = false;
     private boolean isModified = false;
 
+    /**
+     * Creates new instance from given dictionary.
+     * @param pdfObject the {@link PdfDictionary} object from which the resource object will be created.
+     */
     public PdfResources(PdfDictionary pdfObject) {
         super(pdfObject);
         buildResources(pdfObject);
     }
 
-
+    /**
+     * Creates new instance from empty dictionary.
+     */
     public PdfResources() {
         this(new PdfDictionary());
     }
 
     /**
-     * Add font to resources and register PdfFont in the document for further flushing.
+     * Adds font to resources and register PdfFont in the document for further flushing.
      *
-     * @return font resource name.
+     * @return added font resource name.
      */
     public PdfName addFont(PdfDocument pdfDocument, PdfFont font) {
         pdfDocument.getDocumentFonts().add(font);
         return addResource(font, fontNamesGen);
     }
 
+    /**
+     * Adds {@link PdfImageXObject} object to the resources.
+     *
+     * @param image the {@link PdfImageXObject} to add.
+     * @return added image resource name.
+     */
     public PdfName addImage(PdfImageXObject image) {
         return addResource(image, imageNamesGen);
     }
 
-    public PdfName addImage(PdfObject image) {
+    /**
+     * Adds {@link PdfStream} to the resources as image.
+     *
+     * @param image the {@link PdfStream} to add.
+     * @return added image resources name.
+     */
+    public PdfName addImage(PdfStream image) {
         return addResource(image, imageNamesGen);
     }
 
+    /**
+     * Adds {@link PdfObject} to the resources as image.
+     *
+     * @param image the {@link PdfObject} to add. Should be {@link PdfStream}.
+     * @return added image resources name.
+     *
+     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addImage(PdfStream)} instead.
+     */
+    @Deprecated
+    public PdfName addImage(PdfObject image) {
+        if (image.getType() != PdfObject.STREAM) {
+            throw new PdfException(PdfException.CannotAddNonStreamImageToResources1)
+                    .setMessageParams(image.getClass().toString());
+        }
+        return addResource(image, imageNamesGen);
+    }
+
+    /**
+     * Adds {@link PdfFormXObject} object to the resources.
+     *
+     * @param form the {@link PdfFormXObject} to add.
+     * @return added form resource name.
+     */
     public PdfName addForm(PdfFormXObject form) {
         return addResource(form, formNamesGen);
     }
 
+    /**
+     * Adds {@link PdfStream} to the resources as form.
+     *
+     * @param form the {@link PdfStream} to add.
+     * @return added form resources name.
+     */
+    public PdfName addForm(PdfStream form) {
+        return addResource(form, formNamesGen);
+    }
+
+    /**
+     * Adds {@link PdfObject} to the resources as form.
+     *
+     * @param form the {@link PdfObject} to add. Should be {@link PdfStream}.
+     * @return added form resources name.
+     *
+     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addForm(PdfStream)} instead.
+     */
+    @Deprecated
     public PdfName addForm(PdfObject form) {
+        if (form.getType() != PdfObject.STREAM) {
+            throw new PdfException(PdfException.CannotAddNonStreamFormToResources1)
+                    .setMessageParams(form.getClass().toString());
+        }
         return addResource(form, formNamesGen);
     }
 
@@ -141,39 +207,161 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return name;
     }
 
+    /**
+     * Adds {@link PdfExtGState} object to the resources.
+     *
+     * @param extGState the {@link PdfExtGState} to add.
+     * @return added graphics state parameter dictionary resource name.
+     */
     public PdfName addExtGState(PdfExtGState extGState) {
         return addResource(extGState, egsNamesGen);
     }
 
-    public PdfName addExtGState(PdfObject extGState) {
+    /**
+     * Adds {@link PdfDictionary} to the resources as graphics state parameter dictionary.
+     *
+     * @param extGState the {@link PdfDictionary} to add.
+     * @return added graphics state parameter dictionary resources name.
+     */
+    public PdfName addExtGState(PdfDictionary extGState) {
         return addResource(extGState, egsNamesGen);
     }
 
-    public PdfName addProperties(PdfObject properties) {
+    /**
+     * Adds {@link PdfObject} to the resources as graphics state parameter dictionary.
+     *
+     * @param extGState the {@link PdfObject} to add. Should be {@link PdfDictionary}.
+     * @return added graphics state parameter dictionary resources name.
+     *
+     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addExtGState(PdfDictionary)} instead.
+     */
+    @Deprecated
+    public PdfName addExtGState(PdfObject extGState) {
+        if (extGState.getType() != PdfObject.DICTIONARY) {
+            throw new PdfException(PdfException.CannotAddNonDictionaryExtGStateToResources1)
+                    .setMessageParams(extGState.getClass().toString());
+        }
+        return addResource(extGState, egsNamesGen);
+    }
+
+    /**
+     * Adds {@link PdfDictionary} to the resources as properties list.
+     *
+     * @param properties the {@link PdfDictionary} to add.
+     * @return added properties list resources name.
+     */
+    public PdfName addProperties(PdfDictionary properties) {
         return addResource(properties, propNamesGen);
     }
 
+    /**
+     * Adds {@link PdfObject} to the resources as properties list.
+     *
+     * @param properties the {@link PdfObject} to add. Should be {@link PdfDictionary}.
+     * @return added properties list resources name.
+     *
+     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addProperties(PdfDictionary)} instead.
+     */
+    @Deprecated
+    public PdfName addProperties(PdfObject properties) {
+        if (properties.getType() != PdfObject.DICTIONARY) {
+            throw new PdfException(PdfException.CannotAddNonDictionaryPropertiesToResources1)
+                    .setMessageParams(properties.getClass().toString());
+        }
+        return addResource(properties, propNamesGen);
+    }
+
+    /**
+     * Adds {@link PdfColorSpace} object to the resources.
+     *
+     * @param cs the {@link PdfColorSpace} to add.
+     * @return added color space resource name.
+     */
     public PdfName addColorSpace(PdfColorSpace cs) {
         return addResource(cs, csNamesGen);
     }
 
+    /**
+     * Adds {@link PdfObject} to the resources as color space.
+     *
+     * @param colorSpace the {@link PdfObject} to add.
+     * @return added color space resources name.
+     */
     public PdfName addColorSpace(PdfObject colorSpace) {
         return addResource(colorSpace, csNamesGen);
     }
 
+    /**
+     * Adds {@link PdfPattern} object to the resources.
+     *
+     * @param pattern the {@link PdfPattern} to add.
+     * @return added pattern resource name.
+     */
     public PdfName addPattern(PdfPattern pattern) {
         return addResource(pattern, patternNamesGen);
     }
 
-    public PdfName addPattern(PdfObject pattern) {
+    /**
+     * Adds {@link PdfDictionary} to the resources as pattern.
+     *
+     * @param pattern the {@link PdfDictionary} to add.
+     * @return added pattern resources name.
+     */
+    public PdfName addPattern(PdfDictionary pattern) {
         return addResource(pattern, patternNamesGen);
     }
 
+    /**
+     * Adds {@link PdfObject} to the resources as pattern.
+     *
+     * @param pattern the {@link PdfObject} to add. Should be {@link PdfDictionary} or {@link PdfStream}.
+     * @return added pattern resources name.
+     *
+     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addPattern(PdfDictionary)} instead.
+     */
+    @Deprecated
+    public PdfName addPattern(PdfObject pattern) {
+        if (pattern instanceof PdfDictionary) {
+            throw new PdfException(PdfException.CannotAddNonDictionaryPatternToResources1)
+                    .setMessageParams(pattern.getClass().toString());
+        }
+        return addResource(pattern, patternNamesGen);
+    }
+
+    /**
+     * Adds {@link PdfShading} object to the resources.
+     *
+     * @param shading the {@link PdfShading} to add.
+     * @return added shading resource name.
+     */
     public PdfName addShading(PdfShading shading) {
         return addResource(shading, shadingNamesGen);
     }
 
+    /**
+     * Adds {@link PdfDictionary} to the resources as shading dictionary.
+     *
+     * @param shading the {@link PdfDictionary} to add.
+     * @return added shading dictionary resources name.
+     */
+    public PdfName addShading(PdfDictionary shading) {
+        return addResource(shading, shadingNamesGen);
+    }
+
+    /**
+     * Adds {@link PdfObject} to the resources as shading dictionary.
+     *
+     * @param shading the {@link PdfObject} to add. Should be {@link PdfDictionary} or {@link PdfStream}.
+     * @return added shading dictionary resources name.
+     *
+     * @deprecated Will be removed in iText 7.1. Use more safe {@link #addShading(PdfDictionary)} instead.
+     */
+    @Deprecated
     public PdfName addShading(PdfObject shading) {
+        if (shading instanceof PdfDictionary) {
+            throw new PdfException(PdfException.CannotAddNonDictionaryShadingToResources1)
+                    .setMessageParams(shading.getClass().toString());
+        }
         return addResource(shading, shadingNamesGen);
     }
 
@@ -194,32 +382,74 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Sets the default color space.
+     * Sets the default color space (see ISO-320001 Paragraph 8.6.5.6).
      *
-     * @param defaultCsKey
-     * @param defaultCsValue
-     * @throws PdfException
+     * @deprecated Will be removed in iText 7.1.0. Use {@link #setDefaultGray(PdfColorSpace)},
+     *             {@link #setDefaultRgb(PdfColorSpace)} or {@link #setDefaultCmyk(PdfColorSpace)} instead.
+     *
+     * @param defaultCsKey the name of Default Color Space. Should be {@link PdfName#DefaultGray},
+     *                     {@link PdfName#DefaultRGB}, or {@link PdfName#DefaultCMYK}.
+     * @param defaultCsValue the value of the default color space to be set.
      */
+    @Deprecated
     public void setDefaultColorSpace(PdfName defaultCsKey, PdfColorSpace defaultCsValue) {
+        if (!defaultCsKey.equals(PdfName.DefaultCMYK) && !defaultCsKey.equals(PdfName.DefaultGray) &&
+                !defaultCsKey.equals(PdfName.DefaultRGB)) {
+            throw new PdfException(PdfException.UnsupportedDefaultColorSpaceName1).setMessageParams(defaultCsKey.toString());
+        }
         addResource(defaultCsValue.getPdfObject(), PdfName.ColorSpace, defaultCsKey);
     }
 
+    /**
+     * Sets the value of default Gray Color Space (see ISO-320001 Paragraph 8.6.5.6).
+     *
+     * @param defaultCs the color space to set.
+     */
     public void setDefaultGray(PdfColorSpace defaultCs) {
-        setDefaultColorSpace(PdfName.DefaultGray, defaultCs);
+        addResource(defaultCs.getPdfObject(), PdfName.ColorSpace, PdfName.DefaultGray);
     }
 
+    /**
+     * Sets the value of default RGB Color Space (see ISO-320001 Paragraph 8.6.5.6).
+     *
+     * @param defaultCs the color space to set.
+     */
     public void setDefaultRgb(PdfColorSpace defaultCs) {
-        setDefaultColorSpace(PdfName.DefaultRGB, defaultCs);
+        addResource(defaultCs.getPdfObject(), PdfName.ColorSpace, PdfName.DefaultRGB);
     }
 
+    /**
+     * Sets the value of default CMYK Color Space (see ISO-320001 Paragraph 8.6.5.6).
+     *
+     * @param defaultCs the color space to set.
+     */
     public void setDefaultCmyk(PdfColorSpace defaultCs) {
-        setDefaultColorSpace(PdfName.DefaultCMYK, defaultCs);
+        addResource(defaultCs.getPdfObject(), PdfName.ColorSpace, PdfName.DefaultCMYK);
     }
 
+    /**
+     * Gets the mapped resource name of the {@link PdfObject} under the given wrapper.
+     * </br>
+     * </br>
+     * Note: if the name for the object won't be found, then the name of object's Indirect Reference will be searched.
+     *
+     * @param resource the wrapper of the {@link PdfObject}, for which the name will be searched.
+     * @param <T> the type of the underlined {@link PdfObject} in wrapper.
+     * @return the mapped resource name or {@code null} if object isn't added to resources.
+     */
     public <T extends PdfObject> PdfName getResourceName(PdfObjectWrapper<T> resource) {
-        return resourceToName.get(resource.getPdfObject());
+        return getResourceName(resource.getPdfObject());
     }
 
+    /**
+     * Gets the mapped resource name of the given {@link PdfObject}.
+     * </br>
+     * </br>
+     * Note: if the name for the object won't be found, then the name of object's Indirect Reference will be searched.
+     *
+     * @param resource the object, for which the name will be searched.
+     * @return the mapped resource name or {@code null} if object isn't added to resources.
+     */
     public PdfName getResourceName(PdfObject resource) {
         PdfName resName = resourceToName.get(resource);
         if (resName == null)
@@ -227,6 +457,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return resName;
     }
 
+    /**
+     * Gets the names of all the added resources.
+     *
+     * @return the name of all the added resources.
+     */
     public Set<PdfName> getResourceNames() {
         Set<PdfName> names = new TreeSet<>(); // TODO: isn't it better to use HashSet? Do we really need certain order?
         for (PdfName resType : getPdfObject().keySet()) {
@@ -235,43 +470,48 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return names;
     }
 
+    /**
+     * Gets the array of predefined procedure set names (see ISO-320001 Paragraph 14.2).
+     *
+     * @return the array of predefined procedure set names.
+     */
     public PdfArray getProcSet() {
         return getPdfObject().getAsArray(PdfName.ProcSet);
     }
 
+    /**
+     * Sets the array of predefined procedure set names (see ISO-320001 Paragraph 14.2).
+     *
+     * @param array the array of predefined procedure set names to be set.
+     */
     public void setProcSet(PdfArray array) {
         getPdfObject().put(PdfName.ProcSet, array);
     }
 
+    /**
+     * Gets the names of all resources of specified type.
+     *
+     * @param resType the resource type. Should be {@link PdfName#ColorSpace}, {@link PdfName#ExtGState},
+     *                {@link PdfName#Pattern}, {@link PdfName#Shading}, {@link PdfName#XObject}, {@link PdfName#Font}.
+     * @return set of resources name of corresponding type. May be empty.
+     *         Will be empty in case of incorrect resource type.
+     */
     public Set<PdfName> getResourceNames(PdfName resType) {
         PdfDictionary resourceCategory = getPdfObject().getAsDictionary(resType);
         return resourceCategory == null ? new TreeSet<PdfName>() : resourceCategory.keySet(); // TODO: TreeSet or HashSet enough?
     }
 
-    public PdfDictionary getResource(PdfName pdfName) {
-        return getPdfObject().getAsDictionary(pdfName);
+    /**
+     * Get the {@link PdfDictionary} object that that contain resources of specified type.
+     *
+     * @param resType the resource type. Should be {@link PdfName#ColorSpace}, {@link PdfName#ExtGState},
+     *                {@link PdfName#Pattern}, {@link PdfName#Shading}, {@link PdfName#XObject}, {@link PdfName#Font}.
+     * @return the {@link PdfDictionary} object containing all resources of specified type,
+     *         or {@code null} in case of incorrect resource type.
+     */
+    public PdfDictionary getResource(PdfName resType) {
+        return getPdfObject().getAsDictionary(resType);
     }
-
-//    public List<PdfDictionary> getFonts(boolean updateFonts) throws IOException {
-//        if (updateFonts) {
-//            getPdfObject().remove(PdfName.Font);
-//            PdfDictionary fMap = getResource(PdfName.Font);
-//            if (fMap != null) {
-//                addFont(fMap.entrySet());
-//            }
-//            PdfDictionary xMap = getResource(PdfName.XObject);
-//            if (xMap != null && !xMap.isEmpty()) {
-//                callXObjectFont(xMap.entrySet(), new HashSet<PdfDictionary>());
-//            }
-//        }
-//        List<PdfDictionary> fonts = new ArrayList<>();
-//        for (PdfObject fontDict : getPdfObject().getAsDictionary(PdfName.Font).values()) {
-//            if (fontDict.isDictionary()) {
-//                fonts.add((PdfDictionary) fontDict);
-//            }
-//        }
-//        return fonts;
-//    }
 
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
@@ -287,7 +527,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
             checkAndResolveCircularReferences(resource);
         }
         if (readOnly) {
-            setPdfObject(new PdfDictionary(getPdfObject()));
+            setPdfObject(getPdfObject().clone(Collections.<PdfName>emptyList()));
             buildResources(getPdfObject());
             isModified = true;
             readOnly = false;
@@ -333,54 +573,9 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
             for (PdfName resourceName : resources.keySet()) {
                 PdfObject resource = resources.get(resourceName, false);
                 resourceToName.put(resource, resourceName);
-                getPdfObject().getAsDictionary(resourceType).put(resourceName, resource);
             }
         }
     }
-
-//    private void addFont(Collection<PdfObject> entrySet) throws IOException {
-//        for (PdfObject entry : entrySet) {
-//            PdfDictionary fonts = getPdfObject().getAsDictionary(PdfName.Font);
-//            if (entry.isIndirectReference() && !fonts.containsValue(entry)) {
-//                fonts.put((PdfIndirectReference) entry.getValue(),
-//                        PdfFont.createFont((PdfDictionary) ((PdfIndirectReference) entry.getValue()).getRefersTo()));
-//            } else if (entry.getValue().isDictionary()) {
-//                PdfFont font = PdfFont.createFont((PdfDictionary) entry.getValue());
-//                fontsMap.put(font.getPdfObject().getIndirectReference(), font);
-//            }
-//        }
-//    }
-
-//    private void addFontFromXObject(Set<Map.Entry<PdfName, PdfObject>> entrySet, Set<PdfDictionary> visitedResources) throws IOException {
-//        PdfDictionary xObject = new PdfDictionary(entrySet);
-//        PdfDictionary resources = xObject.getAsDictionary(PdfName.Resources);
-//        if (resources == null)
-//            return;
-//        PdfDictionary font = resources.getAsDictionary(PdfName.Font);
-//
-//        if (font != null) {
-//            addFont(font.values());
-//        }
-//        PdfDictionary xobj = resources.getAsDictionary(PdfName.XObject);
-//        if (xobj != null) {
-//            if (visitedResources.add(xobj)) {
-//                callXObjectFont(xobj.entrySet(), visitedResources);
-//                visitedResources.remove(xobj);
-//            } else {
-//                throw new IOException(IOException.IllegalResourceTree);
-//            }
-//        }
-//    }
-
-//    private void callXObjectFont(Set<Map.Entry<PdfName, PdfObject>> entrySet, Set<PdfDictionary> visitedResources) throws IOException {
-//        for (Map.Entry<PdfName, PdfObject> entry : entrySet) {
-//            if (entry.getValue().isIndirectReference()) {
-//                if (((PdfIndirectReference) entry.getValue()).getRefersTo().isStream()) {
-//                    addFontFromXObject(((PdfStream) ((PdfIndirectReference) entry.getValue()).getRefersTo()).entrySet(), visitedResources);
-//                }
-//            }
-//        }
-//    }
 
     private void checkAndResolveCircularReferences(PdfObject pdfObject) {
         // Consider the situation when an XObject references the resources of the first page.
@@ -419,7 +614,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         /**
          * Constructs an instance of {@link ResourceNameGenerator} class.
          *
-         * @param resourceType Type of resource ({@link PdfName#XObject}, {@link PdfName#Font} etc).
+         * @param resourceType Type of resource. Should be {@link PdfName#ColorSpace}, {@link PdfName#ExtGState},
+         *                     {@link PdfName#Pattern}, {@link PdfName#Shading}, {@link PdfName#XObject}, {@link PdfName#Font}.
          * @param prefix       Prefix used for generating names.
          * @param seed         Seed for the value which is appended to the number each time
          *                     new name is generated.
@@ -433,13 +629,20 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         /**
          * Constructs an instance of {@link ResourceNameGenerator} class.
          *
-         * @param resourceType Type of resource ({@link PdfName#XObject}, {@link PdfName#Font} etc).
+         * @param resourceType Type of resource. Should be {@link PdfName#ColorSpace}, {@link PdfName#ExtGState},
+         *                     {@link PdfName#Pattern}, {@link PdfName#Shading}, {@link PdfName#XObject}, {@link PdfName#Font}.
          * @param prefix       Prefix used for generating names.
          */
         public ResourceNameGenerator(PdfName resourceType, String prefix) {
             this(resourceType, prefix, 1);
         }
 
+        /**
+         * Gets the resource type of generator.
+         *
+         * @return Type of resource. May be {@link PdfName#ColorSpace}, {@link PdfName#ExtGState},
+         *         {@link PdfName#Pattern}, {@link PdfName#Shading}, {@link PdfName#XObject}, {@link PdfName#Font}.
+         */
         public PdfName getResourceType() {
             return resourceType;
         }
@@ -447,7 +650,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         /**
          * Generates new (unique) resource name.
          *
-         * @return New (unique) resource name.
+         * @param resources the {@link PdfResources} object for which name will be generated.
+         * @return new (unique) resource name.
          */
         public PdfName generate(PdfResources resources) {
             PdfName newName = new PdfName(prefix + counter++);

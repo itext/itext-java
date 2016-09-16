@@ -233,14 +233,14 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         float y = ystart;
         for (String text : text1) {
             doc.showTextAligned(text, x, y, TextAlignment.LEFT);
-            x += 70.0;
+            x += 70.0f;
         }
 
         x = xstart + 12;
         y = ystart;
         for (String text : text2) {
             doc.showTextAligned(text, x, y, TextAlignment.LEFT);
-            x += 70.0;
+            x += 70.0f;
         }
 
         doc.close();
@@ -258,13 +258,13 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
         float y = ystart;
         for (String text : text1) {
             doc.showTextAligned(text, x, y, TextAlignment.LEFT);
-            y -= 25.0;
+            y -= 25.0f;
         }
 
         y = ystart - 13;
         for (String text : text2) {
             doc.showTextAligned(text, x, y, TextAlignment.LEFT);
-            y -= 25.0;
+            y -= 25.0f;
         }
 
         doc.close();

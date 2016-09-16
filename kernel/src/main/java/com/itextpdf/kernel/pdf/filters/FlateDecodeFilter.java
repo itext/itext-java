@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -172,10 +171,10 @@ public class FlateDecodeFilter implements IFilterHandler {
                     break;
                 case 3: //PNG_FILTER_AVERAGE
                     for (int i = 0; i < bytesPerPixel; i++) {
-                        curr[i] += prior[i] / 2;
+                        curr[i] += (byte) (prior[i] / 2);
                     }
                     for (int i = bytesPerPixel; i < bytesPerRow; i++) {
-                        curr[i] += ((curr[i - bytesPerPixel] & 0xff) + (prior[i] & 0xff))/2;
+                        curr[i] += (byte) (((curr[i - bytesPerPixel] & 0xff) + (prior[i] & 0xff))/2);
                     }
                     break;
                 case 4: //PNG_FILTER_PAETH

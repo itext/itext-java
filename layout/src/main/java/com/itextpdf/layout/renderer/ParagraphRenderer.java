@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -45,72 +44,48 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.property.Leading;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.LineLayoutResult;
+import com.itextpdf.layout.property.Leading;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * This class represents the {@link IRenderer renderer} object for a {@link Paragraph}
+ * object. It will draw the glyphs of the textual content on the {@link DrawContext}.
+ */
 public class ParagraphRenderer extends BlockRenderer {
 
     protected float previousDescent = 0;
     protected List<LineRenderer> lines = null;
 
+    /**
+     * Creates a ParagraphRenderer from its corresponding layout object.
+     *
+     * @param modelElement the {@link com.itextpdf.layout.element.Paragraph} which this object should manage
+     */
     public ParagraphRenderer(Paragraph modelElement) {
         super(modelElement);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         int pageNumber = layoutContext.getArea().getPageNumber();
-
-        Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
-        if (getProperty(Property.ROTATION_ANGLE) != null) {
-            parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
-        }
-        applyMargins(parentBBox, false);
-        applyBorderBox(parentBBox, false);
-
-        if (isPositioned()) {
-            float x = getPropertyAsFloat(Property.X);
-            float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
-            parentBBox.setX(relativeX + x);
-        }
-
-        Float blockWidth = retrieveWidth(parentBBox.getWidth());
-        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned())) {
-            parentBBox.setWidth(blockWidth);
-        }
-        applyPaddings(parentBBox, false);
-
-        List<Rectangle> areas;
-        if (isPositioned()) {
-            areas = Collections.singletonList(parentBBox);
-        } else {
-            areas = initElementAreas(new LayoutArea(pageNumber, parentBBox));
-        }
-
-        occupiedArea = new LayoutArea(pageNumber, new Rectangle(parentBBox.getX(), parentBBox.getY() + parentBBox.getHeight(), parentBBox.getWidth(), 0));
-
-        int currentAreaPos = 0;
-        Rectangle layoutBox = areas.get(0).clone();
-
         boolean anythingPlaced = false;
         boolean firstLineInBox = true;
-
-        lines = new ArrayList<>();
         LineRenderer currentRenderer = (LineRenderer) new LineRenderer().setParent(this);
-        for (IRenderer child : childRenderers) {
-            currentRenderer.addChild(child);
-        }
+        Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
 
         if (0 == childRenderers.size()) {
             anythingPlaced = true;
@@ -126,20 +101,59 @@ public class ParagraphRenderer extends BlockRenderer {
             setProperty(Property.BORDER, Border.NO_BORDER);
         }
 
+        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
+            parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
+        }
+        float[] margins = getMargins();
+        applyMargins(parentBBox, margins, false);
+        Border[] borders = getBorders();
+        applyBorderBox(parentBBox, borders, false);
+
+        boolean isPositioned = isPositioned();
+
+        if (isPositioned) {
+            float x = (float) this.getPropertyAsFloat(Property.X);
+            float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
+            parentBBox.setX(relativeX + x);
+        }
+
+        Float blockWidth = retrieveWidth(parentBBox.getWidth());
+        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
+            parentBBox.setWidth((float) blockWidth);
+        }
+        float[] paddings = getPaddings();
+        applyPaddings(parentBBox, paddings, false);
+
+        List<Rectangle> areas;
+        if (isPositioned) {
+            areas = Collections.singletonList(parentBBox);
+        } else {
+            areas = initElementAreas(new LayoutArea(pageNumber, parentBBox));
+        }
+
+        occupiedArea = new LayoutArea(pageNumber, new Rectangle(parentBBox.getX(), parentBBox.getY() + parentBBox.getHeight(), parentBBox.getWidth(), 0));
+
+        int currentAreaPos = 0;
+        Rectangle layoutBox = areas.get(0).clone();
+        lines = new ArrayList<>();
+        for (IRenderer child : childRenderers) {
+            currentRenderer.addChild(child);
+        }
+
         float lastYLine = layoutBox.getY() + layoutBox.getHeight();
-        Leading leading = getProperty(Property.LEADING);
+        Leading leading = this.<Leading>getProperty(Property.LEADING);
         float leadingValue = 0;
 
         float lastLineHeight = 0;
 
         while (currentRenderer != null) {
-            currentRenderer.setProperty(Property.TAB_DEFAULT, getPropertyAsFloat(Property.TAB_DEFAULT));
-            currentRenderer.setProperty(Property.TAB_STOPS, getProperty(Property.TAB_STOPS));
+            currentRenderer.setProperty(Property.TAB_DEFAULT, this.getPropertyAsFloat(Property.TAB_DEFAULT));
+            currentRenderer.setProperty(Property.TAB_STOPS, this.<Object>getProperty(Property.TAB_STOPS));
 
-            float lineIndent = anythingPlaced ? 0 : getPropertyAsFloat(Property.FIRST_LINE_INDENT);
+            float lineIndent = anythingPlaced ? 0 : (float) this.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
             float availableWidth = layoutBox.getWidth() - lineIndent;
             Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), availableWidth, layoutBox.getHeight());
-            LineLayoutResult result = currentRenderer.layout(new LayoutContext(new LayoutArea(pageNumber, childLayoutBox)));
+            LineLayoutResult result = ((LineRenderer) currentRenderer.setParent(this)).layout(new LayoutContext(new LayoutArea(pageNumber, childLayoutBox)));
 
             LineRenderer processedRenderer = null;
             if (result.getStatus() == LayoutResult.FULL) {
@@ -148,13 +162,13 @@ public class ParagraphRenderer extends BlockRenderer {
                 processedRenderer = (LineRenderer) result.getSplitRenderer();
             }
 
-            TextAlignment textAlignment = getProperty(Property.TEXT_ALIGNMENT);
+            TextAlignment textAlignment = (TextAlignment) this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT, TextAlignment.LEFT);
             if (result.getStatus() == LayoutResult.PARTIAL && textAlignment == TextAlignment.JUSTIFIED && !result.isSplitForcedByNewline() ||
                     textAlignment == TextAlignment.JUSTIFIED_ALL) {
                 if (processedRenderer != null) {
                     processedRenderer.justify(layoutBox.getWidth() - lineIndent);
                 }
-            } else if (textAlignment != null && textAlignment != TextAlignment.LEFT && processedRenderer != null) {
+            } else if (textAlignment != TextAlignment.LEFT && processedRenderer != null) {
                 float deltaX = availableWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
                 switch (textAlignment) {
                     case RIGHT:
@@ -167,7 +181,7 @@ public class ParagraphRenderer extends BlockRenderer {
             }
 
             leadingValue = processedRenderer != null && leading != null ? processedRenderer.getLeadingValue(leading) : 0;
-            if (processedRenderer != null && processedRenderer.containsImage()){
+            if (processedRenderer != null && processedRenderer.containsImage()) {
                 leadingValue -= previousDescent;
             }
             boolean doesNotFit = result.getStatus() == LayoutResult.NOTHING;
@@ -187,13 +201,13 @@ public class ParagraphRenderer extends BlockRenderer {
                     lastYLine = layoutBox.getY() + layoutBox.getHeight();
                     firstLineInBox = true;
                 } else {
-                    boolean keepTogether = getProperty(Property.KEEP_TOGETHER);
+                    boolean keepTogether = isKeepTogether();
                     if (keepTogether) {
-                        return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                        return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
                     } else {
-                        applyPaddings(occupiedArea.getBBox(), true);
-                        applyBorderBox(occupiedArea.getBBox(), true);
-                        applyMargins(occupiedArea.getBBox(), true);
+                        applyPaddings(occupiedArea.getBBox(), paddings, true);
+                        applyBorderBox(occupiedArea.getBBox(), borders, true);
+                        applyMargins(occupiedArea.getBBox(), margins, true);
 
                         ParagraphRenderer[] split = split();
                         split[0].lines = lines;
@@ -210,12 +224,22 @@ public class ParagraphRenderer extends BlockRenderer {
                         if (anythingPlaced) {
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]);
                         } else {
-                            if (getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
+                            if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+                                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), currentRenderer.getOccupiedArea().getBBox()));
                                 parent.setProperty(Property.FULL, true);
                                 lines.add(currentRenderer);
-                                return new LayoutResult(LayoutResult.FULL, occupiedArea, null, this);
+                                // Force placement of children we have and do not force placement of the others
+                                if (LayoutResult.PARTIAL == result.getStatus()) {
+                                    IRenderer childNotRendered = result.getCauseOfNothing();
+                                    int firstNotRendered = currentRenderer.childRenderers.indexOf(childNotRendered);
+                                    currentRenderer.childRenderers.retainAll(currentRenderer.childRenderers.subList(0, firstNotRendered));
+                                    split[1].childRenderers.removeAll(split[1].childRenderers.subList(0, firstNotRendered));
+                                    return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, this, split[1]);
+                                } else {
+                                    return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, this);
+                                }
                             } else {
-                                return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                                return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
                             }
                         }
                     }
@@ -237,75 +261,58 @@ public class ParagraphRenderer extends BlockRenderer {
             }
         }
 
-        if (!isPositioned()) {
+        if (!isPositioned) {
             float moveDown = Math.min((leadingValue - lastLineHeight) / 2, occupiedArea.getBBox().getY() - layoutBox.getY());
             occupiedArea.getBBox().moveDown(moveDown);
             occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
         }
-        Float blockHeight = getPropertyAsFloat(Property.HEIGHT);
-        applyPaddings(occupiedArea.getBBox(), true);
+        Float blockHeight = this.getPropertyAsFloat(Property.HEIGHT);
+        applyPaddings(occupiedArea.getBBox(), paddings, true);
         if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
-            occupiedArea.getBBox().moveDown(blockHeight - occupiedArea.getBBox().getHeight()).setHeight(blockHeight);
+            occupiedArea.getBBox().moveDown((float) blockHeight - occupiedArea.getBBox().getHeight()).setHeight((float) blockHeight);
             applyVerticalAlignment();
         }
-        if (isPositioned()) {
-            float y = getPropertyAsFloat(Property.Y);
+        if (isPositioned) {
+            float y = (float) this.getPropertyAsFloat(Property.Y);
             float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
             move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
 
-        applyBorderBox(occupiedArea.getBBox(), true);
-        applyMargins(occupiedArea.getBBox(), true);
-        if (getProperty(Property.ROTATION_ANGLE) != null) {
+        applyBorderBox(occupiedArea.getBBox(), borders, true);
+        applyMargins(occupiedArea.getBBox(), margins, true);
+        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
-            if (isNotFittingHeight(layoutContext.getArea())) {
-                if (!layoutContext.getArea().isEmptyArea()) {
-                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+            if (isNotFittingLayoutArea(layoutContext.getArea())) {
+                if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
                 }
             }
         }
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRenderer getNextRenderer() {
         return new ParagraphRenderer((Paragraph) modelElement);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T1> T1 getDefaultProperty(int property) {
         if ((property == Property.MARGIN_TOP || property == Property.MARGIN_BOTTOM) && parent instanceof CellRenderer) {
-            return (T1) Float.valueOf(0);
+            return (T1) (Object) 0f;
         }
-        return super.getDefaultProperty(property);
+        return super.<T1>getDefaultProperty(property);
     }
 
-    protected ParagraphRenderer createOverflowRenderer() {
-        ParagraphRenderer overflowRenderer = (ParagraphRenderer) getNextRenderer();
-        // Reset first line indent in case of overflow.
-        float firstLineIndent = getPropertyAsFloat(Property.FIRST_LINE_INDENT);
-        if (firstLineIndent != 0) {
-            overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0);
-        }
-        return overflowRenderer;
-    }
-
-    protected ParagraphRenderer createSplitRenderer() {
-        return (ParagraphRenderer) getNextRenderer();
-    }
-
-    protected ParagraphRenderer[] split() {
-        ParagraphRenderer splitRenderer = createSplitRenderer();
-        splitRenderer.occupiedArea = occupiedArea.clone();
-        splitRenderer.parent = parent;
-        splitRenderer.isLastRendererForModelElement = false;
-
-        ParagraphRenderer overflowRenderer = createOverflowRenderer();
-        overflowRenderer.parent = parent;
-
-        return new ParagraphRenderer[] {splitRenderer, overflowRenderer};
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -321,6 +328,9 @@ public class ParagraphRenderer extends BlockRenderer {
         return sb.toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void drawChildren(DrawContext drawContext) {
         if (lines != null) {
@@ -330,6 +340,9 @@ public class ParagraphRenderer extends BlockRenderer {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void move(float dxRight, float dyUp) {
         occupiedArea.getBBox().moveRight(dxRight);
@@ -345,5 +358,46 @@ public class ParagraphRenderer extends BlockRenderer {
             return null;
         }
         return lines.get(0).getFirstYLineRecursively();
+    }
+
+    @Deprecated
+    protected ParagraphRenderer createOverflowRenderer() {
+        return (ParagraphRenderer) getNextRenderer();
+    }
+
+    @Deprecated
+    protected ParagraphRenderer createSplitRenderer() {
+        return (ParagraphRenderer) getNextRenderer();
+    }
+
+    protected ParagraphRenderer createOverflowRenderer(IRenderer parent) {
+        ParagraphRenderer overflowRenderer = createOverflowRenderer();
+        overflowRenderer.parent = parent;
+        fixOverflowRenderer(overflowRenderer);
+        return overflowRenderer;
+    }
+
+    protected ParagraphRenderer createSplitRenderer(IRenderer parent) {
+        ParagraphRenderer splitRenderer = createSplitRenderer();
+        splitRenderer.parent = parent;
+        return splitRenderer;
+    }
+
+    protected ParagraphRenderer[] split() {
+        ParagraphRenderer splitRenderer = createSplitRenderer(parent);
+        splitRenderer.occupiedArea = occupiedArea.clone();
+        splitRenderer.isLastRendererForModelElement = false;
+
+        ParagraphRenderer overflowRenderer = createOverflowRenderer(parent);
+
+        return new ParagraphRenderer[]{splitRenderer, overflowRenderer};
+    }
+
+    private void fixOverflowRenderer(ParagraphRenderer overflowRenderer) {
+        // Reset first line indent in case of overflow.
+        float firstLineIndent = (float) overflowRenderer.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
+        if (firstLineIndent != 0) {
+            overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0);
+        }
     }
 }

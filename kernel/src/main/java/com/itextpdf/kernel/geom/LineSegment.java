@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -91,8 +90,21 @@ public class LineSegment {
      * is 5 unit long and sits at a 37 degree angle from horizontal, the bounding rectangle will have
      * origin of the lower left hand end point of the segment, with width = 4 and height = 3.
      * @return the bounding rectangle
+     * @deprecated Use getBoundingRectangle(). Will be removed in 7.1
      */
-    public Rectangle getBoundingRectange(){
+    @Deprecated
+    public Rectangle getBoundingRectange() {
+        return getBoundingRectangle();
+    }
+
+    /**
+     * Computes the bounding rectangle for this line segment.  The rectangle has a rotation 0 degrees
+     * with respect to the coordinate system that the line system is in.  For example, if a line segment
+     * is 5 unit long and sits at a 37 degree angle from horizontal, the bounding rectangle will have
+     * origin of the lower left hand end point of the segment, with width = 4 and height = 3.
+     * @return the bounding rectangle
+     */
+    public Rectangle getBoundingRectangle(){
         float x1 = getStartPoint().get(Vector.I1);
         float y1 = getStartPoint().get(Vector.I2);
         float x2 = getEndPoint().get(Vector.I1);

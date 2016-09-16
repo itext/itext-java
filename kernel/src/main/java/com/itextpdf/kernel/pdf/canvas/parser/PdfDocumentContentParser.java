@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -64,7 +63,8 @@ public class PdfDocumentContentParser {
 
     /**
      * Processes content from the specified page number using the specified listener.
-     * Also allows registration of custom ContentOperators
+     * Also allows registration of custom IContentOperators that can influence
+     * how (and whether or not) the PDF instructions will be parsed.
      *
      * @param <E>                        the type of the renderListener - this makes it easy to chain calls
      * @param pageNumber                 the page number to process
@@ -73,10 +73,7 @@ public class PdfDocumentContentParser {
      * @return the provided renderListener
      */
     public <E extends IEventListener> E processContent(int pageNumber, E renderListener, Map<String, IContentOperator> additionalContentOperators) {
-        PdfCanvasProcessor processor = new PdfCanvasProcessor(renderListener);
-        for (Map.Entry<String, IContentOperator> entry : additionalContentOperators.entrySet()) {
-            processor.registerContentOperator(entry.getKey(), entry.getValue());
-        }
+        PdfCanvasProcessor processor = new PdfCanvasProcessor(renderListener, additionalContentOperators);
         processor.processPageContent(pdfDocument.getPage(pageNumber));
         return renderListener;
     }

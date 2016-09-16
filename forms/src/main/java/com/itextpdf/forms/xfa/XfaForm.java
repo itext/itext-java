@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -45,7 +44,6 @@
 package com.itextpdf.forms.xfa;
 
 import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -62,6 +60,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
@@ -98,7 +97,7 @@ public class XfaForm {
      * An empty constructor to build on.
      */
     public XfaForm() {
-        this(ResourceUtil.getResourceStream(DEFAULT_XFA));
+        this(new ByteArrayInputStream("<?xml version=\"1.0\" encoding=\"UTF-8\"?><xdp:xdp xmlns:xdp=\"http://ns.adobe.com/xdp/\"><template xmlns=\"http://www.xfa.org/schema/xfa-template/3.3/\"></template><xfa:datasets xmlns:xfa=\"http://www.xfa.org/schema/xfa-data/1.0/\"><xfa:data></xfa:data></xfa:datasets></xdp:xdp>".getBytes(StandardCharsets.UTF_8)));
     }
 
     /**
@@ -593,7 +592,8 @@ public class XfaForm {
         }
         if (xfaNodes.containsKey("datasets")) {
             datasetsNode = xfaNodes.get("datasets");
-            datasetsSom = new Xml2SomDatasets(datasetsNode.getFirstChild());
+            Node dataNode = findDataNode(datasetsNode);
+            datasetsSom = new Xml2SomDatasets(dataNode != null ? dataNode : datasetsNode.getFirstChild());
         }
         if (datasetsNode == null)
             createDatasetsNode(domDocument.getFirstChild());
@@ -627,4 +627,15 @@ public class XfaForm {
         }
         return result;
     }
+
+    private Node findDataNode(Node datasetsNode) {
+        NodeList childNodes = datasetsNode.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            if (childNodes.item(i).getNodeName().equals("xfa:data")) {
+                return childNodes.item(i);
+            }
+        }
+        return null;
+    }
+
 }

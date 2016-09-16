@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -63,6 +62,7 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
     private PdfStream fontFile;
     private PdfName fontFileName;
     private PdfName subtype;
+    private int missingWidth = 0;
 
     private DocType1Font(String fontName) {
         super(fontName);
@@ -81,7 +81,7 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
             try {
                 //if there are no font modifiers, cached font could be used,
                 //otherwise a new instance should be created.
-                type1StdFont = (Type1Font) FontProgramFactory.createRegisteredFont(baseFont);
+                type1StdFont = (Type1Font) FontProgramFactory.createFont(baseFont, true);
             } catch (Exception e) {
                 type1StdFont = null;
             }
@@ -96,15 +96,15 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
 
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
         int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.intValue(), 0) : 0;
-        int[] widths = FontUtil.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
+        int[] widths = FontUtil.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar, fontProgram.getMissingWidth());
         fontProgram.avgWidth = 0;
         int glyphsWithWidths = 0;
         for (int i = 0; i < 256; i++) {
             Glyph glyph = new Glyph(i, widths[i], fontEncoding.getUnicode(i));
             fontProgram.codeToGlyph.put(i, glyph);
             if (glyph.hasValidUnicode()) {
-                // Workaround for fonts for embedded Document fonts with differences without base encoding
-                if (!fontProgram.unicodeToGlyph.containsKey(glyph.getUnicode()) || glyph.getWidth() != 0) {
+                //FontEncoding.codeToUnicode table has higher priority
+                if (fontEncoding.convertToByte(glyph.getUnicode()) == i) {
                     fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
                 }
             } else if (toUnicode != null) {
@@ -131,6 +131,10 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
 
     public PdfName getSubtype() {
         return subtype;
+    }
+
+    public int getMissingWidth() {
+        return missingWidth;
     }
 
     static void fillFontDescriptor(DocType1Font font, PdfDictionary fontDesc) {
@@ -168,6 +172,10 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
         v = fontDesc.getAsNumber(PdfName.FontWeight);
         if (v != null) {
             font.setFontWeight(v.intValue());
+        }
+        v = fontDesc.getAsNumber(PdfName.MissingWidth);
+        if (v != null) {
+            font.missingWidth = v.intValue();
         }
 
         PdfName fontStretch = fontDesc.getAsName(PdfName.FontStretch);

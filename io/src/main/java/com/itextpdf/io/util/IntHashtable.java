@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -133,6 +132,10 @@ public class IntHashtable implements Cloneable, Serializable {
         this.loadFactor = loadFactor;
         table = new Entry[initialCapacity];
         threshold = (int) (initialCapacity * loadFactor);
+    }
+
+    public IntHashtable(IntHashtable o) {
+        this(o.table.length, o.loadFactor);
     }
 
     /***
@@ -414,6 +417,11 @@ public class IntHashtable implements Cloneable, Serializable {
         protected Object clone() throws CloneNotSupportedException {
             return new Entry(key, value, next != null ? (Entry)next.clone() : null);
         }
+
+        @Override
+        public String toString() {
+            return MessageFormat.format("{0}={1}", key, value);
+        }
     }
 
     public int[] toOrderedKeys() {
@@ -453,7 +461,7 @@ public class IntHashtable implements Cloneable, Serializable {
     @Override
     public Object clone() throws CloneNotSupportedException {
         try {
-            IntHashtable t = (IntHashtable)super.clone();
+            IntHashtable t = new IntHashtable(this);
             t.table = new Entry[table.length];
             for (int i = table.length ; i-- > 0 ; ) {
                 t.table[i] = table[i] != null

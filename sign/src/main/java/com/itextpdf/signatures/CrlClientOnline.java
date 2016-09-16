@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -168,12 +167,7 @@ public class CrlClientOnline implements ICrlClient {
         for (URL urlt : urllist) {
             try {
                 LOGGER.info("Checking CRL: " + urlt);
-                HttpURLConnection con = (HttpURLConnection)urlt.openConnection();
-                if (con.getResponseCode() / 100 != 2) {
-                    throw new PdfException(PdfException.InvalidHttpResponse1).setMessageParams(con.getResponseCode());
-                }
-                //Get Response
-                InputStream inp = (InputStream) con.getContent();
+                InputStream inp = SignUtils.getHttpResponse(urlt);
                 byte[] buf = new byte[1024];
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();
                 while (true) {

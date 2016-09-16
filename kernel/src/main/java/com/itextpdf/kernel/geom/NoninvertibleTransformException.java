@@ -18,18 +18,23 @@
  *  The Apache Harmony project has been discontinued.
  *  That's why we imported the code into iText.
  */
-/**
- * @author Denis M. Kishenko
- */
 package com.itextpdf.kernel.geom;
 
+/**
+ * NoninvertibleTransformException
+ *
+ * @author Denis M. Kishenko
+ */
 public class NoninvertibleTransformException extends java.lang.Exception {
 
     private static final long serialVersionUID = 6137225240503990466L;
 
-    public NoninvertibleTransformException(String s) {
-        super(s);
+    /**
+     * Creates a new NoninvertibleTransformException.
+     * @param message the detail message.
+     */
+    public NoninvertibleTransformException(String message) {
+        super(message);
     }
-
 }
 

@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -228,7 +227,7 @@ public abstract class ImageData {
         if (this.mask)
             throw new IOException(IOException.ImageMaskCannotContainAnotherImageMask);
         if (!imageMask.mask)
-            throw new IOException(IOException.ImageMaskIsNotAMaskDidYouDoMakeMask);
+            throw new IOException(IOException.ImageIsNotMaskYouMustCallImageDataMakeMask);
         this.imageMask = imageMask;
     }
 
@@ -238,7 +237,7 @@ public abstract class ImageData {
 
     public void makeMask() {
         if (!canBeMask())
-            throw new IOException(IOException.ImageCanNotBeAnImageMask);
+            throw new IOException(IOException.ThisImageCanNotBeAnImageMask);
         mask = true;
     }
 

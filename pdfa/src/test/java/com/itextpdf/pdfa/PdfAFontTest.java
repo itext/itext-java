@@ -1,5 +1,6 @@
 package com.itextpdf.pdfa;
 
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -10,11 +11,11 @@ import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.kernel.xmp.XMPException;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,18 +29,18 @@ import org.junit.rules.ExpectedException;
 import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
-public class PdfAFontTest {
+public class PdfAFontTest extends ExtendedITextTest {
 
     static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    static final String outputDir = "./target/test/PdfAFontTest/";
+    static final String outputDir = "./target/test/com/itextpdf/pdfa/PdfAFontTest/";
 
     @BeforeClass
     public static void beforeClass() {
-        new File(outputDir).mkdirs();
+        createOrClearDestinationFolder(outputDir);
     }
 
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void fontCheckPdfA1_01() throws IOException, XMPException, InterruptedException {
@@ -65,8 +66,8 @@ public class PdfAFontTest {
 
     @Test
     public void fontCheckPdfA1_02() throws IOException, XMPException {
-        thrown.expect(PdfAConformanceException.class);
-        thrown.expectMessage(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1);
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -110,8 +111,8 @@ public class PdfAFontTest {
 
     @Test
     public void fontCheckPdfA1_04() throws IOException, XMPException {
-        thrown.expect(PdfAConformanceException.class);
-        thrown.expectMessage(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1);
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1);
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -262,6 +263,65 @@ public class PdfAFontTest {
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSansCJKtc-Light.otf", "Identity-H", true);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(font, 12)
+                .showText("Hello World")
+                .endText()
+                .restoreState();
+
+
+        doc.close();
+
+        compareResult(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void symbolicTtfCharEncodingsPdfA1Test01() throws XMPException, IOException, InterruptedException {
+        // encoding must not be specified
+        createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test01.pdf", "Symbols1.ttf", "", PdfAConformanceLevel.PDF_A_1B);
+    }
+
+    @Test
+    public void symbolicTtfCharEncodingsPdfA1Test02() throws XMPException, IOException, InterruptedException {
+        // if you specify encoding, symbolic font is treated as non-symbolic
+        createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test02.pdf", "Symbols1.ttf", PdfEncodings.MACROMAN, PdfAConformanceLevel.PDF_A_1B);
+    }
+
+    @Test
+    public void symbolicTtfCharEncodingsPdfA1Test03() throws XMPException, IOException, InterruptedException {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.AllNonSymbolicTrueTypeFontShallSpecifyMacRomanOrWinAnsiEncodingAsTheEncodingEntry);
+        // if you specify encoding, symbolic font is treated as non-symbolic
+        createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test03.pdf", "Symbols1.ttf", "ISO-8859-1", PdfAConformanceLevel.PDF_A_1B);
+    }
+
+    @Test
+    public void nonSymbolicTtfCharEncodingsPdfA1Test01() throws XMPException, IOException, InterruptedException {
+        // encoding must be either winansi or macroman, by default winansi is used
+        createDocumentWithFont("nonSymbolicTtfCharEncodingsPdfA1Test01.pdf", "FreeSans.ttf", PdfEncodings.WINANSI, PdfAConformanceLevel.PDF_A_1B);
+    }
+
+
+    @Test
+    public void nonSymbolicTtfCharEncodingsPdfA1Test02() throws XMPException, IOException, InterruptedException {
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.AllNonSymbolicTrueTypeFontShallSpecifyMacRomanEncodingOrWinAnsiEncoding);
+        // encoding must be either winansi or macroman, by default winansi is used
+        createDocumentWithFont("nonSymbolicTtfCharEncodingsPdfA1Test02.pdf", "FreeSans.ttf", "ISO-8859-1", PdfAConformanceLevel.PDF_A_2B);
+    }
+
+    private void createDocumentWithFont(String outFileName, String fontFileName, String encoding, PdfAConformanceLevel conformanceLevel) throws IOException, InterruptedException {
+        String outPdf = outputDir + outFileName;
+        String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_" + outFileName;
+        PdfWriter writer = new PdfWriter(outPdf);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfDocument doc = new PdfADocument(writer, conformanceLevel, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfPage page = doc.addNewPage();
+
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + fontFileName, encoding, true);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
                 .beginText()

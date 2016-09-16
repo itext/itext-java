@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -48,10 +47,18 @@ import com.itextpdf.layout.element.Div;
 
 public class DivRenderer extends BlockRenderer {
 
+    /**
+     * Creates a DivRenderer from its corresponding layout object.
+     * @param modelElement the {@link com.itextpdf.layout.element.Div} which this object should manage
+     */
+
     public DivRenderer(Div modelElement) {
         super(modelElement);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRenderer getNextRenderer() {
         return new DivRenderer((Div) modelElement);

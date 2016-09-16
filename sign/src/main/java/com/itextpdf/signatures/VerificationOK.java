@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -74,7 +73,7 @@ public class VerificationOK {
     }
 
     /**
-     * A single String explaining which certificate was verified, how and why.
+     * Return a single String explaining which certificate was verified, how and why.
      * @see java.lang.Object#toString()
      */
     public String toString() {

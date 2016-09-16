@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -61,7 +60,7 @@ import com.itextpdf.layout.renderer.RootRenderer;
  * mainly operates high-level operations e.g. setting page size and rotation,
  * adding elements, and writing text at specific coordinates. It has no
  * knowledge of the actual PDF concepts and syntax.
- * 
+ * <p>
  * A {@link Document}'s rendering behavior can be modified by extending
  * {@link DocumentRenderer} and setting an instance of this newly created with
  * {@link #setRenderer(com.itextpdf.layout.renderer.DocumentRenderer) }.
@@ -76,16 +75,18 @@ public class Document extends RootElement<Document> {
     /**
      * Creates a document from a {@link PdfDocument}. Initializes the first page
      * with the {@link PdfDocument}'s current default {@link PageSize}.
+     *
      * @param pdfDoc the in-memory representation of the PDF document
      */
     public Document(PdfDocument pdfDoc) {
         this(pdfDoc, pdfDoc.getDefaultPageSize());
     }
-    
+
     /**
      * Creates a document from a {@link PdfDocument} with a manually set {@link
      * PageSize}.
-     * @param pdfDoc the in-memory representation of the PDF document
+     *
+     * @param pdfDoc   the in-memory representation of the PDF document
      * @param pageSize the page size
      */
     public Document(PdfDocument pdfDoc, PageSize pageSize) {
@@ -94,13 +95,15 @@ public class Document extends RootElement<Document> {
 
     /**
      * Creates a document from a {@link PdfDocument} with a manually set {@link
-     * PageSize}. 
-     * @param pdfDoc the in-memory representation of the PDF document
-     * @param pageSize the page size
+     * PageSize}.
+     *
+     * @param pdfDoc         the in-memory representation of the PDF document
+     * @param pageSize       the page size
      * @param immediateFlush if true, write pages and page-related instructions
-     * to the {@link PdfDocument} as soon as possible.
+     *                       to the {@link PdfDocument} as soon as possible.
      */
     public Document(PdfDocument pdfDoc, PageSize pageSize, boolean immediateFlush) {
+        super();
         this.pdfDocument = pdfDoc;
         this.pdfDocument.setDefaultPageSize(pageSize);
         this.immediateFlush = immediateFlush;
@@ -109,15 +112,18 @@ public class Document extends RootElement<Document> {
     /**
      * Closes the document and associated PdfDocument.
      */
+    @Override
     public void close() {
-        if (rootRenderer != null && !immediateFlush)
-            rootRenderer.flush();
+        if (rootRenderer != null) {
+            rootRenderer.close();
+        }
         pdfDocument.close();
     }
 
     /**
      * Terminates the current element, usually a page. Sets the next element
      * to be the size specified in the argument.
+     *
      * @param areaBreak an {@link AreaBreak}, optionally with a specified size
      * @return this element
      */
@@ -140,6 +146,7 @@ public class Document extends RootElement<Document> {
 
     /**
      * Gets PDF document.
+     *
      * @return the in-memory representation of the PDF document
      */
     public PdfDocument getPdfDocument() {
@@ -149,7 +156,7 @@ public class Document extends RootElement<Document> {
     /**
      * Changes the {@link DocumentRenderer} at runtime. Use this to customize
      * the Document's {@link IRenderer} behavior.
-     * 
+     *
      * @param documentRenderer
      */
     public void setRenderer(DocumentRenderer documentRenderer) {
@@ -168,7 +175,7 @@ public class Document extends RootElement<Document> {
      * Performs an entire recalculation of the document flow, taking into
      * account all its current child elements. May become very
      * resource-intensive for large documents.
-     * 
+     * <p>
      * Do not use when you have set {@link #immediateFlush} to <code>true</code>.
      */
     public void relayout() {
@@ -176,11 +183,8 @@ public class Document extends RootElement<Document> {
             throw new IllegalStateException("Operation not supported with immediate flush");
         }
 
-        try {
-            while (pdfDocument.getNumberOfPages() > 0)
-                pdfDocument.removePage(pdfDocument.getNumberOfPages());
-        } catch (Exception exc) {
-            throw new RuntimeException(exc);
+        while (pdfDocument.getNumberOfPages() > 0) {
+            pdfDocument.removePage(pdfDocument.getNumberOfPages());
         }
         rootRenderer = new DocumentRenderer(this, immediateFlush);
         for (IElement element : childElements) {
@@ -195,43 +199,84 @@ public class Document extends RootElement<Document> {
         return rootRenderer;
     }
 
+    /**
+     * Gets the left margin, measured in points
+     *
+     * @return a <code>float</code> containing the left margin value
+     */
     public float getLeftMargin() {
         return leftMargin;
     }
 
+    /**
+     * Sets the left margin, measured in points
+     *
+     * @param leftMargin a <code>float</code> containing the new left margin value
+     */
     public void setLeftMargin(float leftMargin) {
         this.leftMargin = leftMargin;
     }
 
+    /**
+     * Gets the right margin, measured in points
+     *
+     * @return a <code>float</code> containing the right margin value
+     */
     public float getRightMargin() {
         return rightMargin;
     }
 
-    public void  setRightMargin(float rightMargin) {
+    /**
+     * Sets the right margin, measured in points
+     *
+     * @param rightMargin a <code>float</code> containing the new right margin value
+     */
+    public void setRightMargin(float rightMargin) {
         this.rightMargin = rightMargin;
     }
 
+    /**
+     * Gets the top margin, measured in points
+     *
+     * @return a <code>float</code> containing the top margin value
+     */
     public float getTopMargin() {
         return topMargin;
     }
 
-    public void  setTopMargin(float topMargin) {
+    /**
+     * Sets the top margin, measured in points
+     *
+     * @param topMargin a <code>float</code> containing the new top margin value
+     */
+    public void setTopMargin(float topMargin) {
         this.topMargin = topMargin;
     }
 
+    /**
+     * Gets the bottom margin, measured in points
+     *
+     * @return a <code>float</code> containing the bottom margin value
+     */
     public float getBottomMargin() {
         return bottomMargin;
     }
 
+    /**
+     * Sets the bottom margin, measured in points
+     *
+     * @param bottomMargin a <code>float</code> containing the new bottom margin value
+     */
     public void setBottomMargin(float bottomMargin) {
         this.bottomMargin = bottomMargin;
     }
 
     /**
      * Convenience method to set all margins with one method.
-     * @param topMargin the upper margin
-     * @param rightMargin the right margin
-     * @param leftMargin the left margin
+     *
+     * @param topMargin    the upper margin
+     * @param rightMargin  the right margin
+     * @param leftMargin   the left margin
      * @param bottomMargin the lower margin
      */
     public void setMargins(float topMargin, float rightMargin, float bottomMargin, float leftMargin) {
@@ -244,8 +289,8 @@ public class Document extends RootElement<Document> {
     /**
      * Returns the area that will actually be used to write on the page, given
      * the current margins. Does not have any side effects on the document.
-     * 
-     * @param pageSize the size of the page to 
+     *
+     * @param pageSize the size of the page to
      * @return a {@link Rectangle} with the required dimensions and origin point
      */
     public Rectangle getPageEffectiveArea(PageSize pageSize) {
@@ -253,12 +298,11 @@ public class Document extends RootElement<Document> {
     }
 
     /**
-     * checks whether a method is invoked at the closed document
-     * @throws PdfException
+     * Checks whether a method is invoked at the closed document
      */
-    protected void checkClosingStatus(){
-        if(getPdfDocument().isClosed()){
-            throw  new PdfException(PdfException.DocumentClosedImpossibleExecuteAction);
+    protected void checkClosingStatus() {
+        if (getPdfDocument().isClosed()) {
+            throw new PdfException(PdfException.DocumentClosedItIsImpossibleToExecuteAction);
         }
     }
 }

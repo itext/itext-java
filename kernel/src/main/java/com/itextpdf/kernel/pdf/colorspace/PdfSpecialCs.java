@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -47,6 +46,7 @@ package com.itextpdf.kernel.pdf.colorspace;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -62,6 +62,18 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
 
     protected PdfSpecialCs(PdfArray pdfObject) {
         super(pdfObject);
+    }
+
+    /**
+     * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure
+     * that this object is added to the document, i.e. it has an indirect reference.
+     * Basically this means that before flushing you need to explicitly call {@link #makeIndirect(PdfDocument)}.
+     * For example: wrapperInstance.makeIndirect(document).flush();
+     * Note that not every wrapper require this, only those that have such warning in documentation.
+     */
+    @Override
+    public void flush() {
+        super.flush();
     }
 
     @Override
@@ -243,6 +255,18 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
     public static class UncoloredTilingPattern extends Pattern {
 
         private static final long serialVersionUID = -9030226298201261021L;
+
+        /**
+         * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure
+         * that this object is added to the document, i.e. it has an indirect reference.
+         * Basically this means that before flushing you need to explicitly call {@link #makeIndirect(PdfDocument)}.
+         * For example: wrapperInstance.makeIndirect(document).flush();
+         * Note that not every wrapper require this, only those that have such warning in documentation.
+         */
+        @Override
+        public void flush() {
+            super.flush();
+        }
 
 		@Override
         protected boolean isWrappedObjectMustBeIndirect() {

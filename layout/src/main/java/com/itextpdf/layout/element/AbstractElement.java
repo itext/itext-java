@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -109,10 +108,10 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
 
     @Override
     public <T1> T1 getProperty(int property) {
-        Object result = super.getProperty(property);
+        Object result = super.<T1>getProperty(property);
         if (styles != null && styles.size() > 0 && result == null && !super.hasProperty(property)) {
             for (Style style : styles) {
-                result = style.getProperty(property);
+                result = style.<T1>getProperty(property);
                 if (result != null || super.hasProperty(property)) {
                     break;
                 }
@@ -132,7 +131,7 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
             styles = new LinkedHashSet<>();
         }
         styles.add(style);
-        return (T)this;
+        return (T) (Object)this;
     }
 
     protected abstract IRenderer makeNewRenderer();
@@ -148,17 +147,40 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
         }
     }
 
+    /**
+     * Returns <code>true</code> if this list contains no elements.
+     *
+     * @return <code>true</code> if this list contains no elements
+     */
     public boolean isEmpty() {
         return 0 == childElements.size();
     }
 
+    /**
+     * Sets an action on this Element. An action is a general PDF concept that
+     * signifies anything that makes the document interactive, e.g. a hyperlink
+     * or a button.
+     * 
+     * @param action the {@link PdfAction} that should be performed
+     * @return this Element
+     */
     public T setAction(PdfAction action) {
         setProperty(Property.ACTION, action);
-        return (T) this;
+        return (T) (Object) this;
     }
 
+    /**
+     * Explicitly sets the page number this element should be put on. The location
+     * on the page will be the same as if it were added at the end of the document,
+     * but it will be located on the specified page.
+     * 
+     * This method should be used very carefully in client code.
+     * 
+     * @param pageNumber the page number of the page this element should be placed on
+     * @return this Element
+     */
     public T setPageNumber(int pageNumber) {
         setProperty(Property.PAGE_NUMBER, pageNumber);
-        return (T) this;
+        return (T) (Object) this;
     }
 }

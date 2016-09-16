@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -90,7 +89,7 @@ class Type1Parser implements Serializable {
             byte[] buf = new byte[1024];
             InputStream resource = null;
             try {
-                String resourcePath = FontConstants.RESOURCE_PATH + "afm/" + afmPath + ".afm";
+                String resourcePath = FontConstants.AFM_RESOURCE_PATH + afmPath + ".afm";
                 resource = ResourceUtil.getResourceStream(resourcePath);
                 if (resource == null) {
                     throw new IOException("1.not.found.as.resource").setMessageParams(resourcePath);

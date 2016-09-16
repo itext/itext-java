@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,9 +43,8 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.io.util.DateTimeUtil;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
-import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.tsp.TimeStampToken;
 
 import java.security.KeyStore;
@@ -62,33 +60,27 @@ import java.util.*;
 public class CertificateVerification {
 
     /**
+     * Verifies a single certificate for the current date.
+     * @param cert the certificate to verify
+     * @param crls the certificate revocation list or <CODE>null</CODE>
+     * @return a <CODE>String</CODE> with the error description or <CODE>null</CODE>
+     * if no error
+     */
+    public static String verifyCertificate(X509Certificate cert, Collection<CRL> crls) {
+        return verifyCertificate(cert, crls, DateTimeUtil.getCurrentTimeCalendar());
+    }
+
+    /**
      * Verifies a single certificate.
      * @param cert the certificate to verify
      * @param crls the certificate revocation list or <CODE>null</CODE>
-     * @param calendar the date or <CODE>null</CODE> for the current date
+     * @param calendar the date, shall not be null
      * @return a <CODE>String</CODE> with the error description or <CODE>null</CODE>
      * if no error
      */
     public static String verifyCertificate(X509Certificate cert, Collection<CRL> crls, Calendar calendar) {
-        if (calendar == null)
-            calendar = new GregorianCalendar();
-        if (cert.hasUnsupportedCriticalExtension()) {
-            for (String oid : cert.getCriticalExtensionOIDs()) {
-                // KEY USAGE and DIGITAL SIGNING is ALLOWED
-                if ("2.5.29.15".equals(oid) && cert.getKeyUsage()[0]) {
-                    continue;
-                }
-                try {
-                    // EXTENDED KEY USAGE and TIMESTAMPING is ALLOWED
-                    if ("2.5.29.37".equals(oid) && cert.getExtendedKeyUsage().contains("1.3.6.1.5.5.7.3.8")) {
-                        continue;
-                    }
-                } catch (CertificateParsingException e) {
-                    // DO NOTHING;
-                }
-                return "Has unsupported critical extension";
-            }
-        }
+        if (SignUtils.hasUnsupportedCriticalExtension(cert))
+            return "Has unsupported critical extension";
         try {
             cert.checkValidity(calendar.getTime());
         }
@@ -104,32 +96,40 @@ public class CertificateVerification {
         return null;
     }
 
+
+    /**
+     * Verifies a certificate chain against a KeyStore for the current date.
+     * @param certs the certificate chain
+     * @param keystore the <CODE>KeyStore</CODE>
+     * @param crls the certificate revocation list or <CODE>null</CODE>
+     * @return <CODE>null</CODE> if the certificate chain could be validated or a
+     * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
+     * failed certificate and <CODE>error</CODE> is the error message
+     */
+    public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore, Collection<CRL> crls) {
+        return verifyCertificates(certs, keystore, crls, DateTimeUtil.getCurrentTimeCalendar());
+    }
+
     /**
      * Verifies a certificate chain against a KeyStore.
      * @param certs the certificate chain
      * @param keystore the <CODE>KeyStore</CODE>
      * @param crls the certificate revocation list or <CODE>null</CODE>
-     * @param calendar the date or <CODE>null</CODE> for the current date
+     * @param calendar the date, shall not be null
      * @return <CODE>null</CODE> if the certificate chain could be validated or a
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
      */
     public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore, Collection<CRL> crls, Calendar calendar) {
         List<VerificationException> result = new ArrayList<>();
-        if (calendar == null)
-            calendar = new GregorianCalendar();
         for (int k = 0; k < certs.length; ++k) {
             X509Certificate cert = (X509Certificate)certs[k];
             String err = verifyCertificate(cert, crls, calendar);
             if (err != null)
                 result.add(new VerificationException(cert, err));
             try {
-                for (Enumeration<String> aliases = keystore.aliases(); aliases.hasMoreElements();) {
+                for (X509Certificate certStoreX509 : SignUtils.getCertificates(keystore)) {
                     try {
-                        String alias = aliases.nextElement();
-                        if (!keystore.isCertificateEntry(alias))
-                            continue;
-                        X509Certificate certStoreX509 = (X509Certificate)keystore.getCertificate(alias);
                         if (verifyCertificate(certStoreX509, crls, calendar) != null)
                             continue;
                         try {
@@ -168,10 +168,22 @@ public class CertificateVerification {
     }
 
     /**
+     * Verifies a certificate chain against a KeyStore for the current date.
+     * @param certs the certificate chain
+     * @param keystore the <CODE>KeyStore</CODE>
+     * @return <CODE>null</CODE> if the certificate chain could be validated or a
+     * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
+     * failed certificate and <CODE>error</CODE> is the error message
+     */
+    public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore) {
+        return verifyCertificates(certs, keystore, DateTimeUtil.getCurrentTimeCalendar());
+    }
+
+    /**
      * Verifies a certificate chain against a KeyStore.
      * @param certs the certificate chain
      * @param keystore the <CODE>KeyStore</CODE>
-     * @param calendar the date or <CODE>null</CODE> for the current date
+     * @param calendar the date, shall not be null
      * @return <CODE>null</CODE> if the certificate chain could be validated or a
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
@@ -188,17 +200,10 @@ public class CertificateVerification {
      * @return <CODE>true</CODE> is a certificate was found
      */
     public static boolean verifyOcspCertificates(BasicOCSPResp ocsp, KeyStore keystore, String provider) {
-        if (provider == null)
-            provider = "BC";
         try {
-            for (Enumeration<String> aliases = keystore.aliases(); aliases.hasMoreElements();) {
+            for (X509Certificate certStoreX509 : SignUtils.getCertificates(keystore)) {
                 try {
-                    String alias = aliases.nextElement();
-                    if (!keystore.isCertificateEntry(alias))
-                        continue;
-                    X509Certificate certStoreX509 = (X509Certificate)keystore.getCertificate(alias);
-                    if (ocsp.isSignatureValid(new JcaContentVerifierProviderBuilder().setProvider(provider).build(certStoreX509.getPublicKey())))
-                        return true;
+                    return SignUtils.isSignatureValid(ocsp, certStoreX509, provider);
                 }
                 catch (Exception ex) {
                 }
@@ -217,16 +222,10 @@ public class CertificateVerification {
      * @return <CODE>true</CODE> is a certificate was found
      */
     public static boolean verifyTimestampCertificates(TimeStampToken ts, KeyStore keystore, String provider) {
-        if (provider == null)
-            provider = "BC";
         try {
-            for (Enumeration<String> aliases = keystore.aliases(); aliases.hasMoreElements();) {
+            for (X509Certificate certStoreX509 : SignUtils.getCertificates(keystore)) {
                 try {
-                    String alias = aliases.nextElement();
-                    if (!keystore.isCertificateEntry(alias))
-                        continue;
-                    X509Certificate certStoreX509 = (X509Certificate)keystore.getCertificate(alias);
-                    ts.isSignatureValid(new JcaSimpleSignerInfoVerifierBuilder().setProvider(provider).build(certStoreX509));
+                    SignUtils.isSignatureValid(ts, certStoreX509, provider);
                     return true;
                 }
                 catch (Exception ex) {

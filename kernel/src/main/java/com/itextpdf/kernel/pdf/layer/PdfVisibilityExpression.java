@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -60,7 +59,6 @@ public class PdfVisibilityExpression extends PdfObjectWrapper<PdfArray> {
 	/**
      * Constructs a new PdfVisibilityExpression instance by its raw PdfArray.
      * @param visibilityExpressionArray the array representing the visibility expression
-     * @throws PdfException
      */
     public PdfVisibilityExpression(PdfArray visibilityExpressionArray) {
         super(visibilityExpressionArray);

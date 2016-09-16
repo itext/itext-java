@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -147,20 +146,17 @@ class Xml2SomDatasets extends Xml2Som {
                     if (i == null)
                         i = 0;
                     else
-                        i += 1;
+                        i = i + 1;
                     ss.put(s, i);
+                    stack.push(String.format("%s[%s]", s, i.toString()));
                     if (hasChildren(n2)) {
-                        stack.push(s + "[" + i.toString() + "]");
                         processDatasetsInternal(n2);
-                        stack.pop();
-                    } else {
-                        stack.push(s + "[" + i.toString() + "]");
-                        String unstack = printStack();
-                        order.add(unstack);
-                        inverseSearchAdd(unstack);
-                        name2Node.put(unstack, n2);
-                        stack.pop();
                     }
+                    String unstack = printStack();
+                    order.add(unstack);
+                    inverseSearchAdd(unstack);
+                    name2Node.put(unstack, n2);
+                    stack.pop();
                 }
                 n2 = n2.getNextSibling();
             }

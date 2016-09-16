@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -56,6 +55,7 @@ import com.itextpdf.kernel.pdf.filters.FlateDecodeFilter;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,13 +147,13 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
     private void write(PdfDictionary pdfDictionary) {
         writeBytes(openDict);
-        for (Map.Entry<PdfName, PdfObject> entry : pdfDictionary.entrySet()) {
+        for (PdfName key : pdfDictionary.keySet()) {
             boolean isAlreadyWriteSpace = false;
-            write(entry.getKey());
-            PdfObject value = entry.getValue();
+            write(key);
+            PdfObject value = pdfDictionary.get(key, false);
             if (value == null) {
                 Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
-                logger.warn(MessageFormat.format(LogMessageConstant.INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE, entry.getKey()));
+                logger.warn(MessageFormat.format(LogMessageConstant.INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE, key));
                 value = PdfNull.PDF_NULL;
             }
             if ((value.getType() == PdfObject.NUMBER
@@ -181,7 +181,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
     private void write(PdfIndirectReference indirectReference) {
         if (document != null && !indirectReference.getDocument().equals(document)) {
-            throw new PdfException(PdfException.PdfInderectObjectBelongToOtherPdfDocument);
+            throw new PdfException(PdfException.PdfIndirectObjectBelongsToOtherPdfDocument);
         }
         if (indirectReference.getRefersTo() == null) {
             write(PdfNull.PDF_NULL);
@@ -311,8 +311,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                             assert pdfStream.getOutputStream() != null : "Error in outputStream";
                             ((ByteArrayOutputStream) pdfStream.getOutputStream().getOutputStream()).writeTo(zip);
                         }
-
-                        zip.close();
+                        zip.finish();
                     } else {
                         if (pdfStream instanceof PdfObjectStream) {
                             PdfObjectStream objectStream = (PdfObjectStream) pdfStream;
@@ -339,10 +338,11 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 this.write((PdfDictionary) pdfStream);
                 writeBytes(PdfOutputStream.stream);
                 byteArrayStream.writeTo(this);
+                byteArrayStream.close();
                 writeBytes(PdfOutputStream.endstream);
             }
         } catch (IOException e) {
-            throw new PdfException(PdfException.CannotWritePdfStream, e, pdfStream);
+            throw new PdfException(PdfException.CannotWriteToPdfStream, e, pdfStream);
         }
     }
 
@@ -508,7 +508,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
         java.io.OutputStream tempOutputStream = outputStream;
         if (outputStream instanceof java.io.ByteArrayOutputStream) {
-            duplicateContentBuffer = ((java.io.ByteArrayOutputStream)outputStream).toByteArray();
+            duplicateContentBuffer = ((java.io.ByteArrayOutputStream) outputStream).toByteArray();
         }
         outputStream = null;
         out.defaultWriteObject();

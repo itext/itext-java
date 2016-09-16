@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -48,13 +47,12 @@ import com.itextpdf.io.IOException;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Type1Font extends FontProgram {
 
@@ -138,9 +136,9 @@ public class Type1Font extends FontProgram {
     @Override
     public int getKerning(Glyph first, Glyph second) {
         if (first.hasValidUnicode() && second.hasValidUnicode()) {
-            Long record = ((long)first.getUnicode() << 32) + second.getUnicode();
+            long record = ((long)first.getUnicode() << 32) + second.getUnicode();
             if (kernPairs.containsKey(record)) {
-                return kernPairs.get(record);
+                return (int) kernPairs.get(record);
             } else {
                 return 0;
             }
@@ -157,7 +155,7 @@ public class Type1Font extends FontProgram {
      * @return {@code true} if the kerning was applied, {@code false} otherwise.
      */
     public boolean setKerning(int first, int second, int kern) {
-        Long record = ((long)first << 32) + second;
+        long record = ((long)first << 32) + second;
         kernPairs.put(record, kern);
         return true;
     }
@@ -168,11 +166,11 @@ public class Type1Font extends FontProgram {
      * @return Glyph instance if found, otherwise null.
      */
     public Glyph getGlyph(String name) {
-        Integer unicode = AdobeGlyphList.nameToUnicode(name);
-        if (unicode == null) {
-            return null;
+        int unicode = AdobeGlyphList.nameToUnicode(name);
+        if (unicode != -1) {
+            return getGlyph((int) unicode);
         } else {
-            return getGlyph(unicode);
+            return null;
         }
     }
 
@@ -326,8 +324,8 @@ public class Type1Font extends FontProgram {
                 startKernPairs = false;
                 break;
             }
-            Integer C = -1;
-            Integer WX = 250;
+            int C = -1;
+            int WX = 250;
             String N = "";
             int[] B = null;
             tok = new StringTokenizer(line, ";");
@@ -339,7 +337,7 @@ public class Type1Font extends FontProgram {
                 ident = tokc.nextToken();
                 switch (ident) {
                     case "C":
-                        C = Integer.valueOf(tokc.nextToken());
+                        C = Integer.parseInt(tokc.nextToken());
                         break;
                     case "WX":
                         WX = (int) Float.parseFloat(tokc.nextToken());
@@ -357,12 +355,12 @@ public class Type1Font extends FontProgram {
                         break;
                 }
             }
-            Integer unicode = AdobeGlyphList.nameToUnicode(N);
-            Glyph glyph = new Glyph(C, WX, unicode != null ? unicode : -1, B);
+            int unicode = AdobeGlyphList.nameToUnicode(N);
+            Glyph glyph = new Glyph(C, WX, unicode, B);
             if (C >= 0) {
                 codeToGlyph.put(C, glyph);
             }
-            if (unicode != null) {
+            if (unicode != -1) {
                 unicodeToGlyph.put(unicode, glyph);
             }
             avgWidth += WX;
@@ -416,11 +414,11 @@ public class Type1Font extends FontProgram {
                     String second = tok.nextToken();
                     Integer width = (int) Float.parseFloat(tok.nextToken());
 
-                    Integer firstUni = AdobeGlyphList.nameToUnicode(first);
-                    Integer secondUni = AdobeGlyphList.nameToUnicode(second);
+                    int firstUni = AdobeGlyphList.nameToUnicode(first);
+                    int secondUni = AdobeGlyphList.nameToUnicode(second);
 
-                    if (firstUni != null && secondUni != null) {
-                        Long record = ((long)firstUni << 32) + secondUni;
+                    if (firstUni != -1 && secondUni != -1) {
+                        long record = ((long)firstUni << 32) + secondUni;
                         kernPairs.put(record, width);
                     }
                 } else if (ident.equals("EndKernPairs")) {

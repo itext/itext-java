@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -69,11 +68,11 @@ public class IccProfile {
         icc.data = data;
         Integer cs;
         cs = getIccNumberOfComponents(data);
-        int nc = cs == null ? 0 : cs;
+        int nc = cs == null ? 0 : (int) cs;
         icc.numComponents = nc;
         // invalid ICC
         if (nc != numComponents) {
-            throw new com.itextpdf.io.IOException(IOException.WrongNumberOfComponentsInIccProfile).setMessageParams(nc, numComponents);
+            throw new com.itextpdf.io.IOException(IOException.IccProfileContains0ComponentsWhileImageDataContains1Components).setMessageParams(nc, numComponents);
         }
         return icc;
     }
@@ -81,7 +80,7 @@ public class IccProfile {
     public static IccProfile getInstance(byte[] data) {
         Integer cs;
         cs = getIccNumberOfComponents(data);
-        int numComponents = cs == null ? 0 : cs;
+        int numComponents = cs == null ? 0 : (int) cs;
         return getInstance(data, numComponents);
     }
 

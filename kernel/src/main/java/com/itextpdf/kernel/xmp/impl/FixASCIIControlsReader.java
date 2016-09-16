@@ -64,11 +64,11 @@ public class FixASCIIControlsReader extends PushbackReader
 	/**
 	 * The look-ahead size is 6 at maximum (&amp;#xAB;)
 	 * @see java.io.PushbackReader#PushbackReader(java.io.Reader, int)
-	 * @param in a Reader
+	 * @param input a Reader
 	 */
-	public FixASCIIControlsReader(Reader in)
+	public FixASCIIControlsReader(Reader input)
 	{
-		super(in, BUFFER_SIZE);
+		super(input, BUFFER_SIZE);
 	}
 
 

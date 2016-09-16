@@ -1289,53 +1289,31 @@ public class ParseRDF implements XMPError, XMPConst
 		
 		if (NS_RDF.equals(namespace))
 		{
-			if ("li".equals(localName))
-			{
-				return RDFTERM_LI;
-			}
-			else if ("parseType".equals(localName))
-			{
-				return RDFTERM_PARSE_TYPE;
-			}
-			else if ("Description".equals(localName))
-			{
-				return RDFTERM_DESCRIPTION;
-			}
-			else if ("about".equals(localName))
-			{
-				return RDFTERM_ABOUT;
-			}
-			else if ("resource".equals(localName))
-			{
-				return RDFTERM_RESOURCE;
-			}
-			else if ("RDF".equals(localName))
-			{
-				return RDFTERM_RDF;
-			}
-			else if ("ID".equals(localName))
-			{
-				return RDFTERM_ID;
-			}
-			else if ("nodeID".equals(localName))
-			{
-				return RDFTERM_NODE_ID;
-			}
-			else if ("datatype".equals(localName))
-			{
-				return RDFTERM_DATATYPE;
-			}
-			else if ("aboutEach".equals(localName))
-			{
-				return RDFTERM_ABOUT_EACH;
-			}
-			else if ("aboutEachPrefix".equals(localName))
-			{
-				return RDFTERM_ABOUT_EACH_PREFIX;
-			}
-			else if ("bagID".equals(localName))
-			{
-				return RDFTERM_BAG_ID;
+			switch (localName) {
+				case "li":
+					return RDFTERM_LI;
+				case "parseType":
+					return RDFTERM_PARSE_TYPE;
+				case "Description":
+					return RDFTERM_DESCRIPTION;
+				case "about":
+					return RDFTERM_ABOUT;
+				case "resource":
+					return RDFTERM_RESOURCE;
+				case "RDF":
+					return RDFTERM_RDF;
+				case "ID":
+					return RDFTERM_ID;
+				case "nodeID":
+					return RDFTERM_NODE_ID;
+				case "datatype":
+					return RDFTERM_DATATYPE;
+				case "aboutEach":
+					return RDFTERM_ABOUT_EACH;
+				case "aboutEachPrefix":
+					return RDFTERM_ABOUT_EACH_PREFIX;
+				case "bagID":
+					return RDFTERM_BAG_ID;
 			}
 		}
 		

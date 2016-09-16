@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -57,7 +56,7 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
     private static final long serialVersionUID = 7009919945291639441L;
 
-	PdfType1Font(Type1Font type1Font, String encoding, boolean embedded) {
+    PdfType1Font(Type1Font type1Font, String encoding, boolean embedded) {
         super();
         setFontProgram(type1Font);
         this.embedded = embedded && !type1Font.isBuiltInFont();
@@ -80,7 +79,9 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         newFont = false;
         checkFontDictionary(fontDictionary, PdfName.Type1);
         CMapToUnicode toUni = FontUtil.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
-        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
+        //if there is no FontDescriptor, it is most likely one of the Standard Font with StandardEncoding as base encoding.
+        boolean fillStandardEncoding = !fontDictionary.containsKey(PdfName.FontDescriptor);
+        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni, fillStandardEncoding);
         fontProgram = DocType1Font.createFontProgram(fontDictionary, fontEncoding, toUni);
 
         if (fontProgram instanceof IDocFontProgram) {
@@ -140,9 +141,10 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
     protected void addFontStream(PdfDictionary fontDescriptor) {
         if (embedded) {
             if (fontProgram instanceof IDocFontProgram) {
-                IDocFontProgram docType1Font = (IDocFontProgram)fontProgram;
+                IDocFontProgram docType1Font = (IDocFontProgram) fontProgram;
                 fontDescriptor.put(docType1Font.getFontFileName(),
                         docType1Font.getFontFile());
+                docType1Font.getFontFile().flush();
                 if (docType1Font.getSubtype() != null) {
                     fontDescriptor.put(PdfName.Subtype, docType1Font.getSubtype());
                 }
@@ -155,6 +157,9 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
                         fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
                     }
                     fontDescriptor.put(PdfName.FontFile, fontStream);
+                    if (makeObjectIndirect(fontStream)) {
+                        fontStream.flush();
+                    }
                 }
             }
         }

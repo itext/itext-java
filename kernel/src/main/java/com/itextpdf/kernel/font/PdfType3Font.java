@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -110,7 +109,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         }
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
         int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.intValue(), 0) : 0;
-        int[] widths = FontUtil.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar);
+        int[] widths = FontUtil.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar, 0);
         double[] fontMatrix = new double[6];
         for (int i = 0; i < fontMatrixArray.size(); i++) {
             fontMatrix[i] = ((PdfNumber) fontMatrixArray.get(i)).getValue();
@@ -118,8 +117,8 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
         setFontMatrix(fontMatrix);
 
         for (PdfName glyphName : charProcsDic.keySet()) {
-            Integer unicode = AdobeGlyphList.nameToUnicode(glyphName.getValue());
-            if (unicode != null && fontEncoding.canEncode(unicode)) {
+            int unicode = AdobeGlyphList.nameToUnicode(glyphName.getValue());
+            if (unicode != -1 && fontEncoding.canEncode(unicode)) {
                 int code = fontEncoding.convertToByte(unicode);
                 getFontProgram().addGlyph(code, unicode, widths[code], null, new Type3Glyph(charProcsDic.getAsStream(glyphName), getDocument()));
             }
@@ -227,6 +226,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
             if (fontEncoding.canDecode(i)) {
                 Type3Glyph glyph = getType3Glyph(fontEncoding.getUnicode(i));
                 charProcs.put(new PdfName(fontEncoding.getDifference(i)), glyph.getContentStream());
+                glyph.getContentStream().flush();
             }
         }
         getPdfObject().put(PdfName.CharProcs, charProcs);

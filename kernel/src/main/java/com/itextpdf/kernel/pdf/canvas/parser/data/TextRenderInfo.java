@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -49,11 +48,11 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.LineSegment;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Vector;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
-import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -85,16 +84,16 @@ public class TextRenderInfo implements IEventData {
 
     /**
      * Creates a new TextRenderInfo object
-     * @param string the PDF string that should be displayed
+     * @param str the PDF string that should be displayed
      * @param gs the graphics state (note: at this time, this is not immutable, so don't cache it)
      * @param textMatrix the text matrix at the time of the render operation
      * @param canvasTagHierarchy the marked content tags sequence, if available
      */
-    public TextRenderInfo(PdfString string, CanvasGraphicsState gs, Matrix textMatrix, Stack<CanvasTag> canvasTagHierarchy) {
-        this.string = string;
+    public TextRenderInfo(PdfString str, CanvasGraphicsState gs, Matrix textMatrix, Stack<CanvasTag> canvasTagHierarchy) {
+        this.string = str;
         this.textToUserSpaceTransformMatrix = textMatrix.multiply(gs.getCtm());
         this.gs = gs;
-        this.canvasTagHierarchy = Collections.unmodifiableList(new ArrayList<>(canvasTagHierarchy));
+        this.canvasTagHierarchy = Collections.<CanvasTag>unmodifiableList(new ArrayList<>(canvasTagHierarchy));
         this.fontMatrix = gs.getFont().getFontMatrix();
     }
 
@@ -190,8 +189,7 @@ public class TextRenderInfo implements IEventData {
      * @return the ascentline line segment
      */
     public LineSegment getAscentLine(){
-        float ascent = gs.getFont().getFontProgram().getFontMetrics().getTypoAscender() * gs.getFontSize() / 1000f;
-        return getUnscaledBaselineWithOffset(ascent + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
+        return getUnscaledBaselineWithOffset(getAscentDescent()[0] + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
     }
 
     /**
@@ -200,9 +198,7 @@ public class TextRenderInfo implements IEventData {
      * @return the descentline line segment
      */
     public LineSegment getDescentLine(){
-        // per getFontDescription() API, descent is returned as a negative number, so we apply that as a normal vertical offset
-        float descent = gs.getFont().getFontProgram().getFontMetrics().getTypoDescender() * gs.getFontSize() / 1000f;
-        return getUnscaledBaselineWithOffset(descent + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
+        return getUnscaledBaselineWithOffset(getAscentDescent()[1] + gs.getTextRise()).transformBy(textToUserSpaceTransformMatrix);
     }
 
     /**
@@ -470,5 +466,20 @@ public class TextRenderInfo implements IEventData {
             strings.add(newString);
         }
         return strings.toArray(new PdfString[strings.size()]);
+    }
+
+    private float[] getAscentDescent() {
+        float ascent = gs.getFont().getFontProgram().getFontMetrics().getTypoAscender();
+        float descent = gs.getFont().getFontProgram().getFontMetrics().getTypoDescender();
+
+        // If descent is positive, we consider it a bug and fix it
+        if (descent > 0) {
+            descent = -descent;
+        }
+
+        float scale = ascent - descent < 700 ? ascent - descent : 1000;
+        descent = descent / scale * gs.getFontSize();
+        ascent = ascent / scale * gs.getFontSize();
+        return new float[] {ascent, descent};
     }
 }

@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -45,6 +44,7 @@
 package com.itextpdf.kernel.pdf.canvas;
 
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.otf.ActualTextIterator;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.image.ImageData;
@@ -76,16 +76,15 @@ import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfShading;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.layer.IPdfOCG;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.layer.PdfLayerMembership;
-import com.itextpdf.kernel.pdf.layer.IPdfOCG;
 import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -219,8 +218,8 @@ public class PdfCanvas {
      */
     public PdfCanvas(PdfPage page) {
         this(page, (page.getDocument().getReader() != null && page.getDocument().getWriter() != null
-                        && page.getContentStreamCount() > 0 && page.getLastContentStream().getLength() > 0)
-                   || (page.getRotation() != 0 && page.isIgnorePageRotationForContent()));
+                && page.getContentStreamCount() > 0 && page.getLastContentStream().getLength() > 0)
+                || (page.getRotation() != 0 && page.isIgnorePageRotationForContent()));
     }
 
     /**
@@ -356,6 +355,27 @@ public class PdfCanvas {
     }
 
     /**
+     * Concatenates the 2x3 affine transformation matrix to the current matrix
+     * in the content stream managed by this Canvas.
+     * If an array not containing the 6 values of the matrix is passed,
+     * The current canvas is returned unchanged.
+     * @param array affine transformation stored as a PdfArray with 6 values
+     * @return current canvas
+     */
+    public PdfCanvas concatMatrix(PdfArray array){
+        if(array.size() != 6 ){
+            //Throw exception or warning here
+            return this;
+        }
+        for(int i=0; i<array.size();i++){
+            if(!array.get(i).isNumber()){
+                return this;
+            }
+        }
+        return concatMatrix(array.getAsNumber(0).doubleValue(),array.getAsNumber(1).doubleValue(),array.getAsNumber(2).doubleValue(),array.getAsNumber(3).doubleValue(),array.getAsNumber(4).doubleValue(),array.getAsNumber(5).doubleValue());
+    }
+
+    /**
      * Concatenates the affine transformation matrix to the current matrix
      * in the content stream managed by this Canvas.
      * See also {@link #concatMatrix(double, double, double, double, double, double)}
@@ -415,7 +435,7 @@ public class PdfCanvas {
      */
     public PdfCanvas setFontAndSize(PdfFont font, float size) {
         if (size < 0.0001f && size > -0.0001f)
-            throw new PdfException(PdfException.FontSizeTooSmall, size);
+            throw new PdfException(PdfException.FontSizeIsTooSmall, size);
         currentGs.setFontSize(size);
         font.makeIndirect(document);
         PdfName fontName = resources.addFont(document, font);
@@ -674,7 +694,7 @@ public class PdfCanvas {
         float fontSize = currentGs.getFontSize() / 1000f;
         float charSpacing = currentGs.getCharSpacing();
         float scaling = currentGs.getHorizontalScaling() / 100f;
-        for (Iterator<GlyphLine.GlyphLinePart> iterator = text.iterator(); iterator.hasNext(); ) {
+        for (ActualTextIterator iterator = new ActualTextIterator(text); iterator.hasNext(); ) {
             GlyphLine.GlyphLinePart glyphLinePart = iterator.next();
             if (glyphLinePart.actualText != null) {
                 PdfDictionary properties = new PdfDictionary();
@@ -698,8 +718,39 @@ public class PdfCanvas {
                     float xPlacement = Float.NaN;
                     float yPlacement = Float.NaN;
                     if (glyph.hasPlacement()) {
-                        xPlacement = -getSubrangeWidth(text, i + glyph.getAnchorDelta(), i) + glyph.getXPlacement() * fontSize;
-                        yPlacement = glyph.getYAdvance() * fontSize;
+
+                        {
+                            float xPlacementAddition = 0;
+                            int currentGlyphIndex = i;
+                            Glyph currentGlyph = text.get(i);
+                            while (currentGlyph != null && currentGlyph.getXPlacement() != 0) {
+                                xPlacementAddition += currentGlyph.getXPlacement();
+                                if (currentGlyph.getAnchorDelta() == 0) {
+                                    break;
+                                } else {
+                                    currentGlyphIndex += currentGlyph.getAnchorDelta();
+                                    currentGlyph = text.get(currentGlyphIndex);
+                                }
+                            }
+                            xPlacement = -getSubrangeWidth(text, currentGlyphIndex, i) + xPlacementAddition * fontSize;
+                        }
+
+                        {
+                            float yPlacementAddition = 0;
+                            int currentGlyphIndex = i;
+                            Glyph currentGlyph = text.get(i);
+                            while (currentGlyph != null && currentGlyph.getYPlacement() != 0) {
+                                yPlacementAddition += currentGlyph.getYPlacement();
+                                if (currentGlyph.getAnchorDelta() == 0) {
+                                    break;
+                                } else {
+                                    currentGlyph = text.get(currentGlyphIndex + currentGlyph.getAnchorDelta());
+                                    currentGlyphIndex += currentGlyph.getAnchorDelta();
+                                }
+                            }
+                            yPlacement = glyph.getYAdvance() * fontSize + yPlacementAddition * fontSize;
+                        }
+
                         contentStream.getOutputStream()
                                 .writeFloat(xPlacement, true)
                                 .writeSpace()
@@ -990,8 +1041,8 @@ public class PdfCanvas {
         double kappa = Math.abs(4.0 / 3.0 * (1.0 - Math.cos(halfAng)) / Math.sin(halfAng));
         List<double[]> pointList = new ArrayList<>();
         for (int iter = 0; iter < Nfrag; ++iter) {
-            double theta0 =  ((startAng + iter * fragAngle) * Math.PI / 180.0);
-            double theta1 =  ((startAng + (iter + 1) * fragAngle) * Math.PI / 180.0);
+            double theta0 = ((startAng + iter * fragAngle) * Math.PI / 180.0);
+            double theta1 = ((startAng + (iter + 1) * fragAngle) * Math.PI / 180.0);
             double cos0 = Math.cos(theta0);
             double cos1 = Math.cos(theta1);
             double sin0 = Math.sin(theta0);
@@ -1723,7 +1774,7 @@ public class PdfCanvas {
     public PdfCanvas endLayer() {
         int num;
         if (layerDepth != null && !layerDepth.isEmpty()) {
-            num = layerDepth.get(layerDepth.size() - 1);
+            num = (int) layerDepth.get(layerDepth.size() - 1);
             layerDepth.remove(layerDepth.size() - 1);
         } else {
             throw new PdfException(PdfException.UnbalancedLayerOperators);
@@ -1788,7 +1839,6 @@ public class PdfCanvas {
      * @param rect
      * @param asInline true if to add image as in-line.
      * @return created XObject or null in case of in-line image (asInline = true).
-     * @throws PdfException
      */
     public PdfXObject addImage(ImageData image, Rectangle rect, boolean asInline) {
         return addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY(), asInline);
@@ -1802,7 +1852,6 @@ public class PdfCanvas {
      * @param y
      * @param asInline true if to add image as in-line.
      * @return created XObject or null in case of in-line image (asInline = true).
-     * @throws PdfException
      */
     public PdfXObject addImage(ImageData image, float x, float y, boolean asInline) {
         if (image.getOriginalType() == ImageType.WMF) {
@@ -1861,7 +1910,6 @@ public class PdfCanvas {
      * @param asInline true if to add image as in-line.
      * @param dummy
      * @return created XObject or null in case of in-line image (asInline = true).
-     * @throws PdfException
      */
     public PdfXObject addImage(ImageData image, float x, float y, float height, boolean asInline, boolean dummy) {
         return addImage(image, height / image.getHeight() * image.getWidth(), 0, 0, height, x, y, asInline);
@@ -2170,7 +2218,6 @@ public class PdfCanvas {
      * @param x
      * @param y
      * @return current canvas.
-     * @throws PdfException
      */
     private PdfCanvas addForm(PdfFormXObject form, float x, float y) {
         return addForm(form, 1, 0, 0, 1, x, y);
@@ -2182,7 +2229,6 @@ public class PdfCanvas {
      * @param form
      * @param rect
      * @return current canvas.
-     * @throws PdfException
      */
     private PdfCanvas addForm(PdfFormXObject form, Rectangle rect) {
         return addForm(form, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY());
@@ -2196,7 +2242,6 @@ public class PdfCanvas {
      * @param y
      * @param width
      * @return current canvas.
-     * @throws PdfException
      */
     private PdfCanvas addForm(PdfFormXObject form, float x, float y, float width) {
         PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);

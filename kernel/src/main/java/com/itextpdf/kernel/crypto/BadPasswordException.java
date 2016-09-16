@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -46,14 +45,30 @@ package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.kernel.PdfException;
 
+/**
+ * Bad password exception.
+ */
 public class BadPasswordException extends PdfException {
+
+    private static final long serialVersionUID = -2278753672963132724L;
 
     public static final String PdfReaderNotOpenedWithOwnerPassword = "PdfReader is not opened with owner password";
 
+    /**
+     * Creates a new BadPasswordException.
+     *
+     * @param message the detail message.
+     * @param cause   the cause (which is saved for later retrieval by {@link #getCause()} method).
+     */
     public BadPasswordException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * Creates a new BadPasswordException.
+     *
+     * @param message the detail message.
+     */
     public BadPasswordException(String message) {
         super(message);
     }

@@ -21,6 +21,7 @@ import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
@@ -32,9 +33,9 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class SigningTest {
 
-    public static final String sourceFolder = "src/test/resources/signingTest/";
-    public static final String destinationFolder = "target/test/signingTest/";
-    public static final String keystorePath = "src/test/resources/ks";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/signatures/";
+    public static final String keystorePath = "./src/test/resources/com/itextpdf/signatures/ks";
     public static final char[] password = "password".toCharArray();
 
     private BouncyCastleProvider provider;
@@ -71,10 +72,8 @@ public class SigningTest {
                 DigestAlgorithms.SHA256, provider.getName(),
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false);
 
-        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_",
-                new HashMap<Integer, List<Rectangle>>() {{
-                    put(1, Arrays.asList(new Rectangle(67, 690, 155, 15)));
-                }}));
+        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
+                "diff_", getTestMap(new Rectangle(67, 690, 155, 15))));
     }
 
     @Test
@@ -88,10 +87,8 @@ public class SigningTest {
                 DigestAlgorithms.SHA256, provider.getName(),
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false);
 
-        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_",
-                new HashMap<Integer, List<Rectangle>>() {{
-                    put(1, Arrays.asList(new Rectangle(67, 725, 155, 15)));
-                }}));
+        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
+                "diff_", getTestMap(new Rectangle(67, 725, 155, 15))));
     }
 
     @Test
@@ -105,10 +102,9 @@ public class SigningTest {
                 DigestAlgorithms.SHA256, provider.getName(),
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false);
 
-        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_",
-                new HashMap<Integer, List<Rectangle>>() {{
-                    put(1, Arrays.asList(new Rectangle(67, 725, 155, 15)));
-                }}));
+        Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
+                "diff_", getTestMap(new Rectangle(67, 725, 155, 15))));
+
     }
 
     @Test
@@ -146,5 +142,11 @@ public class SigningTest {
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();
         signer.signDetached(digest, pks, chain, null, null, null, 0, subfilter);
+    }
+
+    private static Map<Integer, List<Rectangle> > getTestMap(Rectangle ignoredArea) {
+        Map<Integer, List<Rectangle> > result = new HashMap<Integer, List<Rectangle> >();
+        result.put(1, Arrays.asList(ignoredArea));
+        return result;
     }
 }

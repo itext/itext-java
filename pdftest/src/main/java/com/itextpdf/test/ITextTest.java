@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -49,38 +48,112 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.concurrent.TimeUnit;
 
+import org.junit.Rule;
+import org.junit.rules.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This is a generic class for testing. Subclassing it, or its subclasses is considered a good practice of
+ * creating your own tests.
+ */
 public abstract class ITextTest {
 
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
+    @Rule
+    public Timeout testTimeout = new Timeout(5, TimeUnit.MINUTES);
+
+    /**
+     * Creates a folder with a given path, including all necessary nonexistent parent directories.
+     * If a folder is already present, no action is performed.
+     * @param path the path of the folder to create
+     */
     public static void createDestinationFolder(String path) {
         File fpath = new File(path);
         fpath.mkdirs();
     }
 
+    /**
+     * Creates a directory with given path if it does not exist and clears the contents
+     * of the directory in case it exists.
+     * @param path the path of the directory to be created/cleared
+     */
     public static void createOrClearDestinationFolder(String path) {
         File fpath = new File(path);
         fpath.mkdirs();
-        for (File file : fpath.listFiles())
-            file.delete();
+        deleteDirectoryContents(path, false);
     }
 
+    /**
+     * Removes the directory with given path along with its content including all the subdirectories.
+     * @param path the path of the directory to be removed
+     */
     public static void deleteDirectory(String path) {
-        File fpath = new File(path);
-        if (fpath.exists() && fpath.listFiles() != null) {
-            for (File f : fpath.listFiles()) {
+        deleteDirectoryContents(path, true);
+    }
+
+    /**
+     * Due to import control restrictions by the governments of a few countries,
+     * the encryption libraries shipped by default with the Java SDK restrict the
+     * length, and as a result the strength, of encryption keys. Be aware that by
+     * using this method we remove cryptography restrictions via reflection for
+     * testing purposes.
+     * <br/>
+     * For more conventional way of solving this problem you need to replace the
+     * default security JARs in your Java installation with the Java Cryptography
+     * Extension (JCE) Unlimited Strength Jurisdiction Policy Files. These JARs
+     * are available for download from http://java.oracle.com/ in eligible countries.
+     */
+    public static void removeCryptographyRestrictions() {
+        try {
+            Field field = Class.forName("javax.crypto.JceSecurity").
+                    getDeclaredField("isRestricted");
+            field.setAccessible(true);
+            if (field.getBoolean(null)) {
+                field.set(null, java.lang.Boolean.FALSE);
+            } else {
+                field.setAccessible(false);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * By using this method we restore cryptography restrictions via reflection.
+     * This method is opposite to {@link ITextTest#removeCryptographyRestrictions()}.
+     */
+    public static void restoreCryptographyRestrictions() {
+        try {
+            Field field = Class.forName("javax.crypto.JceSecurity").
+                    getDeclaredField("isRestricted");
+            if (field.isAccessible()) {
+                field.set(null, java.lang.Boolean.TRUE);
+                field.setAccessible(false);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private static void deleteDirectoryContents(String path, boolean removeParentDirectory) {
+        File file = new File(path);
+        if (file.exists() && file.listFiles() != null) {
+            for (File f : file.listFiles()) {
                 if (f.isDirectory()) {
-                    deleteDirectory(f.getPath());
+                    deleteDirectoryContents(f.getPath(), false);
                     f.delete();
                 } else {
                     f.delete();
                 }
             }
-            fpath.delete();
+            if (removeParentDirectory) {
+                file.delete();
+            }
         }
     }
 

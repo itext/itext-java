@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,43 +43,82 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.LineSeparator;
+import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.Property;
 
 public class LineSeparatorRenderer extends BlockRenderer {
 
+    /**
+     * Creates a LineSeparatorRenderer from its corresponding layout object.
+     * @param lineSeparator the {@link com.itextpdf.layout.element.LineSeparator} which this object should manage
+     */
     public LineSeparatorRenderer(LineSeparator lineSeparator) {
         super(lineSeparator);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        ILineDrawer lineDrawer = getProperty(Property.LINE_DRAWER);
-        float height = lineDrawer != null ? lineDrawer.getLineWidth() : 0;
-        occupiedArea = layoutContext.getArea().clone();
-        applyMargins(occupiedArea.getBBox(), false);
-        if (occupiedArea.getBBox().getHeight() < height) {
-            return new LayoutResult(LayoutResult.NOTHING, null, null, this);
+        Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
+        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
+            parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
-        occupiedArea.getBBox().moveUp(occupiedArea.getBBox().getHeight() - height).setHeight(height);
+
+        ILineDrawer lineDrawer = this.<ILineDrawer>getProperty(Property.LINE_DRAWER);
+        float height = lineDrawer != null ? lineDrawer.getLineWidth() : 0;
+
+        occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), parentBBox.clone());
+        applyMargins(occupiedArea.getBBox(), false);
+
+        Float calculatedWidth = retrieveWidth(layoutContext.getArea().getBBox().getWidth());
+        if (calculatedWidth == null) {
+            calculatedWidth = occupiedArea.getBBox().getWidth();
+        }
+        if ((occupiedArea.getBBox().getHeight() < height || occupiedArea.getBBox().getWidth() < calculatedWidth) && !hasOwnProperty(Property.FORCED_PLACEMENT)) {
+            return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
+        }
+
+        occupiedArea.getBBox().setWidth((float) calculatedWidth).moveUp(occupiedArea.getBBox().getHeight() - height).setHeight(height);
+
         applyMargins(occupiedArea.getBBox(), true);
+
+        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
+            applyRotationLayout(layoutContext.getArea().getBBox().clone());
+            if (isNotFittingLayoutArea(layoutContext.getArea())) {
+                if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
+                }
+            }
+        }
+
         return new LayoutResult(LayoutResult.FULL, occupiedArea, this, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRenderer getNextRenderer() {
         return new LineSeparatorRenderer((LineSeparator) modelElement);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void draw(DrawContext drawContext) {
-        super.draw(drawContext);
-        ILineDrawer lineDrawer = getProperty(Property.LINE_DRAWER);
+    public void drawChildren(DrawContext drawContext) {
+        ILineDrawer lineDrawer = this.<ILineDrawer>getProperty(Property.LINE_DRAWER);
         if (lineDrawer != null) {
-            lineDrawer.draw(drawContext.getCanvas(), occupiedArea.getBBox());
+            Rectangle area = getOccupiedAreaBBox();
+            applyMargins(area, false);
+            lineDrawer.draw(drawContext.getCanvas(), area);
         }
     }
 }

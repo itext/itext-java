@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -46,24 +45,51 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Canvas;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.Property;
+
+import org.slf4j.LoggerFactory;
 
 public class CanvasRenderer extends RootRenderer {
 
     protected Canvas canvas;
 
+    /**
+     * Creates a CanvasRenderer from its corresponding layout object.
+     * Sets {@link #immediateFlush} to true.
+     *
+     * @param canvas the {@link com.itextpdf.layout.Canvas} which this object should manage
+     */
     public CanvasRenderer(Canvas canvas) {
         this(canvas, true);
     }
 
+    /**
+     * Creates a CanvasRenderer from its corresponding layout object.
+     * Defines whether the content should be flushed immediately after addition {@link #addChild(IRenderer)} or not
+     *
+     * @param canvas the {@link com.itextpdf.layout.Canvas} which this object should manage
+     * @param immediateFlush the value which stands for immediate flushing
+     */
     public CanvasRenderer(Canvas canvas, boolean immediateFlush) {
         this.canvas = canvas;
         this.modelElement = canvas;
         this.immediateFlush = immediateFlush;
     }
 
+    @Override
+    public void addChild(IRenderer renderer) {
+        if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FULL))) {
+            LoggerFactory.getLogger(CanvasRenderer.class).warn("Canvas is already full. Element will be skipped.");
+        } else {
+            super.addChild(renderer);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void flushSingleRenderer(IRenderer resultRenderer) {
         if (!resultRenderer.isFlushed()) {
@@ -81,6 +107,9 @@ public class CanvasRenderer extends RootRenderer {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
         if (currentArea == null) {
@@ -92,6 +121,9 @@ public class CanvasRenderer extends RootRenderer {
         return currentArea;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRenderer getNextRenderer() {
         return null;

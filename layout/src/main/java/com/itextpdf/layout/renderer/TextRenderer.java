@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -61,26 +60,18 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.property.Background;
-import com.itextpdf.layout.property.BaseDirection;
-import com.itextpdf.layout.property.FontKerning;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.hyphenation.Hyphenation;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
-import com.itextpdf.layout.property.Underline;
+import com.itextpdf.layout.property.*;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
@@ -105,6 +96,7 @@ public class TextRenderer extends AbstractRenderer {
 
     /**
      * Creates a TextRenderer from its corresponding layout object.
+     *
      * @param textElement the {@link Text} which this object should manage
      */
     public TextRenderer(Text textElement) {
@@ -114,8 +106,9 @@ public class TextRenderer extends AbstractRenderer {
     /**
      * Creates a TextRenderer from its corresponding layout object, with a custom
      * text to replace the contents of the {@link Text}.
+     *
      * @param textElement the {@link Text} which this object should manage
-     * @param text the replacement text
+     * @param text        the replacement text
      */
     public TextRenderer(Text textElement, String text) {
         super(textElement);
@@ -136,23 +129,25 @@ public class TextRenderer extends AbstractRenderer {
         convertWaitingStringToGlyphLine();
 
         LayoutArea area = layoutContext.getArea();
-        Rectangle layoutBox = applyMargins(area.getBBox().clone(), false);
-        applyBorderBox(layoutBox, false);
+        float[] margins = getMargins();
+        Rectangle layoutBox = applyMargins(area.getBBox().clone(), margins, false);
+        Border[] borders = getBorders();
+        applyBorderBox(layoutBox, borders, false);
 
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         boolean anythingPlaced = false;
 
         int currentTextPos = text.start;
-        float fontSize = getPropertyAsFloat(Property.FONT_SIZE);
-        float textRise = getPropertyAsFloat(Property.TEXT_RISE);
-        Float characterSpacing = getPropertyAsFloat(Property.CHARACTER_SPACING);
-        Float wordSpacing = getPropertyAsFloat(Property.WORD_SPACING);
-        PdfFont font = getPropertyAsFont(Property.FONT);
-        Float hScale = getProperty(Property.HORIZONTAL_SCALING);
-        ISplitCharacters splitCharacters = getProperty(Property.SPLIT_CHARACTERS);
-        float italicSkewAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION)) ? ITALIC_ANGLE * fontSize : 0;
-        float boldSimulationAddition = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.BOLD_SIMULATION)) ? BOLD_SIMULATION_STROKE_COEFF * fontSize : 0;
+        float fontSize = (float) this.getPropertyAsFloat(Property.FONT_SIZE);
+        float textRise = (float) this.getPropertyAsFloat(Property.TEXT_RISE);
+        Float characterSpacing = this.getPropertyAsFloat(Property.CHARACTER_SPACING);
+        Float wordSpacing = this.getPropertyAsFloat(Property.WORD_SPACING);
+        PdfFont font = this.getPropertyAsFont(Property.FONT);
+        Float hScale = this.getProperty(Property.HORIZONTAL_SCALING, (Float) 1f);
+        ISplitCharacters splitCharacters = this.<ISplitCharacters>getProperty(Property.SPLIT_CHARACTERS);
+        float italicSkewAddition = Boolean.TRUE.equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION)) ? ITALIC_ANGLE * fontSize : 0;
+        float boldSimulationAddition = Boolean.TRUE.equals(getPropertyAsBoolean(Property.BOLD_SIMULATION)) ? BOLD_SIMULATION_STROKE_COEFF * fontSize : 0;
 
         line = new GlyphLine(text);
         line.start = line.end = -1;
@@ -176,7 +171,7 @@ public class TextRenderer extends AbstractRenderer {
         float currentLineWidth = 0;
         int previousCharPos = -1;
 
-        Character tabAnchorCharacter = getProperty(Property.TAB_ANCHOR);
+        Character tabAnchorCharacter = this.<Character>getProperty(Property.TAB_ANCHOR);
 
         TextLayoutResult result = null;
 
@@ -215,9 +210,9 @@ public class TextRenderer extends AbstractRenderer {
                 if (noPrint(currentGlyph))
                     continue;
 
-                if (tabAnchorCharacter != null && tabAnchorCharacter == text.get(ind).getUnicode().intValue()) {
+                if (tabAnchorCharacter != null && tabAnchorCharacter == text.get(ind).getUnicode()) {
                     tabAnchorCharacterPosition = currentLineWidth + nonBreakablePartFullWidth;
-                    tabAnchorCharacter = null;
+                    tabAnchorCharacter = (Character) (Object) null;
                 }
 
                 float glyphWidth = getCharWidth(currentGlyph, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
@@ -247,7 +242,7 @@ public class TextRenderer extends AbstractRenderer {
 
                 if (splitCharacters.isSplitCharacter(text, ind) || ind + 1 == text.end ||
                         splitCharacters.isSplitCharacter(text, ind + 1) &&
-                                (Character.isWhitespace(text.get(ind + 1).getUnicode()) || Character.isSpaceChar(text.get(ind + 1).getUnicode()))) {
+                                (Character.isWhitespace((char) text.get(ind + 1).getUnicode()) || Character.isSpaceChar((char) text.get(ind + 1).getUnicode()))) {
                     nonBreakablePartEnd = ind;
                     break;
                 }
@@ -268,18 +263,23 @@ public class TextRenderer extends AbstractRenderer {
             } else {
                 // check if line height exceeds the allowed height
                 if (Math.max(currentLineHeight, nonBreakablePartMaxHeight) > layoutBox.getHeight()) {
+                    applyBorderBox(occupiedArea.getBBox(), borders, true);
+                    applyMargins(occupiedArea.getBBox(), margins, true);
+                    // Force to place what we can
+                    if (line.start == -1) {
+                       line.start = currentTextPos;
+                    }
+                    line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth - 1);
                     // the line does not fit because of height - full overflow
                     TextRenderer[] splitResult = split(initialLineTextPos);
-                    applyBorderBox(occupiedArea.getBBox(), true);
-                    applyMargins(occupiedArea.getBBox(), true);
-                    return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1]);
+                    return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1], this);
                 } else {
                     // cannot fit a word as a whole
 
                     boolean wordSplit = false;
                     boolean hyphenationApplied = false;
 
-                    HyphenationConfig hyphenationConfig = getProperty(Property.HYPHENATION);
+                    HyphenationConfig hyphenationConfig = this.<HyphenationConfig>getProperty(Property.HYPHENATION);
                     if (hyphenationConfig != null) {
                         int[] wordBounds = getWordBoundsForHyphenation(text, currentTextPos, text.end, Math.max(currentTextPos, firstCharacterWhichExceedsAllowedWidth - 1));
                         if (wordBounds != null) {
@@ -340,8 +340,9 @@ public class TextRenderer extends AbstractRenderer {
                             currentLineWidth += getCharWidth(line.get(0), fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
                         }
                     }
-                    if (line.end <= 0) {
-                        result = new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                    if (line.end <= line.start) {
+                        return new TextLayoutResult(LayoutResult.NOTHING,
+                                occupiedArea, null, this, this);
                     } else {
                         result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, null, null).setWordHasBeenSplit(wordSplit);
                     }
@@ -351,47 +352,50 @@ public class TextRenderer extends AbstractRenderer {
             }
         }
 
-        if (result != null && result.getStatus() == LayoutResult.NOTHING) {
-            return result;
-        } else {
-            if (currentLineHeight > layoutBox.getHeight() && !getPropertyAsBoolean(Property.FORCED_PLACEMENT)) {
-                applyBorderBox(occupiedArea.getBBox(), true);
-                applyMargins(occupiedArea.getBBox(), true);
-                return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
-            }
-
-            yLineOffset = currentLineAscender * fontSize / TEXT_SPACE_COEFF;
-
-            occupiedArea.getBBox().moveDown(currentLineHeight);
-            occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + currentLineHeight);
-
-            occupiedArea.getBBox().setWidth(Math.max(occupiedArea.getBBox().getWidth(), currentLineWidth));
-            layoutBox.setHeight(area.getBBox().getHeight() - currentLineHeight);
-
-            occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() + italicSkewAddition + boldSimulationAddition);
-            applyBorderBox(occupiedArea.getBBox(), true);
-            applyMargins(occupiedArea.getBBox(), true);
-
-            if (result != null) {
-                TextRenderer[] split;
-                if (isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol) {
-                    // ignore '\n'
-                    split = split(currentTextPos+1);
-                } else {
-                    split = split(currentTextPos);
-                }
-                // if (split[1].length() > 0 && split[1].charAt(0) != null && split[1].charAt(0) == '\n') {
-                if (isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol) {
-                    result.setSplitForcedByNewline(true);
-                }
-                result.setSplitRenderer(split[0]);
-                // no sense to process empty renderer
-                if (split[1].text.start != split[1].text.end) {
-                    result.setOverflowRenderer(split[1]);
-                }
+        // indicates whether the placing is forced while the layout result is LayoutResult.NOTHING
+        boolean isPlacingForcedWhileNothing = false;
+        if (currentLineHeight > layoutBox.getHeight()) {
+            if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+                applyBorderBox(occupiedArea.getBBox(), borders, true);
+                applyMargins(occupiedArea.getBBox(), margins, true);
+                return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
             } else {
-                result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+                isPlacingForcedWhileNothing = true;
             }
+        }
+
+        yLineOffset = currentLineAscender * fontSize / TEXT_SPACE_COEFF;
+
+        occupiedArea.getBBox().moveDown(currentLineHeight);
+        occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + currentLineHeight);
+
+        occupiedArea.getBBox().setWidth(Math.max(occupiedArea.getBBox().getWidth(), currentLineWidth));
+        layoutBox.setHeight(area.getBBox().getHeight() - currentLineHeight);
+
+        occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() + italicSkewAddition + boldSimulationAddition);
+        applyBorderBox(occupiedArea.getBBox(), borders, true);
+        applyMargins(occupiedArea.getBBox(), margins, true);
+
+        if (result != null) {
+            TextRenderer[] split;
+            if (isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol) {
+                // ignore '\n'
+                split = splitIgnoreFirstNewLine(currentTextPos);
+            } else {
+                split = split(currentTextPos);
+            }
+            // if (split[1].length() > 0 && split[1].charAt(0) != null && split[1].charAt(0) == '\n') {
+            if (isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol) {
+                result.setSplitForcedByNewline(true);
+            }
+            result.setSplitRenderer(split[0]);
+            // no sense to process empty renderer
+            if (split[1].text.start != split[1].text.end) {
+                result.setOverflowRenderer(split[1]);
+            }
+        } else {
+            result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null,
+                    isPlacingForcedWhileNothing ? this : null);
         }
 
         return result;
@@ -399,14 +403,12 @@ public class TextRenderer extends AbstractRenderer {
 
     public void applyOtf() {
         convertWaitingStringToGlyphLine();
-        Character.UnicodeScript script = getProperty(Property.FONT_SCRIPT);
-        FontKerning fontKerning = getProperty(Property.FONT_KERNING);
-        PdfFont font = getPropertyAsFont(Property.FONT);
+        Character.UnicodeScript script = this.<Character.UnicodeScript>getProperty(Property.FONT_SCRIPT);
         if (!otfFeaturesApplied) {
             if (script == null && TypographyUtils.isTypographyModuleInitialized()) {
                 // Try to autodetect complex script.
                 Collection<Character.UnicodeScript> supportedScripts = TypographyUtils.getSupportedScripts();
-                Map<Character.UnicodeScript, Integer> scriptFrequency = new EnumMap<>(Character.UnicodeScript.class);
+                Map<Character.UnicodeScript, Integer> scriptFrequency = new EnumMap<Character.UnicodeScript, Integer>(Character.UnicodeScript.class);
                 for (int i = text.start; i < text.end; i++) {
                     int unicode = text.get(i).getUnicode();
                     Character.UnicodeScript glyphScript = unicode > -1 ? Character.UnicodeScript.of(unicode) : null;
@@ -422,7 +424,8 @@ public class TextRenderer extends AbstractRenderer {
                 Character.UnicodeScript selectScript = null;
                 for (Map.Entry<Character.UnicodeScript, Integer> entry : scriptFrequency.entrySet()) {
                     Character.UnicodeScript entryScript = entry.getKey();
-                    if (entry.getValue() > max && !Character.UnicodeScript.COMMON.equals(entryScript) && !Character.UnicodeScript.UNKNOWN.equals(entryScript)) {
+                    if (entry.getValue() > max && !Character.UnicodeScript.COMMON.equals(entryScript) && !Character.UnicodeScript.UNKNOWN.equals(entryScript)
+                            && !Character.UnicodeScript.INHERITED.equals(entryScript)) {
                         max = entry.getValue();
                         selectScript = entryScript;
                     }
@@ -435,10 +438,12 @@ public class TextRenderer extends AbstractRenderer {
                 }
             }
 
+            PdfFont font = getPropertyAsFont(Property.FONT);
             if (isOtfFont(font) && script != null) {
                 TypographyUtils.applyOtfScript(font.getFontProgram(), text, script);
             }
 
+            FontKerning fontKerning = this.<FontKerning>getProperty(Property.FONT_KERNING, FontKerning.NO);
             if (fontKerning == FontKerning.YES) {
                 TypographyUtils.applyKerning(font.getFontProgram(), text);
             }
@@ -473,8 +478,10 @@ public class TextRenderer extends AbstractRenderer {
             }
         }
 
-        int position = getPropertyAsInteger(Property.POSITION);
-        if (position == LayoutPosition.RELATIVE) {
+        applyBorderBox(occupiedArea.getBBox(), false);
+
+        boolean isRelativePosition = isRelativePosition();
+        if (isRelativePosition) {
             applyAbsolutePositioningTranslation(false);
         }
 
@@ -482,16 +489,16 @@ public class TextRenderer extends AbstractRenderer {
 
         if (line.end > line.start) {
             PdfFont font = getPropertyAsFont(Property.FONT);
-            float fontSize = getPropertyAsFloat(Property.FONT_SIZE);
+            float fontSize = (float) this.getPropertyAsFloat(Property.FONT_SIZE);
             Color fontColor = getPropertyAsColor(Property.FONT_COLOR);
-            Integer textRenderingMode = getProperty(Property.TEXT_RENDERING_MODE);
-            Float textRise = getPropertyAsFloat(Property.TEXT_RISE);
-            Float characterSpacing = getPropertyAsFloat(Property.CHARACTER_SPACING);
-            Float wordSpacing = getPropertyAsFloat(Property.WORD_SPACING);
-            Float horizontalScaling = getProperty(Property.HORIZONTAL_SCALING);
-            Float[] skew = getProperty(Property.SKEW);
-            boolean italicSimulation = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION));
-            boolean boldSimulation = Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.BOLD_SIMULATION));
+            Integer textRenderingMode = this.<Integer>getProperty(Property.TEXT_RENDERING_MODE);
+            Float textRise = this.getPropertyAsFloat(Property.TEXT_RISE);
+            Float characterSpacing = this.getPropertyAsFloat(Property.CHARACTER_SPACING);
+            Float wordSpacing = this.getPropertyAsFloat(Property.WORD_SPACING);
+            Float horizontalScaling = this.<Float>getProperty(Property.HORIZONTAL_SCALING);
+            float[] skew = this.<float[]>getProperty(Property.SKEW);
+            boolean italicSimulation = Boolean.TRUE.equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION));
+            boolean boldSimulation = Boolean.TRUE.equals(getPropertyAsBoolean(Property.BOLD_SIMULATION));
             Float strokeWidth = null;
 
             if (boldSimulation) {
@@ -516,14 +523,14 @@ public class TextRenderer extends AbstractRenderer {
             }
 
             if (textRenderingMode != PdfCanvasConstants.TextRenderingMode.FILL) {
-                canvas.setTextRenderingMode(textRenderingMode);
+                canvas.setTextRenderingMode((int) textRenderingMode);
             }
             if (textRenderingMode == PdfCanvasConstants.TextRenderingMode.STROKE || textRenderingMode == PdfCanvasConstants.TextRenderingMode.FILL_STROKE) {
                 if (strokeWidth == null) {
-                    strokeWidth = getPropertyAsFloat(Property.STROKE_WIDTH);
+                    strokeWidth = this.getPropertyAsFloat(Property.STROKE_WIDTH);
                 }
                 if (strokeWidth != null && strokeWidth != 1f) {
-                    canvas.setLineWidth(strokeWidth);
+                    canvas.setLineWidth((float) strokeWidth);
                 }
                 Color strokeColor = getPropertyAsColor(Property.STROKE_COLOR);
                 if (strokeColor == null)
@@ -534,13 +541,13 @@ public class TextRenderer extends AbstractRenderer {
             if (fontColor != null)
                 canvas.setFillColor(fontColor);
             if (textRise != null && textRise != 0)
-                canvas.setTextRise(textRise);
+                canvas.setTextRise((float) textRise);
             if (characterSpacing != null && characterSpacing != 0)
-                canvas.setCharacterSpacing(characterSpacing);
+                canvas.setCharacterSpacing((float) characterSpacing);
             if (wordSpacing != null && wordSpacing != 0)
-                canvas.setWordSpacing(wordSpacing);
+                canvas.setWordSpacing((float) wordSpacing);
             if (horizontalScaling != null && horizontalScaling != 1)
-                canvas.setHorizontalScaling(horizontalScaling * 100);
+                canvas.setHorizontalScaling((float) horizontalScaling * 100);
 
             GlyphLine.IGlyphLineFilter filter = new GlyphLine.IGlyphLineFilter() {
                 @Override
@@ -549,6 +556,8 @@ public class TextRenderer extends AbstractRenderer {
                 }
             };
 
+            boolean appearanceStreamLayout = Boolean.TRUE.equals (getPropertyAsBoolean(Property.APPEARANCE_STREAM_LAYOUT));
+
             if (hasOwnProperty(Property.REVERSED)) {
                 //We should mark a RTL written text
                 Map<GlyphLine, Boolean> outputs = getOutputChunks();
@@ -556,15 +565,23 @@ public class TextRenderer extends AbstractRenderer {
                 for (Map.Entry<GlyphLine, Boolean> output : outputs.entrySet()) {
                     GlyphLine o = output.getKey().filter(filter);
 
-                    if (output.getValue()) {
+
+                    boolean writeReversedChars = !appearanceStreamLayout && (boolean) output.getValue();
+                    if (writeReversedChars) {
                         canvas.openTag(new CanvasTag(PdfName.ReversedChars));
                     }
+                    if (appearanceStreamLayout) {
+                        o.setActualText(o.start, o.end, null);
+                    }
                     canvas.showText(o);
-                    if (output.getValue()) {
+                    if (writeReversedChars) {
                         canvas.closeTag();
                     }
                 }
             } else {
+                if (appearanceStreamLayout) {
+                    line.setActualText(line.start, line.end, null);
+                }
                 canvas.showText(line.filter(filter));
             }
 
@@ -573,7 +590,7 @@ public class TextRenderer extends AbstractRenderer {
                 canvas.closeTag();
             }
 
-            Object underlines = getProperty(Property.UNDERLINE);
+            Object underlines = this.<Object>getProperty(Property.UNDERLINE);
             if (underlines instanceof List) {
                 for (Object underline : (List) underlines) {
                     if (underline instanceof Underline) {
@@ -585,9 +602,11 @@ public class TextRenderer extends AbstractRenderer {
             }
         }
 
-        if (position == LayoutPosition.RELATIVE) {
+        if (isRelativePosition) {
             applyAbsolutePositioningTranslation(false);
         }
+
+        applyBorderBox(occupiedArea.getBBox(), true);
 
         if (isTagged) {
             tagPointer.moveToParent();
@@ -599,8 +618,8 @@ public class TextRenderer extends AbstractRenderer {
 
     @Override
     public void drawBackground(DrawContext drawContext) {
-        Background background = getProperty(Property.BACKGROUND);
-        Float textRise = getPropertyAsFloat(Property.TEXT_RISE);
+        Background background = this.<Background>getProperty(Property.BACKGROUND);
+        Float textRise = this.getPropertyAsFloat(Property.TEXT_RISE);
         float bottomBBoxY = occupiedArea.getBBox().getY();
         float leftBBoxX = occupiedArea.getBBox().getX();
         if (background != null) {
@@ -610,23 +629,13 @@ public class TextRenderer extends AbstractRenderer {
                 canvas.openTag(new CanvasArtifact());
             }
             canvas.saveState().setFillColor(background.getColor());
-            canvas.rectangle(leftBBoxX - background.getExtraLeft(), bottomBBoxY + textRise - background.getExtraBottom(),
+            canvas.rectangle(leftBBoxX - background.getExtraLeft(), bottomBBoxY + (float) textRise - background.getExtraBottom(),
                     occupiedArea.getBBox().getWidth() + background.getExtraLeft() + background.getExtraRight(),
-                    occupiedArea.getBBox().getHeight() - textRise + background.getExtraTop() + background.getExtraBottom());
+                    occupiedArea.getBBox().getHeight() - (float) textRise + background.getExtraTop() + background.getExtraBottom());
             canvas.fill().restoreState();
             if (isTagged) {
                 canvas.closeTag();
             }
-        }
-    }
-
-    @Override
-    public <T1> T1 getDefaultProperty(int property) {
-        switch (property) {
-            case Property.HORIZONTAL_SCALING:
-                return (T1) Float.valueOf(1);
-            default:
-                return super.getDefaultProperty(property);
         }
     }
 
@@ -639,7 +648,7 @@ public class TextRenderer extends AbstractRenderer {
 
         if (text != null) {
             Glyph glyph;
-            while (text.start < text.end && (glyph = text.get(text.start)).hasValidUnicode() && Character.isWhitespace(glyph.getUnicode()) && !isNewLine(text, text.start)) {
+            while (text.start < text.end && (glyph = text.get(text.start)).hasValidUnicode() && Character.isWhitespace((char) glyph.getUnicode()) && !isNewLine(text, text.start)) {
                 text.start++;
             }
         }
@@ -648,6 +657,7 @@ public class TextRenderer extends AbstractRenderer {
     /**
      * Trims any whitespace characters from the end of the {@link GlyphLine} to
      * be rendered.
+     *
      * @return the amount of space in points which the text was trimmed by
      */
     public float trimLast() {
@@ -656,15 +666,15 @@ public class TextRenderer extends AbstractRenderer {
         if (line.end <= 0)
             return trimmedSpace;
 
-        float fontSize = getPropertyAsFloat(Property.FONT_SIZE);
-        Float characterSpacing = getPropertyAsFloat(Property.CHARACTER_SPACING);
-        Float wordSpacing = getPropertyAsFloat(Property.WORD_SPACING);
-        Float hScale = getProperty(Property.HORIZONTAL_SCALING);
+        float fontSize = (float) this.getPropertyAsFloat(Property.FONT_SIZE);
+        Float characterSpacing = this.getPropertyAsFloat(Property.CHARACTER_SPACING);
+        Float wordSpacing = this.getPropertyAsFloat(Property.WORD_SPACING);
+        Float hScale = this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
 
         int firstNonSpaceCharIndex = line.end - 1;
         while (firstNonSpaceCharIndex >= line.start) {
             Glyph currentGlyph = line.get(firstNonSpaceCharIndex);
-            if (!currentGlyph.hasValidUnicode() || !Character.isWhitespace(currentGlyph.getUnicode())) {
+            if (!currentGlyph.hasValidUnicode() || !Character.isWhitespace((char) currentGlyph.getUnicode())) {
                 break;
             }
 
@@ -683,6 +693,7 @@ public class TextRenderer extends AbstractRenderer {
 
     /**
      * Gets the maximum offset above the base line that this Text extends to.
+     *
      * @return the upwards vertical offset of this {@link Text}
      */
     public float getAscent() {
@@ -691,23 +702,26 @@ public class TextRenderer extends AbstractRenderer {
 
     /**
      * Gets the maximum offset below the base line that this Text extends to.
+     *
      * @return the downwards vertical offset of this {@link Text}
      */
     public float getDescent() {
-        return -(occupiedArea.getBBox().getHeight() - yLineOffset - getPropertyAsFloat(Property.TEXT_RISE));
+        return -(occupiedArea.getBBox().getHeight() - yLineOffset - (float) this.getPropertyAsFloat(Property.TEXT_RISE));
     }
 
     /**
      * Gets the position on the canvas of the imaginary horizontal line upon which
      * the {@link Text}'s contents will be written.
+     *
      * @return the y position of this text on the {@link DrawContext}
      */
     public float getYLine() {
-        return occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - yLineOffset - getPropertyAsFloat(Property.TEXT_RISE);
+        return occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - yLineOffset - (float) this.getPropertyAsFloat(Property.TEXT_RISE);
     }
 
     /**
      * Moves the vertical position to the parameter's value.
+     *
      * @param y the new vertical position of the Text
      */
     public void moveYLineTo(float y) {
@@ -719,6 +733,7 @@ public class TextRenderer extends AbstractRenderer {
     /**
      * Manually sets the contents of the Text's representation on the canvas,
      * regardless of the Text's own contents.
+     *
      * @param text the replacement text
      */
     public void setText(String text) {
@@ -730,8 +745,8 @@ public class TextRenderer extends AbstractRenderer {
      * Manually sets a GlyphLine to be rendered with a specific start and end
      * point.
      *
-     * @param text a {@link GlyphLine}
-     * @param leftPos the leftmost end of the GlyphLine
+     * @param text     a {@link GlyphLine}
+     * @param leftPos  the leftmost end of the GlyphLine
      * @param rightPos the rightmost end of the GlyphLine
      */
     public void setText(GlyphLine text, int leftPos, int rightPos) {
@@ -748,6 +763,7 @@ public class TextRenderer extends AbstractRenderer {
 
     /**
      * The length of the whole text assigned to this renderer.
+     *
      * @return the text length
      */
     public int length() {
@@ -778,8 +794,22 @@ public class TextRenderer extends AbstractRenderer {
         return new TextRenderer((Text) modelElement, null);
     }
 
-    private boolean isNewLine(GlyphLine text, int ind) {
-        return text.get(ind).hasValidUnicode() && text.get(ind).getUnicode() == '\n';
+    protected static boolean isNewLine(GlyphLine text, int ind) {
+        int unicode = text.get(ind).getUnicode();
+        return unicode == '\n' || unicode == '\r';
+    }
+
+    private TextRenderer[] splitIgnoreFirstNewLine(int currentTextPos) {
+        if (text.get(currentTextPos).hasValidUnicode() && text.get(currentTextPos).getUnicode() == '\r') {
+            int next = currentTextPos + 1 < text.end ? text.get(currentTextPos + 1).getUnicode() : -1;
+            if (next == '\n') {
+                return split(currentTextPos + 2);
+            } else {
+                return split(currentTextPos + 1);
+            }
+        } else {
+            return split(currentTextPos + 1);
+        }
     }
 
     private GlyphLine convertToGlyphLine(String text) {
@@ -797,7 +827,9 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     /**
-     * Returns the length of the {@see line} which is the result of the layout call.
+     * Returns the length of the {@link com.itextpdf.layout.renderer.TextRenderer#line line} which is the result of the layout call.
+     *
+     * @return the length of the line
      */
     protected int lineLength() {
         return line.end > 0 ? line.end - line.start : 0;
@@ -862,6 +894,7 @@ public class TextRenderer extends AbstractRenderer {
         if (underlineColor != null) {
             canvas.setStrokeColor(underlineColor);
         }
+        canvas.setLineCapStyle(underline.getLineCapStyle());
         float underlineThickness = underline.getThickness(fontSize);
         if (underlineThickness != 0) {
             canvas.setLineWidth(underlineThickness);
@@ -877,8 +910,8 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     protected float calculateLineWidth() {
-        return getGlyphLineWidth(line, getPropertyAsFloat(Property.FONT_SIZE), getPropertyAsFloat(Property.HORIZONTAL_SCALING),
-                getPropertyAsFloat(Property.CHARACTER_SPACING), getPropertyAsFloat(Property.WORD_SPACING));
+        return getGlyphLineWidth(line, (float) this.getPropertyAsFloat(Property.FONT_SIZE), this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f),
+                this.getPropertyAsFloat(Property.CHARACTER_SPACING), this.getPropertyAsFloat(Property.WORD_SPACING));
     }
 
     /**
@@ -886,13 +919,13 @@ public class TextRenderer extends AbstractRenderer {
      * glyphline is written in a reversed order (right to left text).
      */
     private Map<GlyphLine, Boolean> getOutputChunks() {
-        List<int[]> reversedRange = getProperty(Property.REVERSED);
+        List<int[]> reversedRange = this.<List<int[]>>getProperty(Property.REVERSED);
         Map<GlyphLine, Boolean> outputs = new LinkedHashMap<>();
         if (reversedRange != null) {
             if (reversedRange.get(0)[0] > 0) {
                 outputs.put(line.copy(0, reversedRange.get(0)[0]), false);
             }
-            for(int i = 0; i < reversedRange.size(); i++) {
+            for (int i = 0; i < reversedRange.size(); i++) {
                 int[] range = reversedRange.get(i);
                 outputs.put(line.copy(range[0], range[1] + 1), true);
                 if (i != reversedRange.size() - 1) {
@@ -922,18 +955,18 @@ public class TextRenderer extends AbstractRenderer {
         if (hScale == null)
             hScale = 1f;
 
-        float resultWidth = g.getWidth() * fontSize * hScale;
+        float resultWidth = g.getWidth() * fontSize * (float) hScale;
         if (characterSpacing != null) {
-            resultWidth += characterSpacing * hScale * TEXT_SPACE_COEFF;
+            resultWidth += (float) characterSpacing * (float) hScale * TEXT_SPACE_COEFF;
         }
         if (wordSpacing != null && g.hasValidUnicode() && g.getUnicode() == ' ') {
-            resultWidth += wordSpacing * hScale * TEXT_SPACE_COEFF;
+            resultWidth += (float) wordSpacing * (float) hScale * TEXT_SPACE_COEFF;
         }
         return resultWidth;
     }
 
     private float scaleXAdvance(float xAdvance, float fontSize, Float hScale) {
-        return xAdvance * fontSize * hScale;
+        return xAdvance * fontSize * (float) hScale;
     }
 
     private float getGlyphLineWidth(GlyphLine glyphLine, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {
@@ -967,8 +1000,8 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private boolean isGlyphPartOfWordForHyphenation(Glyph g) {
-        return g.hasValidUnicode() && (Character.isLetter(g.getUnicode()) ||
-                Character.isDigit(g.getUnicode()) || '\u00ad' == g.getUnicode());
+        return g.hasValidUnicode() && (Character.isLetter((char) g.getUnicode()) ||
+                Character.isDigit((char) g.getUnicode()) || '\u00ad' == g.getUnicode());
     }
 
     private boolean isWhitespaceGlyph(Glyph g) {

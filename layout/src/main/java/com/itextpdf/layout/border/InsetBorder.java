@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -51,27 +50,56 @@ import com.itextpdf.kernel.color.DeviceRgb;
 
 public class InsetBorder extends Border3D {
 
+    /**
+     * Creates a InsetBorder instance with the specified width. The color is set to the default: {@link Border3D#GRAY gray}.
+     *
+     * @param width width of the border
+     */
     public InsetBorder(float width) {
         super(width);
     }
 
+    /**
+     * Creates a InsetBorder instance with the specified width and the {@link DeviceRgb rgb color}.
+     *
+     * @param width width of the border
+     * @param color the {@link DeviceRgb rgb color} of the border
+     */
     public InsetBorder(DeviceRgb color, float width) {
         super(color, width);
     }
 
+    /**
+     * Creates a InsetBorder instance with the specified width and the {@link DeviceCmyk cmyk color}.
+     *
+     * @param width width of the border
+     * @param color the {@link DeviceCmyk cmyk color} of the border
+     */
     public InsetBorder(DeviceCmyk color, float width) {
         super(color, width);
     }
 
+    /**
+     * Creates a InsetBorder instance with the specified width and the {@link DeviceGray gray color}.
+     *
+     * @param width width of the border
+     * @param color the {@link DeviceGray gray color} of the border
+     */
     public InsetBorder(DeviceGray color, float width) {
         super(color, width);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getType(){
         return Border._3D_INSET;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void setInnerHalfColor(PdfCanvas canvas, Side side) {
         switch (side) {
@@ -86,6 +114,9 @@ public class InsetBorder extends Border3D {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void setOuterHalfColor(PdfCanvas canvas, Side side) {
         switch (side) {

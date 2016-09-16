@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,6 +43,10 @@
  */
 package com.itextpdf.kernel.crypto;
 
+import com.itextpdf.io.util.SystemUtil;
+
+import java.nio.charset.StandardCharsets;
+
 /**
  * An initialization vector generator for a CBC block encryption. It's a random generator based on ARCFOUR.
  *
@@ -55,10 +58,10 @@ public final class IVGenerator {
 
     static {
         arcfour = new ARCFOUREncryption();
-        long time = System.currentTimeMillis();
-        long mem = Runtime.getRuntime().freeMemory();
+        long time = SystemUtil.getSystemTimeMillis();
+        long mem = SystemUtil.getFreeMemory();
         String s = time + "+" + mem;
-        arcfour.prepareARCFOURKey(s.getBytes());
+        arcfour.prepareARCFOURKey(s.getBytes(StandardCharsets.ISO_8859_1));
     }
 
     /**

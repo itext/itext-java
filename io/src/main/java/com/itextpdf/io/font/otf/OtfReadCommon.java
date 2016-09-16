@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -48,6 +47,7 @@ import com.itextpdf.io.source.RandomAccessFileOrArray;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -95,8 +95,7 @@ public class OtfReadCommon {
 			throw new UnsupportedOperationException(MessageFormat.format("Invalid coverage format: {0}", coverageFormat));
 		}
 
-		//return Collections.unmodifiableList(glyphIds);
-        return glyphIds;
+		return Collections.unmodifiableList(glyphIds);
 	}
 
 	private static void readRangeRecord(RandomAccessFileOrArray rf, List<Integer> glyphIds) throws java.io.IOException {

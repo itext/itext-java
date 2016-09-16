@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -70,7 +69,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
     private static final long serialVersionUID = -8152778382960290571L;
 
-	PdfTrueTypeFont(TrueTypeFont ttf, String encoding, boolean embedded) {
+    PdfTrueTypeFont(TrueTypeFont ttf, String encoding, boolean embedded) {
         super();
         setFontProgram(ttf);
         this.embedded = embedded;
@@ -94,7 +93,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         newFont = false;
         checkFontDictionary(fontDictionary, PdfName.TrueType);
         CMapToUnicode toUni = FontUtil.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
-        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni);
+        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni, false);
         fontProgram = DocTrueTypeFont.createFontProgram(fontDictionary, fontEncoding);
         embedded = ((IDocFontProgram) fontProgram).getFontFile() != null;
         subset = false;
@@ -117,9 +116,9 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         return null;
     }
 
-    //TODO make subtype class member and simplify this method
     @Override
     public void flush() {
+        //TODO make subtype class member and simplify this method
         if (newFont) {
             PdfName subtype;
             String fontName;
@@ -145,11 +144,11 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
             assert usemap != null;
             for (Map.Entry<Integer, int[]> e : usemap.entrySet()) {
                 int[] v = e.getValue();
-                Integer gi = v[0];
+                int gi = v[0];
                 if (longTag.contains(gi)) {
                     continue;
                 }
-                int c = e.getKey();
+                int c = (int) e.getKey();
                 boolean skip = true;
                 for (int k = 0; k < rg.length; k += 2) {
                     if (c >= rg[k] && c <= rg[k + 1]) {
@@ -213,6 +212,9 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
             }
             if (fontStream != null) {
                 fontDescriptor.put(fontFileName, fontStream);
+                if (fontStream.getIndirectReference() != null) {
+                    fontStream.flush();
+                }
             }
         }
     }

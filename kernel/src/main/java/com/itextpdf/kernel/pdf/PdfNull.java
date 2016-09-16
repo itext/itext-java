@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -144,5 +143,15 @@ public class PdfNull extends PdfPrimitiveObject {
     @Override
     protected void copyContent(PdfObject from, PdfDocument document) {
 
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this == obj || obj != null && getClass() == obj.getClass();
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
     }
 }

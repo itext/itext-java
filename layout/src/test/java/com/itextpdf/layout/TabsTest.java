@@ -1,32 +1,29 @@
 package com.itextpdf.layout;
 
-import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.draw.DashedLine;
 import com.itextpdf.kernel.pdf.canvas.draw.DottedLine;
 import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.property.TabAlignment;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Tab;
 import com.itextpdf.layout.element.TabStop;
+import com.itextpdf.layout.property.TabAlignment;
 import com.itextpdf.test.ExtendedITextTest;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 
 @Category(IntegrationTest.class)
 public class TabsTest extends ExtendedITextTest {
@@ -52,7 +49,7 @@ public class TabsTest extends ExtendedITextTest {
             "space anchor:\t2012 203\tslash anchor:\t2024\\2\tdot anchor:\t20421.333452\n" +
             "space anchor:\t201212 0423\tslash anchor:\t2067867824\\67867812\tdot anchor:\t21.32131232\n" +
             "space anchor:\t2123123012 03\tslash anchor:\t202131224\\12\tdot anchor:\t202.32323232323232323223223223223232323232323232323232\n" +
-            "space anchor:\t2012 0213133\tslash anchor:\t2024\\21312312\tdot anchor:\t131.292\n";
+            "space anchor:\t2012 0213133\tslash anchor:\t2024\\21312312\tdot anchor:\t131.292";
 
     @BeforeClass
     public static void beforeClass() {
@@ -64,20 +61,18 @@ public class TabsTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "defaultTabTest.pdf";
         String cmpFileName = sourceFolder + "cmp_defaultTabTest.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Paragraph p = new Paragraph();
-        addTabbedTextToParagraph(p, text0, new Float[0], null, null, null);
+        addTabbedTextToParagraph(p, text0, new float[0], null, null, null);
         doc.add(p);
 
         float left = doc.getLeftMargin();
         float right = doc.getRightMargin();
         float pageWidth = doc.getPdfDocument().getDefaultPageSize().getWidth();
-        Float[] defaultStopPositions = {0f, 50f, 100f, 150f, 200f, 250f, 300f, 350f, 400f, 450f, 500f, pageWidth - left - right};
-        drawTabStopsPositions(Arrays.asList(defaultStopPositions), doc, 1, 0, 120);
+        float[] defaultStopPositions = {0f, 50f, 100f, 150f, 200f, 250f, 300f, 350f, 400f, 450f, 500f, pageWidth - left - right};
+        drawTabStopsPositions(defaultStopPositions, doc, 1, 0, 120);
 
         doc.close();
 
@@ -95,7 +90,7 @@ public class TabsTest extends ExtendedITextTest {
         float tabInterval = doc.getPdfDocument().getDefaultPageSize().getWidth() / 8;
 
         //left alignments
-        Float[] positions1 = {tabInterval * 2, tabInterval * 4, tabInterval * 5};
+        float[] positions1 = {tabInterval * 2, tabInterval * 4, tabInterval * 5};
         TabAlignment[] alignments1 = {TabAlignment.LEFT, TabAlignment.LEFT, TabAlignment.LEFT};
         ILineDrawer[] leaders1 = {null, null, null};
         Character[] anchors1 = {null, null, null};
@@ -108,7 +103,7 @@ public class TabsTest extends ExtendedITextTest {
         doc.add(new Paragraph("\n"));
 
         //right alignments
-        Float[] positions2 = {tabInterval * 3, tabInterval * 4, tabInterval * 6};
+        float[] positions2 = {tabInterval * 3, tabInterval * 4, tabInterval * 6};
         TabAlignment[] alignments2 = {TabAlignment.RIGHT, TabAlignment.RIGHT, TabAlignment.RIGHT};
         ILineDrawer[] leaders2 = {null, null, null};
         Character[] anchors2 = {null, null, null};
@@ -121,7 +116,7 @@ public class TabsTest extends ExtendedITextTest {
         doc.add(new Paragraph("\n"));
 
         //center alignments
-        Float[] positions3 = {tabInterval * 3, tabInterval * 4, tabInterval * 6};
+        float[] positions3 = {tabInterval * 3, tabInterval * 4, tabInterval * 6};
         TabAlignment[] alignments3 = {TabAlignment.CENTER, TabAlignment.CENTER, TabAlignment.CENTER};
         ILineDrawer[] leaders3 = {null, null, null};
         Character[] anchors3 = {null, null, null};
@@ -133,9 +128,9 @@ public class TabsTest extends ExtendedITextTest {
         doc.add(p);
 
 
-        drawTabStopsPositions(Arrays.asList(positions1), doc, 1, 0, 120);
-        drawTabStopsPositions(Arrays.asList(positions2), doc, 1, 125, 95);
-        drawTabStopsPositions(Arrays.asList(positions3), doc, 1, 235, 95);
+        drawTabStopsPositions(positions1, doc, 1, 0, 120);
+        drawTabStopsPositions(positions2, doc, 1, 125, 95);
+        drawTabStopsPositions(positions3, doc, 1, 235, 95);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
@@ -151,7 +146,7 @@ public class TabsTest extends ExtendedITextTest {
 
         float tabInterval = doc.getPdfDocument().getDefaultPageSize().getWidth() / 8;
 
-        Float[] positions1 = {tabInterval * 2, tabInterval * 3, tabInterval * 4, tabInterval * 5, tabInterval * 6};
+        float[] positions1 = {tabInterval * 2, tabInterval * 3, tabInterval * 4, tabInterval * 5, tabInterval * 6};
         TabAlignment[] alignments1 = {TabAlignment.ANCHOR, TabAlignment.CENTER, TabAlignment.ANCHOR,
                 TabAlignment.RIGHT, TabAlignment.ANCHOR};
         ILineDrawer[] leaders1 = {new DottedLine(), null, new DashedLine(.5f), null, new SolidLine(.5f)};
@@ -163,7 +158,7 @@ public class TabsTest extends ExtendedITextTest {
         addTabbedTextToParagraph(p, text2, positions1, alignments1, leaders1, anchors1);
         doc.add(p);
 
-        drawTabStopsPositions(Arrays.asList(positions1), doc, 1, 0, 120);
+        drawTabStopsPositions(positions1, doc, 1, 0, 120);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + outFileName));
@@ -179,7 +174,7 @@ public class TabsTest extends ExtendedITextTest {
 
         float tabInterval = doc.getPdfDocument().getDefaultPageSize().getWidth() / 8;
 
-        Float[] positions = {tabInterval * 2, tabInterval * 4, tabInterval * 6};
+        float[] positions = {tabInterval * 2, tabInterval * 4, tabInterval * 6};
         TabAlignment[] alignments = {TabAlignment.RIGHT, TabAlignment.CENTER, TabAlignment.CENTER};
 //        Drawable[] leaders = {null, null, null};
         ILineDrawer[] leaders = {new DottedLine(), new DashedLine(.5f), new SolidLine(.5f)};
@@ -200,7 +195,7 @@ public class TabsTest extends ExtendedITextTest {
 
         doc.add(p);
 
-        drawTabStopsPositions(Arrays.asList(positions), doc, 1, 0, 120);
+        drawTabStopsPositions(positions, doc, 1, 0, 120);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + outFileName));
@@ -211,9 +206,7 @@ public class TabsTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "outOfPageBoundsTest.pdf";
         String cmpFileName = sourceFolder + "cmp_outOfPageBoundsTest.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
 
@@ -271,14 +264,12 @@ public class TabsTest extends ExtendedITextTest {
     }
 
     private Document initDocument(String outFileName) throws FileNotFoundException {
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         pdfDoc.setDefaultPageSize(PageSize.A4.rotate());
         return new Document(pdfDoc);
     }
 
-    private void drawTabStopsPositions(java.util.List<Float> positions, Document doc, int pageNum, int yStart, int dy) {
+    private void drawTabStopsPositions(float[] positions, Document doc, int pageNum, int yStart, int dy) {
         PdfCanvas canvas = new PdfCanvas(doc.getPdfDocument().getPage(pageNum));
         float left = doc.getLeftMargin();
         float h = doc.getPdfDocument().getPage(pageNum).getCropBox().getHeight() - yStart;
@@ -287,7 +278,7 @@ public class TabsTest extends ExtendedITextTest {
         canvas.setLineDash(4, 2);
         canvas.setLineWidth(0.5f);
         canvas.setLineDash(4, 2);
-        for (Float f : positions) {
+        for (float f : positions) {
             canvas.moveTo(left + f, h);
             canvas.lineTo(left + f, h - dy);
         }
@@ -297,7 +288,7 @@ public class TabsTest extends ExtendedITextTest {
         canvas.release();
     }
 
-    private void addTabbedTextToParagraph(Paragraph p, String text, Float[] positions, TabAlignment[] alignments,
+    private void addTabbedTextToParagraph(Paragraph p, String text, float[] positions, TabAlignment[] alignments,
                                           ILineDrawer[] tabLeadings, Character[] tabAnchorCharacters) {
         java.util.List<TabStop> tabStops = new ArrayList<>();
         for (int i = 0; i < positions.length; ++i) {

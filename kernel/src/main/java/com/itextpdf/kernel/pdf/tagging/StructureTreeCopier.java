@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -66,17 +65,19 @@ import java.util.Set;
  */
 class StructureTreeCopier {
 
-    private static List<PdfName> ignoreKeysForCopy = new ArrayList<PdfName>() {{
-        add(PdfName.K);
-        add(PdfName.P);
-        add(PdfName.Pg);
-        add(PdfName.Obj);
-    }};
+    private static List<PdfName> ignoreKeysForCopy = new ArrayList<PdfName>();
 
-    private static List<PdfName> ignoreKeysForClone = new ArrayList<PdfName>() {{
-        add(PdfName.K);
-        add(PdfName.P);
-    }};
+    private static List<PdfName> ignoreKeysForClone = new ArrayList<PdfName>();
+
+    static {
+        ignoreKeysForCopy.add(PdfName.K);
+        ignoreKeysForCopy.add(PdfName.P);
+        ignoreKeysForCopy.add(PdfName.Pg);
+        ignoreKeysForCopy.add(PdfName.Obj);
+
+        ignoreKeysForClone.add(PdfName.K);
+        ignoreKeysForClone.add(PdfName.P);
+    }
 
     /**
      * Copies structure to a {@code destDocument}.
@@ -86,7 +87,6 @@ class StructureTreeCopier {
      *
      * @param destDocument document to copy structure to. Shall not be current document.
      * @param page2page  association between original page and copied page.
-     * @throws PdfException
      */
     public static void copyTo(PdfDocument destDocument, Map<PdfPage, PdfPage> page2page, PdfDocument callingDocument) {
         if (!destDocument.isTagged())
@@ -107,7 +107,6 @@ class StructureTreeCopier {
      * @param destDocument       document to copy structure to.
      * @param insertBeforePage indicates where the structure to be inserted.
      * @param page2page        association between original page and copied page.
-     * @throws PdfException
      */
     public static void copyTo(PdfDocument destDocument, int insertBeforePage, Map<PdfPage, PdfPage> page2page, PdfDocument callingDocument) {
         if (!destDocument.isTagged())
@@ -171,7 +170,6 @@ class StructureTreeCopier {
      * @param destDocument document to cpt structure to.
      * @param page2page  association between original page and copied page.
      * @param copyFromDestDocument indicates if <code>page2page</code> keys and values represent pages from {@code destDocument}.
-     * @throws PdfException
      */
     private static void copyTo(PdfDocument destDocument, Map<PdfPage, PdfPage> page2page, PdfDocument callingDocument, boolean copyFromDestDocument) {
         copyTo(destDocument, page2page, callingDocument, copyFromDestDocument, -1);
@@ -274,7 +272,7 @@ class StructureTreeCopier {
         if (kid.isNumber()) {
             toDocument.getStructTreeRoot().getParentTreeHandler()
                     .registerMcr(new PdfMcrNumber((PdfNumber) kid, new PdfStructElem(copiedParent)));
-            return kid; // TODO do we always copy numbers?
+            return kid; // TODO do we always copy numbers? don't we need to check if it is supposed to be copied like objs in objectsToCopy?
         } else if (kid.isDictionary()) {
             PdfDictionary kidAsDict = (PdfDictionary) kid;
             if (objectsToCopy.contains(kidAsDict)) {
@@ -292,7 +290,7 @@ class StructureTreeCopier {
                             // Some link annotations may be not copied, because their destination page is not copied.
                             return null;
                         }
-                        contentItemObject.put(PdfName.StructParent, new PdfNumber(toDocument.getNextStructParentIndex()));
+                        contentItemObject.put(PdfName.StructParent, new PdfNumber((int) toDocument.getNextStructParentIndex()));
                     } else {
                         mcr = new PdfMcrDictionary(copiedKid, new PdfStructElem(copiedParent));
                     }

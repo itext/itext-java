@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -46,6 +45,8 @@ package com.itextpdf.io.source;
 
 import com.itextpdf.io.util.DecimalFormatUtil;
 
+import java.nio.charset.StandardCharsets;
+
 public class ByteUtils {
 
     static boolean HighPrecision = false;
@@ -53,7 +54,7 @@ public class ByteUtils {
     private static final byte[] bytes = new byte[]{48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102};
     private static final byte[] zero = new byte[]{48};
     private static final byte[] one = new byte[]{49};
-    private static final byte[] negOne = new byte[]{'-', 49};
+    private static final byte[] negOne = new byte[]{(byte) '-', 49};
 
     public static byte[] getIsoBytes(String text) {
         if (text == null)
@@ -125,7 +126,15 @@ public class ByteUtils {
 
     static byte[] getIsoBytes(double d, ByteBuffer buffer, boolean highPrecision) {
         if (highPrecision) {
-            byte[] result = DecimalFormatUtil.formatNumber(d, "0.######").getBytes();
+            if (Math.abs(d) < 0.000001) {
+                if (buffer != null) {
+                    buffer.prepend(zero);
+                    return null;
+                } else {
+                    return zero;
+                }
+            }
+            byte[] result = DecimalFormatUtil.formatNumber(d, "0.######").getBytes(StandardCharsets.ISO_8859_1);
             if (buffer != null) {
                 buffer.prepend(result);
                 return null;
@@ -221,7 +230,13 @@ public class ByteUtils {
             }
         } else {
             d += 0.5;
-            long v = (long) d;
+            long v;
+            if (d > Long.MAX_VALUE) {
+                //by default cast logic do the same, but not in .NET
+                v = Long.MAX_VALUE;
+            } else {
+                v = (long) d;
+            }
             int intLen = longSize(v);
             buf = buffer == null ? new ByteBuffer(intLen + (negative ? 1 : 0)) : buffer;
             for (int i = 0; i < intLen; i++) {

@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -48,17 +47,12 @@ import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.util.ResourceUtil;
 
 import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class CidFontProperties {
 
     /** The path to the font resources. */
+    @Deprecated
     public static final String RESOURCE_PATH_CMAP = FontConstants.RESOURCE_PATH + "cmap/";
 
     private static final Map<String, Map<String, Object>> allFonts = new HashMap<>();
@@ -112,7 +106,7 @@ public class CidFontProperties {
     }
 
     private static void loadRegistry() throws java.io.IOException {
-        InputStream resource = ResourceUtil.getResourceStream(RESOURCE_PATH_CMAP + "cjk_registry.properties");
+        InputStream resource = ResourceUtil.getResourceStream(FontConstants.CMAP_RESOURCE_PATH + "cjk_registry.properties");
         Properties p = new Properties();
         p.load(resource);
         resource.close();
@@ -130,7 +124,7 @@ public class CidFontProperties {
 
     private static Map<String, Object> readFontProperties(String name) throws java.io.IOException {
         name += ".properties";
-        InputStream resource = ResourceUtil.getResourceStream(RESOURCE_PATH_CMAP + name);
+        InputStream resource = ResourceUtil.getResourceStream(FontConstants.CMAP_RESOURCE_PATH + name);
         Properties p = new Properties();
         p.load(resource);
         resource.close();

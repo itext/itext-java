@@ -5,6 +5,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.kernel.xmp.XMPException;
 
@@ -20,21 +21,21 @@ import org.junit.rules.ExpectedException;
 import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
-public class PdfA2EmbeddedFilesCheckTest {
+public class PdfA2EmbeddedFilesCheckTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = sourceFolder + "cmp/PdfA2EmbeddedFilesCheckTest/";
-    public static final String destinationFolder = "./target/test/PdfA2EmbeddedFilesCheckTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA2EmbeddedFilesCheckTest/";
 
     @BeforeClass
     public static void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
-    @Ignore
+    @Ignore("ignore")
     // According to spec, only pdfa-1 or pdfa-2 compliant pdf document are allowed to be added to the
     // conforming pdfa-2 document. We only check they mime type, to define embedded file type, but we don't check
     // the bytes of the file. That's why this test creates invalid pdfa document.
@@ -90,7 +91,7 @@ public class PdfA2EmbeddedFilesCheckTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int length;
-        while ((length = fis.read(buffer)) > 0) {
+        while ((length = fis.read(buffer, 0, buffer.length)) > 0) {
             os.write(buffer, 0, length);
         }
         pdfDocument.addFileAttachment("some pdf file", os.toByteArray(), "foo.pdf", PdfName.ApplicationPdf, null, null);
@@ -101,8 +102,8 @@ public class PdfA2EmbeddedFilesCheckTest {
 
     @Test
     public void fileSpecCheckTest03() throws IOException, XMPException {
-        thrown.expect(PdfAConformanceException.class);
-        thrown.expectMessage(PdfAConformanceException.EmbeddedFileShallBeOfPdfMimeType);
+        junitExpectedException.expect(PdfAConformanceException.class);
+        junitExpectedException.expectMessage(PdfAConformanceException.EmbeddedFileShallBeOfPdfMimeType);
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);

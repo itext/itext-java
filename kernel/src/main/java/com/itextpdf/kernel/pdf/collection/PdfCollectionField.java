@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -50,22 +49,38 @@ import com.itextpdf.kernel.pdf.*;
 public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = 4766153544105870238L;
-	
-    /** A possible type of collection field. */
+
+    /**
+     * A possible type of collection field.
+     */
     public static final int TEXT = 0;
-    /** A possible type of collection field. */
+    /**
+     * A possible type of collection field.
+     */
     public static final int DATE = 1;
-    /** A possible type of collection field. */
+    /**
+     * A possible type of collection field.
+     */
     public static final int NUMBER = 2;
-    /** A possible type of collection field. */
+    /**
+     * A possible type of collection field.
+     */
     public static final int FILENAME = 3;
-    /** A possible type of collection field. */
+    /**
+     * A possible type of collection field.
+     */
     public static final int DESC = 4;
-    /** A possible type of collection field. */
+    /**
+     * A possible type of collection field.
+     */
     public static final int MODDATE = 5;
-    /** A possible type of collection field. */
+    /**
+     * A possible type of collection field.
+     */
     public static final int CREATIONDATE = 6;
-    /** A possible type of collection field. */
+    /**
+     * A possible type of collection field.
+     */
     public static final int SIZE = 7;
 
     protected int subType;
@@ -103,8 +118,9 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Creates a PdfCollectionField.
-     * @param name		the field name
-     * @param subType	the field subtype
+     *
+     * @param name    the field name
+     * @param subType the field subtype
      */
     public PdfCollectionField(String name, int subType) {
         super(new PdfDictionary());
@@ -140,6 +156,7 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * The relative order of the field name. Fields are sorted in ascending order.
+     *
      * @param order a number indicating the order of the field
      * @return
      */
@@ -154,6 +171,7 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Sets the initial visibility of the field.
+     *
      * @param visible
      * @return
      */
@@ -168,6 +186,7 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Indication if the field value should be editable in the viewer.
+     *
      * @param editable
      * @return
      */
@@ -181,7 +200,7 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public PdfObject getValue(String value) {
-        switch(subType) {
+        switch (subType) {
             case TEXT:
                 return new PdfString(value);
             case DATE:
@@ -189,7 +208,7 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
             case NUMBER:
                 return new PdfNumber(Double.parseDouble(value.trim()));
         }
-        throw new PdfException(PdfException.IsNotAnAcceptableValueForTheField).setMessageParams(value, getPdfObject().getAsName(PdfName.N).getValue());
+        throw new PdfException(PdfException._1IsNotAnAcceptableValueForTheField2).setMessageParams(value, getPdfObject().getAsName(PdfName.N).getValue());
     }
 
     @Override

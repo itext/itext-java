@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -74,7 +73,6 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
 
 	/**
      * Creates a new, empty membership layer.
-     * @throws PdfException
      */
     public PdfLayerMembership(PdfDocument doc) {
         super(new PdfDictionary());
@@ -86,7 +84,6 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
      * Creates a new PdfLayerMembership instance by its PdfDictionary, which must be an indirect object.
      *
      * @param membershipDictionary the membership dictionary, must have an indirect reference.
-     * @throws PdfException
      */
     public PdfLayerMembership(PdfDictionary membershipDictionary) {
         super(membershipDictionary);
@@ -97,12 +94,14 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
 
     /**
      * Gets the collection of the layers this layer membership operates with.
-     * @throws PdfException
      */
     public Collection<PdfLayer> getLayers() {
         final PdfObject layers = getPdfObject().get(PdfName.OCGs);
-        if (layers instanceof PdfDictionary)
-            return new ArrayList<PdfLayer>() {{add(new PdfLayer(((PdfDictionary) layers).makeIndirect(getDocument())));}};
+        if (layers instanceof PdfDictionary) {
+            List<PdfLayer> list = new ArrayList<>();
+            list.add(new PdfLayer(((PdfDictionary) layers).makeIndirect(getDocument())));
+            return list;
+        }
         else if (layers instanceof PdfArray) {
             List<PdfLayer> layerList = new ArrayList<>();
             for (int ind = 0; ind < ((PdfArray) layers).size(); ind++) {
@@ -116,7 +115,6 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
     /**
      * Adds a new layer to the current layer membership.
      * @param layer the layer to be added
-     * @throws PdfException
      */
     public void addLayer(PdfLayer layer) {
         PdfArray layers = getPdfObject().getAsArray(PdfName.OCGs);
@@ -149,7 +147,6 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
     /**
      * Gets the visibility policy for content belonging to this
      * optional content membership dictionary.
-     * @throws PdfException
      */
     public PdfName getVisibilityPolicy() {
         PdfName visibilityPolicy = getPdfObject().getAsName(PdfName.P);
@@ -174,7 +171,6 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
     /**
      * Gets the visibility expression for content belonging to this
      * optional content membership dictionary.
-     * @throws PdfException
      */
     public PdfVisibilityExpression getVisibilityExpression() {
         PdfArray ve = getPdfObject().getAsArray(PdfName.VE);

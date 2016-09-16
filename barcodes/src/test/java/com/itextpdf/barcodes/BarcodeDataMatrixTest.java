@@ -1,47 +1,38 @@
 package com.itextpdf.barcodes;
 
 
-import com.itextpdf.barcodes.qrcode.EncodeHintType;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
-
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
-public class BarcodeDataMatrixTest {
+public class BarcodeDataMatrixTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
     public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodeDataMatrix/";
 
-
     @BeforeClass
     public static void beforeClass() {
-        File dir = new File(destinationFolder);
-        dir.mkdirs();
-        for (File file : dir.listFiles())
-            file.delete();
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeDataMatrix.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -57,20 +48,16 @@ public class BarcodeDataMatrixTest {
     @Test
     public void barcode02Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeDataMatrix2.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream( destinationFolder +filename));
+        PdfWriter writer = new PdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
-
-
 
         PdfPage page1 = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
-        BarcodeDataMatrix barcode2 = new BarcodeDataMatrix("дима","UTF-8");
+        BarcodeDataMatrix barcode2 = new BarcodeDataMatrix("дима", "UTF-8");
         barcode2.placeBarcode(canvas, Color.GREEN, 10);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
-
-
     }
 
 }

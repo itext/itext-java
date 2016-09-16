@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -45,34 +44,88 @@
 package com.itextpdf.kernel.color;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
-import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 
 import java.util.Arrays;
 
+/**
+ * Represents a color
+ */
 public class Color {
 
+    /**
+     * Predefined black DeviceRgb color
+     */
     public static final Color BLACK = new DeviceRgb(0, 0, 0);
+    /**
+     * Predefined blue  DeviceRgb color
+     */
     public static final Color BLUE = new DeviceRgb(0, 0, 255);
+    /**
+     * Predefined cyan DeviceRgb color
+     */
     public static final Color CYAN = new DeviceRgb(0, 255, 255);
+    /**
+     * Predefined dark gray DeviceRgb color
+     */
     public static final Color DARK_GRAY = new DeviceRgb(64, 64, 64);
+    /**
+     * Predefined gray DeviceRgb color
+     */
     public static final Color GRAY = new DeviceRgb(128, 128, 128);
+    /**
+     * Predefined green DeviceRgb color
+     */
     public static final Color GREEN = new DeviceRgb(0, 255, 0);
+    /**
+     * Predefined light gray DeviceRgb color
+     */
     public static final Color LIGHT_GRAY = new DeviceRgb(192, 192, 192);
+    /**
+     * Predefined magenta DeviceRgb color
+     */
     public static final Color MAGENTA = new DeviceRgb(255, 0, 255);
+    /**
+     * Predefined orange DeviceRgb color
+     */
     public static final Color ORANGE = new DeviceRgb(255, 200, 0);
+    /**
+     * Predefined pink DeviceRgb color
+     */
     public static final Color PINK = new DeviceRgb(255, 175, 175);
+    /**
+     * Predefined red DeviceRgb color
+     */
     public static final Color RED = new DeviceRgb(255, 0, 0);
+    /**
+     * Predefined white DeviceRgb color
+     */
     public static final Color WHITE = new DeviceRgb(255, 255, 255);
+    /**
+     * Predefined yellow DeviceRgb color
+     */
     public static final Color YELLOW = new DeviceRgb(255, 255, 0);
 
+    /**
+     * The color space of the color
+     */
     protected PdfColorSpace colorSpace;
+
+    /**
+     * The color value of the color
+     */
     protected float[] colorValue;
 
+    /**
+     * Creates a Color of certain color space and color value.
+     * If color value is set in null, all value components will be initialised with zeroes.
+     *
+     * @param colorSpace the color space to which the created Color object relates
+     * @param colorValue the color value of the created Color object
+     */
     protected Color(PdfColorSpace colorSpace, float[] colorValue) {
         this.colorSpace = colorSpace;
         if (colorValue == null)
@@ -81,10 +134,23 @@ public class Color {
             this.colorValue = colorValue;
     }
 
+    /**
+     * Makes a Color of certain color space.
+     * All color value components will be initialised with zeroes.
+     *
+     * @param colorSpace the color space to which the returned Color object relates
+     */
     public static Color makeColor(PdfColorSpace colorSpace) {
         return makeColor(colorSpace, null);
     }
 
+    /**
+     * Makes a Color of certain color space and color value.
+     * If color value is set in null, all value components will be initialised with zeroes.
+     *
+     * @param colorSpace the color space to which the returned Color object relates
+     * @param colorValue the color value of the returned Color object
+     */
     public static Color makeColor(PdfColorSpace colorSpace, float[] colorValue) {
         Color c = null;
         boolean unknownColorSpace = false;
@@ -137,6 +203,13 @@ public class Color {
         return c;
     }
 
+    /**
+     * Converts {@link com.itextpdf.kernel.color.DeviceCmyk DeviceCmyk} color to
+     * {@link com.itextpdf.kernel.color.DeviceRgb DeviceRgb} color
+     * @param cmykColor the DeviceCmyk color which will be converted to DeviceRgb color
+     *
+     * @return converted color
+     */
     public static DeviceRgb convertCmykToRgb(DeviceCmyk cmykColor) {
         float cyanComp = 1 - cmykColor.getColorValue()[0];
         float magentaComp = 1 - cmykColor.getColorValue()[1];
@@ -149,6 +222,13 @@ public class Color {
         return new DeviceRgb(r, g, b);
     }
 
+    /**
+     * Converts {@link com.itextpdf.kernel.color.DeviceRgb DeviceRgb} color to
+     * {@link com.itextpdf.kernel.color.DeviceCmyk DeviceCmyk} color
+     * @param rgbColor the DeviceRgb color which will be converted to DeviceCmyk color
+     *
+     * @return converted color
+     */
     public static DeviceCmyk convertRgbToCmyk(DeviceRgb rgbColor) {
         float redComp = rgbColor.getColorValue()[0];
         float greenComp = rgbColor.getColorValue()[1];
@@ -161,24 +241,48 @@ public class Color {
         return new DeviceCmyk(c, m, y, k);
     }
 
+    /**
+     * Returns the number of color value components
+     *
+     * @return the number of color value components
+     */
     public int getNumberOfComponents() {
         return colorValue.length;
     }
 
+    /**
+     * Returns the {@link com.itextpdf.kernel.pdf.colorspace.PdfColorSpace color space}
+     * to which the color is related.
+     *
+     * @return the color space of the color
+     */
     public PdfColorSpace getColorSpace() {
         return colorSpace;
     }
 
+    /**
+     * Returns the color value of the color
+     *
+     * @return the color value
+     */
     public float[] getColorValue() {
         return colorValue;
     }
 
+    /**
+     * Sets the color value of the color
+     * @param value new color value
+     */
     public void setColorValue(float[] value) {
         colorValue = value;
         if (colorValue.length != value.length)
             throw new PdfException(PdfException.IncorrectNumberOfComponents, this);
     }
 
+    /**
+     * Indicates whether the color is equal to the given color.
+     * The {@link Color#colorSpace color space} and {@link Color#colorValue color value} are considered during the comparison.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -192,6 +296,9 @@ public class Color {
                 && Arrays.equals(colorValue, color.colorValue);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         int result = colorSpace != null ? colorSpace.hashCode() : 0;

@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -47,6 +46,14 @@ package com.itextpdf.layout.element;
 import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
 import com.itextpdf.layout.property.TabAlignment;
 
+/**
+ * A TabStop is the closest location on a line of text that the text will jump
+ * to if a {@link Tab} is inserted. At least one TabStop must be defined on an
+ * element if you want to use {@link Tab Tabs}.
+ * 
+ * This object can be added to a {@link Paragraph} with the method
+ * {@link Paragraph#addTabStops}.
+ */
 public class TabStop {
 
     private float tabPosition;
@@ -54,14 +61,37 @@ public class TabStop {
     private Character tabAnchor;
     private ILineDrawer tabLeader;
 
+    /**
+     * Creates a TabStop at the appropriate position.
+     * @param tabPosition a <code>float</code>, measured in points
+     */
     public TabStop(float tabPosition) {
         this(tabPosition, TabAlignment.LEFT);
     }
 
+    /**
+     * Creates a TabStop at the appropriate position, with a specified tab
+     * alignment. A tab alignment defines the way the textual content should be
+     * positioned with regards to this tab stop.
+     * 
+     * @param tabPosition a <code>float</code>, measured in points
+     * @param tabAlignment a {@link TabAlignment} value
+     */
     public TabStop(float tabPosition, TabAlignment tabAlignment) {
         this(tabPosition, tabAlignment, null);
     }
 
+    /**
+     * Creates a TabStop at the appropriate position, with a specified tab
+     * alignment and an explicitly given line pattern. A tab alignment defines
+     * the way the textual content should be positioned with regards to this tab
+     * stop. The line pattern defines a pattern that should be repeated until
+     * the TabStop is reached. If null, the space leading up to the TabStop will
+     * be empty.
+     * @param tabPosition a <code>float</code>, measured in points
+     * @param tabAlignment a {@link TabAlignment} value
+     * @param tabLeader the {@ILineDrawer} value, a pattern drawing object
+     */
     public TabStop(float tabPosition, TabAlignment tabAlignment, ILineDrawer tabLeader) {
         this.tabPosition = tabPosition;
         this.tabAlignment = tabAlignment;

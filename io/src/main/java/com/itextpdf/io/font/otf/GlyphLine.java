@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -97,7 +96,7 @@ public class GlyphLine {
     }
 
     public String toUnicodeString(int start, int end) {
-        Iterator<GlyphLinePart> iter = new ActualTextIterator(this, start, end);
+        ActualTextIterator iter = new ActualTextIterator(this, start, end);
         StringBuilder str = new StringBuilder();
         while (iter.hasNext()) {
             GlyphLinePart part = iter.next();

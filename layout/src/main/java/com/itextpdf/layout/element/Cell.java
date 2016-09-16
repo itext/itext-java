@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -46,18 +45,17 @@ package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Cell} is one piece of data in an enclosing grid, the {@link Table}.
@@ -121,18 +119,34 @@ public class Cell extends BlockElement<Cell> {
         return cellRenderer == null ? makeNewRenderer() : cellRenderer;
     }
 
+    /**
+     * Gets {@link #row the number of the row} in which the cell is located.
+     * @return the row number
+     */
     public int getRow() {
         return row;
     }
 
+    /**
+     * Gets {@link #row the number of the column} in which the cell is located.
+     * @return the column number
+     */
     public int getCol() {
         return col;
     }
 
+    /**
+     * Gets the {@link #rowspan rowspan} of the cell.
+     * @return the rowspan
+     */
     public int getRowspan() {
         return rowspan;
     }
 
+    /**
+     * Gets the {@link #colspan colspan} of the cell.
+     * @return the colspan
+     */
     public int getColspan() {
         return colspan;
     }
@@ -202,14 +216,14 @@ public class Cell extends BlockElement<Cell> {
     public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
             case Property.BORDER:
-                return (T1) DEFAULT_BORDER;
+                return (T1) (Object) DEFAULT_BORDER;
             case Property.PADDING_BOTTOM:
             case Property.PADDING_LEFT:
             case Property.PADDING_RIGHT:
             case Property.PADDING_TOP:
-                return (T1) Float.valueOf(2);
+                return (T1) (Object) 2f;
             default:
-                return super.getDefaultProperty(property);
+                return super.<T1>getDefaultProperty(property);
         }
     }
 

@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -52,6 +51,10 @@ import com.itextpdf.kernel.color.Color;
  * Draws a border with rounded dots aroudn the element it's been set to. For square dots see {@link com.itextpdf.layout.border.DottedBorder}.
  */
 public class RoundDotsBorder extends Border {
+
+    /**
+     * The modifier to be applied on the width to have the initial gap size
+     */
     private static final float GAP_MODIFIER = 2.5f;
 
     /**
@@ -73,11 +76,17 @@ public class RoundDotsBorder extends Border {
         super(color, width);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getType() {
         return Border.ROUND_DOTS;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
         float initialGap = width * GAP_MODIFIER;
@@ -117,6 +126,9 @@ public class RoundDotsBorder extends Border {
                 .stroke();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
         float initialGap = width * GAP_MODIFIER;
@@ -142,6 +154,13 @@ public class RoundDotsBorder extends Border {
                 .stroke();
     }
 
+    /**
+     * Adjusts the size of the gap between dots
+     *
+     * @param distance the {@link Border border} length
+     * @param initialGap the initial size of the gap
+     * @return the adjusted size of the gap
+     */
     protected float getDotsGap(double distance, float initialGap) {
         double gapsNum = Math.ceil(distance / initialGap);
         return (float) (distance / gapsNum);

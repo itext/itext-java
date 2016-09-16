@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,9 +43,9 @@
  */
 package com.itextpdf.io.font.otf;
 
-import java.util.HashMap;
+import com.itextpdf.io.util.IntHashtable;
+
 import java.util.List;
-import java.util.Map;
 
 /**
  * LookupType 1: Single Substitution Subtable
@@ -54,11 +53,11 @@ import java.util.Map;
  */
 public class GsubLookupType1 extends OpenTableLookup {
 
-    private Map<Integer,Integer> substMap;
+    private IntHashtable substMap;
 
     public GsubLookupType1(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
         super(openReader, lookupFlag, subTableLocations);
-        substMap = new HashMap<>();
+        substMap = new IntHashtable();
         readSubTables();
     }
 
@@ -70,8 +69,8 @@ public class GsubLookupType1 extends OpenTableLookup {
         Glyph g = line.get(line.idx);
         boolean changed = false;
         if (!openReader.isSkip(g.getCode(), lookupFlag)) {
-            Integer substCode = substMap.get(g.getCode());
-            if (substCode != null) {
+            int substCode = substMap.get(g.getCode());
+            if (substCode != 0) {
                 line.substituteOneToOne(openReader, substCode);
                 changed = true;
             }

@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -48,7 +47,8 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStra
 import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
 import com.itextpdf.kernel.pdf.PdfPage;
 
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class PdfTextExtractor {
 
@@ -57,15 +57,29 @@ public final class PdfTextExtractor {
 
     /**
      * Extract text from a specified page using an extraction strategy.
+     * Also allows registration of custom IContentOperators that can influence
+     * how (and whether or not) the PDF instructions will be parsed.
+     *
+     * @param page     the page for the text to be extracted from
+     * @param strategy the strategy to use for extracting text
+     * @param additionalContentOperators an optional map of custom {@link IContentOperator}s for rendering instructions
+     * @return the extracted text
+     */
+    public static String getTextFromPage(PdfPage page, ITextExtractionStrategy strategy, Map<String, IContentOperator> additionalContentOperators) {
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(strategy, additionalContentOperators);
+        parser.processPageContent(page);
+        return strategy.getResultantText();
+    }
+    
+    /**
+     * Extract text from a specified page using an extraction strategy.
      *
      * @param page     the page for the text to be extracted from
      * @param strategy the strategy to use for extracting text
      * @return the extracted text
      */
     public static String getTextFromPage(PdfPage page, ITextExtractionStrategy strategy) {
-        PdfCanvasProcessor parser = new PdfCanvasProcessor(strategy);
-        parser.processPageContent(page);
-        return strategy.getResultantText();
+        return getTextFromPage(page, strategy, new HashMap<String, IContentOperator>());
     }
 
     /**
@@ -76,7 +90,7 @@ public final class PdfTextExtractor {
      * @param page the page for the text to be extracted from
      * @return the extracted text
      */
-    public static String getTextFromPage(PdfPage page) throws IOException {
+    public static String getTextFromPage(PdfPage page) {
         return getTextFromPage(page, new LocationTextExtractionStrategy());
     }
 }

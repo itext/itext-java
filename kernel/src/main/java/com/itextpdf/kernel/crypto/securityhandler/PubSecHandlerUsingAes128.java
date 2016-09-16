@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -59,6 +58,9 @@ import java.security.Key;
 import java.security.cert.Certificate;
 
 public class PubSecHandlerUsingAes128 extends PubKeySecurityHandler {
+    private static final byte[] salt = {(byte) 0x73, (byte) 0x41, (byte) 0x6c,
+            (byte) 0x54};
+
     public PubSecHandlerUsingAes128(PdfDictionary encryptionDictionary, Certificate[] certs, int[] permissions, boolean encryptMetadata, boolean embeddedFilesOnly) {
         initKeyAndFillDictionary(encryptionDictionary, certs, permissions, encryptMetadata, embeddedFilesOnly);
     }
@@ -78,6 +80,23 @@ public class PubSecHandlerUsingAes128 extends PubKeySecurityHandler {
         return new AesDecryptor(nextObjectKey, 0, nextObjectKeySize);
     }
 
+    @Override
+    public void setHashKeyForNextObject(int objNumber, int objGeneration) {
+        md5.reset(); // added by ujihara
+        extra[0] = (byte) objNumber;
+        extra[1] = (byte) (objNumber >> 8);
+        extra[2] = (byte) (objNumber >> 16);
+        extra[3] = (byte) objGeneration;
+        extra[4] = (byte) (objGeneration >> 8);
+        md5.update(mkey);
+        md5.update(extra);
+        md5.update(salt);
+        nextObjectKey = md5.digest();
+        nextObjectKeySize = mkey.length + 5;
+        if (nextObjectKeySize > 16)
+            nextObjectKeySize = 16;
+    }
+
     protected String getDigestAlgorithm() {
         return "SHA-1";
     }
@@ -91,6 +110,7 @@ public class PubSecHandlerUsingAes128 extends PubKeySecurityHandler {
     protected void setPubSecSpecificHandlerDicEntries(PdfDictionary encryptionDictionary, boolean encryptMetadata, boolean embeddedFilesOnly) {
         encryptionDictionary.put(PdfName.Filter, PdfName.Adobe_PubSec);
         encryptionDictionary.put(PdfName.SubFilter, PdfName.Adbe_pkcs7_s5);
+
         encryptionDictionary.put(PdfName.R, new PdfNumber(4));
         encryptionDictionary.put(PdfName.V, new PdfNumber(4));
 
@@ -101,6 +121,7 @@ public class PubSecHandlerUsingAes128 extends PubKeySecurityHandler {
             stdcf.put(PdfName.EncryptMetadata, PdfBoolean.FALSE);
         }
         stdcf.put(PdfName.CFM, PdfName.AESV2);
+        stdcf.put(PdfName.Length, new PdfNumber(128));
         PdfDictionary cf = new PdfDictionary();
         cf.put(PdfName.DefaultCryptFilter, stdcf);
         encryptionDictionary.put(PdfName.CF, cf);

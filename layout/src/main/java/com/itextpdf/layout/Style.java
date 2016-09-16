@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -61,7 +60,7 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return the left margin width, as a <code>float</code>
      */
     public Float getMarginLeft() {
-        return getProperty(Property.MARGIN_LEFT);
+        return this.<Float>getProperty(Property.MARGIN_LEFT);
     }
 
     /**
@@ -71,7 +70,7 @@ public class Style extends ElementPropertyContainer<Style> {
      */
     public Style setMarginLeft(float value) {
         setProperty(Property.MARGIN_LEFT, value);
-        return this;
+        return (Style) (Object) this;
     }
 
     /**
@@ -79,7 +78,7 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return the right margin width, as a <code>float</code>
      */
     public Float getMarginRight() {
-        return getProperty(Property.MARGIN_RIGHT);
+        return this.<Float>getProperty(Property.MARGIN_RIGHT);
     }
 
     /**
@@ -89,7 +88,7 @@ public class Style extends ElementPropertyContainer<Style> {
      */
     public Style setMarginRight(float value) {
         setProperty(Property.MARGIN_RIGHT, value);
-        return this;
+        return (Style) (Object) this;
     }
 
     /**
@@ -97,7 +96,7 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return the top margin width, as a <code>float</code>
      */
     public Float getMarginTop() {
-        return getProperty(Property.MARGIN_TOP);
+        return this.<Float>getProperty(Property.MARGIN_TOP);
     }
 
     /**
@@ -107,7 +106,7 @@ public class Style extends ElementPropertyContainer<Style> {
      */
     public Style setMarginTop(float value) {
         setProperty(Property.MARGIN_TOP, value);
-        return this;
+        return (Style) (Object) this;
     }
 
     /**
@@ -115,7 +114,7 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return the bottom margin width, as a <code>float</code>
      */
     public Float getMarginBottom() {
-        return getProperty(Property.MARGIN_BOTTOM);
+        return this.<Float>getProperty(Property.MARGIN_BOTTOM);
     }
 
     /**
@@ -125,7 +124,7 @@ public class Style extends ElementPropertyContainer<Style> {
      */
     public Style setMarginBottom(float value) {
         setProperty(Property.MARGIN_BOTTOM, value);
-        return this;
+        return (Style) (Object) this;
     }
 
     /**
@@ -152,7 +151,7 @@ public class Style extends ElementPropertyContainer<Style> {
         setMarginRight(marginRight);
         setMarginBottom(marginBottom);
         setMarginLeft(marginLeft);
-        return this;
+        return (Style) (Object) this;
     }
 
     /**
@@ -160,7 +159,7 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return the left padding width, as a <code>float</code>
      */
     public Float getPaddingLeft() {
-        return getProperty(Property.PADDING_LEFT);
+        return this.<Float>getProperty(Property.PADDING_LEFT);
     }
 
     /**
@@ -170,7 +169,7 @@ public class Style extends ElementPropertyContainer<Style> {
      */
     public Style setPaddingLeft(float value) {
         setProperty(Property.PADDING_LEFT, value);
-        return this;
+        return (Style) (Object) this;
     }
 
     /**
@@ -178,7 +177,7 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return the right padding width, as a <code>float</code>
      */
     public Float getPaddingRight() {
-        return getProperty(Property.PADDING_RIGHT);
+        return this.<Float>getProperty(Property.PADDING_RIGHT);
     }
 
     /**
@@ -188,7 +187,7 @@ public class Style extends ElementPropertyContainer<Style> {
      */
     public Style setPaddingRight(float value) {
         setProperty(Property.PADDING_RIGHT, value);
-        return this;
+        return (Style) (Object) this;
     }
 
     /**
@@ -196,7 +195,7 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return the top padding width, as a <code>float</code>
      */
     public Float getPaddingTop() {
-        return getProperty(Property.PADDING_TOP);
+        return this.<Float>getProperty(Property.PADDING_TOP);
     }
 
     /**
@@ -206,7 +205,7 @@ public class Style extends ElementPropertyContainer<Style> {
      */
     public Style setPaddingTop(float value) {
         setProperty(Property.PADDING_TOP, value);
-        return this;
+        return (Style) (Object) this;
     }
 
     /**
@@ -214,7 +213,7 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return the bottom padding width, as a <code>float</code>
      */
     public Float getPaddingBottom() {
-        return getProperty(Property.PADDING_BOTTOM);
+        return this.<Float>getProperty(Property.PADDING_BOTTOM);
     }
 
     /**
@@ -224,7 +223,7 @@ public class Style extends ElementPropertyContainer<Style> {
      */
     public Style setPaddingBottom(float value) {
         setProperty(Property.PADDING_BOTTOM, value);
-        return this;
+        return (Style) (Object) this;
     }
 
     /**
@@ -234,7 +233,7 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return this element
      */
     public Style setPadding(float commonPadding) {
-        return setPaddings(commonPadding, commonPadding, commonPadding, commonPadding);
+        return (Style) (Object) setPaddings(commonPadding, commonPadding, commonPadding, commonPadding);
     }
 
     /**
@@ -251,7 +250,7 @@ public class Style extends ElementPropertyContainer<Style> {
         setPaddingRight(paddingRight);
         setPaddingBottom(paddingBottom);
         setPaddingLeft(paddingLeft);
-        return this;
+        return (Style) (Object) this;
     }
 
     /**
@@ -262,7 +261,7 @@ public class Style extends ElementPropertyContainer<Style> {
      */
     public Style setVerticalAlignment(VerticalAlignment verticalAlignment) {
         setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
-        return this;
+        return (Style) (Object) this;
     }
 
     /**
@@ -277,7 +276,7 @@ public class Style extends ElementPropertyContainer<Style> {
      */
     public Style setSpacingRatio(float ratio) {
         setProperty(Property.SPACING_RATIO, ratio);
-        return this;
+        return (Style) (Object) this;
     }
 
     /**
@@ -286,7 +285,7 @@ public class Style extends ElementPropertyContainer<Style> {
      * @return the current value of the {@link Property#KEEP_TOGETHER} property
      */
     public Boolean isKeepTogether() {
-        return getProperty(Property.KEEP_TOGETHER);
+        return this.<Boolean>getProperty(Property.KEEP_TOGETHER);
     }
 
     /**
@@ -297,7 +296,7 @@ public class Style extends ElementPropertyContainer<Style> {
      */
     public Style setKeepTogether(boolean keepTogether) {
         setProperty(Property.KEEP_TOGETHER, keepTogether);
-        return this;
+        return (Style) (Object) this;
     }
 
     /**
@@ -308,7 +307,7 @@ public class Style extends ElementPropertyContainer<Style> {
      */
     public Style setRotationAngle(float radAngle) {
         setProperty(Property.ROTATION_ANGLE, radAngle);
-        return this;
+        return (Style) (Object) this;
     }
 
     /**
@@ -319,6 +318,6 @@ public class Style extends ElementPropertyContainer<Style> {
      */
     public Style setRotationAngle(double angle) {
         setProperty(Property.ROTATION_ANGLE, (float) angle);
-        return this;
+        return (Style) (Object) this;
     }
 }

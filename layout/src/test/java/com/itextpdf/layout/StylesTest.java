@@ -22,7 +22,7 @@ public class StylesTest extends ExtendedITextTest {
                 .addStyle(myStyle)
                 .setFontColor(Color.GREEN);
 
-        Assert.assertEquals(Color.GREEN, p.getRenderer().getProperty(Property.FONT_COLOR));
+        Assert.assertEquals(Color.GREEN, p.getRenderer().<Color>getProperty(Property.FONT_COLOR));
     }
 
     @Test
@@ -32,7 +32,7 @@ public class StylesTest extends ExtendedITextTest {
 
         Paragraph p = new Paragraph("text").addStyle(myStyle);
 
-        Assert.assertEquals(Color.RED, p.getRenderer().getProperty(Property.FONT_COLOR));
+        Assert.assertEquals(Color.RED, p.getRenderer().<Color>getProperty(Property.FONT_COLOR));
     }
 
 }

@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -45,7 +44,7 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.io.codec.Base64;
-import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -172,14 +171,7 @@ public class PdfButtonFormField extends PdfFormField {
 
     public PdfButtonFormField setImage(String image) throws IOException {
         InputStream is = new FileInputStream(image);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        int r = is.read();
-        while (r != -1) {
-            baos.write(r);
-            r = is.read();
-        }
-
-        String str = Base64.encodeBytes(baos.toByteArray());
+        String str = Base64.encodeBytes(StreamUtil.inputStreamToArray(is));
         return (PdfButtonFormField) setValue(str);
     }
 

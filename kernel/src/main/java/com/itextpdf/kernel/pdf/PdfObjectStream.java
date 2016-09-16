@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -71,7 +70,8 @@ class PdfObjectStream extends PdfStream {
 
     public PdfObjectStream(PdfDocument doc) {
         super();
-        makeIndirect(doc);
+        //avoid reuse existed references
+        makeIndirect(doc, doc.getXref().createNewIndirectReference(doc));
         getOutputStream().document = doc;
         put(PdfName.Type, PdfName.ObjStm);
         put(PdfName.N, size);
@@ -97,7 +97,6 @@ class PdfObjectStream extends PdfStream {
      * Adds object to the object stream.
      *
      * @param object object to add.
-     * @throws PdfException
      */
     public void addObject(PdfObject object) {
         if (size.intValue() == MAX_OBJ_STREAM_SIZE) {

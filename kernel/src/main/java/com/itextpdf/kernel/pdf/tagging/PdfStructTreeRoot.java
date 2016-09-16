@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -181,7 +180,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             createParentTreeEntryForPage(getDocument().getPage(i + 1));
         }
         getPdfObject().put(PdfName.ParentTree, getParentTreeHandler().buildParentTree());
-        getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber(getDocument().getNextStructParentIndex()));
+        getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber((int) getDocument().getNextStructParentIndex()));
         flushAllKids(this);
         super.flush();
     }
@@ -194,7 +193,6 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      *
      * @param destDocument document to copy structure to. Shall not be current document.
      * @param page2page  association between original page and copied page.
-     * @throws PdfException
      */
     public void copyTo(PdfDocument destDocument, Map<PdfPage, PdfPage> page2page) {
         StructureTreeCopier.copyTo(destDocument, page2page, getDocument());
@@ -209,7 +207,6 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * @param destDocument       document to copy structure to.
      * @param insertBeforePage indicates where the structure to be inserted.
      * @param page2page        association between original page and copied page.
-     * @throws PdfException
      */
     public void copyTo(PdfDocument destDocument, int insertBeforePage, Map<PdfPage, PdfPage> page2page) {
         StructureTreeCopier.copyTo(destDocument, insertBeforePage, page2page, getDocument());

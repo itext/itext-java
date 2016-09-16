@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,44 +43,49 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Link;
-import com.itextpdf.layout.layout.LayoutPosition;
+import com.itextpdf.layout.property.Property;
 
 public class LinkRenderer extends TextRenderer {
 
+    /**
+     * Creates a LinkRenderer from its corresponding layout object.
+     * @param link the {@link com.itextpdf.layout.element.Link} which this object should manage
+     */
     public LinkRenderer(Link link) {
         this (link, link.getText());
     }
 
+    /**
+     * Creates a LinkRenderer from its corresponding layout object, with a custom
+     * text to replace the contents of the {@link com.itextpdf.layout.element.Link}.
+     *
+     * @param linkElement the {@link com.itextpdf.layout.element.Link} which this object should manage
+     * @param text the replacement text
+     */
     public LinkRenderer(Link linkElement, String text) {
         super(linkElement, text);
     }
 
     @Override
-    public void draw(DrawContext drawContext){
+    public void draw(DrawContext drawContext) {
         super.draw(drawContext);
 
-        int position = getPropertyAsInteger(Property.POSITION);
-        if (position == LayoutPosition.RELATIVE) {
+        boolean isRelativePosition = isRelativePosition();
+        if (isRelativePosition) {
             applyAbsolutePositioningTranslation(false);
         }
 
         PdfLinkAnnotation linkAnnotation = ((Link)modelElement).getLinkAnnotation();
-        linkAnnotation.setRectangle(new PdfArray(occupiedArea.getBBox()));
+        Rectangle pdfBBox = calculateAbsolutePdfBBox();
+        linkAnnotation.setRectangle(new PdfArray(pdfBBox));
 
-        Border border = getProperty(Property.BORDER);
-        if (border != null) {
-            linkAnnotation.setBorder(new PdfArray(new float[]{0, 0, border.getWidth()}));
-        } else {
-            linkAnnotation.setBorder(new PdfArray(new float[]{0, 0, 0}));
-        }
-
-        if (position == LayoutPosition.RELATIVE) {
+        if (isRelativePosition) {
             applyAbsolutePositioningTranslation(true);
         }
 

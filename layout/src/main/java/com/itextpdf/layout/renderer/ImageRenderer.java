@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -56,12 +55,11 @@ import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 
 public class ImageRenderer extends AbstractRenderer {
@@ -77,6 +75,11 @@ public class ImageRenderer extends AbstractRenderer {
 
     float[] matrix = new float[6];
 
+    /**
+     * Creates an ImageRenderer from its corresponding layout object.
+     *
+     * @param image the {@link com.itextpdf.layout.element.Image} which this object should manage
+     */
     public ImageRenderer(Image image) {
         super(image);
     }
@@ -89,20 +92,20 @@ public class ImageRenderer extends AbstractRenderer {
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         width = retrieveWidth(layoutBox.getWidth());
-        Float angle = getPropertyAsFloat(Property.ROTATION_ANGLE);
+        Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
         PdfXObject xObject = ((Image) (getModelElement())).getXObject();
         imageWidth = xObject.getWidth();
         imageHeight = xObject.getHeight();
 
         width = width == null ? imageWidth : width;
-        height = width / imageWidth * imageHeight;
+        height = (float) width / imageWidth * imageHeight;
 
-        fixedXPosition = getPropertyAsFloat(Property.X);
-        fixedYPosition = getPropertyAsFloat(Property.Y);
+        fixedXPosition = this.getPropertyAsFloat(Property.X);
+        fixedYPosition = this.getPropertyAsFloat(Property.Y);
 
-        Float horizontalScaling = getPropertyAsFloat(Property.HORIZONTAL_SCALING);
-        Float verticalScaling = getPropertyAsFloat(Property.VERTICAL_SCALING);
+        Float horizontalScaling = this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
+        Float verticalScaling = this.getPropertyAsFloat(Property.VERTICAL_SCALING, 1f);
 
         AffineTransform t = new AffineTransform();
 
@@ -113,26 +116,26 @@ public class ImageRenderer extends AbstractRenderer {
 
         if (horizontalScaling != 1) {
             if (xObject instanceof PdfFormXObject) {
-                t.scale(horizontalScaling, 1);
+                t.scale((float) horizontalScaling, 1);
             }
-            width *= horizontalScaling;
+            width *= (float) horizontalScaling;
         }
         if (verticalScaling != 1) {
             if (xObject instanceof PdfFormXObject) {
-                t.scale(1, verticalScaling);
+                t.scale(1, (float) verticalScaling);
             }
-            height *= verticalScaling;
+            height *= (float) verticalScaling;
         }
 
-        float imageItselfScaledWidth = width;
-        float imageItselfScaledHeight = height;
+        float imageItselfScaledWidth = (float) width;
+        float imageItselfScaledHeight = (float) height;
 
         // See in adjustPositionAfterRotation why angle = 0 is necessary
         if (null == angle) {
             angle = 0f;
         }
-        t.rotate(angle);
-        float scaleCoef = adjustPositionAfterRotation(angle, layoutBox.getWidth(), layoutBox.getHeight());
+        t.rotate((float) angle);
+        float scaleCoef = adjustPositionAfterRotation((float) angle, layoutBox.getWidth(), layoutBox.getHeight());
 
         imageItselfScaledHeight *= scaleCoef;
         imageItselfScaledWidth *= scaleCoef;
@@ -142,23 +145,30 @@ public class ImageRenderer extends AbstractRenderer {
 
         getMatrix(t, imageItselfScaledWidth, imageItselfScaledHeight);
 
-        if (!getPropertyAsBoolean(Property.FORCED_PLACEMENT) && (width > layoutBox.getWidth() || height > layoutBox.getHeight())) {
-            return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+        // indicates whether the placement is forced
+        boolean isPlacingForced = false;
+        if (width > layoutBox.getWidth() || height > layoutBox.getHeight()) {
+            if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+                isPlacingForced = true;
+            } else {
+                return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
+            }
         }
 
         occupiedArea.getBBox().moveDown(height);
         occupiedArea.getBBox().setHeight(height);
-        occupiedArea.getBBox().setWidth(width);
+        occupiedArea.getBBox().setWidth((float) width);
 
-        float leftMargin = getPropertyAsFloat(Property.MARGIN_LEFT);
-        float topMargin = getPropertyAsFloat(Property.MARGIN_TOP);
+        float leftMargin = (float) this.getPropertyAsFloat(Property.MARGIN_LEFT);
+        float topMargin = (float) this.getPropertyAsFloat(Property.MARGIN_TOP);
         if (leftMargin != 0 || topMargin != 0) {
             translateImage(leftMargin, topMargin, t);
             getMatrix(t, imageItselfScaledWidth, imageItselfScaledHeight);
         }
 
         applyMargins(occupiedArea.getBBox(), true);
-        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null,
+                isPlacingForced ? this : null);
     }
 
     @Override
@@ -186,8 +196,8 @@ public class ImageRenderer extends AbstractRenderer {
 
         applyMargins(occupiedArea.getBBox(), false);
 
-        int position = getPropertyAsInteger(Property.POSITION);
-        if (position == LayoutPosition.RELATIVE) {
+        boolean isRelativePosition = isRelativePosition();
+        if (isRelativePosition) {
             applyAbsolutePositioningTranslation(false);
         }
 
@@ -206,8 +216,8 @@ public class ImageRenderer extends AbstractRenderer {
         }
 
         PdfXObject xObject = ((Image) (getModelElement())).getXObject();
-        canvas.addXObject(xObject, matrix[0], matrix[1], matrix[2], matrix[3], fixedXPosition + deltaX, fixedYPosition);
-        if (Boolean.valueOf(true).equals(getPropertyAsBoolean(Property.FLUSH_ON_DRAW))) {
+        canvas.addXObject(xObject, matrix[0], matrix[1], matrix[2], matrix[3], (float) fixedXPosition + deltaX, (float) fixedYPosition);
+        if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FLUSH_ON_DRAW))) {
             xObject.flush();
         }
 
@@ -215,7 +225,7 @@ public class ImageRenderer extends AbstractRenderer {
             canvas.closeTag();
         }
 
-        if (position == LayoutPosition.RELATIVE) {
+        if (isRelativePosition) {
             applyAbsolutePositioningTranslation(true);
         }
 
@@ -236,8 +246,8 @@ public class ImageRenderer extends AbstractRenderer {
             setProperty(Property.HEIGHT, area.getBBox().getWidth() / width * imageHeight);
             setProperty(Property.WIDTH, UnitValue.createPointValue(area.getBBox().getWidth()));
             // if still image is not scaled properly
-            if (getPropertyAsFloat(Property.HEIGHT) > area.getBBox().getHeight()) {
-                setProperty(Property.WIDTH, UnitValue.createPointValue(area.getBBox().getHeight() / getPropertyAsFloat(Property.HEIGHT) * ((UnitValue)getProperty(Property.WIDTH)).getValue()));
+            if (this.getPropertyAsFloat(Property.HEIGHT) > area.getBBox().getHeight()) {
+                setProperty(Property.WIDTH, UnitValue.createPointValue(area.getBBox().getHeight() / (float) this.getPropertyAsFloat(Property.HEIGHT) * (this.<UnitValue>getProperty(Property.WIDTH)).getValue()));
                 setProperty(Property.HEIGHT, UnitValue.createPointValue(area.getBBox().getHeight()));
             }
         }
@@ -261,8 +271,8 @@ public class ImageRenderer extends AbstractRenderer {
             AffineTransform t = AffineTransform.getRotateInstance(angle);
             Point p00 = t.transform(new Point(0, 0), new Point());
             Point p01 = t.transform(new Point(0, height), new Point());
-            Point p10 = t.transform(new Point(width, 0), new Point());
-            Point p11 = t.transform(new Point(width, height), new Point());
+            Point p10 = t.transform(new Point((float) width, 0), new Point());
+            Point p11 = t.transform(new Point((float) width, height), new Point());
 
             double[] xValues = {p01.getX(), p10.getX(), p11.getX()};
             double[] yValues = {p01.getY(), p10.getY(), p11.getY()};
@@ -292,15 +302,15 @@ public class ImageRenderer extends AbstractRenderer {
         // TODO
         float scaleCoeff = 1;
         // hasProperty(Property) checks only properties field, cannot use it
-        if (null != getPropertyAsBoolean(Property.AUTO_SCALE) && getPropertyAsBoolean(Property.AUTO_SCALE)) {
-            scaleCoeff = Math.min(maxWidth / width, maxHeight / height);
+        if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.AUTO_SCALE))) {
+            scaleCoeff = Math.min(maxWidth / (float) width, maxHeight / height);
             height *= scaleCoeff;
             width *= scaleCoeff;
-        } else if (null != getPropertyAsBoolean(Property.AUTO_SCALE_WIDTH) && getPropertyAsBoolean(Property.AUTO_SCALE_WIDTH)) {
-            scaleCoeff = maxWidth / width;
+        } else if (null != getPropertyAsBoolean(Property.AUTO_SCALE_WIDTH) && (boolean) getPropertyAsBoolean(Property.AUTO_SCALE_WIDTH)) {
+            scaleCoeff = maxWidth / (float) width;
             height *= scaleCoeff;
             width = maxWidth;
-        } else if (null != getPropertyAsBoolean(Property.AUTO_SCALE_HEIGHT) && getPropertyAsBoolean(Property.AUTO_SCALE_HEIGHT)) {
+        } else if (null != getPropertyAsBoolean(Property.AUTO_SCALE_HEIGHT) && (boolean) getPropertyAsBoolean(Property.AUTO_SCALE_HEIGHT)) {
             scaleCoeff = maxHeight / height;
             height = maxHeight;
             width *= scaleCoeff;
@@ -313,10 +323,10 @@ public class ImageRenderer extends AbstractRenderer {
         t.translate(xDistance, yDistance);
         t.getMatrix(matrix);
         if (fixedXPosition != null) {
-            fixedXPosition += (float)t.getTranslateX();
+            fixedXPosition += (float) t.getTranslateX();
         }
         if (fixedYPosition != null) {
-            fixedYPosition += (float)t.getTranslateY();
+            fixedYPosition += (float) t.getTranslateY();
         }
     }
 }

@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -202,7 +201,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * @return the left margin width, as a <code>float</code>
      */
     public Float getMarginLeft() {
-        return getProperty(Property.MARGIN_LEFT);
+        return this.<Float>getProperty(Property.MARGIN_LEFT);
     }
 
     /**
@@ -220,7 +219,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * @return the right margin width, as a <code>float</code>
      */
     public Float getMarginRight() {
-        return getProperty(Property.MARGIN_RIGHT);
+        return this.<Float>getProperty(Property.MARGIN_RIGHT);
     }
 
     /**
@@ -238,9 +237,9 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * @return the top margin width, as a <code>float</code>
      */
     public Float getMarginTop() {
-        return getProperty(Property.MARGIN_TOP);
+        return this.<Float>getProperty(Property.MARGIN_TOP);
     }
-    
+
     /**
      * Sets the top margin width of the element.
      * @param value the new top margin width
@@ -256,7 +255,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * @return the bottom margin width, as a <code>float</code>
      */
     public Float getMarginBottom() {
-        return getProperty(Property.MARGIN_BOTTOM);
+        return this.<Float>getProperty(Property.MARGIN_BOTTOM);
     }
 
     /**
@@ -271,7 +270,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Sets the margins around the element to a series of new widths.
-     * 
+     *
      * @param marginTop the new margin top width
      * @param marginRight the new margin right width
      * @param marginBottom the new margin bottom width
@@ -284,7 +283,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Scale the image relative to its default size.
-     * 
+     *
      * @param horizontalScaling the horizontal scaling coefficient. default value 1 = 100%
      * @param verticalScaling the vertical scaling coefficient. default value 1 = 100%
      * @return this element
@@ -298,7 +297,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Scale the image to an absolute size. This method will preserve the
      * width-height ratio of the image.
-     * 
+     *
      * @param fitWidth the new maximum width of the image
      * @param fitHeight the new maximum height of the image
      * @return this element
@@ -312,7 +311,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     /**
      * Scale the image to an absolute size. This method will <em>not</em>
      * preserve the width-height ratio of the image.
-     * 
+     *
      * @param fitWidth the new absolute width of the image
      * @param fitHeight the new absolute height of the image
      * @return this element
@@ -325,14 +324,14 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Sets the autoscale property for both width and height.
-     * 
+     *
      * @param autoScale whether or not to let the image resize automatically
      * @return this image
      */
     public Image setAutoScale(boolean autoScale) {
         if (hasProperty(Property.AUTO_SCALE_WIDTH) && hasProperty(Property.AUTO_SCALE_HEIGHT) && autoScale &&
-                ((Boolean) getProperty(Property.AUTO_SCALE_WIDTH) ||
-                        (Boolean) getProperty(Property.AUTO_SCALE_HEIGHT))) {
+                ((boolean) this.<Boolean>getProperty(Property.AUTO_SCALE_WIDTH) ||
+                        (boolean) this.<Boolean>getProperty(Property.AUTO_SCALE_HEIGHT))) {
             Logger logger = LoggerFactory.getLogger(Image.class);
             logger.warn(LogMessageConstant.IMAGE_HAS_AMBIGUOUS_SCALE);
         }
@@ -342,12 +341,12 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      * Sets the autoscale property for the height of the image.
-     * 
+     *
      * @param autoScale whether or not to let the image height resize automatically
      * @return this image
      */
     public Image setAutoScaleHeight(boolean autoScale) {
-        if (hasProperty(Property.AUTO_SCALE_WIDTH) && autoScale && (Boolean) getProperty(Property.AUTO_SCALE_WIDTH)) {
+        if (hasProperty(Property.AUTO_SCALE_WIDTH) && autoScale && (boolean) this.<Boolean>getProperty(Property.AUTO_SCALE_WIDTH)) {
             setProperty(Property.AUTO_SCALE_WIDTH, false);
             setProperty(Property.AUTO_SCALE_HEIGHT, false);
             setProperty(Property.AUTO_SCALE, true);
@@ -359,12 +358,12 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     /**
      *  Sets the autoscale property for the width of the image.
-     * 
+     *
      * @param autoScale whether or not to let the image width resize automatically
      * @return this image
      */
     public Image setAutoScaleWidth(boolean autoScale) {
-        if (hasProperty(Property.AUTO_SCALE_HEIGHT) && autoScale && (Boolean) getProperty(Property.AUTO_SCALE_HEIGHT)) {
+        if (hasProperty(Property.AUTO_SCALE_HEIGHT) && autoScale && (boolean) this.<Boolean>getProperty(Property.AUTO_SCALE_HEIGHT)) {
             setProperty(Property.AUTO_SCALE_WIDTH, false);
             setProperty(Property.AUTO_SCALE_HEIGHT, false);
             setProperty(Property.AUTO_SCALE, true);
@@ -378,7 +377,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * Sets values for a absolute repositioning of the Element. Also has as a
      * side effect that the Element's {@link Property#POSITION} is changed to 
      * {@link LayoutPosition#FIXED fixed}.
-     * 
+     *
      * @param x horizontal position on the page
      * @param y vertical position on the page
      * @return this image.
@@ -392,7 +391,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * Sets values for a absolute repositioning of the Element, on a specific
      * page. Also has as a side effect that the Element's {@link
      * Property#POSITION} is changed to {@link LayoutPosition#FIXED fixed}.
-     * 
+     *
      * @param pageNumber the page where the element must be positioned
      * @param x horizontal position on the page
      * @param y vertical position on the page
@@ -401,19 +400,6 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     public Image setFixedPosition(int pageNumber, float x, float y) {
         setFixedPosition(pageNumber, x, y, getWidth());
         return this;
-    }
-
-    @Override
-    public <T1> T1 getDefaultProperty(int property) {
-        switch (property) {
-            case Property.AUTO_SCALE:
-                return (T1) Boolean.valueOf(false);
-            case Property.HORIZONTAL_SCALING:
-            case Property.VERTICAL_SCALING:
-                return (T1) Float.valueOf(1);
-            default:
-                return super.getDefaultProperty(property);
-        }
     }
 
     /**
@@ -439,9 +425,9 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * @return the current scaled width
      */
     public float getImageScaledWidth() {
-        return null == getProperty(Property.HORIZONTAL_SCALING) ?
+        return null == this.<Float>getProperty(Property.HORIZONTAL_SCALING) ?
                 xObject.getWidth() :
-                xObject.getWidth() * (Float) getProperty(Property.HORIZONTAL_SCALING);
+                xObject.getWidth() * (float) this.<Float>getProperty(Property.HORIZONTAL_SCALING);
     }
 
     /**
@@ -449,9 +435,9 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      * @return the current scaled height
      */
     public float getImageScaledHeight() {
-        return null == getProperty(Property.VERTICAL_SCALING) ?
+        return null == this.<Float>getProperty(Property.VERTICAL_SCALING) ?
                 xObject.getHeight() :
-                xObject.getHeight() * (Float) getProperty(Property.VERTICAL_SCALING);
+                xObject.getHeight() * (float) this.<Float>getProperty(Property.VERTICAL_SCALING);
     }
 
     @Override

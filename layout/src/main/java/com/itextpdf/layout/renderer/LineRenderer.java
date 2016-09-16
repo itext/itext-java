@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -48,23 +47,11 @@ import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.property.BaseDirection;
-import com.itextpdf.layout.property.Leading;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.TabStop;
-import com.itextpdf.layout.layout.LayoutArea;
-import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.layout.LineLayoutResult;
-import com.itextpdf.layout.layout.TextLayoutResult;
-import com.itextpdf.layout.property.TabAlignment;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.layout.*;
+import com.itextpdf.layout.property.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
+import java.util.*;
 
 public class LineRenderer extends AbstractRenderer {
 
@@ -83,31 +70,40 @@ public class LineRenderer extends AbstractRenderer {
         maxDescent = 0;
         int childPos = 0;
 
-        BaseDirection baseDirection = getProperty(Property.BASE_DIRECTION);
+        BaseDirection baseDirection = this.<BaseDirection>getProperty(Property.BASE_DIRECTION);
         for (IRenderer renderer : childRenderers) {
             if (renderer instanceof TextRenderer) {
+                renderer.setParent(this);
                 ((TextRenderer) renderer).applyOtf();
+                renderer.setParent(null);
                 if (baseDirection == null || baseDirection == BaseDirection.NO_BIDI) {
-                    baseDirection = renderer.getOwnProperty(Property.BASE_DIRECTION);
+                    baseDirection = renderer.<BaseDirection>getOwnProperty(Property.BASE_DIRECTION);
                 }
             }
         }
 
+        List<Integer> unicodeIdsReorderingList = null;
         if (levels == null && baseDirection != null && baseDirection != BaseDirection.NO_BIDI) {
-            List<Integer> unicodeIdsLst = new ArrayList<>();
+            unicodeIdsReorderingList = new ArrayList<>();
+            boolean newLineFound = false;
             for (IRenderer child : childRenderers) {
+                if (newLineFound) {
+                    break;
+                }
                 if (child instanceof TextRenderer) {
                     GlyphLine text = ((TextRenderer) child).getText();
                     for (int i = text.start; i < text.end; i++) {
-                        assert text.get(i).getChars().length > 0;
+                        if (TextRenderer.isNewLine(text, i)) {
+                            newLineFound = true;
+                            break;
+                        }
                         // we assume all the chars will have the same bidi group
                         // we also assume pairing symbols won't get merged with other ones
-                        int unicode = text.get(i).getChars()[0];
-                        unicodeIdsLst.add(unicode);
+                        unicodeIdsReorderingList.add(text.get(i).getUnicode());
                     }
                 }
             }
-            levels = TypographyUtils.getBidiLevels(baseDirection, ArrayUtil.toArray(unicodeIdsLst));
+            levels = unicodeIdsReorderingList.size() > 0 ? TypographyUtils.getBidiLevels(baseDirection, ArrayUtil.toArray(unicodeIdsReorderingList)) : null;
         }
 
         boolean anythingPlaced = false;
@@ -144,11 +140,11 @@ public class LineRenderer extends AbstractRenderer {
             }
 
             if (nextTabStop != null && nextTabStop.getTabAlignment() == TabAlignment.ANCHOR
-                                               && childRenderer instanceof TextRenderer) {
+                    && childRenderer instanceof TextRenderer) {
                 childRenderer.setProperty(Property.TAB_ANCHOR, nextTabStop.getTabAnchor());
             }
 
-            childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
+            childResult = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
 
             float childAscent = 0;
             float childDescent = 0;
@@ -171,12 +167,17 @@ public class LineRenderer extends AbstractRenderer {
                 childResult.getOccupiedArea().getBBox().moveRight(tabWidth);
                 if (childResult.getSplitRenderer() != null)
                     childResult.getSplitRenderer().getOccupiedArea().getBBox().moveRight(tabWidth);
+
+                float tabAndNextElemWidth = tabWidth + childResult.getOccupiedArea().getBBox().getWidth();
+                if (nextTabStop.getTabAlignment() == TabAlignment.RIGHT && curWidth + tabAndNextElemWidth < nextTabStop.getTabPosition()) {
+                    curWidth = nextTabStop.getTabPosition();
+                } else {
+                    curWidth += tabAndNextElemWidth;
+                }
                 nextTabStop = null;
-
-                curWidth += tabWidth;
+            } else {
+                curWidth += childResult.getOccupiedArea().getBBox().getWidth();
             }
-
-            curWidth += childResult.getOccupiedArea().getBBox().getWidth();
             occupiedArea.setBBox(new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight, curWidth, maxHeight));
 
             if (childResult.getStatus() != LayoutResult.FULL) {
@@ -200,8 +201,8 @@ public class LineRenderer extends AbstractRenderer {
                         anythingPlaced = true;
                     }
 
-                    if (childResult.getStatus() == LayoutResult.PARTIAL && childResult.getOverflowRenderer() instanceof ImageRenderer){
-                        ((ImageRenderer)childResult.getOverflowRenderer()).autoScale(layoutContext.getArea());
+                    if (childResult.getStatus() == LayoutResult.PARTIAL && childResult.getOverflowRenderer() instanceof ImageRenderer) {
+                        ((ImageRenderer) childResult.getOverflowRenderer()).autoScale(layoutContext.getArea());
                     }
 
                     if (null != childResult.getOverflowRenderer()) {
@@ -214,9 +215,11 @@ public class LineRenderer extends AbstractRenderer {
                     }
                 }
 
-                result = new LineLayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1]);
-                if (childResult.getStatus() == LayoutResult.PARTIAL && childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isSplitForcedByNewline())
+                result = new LineLayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1],
+                        childResult.getStatus() == LayoutResult.NOTHING ? childResult.getCauseOfNothing() : this);
+                if (childResult.getStatus() == LayoutResult.PARTIAL && childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isSplitForcedByNewline()) {
                     result.setSplitForcedByNewline(true);
+                }
                 break;
             } else {
                 anythingPlaced = true;
@@ -228,7 +231,7 @@ public class LineRenderer extends AbstractRenderer {
             if (anythingPlaced) {
                 result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
             } else {
-                result = new LineLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this);
+                result = new LineLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
             }
         }
 
@@ -333,6 +336,13 @@ public class LineRenderer extends AbstractRenderer {
                     if (levels != null) {
                         overflow.levels = new byte[levels.length - lineLevels.length];
                         System.arraycopy(levels, lineLevels.length, overflow.levels, 0, overflow.levels.length);
+                        if (overflow.levels.length == 0) {
+                            overflow.levels = null;
+                        }
+                    }
+                } else if (result.getStatus() == LayoutResult.NOTHING) {
+                    if (levels != null) {
+                        ((LineRenderer)result.getOverflowRenderer()).levels = levels;
                     }
                 }
             }
@@ -380,7 +390,7 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     protected void justify(float width) {
-        float ratio = getPropertyAsFloat(Property.SPACING_RATIO);
+        float ratio = (float) this.getPropertyAsFloat(Property.SPACING_RATIO);
         float freeWidth = occupiedArea.getBBox().getX() + width -
                 getLastChildRenderer().getOccupiedArea().getBBox().getX() - getLastChildRenderer().getOccupiedArea().getBBox().getWidth();
         int numberOfSpaces = getNumberOfSpaces();
@@ -396,13 +406,13 @@ public class LineRenderer extends AbstractRenderer {
             child.move(lastRightPos - childX, 0);
             childX = lastRightPos;
             if (child instanceof TextRenderer) {
-                float childHSCale = child.getProperty(Property.HORIZONTAL_SCALING);
+                float childHSCale = (float) ((TextRenderer) child).getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
                 child.setProperty(Property.CHARACTER_SPACING, characterSpacing / childHSCale);
                 child.setProperty(Property.WORD_SPACING, wordSpacing / childHSCale);
                 boolean isLastTextRenderer = !iterator.hasNext();
                 float widthAddition = (isLastTextRenderer ? (((TextRenderer) child).lineLength() - 1) : ((TextRenderer) child).lineLength()) * characterSpacing +
                         wordSpacing * ((TextRenderer) child).getNumberOfSpaces();
-                        child.getOccupiedArea().getBBox().setWidth(child.getOccupiedArea().getBBox().getWidth() + widthAddition);
+                child.getOccupiedArea().getBBox().setWidth(child.getOccupiedArea().getBBox().getWidth() + widthAddition);
             }
             lastRightPos = childX + child.getOccupiedArea().getBBox().getWidth();
         }
@@ -450,7 +460,7 @@ public class LineRenderer extends AbstractRenderer {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (IRenderer renderer: childRenderers) {
+        for (IRenderer renderer : childRenderers) {
             sb.append(renderer.toString());
         }
         return sb.toString();
@@ -475,10 +485,9 @@ public class LineRenderer extends AbstractRenderer {
 
         LineRenderer overflowRenderer = createOverflowRenderer();
         overflowRenderer.parent = parent;
-        overflowRenderer.levels = levels;
         overflowRenderer.addAllProperties(getOwnProperties());
 
-        return new LineRenderer[] {splitRenderer, overflowRenderer};
+        return new LineRenderer[]{splitRenderer, overflowRenderer};
     }
 
     protected LineRenderer adjustChildrenYLine() {
@@ -486,8 +495,8 @@ public class LineRenderer extends AbstractRenderer {
         for (IRenderer renderer : childRenderers) {
             if (renderer instanceof TextRenderer) {
                 ((TextRenderer) renderer).moveYLineTo(actualYLine);
-            } else if (renderer instanceof ImageRenderer){
-                renderer.getOccupiedArea().getBBox().setY(occupiedArea.getBBox().getY()- maxDescent);
+            } else if (renderer instanceof ImageRenderer) {
+                renderer.getOccupiedArea().getBBox().setY(occupiedArea.getBBox().getY() - maxDescent);
             } else {
                 renderer.getOccupiedArea().getBBox().setY(occupiedArea.getBBox().getY());
             }
@@ -504,9 +513,9 @@ public class LineRenderer extends AbstractRenderer {
         return this;
     }
 
-    protected boolean containsImage(){
-        for (IRenderer renderer : childRenderers){
-            if (renderer instanceof ImageRenderer){
+    protected boolean containsImage() {
+        for (IRenderer renderer : childRenderers) {
+            if (renderer instanceof ImageRenderer) {
                 return true;
             }
         }
@@ -518,7 +527,7 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     private TabStop getNextTabStop(float curWidth) {
-        NavigableMap<Float, TabStop> tabStops = getProperty(Property.TAB_STOPS);
+        NavigableMap<Float, TabStop> tabStops = this.<NavigableMap<Float, TabStop>>getProperty(Property.TAB_STOPS);
 
         Map.Entry<Float, TabStop> nextTabStopEntry = null;
         TabStop nextTabStop = null;
@@ -570,12 +579,12 @@ public class LineRenderer extends AbstractRenderer {
                 tabWidth = tabStop.getTabPosition() - curWidth - childWidth;
                 break;
             case CENTER:
-                tabWidth = tabStop.getTabPosition() - curWidth - childWidth/2;
+                tabWidth = tabStop.getTabPosition() - curWidth - childWidth / 2;
                 break;
             case ANCHOR:
                 float anchorPosition = -1;
                 if (nextElementRenderer instanceof TextRenderer)
-                    anchorPosition = ((TextRenderer)nextElementRenderer).getTabAnchorCharacterPosition();
+                    anchorPosition = ((TextRenderer) nextElementRenderer).getTabAnchorCharacterPosition();
                 if (anchorPosition == -1)
                     anchorPosition = childWidth;
                 tabWidth = tabStop.getTabPosition() - curWidth - anchorPosition;
@@ -592,11 +601,11 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     private void processDefaultTab(IRenderer tabRenderer, float curWidth, float lineWidth) {
-        Float tabDefault = getPropertyAsFloat(Property.TAB_DEFAULT);
+        Float tabDefault = this.getPropertyAsFloat(Property.TAB_DEFAULT);
         Float tabWidth = tabDefault - curWidth % tabDefault;
         if (curWidth + tabWidth > lineWidth)
             tabWidth = lineWidth - curWidth;
-        tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(tabWidth));
+        tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue((float) tabWidth));
         tabRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
     }
 

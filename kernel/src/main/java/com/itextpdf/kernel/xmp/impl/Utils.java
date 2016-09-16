@@ -453,7 +453,7 @@ public class Utils implements XMPConst
 	 */
 	static String removeControlChars(String value)
 	{
-		StringBuffer buffer = new StringBuffer(value);
+		StringBuilder buffer = new StringBuilder(value);
 		for (int i = 0; i < buffer.length(); i++)
 		{
 			if (isControlChar(buffer.charAt(i)))
@@ -518,8 +518,9 @@ public class Utils implements XMPConst
 		xmlNameChars = new boolean[0x0100];
 		xmlNameStartChars = new boolean[0x0100];
 		
-		for (char ch = 0; ch < xmlNameChars.length; ch++)
+		for (int i = 0; i < xmlNameChars.length; i++)
 		{
+			char ch = (char) i;
 			xmlNameStartChars[ch] =
 				ch == ':'  ||
 				('A' <= ch  &&  ch <= 'Z')  ||

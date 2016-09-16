@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -60,6 +59,11 @@ public final class EncodeHintType {
      * Specifies what character encoding to use where applicable (type String)
      */
     public static final EncodeHintType CHARACTER_SET = new EncodeHintType();
+
+    /**
+    * Specifies the minimal version level to use, for example in QR Codes (type Integer).
+    */
+    public static final EncodeHintType MIN_VERSION_NR = new EncodeHintType();
 
     private EncodeHintType() {
     }

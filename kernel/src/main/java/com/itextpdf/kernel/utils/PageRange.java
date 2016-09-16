@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -49,17 +48,24 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Class representing a page range, for instance a page range can contain
+ * pages 5, then pages 10 through 15, then page 18, then page 21 and so on.
+ */
 public class PageRange {
     private List<Integer> sequenceStarts = new ArrayList<>();
     private List<Integer> sequenceEnds = new ArrayList<>();
 
+    /**
+     * Constructs an empty {@link PageRange} instance.
+     */
     public PageRange() {
     }
 
     /**
-     * You can call specify the page range in a string form, for example: "1-12, 15, 45-66".
+     * Constructs a {@link PageRange} instance from a range in a string form, for example: "1-12, 15, 45-66".
      *
-     * @param pageRange the page range.
+     * @param pageRange the page range
      */
     public PageRange(String pageRange) {
         pageRange = pageRange.replaceAll("\\s+", "");
@@ -78,28 +84,49 @@ public class PageRange {
         }
     }
 
+    /**
+     * Adds a page sequence to the range.
+     * @param startPageNumber the starting page number of the sequence
+     * @param endPageNumber the finishing page number of the sequnce
+     * @return this range, already modified
+     */
     public PageRange addPageSequence(int startPageNumber, int endPageNumber) {
         sequenceStarts.add(startPageNumber);
         sequenceEnds.add(endPageNumber);
         return this;
     }
 
+    /**
+     * Adds a single page to the range.
+     * @param pageNumber the page number to add
+     * @return this range, already modified
+     */
     public PageRange addSinglePage(int pageNumber) {
         sequenceStarts.add(pageNumber);
         sequenceEnds.add(pageNumber);
         return this;
     }
 
+    /**
+     * Gets the list if pages that have been added to the range so far.
+     * @return the list containing page numbers added to the range
+     */
     public List<Integer> getAllPages() {
         List<Integer> allPages = new ArrayList<>();
         for (int ind = 0; ind < sequenceStarts.size(); ind++) {
-            for (int pageInRange = sequenceStarts.get(ind); pageInRange <= sequenceEnds.get(ind); pageInRange++) {
+            for (int pageInRange = (int) sequenceStarts.get(ind); pageInRange <= sequenceEnds.get(ind); pageInRange++) {
                 allPages.add(pageInRange);
             }
         }
         return allPages;
     }
 
+    /**
+     * Checks if a given page is present in the range built so far.
+     *
+     * @param pageNumber the page number to check
+     * @return <code>true</code> if the page is present in this range, <code>false</code> otherwise
+     */
     public boolean isPageInRange(int pageNumber) {
         for (int ind = 0; ind < sequenceStarts.size(); ind++) {
             if (sequenceStarts.get(ind) <= pageNumber && pageNumber <= sequenceEnds.get(ind))
@@ -108,6 +135,9 @@ public class PageRange {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof PageRange))
@@ -117,6 +147,9 @@ public class PageRange {
         return sequenceStarts.equals(other.sequenceStarts) && sequenceEnds.equals(other.sequenceEnds);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return sequenceStarts.hashCode() * 31 + sequenceEnds.hashCode();

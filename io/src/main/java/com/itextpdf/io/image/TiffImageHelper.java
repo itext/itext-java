@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -403,7 +402,7 @@ class TiffImageHelper {
                 // is often missing
 
                 if ((!dir.isTagPresent(TIFFConstants.TIFFTAG_JPEGIFOFFSET))) {
-                    throw new IOException(IOException.MissingTagSForOjpegCompression);
+                    throw new IOException(IOException.MissingTagsForOjpegCompression);
                 }
                 int jpegOffset = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_JPEGIFOFFSET);
                 int jpegLength = (int) s.length() - jpegOffset;
@@ -640,7 +639,7 @@ class TiffImageHelper {
                         dst[dstCount++] = data[srcCount++];
                     }
 
-                } else if (b <= -1 && b >= -127) {
+                } else if ((b & 0x80) != 0 && b != (byte) 0x80) {
                     // 2 byte encoded run packet
                     repeat = data[srcCount++];
                     for (int i = 0; i < (-b + 1); i++) {

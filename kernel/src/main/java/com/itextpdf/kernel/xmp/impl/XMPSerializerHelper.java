@@ -52,11 +52,11 @@ public class XMPSerializerHelper
 	 * serialialize the same XMPMeta objects in two threads.
 	 * 
 	 * @param xmp a metadata implementation object
-	 * @param out the output stream to serialize to
+	 * @param output the output stream to serialize to
 	 * @param options serialization options, can be <code>null</code> for default.
 	 * @throws XMPException
 	 */
-	public static void serialize(XMPMetaImpl xmp, OutputStream out, 
+	public static void serialize(XMPMetaImpl xmp, OutputStream output,
 		SerializeOptions options)
 		throws XMPException
 	{
@@ -67,7 +67,7 @@ public class XMPSerializerHelper
 		{
 			xmp.sort();
 		}
-		new XMPSerializerRDF().serialize(xmp, out, options);
+		new XMPSerializerRDF().serialize(xmp, output, options);
 	}		
 	
 
@@ -89,18 +89,18 @@ public class XMPSerializerHelper
 		options = options != null ? options : new SerializeOptions();		
 		options.setEncodeUTF16BE(true);
 
-		ByteArrayOutputStream out = new ByteArrayOutputStream(2048);
-		serialize(xmp, out, options);
+		ByteArrayOutputStream output = new ByteArrayOutputStream(2048);
+		serialize(xmp, output, options);
 
 		try
 		{
-			return out.toString(options.getEncoding());
+			return output.toString(options.getEncoding());
 		}
 		catch (UnsupportedEncodingException e)
 		{
 			// cannot happen as UTF-8/16LE/BE is required to be implemented in
 			// Java
-			return out.toString();
+			return output.toString();
 		}
 	}
 	

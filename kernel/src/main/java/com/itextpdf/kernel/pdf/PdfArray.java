@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -59,7 +58,7 @@ import java.util.List;
 public class PdfArray extends PdfObject implements Iterable<PdfObject> {
 
     private static final long serialVersionUID = 1617495612878046869L;
-	
+
     protected List<PdfObject> list;
 
     /**
@@ -174,7 +173,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     public PdfArray(List<String> strings, boolean asNames) {
         list = new ArrayList<>(strings.size());
         for (String s : strings) {
-            list.add(asNames ? new PdfName(s) : new PdfString(s));
+            list.add(asNames ? (PdfObject) new PdfName(s) : new PdfString(s));
         }
     }
 
@@ -183,16 +182,43 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     }
 
     public boolean isEmpty() {
-        return list.isEmpty();
+        return list.size() == 0;
     }
 
     public boolean contains(PdfObject o) {
-        return list.contains(o);
+        if (list.contains(o))
+            return true;
+        if (o == null)
+            return false;
+        for (PdfObject pdfObject : this) {
+            if (PdfObject.equalContent(o, pdfObject)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    @Override
+    /**
+     * Returns an iterator over an array of PdfObject elements.
+     * <br/>
+     * <b>NOTE:</b> since 7.0.1 it returns collection of direct objects.
+     * If you want to get {@link PdfIndirectReference} instances for the indirect objects value,
+     * you shall use {@link #get(int, boolean)} method.
+     *
+     * @return an Iterator.
+     */
     public Iterator<PdfObject> iterator() {
-        return list.iterator();
+        return new PdfArrayDirectIterator(list.iterator());
+    }
+
+    /**
+     * Returns an iterator over an array of PdfObject elements.
+     *
+     * @deprecated Use {@link #iterator()} instead.
+     */
+    @Deprecated
+    public Iterator<PdfObject> directIterator() {
+        return new PdfArrayDirectIterator(list.iterator());
     }
 
     public void add(PdfObject pdfObject) {
@@ -200,7 +226,17 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     }
 
     public void remove(PdfObject o) {
-        list.remove(o);
+        if (list.remove(o))
+            return;
+        if (o == null)
+            return;
+        Iterator<PdfObject> it = iterator();
+        while (it.hasNext()) {
+            if (PdfObject.equalContent(o, it.next())) {
+                it.remove();
+                return;
+            }
+        }
     }
 
     /**
@@ -240,7 +276,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     /**
      * Sets the PdfObject at the specified index in the PdfArray.
      *
-     * @param index the position to set the PdfObject
+     * @param index   the position to set the PdfObject
      * @param element PdfObject to be added
      * @return true if the operation changed the PdfArray
      * @see java.util.List#set(int, Object)
@@ -250,9 +286,9 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     }
 
     /**
-     * Adds the specified PdfObject qt the specified index. All objects after this index will be shifted by 1.
+     * Adds the specified PdfObject at the specified index. All objects after this index will be shifted by 1.
      *
-     * @param index position to insert the PdfObject
+     * @param index   position to insert the PdfObject
      * @param element PdfObject to be added
      * @see java.util.List#add(int, Object)
      */
@@ -279,14 +315,23 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      * @see java.util.List#indexOf(Object)
      */
     public int indexOf(PdfObject o) {
-        return list.indexOf(o);
+        if (o == null)
+            return list.indexOf(null);
+        int index = 0;
+        for (PdfObject pdfObject : this) {
+            if (PdfObject.equalContent(o, pdfObject)) {
+                return index;
+            }
+            index++;
+        }
+        return -1;
     }
 
     /**
      * Returns a sublist of this PdfArray, starting at fromIndex (inclusive) and ending at toIndex (exclusive).
      *
      * @param fromIndex the position of the first element in the sublist (inclusive)
-     * @param toIndex the position of the last element in the sublist (exclusive)
+     * @param toIndex   the position of the last element in the sublist (exclusive)
      * @return List of PdfObjects
      * @see java.util.List#subList(int, int)
      */
@@ -365,7 +410,6 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
 
     /**
      * @param asDirect true is to extract direct object always.
-     * @throws PdfException
      */
     public PdfObject get(int index, boolean asDirect) {
         if (!asDirect)

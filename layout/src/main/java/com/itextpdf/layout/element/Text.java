@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -72,21 +71,19 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
         this.text = text;
     }
 
-    @Override
-    public <T1> T1 getDefaultProperty(int property) {
-        switch (property) {
-            case Property.HORIZONTAL_SCALING:
-            case Property.VERTICAL_SCALING:
-                return (T1) new Float(1);
-            default:
-                return super.getDefaultProperty(property);
-        }
-    }
-
+    /**
+     * Gets the contents of the Text object that will be rendered.
+     * 
+     * @return the string with the contents
+     */
     public String getText() {
         return text;
     }
 
+    /**
+     * Sets the contents of the Text object.
+     * @param text the new contents
+     */
     public void setText(String text) {
         this.text = text;
     }
@@ -96,7 +93,7 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
      * @return the vertical distance from the text's default base line, as a float.
      */
     public float getTextRise() {
-        return getProperty(Property.TEXT_RISE);
+        return (float)this.<Float>getProperty(Property.TEXT_RISE);
     }
 
     /**
@@ -106,7 +103,7 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
      */
     public Text setTextRise(float textRise) {
         setProperty(Property.TEXT_RISE, textRise);
-        return this;
+        return (Text) (Object) this;
     }
 
     /**
@@ -115,7 +112,7 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
      * @return the horizontal spacing, as a <code>float</code>
      */
     public Float getHorizontalScaling() {
-        return getProperty(Property.HORIZONTAL_SCALING);
+        return this.<Float>getProperty(Property.HORIZONTAL_SCALING);
     }
 
 
@@ -130,7 +127,7 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
     public Text setSkew(float alpha, float beta){
         alpha = (float) Math.tan(alpha * Math.PI / 180);
         beta = (float) Math.tan(beta * Math.PI / 180);
-        setProperty(Property.SKEW, new Float[]{alpha, beta});
+        setProperty(Property.SKEW, new float[]{alpha, beta});
         return this;
     }
 
@@ -144,7 +141,7 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
      */
     public Text setHorizontalScaling(float horizontalScaling) {
         setProperty(Property.HORIZONTAL_SCALING, horizontalScaling);
-        return this;
+        return (Text) (Object) this;
     }
 
     @Override

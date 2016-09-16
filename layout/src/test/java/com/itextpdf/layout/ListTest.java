@@ -1,33 +1,30 @@
 package com.itextpdf.layout;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.element.AreaBreak;
-import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.List;
-import com.itextpdf.layout.element.ListItem;
-import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolAlignment;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 @Category(IntegrationTest.class)
-public class ListTest extends ExtendedITextTest{
+public class ListTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/ListTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/ListTest/";
@@ -41,7 +38,7 @@ public class ListTest extends ExtendedITextTest{
     public void nestedListTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "nestedListTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_nestedListTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -67,7 +64,7 @@ public class ListTest extends ExtendedITextTest{
     public void listNumberingTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "listNumberingTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_listNumberingTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -96,10 +93,82 @@ public class ListTest extends ExtendedITextTest{
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(count = 8, messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void addListOnShortPage1() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "addListOnShortPage1.pdf";
+        String cmpFileName = sourceFolder + "cmp_addListOnShortPage1.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(500, 60));
+
+        ListItem item = new ListItem();
+        ListItem nestedItem = new ListItem();
+        List list = new List(ListNumberingType.DECIMAL);
+        List nestedList = new List(ListNumberingType.ENGLISH_UPPER);
+        List nestedNestedList = new List(ListNumberingType.GREEK_LOWER);
+
+        nestedNestedList.add("Hello");
+        nestedNestedList.add("World");
+        nestedItem.add(nestedNestedList);
+
+        nestedList.add(nestedItem);
+        nestedList.add(nestedItem);
+
+        item.add(nestedList);
+
+        list.add(item);
+        list.add(item);
+
+        doc.add(list);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(count = 3, messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void addListOnShortPage2() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "addListOnShortPage2.pdf";
+        String cmpFileName = sourceFolder + "cmp_addListOnShortPage2.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(500, 130));
+        List list = new List(ListNumberingType.DECIMAL);
+
+        ListItem item = new ListItem();
+        item.add(new Paragraph("Red"));
+        item.add(new Paragraph("Is"));
+        item.add(new Paragraph("The"));
+        item.add(new Paragraph("Color"));
+        item.add(new Image(ImageDataFactory.create(sourceFolder + "red.png")));
+
+        List nestedList = new List(ListNumberingType.ENGLISH_UPPER);
+        nestedList.add("Hello");
+        nestedList.add("World");
+
+        item.add(nestedList);
+
+        for (int i = 0; i < 3; i++) {
+            list.add(item);
+        }
+
+        doc.add(list);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
     public void divInListItemTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "divInListItemTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_divInListItemTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -115,7 +184,7 @@ public class ListTest extends ExtendedITextTest{
     public void listOverflowTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "listOverflowTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_listOverflowTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -126,7 +195,7 @@ public class ListTest extends ExtendedITextTest{
                 add("third string").
                 add("fourth string");
 
-        for (int i = 0; i < 28; i++){
+        for (int i = 0; i < 28; i++) {
             document.add(p);
         }
 
@@ -141,7 +210,7 @@ public class ListTest extends ExtendedITextTest{
     public void listOverflowTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "listOverflowTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_listOverflowTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -150,9 +219,9 @@ public class ListTest extends ExtendedITextTest{
                 add("first string");
         ListItem item = (ListItem) new ListItem("second string").add(new Paragraph("third string"));
         list.add(item).
-            add("fourth item");
+                add("fourth item");
 
-        for (int i = 0; i < 28; i++){
+        for (int i = 0; i < 28; i++) {
             document.add(p);
         }
 
@@ -167,7 +236,7 @@ public class ListTest extends ExtendedITextTest{
     public void listOverflowTest03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "listOverflowTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_listOverflowTest03.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -179,7 +248,7 @@ public class ListTest extends ExtendedITextTest{
                 add("third string").
                 add("fourth string");
 
-        for (int i = 0; i < 28; i++){
+        for (int i = 0; i < 28; i++) {
             document.add(p);
         }
 
@@ -194,7 +263,7 @@ public class ListTest extends ExtendedITextTest{
     public void listEmptyItemTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "listEmptyItemTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_listEmptyItemTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -212,7 +281,7 @@ public class ListTest extends ExtendedITextTest{
     public void imageInListTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageInListTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_imageInListTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -232,7 +301,7 @@ public class ListTest extends ExtendedITextTest{
     public void listItemAlignmentTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "listItemAlignmentTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_listItemAlignmentTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 

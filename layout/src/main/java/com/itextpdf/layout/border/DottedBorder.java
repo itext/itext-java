@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -53,10 +52,14 @@ import com.itextpdf.kernel.color.Color;
  */
 public class DottedBorder extends Border {
 
+    /**
+     * The modifier to be applied on the width to have the initial gap size
+     */
     private static final float GAP_MODIFIER = 1.5f;
 
     /**
      * Creates a DottedBorder instance with the specified width. The color is set to the default: black.
+     *
      * @param width width of the border
      */
     public DottedBorder(float width) {
@@ -73,11 +76,17 @@ public class DottedBorder extends Border {
         super(color, width);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getType() {
         return Border.DOTTED;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
         float initialGap = width * GAP_MODIFIER;
@@ -120,6 +129,9 @@ public class DottedBorder extends Border {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
         float initialGap = width * GAP_MODIFIER;
@@ -143,6 +155,13 @@ public class DottedBorder extends Border {
                 restoreState();
     }
 
+    /**
+     * Adjusts the size of the gap between dots
+     *
+     * @param distance the {@link Border border} length
+     * @param initialGap the initial size of the gap
+     * @return the adjusted size of the gap
+     */
     protected float getDotsGap(double distance, float initialGap) {
         double gapsNum = Math.ceil(distance / initialGap);
         return (float) (distance / gapsNum);

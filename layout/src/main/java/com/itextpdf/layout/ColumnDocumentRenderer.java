@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -55,14 +54,32 @@ import com.itextpdf.layout.renderer.DocumentRenderer;
  */
 public class ColumnDocumentRenderer extends DocumentRenderer {
 
-    private Rectangle[] columns;
-    private int nextAreaNumber;
+    protected Rectangle[] columns;
+    protected int nextAreaNumber;
 
+    /**
+     * Creates a ColumnDocumentRenderer. Sets {@link #immediateFlush} to true.
+     * 
+     * @param document the {@link Document} on which this Renderer will calculate
+     * and execute element placements
+     * @param columns an array of {@link Rectangle} specifying the acceptable
+     * positions for elements on a page
+     */
     public ColumnDocumentRenderer(Document document, Rectangle[] columns) {
         super(document);
         this.columns = columns;
     }
 
+    /**
+     * Creates a ColumnDocumentRenderer whose elements need not be flushed
+     * immediately.
+     * 
+     * @param document the {@link Document} on which this Renderer will calculate
+     * and execute element placements
+     * @param immediateFlush whether or not to flush contents as soon as possible
+     * @param columns an array of {@link Rectangle} specifying the acceptable
+     * positions for elements on a page
+     */
     public ColumnDocumentRenderer(Document document, boolean immediateFlush, Rectangle[] columns) {
         super(document, immediateFlush);
         this.columns = columns;
@@ -77,5 +94,14 @@ public class ColumnDocumentRenderer extends DocumentRenderer {
             super.updateCurrentArea(overflowResult);
         }
         return (currentArea = new LayoutArea(currentPageNumber, columns[nextAreaNumber++ % columns.length].clone()));
+    }
+    
+    /**
+     * Gets the array index of the next area that will be written on after the
+     * current one is full (overflowed).
+     * @return the array index of the next area that will be written on
+     */
+    public int getNextAreaNumber() {
+        return nextAreaNumber;
     }
 }

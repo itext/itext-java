@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -49,11 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Class to read a JBIG2 file at a basic level: understand all the segments,
@@ -157,7 +152,7 @@ public class Jbig2SegmentReader {
          */
         public byte[] getData(boolean for_embedding) throws java.io.IOException {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
-            for (Integer sn : segs.keySet()) {
+            for (int sn : segs.keySet()) {
                 Jbig2Segment s = segs.get(sn);
 
                 // pdf reference 1.4, section 3.3.6 Jbig2Decode Filter
@@ -226,9 +221,8 @@ public class Jbig2SegmentReader {
                 tmp = readHeader();
                 segments.put(tmp.segmentNumber, tmp);
             } while (tmp.type != END_OF_FILE);
-            Iterator<Integer> segs = segments.keySet().iterator();
-            while (segs.hasNext()) {
-                readSegment(segments.get(segs.next()));
+            for (int integer : segments.keySet()) {
+                readSegment(segments.get(integer));
             }
         }
     }
@@ -409,8 +403,9 @@ public class Jbig2SegmentReader {
         return pages.get(page);
     }
 
-    public byte[] getGlobal(boolean for_embedding) {
+    public byte[] getGlobal(boolean for_embedding){
         ByteArrayOutputStream os = new ByteArrayOutputStream();
+        byte[] streamBytes = null;
         try {
             for (Object element : globals) {
                 Jbig2Segment s = (Jbig2Segment) element;
@@ -421,15 +416,17 @@ public class Jbig2SegmentReader {
                 os.write(s.headerData);
                 os.write(s.data);
             }
+
+            if (os.size() > 0) {
+                streamBytes = os.toByteArray();
+            }
             os.close();
         } catch (java.io.IOException e) {
             Logger logger = LoggerFactory.getLogger(Jbig2SegmentReader.class);
             logger.debug(e.getMessage());
         }
-        if (os.size() <= 0) {
-            return null;
-        }
-        return os.toByteArray();
+
+        return streamBytes;
     }
 
     @Override

@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -199,8 +198,8 @@ public class MetaFont extends MetaObject {
             font = FontProgramFactory.createFont(fontName);
             encoding = FontEncoding.createFontEncoding(PdfEncodings.WINANSI);
         }
-        catch (Exception e) {
-            throw new RuntimeException(e);
+        catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
         }
 
         return font;

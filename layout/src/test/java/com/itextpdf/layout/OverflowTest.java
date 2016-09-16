@@ -6,19 +6,16 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.test.ExtendedITextTest;
-
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class OverflowTest extends ExtendedITextTest{
@@ -35,7 +32,7 @@ public class OverflowTest extends ExtendedITextTest{
     public void textOverflowTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "textOverflowTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_textOverflowTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -56,7 +53,7 @@ public class OverflowTest extends ExtendedITextTest{
     public void textOverflowTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "textOverflowTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_textOverflowTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -75,7 +72,7 @@ public class OverflowTest extends ExtendedITextTest{
     public void textOverflowTest03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "textOverflowTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_textOverflowTest03.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -94,7 +91,7 @@ public class OverflowTest extends ExtendedITextTest{
     public void textOverflowTest04() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "textOverflowTest04.pdf";
         String cmpFileName = sourceFolder + "cmp_textOverflowTest04.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 

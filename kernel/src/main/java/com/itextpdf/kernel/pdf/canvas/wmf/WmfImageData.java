@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,12 +43,11 @@
  */
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.io.image.ImageData;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -81,19 +79,20 @@ public class WmfImageData extends ImageData {
         super(url, ImageType.WMF);
         byte[] imageType = readImageType(url);
         if (!imageTypeIs(imageType, wmf)) {
-            throw new PdfException(PdfException.IsNotWmfImage);
+            throw new PdfException(PdfException.NotAWmfImage);
         }
     }
 
     /**
      * Creates a WmfImage from a byte[].
+     *
      * @param bytes the image bytes
      */
     public WmfImageData(byte[] bytes) {
         super(bytes, ImageType.WMF);
         byte[] imageType = readImageType(url);
         if (!imageTypeIs(imageType, wmf)) {
-            throw new PdfException(PdfException.IsNotWmfImage);
+            throw new PdfException(PdfException.NotAWmfImage);
         }
     }
 
@@ -105,14 +104,10 @@ public class WmfImageData extends ImageData {
         return true;
     }
 
-    private static <T> byte[] readImageType(T source) {
+    private static byte[] readImageType(URL source) {
         InputStream is = null;
         try {
-            if (source instanceof URL) {
-                is = ((URL) source).openStream();
-            } else {
-                is = new ByteArrayInputStream((byte[])source);
-            }
+            is = source.openStream();
             byte[] bytes = new byte[8];
             is.read(bytes);
             return bytes;
@@ -122,7 +117,8 @@ public class WmfImageData extends ImageData {
             if (is != null) {
                 try {
                     is.close();
-                } catch (IOException ignored) { }
+                } catch (IOException ignored) {
+                }
             }
         }
 

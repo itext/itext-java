@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -59,14 +58,16 @@ import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.SubstituteLoggerFactory;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.IThrowableProxy;
+import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import ch.qos.logback.core.read.ListAppender;
 
 
 public class LogListener extends TestWatcher {
-
 
     private static final String ROOT_ITEXT_PACKAGE = "com.itextpdf";
 
@@ -155,36 +156,45 @@ public class LogListener extends TestWatcher {
 
     private void checkLogMessages(Description description) {
         Annotation annotation = description.getAnnotation(LogMessages.class);
+        int checkedMessages = 0;
         if (annotation != null) {
             LogMessages logMessages = (LogMessages) annotation;
-            if (!logMessages.ignore()) {
-                LogMessage[] messages = logMessages.messages();
-                for (LogMessage logMessage : messages) {
-                    int foundedCount = contains(logMessage.messageTemplate());
-                    if (foundedCount != logMessage.count()) {
-                        Assert.assertTrue(MessageFormat.format("{0}.{1}: Some log messages are not found in test execution - {2} messages",
-                                        description.getClassName(),
-                                        description.getMethodName(),
-                                        logMessage.count() - foundedCount),
-                                false);
-                    }
+            LogMessage[] messages = logMessages.messages();
+            for (LogMessage logMessage : messages) {
+                int foundCount = contains(logMessage.messageTemplate());
+                if (foundCount != logMessage.count() && !logMessages.ignore()) {
+                    Assert.fail(MessageFormat.format("{0}:{1} Expected to find {2}, but found {3} messages with the following content: \"{4}\"",
+                                    description.getClassName(), description.getMethodName(), logMessage.count(), foundCount, logMessage.messageTemplate()));
+                } else {
+                    checkedMessages += foundCount;
                 }
             }
-        } else {
-            if (getSize() > 0) {
-                Assert.assertTrue(MessageFormat.format("{0}.{1}: The test does not check the message logging - {2} messages",
-                                description.getClassName(),
-                                description.getMethodName(),
-                                getSize()),
-                        false);
-            }
+        }
+        if (getSize() > checkedMessages) {
+            Assert.fail(MessageFormat.format("{0}.{1}: The test does not check the message logging - {2} messages",
+                            description.getClassName(),
+                            description.getMethodName(),
+                            getSize() - checkedMessages));
         }
     }
 
     private class CustomListAppender<E> extends ListAppender<ILoggingEvent> {
         protected void append(ILoggingEvent e) {
             System.out.println(e.getLoggerName() + " " + e.getLevel() + " " + e.getMessage());
-            this.list.add(e);
+            printStackTraceIfAny(e);
+            if (e.getLevel().isGreaterOrEqual(Level.WARN)) {
+                this.list.add(e);
+            }
+        }
+
+        private void printStackTraceIfAny(ILoggingEvent e) {
+            IThrowableProxy throwableProxy = e.getThrowableProxy();
+            if (throwableProxy != null) {
+                System.out.println(throwableProxy.getMessage());
+                for (StackTraceElementProxy el : throwableProxy.getStackTraceElementProxyArray()) {
+                    System.out.println("\t" + el);
+                }
+            }
         }
     }
 

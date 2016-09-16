@@ -1,11 +1,11 @@
 package com.itextpdf.io.source;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Random;
-
 import com.itextpdf.io.util.DecimalFormatUtil;
 import com.itextpdf.test.annotations.type.UnitTest;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Random;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -14,14 +14,11 @@ import org.junit.experimental.categories.Category;
 public class WriteNumbersTest {
 
     public static double round(double value, int places) {
-        BigDecimal bd = new BigDecimal(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
+        return Math.round(value * Math.pow(10, places)) / Math.pow(10, places);
     }
 
     @Test
     public void WriteNumber1Test() {
-
         Random rnd = new Random();
         for (int i = 0; i < 100000; i++) {
             double d = (double)rnd.nextInt(2120000000)/100000;
@@ -31,7 +28,7 @@ public class WriteNumbersTest {
                 continue;
             }
             byte[] actuals = ByteUtils.getIsoBytes(d);
-            byte[] expecteds = DecimalFormatUtil.formatNumber(d, "0.##").getBytes();
+            byte[] expecteds = DecimalFormatUtil.formatNumber(d, "0.##").getBytes(StandardCharsets.ISO_8859_1);
             String message = "Expects: " + new String(expecteds) + ", actual: " + new String(actuals) + " \\\\ "+ d;
             Assert.assertArrayEquals(message, expecteds, actuals);
         }
@@ -45,7 +42,7 @@ public class WriteNumbersTest {
             d = round(d, 5);
             if (Math.abs(d) < 0.000015) continue;
             byte[] actuals = ByteUtils.getIsoBytes(d);
-            byte[] expecteds = DecimalFormatUtil.formatNumber(d, "0.#####").getBytes();
+            byte[] expecteds = DecimalFormatUtil.formatNumber(d, "0.#####").getBytes(StandardCharsets.ISO_8859_1);
             String message = "Expects: " + new String(expecteds) + ", actual: " + new String(actuals) + " \\\\ " + d;
             Assert.assertArrayEquals(message, expecteds, actuals);
         }
@@ -58,7 +55,7 @@ public class WriteNumbersTest {
             double d = rnd.nextDouble(); if (d < 32700) d*= 100000;
             d = round(d, 0);
             byte[] actuals = ByteUtils.getIsoBytes(d);
-            byte[] expecteds = DecimalFormatUtil.formatNumber(d, "0").getBytes();
+            byte[] expecteds = DecimalFormatUtil.formatNumber(d, "0").getBytes(StandardCharsets.ISO_8859_1);
             String message = "Expects: " + new String(expecteds) + ", actual: " + new String(actuals) + " \\\\ "+ d;
             Assert.assertArrayEquals(message, expecteds, actuals);
         }

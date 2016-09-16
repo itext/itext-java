@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -46,6 +45,10 @@ package com.itextpdf.io.util;
 
 import java.util.Collection;
 
+/**
+ * This file is a helper class for internal usage only.
+ * Be aware that it's API and functionality may be changed in future.
+ */
 public final class ArrayUtil {
 
     private ArrayUtil() {
@@ -64,7 +67,7 @@ public final class ArrayUtil {
         int[] array = new int[collection.size()];
         int k = 0;
         for (Integer key : collection) {
-            array[k++] = key;
+            array[k++] = (int) key;
         }
         return array;
     }

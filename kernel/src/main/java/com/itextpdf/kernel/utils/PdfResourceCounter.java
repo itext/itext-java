@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -52,8 +51,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfOutputStream;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -145,7 +142,6 @@ public class PdfResourceCounter {
      *
      * @param res The resources that can be excluded when counting the bytes.
      * @return The number of bytes needed for an object.
-     * @throws java.io.IOException
      */
     public long getLength(Map<Integer, PdfObject> res) {
         long length = 0;
@@ -158,7 +154,7 @@ public class PdfResourceCounter {
             PdfOutputStream os = new PdfOutputStream(new IdelOutputStream());
 
             os.write(resources.get(ref).clone());
-            length += os.getCurrentPos() - 1;
+            length += os.getCurrentPos();
         }
 
         return length;

@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -154,7 +153,7 @@ final class MatrixUtil {
     // JAVAPORT: We shouldn't need to do this at all. The code should be rewritten to begin encoding
     // with the ByteMatrix initialized all to zero.
     public static void clearMatrix(ByteMatrix matrix) {
-        matrix.clear((byte) -1);
+        matrix.clear((byte) 0xff);
     }
 
     // Build 2D matrix of QR Code from "dataBits" with "ecLevel", "version" and "getMaskPattern". On
@@ -382,13 +381,13 @@ final class MatrixUtil {
     }
 
     // Check if "value" is empty.
-    private static boolean isEmpty(int value) {
-        return value == -1;
+    private static boolean isEmpty(byte value) {
+        return value == (byte)0xff;
     }
 
     // Check if "value" is valid.
-    private static boolean isValidValue(int value) {
-        return (value == -1 ||  // Empty.
+    private static boolean isValidValue(byte value) {
+        return (value == (byte)0xff ||  // Empty.
                 value == 0 ||  // Light (white).
                 value == 1);  // Dark (black).
     }

@@ -12,9 +12,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -36,12 +35,9 @@ public class PdfCopyTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = LogMessageConstant.MAKE_COPY_OF_CATALOG_DICTIONARY_IS_FORBIDDEN)
     })
     public void copySignedDocuments() throws IOException {
-        FileInputStream fis1 = new FileInputStream(sourceFolder + "hello_signed.pdf");
-        PdfReader reader1 = new PdfReader(fis1);
-        PdfDocument pdfDoc1 = new PdfDocument(reader1);
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfReader(sourceFolder + "hello_signed.pdf"));
 
-        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copySignedDocuments.pdf");
-        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(fos2));
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copySignedDocuments.pdf"));
         pdfDoc1.copyPagesTo(1, 1, pdfDoc2);
         pdfDoc2.close();
         pdfDoc1.close();
@@ -56,9 +52,7 @@ public class PdfCopyTest extends ExtendedITextTest {
 
     @Test
     public void copying1() throws IOException {
-        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copying1_1.pdf");
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copying1_1.pdf"));
         pdfDoc1.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
@@ -67,13 +61,9 @@ public class PdfCopyTest extends ExtendedITextTest {
         page1.flush();
         pdfDoc1.close();
 
-        FileInputStream fis1 = new FileInputStream(destinationFolder + "copying1_1.pdf");
-        PdfReader reader1 = new PdfReader(fis1);
-        pdfDoc1 = new PdfDocument(reader1);
+        pdfDoc1 = new PdfDocument(new PdfReader(destinationFolder + "copying1_1.pdf"));
 
-        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copying1_2.pdf");
-        PdfWriter writer2 = new PdfWriter(fos2);
-        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copying1_2.pdf"));
         pdfDoc2.addNewPage();
         pdfDoc2.getDocumentInfo().getPdfObject().put(new PdfName("a"), pdfDoc1.getCatalog().getPdfObject().get(new PdfName("a")).copyTo(pdfDoc2));
         pdfDoc2.close();
@@ -86,14 +76,12 @@ public class PdfCopyTest extends ExtendedITextTest {
         PdfDictionary info = trailer.getAsDictionary(PdfName.Info);
         PdfName b = info.getAsName(new PdfName("a"));
         assertEquals("/b", b.toString());
-        reader.close();
+        pdfDocument.close();
     }
 
     @Test
     public void copying2() throws IOException {
-        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copying2_1.pdf");
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copying2_1.pdf"));
         for (int i = 0; i < 10; i++) {
             PdfPage page1 = pdfDoc1.addNewPage();
             page1.getContentStream(0).getOutputStream().write(ByteUtils.getIsoBytes("%page " + String.valueOf(i + 1) + "\n"));
@@ -101,13 +89,9 @@ public class PdfCopyTest extends ExtendedITextTest {
         }
         pdfDoc1.close();
 
-        FileInputStream fis1 = new FileInputStream(destinationFolder + "copying2_1.pdf");
-        PdfReader reader1 = new PdfReader(fis1);
-        pdfDoc1 = new PdfDocument(reader1);
+        pdfDoc1 = new PdfDocument(new PdfReader(destinationFolder + "copying2_1.pdf"));
 
-        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copying2_2.pdf");
-        PdfWriter writer2 = new PdfWriter(fos2);
-        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copying2_2.pdf"));
         for (int i = 0; i < 10; i++) {
             if (i % 2 == 0) {
                 pdfDoc2.addPage(pdfDoc1.getPage(i + 1).copyTo(pdfDoc2));
@@ -123,15 +107,13 @@ public class PdfCopyTest extends ExtendedITextTest {
             byte[] bytes = pdfDocument.getPage(i + 1).getContentBytes();
             assertEquals("%page " + String.valueOf(i * 2 + 1) + "\n", new String(bytes));
         }
-        reader.close();
+        pdfDocument.close();
 
     }
 
     @Test
     public void copying3() throws IOException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "copying3_1.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "copying3_1.pdf"));
 
         PdfDictionary helloWorld = new PdfDictionary().makeIndirect(pdfDoc);
         PdfDictionary helloWorld1 = new PdfDictionary().makeIndirect(pdfDoc);
@@ -175,7 +157,7 @@ public class PdfCopyTest extends ExtendedITextTest {
         assertEquals(dic12.getIndirectReference().getObjNumber(), 5);
         assertEquals(dic12.getIndirectReference().getGenNumber(), 0);
 
-        reader.close();
+        pdfDoc.close();
     }
 
     @Test
@@ -185,19 +167,32 @@ public class PdfCopyTest extends ExtendedITextTest {
     public void copyDocumentsWithFormFieldsTest() throws IOException, InterruptedException {
         String filename = sourceFolder + "fieldsOn2-sPage.pdf";
 
-        PdfReader reader = new PdfReader(new FileInputStream(filename));
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "copyDocumentsWithFormFields.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-
-        PdfDocument sourceDoc = new PdfDocument(reader);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument sourceDoc = new PdfDocument(new PdfReader(filename));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "copyDocumentsWithFormFields.pdf"));
 
         sourceDoc.initializeOutlines();
         sourceDoc.copyPagesTo(1, sourceDoc.getNumberOfPages(), pdfDoc);
 
+        sourceDoc.close();
         pdfDoc.close();
 
         assertNull(new CompareTool().compareByContent(destinationFolder + "copyDocumentsWithFormFields.pdf", sourceFolder + "cmp_copyDocumentsWithFormFields.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void copySamePageWithAnnotationsSeveralTimes() throws IOException, InterruptedException {
+        String filename = sourceFolder + "rotated_annotation.pdf";
+
+        PdfDocument sourceDoc = new PdfDocument(new PdfReader(filename));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "copySamePageWithAnnotationsSeveralTimes.pdf"));
+
+        sourceDoc.initializeOutlines();
+        sourceDoc.copyPagesTo(Arrays.asList(1, 1, 1), pdfDoc);
+
+        sourceDoc.close();
+        pdfDoc.close();
+
+        assertNull(new CompareTool().compareByContent(destinationFolder + "copySamePageWithAnnotationsSeveralTimes.pdf", sourceFolder + "cmp_copySamePageWithAnnotationsSeveralTimes.pdf", destinationFolder, "diff_"));
     }
 
 }

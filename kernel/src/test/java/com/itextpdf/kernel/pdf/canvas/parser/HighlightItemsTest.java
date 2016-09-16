@@ -14,7 +14,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +35,7 @@ public class HighlightItemsTest extends ExtendedITextTest {
 
     @Before
     public void setUp() {
-        new File(outputPath).mkdirs();
+        createDestinationFolder(outputPath);
     }
 
     @Test

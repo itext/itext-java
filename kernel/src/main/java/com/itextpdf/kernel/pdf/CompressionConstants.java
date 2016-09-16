@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,6 +43,9 @@
  */
 package com.itextpdf.kernel.pdf;
 
+/**
+ * Compression constants for {@link PdfStream}.
+ */
 public class CompressionConstants {
     /**
      * A possible compression level.

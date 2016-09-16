@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -241,7 +240,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         if (checkState(READ_ONLY)) {
             states.append("ReadOnly; ");
         }
-        return MessageFormat.format("{0} {1} R{2}", getObjNumber(), getGenNumber(), states.substring(0, states.length() - 1));
+        return MessageFormat.format("{0} {1} R{2}", Integer.toString(getObjNumber()), Integer.toString(getGenNumber()), states.substring(0, states.length() - 1));
     }
 
     /**

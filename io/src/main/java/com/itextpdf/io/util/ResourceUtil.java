@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -46,6 +45,10 @@ package com.itextpdf.io.util;
 
 import java.io.InputStream;
 
+/**
+ * This file is a helper class for internal usage only.
+ * Be aware that it's API and functionality may be changed in future.
+ */
 public final class ResourceUtil {
 
     private ResourceUtil() {

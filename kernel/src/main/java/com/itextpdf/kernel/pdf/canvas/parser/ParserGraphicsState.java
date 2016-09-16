@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -202,7 +201,7 @@ public class ParserGraphicsState extends CanvasGraphicsState {
             return transformed;
 
         } catch (NoninvertibleTransformException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

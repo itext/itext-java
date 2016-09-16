@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -106,7 +105,7 @@ public class AreaBreak extends AbstractElement<AreaBreak> {
      * @return the current {@link AreaBreakType area break type}
      */
     public AreaBreakType getType() {
-        return (AreaBreakType) getProperty(Property.AREA_BREAK_TYPE);
+        return this.<AreaBreakType>getProperty(Property.AREA_BREAK_TYPE);
     }
 
     @Override

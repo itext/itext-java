@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,18 +43,32 @@
  */
 package com.itextpdf.layout.layout;
 
+/**
+ * Represents the context for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
+ */
 public class LayoutContext {
-
+    
+    /**
+     * The {@link LayoutArea area} the content to be placed on.
+     */
     protected LayoutArea area;
 
     public LayoutContext(LayoutArea area) {
         this.area = area;
     }
 
+    /**
+     * Gets the {@link LayoutArea area} the content to be placed on.
+     *
+     * @return the area for content layouting.
+     */
     public LayoutArea getArea() {
         return area;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return area.toString();

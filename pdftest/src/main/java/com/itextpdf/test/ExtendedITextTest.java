@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -48,15 +47,26 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 
+/**
+ * This class is used for testing when logger output should be tested as well.
+ * By default any logger output that is not expected, i.e. marked with {@link com.itextpdf.test.annotations.LogMessage},
+ * will result in crash.
+ */
 public abstract class ExtendedITextTest extends ITextTest {
 
     @Rule
     public LogListener logListener = new LogListener();
 
+    /**
+     * This method is called before each test method is executed
+     */
     @Before
     public void beforeTestMethodAction(){
     }
 
+    /**
+     * This method is called after each test method is executed
+     */
     @After
     public void afterTestMethodAction(){
     }

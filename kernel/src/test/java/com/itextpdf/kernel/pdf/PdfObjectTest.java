@@ -1,29 +1,25 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
 @Category(IntegrationTest.class)
 public class PdfObjectTest {
 
     @Test
     public void indirectsChain1() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter writer = new PdfWriter(baos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         document.addNewPage();
         PdfDictionary catalog = document.getCatalog().getPdfObject();
-        catalog.put(new PdfName("a"), new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
-            put(new PdfName("b"), new PdfName("c"));
-        }}).makeIndirect(document).getIndirectReference().makeIndirect(document).getIndirectReference().makeIndirect(document));
+        catalog.put(new PdfName("a"), getTestPdfDictionary()
+                .makeIndirect(document).getIndirectReference().makeIndirect(document).getIndirectReference().makeIndirect(document));
         PdfObject object = ((PdfIndirectReference)catalog.get(new PdfName("a"), false)).getRefersTo(true);
         Assert.assertTrue(object instanceof PdfDictionary);
         document.close();
@@ -31,14 +27,10 @@ public class PdfObjectTest {
 
     @Test
     public void indirectsChain2() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter writer = new PdfWriter(baos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         document.addNewPage();
         PdfDictionary catalog = document.getCatalog().getPdfObject();
-        PdfDictionary dictionary = new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
-            put(new PdfName("b"), new PdfName("c"));
-        }});
+        PdfDictionary dictionary = getTestPdfDictionary();
         PdfObject object = dictionary;
         for (int i = 0; i < 200; i++) {
             object = object.makeIndirect(document).getIndirectReference();
@@ -51,14 +43,10 @@ public class PdfObjectTest {
 
     @Test
     public void indirectsChain3() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter writer = new PdfWriter(baos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         document.addNewPage();
         PdfDictionary catalog = document.getCatalog().getPdfObject();
-        PdfDictionary dictionary = new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
-            put(new PdfName("b"), new PdfName("c"));
-        }});
+        PdfDictionary dictionary = getTestPdfDictionary();
         PdfObject object = dictionary;
         for (int i = 0; i < 31; i++) {
             object = object.makeIndirect(document).getIndirectReference();
@@ -72,14 +60,10 @@ public class PdfObjectTest {
 
     @Test
     public void indirectsChain4() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter writer = new PdfWriter(baos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         document.addNewPage();
         PdfDictionary catalog = document.getCatalog().getPdfObject();
-        PdfDictionary dictionary = new PdfDictionary(new HashMap<PdfName, PdfObject>() {{
-            put(new PdfName("b"), new PdfName("c"));
-        }});
+        PdfDictionary dictionary = getTestPdfDictionary();
         PdfObject object = dictionary;
         for (int i = 0; i < 31; i++) {
             object = object.makeIndirect(document).getIndirectReference();
@@ -141,8 +125,7 @@ public class PdfObjectTest {
     @Test
     public void pdtIndirectReferenceLateInitializing1() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter writer = new PdfWriter(baos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(baos));
         document.addNewPage();
         PdfDictionary catalog = document.getCatalog().getPdfObject();
 
@@ -158,9 +141,7 @@ public class PdfObjectTest {
 
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        PdfReader reader = new PdfReader(bais);
-
-        document = new PdfDocument(reader);
+        document = new PdfDocument(new PdfReader(bais));
 
         PdfObject object = document.getCatalog().getPdfObject().get(new PdfName("Smth"));
         Assert.assertTrue(object instanceof PdfDictionary);
@@ -174,9 +155,8 @@ public class PdfObjectTest {
     @Test
     public void pdtIndirectReferenceLateInitializing2() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter writer = new PdfWriter(baos);
 
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(baos));
         document.addNewPage();
         PdfDictionary catalog = document.getCatalog().getPdfObject();
 
@@ -193,8 +173,7 @@ public class PdfObjectTest {
         document.close();
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        PdfReader reader = new PdfReader(bais);
-        document = new PdfDocument(reader);
+        document = new PdfDocument(new PdfReader(bais));
 
         PdfDictionary catalogDict = document.getCatalog().getPdfObject();
         PdfObject object1 = catalogDict.get(new PdfName("Smth1"));
@@ -205,10 +184,7 @@ public class PdfObjectTest {
 
     @Test
     public void pdtIndirectReferenceLateInitializing3() throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter writer = new PdfWriter(baos);
-
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         document.addNewPage();
         PdfDictionary catalog = document.getCatalog().getPdfObject();
 
@@ -246,5 +222,11 @@ public class PdfObjectTest {
         Assert.assertTrue(dict1 == dict);
 
         document.close();
+    }
+
+    private static PdfDictionary getTestPdfDictionary() {
+        HashMap<PdfName, PdfObject> tmpMap = new HashMap<PdfName, PdfObject>();
+        tmpMap.put(new PdfName("b"), new PdfName("c"));
+        return new PdfDictionary(tmpMap);
     }
 }

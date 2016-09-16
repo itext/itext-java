@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,42 +43,79 @@
  */
 package com.itextpdf.kernel.pdf.xobject;
 
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.layer.IPdfOCG;
 
+/**
+ * An abstract wrapper for supported types of XObject.
+ *
+ * @see PdfFormXObject
+ * @see PdfImageXObject
+ */
 public class PdfXObject extends PdfObjectWrapper<PdfStream> {
 
     private static final long serialVersionUID = -480702872582809954L;
 
-	public PdfXObject() {
+    @Deprecated
+    public PdfXObject() {
         this(new PdfStream());
     }
 
+    @Deprecated
     public PdfXObject(PdfStream pdfObject) {
         super(pdfObject);
     }
 
+    /**
+     * Create {@link PdfFormXObject} or {@link PdfImageXObject} by {@link PdfStream}.
+     *
+     * @param stream {@link PdfStream} with either {@link PdfName#Form}
+     *               or {@link PdfName#Image} {@link PdfName#Subtype}
+     * @return either {@link PdfFormXObject} or {@link PdfImageXObject}.
+     */
     public static PdfXObject makeXObject(PdfStream stream) {
-        if (PdfName.Form.equals(stream.getAsName(PdfName.Subtype)) || stream.containsKey(PdfName.BBox))
+        if (PdfName.Form.equals(stream.getAsName(PdfName.Subtype))) {
             return new PdfFormXObject(stream);
-        else
+        } else if (PdfName.Image.equals(stream.getAsName(PdfName.Subtype))) {
             return new PdfImageXObject(stream);
+        } else {
+            throw new UnsupportedOperationException(PdfException.UnsupportedXObjectType);
+        }
     }
 
     /**
      * Sets the layer this XObject belongs to.
-     * @param layer the layer this XObject belongs to
+     *
+     * @param layer the layer this XObject belongs to.
      */
     public void setLayer(IPdfOCG layer) {
         getPdfObject().put(PdfName.OC, layer.getIndirectReference());
     }
 
-    public float getWidth() { throw new UnsupportedOperationException(); }
+    /**
+     * Gets width of XObject.
+     *
+     * @return float value.
+     */
+    public float getWidth() {
+        throw new UnsupportedOperationException();
+    }
 
-    public float getHeight() { throw new UnsupportedOperationException(); }
+    /**
+     * Gets height of XObject.
+     *
+     * @return float value.
+     */
+    public float getHeight() {
+        throw new UnsupportedOperationException();
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;

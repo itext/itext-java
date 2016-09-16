@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -79,14 +78,16 @@ public class TagStructureContext implements Serializable {
 
     private static final long serialVersionUID = -7870069015800895036L;
 
-    private static final Set<PdfName> allowedRootTagRoles = new HashSet<PdfName>() {{
-        add(PdfName.Book);
-        add(PdfName.Document);
-        add(PdfName.Part);
-        add(PdfName.Art);
-        add(PdfName.Sect);
-        add(PdfName.Div);
-    }};
+    private static final Set<PdfName> allowedRootTagRoles = new HashSet<PdfName>();
+
+    static {
+        allowedRootTagRoles.add(PdfName.Book);
+        allowedRootTagRoles.add(PdfName.Document);
+        allowedRootTagRoles.add(PdfName.Part);
+        allowedRootTagRoles.add(PdfName.Art);
+        allowedRootTagRoles.add(PdfName.Sect);
+        allowedRootTagRoles.add(PdfName.Div);
+    }
 
     private PdfDocument document;
     private PdfStructElem rootTagElement;
@@ -393,7 +394,7 @@ public class TagStructureContext implements Serializable {
     }
 
     IAccessibleElement getModelConnectedToStruct(PdfStructElem struct) {
-        return connectedStructToModel.get(struct);
+        return connectedStructToModel.get(struct.getPdfObject());
     }
 
     void throwExceptionIfRoleIsInvalid(PdfName role) {
@@ -440,7 +441,7 @@ public class TagStructureContext implements Serializable {
             if (!structParent.isFlushed()) {
                 structParent.removeKid(pageTag);
                 PdfDictionary parentObject = structParent.getPdfObject();
-                if (!connectedStructToModel.containsKey(parentObject) && parent.getKids().isEmpty()
+                if (!connectedStructToModel.containsKey(parentObject) && parent.getKids().size() == 0
                         && parentObject != rootTagElement.getPdfObject()) {
                     removePageTagFromParent(structParent, parent.getParent());
                     parentObject.getIndirectReference().setFree();
@@ -473,7 +474,7 @@ public class TagStructureContext implements Serializable {
                 }
             } else if (kid instanceof PdfStructElem) {
                 // If kid is structElem and was already flushed then in kids list there will be null for it instead of
-                // PdfStructElem. And therefore if we get into this if clause it means that some StructElem wasn't flushed.
+                // PdfStructElem. And therefore if we get into this if-clause it means that some StructElem wasn't flushed.
                 allKidsBelongToPage = false;
                 break;
             }

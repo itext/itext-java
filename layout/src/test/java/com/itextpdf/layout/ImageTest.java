@@ -2,33 +2,27 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.util.UrlUtil;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.List;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.IOException;
+
 @Category(IntegrationTest.class)
-public class ImageTest extends ExtendedITextTest{
+public class ImageTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/ImageTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/ImageTest/";
@@ -44,9 +38,7 @@ public class ImageTest extends ExtendedITextTest{
         String outFileName = destinationFolder + "imageTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest01.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -72,15 +64,13 @@ public class ImageTest extends ExtendedITextTest{
         String outFileName = destinationFolder + "imageTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest02.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createJpeg(new File(sourceFolder+"Desert.jpg").toURI().toURL()));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createJpeg(UrlUtil.toURL(sourceFolder + "Desert.jpg")));
         Image image = new Image(xObject, 100);
 
         Paragraph p = new Paragraph();
@@ -100,9 +90,7 @@ public class ImageTest extends ExtendedITextTest{
         String outFileName = destinationFolder + "imageTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest03.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -129,9 +117,7 @@ public class ImageTest extends ExtendedITextTest{
         String outFileName = destinationFolder + "imageTest04.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest04.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -158,9 +144,7 @@ public class ImageTest extends ExtendedITextTest{
         String outFileName = destinationFolder + "imageTest05.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest05.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -183,13 +167,10 @@ public class ImageTest extends ExtendedITextTest{
 
     @Test
     public void imageTest06() throws IOException, InterruptedException {
-
         String outFileName = destinationFolder + "imageTest06.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest06.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -215,15 +196,12 @@ public class ImageTest extends ExtendedITextTest{
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void imageTest07() throws IOException, InterruptedException {
-
         String outFileName = destinationFolder + "imageTest07.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest07.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
-
 
         Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
 
@@ -244,8 +222,7 @@ public class ImageTest extends ExtendedITextTest{
         String outFileName = destinationFolder + "imageTest08.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest08.pdf";
 
-        FileOutputStream file = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(file);
+        PdfWriter writer = new PdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -262,6 +239,117 @@ public class ImageTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void imageTest09() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest09.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest09.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc, new PageSize(500, 300));
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        image.setWidthPercent(100);
+        doc.add(image);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void imageTest10() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest10.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest10.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc, new PageSize(500, 300));
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        image.setAutoScale(true);
+        doc.add(image);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void imageTest11() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest11.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest11.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        image.setAutoScale(true);
+        doc.add(image);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void imageTest12_HorizontalAlignment_CENTER() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest12.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest12.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg"));
+        image.setHorizontalAlignment(HorizontalAlignment.CENTER);
+
+        doc.add(image);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void imageTest13_HorizontalAlignment_RIGHT() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest13.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest13.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg"));
+        image.setHorizontalAlignment(HorizontalAlignment.RIGHT);
+
+        doc.add(image);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void imageTest14_HorizontalAlignment_LEFT() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest14.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest14.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg"));
+        image.setHorizontalAlignment(HorizontalAlignment.LEFT);
+
+        doc.add(image);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
     /**
      * Image can be reused in layout, so flushing it on the very first draw is a bad thing.
      */
@@ -271,16 +359,16 @@ public class ImageTest extends ExtendedITextTest{
         String cmpFileName = sourceFolder + "cmp_flushOnDrawTest.pdf";
 
         int rowCount = 60;
-        FileOutputStream fos = new FileOutputStream(outFileName);
-        PdfWriter writer = new PdfWriter(fos);
+        PdfWriter writer = new PdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Table table = new Table(8);
         table.setWidthPercent(100);
         for (int k = 0; k < rowCount; k++) {
-            for (int j = 0; j < 7; j++)
-            { table.addCell("Hello"); }
+            for (int j = 0; j < 7; j++) {
+                table.addCell("Hello");
+            }
             Cell c = new Cell().add(img.setWidthPercent(50));
             table.addCell(c);
         }
@@ -300,7 +388,7 @@ public class ImageTest extends ExtendedITextTest{
         String outFileName = destinationFolder + "flushOnDrawCheckCircularReferencesTest.pdf";
         String cmpFileName = sourceFolder + "cmp_flushOnDrawCheckCircularReferencesTest.pdf";
 
-        PdfDocument pdf = pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
         //Initialize document
         Document document = new Document(pdf);
 

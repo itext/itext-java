@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -47,19 +46,16 @@ package com.itextpdf.io.font;
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.otf.Glyph;
-import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.font.otf.GlyphPositioningTableReader;
 import com.itextpdf.io.font.otf.GlyphSubstitutionTableReader;
 import com.itextpdf.io.font.otf.OpenTypeGdefTableReader;
+import com.itextpdf.io.util.IntHashtable;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.itextpdf.io.util.IntHashtable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -200,6 +196,10 @@ public class TrueTypeFont extends FontProgram {
         return gposTable;
     }
 
+    public OpenTypeGdefTableReader getGdefTable() {
+        return gdefTable;
+    }
+
     public byte[] getSubset(Set<Integer> glyphs, boolean subset) {
         try {
             return fontParser.getSubset(glyphs, subset);
@@ -215,6 +215,7 @@ public class TrueTypeFont extends FontProgram {
         } else {
             gdefTable = new OpenTypeGdefTableReader(fontParser.raf, 0);
         }
+        gdefTable.readTable();
     }
 
     protected void readGsubTable() throws java.io.IOException {
@@ -312,7 +313,7 @@ public class TrueTypeFont extends FontProgram {
         unicodeToGlyph = new LinkedHashMap<>(cmap.size());
         codeToGlyph = new LinkedHashMap<>(glyphWidths.length);
         avgWidth = 0;
-        for (Integer charCode : cmap.keySet()) {
+        for (int charCode : cmap.keySet()) {
             int index = cmap.get(charCode)[0];
             if (index >= glyphWidths.length) {
                 Logger LOGGER = LoggerFactory.getLogger(TrueTypeFont.class);

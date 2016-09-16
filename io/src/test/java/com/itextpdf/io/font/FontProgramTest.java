@@ -6,16 +6,18 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 @Category(UnitTest.class)
 public class FontProgramTest {
 
     @Test
     public void exceptionMessageTest() throws IOException {
+        String font = "some-font.ttf";
         try {
-            FontProgramFactory.createFont("some-font.ttf");
+            FontProgramFactory.createFont(font);
         } catch (com.itextpdf.io.IOException ex) {
-            Assert.assertEquals("font.file some-font.ttf not.found", ex.getMessage());
+            Assert.assertEquals(MessageFormat.format(com.itextpdf.io.IOException.FontFile1NotFound, font), ex.getMessage());
         }
     }
 

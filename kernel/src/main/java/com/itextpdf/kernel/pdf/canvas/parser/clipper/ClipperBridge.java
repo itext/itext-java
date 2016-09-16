@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,12 +43,11 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.clipper;
 
-import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.geom.Subpath;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -224,19 +222,21 @@ public class ClipperBridge {
         return fillType;
     }
 
+    /**
+     * @deprecated close will be {@code boolean}. Visibility will be changed to internal.
+     */
+    @Deprecated
     public static void addContour(com.itextpdf.kernel.geom.Path path, List<Point.LongPoint> contour, Boolean close) {
         List<com.itextpdf.kernel.geom.Point> floatContour = convertToFloatPoints(contour);
-        Iterator<com.itextpdf.kernel.geom.Point> iter = floatContour.iterator();
-
-        com.itextpdf.kernel.geom.Point point = iter.next();
+        com.itextpdf.kernel.geom.Point point = floatContour.get(0);
         path.moveTo((float) point.getX(), (float) point.getY());
 
-        while (iter.hasNext()) {
-            point = iter.next();
+        for (int i = 1; i < floatContour.size(); i++) {
+            point = floatContour.get(i);
             path.lineTo((float) point.getX(), (float) point.getY());
         }
 
-        if (close) {
+        if ((boolean) close) {
             path.closeSubpath();
         }
     }

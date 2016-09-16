@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,6 +43,28 @@
  */
 package com.itextpdf.kernel.pdf;
 
+/**
+ * Page label numbering style constants for {@link PdfPage#setPageLabel(PageLabelNumberingStyleConstants, String)}.
+ */
 public enum PageLabelNumberingStyleConstants {
-    DECIMAL_ARABIC_NUMERALS, UPPERCASE_ROMAN_NUMERALS, LOWERCASE_ROMAN_NUMERALS, UPPERCASE_LETTERS, LOWERCASE_LETTERS
+    /**
+     * 1, 2, 3, 4...
+     */
+    DECIMAL_ARABIC_NUMERALS,
+    /**
+     * I, II, III, IV...
+     */
+    UPPERCASE_ROMAN_NUMERALS,
+    /**
+     * i, ii, iii, iv...
+     */
+    LOWERCASE_ROMAN_NUMERALS,
+    /**
+     * A, B, C, D...
+     */
+    UPPERCASE_LETTERS,
+    /**
+     * a, b, c, d...
+     */
+    LOWERCASE_LETTERS
 }

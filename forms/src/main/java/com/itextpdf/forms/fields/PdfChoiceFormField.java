@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -161,7 +160,7 @@ public class PdfChoiceFormField extends PdfFormField {
         PdfArray indices = new PdfArray();
         PdfArray values = new PdfArray();
         PdfArray options = getOptions();
-        for (Integer number : optionNumbers) {
+        for (int number : optionNumbers) {
             if (number >= 0 && number < options.size()) {
                 indices.add(new PdfNumber(number));
                 PdfObject option = options.get(number);

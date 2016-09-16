@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -45,20 +44,23 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.io.codec.Base64;
+import com.itextpdf.io.util.SystemUtil;
 import com.itextpdf.kernel.PdfException;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
-import org.bouncycastle.tsp.*;
+import org.bouncycastle.tsp.TSPException;
+import org.bouncycastle.tsp.TimeStampRequest;
+import org.bouncycastle.tsp.TimeStampRequestGenerator;
+import org.bouncycastle.tsp.TimeStampResponse;
+import org.bouncycastle.tsp.TimeStampToken;
+import org.bouncycastle.tsp.TimeStampTokenInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.math.BigInteger;
-import java.net.URL;
-import java.net.URLConnection;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 
@@ -156,7 +158,7 @@ public class TSAClientBouncyCastle implements ITSAClient {
      * @return the digest algorithm name
      */
     public MessageDigest getMessageDigest() throws GeneralSecurityException {
-        return new BouncyCastleDigest().getMessageDigest(digestAlgorithm);
+        return SignUtils.getMessageDigest(digestAlgorithm);
     }
 
     /**
@@ -173,7 +175,7 @@ public class TSAClientBouncyCastle implements ITSAClient {
         TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
         tsqGenerator.setCertReq(true);
         // tsqGenerator.setReqPolicy("1.3.6.1.4.1.601.10.3.1");
-        BigInteger nonce = BigInteger.valueOf(System.currentTimeMillis());
+        BigInteger nonce = BigInteger.valueOf(SystemUtil.getSystemTimeMillis());
         TimeStampRequest request = tsqGenerator.generate(new ASN1ObjectIdentifier(DigestAlgorithms.getAllowedDigest(digestAlgorithm)), imprint, nonce);
         byte[] requestBytes = request.getEncoded();
 
@@ -195,7 +197,7 @@ public class TSAClientBouncyCastle implements ITSAClient {
         //        assure we do not sign using an invalid timestamp).
 
         // extract just the time stamp token (removes communication status info)
-        TimeStampToken  tsToken = response.getTimeStampToken();
+        TimeStampToken tsToken = response.getTimeStampToken();
         if (tsToken == null) {
             throw new PdfException(PdfException.Tsa1FailedToReturnTimeStampToken2).setMessageParams(tsaURL, response.getStatusString());
         }
@@ -218,32 +220,9 @@ public class TSAClientBouncyCastle implements ITSAClient {
      */
     protected byte[] getTSAResponse(byte[] requestBytes) throws IOException {
         // Setup the TSA connection
-        URL url = new URL(tsaURL);
-        URLConnection tsaConnection;
-        try {
-            tsaConnection = (URLConnection) url.openConnection();
-        }
-        catch (IOException ioe) {
-            throw new PdfException(PdfException.FailedToGetTsaResponseFrom1).setMessageParams(tsaURL);
-        }
-        tsaConnection.setDoInput(true);
-        tsaConnection.setDoOutput(true);
-        tsaConnection.setUseCaches(false);
-        tsaConnection.setRequestProperty("Content-Type", "application/timestamp-query");
-        //tsaConnection.setRequestProperty("Content-Transfer-Encoding", "base64");
-        tsaConnection.setRequestProperty("Content-Transfer-Encoding", "binary");
-
-        if ((tsaUsername != null) && !tsaUsername.equals("") ) {
-            String userPassword = tsaUsername + ":" + tsaPassword;
-            tsaConnection.setRequestProperty("Authorization", "Basic " +
-                    Base64.encodeBytes(userPassword.getBytes(), Base64.DONT_BREAK_LINES));
-        }
-        OutputStream out = tsaConnection.getOutputStream();
-        out.write(requestBytes);
-        out.close();
-
+        SignUtils.TsaResponse response = SignUtils.getTsaResponseForUserRequest(tsaURL, requestBytes, tsaUsername, tsaPassword);
         // Get TSA response as a byte array
-        InputStream inp = tsaConnection.getInputStream();
+        InputStream inp = response.tsaResponseStream;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int bytesRead = 0;
@@ -252,9 +231,8 @@ public class TSAClientBouncyCastle implements ITSAClient {
         }
         byte[] respBytes = baos.toByteArray();
 
-        String encoding = tsaConnection.getContentEncoding();
-        if (encoding != null && encoding.toLowerCase().equals("base64".toLowerCase())) {
-            respBytes = Base64.decode(new String(respBytes));
+        if (response.encoding != null && response.encoding.toLowerCase().equals("base64".toLowerCase())) {
+            respBytes = Base64.decode(new String(respBytes, "US-ASCII"));
         }
         return respBytes;
     }

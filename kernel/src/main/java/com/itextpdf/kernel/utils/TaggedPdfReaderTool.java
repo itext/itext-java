@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -45,20 +44,14 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.canvas.parser.EventType;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
@@ -68,7 +61,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,27 +73,52 @@ import java.util.Set;
 public class TaggedPdfReaderTool {
 
     protected PdfDocument document;
-    protected PrintWriter out;
+    protected OutputStreamWriter out;
     protected String rootTag;
 
-    // key - page dictionary; value pairs of mcid and text in them
+    // key - page dictionary; value - a mapping of mcids to text in them
     protected Map<PdfDictionary, Map<Integer, String>> parsedTags = new HashMap<>();
 
+    /**
+     * Constructs a {@link TaggedPdfReaderTool} via a given {@link PdfDocument}.
+     * @param document the document to read tag structure from
+     */
     public TaggedPdfReaderTool(PdfDocument document) {
         this.document = document;
     }
 
+    /**
+     * Checks if a character value should be escaped/unescaped.
+     *
+     * @param    c    a character value
+     * @return true if it's OK to escape or unescape this value
+     */
+    public static boolean isValidCharacterValue(int c) {
+        return (c == 0x9 || c == 0xA || c == 0xD
+                || c >= 0x20 && c <= 0xD7FF
+                || c >= 0xE000 && c <= 0xFFFD
+                || c >= 0x10000 && c <= 0x10FFFF);
+    }
+
+    /**
+     * Converts the current tag structure into an XML file with default encoding (UTF-8).
+     * @param os the output stream to save XML file to
+     */
     public void convertToXml(OutputStream os)
             throws IOException {
         convertToXml(os, "UTF-8");
     }
 
+    /**
+     * Converts the current tag structure into an XML file with provided encoding.
+     * @param os the output stream to save XML file to
+     * @param charset the charset of the resultant XML file
+     */
     public void convertToXml(OutputStream os, String charset)
             throws IOException {
-        OutputStreamWriter outs = new OutputStreamWriter(os, charset);
-        out = new PrintWriter(outs);
+        out = new OutputStreamWriter(os, Charset.forName(charset));
         if (rootTag != null) {
-            out.println("<" + rootTag + ">");
+            out.write("<" + rootTag + ">" + System.lineSeparator());
         }
         // get the StructTreeRoot from the document
         PdfStructTreeRoot structTreeRoot = document.getStructTreeRoot();
@@ -109,12 +127,17 @@ public class TaggedPdfReaderTool {
         // Inspect the child or children of the StructTreeRoot
         inspectKids(structTreeRoot.getKids());
         if (rootTag != null) {
-            out.print("</" + rootTag + ">");
+            out.write("</" + rootTag + ">");
         }
         out.flush();
         out.close();
     }
 
+    /**
+     * Sets the name of the root tag of the resultant XML file
+     * @param rootTagName the name of the root tag
+     * @return this object
+     */
     public TaggedPdfReaderTool setRootTag(String rootTagName) {
         this.rootTag = rootTagName;
         return this;
@@ -130,34 +153,38 @@ public class TaggedPdfReaderTool {
     }
 
     protected void inspectKid(IPdfStructElem kid) {
-        if (kid instanceof PdfStructElem) {
-            PdfStructElem structElemKid = (PdfStructElem) kid;
-            PdfName s = structElemKid.getRole();
-            String tagN = s.getValue();
-            String tag = fixTagName(tagN);
-            out.print("<");
-            out.print(tag);
+        try {
+            if (kid instanceof PdfStructElem) {
+                PdfStructElem structElemKid = (PdfStructElem) kid;
+                PdfName s = structElemKid.getRole();
+                String tagN = s.getValue();
+                String tag = fixTagName(tagN);
+                out.write("<");
+                out.write(tag);
 
-            inspectAttributes(structElemKid);
+                inspectAttributes(structElemKid);
 
-            out.println(">");
+                out.write(">" + System.lineSeparator());
 
-            PdfString alt = (structElemKid).getAlt();
+                PdfString alt = (structElemKid).getAlt();
 
-            if (alt != null) {
-                out.print("<alt><![CDATA[");
-                out.print(alt.getValue().replaceAll("[\\000]*", ""));
-                out.println("]]></alt>");
+                if (alt != null) {
+                    out.write("<alt><![CDATA[");
+                    out.write(alt.getValue().replaceAll("[\\000]*", ""));
+                    out.write("]]></alt>" + System.lineSeparator());
+                }
+
+                inspectKids(structElemKid.getKids());
+                out.write("</");
+                out.write(tag);
+                out.write(">" + System.lineSeparator());
+            } else if (kid instanceof PdfMcr) {
+                parseTag((PdfMcr) kid);
+            } else {
+                out.write(" <flushedKid/> ");
             }
-
-            inspectKids(structElemKid.getKids());
-            out.print("</");
-            out.print(tag);
-            out.println(">");
-        } else if (kid instanceof PdfMcr) {
-            parseTag((PdfMcr) kid);
-        } else {
-            out.print(" <flushedKid/> ");
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.UnknownIOException, e);
         }
     }
 
@@ -171,13 +198,17 @@ public class TaggedPdfReaderTool {
             } else {
                 attrDict = (PdfDictionary) attrObj;
             }
-            for (Map.Entry<PdfName, PdfObject> entry : attrDict.entrySet()) {
-                out.print(' ');
-                String attrName = entry.getKey().getValue();
-                out.print(Character.toLowerCase(attrName.charAt(0)) + attrName.substring(1));
-                out.print("=\"");
-                out.print(entry.getValue().toString());
-                out.print("\"");
+            try {
+                for (PdfName key : attrDict.keySet()) {
+                    out.write(' ');
+                    String attrName = key.getValue();
+                    out.write(Character.toLowerCase(attrName.charAt(0)) + attrName.substring(1));
+                    out.write("=\"");
+                    out.write(attrDict.get(key, false).toString());
+                    out.write("\"");
+                }
+            } catch (java.io.IOException e) {
+                throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.UnknownIOException, e);
             }
         }
     }
@@ -209,7 +240,11 @@ public class TaggedPdfReaderTool {
                 tagContent = subtype.toString();
             }
         }
-        out.print(escapeXML(tagContent, true));
+        try {
+            out.write(escapeXML(tagContent, true));
+        } catch (java.io.IOException e) {
+            throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.UnknownIOException, e);
+        }
     }
 
     protected static String fixTagName(String tag) {
@@ -254,13 +289,12 @@ public class TaggedPdfReaderTool {
 
     /**
      * NOTE: copied from itext5 XMLUtils class
-     * <p>
+     *
      * Escapes a string with the appropriated XML codes.
      *
      * @param s         the string to be escaped
      * @param onlyASCII codes above 127 will always be escaped with &amp;#nn; if <CODE>true</CODE>
      * @return the escaped string
-     * @since 5.0.6
      */
     protected static String escapeXML(String s, boolean onlyASCII) {
         char[] cc = s.toCharArray();
@@ -294,19 +328,6 @@ public class TaggedPdfReaderTool {
             }
         }
         return sb.toString();
-    }
-
-    /**
-     * Checks if a character value should be escaped/unescaped.
-     *
-     * @param    c    a character value
-     * @return true if it's OK to escape or unescape this value
-     */
-    public static boolean isValidCharacterValue(int c) {
-        return (c == 0x9 || c == 0xA || c == 0xD
-                || c >= 0x20 && c <= 0xD7FF
-                || c >= 0xE000 && c <= 0xFFFD
-                || c >= 0x10000 && c <= 0x10FFFF);
     }
 
     private class MarkedContentEventListener implements IEventListener {

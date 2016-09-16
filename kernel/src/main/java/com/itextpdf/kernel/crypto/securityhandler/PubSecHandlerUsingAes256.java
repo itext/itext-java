@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -63,6 +62,11 @@ public class PubSecHandlerUsingAes256 extends PubSecHandlerUsingAes128 {
     }
 
     @Override
+    public void setHashKeyForNextObject(int objNumber, int objGeneration) {
+        // in AES256 we don't recalculate nextObjectKey
+    }
+
+    @Override
     protected String getDigestAlgorithm() {
         return "SHA-256";
     }
@@ -83,9 +87,11 @@ public class PubSecHandlerUsingAes256 extends PubSecHandlerUsingAes128 {
         PdfArray recipients = createRecipientsArray();
         PdfDictionary stdcf = new PdfDictionary();
         stdcf.put(PdfName.Recipients, recipients);
-        if (!encryptMetadata)
+        if (!encryptMetadata) {
             stdcf.put(PdfName.EncryptMetadata, PdfBoolean.FALSE);
+        }
         stdcf.put(PdfName.CFM, PdfName.AESV3);
+        stdcf.put(PdfName.Length, new PdfNumber(256));
         PdfDictionary cf = new PdfDictionary();
         cf.put(PdfName.DefaultCryptFilter, stdcf);
         encryptionDictionary.put(PdfName.CF, cf);

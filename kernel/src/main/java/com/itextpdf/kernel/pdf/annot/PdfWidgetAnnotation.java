@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -64,27 +63,29 @@ public class PdfWidgetAnnotation extends PdfAnnotation {
         super(pdfObject);
     }
 
-    private HashSet<PdfName> widgetEntries = new HashSet<PdfName>() {{
-        add(PdfName.Subtype);
-        add(PdfName.Type);
-        add(PdfName.Rect);
-        add(PdfName.Contents);
-        add(PdfName.P);
-        add(PdfName.NM);
-        add(PdfName.M);
-        add(PdfName.F);
-        add(PdfName.AP);
-        add(PdfName.AS);
-        add(PdfName.Border);
-        add(PdfName.C);
-        add(PdfName.StructParent);
-        add(PdfName.OC);
-        add(PdfName.H);
-        add(PdfName.MK);
-        add(PdfName.A);
-        add(PdfName.AA);
-        add(PdfName.BS);
-    }};
+    private HashSet<PdfName> widgetEntries = new HashSet<PdfName>();
+
+    {
+        widgetEntries.add(PdfName.Subtype);
+        widgetEntries.add(PdfName.Type);
+        widgetEntries.add(PdfName.Rect);
+        widgetEntries.add(PdfName.Contents);
+        widgetEntries.add(PdfName.P);
+        widgetEntries.add(PdfName.NM);
+        widgetEntries.add(PdfName.M);
+        widgetEntries.add(PdfName.F);
+        widgetEntries.add(PdfName.AP);
+        widgetEntries.add(PdfName.AS);
+        widgetEntries.add(PdfName.Border);
+        widgetEntries.add(PdfName.C);
+        widgetEntries.add(PdfName.StructParent);
+        widgetEntries.add(PdfName.OC);
+        widgetEntries.add(PdfName.H);
+        widgetEntries.add(PdfName.MK);
+        widgetEntries.add(PdfName.A);
+        widgetEntries.add(PdfName.AA);
+        widgetEntries.add(PdfName.BS);
+    }
 
     @Override
     public PdfName getSubtype() {

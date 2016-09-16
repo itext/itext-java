@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
  * Copyright (c) 2014-2015 iText Group NV
@@ -136,7 +135,7 @@ public class ClipperOffset {
 
         //strip duplicate points from path and also get index to the lowest point ...
         if (endType == EndType.CLOSED_LINE || endType == EndType.CLOSED_POLYGON) {
-            while (highI > 0 && path.get( 0 ) == path.get( highI )) {
+            while (highI > 0 && path.get( 0 ).equals(path.get( highI ))) {
                 highI--;
             }
         }
@@ -144,7 +143,7 @@ public class ClipperOffset {
         newNode.getPolygon().add( path.get( 0 ) );
         int j = 0, k = 0;
         for (int i = 1; i <= highI; i++) {
-            if (newNode.getPolygon().get( j ) != path.get( i )) {
+            if (!newNode.getPolygon().get( j ).equals(path.get( i ))) {
                 j++;
                 newNode.getPolygon().add( path.get( i ) );
                 if (path.get( i ).getY() > newNode.getPolygon().get( k ).getY() || path.get( i ).getY() == newNode.getPolygon().get( k ).getY()

@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -47,17 +46,21 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.property.ListSymbolAlignment;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.ListSymbolAlignment;
+import com.itextpdf.layout.property.Property;
 
 public class ListItemRenderer extends DivRenderer {
 
     protected IRenderer symbolRenderer;
     protected float symbolAreaWidth;
 
+    /**
+     * Creates a ListItemRenderer from its corresponding layout object.
+     * @param modelElement the {@link com.itextpdf.layout.element.ListItem} which this object should manage
+     */
     public ListItemRenderer(ListItem modelElement) {
         super(modelElement);
     }
@@ -69,7 +72,7 @@ public class ListItemRenderer extends DivRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        if (symbolRenderer != null && getProperty(Property.HEIGHT) == null) {
+        if (symbolRenderer != null && this.<Object>getProperty(Property.HEIGHT) == null) {
             // TODO this is actually MinHeight.
             setProperty(Property.HEIGHT, symbolRenderer.getOccupiedArea().getBBox().getHeight());
         }
@@ -100,14 +103,15 @@ public class ListItemRenderer extends DivRenderer {
 
         // It will be null in case of overflow (only the "split" part will contain symbol renderer.
         if (symbolRenderer != null) {
+            symbolRenderer.setParent(parent);
             float x = occupiedArea.getBBox().getX();
             if (childRenderers.size() > 0) {
                 Float yLine = ((AbstractRenderer) childRenderers.get(0)).getFirstYLineRecursively();
                 if (yLine != null) {
                     if (symbolRenderer instanceof TextRenderer) {
-                        ((TextRenderer) symbolRenderer).moveYLineTo(yLine);
+                        ((TextRenderer) symbolRenderer).moveYLineTo((float) yLine);
                     } else {
-                        symbolRenderer.move(0, yLine - symbolRenderer.getOccupiedArea().getBBox().getY());
+                        symbolRenderer.move(0, (float) yLine - symbolRenderer.getOccupiedArea().getBBox().getY());
                     }
                 } else {
                     symbolRenderer.move(0, occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() -
@@ -118,9 +122,10 @@ public class ListItemRenderer extends DivRenderer {
                         symbolRenderer.getOccupiedArea().getBBox().getHeight() - symbolRenderer.getOccupiedArea().getBBox().getY());
             }
 
-            ListSymbolAlignment listSymbolAlignment = parent.getProperty(Property.LIST_SYMBOL_ALIGNMENT);
+            ListSymbolAlignment listSymbolAlignment = (ListSymbolAlignment)parent.<ListSymbolAlignment>getProperty(Property.LIST_SYMBOL_ALIGNMENT,
+                    ListSymbolAlignment.RIGHT);
             float xPosition = x - symbolRenderer.getOccupiedArea().getBBox().getX();
-            if (listSymbolAlignment == null || listSymbolAlignment == ListSymbolAlignment.RIGHT) {
+            if (listSymbolAlignment == ListSymbolAlignment.RIGHT) {
                 xPosition += symbolAreaWidth - symbolRenderer.getOccupiedArea().getBBox().getWidth();
             }
             symbolRenderer.move(xPosition, 0);
@@ -155,7 +160,7 @@ public class ListItemRenderer extends DivRenderer {
             splitRenderer.symbolAreaWidth = symbolAreaWidth;
         }
         // TODO retain all the properties ?
-        splitRenderer.setProperty(Property.MARGIN_LEFT, getProperty(Property.MARGIN_LEFT));
+        splitRenderer.setProperty(Property.MARGIN_LEFT, this.<Object>getProperty(Property.MARGIN_LEFT));
         return splitRenderer;
     }
 
@@ -169,7 +174,7 @@ public class ListItemRenderer extends DivRenderer {
             overflowRenderer.symbolAreaWidth = symbolAreaWidth;
         }
         // TODO retain all the properties ?
-        overflowRenderer.setProperty(Property.MARGIN_LEFT, getProperty(Property.MARGIN_LEFT));
+        overflowRenderer.setProperty(Property.MARGIN_LEFT, this.<Object>getProperty(Property.MARGIN_LEFT));
         return overflowRenderer;
     }
 }

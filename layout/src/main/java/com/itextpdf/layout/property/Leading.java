@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -45,6 +44,8 @@
 package com.itextpdf.layout.property;
 
 import com.itextpdf.layout.IPropertyContainer;
+
+import java.util.Objects;
 
 /**
  * A specialized class that specifies the leading, "the vertical distance between
@@ -96,5 +97,15 @@ public class Leading {
      */
     public float getValue() {
         return value;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Leading && type == ((Leading) obj).type && value == ((Leading) obj).value;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, value);
     }
 }

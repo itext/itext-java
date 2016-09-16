@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -61,6 +60,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +71,7 @@ import java.util.List;
  * it's role and properties, etc. Also, using instance of this class, you can change tag position in the tag structure,
  * you can flush current tag or remove it.
  * <br/><br/>
- *
+ * <p>
  * There could be any number of the instances of this class, simultaneously pointing to different (or the same) parts of
  * the tag structure. Because of this, you can for example remove the tag at which another instance is currently pointing.
  * In this case, this another instance becomes invalid, and invocation of any method on it will result in exception. To make
@@ -91,6 +91,7 @@ public class TagTreePointer implements Serializable {
 
     /**
      * Creates {@code TagTreePointer} instance. After creation {@code TagTreePointer} points at the root tag.
+     *
      * @param document the document, at which tag structure this instance will point.
      */
     public TagTreePointer(PdfDocument document) {
@@ -100,6 +101,7 @@ public class TagTreePointer implements Serializable {
 
     /**
      * A copy constructor.
+     *
      * @param tagPointer the {@code TagTreePointer} from which current position and page are copied.
      */
     public TagTreePointer(TagTreePointer tagPointer) {
@@ -113,18 +115,19 @@ public class TagTreePointer implements Serializable {
      * Sets a page which content will be tagged with this instance of {@code TagTreePointer}.
      * To tag page content:
      * <ol>
-     *     <li>Set pointer position to the tag which will be the parent of the page content item;</li>
-     *     <li>Call {@link #getTagReference()} to obtain the reference to the current tag;</li>
-     *     <li>Pass {@code PdfTagReference} to the {@link PdfCanvas#openTag(TagReference)} method of the page's {@link PdfCanvas} to start marked content item;</li>
-     *     <li>Draw content on {@code PdfCanvas};</li>
-     *     <li>Use {@link PdfCanvas#closeTag()} to finish marked content item.</li>
+     * <li>Set pointer position to the tag which will be the parent of the page content item;</li>
+     * <li>Call {@link #getTagReference()} to obtain the reference to the current tag;</li>
+     * <li>Pass {@code PdfTagReference} to the {@link PdfCanvas#openTag(TagReference)} method of the page's {@link PdfCanvas} to start marked content item;</li>
+     * <li>Draw content on {@code PdfCanvas};</li>
+     * <li>Use {@link PdfCanvas#closeTag()} to finish marked content item.</li>
      * </ol>
+     *
      * @param page the page which content will be tagged with this instance of {@code TagTreePointer}.
      * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer setPageForTagging(PdfPage page) {
         if (page.isFlushed()) {
-            throw new PdfException(PdfException.PageWasAlreadyFlushed);
+            throw new PdfException(PdfException.PageAlreadyFlushed);
         }
         this.currentPage = page;
 
@@ -145,6 +148,7 @@ public class TagTreePointer implements Serializable {
      * the tagged content will reside.
      * <br><br>
      * NOTE: It's important to set a {@code null} for this value, when tagging of this stream content is finished.
+     *
      * @param contentStream the content stream which content will be tagged with this instance of {@code TagTreePointer}
      *                      or {@code null} if content stream tagging is finished.
      */
@@ -170,6 +174,7 @@ public class TagTreePointer implements Serializable {
     /**
      * Adds a new tag with given role to the tag structure.
      * This method call moves this {@code TagTreePointer} to the added kid.
+     *
      * @param role role of the new tag.
      * @return this {@link TagTreePointer} instance.
      */
@@ -183,8 +188,9 @@ public class TagTreePointer implements Serializable {
      * This method call moves this {@code TagTreePointer} to the added kid.
      * <br/>
      * This call is equivalent of calling sequentially {@link #setNextNewKidIndex(int)} and {@link #addTag(PdfName)}.
+     *
      * @param index zero-based index in kids array of parent tag at which new tag will be added.
-     * @param role role of the new tag.
+     * @param role  role of the new tag.
      * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer addTag(int index, PdfName role) {
@@ -197,6 +203,7 @@ public class TagTreePointer implements Serializable {
      * This method call moves this {@code TagTreePointer} to the added kid.
      * <br/>
      * New tag will have a role and attributes defined by the given IAccessibleElement.
+     *
      * @param element accessible element which represents a new tag.
      * @return this {@link TagTreePointer} instance.
      */
@@ -217,7 +224,8 @@ public class TagTreePointer implements Serializable {
      * If the same accessible element is connected to the tag and is added twice to the same parent -
      * this {@code TagTreePointer} instance would move to connected kid instead of creating tag twice.
      * But if it is added to some other parent, then connection will be removed.
-     * @param element accessible element which represents a new tag.
+     *
+     * @param element            accessible element which represents a new tag.
      * @param keepConnectedToTag defines if to retain the connection between accessible element and the tag.
      * @return this {@link TagTreePointer} instance.
      */
@@ -232,7 +240,8 @@ public class TagTreePointer implements Serializable {
      * <br/>
      * New tag will have a role and attributes defined by the given IAccessibleElement.
      * This call is equivalent of calling sequentially {@link #setNextNewKidIndex(int)} and {@link #addTag(IAccessibleElement)}.
-     * @param index zero-based index in kids array of parent tag at which new tag will be added.
+     *
+     * @param index   zero-based index in kids array of parent tag at which new tag will be added.
      * @param element accessible element which represents a new tag.
      * @return this {@link TagTreePointer} instance.
      */
@@ -253,9 +262,10 @@ public class TagTreePointer implements Serializable {
      * If the same accessible element is connected to the tag and is added twice to the same parent -
      * this {@code TagTreePointer} instance would move to connected kid instead of creating tag twice.
      * But if it is added to some other parent, then connection will be removed.
-     *
+     * <p>
      * <br/><br/>
      * This call is equivalent of calling sequentially {@link #setNextNewKidIndex(int)} and {@link #addTag(IAccessibleElement, boolean)}.
+     *
      * @param index              zero-based index in kids array of parent tag at which new tag will be added.
      * @param element            accessible element which represents a new tag.
      * @param keepConnectedToTag defines if to retain the connection between accessible element and the tag.
@@ -286,6 +296,7 @@ public class TagTreePointer implements Serializable {
      * By default, when annotation is added to the page it is automatically tagged with auto tagging pointer
      * (see {@link TagStructureContext#getAutoTaggingPointer()}). If you want to add annotation tag manually, be sure to use
      * {@link PdfPage#addAnnotation(int, PdfAnnotation, boolean)} method with <i>false</i> for boolean flag.
+     *
      * @param annotation {@code PdfAnnotation} to be tagged.
      * @return this {@link TagTreePointer} instance.
      */
@@ -294,7 +305,7 @@ public class TagTreePointer implements Serializable {
 
         PdfObjRef kid = new PdfObjRef(annotation, getCurrentStructElem());
         if (!ensureElementPageEqualsKidPage(getCurrentStructElem(), currentPage.getPdfObject())) {
-            ((PdfDictionary)kid.getPdfObject()).put(PdfName.Pg, currentPage.getPdfObject());
+            ((PdfDictionary) kid.getPdfObject()).put(PdfName.Pg, currentPage.getPdfObject());
         }
         addNewKid(kid);
         return this;
@@ -310,6 +321,7 @@ public class TagTreePointer implements Serializable {
      * <br/>
      * Keep in mind, that this method set property to the {@code TagTreePointer} and not to the tag itself, which means
      * that if you would move the pointer, this property would be applied to the new current tag.
+     *
      * @param nextNewKidIndex index of the next added kid.
      * @return this {@link TagTreePointer} instance.
      */
@@ -323,6 +335,7 @@ public class TagTreePointer implements Serializable {
     /**
      * Checks if given {@code IAccessibleElement} is connected to some tag.
      * See {@link TagTreePointer#moveToTag} for more explanations about tag connections concept.
+     *
      * @param element element to check if it has a connected tag.
      * @return true, if there is a tag which retains the connection to the given accessible element.
      */
@@ -333,6 +346,7 @@ public class TagTreePointer implements Serializable {
     /**
      * Destroys the connection between the given accessible element and the tag to which this element is connected to.
      * See {@link TagTreePointer#moveToTag} for more explanations about tag connections concept.
+     *
      * @param element {@code IAccessibleElement} which connection to the tag (if there is one) will be removed.
      * @return this {@link TagStructureContext} instance.
      */
@@ -346,6 +360,7 @@ public class TagTreePointer implements Serializable {
      * <br/><br/>
      * You cannot remove root tag, and also you cannot remove any tag if document's tag structure was partially flushed;
      * in this two cases an exception will be thrown.
+     *
      * @return this {@link TagStructureContext} instance.
      */
     public TagTreePointer removeTag() {
@@ -378,7 +393,8 @@ public class TagTreePointer implements Serializable {
     /**
      * Moves kid of the current tag to the tag at which given {@code TagTreePointer} points.
      * This method doesn't change pointerToNewParent position.
-     * @param kidIndex zero-based index of the current tag's kid to be relocated.
+     *
+     * @param kidIndex           zero-based index of the current tag's kid to be relocated.
      * @param pointerToNewParent the {@code TagTreePointer} which is positioned at the tag which will become kid's new parent.
      * @return this {@link TagStructureContext} instance.
      */
@@ -401,6 +417,7 @@ public class TagTreePointer implements Serializable {
     /**
      * Creates a reference to the current tag, which could be used to associate a content on the PdfCanvas with current tag.
      * See {@link PdfCanvas#openTag(TagReference)} and {@link #setPageForTagging(PdfPage)}.
+     *
      * @return the reference to the current tag.
      */
     public TagReference getTagReference() {
@@ -410,6 +427,7 @@ public class TagTreePointer implements Serializable {
     /**
      * Creates a reference to the current tag, which could be used to associate a content on the PdfCanvas with current tag.
      * See {@link PdfCanvas#openTag(TagReference)} and {@link #setPageForTagging(PdfPage)}.
+     *
      * @param index zero-based index in kids array of tag. These indexes define the logical order of the content on the page.
      * @return the reference to the current tag.
      */
@@ -419,6 +437,7 @@ public class TagTreePointer implements Serializable {
 
     /**
      * Moves this {@code TagTreePointer} instance to the document root tag.
+     *
      * @return this {@link TagStructureContext} instance.
      */
     public TagTreePointer moveToRoot() {
@@ -428,6 +447,7 @@ public class TagTreePointer implements Serializable {
 
     /**
      * Moves this {@code TagTreePointer} instance to the parent of the current tag.
+     *
      * @return this {@link TagStructureContext} instance.
      */
     public TagTreePointer moveToParent() {
@@ -447,6 +467,7 @@ public class TagTreePointer implements Serializable {
 
     /**
      * Moves this {@code TagTreePointer} instance to the kid of the current tag.
+     *
      * @param kidIndex zero-based index of the current tag kid to which pointer will be moved.
      * @return this {@link TagStructureContext} instance.
      */
@@ -464,6 +485,7 @@ public class TagTreePointer implements Serializable {
 
     /**
      * Moves this {@code TagTreePointer} instance to the kid of the current tag.
+     *
      * @param role role of the current tag kid to which pointer will be moved.
      *             If there is several kids with this role, pointer will be moved to the first kid with such role.
      * @return this {@link TagStructureContext} instance.
@@ -475,8 +497,9 @@ public class TagTreePointer implements Serializable {
 
     /**
      * Moves this {@code TagTreePointer} instance to the kid of the current tag.
-     * @param n if there is several kids with the given role, pointer will be moved to the kid
-     *          which is the n'th if you count kids with such role.
+     *
+     * @param n    if there is several kids with the given role, pointer will be moved to the kid
+     *             which is the n'th if you count kids with such role.
      * @param role role of the current tag kid to which pointer will be moved.
      * @return this {@link TagStructureContext} instance.
      */
@@ -488,8 +511,8 @@ public class TagTreePointer implements Serializable {
 
         int k = 0;
         for (int i = 0; i < kids.size(); ++i) {
-            if (kids.get(i) == null)  continue;
-            if (kids.get(i).getRole().equals(role)  && !(kids.get(i) instanceof PdfMcr) && k++ == n) {
+            if (kids.get(i) == null) continue;
+            if (kids.get(i).getRole().equals(role) && !(kids.get(i) instanceof PdfMcr) && k++ == n) {
                 moveToKid(i);
                 return this;
             }
@@ -500,7 +523,7 @@ public class TagTreePointer implements Serializable {
 
     /**
      * Moves this {@code TagTreePointer} instance to a tag, which is connected with the given accessible element.
-     *
+     * <p>
      * <br/><br/>
      * The connection between the tag and the accessible element instance is used as a sign that tag is not yet finished
      * and therefore should not be flushed or removed if page tags are flushed or removed. Also, any {@code TagTreePointer}
@@ -510,6 +533,7 @@ public class TagTreePointer implements Serializable {
      * <br/>
      * For any existing not connected tag the connection could be created using {@link #getConnectedElement(boolean)}
      * with <i>true</i> as parameter.
+     *
      * @param element an element which has a connection with some tag.
      * @return this {@link TagStructureContext} instance.
      */
@@ -522,6 +546,7 @@ public class TagTreePointer implements Serializable {
      * Gets current element kids roles.
      * If certain kid is already flushed, at its position there will be a {@code null}.
      * If kid is content item, at its position there will be "MCR" (Marked Content Reference).
+     *
      * @return current element kids roles
      */
     public List<PdfName> getKidsRoles() {
@@ -542,11 +567,12 @@ public class TagTreePointer implements Serializable {
     /**
      * Flushes the current tag and all it's descenders.
      * This method call moves this {@code TagTreePointer} to the current tag parent.
-     *
+     * <p>
      * <br><br>
      * If some of the tags to be flushed are still connected to the accessible elements, then these tags are considered
      * as not yet finished ones, and they won't be flushed immediately, but they will be flushed, when the connection
      * is removed.
+     *
      * @return this {@link TagStructureContext} instance.
      */
     public TagTreePointer flushTag() {
@@ -566,6 +592,7 @@ public class TagTreePointer implements Serializable {
      * Gets connected accessible element for the current tag. If tag is not connected to element, behaviour is defined
      * by the createIfNotExist flag.
      * See {@link TagTreePointer#moveToTag} for more explanations about tag connections concept.
+     *
      * @param createIfNotExist if <i>true</i>, creates an {@code IAccessibleElement} and connects it to the tag.
      * @return connected {@code IAccessibleElement} if there is one (or if it is created), otherwise null.
      */
@@ -582,12 +609,13 @@ public class TagTreePointer implements Serializable {
 
     /**
      * Gets accessibility properties of the current tag.
+     *
      * @return accessibility properties of the current tag.
      */
     public AccessibilityProperties getProperties() {
         PdfStructElem currElem = getCurrentStructElem();
         IAccessibleElement model = tagStructureContext.getModelConnectedToStruct(currElem);
-        if (model != null){
+        if (model != null) {
             return model.getAccessibilityProperties();
         } else {
             return new BackedAccessibleProperties(currElem);
@@ -596,6 +624,7 @@ public class TagTreePointer implements Serializable {
 
     /**
      * Gets current tag role.
+     *
      * @return current tag role.
      */
     public PdfName getRole() {
@@ -609,6 +638,7 @@ public class TagTreePointer implements Serializable {
 
     /**
      * Sets new role to the current tag.
+     *
      * @param role new role to be set.
      * @return this {@link TagStructureContext} instance.
      */
@@ -631,7 +661,7 @@ public class TagTreePointer implements Serializable {
         } else {
             mcr = new PdfMcrDictionary(currentPage, elem);
             if (markedContentNotInPageStream()) {
-                ((PdfDictionary)mcr.getPdfObject()).put(PdfName.Stm, contentStream);
+                ((PdfDictionary) mcr.getPdfObject()).put(PdfName.Stm, contentStream);
             }
         }
         elem.addKid(index, mcr);

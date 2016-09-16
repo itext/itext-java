@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -54,6 +53,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Represents the most common properties of color spaces.
+ */
 public abstract class PdfColorSpace extends PdfObjectWrapper<PdfObject> {
 
     public static final Set<PdfName> directColorSpaces = new HashSet<>(Arrays.asList(PdfName.DeviceGray, PdfName.DeviceRGB, PdfName.DeviceCMYK, PdfName.Pattern));

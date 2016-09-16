@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -47,12 +46,11 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.BadPasswordException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class PdfObject implements Serializable {
 
@@ -71,29 +69,37 @@ public abstract class PdfObject implements Serializable {
 
     // Indicates if the object has been flushed.
     protected static final short FLUSHED = 1;
+
     // Indicates that the indirect reference of the object could be reused or have to be marked as free.
     protected static final short FREE = 2;
+
     // Indicates that definition of the indirect reference of the object still not found (e.g. keys in XRefStm).
     protected static final short READING = 4;
+
     // Indicates that object changed (using in stamp mode).
     protected static final short MODIFIED = 8;
+
     // Indicates that the indirect reference of the object represents ObjectStream from original document.
     // When PdfReader read ObjectStream reference marked as OriginalObjectStream
     // to avoid further reusing.
     protected static final short ORIGINAL_OBJECT_STREAM = 16;
+
     // For internal usage only. Marks objects that shall be written to the output document.
     // Option is needed to build the correct PDF objects tree when closing the document.
     // As a result it avoids writing unused (removed) objects.
     protected static final short MUST_BE_FLUSHED = 32;
+
     // Indicates that the object shall be indirect when it is written to the document.
     // It is used to postpone the creation of indirect reference for the objects that shall be indirect,
     // so it is possible to create such objects without PdfDocument instance.
     protected static final short MUST_BE_INDIRECT = 64;
+
     // Indicates that the object is highly sensitive and we do not want to release it even if release() is called.
     // This flag can be set in stamping mode in object wrapper constructors and is automatically set when setModified
     // flag is set (we do not want to release changed objects).
     // The flag is set automatically for some wrappers that need document even in reader mode (FormFields etc).
     protected static final short FORBID_RELEASE = 128;
+
     // Indicates that we do not want this object to be ever written into the resultant document
     // (because of multiple objects read from the same reference inconsistency).
     protected static final short READ_ONLY = 256;
@@ -117,8 +123,6 @@ public abstract class PdfObject implements Serializable {
 
     /**
      * Flushes the object to the document.
-     *
-     * @throws PdfException
      */
     public final void flush() {
         flush(true);
@@ -128,15 +132,19 @@ public abstract class PdfObject implements Serializable {
      * Flushes the object to the document.
      *
      * @param canBeInObjStm indicates whether object can be placed into object stream.
-     * @throws PdfException
      */
     public final void flush(boolean canBeInObjStm) {
         if (isFlushed() || getIndirectReference() == null) {
+            // TODO here we should take into account and log the case when object is MustBeIndirect, but has no indirect reference
+            // TODO DEVSIX-744
 //            Logger logger = LoggerFactory.getLogger(PdfObject.class);
 //            if (isFlushed()) {
 //                logger.warn("Meaningless call, the object has already flushed");
+//            } else if (isIndirect()){
+//                logger.warn("Meaningless call, the object will be transformed into indirect on closing, but at the moment it doesn't have an indirect reference and therefore couldn't be flushed. " +
+//                        "To flush it now call makeIndirect(PdfDocument) method before calling flush() method.");
 //            } else {
-//                logger.warn("Meaningless call, the object is direct object.");
+//                logger.warn("Meaningless call, the object is direct object. It will be flushed along with the indirect object that contains it.");
 //            }
             return;
         }
@@ -172,6 +180,7 @@ public abstract class PdfObject implements Serializable {
      * <br>
      * E.g. all PdfStreams are transformed to indirect objects when they are written, but they don't always
      * have indirect references at any given moment.
+     *
      * @return returns {@code true} if object is indirect or is to be indirect in the resultant document.
      */
     public boolean isIndirect() {
@@ -272,11 +281,12 @@ public abstract class PdfObject implements Serializable {
      *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
      * @return copied object.
      */
-    public  PdfObject copyTo(PdfDocument document, boolean allowDuplicating) {
+    public PdfObject copyTo(PdfDocument document, boolean allowDuplicating) {
         if (document == null)
-            throw new PdfException(PdfException.DocumentToCopyToCannotBeNull);
+            throw new PdfException(PdfException.DocumentForCopyToCannotBeNull);
 
         if (indirectReference != null) {
+            // TODO checkState(MUST_BE_INDIRECT) now is always false, because indirectReference != null. See also DEVSIX-602
             if (indirectReference.getWriter() != null || checkState(MUST_BE_INDIRECT)) {
                 throw new PdfException(PdfException.CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten);
             }
@@ -398,7 +408,7 @@ public abstract class PdfObject implements Serializable {
      * <CODE>PdfIndirectReference</CODE>.
      *
      * @return <CODE>true</CODE> if this is an indirect reference,
-     *   otherwise <CODE>false</CODE>
+     * otherwise <CODE>false</CODE>
      */
     public boolean isIndirectReference() {
         return getType() == INDIRECT_REFERENCE;
@@ -409,7 +419,7 @@ public abstract class PdfObject implements Serializable {
      * <CODE>PdfLiteral</CODE>.
      *
      * @return <CODE>true</CODE> if this is a literal,
-     *   otherwise <CODE>false</CODE>
+     * otherwise <CODE>false</CODE>
      */
     public boolean isLiteral() {
         return getType() == LITERAL;
@@ -429,6 +439,7 @@ public abstract class PdfObject implements Serializable {
 
     /**
      * Checks state of the flag of current object.
+     *
      * @param state special flag to check
      * @return true if the state was set.
      */
@@ -438,6 +449,7 @@ public abstract class PdfObject implements Serializable {
 
     /**
      * Sets special states of current object.
+     *
      * @param state special flag of current object
      */
     protected PdfObject setState(short state) {
@@ -447,10 +459,11 @@ public abstract class PdfObject implements Serializable {
 
     /**
      * Clear state of the flag of current object.
+     *
      * @param state special flag state to clear
      */
     protected PdfObject clearState(short state) {
-        this.state &= ~state;
+        this.state &= (short) ~state;
         return this;
     }
 
@@ -471,11 +484,11 @@ public abstract class PdfObject implements Serializable {
      * <li>copying to the other document</li>
      * <li>cloning inside of the current document</li>
      * </ol>
-     *
+     * <p>
      * This two cases are distinguished by the state of <code>document</code> parameter:
      * the second case is processed if <code>document</code> is <code>null</code>.
      *
-     * @param documentTo if not null: document to copy object to; otherwise indicates that object is to be cloned.
+     * @param documentTo       if not null: document to copy object to; otherwise indicates that object is to be cloned.
      * @param allowDuplicating indicates if to allow copy objects which already have been copied.
      *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
      *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
@@ -501,5 +514,15 @@ public abstract class PdfObject implements Serializable {
             }
             return obj.clone();
         }
+    }
+
+    static boolean equalContent(PdfObject obj1, PdfObject obj2) {
+        PdfObject direct1 = obj1 != null && obj1.isIndirectReference()
+                ? ((PdfIndirectReference)obj1).getRefersTo(true)
+                : obj1;
+        PdfObject direct2 = obj2 != null && obj2.isIndirectReference()
+                ? ((PdfIndirectReference)obj2).getRefersTo(true)
+                : obj2;
+        return direct1 != null && direct1.equals(direct2);
     }
 }

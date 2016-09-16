@@ -204,7 +204,8 @@ public class XMPUtilsImpl implements XMPConst
 		String itemValue;
 		int itemStart, itemEnd;
 		int nextKind = UCK_NORMAL, charKind = UCK_NORMAL;
-		char ch = 0, nextChar = 0;
+		char ch = '\0';
+		char nextChar;
 		
 		itemEnd = 0;
 		int endPos = catedStr.length();
@@ -967,41 +968,41 @@ public class XMPUtilsImpl implements XMPConst
 	{
 		switch (openQuote)
 		{
-		case 0x0022:
-			return 0x0022; // ! U+0022 is both opening and closing.
+		case (char) 0x0022:
+			return (char) 0x0022; // ! U+0022 is both opening and closing.
 //		Not interpreted as brackets anymore
 //		case 0x005B: 
 //			return 0x005D;
-		case 0x00AB:
-			return 0x00BB; // ! U+00AB and U+00BB are reversible.
-		case 0x00BB:
-			return 0x00AB;
-		case 0x2015:
-			return 0x2015; // ! U+2015 is both opening and closing.
-		case 0x2018:
-			return 0x2019;
-		case 0x201A:
-			return 0x201B;
-		case 0x201C:
-			return 0x201D;
-		case 0x201E:
-			return 0x201F;
-		case 0x2039:
-			return 0x203A; // ! U+2039 and U+203A are reversible.
-		case 0x203A:
-			return 0x2039;
-		case 0x3008:
-			return 0x3009;
-		case 0x300A:
-			return 0x300B;
-		case 0x300C:
-			return 0x300D;
-		case 0x300E:
-			return 0x300F;
-		case 0x301D:
-			return 0x301F; // ! U+301E also closes U+301D.
+		case (char) 0x00AB:
+			return (char) 0x00BB; // ! U+00AB and U+00BB are reversible.
+		case (char) 0x00BB:
+			return (char) 0x00AB;
+		case (char) 0x2015:
+			return (char) 0x2015; // ! U+2015 is both opening and closing.
+		case (char) 0x2018:
+			return (char) 0x2019;
+		case (char) 0x201A:
+			return (char) 0x201B;
+		case (char) 0x201C:
+			return (char) 0x201D;
+		case (char) 0x201E:
+			return (char) 0x201F;
+		case (char) 0x2039:
+			return (char) 0x203A; // ! U+2039 and U+203A are reversible.
+		case (char) 0x203A:
+			return (char) 0x2039;
+		case (char) 0x3008:
+			return (char) 0x3009;
+		case (char) 0x300A:
+			return (char) 0x300B;
+		case (char) 0x300C:
+			return (char) 0x300D;
+		case (char) 0x300E:
+			return (char) 0x300F;
+		case (char) 0x301D:
+			return (char) 0x301F; // ! U+301E also closes U+301D.
 		default:
-			return 0;
+			return '\0';
 		}
 	}
 

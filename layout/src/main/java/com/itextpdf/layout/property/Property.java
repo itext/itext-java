@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -57,6 +56,7 @@ public final class Property {
     }
 
     public static final int ACTION = 1;
+    public static final int APPEARANCE_STREAM_LAYOUT = 82;
     public static final int AREA_BREAK_TYPE = 2;
     public static final int AUTO_SCALE = 3;
     public static final int AUTO_SCALE_HEIGHT = 4;
@@ -91,6 +91,7 @@ public final class Property {
     public static final int HYPHENATION = 30;
     public static final int ITALIC_SIMULATION = 31;
     public static final int KEEP_TOGETHER = 32;
+    public static final int KEEP_WITH_NEXT = 81;
     public static final int LEADING = 33;
     public static final int LEFT = 34;
     public static final int LINE_DRAWER = 35;
@@ -130,7 +131,7 @@ public final class Property {
     public static final int TAB_STOPS = 69;
     public static final int TEXT_ALIGNMENT = 70;
     /**
-     * Use values from .
+     * Use values from {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode}.
      */
     public static final int TEXT_RENDERING_MODE = 71;
     public static final int TEXT_RISE = 72;
@@ -152,11 +153,12 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 80;
+    private static final int MAX_INHERITED_PROPERTY_ID = 82;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
 
+        INHERITED_PROPERTIES[Property.APPEARANCE_STREAM_LAYOUT] = true;
         INHERITED_PROPERTIES[Property.BASE_DIRECTION] = true;
         INHERITED_PROPERTIES[Property.BOLD_SIMULATION] = true;
         INHERITED_PROPERTIES[Property.CHARACTER_SPACING] = true;
@@ -184,7 +186,16 @@ public final class Property {
         INHERITED_PROPERTIES[Property.WORD_SPACING] = true;
     }
 
+    /**
+     * This method checks whether a Property, in order to be picked up by the
+     * rendering engine, must be defined on the current element or renderer 
+     * (<code>return false</code>), or may be defined in one of its parent
+     * elements or renderers (<code>return true</code>). 
+     * 
+     * @param property the ID, defined in this class, of the property to check
+     * @return whether the property type is inheritable
+     */
     public static boolean isPropertyInherited(int property) {
-        return property >= 0 && property < MAX_INHERITED_PROPERTY_ID && INHERITED_PROPERTIES[property];
+        return property >= 0 && property <= MAX_INHERITED_PROPERTY_ID && INHERITED_PROPERTIES[property];
     }
 }

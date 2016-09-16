@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,15 +43,16 @@
  */
 package com.itextpdf.barcodes;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -237,8 +237,8 @@ public class Barcode128 extends Barcode1D {
             barHeight = size * 3;
             textAlignment = ALIGN_CENTER;
             codeType = CODE128;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot create font", e);
         }
     }
 
@@ -294,8 +294,8 @@ public class Barcode128 extends Barcode1D {
             for (int k = 2; k < 5; ++k) {
                 if (code.length() < k)
                     break;
-                Integer subcode = Integer.parseInt(code.substring(0, k));
-                n = ais.containsKey(subcode) ? ais.get(subcode) : 0;
+                int subcode = Integer.parseInt(code.substring(0, k));
+                n = ais.containsKey(subcode) ? (int)ais.get(subcode) : 0;
                 if (n != 0) {
                     idlen = k;
                     break;
@@ -685,7 +685,7 @@ public class Barcode128 extends Barcode1D {
                     throw new IllegalArgumentException("AI is too short");
                 }
                 int ai = Integer.parseInt(sai);
-                int len = ais.get(ai);
+                int len = (int)ais.get(ai);
                 if (len == 0) {
                     throw new IllegalArgumentException("AI not found");
                 }

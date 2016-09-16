@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -69,9 +68,10 @@ public class FontCache {
     /**
      * The path to the font resources.
      */
+    @Deprecated
     public static final String CMAP_RESOURCE_PATH = FontConstants.RESOURCE_PATH + "cmap/";
 
-    private static final Map<String, Map<String, Object>> allFonts = new HashMap<>();
+    private static final Map<String, Map<String, Object>> allCidFonts = new HashMap<>();
     private static final Map<String, Set<String>> registryNames = new HashMap<>();
 
     private static final String CJK_REGISTRY_FILENAME = "cjk_registry.properties";
@@ -86,7 +86,7 @@ public class FontCache {
         try {
             loadRegistry();
             for (String font : registryNames.get(FONTS_PROP)) {
-                allFonts.put(font, readFontProperties(font));
+                allCidFonts.put(font, readFontProperties(font));
             }
         } catch (Exception ignored) {
         }
@@ -111,7 +111,7 @@ public class FontCache {
         for (Map.Entry<String, Set<String>> e : registryNames.entrySet()) {
             if (e.getValue().contains(cmap)) {
                 String registry = e.getKey();
-                for (Map.Entry<String, Map<String, Object>> e1 : allFonts.entrySet()) {
+                for (Map.Entry<String, Map<String, Object>> e1 : allCidFonts.entrySet()) {
                     if (registry.equals(e1.getValue().get(REGISTRY_PROP)))
                         return e1.getKey();
                 }
@@ -125,8 +125,16 @@ public class FontCache {
         return registryNames.get(registry);
     }
 
+    public static Map<String, Map<String, Object>> getAllPredefinedCidFonts() {
+        return allCidFonts;
+    }
+
+    /**
+     * @deprecated Use {@link #getAllPredefinedCidFonts()} instead.
+     */
+    @Deprecated
     public static Map<String, Map<String, Object>> getAllFonts() {
-        return allFonts;
+        return allCidFonts;
     }
 
     public static Map<String, Set<String>> getRegistryNames() {
@@ -155,6 +163,7 @@ public class FontCache {
 
     public static FontProgram getFont(String fontName) {
         String key = getFontCacheKey(fontName);
+        FontProgram font = null;
         return fontCache.get(key);
     }
 
@@ -169,7 +178,7 @@ public class FontCache {
     }
 
     private static void loadRegistry() throws java.io.IOException {
-        InputStream resource = ResourceUtil.getResourceStream(CMAP_RESOURCE_PATH + CJK_REGISTRY_FILENAME);
+        InputStream resource = ResourceUtil.getResourceStream(FontConstants.CMAP_RESOURCE_PATH + CJK_REGISTRY_FILENAME);
         try {
             Properties p = new Properties();
             p.load(resource);
@@ -195,7 +204,7 @@ public class FontCache {
     }
 
     private static Map<String, Object> readFontProperties(String name) throws java.io.IOException {
-        InputStream resource = ResourceUtil.getResourceStream(CMAP_RESOURCE_PATH + name + ".properties");
+        InputStream resource = ResourceUtil.getResourceStream(FontConstants.CMAP_RESOURCE_PATH + name + ".properties");
 
         try {
             Properties p = new Properties();

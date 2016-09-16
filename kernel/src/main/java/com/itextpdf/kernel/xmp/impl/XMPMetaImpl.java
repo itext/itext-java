@@ -54,7 +54,7 @@ import java.util.Iterator;
  * 
  * @since 17.02.2006
  */
-public class XMPMetaImpl implements XMPMeta, XMPConst
+public class XMPMetaImpl implements XMPConst, XMPMeta
 {
 	/** Property values are Strings by default */
 	private static final int VALUE_STRING = 0;
@@ -419,7 +419,7 @@ public class XMPMetaImpl implements XMPMeta, XMPConst
 		}
 
 		Object[] result = XMPNodeUtils.chooseLocalizedText(arrayNode, genericLang, specificLang);
-		int match = ((Integer) result[0]).intValue();
+		int match = (int) result[0];
 		final XMPNode itemNode = (XMPNode) result[1];
 
 		if (match != XMPNodeUtils.CLT_NO_VALUES)
@@ -446,7 +446,7 @@ public class XMPMetaImpl implements XMPMeta, XMPConst
 
 				public String toString()
 				{
-					return itemNode.getValue().toString();
+					return itemNode.getValue();
 				}
 			};
 		}
@@ -526,7 +526,7 @@ public class XMPMetaImpl implements XMPMeta, XMPConst
 		// chooseLocalizedText will make sure the array is a language
 		// alternative.
 		Object[] result = XMPNodeUtils.chooseLocalizedText(arrayNode, genericLang, specificLang);
-		int match = ((Integer) result[0]).intValue();
+		int match = (int) result[0];
 		XMPNode itemNode = (XMPNode) result[1];
 
 		boolean specificXDefault = XMPConst.X_DEFAULT.equals(specificLang);
@@ -1410,16 +1410,16 @@ public class XMPMetaImpl implements XMPMeta, XMPConst
 		switch (valueType)
 		{
 		case VALUE_BOOLEAN:
-			value = new Boolean(XMPUtils.convertToBoolean(rawValue));
+			value = XMPUtils.convertToBoolean(rawValue);
 			break;
 		case VALUE_INTEGER:
-			value = new Integer(XMPUtils.convertToInteger(rawValue));
+			value = XMPUtils.convertToInteger(rawValue);
 			break;
 		case VALUE_LONG:
-			value = new Long(XMPUtils.convertToLong(rawValue));
+			value = XMPUtils.convertToLong(rawValue);
 			break;
 		case VALUE_DOUBLE:
-			value = new Double(XMPUtils.convertToDouble(rawValue));
+			value = XMPUtils.convertToDouble(rawValue);
 			break;
 		case VALUE_DATE:
 			value = XMPUtils.convertToDate(rawValue);

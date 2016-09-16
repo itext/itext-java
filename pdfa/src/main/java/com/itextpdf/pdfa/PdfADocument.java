@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -74,26 +73,61 @@ import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.checker.PdfA2Checker;
 import com.itextpdf.pdfa.checker.PdfA3Checker;
 import com.itextpdf.pdfa.checker.PdfAChecker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * This class extends {@link PdfDocument} and is in charge of creating files
+ * that comply with the PDF/A standard.
+ * 
+ * Client code is still responsible for making sure the file is actually PDF/A
+ * compliant: multiple steps must be undertaken (depending on the
+ * {@link PdfAConformanceLevel}) to ensure that the PDF/A standard is followed.
+ * 
+ * This class will throw exceptions, mostly {@link PdfAConformanceException}, 
+ * and thus refuse to output a PDF/A file if at any point the document does not
+ * adhere to the PDF/A guidelines specified by the {@link PdfAConformanceLevel}.
+ */
 public class PdfADocument extends PdfDocument {
 
     private static final long serialVersionUID = -5908390625367471894L;
     protected PdfAChecker checker;
 
+    /**
+     * Constructs a new PdfADocument for writing purposes, i.e. from scratch. A
+     * PDF/A file has a conformance level, and must have an explicit output
+     * intent.
+     * 
+     * @param writer the {@link PdfWriter} object to write to
+     * @param conformanceLevel the generation and strictness level of the PDF/A that must be followed.
+     * @param outputIntent a {@link PdfOutputIntent}
+     */
     public PdfADocument(PdfWriter writer, PdfAConformanceLevel conformanceLevel, PdfOutputIntent outputIntent) {
         super(writer);
         setChecker(conformanceLevel);
         addOutputIntent(outputIntent);
     }
 
+    /**
+     * Opens a PDF/A document in the stamping mode.
+     * 
+     * @param reader PDF reader.
+     * @param writer PDF writer.
+     */
     public PdfADocument(PdfReader reader, PdfWriter writer) {
         this(reader, writer, new StampingProperties());
     }
 
+    /**
+     * Open a PDF/A document in stamping mode.
+     *
+     * @param reader PDF reader.
+     * @param writer PDF writer.
+     * @param properties properties of the stamping process
+     */
     public PdfADocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
         super(reader, writer, properties);
 
@@ -142,7 +176,7 @@ public class PdfADocument extends PdfDocument {
                 break;
         }
 
-        IsoKey drawMode = null;
+        IsoKey drawMode = IsoKey.DRAWMODE_FILL;
         if (fill && stroke) {
             drawMode = IsoKey.DRAWMODE_FILL_STROKE;
         } else if (fill) {
@@ -165,7 +199,7 @@ public class PdfADocument extends PdfDocument {
         }
         switch (key) {
             case CANVAS_STACK:
-                checker.checkCanvasStack((Character) obj);
+                checker.checkCanvasStack((char) obj);
                 break;
             case PDF_OBJECT:
                 checker.checkPdfObject((PdfObject) obj);
@@ -198,11 +232,34 @@ public class PdfADocument extends PdfDocument {
                 break;
             case PAGE:
                 checker.checkSinglePage((PdfPage) obj);
+                break;
+            case TAG_STRUCTURE_ELEMENT:
+                checker.checkTagStructureElement((PdfObject) obj);
+                break;
         }
     }
 
+    /**
+     * Gets the PdfAConformanceLevel set in the constructor or in the metadata
+     * of the {@link PdfReader}.
+     * 
+     * @return a {@link PdfAConformanceLevel}
+     */
     public PdfAConformanceLevel getConformanceLevel() {
         return checker.getConformanceLevel();
+    }
+
+    @Override
+    protected void addCustomMetadataExtensions(XMPMeta xmpMeta) {
+        if (this.isTagged()) {
+            try {
+                XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
+                XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
+            } catch (XMPException exc) {
+                Logger logger = LoggerFactory.getLogger(PdfADocument.class);
+                logger.error(LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, exc);
+            }
+        }
     }
 
     @Override
@@ -211,10 +268,7 @@ public class PdfADocument extends PdfDocument {
             XMPMeta xmpMeta = updateDefaultXmpMetadata();
             xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, checker.getConformanceLevel().getPart());
             xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, checker.getConformanceLevel().getConformance());
-            if (this.isTagged()) {
-                XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PdfAXMPUtil.PDF_UA_EXTENSION);
-                XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
-            }
+            addCustomMetadataExtensions(xmpMeta);
             setXmpMetadata(xmpMeta);
         } catch (XMPException e) {
             Logger logger = LoggerFactory.getLogger(PdfADocument.class);
@@ -241,10 +295,7 @@ public class PdfADocument extends PdfDocument {
     @Override
     protected void flushFonts() {
         for (PdfFont pdfFont : getDocumentFonts()) {
-            if (!pdfFont.isEmbedded()) {
-                throw new PdfAConformanceException(PdfAConformanceException.AllFontsMustBeEmbeddedThisOneIsnt1)
-                        .setMessageParams(pdfFont.getFontProgram().getFontNames().getFontName());
-            }
+            checker.checkFont(pdfFont);
         }
         super.flushFonts();
     }

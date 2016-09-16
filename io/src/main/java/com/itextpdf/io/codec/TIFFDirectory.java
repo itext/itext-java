@@ -52,7 +52,6 @@ import java.io.EOFException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -141,7 +140,7 @@ public class TIFFDirectory implements Serializable {
         stream.seek(0L);
         int endian = stream.readUnsignedShort();
         if (!isValidEndianTag(endian)) {
-            throw new IOException(IOException.BadEndiannessTagNot0x4949Or0x4d4d);
+            throw new IOException(IOException.BadEndiannessTag0x4949Or0x4d4d);
         }
         isBigEndian = endian == 0x4d4d;
 
@@ -155,7 +154,7 @@ public class TIFFDirectory implements Serializable {
 
         for (int i = 0; i < directory; i++) {
             if (ifd_offset == 0L) {
-                throw new IOException(IOException.DirectoryNumberTooLarge);
+                throw new IOException(IOException.DirectoryNumberIsTooLarge);
             }
 
             stream.seek(ifd_offset);
@@ -190,7 +189,7 @@ public class TIFFDirectory implements Serializable {
         stream.seek(0L);
         int endian = stream.readUnsignedShort();
         if (!isValidEndianTag(endian)) {
-            throw new IOException(IOException.BadEndiannessTagNot0x4949Or0x4d4d);
+            throw new IOException(IOException.BadEndiannessTag0x4949Or0x4d4d);
         }
         isBigEndian = endian == 0x4d4d;
 
@@ -418,7 +417,7 @@ public class TIFFDirectory implements Serializable {
         if (i == null) {
             return null;
         } else {
-            return fields[i];
+            return fields[(int) i];
         }
     }
 
@@ -435,11 +434,10 @@ public class TIFFDirectory implements Serializable {
      */
     public int[] getTags() {
         int[] tags = new int[fieldIndex.size()];
-        Iterator<Integer> e = fieldIndex.keySet().iterator();
         int i = 0;
 
-        while (e.hasNext()) {
-            tags[i++] = e.next();
+        for (Integer integer : fieldIndex.keySet()) {
+            tags[i++] = (int) integer;
         }
 
         return tags;
@@ -461,7 +459,7 @@ public class TIFFDirectory implements Serializable {
      */
     public byte getFieldAsByte(int tag, int index) {
         Integer i = fieldIndex.get(tag);
-        byte[] b = fields[i].getAsBytes();
+        byte[] b = fields[(int) i].getAsBytes();
         return b[index];
     }
 
@@ -483,7 +481,7 @@ public class TIFFDirectory implements Serializable {
      */
     public long getFieldAsLong(int tag, int index) {
         Integer i = fieldIndex.get(tag);
-        return fields[i].getAsLong(index);
+        return fields[(int) i].getAsLong(index);
     }
 
     /**
@@ -504,7 +502,7 @@ public class TIFFDirectory implements Serializable {
      */
     public float getFieldAsFloat(int tag, int index) {
         Integer i = fieldIndex.get(tag);
-        return fields[i].getAsFloat(index);
+        return fields[(int) i].getAsFloat(index);
     }
 
     /**
@@ -524,7 +522,7 @@ public class TIFFDirectory implements Serializable {
      */
     public double getFieldAsDouble(int tag, int index) {
         Integer i = fieldIndex.get(tag);
-        return fields[i].getAsDouble(index);
+        return fields[(int) i].getAsDouble(index);
     }
 
     /**
@@ -634,7 +632,7 @@ public class TIFFDirectory implements Serializable {
         stream.seek(0L);
         int endian = stream.readUnsignedShort();
         if (!isValidEndianTag(endian)) {
-            throw new IOException(IOException.BadEndiannessTagNot0x4949Or0x4d4d);
+            throw new IOException(IOException.BadEndiannessTag0x4949Or0x4d4d);
         }
         boolean isBigEndian = endian == 0x4d4d;
         int magic = readUnsignedShort(stream, isBigEndian);

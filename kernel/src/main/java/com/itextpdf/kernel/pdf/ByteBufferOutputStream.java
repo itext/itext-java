@@ -1,5 +1,4 @@
 /*
- * $Id$
  *
  * This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -46,13 +45,12 @@ package com.itextpdf.kernel.pdf;
 
 
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.util.DecimalFormatUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Acts like a <CODE>StringBuffer</CODE> but works with <CODE>byte</CODE> arrays.
@@ -65,7 +63,7 @@ public class ByteBufferOutputStream extends OutputStream {
     protected int count;
     
     /** The buffer where the bytes are stored. */
-    protected byte buf[];
+    protected byte[] buf;
     
     private static int byteCacheSize = 0;
     
@@ -78,7 +76,6 @@ public class ByteBufferOutputStream extends OutputStream {
      * If <CODE>false</CODE> uses the faster, although less precise, representation.
      */    
     public static boolean HIGH_PRECISION = false;
-    private static final DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.US);
     
     /** Creates new ByteBufferOutputStream with capacity 128 */
     public ByteBufferOutputStream() {
@@ -235,7 +232,7 @@ public class ByteBufferOutputStream extends OutputStream {
      */
     public ByteBufferOutputStream append(String str) {
         if (str != null)
-            return append(str.getBytes());
+            return append(str.getBytes(StandardCharsets.ISO_8859_1));
         return this;
     }
     
@@ -325,8 +322,7 @@ public class ByteBufferOutputStream extends OutputStream {
      */
     public static String formatDouble(double d, ByteBufferOutputStream buf) {
         if (HIGH_PRECISION) {
-            DecimalFormat dn = new DecimalFormat("0.######", dfs);
-            String sform = dn.format(d);
+            String sform = DecimalFormatUtil.formatNumber(d, "0.######");
             if (buf == null)
                 return sform;
             else {
@@ -608,11 +604,11 @@ public class ByteBufferOutputStream extends OutputStream {
      * the specified output stream argument, as if by calling the output
      * stream's write method using <code>out.write(buf, 0, count)</code>.
      *
-     * @param      out   the output stream to which to write the data.
+     * @param      output   the output stream to which to write the data.
      * @exception  java.io.IOException  if an I/O error occurs.
      */
-    public void writeTo(OutputStream out) throws IOException {
-        out.write(buf, 0, count);
+    public void writeTo(OutputStream output) throws IOException {
+        output.write(buf, 0, count);
     }
     
     public void write(int b) throws IOException {

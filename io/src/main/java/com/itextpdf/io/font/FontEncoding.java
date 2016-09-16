@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -234,7 +233,7 @@ public class FontEncoding implements Serializable {
                 String order = tok.nextToken();
                 String name = tok.nextToken();
                 char uni = (char) Integer.parseInt(tok.nextToken(), 16);
-                Integer uniName = AdobeGlyphList.nameToUnicode(name);
+                int uniName = AdobeGlyphList.nameToUnicode(name);
                 int orderK;
                 if (order.startsWith("'")) {
                     orderK = order.charAt(1);
@@ -245,7 +244,7 @@ public class FontEncoding implements Serializable {
                 unicodeToCode.put(uni, orderK);
                 codeToUnicode[orderK] = (int) uni;
                 differences[orderK] = name;
-                unicodeDifferences.put(uni, uniName != null ? uniName : -1);
+                unicodeDifferences.put(uni, uniName);
             }
         } else {
             int k = 0;
@@ -337,6 +336,8 @@ public class FontEncoding implements Serializable {
             case "macroman":
             case "macromanencoding":
                 return PdfEncodings.MACROMAN;
+            case "zapfdingbatsencoding":
+                return PdfEncodings.ZAPFDINGBATS;
             default:
                 return enc;
         }

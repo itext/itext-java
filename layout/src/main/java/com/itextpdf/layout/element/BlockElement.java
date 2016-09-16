@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -53,7 +52,7 @@ import com.itextpdf.layout.property.VerticalAlignment;
  * available to it on the canvas or page. The concept is comparable to the block
  * element in HTML. Also like in HTML, the visual representation of the object
  * can be delimited by padding, a border, and/or a margin.
- * 
+ *
  * @param <T> the type of the implementation
  */
 public abstract class BlockElement<T extends IElement> extends AbstractElement<T> implements IAccessibleElement {
@@ -66,74 +65,82 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
 
     /**
      * Gets the current left margin width of the element.
+     *
      * @return the left margin width, as a <code>float</code>
      */
     public Float getMarginLeft() {
-        return getProperty(Property.MARGIN_LEFT);
+        return this.<Float>getProperty(Property.MARGIN_LEFT);
     }
 
     /**
      * Sets the left margin width of the element.
+     *
      * @param value the new left margin width
      * @return this element
      */
     public T setMarginLeft(float value) {
         setProperty(Property.MARGIN_LEFT, value);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
      * Gets the current right margin width of the element.
+     *
      * @return the right margin width, as a <code>float</code>
      */
     public Float getMarginRight() {
-        return getProperty(Property.MARGIN_RIGHT);
+        return this.<Float>getProperty(Property.MARGIN_RIGHT);
     }
 
     /**
      * Sets the right margin width of the element.
+     *
      * @param value the new right margin width
      * @return this element
      */
     public T setMarginRight(float value) {
         setProperty(Property.MARGIN_RIGHT, value);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
      * Gets the current top margin width of the element.
+     *
      * @return the top margin width, as a <code>float</code>
      */
     public Float getMarginTop() {
-        return getProperty(Property.MARGIN_TOP);
+        return this.<Float>getProperty(Property.MARGIN_TOP);
     }
 
     /**
      * Sets the top margin width of the element.
+     *
      * @param value the new top margin width
      * @return this element
      */
     public T setMarginTop(float value) {
         setProperty(Property.MARGIN_TOP, value);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
      * Gets the current bottom margin width of the element.
+     *
      * @return the bottom margin width, as a <code>float</code>
      */
     public Float getMarginBottom() {
-        return getProperty(Property.MARGIN_BOTTOM);
+        return this.<Float>getProperty(Property.MARGIN_BOTTOM);
     }
 
     /**
      * Sets the bottom margin width of the element.
+     *
      * @param value the new bottom margin width
      * @return this element
      */
     public T setMarginBottom(float value) {
         setProperty(Property.MARGIN_BOTTOM, value);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -149,10 +156,10 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
     /**
      * Sets the margins around the element to a series of new widths.
      *
-     * @param marginTop the new margin top width
-     * @param marginRight the new margin right width
+     * @param marginTop    the new margin top width
+     * @param marginRight  the new margin right width
      * @param marginBottom the new margin bottom width
-     * @param marginLeft the new margin left width
+     * @param marginLeft   the new margin left width
      * @return this element
      */
     public T setMargins(float marginTop, float marginRight, float marginBottom, float marginLeft) {
@@ -160,79 +167,87 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
         setMarginRight(marginRight);
         setMarginBottom(marginBottom);
         setMarginLeft(marginLeft);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
      * Gets the current left padding width of the element.
+     *
      * @return the left padding width, as a <code>float</code>
      */
     public Float getPaddingLeft() {
-        return getProperty(Property.PADDING_LEFT);
+        return this.<Float>getProperty(Property.PADDING_LEFT);
     }
 
     /**
      * Sets the left padding width of the element.
+     *
      * @param value the new left padding width
      * @return this element
      */
     public T setPaddingLeft(float value) {
         setProperty(Property.PADDING_LEFT, value);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
      * Gets the current right padding width of the element.
+     *
      * @return the right padding width, as a <code>float</code>
      */
     public Float getPaddingRight() {
-        return getProperty(Property.PADDING_RIGHT);
+        return this.<Float>getProperty(Property.PADDING_RIGHT);
     }
 
     /**
      * Sets the right padding width of the element.
+     *
      * @param value the new right padding width
      * @return this element
      */
     public T setPaddingRight(float value) {
         setProperty(Property.PADDING_RIGHT, value);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
      * Gets the current top padding width of the element.
+     *
      * @return the top padding width, as a <code>float</code>
      */
     public Float getPaddingTop() {
-        return getProperty(Property.PADDING_TOP);
+        return this.<Float>getProperty(Property.PADDING_TOP);
     }
 
     /**
      * Sets the top padding width of the element.
+     *
      * @param value the new top padding width
      * @return this element
      */
     public T setPaddingTop(float value) {
         setProperty(Property.PADDING_TOP, value);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
      * Gets the current bottom padding width of the element.
+     *
      * @return the bottom padding width, as a <code>float</code>
      */
     public Float getPaddingBottom() {
-        return getProperty(Property.PADDING_BOTTOM);
+        return this.<Float>getProperty(Property.PADDING_BOTTOM);
     }
 
     /**
      * Sets the bottom padding width of the element.
+     *
      * @param value the new bottom padding width
      * @return this element
      */
     public T setPaddingBottom(float value) {
         setProperty(Property.PADDING_BOTTOM, value);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -248,10 +263,10 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
     /**
      * Sets the paddings around the element to a series of new widths.
      *
-     * @param paddingTop the new padding top width
-     * @param paddingRight the new padding right width
+     * @param paddingTop    the new padding top width
+     * @param paddingRight  the new padding right width
      * @param paddingBottom the new padding bottom width
-     * @param paddingLeft the new padding left width
+     * @param paddingLeft   the new padding left width
      * @return this element
      */
     public T setPaddings(float paddingTop, float paddingRight, float paddingBottom, float paddingLeft) {
@@ -259,7 +274,7 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
         setPaddingRight(paddingRight);
         setPaddingBottom(paddingBottom);
         setPaddingLeft(paddingLeft);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
@@ -270,12 +285,13 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      */
     public T setVerticalAlignment(VerticalAlignment verticalAlignment) {
         setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
-        return (T) this;
+        return (T) (Object) this;
     }
 
     /**
      * Sets a ratio which determines in which proportion will word spacing and character spacing
      * be applied when horizontal alignment is justified.
+     *
      * @param ratio the ratio coefficient. It must be between 0 and 1, inclusive.
      *              It means that <b>ratio</b> part of the free space will
      *              be compensated by word spacing, and <b>1-ratio</b> part of the free space will
@@ -285,58 +301,73 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      */
     public T setSpacingRatio(float ratio) {
         setProperty(Property.SPACING_RATIO, ratio);
-        return (T) this;
-    }
-
-    @Override
-    public <T1> T1 getDefaultProperty(int property) {
-        switch (property) {
-            case Property.KEEP_TOGETHER:
-                return (T1) Boolean.valueOf(false);
-            default:
-                return super.getDefaultProperty(property);
-        }
+        return (T) (Object) this;
     }
 
     /**
      * Returns whether the {@link BlockElement} should be kept together as much
      * as possible.
+     *
      * @return the current value of the {@link Property#KEEP_TOGETHER} property
      */
     public Boolean isKeepTogether() {
-        return getProperty(Property.KEEP_TOGETHER);
+        return this.<Boolean>getProperty(Property.KEEP_TOGETHER);
     }
 
     /**
      * Sets whether the {@link BlockElement} should be kept together as much
      * as possible.
+     *
      * @param keepTogether the new value of the {@link Property#KEEP_TOGETHER} property
      * @return this element
      */
     public T setKeepTogether(boolean keepTogether) {
         setProperty(Property.KEEP_TOGETHER, keepTogether);
-        return (T) this;
+        return (T) (Object) this;
+    }
+
+    /**
+     * Returns whether the end of this {@link BlockElement} and the start of the next sibling of this element
+     * should be placed in the same area.
+     *
+     * @return the current value of the {@link Property#KEEP_WITH_NEXT} property
+     */
+    public Boolean isKeepWithNext() {
+        return this.<Boolean>getProperty(Property.KEEP_WITH_NEXT);
+    }
+
+    /**
+     * Sets whether the end of this {@link BlockElement} and the start of the next sibling of this element
+     * should be placed in the same area.
+     * Note that this will only work for high-level elements, i.e. elements added to the {@link com.itextpdf.layout.RootElement}.
+     *
+     * @param keepWithNext the new value of the {@link Property#KEEP_WITH_NEXT} property
+     * @return this element
+     */
+    public T setKeepWithNext(boolean keepWithNext) {
+        setProperty(Property.KEEP_WITH_NEXT, keepWithNext);
+        return (T) (Object) this;
     }
 
     /**
      * Sets the rotation radAngle.
-     * 
-     * @param radAngle the new rotation radAngle, as a <code>float</code>
+     *
+     * @param angleInRadians the new rotation radAngle, as a <code>float</code>, in radians
      * @return this element
      */
-    public T setRotationAngle(float radAngle) {
-        setProperty(Property.ROTATION_ANGLE, radAngle);
-        return (T) this;
+    public T setRotationAngle(float angleInRadians) {
+        setProperty(Property.ROTATION_ANGLE, angleInRadians);
+        return (T) (Object) this;
     }
 
     /**
      * Sets the rotation angle.
-     * 
-     * @param angle the new rotation angle, as a <code>double</code>
+     *
+     * @param angleInRadians the new rotation angle, as a <code>double</code>, in radians
      * @return this element
      */
-    public T setRotationAngle(double angle) {
-        setProperty(Property.ROTATION_ANGLE, (float) angle);
-        return (T) this;
+    public T setRotationAngle(double angleInRadians) {
+        setProperty(Property.ROTATION_ANGLE, (float) angleInRadians);
+        return (T) (Object) this;
     }
 }

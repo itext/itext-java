@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,6 +43,9 @@
  */
 package com.itextpdf.kernel.pdf;
 
+/**
+ * Type of object to conform.
+ */
 public enum IsoKey {
     CANVAS_STACK,
     DRAWMODE_FILL,
@@ -54,4 +56,5 @@ public enum IsoKey {
     PAGE,
     PDF_OBJECT,
     RENDERING_INTENT,
+    TAG_STRUCTURE_ELEMENT,
 }

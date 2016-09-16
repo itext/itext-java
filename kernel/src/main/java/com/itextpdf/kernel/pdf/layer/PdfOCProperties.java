@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,8 +43,8 @@
  */
 package com.itextpdf.kernel.pdf.layer;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -56,7 +55,6 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -77,7 +75,6 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Creates a new PdfOCProperties instance.
      * @param document the document the optional content belongs to
-     * @throws PdfException
      */
     public PdfOCProperties(PdfDocument document) {
         this(new PdfDictionary().makeIndirect(document));
@@ -88,7 +85,6 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      * the dictionary must be an indirect object.
      *
      * @param ocPropertiesDict the dictionary of optional content properties, must have an indirect reference.
-     * @throws PdfException
      */
     public PdfOCProperties(PdfDictionary ocPropertiesDict) {
         super(ocPropertiesDict);
@@ -155,11 +151,14 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
 
         List<PdfLayer> docOrder = new ArrayList<>(layers);
-        for (Iterator<PdfLayer> it = docOrder.iterator(); it.hasNext();) {
-            PdfLayer layer = it.next();
-            if (layer.getParent() != null)
-                it.remove();
+        for (int i = 0; i < docOrder.size(); i++) {
+            PdfLayer layer = docOrder.get(i);
+            if (layer.getParent() != null) {
+                docOrder.remove(layer);
+                i--;
+            }
         }
+
         PdfArray order = new PdfArray();
         for (Object element : docOrder) {
             PdfLayer layer = (PdfLayer)element;
@@ -254,7 +253,6 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Populates the /AS entry in the /D dictionary.
-     * @throws PdfException
      */
     private void addASEvent(PdfName event, PdfName category) {
         PdfArray arr = new PdfArray();
@@ -284,7 +282,6 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Reads the layers from the document to be able to modify them in the future.
-     * @throws PdfException
      */
     private void readLayersFromDictionary() {
         PdfArray ocgs = getPdfObject().getAsArray(PdfName.OCGs);
@@ -303,15 +300,17 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         if (d != null && !d.isEmpty()) {
             PdfArray off = d.getAsArray(PdfName.OFF);
             if (off != null) {
-                for (PdfObject offLayer : off) {
-                    layerMap.get(offLayer).on = false;
+                for (int i = 0; i < off.size(); i++) {
+                    PdfObject offLayer = off.get(i, false);
+                    layerMap.get((PdfIndirectReference) offLayer).on = false;
                 }
             }
 
             PdfArray locked = d.getAsArray(PdfName.Locked);
             if (locked != null) {
-                for (PdfObject lockedLayer : locked) {
-                    layerMap.get(lockedLayer).locked = true;
+                for (int i = 0; i < locked.size(); i++) {
+                    PdfObject lockedLayer = locked.get(i, false);
+                    layerMap.get((PdfIndirectReference) lockedLayer).locked = true;
                 }
             }
 
@@ -329,7 +328,6 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Reads the /Order in the /D entry and initialized the parent-child hierarchy.
-     * @throws PdfException
      */
     private void readOrderFromDictionary(PdfLayer parent, PdfArray orderArray, Map<PdfIndirectReference, PdfLayer> layerMap) {
         for (int i = 0; i < orderArray.size(); i++) {

@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -71,7 +70,6 @@ public class PdfTextFormField extends PdfFormField {
 
     protected PdfTextFormField(PdfDictionary pdfObject) {
         super(pdfObject);
-        setBorderWidth(0);
     }
 
     /**

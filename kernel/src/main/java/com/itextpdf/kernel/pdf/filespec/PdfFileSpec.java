@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -45,11 +44,11 @@
 package com.itextpdf.kernel.pdf.filespec;
 
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.collection.PdfCollectionItem;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 
@@ -87,8 +86,8 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
         return createEmbeddedFileSpec(doc, stream, description, fileDisplay, mimeType, afRelationshipValue, isUnicodeFileName);
     }
 
-    public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, String filePath, String description, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) throws FileNotFoundException {
-        PdfStream stream = new PdfStream(doc, new FileInputStream(filePath));
+    public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, String filePath, String description, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) throws IOException {
+        PdfStream stream = new PdfStream(doc, UrlUtil.toURL(filePath).openStream());
         return createEmbeddedFileSpec(doc, stream, description, fileDisplay, mimeType, afRelationshipValue, isUnicodeFileName);
     }
 

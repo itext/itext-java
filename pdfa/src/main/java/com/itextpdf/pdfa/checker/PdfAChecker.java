@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -46,25 +45,91 @@ package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.io.color.IccProfile;
 import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfTrueTypeFont;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfCatalog;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
+/**
+ * An abstract class that will run through all necessary checks defined in the
+ * different PDF/A standards and levels. A number of common checks are executed
+ * in this class, while standard-dependent specifications are implemented in the
+ * available subclasses. The standard that is followed is the series of ISO
+ * 19005 specifications, currently generations 1 through 3. The ZUGFeRD standard
+ * is derived from ISO 19005-3.
+ * 
+ * While it is possible to subclass this method and implement its abstract
+ * methods in client code, this is not encouraged and will have little effect.
+ * It is not possible to plug custom implementations into iText, because iText
+ * should always refuse to create non-compliant PDF/A, which would be possible
+ * with client code implementations. Any future generations of the PDF/A
+ * standard and its derivates will get their own implementation in the
+ * iText 7 - pdfa project.
+ */
 public abstract class PdfAChecker {
 
+    /**
+     * @deprecated Use slf4j logging instead.
+     */
+    @Deprecated
     protected Logger LOGGER = Logger.getLogger(getClass().getName());
 
+    /**
+     * The Red-Green-Blue color profile as defined by the International Color
+     * Consortium.
+     */
     public static final String ICC_COLOR_SPACE_RGB = "RGB ";
+    
+    /**
+     * The Cyan-Magenta-Yellow-Key (black) color profile as defined by the
+     * International Color Consortium.
+     */
     public static final String ICC_COLOR_SPACE_CMYK = "CMYK";
+    
+    /**
+     * The Grayscale color profile as defined by the International Color
+     * Consortium.
+     */
     public static final String ICC_COLOR_SPACE_GRAY = "GRAY";
 
+    /**
+     * The Output device class
+     */
     public static final String ICC_DEVICE_CLASS_OUTPUT_PROFILE = "prtr";
+    
+    /**
+     * The Monitor device class
+     */
     public static final String ICC_DEVICE_CLASS_MONITOR_PROFILE = "mntr";
 
+    /**
+     * The maximum Graphics State stack depth in PDF/A documents, i.e. the
+     * maximum number of graphics state operators with code <code>q</code> that
+     * may be opened (i.e. not yet closed by a corresponding <code>Q</code>) at
+     * any point in a content stream sequence.
+     * 
+     * Defined as 28 by PDF/A-1 section 6.1.12, by referring to the PDF spec
+     * Appendix C table 1 "architectural limits".
+     */
     public static final int maxGsStackDepth = 28;
 
     protected PdfAConformanceLevel conformanceLevel;
@@ -91,6 +156,14 @@ public abstract class PdfAChecker {
         this.conformanceLevel = conformanceLevel;
     }
 
+    /**
+     * This method checks a number of document-wide requirements of the PDF/A
+     * standard. The algorithms of some of these checks vary with the PDF/A
+     * level and thus are implemented in subclasses; others are implemented
+     * as private methods in this class.
+     * 
+     * @param catalog
+     */
     public void checkDocument(PdfCatalog catalog) {
         PdfDictionary catalogDict = catalog.getPdfObject();
         setPdfAOutputIntentColorSpace(catalogDict);
@@ -107,21 +180,28 @@ public abstract class PdfAChecker {
         checkColorsUsages();
     }
 
+    /**
+     * This method checks all requirements that must be fulfilled by a page in a
+     * PDF/A document.
+     * @param page the page that must be checked
+     */
     public void checkSinglePage(PdfPage page) {
         checkPage(page);
     }
 
 
+    /**
+     * This method checks the requirements that must be fulfilled by a COS
+     * object in a PDF/A document.
+     * @param obj the COS object that must be checked
+     */
     public void checkPdfObject(PdfObject obj) {
         switch (obj.getType()) {
             case PdfObject.NUMBER:
                 checkPdfNumber((PdfNumber) obj);
                 break;
             case PdfObject.STREAM:
-                PdfStream stream = (PdfStream) obj;
-                //form xObjects, annotation appearance streams, patterns and type3 glyphs may have their own resources dictionary
-                checkResources(stream.getAsDictionary(PdfName.Resources));
-                checkPdfStream(stream);
+                checkPdfStream((PdfStream) obj);
                 break;
             case PdfObject.STRING:
                 checkPdfString((PdfString) obj);
@@ -136,20 +216,104 @@ public abstract class PdfAChecker {
         }
     }
 
+    /**
+     * Gets the {@link PdfAConformanceLevel} for this file.
+     * 
+     * @return the defined conformance level for this document.
+     */
     public PdfAConformanceLevel getConformanceLevel() {
         return conformanceLevel;
     }
 
+    /**
+     * Remembers which objects have already been checked, in order to avoid
+     * redundant checks.
+     * 
+     * @param object the object to check
+     * @return whether or not the object has already been checked
+     */
     public boolean objectIsChecked(PdfObject object) {
         return checkedObjects.contains(object);
     }
 
+    /**
+     * This method checks compliance of the tag structure elements, such as struct elements
+     * or parent tree entries.
+     *
+     * @param obj an object that represents tag structure element.
+     */
+    public void checkTagStructureElement(PdfObject obj) {
+        // We don't check tag structure as there are no strict constraints,
+        // so we just mark tag structure elements to be able to flush them
+        checkedObjects.add(obj);
+    }
+
+    /**
+     * This method checks compliance with the graphics state architectural
+     * limitation, explained by {@link PdfAChecker#maxGsStackDepth}.
+     * 
+     * @param stackOperation the operation to check the graphics state counter for
+     */
     public abstract void checkCanvasStack(char stackOperation);
+    
+    /**
+     * This method checks compliance with the inline image restrictions in the
+     * PDF/A specs, specifically filter parameters.
+     * 
+     * @param inlineImage a {@link PdfStream} containing the inline image
+     * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
+     */
     public abstract void checkInlineImage(PdfStream inlineImage, PdfDictionary currentColorSpaces);
+    
+    /**
+     * This method checks compliance with the color restrictions imposed by the
+     * available color spaces in the document.
+     * 
+     * @param color the color to check
+     * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
+     * @param fill whether the color is used for fill or stroke operations
+     */
     public abstract void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill);
+    
+    /**
+     * This method performs a range of checks on the given color space, depending
+     * on the type and properties of that color space.
+     * 
+     * @param colorSpace the color space to check
+     * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
+     * @param checkAlternate whether or not to also check the parent color space
+     * @param fill whether the color space is used for fill or stroke operations
+     */
     public abstract void checkColorSpace(PdfColorSpace colorSpace, PdfDictionary currentColorSpaces, boolean checkAlternate, Boolean fill);
+
+    /**
+     * Checks whether the rendering intent of the document is within the allowed
+     * range of intents. This is defined in ISO 19005-1 section 6.2.9, and
+     * unchanged in newer generations of the PDF/A specification.
+     * 
+     * @param intent the intent to be analyzed
+     */
     public abstract void checkRenderingIntent(PdfName intent);
+    
+    /**
+     * Performs a number of checks on the graphics state, among others ISO
+     * 19005-1 section 6.2.8 and 6.4 and ISO 19005-2 section 6.2.5 and 6.2.10.
+     * 
+     * @param extGState the graphics state to be checked
+     */
     public abstract void checkExtGState(CanvasGraphicsState extGState);
+
+    /**
+     * Performs a number of checks on the font. See ISO 19005-1 section 6.3,
+     * ISO 19005-2 and ISO 19005-3 section 6.2.11.
+     * Be aware that not all constraints defined in the ISO are checked in this method,
+     * for most of them we consider that iText always creates valid fonts.
+     * @param pdfFont font to be checked
+     */
+    //TODO iText 7.1: Mark as abstract
+    public void checkFont(PdfFont pdfFont) {
+        throw new RuntimeException("You must override this method");
+    }
 
     protected abstract Set<PdfName> getForbiddenActions();
     protected abstract Set<PdfName> getAllowedNamedActions();
@@ -163,12 +327,20 @@ public abstract class PdfAChecker {
     protected abstract void checkFormXObject(PdfStream form);
     protected abstract void checkLogicalStructure(PdfDictionary catalog);
     protected abstract void checkMetaData(PdfDictionary catalog);
+    //TODO iText 7.1: Mark as abstract
+    protected void checkNonSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
+        throw new RuntimeException("You must override this method");
+    }
     protected abstract void checkOutputIntents(PdfDictionary catalog);
     protected abstract void checkPageObject(PdfDictionary page, PdfDictionary pageResources);
     protected abstract void checkPageSize(PdfDictionary page);
     protected abstract void checkPdfNumber(PdfNumber number);
     protected abstract void checkPdfStream(PdfStream stream);
     protected abstract void checkPdfString(PdfString string);
+    //TODO iText 7.1: Mark as abstract
+    protected void checkSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
+        throw new RuntimeException("You must override this method");
+    }
     protected abstract void checkTrailer(PdfDictionary trailer);
 
 
@@ -179,12 +351,19 @@ public abstract class PdfAChecker {
 
         PdfDictionary xObjects = resources.getAsDictionary(PdfName.XObject);
         PdfDictionary shadings = resources.getAsDictionary(PdfName.Shading);
+        PdfDictionary patterns = resources.getAsDictionary(PdfName.Pattern);
 
         if (xObjects != null) {
             for (PdfObject xObject : xObjects.values()) {
                 PdfStream xObjStream = (PdfStream) xObject;
-                PdfObject subtype = xObjStream.get(PdfName.Subtype);
-                if (PdfName.Image.equals(subtype)) {
+                PdfObject subtype = null;
+                boolean isFlushed = xObjStream.isFlushed();
+                if (!isFlushed) {
+                    subtype = xObjStream.get(PdfName.Subtype);
+                }
+
+                if (PdfName.Image.equals(subtype)
+                        || isFlushed) { // if flushed still may be need to check colorspace in given context
                     checkImage(xObjStream, resources.getAsDictionary(PdfName.ColorSpace));
                 } else if (PdfName.Form.equals(subtype)) {
                     checkFormXObject(xObjStream);
@@ -195,7 +374,20 @@ public abstract class PdfAChecker {
         if (shadings != null) {
             for (PdfObject shading : shadings.values()) {
                 PdfDictionary shadingDict = (PdfDictionary) shading;
-                checkColorSpace(PdfColorSpace.makeColorSpace(shadingDict.get(PdfName.ColorSpace)), resources.getAsDictionary(PdfName.ColorSpace), true, null);
+                if (!isAlreadyChecked(shadingDict)) {
+                    checkColorSpace(PdfColorSpace.makeColorSpace(shadingDict.get(PdfName.ColorSpace)), resources.getAsDictionary(PdfName.ColorSpace), true, null);
+                }
+            }
+        }
+
+        if (patterns != null) {
+            for (PdfObject p : patterns.values()) {
+                if (p.isStream()) {
+                    PdfStream pStream = (PdfStream) p;
+                    if (!isAlreadyChecked(pStream)) {
+                        checkResources(pStream.getAsDictionary(PdfName.Resources));
+                    }
+                }
             }
         }
     }
@@ -216,6 +408,21 @@ public abstract class PdfAChecker {
         }
         checkedObjects.add(dictionary);
         return false;
+    }
+
+    protected void checkResourcesOfAppearanceStreams(PdfDictionary appearanceStreamsDict) {
+        for (PdfObject val : appearanceStreamsDict.values()) {
+            if (val instanceof PdfDictionary) {
+                PdfDictionary ap = (PdfDictionary) val;
+                if (ap.isDictionary()) {
+                    checkResourcesOfAppearanceStreams(ap);
+                } else if (ap.isStream()) {
+                    if (!isAlreadyChecked(ap)) {
+                        checkResources(ap.getAsDictionary(PdfName.Resources));
+                    }
+                }
+            }
+        }
     }
 
     private void checkPages(PdfDocument document) {
@@ -243,24 +450,14 @@ public abstract class PdfAChecker {
     }
 
     private void checkOpenAction(PdfObject openAction) {
-        if (openAction == null)
-            return;
-
-        if (openAction.isDictionary()) {
+        if (openAction != null && openAction.isDictionary()) {
             checkAction((PdfDictionary) openAction);
-        } else if (openAction.isArray()) {
-            PdfArray actions = (PdfArray) openAction;
-            for (PdfObject action : actions) {
-                checkAction((PdfDictionary) action);
-            }
         }
     }
 
     private void checkAnnotations(PdfDictionary page) {
         PdfArray annots = page.getAsArray(PdfName.Annots);
         if (annots != null) {
-            // explicit iteration to resolve indirect references on get().
-            // TODO DEVSIX-591
             for (int i = 0; i < annots.size(); i++) {
                 PdfDictionary annot = annots.getAsDictionary(i);
                 checkAnnotation(annot);

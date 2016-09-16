@@ -91,6 +91,10 @@ public class CharVector implements Serializable {
         n = a.length;
     }
 
+    /**
+     * Copy constructor
+     * @param cv the CharVector that should be cloned
+     */
     public CharVector(CharVector cv) {
         this.array = (char[])cv.array.clone();
         this.blockSize = cv.blockSize;

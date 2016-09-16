@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,6 +43,7 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.io.util.DateTimeUtil;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
@@ -51,21 +51,15 @@ import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.CertificateStatus;
 import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.SingleResp;
-import org.bouncycastle.operator.ContentVerifierProvider;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
-import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
 import java.security.cert.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -156,7 +150,7 @@ public class OCSPVerifier extends RootStoreVerifier {
             // check if the issuer matches
             try {
                 if (issuerCert == null) issuerCert = signCert;
-                if (!resp[i].getCertID().matchesIssuer(new X509CertificateHolder(issuerCert.getEncoded()), new BcDigestCalculatorProvider())) {
+                if (!SignUtils.checkIfIssuersMatch(resp[i].getCertID(), issuerCert)) {
                     LOGGER.info("OCSP: Issuers doesn't match.");
                     continue;
                 }
@@ -164,14 +158,18 @@ public class OCSPVerifier extends RootStoreVerifier {
                 continue;
             }
             // check if the OCSP response was valid at the time of signing
-            Date nextUpdate = resp[i].getNextUpdate();
-            if (nextUpdate == null) {
-                nextUpdate = new Date(resp[i].getThisUpdate().getTime() + 180000l);
+            if (resp[i].getNextUpdate() == null) {
+                Date nextUpdate = SignUtils.add180Sec(resp[i].getThisUpdate());
                 LOGGER.info(MessageFormat.format("No 'next update' for OCSP Response; assuming {0}", nextUpdate));
-            }
-            if (signDate.after(nextUpdate)) {
-                LOGGER.info(MessageFormat.format("OCSP no longer valid: {0} after {1}", signDate, nextUpdate));
-                continue;
+                if (signDate.after(nextUpdate)) {
+                    LOGGER.info(MessageFormat.format("OCSP no longer valid: {0} after {1}", signDate, nextUpdate));
+                    continue;
+                }
+            } else {
+                if (signDate.after(resp[i].getNextUpdate())) {
+                    LOGGER.info(MessageFormat.format("OCSP no longer valid: {0} after {1}", signDate, resp[i].getNextUpdate()));
+                    continue;
+                }
             }
             // check the status of the certificate
             Object status = resp[i].getCertStatus();
@@ -209,19 +207,13 @@ public class OCSPVerifier extends RootStoreVerifier {
         if (responderCert == null) {
             if (ocspResp.getCerts() != null) {
                 //look for existence of Authorized OCSP responder inside the cert chain in ocsp response
-                X509CertificateHolder[] certs = ocspResp.getCerts();
-                for (X509CertificateHolder cert : certs) {
-                    X509Certificate tempCert;
+                Iterable<X509Certificate> certs = SignUtils.getCertsFromOcspResponse(ocspResp);
+                for (X509Certificate cert : certs) {
+                    List keyPurposes = null;
                     try {
-                        tempCert = new JcaX509CertificateConverter().getCertificate(cert);
-                    } catch (Exception ex) {
-                        continue;
-                    }
-                    List<String> keyPurposes = null;
-                    try {
-                        keyPurposes = tempCert.getExtendedKeyUsage();
-                        if ((keyPurposes != null) && keyPurposes.contains(id_kp_OCSPSigning) && isSignatureValid(ocspResp, tempCert)) {
-                            responderCert = tempCert;
+                        keyPurposes = cert.getExtendedKeyUsage();
+                        if ((keyPurposes != null) && keyPurposes.contains(id_kp_OCSPSigning) && isSignatureValid(ocspResp, cert)) {
+                            responderCert = cert;
                             break;
                         }
                     } catch (CertificateParsingException ignored) {
@@ -237,20 +229,13 @@ public class OCSPVerifier extends RootStoreVerifier {
                 //try to verify using rootStore
                 if (rootStore != null) {
                     try {
-                        for (Enumeration<String> aliases = rootStore.aliases(); aliases.hasMoreElements(); ) {
-                            String alias = aliases.nextElement();
-                            try {
-                                if (!rootStore.isCertificateEntry(alias))
-                                    continue;
-                                X509Certificate anchor = (X509Certificate) rootStore.getCertificate(alias);
-                                if (isSignatureValid(ocspResp, anchor)) {
-                                    responderCert = anchor;
-                                    break;
-                                }
-                            } catch (GeneralSecurityException ignored) {
+                        for (X509Certificate anchor : SignUtils.getCertificates(rootStore) ) {
+                            if (isSignatureValid(ocspResp, anchor)) {
+                                responderCert = anchor;
+                                break;
                             }
                         }
-                    } catch (KeyStoreException e) {
+                    } catch (Exception e) {
                         responderCert = (X509Certificate) null;
                     }
                 }
@@ -280,7 +265,7 @@ public class OCSPVerifier extends RootStoreVerifier {
                 CRLVerifier crlVerifier = new CRLVerifier(null, null);
                 crlVerifier.setRootStore(rootStore);
                 crlVerifier.setOnlineCheckingAllowed(onlineCheckingAllowed);
-                crlVerifier.verify((X509CRL)crl, responderCert, issuerCert, new Date());
+                crlVerifier.verify((X509CRL)crl, responderCert, issuerCert, DateTimeUtil.getCurrentTimeDate());
                 return;
             }
         }
@@ -316,12 +301,8 @@ public class OCSPVerifier extends RootStoreVerifier {
      */
     public boolean isSignatureValid(BasicOCSPResp ocspResp, Certificate responderCert) {
         try {
-            ContentVerifierProvider verifierProvider = new JcaContentVerifierProviderBuilder()
-                    .setProvider("BC").build(responderCert.getPublicKey());
-            return ocspResp.isSignatureValid(verifierProvider);
-        } catch (OperatorCreationException e) {
-            return false;
-        } catch (OCSPException e) {
+            return SignUtils.isSignatureValid(ocspResp, responderCert, "BC");
+        } catch (Exception e) {
             return false;
         }
     }

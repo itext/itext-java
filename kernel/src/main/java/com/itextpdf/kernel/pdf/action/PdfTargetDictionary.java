@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -51,109 +50,230 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 
+/**
+ * A target dictionary locates the target in relation to the source,
+ * in much the same way that a relative path describes the physical
+ * relationship between two files in a file system. Target dictionaries may be
+ * nested recursively to specify one or more intermediate targets before reaching the final one.
+ */
 public class PdfTargetDictionary extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -5814265943827690509L;
 
-	public PdfTargetDictionary(PdfDictionary pdfObject) {
+    /**
+     * Creates a new {@link PdfTargetDictionary} object by the underlying dictionary.
+     *
+     * @param pdfObject the underlying dictionary object
+     */
+    public PdfTargetDictionary(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
+    /**
+     * Creates a new {@link PdfTargetDictionary} object given its type. The type must be either
+     * {@link PdfName#P}, or {@link PdfName#C}. If it is {@link PdfName#C}, additional entries must be specified
+     * according to the spec.
+     * @param r the relationship between the current document and the target
+     */
     public PdfTargetDictionary(PdfName r) {
         this(new PdfDictionary());
         put(PdfName.R, r);
     }
 
+    /**
+     * Creates a new {@link PdfTargetDictionary} object.
+     * @param r the relationship between the current document and the target
+     * @param n the name of the file in the EmbeddedFiles name tree
+     * @param p if the value is an integer, it specifies the page number (zero-based) in the current
+     *          document containing the file attachment annotation. If the value is a string,
+     *          it specifies a named destination in the current document that provides the page
+     *          number of the file attachment annotation
+     * @param a If the value is an integer, it specifies the index (zero-based) of the annotation in the
+     *          Annots array of the page specified by P. If the value is a text string,
+     *          it specifies the value of NM in the annotation dictionary
+     * @param t A target dictionary specifying additional path information to the target document.
+     *          If this entry is absent, the current document is the target file containing the destination
+     */
     public PdfTargetDictionary(PdfName r, PdfString n, PdfObject p, PdfObject a, PdfTargetDictionary t) {
         this(new PdfDictionary());
-        put(PdfName.R, r).put(PdfName.N, n).
+        put(PdfName.R, r).
+                put(PdfName.N, n).
                 put(PdfName.P, p).
-                put(PdfName.A, a).put(PdfName.T, t.getPdfObject());
+                put(PdfName.A, a).
+                put(PdfName.T, t.getPdfObject());
     }
 
     /**
-     * Sets the name of the file in the EmbeddedFiles name tree.
+     * Creates a new target object pointing to the parent of the current document.
+     * @return created {@link PdfTargetDictionary}
+     */
+    public static PdfTargetDictionary createParentTarget() {
+        return new PdfTargetDictionary(PdfName.P);
+    }
+
+    /**
+     * Creates a new target object pointing to a file in the EmbeddedFiles name tree.
+     * @param embeddedFileName the name of the file in the EmbeddedFiles name tree
+     * @return created object
+     */
+    public static PdfTargetDictionary createChildTarget(String embeddedFileName) {
+        return new PdfTargetDictionary(PdfName.C).
+                put(PdfName.N, new PdfString(embeddedFileName));
+    }
+
+    /**
+     * Creates a new target object pointing to a file attachment annotation.
+     * @param namedDestination a named destination in the current document that
+     *                         provides the page number of the file attachment annotation
+     * @param annotationIdentifier a unique annotation identifier ({@link PdfName#NM} entry) of the annotation
+     * @return created object
+     */
+    public static PdfTargetDictionary createChildTarget(String namedDestination, String annotationIdentifier) {
+        return new PdfTargetDictionary(PdfName.C).
+                put(PdfName.P, new PdfString(namedDestination)).
+                put(PdfName.A, new PdfString(annotationIdentifier));
+    }
+
+    /**
+     * Creates a new target object pointing to a file attachment annotation.
+     * @param pageNumber the number of the page in the current document, one-based
+     * @param annotationIndex the index of the annotation in the Annots entry of the page, zero-based
+     * @return created object
+     */
+    public static PdfTargetDictionary createChildTarget(int pageNumber, int annotationIndex) {
+        return new PdfTargetDictionary(PdfName.C).
+                put(PdfName.P, new PdfNumber(pageNumber - 1)).
+                put(PdfName.A, new PdfNumber(annotationIndex));
+    }
+
+    /**
+     * Sets the name of the file in the EmbeddedFiles name tree for the child target located
+     * in the EmbeddedFiles.
+     *
      * @param name the name of the file
-     * @return
+     * @return this object wrapper
      */
     public PdfTargetDictionary setName(String name) {
         return put(PdfName.N, new PdfString(name));
     }
 
     /**
-     * Gets name of the file
-     * @return
+     * Gets name of the file in the EmbeddedFiles name tree for the child target located
+     * in the EmbeddedFiles.
+     *
+     * @return the name of the child file for this target
      */
     public PdfString getName() {
         return getPdfObject().getAsString(PdfName.N);
     }
 
     /**
-     * Sets the page number in the current document containing the file attachment annotation.
-     * @param pageNumber
-     * @return
+     * Sets the page number in the current document containing the file attachment annotation for the
+     * child target associates with a file attachment annotation.
+     *
+     * @param pageNumber the page number (one-based) in the current document containing
+     *                   the file attachment annotation
+     * @return this object wrapper
      */
     public PdfTargetDictionary setPage(int pageNumber) {
-        return put(PdfName.P, new PdfNumber(pageNumber));
+        return put(PdfName.P, new PdfNumber(pageNumber - 1));
     }
 
     /**
-     * Sets a named destination in the current document that provides the page number of the file attachment annotation.
-     * @param namedDestination
-     * @return
+     * Sets a named destination in the current document that provides the page number of the file
+     * attachment annotation for the child target associated with a file attachment annotation.
+     *
+     * @param namedDestination a named destination in the current document that provides the page
+     *                         number of the file attachment annotation
+     * @return this object wrapper
      */
     public PdfTargetDictionary setPage(String namedDestination) {
         return put(PdfName.P, new PdfString(namedDestination));
     }
 
     /**
-     * Get the page number or a named destination that provides the page number containing the file attachment annotation
-     * @return
+     * Get the contents of the /P entry of this target object.
+     * If the value is an integer, it specifies the page number (zero-based)
+     * in the current document containing the file attachment annotation.
+     * If the value is a string, it specifies a named destination in the current
+     * document that provides the page number of the file attachment annotation.
+     *
+     * @return the /P entry of target object
      */
     public PdfObject getPage() {
         return getPdfObject().get(PdfName.P);
     }
 
     /**
-     * Sets the index of the annotation in Annots array of the page specified by /P entry.
-     * @param annotNumber
-     * @return
+     * Sets the index of the annotation in Annots array of the page specified by /P entry
+     * for the child target associated with a file attachment annotation.
+     *
+     * @param annotationIndex the index (zero-based) of the annotation in the Annots array
+     * @return this object wrapper
      */
-    public PdfTargetDictionary setAnnotation(int annotNumber) {
-        return put(PdfName.A, new PdfNumber(annotNumber));
+    public PdfTargetDictionary setAnnotation(int annotationIndex) {
+        return put(PdfName.A, new PdfNumber(annotationIndex));
     }
 
     /**
-     * Sets the text value, which specifies the value of the /NM entry in the annotation dictionary.
-     * @param annotationName
-     * @return
+     * Sets the text value, which uniquely identifies an annotation (/NM entry) in an annotation dictionary
+     * for the child target associated with a file attachment annotation.
+     *
+     * @param annotationName specifies the value of NM in the annotation dictionary of the target annotation
+     * @return this object wrapper
      */
     public PdfTargetDictionary setAnnotation(String annotationName) {
         return put(PdfName.A, new PdfString(annotationName));
     }
 
+    /**
+     * Gets the object in the /A entry of the underlying object. If the value is an integer,
+     * it specifies the index (zero-based) of the annotation in the Annots array of the page specified by P.
+     * If the value is a text string, it specifies the value of NM in the annotation dictionary.
+     *
+     * @return the /A entry in the target object
+     */
     public PdfObject getAnnotation() {
         return getPdfObject().get(PdfName.A);
     }
 
     /**
      * Sets a target dictionary specifying additional path information to the target document.
-     * @param target
-     * @return
+     * If this entry is absent, the current document is the target file containing the destination.
+     *
+     * @param target the additional path target dictionary
+     * @return this object wrapper
      */
     public PdfTargetDictionary setTarget(PdfTargetDictionary target) {
         return put(PdfName.T, target.getPdfObject());
     }
 
+    /**
+     * Get a target dictionary specifying additional path information to the target document.
+     * If the current target object is the final node in the target path, <code>null</code> is returned.
+     *
+     * @return a target dictionary specifying additional path information to the target document
+     */
     public PdfTargetDictionary getTarget() {
-        return new PdfTargetDictionary(getPdfObject().getAsDictionary(PdfName.T));
+        PdfDictionary targetDictObject = getPdfObject().getAsDictionary(PdfName.T);
+        return targetDictObject != null ? new PdfTargetDictionary(targetDictObject) : null;
     }
 
+    /**
+     * This is a convenient method to put key-value pairs to the underlying {@link PdfObject}.
+     *
+     * @param key   the key, a {@link PdfName} instance
+     * @param value the value
+     * @return this object wrapper
+     */
     public PdfTargetDictionary put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return false;

@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -48,6 +47,11 @@ import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 
 public class OtfClass {
+
+    public static final int GLYPH_BASE = 1;
+    public static final int GLYPH_LIGATURE = 2;
+    public static final int GLYPH_MARK = 3;
+
     //key is glyph, value is class inside all 2
     private IntHashtable mapClass = new IntHashtable();
     
@@ -79,6 +83,10 @@ public class OtfClass {
     
     public int getOtfClass(int glyph) {
         return mapClass.get(glyph);
+    }
+
+    public boolean isMarkOtfClass(int glyph) {
+        return hasClass(glyph) && getOtfClass(glyph) == GLYPH_MARK;
     }
     
     public boolean hasClass(int glyph) {

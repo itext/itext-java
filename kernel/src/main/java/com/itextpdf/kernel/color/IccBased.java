@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -63,7 +62,6 @@ public class IccBased extends Color {
      * Creates IccBased color.
      *
      * @param iccStream ICC profile stream. User is responsible for closing the stream.
-     * @throws PdfException
      */
     public IccBased(InputStream iccStream) {
         this(new PdfCieBasedCs.IccBased(iccStream), null);
@@ -77,7 +75,6 @@ public class IccBased extends Color {
      *
      * @param iccStream ICC profile stream. User is responsible for closing the stream.
      * @param value     color value.
-     * @throws PdfException
      */
     public IccBased(InputStream iccStream, float[] value) {
         this(new PdfCieBasedCs.IccBased(iccStream), value);

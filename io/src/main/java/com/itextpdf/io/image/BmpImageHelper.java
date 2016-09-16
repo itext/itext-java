@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -143,7 +142,7 @@ final class BmpImageHelper {
             // Start File Header
             if (!(readUnsignedByte(bmp.inputStream) == 'B' &&
                     readUnsignedByte(bmp.inputStream) == 'M')) {
-                throw new IOException(IOException.InvalidMagicValueForBmpFile);
+                throw new IOException(IOException.InvalidMagicValueForBmpFileMustBeBM);
             }
 
             // Read file size

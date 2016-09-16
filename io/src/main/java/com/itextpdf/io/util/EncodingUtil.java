@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -44,12 +43,17 @@
  */
 package com.itextpdf.io.util;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
 
+/**
+ * This file is a helper class for internal usage only.
+ * Be aware that it's API and functionality may be changed in future.
+ */
 public final class EncodingUtil {
 
     private EncodingUtil() {
@@ -65,5 +69,9 @@ public final class EncodingUtil {
         byte[] br = new byte[lim];
         bb.get(br);
         return br;
+    }
+
+    public static String convertToString(byte[] bytes, String encoding) throws UnsupportedEncodingException {
+        return new String(bytes, encoding);
     }
 }

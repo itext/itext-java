@@ -1,37 +1,28 @@
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.File;
-import java.io.IOException;
-
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runners.MethodSorters;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+
 @FixMethodOrder(MethodSorters.DEFAULT)
 @Category(IntegrationTest.class)
-public class CompareToolTest {
+public class CompareToolTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/CompareToolTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/CompareToolTest/";
 
-    @Before
-    public void setUp() {
-        File dest = new File(destinationFolder);
-        dest.mkdirs();
-        File[] files = dest.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                file.delete();
-            }
-        }
+    @BeforeClass
+    public static void setUp() {
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -45,7 +36,7 @@ public class CompareToolTest {
         System.out.println(result);
         Assert.assertNotNull("CompareTool must return differences found between the files", result);
         // Comparing the report to the reference one.
-        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(sourceFolder + "cmp_report01.xml", destinationFolder + "report.xml"));
+        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(sourceFolder + "cmp_report01.xml", destinationFolder + "simple_pdf.report.xml"));
     }
 
     @Test
@@ -59,7 +50,7 @@ public class CompareToolTest {
         System.out.println(result);
         Assert.assertNotNull("CompareTool must return differences found between the files", result);
         // Comparing the report to the reference one.
-        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(sourceFolder + "cmp_report02.xml", destinationFolder + "report.xml"));
+        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(sourceFolder + "cmp_report02.xml", destinationFolder + "tagged_pdf.report.xml"));
     }
 
     @Test
@@ -73,6 +64,6 @@ public class CompareToolTest {
         System.out.println(result);
         Assert.assertNotNull("CompareTool must return differences found between the files", result);
         // Comparing the report to the reference one.
-        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(sourceFolder + "cmp_report03.xml", destinationFolder + "report.xml"));
+        Assert.assertTrue("CompareTool report differs from the reference one", compareTool.compareXmls(sourceFolder + "cmp_report03.xml", destinationFolder + "screenAnnotation.report.xml"));
     }
 }

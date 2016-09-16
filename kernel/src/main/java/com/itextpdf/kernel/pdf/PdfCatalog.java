@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -51,6 +50,8 @@ import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +61,7 @@ import java.util.Map;
 public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -1354567597112193418L;
-	
+
     final private PdfPagesTree pageTree;
     protected Map<PdfName, PdfNameTree> nameTrees = new HashMap<>();
     protected PdfNumTree pageLabels;
@@ -76,7 +77,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     protected PdfCatalog(PdfDictionary pdfObject) {
         super(pdfObject);
         if (pdfObject == null) {
-            throw new PdfException(PdfException.DocumentHasNoCatalogObject);
+            throw new PdfException(PdfException.DocumentHasNoPdfCatalogObject);
         }
         ensureObjectIsAddedToDocument(pdfObject);
         getPdfObject().put(PdfName.Type, PdfName.Catalog);
@@ -133,7 +134,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      */
     @Override
     public void flush() {
-        throw new PdfException(PdfException.YouCannotFlushPdfCatalogManually);
+        Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+        logger.warn("PdfCatalog cannot be flushed manually");
     }
 
     public PdfCatalog setOpenAction(PdfDestination destination) {
@@ -173,10 +175,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method sets a page layout of the document
+     *
      * @param pageLayout
      * @return
      */
-    public PdfCatalog setPageLayout (PdfName pageLayout) {
+    public PdfCatalog setPageLayout(PdfName pageLayout) {
         if (pageLayout.equals(PdfName.SinglePage) || pageLayout.equals(PdfName.OneColumn) ||
                 pageLayout.equals(PdfName.TwoColumnLeft) || pageLayout.equals(PdfName.TwoColumnRight) ||
                 pageLayout.equals(PdfName.TwoPageLeft) || pageLayout.equals(PdfName.TwoPageRight)) {
@@ -185,13 +188,14 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
-    public PdfName getPageLayout(){
+    public PdfName getPageLayout() {
         return getPdfObject().getAsName(PdfName.PageLayout);
     }
 
     /**
      * This method sets the document viewer preferences, specifying the way the document shall be displayed on the
      * screen
+     *
      * @param preferences
      * @return
      */
@@ -210,6 +214,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method gets Names tree from the catalog.
+     *
      * @param treeType type of the tree (Dests, AP, EmbeddedFiles etc).
      * @return returns {@link PdfNameTree}
      */
@@ -225,6 +230,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * This method returns the NumberTree of Page Labels
+     *
      * @return returns {@link PdfNumTree}
      */
     public PdfNumTree getPageLabelsTree(boolean createIfNotExists) {
@@ -270,6 +276,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets collection dictionary that a conforming reader shall use to enhance the presentation of file attachments
      * stored in the PDF document.
+     *
      * @param collection
      * @return
      */
@@ -319,8 +326,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param key   Name of the destination.
      * @param value An object destination refers to. Must be an array or a dictionary with key /D and array.
-     *              See PdfSpec 12.3.2.3 for more info.
-     * @throws PdfException
+     *              See ISO 32000-1 12.3.2.3 for more info.
      */
     void addNamedDestination(String key, PdfObject value) {
         addNameToNameTree(key, value, PdfName.Dests);
@@ -329,21 +335,20 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This methods adds a new name to the specified NameTree. It throws an exception, if the name already exists.
      *
-     * @param key key in the name tree
-     * @param value value in the name tree
+     * @param key      key in the name tree
+     * @param value    value in the name tree
      * @param treeType type of the tree (Dests, AP, EmbeddedFiles etc).
      */
-    void addNameToNameTree(String key, PdfObject value, PdfName treeType){
+    void addNameToNameTree(String key, PdfObject value, PdfName treeType) {
         getNameTree(treeType).addEntry(key, value);
     }
 
     /**
      * This method returns a complete outline tree of the whole document.
      *
-     * @param updateOutlines - if this flag is true, the method read the whole document and creates outline tree.
+     * @param updateOutlines if the flag is true, the method read the whole document and creates outline tree.
      *                       If false the method gets cached outline tree (if it was cached via calling getOutlines method before).
-     * @return
-     * @throws PdfException
+     * @return fully initialized {@link PdfOutline} object.
      */
     PdfOutline getOutlines(boolean updateOutlines) {
         if (outlines != null && !updateOutlines)
@@ -372,6 +377,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Indicates if the catalog has any outlines
+     *
      * @return {@code true}, if there are outlines and {@code false} otherwise.
      */
     boolean hasOutlines() {
@@ -391,7 +397,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * This method removes all outlines associated with a given page
      *
      * @param page
-     * @throws PdfException
      */
     void removeOutlines(PdfPage page) {
         if (getDocument().getWriter() == null) {
@@ -399,9 +404,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         }
         if (hasOutlines()) {
             getOutlines(false);
-            if (!pagesWithOutlines.isEmpty()) {
-                for (PdfOutline outline : pagesWithOutlines.get(page.getPdfObject())) {
-                    outline.removeOutline();
+            if (pagesWithOutlines.size() > 0) {
+                if (pagesWithOutlines.get(page.getPdfObject()) != null) {
+                    for (PdfOutline outline : pagesWithOutlines.get(page.getPdfObject())) {
+                        outline.removeOutline();
+                    }
                 }
             }
         }
@@ -411,7 +418,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * This method sets the root outline element in the catalog.
      *
      * @param outline
-     * @throws PdfException
      */
     void addRootOutline(PdfOutline outline) {
         if (!outlineMode)
@@ -425,10 +431,10 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     PdfDestination copyDestination(PdfObject dest, Map<PdfPage, PdfPage> page2page, PdfDocument toDocument) {
         PdfDestination d = null;
         if (dest.isArray()) {
-            PdfObject pageObject = ((PdfArray)dest).get(0);
+            PdfObject pageObject = ((PdfArray) dest).get(0);
             for (PdfPage oldPage : page2page.keySet()) {
                 if (oldPage.getPdfObject() == pageObject) {
-                    PdfArray array = new PdfArray((PdfArray)dest);
+                    PdfArray array = new PdfArray((PdfArray) dest);
                     array.set(0, page2page.get(oldPage).getPdfObject());
                     d = new PdfExplicitDestination(array);
                 }
@@ -437,14 +443,14 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             PdfNameTree destsTree = getNameTree(PdfName.Dests);
             Map<String, PdfObject> dests = destsTree.getNames();
             String name = ((PdfString) dest).toUnicodeString();
-            PdfArray array = (PdfArray)dests.get(name);
+            PdfArray array = (PdfArray) dests.get(name);
             if (array != null) {
                 PdfObject pageObject = array.get(0);
                 for (PdfPage oldPage : page2page.keySet()) {
                     if (oldPage.getPdfObject() == pageObject) {
                         array.set(0, page2page.get(oldPage).getPdfObject());
                         d = new PdfStringDestination(name);
-                        toDocument.addNamedDestination(name,array);
+                        toDocument.addNamedDestination(name, array);
                     }
                 }
             }

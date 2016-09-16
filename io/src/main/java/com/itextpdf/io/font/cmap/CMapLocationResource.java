@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -59,10 +58,10 @@ import java.io.InputStream;
 public class CMapLocationResource implements ICMapLocation {
 
     public PdfTokenizer getLocation(String location) throws java.io.IOException {
-        String fullName = FontConstants.RESOURCE_PATH + "cmap/" + location;
+        String fullName = FontConstants.CMAP_RESOURCE_PATH + location;
         InputStream inp = ResourceUtil.getResourceStream(fullName);
         if (inp == null) {
-            throw new IOException("the.cmap.1.was.not.found").setMessageParams(fullName);
+            throw new IOException(IOException.Cmap1WasNotFound).setMessageParams(fullName);
         }
         return new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(inp)));
     }

@@ -4,7 +4,7 @@
 
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.0.0</version>
+    <version>7.0.1</version>
     <packaging>pom</packaging>
     <name>iText 7</name>
     <description>A Free Java-PDF library</description>
@@ -16,10 +16,51 @@
         <url>http://itextpdf.com/</url>
     </organization>
 
+    <licenses>
+        <license>
+            <name>GNU Affero General Public License v3</name>
+            <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>itext</id>
+            <name>iText Software</name>
+            <email>info@itextpdf.com</email>
+            <url>http://www.itextpdf.com</url>
+        </developer>
+    </developers>
+
+    <mailingLists>
+        <mailingList>
+            <name>iText on StackOverflow</name>
+            <subscribe>http://stackoverflow.com/questions/tagged/itext</subscribe>
+            <archive>http://stackoverflow.com/questions/tagged/itext</archive>
+            <otherArchives>
+                <otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
+                <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
+                <otherArchive>http://www.junlu.com/2.html</otherArchive>
+                <otherArchive>http://sourceforge.net/mailarchive/forum.php?forum_id=3273</otherArchive>
+                <otherArchive>http://www.mail-archive.com/itext-questions%40lists.sourceforge.net/</otherArchive>
+            </otherArchives>
+        </mailingList>
+    </mailingLists>
+
     <scm>
         <connection>scm:git:git@gitlab.itextsupport.com:itext7/itextcore.git</connection>
         <url>scm:git:git@gitlab.itextsupport.com:itext7/itextcore.git</url>
     </scm>
+
+    <issueManagement>
+        <system>jira</system>
+        <url>https://jira.itextsupport.com/</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>jenkins-ci</system>
+        <url>http://ci.itextsupport.com/</url>
+    </ciManagement>
 
     <modules>
         <module>barcodes</module>
@@ -49,19 +90,23 @@
         <surefire.version>2.18.1</surefire.version>
         <failsafe.version>2.18.1</failsafe.version>
         <jacoco.version>0.7.5.201505241946</jacoco.version>
+        <pitest.version>1.1.8</pitest.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>
         <performancetests>com.itextpdf.test.annotations.type.PerformanceTest</performancetests>
         <sampletests>com.itextpdf.test.annotations.type.SampleTest</sampletests>
         <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
+        <slowtests>com.itextpdf.test.annotations.type.SlowTest</slowtests>
+        <skipTests>true</skipTests>
         <logback.version>1.1.3</logback.version>
         <jfreechart.version>1.0.19</jfreechart.version>
         <hsqldb.version>2.3.3</hsqldb.version>
+        <sonar.clirr.reportPath>${project.build.directory}/clirr-report.txt</sonar.clirr.reportPath>
     </properties>
 
     <dependencies>
-         <dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
@@ -97,26 +142,43 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-artifact</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>${project.artifactId}</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>${project.packaging}</type>
+                                    <destFileName>itext7-${project.artifactId}-${project.version}</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>../target</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+            </plugin>
             <!-- Run unit tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.maven.surefire</groupId>
-                        <artifactId>surefire-junit47</artifactId>
-                        <version>${surefire.version}</version>
-                        <scope>compile</scope>
-                    </dependency>
-                </dependencies>
                 <configuration>
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
-                    <parallel>methods</parallel>
-                    <threadCount>10</threadCount>
-                    <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+                    <skipTests>${skipTests}</skipTests>
                 </configuration>
             </plugin>
             <!-- Run integration tests -->
@@ -124,243 +186,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>${failsafe.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
-                    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-                    <argLine>${jacoco.agent.argLine}</argLine>
-<!--                    <parallel>methods</parallel>    -->
-                    <threadCount>1</threadCount>
-                </configuration>
-            </plugin>
-            <!--
-                Compute integration test coverage for Sonar
-                BEWARE: Sonar doesn't run the verify phase, it has to be forced by setting -Dsonar.phase=verify
-            -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
-                <configuration>
-                    <propertyName>jacoco.agent.argLine</propertyName> <!-- default: argLine -->
-                    <includes>
-                        <include>com/itextpdf/**</include>
-                    </includes>
-                    <destFile>${project.build.directory}/jacoco-integration.exec</destFile> <!-- agent -->
-                    <dataFile>${project.build.directory}/jacoco-integration.exec</dataFile> <!-- report -->
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>site</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${checkstyle.version}</version>
-                <executions>
-                    <execution>
-                        <id>validate</id>
-                        <phase>validate</phase>
-                        <configuration>
-                            <consoleOutput>true</consoleOutput>
-                            <failOnViolation>false</failOnViolation>
-                            <failsOnError>false</failsOnError>
-                            <linkXRef>false</linkXRef>
-                        </configuration>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${pmd.version}</version>
-                <executions>
-                    <execution>
-                        <id>validate</id>
-                        <phase>validate</phase>
-                        <configuration>
-                            <consoleOutput>true</consoleOutput>
-                            <failOnViolation>false</failOnViolation>
-                            <failsOnError>false</failsOnError>
-                            <linkXRef>false</linkXRef>
-                        </configuration>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>${findbugs.version}</version>
-                <configuration>
-                    <effort>Max</effort>
-                    <threshold>Low</threshold>
-                    <xmlOutput>true</xmlOutput>
-                    <failOnError>false</failOnError>
-                    <plugins>
-                        <plugin>
-                            <groupId>com.mebigfatguy.fb-contrib</groupId>
-                            <artifactId>fb-contrib</artifactId>
-                            <version>${fb-contrib.version}</version>
-                        </plugin>
-                    </plugins>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.pitest</groupId>
-                <artifactId>pitest-maven</artifactId>
-                <version>1.1.8</version>
-                <configuration>
-                    <targetClasses>
-                        <param>com.itextpdf*</param>
-                    </targetClasses>
-                    <targetTests>
-                        <param>com.itextpdf*</param>
-                    </targetTests>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <excludeResources>true</excludeResources>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${javadoc.version}</version>
-                <configuration>
-                    <additionalparam>${javadoc.doclint.none}</additionalparam>
-                    <quiet>true</quiet>
-                    <detectLinks>true</detectLinks>
-                    <subpackages>com.itextpdf.barcodes:com.itextpdf.font-asian:com.itextpdf.forms:com.itextpdf.hyph:com.itextpdf.io:com.itextpdf.kernel:com.itextpdf.layout:com.itextpdf.pdfa:com.itextpdf.signatures</subpackages>
-                    <groups>
-                        <group>
-                            <title>Barcodes</title>
-                            <packages>com.itextpdf.barcodes*</packages>
-                        </group>
-                        <group>
-                            <title>Asian Fonts</title>
-                            <packages>com.itextpdf.font-asian*</packages>
-                        </group>
-                        <group>
-                            <title>Forms</title>
-                            <packages>com.itextpdf.forms*</packages>
-                        </group>
-                        <group>
-                            <title>Hyphenation</title>
-                            <packages>com.itextpdf.hyph*</packages>
-                        </group>
-                        <group>
-                            <title>Input / Output</title>
-                            <packages>com.itextpdf.io*</packages>
-                        </group>
-                        <group>
-                            <title>Kernel</title>
-                            <packages>com.itextpdf.kernel*</packages>
-                        </group>
-                        <group>
-                            <title>Layout</title>
-                            <packages>com.itextpdf.layout*</packages>
-                        </group>
-                        <group>
-                            <title>PDF/A</title>
-                            <packages>com.itextpdf.pdfa*</packages>
-                        </group>
-                        <group>
-                            <title>Signatures</title>
-                            <packages>com.itextpdf.signatures*</packages>
-                        </group>
-                    </groups>
-                    <footer><![CDATA[
-<script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-11854164-1', 'itextpdf.com');
-ga('send', 'pageview');
-
-</script>
-                    ]]></footer>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>site-javadoc</id>
-                        <phase>site</phase>
-                        <goals>
-                            <goal>aggregate</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>external.atlassian.jgitflow</groupId>
-                <artifactId>jgitflow-maven-plugin</artifactId>
-                <version>1.0-m5.1</version>
-                <configuration>
-                    <!-- see goals wiki page for configuration options -->
-                    <flowInitContext>
-                        <masterBranchName>master</masterBranchName>
-                        <developBranchName>develop</developBranchName>
-                        <featureBranchPrefix>feature/</featureBranchPrefix>
-                        <releaseBranchPrefix>release/</releaseBranchPrefix>
-                        <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-                        <versionTagPrefix />
-                    </flowInitContext>
-                    <allowUntracked>true</allowUntracked>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <updateDependencies>true</updateDependencies>
+                    <skipTests>${skipTests}</skipTests>
                 </configuration>
             </plugin>
         </plugins>
@@ -412,6 +239,11 @@ ga('send', 'pageview');
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>clirr-maven-plugin</artifactId>
+                <version>2.7</version>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${javadoc.version}</version>
@@ -420,6 +252,7 @@ ga('send', 'pageview');
                     <quiet>true</quiet>
                 </configuration>
             </plugin>
+            <!--
             <plugin>
                 <groupId>com.soebes.maven.plugins.dmg</groupId>
                 <artifactId>doxygen-maven-plugin</artifactId>
@@ -440,9 +273,10 @@ ga('send', 'pageview');
                     <umlLook>true</umlLook>
                     <callGraph>true</callGraph>
                     <callerGraph>true</callerGraph>
-                    <generateLatex>true</generateLatex>
+                    <generateLatex>false</generateLatex>
                 </configuration>
             </plugin>
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
@@ -452,6 +286,9 @@ ga('send', 'pageview');
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-linkcheck-plugin</artifactId>
                 <version>1.2</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -470,6 +307,325 @@ ga('send', 'pageview');
             <properties>
                 <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
             </properties>
+        </profile>
+        <profile>
+            <id>develop</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>qa</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <version>${checkstyle.version}</version>
+                        <executions>
+                            <execution>
+                                <id>validate</id>
+                                <phase>validate</phase>
+                                <configuration>
+                                    <consoleOutput>false</consoleOutput>
+                                    <failOnViolation>false</failOnViolation>
+                                    <failsOnError>false</failsOnError>
+                                    <linkXRef>false</linkXRef>
+                                </configuration>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-pmd-plugin</artifactId>
+                        <version>${pmd.version}</version>
+                        <executions>
+                            <execution>
+                                <id>validate</id>
+                                <phase>validate</phase>
+                                <configuration>
+                                    <consoleOutput>false</consoleOutput>
+                                    <failOnViolation>false</failOnViolation>
+                                    <failsOnError>false</failsOnError>
+                                    <linkXRef>false</linkXRef>
+                                </configuration>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <version>${findbugs.version}</version>
+                        <configuration>
+                            <effort>Max</effort>
+                            <threshold>Low</threshold>
+                            <xmlOutput>true</xmlOutput>
+                            <failOnError>false</failOnError>
+                            <plugins>
+                                <plugin>
+                                    <groupId>com.mebigfatguy.fb-contrib</groupId>
+                                    <artifactId>fb-contrib</artifactId>
+                                    <version>${fb-contrib.version}</version>
+                                </plugin>
+                            </plugins>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>clirr-maven-plugin</artifactId>
+                        <version>2.7</version>
+                        <configuration>
+                            <comparisonVersion>7.0.0</comparisonVersion>
+                            <textOutputFile>${project.build.directory}/clirr-report.txt</textOutputFile>
+                            <linkXRef>false</linkXRef>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>clirr</id>
+                                <goals>
+                                    <goal>check-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>test</id>
+            <build>
+                <plugins>
+                    <!-- Run unit tests -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${surefire.version}</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.maven.surefire</groupId>
+                                <artifactId>surefire-junit47</artifactId>
+                                <version>${surefire.version}</version>
+                                <scope>compile</scope>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <skipTests>false</skipTests>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                            <groups>${unittests}</groups>
+                            <forkCount>1</forkCount>
+                            <reuseForks>false</reuseForks>
+                            <parallel>methods</parallel>
+                            <threadCount>10</threadCount>
+                            <argLine>-Xmx1024m</argLine>
+                        </configuration>
+                    </plugin>
+                    <!-- Run integration tests -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>${failsafe.version}</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <skipTests>false</skipTests>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                            <groups>${slowtests}</groups>
+                            <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                            <argLine>${jacoco.agent.argLine}</argLine>
+                            <threadCount>1</threadCount>
+                        </configuration>
+                    </plugin>
+                    <!-- Compute integration test coverage for Sonar BEWARE: Sonar
+                        doesn't run the verify phase, it has to be forced by setting -Dsonar.phase=verify -->
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacoco.version}</version>
+                        <configuration>
+                            <propertyName>jacoco.agent.argLine</propertyName> <!-- default: argLine -->
+                            <includes>
+                                <include>com/itextpdf/**</include>
+                            </includes>
+                            <destFile>${project.build.directory}/jacoco-integration.exec</destFile> <!-- agent -->
+                            <dataFile>${project.build.directory}/jacoco-integration.exec</dataFile> <!-- report -->
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>report</id>
+                                <phase>site</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <version>${pitest.version}</version>
+                        <configuration>
+                            <targetClasses>
+                                <param>com.itextpdf*</param>
+                            </targetClasses>
+                            <targetTests>
+                                <param>com.itextpdf*</param>
+                            </targetTests>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <configuration>
+                            <excludeResources>true</excludeResources>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${javadoc.version}</version>
+                        <configuration>
+                            <additionalparam>${javadoc.doclint.none}</additionalparam>
+                            <quiet>true</quiet>
+                            <failOnError>false</failOnError>
+                            <detectLinks>true</detectLinks>
+                            <subpackages>com.itextpdf.barcodes:com.itextpdf.font-asian:com.itextpdf.forms:com.itextpdf.hyph:com.itextpdf.io:com.itextpdf.kernel:com.itextpdf.layout:com.itextpdf.pdfa:com.itextpdf.signatures</subpackages>
+                            <groups>
+                                <group>
+                                    <title>Barcodes</title>
+                                    <packages>com.itextpdf.barcodes*</packages>
+                                </group>
+                                <group>
+                                    <title>Asian Fonts</title>
+                                    <packages>com.itextpdf.font-asian*</packages>
+                                </group>
+                                <group>
+                                    <title>Forms</title>
+                                    <packages>com.itextpdf.forms*</packages>
+                                </group>
+                                <group>
+                                    <title>Hyphenation</title>
+                                    <packages>com.itextpdf.hyph*</packages>
+                                </group>
+                                <group>
+                                    <title>Input / Output</title>
+                                    <packages>com.itextpdf.io*</packages>
+                                </group>
+                                <group>
+                                    <title>Kernel</title>
+                                    <packages>com.itextpdf.kernel*</packages>
+                                </group>
+                                <group>
+                                    <title>Layout</title>
+                                    <packages>com.itextpdf.layout*</packages>
+                                </group>
+                                <group>
+                                    <title>PDF/A</title>
+                                    <packages>com.itextpdf.pdfa*</packages>
+                                </group>
+                                <group>
+                                    <title>Signatures</title>
+                                    <packages>com.itextpdf.signatures*</packages>
+                                </group>
+                            </groups>
+                            <footer><![CDATA[
+        <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-11854164-1', 'itextpdf.com');
+        ga('send', 'pageview');
+
+        </script>
+                            ]]></footer>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>site-javadoc</id>
+                                <phase>site</phase>
+                                <goals>
+                                    <goal>aggregate</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>external.atlassian.jgitflow</groupId>
+                        <artifactId>jgitflow-maven-plugin</artifactId>
+                        <version>1.0-m5.1</version>
+                        <configuration>
+                            <!-- see goals wiki page for configuration options -->
+                            <flowInitContext>
+                                <masterBranchName>master</masterBranchName>
+                                <developBranchName>develop</developBranchName>
+                                <featureBranchPrefix>feature/</featureBranchPrefix>
+                                <releaseBranchPrefix>release/</releaseBranchPrefix>
+                                <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
+                                <versionTagPrefix />
+                            </flowInitContext>
+                            <allowUntracked>true</allowUntracked>
+                            <autoVersionSubmodules>true</autoVersionSubmodules>
+                            <updateDependencies>true</updateDependencies>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 

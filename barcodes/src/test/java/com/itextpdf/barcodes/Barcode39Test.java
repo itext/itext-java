@@ -9,34 +9,30 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.IOException;
+
 @Category(IntegrationTest.class)
-public class Barcode39Test {
+public class Barcode39Test extends ExtendedITextTest {
+
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
     public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/Barcode39/";
 
     @BeforeClass
     public static void beforeClass() {
-        new File(destinationFolder).mkdirs();
+        createDestinationFolder(destinationFolder);
     }
 
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
-
         String filename = "barcode39_01.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + filename));
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -54,11 +50,9 @@ public class Barcode39Test {
 
     @Test
     public void barcode02Test() throws IOException, PdfException, InterruptedException {
-
         String filename = "barcode39_02.pdf";
-        PdfWriter writer = new PdfWriter(new FileOutputStream(destinationFolder + filename));
-        PdfReader reader = new PdfReader(new FileInputStream(sourceFolder + "DocumentWithTrueTypeFont1.pdf"));
-        PdfDocument document = new PdfDocument(reader, writer);
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "DocumentWithTrueTypeFont1.pdf"),
+                new PdfWriter(destinationFolder + filename));
 
         PdfCanvas canvas = new PdfCanvas(document.getLastPage());
 
@@ -73,14 +67,15 @@ public class Barcode39Test {
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void barcode03Test() {
-
-        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Barcode39 barcode = new Barcode39(document);
-        barcode.getBarsCode39("9781935*182610");
+        try {
+            barcode.getBarsCode39("9781935*182610");
+            Assert.fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException ignored) {
 
-
+        }
     }
 }

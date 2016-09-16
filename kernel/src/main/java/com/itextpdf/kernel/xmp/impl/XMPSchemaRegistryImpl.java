@@ -40,7 +40,6 @@ import com.itextpdf.kernel.xmp.properties.XMPAliasInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -53,7 +52,7 @@ import java.util.regex.Pattern;
  * 
  * @since 27.01.2006
  */
-public final class XMPSchemaRegistryImpl implements XMPSchemaRegistry, XMPConst
+public final class XMPSchemaRegistryImpl implements XMPConst, XMPSchemaRegistry
 {
 	/** a map from a namespace URI to its registered prefix */
 	private Map namespaceToPrefixMap = new HashMap();
@@ -308,20 +307,18 @@ public final class XMPSchemaRegistryImpl implements XMPSchemaRegistry, XMPConst
 	public synchronized XMPAliasInfo[] findAliases(String aliasNS)
 	{
 		String prefix = getNamespacePrefix(aliasNS);
-		List result = new ArrayList(); 
+		List<XMPAliasInfo> result = new ArrayList<>();
 		if (prefix != null)
 		{
-			for (Iterator it = aliasMap.keySet().iterator(); it.hasNext();)
-			{
-				String qname = (String) it.next();
-				if (qname.startsWith(prefix))
-				{
+			for (Object key : aliasMap.keySet()) {
+				String qname = (String) key;
+				if (qname.startsWith(prefix)) {
 					result.add(findAlias(qname));
 				}
 			}
 			
 		}
-		return (XMPAliasInfo[]) result.toArray(new XMPAliasInfo[result.size()]);
+		return result.toArray(new XMPAliasInfo[result.size()]);
 	}	
 	
 	
@@ -458,7 +455,7 @@ public final class XMPSchemaRegistryImpl implements XMPSchemaRegistry, XMPConst
 	 */
 	public synchronized Map getAliases()
 	{
-		return Collections.unmodifiableMap(new TreeMap(aliasMap));
+		return Collections.unmodifiableMap(new TreeMap<>(aliasMap));
 	}
 	
 	

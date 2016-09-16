@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -55,6 +54,6 @@ public interface IEventHandler {
      *
      * @param event the Event that needs to be processed
      */
-    public void handleEvent(Event event);
+    void handleEvent(Event event);
 
 }

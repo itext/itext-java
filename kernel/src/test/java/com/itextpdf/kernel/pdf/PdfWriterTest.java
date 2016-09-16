@@ -1,23 +1,21 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
-
+import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.TreeMap;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfWriterTest extends ExtendedITextTest {
@@ -31,9 +29,7 @@ public class PdfWriterTest extends ExtendedITextTest {
 
     @Test
     public void createEmptyDocument() throws IOException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "emptyDocument.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "emptyDocument.pdf"));
         pdfDoc.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
@@ -47,18 +43,16 @@ public class PdfWriterTest extends ExtendedITextTest {
         Assert.assertNotNull(pdfDocument.getPage(1));
         String date = pdfDocument.getDocumentInfo().getPdfObject().getAsString(PdfName.CreationDate).getValue();
         Calendar cl = PdfDate.decode(date);
-        long diff = new GregorianCalendar().getTimeInMillis() - cl.getTimeInMillis();
-        String message = "Unexpected creation date. Different from now is " + (float)diff/1000 + "s";
+        double diff = DateTimeUtil.getUtcMillisFromEpoch(null) - DateTimeUtil.getUtcMillisFromEpoch(cl);
+        String message = "Unexpected creation date. Different from now is " + (float) diff / 1000 + "s";
         Assert.assertTrue(message, diff < 5000);
-        reader.close();
+        pdfDocument.close();
 
     }
 
     @Test
     public void useObjectForMultipleTimes1() throws IOException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "useObjectForMultipleTimes1.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "useObjectForMultipleTimes1.pdf"));
 
         PdfDictionary helloWorld = new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
@@ -73,9 +67,7 @@ public class PdfWriterTest extends ExtendedITextTest {
 
     @Test
     public void useObjectForMultipleTimes2() throws IOException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "useObjectForMultipleTimes2.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "useObjectForMultipleTimes2.pdf"));
 
         PdfDictionary helloWorld = new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
@@ -91,9 +83,7 @@ public class PdfWriterTest extends ExtendedITextTest {
 
     @Test
     public void useObjectForMultipleTimes3() throws IOException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "useObjectForMultipleTimes3.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "useObjectForMultipleTimes3.pdf"));
 
         PdfDictionary helloWorld = new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
@@ -109,9 +99,7 @@ public class PdfWriterTest extends ExtendedITextTest {
 
     @Test
     public void useObjectForMultipleTimes4() throws IOException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "useObjectForMultipleTimes4.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "useObjectForMultipleTimes4.pdf"));
 
         PdfDictionary helloWorld = new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
@@ -139,42 +127,37 @@ public class PdfWriterTest extends ExtendedITextTest {
         Assert.assertNotNull(helloWorld);
         world = helloWorld.getAsString(new PdfName("Hello"));
         Assert.assertEquals("World", world.toString());
-        reader.close();
+        pdfDoc.close();
     }
 
     /**
      * Copying direct objects. Objects of all types are added into document catalog.
      *
      * @throws IOException
-     * @throws PdfException
      */
     @Test
     public void copyObject1() throws IOException {
-        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyObject1_1.pdf");
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject1_1.pdf"));
         PdfPage page1 = pdfDoc1.addNewPage();
         page1.flush();
         PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
         PdfArray aDirect = new PdfArray();
-        aDirect.add(new PdfArray(new ArrayList<PdfObject>() {{
-            add(new PdfNumber(1));
-            add(new PdfNumber(2));
-        }}));
+        ArrayList<PdfObject> tmpArray = new ArrayList<PdfObject>(2);
+        tmpArray.add(new PdfNumber(1));
+        tmpArray.add(new PdfNumber(2));
+        aDirect.add(new PdfArray(tmpArray));
         aDirect.add(new PdfBoolean(true));
-        aDirect.add(new PdfDictionary(new TreeMap<PdfName, PdfObject>() {{
-            put(new PdfName("one"), new PdfNumber(1));
-            put(new PdfName("two"), new PdfNumber(2));
-        }}));
+        TreeMap<PdfName, PdfObject> tmpMap = new TreeMap<PdfName, PdfObject>();
+        tmpMap.put(new PdfName("one"), new PdfNumber(1));
+        tmpMap.put(new PdfName("two"), new PdfNumber(2));
+        aDirect.add(new PdfDictionary(tmpMap));
         aDirect.add(new PdfName("name"));
         aDirect.add(new PdfNull());
         aDirect.add(new PdfNumber(100));
         aDirect.add(new PdfString("string"));
         catalog1.put(new PdfName("aDirect"), aDirect);
 
-        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyObject1_2.pdf");
-        PdfWriter writer2 = new PdfWriter(fos2);
-        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject1_2.pdf"));
         PdfPage page2 = pdfDoc2.addNewPage();
         page2.flush();
         PdfDictionary catalog2 = pdfDoc2.getCatalog().getPdfObject();
@@ -198,7 +181,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         Assert.assertTrue(a.get(4).isNull());
         Assert.assertEquals(100, ((PdfNumber) a.get(5)).intValue());
         Assert.assertEquals("string", ((PdfString) a.get(6)).toUnicodeString());
-        reader.close();
+        pdfDocument.close();
 
     }
 
@@ -206,27 +189,24 @@ public class PdfWriterTest extends ExtendedITextTest {
      * Copying objects, some of those are indirect. Objects of all types are added into document catalog.
      *
      * @throws IOException
-     * @throws PdfException
      */
     @Test
     public void copyObject2() throws IOException {
-        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyObject2_1.pdf");
-        PdfWriter writer1 = new PdfWriter(fos1);
-        final PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject2_1.pdf"));
         PdfPage page1 = pdfDoc1.addNewPage();
         page1.flush();
         PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
         PdfName aDirectName = new PdfName("aDirect");
         PdfArray aDirect = new PdfArray().makeIndirect(pdfDoc1);
-        aDirect.add(new PdfArray(new ArrayList<PdfObject>() {{
-            add(new PdfNumber(1));
-            add(new PdfNumber(2).makeIndirect(pdfDoc1));
-        }}));
+        ArrayList<PdfObject> tmpArray = new ArrayList<PdfObject>(2);
+        tmpArray.add(new PdfNumber(1));
+        tmpArray.add(new PdfNumber(2).makeIndirect(pdfDoc1));
+        aDirect.add(new PdfArray(tmpArray));
         aDirect.add(new PdfBoolean(true));
-        aDirect.add(new PdfDictionary(new TreeMap<PdfName, PdfObject>() {{
-            put(new PdfName("one"), new PdfNumber(1));
-            put(new PdfName("two"), new PdfNumber(2).makeIndirect(pdfDoc1));
-        }}));
+        TreeMap<PdfName, PdfObject> tmpMap = new TreeMap<PdfName, PdfObject>();
+        tmpMap.put(new PdfName("one"), new PdfNumber(1));
+        tmpMap.put(new PdfName("two"), new PdfNumber(2).makeIndirect(pdfDoc1));
+        aDirect.add(new PdfDictionary(tmpMap));
         aDirect.add(new PdfName("name"));
         aDirect.add(new PdfNull().makeIndirect(pdfDoc1));
         aDirect.add(new PdfNumber(100));
@@ -234,12 +214,10 @@ public class PdfWriterTest extends ExtendedITextTest {
         catalog1.put(aDirectName, aDirect);
         pdfDoc1.close();
 
-        PdfDocument pdfDoc1R = new PdfDocument(new com.itextpdf.kernel.pdf.PdfReader(destinationFolder + "copyObject2_1.pdf"));
+        PdfDocument pdfDoc1R = new PdfDocument(new PdfReader(destinationFolder + "copyObject2_1.pdf"));
         aDirect = (PdfArray) pdfDoc1R.getCatalog().getPdfObject().get(aDirectName);
 
-        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyObject2_2.pdf");
-        PdfWriter writer2 = new PdfWriter(fos2);
-        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject2_2.pdf"));
         PdfPage page2 = pdfDoc2.addNewPage();
         page2.flush();
         PdfDictionary catalog2 = pdfDoc2.getCatalog().getPdfObject();
@@ -264,21 +242,18 @@ public class PdfWriterTest extends ExtendedITextTest {
         Assert.assertTrue(a.get(4).isNull());
         Assert.assertEquals(100, ((PdfNumber) a.get(5)).intValue());
         Assert.assertEquals("string", ((PdfString) a.get(6)).toUnicodeString());
-        reader.close();
+        pdfDocument.close();
     }
 
     /**
      * Copy objects recursively.
      *
      * @throws IOException
-     * @throws PdfException
      */
     @Test
     public void copyObject3() throws IOException {
         {
-            FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyObject3_1.pdf");
-            PdfWriter writer1 = new PdfWriter(fos1);
-            final PdfDocument pdfDoc1 = new PdfDocument(writer1);
+            PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject3_1.pdf"));
             PdfPage page1 = pdfDoc1.addNewPage();
             page1.flush();
             PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
@@ -294,12 +269,10 @@ public class PdfWriterTest extends ExtendedITextTest {
             catalog1.put(arr1Name, arr1);
             pdfDoc1.close();
 
-            PdfDocument pdfDoc1R = new PdfDocument(new com.itextpdf.kernel.pdf.PdfReader(destinationFolder + "copyObject3_1.pdf"));
+            PdfDocument pdfDoc1R = new PdfDocument(new PdfReader(destinationFolder + "copyObject3_1.pdf"));
             arr1 = (PdfArray) pdfDoc1R.getCatalog().getPdfObject().get(arr1Name);
 
-            FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyObject3_2.pdf");
-            PdfWriter writer2 = new PdfWriter(fos2);
-            PdfDocument pdfDoc2 = new PdfDocument(writer2);
+            PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject3_2.pdf"));
             PdfPage page2 = pdfDoc2.addNewPage();
             page2.flush();
             PdfDictionary catalog2 = pdfDoc2.getCatalog().getPdfObject();
@@ -319,7 +292,7 @@ public class PdfWriterTest extends ExtendedITextTest {
             PdfDictionary dic1 = arr2.getAsDictionary(0);
             PdfDictionary dic2 = dic1.getAsDictionary(new PdfName("dic2"));
             Assert.assertEquals(arr1, dic2.getAsArray(new PdfName("arr1")));
-            reader.close();
+            pdfDocument.close();
         }
     }
 
@@ -327,31 +300,26 @@ public class PdfWriterTest extends ExtendedITextTest {
      * Copies stream.
      *
      * @throws IOException
-     * @throws PdfException
      */
     @Test
     public void copyObject4() throws IOException {
-        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyObject4_1.pdf");
-        PdfWriter writer1 = new PdfWriter(fos1);
-        final PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject4_1.pdf"));
         PdfPage page1 = pdfDoc1.addNewPage();
         page1.flush();
         PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
         PdfStream stream1 = new PdfStream().makeIndirect(pdfDoc1);
-        stream1.getOutputStream().write(new PdfArray(new ArrayList<PdfObject>() {{
-            add(new PdfNumber(1));
-            add(new PdfNumber(2));
-            add(new PdfNumber(3));
-        }}));
+        ArrayList<PdfObject> tmpArray = new ArrayList<PdfObject>(3);
+        tmpArray.add(new PdfNumber(1));
+        tmpArray.add(new PdfNumber(2));
+        tmpArray.add(new PdfNumber(3));
+        stream1.getOutputStream().write(new PdfArray(tmpArray));
         catalog1.put(new PdfName("stream"), stream1);
         pdfDoc1.close();
 
-        PdfDocument pdfDoc1R = new PdfDocument(new com.itextpdf.kernel.pdf.PdfReader(destinationFolder + "copyObject4_1.pdf"));
+        PdfDocument pdfDoc1R = new PdfDocument(new PdfReader(destinationFolder + "copyObject4_1.pdf"));
         stream1 = (PdfStream) pdfDoc1R.getCatalog().getPdfObject().get(new PdfName("stream"));
 
-        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyObject4_2.pdf");
-        PdfWriter writer2 = new PdfWriter(fos2);
-        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject4_2.pdf"));
         PdfPage page2 = pdfDoc2.addNewPage();
         page2.flush();
         PdfDictionary catalog2 = pdfDoc2.getCatalog().getPdfObject();
@@ -364,34 +332,29 @@ public class PdfWriterTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
-        PdfStream stream = (PdfStream)catalog.getAsStream(new PdfName("stream"));
+        PdfStream stream = (PdfStream) catalog.getAsStream(new PdfName("stream"));
         byte[] bytes = stream.getBytes();
         Assert.assertArrayEquals(ByteUtils.getIsoBytes("[1 2 3]"), bytes);
-        reader.close();
+        pdfDocument.close();
     }
 
     /**
      * Copies page.
      *
      * @throws IOException
-     * @throws PdfException
      */
     @Test
     public void copyObject5() throws IOException {
-        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyObject5_1.pdf");
-        PdfWriter writer1 = new PdfWriter(fos1);
-        final PdfDocument pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject5_1.pdf"));
         PdfPage page1 = pdfDoc1.addNewPage();
         page1.getContentStream(0).getOutputStream().write(ByteUtils.getIsoBytes("%Page_1"));
         page1.flush();
         pdfDoc1.close();
 
-        PdfDocument pdfDoc1R = new PdfDocument(new com.itextpdf.kernel.pdf.PdfReader(destinationFolder + "copyObject5_1.pdf"));
+        PdfDocument pdfDoc1R = new PdfDocument(new PdfReader(destinationFolder + "copyObject5_1.pdf"));
         page1 = pdfDoc1R.getPage(1);
 
-        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyObject5_2.pdf");
-        PdfWriter writer2 = new PdfWriter(fos2);
-        PdfDocument pdfDoc2 = new PdfDocument(writer2);
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject5_2.pdf"));
         PdfPage page2 = page1.copyTo(pdfDoc2);
         pdfDoc2.addPage(page2);
         page2.flush();
@@ -407,10 +370,12 @@ public class PdfWriterTest extends ExtendedITextTest {
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         Assert.assertEquals(8, reader.trailer.getAsNumber(PdfName.Size).intValue());
         byte[] bytes = pdfDocument.getPage(1).getContentBytes();
-        Assert.assertArrayEquals(ByteUtils.getIsoBytes("%Page_1"), bytes);
+        // getting content bytes results in adding '\n' for each content stream
+        // so we should compare String with '\n' at the end
+        Assert.assertArrayEquals(ByteUtils.getIsoBytes("%Page_1\n"), bytes);
         bytes = pdfDocument.getPage(2).getContentBytes();
-        Assert.assertArrayEquals(ByteUtils.getIsoBytes("%Page_2"), bytes);
-        reader.close();
+        Assert.assertArrayEquals(ByteUtils.getIsoBytes("%Page_2\n"), bytes);
+        pdfDocument.close();
     }
 
     /**
@@ -420,9 +385,7 @@ public class PdfWriterTest extends ExtendedITextTest {
      */
     @Test
     public void copyObject6() throws IOException {
-        FileOutputStream fos = new FileOutputStream(destinationFolder + "copyObject6_1.pdf");
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "copyObject6_1.pdf"));
 
         PdfDictionary helloWorld = new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
@@ -430,9 +393,9 @@ public class PdfWriterTest extends ExtendedITextTest {
         page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
         pdfDoc.close();
 
-        pdfDoc = new PdfDocument(new com.itextpdf.kernel.pdf.PdfReader(destinationFolder + "copyObject6_1.pdf"));
+        pdfDoc = new PdfDocument(new PdfReader(destinationFolder + "copyObject6_1.pdf"));
         helloWorld = (PdfDictionary) pdfDoc.getPage(1).getPdfObject().get(new PdfName("HelloWorld"));
-        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + "copyObject6_2.pdf")));
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject6_2.pdf"));
         PdfPage page1 = pdfDoc1.addNewPage();
 
         page1.getPdfObject().put(new PdfName("HelloWorldCopy1"), helloWorld.copyTo(pdfDoc1));
@@ -456,17 +419,17 @@ public class PdfWriterTest extends ExtendedITextTest {
 
         PdfObject obj2 = pdfDocument.getPage(1).getPdfObject().get(new PdfName("HelloWorldCopy2"));
 
-        PdfIndirectReference ref2 =  obj2.getIndirectReference();
+        PdfIndirectReference ref2 = obj2.getIndirectReference();
         Assert.assertEquals(7, ref2.getObjNumber());
         Assert.assertEquals(0, ref2.getGenNumber());
 
         PdfObject obj3 = pdfDocument.getPage(1).getPdfObject().get(new PdfName("HelloWorldCopy3"));
 
-        PdfIndirectReference ref3 =  obj3.getIndirectReference();
+        PdfIndirectReference ref3 = obj3.getIndirectReference();
         Assert.assertEquals(7, ref3.getObjNumber());
         Assert.assertEquals(0, ref3.getGenNumber());
 
-        reader.close();
+        pdfDocument.close();
     }
 
     /**
@@ -478,14 +441,8 @@ public class PdfWriterTest extends ExtendedITextTest {
     public void copyObject7() throws IOException {
         String exceptionMessage = null;
 
-        PdfDocument pdfDoc1;
-        PdfDocument pdfDoc2;
-        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyObject6_1.pdf");
-        FileOutputStream fos2 = new FileOutputStream(destinationFolder + "copyObject6_2.pdf");
-        PdfWriter writer1 = new PdfWriter(fos1);
-        PdfWriter writer2 = new PdfWriter(fos2);
-        pdfDoc1 = new PdfDocument(writer1);
-        pdfDoc2 = new PdfDocument(writer2);
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject6_1.pdf"));
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject6_2.pdf"));
         try {
 
             PdfPage page1 = pdfDoc1.addNewPage();
@@ -516,14 +473,11 @@ public class PdfWriterTest extends ExtendedITextTest {
     public void copyObject8() throws IOException {
         String exceptionMessage = null;
 
-        PdfDocument pdfDoc1;
-        FileOutputStream fos1 = new FileOutputStream(destinationFolder + "copyObject6_1.pdf");
-        PdfWriter writer1 = new PdfWriter(fos1);
-        pdfDoc1 = new PdfDocument(writer1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "copyObject6_1.pdf"));
         try {
-            PdfPage page1 = pdfDoc1.addNewPage();
+            PdfPage page1 = pdfDoc.addNewPage();
             PdfDictionary directDict = new PdfDictionary();
-            PdfObject indirectDict = new PdfDictionary().makeIndirect(pdfDoc1);
+            PdfObject indirectDict = new PdfDictionary().makeIndirect(pdfDoc);
             page1.getPdfObject().put(new PdfName("HelloWorldDirect"), directDict);
             page1.getPdfObject().put(new PdfName("HelloWorldIndirect"), indirectDict);
 
@@ -532,20 +486,24 @@ public class PdfWriterTest extends ExtendedITextTest {
         } catch (PdfException ex) {
             exceptionMessage = ex.getMessage();
         } finally {
-            pdfDoc1.close();
+            pdfDoc.close();
         }
 
-        Assert.assertEquals(exceptionMessage, PdfException.DocumentToCopyToCannotBeNull);
+        Assert.assertEquals(exceptionMessage, PdfException.DocumentForCopyToCannotBeNull);
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void closeStream1() throws IOException {
         FileOutputStream fos = new FileOutputStream(destinationFolder + "closeStream1.pdf");
         PdfWriter writer = new PdfWriter(fos);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.addNewPage();
         pdfDoc.close();
-        fos.write(1);
+        try {
+            fos.write(1);
+            Assert.fail("Exception expected");
+        } catch (Exception ignored) {
+        }
     }
 
     @Test
@@ -563,8 +521,7 @@ public class PdfWriterTest extends ExtendedITextTest {
     public void directInIndirectChain() throws IOException {
         String filename = destinationFolder + "directInIndirectChain.pdf";
 
-        PdfWriter writer = new PdfWriter(new FileOutputStream(filename));
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
         PdfArray level1 = new PdfArray();
         level1.add(new PdfNumber(1).makeIndirect(pdfDoc));
         PdfDictionary level2 = new PdfDictionary();
@@ -589,16 +546,14 @@ public class PdfWriterTest extends ExtendedITextTest {
         Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
         Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        reader.close();
+        pdfDocument.close();
     }
 
     @Test
     public void createPdfStreamByInputStream() throws IOException {
         String filename = destinationFolder + "createPdfStreamByInputStream.pdf";
 
-        FileOutputStream fos = new FileOutputStream(filename);
-        PdfWriter writer = new PdfWriter(fos);
-        PdfDocument document = new PdfDocument(writer);
+        PdfDocument document = new PdfDocument(new PdfWriter(filename));
         document.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
@@ -621,7 +576,7 @@ public class PdfWriterTest extends ExtendedITextTest {
 //        Assert.assertTrue(message, diff < 5000);
 //        reader.close();
 
-        com.itextpdf.kernel.pdf.PdfReader reader6 = new com.itextpdf.kernel.pdf.PdfReader(filename);
+        PdfReader reader6 = new PdfReader(filename);
         document = new PdfDocument(reader6);
         Assert.assertEquals("Rebuilt", false, reader6.hasRebuiltXref());
         Assert.assertEquals("Fixed", false, reader6.hasFixedXref());

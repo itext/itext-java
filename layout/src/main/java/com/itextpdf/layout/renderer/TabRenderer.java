@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -47,14 +46,18 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.element.Tab;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.Property;
 
 public class TabRenderer extends AbstractRenderer {
-
+    /**
+     * Creates a TabRenderer from its corresponding layout object
+     *
+     * @param tab the {@link Tab} which this object should manage
+     */
     public TabRenderer(Tab tab) {
         super(tab);
     }
@@ -63,16 +66,16 @@ public class TabRenderer extends AbstractRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea();
         Float width = retrieveWidth(area.getBBox().getWidth());
-        Float height = getPropertyAsFloat(Property.HEIGHT);
+        Float height = this.getPropertyAsFloat(Property.HEIGHT);
         occupiedArea = new LayoutArea(area.getPageNumber(),
-                new Rectangle(area.getBBox().getX(), area.getBBox().getY() + area.getBBox().getHeight(), width, height));
+                new Rectangle(area.getBBox().getX(), area.getBBox().getY() + area.getBBox().getHeight(),(float)  width, (float) height));
 
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
     }
 
     @Override
     public void draw(DrawContext drawContext) {
-        ILineDrawer leader = getProperty(Property.TAB_LEADER);
+        ILineDrawer leader = this.<ILineDrawer>getProperty(Property.TAB_LEADER);
         if (leader == null)
             return;
 

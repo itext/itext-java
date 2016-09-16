@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -45,6 +44,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.io.util.DateTimeUtil;
 import com.itextpdf.kernel.pdf.*;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPException;
@@ -56,7 +56,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
@@ -108,7 +107,7 @@ public class LtvVerifier extends RootStoreVerifier {
         this.sgnUtil = new SignatureUtil(document);
         List<String> names = sgnUtil.getSignatureNames();
         signatureName = names.get(names.size() - 1);
-        this.signDate = new Date();
+        this.signDate = DateTimeUtil.getCurrentTimeDate();
         pkcs7 = coversWholeDocument();
         LOGGER.info(MessageFormat.format("Checking {0}signature {1}", pkcs7.isTsp() ? "document-level timestamp " : "", signatureName));
     }
@@ -143,7 +142,7 @@ public class LtvVerifier extends RootStoreVerifier {
      * @throws GeneralSecurityException
      */
     protected PdfPKCS7 coversWholeDocument() throws GeneralSecurityException {
-        PdfPKCS7 pkcs7 = sgnUtil.verifySignature(signatureName);
+        PdfPKCS7 pkcs7 = sgnUtil.verifySignature(signatureName, null);
         if (sgnUtil.signatureCoversWholeDocument(signatureName)) {
             LOGGER.info("The timestamp covers whole document.");
         }
@@ -281,7 +280,7 @@ public class LtvVerifier extends RootStoreVerifier {
         latestRevision = false;
         dss = document.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
         Calendar cal = pkcs7.getTimeStampDate();
-        if (cal == null)
+        if (cal == SignUtils.UNDEFINED_TIMESTAMP_DATE)
             cal = pkcs7.getSignDate();
         // TODO: get date from signature
         signDate = cal.getTime();
@@ -314,11 +313,9 @@ public class LtvVerifier extends RootStoreVerifier {
         PdfArray crlarray = dss.getAsArray(PdfName.CRLs);
         if (crlarray == null)
             return crls;
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
         for (int i = 0; i < crlarray.size(); i++) {
             PdfStream stream = crlarray.getAsStream(i);
-            X509CRL crl = (X509CRL)cf.generateCRL(new ByteArrayInputStream(stream.getBytes()));
-            crls.add(crl);
+            crls.add((X509CRL) SignUtils.parseCrlFromStream(new ByteArrayInputStream(stream.getBytes())));
         }
         return crls;
     }
@@ -343,7 +340,7 @@ public class LtvVerifier extends RootStoreVerifier {
                 try {
                     ocsps.add((BasicOCSPResp) ocspResponse.getResponseObject());
                 } catch (OCSPException e) {
-                    throw new GeneralSecurityException(e);
+                    throw new GeneralSecurityException(e.toString());
                 }
         }
         return ocsps;

@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -50,37 +49,79 @@ import com.itextpdf.layout.renderer.AbstractRenderer;
 
 import java.text.MessageFormat;
 
+/**
+ * Represents the area for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
+ */
 public class LayoutArea {
-
+    
+    /**
+     * The number of page on which the area is located.
+     */
     protected int pageNumber;
+    /**
+     * The area's bounding box
+     */
     protected Rectangle bBox;
+    /**
+     * Indicates whether the area already has some placed content or not.
+     */
     protected boolean emptyArea = true;
 
+    /**
+     * Creates the area for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
+     *
+     * @param pageNumber the number of page on which the area is located.
+     * @param bBox the area's bounding box
+     */
     public LayoutArea(int pageNumber, Rectangle bBox) {
         this.pageNumber = pageNumber;
         this.bBox = bBox;
     }
 
+    /**
+     * Gets the number of page on which the area is located.
+     *
+     * @return page number
+     */
     public int getPageNumber() {
         return pageNumber;
     }
 
+    /**
+     * Gets the {@link Rectangle box} which bounds the area.
+     *
+     * @return the bounding box
+     */
     public Rectangle getBBox() {
         return bBox;
     }
 
+    /**
+     * Sets the {@link Rectangle box} which bounds the area.
+     */
     public void setBBox(Rectangle bbox) {
         this.bBox = bbox;
     }
 
+    /**
+     * Indicates whether the area already has some placed content or not.
+     *
+     * @return whether the area is empty or not
+     */
     public boolean isEmptyArea() {
         return emptyArea;
     }
 
+    /**
+     * Defines whether the area already has some placed content or not.
+     */
     public void setEmptyArea(boolean emptyArea) {
         this.emptyArea = emptyArea;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LayoutArea clone() {
         LayoutArea area = new LayoutArea(pageNumber, bBox.clone());
@@ -88,6 +129,9 @@ public class LayoutArea {
         return area;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof LayoutArea))
@@ -96,6 +140,9 @@ public class LayoutArea {
         return pageNumber == that.pageNumber && bBox.equalsWithEpsilon(that.bBox, AbstractRenderer.EPS);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         HashCode hashCode = new HashCode();
@@ -105,6 +152,9 @@ public class LayoutArea {
         return hashCode.hashCode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return MessageFormat.format("{0}, page {1}", bBox.toString(), pageNumber);

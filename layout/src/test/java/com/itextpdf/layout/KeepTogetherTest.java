@@ -14,17 +14,15 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.IOException;
+
 @Category(IntegrationTest.class)
-public class KeepTogetherTest extends ExtendedITextTest{
+public class KeepTogetherTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/KeepTogetherTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/KeepTogetherTest/";
@@ -36,17 +34,16 @@ public class KeepTogetherTest extends ExtendedITextTest{
 
     @Test
     public void keepTogetherParagraphTest01() throws IOException, InterruptedException {
-
         String cmpFileName = sourceFolder + "cmp_keepTogetherParagraphTest01.pdf";
-        String outFile  = destinationFolder + "keepTogetherParagraphTest01.pdf";
+        String outFile = destinationFolder + "keepTogetherParagraphTest01.pdf";
 
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outFile));
+        PdfWriter writer = new PdfWriter(outFile);
 
 
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
-        for (int i = 0; i < 29; i++){
+        for (int i = 0; i < 29; i++) {
             doc.add(new Paragraph("String number" + i));
         }
 
@@ -64,22 +61,21 @@ public class KeepTogetherTest extends ExtendedITextTest{
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void keepTogetherParagraphTest02() throws IOException, InterruptedException {
-
         String cmpFileName = sourceFolder + "cmp_keepTogetherParagraphTest02.pdf";
-        String outFile  = destinationFolder + "keepTogetherParagraphTest02.pdf";
+        String outFile = destinationFolder + "keepTogetherParagraphTest02.pdf";
 
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outFile));
+        PdfWriter writer = new PdfWriter(outFile);
 
 
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
-        for (int i = 0; i < 28; i++){
+        for (int i = 0; i < 28; i++) {
             doc.add(new Paragraph("String number" + i));
         }
 
         String str = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaanasdadasdadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-        for (int i= 0 ; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             str += str;
         }
 
@@ -93,16 +89,13 @@ public class KeepTogetherTest extends ExtendedITextTest{
 
     @Test
     public void keepTogetherListTest01() throws IOException, InterruptedException {
-
         String cmpFileName = sourceFolder + "cmp_keepTogetherListTest01.pdf";
-        String outFile  = destinationFolder + "keepTogetherListTest01.pdf";
+        String outFile = destinationFolder + "keepTogetherListTest01.pdf";
 
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outFile));
-
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
-        for (int i = 0; i < 28; i++){
+        for (int i = 0; i < 28; i++) {
             doc.add(new Paragraph("String number" + i));
         }
 
@@ -115,18 +108,17 @@ public class KeepTogetherTest extends ExtendedITextTest{
 
     @Test
     public void keepTogetherDivTest01() throws IOException, InterruptedException {
-
         String cmpFileName = sourceFolder + "cmp_keepTogetherDivTest01.pdf";
-        String outFile  = destinationFolder + "keepTogetherDivTest01.pdf";
+        String outFile = destinationFolder + "keepTogetherDivTest01.pdf";
 
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outFile));
+        PdfWriter writer = new PdfWriter(outFile);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
         Paragraph p = new Paragraph("Test String");
 
-        for (int i = 0; i < 28; i++){
+        for (int i = 0; i < 28; i++) {
             doc.add(p);
         }
 
@@ -143,22 +135,20 @@ public class KeepTogetherTest extends ExtendedITextTest{
 
     @Test
     @LogMessages(messages = {
-           @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void keepTogetherDivTest02() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_keepTogetherDivTest02.pdf";
-        String outFile  = destinationFolder + "keepTogetherDivTest02.pdf";
+        String outFile = destinationFolder + "keepTogetherDivTest02.pdf";
 
-        PdfWriter writer = new PdfWriter(new FileOutputStream(outFile));
-
-        PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         Rectangle[] columns = {new Rectangle(100, 100, 100, 500), new Rectangle(400, 100, 100, 500)};
         doc.setRenderer(new ColumnDocumentRenderer(doc, columns));
         Div div = new Div();
         doc.add(new Paragraph("first string"));
-        for (int i = 0; i < 130; i++){
+        for (int i = 0; i < 130; i++) {
             div.add(new Paragraph("String number " + i));
         }
         div.setKeepTogether(true);

@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -80,6 +79,7 @@ public class Canvas extends RootElement<Canvas> {
      * @param rootArea the maximum area that the Canvas may write upon
      */
     public Canvas(PdfCanvas pdfCanvas, PdfDocument pdfDocument, Rectangle rootArea) {
+        super();
         this.pdfDocument = pdfDocument;
         this.pdfCanvas = pdfCanvas;
         this.rootArea = rootArea;
@@ -93,9 +93,7 @@ public class Canvas extends RootElement<Canvas> {
      * @param rootArea the maximum area that the Canvas may write upon
      */
     public Canvas(PdfCanvas pdfCanvas, PdfDocument pdfDocument, Rectangle rootArea, boolean immediateFlush) {
-        this.pdfDocument = pdfDocument;
-        this.pdfCanvas = pdfCanvas;
-        this.rootArea = rootArea;
+        this(pdfCanvas, pdfDocument, rootArea);
         this.immediateFlush = immediateFlush;
     }
 
@@ -106,9 +104,7 @@ public class Canvas extends RootElement<Canvas> {
      * @param pdfDocument the document that the resulting content stream will be written to
      */
     public Canvas(PdfFormXObject formXObject, PdfDocument pdfDocument) {
-        this.pdfDocument = pdfDocument;
-        this.pdfCanvas = new PdfCanvas(formXObject, pdfDocument);
-        this.rootArea = formXObject.getBBox().toRectangle();
+        this(new PdfCanvas(formXObject, pdfDocument), pdfDocument, formXObject.getBBox().toRectangle());
     }
 
     /**
@@ -167,6 +163,13 @@ public class Canvas extends RootElement<Canvas> {
         return page != null;
     }
 
+    /**
+     * Performs an entire recalculation of the element flow on the canvas,
+     * taking into account all its current child elements. May become very
+     * resource-intensive for large documents.
+     * 
+     * Do not use when you have set {@link #immediateFlush} to <code>true</code>.
+     */
     public void relayout() {
         if (immediateFlush) {
             throw new IllegalStateException("Operation not supported with immediate flush");
@@ -177,6 +180,25 @@ public class Canvas extends RootElement<Canvas> {
         for (IElement element : childElements) {
             rootRenderer.addChild(element.createRendererSubTree());
         }
+    }
+
+    /**
+     * Forces all registered renderers (including child element renderers) to
+     * flush their contents to the content stream.
+     */
+    public void flush() {
+        rootRenderer.flush();
+    }
+
+    /**
+     * Closes the {@link Canvas}. Although not completely necessary in all cases, it is still recommended to call this
+     * method when you are done working with {@link Canvas} object, as due to some properties set there might be some
+     * 'hanging' elements, which are waiting other elements to be added and processed. {@link #close()} tells the
+     * {@link Canvas} that no more elements will be added and it is time to finish processing all the elements.
+     */
+    @Override
+    public void close() {
+        rootRenderer.close();
     }
 
     @Override

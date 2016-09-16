@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -54,11 +53,24 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * PdfA3Checker defines the requirements of the PDF/A-3 standard and contains a
+ * number of methods that override the implementations of its superclass
+ * {@link PdfA2Checker}.
+ * 
+ * The specification implemented by this class is ISO 19005-3
+ */
 public class PdfA3Checker extends PdfA2Checker{
     protected static final Set<PdfName> allowedAFRelationships = new HashSet<>(Arrays.asList(
             PdfName.Source, PdfName.Data, PdfName.Alternative,
             PdfName.Supplement, PdfName.Unspecified));
 
+    /**
+     * Creates a PdfA3Checker with the required conformance level
+     * 
+     * @param conformanceLevel the required conformance level, <code>a</code> or
+     * <code>u</code> or <code>b</code>
+     */
     public PdfA3Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
     }

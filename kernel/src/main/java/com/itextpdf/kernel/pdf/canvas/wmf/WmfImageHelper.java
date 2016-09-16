@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -84,7 +83,6 @@ public class WmfImageHelper {
 
     /**
      * This method checks if the image is a valid WMF and processes some parameters.
-     * @throws PdfException
      */
     private void processParameters() {
         InputStream is = null;

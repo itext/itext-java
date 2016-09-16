@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -88,7 +87,7 @@ public class PdfType0Font extends PdfFont {
 
     private static final long serialVersionUID = -8033620300884193397L;
 
-	private static final byte[] rotbits = {(byte) 0x80, (byte) 0x40, (byte) 0x20, (byte) 0x10, (byte) 0x08, (byte) 0x04, (byte) 0x02, (byte) 0x01};
+    private static final byte[] rotbits = {(byte) 0x80, (byte) 0x40, (byte) 0x20, (byte) 0x10, (byte) 0x08, (byte) 0x04, (byte) 0x02, (byte) 0x01};
 
     protected static final int CID_FONT_TYPE_0 = 0;
     protected static final int CID_FONT_TYPE_2 = 2;
@@ -235,7 +234,7 @@ public class PdfType0Font extends PdfFont {
                 if (glyph != null && !longTag.containsKey(glyph.getCode())) {
                     longTag.put(glyph.getCode(), new int[]{glyph.getCode(), glyph.getWidth(),
                             glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
-                    glyphs[i++] = (char)cmapEncoding.getCmapCode(glyph.getCode());
+                    glyphs[i++] = (char) cmapEncoding.getCmapCode(glyph.getCode());
                 }
             }
         } else {
@@ -255,17 +254,10 @@ public class PdfType0Font extends PdfFont {
                     longTag.put(glyph.getCode(), new int[]{glyph.getCode(), glyph.getWidth(),
                             glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
                 }
-                glyphs[i++] = (char)cmapEncoding.getCmapCode(glyph.getCode());
+                glyphs[i++] = (char) cmapEncoding.getCmapCode(glyph.getCode());
             }
         }
-
-        String s = new String(glyphs, 0, i);
-        try {
-            return s.getBytes(PdfEncodings.UNICODE_BIG_UNMARKED);
-        } catch (UnsupportedEncodingException e) {
-            throw new PdfException("TrueTypeFont", e);
-        }
-
+        return PdfEncodings.convertToBytes(new String(glyphs, 0, i), PdfEncodings.UNICODE_BIG_UNMARKED);
     }
 
     @Override
@@ -274,19 +266,13 @@ public class PdfType0Font extends PdfFont {
             char[] glyphs = new char[glyphLine.size()];
             for (int i = 0; i < glyphLine.size(); i++) {
                 Glyph glyph = glyphLine.get(i);
-                glyphs[i] = (char)cmapEncoding.getCmapCode(glyph.getCode());
+                glyphs[i] = (char) cmapEncoding.getCmapCode(glyph.getCode());
                 int code = glyph.getCode();
                 if (longTag.get(code) == null) {
                     longTag.put(code, new int[]{code, glyph.getWidth(), glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
                 }
             }
-
-            String s = new String(glyphs, 0, glyphs.length);
-            try {
-                return s.getBytes(PdfEncodings.UNICODE_BIG_UNMARKED);
-            } catch (UnsupportedEncodingException e) {
-                throw new PdfException("TrueTypeFont", e);
-            }
+            return PdfEncodings.convertToBytes(new String(glyphs, 0, glyphs.length), PdfEncodings.UNICODE_BIG_UNMARKED);
         } else {
             return null;
         }
@@ -298,12 +284,7 @@ public class PdfType0Font extends PdfFont {
         if (longTag.get(code) == null) {
             longTag.put(code, new int[]{code, glyph.getWidth(), glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
         }
-        String s = new String(new char[]{(char) glyph.getCode()}, 0, 1);
-        try {
-            return s.getBytes(PdfEncodings.UNICODE_BIG_UNMARKED);
-        } catch (UnsupportedEncodingException e) {
-            throw new PdfException("PdfType0Font", e);
-        }
+        return PdfEncodings.convertToBytes(new String(new char[]{(char) glyph.getCode()}, 0, 1), PdfEncodings.UNICODE_BIG_UNMARKED);
     }
 
     @Override
@@ -312,17 +293,13 @@ public class PdfType0Font extends PdfFont {
         for (int i = from; i <= to; i++) {
             Glyph glyph = text.get(i);
             int code = glyph.getCode();
-            bytes.append((char)cmapEncoding.getCmapCode(glyph.getCode()));
+            bytes.append((char) cmapEncoding.getCmapCode(glyph.getCode()));
             if (longTag.get(code) == null) {
                 longTag.put(code, new int[]{code, glyph.getWidth(), glyph.hasValidUnicode() ? glyph.getUnicode() : 0});
             }
         }
         //TODO improve converting chars to hexed string
-        try {
-            StreamUtil.writeHexedString(stream, bytes.toString().getBytes(PdfEncodings.UNICODE_BIG_UNMARKED));
-        } catch (UnsupportedEncodingException e) {
-            throw new PdfException("PdfType0Font", e);
-        }
+        StreamUtil.writeHexedString(stream, PdfEncodings.convertToBytes(bytes.toString(), PdfEncodings.UNICODE_BIG_UNMARKED));
     }
 
     @Override
@@ -428,7 +405,7 @@ public class PdfType0Font extends PdfFont {
     @Override
     protected PdfDictionary getFontDescriptor(String fontName) {
         PdfDictionary fontDescriptor = new PdfDictionary();
-        markObjectAsIndirect(fontDescriptor);
+        makeObjectIndirect(fontDescriptor);
         fontDescriptor.put(PdfName.Type, PdfName.FontDescriptor);
         fontDescriptor.put(PdfName.FontName, new PdfName(fontName));
         fontDescriptor.put(PdfName.FontBBox, new PdfArray(getFontProgram().getFontMetrics().getBbox()));
@@ -443,7 +420,6 @@ public class PdfType0Font extends PdfFont {
             styleDictionary.put(PdfName.Panose, new PdfString(fontProgram.getFontIdentification().getPanose()).setHexWriting(true));
             fontDescriptor.put(PdfName.Style, styleDictionary);
         }
-
         return fontDescriptor;
     }
 
@@ -475,8 +451,11 @@ public class PdfType0Font extends PdfFont {
             Arrays.sort(metrics, new MetricComparator());
             PdfDictionary cidFont = getCidFontType2(null, fontDescriptor, fontProgram.getFontNames().getFontName(), metrics);
             getPdfObject().put(PdfName.DescendantFonts, new PdfArray(cidFont));
-            fontDescriptor.flush();
-            cidFont.flush();
+            if (getPdfObject().getIndirectReference() != null) {
+                //this means, that fontDescriptor and cidFont already are indirects
+                fontDescriptor.flush();
+                cidFont.flush();
+            }
         } else if (cidFontType == CID_FONT_TYPE_2) {
             TrueTypeFont ttf = (TrueTypeFont) getFontProgram();
             addRangeUni(ttf, longTag, true);
@@ -533,10 +512,16 @@ public class PdfType0Font extends PdfFont {
             PdfStream toUnicode = getToUnicode(metrics);
             if (toUnicode != null) {
                 getPdfObject().put(PdfName.ToUnicode, toUnicode);
-                toUnicode.flush();
+                if (toUnicode.getIndirectReference() != null) {
+                    toUnicode.flush();
+                }
             }
-            fontDescriptor.flush();
-            cidFont.flush();
+            if (getPdfObject().getIndirectReference() != null) {
+                //this means, that fontDescriptor, cidFont and fontStream already are indirects
+                fontDescriptor.flush();
+                cidFont.flush();
+                fontStream.flush();
+            }
         } else {
             throw new IllegalStateException("Unsupported CID Font");
         }
@@ -553,7 +538,7 @@ public class PdfType0Font extends PdfFont {
      */
     protected PdfDictionary getCidFontType2(TrueTypeFont ttf, PdfDictionary fontDescriptor, String fontName, int[][] metrics) {
         PdfDictionary cidFont = new PdfDictionary();
-        markObjectAsIndirect(cidFont);
+        makeObjectIndirect(cidFont);
         cidFont.put(PdfName.Type, PdfName.Font);
         // sivan; cff
         cidFont.put(PdfName.FontDescriptor, fontDescriptor);
@@ -641,8 +626,8 @@ public class PdfType0Font extends PdfFont {
                 buf.append(size).append(" beginbfrange\n");
             }
             --size;
-            String fromTo = CMapContentParser.toHex(unicodeGlyphs.get(k));
-            Glyph glyph = fontProgram.getGlyphByCode(unicodeGlyphs.get(k));
+            String fromTo = CMapContentParser.toHex((int) unicodeGlyphs.get(k));
+            Glyph glyph = fontProgram.getGlyphByCode((int) unicodeGlyphs.get(k));
             if (glyph.getChars() != null) {
                 StringBuilder uni = new StringBuilder(glyph.getChars().length);
                 for (char ch : glyph.getChars()) {
@@ -655,7 +640,9 @@ public class PdfType0Font extends PdfFont {
                 "endcmap\n" +
                 "CMapName currentdict /CMap defineresource pop\n" +
                 "end end\n");
-        return new PdfStream(PdfEncodings.convertToBytes(buf.toString(), null));
+        PdfStream toUnicode = new PdfStream(PdfEncodings.convertToBytes(buf.toString(), null));
+        makeObjectIndirect(toUnicode);
+        return toUnicode;
     }
 
     //TODO optimize memory ussage
@@ -672,7 +659,7 @@ public class PdfType0Font extends PdfFont {
             assert usemap != null;
             for (Map.Entry<Integer, int[]> e : usemap.entrySet()) {
                 int[] v = e.getValue();
-                Integer gi = v[0];
+                int gi = v[0];
                 if (longTag.containsKey(v[0])) {
                     continue;
                 }

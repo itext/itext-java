@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -68,12 +67,12 @@ public final class Version {
      * iText is a registered trademark by iText Group NV.
      * Please don't change this constant.
      */
-    private String iText = "iText\u00ae";
+    private static String iText = "iText\u00ae";
     /**
      * This String contains the version number of this iText release.
      * For debugging purposes, we request you NOT to change this constant.
      */
-    private String release = "7.0.0";
+    private static String release = "7.0.1";
     /**
      * This String contains the iText version as shown in the producer line.
      * iText is a product developed by iText Group NV.
@@ -81,10 +80,13 @@ public final class Version {
      * in every PDF that is created or manipulated using iText.
      */
     private String iTextVersion = iText + " " + release + " \u00a92000-2016 iText Group NV";
+
     /**
      * The license key.
      */
     private String key = null;
+
+    private boolean expired;
 
     /**
      * Gets an instance of the iText version that is currently used.
@@ -96,44 +98,52 @@ public final class Version {
             version = new Version();
             synchronized (version) {
                 try {
-                    Class<?> klass = Class.forName("com.itextpdf.licensekey.LicenseKey");
-                    Method m = klass.getMethod("getLicenseeInfo");
-                    String[] info = (String[]) m.invoke(klass.newInstance());
-                    if (info[3] != null && info[3].trim().length() > 0) {
-                        version.key = info[3];
-                    } else {
-                        version.key = "Trial version";
-                        if (info[5] == null) {
-                            version.key += "unauthorised";
+                    String licenseKeyClassFullName = "com.itextpdf.licensekey.LicenseKey";
+                    String licenseeInfoMethodName = "getLicenseeInfo";
+                    Class<?> klass = Class.forName(licenseKeyClassFullName);
+                    if (klass != null) {
+                        Method m = klass.getMethod(licenseeInfoMethodName);
+                        String[] info = (String[]) m.invoke(klass.newInstance(), null);
+                        if (info[3] != null && info[3].trim().length() > 0) {
+                            version.key = info[3];
                         } else {
-                            version.key += info[5];
+                            version.key = "Trial version ";
+                            if (info[5] == null) {
+                                version.key += "unauthorised";
+                            } else {
+                                version.key += info[5];
+                            }
                         }
-                    }
 
-                    if (info[4] != null && info[4].trim().length() > 0) {
-                        version.iTextVersion = info[4];
-                    } else if (info[2] != null && info[2].trim().length() > 0) {
-                        version.iTextVersion += " (" + info[2];
-                        if (!version.key.toLowerCase().startsWith("trial")) {
-                            version.iTextVersion += "; licensed version)";
-                        } else {
-                            version.iTextVersion += "; " + version.key + ")";
+                        if (info.length > 6) {
+                            if (info[6] != null && info[6].trim().length() > 0) {
+                                String versionToCheck = release.substring(0, release.lastIndexOf("."));
+
+                                if (! info[6].equalsIgnoreCase(versionToCheck)) {
+                                    throw new IllegalArgumentException("Your license key version doesn't match the iText version.");
+                                }
+                            }
                         }
-                    } else if (info[0] != null && info[0].trim().length() > 0) {
-                        // fall back to contact name, if company name is unavailable
-                        version.iTextVersion += " (" + info[0];
-                        if (!version.key.toLowerCase().startsWith("trial")) {
+
+                        if (info[4] != null && info[4].trim().length() > 0) {
+                            version.iTextVersion = info[4];
+                        } else if (info[2] != null && info[2].trim().length() > 0) {
+                            version.addLicensedPostfix(info[2]);
+                        } else if (info[0] != null && info[0].trim().length() > 0) {
+                            // fall back to contact name, if company name is unavailable.
                             // we shouldn't have a licensed version without company name,
                             // but let's account for it anyway
-                            version.iTextVersion += "; licensed version)";
+                            version.addLicensedPostfix(info[0]);
                         } else {
-                            version.iTextVersion += "; " + version.key + ")";
+                            version.addAGPLPostfix(null);
                         }
                     } else {
-                        throw new Exception();
+                        version.addAGPLPostfix(null);
                     }
+                } catch (IllegalArgumentException exc) {
+                    throw exc;
                 } catch (Exception e) {
-                    version.iTextVersion += AGPL;
+                    version.addAGPLPostfix(e.getCause());
                 }
             }
         }
@@ -146,6 +156,14 @@ public final class Version {
      */
     public static boolean isAGPLVersion() {
         return getInstance().getVersion().indexOf(AGPL) > 0;
+    }
+
+    /**
+     * Is the license expired?
+     * @return true if expired
+     */
+    public static boolean isExpired() {
+        return getInstance().expired;
     }
 
     /**
@@ -189,6 +207,23 @@ public final class Version {
      */
     public String getKey() {
         return key;
+    }
+
+    private void addLicensedPostfix(String ownerName) {
+        iTextVersion += " (" + ownerName;
+        if (! key.toLowerCase().startsWith("trial")) {
+            iTextVersion += "; licensed version)";
+        } else {
+            iTextVersion += "; " + key + ")";
+        }
+    }
+
+    private void addAGPLPostfix(Throwable cause) {
+        iTextVersion += AGPL;
+
+        if (cause != null && cause.getMessage() != null && cause.getMessage().contains("expired")) {
+            expired = true;
+        }
     }
 
 }

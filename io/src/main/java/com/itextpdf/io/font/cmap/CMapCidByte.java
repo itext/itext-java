@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -76,7 +75,7 @@ public class CMapCidByte extends AbstractCMap {
 
     public IntHashtable getReversMap() {
         IntHashtable code2cid = new IntHashtable(map.size());
-        for (Integer cid: map.keySet()) {
+        for (int cid : map.keySet()) {
             byte[] bytes = map.get(cid);
             int byteCode = 0;
             for (byte b: bytes) {

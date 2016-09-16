@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -45,11 +44,7 @@
 package com.itextpdf.kernel.pdf.annot;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.*;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -75,7 +70,7 @@ public class PdfSoundAnnotation extends PdfMarkupAnnotation {
 
     public PdfSoundAnnotation(PdfDocument document, Rectangle rect, InputStream soundStream, float sampleRate, PdfName encoding, int channels, int sampleSizeInBits) throws IOException {
         super(rect);
-        PdfStream sound = new PdfStream(document, correctInputStreamForWavFile(soundStream));
+        PdfStream sound = new PdfStream(document, correctWavFile(soundStream));
         sound.put(PdfName.R, new PdfNumber(sampleRate));
         sound.put(PdfName.E, encoding);
         sound.put(PdfName.B, new PdfNumber(sampleSizeInBits));
@@ -92,7 +87,7 @@ public class PdfSoundAnnotation extends PdfMarkupAnnotation {
         return getPdfObject().getAsStream(PdfName.Sound);
     }
 
-    private InputStream correctInputStreamForWavFile(InputStream is) throws IOException {
+    private static InputStream correctWavFile(InputStream is) throws IOException {
         String header = "";
         InputStream bufferedIn = new BufferedInputStream(is);
         bufferedIn.mark(0);

@@ -1,18 +1,15 @@
 package com.itextpdf.kernel.pdf.canvas.parser;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
-import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.canvas.parser.filter.TextRegionEventFilter;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.FilteredEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.FilteredTextEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.junit.Assert;
@@ -26,7 +23,7 @@ public class FilteredEventListenerTest extends ExtendedITextTest {
 
     @Test
     public void test() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "test.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "test.pdf"));
 
         final String[] expectedText = new String[]{
                 "PostScript Compatibility",
@@ -63,7 +60,7 @@ public class FilteredEventListenerTest extends ExtendedITextTest {
 
     @Test
     public void multipleFiltersForOneRegionTest() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "test.pdf")));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "test.pdf"));
 
         final Rectangle[] regions = new Rectangle[]{new Rectangle(0, 0, 500, 650),
                 new Rectangle(0, 0, 400, 400), new Rectangle(200, 200, 300, 400), new Rectangle(100, 100, 350, 300)};

@@ -1,5 +1,4 @@
 /*
-    $Id$
 
     This file is part of the iText (R) project.
     Copyright (c) 1998-2016 iText Group NV
@@ -75,8 +74,8 @@ public class DashedLine implements ILineDrawer {
                 .setLineWidth(lineWidth)
                 .setStrokeColor(color)
                 .setLineDash(2, 2)
-                .moveTo(drawArea.getX(), drawArea.getY() + drawArea.getHeight() / 2)
-                .lineTo(drawArea.getX() + drawArea.getWidth(), drawArea.getY() + drawArea.getHeight() / 2)
+                .moveTo(drawArea.getX(), drawArea.getY() + lineWidth / 2)
+                .lineTo(drawArea.getX() + drawArea.getWidth(), drawArea.getY() + lineWidth / 2)
                 .stroke()
                 .restoreState();
     }
@@ -85,6 +84,7 @@ public class DashedLine implements ILineDrawer {
      * Gets line width in points
      * @return line thickness
      */
+    @Override
     public float getLineWidth() {
         return lineWidth;
     }
@@ -93,6 +93,7 @@ public class DashedLine implements ILineDrawer {
      * Sets line width in points
      * @param lineWidth new line width
      */
+    @Override
     public void setLineWidth(float lineWidth) {
         this.lineWidth = lineWidth;
     }
