@@ -109,8 +109,9 @@ class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
         fillFontDescriptor(fontProgram, fontDescriptor);
         int dw = (fontDescriptor != null && fontDescriptor.containsKey(PdfName.DW))
                 ? (int) fontDescriptor.getAsInt(PdfName.DW) : 1000;
+        IntHashtable widths = null;
         if (toUnicode != null) {
-            IntHashtable widths = FontUtil.convertCompositeWidthsArray(fontDictionary.getAsArray(PdfName.W));
+            widths = FontUtil.convertCompositeWidthsArray(fontDictionary.getAsArray(PdfName.W));
             fontProgram.avgWidth = 0;
             for (int cid : toUnicode.getCodes()) {
                 int width = widths.containsKey(cid) ? widths.get(cid) : dw;
@@ -127,7 +128,7 @@ class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
         }
 
         if (fontProgram.codeToGlyph.get(0) == null) {
-            fontProgram.codeToGlyph.put(0, new Glyph(0, dw, -1));
+            fontProgram.codeToGlyph.put(0, new Glyph(0, widths != null && widths.containsKey(0) ? widths.get(0) : dw, -1));
         }
         return fontProgram;
     }
