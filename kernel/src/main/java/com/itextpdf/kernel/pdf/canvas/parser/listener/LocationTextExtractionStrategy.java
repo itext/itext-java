@@ -47,9 +47,10 @@ import com.itextpdf.kernel.geom.LineSegment;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
-import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.EventType;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -61,6 +62,8 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
      * set to true for debugging
      */
     private static boolean DUMP_STATE = false;
+
+    private static final float DIACRITICAL_MARKS_ALLOWED_VERTICAL_DEVIATION = 2;
 
     /**
      * a summary of all found text
@@ -172,7 +175,6 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
         StringBuilder sb = new StringBuilder();
         TextChunk lastChunk = null;
         for (TextChunk chunk : textChunks) {
-
             if (lastChunk == null) {
                 sb.append(chunk.text);
             } else {
@@ -396,8 +398,17 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
          * @param as the location to compare to
          * @return true is this location is on the the same line as the other
          */
-        public boolean sameLine(ITextChunkLocation as){
-            return orientationMagnitude() == as.orientationMagnitude() && distPerpendicular() == as.distPerpendicular();
+        public boolean sameLine(ITextChunkLocation as) {
+            if (orientationMagnitude() != as.orientationMagnitude()) {
+                return false;
+            }
+            float distPerpendicularDiff = distPerpendicular() - as.distPerpendicular();
+            if (distPerpendicularDiff == 0) {
+                return true;
+            }
+            LineSegment mySegment = new LineSegment(startLocation, endLocation);
+            LineSegment otherSegment = new LineSegment(as.getStartLocation(), as.getEndLocation());
+            return Math.abs(distPerpendicularDiff) <= DIACRITICAL_MARKS_ALLOWED_VERTICAL_DEVIATION && (mySegment.getLength() == 0 || otherSegment.getLength() == 0);
         }
 
         /**
@@ -413,7 +424,7 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
         }
 
         public boolean isAtWordBoundary(ITextChunkLocation previous) {
-            /**
+            /*
              * Here we handle a very specific case which in PDF may look like:
              * -.232 Tc [( P)-226.2(r)-231.8(e)-230.8(f)-238(a)-238.9(c)-228.9(e)]TJ
              * The font's charSpace width is 0.232 and it's compensated with charSpacing of 0.232.
