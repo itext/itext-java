@@ -104,11 +104,7 @@ public class GlyphLine {
                 str.append(part.actualText);
             } else {
                 for (int i = part.start; i < part.end; i++) {
-                    if (glyphs.get(i).getChars() != null) {
-                        str.append(glyphs.get(i).getChars());
-                    } else if (glyphs.get(i).hasValidUnicode()) {
-                        str.append(TextUtil.convertFromUtf32(glyphs.get(i).getUnicode()));
-                    }
+                    str.append(glyphs.get(i).getUnicodeString());
                 }
             }
         }
@@ -292,11 +288,21 @@ public class GlyphLine {
         public int start;
         public int end;
         public String actualText;
+        public boolean reversed;
+
+        public GlyphLinePart(int start, int end) {
+            this(start, end, null);
+        }
 
         public GlyphLinePart(int start, int end, String actualText) {
             this.start = start;
             this.end = end;
             this.actualText = actualText;
+        }
+
+        public GlyphLinePart setReversed(boolean reversed) {
+            this.reversed = reversed;
+            return this;
         }
     }
 

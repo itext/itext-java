@@ -8,13 +8,14 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class EncodingTest extends ExtendedITextTest {
@@ -291,10 +292,11 @@ public class EncodingTest extends ExtendedITextTest {
         canvas.
                 saveState().
                 beginText().
-                moveText(36, 786).
                 setFontAndSize(font, 36).
+                moveText(36, 786).
                 showText(str).
-                endText();
+                endText().
+                restoreState();
 
         str = "";
         for (int i = 101; i <= 190; i++) {
@@ -303,16 +305,19 @@ public class EncodingTest extends ExtendedITextTest {
         canvas.
                 saveState().
                 beginText().
-                moveText(36, 746).
                 setFontAndSize(font, 36).
+                moveText(36, 746).
                 showText(str).
-                endText();
+                endText().
+                restoreState();
         str = "";
         for (int i = 191; i <= 254; i++) {
             str += (char) i;
         }
         canvas.
+                saveState().
                 beginText().
+                setFontAndSize(font, 36).
                 moveText(36, 766).
                 showText(str).
                 endText().

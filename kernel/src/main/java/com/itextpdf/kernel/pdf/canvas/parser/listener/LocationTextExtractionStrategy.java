@@ -47,11 +47,13 @@ import com.itextpdf.kernel.geom.LineSegment;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
-import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.EventType;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -62,6 +64,8 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
      */
     private static boolean DUMP_STATE = false;
 
+    private static final float DIACRITICAL_MARKS_ALLOWED_VERTICAL_DEVIATION = 2;
+
     /**
      * a summary of all found text
      */
@@ -70,6 +74,8 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
     private final ITextChunkLocationStrategy tclStrat;
 
     private boolean useActualText = false;
+
+    private boolean rightToLeftRunDirection = false;
 
     private TextRenderInfo lastTextRenderInfo;
 
@@ -103,6 +109,18 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
      */
     public LocationTextExtractionStrategy setUseActualText(boolean useActualText) {
         this.useActualText = useActualText;
+        return this;
+    }
+
+    /**
+     * Sets if text flows from left to right or from right to left.
+     * Call this method with <code>true</code> argument for extracting Arabic, Hebrew or other
+     * text with right-to-left writing direction.
+     * @param rightToLeftRunDirection value specifying whether the direction should be right to left
+     * @return this object
+     */
+    public LocationTextExtractionStrategy setRightToLeftRunDirection(boolean rightToLeftRunDirection) {
+        this.rightToLeftRunDirection = rightToLeftRunDirection;
         return this;
     }
 
@@ -167,12 +185,15 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
         if (DUMP_STATE) dumpState();
 
         List<TextChunk> textChunks = locationalResult;
-        Collections.sort(textChunks);
+        if (rightToLeftRunDirection) {
+            Collections.sort(textChunks, new TextChunkComparator(new TextChunkLocationComparator(false)));
+        } else {
+            Collections.sort(textChunks);
+        }
 
         StringBuilder sb = new StringBuilder();
         TextChunk lastChunk = null;
         for (TextChunk chunk : textChunks) {
-
             if (lastChunk == null) {
                 sb.append(chunk.text);
             } else {
@@ -323,6 +344,8 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
     }
 
     public static class TextChunkLocationDefaultImp implements ITextChunkLocation {
+        private static final TextChunkLocationComparator defaultComparator = new TextChunkLocationComparator();
+
         /** the starting location of the chunk */
         private final Vector startLocation;
         /** the ending location of the chunk */
@@ -396,8 +419,17 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
          * @param as the location to compare to
          * @return true is this location is on the the same line as the other
          */
-        public boolean sameLine(ITextChunkLocation as){
-            return orientationMagnitude() == as.orientationMagnitude() && distPerpendicular() == as.distPerpendicular();
+        public boolean sameLine(ITextChunkLocation as) {
+            if (orientationMagnitude() != as.orientationMagnitude()) {
+                return false;
+            }
+            float distPerpendicularDiff = distPerpendicular() - as.distPerpendicular();
+            if (distPerpendicularDiff == 0) {
+                return true;
+            }
+            LineSegment mySegment = new LineSegment(startLocation, endLocation);
+            LineSegment otherSegment = new LineSegment(as.getStartLocation(), as.getEndLocation());
+            return Math.abs(distPerpendicularDiff) <= DIACRITICAL_MARKS_ALLOWED_VERTICAL_DEVIATION && (mySegment.getLength() == 0 || otherSegment.getLength() == 0);
         }
 
         /**
@@ -413,7 +445,7 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
         }
 
         public boolean isAtWordBoundary(ITextChunkLocation previous) {
-            /**
+            /*
              * Here we handle a very specific case which in PDF may look like:
              * -.232 Tc [( P)-226.2(r)-231.8(e)-230.8(f)-238(a)-238.9(c)-228.9(e)]TJ
              * The font's charSpace width is 0.232 and it's compensated with charSpacing of 0.232.
@@ -438,23 +470,57 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
 
         @Override
         public int compareTo(ITextChunkLocation other) {
-            if (this == other) return 0; // not really needed, but just in case
+            return defaultComparator.compare(this, other);
+        }
+    }
 
-            LineSegment mySegment = new LineSegment(startLocation, endLocation);
-            LineSegment otherSegment = new LineSegment(other.getStartLocation(), other.getEndLocation());
-            if (other.getStartLocation().equals(other.getEndLocation()) && mySegment.containsSegment(otherSegment) || startLocation.equals(endLocation) && otherSegment.containsSegment(mySegment)) {
+    private static class TextChunkComparator implements Comparator<TextChunk> {
+        private Comparator<ITextChunkLocation> locationComparator;
+
+        public TextChunkComparator(Comparator<ITextChunkLocation> locationComparator) {
+            this.locationComparator = locationComparator;
+        }
+
+        @Override
+        public int compare(TextChunk o1, TextChunk o2) {
+            return locationComparator.compare(o1.location, o2.location);
+        }
+    }
+
+    private static class TextChunkLocationComparator implements Comparator<ITextChunkLocation> {
+        private boolean leftToRight = true;
+
+        public TextChunkLocationComparator() {
+        }
+
+        public TextChunkLocationComparator(boolean leftToRight) {
+            this.leftToRight = leftToRight;
+        }
+
+        @Override
+        public int compare(ITextChunkLocation first, ITextChunkLocation second) {
+            if (first == second) return 0; // not really needed, but just in case
+
+            LineSegment mySegment = new LineSegment(first.getStartLocation(), first.getEndLocation());
+            LineSegment otherSegment = new LineSegment(second.getStartLocation(), second.getEndLocation());
+            if (second.getStartLocation().equals(second.getEndLocation()) && mySegment.containsSegment(otherSegment) || first.getStartLocation().equals(first.getEndLocation()) && otherSegment.containsSegment(mySegment)) {
                 // Return 0 to save order due to stable sort. This handles situation of mark glyphs that have zero width
                 return 0;
             }
 
             int result;
-            result = Integer.compare(orientationMagnitude(), other.orientationMagnitude());
-            if (result != 0) return result;
+            result = Integer.compare(first.orientationMagnitude(), second.orientationMagnitude());
+            if (result != 0) {
+                return result;
+            }
 
-            result = Integer.compare(distPerpendicular(), other.distPerpendicular());
-            if (result != 0) return result;
+            int distPerpendicularDiff = first.distPerpendicular() - second.distPerpendicular();
+            if (Math.abs(distPerpendicularDiff) > DIACRITICAL_MARKS_ALLOWED_VERTICAL_DEVIATION || distPerpendicularDiff != 0 && (mySegment.getLength() > 0 && otherSegment.getLength() > 0)) {
+                return distPerpendicularDiff;
+            }
 
-            return Float.compare(distParallelStart(), other.distParallelStart());
+            return leftToRight ? Float.compare(first.distParallelStart(), second.distParallelStart()) :
+                                 -Float.compare(first.distParallelEnd(), second.distParallelEnd());
         }
     }
 

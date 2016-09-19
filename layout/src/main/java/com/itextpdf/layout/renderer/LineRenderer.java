@@ -48,10 +48,22 @@ import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.TabStop;
-import com.itextpdf.layout.layout.*;
-import com.itextpdf.layout.property.*;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.layout.LineLayoutResult;
+import com.itextpdf.layout.layout.TextLayoutResult;
+import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.Leading;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TabAlignment;
+import com.itextpdf.layout.property.UnitValue;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
 
 public class LineRenderer extends AbstractRenderer {
 
@@ -265,7 +277,6 @@ public class LineRenderer extends AbstractRenderer {
                 if (reorder != null) {
                     children.clear();
                     int pos = 0;
-                    List<int[]> reversedRanges = new ArrayList<>();
                     int initialPos = 0;
                     boolean reversed = false;
                     int offset = 0;
@@ -278,15 +289,14 @@ public class LineRenderer extends AbstractRenderer {
                         GlyphLine gl = ((TextRenderer) children.get(children.size() - 1)).line;
                         List<Glyph> replacementGlyphs = new ArrayList<>();
                         while (pos < lineGlyphs.size() && lineGlyphs.get(pos).renderer == renderer) {
-                            if (pos < lineGlyphs.size() - 1) {
-                                if (reorder[pos] == reorder[pos + 1] + 1) {
+                            if (pos + 1 < lineGlyphs.size()) {
+                                if (reorder[pos] == reorder[pos + 1] + 1 &&
+                                        !TextRenderer.isSpaceGlyph(lineGlyphs.get(pos + 1).glyph) && !TextRenderer.isSpaceGlyph(lineGlyphs.get(pos).glyph)) {
                                     reversed = true;
                                 } else {
                                     if (reversed) {
-                                        List<int[]> reversedRange = new ArrayList<>();
+                                        List<int[]> reversedRange = createOrGetReversedProperty(newRenderer);
                                         reversedRange.add(new int[]{initialPos - offset, pos - offset});
-                                        newRenderer.setProperty(Property.REVERSED, reversedRange);
-                                        reversedRanges.add(new int[]{initialPos - offset, pos - offset});
                                         reversed = false;
                                     }
                                     initialPos = pos + 1;
@@ -298,29 +308,13 @@ public class LineRenderer extends AbstractRenderer {
                         }
 
                         if (reversed) {
-                            List<int[]> reversedRange = new ArrayList<>();
+                            List<int[]> reversedRange = createOrGetReversedProperty(newRenderer);
                             reversedRange.add(new int[]{initialPos - offset, pos - 1 - offset});
-                            newRenderer.setProperty(Property.REVERSED, reversedRange);
-                            reversedRanges.add(new int[]{initialPos - offset, pos - 1 - offset});
                             reversed = false;
                             initialPos = pos;
                         }
                         offset = initialPos;
                         gl.setGlyphs(replacementGlyphs);
-                    }
-                    if (reversed) {
-                        if (children.size() == 1) {
-                            offset = 0;
-                        }
-                        List<int[]> reversedRange = new ArrayList<>();
-                        reversedRange.add(new int[]{initialPos - offset, pos - offset - 1});
-                        lineGlyphs.get(pos - 1).renderer.setProperty(Property.REVERSED, reversedRange);
-                        reversedRanges.add(new int[]{initialPos - offset, pos - 1 - offset});
-                    }
-                    if (!reversedRanges.isEmpty()) {
-                        if (children.size() == 1) {
-                            lineGlyphs.get(0).renderer.setProperty(Property.REVERSED, reversedRanges);
-                        }
                     }
 
                     float currentXPos = layoutContext.getArea().getBBox().getLeft();
@@ -520,6 +514,13 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
         return false;
+    }
+
+    private List<int[]> createOrGetReversedProperty(TextRenderer newRenderer) {
+        if (!newRenderer.hasOwnProperty(Property.REVERSED)) {
+            newRenderer.setProperty(Property.REVERSED, new ArrayList<int[]>());
+        }
+        return newRenderer.getOwnProperty(Property.REVERSED);
     }
 
     private IRenderer getLastChildRenderer() {

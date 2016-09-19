@@ -192,6 +192,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     }
 
     @Override
+    // TODO refactor using decodeIntoGlyphLine?
     public String decode(PdfString content) {
         byte[] contentBytes = content.getValueBytes();
         StringBuilder builder = new StringBuilder(contentBytes.length);
@@ -209,7 +210,27 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         return builder.toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    public GlyphLine decodeIntoGlyphLine(PdfString content) {
+        byte[] contentBytes = content.getValueBytes();
+        List<Glyph> glyphs = new ArrayList<>(contentBytes.length);
+        for (byte b : contentBytes) {
+            int code = b & 0xff;
+            int uni = fontEncoding.getUnicode(code);
+            if (uni > -1) {
+                glyphs.add(getGlyph(uni));
+            } else if (fontEncoding.getBaseEncoding() == null) {
+                glyphs.add(fontProgram.getGlyphByCode(code));
+            }
+        }
+        return new GlyphLine(glyphs);
+    }
+
+    @Override
+    // TODO refactor using decodeIntoGlyphLine?
     public float getContentWidth(PdfString content) {
         float width = 0;
         byte[] contentBytes = content.getValueBytes();
