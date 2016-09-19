@@ -12,6 +12,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.IOException;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -88,6 +89,20 @@ public class BidiTextExtractionTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "in04.pdf"));
 
         String expectedText = ")\u05E2\u05DC \u05E9\u05DD \u05DE\u05E4\u05EA\u05D7\u05D9\u05D5(";
+
+        String actualText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), new LocationTextExtractionStrategy().setRightToLeftRunDirection(true));
+
+        Assert.assertEquals(expectedText, actualText);
+    }
+
+    @Test
+    @Ignore
+    // TODO see DEVSIX-854
+    // Not correct since iText cannot detect reordering automatically when no /ReversedChars is present.
+    public void test05() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "in05.pdf"));
+
+        String expectedText = "\u0642\u0633\u0651\u0645 \u0639\u0644\u0645\u0627\u0621 \u0627\u0644\u0622\u062B\u0627\u0631";
 
         String actualText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), new LocationTextExtractionStrategy().setRightToLeftRunDirection(true));
 
