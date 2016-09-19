@@ -53,6 +53,10 @@ public class Glyph implements Serializable {
 
     private static final long serialVersionUID = 1627806639423114471L;
 
+    private static final char REPLACEMENT_CHARACTER = '\ufffd';
+    private static final char[] REPLACEMENT_CHARACTERS = new char[] {REPLACEMENT_CHARACTER};
+    private static final String REPLACEMENT_CHARACTER_STRING = String.valueOf(REPLACEMENT_CHARACTER);
+
     // The <i>code</i> or <i>id</i> by which this is represented in the Font File.
     private final int code;
     // The normalized width of this Glyph.
@@ -248,7 +252,20 @@ public class Glyph implements Serializable {
         if (chars != null) {
             return String.valueOf(chars);
         } else {
-            return String.valueOf('\ufffd');
+            return REPLACEMENT_CHARACTER_STRING;
+        }
+    }
+
+    /**
+     * Gets Unicode char sequence corresponding to this glyph. In general case it might consist of many characters.
+     * If this glyph does not have a valid unicode ({@see #hasValidUnicode()}, then a special Unicode '\ufffd' character is returned.
+     * @return the Unicode char sequence that corresponds to this glyph
+     */
+    public char[] getUnicodeChars() {
+        if (chars != null) {
+            return chars;
+        } else {
+            return REPLACEMENT_CHARACTERS;
         }
     }
 

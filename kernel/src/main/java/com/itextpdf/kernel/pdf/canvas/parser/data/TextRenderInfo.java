@@ -124,7 +124,7 @@ public class TextRenderInfo implements IEventData {
             } else {
                 StringBuilder sb = new StringBuilder(gl.end - gl.start);
                 for (int i = gl.end - 1; i >= gl.start; i--) {
-                    sb.append(gl.get(i).getUnicodeString());
+                    sb.append(gl.get(i).getUnicodeChars());
                 }
                 text = sb.toString();
             }

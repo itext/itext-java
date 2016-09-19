@@ -104,7 +104,7 @@ public class GlyphLine {
                 str.append(part.actualText);
             } else {
                 for (int i = part.start; i < part.end; i++) {
-                    str.append(glyphs.get(i).getUnicodeString());
+                    str.append(glyphs.get(i).getUnicodeChars());
                 }
             }
         }
