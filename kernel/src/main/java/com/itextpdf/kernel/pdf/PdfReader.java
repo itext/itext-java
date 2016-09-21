@@ -66,6 +66,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Reads a PDF document.
+ */
 public class PdfReader implements Closeable, Serializable {
 
     private static final long serialVersionUID = -3584187443691964939L;
@@ -169,19 +172,40 @@ public class PdfReader implements Closeable, Serializable {
 
     }
 
+    /**
+     * Close {@link PdfTokenizer}.
+     *
+     * @throws IOException on error.
+     */
     public void close() throws IOException {
         tokens.close();
     }
 
+    /**
+     * The iText is not responsible if you decide to change the
+     * value of this parameter.
+     */
     public PdfReader setUnethicalReading(boolean unethicalReading) {
         this.unethicalReading = unethicalReading;
         return this;
     }
 
+    /**
+     * Gets whether {@link #close()} method shall close input stream.
+     *
+     * @return true, if {@link #close()} method will close input stream,
+     * otherwise false.
+     */
     public boolean isCloseStream() {
         return tokens.isCloseStream();
     }
 
+    /**
+     * Sets whether {@link #close()} method shall close input stream.
+     *
+     * @param closeStream true, if {@link #close()} method shall close input stream,
+     *                    otherwise false.
+     */
     public void setCloseStream(boolean closeStream) {
         tokens.setCloseStream(closeStream);
     }
@@ -233,11 +257,12 @@ public class PdfReader implements Closeable, Serializable {
     }
 
     /**
-     * Reads and gets stream bytes.
+     * Reads, decrypt and optionally decode stream bytes.
+     * Note, this method doesn't store actual bytes in any internal structures.
      *
      * @param decode true if to get decoded stream bytes, false if to leave it originally encoded.
-     * @return byte[]
-     * @throws IOException
+     * @return byte[] array.
+     * @throws IOException on error.
      */
     public byte[] readStreamBytes(PdfStream stream, boolean decode) throws IOException {
         byte[] b = readStreamBytesRaw(stream);
@@ -248,6 +273,13 @@ public class PdfReader implements Closeable, Serializable {
         }
     }
 
+    /**
+     * Reads and decrypt stream bytes.
+     * Note, this method doesn't store actual bytes in any internal structures.
+     *
+     * @return byte[] array.
+     * @throws IOException on error.
+     */
     public byte[] readStreamBytesRaw(PdfStream stream) throws IOException {
         PdfName type = stream.getAsName(PdfName.Type);
         if (!PdfName.XRefStm.equals(type) && !PdfName.ObjStm.equals(type))
@@ -296,12 +328,12 @@ public class PdfReader implements Closeable, Serializable {
     }
 
     /**
-     * Gets the input stream associated with PdfStream.
+     * Reads, decrypt and optionally decode stream bytes into {@link ByteArrayInputStream}.
      * User is responsible for closing returned stream.
      *
      * @param decode true if to get decoded stream, false if to leave it originally encoded.
-     * @return InputStream
-     * @throws IOException
+     * @return InputStream or {@code null} if reading was failed.
+     * @throws IOException on error.
      */
     public InputStream readStream(PdfStream stream, boolean decode) throws IOException {
         byte[] bytes = readStreamBytes(stream, decode);
@@ -309,7 +341,7 @@ public class PdfReader implements Closeable, Serializable {
     }
 
     /**
-     * Decode a byte[] applying the filters specified in the provided dictionary using default filter handlers.
+     * Decode bytes applying the filters specified in the provided dictionary using default filter handlers.
      *
      * @param b                the bytes to decode
      * @param streamDictionary the dictionary that contains filter information
@@ -394,16 +426,31 @@ public class PdfReader implements Closeable, Serializable {
      * Provides the size of the opened file.
      *
      * @return The size of the opened file.
-     * @throws IOException
+     * @throws IOException on error.
      */
     public long getFileLength() throws IOException {
         return tokens.getSafeFile().length();
     }
 
+    /**
+     * Checks if the document was opened with the owner password so that the end application
+     * can decide what level of access restrictions to apply. If the document is not encrypted
+     * it will return {@code true}.
+     *
+     * @return {@code true} if the document was opened with the owner password or if it's not encrypted,
+     * {@code false} if the document was opened with the user password.
+     */
     public boolean isOpenedWithFullPermission() {
         return !encrypted || decrypt.isOpenedWithFullPermission() || unethicalReading;
     }
 
+    /**
+     * Gets the encryption permissions. It can be used directly in
+     * {@link WriterProperties#setStandardEncryption(byte[], byte[], int, int)}.
+     * See ISO 32000-1, Table 22 for more details.
+     *
+     * @return the encryption permissions, an unsigned 32-bit quantity.
+     */
     public long getPermissions() {
         long perm = 0;
         if (encrypted && decrypt.getPermissions() != null) {
@@ -412,6 +459,11 @@ public class PdfReader implements Closeable, Serializable {
         return perm;
     }
 
+    /**
+     * Gets encryption algorithm and access permissions.
+     *
+     * @see EncryptionConstants
+     */
     public int getCryptoMode() {
         if (decrypt == null)
             return -1;
@@ -441,6 +493,25 @@ public class PdfReader implements Closeable, Serializable {
     }
 
     /**
+     * Gets file ID, either {@link PdfName#ID} key of trailer or a newly generated id.
+     *
+     * @return byte array represents file ID.
+     * @see PdfEncryption#generateNewDocumentId()
+     */
+    public byte[] getOriginalFileId() {
+        PdfArray id = trailer.getAsArray(PdfName.ID);
+        if (id != null) {
+            return ByteUtils.getIsoBytes(id.getAsString(0).getValue());
+        } else {
+            return PdfEncryption.generateNewDocumentId();
+        }
+    }
+
+    public boolean isEncrypted() {
+        return encrypted;
+    }
+
+    /**
      * Parses the entire PDF
      */
     protected void readPdf() throws IOException {
@@ -459,26 +530,6 @@ public class PdfReader implements Closeable, Serializable {
             rebuildXref();
         }
         readDecryptObj();
-    }
-
-    private void readDecryptObj() {
-        if (encrypted)
-            return;
-        PdfDictionary enc = trailer.getAsDictionary(PdfName.Encrypt);
-        if (enc == null)
-            return;
-        encrypted = true;
-
-        PdfName filter = enc.getAsName(PdfName.Filter);
-        if (PdfName.Adobe_PubSec.equals(filter)) {
-            if (properties.certificate == null) {
-                throw new PdfException(PdfException.CertificateIsNotProvidedDocumentIsEncryptedWithPublicKeyCertificate);
-            }
-            decrypt = new PdfEncryption(enc, properties.certificateKey, properties.certificate,
-                    properties.certificateKeyProvider, properties.externalDecryptionProcess);
-        } else if (PdfName.Standard.equals(filter)) {
-            decrypt = new PdfEncryption(enc, properties.password, getOriginalFileId());
-        }
     }
 
     protected void readObjectStream(PdfStream objectStream) throws IOException {
@@ -751,7 +802,7 @@ public class PdfReader implements Closeable, Serializable {
                 tokens.nextValidToken();
                 int gen = tokens.getIntValue();
                 tokens.nextValidToken();
-                if ( pos == 0L && gen == 65535 && num == 1 ) {
+                if (pos == 0L && gen == 65535 && num == 1) {
                     // Very rarely can an XREF have an incorrect start number. (SUP-1557)
                     // e.g.
                     // xref
@@ -992,17 +1043,24 @@ public class PdfReader implements Closeable, Serializable {
             throw new PdfException(PdfException.TrailerNotFound);
     }
 
-    public byte[] getOriginalFileId() {
-        PdfArray id = trailer.getAsArray(PdfName.ID);
-        if (id != null) {
-            return ByteUtils.getIsoBytes(id.getAsString(0).getValue());
-        } else {
-            return PdfEncryption.generateNewDocumentId();
-        }
-    }
+    private void readDecryptObj() {
+        if (encrypted)
+            return;
+        PdfDictionary enc = trailer.getAsDictionary(PdfName.Encrypt);
+        if (enc == null)
+            return;
+        encrypted = true;
 
-    public boolean isEncrypted() {
-        return encrypted;
+        PdfName filter = enc.getAsName(PdfName.Filter);
+        if (PdfName.Adobe_PubSec.equals(filter)) {
+            if (properties.certificate == null) {
+                throw new PdfException(PdfException.CertificateIsNotProvidedDocumentIsEncryptedWithPublicKeyCertificate);
+            }
+            decrypt = new PdfEncryption(enc, properties.certificateKey, properties.certificate,
+                    properties.certificateKeyProvider, properties.externalDecryptionProcess);
+        } else if (PdfName.Standard.equals(filter)) {
+            decrypt = new PdfEncryption(enc, properties.password, getOriginalFileId());
+        }
     }
 
     /**

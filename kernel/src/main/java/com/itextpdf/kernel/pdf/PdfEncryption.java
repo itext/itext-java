@@ -259,10 +259,22 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         return new PdfLiteral(buf.toByteArray());
     }
 
+    /**
+     * Gets the encryption permissions. It can be used directly in
+     * {@link WriterProperties#setStandardEncryption(byte[], byte[], int, int)}.
+     * See ISO 32000-1, Table 22 for more details.
+     *
+     * @return the encryption permissions, an unsigned 32-bit quantity.
+     */
     public Long getPermissions() {
         return permissions;
     }
 
+    /**
+     * Gets encryption algorithm and access permissions.
+     *
+     * @see EncryptionConstants
+     */
     public int getCryptoMode() {
         return cryptoMode;
     }
