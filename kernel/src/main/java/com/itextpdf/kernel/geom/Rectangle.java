@@ -45,6 +45,9 @@ package com.itextpdf.kernel.geom;
 
 import java.io.Serializable;
 
+/**
+ * Class that represent rectangle object.
+ */
 public class Rectangle implements Serializable {
 
     private static final long serialVersionUID = 8025677415569233446L;
@@ -56,6 +59,14 @@ public class Rectangle implements Serializable {
     protected float width;
     protected float height;
 
+    /**
+     * Creates new instance.
+     *
+     * @param x the x coordinate of lower left point
+     * @param y the y coordinate of lower left point
+     * @param width the width value
+     * @param height the height value
+     */
     public Rectangle(float x, float y, float width, float height) {
         this.x = x;
         this.y = y;
@@ -63,10 +74,21 @@ public class Rectangle implements Serializable {
         this.height = height;
     }
 
+    /**
+     * Creates new instance of rectangle with (0, 0) as the lower left point.
+     *
+     * @param width the width value
+     * @param height the height value
+     */
     public Rectangle(float width, float height) {
         this(0, 0, width, height);
     }
 
+    /**
+     * Creates the copy of given {@link Rectangle}
+     *
+     * @param rect the copied {@link Rectangle}
+     */
     public Rectangle(Rectangle rect) {
         this(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
     }
@@ -270,26 +292,62 @@ public class Rectangle implements Serializable {
         return y;
     }
 
+    /**
+     * Decreases the y coordinate.
+     *
+     * @param move the value on which the position will be changed.
+     * @return this {@link Rectangle} instance.
+     */
     public Rectangle moveDown(float move) {
         y -= move;
         return this;
     }
 
+
+    /**
+     * Increases the y coordinate.
+     *
+     * @param move the value on which the position will be changed.
+     * @return this {@link Rectangle} instance.
+     */
     public Rectangle moveUp(float move) {
         y += move;
         return this;
     }
 
+    /**
+     * Increases the x coordinate.
+     *
+     * @param move the value on which the position will be changed.
+     * @return this {@link Rectangle} instance.
+     */
     public Rectangle moveRight(float move) {
         x += move;
         return this;
     }
 
+    /**
+     * Decreases the x coordinate.
+     *
+     * @param move the value on which the position will be changed.
+     * @return this {@link Rectangle} instance.
+     */
     public Rectangle moveLeft(float move) {
         x -= move;
         return this;
     }
 
+    /**
+     * Change the rectangle according the specified margins.
+     *
+     * @param topIndent the value on which the top y coordinate will change.
+     * @param rightIndent the value on which the right x coordinate will change.
+     * @param bottomIndent the value on which the bottom y coordinate will change.
+     * @param leftIndent the value on which the left x coordinate will change.
+     * @param reverse if {@code true} the rectangle will expand, otherwise it will shrink
+     * @param <T> the type of this instance (this is useful for classes that extends rectangle)
+     * @return this instance that is cast to type T.
+     */
     public <T extends Rectangle> T applyMargins(float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse) {
         x += leftIndent * (reverse ? -1 : 1);
         width -= (leftIndent + rightIndent) * (reverse ? -1 : 1);
@@ -298,6 +356,15 @@ public class Rectangle implements Serializable {
         return (T) this;
     }
 
+    /**
+     * Checks if rectangle have common points with line, specified by two points.
+     *
+     * @param x1 the x coordinate of first line's point.
+     * @param y1 the y coordinate of first line's point.
+     * @param x2 the x coordinate of second line's point.
+     * @param y2 the y coordinate of second line's point.
+     * @return {@code true} if rectangle have common points with line and {@code false} otherwise.
+     */
     public boolean intersectsLine(float x1, float y1, float x2, float y2) {
         double rx1 = getX();
         double ry1 = getY();
@@ -310,6 +377,11 @@ public class Rectangle implements Serializable {
                         linesIntersect(rx2, ry1, rx1, ry2, x1, y1, x2, y2);
     }
 
+    /**
+     * Gets the string representation of rectangle.
+     *
+     * @return the string representation of rectangle.
+     */
     @Override
     public String toString() {
         return "Rectangle: " + getWidth() +
@@ -326,10 +398,23 @@ public class Rectangle implements Serializable {
         return new Rectangle(x, y, width, height);
     }
 
+    /**
+     * Compares instance of this rectangle with given deviation equals to 0.0001
+     *
+     * @param that the {@link Rectangle} to compare with.
+     * @return {@code true} if the difference between corresponding rectangle values is less than deviation and {@code false} otherwise.
+     */
     public boolean equalsWithEpsilon(Rectangle that) {
         return equalsWithEpsilon(that, EPS);
     }
 
+    /**
+     * Compares instance of this rectangle with given deviation.
+     *
+     * @param that the {@link Rectangle} to compare with.
+     * @param eps the deviation value.
+     * @return {@code true} if the difference between corresponding rectangle values is less than deviation and {@code false} otherwise.
+     */
     public boolean equalsWithEpsilon(Rectangle that, float eps) {
         float dx = Math.abs(x - that.x);
         float dy = Math.abs(y - that.y);
