@@ -1112,7 +1112,7 @@ public class PdfFontTest extends ExtendedITextTest {
     })
     public void createWrongPfb() throws IOException, InterruptedException {
         byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
-        PdfFont font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(afm, afm), null);
+        PdfFont font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(afm, afm, false), null);
         byte[] streamContent = ((PdfType1Font) font).getFontProgram().getFontStreamBytes();
         Assert.assertTrue("Empty stream content expected", streamContent == null);
     }
@@ -1121,7 +1121,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void autoDetect1() throws IOException, InterruptedException {
         byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
 
-        Assert.assertTrue("Type1 font expected", FontProgramFactory.createFont(afm) instanceof Type1Font);
+        Assert.assertTrue("Type1 font expected", FontProgramFactory.createFont(afm, false) instanceof Type1Font);
     }
 
     @Test

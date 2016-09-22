@@ -303,7 +303,7 @@ public final class PdfFontFactory {
      * @throws IOException this exception is actually never thrown. Will be removed in 7.1.
      */
     public static PdfFont createFont(byte[] fontProgram, String encoding, boolean embedded, boolean cached) throws IOException {
-        FontProgram fp = FontProgramFactory.createFont(null, fontProgram, cached);
+        FontProgram fp = FontProgramFactory.createFont(fontProgram, cached);
         return createFont(fp, encoding, embedded);
     }
 

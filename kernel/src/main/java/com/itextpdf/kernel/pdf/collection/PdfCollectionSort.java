@@ -44,7 +44,12 @@
 package com.itextpdf.kernel.pdf.collection;
 
 import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfBoolean;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 
 import java.util.Arrays;
 
