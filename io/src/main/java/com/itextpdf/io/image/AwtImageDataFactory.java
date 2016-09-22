@@ -189,8 +189,25 @@ class AwtImageDataFactory {
                                 transparency[0] = transparency[1] = transparentPixel >> 16 & 0xff;
                                 transparency[2] = transparency[3] = transparentPixel >> 8 & 0xff;
                                 transparency[4] = transparency[5] = transparentPixel & 0xff;
+                                // Added by Michael Klink
+                                // Check whether this value for transparent pixels
+                                // has already been used for a non-transparent one
+                                // before this position
+                                for (int prevPixel = 0; prevPixel < j; prevPixel++) {
+                                    if ((pixels[prevPixel] & 0xffffff) == transparentPixel) {
+                                        // found a prior use of the transparentPixel color
+                                        // and, therefore, cannot make use of this color
+                                        // for transparency; we could still use an image
+                                        // mask but for simplicity let's use a soft mask
+                                        // which already is implemented here
+                                        shades = true;
+                                        break;
+                                    }
+                                }
                             }
-                        } else if ((pixels[j] & 0xffffff) != transparentPixel) {
+                        } else if (((pixels[j] & 0xffffff) != transparentPixel) && (alpha == 0)) {
+                            shades = true;
+                        } else if (((pixels[j] & 0xffffff) == transparentPixel) && (alpha != 0)) {
                             shades = true;
                         }
                     }
