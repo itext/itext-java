@@ -130,15 +130,15 @@ public final class PdfFontFactory {
     }
 
     /**
-     * Creates a {@link PdfFont} instance from the TrueTypeCollection represented by its byte contents.
+     * Creates a {@link PdfFont} instance from the TrueType Collection represented by its byte contents.
      *
-     * @param ttc      the byte contents of the TrueTypeCollection
+     * @param ttc      the byte contents of the TrueType Collection
      * @param ttcIndex the index of the font in the collection, zero-based
      * @param encoding the encoding of the font to be created. See {@link PdfEncodings}
      * @param embedded indicates whether the font is to be embedded into the target document
      * @param cached   indicates whether the font will be cached
      * @return created {@link PdfFont} instance
-     * @throws IOException in case the contents of the TrueTypeCollection is mal-formed or an error occurred during reading the font
+     * @throws IOException in case the contents of the TrueType Collection is mal-formed or an error occurred during reading the font
      */
     public static PdfFont createTtcFont(byte[] ttc, int ttcIndex, String encoding, boolean embedded, boolean cached) throws IOException {
         FontProgram fontProgram = FontProgramFactory.createFont(ttc, ttcIndex, cached);
@@ -146,7 +146,7 @@ public final class PdfFontFactory {
     }
 
     /**
-     * Creates a {@link PdfFont} instance from the TrueTypeCollection given by the path to the .ttc file.
+     * Creates a {@link PdfFont} instance from the TrueType Collection given by the path to the .ttc file.
      *
      * @param ttc      the path of the .ttc file
      * @param ttcIndex the index of the font in the collection, zero-based
@@ -154,7 +154,7 @@ public final class PdfFontFactory {
      * @param embedded indicates whether the font is to be embedded into the target document
      * @param cached   indicates whether the font will be cached
      * @return created {@link PdfFont} instance
-     * @throws IOException in case the file is not found, contents of the TrueTypeCollection is mal-formed
+     * @throws IOException in case the file is not found, contents of the TrueType Collection is mal-formed
      *                     or an error occurred during reading the font
      */
     public static PdfFont createTtcFont(String ttc, int ttcIndex, String encoding, boolean embedded, boolean cached) throws IOException {
@@ -423,7 +423,7 @@ public final class PdfFontFactory {
 
     /**
      * Registers a .ttf, .otf, .afm, .pfm, or a .ttc font file.
-     * In case if TrueTypeCollection (.ttc), an additional parameter may be specified defining the index of the font
+     * In case if TrueType Collection (.ttc), an additional parameter may be specified defining the index of the font
      * to be registered, e.g. "path/to/font/collection.ttc,0". The index is zero-based.
      *
      * @param path the path to a font file

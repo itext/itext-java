@@ -79,7 +79,7 @@ public final class FontProgramFactory {
      * TrueType fonts and CJK fonts can have an optional style modifier
      * appended to the name. These modifiers are: Bold, Italic and BoldItalic. An
      * example would be "STSong-Light,Bold". Note that this modifiers do not work if
-     * the font is embedded. Fonts in TrueType collections are addressed by index such as "msgothic.ttc,1".
+     * the font is embedded. Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
      * This would get the second font (indexes start at 0), in this case "MS PGothic".
      * <p/>
      * The fonts are cached and if they already exist they are extracted from the cache,
@@ -100,7 +100,7 @@ public final class FontProgramFactory {
      * TrueType fonts and CJK fonts can have an optional style modifier
      * appended to the name. These modifiers are: Bold, Italic and BoldItalic. An
      * example would be "STSong-Light,Bold". Note that this modifiers do not work if
-     * the font is embedded. Fonts in TrueType collections are addressed by index such as "msgothic.ttc,1".
+     * the font is embedded. Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
      * This would get the second font (indexes start at 0), in this case "MS PGothic".
      * <p/>
      * The fonts are cached and if they already exist they are extracted from the cache,
@@ -122,7 +122,7 @@ public final class FontProgramFactory {
      * TrueType fonts and CJK fonts can have an optional style modifier
      * appended to the name. These modifiers are: Bold, Italic and BoldItalic. An
      * example would be "STSong-Light,Bold". Note that this modifiers do not work if
-     * the font is embedded. Fonts in TrueType collections are addressed by index such as "msgothic.ttc,1".
+     * the font is embedded. Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
      * This would get the second font (indexes start at 0), in this case "MS PGothic".
      * <p/>
      * The fonts are cached and if they already exist they are extracted from the cache,
@@ -138,12 +138,12 @@ public final class FontProgramFactory {
 
     /**
      * Creates a new font program. This font program can be one of the 14 built in fonts,
-     * a Type1 font referred to by an AFM or PFM file, a TrueType font (simple only) or
+     * a Type 1 font referred to by an AFM or PFM file, a TrueType font (simple only) or
      * a CJK font from the Adobe Asian Font Pack.
      * TrueType fonts and CJK fonts can have an optional style modifier
      * appended to the name. These modifiers are: Bold, Italic and BoldItalic. An
      * example would be "STSong-Light,Bold". Note that this modifiers do not work if
-     * the font is embedded. Fonts in TrueType collections are addressed by index such as "msgothic.ttc,1".
+     * the font is embedded. Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
      * This would get the second font (indexes start at 0), in this case "MS PGothic".
      * <p/>
      * The fonts are cached and if they already exist they are extracted from the cache,
@@ -245,7 +245,7 @@ public final class FontProgramFactory {
     }
 
     /**
-     * Creates a new Type1 font by the byte contents of the corresponding AFM/PFM and PFB files
+     * Creates a new Type 1 font by the byte contents of the corresponding AFM/PFM and PFB files
      * @param afm the contents of the AFM or PFM metrics file
      * @param pfb the contents of the PFB file
      * @return created {@link FontProgram} instance
@@ -255,7 +255,7 @@ public final class FontProgramFactory {
     }
 
     /**
-     * Creates a new Type1 font by the byte contents of the corresponding AFM/PFM and PFB files
+     * Creates a new Type 1 font by the byte contents of the corresponding AFM/PFM and PFB files
      * @param afm the contents of the AFM or PFM metrics file
      * @param pfb the contents of the PFB file
      * @param cached specifies whether to cache the created {@link FontProgram} or not
@@ -266,7 +266,7 @@ public final class FontProgramFactory {
     }
 
     /**
-     * Creates a new Type1 font by the corresponding AFM/PFM and PFB files
+     * Creates a new Type 1 font by the corresponding AFM/PFM and PFB files
      * @param metricsPath path to the AFM or PFM metrics file
      * @param binaryPath path to the contents of the PFB file
      * @return created {@link FontProgram} instance
@@ -276,7 +276,7 @@ public final class FontProgramFactory {
     }
 
     /**
-     * Creates a new Type1 font by the corresponding AFM/PFM and PFB files
+     * Creates a new Type 1 font by the corresponding AFM/PFM and PFB files
      * @param metricsPath path to the AFM or PFM metrics file
      * @param binaryPath path to the contents of the PFB file
      * @param cached specifies whether to cache the created {@link FontProgram} or not
@@ -287,9 +287,9 @@ public final class FontProgramFactory {
     }
 
     /**
-     * Creates a new True Type font program from ttc (TrueTypeCollection) file.
+     * Creates a new TrueType font program from ttc (TrueType Collection) file.
      *
-     * @param ttc      location  of true type collection file (*.ttc)
+     * @param ttc      location  of TrueType Collection file (*.ttc)
      * @param ttcIndex the index of the font file from the collection to be read
      * @param cached   true if the font comes from the cache or is added to
      *                 the cache if new, false if the font is always created new
@@ -308,9 +308,9 @@ public final class FontProgramFactory {
     }
 
     /**
-     * Creates a new True Type font program from ttc (TrueTypeCollection) file bytes.
+     * Creates a new TrueType font program from ttc (TrueType Collection) file bytes.
      *
-     * @param ttc      the content of a TrueTypeCollection file (*.ttc)
+     * @param ttc      the content of a TrueType Collection file (*.ttc)
      * @param ttcIndex the index of the font file from the collection to be read
      * @param cached   true if the font comes from the cache or is added to
      *                 the cache if new, false if the font is always created new
@@ -355,7 +355,7 @@ public final class FontProgramFactory {
 
     /**
      * Registers a .ttf, .otf, .afm, .pfm, or a .ttc font file.
-     * In case if TrueTypeCollection (.ttc), an additional parameter may be specified defining the index of the font
+     * In case if TrueType Collection (.ttc), an additional parameter may be specified defining the index of the font
      * to be registered, e.g. "path/to/font/collection.ttc,0". The index is zero-based.
      *
      * @param path the path to a font file
