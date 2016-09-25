@@ -553,12 +553,13 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         int firstRow = lastAddedRowGroups.get(0).startRow;
         int lastRow = lastAddedRowGroups.get(lastAddedRowGroups.size() - 1).finishRow;
 
-        for (Iterator<IElement> iterator = childElements.iterator(); iterator.hasNext(); ) {
-            IElement cell = iterator.next();
+        List<IElement> toRemove = new ArrayList<>();
+        for (IElement cell : childElements) {
             if (((Cell)cell).getRow() >= firstRow && ((Cell)cell).getRow() <= lastRow) {
-                iterator.remove();
+                toRemove.add(cell);
             }
         }
+        childElements.removeAll(toRemove);
 
         for (int i = 0; i <= lastRow - firstRow; i++) {
             rows.remove(firstRow - rowWindowStart);
