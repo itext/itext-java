@@ -96,8 +96,7 @@ public class BidiTextExtractionTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore
-    // TODO see DEVSIX-854
+    @Ignore("see DEVSIX-854")
     // Not correct since iText cannot detect reordering automatically when no /ReversedChars is present.
     public void test05() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "in05.pdf"));

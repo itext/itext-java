@@ -360,20 +360,21 @@ public class PdfCanvas {
      * in the content stream managed by this Canvas.
      * If an array not containing the 6 values of the matrix is passed,
      * The current canvas is returned unchanged.
+     *
      * @param array affine transformation stored as a PdfArray with 6 values
      * @return current canvas
      */
-    public PdfCanvas concatMatrix(PdfArray array){
-        if(array.size() != 6 ){
+    public PdfCanvas concatMatrix(PdfArray array) {
+        if (array.size() != 6) {
             //Throw exception or warning here
             return this;
         }
-        for(int i=0; i<array.size();i++){
-            if(!array.get(i).isNumber()){
+        for (int i = 0; i < array.size(); i++) {
+            if (!array.get(i).isNumber()) {
                 return this;
             }
         }
-        return concatMatrix(array.getAsNumber(0).doubleValue(),array.getAsNumber(1).doubleValue(),array.getAsNumber(2).doubleValue(),array.getAsNumber(3).doubleValue(),array.getAsNumber(4).doubleValue(),array.getAsNumber(5).doubleValue());
+        return concatMatrix(array.getAsNumber(0).doubleValue(), array.getAsNumber(1).doubleValue(), array.getAsNumber(2).doubleValue(), array.getAsNumber(3).doubleValue(), array.getAsNumber(4).doubleValue(), array.getAsNumber(5).doubleValue());
     }
 
     /**
@@ -707,8 +708,9 @@ public class PdfCanvas {
         float fontSize = currentGs.getFontSize() / 1000f;
         float charSpacing = currentGs.getCharSpacing();
         float scaling = currentGs.getHorizontalScaling() / 100f;
-        for (; iterator.hasNext(); ) {
-            GlyphLine.GlyphLinePart glyphLinePart = iterator.next();
+        List<GlyphLine.GlyphLinePart> glyphLineParts = iteratorToList(iterator);
+        for (int partIndex = 0; partIndex < glyphLineParts.size(); ++partIndex) {
+            GlyphLine.GlyphLinePart glyphLinePart = glyphLineParts.get(partIndex);
             if (glyphLinePart.actualText != null) {
                 PdfDictionary properties = new PdfDictionary();
                 properties.put(PdfName.ActualText, new PdfString(glyphLinePart.actualText, PdfEncodings.UNICODE_BIG).setHexWriting(true));
@@ -804,7 +806,7 @@ public class PdfCanvas {
             } else if (glyphLinePart.reversed) {
                 endMarkedContent();
             }
-            if (glyphLinePart.end > sub && iterator.hasNext()) {
+            if (glyphLinePart.end > sub && partIndex + 1 < glyphLineParts.size()) {
                 contentStream.getOutputStream()
                         .writeFloat(getSubrangeWidth(text, sub, glyphLinePart.end - 1), true)
                         .writeSpace()
@@ -2431,5 +2433,13 @@ public class PdfCanvas {
                 concatMatrix(0, -1, 1, 0, 0, rectagle.getRight());
                 break;
         }
+    }
+
+    private static <T> List<T> iteratorToList(Iterator<T> iterator) {
+        List<T> list = new ArrayList<>();
+        while (iterator.hasNext()) {
+            list.add(iterator.next());
+        }
+        return list;
     }
 }

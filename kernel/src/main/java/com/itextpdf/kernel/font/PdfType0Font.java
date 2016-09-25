@@ -401,10 +401,10 @@ public class PdfType0Font extends PdfFont {
     public GlyphLine decodeIntoGlyphLine(PdfString content) {
         String cids = content.getValue();
         if (cids.length() == 1) {
-            return new GlyphLine((List)Collections.emptyList());
+            return new GlyphLine(Collections.<Glyph>emptyList());
         }
         List<Glyph> glyphs = new ArrayList<>();
-        //number of cids must be even. With i < cids.length() - 1 we garantee, that we will not process the last odd index.
+        //number of cids must be even. With i < cids.length() - 1 we guarantee, that we will not process the last odd index.
         for (int i = 0; i < cids.length() - 1; i += 2) {
             int code = (cids.charAt(i) << 8) + cids.charAt(i + 1);
             Glyph glyph = fontProgram.getGlyphByCode(cmapEncoding.getCidCode(code));
