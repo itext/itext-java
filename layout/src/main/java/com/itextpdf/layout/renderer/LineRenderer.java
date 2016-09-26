@@ -394,8 +394,8 @@ public class LineRenderer extends AbstractRenderer {
         float characterSpacing = (1 - ratio) * baseFactor;
 
         float lastRightPos = occupiedArea.getBBox().getX();
-        for (Iterator<IRenderer> iterator = childRenderers.iterator(); iterator.hasNext(); ) {
-            IRenderer child = iterator.next();
+        for (int i = 0; i < childRenderers.size(); ++i) {
+            IRenderer child = childRenderers.get(i);
             float childX = child.getOccupiedArea().getBBox().getX();
             child.move(lastRightPos - childX, 0);
             childX = lastRightPos;
@@ -403,7 +403,7 @@ public class LineRenderer extends AbstractRenderer {
                 float childHSCale = (float) ((TextRenderer) child).getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
                 child.setProperty(Property.CHARACTER_SPACING, characterSpacing / childHSCale);
                 child.setProperty(Property.WORD_SPACING, wordSpacing / childHSCale);
-                boolean isLastTextRenderer = !iterator.hasNext();
+                boolean isLastTextRenderer = i + 1 == childRenderers.size();
                 float widthAddition = (isLastTextRenderer ? (((TextRenderer) child).lineLength() - 1) : ((TextRenderer) child).lineLength()) * characterSpacing +
                         wordSpacing * ((TextRenderer) child).getNumberOfSpaces();
                 child.getOccupiedArea().getBBox().setWidth(child.getOccupiedArea().getBBox().getWidth() + widthAddition);
@@ -520,7 +520,7 @@ public class LineRenderer extends AbstractRenderer {
         if (!newRenderer.hasOwnProperty(Property.REVERSED)) {
             newRenderer.setProperty(Property.REVERSED, new ArrayList<int[]>());
         }
-        return newRenderer.getOwnProperty(Property.REVERSED);
+        return newRenderer.<List<int[]>>getOwnProperty(Property.REVERSED);
     }
 
     private IRenderer getLastChildRenderer() {
@@ -536,7 +536,7 @@ public class LineRenderer extends AbstractRenderer {
         if (tabStops != null)
             nextTabStopEntry = tabStops.higherEntry(curWidth);
         if (nextTabStopEntry != null) {
-            nextTabStop = nextTabStopEntry.getValue();
+            nextTabStop = ((Map.Entry<Float, TabStop>)nextTabStopEntry).getValue();
         }
 
         return nextTabStop;
