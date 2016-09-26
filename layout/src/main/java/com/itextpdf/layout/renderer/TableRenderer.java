@@ -297,10 +297,10 @@ public class TableRenderer extends AbstractRenderer {
                     cell.setProperty(Property.BORDER_TOP, getCollapsedBorder(cellBorders[0], borders[0]));
                 }
                 if (0 == col) {
-                    cell.setProperty(Property.BORDER_LEFT, getCollapsedBorder(cellBorders[1], borders[1]));
+                    cell.setProperty(Property.BORDER_LEFT, getCollapsedBorder(cellBorders[3], borders[3]));
                 }
                 if (tableModel.getNumberOfColumns() == col + colspan) {
-                    cell.setProperty(Property.BORDER_RIGHT, getCollapsedBorder(cellBorders[3], borders[3]));
+                    cell.setProperty(Property.BORDER_RIGHT, getCollapsedBorder(cellBorders[1], borders[1]));
                 }
 
                 if (cell != null) {
@@ -343,15 +343,15 @@ public class TableRenderer extends AbstractRenderer {
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, null);
 
                 // Increase bottom border widths up to the table's if necessary to correct #layout()
-                Border bottomBorder = getCollapsedBorder(cellBorders[2], borders[2]);
+                Border bottomBorder = getCollapsedBorder(cell.getBorders()[2], borders[2]);
                 if (bottomBorder != null) {
                     cellArea.getBBox().applyMargins(0, 0, bottomBorder.getWidth(), 0, false);
+                    cell.setProperty(Property.BORDER_BOTTOM, bottomBorder);
                 }
-                cell.setProperty(Property.BORDER_BOTTOM, bottomBorder);
                 LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea));
-                cell.setProperty(Property.BORDER_BOTTOM, cellBorders[2]);
                 if (bottomBorder != null) {
                     cellArea.getBBox().applyMargins(0, 0, bottomBorder.getWidth(), 0, true);
+                    cell.setProperty(Property.BORDER_BOTTOM, cell.getBorders()[2]);
                 }
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
                 // width of BlockRenderer depends on child areas, while in cell case it is hardly define.
