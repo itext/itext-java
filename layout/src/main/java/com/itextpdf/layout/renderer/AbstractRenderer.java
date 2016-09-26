@@ -802,7 +802,7 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected boolean isRelativePosition() {
-        Integer positioning = getPropertyAsInteger(Property.POSITION);
+        Integer positioning = this.getPropertyAsInteger(Property.POSITION);
         return Integer.valueOf(LayoutPosition.RELATIVE).equals(positioning);
     }
 
@@ -890,7 +890,7 @@ public abstract class AbstractRenderer implements IRenderer {
         AbstractRenderer renderer = this;
         while (renderer.parent != null) {
             if (renderer instanceof BlockRenderer) {
-                Float angle = renderer.getProperty(Property.ROTATION_ANGLE);
+                Float angle = renderer.<Float>getProperty(Property.ROTATION_ANGLE);
                 if (angle != null) {
                     BlockRenderer blockRenderer = (BlockRenderer) renderer;
                     AffineTransform rotationTransform = blockRenderer.createRotationTransformInsideOccupiedArea();
