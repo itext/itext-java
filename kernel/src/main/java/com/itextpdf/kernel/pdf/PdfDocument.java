@@ -163,6 +163,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     protected TagStructureContext tagStructureContext;
 
+    protected static long lastDocumentId = 0;
+
+    protected long documentId;
+
     /**
      * Yet not copied link annotations from the other documents.
      * Key - page from the source document, which contains this annotation.
@@ -179,6 +183,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (reader == null) {
             throw new NullPointerException("reader");
         }
+        documentId = incrementDocumentId();
         this.reader = reader;
         this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
         open(null);
@@ -194,6 +199,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (writer == null) {
             throw new NullPointerException("writer");
         }
+        documentId = incrementDocumentId();
         this.writer = writer;
         this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
         open(writer.properties.pdfVersion);
@@ -224,6 +230,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (writer == null) {
             throw new NullPointerException("writer");
         }
+        documentId = incrementDocumentId();
         this.reader = reader;
         this.writer = writer;
         this.properties = properties;
@@ -1227,6 +1234,15 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         this.userProperties = userProperties;
     }
 
+    protected synchronized long incrementDocumentId() {
+        return lastDocumentId++;
+    }
+
+
+    public long getDocumentId() {
+        return documentId;
+    }
+
     /**
      * Gets list of indirect references.
      *
@@ -1739,6 +1755,38 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 } catch (IOException ignored) {
                 }
             }
+        }
+    }
+
+    /**
+     * A structure storing documentId, object number and generation number. This structure is using to calculate
+     * an unique object key during the copy process.
+     */
+    public static class IndirectRefDescription {
+        private long docId;
+        private int objNr;
+        private int genNr;
+
+        public IndirectRefDescription(long docId, int objNr, int genNr) {
+            this.docId = docId;
+            this.objNr = objNr;
+            this.genNr = genNr;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = (int) docId;
+            return 31 * (result + objNr + genNr);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            IndirectRefDescription that = (IndirectRefDescription) o;
+
+            return docId == that.docId && objNr == that.objNr && genNr == that.genNr;
         }
     }
 }
