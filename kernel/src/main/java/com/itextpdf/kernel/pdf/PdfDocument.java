@@ -163,7 +163,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     protected TagStructureContext tagStructureContext;
 
-    protected static long lastDocumentId = 0;
+    private static long lastDocumentId = 0;
 
     protected long documentId;
 
@@ -1234,7 +1234,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         this.userProperties = userProperties;
     }
 
-    protected synchronized long incrementDocumentId() {
+    private synchronized long incrementDocumentId() {
         return lastDocumentId++;
     }
 
