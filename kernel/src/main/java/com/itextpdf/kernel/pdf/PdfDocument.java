@@ -1239,7 +1239,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
 
-    public long getDocumentId() {
+    protected long getDocumentId() {
         return documentId;
     }
 
@@ -1762,7 +1762,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * A structure storing documentId, object number and generation number. This structure is using to calculate
      * an unique object key during the copy process.
      */
-    public static class IndirectRefDescription {
+    protected static class IndirectRefDescription {
         private long docId;
         private int objNr;
         private int genNr;
@@ -1776,7 +1776,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         @Override
         public int hashCode() {
             int result = (int) docId;
-            return 31 * (result + objNr + genNr);
+            result *= 31;
+            result += objNr;
+            result *= 31;
+            result += genNr;
+            return result;
         }
 
         @Override
