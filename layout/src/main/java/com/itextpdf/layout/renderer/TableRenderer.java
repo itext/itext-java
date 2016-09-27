@@ -166,6 +166,7 @@ public class TableRenderer extends AbstractRenderer {
         float leftTableBorderWidth = -1;
         float rightTableBorderWidth = -1;
         float topTableBorderWidth = -1;
+        float bottomTableBorderWidth = 0;
 
         // Find left, right and top borders widths
         // We consider only the first row's left and right border widths
@@ -197,7 +198,6 @@ public class TableRenderer extends AbstractRenderer {
         leftTableBorderWidth = Math.max(null == borders[3] ? 0 : borders[3].getWidth(), leftTableBorderWidth);
         rightTableBorderWidth = Math.max(null == borders[1] ? 0 : borders[1].getWidth(), rightTableBorderWidth);
         topTableBorderWidth = Math.max(null == borders[0] ? 0 : borders[0].getWidth(), topTableBorderWidth);
-
         if (isPositioned()) {
             float x = (float) this.getPropertyAsFloat(Property.X);
             float relativeX = isFixedLayout() ? 0 : layoutBox.getX();
@@ -211,7 +211,7 @@ public class TableRenderer extends AbstractRenderer {
             tableWidth = layoutBox.getWidth();
         }
         occupiedArea = new LayoutArea(area.getPageNumber(),
-                new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() + topTableBorderWidth / 2, (float) tableWidth, 0));
+                new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - topTableBorderWidth / 2, (float) tableWidth, 0));
 
         int numberOfColumns = ((Table) getModelElement()).getNumberOfColumns();
         horizontalBorders = new ArrayList<>();
@@ -222,6 +222,11 @@ public class TableRenderer extends AbstractRenderer {
         boolean headerShouldBeApplied = !rows.isEmpty() && (!isOriginalNonSplitRenderer || isFirstHeader && !tableModel.isSkipFirstHeader());
 
         if (headerElement != null && headerShouldBeApplied) {
+            headerElement.setBorderTop(borders[0]);
+            headerElement.setBorderRight(borders[1]);
+            headerElement.setBorderBottom(borders[2]);
+            headerElement.setBorderLeft(borders[3]);
+
             headerRenderer = (TableRenderer) headerElement.createRendererSubTree().setParent(this);
             LayoutResult result = headerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             if (result.getStatus() != LayoutResult.FULL) {
@@ -233,6 +238,11 @@ public class TableRenderer extends AbstractRenderer {
         }
         Table footerElement = tableModel.getFooter();
         if (footerElement != null) {
+            footerElement.setBorderTop(borders[0]);
+            footerElement.setBorderRight(borders[1]);
+            footerElement.setBorderBottom(borders[2]);
+            footerElement.setBorderLeft(borders[3]);
+
             footerRenderer = (TableRenderer) footerElement.createRendererSubTree().setParent(this);
             LayoutResult result = footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             if (result.getStatus() != LayoutResult.FULL) {
@@ -243,16 +253,24 @@ public class TableRenderer extends AbstractRenderer {
             layoutBox.moveUp(footerHeight).decreaseHeight(footerHeight);
         }
 
-        // Apply top border
-        layoutBox.applyMargins(topTableBorderWidth / 2, 0, 0, 0, false);
-
-        layoutBox.applyMargins(0, rightTableBorderWidth / 2, 0, leftTableBorderWidth / 2, false);
+        // Apply halves of the borders
+        layoutBox.applyMargins(topTableBorderWidth / 2, rightTableBorderWidth / 2, 0, leftTableBorderWidth / 2, false);
 
         columnWidths = calculateScaledColumnWidths(tableModel, (float) tableWidth, leftTableBorderWidth, rightTableBorderWidth);
         LayoutResult[] splits = new LayoutResult[tableModel.getNumberOfColumns()];
         // This represents the target row index for the overflow renderer to be placed to.
         // Usually this is just the current row id of a cell, but it has valuable meaning when a cell has rowspan.
         int[] targetOverflowRowIndex = new int[tableModel.getNumberOfColumns()];
+
+        // complete table with empty cells
+        for (int col = 0; col < rows.get(rows.size()-1).length; col++) {
+            if (null == rows.get(rows.size()-1)[col]) {
+                Cell emptyCell = new Cell();
+                emptyCell.setBorder(Border.NO_BORDER);
+                ((Table)this.getModelElement()).addCell(emptyCell);
+                this.addChild(emptyCell.getRenderer());
+            }
+        }
 
         horizontalBorders.add(tableModel.getLastRowBottomBorder());
 
@@ -262,6 +280,8 @@ public class TableRenderer extends AbstractRenderer {
             if (row == 1 && Boolean.TRUE.equals(this.<Boolean>getOwnProperty(Property.FORCED_PLACEMENT))) {
                 deleteOwnProperty(Property.FORCED_PLACEMENT);
             }
+
+            bottomTableBorderWidth = 0;
 
             CellRenderer[] currentRow = rows.get(row);
             float rowHeight = 0;
@@ -345,6 +365,7 @@ public class TableRenderer extends AbstractRenderer {
                 // Increase bottom border widths up to the table's if necessary to correct #layout()
                 Border bottomBorder = getCollapsedBorder(cell.getBorders()[2], borders[2]);
                 if (bottomBorder != null) {
+                    bottomTableBorderWidth = Math.max(bottomTableBorderWidth, bottomBorder.getWidth());
                     cellArea.getBBox().applyMargins(0, 0, bottomBorder.getWidth(), 0, false);
                     cell.setProperty(Property.BORDER_BOTTOM, bottomBorder);
                 }
@@ -491,6 +512,7 @@ public class TableRenderer extends AbstractRenderer {
             }
             if (split) {
                 TableRenderer[] splitResult = split(row, hasContent);
+                splitResult[0].getOccupiedArea().getBBox().applyMargins(0, 0, bottomTableBorderWidth / 2, 0, true);
                 int[] rowspans = new int[currentRow.length];
                 boolean[] columnsWithCellToBeEnlarged = new boolean[currentRow.length];
                 for (int col = 0; col < currentRow.length; col++) {
@@ -615,8 +637,8 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         // TODO TODO TODO
-        // Apply top border
-//        applyMargins(occupiedArea.getBBox(), new float[] {topTableBorderWidth / 2, 0, 0, 0}, true);
+        // Apply bottom border
+        applyMargins(occupiedArea.getBBox(), new float[] {0, 0, bottomTableBorderWidth / 2, 0}, true);
 
         applyMargins(occupiedArea.getBBox(), true);
         if (tableModel.isSkipLastFooter() || !tableModel.isComplete()) {
