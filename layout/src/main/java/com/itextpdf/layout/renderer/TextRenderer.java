@@ -221,7 +221,7 @@ public class TextRenderer extends AbstractRenderer {
 
                 if (tabAnchorCharacter != null && tabAnchorCharacter == text.get(ind).getUnicode()) {
                     tabAnchorCharacterPosition = currentLineWidth + nonBreakablePartFullWidth;
-                    tabAnchorCharacter = (Character) (Object) null;
+                    tabAnchorCharacter = null;
                 }
 
                 float glyphWidth = getCharWidth(currentGlyph, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
@@ -420,8 +420,8 @@ public class TextRenderer extends AbstractRenderer {
                 Map<Character.UnicodeScript, Integer> scriptFrequency = new EnumMap<Character.UnicodeScript, Integer>(Character.UnicodeScript.class);
                 for (int i = text.start; i < text.end; i++) {
                     int unicode = text.get(i).getUnicode();
-                    Character.UnicodeScript glyphScript = unicode > -1 ? Character.UnicodeScript.of(unicode) : null;
-                    if (glyphScript != null) {
+                    if (unicode > -1) {
+                        Character.UnicodeScript glyphScript = Character.UnicodeScript.of(unicode);
                         if (scriptFrequency.containsKey(glyphScript)) {
                             scriptFrequency.put(glyphScript, scriptFrequency.get(glyphScript) + 1);
                         } else {
@@ -429,21 +429,24 @@ public class TextRenderer extends AbstractRenderer {
                         }
                     }
                 }
-                int max = 0;
-                Character.UnicodeScript selectScript = null;
+                Integer max = 0;
+                Map.Entry<Character.UnicodeScript, Integer> selectedEntry = null;
                 for (Map.Entry<Character.UnicodeScript, Integer> entry : scriptFrequency.entrySet()) {
                     Character.UnicodeScript entryScript = entry.getKey();
                     if (entry.getValue() > max && !Character.UnicodeScript.COMMON.equals(entryScript) && !Character.UnicodeScript.UNKNOWN.equals(entryScript)
                             && !Character.UnicodeScript.INHERITED.equals(entryScript)) {
                         max = entry.getValue();
-                        selectScript = entryScript;
+                        selectedEntry = entry;
                     }
                 }
-                if (selectScript == Character.UnicodeScript.ARABIC || selectScript == Character.UnicodeScript.HEBREW && parent instanceof LineRenderer) {
-                    setProperty(Property.BASE_DIRECTION, BaseDirection.DEFAULT_BIDI);
-                }
-                if (selectScript != null && supportedScripts != null && supportedScripts.contains(selectScript)) {
-                    script = selectScript;
+                if (selectedEntry != null) {
+                    Character.UnicodeScript selectScript = ((Map.Entry<Character.UnicodeScript, Integer>)selectedEntry).getKey();
+                    if (selectScript == Character.UnicodeScript.ARABIC || selectScript == Character.UnicodeScript.HEBREW && parent instanceof LineRenderer) {
+                        setProperty(Property.BASE_DIRECTION, BaseDirection.DEFAULT_BIDI);
+                    }
+                    if (supportedScripts != null && supportedScripts.contains(selectScript)) {
+                        script = selectScript;
+                    }
                 }
             }
 
@@ -452,7 +455,7 @@ public class TextRenderer extends AbstractRenderer {
                 TypographyUtils.applyOtfScript(font.getFontProgram(), text, script);
             }
 
-            FontKerning fontKerning = this.<FontKerning>getProperty(Property.FONT_KERNING, FontKerning.NO);
+            FontKerning fontKerning = (FontKerning)this.<FontKerning>getProperty(Property.FONT_KERNING, FontKerning.NO);
             if (fontKerning == FontKerning.YES) {
                 TypographyUtils.applyKerning(font.getFontProgram(), text);
             }
@@ -569,8 +572,8 @@ public class TextRenderer extends AbstractRenderer {
 
             if (hasOwnProperty(Property.REVERSED)) {
                 boolean writeReversedChars = !appearanceStreamLayout;
-                List<int[]> reversedRanges = (List<int[]>) getOwnProperty(Property.REVERSED);
-                List<Integer> removedIds = new ArrayList<>();
+                List<int[]> reversedRanges = this.<List<int[]>>getOwnProperty(Property.REVERSED);
+                ArrayList<Integer> removedIds = new ArrayList<>();
                 for (int i = line.start; i < line.end; i++) {
                     if (!filter.accept(line.get(i))) {
                         removedIds.add(i);
