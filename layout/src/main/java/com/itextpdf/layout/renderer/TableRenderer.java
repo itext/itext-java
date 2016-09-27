@@ -48,9 +48,11 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
@@ -313,7 +315,7 @@ public class TableRenderer extends AbstractRenderer {
                 // collapse borders if necessary
                 // notice that bottom border collapse is handled lately
                 Border[] cellBorders = cell.getBorders();
-                if (0 == row - rowspan + 1) {
+                if (0 >= row - rowspan + 1) {
                     cell.setProperty(Property.BORDER_TOP, getCollapsedBorder(cellBorders[0], borders[0]));
                 }
                 if (0 == col) {
@@ -512,7 +514,10 @@ public class TableRenderer extends AbstractRenderer {
             }
             if (split) {
                 TableRenderer[] splitResult = split(row, hasContent);
+
+                // Apply bottom border
                 splitResult[0].getOccupiedArea().getBBox().applyMargins(0, 0, bottomTableBorderWidth / 2, 0, true);
+
                 int[] rowspans = new int[currentRow.length];
                 boolean[] columnsWithCellToBeEnlarged = new boolean[currentRow.length];
                 for (int col = 0; col < currentRow.length; col++) {
@@ -533,16 +538,23 @@ public class TableRenderer extends AbstractRenderer {
                             currentRow[col] = null;
                             CellRenderer cellOverflow = (CellRenderer) splits[col].getOverflowRenderer();
                             if (splits[col].getStatus() != LayoutResult.NOTHING) {
-//                                cellOverflow.setBorders(cellOverflow.getBorders()[2], 0);
                                 // TODO
-                                cellOverflow.setBorders(getBorders()[0] == null ? (Border) cellOverflow.getModelElement().getDefaultProperty(Property.BORDER) : getBorders()[0], 0);
+                                cellOverflow.setBorders(null == (Border) cellOverflow.getModelElement().getDefaultProperty(Property.BORDER_TOP)
+                                        ? (Border) cellOverflow.getModelElement().getDefaultProperty(Property.BORDER)
+                                        : (Border) cellOverflow.getModelElement().getDefaultProperty(Property.BORDER_BOTTOM), 0);
+                                // cellOverflow.setBorders(getBorders()[0] == null ? (Border) cellOverflow.getModelElement().getDefaultProperty(Property.BORDER) : getBorders()[0], 0);
                                 horizontalBorders.get(row + 1).set(col, getBorders()[2] == null ? (Border) cellOverflow.getModelElement().getDefaultProperty(Property.BORDER) : getBorders()[2]);
-
                             }
                             rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) cellOverflow.setParent(splitResult[1]);
                         } else {
                             rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) currentRow[col].setParent(splitResult[1]);
                         }
+//                        if (splits[col].getStatus() != LayoutResult.NOTHING) {
+//                            rows.get(row)[col].setProperty(Property.BORDER_BOTTOM,
+//                                    rows.get(row)[col].getModelElement().getProperty(Property.BORDER_BOTTOM) != null
+//                                            ? rows.get(row)[col].getModelElement().getProperty(Property.BORDER_BOTTOM)
+//                                            : rows.get(row)[col].getModelElement().getProperty(Property.BORDER));
+//                        }
                     } else if (hasContent && currentRow[col] != null) {
                         // columnsWithCellToBeEnlarged[col] = true;
                         // TODO
@@ -636,7 +648,6 @@ public class TableRenderer extends AbstractRenderer {
             move(0, relativeY + y - occupiedArea.getBBox().getY());
         }
 
-        // TODO TODO TODO
         // Apply bottom border
         applyMargins(occupiedArea.getBBox(), new float[] {0, 0, bottomTableBorderWidth / 2, 0}, true);
 
@@ -955,7 +966,7 @@ public class TableRenderer extends AbstractRenderer {
 
     @Override
     public void drawBorder(DrawContext drawContext) {
-        // Do nothing here. Itext7 handle cell and table borders collapse and draw result borders on #drawBorders() method
+        // Do nothing here. Itext7 handles cell and table borders collapse and draws result borders during #drawBorders()
     }
 
     protected void drawBorders(DrawContext drawContext) {
@@ -987,104 +998,131 @@ public class TableRenderer extends AbstractRenderer {
             drawContext.getCanvas().openTag(new CanvasArtifact());
         }
 
+        // Notice that we draw boundary borders after all the others are drawn
         float y1 = startY;
-        for (int i = 0; i < horizontalBorders.size(); i++) {
-            ArrayList<Border> borders = horizontalBorders.get(i);
-            float x1 = startX;
-            float x2 = x1 + columnWidths[0];
-            if (i == 0) {
-                if (verticalBorders != null && verticalBorders.size() > 0 && verticalBorders.get(0).size() > 0 && verticalBorders.get(verticalBorders.size() - 1).size() > 0) {
-                    Border firstBorder = verticalBorders.get(0).get(0);
-                    if (firstBorder != null) {
-                        x1 -= firstBorder.getWidth() / 2;
-                    }
-                }
-            } else if (i == horizontalBorders.size() - 1) {
-                if (verticalBorders != null && verticalBorders.size() > 0 && verticalBorders.get(0).size() > 0 &&
-                        verticalBorders.get(verticalBorders.size() - 1) != null && verticalBorders.get(verticalBorders.size() - 1).size() > 0
-                        && verticalBorders.get(0) != null) {
-                    Border firstBorder = verticalBorders.get(0).get(verticalBorders.get(0).size() - 1);
-                    if (firstBorder != null) {
-                        x1 -= firstBorder.getWidth() / 2;
-                    }
-                }
-            }
+        if (heights.size() > 0) {
+            y1 -= (float) heights.get(0);
+        }
 
-            int j;
-            for (j = 1; j < borders.size(); j++) {
-                Border prevBorder = borders.get(j - 1);
-                Border curBorder = borders.get(j);
-                if (prevBorder != null) {
-                    if (!prevBorder.equals(curBorder)) {
-                        prevBorder.drawCellBorder(drawContext.getCanvas(), x1, y1, x2, y1);
-                        x1 = x2;
-                    }
-                } else {
-                    x1 += columnWidths[j - 1];
-                    x2 = x1;
-                }
-                if (curBorder != null) {
-                    x2 += columnWidths[j];
-                }
-            }
-
-            Border lastBorder = borders.size() > j - 1 ? borders.get(j - 1) : null;
-            if (lastBorder != null) {
-                if (verticalBorders != null && verticalBorders.get(j) != null && verticalBorders.get(j).size() > 0) {
-                    if (i == 0) {
-                        if (verticalBorders.get(j).get(i) != null)
-                            x2 += verticalBorders.get(j).get(i).getWidth() / 2;
-                    } else if (i == horizontalBorders.size() - 1 && verticalBorders.get(j).size() >= i - 1 && verticalBorders.get(j).get(i - 1) != null) {
-                        x2 += verticalBorders.get(j).get(i - 1).getWidth() / 2;
-                    }
-                }
-
-                lastBorder.drawCellBorder(drawContext.getCanvas(), x1, y1, x2, y1);
-            }
+        for (int i = 1; i < horizontalBorders.size()-1; i++) {
+            drawHorizontalBorder(i, startX, y1, drawContext.getCanvas());
             if (i < heights.size()) {
                 y1 -= (float) heights.get(i);
             }
         }
+
         float x1 = startX;
-        for (int i = 0; i < verticalBorders.size(); i++) {
-            ArrayList<Border> borders = verticalBorders.get(i);
-            y1 = startY;
-            float y2 = y1;
-            if (!heights.isEmpty()) {
-                y2 = y1 - (float) heights.get(0);
-            }
-            int j;
-            for (j = 1; j < borders.size(); j++) {
-                Border prevBorder = borders.get(j - 1);
-                Border curBorder = borders.get(j);
-                if (prevBorder != null) {
-                    if (!prevBorder.equals(curBorder)) {
-                        prevBorder.drawCellBorder(drawContext.getCanvas(), x1, y1, x1, y2);
-                        y1 = y2;
-                    }
-                } else {
-                    y1 -= (float) heights.get(j - 1);
-                    y2 = y1;
-                }
-                if (curBorder != null) {
-                    y2 -= (float) heights.get(j);
-                }
-            }
-            if (borders.size() == 0) {
-                x1 += columnWidths[i];
-                continue;
-            }
-            Border lastBorder = borders.get(j - 1);
-            if (lastBorder != null) {
-                lastBorder.drawCellBorder(drawContext.getCanvas(), x1, y1, x1, y2);
-            }
+        if (columnWidths.length > 0) {
+            x1 += columnWidths[0];
+        }
+
+        for (int i = 1; i < verticalBorders.size(); i++) {
+            drawVerticalBorder(i, startY, x1, drawContext.getCanvas());
             if (i < columnWidths.length) {
                 x1 += columnWidths[i];
             }
         }
+        // draw boundary borders
+        drawVerticalBorder(0, startY, startX, drawContext.getCanvas());
+        drawHorizontalBorder(0, startX, startY, drawContext.getCanvas());
+        y1 = startY;
+        for (int i = 0; i < heights.size(); i++) {
+            y1 -= heights.get(i);
+        }
+        drawHorizontalBorder(horizontalBorders.size()-1, startX, y1, drawContext.getCanvas());
+
+
 
         if (isTagged) {
             drawContext.getCanvas().closeTag();
+        }
+    }
+
+    private void drawHorizontalBorder(int i, float startX, float y1, PdfCanvas canvas) {
+        ArrayList<Border> borders = horizontalBorders.get(i);
+        float x1 = startX;
+        float x2 = x1 + columnWidths[0];
+        if (i == 0) {
+            if (verticalBorders != null && verticalBorders.size() > 0 && verticalBorders.get(0).size() > 0 && verticalBorders.get(verticalBorders.size() - 1).size() > 0) {
+                Border firstBorder = verticalBorders.get(0).get(0);
+                if (firstBorder != null) {
+                    x1 -= firstBorder.getWidth() / 2;
+                }
+            }
+        } else if (i == horizontalBorders.size() - 1) {
+            if (verticalBorders != null && verticalBorders.size() > 0 && verticalBorders.get(0).size() > 0 &&
+                    verticalBorders.get(verticalBorders.size() - 1) != null && verticalBorders.get(verticalBorders.size() - 1).size() > 0
+                    && verticalBorders.get(0) != null) {
+                Border firstBorder = verticalBorders.get(0).get(verticalBorders.get(0).size() - 1);
+                if (firstBorder != null) {
+                    x1 -= firstBorder.getWidth() / 2;
+                }
+            }
+        }
+
+        int j;
+        for (j = 1; j < borders.size(); j++) {
+            Border prevBorder = borders.get(j - 1);
+            Border curBorder = borders.get(j);
+            if (prevBorder != null) {
+                if (!prevBorder.equals(curBorder)) {
+                    prevBorder.drawCellBorder(canvas, x1, y1, x2, y1);
+                    x1 = x2;
+                }
+            } else {
+                x1 += columnWidths[j - 1];
+                x2 = x1;
+            }
+            if (curBorder != null) {
+                x2 += columnWidths[j];
+            }
+        }
+
+        Border lastBorder = borders.size() > j - 1 ? borders.get(j - 1) : null;
+        if (lastBorder != null) {
+            if (verticalBorders != null && verticalBorders.get(j) != null && verticalBorders.get(j).size() > 0) {
+                if (i == 0) {
+                    if (verticalBorders.get(j).get(i) != null)
+                        x2 += verticalBorders.get(j).get(i).getWidth() / 2;
+                } else if (i == horizontalBorders.size() - 1 && verticalBorders.get(j).size() >= i - 1 && verticalBorders.get(j).get(i - 1) != null) {
+                    x2 += verticalBorders.get(j).get(i - 1).getWidth() / 2;
+                }
+            }
+
+            lastBorder.drawCellBorder(canvas, x1, y1, x2, y1);
+        }
+    }
+
+    private void drawVerticalBorder(int i, float startY, float x1, PdfCanvas canvas) {
+        ArrayList<Border> borders = verticalBorders.get(i);
+        float y1 = startY;
+        float y2 = y1;
+        if (!heights.isEmpty()) {
+            y2 = y1 - (float) heights.get(0);
+        }
+        int j;
+        for (j = 1; j < borders.size(); j++) {
+            Border prevBorder = borders.get(j - 1);
+            Border curBorder = borders.get(j);
+            if (prevBorder != null) {
+                if (!prevBorder.equals(curBorder)) {
+                    prevBorder.drawCellBorder(canvas, x1, y1, x1, y2);
+                    y1 = y2;
+                }
+            } else {
+                y1 -= (float) heights.get(j - 1);
+                y2 = y1;
+            }
+            if (curBorder != null) {
+                y2 -= (float) heights.get(j);
+            }
+        }
+        if (borders.size() == 0) {
+            return;
+        }
+        Border lastBorder = borders.get(j - 1);
+        if (lastBorder != null) {
+            lastBorder.drawCellBorder(canvas, x1, y1, x1, y2);
         }
     }
 
