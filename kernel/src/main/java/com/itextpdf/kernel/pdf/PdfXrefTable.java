@@ -150,6 +150,7 @@ class PdfXrefTable implements Serializable {
             }
             if (reference.getGenNumber() < MAX_GENERATION) {
                 freeReferences.add(reference.getObjNumber());
+                ensureCount(Math.max(this.count, reference.getObjNumber()));
                 xref[reference.getObjNumber()] = null;
             }
 
