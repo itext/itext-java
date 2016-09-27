@@ -441,7 +441,7 @@ public class TextRenderer extends AbstractRenderer {
                 }
                 if (selectedEntry != null) {
                     Character.UnicodeScript selectScript = ((Map.Entry<Character.UnicodeScript, Integer>)selectedEntry).getKey();
-                    if (selectScript == Character.UnicodeScript.ARABIC || selectScript == Character.UnicodeScript.HEBREW && parent instanceof LineRenderer) {
+                    if ((selectScript == Character.UnicodeScript.ARABIC || selectScript == Character.UnicodeScript.HEBREW) && parent instanceof LineRenderer) {
                         setProperty(Property.BASE_DIRECTION, BaseDirection.DEFAULT_BIDI);
                     }
                     if (supportedScripts != null && supportedScripts.contains(selectScript)) {
