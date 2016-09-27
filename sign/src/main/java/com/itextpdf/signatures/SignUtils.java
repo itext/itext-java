@@ -86,6 +86,8 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.esf.SigPolicyQualifierInfo;
+import org.bouncycastle.asn1.esf.SigPolicyQualifiers;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.Extension;
@@ -296,6 +298,10 @@ class SignUtils {
 
     static Signature getSignatureHelper(String algorithm, String provider) throws NoSuchProviderException, NoSuchAlgorithmException {
         return provider == null ? Signature.getInstance(algorithm) : Signature.getInstance(algorithm, provider);
+    }
+
+    static SigPolicyQualifiers createSigPolicyQualifiers(SigPolicyQualifierInfo... sigPolicyQualifierInfo) {
+        return new SigPolicyQualifiers(sigPolicyQualifierInfo);
     }
 
     static Iterable<X509Certificate> getCertificates(final KeyStore keyStore) throws KeyStoreException {

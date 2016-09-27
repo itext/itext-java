@@ -130,10 +130,9 @@ public class SignaturePolicyInfo {
         if (this.policyUri != null && this.policyUri.length() > 0) {
             spqi = new SigPolicyQualifierInfo(PKCSObjectIdentifiers.id_spq_ets_uri, new DERIA5String(this.policyUri));
         }
-        SigPolicyQualifiers qualifiers = new SigPolicyQualifiers(new SigPolicyQualifierInfo[] {spqi});
 
         signaturePolicyIdentifier = new SignaturePolicyIdentifier(new SignaturePolicyId(DERObjectIdentifier.getInstance(new DERObjectIdentifier(this.policyIdentifier.replace("urn:oid:", ""))),
-                new OtherHashAlgAndValue(new AlgorithmIdentifier(algId), new DEROctetString(this.policyHash)), qualifiers));
+                new OtherHashAlgAndValue(new AlgorithmIdentifier(algId), new DEROctetString(this.policyHash)), SignUtils.createSigPolicyQualifiers(spqi)));
 
         return signaturePolicyIdentifier;
     }
