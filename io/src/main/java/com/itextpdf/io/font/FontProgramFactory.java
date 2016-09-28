@@ -330,14 +330,39 @@ public final class FontProgramFactory {
         return cached ? FontCache.saveFont(fontBuilt, fontKey) : fontBuilt;
     }
 
+    /**
+     * Creates a FontProgram from the font file that has been previously registered.
+     * @param fontName either a font alias, if the font file has been registered with an alias,
+     *                 or just a font name otherwise
+     * @param style the style of the font to look for. Possible values are listed in {@link FontConstants}.
+     *              See {@link FontConstants#BOLD}, {@link FontConstants#ITALIC}, {@link FontConstants#NORMAL},
+     *              {@link FontConstants#BOLDITALIC}, {@link FontConstants#UNDEFINED}
+     * @param cached whether to try to get the font program from cache
+     * @return created {@link FontProgram}
+     */
     public static FontProgram createRegisteredFont(String fontName, int style, boolean cached) throws java.io.IOException {
         return fontRegisterProvider.getFont(fontName, style, cached);
     }
 
+    /**
+     * Creates a FontProgram from the font file that has been previously registered.
+     * @param fontName either a font alias, if the font file has been registered with an alias,
+     *                 or just a font name otherwise
+     * @param style the style of the font to look for. Possible values are listed in {@link FontConstants}.
+     *              See {@link FontConstants#BOLD}, {@link FontConstants#ITALIC}, {@link FontConstants#NORMAL},
+     *              {@link FontConstants#BOLDITALIC}, {@link FontConstants#UNDEFINED}
+     * @return created {@link FontProgram}
+     */
     public static FontProgram createRegisteredFont(String fontName, int style) throws java.io.IOException {
         return fontRegisterProvider.getFont(fontName, style);
     }
 
+    /**
+     * Creates a FontProgram from the font file that has been previously registered.
+     * @param fontName either a font alias, if the font file has been registered with an alias,
+     *                 or just a font name otherwise
+     * @return created {@link FontProgram}
+     */
     public static FontProgram createRegisteredFont(String fontName) throws java.io.IOException {
         return fontRegisterProvider.getFont(fontName, FontConstants.UNDEFINED);
     }

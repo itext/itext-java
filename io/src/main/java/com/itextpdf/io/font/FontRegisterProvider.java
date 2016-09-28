@@ -158,21 +158,15 @@ class FontRegisterProvider {
             synchronized (family) {
                 // some bugs were fixed here by Daniel Marczisovszky
                 int s = style == FontConstants.UNDEFINED ? FontConstants.NORMAL : style;
-                int fs = FontConstants.NORMAL;
-                boolean found = false;
                 for (String f : family) {
                     String lcf = f.toLowerCase();
-                    fs = FontConstants.NORMAL;
+                    int fs = FontConstants.NORMAL;
                     if (lcf.contains("bold")) fs |= FontConstants.BOLD;
                     if (lcf.contains("italic") || lcf.contains("oblique")) fs |= FontConstants.ITALIC;
                     if ((s & FontConstants.BOLDITALIC) == fs) {
                         fontName = f;
-                        found = true;
                         break;
                     }
-                }
-                if (style != FontConstants.UNDEFINED && found) {
-                    style &= ~fs;
                 }
             }
         }
@@ -182,20 +176,11 @@ class FontRegisterProvider {
     protected FontProgram getFontProgram(String fontName, boolean cached) throws java.io.IOException {
         FontProgram fontProgram = null;
         fontName = fontNames.get(fontName.toLowerCase());
-        // the font is not registered as truetype font
         if (fontName != null) {
             fontProgram = FontProgramFactory.createFont(fontName, cached);
         }
-        if (fontProgram == null) {
-            try {
-                // the font is a type 1 font or CJK font
-                fontProgram = FontProgramFactory.createFont(fontName, cached);
-            } catch (IOException ignored) {
-            }
-        }
         return fontProgram;
     }
-
 
     /**
      * Register a font by giving explicitly the font family and name.
@@ -241,7 +226,8 @@ class FontRegisterProvider {
     }
 
     /**
-     * Register a ttf- or a ttc-file.
+     * Register a font file, either .ttf or .otf, .afm or a font from TrueType Collection.
+     * If a TrueType Collection is registered, an additional index of the font program can be specified
      *
      * @param path the path to a ttf- or ttc-file
      */
