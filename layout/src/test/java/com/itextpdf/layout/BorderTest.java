@@ -468,7 +468,31 @@ public class BorderTest extends ExtendedITextTest {
         table.addCell(cell);
 
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
+        cell.setBorder(new SolidBorder(Color.RED, 45f));
+        table.addCell(cell);
+        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell.setBorder(new SolidBorder(Color.RED, 64f));
+        table.addCell(cell);
+        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell.setBorder(new SolidBorder(Color.RED, 102f));
+        table.addCell(cell);
+        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell.setBorder(new SolidBorder(Color.RED, 11f));
+        table.addCell(cell);
+        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell.setBorder(new SolidBorder(Color.RED, 12f));
+        table.addCell(cell);
+        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell.setBorder(new SolidBorder(Color.RED, 44f));
+        table.addCell(cell);
+        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell.setBorder(new SolidBorder(Color.RED, 27f));
+        table.addCell(cell);
+        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell.setBorder(new SolidBorder(Color.RED, 16f));
+        table.addCell(cell);
+        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell.setBorder(new SolidBorder(Color.RED, 59));
         table.addCell(cell);
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 50f));
@@ -498,92 +522,50 @@ public class BorderTest extends ExtendedITextTest {
         cell.setBorder(new SolidBorder(Color.RED, 50f));
         table.addCell(cell);
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
+        cell.setBorder(new SolidBorder(Color.RED, 20f));
         table.addCell(cell);
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
+        cell.setBorder(new SolidBorder(Color.RED, 20f));
         table.addCell(cell);
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
+        cell.setBorder(new SolidBorder(Color.RED, 20f));
+
         table.addCell(cell);
+
+        doc.add(table);
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void wideBorderTest03() throws IOException, InterruptedException {
+        fileName = "wideBorderTest03.pdf";
+        outFileName = destinationFolder + fileName;
+        cmpFileName = sourceFolder + cmpPrefix + fileName;
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc  = new Document(pdfDocument, new PageSize(842, 400));
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(Color.GREEN, 91f));
+        Cell cell;
+
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
+        cell.setBorder(new SolidBorder(Color.BLUE, 20f));
         table.addCell(cell);
+
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
+        cell.setBorder(new SolidBorder(Color.RED, 120f));
         table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
+
+
+//        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+//        cell.setBorder(new SolidBorder(Color.RED, 50f));
+//        table.addCell(cell);
+//
+//        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+//        cell.setBorder(new SolidBorder(Color.RED, 50f));
+//        table.addCell(cell);
 
         doc.add(table);
         closeDocumentAndCompareOutputs(doc);
@@ -650,15 +632,6 @@ public class BorderTest extends ExtendedITextTest {
                 "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
                 "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
                 "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
-                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
-                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
-                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
-                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
-                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
-                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
-                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
-                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
-                "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
                 "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.";
         Table table = new Table(2);
         table.setBorderTop(new DottedBorder(Color.MAGENTA, 3f));
@@ -698,32 +671,18 @@ public class BorderTest extends ExtendedITextTest {
         fileName = "tableWithHeaderTest01.pdf";
         Document doc = createDocument();
 
-        Table table = new Table(1);
-        Cell cell;
-
-        cell = new Cell().add("Header").setBorderBottom(new SolidBorder(Color.GREEN, 25f));
-        table.addHeaderCell(cell);
-
-        cell = new Cell().add("Hello World").setBorder(new SolidBorder(Color.MAGENTA, 5f));
-        table.addCell(cell);
-
-        doc.add(table);
-        closeDocumentAndCompareOutputs(doc);
-    }
-
-    @Test
-    public void tableWithHeaderTest02() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderTest02.pdf";
-        Document doc = createDocument();
-
-        Table table = new Table(1);
+        Table table = new Table(2);
         table.setBorder(new SolidBorder(Color.YELLOW, 30));
         Cell cell;
 
-        cell = new Cell().add("Header").setBorder(new SolidBorder(Color.GREEN, 25f));
-        table.addHeaderCell(cell);
+        cell = new Cell().add("Header with narrow border").setBorder(new SolidBorder(Color.GREEN, 0.5f));
+        table.addCell(cell);
+        cell = new Cell().add("Header with wide border").setBorder(new SolidBorder(Color.GREEN, 65f));
+        table.addCell(cell);
 
-        cell = new Cell().add("Hello World").setBorder(new SolidBorder(Color.MAGENTA, 5f));
+        cell = new Cell().add("Hello").setBorder(new SolidBorder(Color.MAGENTA, 5f));
+        table.addCell(cell);
+        cell = new Cell().add("World").setBorder(new SolidBorder(Color.MAGENTA, 5f));
         table.addCell(cell);
 
         doc.add(table);
