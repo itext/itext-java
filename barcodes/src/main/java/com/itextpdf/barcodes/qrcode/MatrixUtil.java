@@ -52,7 +52,7 @@ final class MatrixUtil {
     private MatrixUtil() {
     }
 
-    private static final int[][] POSITION_DETECTION_PATTERN =  {
+    private static final int[][] POSITION_DETECTION_PATTERN = {
             {1, 1, 1, 1, 1, 1, 1},
             {1, 0, 0, 0, 0, 0, 1},
             {1, 0, 1, 1, 1, 0, 1},
@@ -80,46 +80,46 @@ final class MatrixUtil {
 
     // From Appendix E. Table 1, JIS0510X:2004 (p 71). The table was double-checked by komatsu.
     private static final int[][] POSITION_ADJUSTMENT_PATTERN_COORDINATE_TABLE = {
-            {-1, -1, -1, -1,  -1,  -1,  -1},  // Version 1
-            { 6, 18, -1, -1,  -1,  -1,  -1},  // Version 2
-            { 6, 22, -1, -1,  -1,  -1,  -1},  // Version 3
-            { 6, 26, -1, -1,  -1,  -1,  -1},  // Version 4
-            { 6, 30, -1, -1,  -1,  -1,  -1},  // Version 5
-            { 6, 34, -1, -1,  -1,  -1,  -1},  // Version 6
-            { 6, 22, 38, -1,  -1,  -1,  -1},  // Version 7
-            { 6, 24, 42, -1,  -1,  -1,  -1},  // Version 8
-            { 6, 26, 46, -1,  -1,  -1,  -1},  // Version 9
-            { 6, 28, 50, -1,  -1,  -1,  -1},  // Version 10
-            { 6, 30, 54, -1,  -1,  -1,  -1},  // Version 11
-            { 6, 32, 58, -1,  -1,  -1,  -1},  // Version 12
-            { 6, 34, 62, -1,  -1,  -1,  -1},  // Version 13
-            { 6, 26, 46, 66,  -1,  -1,  -1},  // Version 14
-            { 6, 26, 48, 70,  -1,  -1,  -1},  // Version 15
-            { 6, 26, 50, 74,  -1,  -1,  -1},  // Version 16
-            { 6, 30, 54, 78,  -1,  -1,  -1},  // Version 17
-            { 6, 30, 56, 82,  -1,  -1,  -1},  // Version 18
-            { 6, 30, 58, 86,  -1,  -1,  -1},  // Version 19
-            { 6, 34, 62, 90,  -1,  -1,  -1},  // Version 20
-            { 6, 28, 50, 72,  94,  -1,  -1},  // Version 21
-            { 6, 26, 50, 74,  98,  -1,  -1},  // Version 22
-            { 6, 30, 54, 78, 102,  -1,  -1},  // Version 23
-            { 6, 28, 54, 80, 106,  -1,  -1},  // Version 24
-            { 6, 32, 58, 84, 110,  -1,  -1},  // Version 25
-            { 6, 30, 58, 86, 114,  -1,  -1},  // Version 26
-            { 6, 34, 62, 90, 118,  -1,  -1},  // Version 27
-            { 6, 26, 50, 74,  98, 122,  -1},  // Version 28
-            { 6, 30, 54, 78, 102, 126,  -1},  // Version 29
-            { 6, 26, 52, 78, 104, 130,  -1},  // Version 30
-            { 6, 30, 56, 82, 108, 134,  -1},  // Version 31
-            { 6, 34, 60, 86, 112, 138,  -1},  // Version 32
-            { 6, 30, 58, 86, 114, 142,  -1},  // Version 33
-            { 6, 34, 62, 90, 118, 146,  -1},  // Version 34
-            { 6, 30, 54, 78, 102, 126, 150},  // Version 35
-            { 6, 24, 50, 76, 102, 128, 154},  // Version 36
-            { 6, 28, 54, 80, 106, 132, 158},  // Version 37
-            { 6, 32, 58, 84, 110, 136, 162},  // Version 38
-            { 6, 26, 54, 82, 110, 138, 166},  // Version 39
-            { 6, 30, 58, 86, 114, 142, 170},  // Version 40
+            {-1, -1, -1, -1, -1, -1, -1},  // Version 1
+            {6, 18, -1, -1, -1, -1, -1},  // Version 2
+            {6, 22, -1, -1, -1, -1, -1},  // Version 3
+            {6, 26, -1, -1, -1, -1, -1},  // Version 4
+            {6, 30, -1, -1, -1, -1, -1},  // Version 5
+            {6, 34, -1, -1, -1, -1, -1},  // Version 6
+            {6, 22, 38, -1, -1, -1, -1},  // Version 7
+            {6, 24, 42, -1, -1, -1, -1},  // Version 8
+            {6, 26, 46, -1, -1, -1, -1},  // Version 9
+            {6, 28, 50, -1, -1, -1, -1},  // Version 10
+            {6, 30, 54, -1, -1, -1, -1},  // Version 11
+            {6, 32, 58, -1, -1, -1, -1},  // Version 12
+            {6, 34, 62, -1, -1, -1, -1},  // Version 13
+            {6, 26, 46, 66, -1, -1, -1},  // Version 14
+            {6, 26, 48, 70, -1, -1, -1},  // Version 15
+            {6, 26, 50, 74, -1, -1, -1},  // Version 16
+            {6, 30, 54, 78, -1, -1, -1},  // Version 17
+            {6, 30, 56, 82, -1, -1, -1},  // Version 18
+            {6, 30, 58, 86, -1, -1, -1},  // Version 19
+            {6, 34, 62, 90, -1, -1, -1},  // Version 20
+            {6, 28, 50, 72, 94, -1, -1},  // Version 21
+            {6, 26, 50, 74, 98, -1, -1},  // Version 22
+            {6, 30, 54, 78, 102, -1, -1},  // Version 23
+            {6, 28, 54, 80, 106, -1, -1},  // Version 24
+            {6, 32, 58, 84, 110, -1, -1},  // Version 25
+            {6, 30, 58, 86, 114, -1, -1},  // Version 26
+            {6, 34, 62, 90, 118, -1, -1},  // Version 27
+            {6, 26, 50, 74, 98, 122, -1},  // Version 28
+            {6, 30, 54, 78, 102, 126, -1},  // Version 29
+            {6, 26, 52, 78, 104, 130, -1},  // Version 30
+            {6, 30, 56, 82, 108, 134, -1},  // Version 31
+            {6, 34, 60, 86, 112, 138, -1},  // Version 32
+            {6, 30, 58, 86, 114, 142, -1},  // Version 33
+            {6, 34, 62, 90, 118, 146, -1},  // Version 34
+            {6, 30, 54, 78, 102, 126, 150},  // Version 35
+            {6, 24, 50, 76, 102, 128, 154},  // Version 36
+            {6, 28, 54, 80, 106, 132, 158},  // Version 37
+            {6, 32, 58, 84, 110, 136, 162},  // Version 38
+            {6, 26, 54, 82, 110, 138, 166},  // Version 39
+            {6, 30, 58, 86, 114, 142, 170},  // Version 40
     };
 
     // Type info cells at the left top corner.
@@ -156,8 +156,16 @@ final class MatrixUtil {
         matrix.clear((byte) 0xff);
     }
 
-    // Build 2D matrix of QR Code from "dataBits" with "ecLevel", "version" and "getMaskPattern". On
-    // success, store the result in "matrix" and return true.
+    /**
+     * Build 2D matrix of QR Code from "dataBits" with "ecLevel", "version" and "getMaskPattern". On
+     * success, store the result in "matrix".
+     *
+     * @param dataBits    BitVector containing the databits
+     * @param ecLevel     Error correction level of the QR code (L,M,Q,H)
+     * @param version     Version of the QR code, [1 .. 40]
+     * @param maskPattern masking pattern
+     * @param matrix      Bytematrix in which the output will be stored
+     */
     public static void buildMatrix(BitVector dataBits, ErrorCorrectionLevel ecLevel, int version,
                                    int maskPattern, ByteMatrix matrix) throws WriterException {
         clearMatrix(matrix);
@@ -170,12 +178,17 @@ final class MatrixUtil {
         embedDataBits(dataBits, maskPattern, matrix);
     }
 
-    // Embed basic patterns. On success, modify the matrix and return true.
-    // The basic patterns are:
-    // - Position detection patterns
-    // - Timing patterns
-    // - Dark dot at the left bottom corner
-    // - Position adjustment patterns, if need be
+    /**
+     * Embed basic patterns. On success, modify the matrix.
+     * The basic patterns are:
+     * - Position detection patterns
+     * - Timing patterns
+     * - Dark dot at the left bottom corner
+     * - Position adjustment patterns, if need be
+     *
+     * @param version Version of the QR code, [1 .. 40]
+     * @param matrix  Bytematrix in which the output will be stored
+     */
     public static void embedBasicPatterns(int version, ByteMatrix matrix) throws WriterException {
         // Let's get started with embedding big squares at corners.
         embedPositionDetectionPatternsAndSeparators(matrix);
@@ -188,7 +201,13 @@ final class MatrixUtil {
         embedTimingPatterns(matrix);
     }
 
-    // Embed type information. On success, modify the matrix.
+    /**
+     * Embed type information into the matrix
+     *
+     * @param ecLevel     The error correction level (L,M,Q,H)
+     * @param maskPattern the masking pattern
+     * @param matrix      Bytematrix in which the output will be stored
+     */
     public static void embedTypeInfo(ErrorCorrectionLevel ecLevel, int maskPattern, ByteMatrix matrix)
             throws WriterException {
         BitVector typeInfoBits = new BitVector();
@@ -307,31 +326,33 @@ final class MatrixUtil {
         return numDigits;
     }
 
-    // Calculate BCH (Bose-Chaudhuri-Hocquenghem) code for "value" using polynomial "poly". The BCH
-    // code is used for encoding type information and version information.
-    // Example: Calculation of version information of 7.
-    // f(x) is created from 7.
-    //   - 7 = 000111 in 6 bits
-    //   - f(x) = x^2 + x^2 + x^1
-    // g(x) is given by the standard (p. 67)
-    //   - g(x) = x^12 + x^11 + x^10 + x^9 + x^8 + x^5 + x^2 + 1
-    // Multiply f(x) by x^(18 - 6)
-    //   - f'(x) = f(x) * x^(18 - 6)
-    //   - f'(x) = x^14 + x^13 + x^12
-    // Calculate the remainder of f'(x) / g(x)
-    //         x^2
-    //         __________________________________________________
-    //   g(x) )x^14 + x^13 + x^12
-    //         x^14 + x^13 + x^12 + x^11 + x^10 + x^7 + x^4 + x^2
-    //         --------------------------------------------------
-    //                              x^11 + x^10 + x^7 + x^4 + x^2
-    //
-    // The remainder is x^11 + x^10 + x^7 + x^4 + x^2
-    // Encode it in binary: 110010010100
-    // The return value is 0xc94 (1100 1001 0100)
-    //
-    // Since all coefficients in the polynomials are 1 or 0, we can do the calculation by bit
-    // operations. We don't care if cofficients are positive or negative.
+    /**
+     * Calculate BCH (Bose-Chaudhuri-Hocquenghem) code for "value" using polynomial "poly". The BCH
+     * code is used for encoding type information and version information.
+     * Example: Calculation of version information of 7.
+     * f(x) is created from 7.
+     * - 7 = 000111 in 6 bits
+     * - f(x) = x^2 + x^2 + x^1
+     * g(x) is given by the standard (p. 67)
+     * - g(x) = x^12 + x^11 + x^10 + x^9 + x^8 + x^5 + x^2 + 1
+     * Multiply f(x) by x^(18 - 6)
+     * - f'(x) = f(x) * x^(18 - 6)
+     * - f'(x) = x^14 + x^13 + x^12
+     * Calculate the remainder of f'(x) / g(x)
+     * x^2
+     * __________________________________________________
+     * g(x) )x^14 + x^13 + x^12
+     * x^14 + x^13 + x^12 + x^11 + x^10 + x^7 + x^4 + x^2
+     * --------------------------------------------------
+     * x^11 + x^10 + x^7 + x^4 + x^2
+     * <p>
+     * The remainder is x^11 + x^10 + x^7 + x^4 + x^2
+     * Encode it in binary: 110010010100
+     * The return value is 0xc94 (1100 1001 0100)
+     * <p>
+     * Since all coefficients in the polynomials are 1 or 0, we can do the calculation by bit
+     * operations. We don't care if cofficients are positive or negative.
+     */
     public static int calculateBCHCode(int value, int poly) {
         // If poly is "1 1111 0010 0101" (version info poly), msbSetInPoly is 13. We'll subtract 1
         // from 13 to make it 12.
@@ -382,12 +403,12 @@ final class MatrixUtil {
 
     // Check if "value" is empty.
     private static boolean isEmpty(byte value) {
-        return value == (byte)0xff;
+        return value == (byte) 0xff;
     }
 
     // Check if "value" is valid.
     private static boolean isValidValue(byte value) {
-        return (value == (byte)0xff ||  // Empty.
+        return (value == (byte) 0xff ||  // Empty.
                 value == 0 ||  // Light (white).
                 value == 1);  // Dark (black).
     }

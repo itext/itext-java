@@ -142,6 +142,12 @@ final class GF256Poly {
         return result;
     }
 
+    /**
+     * GF addition or subtraction (they are identical for a GF(2^n)
+     * @param other the other GF-poly
+     * @return new GF256Poly obtained by summing this GF and other
+     */
+
     GF256Poly addOrSubtract(GF256Poly other) {
         if (!field.equals(other.field)) {
             throw new IllegalArgumentException("GF256Polys do not have same GF256 field");
@@ -172,6 +178,11 @@ final class GF256Poly {
         return new GF256Poly(field, sumDiff);
     }
 
+    /**
+     * GF multiplication
+     * @param other the other GF-poly
+     * @return new GF-poly obtained by multiplying this  with other
+     */
     GF256Poly multiply(GF256Poly other) {
         if (!field.equals(other.field)) {
             throw new IllegalArgumentException("GF256Polys do not have same GF256 field");
@@ -194,6 +205,11 @@ final class GF256Poly {
         return new GF256Poly(field, product);
     }
 
+    /**
+     * GF scalar multiplication
+     * @param scalar scalar
+     * @return new GF-poly obtained by multiplying every element of this with the scalar.
+     */
     GF256Poly multiply(int scalar) {
         if (scalar == 0) {
             return field.getZero();
