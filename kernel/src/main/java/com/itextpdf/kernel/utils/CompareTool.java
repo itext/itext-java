@@ -1328,27 +1328,57 @@ public class CompareTool {
         } else {
             String cmpStr = cmpString.toUnicodeString();
             String outStr = outString.toUnicodeString();
+            String errorMessage = "";
             if (cmpStr.length() != outStr.length()) {
-                if (compareResult != null && currentPath != null)
-                    compareResult.addError(currentPath, MessageFormat.format("PdfString. Lengths are different. Expected: {0}. Found: {1}", cmpStr.length(), outStr.length()));
+                errorMessage += MessageFormat.format("PdfString. Lengths are different. Expected: {0}. Found: {1}", cmpStr.length(), outStr.length()) + "\n";
             } else {
-                for (int i = 0; i < cmpStr.length(); i++) {
-                    if (cmpStr.charAt(i) != outStr.charAt(i)) {
-                        int l = Math.max(0, i - 10);
-                        int r = Math.min(cmpStr.length(), i + 10);
-                        if (compareResult != null && currentPath != null) {
-                            currentPath.pushOffsetToPath(i);
-                            compareResult.addError(currentPath, MessageFormat.format("PdfString. Characters differ at position {0}. Expected: {1} ({2}). Found: {3} ({4}).",
-                                    i, Character.toString(cmpStr.charAt(i)), cmpStr.substring(l, r).replace("\n", "\\n"),
-                                    Character.toString(outStr.charAt(i)), outStr.substring(l, r).replace("\n", "\\n")));
-                            currentPath.pop();
-                        }
-                        break;
-                    }
-                }
+                errorMessage += "PdfString. Chars are different.\n";
+            }
+            String stringDifference = findStringDifference(outStr, cmpStr);
+            if (stringDifference != null) {
+                errorMessage += stringDifference;
+            }
+
+            if (compareResult != null && currentPath != null) {
+                compareResult.addError(currentPath, errorMessage);
             }
             return false;
         }
+    }
+
+    private String findStringDifference(String outString, String cmpString) {
+        int numberOfDifferentChars = 0;
+        int firstDifferenceOffset = 0;
+        int minLength = Math.min(cmpString.length(), outString.length());
+        for (int i = 0; i < minLength; i++) {
+            if (cmpString.charAt(i) != cmpString.charAt(i)) {
+                ++numberOfDifferentChars;
+                if (numberOfDifferentChars == 1) {
+                    firstDifferenceOffset = i;
+                }
+            }
+        }
+        String errorMessage = null;
+        if (numberOfDifferentChars > 0) {
+            int diffBytesAreaL = 10;
+            int diffBytesAreaR = 10;
+            int lCmp = Math.max(0, firstDifferenceOffset - diffBytesAreaL);
+            int rCmp = Math.min(cmpString.length(), firstDifferenceOffset + diffBytesAreaR);
+            int lOut = Math.max(0, firstDifferenceOffset - diffBytesAreaL);
+            int rOut = Math.min(outString.length(), firstDifferenceOffset + diffBytesAreaR);
+
+
+            String cmpByte = String.valueOf(cmpString.charAt(firstDifferenceOffset));
+            String cmpByteNeighbours = cmpString.substring(lCmp, rCmp).replaceAll("\\r|\\n", " ");
+            String outByte = String.valueOf(outString.charAt(firstDifferenceOffset));
+            String outBytesNeighbours = outString.substring(lOut, rOut).replaceAll("\\r|\\n", " ");
+            errorMessage = MessageFormat.format("First chars difference is encountered at index {0}. Expected: {1} ({2}). Found: {3} ({4}). Total number of different chars: {5}",
+                    Integer.valueOf(firstDifferenceOffset).toString(), cmpByte, cmpByteNeighbours, outByte, outBytesNeighbours, numberOfDifferentChars);
+        } else { // lengths are different
+            errorMessage = MessageFormat.format("Chars of the shorter string are the same as the first {0} chars of the longer one.", minLength);
+        }
+
+        return errorMessage;
     }
 
     private byte[] convertPdfStringToBytes(PdfString pdfString) {
