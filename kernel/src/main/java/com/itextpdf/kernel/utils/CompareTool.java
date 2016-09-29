@@ -1332,9 +1332,9 @@ public class CompareTool {
             if (cmpStr.length() != outStr.length()) {
                 errorMessage += MessageFormat.format("PdfString. Lengths are different. Expected: {0}. Found: {1}", cmpStr.length(), outStr.length()) + "\n";
             } else {
-                errorMessage += "PdfString. Chars are different.\n";
+                errorMessage += "PdfString. Characters are different.\n";
             }
-            String stringDifference = findStringDifference(outStr, cmpStr);
+            String stringDifference = findStringDifference(outStr, cmpStr, currentPath);
             if (stringDifference != null) {
                 errorMessage += stringDifference;
             }
@@ -1346,22 +1346,23 @@ public class CompareTool {
         }
     }
 
-    private String findStringDifference(String outString, String cmpString) {
+    private String findStringDifference(String outString, String cmpString, ObjectPath currentPath) {
         int numberOfDifferentChars = 0;
         int firstDifferenceOffset = 0;
         int minLength = Math.min(cmpString.length(), outString.length());
         for (int i = 0; i < minLength; i++) {
-            if (cmpString.charAt(i) != cmpString.charAt(i)) {
+            if (cmpString.charAt(i) != outString.charAt(i)) {
                 ++numberOfDifferentChars;
                 if (numberOfDifferentChars == 1) {
                     firstDifferenceOffset = i;
+                    currentPath.pushOffsetToPath(i);
                 }
             }
         }
         String errorMessage = null;
         if (numberOfDifferentChars > 0) {
-            int diffBytesAreaL = 10;
-            int diffBytesAreaR = 10;
+            int diffBytesAreaL = 15;
+            int diffBytesAreaR = 15;
             int lCmp = Math.max(0, firstDifferenceOffset - diffBytesAreaL);
             int rCmp = Math.min(cmpString.length(), firstDifferenceOffset + diffBytesAreaR);
             int lOut = Math.max(0, firstDifferenceOffset - diffBytesAreaL);
@@ -1372,10 +1373,10 @@ public class CompareTool {
             String cmpByteNeighbours = cmpString.substring(lCmp, rCmp).replaceAll("\\r|\\n", " ");
             String outByte = String.valueOf(outString.charAt(firstDifferenceOffset));
             String outBytesNeighbours = outString.substring(lOut, rOut).replaceAll("\\r|\\n", " ");
-            errorMessage = MessageFormat.format("First chars difference is encountered at index {0}. Expected: {1} ({2}). Found: {3} ({4}). Total number of different chars: {5}",
+            errorMessage = MessageFormat.format("First characters difference is encountered at index {0}.\nExpected: {1} ({2}).\nFound: {3} ({4}).\nTotal number of different characters: {5}",
                     Integer.valueOf(firstDifferenceOffset).toString(), cmpByte, cmpByteNeighbours, outByte, outBytesNeighbours, numberOfDifferentChars);
         } else { // lengths are different
-            errorMessage = MessageFormat.format("Chars of the shorter string are the same as the first {0} chars of the longer one.", minLength);
+            errorMessage = MessageFormat.format("All characters of the shorter string are the same as the first {0} characters of the longer one.", minLength);
         }
 
         return errorMessage;
