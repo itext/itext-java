@@ -30,7 +30,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -367,7 +366,7 @@ public class BorderTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
-        Document doc  = new Document(pdfDocument, new PageSize(842, 842));
+        Document doc  = new Document(pdfDocument, new PageSize(842,842));
 
         Table table = new Table(3);
         table.setBorder(new SolidBorder(Color.GREEN, 91f));
@@ -380,11 +379,11 @@ public class BorderTest extends ExtendedITextTest {
         cell = new Cell(2, 1).add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 70f));
         table.addCell(cell);
-//
+
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 70f));
         table.addCell(cell);
-//
+
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.BLUE, 20f));
         table.addCell(cell);
