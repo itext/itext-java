@@ -670,7 +670,7 @@ public class TextRenderer extends AbstractRenderer {
 
         if (text != null) {
             Glyph glyph;
-            while (text.start < text.end && (glyph = text.get(text.start)).hasValidUnicode() && Character.isWhitespace((char) glyph.getUnicode()) && !isNewLine(text, text.start)) {
+            while (text.start < text.end && (glyph = text.get(text.start)).hasValidUnicode() && isSpaceGlyph(glyph) && !isNewLine(text, text.start)) {
                 text.start++;
             }
         }
@@ -696,7 +696,7 @@ public class TextRenderer extends AbstractRenderer {
         int firstNonSpaceCharIndex = line.end - 1;
         while (firstNonSpaceCharIndex >= line.start) {
             Glyph currentGlyph = line.get(firstNonSpaceCharIndex);
-            if (!currentGlyph.hasValidUnicode() || !Character.isWhitespace((char) currentGlyph.getUnicode())) {
+            if (!currentGlyph.hasValidUnicode() || !isSpaceGlyph(currentGlyph)) {
                 break;
             }
 
