@@ -772,7 +772,7 @@ public class PdfReader implements Closeable, Serializable {
         }
 
         Integer xrefSize = trailer.getAsInt(PdfName.Size);
-        if (xrefSize == null || xrefSize != pdfDocument.getXref().size()) {
+        if (xrefSize == null) {
             throw new PdfException(PdfException.InvalidXrefTable);
         }
     }

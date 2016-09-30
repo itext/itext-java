@@ -1226,6 +1226,32 @@ public class PdfReaderTest extends ExtendedITextTest{
 
         document.close();
     }
+    
+    @Test
+    public void incorrectXrefSizeInTrailer() throws IOException {
+        String filename = sourceFolder + "HelloWorldIncorrectXRefSizeInTrailer.pdf";
+
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument document = new PdfDocument(reader);
+
+        Assert.assertFalse("Need rebuildXref()", reader.hasRebuiltXref());
+        Assert.assertNotNull("Invalid trailer", document.getTrailer().get(PdfName.ID));
+
+        document.close();
+    }
+    
+    @Test
+    public void incorrectXrefSizeInTrailerAppend() throws IOException {
+        String filename = sourceFolder + "10PagesDocumentAppendedIncorrectXRefSize.pdf";
+
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument document = new PdfDocument(reader);
+
+        Assert.assertFalse("Need rebuildXref()", reader.hasRebuiltXref());
+        Assert.assertNotNull("Invalid trailer", document.getTrailer().get(PdfName.ID));
+
+        document.close();
+    }
 
 
     @Test(timeout = 1000)
