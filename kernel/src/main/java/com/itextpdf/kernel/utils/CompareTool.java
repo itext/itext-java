@@ -1223,27 +1223,27 @@ public class CompareTool {
         if (Arrays.equals(outStreamBytes, cmpStreamBytes)) {
             return compareDictionariesExtended(outStream, cmpStream, currentPath, compareResult);
         } else {
-            String errorMessage = "";
+            StringBuilder errorMessage = new StringBuilder();
             if (cmpStreamBytes.length != outStreamBytes.length) {
-                errorMessage += MessageFormat.format("PdfStream. Lengths are different. Expected: {0}. Found: {1}", cmpStreamBytes.length, outStreamBytes.length) + "\n";
+                errorMessage.append(MessageFormat.format("PdfStream. Lengths are different. Expected: {0}. Found: {1}\n", cmpStreamBytes.length, outStreamBytes.length));
             } else {
-                errorMessage += "PdfStream. Bytes are different.\n";
+                errorMessage.append("PdfStream. Bytes are different.\n");
             }
-            String bytesDifference = findBytesDifference(outStreamBytes, cmpStreamBytes);
-            if (bytesDifference != null) {
-                errorMessage += bytesDifference;
-            }
+            int firstDifferenceOffset = findBytesDifference(outStreamBytes, cmpStreamBytes, errorMessage);
 
             if (compareResult != null && currentPath != null) {
-//            currentPath.pushOffsetToPath(firstDifferenceOffset);
-                compareResult.addError(currentPath, errorMessage);
-//            currentPath.pop();
+                currentPath.pushOffsetToPath(firstDifferenceOffset);
+                compareResult.addError(currentPath, errorMessage.toString());
+                currentPath.pop();
             }
             return false;
         }
     }
 
-    private String findBytesDifference(byte[] outStreamBytes, byte[] cmpStreamBytes) {
+    /**
+     * @return first difference offset
+     */
+    private int findBytesDifference(byte[] outStreamBytes, byte[] cmpStreamBytes, StringBuilder errorMessage) {
         int numberOfDifferentBytes = 0;
         int firstDifferenceOffset = 0;
         int minLength = Math.min(cmpStreamBytes.length, outStreamBytes.length);
@@ -1255,7 +1255,7 @@ public class CompareTool {
                 }
             }
         }
-        String errorMessage = null;
+        String bytesDifference = null;
         if (numberOfDifferentBytes > 0) {
             int diffBytesAreaL = 10;
             int diffBytesAreaR = 10;
@@ -1269,13 +1269,15 @@ public class CompareTool {
             String cmpByteNeighbours = new String(cmpStreamBytes, lCmp, rCmp - lCmp).replaceAll("\\r|\\n", " ");
             String outByte = new String(new byte[]{outStreamBytes[firstDifferenceOffset]});
             String outBytesNeighbours = new String(outStreamBytes, lOut, rOut - lOut).replaceAll("\\r|\\n", " ");
-            errorMessage = MessageFormat.format("First bytes difference is encountered at index {0}. Expected: {1} ({2}). Found: {3} ({4}). Total number of different bytes: {5}",
+            bytesDifference = MessageFormat.format("First bytes difference is encountered at index {0}. Expected: {1} ({2}). Found: {3} ({4}). Total number of different bytes: {5}",
                     Integer.valueOf(firstDifferenceOffset).toString(), cmpByte, cmpByteNeighbours, outByte, outBytesNeighbours, numberOfDifferentBytes);
         } else { // lengths are different
-            errorMessage = MessageFormat.format("Bytes of the shorter array are the same as the first {0} bytes of the longer one.", minLength);
+            firstDifferenceOffset = minLength;
+            bytesDifference = MessageFormat.format("Bytes of the shorter array are the same as the first {0} bytes of the longer one.", minLength);
         }
 
-        return errorMessage;
+        errorMessage.append(bytesDifference);
+        return firstDifferenceOffset;
     }
 
     private boolean compareArraysExtended(PdfArray outArray, PdfArray cmpArray, ObjectPath currentPath, CompareResult compareResult) {
@@ -1328,25 +1330,24 @@ public class CompareTool {
         } else {
             String cmpStr = cmpString.toUnicodeString();
             String outStr = outString.toUnicodeString();
-            String errorMessage = "";
+            StringBuilder errorMessage = new StringBuilder();
             if (cmpStr.length() != outStr.length()) {
-                errorMessage += MessageFormat.format("PdfString. Lengths are different. Expected: {0}. Found: {1}", cmpStr.length(), outStr.length()) + "\n";
+                errorMessage.append(MessageFormat.format("PdfString. Lengths are different. Expected: {0}. Found: {1}\n", cmpStr.length(), outStr.length()));
             } else {
-                errorMessage += "PdfString. Characters are different.\n";
+                errorMessage.append("PdfString. Characters are different.\n");
             }
-            String stringDifference = findStringDifference(outStr, cmpStr, currentPath);
-            if (stringDifference != null) {
-                errorMessage += stringDifference;
-            }
+            int firstDifferenceOffset = findStringDifference(outStr, cmpStr, errorMessage);
 
             if (compareResult != null && currentPath != null) {
-                compareResult.addError(currentPath, errorMessage);
+                currentPath.pushOffsetToPath(firstDifferenceOffset);
+                compareResult.addError(currentPath, errorMessage.toString());
+                currentPath.pop();
             }
             return false;
         }
     }
 
-    private String findStringDifference(String outString, String cmpString, ObjectPath currentPath) {
+    private int findStringDifference(String outString, String cmpString, StringBuilder errorMessage) {
         int numberOfDifferentChars = 0;
         int firstDifferenceOffset = 0;
         int minLength = Math.min(cmpString.length(), outString.length());
@@ -1355,11 +1356,10 @@ public class CompareTool {
                 ++numberOfDifferentChars;
                 if (numberOfDifferentChars == 1) {
                     firstDifferenceOffset = i;
-                    currentPath.pushOffsetToPath(i);
                 }
             }
         }
-        String errorMessage = null;
+        String stringDifference = null;
         if (numberOfDifferentChars > 0) {
             int diffBytesAreaL = 15;
             int diffBytesAreaR = 15;
@@ -1373,13 +1373,15 @@ public class CompareTool {
             String cmpByteNeighbours = cmpString.substring(lCmp, rCmp).replaceAll("\\r|\\n", " ");
             String outByte = String.valueOf(outString.charAt(firstDifferenceOffset));
             String outBytesNeighbours = outString.substring(lOut, rOut).replaceAll("\\r|\\n", " ");
-            errorMessage = MessageFormat.format("First characters difference is encountered at index {0}.\nExpected: {1} ({2}).\nFound: {3} ({4}).\nTotal number of different characters: {5}",
+            stringDifference = MessageFormat.format("First characters difference is encountered at index {0}.\nExpected: {1} ({2}).\nFound: {3} ({4}).\nTotal number of different characters: {5}",
                     Integer.valueOf(firstDifferenceOffset).toString(), cmpByte, cmpByteNeighbours, outByte, outBytesNeighbours, numberOfDifferentChars);
         } else { // lengths are different
-            errorMessage = MessageFormat.format("All characters of the shorter string are the same as the first {0} characters of the longer one.", minLength);
+            firstDifferenceOffset = minLength;
+            stringDifference = MessageFormat.format("All characters of the shorter string are the same as the first {0} characters of the longer one.", minLength);
         }
 
-        return errorMessage;
+        errorMessage.append(stringDifference);
+        return firstDifferenceOffset;
     }
 
     private byte[] convertPdfStringToBytes(PdfString pdfString) {
