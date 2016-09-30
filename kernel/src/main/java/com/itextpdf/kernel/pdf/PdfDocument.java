@@ -79,6 +79,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
@@ -163,7 +164,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     protected TagStructureContext tagStructureContext;
 
-    private static long lastDocumentId = 0;
+    private static AtomicLong lastDocumentId = new AtomicLong();
 
     protected long documentId;
 
@@ -1234,15 +1235,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         this.userProperties = userProperties;
     }
 
-    private synchronized long incrementDocumentId() {
-        return lastDocumentId++;
-    }
-
-
-    protected long getDocumentId() {
-        return documentId;
-    }
-
     /**
      * Gets list of indirect references.
      *
@@ -1758,6 +1750,15 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
     }
 
+    private synchronized long incrementDocumentId() {
+        return lastDocumentId.incrementAndGet();
+    }
+
+
+    private long getDocumentId() {
+        return documentId;
+    }
+
     /**
      * A structure storing documentId, object number and generation number. This structure is using to calculate
      * an unique object key during the copy process.
@@ -1767,10 +1768,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         private int objNr;
         private int genNr;
 
-        public IndirectRefDescription(long docId, int objNr, int genNr) {
-            this.docId = docId;
-            this.objNr = objNr;
-            this.genNr = genNr;
+        public IndirectRefDescription(PdfIndirectReference reference) {
+            this.docId = reference.getDocument().getDocumentId();
+            this.objNr = reference.getObjNumber();
+            this.genNr = reference.getGenNumber();
         }
 
         @Override
