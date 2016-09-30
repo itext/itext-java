@@ -62,6 +62,9 @@ final class QRCode {
     private int numRSBlocks;
     private ByteMatrix matrix;
 
+    /**
+     * Create a QR-code object with unitialized parameters
+     */
     public QRCode() {
         mode = null;
         ecLevel = null;
@@ -74,60 +77,87 @@ final class QRCode {
         numRSBlocks = -1;
         matrix = null;
     }
-
-    // Mode of the QR Code.
+    /**
+     * Mode used by the QR code to encode data into bits.
+     * Possible values: TERMINATOR, NUMERIC, ALPHANUMERIC, STRUCTURED_APPEND, BYTE, ECI, KANJI, FNC1_FIRST_POSITION, FNC2_SECOND_POSITION
+     * @return Mode of the QR Code.
+     */
     public Mode getMode() {
         return mode;
     }
 
-    // Error correction level of the QR Code.
+    /**
+     * Possible error correction level values ranked from lowest error correction capability to highest: L, M, Q, H
+     * @return Error correction level of the QR Code.
+     */
     public ErrorCorrectionLevel getECLevel() {
         return ecLevel;
     }
 
-    // Version of the QR Code.  The bigger size, the bigger version.
+    /**
+     * Together with error correction level, the version determines the information capacity of the QR code. Higher version numbers correspond with higher capacity. Ranges from 1 to 40.
+     * @return Version of the QR Code.
+     */
     public int getVersion() {
         return version;
     }
 
-    // ByteMatrix width of the QR Code.
+    /**
+     * @return ByteMatrix width of the QR Code.
+     */
     public int getMatrixWidth() {
         return matrixWidth;
     }
 
-    // Mask pattern of the QR Code.
+    /**
+     * @return Mask pattern of the QR Code.
+     */
     public int getMaskPattern() {
         return maskPattern;
     }
 
-    // Number of total bytes in the QR Code.
+    /**
+     * @return Number of total bytes in the QR Code.
+     */
     public int getNumTotalBytes() {
         return numTotalBytes;
     }
 
-    // Number of data bytes in the QR Code.
+    /**
+     * @return Number of data bytes in the QR Code.
+     */
     public int getNumDataBytes() {
         return numDataBytes;
     }
 
-    // Number of error correction bytes in the QR Code.
+    /**
+     * @return Number of error correction bytes in the QR Code.
+     */
     public int getNumECBytes() {
         return numECBytes;
     }
 
-    // Number of Reedsolomon blocks in the QR Code.
+    /**
+     * @return Number of Reedsolomon blocks in the QR Code.
+     */
     public int getNumRSBlocks() {
         return numRSBlocks;
     }
 
-    // ByteMatrix data of the QR Code.
+    /**
+     * @return ByteMatrix data of the QR Code.
+     */
     public ByteMatrix getMatrix() {
         return matrix;
     }
 
-
-    // Return the value of the module (cell) pointed by "x" and "y" in the matrix of the QR Code. They
-    // call cells in the matrix "modules". 1 represents a black cell, and 0 represents a white cell.
+    /**
+     * Retrieve the value of the module (cell) pointed by "x" and "y" in the matrix of the QR Code.
+     * 1 represents a black cell, and 0 represents a white cell.
+     * @param x width coordinate
+     * @param y height coordinate
+     * @return 1 for a black cell, 0 for a white cell
+     */
     public int at(int x, int y) {
         // The value must be zero or one.
         int value = matrix.get(x, y);
@@ -138,8 +168,10 @@ final class QRCode {
         return value;
     }
 
-    // Checks all the member variables are set properly. Returns true on success. Otherwise, returns
-    // false.
+    /**
+     * Check the validity of all member variables
+     * @return true if all variables are valid, false otherwise
+     */
     public boolean isValid() {
         return
                 // First check if all version are not uninitialized.
@@ -162,7 +194,10 @@ final class QRCode {
                         matrix.getWidth() == matrix.getHeight(); // Must be square.
     }
 
-    // Return debug String.
+    /**
+     * Prints all parameters
+     * @return string containing all parameters
+     */
     public String toString() {
         StringBuffer result = new StringBuffer(200);
         result.append("<<\n");
@@ -194,48 +229,95 @@ final class QRCode {
         return result.toString();
     }
 
+    /**
+     * Set the data encoding mode of the QR code
+     * Possible modes: TERMINATOR, NUMERIC, ALPHANUMERIC, STRUCTURED_APPEND, BYTE, ECI, KANJI, FNC1_FIRST_POSITION, FNC2_SECOND_POSITION
+     * @param value new data encoding mode
+     */
     public void setMode(Mode value) {
         mode = value;
     }
 
+    /**
+     * Set the error correction level of th QR code.
+     * Possible error correction level values ranked from lowest error correction capability to highest: L, M, Q, H
+     * @param value new error correction level
+     */
     public void setECLevel(ErrorCorrectionLevel value) {
         ecLevel = value;
     }
 
+    /**
+     * Set the version of the QR code.
+     * Together with error correction level, the version determines the information capacity of the QR code. Higher version numbers correspond with higher capacity.
+     * Range: 1 to 40.
+     * @param value the new version of the QR code
+     */
     public void setVersion(int value) {
         version = value;
     }
 
+    /**
+     * Sets the width of the byte matrix
+     * @param value the new width of the matrix
+     */
     public void setMatrixWidth(int value) {
         matrixWidth = value;
     }
 
+    /**
+     * Set the masking pattern
+     * @param value new masking pattern of the QR code
+     */
     public void setMaskPattern(int value) {
         maskPattern = value;
     }
 
+    /**
+     * Set the number of total bytes
+     * @param value new number of total bytes
+     */
     public void setNumTotalBytes(int value) {
         numTotalBytes = value;
     }
 
+    /**
+     * Set the number of data bytes
+     * @param value new number of data bytes
+     */
     public void setNumDataBytes(int value) {
         numDataBytes = value;
     }
 
+    /**
+     * Set the number of error correction blocks
+     * @param value new number of error correction blocks
+     */
     public void setNumECBytes(int value) {
         numECBytes = value;
     }
 
+    /**
+     * Set the number of Reed-Solomon blocks
+     * @param value new number of Reed-Solomon blocks
+     */
     public void setNumRSBlocks(int value) {
         numRSBlocks = value;
     }
 
-    // This takes ownership of the 2D array.
+    /**
+     * Set the byte-matrix
+     * @param value the new byte-matrix
+     */
     public void setMatrix(ByteMatrix value) {
         matrix = value;
     }
 
-    // Check if "mask_pattern" is valid.
+    /**
+     * Check if "mask_pattern" is valid.
+     * @param maskPattern masking pattern to check
+     * @return true if the pattern is valid, false otherwise
+     */
     public static boolean isValidMaskPattern(int maskPattern) {
         return maskPattern >= 0 && maskPattern < NUM_MASK_PATTERNS;
     }

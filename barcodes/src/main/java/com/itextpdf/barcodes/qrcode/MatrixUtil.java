@@ -237,8 +237,18 @@ final class MatrixUtil {
         }
     }
 
-    // Embed version information if need be. On success, modify the matrix and return true.
-    // See 8.10 of JISX0510:2004 (p.47) for how to embed version information.
+    //
+    //
+
+    /**
+     * Embed version information if need be.
+     * For version < 7, version info is not necessary
+     * On success, the matrix is modified
+     * See 8.10 of JISX0510:2004 (p.47) for how to embed version information.
+     * @param version QR code version
+     * @param matrix Byte matrix representing the QR code
+     * @throws WriterException
+     */
     public static void maybeEmbedVersionInfo(int version, ByteMatrix matrix) throws WriterException {
         if (version < 7) {  // Version info is necessary if version >= 7.
             return;  // Don't need version info.
@@ -260,9 +270,15 @@ final class MatrixUtil {
         }
     }
 
-    // Embed "dataBits" using "getMaskPattern". On success, modify the matrix and return true.
-    // For debugging purposes, it skips masking process if "getMaskPattern" is -1.
-    // See 8.7 of JISX0510:2004 (p.38) for how to embed data bits.
+    /**
+     * Embed "dataBits" using "getMaskPattern". On success, the matrix is modified
+     * For debugging purposes, it skips masking process if "getMaskPattern" is -1.
+     * See 8.7 of JISX0510:2004 (p.38) for how to embed data bits.
+     * @param dataBits data bits to embed in the QR code
+     * @param maskPattern masking pattern to apply to the data bits
+     * @param matrix Byte matrix representing the QR code
+     * @throws WriterException
+     */
     public static void embedDataBits(BitVector dataBits, int maskPattern, ByteMatrix matrix)
             throws WriterException {
         int bitIndex = 0;
@@ -312,11 +328,15 @@ final class MatrixUtil {
         }
     }
 
-    // Return the position of the most significant bit set (to one) in the "value". The most
-    // significant bit is position 32. If there is no bit set, return 0. Examples:
-    // - findMSBSet(0) => 0
-    // - findMSBSet(1) => 1
-    // - findMSBSet(255) => 8
+    /**
+     * Return the position of the most significant bit set (to one) in the "value".
+     * The most significant bit is position 32. If there is no bit set, return 0. Examples:
+     * - findMSBSet(0) => 0
+     * - findMSBSet(1) => 1
+     * - findMSBSet(255) => 8
+     * @param value bitstring as integer
+     * @return the position of the most significant bit set to 1 in the bit-representation of value
+     */
     public static int findMSBSet(int value) {
         int numDigits = 0;
         while (value != 0) {
@@ -352,6 +372,8 @@ final class MatrixUtil {
      * <p>
      * Since all coefficients in the polynomials are 1 or 0, we can do the calculation by bit
      * operations. We don't care if cofficients are positive or negative.
+     * @param value the bitstring to calculate the BCH Code from
+     * @param poly the polynomial in GF[2^n] to use
      */
     public static int calculateBCHCode(int value, int poly) {
         // If poly is "1 1111 0010 0101" (version info poly), msbSetInPoly is 13. We'll subtract 1
@@ -366,9 +388,18 @@ final class MatrixUtil {
         return value;
     }
 
-    // Make bit vector of type information. On success, store the result in "bits" and return true.
-    // Encode error correction level and mask pattern. See 8.9 of
-    // JISX0510:2004 (p.45) for details.
+    //
+    //
+    //
+
+    /**
+     * Make bit vector of type information. On success, store the result in "bits".
+     * Encode error correction level and mask pattern. See 8.9 of JISX0510:2004 (p.45) for details.
+     * @param ecLevel error correction level of the QR code
+     * @param maskPattern masking pattern to use
+     * @param bits Vactor of bits to contain the result
+     * @throws WriterException
+     */
     public static void makeTypeInfoBits(ErrorCorrectionLevel ecLevel, int maskPattern, BitVector bits)
             throws WriterException {
         if (!QRCode.isValidMaskPattern(maskPattern)) {
@@ -389,8 +420,16 @@ final class MatrixUtil {
         }
     }
 
-    // Make bit vector of version information. On success, store the result in "bits" and return true.
-    // See 8.10 of JISX0510:2004 (p.45) for details.
+    //
+    //
+
+    /**
+     * Make bit vector of version information. On success, store the result in "bits".
+     * See 8.10 of JISX0510:2004 (p.45) for details.
+     * @param version Version of the QR-code
+     * @param bits Vector of bits to contain the result
+     * @throws WriterException
+     */
     public static void makeVersionInfoBits(int version, BitVector bits) throws WriterException {
         bits.appendBits(version, 6);
         int bchCode = calculateBCHCode(version, VERSION_INFO_POLY);

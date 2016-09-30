@@ -59,6 +59,11 @@ public final class ByteMatrix {
     private final int width;
     private final int height;
 
+    /**
+     * Create a ByteMatix of given width and height, with the values initialized to 0
+     * @param width width of the matrix
+     * @param height height of the matrix
+     */
     public ByteMatrix(int width, int height) {
         bytes = new byte[height][];
         for(int i = 0; i < height; i++) {
@@ -68,18 +73,33 @@ public final class ByteMatrix {
         this.height = height;
     }
 
+    /**
+     * @return height of the matrix
+     */
     public int getHeight() {
         return height;
     }
 
+    /**
+     * @return width of the matrix
+     */
     public int getWidth() {
         return width;
     }
 
+    /**
+     * Get the value of the byte at (x,y)
+     * @param x the width coordinate
+     * @param y the height coordinate
+     * @return the byte value at position (x,y)
+     */
     public byte get(int x, int y) {
         return bytes[y][x];
     }
 
+    /**
+     * @return matrix as byte[][]
+     */
     public byte[][] getArray() {
         return bytes;
     }
@@ -100,6 +120,9 @@ public final class ByteMatrix {
         }
     }
 
+    /**
+     * @return String representation
+     */
     public String toString() {
         StringBuffer result = new StringBuffer(2 * width * height + 2);
         for (int y = 0; y < height; ++y) {
