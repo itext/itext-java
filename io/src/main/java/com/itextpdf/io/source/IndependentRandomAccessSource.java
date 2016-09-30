@@ -54,7 +54,8 @@ public class IndependentRandomAccessSource implements IRandomAccessSource {
     private final IRandomAccessSource source;
 
     /**
-     * Constructs a new OffsetRandomAccessSource
+     * Constructs a new IndependentRandomAccessSource object
+     *
      * @param source the source
      */
     public IndependentRandomAccessSource(IRandomAccessSource source) {
