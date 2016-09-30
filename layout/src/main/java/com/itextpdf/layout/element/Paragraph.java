@@ -56,7 +56,7 @@ import java.util.TreeMap;
 
 /**
  * A layout element that represents a self-contained block of textual and
- * grpahical information.
+ * graphical information.
  * It is a {@link BlockElement} which essentially acts as a container for
  * {@link ILeafElement leaf elements}.
  */
