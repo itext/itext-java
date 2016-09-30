@@ -148,9 +148,8 @@ public class BorderTest extends ExtendedITextTest {
 
         Table table = new Table(2);
         table.addCell(new Cell().add("1"));
-        table.addCell(new Cell().add("2"));
+        table.addCell(new Cell(2, 1).add("2"));
         table.addCell(new Cell().add("3"));
-        table.addCell(new Cell().add("4"));
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
@@ -547,7 +546,7 @@ public class BorderTest extends ExtendedITextTest {
         Document doc  = new Document(pdfDocument, new PageSize(842, 400));
 
         Table table = new Table(2);
-        table.setBorder(new SolidBorder(Color.GREEN, 91f));
+        table.setBorder(new SolidBorder(Color.GREEN, 90f));
         Cell cell;
 
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
@@ -559,13 +558,13 @@ public class BorderTest extends ExtendedITextTest {
         table.addCell(cell);
 
 
-//        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-//        cell.setBorder(new SolidBorder(Color.RED, 50f));
-//        table.addCell(cell);
-//
-//        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-//        cell.setBorder(new SolidBorder(Color.RED, 50f));
-//        table.addCell(cell);
+        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell.setBorder(new SolidBorder(Color.RED, 50f));
+        table.addCell(cell);
+
+        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell.setBorder(new SolidBorder(Color.RED, 50f));
+        table.addCell(cell);
 
         doc.add(table);
         closeDocumentAndCompareOutputs(doc);
