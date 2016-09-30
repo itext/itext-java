@@ -1800,8 +1800,14 @@ public class CompareTool {
             baseNode.setAttribute("cmp", MessageFormat.format("{0} {1} obj", baseCmpObject.getObjNumber(), baseCmpObject.getGenNumber()));
             baseNode.setAttribute("out", MessageFormat.format("{0} {1} obj", baseOutObject.getObjNumber(), baseOutObject.getGenNumber()));
             element.appendChild(baseNode);
-            for (LocalPathItem pathItem : path) {
-                element.appendChild(pathItem.toXmlNode(document));
+            Stack<LocalPathItem> pathClone = (Stack<LocalPathItem>) path.clone();
+            List<LocalPathItem> localPathItems = new ArrayList<>(path.size());
+            for (int i = 0; i < path.size(); ++i) {
+                localPathItems.add(pathClone.pop());
+            }
+
+            for (int i = localPathItems.size() - 1; i >= 0; --i) {
+                element.appendChild(localPathItems.get(i).toXmlNode(document));
             }
             return element;
         }
@@ -1813,9 +1819,15 @@ public class CompareTool {
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append(MessageFormat.format("Base cmp object: {0} obj. Base out object: {1} obj", baseCmpObject, baseOutObject));
-            for (LocalPathItem pathItem : path) {
+
+            Stack<LocalPathItem> pathClone = (Stack<LocalPathItem>) path.clone();
+            List<LocalPathItem> localPathItems = new ArrayList<>(path.size());
+            for (int i = 0; i < path.size(); ++i) {
+                localPathItems.add(pathClone.pop());
+            }
+            for (int i = localPathItems.size() - 1; i >= 0; --i) {
                 sb.append("\n");
-                sb.append(pathItem.toString());
+                sb.append(localPathItems.get(i).toString());
             }
             return sb.toString();
         }
