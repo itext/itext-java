@@ -111,7 +111,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         table.addCell(image);
         table.addCell(createParagraph2());
         table.addCell(image);
-        table.addCell(new Paragraph("abcdefghijklkmnopqrstuvwxyz").setFontColor(Color.GREEN));
+        table.addCell(new Paragraph("abcdefghijklmnopqrstuvwxyz").setFontColor(Color.GREEN));
         table.addCell("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
                 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
                 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
@@ -446,7 +446,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     private Paragraph createParagraph2() {
         Paragraph p;
-        String alphabet = "abcdefghijklkmnopqrstuvwxyz";
+        String alphabet = "abcdefghijklmnopqrstuvwxyz";
         StringBuilder longTextBuilder = new StringBuilder();
         for (int i = 0; i < 26; ++i) {
             longTextBuilder.append(alphabet);
