@@ -166,7 +166,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     private static AtomicLong lastDocumentId = new AtomicLong();
 
-    protected long documentId;
+    private long documentId;
 
     /**
      * Yet not copied link annotations from the other documents.
@@ -1750,7 +1750,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
     }
 
-    private synchronized long incrementDocumentId() {
+    private long incrementDocumentId() {
         return lastDocumentId.incrementAndGet();
     }
 
