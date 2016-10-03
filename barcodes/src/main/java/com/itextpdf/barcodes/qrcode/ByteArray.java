@@ -92,18 +92,33 @@ final class ByteArray {
         return bytes[index] & 0xff;
     }
 
+    /**
+     * Set the value at "index" to "value"
+     * @param index position in the byte-array
+     * @param value new value
+     */
     public void set(int index, int value) {
         bytes[index] = (byte) value;
     }
 
+    /**
+     * @return size of the array
+     */
     public int size() {
         return size;
     }
 
+    /**
+     * @return true if size is equal to 0, false otherwise
+     */
     public boolean isEmpty() {
         return size == 0;
     }
 
+    /**
+     * Append a byte to the end of the array. If the array is too small, it's capacity is doubled.
+     * @param value byte to append.
+     */
     public void appendByte(int value) {
         if (size == 0 || size >= bytes.length) {
             int newSize = Math.max(INITIAL_SIZE, size << 1);
@@ -113,6 +128,10 @@ final class ByteArray {
         size++;
     }
 
+    /**
+     * Increase the capacity of the array to "capacity" if the current capacity is smaller
+     * @param capacity the new capacity
+     */
     public void reserve(int capacity) {
         if (bytes == null || bytes.length < capacity) {
             byte[] newArray = new byte[capacity];
@@ -123,7 +142,12 @@ final class ByteArray {
         }
     }
 
-    // Copy count bytes from array source starting at offset.
+    /**
+     * Copy count bytes from array source starting at offset.
+     * @param source source of the copied bytes
+     * @param offset offset to start at
+     * @param count number of bytes to copy
+     */
     public void set(byte[] source, int offset, int count) {
         bytes = new byte[count];
         size = count;

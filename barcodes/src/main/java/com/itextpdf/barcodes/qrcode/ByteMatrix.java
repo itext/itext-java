@@ -104,14 +104,30 @@ public final class ByteMatrix {
         return bytes;
     }
 
+    /**
+     * Set the value of the byte at (x,y)
+     * @param x the width coordinate
+     * @param y the height coordinate
+     * @param value the new byte value
+     */
     public void set(int x, int y, byte value) {
         bytes[y][x] = value;
     }
 
+    /**
+     * Set the value of the byte at (x,y)
+     * @param x the width coordinate
+     * @param y the height coordinate
+     * @param value the new byte value
+     */
     public void set(int x, int y, int value) {
         bytes[y][x] = (byte) value;
     }
 
+    /**
+     * Resets the contents of the entire matrix to value
+     * @param value new value of every element
+     */
     public void clear(byte value) {
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {

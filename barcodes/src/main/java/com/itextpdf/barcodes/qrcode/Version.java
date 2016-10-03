@@ -91,22 +91,39 @@ final class Version {
         this.totalCodewords = total;
     }
 
+    /**
+     * @return the version number
+     */
     public int getVersionNumber() {
         return versionNumber;
     }
 
+    /**
+     * @return int[] containing the positions of the alignment pattern centers
+     */
     public int[] getAlignmentPatternCenters() {
         return alignmentPatternCenters;
     }
 
+    /**
+     * @return total number of code words
+     */
     public int getTotalCodewords() {
         return totalCodewords;
     }
 
+
+    /**
+     * @return the square dimension for the current version number
+     */
     public int getDimensionForVersion() {
         return 17 + 4 * versionNumber;
     }
 
+    /**
+     * @param ecLevel error correction level
+     * @return the number of EC blocks for the given error correction level
+     */
     public ECBlocks getECBlocksForLevel(ErrorCorrectionLevel ecLevel) {
         return ecBlocks[ecLevel.ordinal()];
     }
@@ -128,6 +145,10 @@ final class Version {
         }
     }
 
+    /**
+     * @param versionNumber Version number
+     * @return the version for the given version number
+     */
     public static Version getVersionForNumber(int versionNumber) {
         if (versionNumber < 1 || versionNumber > 40) {
             throw new IllegalArgumentException();

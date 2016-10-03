@@ -388,10 +388,6 @@ final class MatrixUtil {
         return value;
     }
 
-    //
-    //
-    //
-
     /**
      * Make bit vector of type information. On success, store the result in "bits".
      * Encode error correction level and mask pattern. See 8.9 of JISX0510:2004 (p.45) for details.
