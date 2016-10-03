@@ -80,6 +80,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Main enter point to work with PDF document.
@@ -167,6 +168,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     protected TagStructureContext tagStructureContext;
 
+    private static AtomicLong lastDocumentId = new AtomicLong();
+
+    private long documentId;
+
     /**
      * Yet not copied link annotations from the other documents.
      * Key - page from the source document, which contains this annotation.
@@ -183,6 +188,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (reader == null) {
             throw new NullPointerException("reader");
         }
+        documentId = incrementDocumentId();
         this.reader = reader;
         this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
         open(null);
@@ -198,6 +204,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (writer == null) {
             throw new NullPointerException("writer");
         }
+        documentId = incrementDocumentId();
         this.writer = writer;
         this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
         open(writer.properties.pdfVersion);
@@ -228,6 +235,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (writer == null) {
             throw new NullPointerException("writer");
         }
+        documentId = incrementDocumentId();
         this.reader = reader;
         this.writer = writer;
         this.properties = properties;
@@ -1951,6 +1959,51 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 } catch (IOException ignored) {
                 }
             }
+        }
+    }
+
+    private long incrementDocumentId() {
+        return lastDocumentId.incrementAndGet();
+    }
+
+
+    private long getDocumentId() {
+        return documentId;
+    }
+
+    /**
+     * A structure storing documentId, object number and generation number. This structure is using to calculate
+     * an unique object key during the copy process.
+     */
+    protected static class IndirectRefDescription {
+        private long docId;
+        private int objNr;
+        private int genNr;
+
+        public IndirectRefDescription(PdfIndirectReference reference) {
+            this.docId = reference.getDocument().getDocumentId();
+            this.objNr = reference.getObjNumber();
+            this.genNr = reference.getGenNumber();
+        }
+
+        @Override
+        public int hashCode() {
+            int result = (int) docId;
+            result *= 31;
+            result += objNr;
+            result *= 31;
+            result += genNr;
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            IndirectRefDescription that = (IndirectRefDescription) o;
+
+            return docId == that.docId && objNr == that.objNr && genNr == that.genNr;
         }
     }
 }
