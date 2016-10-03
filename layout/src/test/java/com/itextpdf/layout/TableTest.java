@@ -10,8 +10,12 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
-import com.itextpdf.layout.element.*;
-import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.test.ExtendedITextTest;
@@ -20,13 +24,14 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class TableTest extends ExtendedITextTest{
+public class TableTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TableTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/TableTest/";
 
@@ -40,7 +45,7 @@ public class TableTest extends ExtendedITextTest{
 
     @BeforeClass
     public static void beforeClass() {
-       createDestinationFolder(destinationFolder);
+        createDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -781,6 +786,34 @@ public class TableTest extends ExtendedITextTest{
     }
 
     @Test
+    @Ignore
+    public void bigRowspanTest05() throws IOException, InterruptedException {
+        String testName = "bigRowspanTest05.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
+                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
+                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
+        String longTextContent = "1. " + textContent + "2. " + textContent + "3. " + textContent + "4. " + textContent
+                + "5. " + textContent + "6. " + textContent + "7. " + textContent + "8. " + textContent + "9. " + textContent;
+
+        Table table = new Table(new float[]{250, 250})
+                .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + textContent)))
+                .addCell(new Cell(2, 1).add(new Paragraph("cell 4, 2\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 6, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 9, 2\n" + textContent)));
+
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     public void differentPageOrientationTest01() throws IOException, InterruptedException {
         String testName = "differentPageOrientationTest01.pdf";
         String outFileName = destinationFolder + testName;
@@ -832,7 +865,7 @@ public class TableTest extends ExtendedITextTest{
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
-	@Test
+    @Test
     public void toLargeElementWithKeepTogetherPropertyInTableTest01() throws IOException, InterruptedException {
         String testName = "toLargeElementWithKeepTogetherPropertyInTableTest01.pdf";
         String outFileName = destinationFolder + testName;
@@ -879,7 +912,7 @@ public class TableTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
-	@Test
+    @Test
     public void nestedTableSkipHeaderFooterTest() throws IOException, InterruptedException {
         String testName = "nestedTableSkipHeaderFooter.pdf";
         String outFileName = destinationFolder + testName;
@@ -890,9 +923,9 @@ public class TableTest extends ExtendedITextTest{
 
         Table table = new Table(5);
         table.addHeaderCell(new Cell(1, 5).
-            add(new Paragraph("Table XYZ (Continued)")));
+                add(new Paragraph("Table XYZ (Continued)")));
         table.addFooterCell(new Cell(1, 5).
-            add(new Paragraph("Continue on next page")));
+                add(new Paragraph("Continue on next page")));
         table.setSkipFirstHeader(true);
         table.setSkipLastFooter(true);
         for (int i = 0; i < 350; i++) {
@@ -901,9 +934,9 @@ public class TableTest extends ExtendedITextTest{
 
         Table t = new Table(1);
         t.addCell(new Cell().
-            setBorder(new SolidBorder(Color.RED, 1)).
-            setPaddings(3, 3, 3, 3).
-            add(table));
+                setBorder(new SolidBorder(Color.RED, 1)).
+                setPaddings(3, 3, 3, 3).
+                add(table));
 
         doc.add(t);
 
@@ -945,34 +978,6 @@ public class TableTest extends ExtendedITextTest{
 
         doc.add(new Paragraph("Table with setKeepTogether(false):"));
         table.setKeepTogether(false);
-        doc.add(table);
-
-        doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
-    }
-
-    @Test
-    public void imageInTableTest_HA() throws IOException, InterruptedException {
-        String testName = "imageInTableTest_HA.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
-
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        Document doc = new Document(pdfDoc);
-
-        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "itext.png")));
-        Image imageL = new Image(xObject);
-        imageL.setHorizontalAlignment(HorizontalAlignment.LEFT);
-        Image imageC = new Image(xObject);
-        imageC.setHorizontalAlignment(HorizontalAlignment.CENTER);
-        Image imageR = new Image(xObject);
-        imageR.setHorizontalAlignment(HorizontalAlignment.RIGHT);
-
-        doc.add(new Paragraph("Table"));
-        Table table = new Table(1)
-                .addCell(new Cell().add(imageL))
-                .addCell(new Cell().add(imageC))
-                .addCell(new Cell().add(imageR));
         doc.add(table);
 
         doc.close();
