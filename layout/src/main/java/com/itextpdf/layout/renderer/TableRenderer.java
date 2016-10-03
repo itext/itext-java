@@ -265,21 +265,23 @@ public class TableRenderer extends AbstractRenderer {
         int[] targetOverflowRowIndex = new int[tableModel.getNumberOfColumns()];
 
         // complete table with empty cells
-        CellRenderer[] lastAddedRow = rows.get(rows.size()-1);
-        int colIndex = 0;
-        while (colIndex < lastAddedRow.length && null != lastAddedRow[colIndex]) {
-            colIndex++;
-        }
-        if (0 != colIndex && lastAddedRow.length != colIndex) {
-            while (colIndex < lastAddedRow.length) {
-                Cell emptyCell = new Cell();
-                emptyCell.setBorder(Border.NO_BORDER);
-                ((Table) this.getModelElement()).addCell(emptyCell);
-                this.addChild(emptyCell.getRenderer());
-                colIndex++;
+        CellRenderer[] lastAddedRow;
+        if (0 != rows.size()) {
+            lastAddedRow = rows.get(rows.size() - 1);
+            int colIndex = 0;
+            while (colIndex < lastAddedRow.length && null != lastAddedRow[colIndex]) {
+                colIndex += (int) lastAddedRow[colIndex].getPropertyAsInteger(Property.COLSPAN);
+            }
+            if (0 != colIndex && lastAddedRow.length != colIndex) {
+                while (colIndex < lastAddedRow.length) {
+                    Cell emptyCell = new Cell();
+                    emptyCell.setBorder(Border.NO_BORDER);
+                    ((Table) this.getModelElement()).addCell(emptyCell);
+                    this.addChild(emptyCell.getRenderer());
+                    colIndex++;
+                }
             }
         }
-
         horizontalBorders.add(tableModel.getLastRowBottomBorder());
 
         for (row = 0; row < rows.size(); row++) {
@@ -526,9 +528,9 @@ public class TableRenderer extends AbstractRenderer {
             }
 
             if (split || row == rows.size()-1) {
-                for (int ii = 0; ii < row; ii++) {
-                    currentRow = rows.get(ii);
-                    if (ii < row - 1 || (ii == row-1 && (hasContent || cellWithBigRowspanAdded))) {
+                for (int k = 0; k <= row; k++) {
+                    currentRow = rows.get(k);
+                    if (k < row || (k == row && (hasContent || cellWithBigRowspanAdded))) {
                         for (int col = 0; col < currentRow.length; col++) {
                             CellRenderer cell = currentRow[col];
                             if (cell == null) {
@@ -536,10 +538,13 @@ public class TableRenderer extends AbstractRenderer {
                             }
                             float height = 0;
                             int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
-                            for (int i = ii; i > ii - rowspan && i >= 0; i--) {
+                            for (int i = k; i > ((k == row+1) ? targetOverflowRowIndex[col] : k) - rowspan && i >= 0; i--) {
                                 height += (float) heights.get(i);
                             }
-                            int rowN = ii + 1;
+                            int rowN = k + 1;
+                            if (k == row && !hasContent) {
+                                rowN--;
+                            }
                             if (horizontalBorders.get(rowN).get(col) == null) {
                                 horizontalBorders.get(rowN).set(col, cell.getBorders()[2]);
                             }
