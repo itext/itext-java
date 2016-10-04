@@ -1036,6 +1036,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         } else {
             regenerateField();
         }
+        this.setModified();
         return this;
     }
 
