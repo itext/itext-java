@@ -170,9 +170,8 @@ public class TableRenderer extends AbstractRenderer {
         float topTableBorderWidth = -1;
         float bottomTableBorderWidth = 0;
 
-        // Find left, right and top borders widths
-        // We consider only the first row's left and right border widths
-        // and do not consider cells with rowspan different from one,
+        // Find left, right and top collapsed borders widths.
+        // In order to find left and right border widths we try to consider as few rows ad possible
         // i.e. the borders still can be drawn outside the layout area.
         int row = 0;
         while (row < rows.size() && (-1 == leftTableBorderWidth || -1 == rightTableBorderWidth)) {
@@ -181,25 +180,33 @@ public class TableRenderer extends AbstractRenderer {
                 for (int i = 0; i < currentRow.length; i++) {
                     if (null != currentRow[i]) {
                         borders = currentRow[i].getBorders();
-                        topTableBorderWidth = Math.max(null == borders[0] ? 0 : borders[0].getWidth(), topTableBorderWidth);
+                        topTableBorderWidth = Math.max(null == borders[0] ? -1 : borders[0].getWidth(), topTableBorderWidth);
                     }
                 }
             }
-            if (currentRow.length != 0 && currentRow[0] != null) {
-                borders = currentRow[0].getBorders();
-                leftTableBorderWidth = Math.max(null == borders[3] ? 0 : borders[3].getWidth(), leftTableBorderWidth);
-            }
-            if (currentRow.length != 0 && currentRow[currentRow.length - 1] != null) {
-                borders = currentRow[currentRow.length - 1].getBorders();
-                rightTableBorderWidth = Math.max(null == borders[1] ? 0 : borders[1].getWidth(), rightTableBorderWidth);
+            if (0 != currentRow.length) {
+                if (null != currentRow[0]) {
+                    borders = currentRow[0].getBorders();
+                    leftTableBorderWidth = Math.max(null == borders[3] ? -1 : borders[3].getWidth(), leftTableBorderWidth);
+                }
+                // the last cell in a row can have big rowspan
+                int lastInRow = currentRow.length-1;
+                while (lastInRow >= 0 && null == currentRow[lastInRow]) {
+                    lastInRow--;
+                }
+                if (lastInRow >= 0 && currentRow.length == lastInRow + currentRow[lastInRow].getPropertyAsInteger(Property.ROWSPAN)) {
+                    borders = currentRow[lastInRow].getBorders();
+                    rightTableBorderWidth = Math.max(null == borders[1] ? -1 : borders[1].getWidth(), rightTableBorderWidth);
+                }
             }
             row++;
         }
-
+        // collapse with table borders
         borders = getBorders();
         leftTableBorderWidth = Math.max(null == borders[3] ? 0 : borders[3].getWidth(), leftTableBorderWidth);
         rightTableBorderWidth = Math.max(null == borders[1] ? 0 : borders[1].getWidth(), rightTableBorderWidth);
         topTableBorderWidth = Math.max(null == borders[0] ? 0 : borders[0].getWidth(), topTableBorderWidth);
+
         if (isPositioned()) {
             float x = (float) this.getPropertyAsFloat(Property.X);
             float relativeX = isFixedLayout() ? 0 : layoutBox.getX();
@@ -266,12 +273,13 @@ public class TableRenderer extends AbstractRenderer {
 
         // complete table with empty cells
         CellRenderer[] lastAddedRow;
-        if (0 != rows.size()) {
+        if (0 != rows.size() && null != rows.get(rows.size() - 1)) {
             lastAddedRow = rows.get(rows.size() - 1);
             int colIndex = 0;
             while (colIndex < lastAddedRow.length && null != lastAddedRow[colIndex]) {
                 colIndex += (int) lastAddedRow[colIndex].getPropertyAsInteger(Property.COLSPAN);
             }
+            // complete row if it's not already complete ot totally empty
             if (0 != colIndex && lastAddedRow.length != colIndex) {
                 while (colIndex < lastAddedRow.length) {
                     Cell emptyCell = new Cell();
@@ -291,6 +299,7 @@ public class TableRenderer extends AbstractRenderer {
                 deleteOwnProperty(Property.FORCED_PLACEMENT);
             }
 
+            // the width of the widest bottom border of the row
             bottomTableBorderWidth = 0;
 
             CellRenderer[] currentRow = rows.get(row);
@@ -350,6 +359,7 @@ public class TableRenderer extends AbstractRenderer {
                         buildBordersArrays(nextCell, row, true);
                     }
                 }
+
                 targetOverflowRowIndex[col] = currentCellInfo.finishRowInd;
                 // This cell came from the future (split occurred and we need to place cell with big rowpsan into the current area)
                 boolean currentCellHasBigRowspan = (row != currentCellInfo.finishRowInd);
@@ -382,6 +392,7 @@ public class TableRenderer extends AbstractRenderer {
                 }
                 LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea));
                 if (collapsedBottomBorder != null) {
+                    // apply the difference between collapsed table border and own cell border
                     cellResult.getOccupiedArea().getBBox().applyMargins(0, 0,
                             (collapsedBottomBorder.getWidth() - (oldBottomBorder == null ? 0 : oldBottomBorder.getWidth())) / 2, 0, false);
                     cell.setProperty(Property.BORDER_BOTTOM, oldBottomBorder);
@@ -492,42 +503,49 @@ public class TableRenderer extends AbstractRenderer {
                 heights.add(rowHeight);
                 occupiedArea.getBBox().moveDown(rowHeight);
                 occupiedArea.getBBox().increaseHeight(rowHeight);
-
                 layoutBox.decreaseHeight(rowHeight);
             }
 
-            // Correct layout area of the last row on the page
-            if (heights.size() != 0  && (split || row == rows.size()-1)) {
-                float diff = 0;
-                if (hasContent || cellWithBigRowspanAdded) {
-                    lastAddedRow = currentRow;
-                } else {
-                    lastAddedRow = rows.get(row-1);
-                }
-                float currentCellHeight;
-                for (int col = 0; col < lastAddedRow.length; col++) {
-                    if (null != lastAddedRow[col]) {
-                        currentCellHeight = 0;
-                        Border cellBottomBorder = lastAddedRow[col].getBorders()[2];
-                        Border collapsedBorder = getCollapsedBorder(cellBottomBorder, borders[2]);
-                        if (null != cellBottomBorder) {
+
+
+            if (split || row == rows.size()-1) {
+                // Correct layout area of the last row rendered on the page
+                if (heights.size() != 0) {
+                    float bottomBorderWidthDifference = 0;
+                    if (hasContent || cellWithBigRowspanAdded) {
+                        lastAddedRow = currentRow;
+                    } else {
+                        lastAddedRow = rows.get(row-1);
+                    }
+                    float currentCellHeight;
+                    for (int col = 0; col < lastAddedRow.length; col++) {
+                        if (null != lastAddedRow[col]) {
+                            currentCellHeight = 0;
+                            Border cellBottomBorder = lastAddedRow[col].getBorders()[2];
+                            Border collapsedBorder = getCollapsedBorder(cellBottomBorder, borders[2]);
+                            float cellBottomBorderWidth = null == cellBottomBorder ? 0 : cellBottomBorder.getWidth();
+                            float collapsedBorderWidth = null == collapsedBorder ? 0 : collapsedBorder.getWidth();
+                            if (cellBottomBorderWidth < collapsedBorderWidth) {
+                                lastAddedRow[col].setProperty(Property.BORDER_BOTTOM, collapsedBorder);
+                                horizontalBorders.get(hasContent || cellWithBigRowspanAdded ? row + 1 : row).set(col, collapsedBorder);
+                            }
+                            // apply the difference between collapsed table border and own cell border
                             lastAddedRow[col].occupiedArea.getBBox().applyMargins(0, 0,
-                                    (collapsedBorder.getWidth() - cellBottomBorder.getWidth()) / 2, 0, true);
-                            int cellStartIndex =  heights.size()- (int)lastAddedRow[col].getPropertyAsInteger(Property.ROWSPAN);
-                            ListIterator iterator = heights.listIterator(cellStartIndex > 0 ? cellStartIndex : 0);
+                                    (collapsedBorderWidth - cellBottomBorderWidth) / 2, 0, true);
+                            int cellRowStartIndex =  heights.size()- (int)lastAddedRow[col].getPropertyAsInteger(Property.ROWSPAN);
+                            ListIterator iterator = heights.listIterator(cellRowStartIndex > 0 ? cellRowStartIndex : 0);
                             while (iterator.hasNext()) {
                                 currentCellHeight+=(float)iterator.next();
                             }
                             if (currentCellHeight < lastAddedRow[col].occupiedArea.getBBox().getHeight()) {
-                                diff = Math.max(diff, (collapsedBorder.getWidth() - cellBottomBorder.getWidth()) / 2);
+                                bottomBorderWidthDifference = Math.max(bottomBorderWidthDifference, (collapsedBorderWidth - cellBottomBorderWidth) / 2);
                             }
                         }
                     }
+                    heights.set(heights.size() - 1, heights.get(heights.size()-1)+bottomBorderWidthDifference);
                 }
-                heights.set(heights.size() - 1, heights.get(heights.size()-1)+diff);
-            }
 
-            if (split || row == rows.size()-1) {
+                // Correct occupied areas of all added cells
                 for (int k = 0; k <= row; k++) {
                     currentRow = rows.get(k);
                     if (k < row || (k == row && (hasContent || cellWithBigRowspanAdded))) {
@@ -810,7 +828,6 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
 
-        collapseBorders();
         drawBorders(drawContext);
 
         if (footerRenderer != null) {
@@ -924,80 +941,6 @@ public class TableRenderer extends AbstractRenderer {
         overflowRenderer.addAllProperties(getOwnProperties());
         overflowRenderer.isOriginalNonSplitRenderer = false;
         return overflowRenderer;
-    }
-
-    protected void collapseBorders() {
-        // Notice that during #layout() we've already determined the result borders width
-        // and reserved enough space for them.
-        // Im this method we change collapsed cell borders with table borders where it is needed.
-
-        Border[] tableBorders = getBorders();
-        float topWidth = tableBorders[0] != null ? tableBorders[0].getWidth() : 0;
-        float rightWidth = tableBorders[1] != null ? tableBorders[1].getWidth() : 0;
-        float bottomWidth = tableBorders[2] != null ? tableBorders[2].getWidth() : 0;
-        float leftWidth = tableBorders[3] != null ? tableBorders[3].getWidth() : 0;
-
-        List<Border> cellBorders;
-        if (null != horizontalBorders && 0 != horizontalBorders.size()) {
-            cellBorders = horizontalBorders.get(0);
-            if (null != cellBorders) {
-                for (int i = 0; i < cellBorders.size(); i++) {
-                    if (null != cellBorders.get(i)) {
-                        if (cellBorders.get(i).getWidth() <= topWidth) {
-                            cellBorders.set(i, tableBorders[0]);
-                        }
-                    } else {
-                        if (null != tableBorders[0]) {
-                            cellBorders.set(i, tableBorders[0]);
-                        }
-                    }
-                }
-            }
-            cellBorders = horizontalBorders.get(horizontalBorders.size() - 1);
-            if (null != cellBorders) {
-                for (int i = 0; i < cellBorders.size(); i++) {
-                    if (null != cellBorders.get(i)) {
-                        if (cellBorders.get(i).getWidth() <= bottomWidth) {
-                            cellBorders.set(i, tableBorders[2]);
-                        }
-                    } else {
-                        if (null != tableBorders[2]) {
-                            cellBorders.set(i, tableBorders[2]);
-                        }
-                    }
-                }
-            }
-        }
-        if (null != verticalBorders && 0 != verticalBorders.size()) {
-            cellBorders = verticalBorders.get(0);
-            if (null != cellBorders) {
-                for (int i = 0; i < cellBorders.size(); i++) {
-                    if (null != cellBorders.get(i)) {
-                        if (cellBorders.get(i).getWidth() <= leftWidth) {
-                            cellBorders.set(i, tableBorders[3]);
-                        }
-                    } else {
-                        if (null != tableBorders[3]) {
-                            cellBorders.set(i, tableBorders[3]);
-                        }
-                    }
-                }
-            }
-            cellBorders = verticalBorders.get(verticalBorders.size() - 1);
-            if (null != cellBorders) {
-                for (int i = 0; i < cellBorders.size(); i++) {
-                    if (null != cellBorders.get(i)) {
-                        if (cellBorders.get(i).getWidth() <= rightWidth) {
-                            cellBorders.set(i, tableBorders[1]);
-                        }
-                    } else {
-                        if (null != tableBorders[1]) {
-                            cellBorders.set(i, tableBorders[1]);
-                        }
-                    }
-                }
-            }
-        }
     }
 
     @Override
@@ -1325,6 +1268,14 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
+    /**
+     * Returns the collapsed border. We process collapse
+     * if the table border width is strictly greater than cell border width.
+     *
+     * @param cellBorder cell border
+     * @param tableBorder table border
+     * @return the collapsed border
+     */
     private Border getCollapsedBorder(Border cellBorder, Border tableBorder) {
         if (null != tableBorder) {
             if (null == cellBorder || cellBorder.getWidth() < tableBorder.getWidth()) {
