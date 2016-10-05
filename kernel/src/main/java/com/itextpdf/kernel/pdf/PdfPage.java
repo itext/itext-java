@@ -419,7 +419,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         xObject.getPdfObject().mergeDifferent(dictionary);
         //Copy inherited resources
         if (!xObject.getPdfObject().containsKey(PdfName.Resources)) {
-            PdfObject copyResource = getResources().getPdfObject().copyTo(toDocument, false);
+            PdfObject copyResource = getResources().getPdfObject().copyTo(toDocument, true);
             xObject.getPdfObject().put(PdfName.Resources, copyResource);
         }
 
