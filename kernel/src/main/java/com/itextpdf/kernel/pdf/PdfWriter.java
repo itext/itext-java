@@ -85,7 +85,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * It stores hashes of the indirect reference from the source document and the corresponding
      * indirect references of the copied objects from the new document.
      */
-    protected Map<PdfDocument.IndirectRefDescription, PdfIndirectReference> copiedObjects = new HashMap<>();
+    private Map<PdfDocument.IndirectRefDescription, PdfIndirectReference> copiedObjects = new HashMap<>();
 
     /**
      * Is used in smart mode to store serialized objects content.

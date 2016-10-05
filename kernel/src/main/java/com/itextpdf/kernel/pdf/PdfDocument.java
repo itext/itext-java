@@ -1966,7 +1966,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return lastDocumentId.incrementAndGet();
     }
 
-
     private long getDocumentId() {
         return documentId;
     }
@@ -1975,12 +1974,12 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * A structure storing documentId, object number and generation number. This structure is using to calculate
      * an unique object key during the copy process.
      */
-    protected static class IndirectRefDescription {
+    static class IndirectRefDescription {
         private long docId;
         private int objNr;
         private int genNr;
 
-        public IndirectRefDescription(PdfIndirectReference reference) {
+        IndirectRefDescription(PdfIndirectReference reference) {
             this.docId = reference.getDocument().getDocumentId();
             this.objNr = reference.getObjNumber();
             this.genNr = reference.getGenNumber();
