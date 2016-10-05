@@ -16,11 +16,8 @@ import org.junit.experimental.categories.Category;
 import java.io.IOException;
 import java.io.File;
 
-/**
- * Created by SamuelHuylebroeck on 10/4/2016.
- */
 @Category(IntegrationTest.class)
-public class FormFieldAppendTest extends ExtendedITextTest{
+public class FormFieldAppendTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FormFieldAppendTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/FormFieldAppendTest/";
 
@@ -32,25 +29,23 @@ public class FormFieldAppendTest extends ExtendedITextTest{
     @Test
     public void formFillingAppend_form_empty_Test() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "Form_Empty.pdf";
-        String temp = destinationFolder +"temp_empty.pdf";
+        String temp = destinationFolder + "temp_empty.pdf";
         String filename = destinationFolder + "formFillingAppend_form_empty.pdf";
         StampingProperties props = new StampingProperties();
         props.useAppendMode();
 
-
-        PdfDocument doc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(temp) , props) ;
+        PdfDocument doc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(temp), props);
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
-        for(PdfFormField field : form.getFormFields().values()){
+        for (PdfFormField field : form.getFormFields().values()) {
             field.setValue("Test");
         }
 
         doc.close();
 
+        flatten(temp, filename);
 
-        flatten(temp,filename);
-
-       File toDelete = new File(temp);
+        File toDelete = new File(temp);
         toDelete.delete();
 
         CompareTool compareTool = new CompareTool();
@@ -60,12 +55,10 @@ public class FormFieldAppendTest extends ExtendedITextTest{
         }
     }
 
-
-
     @Test
     public void formFillingAppend_form_filled_Test() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "Form_Empty.pdf";
-        String temp = destinationFolder +"temp_filled.pdf";
+        String temp = destinationFolder + "temp_filled.pdf";
         String filename = destinationFolder + "formFillingAppend_form_filled.pdf";
         StampingProperties props = new StampingProperties();
         props.useAppendMode();
@@ -73,24 +66,21 @@ public class FormFieldAppendTest extends ExtendedITextTest{
         PdfDocument doc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(temp), props);
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
-        for(PdfFormField field : form.getFormFields().values()){
+        for (PdfFormField field : form.getFormFields().values()) {
             field.setValue("Different");
         }
 
         doc.close();
 
-        flatten(temp,filename);
+        flatten(temp, filename);
 
-        File toDelete = new File(temp);
-        toDelete.delete();
+        new File(temp).delete();
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_formFillingAppend_form_filled.pdf", destinationFolder, "diff_");
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
-
-
     }
 
     private void flatten(String src, String dest) throws IOException {
@@ -99,6 +89,4 @@ public class FormFieldAppendTest extends ExtendedITextTest{
         form.flattenFields();
         doc.close();
     }
-
-
 }
