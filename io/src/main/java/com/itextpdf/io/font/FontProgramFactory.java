@@ -204,6 +204,14 @@ public final class FontProgramFactory {
             } else if (baseName.toLowerCase().endsWith(".ttf") || baseName.toLowerCase().endsWith(".otf") || baseName.toLowerCase().indexOf(".ttc,") > 0) {
                 if (fontProgram != null) {
                     fontBuilt = new TrueTypeFont(fontProgram);
+                } else if (baseName.toLowerCase().indexOf(".ttc,") > 0) {
+                    // splitting by "," would be easier but is more error-prone
+                    String[] parts = baseName.split(".ttc,");
+                    try {
+                        fontBuilt = new TrueTypeFont(parts[0] + ".ttc", Integer.parseInt(parts[1]));
+                    } catch (NumberFormatException nfe) {
+                        throw new IOException(nfe.getMessage(), nfe);
+                    }
                 } else {
                     fontBuilt = new TrueTypeFont(name);
                 }

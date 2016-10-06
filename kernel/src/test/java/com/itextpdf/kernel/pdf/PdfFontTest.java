@@ -27,6 +27,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.List;
@@ -1148,6 +1149,34 @@ public class PdfFontTest extends ExtendedITextTest {
     public void autoDetect5() throws IOException, InterruptedException {
         byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "abserif4_5.ttf"));
         Assert.assertTrue("TrueType (TTF) expected", FontProgramFactory.createFont(ttf) instanceof TrueTypeFont);
+    }
+    
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.FONT_HAS_INVALID_GLYPH, count = 131)
+    })
+    public void testPdfFontFactoryTtc() throws IOException, InterruptedException {
+        String filename = destinationFolder + "testPdfFontFactoryTtc.pdf";
+        String cmpFilename = sourceFolder + "cmp_testPdfFontFactoryTtc.pdf";
+
+        String txt = "The quick brown fox";
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfPage page = doc.addNewPage();
+
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "uming.ttc,1");
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .beginText()
+                .moveText(36, 680)
+                .setFontAndSize(font, 12)
+                .showText(txt)
+                .endText()
+                .restoreState();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
