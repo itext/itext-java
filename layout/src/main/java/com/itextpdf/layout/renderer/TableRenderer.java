@@ -391,7 +391,7 @@ public class TableRenderer extends AbstractRenderer {
                     cell.setProperty(Property.BORDER_BOTTOM, collapsedBottomBorder);
                 }
                 LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea));
-                if (collapsedBottomBorder != null) {
+                if (collapsedBottomBorder != null && null != cellResult.getOccupiedArea()) {
                     // apply the difference between collapsed table border and own cell border
                     cellResult.getOccupiedArea().getBBox().applyMargins(0, 0,
                             (collapsedBottomBorder.getWidth() - (oldBottomBorder == null ? 0 : oldBottomBorder.getWidth())) / 2, 0, false);
