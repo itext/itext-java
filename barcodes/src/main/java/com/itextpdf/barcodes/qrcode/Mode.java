@@ -122,14 +122,23 @@ final class Mode {
         return characterCountBitsForVersions[offset];
     }
 
+    /**
+     * @return the bits of the mode
+     */
     public int getBits() {
         return bits;
     }
 
+    /**
+     * @return the name of the mode.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return the name of the mode.
+     */
     public String toString() {
         return name;
     }

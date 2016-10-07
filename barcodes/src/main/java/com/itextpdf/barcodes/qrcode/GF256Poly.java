@@ -266,6 +266,9 @@ final class GF256Poly {
         return new GF256Poly[] { quotient, remainder };
     }
 
+    /**
+     * @return String representation of the Galois Field polynomial.
+     */
     public String toString() {
         StringBuffer result = new StringBuffer(8 * getDegree());
         for (int degree = getDegree(); degree >= 0; degree--) {

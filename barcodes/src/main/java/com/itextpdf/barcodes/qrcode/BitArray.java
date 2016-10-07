@@ -66,7 +66,7 @@ final class BitArray {
     }
 
     /**
-     * @param i bit to get
+     * @param i bit to get.
      * @return true iff bit i is set
      */
     public boolean get(int i) {

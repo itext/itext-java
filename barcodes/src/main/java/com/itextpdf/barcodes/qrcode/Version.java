@@ -45,7 +45,7 @@ package com.itextpdf.barcodes.qrcode;
 
 
 /**
- * See ISO 18004:2006 Annex D
+ * See ISO 18004:2006 Annex D.
  *
  * @author Sean Owen
  */
@@ -79,7 +79,7 @@ final class Version {
                     ECBlocks ecBlocks3,
                     ECBlocks ecBlocks4) {
         this.versionNumber = versionNumber;
-        this.alignmentPatternCenters = alignmentPatternCenters;
+        this.alignmentPatternCenters = alignmentPatternCenters.clone();
         this.ecBlocks = new ECBlocks[]{ecBlocks1, ecBlocks2, ecBlocks3, ecBlocks4};
         int total = 0;
         int ecCodewords = ecBlocks1.getECCodewordsPerBlock();
@@ -156,6 +156,11 @@ final class Version {
         return VERSIONS[versionNumber - 1];
     }
 
+    /**
+     * Decode the version information.
+     * @param versionBits bits stored as int containing
+     * @return Version decoded from the versionBits
+     */
     static Version decodeVersionInformation(int versionBits) {
         int bestDifference = Integer.MAX_VALUE;
         int bestVersion = 0;
@@ -183,7 +188,8 @@ final class Version {
     }
 
     /**
-     * See ISO 18004:2006 Annex E
+     * Build the function pattern, See ISO 18004:2006 Annex E.
+     * @return Bitmatrix containing the pattern
      */
     BitMatrix buildFunctionPattern() {
         int dimension = getDimensionForVersion();
@@ -244,6 +250,9 @@ final class Version {
             this.ecBlocks = new ECB[]{ecBlocks1, ecBlocks2};
         }
 
+        /**
+         * @return The number of error-correction words per block
+         */
         public int getECCodewordsPerBlock() {
             return ecCodewordsPerBlock;
         }
@@ -256,10 +265,16 @@ final class Version {
             return total;
         }
 
+        /**
+         * @return the total number of error-correction words
+         */
         public int getTotalECCodewords() {
             return ecCodewordsPerBlock * getNumBlocks();
         }
 
+        /**
+         * @return
+         */
         public ECB[] getECBlocks() {
             return ecBlocks;
         }
@@ -288,12 +303,15 @@ final class Version {
         }
     }
 
+    /**
+     * @return The version number as a string
+     */
     public String toString() {
         return Integer.toString(versionNumber);
     }
 
     /**
-     * See ISO 18004:2006 6.5.1 Table 9
+     * See ISO 18004:2006 6.5.1 Table 9.
      */
     private static Version[] buildVersions() {
         return new Version[]{

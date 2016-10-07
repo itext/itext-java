@@ -88,10 +88,16 @@ final class CharacterSetECI {
         this.value = value;
     }
 
+    /**
+     * @return name of the encoding.
+     */
     public String getEncodingName() {
         return encodingName;
     }
 
+    /**
+     * @return the value of the encoding.
+     */
     public int getValue() {
         return value;
     }

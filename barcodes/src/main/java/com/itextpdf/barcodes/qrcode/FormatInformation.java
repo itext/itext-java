@@ -177,14 +177,25 @@ final class FormatInformation {
         return errorCorrectionLevel;
     }
 
+    /**
+     * @return The datamask in byte-format
+     */
     byte getDataMask() {
         return dataMask;
     }
 
+    /**
+     * @return the hashcode of the QR-code format information
+     */
     public int hashCode() {
         return (errorCorrectionLevel.ordinal() << 3) | (int) dataMask;
     }
 
+    /**
+     * Compares the Format Information of this and o
+     * @param o object to compare to
+     * @return True if o is a FormatInformationObject and the error-correction level and the datamask are equal, false otherwise
+     */
     public boolean equals(Object o) {
         if (!(o instanceof FormatInformation)) {
             return false;

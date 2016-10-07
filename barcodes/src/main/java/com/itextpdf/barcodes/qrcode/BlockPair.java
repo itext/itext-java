@@ -43,6 +43,9 @@
  */
 package com.itextpdf.barcodes.qrcode;
 
+/**
+ * Helper class that groups a block of databytes with its corresponding block of error correction block
+ */
 final class BlockPair {
 
     private final ByteArray dataBytes;
@@ -53,10 +56,16 @@ final class BlockPair {
         errorCorrectionBytes = errorCorrection;
     }
 
+    /**
+     * @return data block of the pair
+     */
     public ByteArray getDataBytes() {
         return dataBytes;
     }
 
+    /**
+     * @return error correction block of the pair
+     */
     public ByteArray getErrorCorrectionBytes() {
         return errorCorrectionBytes;
     }
