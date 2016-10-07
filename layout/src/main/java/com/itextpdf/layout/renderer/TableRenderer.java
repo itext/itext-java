@@ -332,7 +332,7 @@ public class TableRenderer extends AbstractRenderer {
                 // collapse boundary borders if necessary
                 // notice that bottom border collapse is handled afterwards
                 Border[] cellBorders = cell.getBorders();
-                if (0 >= row - rowspan + 1) {
+                if (0 == row - rowspan + 1) {
                     cell.setProperty(Property.BORDER_TOP, getCollapsedBorder(cellBorders[0], borders[0]));
                 }
                 if (0 == col) {
