@@ -217,6 +217,13 @@ public final class ReedSolomon {
         }
     }
 
+    /**
+     * Calculates the error correction code for the given parameters.
+     * @param wd bytearray containing the data
+     * @param nd size of the data
+     * @param datablock size of a datablock
+     * @param nc size of a errorblock
+     */
     public static void generateECC(byte[] wd, int nd, int datablock, int nc) {
         int blocks = (nd + 2) / datablock;
         int b;
