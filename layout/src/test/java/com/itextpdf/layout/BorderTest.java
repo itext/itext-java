@@ -19,6 +19,7 @@ import com.itextpdf.layout.border.OutsetBorder;
 import com.itextpdf.layout.border.RidgeBorder;
 import com.itextpdf.layout.border.RoundDotsBorder;
 import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
@@ -661,6 +662,33 @@ public class BorderTest extends ExtendedITextTest {
         cell.setBorderTop(new SolidBorder(Color.YELLOW, 6f));
         table.addCell(cell);
 
+        doc.add(table);
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void splitCellsTest02() throws IOException, InterruptedException {
+        fileName = "splitCellsTest02.pdf";
+        Document doc = createDocument();
+
+        String text = "And it's Arsenal, \n" +
+                "Arsenal FC, \n" +
+                "We're by far the greatest team, \n" +
+                "The world has ever seen.... \n";
+
+        Table table = new Table(2);
+
+        Cell cell;
+        for (int i = 0; i < 38; i++) {
+            cell = new Cell().add(text);
+            cell.setBorder(new SolidBorder(Color.RED, 2f));
+            cell.setBorderBottom(Border.NO_BORDER);
+            table.addCell(cell);
+        }
+        doc.add(table);
+        doc.add(new AreaBreak());
+
+        table.setBorder(new SolidBorder(Color.YELLOW, 3));
         doc.add(table);
         closeDocumentAndCompareOutputs(doc);
     }

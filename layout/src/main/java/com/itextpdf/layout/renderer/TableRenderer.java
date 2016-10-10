@@ -263,7 +263,7 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         // Apply halves of the borders. The other halves are applied on a Cell level
-        layoutBox.applyMargins(topTableBorderWidth / 2, rightTableBorderWidth / 2, 0, leftTableBorderWidth / 2, false);
+        layoutBox.<Rectangle>applyMargins(topTableBorderWidth / 2, rightTableBorderWidth / 2, 0, leftTableBorderWidth / 2, false);
 
         columnWidths = calculateScaledColumnWidths(tableModel, (float) tableWidth, leftTableBorderWidth, rightTableBorderWidth);
         LayoutResult[] splits = new LayoutResult[tableModel.getNumberOfColumns()];
@@ -387,13 +387,13 @@ public class TableRenderer extends AbstractRenderer {
                 Border collapsedBottomBorder = getCollapsedBorder(oldBottomBorder, borders[2]);
                 if (collapsedBottomBorder != null) {
                     bottomTableBorderWidth = Math.max(bottomTableBorderWidth, collapsedBottomBorder.getWidth());
-                    cellArea.getBBox().applyMargins(0, 0, collapsedBottomBorder.getWidth() / 2, 0, false);
+                    cellArea.getBBox().<Rectangle>applyMargins(0, 0, collapsedBottomBorder.getWidth() / 2, 0, false);
                     cell.setProperty(Property.BORDER_BOTTOM, collapsedBottomBorder);
                 }
                 LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea));
                 if (collapsedBottomBorder != null && null != cellResult.getOccupiedArea()) {
                     // apply the difference between collapsed table border and own cell border
-                    cellResult.getOccupiedArea().getBBox().applyMargins(0, 0,
+                    cellResult.getOccupiedArea().getBBox().<Rectangle>applyMargins(0, 0,
                             (collapsedBottomBorder.getWidth() - (oldBottomBorder == null ? 0 : oldBottomBorder.getWidth())) / 2, 0, false);
                     cell.setProperty(Property.BORDER_BOTTOM, oldBottomBorder);
                 }
@@ -530,7 +530,7 @@ public class TableRenderer extends AbstractRenderer {
                                 horizontalBorders.get(hasContent || cellWithBigRowspanAdded ? row + 1 : row).set(col, collapsedBorder);
                             }
                             // apply the difference between collapsed table border and own cell border
-                            lastAddedRow[col].occupiedArea.getBBox().applyMargins(0, 0,
+                            lastAddedRow[col].occupiedArea.getBBox().<Rectangle>applyMargins(0, 0,
                                     (collapsedBorderWidth - cellBottomBorderWidth) / 2, 0, true);
                             int cellRowStartIndex =  heights.size()- (int)lastAddedRow[col].getPropertyAsInteger(Property.ROWSPAN);
                             ListIterator iterator = heights.listIterator(cellRowStartIndex > 0 ? cellRowStartIndex : 0);
@@ -584,7 +584,7 @@ public class TableRenderer extends AbstractRenderer {
                 TableRenderer[] splitResult = split(row, hasContent);
 
                 // Apply bottom border
-                splitResult[0].getOccupiedArea().getBBox().applyMargins(0, 0, bottomTableBorderWidth / 2, 0, true);
+                splitResult[0].getOccupiedArea().getBBox().<Rectangle>applyMargins(0, 0, bottomTableBorderWidth / 2, 0, true);
 
                 int[] rowspans = new int[currentRow.length];
                 boolean[] columnsWithCellToBeEnlarged = new boolean[currentRow.length];
@@ -601,11 +601,17 @@ public class TableRenderer extends AbstractRenderer {
                             currentRow[col] = null;
                             CellRenderer cellOverflow = (CellRenderer) splits[col].getOverflowRenderer();
                             if (splits[col].getStatus() == LayoutResult.PARTIAL) {
-                                cellOverflow.setBorders((Border) cellOverflow.getModelElement().getDefaultProperty(Property.BORDER), 0);
+                                cellOverflow.setBorders(cellOverflow.getModelElement().hasProperty(Property.BORDER_BOTTOM) && null == cellOverflow.getModelElement().<Border>getProperty(Property.BORDER_BOTTOM)
+                                        ? null
+                                        : (Border) cellOverflow.getModelElement().<Border>getDefaultProperty(Property.BORDER), 0);
                             } else {
                                 cellOverflow.deleteOwnProperty(Property.BORDER_TOP);
                             }
-                            horizontalBorders.get(row + 1).set(col, getBorders()[2] == null ? (Border) cellOverflow.getModelElement().getDefaultProperty(Property.BORDER) : getBorders()[2]);
+                            horizontalBorders.get(row + 1).set(col, getBorders()[2] == null
+                                    ? cellOverflow.getModelElement().hasProperty(Property.BORDER_BOTTOM) && null == cellOverflow.getModelElement().<Border>getProperty(Property.BORDER_BOTTOM)
+                                            ? null
+                                            : (Border) cellOverflow.getModelElement().<Border>getDefaultProperty(Property.BORDER)
+                                    : getBorders()[2]);
                             cellOverflow.deleteOwnProperty(Property.BORDER_BOTTOM);
                             cellOverflow.setBorders(cellOverflow.getBorders()[2], 2);
                             rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) cellOverflow.setParent(splitResult[1]);
@@ -614,9 +620,17 @@ public class TableRenderer extends AbstractRenderer {
                         }
                     } else if (hasContent && currentRow[col] != null) {
                         columnsWithCellToBeEnlarged[col] = true;
-                        horizontalBorders.get(row + 1).set(col, getBorders()[2] == null ? (Border) currentRow[col].getModelElement().getDefaultProperty(Property.BORDER) : getBorders()[2]);
+                        horizontalBorders.get(row + 1).set(col, getBorders()[2] == null
+                                ? currentRow[col].getModelElement().hasProperty(Property.BORDER_BOTTOM) && null == currentRow[col].getModelElement().<Border>getProperty(Property.BORDER_BOTTOM)
+                                        ? null
+                                        : (Border) currentRow[col].getModelElement().getDefaultProperty(Property.BORDER)
+                                : getBorders()[2]);
                         // for the future
-                        currentRow[col].getModelElement().setBorderTop(getBorders()[0] == null ? (Border) currentRow[col].getModelElement().getDefaultProperty(Property.BORDER) : getBorders()[0]);
+                        currentRow[col].getModelElement().setBorderTop(getBorders()[0] == null
+                                ? currentRow[col].getModelElement().hasProperty(Property.BORDER_BOTTOM) && null == currentRow[col].getModelElement().<Border>getProperty(Property.BORDER_BOTTOM)
+                                        ? null
+                                        : (Border) currentRow[col].getModelElement().<Border>getDefaultProperty(Property.BORDER)
+                                : getBorders()[0]);
                     }
                 }
 
