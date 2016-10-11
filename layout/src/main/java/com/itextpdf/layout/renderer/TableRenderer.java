@@ -68,7 +68,6 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 /**
@@ -533,9 +532,8 @@ public class TableRenderer extends AbstractRenderer {
                             lastAddedRow[col].occupiedArea.getBBox().<Rectangle>applyMargins(0, 0,
                                     (collapsedBorderWidth - cellBottomBorderWidth) / 2, 0, true);
                             int cellRowStartIndex =  heights.size()- (int)lastAddedRow[col].getPropertyAsInteger(Property.ROWSPAN);
-                            ListIterator iterator = heights.listIterator(cellRowStartIndex > 0 ? cellRowStartIndex : 0);
-                            while (iterator.hasNext()) {
-                                currentCellHeight+=(float)iterator.next();
+                            for (int i = cellRowStartIndex > 0 ? cellRowStartIndex : 0 ; i < heights.size(); i++) {
+                                currentCellHeight += heights.get(i);
                             }
                             if (currentCellHeight < lastAddedRow[col].occupiedArea.getBBox().getHeight()) {
                                 bottomBorderWidthDifference = Math.max(bottomBorderWidthDifference, (collapsedBorderWidth - cellBottomBorderWidth) / 2);
