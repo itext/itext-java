@@ -146,6 +146,10 @@ public abstract class RootRenderer extends AbstractRenderer {
                 renderer = result.getOverflowRenderer();
             }
 
+            if (null != result && null != result.getSplitRenderer()) {
+                renderer = result.getSplitRenderer();
+            }
+
             // Keep renderer until next element is added for future keep with next adjustments
             if (renderer != null && Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.KEEP_WITH_NEXT))) {
                 if (Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {

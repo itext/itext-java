@@ -83,6 +83,8 @@ public final class Property {
     public static final int FULL = 25;
     public static final int FORCED_PLACEMENT = 26;
     public static final int HEIGHT = 27;
+    public static final int HEIGHT_TYPE = 83;
+
     public static final int HORIZONTAL_ALIGNMENT = 28;
     /**
      * Value of 1 is equivalent to no scaling

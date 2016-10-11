@@ -50,6 +50,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.LineLayoutResult;
+import com.itextpdf.layout.property.HeightPropertyType;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
@@ -98,7 +99,10 @@ public class ParagraphRenderer extends BlockRenderer {
             setProperty(Property.PADDING_RIGHT, 0);
             setProperty(Property.PADDING_BOTTOM, 0);
             setProperty(Property.PADDING_LEFT, 0);
-            setProperty(Property.BORDER, Border.NO_BORDER);
+            // if paragraph has been deliberatly created empty.
+            if (!hasProperty(Property.HEIGHT) && retrieveHeightPropertyType() != HeightPropertyType.MAX_HEIGHT) {
+                setProperty(Property.BORDER, Border.NO_BORDER);
+            }
         }
 
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
@@ -123,6 +127,11 @@ public class ParagraphRenderer extends BlockRenderer {
         }
         float[] paddings = getPaddings();
         applyPaddings(parentBBox, paddings, false);
+
+        Float blockHeight = retrieveHeight();
+        if (null != blockHeight && retrieveHeightPropertyType() != HeightPropertyType.MIN_HEIGHT && parentBBox.getHeight() > blockHeight) {
+            parentBBox.moveUp(parentBBox.getHeight()-blockHeight).setHeight(blockHeight);
+        }
 
         List<Rectangle> areas;
         if (isPositioned) {
@@ -221,6 +230,12 @@ public class ParagraphRenderer extends BlockRenderer {
                             split[1].childRenderers.addAll(result.getOverflowRenderer().getChildRenderers());
                         }
 
+                        if (hasProperty(Property.HEIGHT)) {
+                            if (retrieveHeightPropertyType() != HeightPropertyType.MIN_HEIGHT && parentBBox.getHeight() == blockHeight) {
+                                return new LayoutResult(LayoutResult.FULL, occupiedArea, split[0], null);
+                            }
+                            split[1].setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                        }
                         if (anythingPlaced) {
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]);
                         } else {
@@ -266,10 +281,19 @@ public class ParagraphRenderer extends BlockRenderer {
             occupiedArea.getBBox().moveDown(moveDown);
             occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
         }
-        Float blockHeight = this.getPropertyAsFloat(Property.HEIGHT);
         applyPaddings(occupiedArea.getBBox(), paddings, true);
-        if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
-            occupiedArea.getBBox().moveDown((float) blockHeight - occupiedArea.getBBox().getHeight()).setHeight((float) blockHeight);
+        IRenderer overflowRenderer = null;
+        if (blockHeight != null && retrieveHeightPropertyType() != HeightPropertyType.MAX_HEIGHT && blockHeight > occupiedArea.getBBox().getHeight()) {
+            float blockBottom = occupiedArea.getBBox().getBottom() - ((float) blockHeight - occupiedArea.getBBox().getHeight());
+            if (blockBottom >= layoutContext.getArea().getBBox().getBottom()) {
+                occupiedArea.getBBox().setY(blockBottom).setHeight((float) blockHeight);
+            } else {
+                occupiedArea.getBBox()
+                        .increaseHeight(occupiedArea.getBBox().getBottom() - layoutContext.getArea().getBBox().getBottom())
+                        .setY(layoutContext.getArea().getBBox().getBottom());
+                overflowRenderer = createOverflowRenderer(parent);
+                modelElement.setProperty(Property.HEIGHT, (float) blockHeight - occupiedArea.getBBox().getHeight());
+            }
             applyVerticalAlignment();
         }
         if (isPositioned) {
@@ -288,7 +312,11 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
             }
         }
-        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+        if (null == overflowRenderer) {
+            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+        } else {
+            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, this, overflowRenderer);
+        }
     }
 
     /**

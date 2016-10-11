@@ -48,9 +48,17 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
-import com.itextpdf.layout.element.*;
-import com.itextpdf.layout.property.*;
-import com.itextpdf.layout.renderer.AbstractRenderer;
+import com.itextpdf.layout.element.BlockElement;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.IElement;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.property.FontKerning;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.Leading;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
 import com.itextpdf.layout.splitting.DefaultSplitCharacters;
@@ -234,12 +242,12 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      * @param y         the point about which the text will be aligned and rotated
      * @param textAlign horizontal alignment about the specified point
      * @param vertAlign vertical alignment about the specified point
-     * @param angle     the angle of rotation applied to the text, in radians
+     * @param radAngle  the angle of rotation applied to the text, in radians
      * @return this object
      */
-    public T showTextAlignedKerned(String text, float x, float y, TextAlignment textAlign, VerticalAlignment vertAlign, float angle) {
+    public T showTextAlignedKerned(String text, float x, float y, TextAlignment textAlign, VerticalAlignment vertAlign, float radAngle) {
         Paragraph p = new Paragraph(text).setFontKerning(FontKerning.YES);
-        return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, angle);
+        return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, radAngle);
     }
 
     /**
@@ -281,14 +289,14 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      * @param pageNumber the page number to write the text
      * @param textAlign  horizontal alignment about the specified point
      * @param vertAlign  vertical alignment about the specified point
-     * @param angle      the angle of rotation applied to the text, in radians
+     * @param radAngle   the angle of rotation applied to the text, in radians
      * @return this object
      */
-    public T showTextAligned(Paragraph p, float x, float y, int pageNumber, TextAlignment textAlign, VerticalAlignment vertAlign, float angle) {
+    public T showTextAligned(Paragraph p, float x, float y, int pageNumber, TextAlignment textAlign, VerticalAlignment vertAlign, float radAngle) {
         Div div = new Div();
         div.setTextAlignment(textAlign).setVerticalAlignment(vertAlign);
-        if (angle != 0) {
-            div.setRotationAngle(angle);
+        if (radAngle != 0) {
+            div.setRotationAngle(radAngle);
         }
         div.setProperty(Property.ROTATION_POINT_X, x);
         div.setProperty(Property.ROTATION_POINT_Y, y);
