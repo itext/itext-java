@@ -70,8 +70,11 @@ public class GsubLookupType2 extends OpenTableLookup {
         if (!openReader.isSkip(g.getCode(), lookupFlag)) {
             int[] substSequence = substMap.get(g.getCode());
             if (substSequence != null) {
-                line.substituteOneToMany(openReader, substSequence);
-                changed = true;
+                // The use of multiple substitution for deletion of an input glyph is prohibited. GlyphCount should always be greater than 0.
+                if (substSequence.length > 0) {
+                    line.substituteOneToMany(openReader, substSequence);
+                    changed = true;
+                }
             }
         }
         line.idx++;
