@@ -130,7 +130,6 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 logger.warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
                             }
                             renderer = result.getOverflowRenderer();
-
                             continue;
                         }
                         storedArea = currentArea;

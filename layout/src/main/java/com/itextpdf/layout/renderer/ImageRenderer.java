@@ -59,6 +59,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.HeightType;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 
@@ -125,6 +126,20 @@ public class ImageRenderer extends AbstractRenderer {
                 t.scale(1, (float) verticalScaling);
             }
             height *= (float) verticalScaling;
+        }
+
+        Float heightPropertyValue = retrieveHeight();
+        if (null != heightPropertyValue) {
+            if(HeightType.MIN_HEIGHT == retrieveHeightPropertyType() && height < heightPropertyValue) {
+                width *= heightPropertyValue / height;
+                height = heightPropertyValue;
+            } else if (HeightType.HEIGHT == retrieveHeightPropertyType() && height != heightPropertyValue) {
+                width *= heightPropertyValue / height;
+                height = heightPropertyValue;
+            } else if (HeightType.MAX_HEIGHT == retrieveHeightPropertyType() && height > heightPropertyValue) {
+                width *= heightPropertyValue / height;
+                height = heightPropertyValue;
+            }
         }
 
         float imageItselfScaledWidth = (float) width;
@@ -244,6 +259,7 @@ public class ImageRenderer extends AbstractRenderer {
     protected ImageRenderer autoScale(LayoutArea area) {
         if (width > area.getBBox().getWidth()) {
             setProperty(Property.HEIGHT, area.getBBox().getWidth() / width * imageHeight);
+            setProperty(Property.HEIGHT_TYPE, HeightType.HEIGHT);
             setProperty(Property.WIDTH, UnitValue.createPointValue(area.getBBox().getWidth()));
             // if still image is not scaled properly
             if (this.getPropertyAsFloat(Property.HEIGHT) > area.getBBox().getHeight()) {

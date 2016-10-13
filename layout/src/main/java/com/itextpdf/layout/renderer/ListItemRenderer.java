@@ -49,7 +49,7 @@ import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.property.HeightPropertyType;
+import com.itextpdf.layout.property.HeightType;
 import com.itextpdf.layout.property.ListSymbolAlignment;
 import com.itextpdf.layout.property.Property;
 
@@ -76,7 +76,7 @@ public class ListItemRenderer extends DivRenderer {
         if (symbolRenderer != null && this.<Object>getProperty(Property.HEIGHT) == null) {
             // TODO this is actually MinHeight.
             setProperty(Property.HEIGHT, symbolRenderer.getOccupiedArea().getBBox().getHeight());
-            setProperty(Property.HEIGHT_TYPE, HeightPropertyType.MIN_HEIGHT);
+            setProperty(Property.HEIGHT_TYPE, HeightType.MIN_HEIGHT);
         }
         return super.layout(layoutContext);
     }

@@ -64,7 +64,7 @@ import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.property.Background;
-import com.itextpdf.layout.property.HeightPropertyType;
+import com.itextpdf.layout.property.HeightType;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
@@ -580,8 +580,8 @@ public abstract class AbstractRenderer implements IRenderer {
         return this.<Float>getProperty(Property.HEIGHT);
     }
 
-    protected HeightPropertyType retrieveHeightPropertyType() {
-        return this.<HeightPropertyType>getProperty(Property.HEIGHT_TYPE);
+    protected HeightType retrieveHeightPropertyType() {
+        return this.<HeightType>getProperty(Property.HEIGHT_TYPE);
     }
 
     protected Float retrieveUnitValue(float basePercentValue, int property) {

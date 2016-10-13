@@ -1,18 +1,19 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.LineSeparator;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
@@ -124,7 +125,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_heightTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
-        String text =
+        String textByron =
                 "When a man hath no freedom to fight for at home,\n" +
                 "    Let him combat for that of his neighbours;\n" +
                 "Let him think of the glories of Greece and of Rome,\n" +
@@ -134,6 +135,14 @@ public class DefaultLayoutTest extends ExtendedITextTest {
                 "    And is always as nobly requited;\n" +
                 "Then battle for Freedom wherever you can,\n" +
                 "    And, if not shot or hanged, you'll get knighted.";
+
+        String textHelloWorld =
+                "Hello World\n" +
+                "Hello World\n" +
+                "Hello World\n" +
+                "Hello World\n" +
+                "Hello World\n";
+
 
         Document doc = new Document(pdfDocument);
 
@@ -147,12 +156,12 @@ public class DefaultLayoutTest extends ExtendedITextTest {
         doc.add(list);
         doc.add(new AreaBreak());
 
-        Paragraph p = new Paragraph(text);
+        Paragraph p = new Paragraph(textByron);
         for (int i = 0; i < 15; i++) {
-            p.add(text);
+            p.add(textByron);
         }
         p.setBorder(new SolidBorder(0.5f));
-        p.setHeight(1000);
+        p.setHeight(500);
         doc.add(p);
         doc.add(new AreaBreak());
 
@@ -166,24 +175,23 @@ public class DefaultLayoutTest extends ExtendedITextTest {
         doc.add(div);
         doc.add(new AreaBreak());
 
-        LineSeparator lineSeparator = new LineSeparator(new SolidLine(100));
-        doc.add(lineSeparator.setMinHeight(300));
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(Color.RED, 2f));
+        table.addCell(new Cell(2, 1).add(new Paragraph(textHelloWorld)));
+        for (int i = 0; i < 2; i++) {
+            table.addCell(new Cell().add(new Paragraph(textByron)));
+        }
+        table.addCell(new Cell(1, 2).add(textByron));
 
-        Table table = new Table(1);
-        Cell cell = new Cell().add(new Paragraph("Hello World\nHello World\nHello World\nHello World\nHello World\n"));
-        table.addCell("fixed height (more than sufficient)");
-        cell.setHeight(72f);
-        table.addCell(cell.clone(true));
-        table.addCell("fixed height (not sufficient)");
-        cell.setHeight(36f);
-        table.addCell(cell.clone(true));
-        table.addCell("minimum height");
-        cell = new Cell().add("Dr. iText");
-        cell.setMinHeight(36f);
-        table.addCell(cell);
-
+        //table.setHeight(2000);
         doc.add(table);
+        doc.add(new Paragraph("Hello"));
+        doc.add(new AreaBreak());
 
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        Image image = new Image(xObject, 100);
+        image.setMaxHeight(100);
+        doc.add(image);
 
         doc.close();
 

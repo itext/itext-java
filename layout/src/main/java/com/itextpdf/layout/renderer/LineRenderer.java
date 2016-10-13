@@ -54,7 +54,7 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.LineLayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.property.BaseDirection;
-import com.itextpdf.layout.property.HeightPropertyType;
+import com.itextpdf.layout.property.HeightType;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TabAlignment;
@@ -559,7 +559,7 @@ public class LineRenderer extends AbstractRenderer {
         childRenderer.setProperty(Property.TAB_LEADER, nextTabStop.getTabLeader());
         childRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(nextTabStop.getTabPosition() - curWidth));
         childRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
-        childRenderer.setProperty(Property.HEIGHT_TYPE, HeightPropertyType.MIN_HEIGHT);
+        childRenderer.setProperty(Property.HEIGHT_TYPE, HeightType.MIN_HEIGHT);
 
         if (nextTabStop.getTabAlignment() == TabAlignment.LEFT) {
             return null;
@@ -600,7 +600,7 @@ public class LineRenderer extends AbstractRenderer {
 
         tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(tabWidth));
         tabRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
-        tabRenderer.setProperty(Property.HEIGHT_TYPE, HeightPropertyType.MIN_HEIGHT);
+        tabRenderer.setProperty(Property.HEIGHT_TYPE, HeightType.MIN_HEIGHT);
 
         return tabWidth;
     }
@@ -612,7 +612,7 @@ public class LineRenderer extends AbstractRenderer {
             tabWidth = lineWidth - curWidth;
         tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue((float) tabWidth));
         tabRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
-        tabRenderer.setProperty(Property.HEIGHT_TYPE, HeightPropertyType.MIN_HEIGHT);
+        tabRenderer.setProperty(Property.HEIGHT_TYPE, HeightType.MIN_HEIGHT);
 
     }
 

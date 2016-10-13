@@ -52,7 +52,7 @@ import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.FontKerning;
-import com.itextpdf.layout.property.HeightPropertyType;
+import com.itextpdf.layout.property.HeightType;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
@@ -118,7 +118,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
             case Property.PADDING_LEFT:
                 return (T1) (Object) 0f;
             case Property.HEIGHT_TYPE:
-                return (T1) (Object) HeightPropertyType.HEIGHT;
+                return (T1) (Object) HeightType.HEIGHT;
             default:
                 return (T1) (Object) null;
         }
@@ -184,7 +184,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setHeight(float height) {
         setProperty(Property.HEIGHT, height);
-        setProperty(Property.HEIGHT_TYPE, HeightPropertyType.HEIGHT);
+        setProperty(Property.HEIGHT_TYPE, HeightType.HEIGHT);
         return (T) (Object) this;
     }
 

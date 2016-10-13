@@ -50,7 +50,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.LineLayoutResult;
-import com.itextpdf.layout.property.HeightPropertyType;
+import com.itextpdf.layout.property.HeightType;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
@@ -100,7 +100,7 @@ public class ParagraphRenderer extends BlockRenderer {
             setProperty(Property.PADDING_BOTTOM, 0);
             setProperty(Property.PADDING_LEFT, 0);
             // if paragraph has been deliberatly created empty.
-            if (!hasProperty(Property.HEIGHT) && retrieveHeightPropertyType() != HeightPropertyType.MAX_HEIGHT) {
+            if (!hasProperty(Property.HEIGHT) && retrieveHeightPropertyType() != HeightType.MAX_HEIGHT) {
                 setProperty(Property.BORDER, Border.NO_BORDER);
             }
         }
@@ -129,7 +129,7 @@ public class ParagraphRenderer extends BlockRenderer {
         applyPaddings(parentBBox, paddings, false);
 
         Float blockHeight = retrieveHeight();
-        if (null != blockHeight && retrieveHeightPropertyType() != HeightPropertyType.MIN_HEIGHT && parentBBox.getHeight() > blockHeight) {
+        if (null != blockHeight && retrieveHeightPropertyType() != HeightType.MIN_HEIGHT && parentBBox.getHeight() > blockHeight) {
             parentBBox.moveUp(parentBBox.getHeight()-blockHeight).setHeight(blockHeight);
         }
 
@@ -231,7 +231,7 @@ public class ParagraphRenderer extends BlockRenderer {
                         }
 
                         if (hasProperty(Property.HEIGHT)) {
-                            if (retrieveHeightPropertyType() != HeightPropertyType.MIN_HEIGHT && parentBBox.getHeight() == blockHeight) {
+                            if (retrieveHeightPropertyType() != HeightType.MIN_HEIGHT && parentBBox.getHeight() == blockHeight) {
                                 return new LayoutResult(LayoutResult.FULL, occupiedArea, split[0], null);
                             }
                             split[1].setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
@@ -283,7 +283,7 @@ public class ParagraphRenderer extends BlockRenderer {
         }
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         IRenderer overflowRenderer = null;
-        if (blockHeight != null && retrieveHeightPropertyType() != HeightPropertyType.MAX_HEIGHT && blockHeight > occupiedArea.getBBox().getHeight()) {
+        if (blockHeight != null && retrieveHeightPropertyType() != HeightType.MAX_HEIGHT && blockHeight > occupiedArea.getBBox().getHeight()) {
             float blockBottom = occupiedArea.getBBox().getBottom() - ((float) blockHeight - occupiedArea.getBBox().getHeight());
             if (blockBottom >= layoutContext.getArea().getBBox().getBottom()) {
                 occupiedArea.getBBox().setY(blockBottom).setHeight((float) blockHeight);

@@ -43,8 +43,6 @@
  */
 package com.itextpdf.layout.layout;
 
-import com.itextpdf.layout.property.HeightProperty;
-
 /**
  * Represents the context for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
  */
@@ -55,15 +53,8 @@ public class LayoutContext {
      */
     protected LayoutArea area;
 
-    protected HeightProperty heightProperty;
-
     public LayoutContext(LayoutArea area) {
         this.area = area;
-    }
-
-    public LayoutContext(LayoutArea area, HeightProperty heightProperty) {
-        this.area = area;
-        this.heightProperty = heightProperty;
     }
 
     /**
@@ -73,10 +64,6 @@ public class LayoutContext {
      */
     public LayoutArea getArea() {
         return area;
-    }
-
-    public HeightProperty getHeightProperty() {
-        return heightProperty;
     }
 
     /**

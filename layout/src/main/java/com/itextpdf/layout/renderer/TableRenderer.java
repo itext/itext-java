@@ -58,6 +58,7 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.HeightType;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
@@ -218,6 +219,14 @@ public class TableRenderer extends AbstractRenderer {
         if (tableWidth == null || tableWidth == 0) {
             tableWidth = layoutBox.getWidth();
         }
+
+        Float blockHeight = retrieveHeight();
+        if (blockHeight != null && blockHeight < layoutBox.getHeight() && retrieveHeightPropertyType() != HeightType.MIN_HEIGHT
+                && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+            layoutBox.moveUp(layoutBox.getHeight()-blockHeight).setHeight(blockHeight);
+        }
+        float layoutBoxHeight = layoutBox.getHeight();
+
         occupiedArea = new LayoutArea(area.getPageNumber(),
                 new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - topTableBorderWidth / 2, (float) tableWidth, 0));
 
@@ -696,15 +705,40 @@ public class TableRenderer extends AbstractRenderer {
                     int status = (childRenderers.isEmpty() && footerRenderer == null)
                             ? LayoutResult.NOTHING
                             : LayoutResult.PARTIAL;
-                    if (status == LayoutResult.NOTHING && Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+                    if ((status == LayoutResult.NOTHING && Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)))
+                            || (hasProperty(Property.HEIGHT) && retrieveHeightPropertyType() != HeightType.MIN_HEIGHT  && layoutBoxHeight == blockHeight)) {
+                        return new LayoutResult(LayoutResult.FULL, occupiedArea, splitResult[0], null);
                     } else {
+                        if (hasProperty(Property.HEIGHT)) {
+                            splitResult[1].setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                        }
                         return new LayoutResult(status, occupiedArea, splitResult[0], splitResult[1], LayoutResult.NOTHING == status ? firstCauseOfNothing : null);
                     }
                 }
             } else {
                 childRenderers.addAll(currChildRenderers);
                 currChildRenderers.clear();
+            }
+        }
+
+        IRenderer overflowRenderer = null;
+        if (blockHeight != null && retrieveHeightPropertyType() != HeightType.MAX_HEIGHT && blockHeight > occupiedArea.getBBox().getHeight()) {
+            float blockBottom = occupiedArea.getBBox().getBottom() - ((float) blockHeight - occupiedArea.getBBox().getHeight());
+            if (blockBottom >= layoutContext.getArea().getBBox().getBottom()) {
+                heights.set(heights.size()-1, heights.get(heights.size()-1) + blockHeight - occupiedArea.getBBox().getHeight());
+                occupiedArea.getBBox().setY(blockBottom).setHeight((float) blockHeight);
+            } else {
+                heights.set(heights.size()-1, heights.get(heights.size()-1) + occupiedArea.getBBox().getBottom() - layoutContext.getArea().getBBox().getBottom());
+                occupiedArea.getBBox()
+                        .increaseHeight(occupiedArea.getBBox().getBottom() - layoutContext.getArea().getBBox().getBottom())
+                        .setY(layoutContext.getArea().getBBox().getBottom());
+                // Add empty cell in order to continue table on the next area
+                Cell emptyCell = new Cell(1, ((Table) modelElement).getNumberOfColumns());
+                emptyCell.setBorder(Border.NO_BORDER);
+                overflowRenderer =  createOverflowRenderer(new Table.RowRange(((Table)modelElement).getNumberOfRows(), ((Table)modelElement).getNumberOfRows()));
+                ((Table)modelElement).addCell(emptyCell);
+                overflowRenderer.addChild(emptyCell.getRenderer());
+                modelElement.setProperty(Property.HEIGHT, (float) blockHeight - occupiedArea.getBBox().getHeight());
             }
         }
 
@@ -722,7 +756,12 @@ public class TableRenderer extends AbstractRenderer {
             footerRenderer = null;
         }
         adjustFooterAndFixOccupiedArea(layoutBox);
-        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+
+        if (null == overflowRenderer) {
+            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+        } else {
+            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, this, overflowRenderer);
+        }
     }
 
     /**
@@ -947,7 +986,7 @@ public class TableRenderer extends AbstractRenderer {
 
     protected TableRenderer createOverflowRenderer(Table.RowRange rowRange) {
         TableRenderer overflowRenderer = (TableRenderer) getNextRenderer();
-        overflowRenderer.rowRange = rowRange;
+        overflowRenderer.setRowRange(rowRange);
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());

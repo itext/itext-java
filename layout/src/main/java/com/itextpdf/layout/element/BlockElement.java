@@ -44,7 +44,7 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
-import com.itextpdf.layout.property.HeightPropertyType;
+import com.itextpdf.layout.property.HeightType;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
 
@@ -374,14 +374,13 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
 
     public T setMaxHeight(float maxHeight) {
         setProperty(Property.HEIGHT, maxHeight);
-        setProperty(Property.HEIGHT_TYPE, HeightPropertyType.MAX_HEIGHT);
-
+        setProperty(Property.HEIGHT_TYPE, HeightType.MAX_HEIGHT);
         return (T) (Object) this;
     }
 
     public T setMinHeight(float minHeight) {
         setProperty(Property.HEIGHT, minHeight);
-        setProperty(Property.HEIGHT_TYPE, HeightPropertyType.MIN_HEIGHT);
+        setProperty(Property.HEIGHT_TYPE, HeightType.MIN_HEIGHT);
         return (T) (Object) this;
     }
 }
