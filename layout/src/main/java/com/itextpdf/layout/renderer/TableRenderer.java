@@ -947,7 +947,7 @@ public class TableRenderer extends AbstractRenderer {
 
     protected TableRenderer createOverflowRenderer(Table.RowRange rowRange) {
         TableRenderer overflowRenderer = (TableRenderer) getNextRenderer();
-        overflowRenderer.rowRange = rowRange;
+        overflowRenderer.setRowRange(rowRange);
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());

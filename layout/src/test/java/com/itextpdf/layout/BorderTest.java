@@ -31,6 +31,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -153,6 +154,39 @@ public class BorderTest extends ExtendedITextTest {
         table.addCell(new Cell().add("3"));
         doc.add(table);
 
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Ignore("DEVSIX-796")
+    @Test
+    public void simpleBorderTest04() throws IOException, InterruptedException {
+        fileName = "simpleBorderTest04.pdf";
+        Document doc = createDocument();
+        String textByron =
+                "When a man hath no freedom to fight for at home,\n" +
+                        "    Let him combat for that of his neighbours;\n" +
+                        "Let him think of the glories of Greece and of Rome,\n" +
+                        "    And get knocked on the head for his labours.\n" +
+                        "\n" +
+                        "To do good to Mankind is the chivalrous plan,\n" +
+                        "    And is always as nobly requited;\n" +
+                        "Then battle for Freedom wherever you can,\n" +
+                        "    And, if not shot or hanged, you'll get knighted.";
+        String textHelloWorld =
+                "Hello World\n" +
+                        "Hello World\n" +
+                        "Hello World\n" +
+                        "Hello World\n" +
+                        "Hello World\n";
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(Color.RED, 2f));
+        table.addCell(new Cell(2, 1).add(new Paragraph(textHelloWorld)));
+        for (int i = 0; i < 2; i++) {
+            table.addCell(new Cell().add(new Paragraph(textByron)));
+        }
+        table.addCell(new Cell(1, 2).add(textByron));
+        doc.add(table);
         closeDocumentAndCompareOutputs(doc);
     }
 
