@@ -156,7 +156,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 } else {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
 
-                        layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
+                        // layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
 
                         if (currentAreaPos + 1 == areas.size()) {
                             AbstractRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
@@ -253,14 +253,15 @@ public abstract class BlockRenderer extends AbstractRenderer {
             float blockBottom = occupiedArea.getBBox().getBottom() - ((float) blockHeight - occupiedArea.getBBox().getHeight());
             if (blockBottom >= layoutContext.getArea().getBBox().getBottom()) {
                 occupiedArea.getBBox().setY(blockBottom).setHeight((float) blockHeight);
-            } else {
+            } else if (!isFixedLayout()){
                 occupiedArea.getBBox()
                         .increaseHeight(occupiedArea.getBBox().getBottom() - layoutContext.getArea().getBBox().getBottom())
                         .setY(layoutContext.getArea().getBBox().getBottom());
                 overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
                 modelElement.setProperty(Property.HEIGHT, (float) blockHeight - occupiedArea.getBBox().getHeight());
+            } else {
+                occupiedArea.getBBox().moveDown((float) blockHeight - occupiedArea.getBBox().getHeight()).setHeight((float) blockHeight);
             }
-            applyVerticalAlignment();
         }
 
         if (isPositioned) {
