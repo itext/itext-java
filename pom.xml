@@ -159,7 +159,7 @@
                                     <artifactId>${project.artifactId}</artifactId>
                                     <version>${project.version}</version>
                                     <type>${project.packaging}</type>
-                                    <destFileName>itext7-${project.artifactId}-${project.version}</destFileName>
+                                    <destFileName>itext7-${project.artifactId}-${project.version}.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>../target</outputDirectory>
