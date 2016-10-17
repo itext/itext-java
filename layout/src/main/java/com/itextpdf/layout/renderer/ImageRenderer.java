@@ -64,7 +64,7 @@ import com.itextpdf.layout.property.UnitValue;
 
 public class ImageRenderer extends AbstractRenderer {
 
-    private float height;
+    private Float height;
     private Float width;
     protected Float fixedXPosition;
     protected Float fixedYPosition;
@@ -92,14 +92,21 @@ public class ImageRenderer extends AbstractRenderer {
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         width = retrieveWidth(layoutBox.getWidth());
+        height = retrieveHeight();
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
         PdfXObject xObject = ((Image) (getModelElement())).getXObject();
         imageWidth = xObject.getWidth();
         imageHeight = xObject.getHeight();
 
-        width = width == null ? imageWidth : width;
-        height = (float) width / imageWidth * imageHeight;
+        if (width == null && height == null) {
+            width = imageWidth;
+            height = (float) width / imageWidth * imageHeight;
+        } else if (width == null) {
+            width = (float) height / imageHeight * imageWidth;
+        } else if (height == null) {
+            height = (float) width / imageWidth * imageHeight;
+        }
 
         fixedXPosition = this.getPropertyAsFloat(Property.X);
         fixedYPosition = this.getPropertyAsFloat(Property.Y);
@@ -248,7 +255,7 @@ public class ImageRenderer extends AbstractRenderer {
             // if still image is not scaled properly
             if (this.getPropertyAsFloat(Property.HEIGHT) > area.getBBox().getHeight()) {
                 setProperty(Property.WIDTH, UnitValue.createPointValue(area.getBBox().getHeight() / (float) this.getPropertyAsFloat(Property.HEIGHT) * (this.<UnitValue>getProperty(Property.WIDTH)).getValue()));
-                setProperty(Property.HEIGHT, UnitValue.createPointValue(area.getBBox().getHeight()));
+                setProperty(Property.HEIGHT, area.getBBox().getHeight());
             }
         }
 
