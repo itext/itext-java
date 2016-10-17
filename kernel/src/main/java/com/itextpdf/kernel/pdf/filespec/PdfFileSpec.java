@@ -69,6 +69,18 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
         return (PdfFileSpec) new PdfFileSpec(dict).makeIndirect(doc);
     }
 
+    /**
+     * Attach and embed a file to a PdfDocument.
+     * @param doc PdfDocument to add the file to
+     * @param fileStore byte[] containing the file
+     * @param description file description
+     * @param fileDisplay actual file name stored in the pdf
+     * @param mimeType mime-type of the file
+     * @param fileParameter Pdfdictionary containing fil parameters
+     * @param afRelationshipValue AFRelationship key value, @see AFRelationshipValue. If <CODE>null</CODE>, @see AFRelationshipValue.Unspecified will be added.
+     * @param isUnicodeFileName
+     * @return PdfFileSpec containing the file specification of the file as Pdfobject
+     */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String description, String fileDisplay, PdfName mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue, boolean isUnicodeFileName) {
         PdfStream stream = new PdfStream(fileStore).makeIndirect(doc);
         PdfDictionary params = new PdfDictionary();
