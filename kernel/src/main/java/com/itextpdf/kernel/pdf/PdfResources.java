@@ -153,6 +153,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(image, imageNamesGen);
     }
 
+    public PdfImageXObject getImage(PdfName name) {
+        PdfStream image = getResource(PdfName.Image).getAsStream(name);
+        return image != null ? new PdfImageXObject(image) : null;
+    }
+
     /**
      * Adds {@link PdfFormXObject} object to the resources.
      *
@@ -207,6 +212,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return name;
     }
 
+    public PdfFormXObject getForm(PdfName name) {
+        PdfStream form = getResource(PdfName.Form).getAsStream(name);
+        return form != null ? new PdfFormXObject(form) : null;
+    }
+
     /**
      * Adds {@link PdfExtGState} object to the resources.
      *
@@ -244,6 +254,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(extGState, egsNamesGen);
     }
 
+    public PdfExtGState getPdfExtGState(PdfName name) {
+        PdfDictionary dic = getResource(PdfName.ExtGState).getAsDictionary(name);
+        return dic != null ? new PdfExtGState(dic) : null;
+    }
+
     /**
      * Adds {@link PdfDictionary} to the resources as properties list.
      *
@@ -271,6 +286,10 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(properties, propNamesGen);
     }
 
+    public PdfObject getProperties(PdfName name) {
+        return getResourceObject(PdfName.Properties, name);
+    }
+
     /**
      * Adds {@link PdfColorSpace} object to the resources.
      *
@@ -289,6 +308,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfName addColorSpace(PdfObject colorSpace) {
         return addResource(colorSpace, csNamesGen);
+    }
+
+    public PdfColorSpace getColorSpace(PdfName name) {
+        PdfObject colorSpace = getResourceObject(PdfName.ColorSpace, name);
+        return colorSpace != null ? PdfColorSpace.makeColorSpace(colorSpace) : null;
     }
 
     /**
@@ -328,6 +352,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(pattern, patternNamesGen);
     }
 
+    public PdfPattern getPattern(PdfName name) {
+        PdfObject pattern = getResourceObject(PdfName.Pattern, name);
+        return pattern instanceof PdfDictionary ? PdfPattern.getPatternInstance((PdfDictionary) pattern) : null;
+    }
+
     /**
      * Adds {@link PdfShading} object to the resources.
      *
@@ -363,6 +392,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
                     .setMessageParams(shading.getClass().toString());
         }
         return addResource(shading, shadingNamesGen);
+    }
+
+    public PdfShading getShading(PdfName name) {
+        PdfObject shading = getResourceObject(PdfName.Shading, name);
+        return shading instanceof PdfDictionary ? PdfShading.makeShading((PdfDictionary) shading) : null;
     }
 
     protected boolean isReadOnly() {

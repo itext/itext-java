@@ -957,9 +957,9 @@ public class PdfCanvasProcessor {
                 return new DeviceGray(getColorants(operands)[0]);
             } else if (PdfName.Pattern.equals(pdfObject)) {
                 if (operands.get(0) instanceof PdfName) {
-                    PdfObject pattern = resources.getResourceObject(PdfName.Pattern, (PdfName) operands.get(0));
-                    if (pattern instanceof PdfDictionary) {
-                        return new PatternColor(PdfPattern.getPatternInstance((PdfDictionary) pattern));
+                    PdfPattern pattern = resources.getPattern((PdfName) operands.get(0));
+                    if (pattern != null) {
+                        return new PatternColor(pattern);
                     }
                 }
             } if (PdfName.DeviceRGB.equals(pdfObject)) {
@@ -991,12 +991,9 @@ public class PdfCanvasProcessor {
                 PdfObject patternName = underlyingOperands.remove(operands.size() - 2);
                 PdfColorSpace underlyingCs = ((PdfSpecialCs.UncoloredTilingPattern)pdfColorSpace).getUnderlyingColorSpace();
                 if (patternName instanceof PdfName) {
-                    PdfObject patternObject = resources.getResourceObject(PdfName.Pattern, (PdfName)patternName);
-                    if (patternObject instanceof PdfDictionary) {
-                        PdfPattern pattern = PdfPattern.getPatternInstance((PdfDictionary) patternObject);
-                        if (pattern instanceof PdfPattern.Tiling) {
-                            return new PatternColor((PdfPattern.Tiling) pattern, underlyingCs, getColorants(underlyingOperands));
-                        }
+                    PdfPattern pattern = resources.getPattern((PdfName) patternName);
+                    if (pattern instanceof PdfPattern.Tiling) {
+                        return new PatternColor((PdfPattern.Tiling) pattern, underlyingCs, getColorants(underlyingOperands));
                     }
                 }
             }
