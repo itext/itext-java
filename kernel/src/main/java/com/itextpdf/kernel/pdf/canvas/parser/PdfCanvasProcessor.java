@@ -93,6 +93,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -955,9 +956,8 @@ public class PdfCanvasProcessor {
             if (PdfName.DeviceGray.equals(pdfObject)) {
                 return new DeviceGray(getColorants(operands)[0]);
             } else if (PdfName.Pattern.equals(pdfObject)) {
-                PdfDictionary patterns = resources.getResource(PdfName.Pattern);
-                if (patterns != null && operands.get(0) instanceof PdfName) {
-                    PdfObject pattern = patterns.get((PdfName) operands.get(0));
+                if (operands.get(0) instanceof PdfName) {
+                    PdfObject pattern = resources.getResourceObject(PdfName.Pattern, (PdfName) operands.get(0));
                     if (pattern instanceof PdfDictionary) {
                         return new PatternColor(PdfPattern.getPatternInstance((PdfDictionary) pattern));
                     }
@@ -986,6 +986,20 @@ public class PdfCanvasProcessor {
                 return new Separation((PdfSpecialCs.Separation) pdfColorSpace, getColorants(operands)[0]);
             else if (PdfName.DeviceN.equals(csType))
                 return new DeviceN((PdfSpecialCs.DeviceN) pdfColorSpace, getColorants(operands));
+            else if (PdfName.Pattern.equals(csType)) {
+                List<PdfObject> underlyingOperands = new LinkedList<>(operands);
+                PdfObject patternName = underlyingOperands.remove(operands.size() - 2);
+                PdfColorSpace underlyingCs = ((PdfSpecialCs.UncoloredTilingPattern)pdfColorSpace).getUnderlyingColorSpace();
+                if (patternName instanceof PdfName) {
+                    PdfObject patternObject = resources.getResourceObject(PdfName.Pattern, (PdfName)patternName);
+                    if (patternObject instanceof PdfDictionary) {
+                        PdfPattern pattern = PdfPattern.getPatternInstance((PdfDictionary) patternObject);
+                        if (pattern instanceof PdfPattern.Tiling) {
+                            return new PatternColor((PdfPattern.Tiling) pattern, underlyingCs, getColorants(underlyingOperands));
+                        }
+                    }
+                }
+            }
         }
         return null;
     }

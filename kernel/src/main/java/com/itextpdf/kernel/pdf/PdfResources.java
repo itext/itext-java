@@ -513,6 +513,23 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsDictionary(resType);
     }
 
+    /**
+     * Get the {@link PdfObject} object with specified type and name.
+     *
+     * @param resType the resource type. Should be {@link PdfName#ColorSpace}, {@link PdfName#ExtGState},
+     *                {@link PdfName#Pattern}, {@link PdfName#Shading}, {@link PdfName#XObject}, {@link PdfName#Font}.
+     * @param resName the name of the resource object.
+     * @return the {@link PdfObject} with specified name in the resources of specified type or {@code null}
+     *         in case of incorrect type or missing resource with such name.
+     */
+    public PdfObject getResourceObject(PdfName resType, PdfName resName) {
+        PdfDictionary resource = getResource(resType);
+        if (resource != null) {
+            return resource.get(resName);
+        }
+        return null;
+    }
+
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return false;
