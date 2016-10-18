@@ -90,15 +90,6 @@ public class ParagraphRenderer extends BlockRenderer {
         if (0 == childRenderers.size()) {
             anythingPlaced = true;
             currentRenderer = null;
-            setProperty(Property.MARGIN_TOP, 0);
-            setProperty(Property.MARGIN_RIGHT, 0);
-            setProperty(Property.MARGIN_BOTTOM, 0);
-            setProperty(Property.MARGIN_LEFT, 0);
-            setProperty(Property.PADDING_TOP, 0);
-            setProperty(Property.PADDING_RIGHT, 0);
-            setProperty(Property.PADDING_BOTTOM, 0);
-            setProperty(Property.PADDING_LEFT, 0);
-            setProperty(Property.BORDER, Border.NO_BORDER);
         }
 
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {

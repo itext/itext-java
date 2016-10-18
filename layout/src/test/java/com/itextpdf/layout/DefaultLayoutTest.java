@@ -69,7 +69,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES)
+            @LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, count = 2)
     })
     public void emptyParagraphsTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "emptyParagraphsTest01.pdf";
@@ -83,9 +83,9 @@ public class DefaultLayoutTest extends ExtendedITextTest {
         document.add(new Paragraph().setBackgroundColor(Color.GREEN));
         document.add(new Paragraph().setBorder(new SolidBorder(Color.BLUE, 3)));
 
-        document.add(new Paragraph("Hello! I'm the first paragraph added to the document. Am i right?"));
-        document.add(new Paragraph().setHeight(50));
-        document.add(new Paragraph("Hello! I'm the second paragraph added to the document. Am i right?"));
+        document.add(new Paragraph("Hello! I'm the first paragraph added to the document. Am i right? Or not?"));
+        document.add(new Paragraph().setHeight(50).setBorder(new SolidBorder(1)));
+        document.add(new Paragraph("Hello! I'm the second paragraph added to the document. Am i right? Or not?"));
 
         document.close();
 
