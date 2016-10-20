@@ -93,7 +93,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
         document.add(new Paragraph().setBackgroundColor(Color.GREEN));
         document.add(new Paragraph().setBorder(new SolidBorder(Color.BLUE, 3)));
 
-        document.add(new Paragraph("Hello! I'm the first paragraph added to the document. Am i right?"));
+        document.add(new Paragraph("Hello! I'm the first paragraph added to the document. Am i right?").setBackgroundColor(Color.RED).setBorder(new SolidBorder(1)));
         document.add(new Paragraph().setHeight(50));
         document.add(new Paragraph("Hello! I'm the second paragraph added to the document. Am i right?"));
 
@@ -150,18 +150,24 @@ public class DefaultLayoutTest extends ExtendedITextTest {
         for(int i = 0; i < 10; i++) {
             list.add(new ListItem(""+i));
         }
-        list.setHeight(30);
+        list.setHeight(60);
         list.setBorder(new SolidBorder(0.5f));
         //list.setPaddingTop(100); // TODO
         doc.add(list);
         doc.add(new AreaBreak());
 
+        doc.add(list);
+        doc.add(new AreaBreak());
+
         Paragraph p = new Paragraph(textByron);
-        for (int i = 0; i < 15; i++) {
+        //for (int i = 0; i < 15; i++) {
             p.add(textByron);
-        }
+        //}
         p.setBorder(new SolidBorder(0.5f));
-        p.setHeight(500);
+        p.setHeight(1000);
+        doc.add(p);
+        doc.add(new AreaBreak());
+
         doc.add(p);
         doc.add(new AreaBreak());
 
@@ -175,23 +181,35 @@ public class DefaultLayoutTest extends ExtendedITextTest {
         doc.add(div);
         doc.add(new AreaBreak());
 
+        doc.add(div);
+        doc.add(new AreaBreak());
+
         Table table = new Table(2);
         table.setBorder(new SolidBorder(Color.RED, 2f));
-        table.addCell(new Cell(2, 1).add(new Paragraph(textHelloWorld)));
-        for (int i = 0; i < 2; i++) {
-            table.addCell(new Cell().add(new Paragraph(textByron)));
+//        table.addCell(new Cell(2, 1).add(new Paragraph(textHelloWorld)));
+        for (int i = 0; i < 4; i++) {
+            table.addCell(new Cell().add(new Paragraph(textByron)).setBorder(new SolidBorder(Color.YELLOW, 1)));
         }
-        table.addCell(new Cell(1, 2).add(textByron));
+//        table.addCell(new Cell(1, 2).add(textByron));
 
-        //table.setHeight(2000);
+        table.setHeight(1700);
         doc.add(table);
         doc.add(new Paragraph("Hello"));
         doc.add(new AreaBreak());
+
+        doc.add(table);
+        doc.add(new Paragraph("Hello"));
+        doc.add(new AreaBreak());
+
 
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
         image.setMaxHeight(100);
         doc.add(image);
+        doc.add(new AreaBreak());
+
+        doc.add(image);
+        doc.add(new AreaBreak());
 
         doc.close();
 

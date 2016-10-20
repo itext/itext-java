@@ -50,7 +50,6 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.LineLayoutResult;
-import com.itextpdf.layout.property.HeightType;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
@@ -91,18 +90,6 @@ public class ParagraphRenderer extends BlockRenderer {
         if (0 == childRenderers.size()) {
             anythingPlaced = true;
             currentRenderer = null;
-            setProperty(Property.MARGIN_TOP, 0);
-            setProperty(Property.MARGIN_RIGHT, 0);
-            setProperty(Property.MARGIN_BOTTOM, 0);
-            setProperty(Property.MARGIN_LEFT, 0);
-            setProperty(Property.PADDING_TOP, 0);
-            setProperty(Property.PADDING_RIGHT, 0);
-            setProperty(Property.PADDING_BOTTOM, 0);
-            setProperty(Property.PADDING_LEFT, 0);
-            // if paragraph has been deliberatly created empty.
-            if (!hasProperty(Property.HEIGHT) && retrieveHeightPropertyType() != HeightType.MAX_HEIGHT) {
-                setProperty(Property.BORDER, Border.NO_BORDER);
-            }
         }
 
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
@@ -128,9 +115,10 @@ public class ParagraphRenderer extends BlockRenderer {
         float[] paddings = getPaddings();
         applyPaddings(parentBBox, paddings, false);
 
-        Float blockHeight = retrieveHeight();
-        if (null != blockHeight && retrieveHeightPropertyType() != HeightType.MIN_HEIGHT && parentBBox.getHeight() > blockHeight) {
-            parentBBox.moveUp(parentBBox.getHeight()-blockHeight).setHeight(blockHeight);
+//        Float blockHeight = retrieveHeight();
+        Float blockMaxHeight = retrieveMaxHeight();
+        if (null != blockMaxHeight && parentBBox.getHeight() > blockMaxHeight) {
+            parentBBox.moveUp(parentBBox.getHeight()-blockMaxHeight).setHeight(blockMaxHeight);
         }
 
         List<Rectangle> areas;
@@ -231,7 +219,7 @@ public class ParagraphRenderer extends BlockRenderer {
                         }
 
                         if (hasProperty(Property.HEIGHT)) {
-                            if (retrieveHeightPropertyType() != HeightType.MIN_HEIGHT && parentBBox.getHeight() == blockHeight) {
+                            if (null != blockMaxHeight && parentBBox.getHeight() == blockMaxHeight) {
                                 return new LayoutResult(LayoutResult.FULL, occupiedArea, split[0], null);
                             }
                             split[1].setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
@@ -283,16 +271,20 @@ public class ParagraphRenderer extends BlockRenderer {
         }
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         IRenderer overflowRenderer = null;
-        if (blockHeight != null && retrieveHeightPropertyType() != HeightType.MAX_HEIGHT && blockHeight > occupiedArea.getBBox().getHeight()) {
-            float blockBottom = occupiedArea.getBBox().getBottom() - ((float) blockHeight - occupiedArea.getBBox().getHeight());
+        Float blockMinHeight = retrieveMinHeight();
+        if (null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
+            float blockBottom = occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight());
             if (blockBottom >= layoutContext.getArea().getBBox().getBottom()) {
-                occupiedArea.getBBox().setY(blockBottom).setHeight((float) blockHeight);
+                occupiedArea.getBBox().setY(blockBottom).setHeight((float) blockMinHeight);
             } else {
                 occupiedArea.getBBox()
                         .increaseHeight(occupiedArea.getBBox().getBottom() - layoutContext.getArea().getBBox().getBottom())
                         .setY(layoutContext.getArea().getBBox().getBottom());
                 overflowRenderer = createOverflowRenderer(parent);
-                modelElement.setProperty(Property.HEIGHT, (float) blockHeight - occupiedArea.getBBox().getHeight());
+                overflowRenderer.setProperty(Property.MIN_HEIGHT, (float) blockMinHeight - occupiedArea.getBBox().getHeight());
+                overflowRenderer.deleteOwnProperty(Property.HEIGHT);
+                overflowRenderer.deleteOwnProperty(Property.MAX_HEIGHT);
+
             }
             applyVerticalAlignment();
         }

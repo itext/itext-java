@@ -372,15 +372,30 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
         return (T) (Object) this;
     }
 
+    @Override
+    public T setHeight(float height) {
+        super.setHeight(height);
+        overrideHeightProperties(height);
+        return (T) (Object) this;
+    }
+
     public T setMaxHeight(float maxHeight) {
-        setProperty(Property.HEIGHT, maxHeight);
-        setProperty(Property.HEIGHT_TYPE, HeightType.MAX_HEIGHT);
+        setProperty(Property.MAX_HEIGHT, maxHeight);
         return (T) (Object) this;
     }
 
     public T setMinHeight(float minHeight) {
-        setProperty(Property.HEIGHT, minHeight);
-        setProperty(Property.HEIGHT_TYPE, HeightType.MIN_HEIGHT);
+        setProperty(Property.MIN_HEIGHT, minHeight);
         return (T) (Object) this;
+    }
+
+    // call only after setting Height property value
+    private void overrideHeightProperties(float height) {
+        if (!hasProperty(Property.MAX_HEIGHT) || height < (float) getProperty(Property.MAX_HEIGHT)) {
+            setMaxHeight(height);
+        }
+        if (!hasProperty(Property.MIN_HEIGHT) || height > (float) getProperty(Property.MIN_HEIGHT)) {
+            setMinHeight(height);
+        }
     }
 }

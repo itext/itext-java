@@ -240,7 +240,7 @@ public class LineRenderer extends AbstractRenderer {
         }
 
         if (result == null) {
-            if (anythingPlaced) {
+            if (anythingPlaced || 0 == childRenderers.size()) {
                 result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
             } else {
                 result = new LineLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
@@ -558,8 +558,7 @@ public class LineRenderer extends AbstractRenderer {
 
         childRenderer.setProperty(Property.TAB_LEADER, nextTabStop.getTabLeader());
         childRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(nextTabStop.getTabPosition() - curWidth));
-        childRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
-        childRenderer.setProperty(Property.HEIGHT_TYPE, HeightType.MIN_HEIGHT);
+        childRenderer.setProperty(Property.MIN_HEIGHT, maxAscent - maxDescent);
 
         if (nextTabStop.getTabAlignment() == TabAlignment.LEFT) {
             return null;
@@ -599,8 +598,7 @@ public class LineRenderer extends AbstractRenderer {
             tabWidth -= (curWidth + childWidth + tabWidth) - layoutBox.getWidth();
 
         tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(tabWidth));
-        tabRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
-        tabRenderer.setProperty(Property.HEIGHT_TYPE, HeightType.MIN_HEIGHT);
+        tabRenderer.setProperty(Property.MIN_HEIGHT, maxAscent - maxDescent);
 
         return tabWidth;
     }
@@ -611,9 +609,7 @@ public class LineRenderer extends AbstractRenderer {
         if (curWidth + tabWidth > lineWidth)
             tabWidth = lineWidth - curWidth;
         tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue((float) tabWidth));
-        tabRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
-        tabRenderer.setProperty(Property.HEIGHT_TYPE, HeightType.MIN_HEIGHT);
-
+        tabRenderer.setProperty(Property.MIN_HEIGHT, maxAscent - maxDescent);
     }
 
     static class RendererGlyph {

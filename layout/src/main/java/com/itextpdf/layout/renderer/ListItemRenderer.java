@@ -75,13 +75,11 @@ public class ListItemRenderer extends DivRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         if (symbolRenderer != null && this.<Object>getProperty(Property.HEIGHT) == null) {
             // TODO this is actually MinHeight.
-            setProperty(Property.HEIGHT, symbolRenderer.getOccupiedArea().getBBox().getHeight());
-            setProperty(Property.HEIGHT_TYPE, HeightType.MIN_HEIGHT);
+            setProperty(Property.MIN_HEIGHT, symbolRenderer.getOccupiedArea().getBBox().getHeight());
         }
         LayoutResult result = super.layout(layoutContext);
         if (LayoutResult.PARTIAL == result.getStatus()) {
-            result.getOverflowRenderer().deleteOwnProperty(Property.HEIGHT);
-            result.getOverflowRenderer().deleteOwnProperty(Property.HEIGHT_TYPE);
+            result.getOverflowRenderer().deleteOwnProperty(Property.MIN_HEIGHT);
         }
         return result;
     }

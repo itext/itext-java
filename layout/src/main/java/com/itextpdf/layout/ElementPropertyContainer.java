@@ -117,8 +117,6 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
             case Property.PADDING_BOTTOM:
             case Property.PADDING_LEFT:
                 return (T1) (Object) 0f;
-            case Property.HEIGHT_TYPE:
-                return (T1) (Object) HeightType.HEIGHT;
             default:
                 return (T1) (Object) null;
         }
@@ -184,7 +182,6 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setHeight(float height) {
         setProperty(Property.HEIGHT, height);
-        setProperty(Property.HEIGHT_TYPE, HeightType.HEIGHT);
         return (T) (Object) this;
     }
 
