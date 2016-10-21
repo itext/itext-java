@@ -122,7 +122,7 @@ public class AffineTransform implements Serializable {
     /**
      * The transformation <code>type</code>
      */
-    transient int type;
+    int type;
 
     public AffineTransform() {
         type = TYPE_IDENTITY;
