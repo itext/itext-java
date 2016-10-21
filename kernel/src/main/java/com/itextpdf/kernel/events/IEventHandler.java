@@ -48,7 +48,7 @@ import java.io.Serializable;
 /**
  * Interface for handling events. EventHandlers are added to the {@link EventDispatcher}.
  */
-public interface IEventHandler extends Serializable {
+public interface IEventHandler {
 
     /**
      * Hook for handling events. Implementations can access the PdfDocument instance

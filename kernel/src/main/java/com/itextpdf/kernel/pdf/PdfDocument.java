@@ -77,6 +77,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.*;
@@ -100,7 +101,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     protected PageSize defaultPageSize = PageSize.Default;
 
-    protected EventDispatcher eventDispatcher = new EventDispatcher();
+    protected transient EventDispatcher eventDispatcher = new EventDispatcher();
 
     /**
      * PdfWriter associated with the document.
@@ -2011,5 +2012,10 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
             return docId == that.docId && objNr == that.objNr && genNr == that.genNr;
         }
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        eventDispatcher = new EventDispatcher();
     }
 }
