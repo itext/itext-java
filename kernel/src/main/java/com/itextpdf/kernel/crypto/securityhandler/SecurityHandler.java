@@ -46,6 +46,9 @@ package com.itextpdf.kernel.crypto.securityhandler;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.security.MessageDigest;
 
@@ -69,18 +72,14 @@ public abstract class SecurityHandler implements Serializable {
     protected int nextObjectKeySize;
 
 
-    protected MessageDigest md5;
+    protected transient MessageDigest md5;
     /**
      * Work area to prepare the object/generation bytes
      */
     protected byte[] extra = new byte[5];
 
     protected SecurityHandler() {
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-        } catch (Exception e) {
-            throw new PdfException(PdfException.PdfEncryption, e);
-        }
+        safeInitMessageDigest();
     }
 
     /**
@@ -108,4 +107,17 @@ public abstract class SecurityHandler implements Serializable {
     public abstract OutputStreamEncryption getEncryptionStream(java.io.OutputStream os);
 
     public abstract IDecryptor getDecryptor();
+
+    private void safeInitMessageDigest() {
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (Exception e) {
+            throw new PdfException(PdfException.PdfEncryption, e);
+        }
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        safeInitMessageDigest();
+    }
 }

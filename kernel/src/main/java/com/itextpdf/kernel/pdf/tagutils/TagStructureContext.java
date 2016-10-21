@@ -74,9 +74,7 @@ import java.util.Set;
  * There shall be only one instance of this class per {@code PdfDocument}. To obtain instance of this class use
  * {@link PdfDocument#getTagStructureContext()}.
  */
-public class TagStructureContext implements Serializable {
-
-    private static final long serialVersionUID = -7870069015800895036L;
+public class TagStructureContext {
 
     private static final Set<PdfName> allowedRootTagRoles = new HashSet<PdfName>();
 

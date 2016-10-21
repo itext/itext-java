@@ -166,7 +166,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
     protected Set<PdfFont> documentFonts = new HashSet<>();
 
-    protected TagStructureContext tagStructureContext;
+    protected transient TagStructureContext tagStructureContext;
 
     private static AtomicLong lastDocumentId = new AtomicLong();
 

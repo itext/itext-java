@@ -61,6 +61,8 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,7 +95,7 @@ public abstract class PdfAChecker implements Serializable {
      * @deprecated Use slf4j logging instead.
      */
     @Deprecated
-    protected Logger LOGGER = Logger.getLogger(getClass().getName());
+    protected transient Logger LOGGER = Logger.getLogger(getClass().getName());
 
     /**
      * The Red-Green-Blue color profile as defined by the International Color
@@ -527,5 +529,10 @@ public abstract class PdfAChecker implements Serializable {
                 this.pdfAOutputIntentColorSpace = intentCS;
             }
         }
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        LOGGER = Logger.getLogger(getClass().getName());
     }
 }
