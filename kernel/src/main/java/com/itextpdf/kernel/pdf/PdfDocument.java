@@ -1970,6 +1970,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         return documentId;
     }
 
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        if (tagStructureContext != null) {
+            LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.TAG_STRUCTURE_CONTEXT_WILL_BE_REINITIALIZED_ON_SERIALIZATION);
+        }
+        out.defaultWriteObject();
+    }
+
     /**
      * A structure storing documentId, object number and generation number. This structure is using to calculate
      * an unique object key during the copy process.
