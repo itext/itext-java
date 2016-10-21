@@ -115,7 +115,6 @@ public class ParagraphRenderer extends BlockRenderer {
         float[] paddings = getPaddings();
         applyPaddings(parentBBox, paddings, false);
 
-//        Float blockHeight = retrieveHeight();
         Float blockMaxHeight = retrieveMaxHeight();
         if (null != blockMaxHeight && parentBBox.getHeight() > blockMaxHeight) {
             parentBBox.moveUp(parentBBox.getHeight()-blockMaxHeight).setHeight(blockMaxHeight);
@@ -219,6 +218,9 @@ public class ParagraphRenderer extends BlockRenderer {
                         }
 
                         if (hasProperty(Property.HEIGHT)) {
+                            if (isPositioned) {
+                                correctPositionedLayout(layoutBox);
+                            }
                             if (null != blockMaxHeight && parentBBox.getHeight() == blockMaxHeight) {
                                 return new LayoutResult(LayoutResult.FULL, occupiedArea, split[0], null);
                             }
@@ -289,9 +291,7 @@ public class ParagraphRenderer extends BlockRenderer {
             applyVerticalAlignment();
         }
         if (isPositioned) {
-            float y = (float) this.getPropertyAsFloat(Property.Y);
-            float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
-            move(0, relativeY + y - occupiedArea.getBBox().getY());
+            correctPositionedLayout(layoutBox);
         }
 
         applyBorderBox(occupiedArea.getBBox(), borders, true);
@@ -419,5 +419,11 @@ public class ParagraphRenderer extends BlockRenderer {
         if (firstLineIndent != 0) {
             overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0);
         }
+    }
+
+    private void correctPositionedLayout(Rectangle layoutBox) {
+            float y = (float) this.getPropertyAsFloat(Property.Y);
+            float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
+            move(0, relativeY + y - occupiedArea.getBBox().getY());
     }
 }

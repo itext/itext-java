@@ -79,7 +79,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES)
+            @LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, count = 2)
     })
     public void emptyParagraphsTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "emptyParagraphsTest01.pdf";
@@ -114,6 +114,25 @@ public class DefaultLayoutTest extends ExtendedITextTest {
         document.add(new Paragraph("\n\n\nLook, i'm the the text of the second paragraph. But before me and the first one there are three empty lines!"));
 
         document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void heightsTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "heightTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_heightTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1);
+        table.addCell(new Cell().add("b").setHeight(900));
+
+        table.setBorder(new SolidBorder(Color.RED, 3));
+        doc.add(table);
+
+        doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }

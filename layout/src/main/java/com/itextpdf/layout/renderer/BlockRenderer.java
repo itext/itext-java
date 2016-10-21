@@ -57,14 +57,16 @@ import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.property.HeightType;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 public abstract class BlockRenderer extends AbstractRenderer {
 
@@ -178,11 +180,15 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             applyMargins(occupiedArea.getBBox(), margins, true);
 
                             if (hasProperty(Property.MAX_HEIGHT) || hasProperty(Property.MIN_HEIGHT)) {
-                                if (hasProperty(Property.MAX_HEIGHT) && parentBBox.getHeight() == blockMaxHeight) {
-                                    return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
+                                if (hasProperty(Property.MAX_HEIGHT)) {
+                                    if (parentBBox.getHeight() == blockMaxHeight) {
+                                        return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
+                                    }
+                                    overflowRenderer.setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
                                 }
-                                overflowRenderer.setProperty(Property.MIN_HEIGHT, retrieveMinHeight() - occupiedArea.getBBox().getHeight());
-                                overflowRenderer.setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
+                                if (hasProperty(Property.MIN_HEIGHT)) {
+                                    overflowRenderer.setProperty(Property.MIN_HEIGHT, retrieveMinHeight() - occupiedArea.getBBox().getHeight());
+                                }
                             }
 
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer, causeOfNothing);
@@ -221,6 +227,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         if (hasProperty(Property.MAX_HEIGHT) || hasProperty(Property.MIN_HEIGHT)) {
                             if (hasProperty(Property.MAX_HEIGHT)) {
                                 if (parentBBox.getHeight() == blockMaxHeight) {
+                                    occupiedArea.getBBox()
+                                            .moveDown(blockMaxHeight - occupiedArea.getBBox().getHeight())
+                                            .setHeight(blockMaxHeight);
+
                                     return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
                                 }
                                 overflowRenderer.setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
@@ -258,7 +268,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         IRenderer overflowRenderer = null;
         Float blockMinHeight = retrieveMinHeight();
-        if (null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
+        if (!Boolean.TRUE.equals(getProperty(Property.FORCED_PLACEMENT)) && null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
             float blockBottom = occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight());
             if (blockBottom >= layoutContext.getArea().getBBox().getBottom()) {
                 occupiedArea.getBBox().setY(blockBottom).setHeight((float) blockMinHeight);
@@ -267,7 +277,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         .increaseHeight(occupiedArea.getBBox().getBottom() - layoutContext.getArea().getBBox().getBottom())
                         .setY(layoutContext.getArea().getBBox().getBottom());
                 overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
-                modelElement.setProperty(Property.HEIGHT, (float) blockMinHeight - occupiedArea.getBBox().getHeight());
+                overflowRenderer.setProperty(Property.MIN_HEIGHT, (float) blockMinHeight - occupiedArea.getBBox().getHeight());
             } else {
                 occupiedArea.getBBox().moveDown((float) blockMinHeight - occupiedArea.getBBox().getHeight()).setHeight((float) blockMinHeight);
             }
