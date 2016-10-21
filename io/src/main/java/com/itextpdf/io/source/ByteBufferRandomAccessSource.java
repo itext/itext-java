@@ -46,6 +46,11 @@ package com.itextpdf.io.source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.nio.BufferUnderflowException;
 import java.security.AccessController;
@@ -55,12 +60,14 @@ import java.security.PrivilegedAction;
  * A RandomAccessSource that is based on an underlying {@link java.nio.ByteBuffer}.  This class takes steps to ensure that the byte buffer
  * is completely freed from memory during {@link ByteBufferRandomAccessSource#close()}
  */
-class ByteBufferRandomAccessSource implements IRandomAccessSource {
+class ByteBufferRandomAccessSource implements IRandomAccessSource, Serializable {
 
+    private static final long serialVersionUID = -1477190062876186034L;
     /**
      * Internal cache of memory mapped buffers
      */
-    private final java.nio.ByteBuffer byteBuffer;
+    private transient java.nio.ByteBuffer byteBuffer;
+    private byte[] bufferMirror;
 
     /**
      * Constructs a new {@link ByteBufferRandomAccessSource} based on the specified ByteBuffer
@@ -155,5 +162,23 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource {
         });
 
         return b;
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        if (byteBuffer != null && byteBuffer.hasArray()) {
+            throw new NotSerializableException(byteBuffer.getClass().toString());
+        } else if (byteBuffer != null) {
+            bufferMirror = byteBuffer.array();
+        }
+        out.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+        in.defaultReadObject();
+        if (bufferMirror != null) {
+            byteBuffer = java.nio.ByteBuffer.wrap(bufferMirror);
+            bufferMirror = null;
+        }
     }
 }

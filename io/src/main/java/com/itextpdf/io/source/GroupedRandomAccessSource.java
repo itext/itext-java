@@ -44,6 +44,9 @@
 package com.itextpdf.io.source;
 
 import com.itextpdf.io.LogMessageConstant;
+
+import java.io.Serializable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +54,9 @@ import org.slf4j.LoggerFactory;
  * A RandomAccessSource that is based on a set of underlying sources,
  * treating the sources as if they were a contiguous block of data.
  */
-class GroupedRandomAccessSource implements IRandomAccessSource {
+class GroupedRandomAccessSource implements IRandomAccessSource, Serializable {
+
+    private static final long serialVersionUID = 3417070797788862099L;
     /**
      * The underlying sources (along with some meta data to quickly determine where each source begins and ends)
      */
@@ -233,7 +238,8 @@ class GroupedRandomAccessSource implements IRandomAccessSource {
     /**
      * Used to track each source, along with useful meta data
      */
-    private static class SourceEntry{
+    private static class SourceEntry implements Serializable {
+        private static final long serialVersionUID = 924305549309252826L;
         /**
          * The underlying source
          */
