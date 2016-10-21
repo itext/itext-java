@@ -51,6 +51,7 @@ import com.itextpdf.io.util.TextUtil;
  */
 public class CMapCidUni extends AbstractCMap {
 
+    private static final long serialVersionUID = 6879167385978230141L;
     private IntHashtable map = new IntHashtable(65537);
 
     @Override

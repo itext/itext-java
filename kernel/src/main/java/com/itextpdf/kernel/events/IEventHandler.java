@@ -43,10 +43,12 @@
  */
 package com.itextpdf.kernel.events;
 
+import java.io.Serializable;
+
 /**
  * Interface for handling events. EventHandlers are added to the {@link EventDispatcher}.
  */
-public interface IEventHandler {
+public interface IEventHandler extends Serializable {
 
     /**
      * Hook for handling events. Implementations can access the PdfDocument instance

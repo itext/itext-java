@@ -43,10 +43,12 @@
  */
 package com.itextpdf.io.font.otf;
 
+import java.io.Serializable;
 import java.util.List;
 
-public abstract class ContextualSubTable {
+public abstract class ContextualSubTable implements Serializable {
 
+    private static final long serialVersionUID = 1802216575331243298L;
     protected OpenTypeFontTableReader openReader;
     protected int lookupFlag;
 

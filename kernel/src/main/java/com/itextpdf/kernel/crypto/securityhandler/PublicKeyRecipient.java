@@ -43,10 +43,12 @@
  */
 package com.itextpdf.kernel.crypto.securityhandler;
 
+import java.io.Serializable;
 import java.security.cert.Certificate;
 
-public class PublicKeyRecipient {
+public class PublicKeyRecipient implements Serializable {
 
+    private static final long serialVersionUID = -6985649182567287907L;
     private Certificate certificate = null;
 
     private int permission = 0;

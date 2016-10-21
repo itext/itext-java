@@ -43,6 +43,7 @@
  */
 package com.itextpdf.io.font.otf;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,6 +56,8 @@ import java.util.Map;
  * Pair Adjustment Positioning Subtable
  */
 public class GposLookupType2 extends OpenTableLookup {
+
+    private static final long serialVersionUID = 4781829862270887603L;
 
     private List<OpenTableLookup> listRules = new ArrayList<>();
 
@@ -98,6 +101,9 @@ public class GposLookupType2 extends OpenTableLookup {
     }
 
     private static class PairPosAdjustmentFormat1 extends OpenTableLookup {
+
+        private static final long serialVersionUID = -5556528810086852702L;
+
         private Map<Integer,Map<Integer,PairValueFormat>> gposMap = new HashMap<>();
 
         public PairPosAdjustmentFormat1(OpenTypeFontTableReader openReader, int lookupFlag, int subtableLocation) throws java.io.IOException {
@@ -159,6 +165,7 @@ public class GposLookupType2 extends OpenTableLookup {
     }
 
     private static class PairPosAdjustmentFormat2 extends OpenTableLookup {
+        private static final long serialVersionUID = 3056620748845862393L;
         private OtfClass classDef1;
         private OtfClass classDef2;
         private HashSet<Integer> coverageSet;
@@ -227,7 +234,8 @@ public class GposLookupType2 extends OpenTableLookup {
         }
     }
 
-    private static class PairValueFormat {
+    private static class PairValueFormat implements Serializable {
+        private static final long serialVersionUID = -6442882035589529495L;
         public GposValueRecord first;
         public GposValueRecord second;
     }

@@ -43,12 +43,15 @@
  */
 package com.itextpdf.io.font.otf;
 
+import java.io.Serializable;
+
 /**
  *
  * @author psoares
  */
-public abstract class OpenTableLookup {
+public abstract class OpenTableLookup implements Serializable {
 
+    private static final long serialVersionUID = 8381791136767127636L;
     protected int lookupFlag;
     protected int[] subTableLocations;
     protected OpenTypeFontTableReader openReader;

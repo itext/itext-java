@@ -53,6 +53,8 @@ import org.slf4j.LoggerFactory;
  */
 public class DeviceRgb extends Color {
 
+    private static final long serialVersionUID = 7172400358137528030L;
+
     /**
      * Creates DeviceRgb color by intensities of red, green and blue colorants.
      * The intensities are considered to be in [0, 255] gap, if not,

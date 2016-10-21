@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.geom;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -52,8 +53,9 @@ import java.util.Set;
 /**
  * As subpath is a part of a path comprising a sequence of connected segments.
  */
-public class Subpath {
+public class Subpath implements Serializable {
 
+    private static final long serialVersionUID = -3464451279777771490L;
     private Point startPoint;
     private List<IShape> segments = new ArrayList<>();
     private boolean closed;

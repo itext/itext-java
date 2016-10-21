@@ -45,11 +45,13 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.PdfException;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class PdfNameTree {
+public class PdfNameTree implements Serializable {
 
     private static final int NODE_SIZE = 40;
+    private static final long serialVersionUID = 8153711383828989907L;
 
     private PdfCatalog catalog;
     private Map<String, PdfObject> items = new HashMap<>();

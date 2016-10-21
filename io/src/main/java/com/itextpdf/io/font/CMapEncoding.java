@@ -47,8 +47,11 @@ import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.font.cmap.CMapCidByte;
 import com.itextpdf.io.font.cmap.CMapCidUni;
 
-public class CMapEncoding {
+import java.io.Serializable;
 
+public class CMapEncoding implements Serializable {
+
+    private static final long serialVersionUID = 2418291066110642993L;
     private String cmap;
     private String uniMap;
 

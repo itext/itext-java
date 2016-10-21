@@ -46,10 +46,12 @@ package com.itextpdf.kernel.crypto.securityhandler;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
+import java.io.Serializable;
 import java.security.MessageDigest;
 
-public abstract class SecurityHandler {
+public abstract class SecurityHandler implements Serializable {
 
+    private static final long serialVersionUID = 7980424575363686173L;
     /**
      * The global encryption key
      */

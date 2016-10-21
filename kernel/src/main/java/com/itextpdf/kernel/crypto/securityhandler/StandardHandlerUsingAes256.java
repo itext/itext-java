@@ -66,6 +66,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
     private static final int KEY_SALT_OFFSET = 40;
     private static final int SALT_LENGTH = 8;
     private static final int OU_LENGTH = 48;
+    private static final long serialVersionUID = -8365943606887257386L;
 
     protected boolean encryptMetadata;
 

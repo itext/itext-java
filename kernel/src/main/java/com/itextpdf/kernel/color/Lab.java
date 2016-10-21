@@ -47,6 +47,8 @@ import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 
 public class Lab extends Color {
 
+    private static final long serialVersionUID = -103738025280259190L;
+
     public Lab(PdfCieBasedCs.Lab cs) {
         this(cs, new float[cs.getNumberOfComponents()]); // TODO if zero if outside of the Range, default value should be the nearest to the zero valid value
     }

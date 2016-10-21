@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.source;
 
-public class ByteArrayOutputStream extends java.io.ByteArrayOutputStream {
+public class ByteArrayOutputStream extends java.io.ByteArrayOutputStream{
 
     public ByteArrayOutputStream() {
         super();
@@ -64,5 +64,4 @@ public class ByteArrayOutputStream extends java.io.ByteArrayOutputStream {
         this.count = bytes.length;
         return this;
     }
-
 }

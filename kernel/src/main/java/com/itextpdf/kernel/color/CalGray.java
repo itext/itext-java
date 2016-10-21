@@ -47,6 +47,8 @@ import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 
 public class CalGray extends Color {
 
+    private static final long serialVersionUID = 2654434937251198951L;
+
     public CalGray(PdfCieBasedCs.CalGray cs) {
         this(cs, 0f);
     }

@@ -43,8 +43,12 @@
  */
 package com.itextpdf.kernel.crypto;
 
-public class ARCFOUREncryption {
+import java.io.Serializable;
 
+public class ARCFOUREncryption implements Serializable{
+
+    private static final long serialVersionUID = 1450279022122017100L;
+    
     private byte[] state = new byte[256];
     private int x;
     private int y;

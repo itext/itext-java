@@ -99,6 +99,7 @@ public class PdfA2Checker extends PdfA1Checker {
 
     static final int MAX_PAGE_SIZE = 14400;
     static final int MIN_PAGE_SIZE = 3;
+    private static final long serialVersionUID = -5937712517954260687L;
 
     private boolean transparencyIsUsed = false;
     private boolean currentFillCsIsIccBasedCMYK = false;

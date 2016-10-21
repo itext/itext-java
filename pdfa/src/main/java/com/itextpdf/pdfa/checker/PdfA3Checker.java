@@ -64,6 +64,7 @@ public class PdfA3Checker extends PdfA2Checker{
     protected static final Set<PdfName> allowedAFRelationships = new HashSet<>(Arrays.asList(
             PdfName.Source, PdfName.Data, PdfName.Alternative,
             PdfName.Supplement, PdfName.Unspecified));
+    private static final long serialVersionUID = 6280825718658124941L;
 
     /**
      * Creates a PdfA3Checker with the required conformance level

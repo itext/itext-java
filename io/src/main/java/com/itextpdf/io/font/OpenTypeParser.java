@@ -50,18 +50,22 @@ import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.IntHashtable;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-class OpenTypeParser {
+class OpenTypeParser implements Serializable {
+
+    private static final long serialVersionUID = 3399061674525229738L;
 
     /**
      * The components of table 'head'.
      */
-    protected static class HeaderTable {
+    protected static class HeaderTable implements Serializable {
+        private static final long serialVersionUID = 5849907401352439751L;
         int flags;
         int unitsPerEm;
         short xMin;
@@ -74,7 +78,8 @@ class OpenTypeParser {
     /**
      * The components of table 'hhea'.
      */
-    protected static class HorizontalHeader {
+    protected static class HorizontalHeader implements Serializable {
+        private static final long serialVersionUID = -6857266170153679811L;
         short Ascender;
         short Descender;
         short LineGap;
@@ -90,7 +95,8 @@ class OpenTypeParser {
     /**
      * The components of table 'OS/2'.
      */
-    protected static class WindowsMetrics {
+    protected static class WindowsMetrics implements Serializable{
+        private static final long serialVersionUID = -9117114979326346658L;
         short xAvgCharWidth;
         int usWeightClass;
         int usWidthClass;
@@ -122,7 +128,8 @@ class OpenTypeParser {
         int sCapHeight;
     }
 
-    protected static class PostTable {
+    protected static class PostTable implements Serializable {
+        private static final long serialVersionUID = 5735677308357646890L;
         /**
          * The italic angle. It is usually extracted from the 'post' table or in it's
          * absence with the code:
@@ -139,7 +146,8 @@ class OpenTypeParser {
         boolean isFixedPitch;
     }
 
-    protected static class CmapTable {
+    protected static class CmapTable implements Serializable {
+        private static final long serialVersionUID = 8923883989692194983L;
         /**
          * The map containing the code information for the table 'cmap', encoding 1.0.
          * The key is the code and the value is an {@code int[2]} where position 0

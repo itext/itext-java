@@ -43,7 +43,10 @@
  */
 package com.itextpdf.io.font.otf;
 
-public class GposValueRecord {
+import java.io.Serializable;
+
+public class GposValueRecord implements Serializable {
+    private static final long serialVersionUID = -742355349961596995L;
     public int XPlacement;
     public int YPlacement;
     public int XAdvance;

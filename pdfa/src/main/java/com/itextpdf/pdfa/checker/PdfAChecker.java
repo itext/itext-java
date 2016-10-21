@@ -61,6 +61,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -85,8 +86,9 @@ import java.util.logging.Logger;
  * standard and its derivates will get their own implementation in the
  * iText 7 - pdfa project.
  */
-public abstract class PdfAChecker {
+public abstract class PdfAChecker implements Serializable {
 
+    private static final long serialVersionUID = -9138950508285715228L;
     /**
      * @deprecated Use slf4j logging instead.
      */

@@ -46,6 +46,7 @@ package com.itextpdf.io.font.otf;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -56,9 +57,10 @@ import java.util.Set;
  * 
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
  */
-public abstract class OpenTypeFontTableReader {
+public abstract class OpenTypeFontTableReader implements Serializable {
 
-	protected final RandomAccessFileOrArray rf;
+    private static final long serialVersionUID = 4826484598227913292L;
+    protected final RandomAccessFileOrArray rf;
 	protected final int tableLocation;
 	
     protected List<OpenTableLookup> lookupList;

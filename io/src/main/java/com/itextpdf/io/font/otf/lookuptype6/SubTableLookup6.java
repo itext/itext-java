@@ -54,6 +54,8 @@ import java.util.List;
 
 public abstract class SubTableLookup6 extends ContextualSubTable {
 
+    private static final long serialVersionUID = -7471613803606544198L;
+
     protected SubTableLookup6(OpenTypeFontTableReader openReader, int lookupFlag) {
         super(openReader, lookupFlag);
     }

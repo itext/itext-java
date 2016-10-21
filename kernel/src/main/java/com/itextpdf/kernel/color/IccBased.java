@@ -50,6 +50,8 @@ import java.io.InputStream;
 
 public class IccBased extends Color {
 
+    private static final long serialVersionUID = -2204252409856288615L;
+
     public IccBased(PdfCieBasedCs.IccBased cs) {
         this(cs, new float[cs.getNumberOfComponents()]); // TODO if zero if outside of the Range, default value should be the nearest to the zero valid value
     }

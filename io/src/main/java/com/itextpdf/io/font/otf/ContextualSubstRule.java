@@ -43,7 +43,11 @@
  */
 package com.itextpdf.io.font.otf;
 
-public abstract class ContextualSubstRule {
+import java.io.Serializable;
+
+public abstract class ContextualSubstRule implements Serializable {
+    private static final long serialVersionUID = -8640866820690910047L;
+
     /**
      * @return length of the context glyph sequence defined by this rule.
      */

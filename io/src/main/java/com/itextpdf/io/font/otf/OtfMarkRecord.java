@@ -43,7 +43,10 @@
  */
 package com.itextpdf.io.font.otf;
 
-public class OtfMarkRecord {
+import java.io.Serializable;
+
+public class OtfMarkRecord implements Serializable {
+    private static final long serialVersionUID = 6073692656343678553L;
     public int markClass;
     public GposAnchor anchor;
 }
