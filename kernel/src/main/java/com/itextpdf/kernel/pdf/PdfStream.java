@@ -43,11 +43,16 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 import org.slf4j.LoggerFactory;
 
@@ -419,5 +424,17 @@ public class PdfStream extends PdfDictionary {
 
     protected InputStream getInputStream() {
         return inputStream;
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        if (inputStream == null || inputStream instanceof Serializable) {
+            out.defaultWriteObject();
+        } else {
+            InputStream backup = inputStream;
+            inputStream = null;
+            LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.INPUT_STREAM_CONTENT_IS_LOST_ON_PDFSTREAM_SERIALIZATION);
+            inputStream = backup;
+        }
+
     }
 }
