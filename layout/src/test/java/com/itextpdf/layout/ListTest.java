@@ -8,9 +8,11 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolAlignment;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -335,4 +337,93 @@ public class ListTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void listWithSetHeightProperties01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listWithSetHeightProperties01.pdf";
+        String cmpFileName = sourceFolder + "cmp_listWithSetHeightProperties01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+
+        doc.add(new Paragraph("Default layout:"));
+        ListItem item = new ListItem();
+        ListItem nestedItem = new ListItem();
+        List list = new List(ListNumberingType.DECIMAL);
+        List nestedList = new List(ListNumberingType.ENGLISH_UPPER);
+        List nestedNestedList = new List(ListNumberingType.GREEK_LOWER);
+
+        nestedNestedList.add("Hello");
+        nestedNestedList.add("World");
+        nestedItem.add(nestedNestedList);
+
+        nestedList.add(nestedItem);
+        nestedList.add(nestedItem);
+
+        item.add(nestedList);
+        list.add(item);
+        list.add(item);
+
+        list.setBorder(new SolidBorder(Color.RED, 3));
+        doc.add(list);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("List's height is set shorter than needed:"));
+        list.setHeight(50);
+        doc.add(list);
+        doc.add(new AreaBreak());
+
+        list.deleteOwnProperty(Property.HEIGHT);
+        list.deleteOwnProperty(Property.MIN_HEIGHT);
+        list.deleteOwnProperty(Property.MAX_HEIGHT);
+        doc.add(new Paragraph("List's min height is set shorter than needed:"));
+        list.setMinHeight(50);
+        doc.add(list);
+        doc.add(new AreaBreak());
+
+        list.deleteOwnProperty(Property.HEIGHT);
+        list.deleteOwnProperty(Property.MIN_HEIGHT);
+        list.deleteOwnProperty(Property.MAX_HEIGHT);
+        doc.add(new Paragraph("List's max height is set shorter than needed:"));
+        list.setMaxHeight(50);
+        doc.add(list);
+        doc.add(new AreaBreak());
+
+        list.deleteOwnProperty(Property.HEIGHT);
+        list.deleteOwnProperty(Property.MIN_HEIGHT);
+        list.deleteOwnProperty(Property.MAX_HEIGHT);
+        doc.add(new Paragraph("List's height is set bigger than needed:"));
+        list.setHeight(1300);
+        doc.add(list);
+        doc.add(new AreaBreak());
+
+        list.deleteOwnProperty(Property.HEIGHT);
+        list.deleteOwnProperty(Property.MIN_HEIGHT);
+        list.deleteOwnProperty(Property.MAX_HEIGHT);
+        doc.add(new Paragraph("List's min height is set bigger than needed:"));
+        list.setMinHeight(1300);
+        doc.add(list);
+        doc.add(new AreaBreak());
+
+        list.deleteOwnProperty(Property.HEIGHT);
+        list.deleteOwnProperty(Property.MIN_HEIGHT);
+        list.deleteOwnProperty(Property.MAX_HEIGHT);
+        doc.add(new Paragraph("List's max height is set bigger than needed:"));
+        list.setMaxHeight(1300);
+        doc.add(list);
+        doc.add(new AreaBreak());
+
+        list.deleteOwnProperty(Property.HEIGHT);
+        list.deleteOwnProperty(Property.MIN_HEIGHT);
+        list.deleteOwnProperty(Property.MAX_HEIGHT);
+        doc.add(new Paragraph("Some list items' and nested lists' heights are set bigger or shorter than needed:"));
+        nestedList.setHeight(400);
+        nestedItem.setHeight(300);
+        doc.add(list);
+        doc.add(new AreaBreak());
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
 }

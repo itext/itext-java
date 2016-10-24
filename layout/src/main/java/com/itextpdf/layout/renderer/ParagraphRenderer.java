@@ -216,15 +216,20 @@ public class ParagraphRenderer extends BlockRenderer {
                         if (result.getOverflowRenderer() != null) {
                             split[1].childRenderers.addAll(result.getOverflowRenderer().getChildRenderers());
                         }
-
-                        if (hasProperty(Property.HEIGHT)) {
+                        if (hasProperty(Property.MAX_HEIGHT)) {
                             if (isPositioned) {
                                 correctPositionedLayout(layoutBox);
                             }
-                            if (null != blockMaxHeight && parentBBox.getHeight() == blockMaxHeight) {
+                            if (parentBBox.getHeight() == blockMaxHeight) {
+                                occupiedArea.getBBox()
+                                        .moveDown(blockMaxHeight - occupiedArea.getBBox().getHeight())
+                                        .setHeight(blockMaxHeight);
                                 return new LayoutResult(LayoutResult.FULL, occupiedArea, split[0], null);
                             }
-                            split[1].setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                            split[1].setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
+                        }
+                        if (hasProperty(Property.MIN_HEIGHT)) {
+                            split[1].setProperty(Property.MIN_HEIGHT, retrieveMinHeight() - occupiedArea.getBBox().getHeight());
                         }
                         if (anythingPlaced) {
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]);
@@ -419,11 +424,5 @@ public class ParagraphRenderer extends BlockRenderer {
         if (firstLineIndent != 0) {
             overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0);
         }
-    }
-
-    private void correctPositionedLayout(Rectangle layoutBox) {
-            float y = (float) this.getPropertyAsFloat(Property.Y);
-            float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
-            move(0, relativeY + y - occupiedArea.getBBox().getY());
     }
 }

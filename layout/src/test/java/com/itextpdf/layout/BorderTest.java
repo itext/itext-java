@@ -102,15 +102,15 @@ public class BorderTest extends ExtendedITextTest {
         cell = new Cell().add("One");
         table.addCell(cell);
         // row 1 and 2, cell 2
-        cell = new Cell(2, 1).add("Two");
-        table.addCell(cell);
-        // row 2, cell 1
-        cell = new Cell().add("Three");
-        table.addCell(cell);
-
-        // row 3, cell 1
-        cell = new Cell().add("Four");
-        table.addCell(cell);
+//        cell = new Cell(2, 1).add("Two");
+//        table.addCell(cell);
+//        // row 2, cell 1
+//        cell = new Cell().add("Three");
+//        table.addCell(cell);
+//
+//        // row 3, cell 1
+//        cell = new Cell().add("Four");
+//        table.addCell(cell);
 
 
         doc.add(table);

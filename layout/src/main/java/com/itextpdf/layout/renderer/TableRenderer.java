@@ -282,23 +282,23 @@ public class TableRenderer extends AbstractRenderer {
 
         // complete table with empty cells
         CellRenderer[] lastAddedRow;
-        if (0 != rows.size() && null != rows.get(rows.size() - 1)) {
-            lastAddedRow = rows.get(rows.size() - 1);
-            int colIndex = 0;
-            while (colIndex < lastAddedRow.length && null != lastAddedRow[colIndex]) {
-                colIndex += (int) lastAddedRow[colIndex].getPropertyAsInteger(Property.COLSPAN);
-            }
-            // complete row if it's not already complete ot totally empty
-            if (0 != colIndex && lastAddedRow.length != colIndex) {
-                while (colIndex < lastAddedRow.length) {
-                    Cell emptyCell = new Cell();
-                    emptyCell.setBorder(Border.NO_BORDER);
-                    ((Table) this.getModelElement()).addCell(emptyCell);
-                    this.addChild(emptyCell.getRenderer());
-                    colIndex++;
-                }
-            }
-        }
+//        if (0 != rows.size() && null != rows.get(rows.size() - 1)) {
+//            lastAddedRow = rows.get(rows.size() - 1);
+//            int colIndex = 0;
+//            while (colIndex < lastAddedRow.length && null != lastAddedRow[colIndex]) {
+//                colIndex += (int) lastAddedRow[colIndex].getPropertyAsInteger(Property.COLSPAN);
+//            }
+//            // complete row if it's not already complete ot totally empty
+//            if (0 != colIndex && lastAddedRow.length != colIndex) {
+//                while (colIndex < lastAddedRow.length) {
+//                    Cell emptyCell = new Cell();
+//                    emptyCell.setBorder(Border.NO_BORDER);
+//                    ((Table) this.getModelElement()).addCell(emptyCell);
+//                    this.addChild(emptyCell.getRenderer());
+//                    colIndex++;
+//                }
+//            }
+//        }
         horizontalBorders.add(tableModel.getLastRowBottomBorder());
 
         for (row = 0; row < rows.size(); row++) {
@@ -617,11 +617,14 @@ public class TableRenderer extends AbstractRenderer {
                             } else {
                                 cellOverflow.deleteOwnProperty(Property.BORDER_TOP);
                             }
-                            horizontalBorders.get(row + 1).set(col, getBorders()[2] == null
+                            Border newBorder = getBorders()[2] == null
                                     ? cellOverflow.getModelElement().hasProperty(Property.BORDER_BOTTOM) && null == cellOverflow.getModelElement().<Border>getProperty(Property.BORDER_BOTTOM)
-                                            ? null
-                                            : (Border) cellOverflow.getModelElement().<Border>getDefaultProperty(Property.BORDER)
-                                    : getBorders()[2]);
+                                    ? null
+                                    : (Border) cellOverflow.getModelElement().<Border>getDefaultProperty(Property.BORDER)
+                                    : getBorders()[2];
+                            for (int j = col; j < col + cellOverflow.getPropertyAsInteger(Property.COLSPAN); j++) {
+                                horizontalBorders.get(row + 1).set(j, newBorder);
+                            }
                             cellOverflow.deleteOwnProperty(Property.BORDER_BOTTOM);
                             cellOverflow.setBorders(cellOverflow.getBorders()[2], 2);
                             rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) cellOverflow.setParent(splitResult[1]);
@@ -630,11 +633,14 @@ public class TableRenderer extends AbstractRenderer {
                         }
                     } else if (hasContent && currentRow[col] != null) {
                         columnsWithCellToBeEnlarged[col] = true;
-                        horizontalBorders.get(row + 1).set(col, getBorders()[2] == null
+                        Border newBorder = getBorders()[2] == null
                                 ? currentRow[col].getModelElement().hasProperty(Property.BORDER_BOTTOM) && null == currentRow[col].getModelElement().<Border>getProperty(Property.BORDER_BOTTOM)
-                                        ? null
-                                        : (Border) currentRow[col].getModelElement().getDefaultProperty(Property.BORDER)
-                                : getBorders()[2]);
+                                ? null
+                                : (Border) currentRow[col].getModelElement().getDefaultProperty(Property.BORDER)
+                                : getBorders()[2];
+                        for (int j = col; j < col + currentRow[col].getPropertyAsInteger(Property.COLSPAN); j++) {
+                            horizontalBorders.get(row + 1).set(j, newBorder);
+                        }
                         // for the future
                         currentRow[col].getModelElement().setBorderTop(getBorders()[0] == null
                                 ? currentRow[col].getModelElement().hasProperty(Property.BORDER_BOTTOM) && null == currentRow[col].getModelElement().<Border>getProperty(Property.BORDER_BOTTOM)
@@ -775,17 +781,20 @@ public class TableRenderer extends AbstractRenderer {
             if (0 != childRenderers.size()) {
                 CellRenderer[] currentRow = rows.get(row - 1);
 
-                verticalBorders.get(0).add(row - 1, borders[3]);
-                verticalBorders.get(currentRow.length).add(row - 1, borders[3]);
+                verticalBorders.get(0).add(borders[3]);
+                verticalBorders.get(currentRow.length).add(borders[3]);
                 ArrayList<Border> lastRowHorizontalBorders = new ArrayList<Border>();
+                ArrayList<Border> tableBottomBorders = new ArrayList<Border>();
+
                 for (int i = 0; i < currentRow.length; i++) {
                     if (null != currentRow[i]) {
                         currentRow[i].deleteOwnProperty(Property.BORDER_BOTTOM);
-                        borders = currentRow[i].getBorders();
-                        lastRowHorizontalBorders.add(borders[2]);
+                        lastRowHorizontalBorders.add(currentRow[i].getBorders()[2]);
                     }
+                    tableBottomBorders.add(borders[2]);
                 }
-                horizontalBorders.add(horizontalBorders.size() - 1, lastRowHorizontalBorders);
+                horizontalBorders.set(horizontalBorders.size() - 1, lastRowHorizontalBorders);
+                horizontalBorders.add(tableBottomBorders);
             }
         }
 
