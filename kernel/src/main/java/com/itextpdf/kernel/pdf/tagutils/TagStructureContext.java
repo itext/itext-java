@@ -57,6 +57,10 @@ import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -74,7 +78,9 @@ import java.util.Set;
  * There shall be only one instance of this class per {@code PdfDocument}. To obtain instance of this class use
  * {@link PdfDocument#getTagStructureContext()}.
  */
-public class TagStructureContext {
+public class TagStructureContext implements Serializable {
+
+    private static final long serialVersionUID = -7870069015800895036L;
 
     private static final Set<PdfName> allowedRootTagRoles = new HashSet<PdfName>();
 
@@ -520,5 +526,13 @@ public class TagStructureContext {
         tagPointer
                 .setCurrentStructElem(oldRoot)
                 .removeTag();
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        throw new NotSerializableException(getClass().toString());
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        throw new NotSerializableException(getClass().toString());
     }
 }

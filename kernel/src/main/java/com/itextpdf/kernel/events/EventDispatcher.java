@@ -43,6 +43,10 @@
  */
 package com.itextpdf.kernel.events;
 
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +57,10 @@ import java.util.Map;
  * IEventDispatcher implementation that forwards Events to registered {@link com.itextpdf.kernel.events.IEventHandler}
  * implementations.
  */
-public class EventDispatcher implements IEventDispatcher {
+public class EventDispatcher implements IEventDispatcher, Serializable {
+
+    private static final long serialVersionUID = -6701670578690210618L;
+
 
     protected Map<String, List<IEventHandler>> eventHandlers = new HashMap<>();
 
@@ -103,5 +110,11 @@ public class EventDispatcher implements IEventDispatcher {
         eventHandlers.clear();
     }
 
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        throw new NotSerializableException(getClass().toString());
+    }
 
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        throw new NotSerializableException(getClass().toString());
+    }
 }

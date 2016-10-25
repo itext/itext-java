@@ -61,6 +61,10 @@ import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +81,9 @@ import java.util.List;
  * In this case, this another instance becomes invalid, and invocation of any method on it will result in exception. To make
  * given instance valid again, use {@link #moveToRoot()} method.
  */
-public class TagTreePointer {
+public class TagTreePointer implements Serializable {
+
+    private static final long serialVersionUID = 3774218733446157411L;
 
     private TagStructureContext tagStructureContext;
     private PdfStructElem currentStructElem;
@@ -757,5 +763,13 @@ public class TagTreePointer {
         if (currentPage == null) {
             throw new PdfException(PdfException.PageIsNotSetForThePdfTagStructure);
         }
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        throw new NotSerializableException(getClass().toString());
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        throw new NotSerializableException(getClass().toString());
     }
 }
