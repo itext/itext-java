@@ -162,8 +162,8 @@ public class ImageRenderer extends AbstractRenderer {
             }
         }
 
-        occupiedArea.getBBox().moveDown(height);
-        occupiedArea.getBBox().setHeight(height);
+        occupiedArea.getBBox().moveDown((float) height);
+        occupiedArea.getBBox().setHeight((float) height);
         occupiedArea.getBBox().setWidth((float) width);
 
         float leftMargin = (float) this.getPropertyAsFloat(Property.MARGIN_LEFT);
@@ -277,9 +277,9 @@ public class ImageRenderer extends AbstractRenderer {
         if (angle != 0) {
             AffineTransform t = AffineTransform.getRotateInstance(angle);
             Point p00 = t.transform(new Point(0, 0), new Point());
-            Point p01 = t.transform(new Point(0, height), new Point());
+            Point p01 = t.transform(new Point(0, (float)height), new Point());
             Point p10 = t.transform(new Point((float) width, 0), new Point());
-            Point p11 = t.transform(new Point((float) width, height), new Point());
+            Point p11 = t.transform(new Point((float) width, (float) height), new Point());
 
             double[] xValues = {p01.getX(), p10.getX(), p11.getX()};
             double[] yValues = {p01.getY(), p10.getY(), p11.getY()};
@@ -310,7 +310,7 @@ public class ImageRenderer extends AbstractRenderer {
         float scaleCoeff = 1;
         // hasProperty(Property) checks only properties field, cannot use it
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.AUTO_SCALE))) {
-            scaleCoeff = Math.min(maxWidth / (float) width, maxHeight / height);
+            scaleCoeff = Math.min(maxWidth / (float) width, maxHeight / (float) height);
             height *= scaleCoeff;
             width *= scaleCoeff;
         } else if (null != getPropertyAsBoolean(Property.AUTO_SCALE_WIDTH) && (boolean) getPropertyAsBoolean(Property.AUTO_SCALE_WIDTH)) {
@@ -318,7 +318,7 @@ public class ImageRenderer extends AbstractRenderer {
             height *= scaleCoeff;
             width = maxWidth;
         } else if (null != getPropertyAsBoolean(Property.AUTO_SCALE_HEIGHT) && (boolean) getPropertyAsBoolean(Property.AUTO_SCALE_HEIGHT)) {
-            scaleCoeff = maxHeight / height;
+            scaleCoeff = maxHeight / (float) height;
             height = maxHeight;
             width *= scaleCoeff;
         }

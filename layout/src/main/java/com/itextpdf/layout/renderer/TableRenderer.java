@@ -621,7 +621,7 @@ public class TableRenderer extends AbstractRenderer {
                         horizontalBorders.get(row + 1).set(col, getBorders()[2] == null
                                 ? currentRow[col].getModelElement().hasProperty(Property.BORDER_BOTTOM) && null == currentRow[col].getModelElement().<Border>getProperty(Property.BORDER_BOTTOM)
                                         ? null
-                                        : (Border) currentRow[col].getModelElement().getDefaultProperty(Property.BORDER)
+                                        : (Border) currentRow[col].getModelElement().<Border>getDefaultProperty(Property.BORDER)
                                 : getBorders()[2]);
                         // for the future
                         currentRow[col].getModelElement().setBorderTop(getBorders()[0] == null
