@@ -223,6 +223,10 @@ public class WebColors extends HashMap<String, int[]> {
         return false;
     }
 
+    public static boolean isColorProperty(String value) {
+        return value.contains("rgb(") || value.contains("rgba(") || value.contains("#") || WebColors.NAMES.containsKey(value.toLowerCase());
+    }
+
     /**
      * Gives you a BaseColor based on a name.
      *
