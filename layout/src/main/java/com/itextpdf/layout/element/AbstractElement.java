@@ -134,6 +134,14 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
         return (T) (Object)this;
     }
 
+    /**
+     * Gets the child elements of this elements
+     * @return a list of children
+     */
+    public List<IElement> getChildren() {
+        return childElements;
+    }
+
     protected abstract IRenderer makeNewRenderer();
 
     /**
