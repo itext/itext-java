@@ -46,8 +46,8 @@ package com.itextpdf.layout.element;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
@@ -55,7 +55,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -72,7 +71,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     private List<Cell[]> rows;
 
-    private float[] columnWidths;
+    private UnitValue[] columnWidths;
     private int currentColumn = 0;
     private int currentRow = -1;
     private Table header;
@@ -101,14 +100,49 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         if (columnWidths.length == 0) {
             throw new IllegalArgumentException("the.widths.array.in.pdfptable.constructor.can.not.have.zero.length");
         }
-        this.columnWidths = new float[columnWidths.length];
+        this.columnWidths = new UnitValue[columnWidths.length];
         float width = 0;
         for (int i = 0; i < columnWidths.length; i++) {
-            this.columnWidths[i] = columnWidths[i];
+            this.columnWidths[i] = UnitValue.createPointValue(columnWidths[i]);
             width += columnWidths[i];
         }
         super.setWidth(width);
         initializeRows();
+    }
+
+    /**
+     * Constructs a {@code Table} with the relative column widths.
+     *
+     * @param columnWidths the relative column widths
+     * @param largeTable whether parts of the table will be written before all data is added.
+     */
+    public Table(UnitValue[] columnWidths, boolean largeTable) {
+        this.isComplete = !largeTable;
+        if (columnWidths == null) {
+            throw new NullPointerException("the.widths.array.in.table.constructor.can.not.be.null");
+        }
+        if (columnWidths.length == 0) {
+            throw new IllegalArgumentException("the.widths.array.in.pdfptable.constructor.can.not.have.zero.length");
+        }
+        this.columnWidths = new UnitValue[columnWidths.length];
+        float totalWidth = 0;
+        for (int i = 0; i < columnWidths.length; i++) {
+            this.columnWidths[i] = columnWidths[i];
+            if (columnWidths[i].isPointValue()) {
+                totalWidth += columnWidths[i].getValue();
+            }
+        }
+        super.setWidth(totalWidth);
+        initializeRows();
+    }
+
+    /**
+     * Constructs a {@code Table} with the relative column widths.
+     *
+     * @param columnWidths the relative column widths
+     */
+    public Table(UnitValue[] columnWidths) {
+        this(columnWidths, false);
     }
 
     /**
@@ -131,9 +165,9 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         if (numColumns <= 0) {
             throw new IllegalArgumentException("the.number.of.columns.in.pdfptable.constructor.must.be.greater.than.zero");
         }
-        this.columnWidths = new float[numColumns];
+        this.columnWidths = new UnitValue[numColumns];
         for (int k = 0; k < numColumns; ++k) {
-            this.columnWidths[k] = 1;
+            this.columnWidths[k] = UnitValue.createPointValue(1);
         }
         super.setWidth(UnitValue.createPercentValue(100));
         initializeRows();
@@ -173,7 +207,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * @param column index of the column
      * @return the width of the column
      */
-    public float getColumnWidth(int column) {
+    public UnitValue getColumnWidth(int column) {
         return columnWidths[column];
     }
 
@@ -623,10 +657,10 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         float total = 0;
         int numCols = getNumberOfColumns();
         for (int k = 0; k < numCols; ++k) {
-            total += columnWidths[k];
+            total += columnWidths[k].getValue();
         }
         for (int k = 0; k < numCols; ++k) {
-            columnWidths[k] = width.getValue() * columnWidths[k] / total;
+            columnWidths[k] = UnitValue.createPointValue(width.getValue() * columnWidths[k].getValue() / total);
         }
     }
 

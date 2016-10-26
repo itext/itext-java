@@ -59,6 +59,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -218,6 +219,13 @@ public class TableRenderer extends AbstractRenderer {
         if (tableWidth == null || tableWidth == 0) {
             tableWidth = layoutBox.getWidth();
         }
+        float freeAreaWidth = layoutBox.getWidth() - tableWidth;
+        for (int i = 0; i < tableModel.getNumberOfColumns(); i++) {
+            UnitValue columnWidth = tableModel.getColumnWidth(i);
+            if(columnWidth.isPercentValue()) {
+                tableWidth += (freeAreaWidth) * columnWidth.getValue() / 100;
+            }
+        }
         occupiedArea = new LayoutArea(area.getPageNumber(),
                 new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - topTableBorderWidth / 2, (float) tableWidth, 0));
 
@@ -264,7 +272,7 @@ public class TableRenderer extends AbstractRenderer {
         // Apply halves of the borders. The other halves are applied on a Cell level
         layoutBox.<Rectangle>applyMargins(topTableBorderWidth / 2, rightTableBorderWidth / 2, 0, leftTableBorderWidth / 2, false);
 
-        columnWidths = calculateScaledColumnWidths(tableModel, (float) tableWidth, leftTableBorderWidth, rightTableBorderWidth);
+        columnWidths = calculateScaledColumnWidths(tableModel, (float) tableWidth, leftTableBorderWidth, rightTableBorderWidth, layoutBox.getWidth());
         LayoutResult[] splits = new LayoutResult[tableModel.getNumberOfColumns()];
         // This represents the target row index for the overflow renderer to be placed to.
         // Usually this is just the current row id of a cell, but it has valuable meaning when a cell has rowspan.
@@ -881,11 +889,18 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
-    protected float[] calculateScaledColumnWidths(Table tableModel, float tableWidth, float leftBorderWidth, float rightBorderWidth) {
+    protected float[] calculateScaledColumnWidths(Table tableModel, float tableWidth, float leftBorderWidth, float rightBorderWidth, float layoutBoxWidth) {
         float[] columnWidths = new float[tableModel.getNumberOfColumns()];
         float widthSum = 0;
         for (int i = 0; i < tableModel.getNumberOfColumns(); i++) {
-            columnWidths[i] = tableModel.getColumnWidth(i);
+            float columnWidth = 0;
+            UnitValue columnUnitWidth = tableModel.getColumnWidth(i);
+            if (columnUnitWidth.isPointValue()) {
+                columnWidth = columnUnitWidth.getValue();
+            } else {
+                columnWidth = (layoutBoxWidth - tableWidth) * columnUnitWidth.getValue() / 100;
+            }
+            columnWidths[i] = columnWidth;
             widthSum += columnWidths[i];
         }
         for (int i = 0; i < tableModel.getNumberOfColumns(); i++) {

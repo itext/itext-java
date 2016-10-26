@@ -18,6 +18,7 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -664,6 +665,25 @@ public class TableTest extends ExtendedITextTest {
                 .addCell(new Cell().add(new Paragraph("cell 6, 1\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 6, 2\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + middleTextContent)));
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void simpleTableTest22() throws IOException, InterruptedException {
+        String testName = "tableTest22.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(new UnitValue[]{UnitValue.createPointValue(30), UnitValue.createPointValue(30), UnitValue.createPercentValue(30), UnitValue.createPercentValue(30)})
+                .addCell(new Cell().add(new Paragraph("cell 1, 1")))
+                .addCell(new Cell().add(new Paragraph("cell 1, 2")))
+                .addCell(new Cell().add(new Paragraph("cell 1, 3")))
+                .addCell(new Cell().add(new Paragraph("cell 1, 4")));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
