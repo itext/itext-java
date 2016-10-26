@@ -49,7 +49,7 @@ import java.util.StringTokenizer;
 
 /**
  * This class is a HashMap that contains the names of colors as a key and the
- * corresponding BaseColor as value. (Source: Wikipedia
+ * corresponding RGB color as value. (Source: Wikipedia
  * http://en.wikipedia.org/wiki/Web_colors )
  */
 public class WebColors extends HashMap<String, int[]> {
@@ -205,34 +205,11 @@ public class WebColors extends HashMap<String, int[]> {
     }
 
     /**
-     * A web color string without the leading # will be 3 or 6 characters long
-     * and all those characters will be hex digits. NOTE: colStr must be all
-     * lower case or the current hex letter test will fail.
-     *
-     * @param colStr A non-null, lower case string that might describe an RGB color
-     *               in hex.
-     * @return Is this a web color hex string without the leading #?
-     */
-    private static boolean missingHashColorFormat(String colStr) {
-        int len = colStr.length();
-        if (len == 3 || len == 6) {
-            // and it just contains hex chars 0-9, a-f, A-F
-            String match = "[0-9a-f]{" + len + "}";
-            return colStr.matches(match);
-        }
-        return false;
-    }
-
-    public static boolean isColorProperty(String value) {
-        return value.contains("rgb(") || value.contains("rgba(") || value.contains("#") || WebColors.NAMES.containsKey(value.toLowerCase());
-    }
-
-    /**
-     * Gives you a BaseColor based on a name.
+     * Gives you a DeviceRgb based on a name.
      *
      * @param name a name such as black, violet, cornflowerblue or #RGB or
      *             #RRGGBB or RGB or RRGGBB or rgb(R,G,B)
-     * @return the corresponding BaseColor object. Never returns null.
+     * @return the corresponding DeviceRgb object. Never returns null.
      * @throws IllegalArgumentException if the String isn't a know representation of a color.
      */
     public static DeviceRgb getRGBColor(String name) {
@@ -294,6 +271,25 @@ public class WebColors extends HashMap<String, int[]> {
         }
         color = NAMES.get(colorName);
         return new DeviceRgb(color[0], color[1], color[2]);
+    }
+
+    /**
+     * A web color string without the leading # will be 3 or 6 characters long
+     * and all those characters will be hex digits. NOTE: colStr must be all
+     * lower case or the current hex letter test will fail.
+     *
+     * @param colStr A non-null, lower case string that might describe an RGB color
+     *               in hex.
+     * @return Is this a web color hex string without the leading #?
+     */
+    private static boolean missingHashColorFormat(String colStr) {
+        int len = colStr.length();
+        if (len == 3 || len == 6) {
+            // and it just contains hex chars 0-9, a-f, A-F
+            String match = "[0-9a-f]{" + len + "}";
+            return colStr.matches(match);
+        }
+        return false;
     }
 
     private static int getRGBChannelValue(String rgbChannel) {
