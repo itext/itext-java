@@ -56,16 +56,23 @@ public class BmpImageData extends RawImageData {
         this.size = size;
     }
 
+
     protected BmpImageData(byte[] bytes, boolean noHeader, int size) {
         super(bytes, ImageType.BMP);
         this.noHeader = noHeader;
         this.size = size;
     }
 
+    /**
+     * @return size of the image
+     */
     public int getSize() {
         return size;
     }
 
+    /**
+     * @return True if the bitmap image does not contain a header
+     */
     public boolean isNoHeader() {
         return noHeader;
     }

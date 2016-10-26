@@ -112,6 +112,11 @@ final class BmpImageHelper {
     private static final int BI_RLE4 = 2;
     private static final int BI_BITFIELDS = 3;
 
+    /**
+     * Process the passed Image data as a BMP image.
+     * Image is loaded and all image attributes are initialized and/or updated
+     * @param image the image to process as a BMP image
+     */
     public static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.BMP)
             throw new IllegalArgumentException("BMP image expected");
