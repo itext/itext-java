@@ -133,20 +133,16 @@ public class Barcode39 extends Barcode1D {
      */
     public Barcode39(PdfDocument document) {
         super(document);
-        try {
-            x = 0.8f;
-            n = 2;
-            font = PdfFontFactory.createFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
-            size = 8;
-            baseline = size;
-            barHeight = size * 3;
-            generateChecksum = false;
-            checksumText = false;
-            startStopText = true;
-            extended = false;
-        } catch (IOException e) {
-            throw new PdfException(e);
-        }
+        x = 0.8f;
+        n = 2;
+        font = document.getDefaultFont();
+        size = 8;
+        baseline = size;
+        barHeight = size * 3;
+        generateChecksum = false;
+        checksumText = false;
+        startStopText = true;
+        extended = false;
     }
 
     /**

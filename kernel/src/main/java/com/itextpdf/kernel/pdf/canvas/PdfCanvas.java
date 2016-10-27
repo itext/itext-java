@@ -441,7 +441,6 @@ public class PdfCanvas implements Serializable {
         if (size < 0.0001f && size > -0.0001f)
             throw new PdfException(PdfException.FontSizeIsTooSmall, size);
         currentGs.setFontSize(size);
-        font.makeIndirect(document);
         PdfName fontName = resources.addFont(document, font);
         currentGs.setFont(font);
         contentStream.getOutputStream()

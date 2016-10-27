@@ -44,6 +44,8 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.kernel.PdfException;
@@ -54,6 +56,7 @@ import com.itextpdf.kernel.events.IEventDispatcher;
 import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.log.Counter;
 import com.itextpdf.kernel.log.CounterFactory;
@@ -165,7 +168,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     protected boolean flushUnusedObjects = false;
 
-    protected Set<PdfFont> documentFonts = new HashSet<>();
+    private Map<PdfIndirectReference, PdfFont> documentFonts = new HashMap<>();
+    private PdfFont defaultFont = null;
 
     protected transient TagStructureContext tagStructureContext;
 
@@ -1396,12 +1400,56 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
+     * Create a new instance of {@link PdfFont} or load already created one.
+     *
+     * Note, PdfFont which created with {@link PdfFontFactory#createFont(PdfDictionary)} won't be cached
+     * until it will be added to {@link com.itextpdf.kernel.pdf.canvas.PdfCanvas} or {@link PdfResources}.
+     */
+    public PdfFont getFont(PdfDictionary dictionary) {
+        assert dictionary.getIndirectReference() != null;
+        if (documentFonts.containsKey(dictionary.getIndirectReference())) {
+            return documentFonts.get(dictionary.getIndirectReference());
+        } else {
+            return addFont(PdfFontFactory.createFont(dictionary));
+        }
+    }
+
+    /**
+     * Gets default font for the document: Helvetica, WinAnsi.
+     * One instance per document.
+     *
+     * @return instance of {@link PdfFont} or {@code null} on error.
+     */
+    public PdfFont getDefaultFont() {
+        if (defaultFont == null) {
+            try {
+                defaultFont = PdfFontFactory.createFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
+                defaultFont.makeIndirect(this);
+                addFont(defaultFont);
+            } catch (IOException e) {
+                Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+                logger.error(LogMessageConstant.EXCEPTION_WHILE_CREATING_DEFAULT_FONT, e);
+                defaultFont = null;
+            }
+        }
+        return defaultFont;
+    }
+    /**
      * Gets list of indirect references.
      *
      * @return list of indirect references.
      */
     PdfXrefTable getXref() {
         return xref;
+    }
+
+    /**
+     * Adds PdfFont without an checks
+     * @return the same PdfFont instance.
+     */
+    PdfFont addFont(PdfFont font) {
+        documentFonts.put(font.getPdfObject().getIndirectReference(), font);
+        return font;
     }
 
     /**
@@ -1662,8 +1710,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      *
      * @return List of {@see PdfFonts}.
      */
-    protected Set<PdfFont> getDocumentFonts() {
-        return documentFonts;
+    protected Collection<PdfFont> getDocumentFonts() {
+        return documentFonts.values();
     }
 
     protected void flushFonts() {

@@ -787,7 +787,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
-        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(pdfDictionary.copyTo(pdfDoc));
+        PdfFont pdfTrueTypeFont = inputPdfDoc1.getFont(pdfDictionary.copyTo(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -823,7 +823,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfFont = PdfFontFactory.createFont(pdfDictionary.copyTo(pdfDoc));
+        PdfFont pdfFont = inputPdfDoc1.getFont(pdfDictionary.copyTo(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -926,7 +926,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(pdfDictionary.copyTo(pdfDoc));
+        PdfFont pdfTrueTypeFont = inputPdfDoc1.getFont(pdfDictionary.copyTo(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -963,7 +963,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(pdfDictionary.copyTo(pdfDoc));
+        PdfFont pdfTrueTypeFont = inputPdfDoc1.getFont(pdfDictionary.copyTo(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -997,7 +997,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont((PdfDictionary) pdfDoc.getPdfObject(6));
+        PdfFont pdfTrueTypeFont = pdfDoc.getFont((PdfDictionary) pdfDoc.getPdfObject(6));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -1033,7 +1033,7 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        PdfFont pdfType1Font = PdfFontFactory.createFont(pdfDictionary.copyTo(pdfDoc));
+        PdfFont pdfType1Font = inputPdfDoc1.getFont(pdfDictionary.copyTo(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -1072,6 +1072,46 @@ public class PdfFontTest extends ExtendedITextTest {
                 .moveText(36, 700)
                 .setFontAndSize(pdfType1Font, 72)
                 .showText("New Hello world")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void testType1FontUpdateContent2() throws IOException, InterruptedException {
+        String inputFileName1 = sourceFolder + "DocumentWithCMR10Afm.pdf";
+        String filename = destinationFolder + "DocumentWithCMR10Afm2_updated.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Afm2_updated.pdf";
+
+        PdfReader reader = new PdfReader(inputFileName1);
+        PdfWriter writer = new PdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+        PdfDictionary pdfDictionary = (PdfDictionary) pdfDoc.getPdfObject(4);
+        PdfFont pdfType1Font = pdfDoc.getFont(pdfDictionary);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfType1Font, 72)
+                .showText("New Hello world")
+                .endText()
+                .restoreState();
+        PdfFont pdfType1Font2 = pdfDoc.getFont(pdfDictionary);
+        Assert.assertEquals(pdfType1Font, pdfType1Font2);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 620)
+                .setFontAndSize(pdfType1Font2, 72)
+                .showText("New Hello world2")
                 .endText()
                 .restoreState();
         canvas.rectangle(100, 500, 100, 100).fill();

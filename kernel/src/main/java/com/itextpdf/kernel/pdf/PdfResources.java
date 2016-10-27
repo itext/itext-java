@@ -112,7 +112,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
      * @return added font resource name.
      */
     public PdfName addFont(PdfDocument pdfDocument, PdfFont font) {
-        pdfDocument.getDocumentFonts().add(font);
+        font.makeIndirect(pdfDocument);
+        pdfDocument.addFont(font);
         return addResource(font, fontNamesGen);
     }
 

@@ -60,6 +60,9 @@ import java.util.Set;
 
 /**
  * This class provides helpful methods for creating fonts ready to be used in a {@link PdfDocument}
+ *
+ * Note, just created {@link PdfFont} is almost empty until it will be flushed,
+ * because it is impossible to fulfill font data until flush.
  */
 public final class PdfFontFactory {
 
@@ -83,11 +86,19 @@ public final class PdfFontFactory {
      * @throws IOException if error occurred while creating the font, e.g. metrics loading failure
      */
     public static PdfFont createFont() throws IOException {
-        return createFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
+        return createFont(FontConstants.HELVETICA, DEFAULT_ENCODING);
     }
 
     /**
-     * Creates a {@link PdfFont} by existing font dictionary.
+     * Creates a {@link PdfFont} by already existing font dictionary.
+     *
+     * Note, the font won't be added to any document,
+     * until you add it to {@link com.itextpdf.kernel.pdf.canvas.PdfCanvas}.
+     * While adding to {@link com.itextpdf.kernel.pdf.canvas.PdfCanvas}, or to
+     * {@link com.itextpdf.kernel.pdf.PdfResources} the font will be made indirect implicitly.
+     *
+     * {@link PdfDocument#getFont} method is strongly recommended if you want to get PdfFont by both
+     * existing font dictionary, or just created and hasn't flushed yet.
      *
      * @param fontDictionary the font dictionary to create the font from
      * @return created {@link PdfFont} instance

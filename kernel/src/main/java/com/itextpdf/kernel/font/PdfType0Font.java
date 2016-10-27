@@ -146,7 +146,6 @@ public class PdfType0Font extends PdfFont {
 
     PdfType0Font(PdfDictionary fontDictionary) {
         super(fontDictionary);
-        checkFontDictionary(fontDictionary, PdfName.Type0);
         newFont = false;
         PdfDictionary cidFont = fontDictionary.getAsArray(PdfName.DescendantFonts).getAsDictionary(0);
         String cmap = fontDictionary.getAsName(PdfName.Encoding).getValue();

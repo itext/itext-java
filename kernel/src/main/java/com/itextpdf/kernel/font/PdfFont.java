@@ -442,10 +442,18 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return PdfFontFactory.checkFontDictionary(fontDic, fontType, true);
     }
 
+    /**
+     * @deprecated Will be removed in 7.1
+     */
+    @Deprecated
     protected boolean checkTrueTypeFontDictionary(PdfDictionary fontDic) {
         return checkTrueTypeFontDictionary(fontDic, true);
     }
 
+    /**
+     * @deprecated Will be removed in 7.1
+     */
+    @Deprecated
     protected boolean checkTrueTypeFontDictionary(PdfDictionary fontDic, boolean isException) {
         if (fontDic == null || fontDic.get(PdfName.Subtype) == null
                 || !(fontDic.get(PdfName.Subtype).equals(PdfName.TrueType) || fontDic.get(PdfName.Subtype).equals(PdfName.Type1))) {

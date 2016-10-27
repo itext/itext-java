@@ -211,18 +211,14 @@ public class BarcodeEAN extends Barcode1D {
      */
     public BarcodeEAN(PdfDocument document) {
         super(document);
-        try {
-            x = 0.8f;
-            font = PdfFontFactory.createFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
-            size = 8;
-            baseline = size;
-            barHeight = size * 3;
-            guardBars = true;
-            codeType = EAN13;
-            code = "";
-        } catch (IOException e) {
-            throw new PdfException(e);
-        }
+        x = 0.8f;
+        font = document.getDefaultFont();
+        size = 8;
+        baseline = size;
+        barHeight = size * 3;
+        guardBars = true;
+        codeType = EAN13;
+        code = "";
     }
 
     /**

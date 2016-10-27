@@ -229,19 +229,14 @@ public class Barcode128 extends Barcode1D {
      */
     public Barcode128(PdfDocument document) {
         super(document);
-        try {
-            x = 0.8f;
-            font = PdfFontFactory.createFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
-            size = 8;
-            baseline = size;
-            barHeight = size * 3;
-            textAlignment = ALIGN_CENTER;
-            codeType = CODE128;
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot create font", e);
-        }
+        x = 0.8f;
+        font = document.getDefaultFont();
+        size = 8;
+        baseline = size;
+        barHeight = size * 3;
+        textAlignment = ALIGN_CENTER;
+        codeType = CODE128;
     }
-
     public enum Barcode128CodeSet {
         A,
         B,

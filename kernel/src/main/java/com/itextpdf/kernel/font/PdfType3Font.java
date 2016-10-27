@@ -93,7 +93,6 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
     PdfType3Font(PdfDictionary fontDictionary) {
         super(fontDictionary);
         ensureObjectIsAddedToDocument(fontDictionary);
-        checkFontDictionary(fontDictionary, PdfName.Type3);
         subset = true;
         embedded = true;
         fontProgram = new Type3FontProgram(false);
