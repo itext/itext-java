@@ -1943,22 +1943,23 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
             } else if ((ff & PdfButtonFormField.FF_RADIO) != 0) {
                 PdfArray kids = getKids();
-                for (int i = 0; i < kids.size(); i++) {
-                    PdfObject kid = kids.get(i);
-                    if (kid.isIndirectReference()) {
-                        kid = ((PdfIndirectReference) kid).getRefersTo();
+                if (null != kids) {
+                    for (int i = 0; i < kids.size(); i++) {
+                        PdfObject kid = kids.get(i);
+                        if (kid.isIndirectReference()) {
+                            kid = ((PdfIndirectReference) kid).getRefersTo();
+                        }
+                        PdfFormField field = new PdfFormField((PdfDictionary) kid);
+                        PdfWidgetAnnotation widget = field.getWidgets().get(0);
+                        PdfDictionary buttonValues = field.getPdfObject().getAsDictionary(PdfName.AP).getAsDictionary(PdfName.N);
+                        String state;
+                        if (buttonValues.get(new PdfName(value)) != null) {
+                            state = value;
+                        } else {
+                            state = "Off";
+                        }
+                        widget.setAppearanceState(new PdfName(state));
                     }
-                    PdfFormField field = new PdfFormField((PdfDictionary) kid);
-                    PdfWidgetAnnotation widget = field.getWidgets().get(0);
-                    PdfDictionary buttonValues = field.getPdfObject().getAsDictionary(PdfName.AP).getAsDictionary(PdfName.N);
-                    String state;
-                    if (buttonValues.get(new PdfName(value)) != null) {
-                        state = value;
-                    } else {
-                        state = "Off";
-
-                    }
-                    widget.setAppearanceState(new PdfName(state));
                 }
             } else {
                 Rectangle rect = getRect(getPdfObject());
@@ -2406,30 +2407,39 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     protected Object[] getFontAndSize(PdfDictionary asNormal) throws IOException {
         Object[] fontAndSize = new Object[2];
-        PdfDictionary resources = null;
-        if (asNormal != null) {
-            resources = asNormal.getAsDictionary(PdfName.Resources);
-        }
-        if (resources == null) {
-            PdfDocument document = getDocument();
-            if (document != null) {
-                PdfDictionary acroformDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
-                if (acroformDictionary != null) {
-                    resources = acroformDictionary.getAsDictionary(PdfName.DR);
-                }
+        PdfDictionary normalResources = null;
+        PdfDictionary defaultResources = null;
+        PdfDocument document = getDocument();
+        if (document != null) {
+            PdfDictionary acroformDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
+            if (acroformDictionary != null) {
+                defaultResources = acroformDictionary.getAsDictionary(PdfName.DR);
             }
-
         }
-        if (resources != null) {
-            PdfDictionary fontDic = resources.getAsDictionary(PdfName.Font);
+        if (asNormal != null) {
+            normalResources = asNormal.getAsDictionary(PdfName.Resources);
+        }
+        if (defaultResources != null || normalResources != null) {
+            PdfDictionary normalFontDic = normalResources != null ? normalResources.getAsDictionary(PdfName.Font) : null;
+            PdfDictionary defaultFontDic = defaultResources != null ? defaultResources.getAsDictionary(PdfName.Font) : null;
             PdfString defaultAppearance = getDefaultAppearance();
-            if (fontDic != null && defaultAppearance != null) {
+            if ((normalFontDic != null || defaultFontDic != null) && defaultAppearance != null) {
                 Object[] dab = splitDAelements(defaultAppearance.toUnicodeString());
                 PdfName fontName = new PdfName(dab[DA_FONT].toString());
+                PdfDictionary requiredFontDictionary = null;
+                if (normalFontDic != null && null != normalFontDic.getAsDictionary(fontName)) {
+                    requiredFontDictionary = normalFontDic.getAsDictionary(fontName);
+                } else if (defaultFontDic != null) {
+                    requiredFontDictionary = defaultFontDic.getAsDictionary(fontName);
+                }
                 if (font != null) {
                     fontAndSize[0] = font;
                 } else {
-                    fontAndSize[0] = PdfFontFactory.createFont(fontDic.getAsDictionary(fontName));
+                    if (null != document.getFont(requiredFontDictionary)) {
+                        fontAndSize[0] = document.getFont(requiredFontDictionary);
+                    } else {
+                        fontAndSize[0] = PdfFontFactory.createFont(requiredFontDictionary);
+                    }
                 }
                 if (fontSize != 0) {
                     fontAndSize[1] = fontSize;
