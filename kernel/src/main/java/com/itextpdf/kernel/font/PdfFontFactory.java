@@ -80,7 +80,10 @@ public final class PdfFontFactory {
     private static boolean DEFAULT_CACHED = true;
 
     /**
-     * Creates a default font, namely {@link FontConstants#HELVETICA} standard font with {@link PdfEncodings#WINANSI} encoding.
+     * Creates a new instance of default font, namely {@link FontConstants#HELVETICA} standard font
+     * with {@link PdfEncodings#WINANSI} encoding.
+     * Note, if you want to reuse the same instance of default font, you may use
+     * {@link PdfDocument#getDefaultFont()}.
      *
      * @return created font
      * @throws IOException if error occurred while creating the font, e.g. metrics loading failure

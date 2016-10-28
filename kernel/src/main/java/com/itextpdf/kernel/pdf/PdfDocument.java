@@ -1423,7 +1423,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     public PdfFont getDefaultFont() {
         if (defaultFont == null) {
             try {
-                defaultFont = PdfFontFactory.createFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
+                defaultFont = PdfFontFactory.createFont();
                 defaultFont.makeIndirect(this);
                 addFont(defaultFont);
             } catch (IOException e) {
