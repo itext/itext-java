@@ -50,7 +50,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.Property;
 
 public class CellRenderer extends BlockRenderer {
@@ -106,7 +105,7 @@ public class CellRenderer extends BlockRenderer {
 
         // Avoid rotation
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
-        boolean avoidRotation = null != angle && null != this.<Background>getProperty(Property.BACKGROUND);
+        boolean avoidRotation = null != angle && hasProperty(Property.BACKGROUND);
         if (avoidRotation) {
             AffineTransform transform = new AffineTransform(ctm.get(0), ctm.get(1), ctm.get(3), ctm.get(4), ctm.get(6), ctm.get(7));
             try {
