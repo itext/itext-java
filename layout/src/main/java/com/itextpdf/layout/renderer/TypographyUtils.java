@@ -173,7 +173,7 @@ class TypographyUtils {
 
     static int[] reorderLine(List<LineRenderer.RendererGlyph> line, byte[] lineLevels, byte[] levels) {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-            logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
+            logger.warn(typographyNotFoundException);
         } else {
             if (levels == null) {
                 return null;
