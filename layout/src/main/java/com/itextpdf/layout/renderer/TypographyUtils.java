@@ -94,6 +94,8 @@ class TypographyUtils {
     private static Map<String, Class<?>> cachedClasses = new HashMap<>();
     private static Map<TypographyMethodSignature, AccessibleObject> cachedMethods = new HashMap<>();
 
+    private static final String typographyNotFoundException = "Cannot find pdfCalligraph module, which was implicitly required by one of the layout properties";
+
     static {
         boolean moduleFound = false;
         try {
@@ -113,7 +115,7 @@ class TypographyUtils {
 
     static void applyOtfScript(FontProgram fontProgram, GlyphLine text, Character.UnicodeScript script) {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-            logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
+            logger.warn(typographyNotFoundException);
         } else {
             callMethod(TYPOGRAPHY_PACKAGE + SHAPER, APPLY_OTF_SCRIPT, new Class[]{TrueTypeFont.class, GlyphLine.class, Character.UnicodeScript.class},
                     fontProgram, text, script);
@@ -123,7 +125,7 @@ class TypographyUtils {
 
     static void applyKerning(FontProgram fontProgram, GlyphLine text) {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-            logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
+            logger.warn(typographyNotFoundException);
         } else {
             callMethod(TYPOGRAPHY_PACKAGE + SHAPER, APPLY_KERNING, new Class[]{FontProgram.class, GlyphLine.class},
                     fontProgram, text);
@@ -133,7 +135,7 @@ class TypographyUtils {
 
     static byte[] getBidiLevels(BaseDirection baseDirection, int[] unicodeIds) {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-            logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
+            logger.warn(typographyNotFoundException);
         } else {
             byte direction;
             switch (baseDirection) {
@@ -220,7 +222,7 @@ class TypographyUtils {
 
     static Collection<Character.UnicodeScript> getSupportedScripts() {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-            logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
+            logger.warn(typographyNotFoundException);
             return null;
         } else if (SUPPORTED_SCRIPTS != null) {
             return SUPPORTED_SCRIPTS;
