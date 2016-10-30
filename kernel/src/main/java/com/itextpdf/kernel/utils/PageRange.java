@@ -44,6 +44,8 @@
 package com.itextpdf.kernel.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,8 +55,10 @@ import java.util.regex.Pattern;
  * pages 5, then pages 10 through 15, then page 18, then page 21 and so on.
  */
 public class PageRange {
-    private List<Integer> sequenceStarts = new ArrayList<>();
-    private List<Integer> sequenceEnds = new ArrayList<>();
+	private static final Pattern SEQUENCE_PATTERN = Pattern.compile("(\\d+)-(\\d+)?");
+	private static final Pattern SINGLE_PAGE_PATTERN = Pattern.compile("(\\d+)");
+	
+	private List<IPageRangePart> sequences = new ArrayList<>();
 
     /**
      * Constructs an empty {@link PageRange} instance.
@@ -64,24 +68,54 @@ public class PageRange {
 
     /**
      * Constructs a {@link PageRange} instance from a range in a string form, for example: "1-12, 15, 45-66".
+     * More advanced forms are also available, for example:
+     *    - "3-" to indicate from page 3 to the last page
+     *    - "odd" for all odd pages
+     *    - "even" for all even pages
+     *    - "3- & odd" for all odd pages starting from page 3
+     * A complete example for pages 1 to 5, page 8 then odd pages starting to page 9: "1-5, 8, odd & 9-".
      *
      * @param pageRange the page range
      */
     public PageRange(String pageRange) {
         pageRange = pageRange.replaceAll("\\s+", "");
-        Pattern sequencePattern = Pattern.compile("(\\d+)-(\\d+)");
-        Pattern singlePagePattern = Pattern.compile("(\\d+)");
         for (String pageRangePart : pageRange.split(",")) {
-            Matcher matcher;
-            if ((matcher = sequencePattern.matcher(pageRangePart)).matches()) {
-                sequenceStarts.add(Integer.parseInt(matcher.group(1)));
-                sequenceEnds.add(Integer.parseInt(matcher.group(2)));
-            } else if ((matcher = singlePagePattern.matcher(pageRangePart)).matches()) {
-                int pageNumber = Integer.parseInt(matcher.group(1));
-                sequenceStarts.add(pageNumber);
-                sequenceEnds.add(pageNumber);
-            }
+        	IPageRangePart cond = getRangeObject(pageRangePart);
+        	if (cond != null)
+        		sequences.add(cond);
         }
+    }
+
+    private static IPageRangePart getRangeObject(String rangeDef) {
+    	if (rangeDef.contains("&")) {
+    		List<IPageRangePart> conditions = new ArrayList<>();
+    		for (String pageRangeCond : rangeDef.split("&")) {
+            	IPageRangePart cond = getRangeObject(pageRangeCond);
+            	if (cond != null)
+            		conditions.add(cond);
+    		}
+    		if (conditions.size() > 0)
+    			return new PageRangePartAnd(conditions.toArray(new IPageRangePart[]{}));
+    		else
+    			return null;
+    	} else {
+            Matcher matcher;
+            if ((matcher = SEQUENCE_PATTERN.matcher(rangeDef)).matches()) {
+            	int start = Integer.parseInt(matcher.group(1));
+                if (matcher.group(2) != null) {
+                	return new PageRangePartSequence(start, Integer.parseInt(matcher.group(2)));
+                } else {
+                	return new PageRangePartAfter(start);
+                }
+            } else if ((matcher = SINGLE_PAGE_PATTERN.matcher(rangeDef)).matches()) {
+            	return new PageRangePartSingle(Integer.parseInt(matcher.group(1)));
+            } else if ("odd".equalsIgnoreCase(rangeDef)) {
+            	return PageRangePartOddEven.ODD;
+            } else if ("even".equalsIgnoreCase(rangeDef)) {
+            	return PageRangePartOddEven.EVEN;
+            }
+            return null;
+    	}
     }
 
     /**
@@ -91,8 +125,7 @@ public class PageRange {
      * @return this range, already modified
      */
     public PageRange addPageSequence(int startPageNumber, int endPageNumber) {
-        sequenceStarts.add(startPageNumber);
-        sequenceEnds.add(endPageNumber);
+    	sequences.add(new PageRangePartSequence(startPageNumber, endPageNumber));
         return this;
     }
 
@@ -102,8 +135,7 @@ public class PageRange {
      * @return this range, already modified
      */
     public PageRange addSinglePage(int pageNumber) {
-        sequenceStarts.add(pageNumber);
-        sequenceEnds.add(pageNumber);
+    	sequences.add(new PageRangePartSingle(pageNumber));
         return this;
     }
 
@@ -113,10 +145,22 @@ public class PageRange {
      */
     public List<Integer> getAllPages() {
         List<Integer> allPages = new ArrayList<>();
-        for (int ind = 0; ind < sequenceStarts.size(); ind++) {
-            for (int pageInRange = (int) sequenceStarts.get(ind); pageInRange <= sequenceEnds.get(ind); pageInRange++) {
-                allPages.add(pageInRange);
-            }
+        for (int ind = 0; ind < sequences.size(); ind++) {
+        	allPages.addAll(sequences.get(ind).getAllPages());
+        }
+        return allPages;
+    }
+
+    /**
+     * Gets the list if pages that have been added to the range so far.
+     * 
+     * @param nbPages number of pages of the document to get the pages, to list only the pages eligible for this document.
+     * @return the list containing page numbers added to the range matching this document
+     */
+    public List<Integer> getAllPages(int nbPages) {
+        List<Integer> allPages = new ArrayList<>();
+        for (int ind = 0; ind < sequences.size(); ind++) {
+        	allPages.addAll(sequences.get(ind).getAllPages(nbPages));
         }
         return allPages;
     }
@@ -128,9 +172,9 @@ public class PageRange {
      * @return <code>true</code> if the page is present in this range, <code>false</code> otherwise
      */
     public boolean isPageInRange(int pageNumber) {
-        for (int ind = 0; ind < sequenceStarts.size(); ind++) {
-            if (sequenceStarts.get(ind) <= pageNumber && pageNumber <= sequenceEnds.get(ind))
-                return true;
+        for (int ind = 0; ind < sequences.size(); ind++) {
+        	if (sequences.get(ind).isPageInRange(pageNumber))
+        		return true;
         }
         return false;
     }
@@ -144,7 +188,7 @@ public class PageRange {
             return false;
 
         PageRange other = (PageRange) obj;
-        return sequenceStarts.equals(other.sequenceStarts) && sequenceEnds.equals(other.sequenceEnds);
+        return sequences.equals(other.sequences);
     }
 
     /**
@@ -152,6 +196,264 @@ public class PageRange {
      */
     @Override
     public int hashCode() {
-        return sequenceStarts.hashCode() * 31 + sequenceEnds.hashCode();
+        return sequences.hashCode();
+    }
+    
+    /**
+     * Inner interface for range parts definition
+     */
+    public static interface IPageRangePart {
+    	public List<Integer> getAllPages();
+    	public List<Integer> getAllPages(int nbPages);
+    	public boolean isPageInRange(int pageNumber);
+    }
+    /**
+     * Class for range part containing a single page
+     */
+    public static class PageRangePartSingle implements IPageRangePart {
+    	private final int page;
+    	public PageRangePartSingle(int page) {
+    		this.page = page;
+    	}
+    	@Override
+    	public List<Integer> getAllPages() {
+    		return Collections.singletonList(page);
+    	}
+    	@Override
+    	public List<Integer> getAllPages(int nbPages) {
+			if (page <= nbPages)
+				return Collections.singletonList(page);
+			else
+				return Collections.emptyList();
+    	}
+		@Override
+		public boolean isPageInRange(int pageNumber) {
+			return page == pageNumber;
+		}
+	    /**
+	     * {@inheritDoc}
+	     */
+	    @Override
+	    public boolean equals(Object obj) {
+	        if (!(obj instanceof PageRangePartSingle))
+	            return false;
+
+	        PageRangePartSingle other = (PageRangePartSingle) obj;
+	        return page == other.page;
+	    }
+	    /**
+	     * {@inheritDoc}
+	     */
+	    @Override
+	    public int hashCode() {
+	        return Integer.hashCode(page);
+	    }
+    }
+    /**
+     * Class for range part containing a range of pages represented by a start and an end page
+     */
+    public static class PageRangePartSequence implements IPageRangePart {
+    	private final int start;
+    	private final int end;
+    	
+    	public PageRangePartSequence(int start, int end) {
+    		this.start = start;
+    		this.end = end;
+    	}
+		@Override
+		public List<Integer> getAllPages() {
+	        List<Integer> allPages = new ArrayList<>();
+            for (int pageInRange = start; pageInRange <= end; pageInRange++) {
+                allPages.add(pageInRange);
+            }
+	        return allPages;
+		}
+		@Override
+		public List<Integer> getAllPages(int nbPages) {
+	        List<Integer> allPages = new ArrayList<>();
+            for (int pageInRange = start; pageInRange <= end && pageInRange <= nbPages; pageInRange++) {
+                allPages.add(pageInRange);
+            }
+	        return allPages;
+		}
+		@Override
+		public boolean isPageInRange(int pageNumber) {
+			return start <= pageNumber && pageNumber <= end;
+		}
+	    /**
+	     * {@inheritDoc}
+	     */
+	    @Override
+	    public boolean equals(Object obj) {
+	        if (!(obj instanceof PageRangePartSequence))
+	            return false;
+
+	        PageRangePartSequence other = (PageRangePartSequence) obj;
+	        return start == other.start && end == other.end;
+	    }
+	    /**
+	     * {@inheritDoc}
+	     */
+	    @Override
+	    public int hashCode() {
+	        return Integer.hashCode(start) * 31 + Integer.hashCode(end);
+	    }
+    }
+    /**
+     * Class for range part containing a range of pages for all pages after a given start page
+     */
+    public static class PageRangePartAfter implements IPageRangePart {
+    	private final int start;
+    	
+    	public PageRangePartAfter(int start) {
+    		this.start = start;
+    	}
+		@Override
+		public List<Integer> getAllPages() {
+			// Return only the first element, we do not know the last page...
+			return Collections.singletonList(start);
+		}
+		@Override
+		public List<Integer> getAllPages(int nbPages) {
+	        List<Integer> allPages = new ArrayList<>();
+            for (int pageInRange = start; pageInRange <= nbPages; pageInRange++) {
+                allPages.add(pageInRange);
+            }
+	        return allPages;
+		}
+		@Override
+		public boolean isPageInRange(int pageNumber) {
+			return start <= pageNumber;
+		}
+	    /**
+	     * {@inheritDoc}
+	     */
+	    @Override
+	    public boolean equals(Object obj) {
+	        if (!(obj instanceof PageRangePartAfter))
+	            return false;
+
+	        PageRangePartAfter other = (PageRangePartAfter) obj;
+	        return start == other.start;
+	    }
+	    /**
+	     * {@inheritDoc}
+	     */
+	    @Override
+	    public int hashCode() {
+	        return Integer.hashCode(start) * 31 + Integer.hashCode(-1);
+	    }
+    }
+    /**
+     * Class for range part for all even or odd pages.
+     * The class contains only 2 instances, one for odd pages and one for even pages.
+     */
+    public static class PageRangePartOddEven implements IPageRangePart {
+    	private final boolean isOdd;
+    	private final int mod;
+    	
+        public static final PageRangePartOddEven ODD = new PageRangePartOddEven(true);
+        public static final PageRangePartOddEven EVEN = new PageRangePartOddEven(false);
+        
+    	private PageRangePartOddEven(boolean isOdd) {
+    		this.isOdd = isOdd;
+    		if (isOdd)
+    			mod = 1;
+    		else
+    			mod = 0;
+    	}
+		@Override
+		public List<Integer> getAllPages() {
+			// Return only the first element, we do not know the last page...
+			if (isOdd) {
+				return Collections.singletonList(1);
+			} else {
+				return Collections.singletonList(2);
+			}
+		}
+		@Override
+		public List<Integer> getAllPages(int nbPages) {
+	        List<Integer> allPages = new ArrayList<>();
+            for (int pageInRange = (mod == 0 ? 2 : mod); pageInRange <= nbPages; pageInRange+=2) {
+                allPages.add(pageInRange);
+            }
+	        return allPages;
+		}
+		@Override
+		public boolean isPageInRange(int pageNumber) {
+			return pageNumber % 2 == mod;
+		}
+	    /**
+	     * {@inheritDoc}
+	     */
+	    @Override
+	    public boolean equals(Object obj) {
+	        if (!(obj instanceof PageRangePartOddEven))
+	            return false;
+
+	        PageRangePartOddEven other = (PageRangePartOddEven) obj;
+	        return isOdd == other.isOdd;
+	    }
+	    /**
+	     * {@inheritDoc}
+	     */
+	    @Override
+	    public int hashCode() {
+	        return Boolean.hashCode(isOdd);
+	    }
+    }
+    /**
+     * Class for range part based on several range parts.
+     * A 'and' is performed between all conditions.
+     * This allows for example to configure odd pages between page 19 and 25.
+     */
+    public static class PageRangePartAnd implements IPageRangePart {
+    	private final List<IPageRangePart> conditions = new ArrayList<>();
+    	
+    	public PageRangePartAnd(IPageRangePart... conditions) {
+    		this.conditions.addAll(Arrays.asList(conditions));
+    	}
+		@Override
+		public List<Integer> getAllPages() {
+	        List<Integer> allPages = new ArrayList<>();
+	        for (IPageRangePart cond : conditions) {
+	        	allPages.addAll(cond.getAllPages());
+	        }
+	        return allPages;
+		}
+		@Override
+		public List<Integer> getAllPages(int nbPages) {
+	        List<Integer> allPages = new ArrayList<>();
+	        for (IPageRangePart cond : conditions) {
+	        	allPages.addAll(cond.getAllPages(nbPages));
+	        }
+	        return allPages;
+		}
+		@Override
+		public boolean isPageInRange(int pageNumber) {
+	        for (IPageRangePart cond : conditions) {
+	        	if (!cond.isPageInRange(pageNumber))
+	        		return false;
+	        }
+	        return true;
+		}
+	    /**
+	     * {@inheritDoc}
+	     */
+	    @Override
+	    public boolean equals(Object obj) {
+	        if (!(obj instanceof PageRangePartAnd))
+	            return false;
+
+	        PageRangePartAnd other = (PageRangePartAnd) obj;
+	        return conditions.equals(other.conditions);
+	    }
+	    /**
+	     * {@inheritDoc}
+	     */
+	    @Override
+	    public int hashCode() {
+	        return conditions.hashCode();
+	    }
     }
 }
