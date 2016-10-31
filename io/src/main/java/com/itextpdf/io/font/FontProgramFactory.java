@@ -201,22 +201,27 @@ public final class FontProgramFactory {
         } else {
             if (isBuiltinFonts14 || name.toLowerCase().endsWith(".afm") || name.toLowerCase().endsWith(".pfm")) {
                 fontBuilt = new Type1Font(name, null, null, null);
-            } else if (baseName.toLowerCase().endsWith(".ttf") || baseName.toLowerCase().endsWith(".otf") || baseName.toLowerCase().indexOf(".ttc,") > 0) {
-                if (fontProgram != null) {
-                    fontBuilt = new TrueTypeFont(fontProgram);
-                } else if (baseName.toLowerCase().indexOf(".ttc,") > 0) {
-                    // splitting by "," would be easier but is more error-prone
-                    String[] parts = baseName.split(".ttc,");
-                    try {
-                        fontBuilt = new TrueTypeFont(parts[0] + ".ttc", Integer.parseInt(parts[1]));
-                    } catch (NumberFormatException nfe) {
-                        throw new IOException(nfe.getMessage(), nfe);
-                    }
-                } else {
-                    fontBuilt = new TrueTypeFont(name);
-                }
             } else if (isCidFont) {
                 fontBuilt = new CidFont(name, FontCache.getCompatibleCmaps(baseName));
+            } else {
+                if (baseName.toLowerCase().endsWith(".ttf") || baseName.toLowerCase().endsWith(".otf")) {
+                    if (fontProgram != null) {
+                        fontBuilt = new TrueTypeFont(fontProgram);
+                    } else {
+                        fontBuilt = new TrueTypeFont(name);
+                    }
+                } else {
+                    int ttcSplit = baseName.toLowerCase().indexOf(".ttc,");
+                    if (ttcSplit > 0) {
+                        try {
+                            String ttcName = baseName.substring(0, ttcSplit + 4);//count(.ttc) = 4
+                            int ttcIndex = Integer.parseInt(baseName.substring(ttcSplit + 5));//count(.ttc,) = 5)
+                            fontBuilt = new TrueTypeFont(ttcName, ttcIndex);
+                        } catch (NumberFormatException nfe) {
+                            throw new IOException(nfe.getMessage(), nfe);
+                        }
+                    }
+                }
             }
         }
         if (fontBuilt == null) {
