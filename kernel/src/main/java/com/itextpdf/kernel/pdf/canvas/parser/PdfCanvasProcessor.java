@@ -987,7 +987,7 @@ public class PdfCanvasProcessor {
             else if (PdfName.DeviceN.equals(csType))
                 return new DeviceN((PdfSpecialCs.DeviceN) pdfColorSpace, getColorants(operands));
             else if (PdfName.Pattern.equals(csType)) {
-                List<PdfObject> underlyingOperands = new LinkedList<>(operands);
+                List<PdfObject> underlyingOperands = new ArrayList<>(operands);
                 PdfObject patternName = underlyingOperands.remove(operands.size() - 2);
                 PdfColorSpace underlyingCs = ((PdfSpecialCs.UncoloredTilingPattern)pdfColorSpace).getUnderlyingColorSpace();
                 if (patternName instanceof PdfName) {

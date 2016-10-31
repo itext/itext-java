@@ -169,17 +169,18 @@ public class TableRenderer extends AbstractRenderer {
         float rightTableBorderWidth = -1;
         float topTableBorderWidth = -1;
         float bottomTableBorderWidth = 0;
+        int row, col;
 
         // Find left, right and top collapsed borders widths.
         // In order to find left and right border widths we try to consider as few rows ad possible
         // i.e. the borders still can be drawn outside the layout area.
-        int row = 0;
+        row = 0;
         while (row < rows.size() && (-1 == leftTableBorderWidth || -1 == rightTableBorderWidth)) {
             CellRenderer[] currentRow = rows.get(row);
             if (0 == row) {
-                for (int i = 0; i < currentRow.length; i++) {
-                    if (null != currentRow[i]) {
-                        borders = currentRow[i].getBorders();
+                for (CellRenderer cellRenderer : currentRow) {
+                    if (null != cellRenderer) {
+                        borders = cellRenderer.getBorders();
                         topTableBorderWidth = Math.max(null == borders[0] ? -1 : borders[0].getWidth(), topTableBorderWidth);
                     }
                 }
@@ -219,9 +220,9 @@ public class TableRenderer extends AbstractRenderer {
         if (tableWidth == null || tableWidth == 0) {
             tableWidth = layoutBox.getWidth();
         }
-        float freeAreaWidth = layoutBox.getWidth() - tableWidth;
-        for (int i = 0; i < tableModel.getNumberOfColumns(); i++) {
-            UnitValue columnWidth = tableModel.getColumnWidth(i);
+        float freeAreaWidth = layoutBox.getWidth() - (float) tableWidth;
+        for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
+            UnitValue columnWidth = tableModel.getColumnWidth(col);
             if(columnWidth.isPercentValue()) {
                 tableWidth += (freeAreaWidth) * columnWidth.getValue() / 100;
             }
@@ -321,7 +322,7 @@ public class TableRenderer extends AbstractRenderer {
             List<CellRenderer> currChildRenderers = new ArrayList<>();
             // Process in a queue, because we might need to add a cell from the future, i.e. having big rowspan in case of split.
             Deque<CellRendererInfo> cellProcessingQueue = new ArrayDeque<CellRendererInfo>();
-            for (int col = 0; col < currentRow.length; col++) {
+            for (col = 0; col < currentRow.length; col++) {
                 if (currentRow[col] != null) {
                     cellProcessingQueue.addLast(new CellRendererInfo(currentRow[col], col, row));
                 }
@@ -331,7 +332,7 @@ public class TableRenderer extends AbstractRenderer {
 
             while (cellProcessingQueue.size() > 0) {
                 CellRendererInfo currentCellInfo = cellProcessingQueue.pop();
-                int col = currentCellInfo.column;
+                col = currentCellInfo.column;
                 CellRenderer cell = currentCellInfo.cellRenderer;
                 int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
                 int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
@@ -372,15 +373,15 @@ public class TableRenderer extends AbstractRenderer {
                 boolean currentCellHasBigRowspan = (row != currentCellInfo.finishRowInd);
 
                 float cellWidth = 0, colOffset = 0;
-                for (int i = col; i < col + colspan; i++) {
-                    cellWidth += columnWidths[i];
+                for (int k = col; k < col + colspan; k++) {
+                    cellWidth += columnWidths[k];
                 }
-                for (int i = 0; i < col; i++) {
-                    colOffset += columnWidths[i];
+                for (int l = 0; l < col; l++) {
+                    colOffset += columnWidths[l];
                 }
                 float rowspanOffset = 0;
-                for (int i = row - 1; i > currentCellInfo.finishRowInd - rowspan && i >= 0; i--) {
-                    rowspanOffset += (float) heights.get(i);
+                for (int m = row - 1; m > currentCellInfo.finishRowInd - rowspan && m >= 0; m--) {
+                    rowspanOffset += (float) heights.get(m);
                 }
                 float cellLayoutBoxHeight = rowspanOffset + (!currentCellHasBigRowspan || hasContent ? layoutBox.getHeight() : 0);
                 float cellLayoutBoxBottom = layoutBox.getY() + (!currentCellHasBigRowspan || hasContent ? 0 : layoutBox.getHeight());
@@ -426,6 +427,7 @@ public class TableRenderer extends AbstractRenderer {
                     if (cellResult.getStatus() != LayoutResult.FULL) {
                         // first time split occurs
                         if (!split) {
+                            int addCol;
                             // This is a case when last footer should be skipped and we might face an end of the table.
                             // We check if we can fit all the rows right now and the split occurred only because we reserved
                             // space for footer before, and if yes we skip footer and write all the content right now.
@@ -436,7 +438,7 @@ public class TableRenderer extends AbstractRenderer {
                                 if (canFitRowsInGivenArea(potentialArea, row, columnWidths, heights)) {
                                     layoutBox.increaseHeight(footerHeight).moveDown(footerHeight);
                                     cellProcessingQueue.clear();
-                                    for (int addCol = 0; addCol < currentRow.length; addCol++) {
+                                    for (addCol = 0; addCol < currentRow.length; addCol++) {
                                         if (currentRow[addCol] != null) {
                                             cellProcessingQueue.addLast(new CellRendererInfo(currentRow[addCol], addCol, row));
                                         }
@@ -446,10 +448,10 @@ public class TableRenderer extends AbstractRenderer {
                                 }
                             }
 
-                            // Here we look for a cell with big rowpsan (i.e. one which would not be normally processed in
+                            // Here we look for a cell with big rowspan (i.e. one which would not be normally processed in
                             // the scope of this row), and we add such cells to the queue, because we need to write them
                             // at least partially into the available area we have.
-                            for (int addCol = 0; addCol < currentRow.length; addCol++) {
+                            for (addCol = 0; addCol < currentRow.length; addCol++) {
                                 if (currentRow[addCol] == null) {
                                     // Search for the next cell including rowspan.
                                     for (int addRow = row + 1; addRow < rows.size(); addRow++) {
@@ -513,8 +515,6 @@ public class TableRenderer extends AbstractRenderer {
                 layoutBox.decreaseHeight(rowHeight);
             }
 
-
-
             if (split || row == rows.size()-1) {
                 // Correct layout area of the last row rendered on the page
                 if (heights.size() != 0) {
@@ -525,7 +525,7 @@ public class TableRenderer extends AbstractRenderer {
                         lastAddedRow = rows.get(row-1);
                     }
                     float currentCellHeight;
-                    for (int col = 0; col < lastAddedRow.length; col++) {
+                    for (col = 0; col < lastAddedRow.length; col++) {
                         if (null != lastAddedRow[col]) {
                             currentCellHeight = 0;
                             Border cellBottomBorder = lastAddedRow[col].getBorders()[2];
@@ -540,8 +540,8 @@ public class TableRenderer extends AbstractRenderer {
                             lastAddedRow[col].occupiedArea.getBBox().<Rectangle>applyMargins(0, 0,
                                     (collapsedBorderWidth - cellBottomBorderWidth) / 2, 0, true);
                             int cellRowStartIndex =  heights.size()- (int)lastAddedRow[col].getPropertyAsInteger(Property.ROWSPAN);
-                            for (int i = cellRowStartIndex > 0 ? cellRowStartIndex : 0 ; i < heights.size(); i++) {
-                                currentCellHeight += heights.get(i);
+                            for (int l = cellRowStartIndex > 0 ? cellRowStartIndex : 0 ; l < heights.size(); l++) {
+                                currentCellHeight += heights.get(l);
                             }
                             if (currentCellHeight < lastAddedRow[col].occupiedArea.getBBox().getHeight()) {
                                 bottomBorderWidthDifference = Math.max(bottomBorderWidthDifference, (collapsedBorderWidth - cellBottomBorderWidth) / 2);
@@ -556,15 +556,15 @@ public class TableRenderer extends AbstractRenderer {
                 for (int k = 0; k <= row; k++) {
                     currentRow = rows.get(k);
                     if (k < row || (k == row && (hasContent || cellWithBigRowspanAdded))) {
-                        for (int col = 0; col < currentRow.length; col++) {
+                        for (col = 0; col < currentRow.length; col++) {
                             CellRenderer cell = currentRow[col];
                             if (cell == null) {
                                 continue;
                             }
                             float height = 0;
                             int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
-                            for (int i = k; i > ((k == row+1) ? targetOverflowRowIndex[col] : k) - rowspan && i >= 0; i--) {
-                                height += (float) heights.get(i);
+                            for (int l = k; l > ((k == row+1) ? targetOverflowRowIndex[col] : k) - rowspan && l >= 0; l--) {
+                                height += (float) heights.get(l);
                             }
                             int rowN = k + 1;
                             if (k == row && !hasContent) {
@@ -591,7 +591,7 @@ public class TableRenderer extends AbstractRenderer {
                 TableRenderer[] splitResult = split(row, hasContent);
                 int[] rowspans = new int[currentRow.length];
                 boolean[] columnsWithCellToBeEnlarged = new boolean[currentRow.length];
-                for (int col = 0; col < currentRow.length; col++) {
+                for (col = 0; col < currentRow.length; col++) {
                     if (splits[col] != null) {
                         CellRenderer cellSplit = (CellRenderer) splits[col].getSplitRenderer();
                         if (null != cellSplit) {
@@ -638,13 +638,13 @@ public class TableRenderer extends AbstractRenderer {
                 }
 
                 int minRowspan = Integer.MAX_VALUE;
-                for (int col = 0; col < rowspans.length; col++) {
+                for (col = 0; col < rowspans.length; col++) {
                     if (0 != rowspans[col]) {
                         minRowspan = Math.min(minRowspan, rowspans[col]);
                     }
                 }
 
-                for (int col = 0; col < numberOfColumns; col++) {
+                for (col = 0; col < numberOfColumns; col++) {
                     if (columnsWithCellToBeEnlarged[col]) {
                         if (1 == minRowspan) {
                             // Here we use the same cell, but create a new renderer which doesn't have any children,
@@ -886,24 +886,25 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     protected float[] calculateScaledColumnWidths(Table tableModel, float tableWidth, float leftBorderWidth, float rightBorderWidth, float layoutBoxWidth) {
-        float[] columnWidths = new float[tableModel.getNumberOfColumns()];
+        float[] scaledWidths = new float[tableModel.getNumberOfColumns()];
         float widthSum = 0;
-        for (int i = 0; i < tableModel.getNumberOfColumns(); i++) {
-            float columnWidth = 0;
-            UnitValue columnUnitWidth = tableModel.getColumnWidth(i);
+        int col;
+        for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
+            UnitValue columnUnitWidth = tableModel.getColumnWidth(col);
+            float columnWidth;
             if (columnUnitWidth.isPointValue()) {
                 columnWidth = columnUnitWidth.getValue();
             } else {
                 columnWidth = (layoutBoxWidth - tableWidth) * columnUnitWidth.getValue() / 100;
             }
-            columnWidths[i] = columnWidth;
-            widthSum += columnWidths[i];
+            scaledWidths[col] = columnWidth;
+            widthSum += scaledWidths[col];
         }
-        for (int i = 0; i < tableModel.getNumberOfColumns(); i++) {
-            columnWidths[i] *= (tableWidth - leftBorderWidth / 2 - rightBorderWidth / 2) / widthSum;
+        for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
+            scaledWidths[col] *= (tableWidth - leftBorderWidth / 2 - rightBorderWidth / 2) / widthSum;
         }
 
-        return columnWidths;
+        return scaledWidths;
     }
 
     protected TableRenderer[] split(int row) {

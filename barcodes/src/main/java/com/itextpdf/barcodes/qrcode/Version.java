@@ -79,7 +79,7 @@ final class Version {
                     ECBlocks ecBlocks3,
                     ECBlocks ecBlocks4) {
         this.versionNumber = versionNumber;
-        this.alignmentPatternCenters = alignmentPatternCenters.clone();
+        this.alignmentPatternCenters = (int[]) alignmentPatternCenters.clone();
         this.ecBlocks = new ECBlocks[]{ecBlocks1, ecBlocks2, ecBlocks3, ecBlocks4};
         int total = 0;
         int ecCodewords = ecBlocks1.getECCodewordsPerBlock();
