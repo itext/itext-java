@@ -85,15 +85,14 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
@@ -2435,11 +2434,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 if (font != null) {
                     fontAndSize[0] = font;
                 } else {
-                    if (null != document.getFont(requiredFontDictionary)) {
-                        fontAndSize[0] = document.getFont(requiredFontDictionary);
-                    } else {
-                        fontAndSize[0] = PdfFontFactory.createFont(requiredFontDictionary);
-                    }
+                    PdfFont dicFont = document != null ? document.getFont(requiredFontDictionary) : PdfFontFactory.createFont(requiredFontDictionary);
+                    fontAndSize[0] = dicFont;
                 }
                 if (fontSize != 0) {
                     fontAndSize[1] = fontSize;
