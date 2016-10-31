@@ -549,6 +549,7 @@ public class TableRenderer extends AbstractRenderer {
                         }
                     }
                     heights.set(heights.size() - 1, heights.get(heights.size()-1)+bottomBorderWidthDifference);
+                    occupiedArea.getBBox().moveDown(bottomBorderWidthDifference).increaseHeight(bottomBorderWidthDifference);
                 }
 
                 // Correct occupied areas of all added cells
@@ -588,10 +589,6 @@ public class TableRenderer extends AbstractRenderer {
 
             if (split) {
                 TableRenderer[] splitResult = split(row, hasContent);
-
-                // Apply bottom border
-                splitResult[0].getOccupiedArea().getBBox().<Rectangle>applyMargins(0, 0, bottomTableBorderWidth / 2, 0, true);
-
                 int[] rowspans = new int[currentRow.length];
                 boolean[] columnsWithCellToBeEnlarged = new boolean[currentRow.length];
                 for (int col = 0; col < currentRow.length; col++) {
@@ -678,16 +675,14 @@ public class TableRenderer extends AbstractRenderer {
                 }
 
 
-                if (row == rowRange.getFinishRow() && footerRenderer != null) {
-                    footerRenderer.getOccupiedAreaBBox().setY(splitResult[0].getOccupiedAreaBBox().getY()
-                            - footerRenderer.getOccupiedAreaBBox().getHeight());
-                    for (IRenderer renderer : footerRenderer.getChildRenderers()) {
-                        renderer.move(0, splitResult[0].getOccupiedAreaBBox().getY()
-                                - renderer.getOccupiedArea().getBBox().getY() - renderer.getOccupiedArea().getBBox().getHeight());
-                    }
+                if (0 != this.childRenderers.size()) {
+                    occupiedArea.getBBox().<Rectangle>applyMargins(0, 0, bottomTableBorderWidth / 2, 0, true);
+                    layoutBox.<Rectangle>applyMargins(0, 0, bottomTableBorderWidth / 2, 0, false);
                 } else {
-                    adjustFooterAndFixOccupiedArea(layoutBox);
+                    occupiedArea.getBBox().<Rectangle>applyMargins(topTableBorderWidth / 2, 0, 0, 0, false);
+                    layoutBox.<Rectangle>applyMargins(topTableBorderWidth / 2, 0, 0, 0, true);
                 }
+                adjustFooterAndFixOccupiedArea(layoutBox);
 
                 // On the next page we need to process rows without any changes except moves connected to actual cell splitting
                 for (Map.Entry<Integer, Integer> entry : rowMoves.entrySet()) {
@@ -724,6 +719,7 @@ public class TableRenderer extends AbstractRenderer {
 
         // Apply bottom and top border
         applyMargins(occupiedArea.getBBox(), new float[] {topTableBorderWidth / 2, 0, bottomTableBorderWidth / 2, 0}, true);
+        layoutBox.<Rectangle>applyMargins(0, 0, bottomTableBorderWidth / 2, 0, false);
 
         applyMargins(occupiedArea.getBBox(), true);
         if (tableModel.isSkipLastFooter() || !tableModel.isComplete()) {

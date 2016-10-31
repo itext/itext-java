@@ -25,6 +25,8 @@ import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.renderer.TabRenderer;
+import com.itextpdf.layout.renderer.TableRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -705,10 +707,10 @@ public class BorderTest extends ExtendedITextTest {
         fileName = "splitCellsTest02.pdf";
         Document doc = createDocument();
 
-        String text = "And it's Arsenal, \n" +
-                "Arsenal FC, \n" +
-                "We're by far the greatest team, \n" +
-                "The world has ever seen.... \n";
+        String text = "When a man hath no freedom to fight for at home,\n" +
+                "    Let him combat for that of his neighbours;\n" +
+                "Let him think of the glories of Greece and of Rome,\n" +
+                "    And get knocked on the head for his labours.\n";
 
         Table table = new Table(2);
 
@@ -716,9 +718,43 @@ public class BorderTest extends ExtendedITextTest {
         for (int i = 0; i < 38; i++) {
             cell = new Cell().add(text);
             cell.setBorder(new SolidBorder(Color.RED, 2f));
-            cell.setBorderBottom(Border.NO_BORDER);
             table.addCell(cell);
         }
+        doc.add(table);
+        doc.add(new AreaBreak());
+
+        table.setBorder(new SolidBorder(Color.YELLOW, 3));
+        doc.add(table);
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Ignore
+    @Test
+    public void splitCellsTest04() throws IOException, InterruptedException {
+        fileName = "splitCellsTest04.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(595, 100+72));
+
+        String text = "When a man hath no freedom to fight for at home,\n" +
+                "    Let him combat for that of his neighbours;\n" +
+                "Let him think of the glories of Greece and of Rome,\n" +
+                "    And get knocked on the head for his labours.\n" +
+                "A\n" +
+                "B\n" +
+                "C\n" +
+                "D";
+
+        Table table = new Table(1);
+
+        Cell cell;
+        cell = new Cell().add(text);
+        cell.setBorderBottom(new SolidBorder(Color.RED, 100));
+        cell.setBorderTop(new SolidBorder(Color.RED, 100));
+        table.addCell(cell);
+
+        table.addFooterCell(new Cell().add("Footer").setBorderTop(new SolidBorder(Color.YELLOW, 30)));
+        table.addHeaderCell(new Cell().add("Header").setBorderBottom(new SolidBorder(Color.GREEN, 100)));
+
         doc.add(table);
         doc.add(new AreaBreak());
 
