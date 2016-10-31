@@ -15,6 +15,7 @@ import com.itextpdf.kernel.xmp.XMPException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.MessageFormat;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class PdfA1ActionCheckTest extends ExtendedITextTest {
     @Test
     public void actionCheck01() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException._1ActionsAreNotAllowed);
+        junitExpectedException.expectMessage(MessageFormat.format(PdfAConformanceException._1ActionsAreNotAllowed, "Launch"));
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -47,7 +48,7 @@ public class PdfA1ActionCheckTest extends ExtendedITextTest {
     @Test
     public void actionCheck02() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException._1ActionsAreNotAllowed);
+        junitExpectedException.expectMessage(MessageFormat.format(PdfAConformanceException._1ActionsAreNotAllowed, "Hide"));
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -63,7 +64,7 @@ public class PdfA1ActionCheckTest extends ExtendedITextTest {
     @Test
     public void actionCheck03() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException._1ActionsAreNotAllowed);
+        junitExpectedException.expectMessage(MessageFormat.format(PdfAConformanceException._1ActionsAreNotAllowed, "Sound"));
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -79,7 +80,7 @@ public class PdfA1ActionCheckTest extends ExtendedITextTest {
     @Test
     public void actionCheck04() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException._1ActionsAreNotAllowed);
+        junitExpectedException.expectMessage(MessageFormat.format(PdfAConformanceException._1ActionsAreNotAllowed, "Movie"));
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -95,7 +96,7 @@ public class PdfA1ActionCheckTest extends ExtendedITextTest {
     @Test
     public void actionCheck05() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException._1ActionsAreNotAllowed);
+        junitExpectedException.expectMessage(MessageFormat.format(PdfAConformanceException._1ActionsAreNotAllowed, "ResetForm"));
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -111,7 +112,7 @@ public class PdfA1ActionCheckTest extends ExtendedITextTest {
     @Test
     public void actionCheck06() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException._1ActionsAreNotAllowed);
+        junitExpectedException.expectMessage(MessageFormat.format(PdfAConformanceException._1ActionsAreNotAllowed, "ImportData"));
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -127,7 +128,7 @@ public class PdfA1ActionCheckTest extends ExtendedITextTest {
     @Test
     public void actionCheck07() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException._1ActionsAreNotAllowed);
+        junitExpectedException.expectMessage(MessageFormat.format(PdfAConformanceException._1ActionsAreNotAllowed, "JavaScript"));
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
@@ -160,7 +161,7 @@ public class PdfA1ActionCheckTest extends ExtendedITextTest {
     @Test
     public void actionCheck09() throws FileNotFoundException, XMPException {
         junitExpectedException.expect(PdfAConformanceException.class);
-        junitExpectedException.expectMessage(PdfAConformanceException._1ActionsAreNotAllowed);
+        junitExpectedException.expectMessage(MessageFormat.format(PdfAConformanceException._1ActionsAreNotAllowed, "JavaScript"));
 
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
