@@ -53,6 +53,7 @@ import com.itextpdf.layout.IPropertyContainer;
  */
 public enum ListNumberingType {
     DECIMAL,
+    DECIMAL_LEADING_ZERO,
     ROMAN_LOWER,
     ROMAN_UPPER,
     ENGLISH_LOWER,

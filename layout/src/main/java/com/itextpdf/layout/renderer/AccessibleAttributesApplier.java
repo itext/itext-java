@@ -491,6 +491,7 @@ public class AccessibleAttributesApplier {
     private static PdfName transformNumberingTypeToName(ListNumberingType numberingType) {
         switch (numberingType) {
             case DECIMAL:
+            case DECIMAL_LEADING_ZERO:
                 return PdfName.Decimal;
             case ROMAN_UPPER:
                 return PdfName.UpperRoman;

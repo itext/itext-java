@@ -153,6 +153,9 @@ public class ListRenderer extends BlockRenderer {
                 case DECIMAL:
                     numberText = String.valueOf(index);
                     break;
+                case DECIMAL_LEADING_ZERO:
+                    numberText = (index < 10 ? "0" : "") + String.valueOf(index);
+                    break;
                 case ROMAN_LOWER:
                     numberText = RomanNumbering.toRomanLowerCase(index);
                     break;
