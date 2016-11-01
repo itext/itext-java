@@ -351,20 +351,20 @@ public class TableRenderer extends AbstractRenderer {
                 }
 
                 if (cell != null) {
-                    buildBordersArrays(cell, row, true);
+                    buildBordersArrays(cell, row, true, false);
                 }
                 if (row + 1 < rows.size()) {
                     for (int j = 0; j < cell.getModelElement().getColspan(); j++) {
                         CellRenderer nextCell = rows.get(row + 1)[col + j];
                         if (nextCell != null) {
-                            buildBordersArrays(nextCell, row + 1, true);
+                            buildBordersArrays(nextCell, row + 1, true, true);
                         }
                     }
                 }
                 if (col + 1 < rows.get(row).length) {
                     CellRenderer nextCell = rows.get(row)[col + 1];
                     if (nextCell != null) {
-                        buildBordersArrays(nextCell, row, true);
+                        buildBordersArrays(nextCell, row, true, false);
                     }
                 }
 
@@ -534,7 +534,9 @@ public class TableRenderer extends AbstractRenderer {
                             float collapsedBorderWidth = null == collapsedBorder ? 0 : collapsedBorder.getWidth();
                             if (cellBottomBorderWidth < collapsedBorderWidth) {
                                 lastAddedRow[col].setProperty(Property.BORDER_BOTTOM, collapsedBorder);
-                                horizontalBorders.get(hasContent || cellWithBigRowspanAdded ? row + 1 : row).set(col, collapsedBorder);
+                                for (int i = col; i < col + lastAddedRow[col].getPropertyAsInteger(Property.COLSPAN); i++) {
+                                    horizontalBorders.get(hasContent || cellWithBigRowspanAdded ? row + 1 : row).set(i, collapsedBorder);
+                                }
                             }
                             // apply the difference between collapsed table border and own cell border
                             lastAddedRow[col].occupiedArea.getBBox().<Rectangle>applyMargins(0, 0,
@@ -1187,7 +1189,7 @@ public class TableRenderer extends AbstractRenderer {
         return true;
     }
 
-    private void buildBordersArrays(CellRenderer cell, int row, boolean hasContent) {
+    private void buildBordersArrays(CellRenderer cell, int row, boolean hasContent, boolean isCellFromFutureRow) {
         int colspan = (int)cell.getPropertyAsInteger(Property.COLSPAN);
         int rowspan = (int)cell.getPropertyAsInteger(Property.ROWSPAN);
         int colN = cell.getModelElement().getCol();
@@ -1203,7 +1205,7 @@ public class TableRenderer extends AbstractRenderer {
                     if (rend != null) {
                         rend.setBorders(cellBorders[0], 2);
                     }
-                } else {
+                } else if (!isCellFromFutureRow){
                     cell.setBorders(horizontalBorders.get(row + 1 - rowspan).get(colN + i), 0);
                 }
             }

@@ -573,6 +573,105 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
+    public void borderCollapseTest01() throws IOException, InterruptedException  {
+        fileName = "borderCollapseTest01.pdf";
+        outFileName = destinationFolder + fileName;
+        cmpFileName = sourceFolder + cmpPrefix + fileName;
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(Color.RED, 5));
+
+        Cell cell;
+        table.addCell(new Cell(1,2).add("first").setBorder(Border.NO_BORDER));
+
+        cell = new Cell(1, 2).add("second");
+        cell.setBorder(Border.NO_BORDER);
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void borderCollapseTest02() throws IOException, InterruptedException  {
+        fileName = "borderCollapseTest02.pdf";
+        outFileName = destinationFolder + fileName;
+        cmpFileName = sourceFolder + cmpPrefix + fileName;
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Cell cell;
+        Table table = new Table(2);
+        // first row
+        // column 1
+        cell = new Cell().add("1");
+        cell.setBorder(Border.NO_BORDER);
+        table.addCell(cell);
+        // column 2
+        cell = new Cell().add("2");
+        table.addCell(cell);
+        // second row
+        // column 1
+        cell = new Cell().add("3");
+        cell.setBorder(Border.NO_BORDER);
+        table.addCell(cell);
+        // column 2
+        cell = new Cell().add("4");
+        table.addCell(cell);
+        cell = new Cell(1, 2).add("5");
+        cell.setBorder(Border.NO_BORDER);
+        table.addCell(cell);
+
+        doc.add(table);
+
+        doc.close();
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void borderCollapseTest03() throws IOException, InterruptedException  {
+        fileName = "borderCollapseTest03.pdf";
+        outFileName = destinationFolder + fileName;
+        cmpFileName = sourceFolder + cmpPrefix + fileName;
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Cell cell;
+        Table table = new Table(2);
+        // first row
+        // column 1
+        cell = new Cell().add("1");
+        cell.setBorderBottom(new SolidBorder(Color.RED, 4));
+        table.addCell(cell);
+        // column 2
+        cell = new Cell().add("2");
+        cell.setBorderBottom(new SolidBorder(Color.YELLOW, 5));
+        table.addCell(cell);
+        // second row
+        // column 1
+        cell = new Cell().add("3");
+        cell.setBorder(new SolidBorder(Color.GREEN, 3));
+        table.addCell(cell);
+        // column 2
+        cell = new Cell().add("4");
+        cell.setBorderBottom(new SolidBorder(Color.MAGENTA, 2));
+        table.addCell(cell);
+        cell = new Cell(1, 2).add("5");
+        table.addCell(cell);
+
+        doc.add(table);
+
+        doc.close();
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
     public void wideBorderTest03() throws IOException, InterruptedException {
         fileName = "wideBorderTest03.pdf";
         outFileName = destinationFolder + fileName;
