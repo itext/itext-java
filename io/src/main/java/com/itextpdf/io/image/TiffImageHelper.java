@@ -74,6 +74,10 @@ class TiffImageHelper {
         Map<String, Object> additional;
     }
 
+    /**
+     * Processes the ImageData as a TIFF image.
+     * @param image image to process.
+     */
     public static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.TIFF)
             throw new IllegalArgumentException("TIFF image expected");
