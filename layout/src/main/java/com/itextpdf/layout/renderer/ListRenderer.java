@@ -98,7 +98,7 @@ public class ListRenderer extends BlockRenderer {
             for (IRenderer symbolRenderer : symbolRenderers) {
                 maxSymbolWidth = Math.max(maxSymbolWidth, symbolRenderer.getOccupiedArea().getBBox().getWidth());
             }
-            Float symbolIndent = getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
+            Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
             listItemNum = 0;
             for (IRenderer childRenderer : childRenderers) {
                 childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
