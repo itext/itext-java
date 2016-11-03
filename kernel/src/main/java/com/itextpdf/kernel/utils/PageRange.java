@@ -117,16 +117,27 @@ public class PageRange {
             return null;
     	}
     }
+    
+    /**
+     * Adds any page range part to this page range. Users may define and plug in
+     * custom implementations for behavior not found in the standard library.
+     * 
+     * @param part a custom implementation of {@link IPageRangePart}
+     * @return this range, already modified
+     */
+    public PageRange addPageRangePart(IPageRangePart part) {
+        sequences.add(part);
+        return this;
+    }
 
     /**
      * Adds a page sequence to the range.
      * @param startPageNumber the starting page number of the sequence
-     * @param endPageNumber the finishing page number of the sequnce
+     * @param endPageNumber the finishing page number of the sequence
      * @return this range, already modified
      */
     public PageRange addPageSequence(int startPageNumber, int endPageNumber) {
-    	sequences.add(new PageRangePartSequence(startPageNumber, endPageNumber));
-        return this;
+    	return addPageRangePart(new PageRangePartSequence(startPageNumber, endPageNumber));
     }
 
     /**
@@ -135,8 +146,7 @@ public class PageRange {
      * @return this range, already modified
      */
     public PageRange addSinglePage(int pageNumber) {
-    	sequences.add(new PageRangePartSingle(pageNumber));
-        return this;
+    	return addPageRangePart(new PageRangePartSingle(pageNumber));
     }
 
     /**
@@ -246,7 +256,7 @@ public class PageRange {
 	     */
 	    @Override
 	    public int hashCode() {
-	        return Integer.hashCode(page);
+	        return page;
 	    }
     }
     /**
@@ -296,7 +306,7 @@ public class PageRange {
 	     */
 	    @Override
 	    public int hashCode() {
-	        return Integer.hashCode(start) * 31 + Integer.hashCode(end);
+	        return start * 31 + end;
 	    }
     }
     /**
@@ -341,7 +351,7 @@ public class PageRange {
 	     */
 	    @Override
 	    public int hashCode() {
-	        return Integer.hashCode(start) * 31 + Integer.hashCode(-1);
+	        return start * 31 + -1;
 	    }
     }
     /**
@@ -399,7 +409,9 @@ public class PageRange {
 	     */
 	    @Override
 	    public int hashCode() {
-	        return Boolean.hashCode(isOdd);
+                if (isOdd)
+                    return 127;
+                return 128;
 	    }
     }
     /**
