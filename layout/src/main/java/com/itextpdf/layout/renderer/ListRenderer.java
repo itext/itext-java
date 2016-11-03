@@ -56,6 +56,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.ListSymbolPosition;
 import com.itextpdf.layout.property.Property;
 
 import java.io.IOException;
@@ -94,15 +95,28 @@ public class ListRenderer extends BlockRenderer {
                     }
                 }
             }
+
             float maxSymbolWidth = 0;
-            for (IRenderer symbolRenderer : symbolRenderers) {
-                maxSymbolWidth = Math.max(maxSymbolWidth, symbolRenderer.getOccupiedArea().getBBox().getWidth());
+            for (int i = 0; i < childRenderers.size(); i++) {
+                if (childRenderers.get(i).getModelElement() instanceof ListItem) {
+                    IRenderer symbolRenderer = symbolRenderers.get(i);
+                    IRenderer listItemRenderer = childRenderers.get(i);
+                    if (listItemRenderer.getProperty(Property.LIST_SYMBOL_POSITION) != ListSymbolPosition.INSIDE) {
+                        maxSymbolWidth = Math.max(maxSymbolWidth, symbolRenderer.getOccupiedArea().getBBox().getWidth());
+                    }
+                }
             }
+
             Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
             listItemNum = 0;
             for (IRenderer childRenderer : childRenderers) {
+                childRenderer.setParent(this);
                 childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
-                childRenderer.setProperty(Property.MARGIN_LEFT, childRenderer.getProperty(Property.MARGIN_LEFT, (Float) 0f) + maxSymbolWidth + (symbolIndent != null ? symbolIndent : 0f));
+                float calculatedMargin = childRenderer.getProperty(Property.MARGIN_LEFT, (Float) 0f);
+                if (childRenderer.getProperty(Property.LIST_SYMBOL_POSITION) == ListSymbolPosition.DEFAULT) {
+                    calculatedMargin += maxSymbolWidth + (symbolIndent != null ? symbolIndent : 0f);
+                }
+                childRenderer.setProperty(Property.MARGIN_LEFT, calculatedMargin);
                 if (childRenderer.getModelElement() instanceof ListItem) {
                     IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
                     ((ListItemRenderer) childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);

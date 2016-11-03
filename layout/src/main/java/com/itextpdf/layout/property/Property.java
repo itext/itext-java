@@ -99,9 +99,10 @@ public final class Property {
     public static final int LIST_SYMBOL = 37;
     public static final int LIST_SYMBOL_ALIGNMENT = 38;
     public static final int LIST_SYMBOL_INDENT = 39;
-    public static final int LIST_SYMBOLS_INITIALIZED = 40;
     public static final int LIST_SYMBOL_PRE_TEXT = 41;
+    public static final int LIST_SYMBOL_POSITION = 83;
     public static final int LIST_SYMBOL_POST_TEXT = 42;
+    public static final int LIST_SYMBOLS_INITIALIZED = 40;
     public static final int MARGIN_BOTTOM = 43;
     public static final int MARGIN_LEFT = 44;
     public static final int MARGIN_RIGHT = 45;
@@ -153,7 +154,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 82;
+    private static final int MAX_INHERITED_PROPERTY_ID = 83;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -174,6 +175,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.KEEP_TOGETHER] = true;
         INHERITED_PROPERTIES[Property.LIST_SYMBOL] = true;
         INHERITED_PROPERTIES[Property.LIST_SYMBOL_PRE_TEXT] = true;
+        INHERITED_PROPERTIES[Property.LIST_SYMBOL_POSITION] = true;
         INHERITED_PROPERTIES[Property.LIST_SYMBOL_POST_TEXT] = true;
         INHERITED_PROPERTIES[Property.SPACING_RATIO] = true;
         INHERITED_PROPERTIES[Property.SPLIT_CHARACTERS] = true;

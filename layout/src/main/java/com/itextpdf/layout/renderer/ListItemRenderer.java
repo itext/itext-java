@@ -47,15 +47,18 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.element.ListItem;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.ListSymbolAlignment;
+import com.itextpdf.layout.property.ListSymbolPosition;
 import com.itextpdf.layout.property.Property;
 
 public class ListItemRenderer extends DivRenderer {
 
     protected IRenderer symbolRenderer;
     protected float symbolAreaWidth;
+    private boolean symbolAddedInside;
 
     /**
      * Creates a ListItemRenderer from its corresponding layout object.
@@ -75,6 +78,38 @@ public class ListItemRenderer extends DivRenderer {
         if (symbolRenderer != null && this.<Object>getProperty(Property.HEIGHT) == null) {
             // TODO this is actually MinHeight.
             setProperty(Property.HEIGHT, symbolRenderer.getOccupiedArea().getBBox().getHeight());
+        }
+        ListSymbolPosition symbolPosition = getProperty(Property.LIST_SYMBOL_POSITION);
+        if (symbolPosition == ListSymbolPosition.INSIDE) {
+            if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ParagraphRenderer) {
+                ParagraphRenderer paragraphRenderer = (ParagraphRenderer) childRenderers.get(0);
+                Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
+                if (symbolIndent != null) {
+                    symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
+                }
+                paragraphRenderer.childRenderers.add(0, symbolRenderer);
+                symbolAddedInside = true;
+            } else if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ImageRenderer) {
+                IRenderer paragraphRenderer = new Paragraph().setMargin(0).createRendererSubTree();
+                Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
+                if (symbolIndent != null) {
+                    symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
+                }
+                paragraphRenderer.addChild(symbolRenderer);
+                paragraphRenderer.addChild(childRenderers.get(0));
+                childRenderers.set(0, paragraphRenderer);
+                symbolAddedInside = true;
+            }
+            if (!symbolAddedInside) {
+                IRenderer paragraphRenderer = new Paragraph().setMargin(0).createRendererSubTree();
+                Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
+                if (symbolIndent != null) {
+                    symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
+                }
+                paragraphRenderer.addChild(symbolRenderer);
+                childRenderers.add(0, paragraphRenderer);
+                symbolAddedInside = true;
+            }
         }
         return super.layout(layoutContext);
     }
@@ -102,9 +137,17 @@ public class ListItemRenderer extends DivRenderer {
         super.draw(drawContext);
 
         // It will be null in case of overflow (only the "split" part will contain symbol renderer.
-        if (symbolRenderer != null) {
+        if (symbolRenderer != null && !symbolAddedInside) {
             symbolRenderer.setParent(parent);
             float x = occupiedArea.getBBox().getX();
+            ListSymbolPosition symbolPosition = getProperty(Property.LIST_SYMBOL_POSITION);
+            if (symbolPosition != ListSymbolPosition.DEFAULT) {
+                Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
+                x -= symbolAreaWidth + (symbolIndent == null ? 0 : symbolIndent);
+                if (symbolPosition == ListSymbolPosition.OUTSIDE) {
+                    x += getPropertyAsFloat(Property.MARGIN_LEFT);
+                }
+            }
             if (childRenderers.size() > 0) {
                 Float yLine = ((AbstractRenderer) childRenderers.get(0)).getFirstYLineRecursively();
                 if (yLine != null) {
@@ -130,12 +173,14 @@ public class ListItemRenderer extends DivRenderer {
             }
             symbolRenderer.move(xPosition, 0);
 
-            if (isTagged) {
-                tagPointer.addTag(0, PdfName.Lbl);
-            }
-            symbolRenderer.draw(drawContext);
-            if (isTagged) {
-                tagPointer.moveToParent();
+            if (symbolRenderer.getOccupiedArea().getBBox().getRight() > parent.getOccupiedArea().getBBox().getLeft()) {
+                if (isTagged) {
+                    tagPointer.addTag(0, PdfName.Lbl);
+                }
+                symbolRenderer.draw(drawContext);
+                if (isTagged) {
+                    tagPointer.moveToParent();
+                }
             }
         }
 

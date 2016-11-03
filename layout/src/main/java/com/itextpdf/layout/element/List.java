@@ -47,6 +47,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolAlignment;
+import com.itextpdf.layout.property.ListSymbolPosition;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ListRenderer;
@@ -88,6 +89,8 @@ public class List extends BlockElement<List> {
                 return (T1) (Object) "";
             case Property.LIST_SYMBOL_POST_TEXT:
                 return (T1) (Object) ". ";
+            case Property.LIST_SYMBOL_POSITION:
+                return (T1) (Object) ListSymbolPosition.DEFAULT;
             default:
                 return super.<T1>getDefaultProperty(property);
         }
