@@ -110,7 +110,7 @@ public class PdfSplitter {
         while (currentPage <= numOfPages) {
             PageRange nextRange = getNextRange(currentPage, numOfPages, size);
             splitRanges.add(nextRange);
-            List<Integer> allPages = nextRange.getAllPages();
+            List<Integer> allPages = nextRange.getAllPages(numOfPages);
             currentPage = (int) allPages.get(allPages.size() - 1) + 1;
         }
 
@@ -212,7 +212,7 @@ public class PdfSplitter {
         for (PageRange currentPageRange : pageRanges) {
             PdfDocument currentPdfDocument = createPdfDocument(currentPageRange);
             splitDocuments.add(currentPdfDocument);
-            pdfDocument.copyPagesTo(currentPageRange.getAllPages(), currentPdfDocument);
+            pdfDocument.copyPagesTo(currentPageRange.getAllPages(pdfDocument.getNumberOfPages()), currentPdfDocument);
         }
 
         return splitDocuments;
