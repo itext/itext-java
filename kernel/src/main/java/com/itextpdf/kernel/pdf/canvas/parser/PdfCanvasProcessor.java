@@ -1305,7 +1305,7 @@ public class PdfCanvasProcessor {
     /**
      * A handler that implements operator (J). For more information see Table 51 ISO-32000-1
      */
-    private class SetLineCapOperator implements IContentOperator {
+    private static class SetLineCapOperator implements IContentOperator {
 
         /**
          * {@inheritDoc}
@@ -1319,7 +1319,7 @@ public class PdfCanvasProcessor {
     /**
      * A handler that implements operator (j). For more information see Table 51 ISO-32000-1
      */
-    private class SetLineJoinOperator implements IContentOperator {
+    private static class SetLineJoinOperator implements IContentOperator {
 
         /**
          * {@inheritDoc}
@@ -1333,7 +1333,7 @@ public class PdfCanvasProcessor {
     /**
      * A handler that implements operator (M). For more information see Table 51 ISO-32000-1
      */
-    private class SetMiterLimitOperator implements IContentOperator {
+    private static class SetMiterLimitOperator implements IContentOperator {
 
         /**
          * {@inheritDoc}
@@ -1347,7 +1347,7 @@ public class PdfCanvasProcessor {
     /**
      * A handler that implements operator (d). For more information see Table 51 ISO-32000-1
      */
-    private class SetLineDashPatternOperator implements IContentOperator {
+    private static class SetLineDashPatternOperator implements IContentOperator {
 
         /**
          * {@inheritDoc}
