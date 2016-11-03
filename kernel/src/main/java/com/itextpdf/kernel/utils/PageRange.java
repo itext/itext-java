@@ -428,16 +428,22 @@ public class PageRange {
 		@Override
 		public List<Integer> getAllPages() {
 	        List<Integer> allPages = new ArrayList<>();
+                if (!conditions.isEmpty()) {
+                    allPages.addAll(conditions.get(0).getAllPages());
+                }
 	        for (IPageRangePart cond : conditions) {
-	        	allPages.addAll(cond.getAllPages());
+	        	allPages.retainAll(cond.getAllPages());
 	        }
 	        return allPages;
 		}
 		@Override
 		public List<Integer> getAllPages(int nbPages) {
 	        List<Integer> allPages = new ArrayList<>();
+                if (!conditions.isEmpty()) {
+                    allPages.addAll(conditions.get(0).getAllPages(nbPages));
+                }
 	        for (IPageRangePart cond : conditions) {
-	        	allPages.addAll(cond.getAllPages(nbPages));
+	        	allPages.retainAll(cond.getAllPages(nbPages));
 	        }
 	        return allPages;
 		}
