@@ -135,6 +135,40 @@ public class PdfSplitterTest extends ExtendedITextTest{
 
     @Test
     @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY, count = 2)
+    })
+    public void splitDocumentTest04() throws IOException, InterruptedException {
+        String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
+        PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
+
+        PageRange pageRange1 = new PageRange("even & 80-").addPageSequence(4, 15).addSinglePage(18).addPageSequence(1, 2);
+        PageRange pageRange2 = new PageRange("99,98").addPageSequence(70, 99);
+
+        List<PdfDocument> splitDocuments = new PdfSplitter(inputPdfDoc) {
+            int partNumber = 1;
+
+            @Override
+            protected PdfWriter getNextPdfWriter(PageRange documentPageRange) {
+                try {
+                    return new PdfWriter(destinationFolder + "splitDocument4_" + String.valueOf(partNumber++) + ".pdf");
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException();
+                }
+            }
+        }.extractPageRanges(Arrays.asList(pageRange1, pageRange2));
+
+        for (PdfDocument pdfDocument : splitDocuments) {
+            pdfDocument.close();
+        }
+
+        for (int i = 1; i <= 2; i++) {
+            Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "splitDocument4_" + i + ".pdf",
+                    sourceFolder + "cmp/" + "splitDocument4_" + String.valueOf(i) + ".pdf", destinationFolder, "diff_"));
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY ,count = 2)
     })
     public void splitDocumentByOutlineTest() throws IOException, InterruptedException {

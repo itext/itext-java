@@ -63,7 +63,7 @@ public class PageRangeTest {
         Assert.assertEquals(range.getAllPages(), Arrays.asList(3));
         Assert.assertEquals(range.getAllPages(5), Arrays.asList(3, 4, 5));
     }
-    
+
     @Test
     public void addCustomEven() {
         PageRange range = new PageRange();
@@ -79,6 +79,63 @@ public class PageRangeTest {
         PageRange.IPageRangePart seq = new PageRange.PageRangePartSequence(2, 14);
         PageRange.IPageRangePart and = new PageRange.PageRangePartAnd(odd, seq);
         range.addPageRangePart(and);
+
+        Assert.assertEquals(range.getAllPages(15), Arrays.asList(3, 5, 7, 9, 11, 13));
+    }
+
+    @Test
+    public void addSingleConstructor() {
+        PageRange range = new PageRange("5");
+
+        Assert.assertEquals(range.getAllPages(), Arrays.asList(5));
+    }
+
+    @Test
+    public void addSinglesConstructor() {
+        PageRange range = new PageRange("5, 1");
+
+        Assert.assertEquals(range.getAllPages(), Arrays.asList(5, 1));
+    }
+
+    @Test
+    public void addSequenceConstructor() {
+        PageRange range = new PageRange("11-19");
+
+        Assert.assertEquals(range.getAllPages(), Arrays.asList(11, 12, 13, 14, 15, 16, 17, 18, 19));
+    }
+
+    @Test
+    public void addSequenceAndSingleConstructor() {
+        PageRange range = new PageRange("22-27,25");
+
+        Assert.assertEquals(range.getAllPages(), Arrays.asList(22, 23, 24, 25, 26, 27, 25));
+    }
+
+    @Test
+    public void addSingleAndSequenceConstructor() {
+        PageRange range = new PageRange("5, 3-8");
+
+        Assert.assertEquals(range.getAllPages(), Arrays.asList(5, 3, 4, 5, 6, 7, 8));
+    }
+
+    @Test
+    public void addCustomAfterConstructor() {
+        PageRange range = new PageRange("3-");
+
+        Assert.assertEquals(range.getAllPages(), Arrays.asList(3));
+        Assert.assertEquals(range.getAllPages(5), Arrays.asList(3, 4, 5));
+    }
+
+    @Test
+    public void addCustomEvenConstructor() {
+        PageRange range = new PageRange("even");
+
+        Assert.assertEquals(range.getAllPages(5), Arrays.asList(2, 4));
+    }
+
+    @Test
+    public void addCustomAndConstructor() {
+        PageRange range = new PageRange("odd & 2-14");
 
         Assert.assertEquals(range.getAllPages(15), Arrays.asList(3, 5, 7, 9, 11, 13));
     }
