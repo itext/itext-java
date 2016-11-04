@@ -2421,17 +2421,17 @@ public class PdfCanvas implements Serializable {
     }
 
     private void applyRotation(PdfPage page) {
-        Rectangle rectagle = page.getPageSizeWithRotation();
+        Rectangle rectangle = page.getPageSizeWithRotation();
         int rotation = page.getRotation();
         switch (rotation) {
             case 90:
-                concatMatrix(0, 1, -1, 0, rectagle.getTop(), 0);
+                concatMatrix(0, 1, -1, 0, rectangle.getTop(), 0);
                 break;
             case 180:
-                concatMatrix(-1, 0, 0, -1, rectagle.getRight(), rectagle.getTop());
+                concatMatrix(-1, 0, 0, -1, rectangle.getRight(), rectangle.getTop());
                 break;
             case 270:
-                concatMatrix(0, -1, 1, 0, 0, rectagle.getRight());
+                concatMatrix(0, -1, 1, 0, 0, rectangle.getRight());
                 break;
         }
     }
