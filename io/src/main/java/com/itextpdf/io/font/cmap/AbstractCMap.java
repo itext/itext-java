@@ -105,10 +105,10 @@ public abstract class AbstractCMap implements Serializable {
         if (code.isString()) {
             sout = decodeStringToByte(code.toString());
         }
-        int start = a1[a1.length - 1] & 0xff;
-        int end = a2[a2.length - 1] & 0xff;
+        int start = byteArrayToInt(a1);
+        int end = byteArrayToInt(a2);
         for (int k = start; k <= end; ++k) {
-            a1[a1.length - 1] = (byte)k;
+            intToByteArray(k, a1);
             String mark = PdfEncodings.convertToString(a1, null);
             if (code.isArray()) {
                 List<CMapObject> codes = (ArrayList<CMapObject>) code.getValue();
@@ -120,7 +120,7 @@ public abstract class AbstractCMap implements Serializable {
                 CMapObject s1 = new CMapObject(CMapObject.HEX_STRING, sout);
                 addChar(mark, s1);
                 assert sout != null;
-                ++sout[sout.length - 1];
+                intToByteArray(byteArrayToInt(sout) + 1, sout);
             }
         }
     }
@@ -152,5 +152,21 @@ public abstract class AbstractCMap implements Serializable {
                 return PdfEncodings.convertToString(bytes, PdfEncodings.PDF_DOC_ENCODING);
             }
         }
+    }
+
+    private static void intToByteArray(int n, byte[] b) {
+        for (int k = b.length - 1; k >= 0; --k) {
+            b[k] = (byte)n;
+            n = n >>> 8;
+        }
+    }
+
+    private static int byteArrayToInt(byte[] b) {
+        int n = 0;
+        for (int k = 0; k < b.length; ++k) {
+            n = n << 8;
+            n |= b[k] & 0xff;
+        }
+        return n;
     }
 }
