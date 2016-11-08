@@ -126,11 +126,17 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         }
         this.columnWidths = new UnitValue[columnWidths.length];
         float totalWidth = 0;
+        boolean percentValuesPresentedInTableColumns = false;
         for (int i = 0; i < columnWidths.length; i++) {
             this.columnWidths[i] = columnWidths[i];
             if (columnWidths[i].isPointValue()) {
                 totalWidth += columnWidths[i].getValue();
+            } else if (columnWidths[i].isPercentValue()) {
+                percentValuesPresentedInTableColumns = true;
             }
+        }
+        if (percentValuesPresentedInTableColumns) {
+            totalWidth = 0;
         }
         super.setWidth(totalWidth);
         initializeRows();

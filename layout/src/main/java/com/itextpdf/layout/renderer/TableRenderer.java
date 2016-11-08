@@ -218,15 +218,19 @@ public class TableRenderer extends AbstractRenderer {
 
         Float tableWidth = retrieveWidth(layoutBox.getWidth());
         if (tableWidth == null || tableWidth == 0) {
+            float totalColumnWidthInPercent = 0;
+            for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
+                UnitValue columnWidth = tableModel.getColumnWidth(col);
+                if (columnWidth.isPercentValue()) {
+                    totalColumnWidthInPercent += columnWidth.getValue();
+                }
+            }
             tableWidth = layoutBox.getWidth();
-        }
-        float freeAreaWidth = layoutBox.getWidth() - (float) tableWidth;
-        for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
-            UnitValue columnWidth = tableModel.getColumnWidth(col);
-            if(columnWidth.isPercentValue()) {
-                tableWidth += (freeAreaWidth) * columnWidth.getValue() / 100;
+            if (totalColumnWidthInPercent > 0) {
+                tableWidth = layoutBox.getWidth() * totalColumnWidthInPercent / 100;
             }
         }
+        columnWidths = calculateScaledColumnWidths(tableModel, (float) tableWidth, leftTableBorderWidth, rightTableBorderWidth);
         occupiedArea = new LayoutArea(area.getPageNumber(),
                 new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - topTableBorderWidth / 2, (float) tableWidth, 0));
 
@@ -273,7 +277,6 @@ public class TableRenderer extends AbstractRenderer {
         // Apply halves of the borders. The other halves are applied on a Cell level
         layoutBox.<Rectangle>applyMargins(topTableBorderWidth / 2, rightTableBorderWidth / 2, 0, leftTableBorderWidth / 2, false);
 
-        columnWidths = calculateScaledColumnWidths(tableModel, (float) tableWidth, leftTableBorderWidth, rightTableBorderWidth, layoutBox.getWidth());
         LayoutResult[] splits = new LayoutResult[tableModel.getNumberOfColumns()];
         // This represents the target row index for the overflow renderer to be placed to.
         // Usually this is just the current row id of a cell, but it has valuable meaning when a cell has rowspan.
@@ -887,21 +890,47 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
-    protected float[] calculateScaledColumnWidths(Table tableModel, float tableWidth, float leftBorderWidth, float rightBorderWidth, float layoutBoxWidth) {
+    protected float[] calculateScaledColumnWidths(Table tableModel, float tableWidth, float leftBorderWidth, float rightBorderWidth) {
         float[] scaledWidths = new float[tableModel.getNumberOfColumns()];
         float widthSum = 0;
+        float totalPointWidth = 0;
         int col;
         for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
             UnitValue columnUnitWidth = tableModel.getColumnWidth(col);
             float columnWidth;
-            if (columnUnitWidth.isPointValue()) {
-                columnWidth = columnUnitWidth.getValue();
+            if (columnUnitWidth.isPercentValue()) {
+                columnWidth = tableWidth * columnUnitWidth.getValue() / 100;
+                scaledWidths[col] = columnWidth;
+                widthSum+= columnWidth;
             } else {
-                columnWidth = (layoutBoxWidth - tableWidth) * columnUnitWidth.getValue() / 100;
+                totalPointWidth += columnUnitWidth.getValue();
             }
-            scaledWidths[col] = columnWidth;
-            widthSum += scaledWidths[col];
         }
+        float freeTableSpaceWidth = tableWidth - widthSum;
+
+        if(totalPointWidth > 0) {
+            for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
+                float columnWidth;
+                UnitValue columnUnitWidth = tableModel.getColumnWidth(col);
+                if (columnUnitWidth.isPointValue()) {
+                    columnWidth = (freeTableSpaceWidth / totalPointWidth) * columnUnitWidth.getValue();
+                    scaledWidths[col] = columnWidth;
+                    widthSum+= columnWidth;
+                }
+            }
+        }
+
+//        for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
+//            UnitValue columnUnitWidth = tableModel.getColumnWidth(col);
+//            float columnWidth;
+//            if (columnUnitWidth.isPointValue()) {
+//                columnWidth = columnUnitWidth.getValue();
+//            } else {
+//                columnWidth = tableWidth * columnUnitWidth.getValue() / 100;
+//            }
+//            scaledWidths[col] = columnWidth;
+//            widthSum += scaledWidths[col];
+//        }
         for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
             scaledWidths[col] *= (tableWidth - leftBorderWidth / 2 - rightBorderWidth / 2) / widthSum;
         }
