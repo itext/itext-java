@@ -14,6 +14,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 
@@ -206,5 +207,55 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         form.addField(root);
 
         Assert.assertEquals(3, form.getFormFields().size());
+    }
+
+    @Test
+    public void fillFormWithDefaultResources() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "fillFormWithDefaultResources.pdf";
+        String cmpPdf = sourceFolder + "cmp_fillFormWithDefaultResources.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfReader reader = new PdfReader(sourceFolder + "formWithDefaultResources.pdf");
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+
+        Map<String, PdfFormField> fields = form.getFormFields();
+        PdfFormField field = fields.get("Text1");
+
+        field.setValue("New value size must be 8");
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
+    }
+
+    @Test
+    public void fillFormTwiceWithoutResources() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "fillFormWithoutResources.pdf";
+        String cmpPdf = sourceFolder + "cmp_fillFormWithoutResources.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfReader reader = new PdfReader(sourceFolder + "formWithoutResources.pdf");
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+
+        Map<String, PdfFormField> fields = form.getFormFields();
+        PdfFormField field = fields.get("Text1");
+
+        field.setValue("New value size must be 8").setFontSize(8);
+        pdfDoc.close();
+
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 }
