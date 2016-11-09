@@ -93,6 +93,7 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
+    @Ignore("DEVSIX-924")
     @Test
     public void incompleteTableTest01() throws IOException, InterruptedException {
         fileName = "incompleteTableTest01.pdf";
@@ -706,6 +707,7 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
+    @Ignore
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
@@ -827,7 +829,23 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
-    @Ignore
+    @Test
+    public void splitCellsTest03() throws IOException, InterruptedException {
+        fileName = "splitCellsTest03.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(100, 150));
+
+        String textAlphabet = "ABCDEFGHIJKLMNOPQRSTUWXYZ";
+
+        Table table = new Table(1);
+        table.addCell(new Cell().add(textAlphabet).setBorder(new SolidBorder(4)));
+        table.addFooterCell(new Cell().add("Footer"));
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Ignore("DEVSIX-907")
     @Test
     public void splitCellsTest04() throws IOException, InterruptedException {
         fileName = "splitCellsTest04.pdf";
@@ -847,44 +865,35 @@ public class BorderTest extends ExtendedITextTest {
 
         Cell cell;
         cell = new Cell().add(text);
-        cell.setBorderBottom(new SolidBorder(Color.RED, 100));
-        cell.setBorderTop(new SolidBorder(Color.RED, 100));
+        cell.setBorderBottom(new SolidBorder(Color.RED, 20));
+        cell.setBorderTop(new SolidBorder(Color.GREEN, 20));
         table.addCell(cell);
 
-        table.addFooterCell(new Cell().add("Footer").setBorderTop(new SolidBorder(Color.YELLOW, 30)));
-        table.addHeaderCell(new Cell().add("Header").setBorderBottom(new SolidBorder(Color.GREEN, 100)));
+        table.addFooterCell(new Cell().add("Footer").setBorderTop(new SolidBorder(Color.YELLOW, 20)));
 
-        doc.add(table);
-        doc.add(new AreaBreak());
-
-        table.setBorder(new SolidBorder(Color.YELLOW, 3));
         doc.add(table);
         closeDocumentAndCompareOutputs(doc);
     }
 
     @Test
-    public void tableWithHeaderTest01() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderTest01.pdf";
+    public void splitCellsTest05() throws IOException, InterruptedException {
+        fileName = "splitCellsTest05.pdf";
         Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(130,150)); // 150
 
-        Table table = new Table(2);
-        table.setBorder(new SolidBorder(Color.YELLOW, 30));
-        Cell cell;
+        String textAlphabet = "Cell";
 
-        cell = new Cell().add("Header with narrow border").setBorder(new SolidBorder(Color.GREEN, 0.5f));
-        table.addCell(cell);
-        cell = new Cell().add("Header with wide border").setBorder(new SolidBorder(Color.GREEN, 65f));
-        table.addCell(cell);
-
-        cell = new Cell().add("Hello").setBorder(new SolidBorder(Color.MAGENTA, 5f));
-        table.addCell(cell);
-        cell = new Cell().add("World").setBorder(new SolidBorder(Color.MAGENTA, 5f));
-        table.addCell(cell);
+        Table table = new Table(3);
+        table.addCell(new Cell().add(textAlphabet));
+        table.addCell(new Cell(2, 1).add(textAlphabet));
+        table.addCell(new Cell().add(textAlphabet));
+        table.addCell(new Cell().add(textAlphabet));
+        table.addCell(new Cell().add(textAlphabet));
 
         doc.add(table);
+
         closeDocumentAndCompareOutputs(doc);
     }
-
 
     @Test
     @LogMessages(messages = {
