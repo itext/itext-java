@@ -3,11 +3,13 @@ package com.itextpdf.layout;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
@@ -16,6 +18,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -343,6 +346,46 @@ public class ImageTest extends ExtendedITextTest {
         Image image = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg"));
         image.setHorizontalAlignment(HorizontalAlignment.LEFT);
 
+        doc.add(image);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void imageTest15() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest15.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest15.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+
+        image.setBorder(new SolidBorder(Color.BLUE, 5));
+        doc.add(image);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test()@Ignore("DEVSIX-928")
+    public void imageTest16() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest16.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest16.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+
+        image.setBorder(new SolidBorder(Color.BLUE, 5));
+        image.setAutoScale(true);
+        image.setRotationAngle(Math.PI / 2);
         doc.add(image);
 
         doc.close();

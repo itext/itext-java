@@ -60,7 +60,7 @@ import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -622,7 +622,10 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
         if (currentProperty instanceof List) {
             ((List) currentProperty).add(newUnderline);
         } else if (currentProperty instanceof Underline) {
-            setProperty(Property.UNDERLINE, Arrays.asList((Underline)currentProperty, newUnderline));
+            List<Underline> mergedUnderlines = new ArrayList<>();
+            mergedUnderlines.add((Underline) currentProperty);
+            mergedUnderlines.add(newUnderline);
+            setProperty(Property.UNDERLINE, mergedUnderlines);
         } else {
             setProperty(Property.UNDERLINE, newUnderline);
         }

@@ -232,4 +232,24 @@ public class TextWritingTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
+
+    @Test
+    public void underlineTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "underline.pdf";
+        String cmpFileName = sourceFolder + "cmp_underline.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Paragraph p = new Paragraph("Text");
+        p.setUnderline(1, 0);
+        p.setUnderline(1, 5);
+        p.setUnderline(1, 10);
+
+        document.add(p);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
 }
