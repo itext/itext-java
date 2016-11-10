@@ -55,6 +55,7 @@ import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
+import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -89,6 +90,8 @@ public class ImageRenderer extends AbstractRenderer {
         LayoutArea area = layoutContext.getArea().clone();
         Rectangle layoutBox = area.getBBox();
         applyMargins(layoutBox, false);
+        Border[] borders = getBorders();
+        applyBorderBox(layoutBox, borders, false);
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         width = retrieveWidth(layoutBox.getWidth());
@@ -174,6 +177,7 @@ public class ImageRenderer extends AbstractRenderer {
         }
 
         applyMargins(occupiedArea.getBBox(), true);
+        applyBorderBox(occupiedArea.getBBox(), borders, true);
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null,
                 isPlacingForced ? this : null);
     }
@@ -202,6 +206,7 @@ public class ImageRenderer extends AbstractRenderer {
         }
 
         applyMargins(occupiedArea.getBBox(), false);
+        applyBorderBox(occupiedArea.getBBox(), getBorders(), false);
 
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
