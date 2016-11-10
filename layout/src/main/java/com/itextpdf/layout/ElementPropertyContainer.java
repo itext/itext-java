@@ -621,7 +621,10 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
         if (currentProperty instanceof List) {
             ((List) currentProperty).add(newUnderline);
         } else if (currentProperty instanceof Underline) {
-            setProperty(Property.UNDERLINE, Arrays.asList((Underline)currentProperty, newUnderline));
+            List<Underline> mergedUnderlines = new ArrayList<>();
+            mergedUnderlines.add((Underline) currentProperty);
+            mergedUnderlines.add(newUnderline);
+            setProperty(Property.UNDERLINE, mergedUnderlines);
         } else {
             setProperty(Property.UNDERLINE, newUnderline);
         }
