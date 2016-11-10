@@ -74,9 +74,6 @@ public class ListRenderer extends BlockRenderer {
         super(modelElement);
     }
 
-    // TODO underlying should not be applied
-    // https://jira.itextsupport.com/browse/SUP-952
-
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         if (!hasOwnProperty(Property.LIST_SYMBOLS_INITIALIZED)) {
@@ -155,6 +152,15 @@ public class ListRenderer extends BlockRenderer {
     }
 
     protected IRenderer makeListSymbolRenderer(int index, IRenderer renderer) {
+        IRenderer symbolRenderer = createListSymbolRenderer(index, renderer);
+        // underlying should not be applied
+        if (symbolRenderer != null) {
+            symbolRenderer.setProperty(Property.UNDERLINE, false);
+        }
+        return symbolRenderer;
+    }
+
+    private IRenderer createListSymbolRenderer(int index, IRenderer renderer) {
         Object defaultListSymbol = renderer.<Object>getProperty(Property.LIST_SYMBOL);
         if (defaultListSymbol instanceof Text) {
             return new TextRenderer((Text) defaultListSymbol);
