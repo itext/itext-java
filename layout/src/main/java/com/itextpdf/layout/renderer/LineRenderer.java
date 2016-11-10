@@ -227,7 +227,7 @@ public class LineRenderer extends AbstractRenderer {
                 }
 
                 result = new LineLayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1],
-                        childResult.getStatus() == LayoutResult.NOTHING ? childResult.getCauseOfNothing() : this);
+                        childResult.getStatus() == LayoutResult.NOTHING ? childResult.getCauseOfNothing() : childRenderer);
                 if (childResult.getStatus() == LayoutResult.PARTIAL && childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isSplitForcedByNewline()) {
                     result.setSplitForcedByNewline(true);
                 }

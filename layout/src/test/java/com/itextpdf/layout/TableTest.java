@@ -807,7 +807,7 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("DEVSIX-869")
     public void bigRowspanTest05() throws IOException, InterruptedException {
         String testName = "bigRowspanTest05.pdf";
         String outFileName = destinationFolder + testName;
@@ -965,7 +965,7 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
-    @Ignore
+    @Ignore("DEVSIX-929")
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 9)
     })
