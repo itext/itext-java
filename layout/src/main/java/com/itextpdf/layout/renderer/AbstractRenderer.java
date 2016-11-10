@@ -579,6 +579,14 @@ public abstract class AbstractRenderer implements IRenderer {
         return this.<Float>getProperty(Property.HEIGHT);
     }
 
+    protected Float retrieveMaxHeight() {
+        return this.<Float>getProperty(Property.MAX_HEIGHT);
+    }
+
+    protected Float retrieveMinHeight() {
+        return this.<Float>getProperty(Property.MIN_HEIGHT);
+    }
+
     protected Float retrieveUnitValue(float basePercentValue, int property) {
         UnitValue value = this.<UnitValue>getProperty(property);
         if (value != null) {

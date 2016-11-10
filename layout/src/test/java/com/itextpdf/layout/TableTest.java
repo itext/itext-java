@@ -1033,4 +1033,177 @@ public class TableTest extends ExtendedITextTest {
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
+
+    @Test
+    public void tableWithSetHeightProperties01() throws IOException, InterruptedException {
+        String testName = "tableWithSetHeightProperties01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        String textByron =
+                "When a man hath no freedom to fight for at home,\n" +
+                "    Let him combat for that of his neighbours;\n" +
+                "Let him think of the glories of Greece and of Rome,\n" +
+                "    And get knocked on the head for his labours.\n";
+
+
+        doc.add(new Paragraph("Default layout:"));
+
+        Table table = new Table(3)
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(textByron).setBorder(new SolidBorder(Color.YELLOW, 3)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.RED, 5)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.GRAY, 7)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.BLUE, 12)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.CYAN, 1)));
+        table.setBorder(new SolidBorder(Color.GREEN, 2));
+        doc.add(table);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Table's height is bigger than needed:"));
+        table = new Table(3)
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(textByron).setBorder(new SolidBorder(Color.YELLOW, 3)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.RED, 5)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.GRAY, 7)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.BLUE, 12)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.CYAN, 1)));
+        table.setBorder(new SolidBorder(Color.GREEN, 2));
+        table.setHeight(1700);
+        doc.add(table);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Table's height is shorter than needed:"));
+        table = new Table(3)
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(textByron).setBorder(new SolidBorder(Color.YELLOW, 3)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.RED, 5)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.GRAY, 7)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.BLUE, 12)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.CYAN, 1)));
+        table.setBorder(new SolidBorder(Color.GREEN, 2));
+        table.setHeight(200);
+        doc.add(table);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Some cells' heights are setted:"));
+        table = new Table(3)
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(textByron).setBorder(new SolidBorder(Color.YELLOW, 3)).setHeight(300))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(textByron).setBorder(new SolidBorder(Color.YELLOW, 3)).setHeight(40))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.RED, 5)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.GRAY, 7)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.BLUE, 12)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.CYAN, 1)).setHeight(20));
+        table.setBorder(new SolidBorder(Color.GREEN, 2));
+        table.setHeight(1700);
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableWithSetHeightProperties02() throws IOException, InterruptedException {
+        String testName = "tableWithSetHeightProperties02.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        String textByron =
+                "When a man hath no freedom to fight for at home,\n" +
+                        "    Let him combat for that of his neighbours;\n" +
+                        "Let him think of the glories of Greece and of Rome,\n" +
+                        "    And get knocked on the head for his labours.\n";
+
+
+        doc.add(new Paragraph("Default layout:"));
+
+        Table table = new Table(3)
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(textByron).setBorder(new SolidBorder(Color.YELLOW, 3)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.RED, 5)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.GRAY, 7)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.BLUE, 12)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.CYAN, 1)));
+        table.setBorder(new SolidBorder(Color.GREEN, 2));
+        doc.add(table);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Table's max height is bigger than needed:"));
+        table = new Table(3)
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(textByron).setBorder(new SolidBorder(Color.YELLOW, 3)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.RED, 5)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.GRAY, 7)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.BLUE, 12)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.CYAN, 1)));
+        table.setBorder(new SolidBorder(Color.GREEN, 2));
+        table.setMaxHeight(1300);
+        doc.add(table);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Table's max height is shorter than needed:"));
+        table = new Table(3)
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(textByron).setBorder(new SolidBorder(Color.YELLOW, 3)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.RED, 5)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.GRAY, 7)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.BLUE, 12)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.CYAN, 1)));
+        table.setBorder(new SolidBorder(Color.GREEN, 2));
+        table.setMaxHeight(300);
+        doc.add(table);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Table's min height is bigger than needed:"));
+        table = new Table(3)
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(textByron).setBorder(new SolidBorder(Color.YELLOW, 3)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.RED, 5)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.GRAY, 7)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.BLUE, 12)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.CYAN, 1)));
+        table.setBorder(new SolidBorder(Color.GREEN, 2));
+        table.setMinHeight(1300);
+        doc.add(table);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("Table's min height is shorter than needed:"));
+        table = new Table(3)
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(textByron).setBorder(new SolidBorder(Color.YELLOW, 3)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.RED, 5)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.GRAY, 7)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.BLUE, 12)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.CYAN, 1)));
+        table.setBorder(new SolidBorder(Color.GREEN, 2));
+        table.setMinHeight(300);
+        doc.add(table);
+        doc.add(new AreaBreak());
+
+
+        doc.add(new Paragraph("Some cells' heights are setted:"));
+        table = new Table(3)
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(textByron).setBorder(new SolidBorder(Color.YELLOW, 3)).setMinHeight(300))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.GREEN, 1)))
+                .addCell(new Cell(1, 2).add(textByron).setBorder(new SolidBorder(Color.YELLOW, 3)).setMaxHeight(40))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.RED, 5)))
+                .addCell(new Cell(2, 1).add(textByron).setBorder(new SolidBorder(Color.GRAY, 7)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.BLUE, 12)))
+                .addCell(new Cell().add(textByron).setBorder(new SolidBorder(Color.CYAN, 1)).setMaxHeight(20));
+        table.setBorder(new SolidBorder(Color.GREEN, 2));
+        table.setHeight(1700);
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
 }

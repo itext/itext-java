@@ -66,7 +66,7 @@ public class TabRenderer extends AbstractRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea();
         Float width = retrieveWidth(area.getBBox().getWidth());
-        Float height = this.getPropertyAsFloat(Property.HEIGHT);
+        Float height = this.getPropertyAsFloat(Property.MIN_HEIGHT);
         occupiedArea = new LayoutArea(area.getPageNumber(),
                 new Rectangle(area.getBBox().getX(), area.getBBox().getY() + area.getBBox().getHeight(),(float)  width, (float) height));
 

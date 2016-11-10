@@ -134,6 +134,17 @@ public class ImageRenderer extends AbstractRenderer {
             height *= (float) verticalScaling;
         }
 
+        if (null != retrieveMinHeight() && height < retrieveMinHeight()) {
+            width *= retrieveMinHeight() / height;
+            height = retrieveMinHeight();
+        } else if (null != retrieveMaxHeight() && height > retrieveMaxHeight()) {
+            width *= retrieveMaxHeight() / height;
+            height = retrieveMaxHeight();
+        } else if (null != retrieveHeight() && height != retrieveHeight()) {
+            width *= retrieveHeight() / height;
+            height = retrieveHeight();
+        }
+
         float imageItselfScaledWidth = (float) width;
         float imageItselfScaledHeight = (float) height;
 

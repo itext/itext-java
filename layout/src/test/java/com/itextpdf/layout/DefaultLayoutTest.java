@@ -83,9 +83,9 @@ public class DefaultLayoutTest extends ExtendedITextTest {
         document.add(new Paragraph().setBackgroundColor(Color.GREEN));
         document.add(new Paragraph().setBorder(new SolidBorder(Color.BLUE, 3)));
 
-        document.add(new Paragraph("Hello! I'm the first paragraph added to the document. Am i right? Or not?"));
-        document.add(new Paragraph().setHeight(50).setBorder(new SolidBorder(1)));
-        document.add(new Paragraph("Hello! I'm the second paragraph added to the document. Am i right? Or not?"));
+        document.add(new Paragraph("Hello! I'm the first paragraph added to the document. Am i right?").setBackgroundColor(Color.RED).setBorder(new SolidBorder(1)));
+        document.add(new Paragraph().setHeight(50));
+        document.add(new Paragraph("Hello! I'm the second paragraph added to the document. Am i right?"));
 
         document.close();
 

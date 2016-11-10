@@ -53,6 +53,7 @@ import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
+import com.itextpdf.layout.property.HeightType;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.renderer.IRenderer;
@@ -418,6 +419,16 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      */
     public float getImageHeight() {
         return xObject.getHeight();
+    }
+
+    public Image setMaxHeight(float maxHeight) {
+        setProperty(Property.HEIGHT, maxHeight);
+        return (Image) (Object) this;
+    }
+
+    public Image setMinHeight(float minHeight) {
+        setProperty(Property.HEIGHT, minHeight);
+        return (Image) (Object) this;
     }
 
     /**

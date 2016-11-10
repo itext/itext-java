@@ -83,6 +83,7 @@ public final class Property {
     public static final int FULL = 25;
     public static final int FORCED_PLACEMENT = 26;
     public static final int HEIGHT = 27;
+
     public static final int HORIZONTAL_ALIGNMENT = 28;
     /**
      * Value of 1 is equivalent to no scaling
@@ -107,6 +108,9 @@ public final class Property {
     public static final int MARGIN_LEFT = 44;
     public static final int MARGIN_RIGHT = 45;
     public static final int MARGIN_TOP = 46;
+    public static final int MAX_HEIGHT = 84;
+    public static final int MIN_HEIGHT = 85;
+
     public static final int PADDING_BOTTOM = 47;
     public static final int PADDING_LEFT = 48;
     public static final int PADDING_RIGHT = 49;

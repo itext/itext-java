@@ -115,6 +115,11 @@ public class ParagraphRenderer extends BlockRenderer {
         float[] paddings = getPaddings();
         applyPaddings(parentBBox, paddings, false);
 
+        Float blockMaxHeight = retrieveMaxHeight();
+        if (null != blockMaxHeight && parentBBox.getHeight() > blockMaxHeight) {
+            parentBBox.moveUp(parentBBox.getHeight()-blockMaxHeight).setHeight(blockMaxHeight);
+        }
+
         List<Rectangle> areas;
         if (isPositioned) {
             areas = Collections.singletonList(parentBBox);
@@ -211,7 +216,21 @@ public class ParagraphRenderer extends BlockRenderer {
                         if (result.getOverflowRenderer() != null) {
                             split[1].childRenderers.addAll(result.getOverflowRenderer().getChildRenderers());
                         }
-
+                        if (hasProperty(Property.MAX_HEIGHT)) {
+                            if (isPositioned) {
+                                correctPositionedLayout(layoutBox);
+                            }
+                            if (parentBBox.getHeight() == blockMaxHeight) {
+                                occupiedArea.getBBox()
+                                        .moveDown(blockMaxHeight - occupiedArea.getBBox().getHeight())
+                                        .setHeight(blockMaxHeight);
+                                return new LayoutResult(LayoutResult.FULL, occupiedArea, split[0], null);
+                            }
+                            split[1].setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
+                        }
+                        if (hasProperty(Property.MIN_HEIGHT)) {
+                            split[1].setProperty(Property.MIN_HEIGHT, retrieveMinHeight() - occupiedArea.getBBox().getHeight());
+                        }
                         if (anythingPlaced) {
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]);
                         } else {
@@ -257,16 +276,27 @@ public class ParagraphRenderer extends BlockRenderer {
             occupiedArea.getBBox().moveDown(moveDown);
             occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
         }
-        Float blockHeight = this.getPropertyAsFloat(Property.HEIGHT);
         applyPaddings(occupiedArea.getBBox(), paddings, true);
-        if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
-            occupiedArea.getBBox().moveDown((float) blockHeight - occupiedArea.getBBox().getHeight()).setHeight((float) blockHeight);
+        IRenderer overflowRenderer = null;
+        Float blockMinHeight = retrieveMinHeight();
+        if (null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
+            float blockBottom = occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight());
+            if (blockBottom >= layoutContext.getArea().getBBox().getBottom()) {
+                occupiedArea.getBBox().setY(blockBottom).setHeight((float) blockMinHeight);
+            } else {
+                occupiedArea.getBBox()
+                        .increaseHeight(occupiedArea.getBBox().getBottom() - layoutContext.getArea().getBBox().getBottom())
+                        .setY(layoutContext.getArea().getBBox().getBottom());
+                overflowRenderer = createOverflowRenderer(parent);
+                overflowRenderer.setProperty(Property.MIN_HEIGHT, (float) blockMinHeight - occupiedArea.getBBox().getHeight());
+                overflowRenderer.deleteOwnProperty(Property.HEIGHT);
+                overflowRenderer.deleteOwnProperty(Property.MAX_HEIGHT);
+
+            }
             applyVerticalAlignment();
         }
         if (isPositioned) {
-            float y = (float) this.getPropertyAsFloat(Property.Y);
-            float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
-            move(0, relativeY + y - occupiedArea.getBBox().getY());
+            correctPositionedLayout(layoutBox);
         }
 
         applyBorderBox(occupiedArea.getBBox(), borders, true);
@@ -279,7 +309,11 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
             }
         }
-        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+        if (null == overflowRenderer) {
+            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+        } else {
+            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, this, overflowRenderer);
+        }
     }
 
     /**

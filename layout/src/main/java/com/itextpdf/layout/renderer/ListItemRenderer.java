@@ -50,6 +50,7 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.property.HeightType;
 import com.itextpdf.layout.property.ListSymbolAlignment;
 import com.itextpdf.layout.property.ListSymbolPosition;
 import com.itextpdf.layout.property.Property;
@@ -77,7 +78,7 @@ public class ListItemRenderer extends DivRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         if (symbolRenderer != null && this.<Object>getProperty(Property.HEIGHT) == null) {
             // TODO this is actually MinHeight.
-            setProperty(Property.HEIGHT, symbolRenderer.getOccupiedArea().getBBox().getHeight());
+            setProperty(Property.MIN_HEIGHT, symbolRenderer.getOccupiedArea().getBBox().getHeight());
         }
         ListSymbolPosition symbolPosition = getProperty(Property.LIST_SYMBOL_POSITION);
         if (symbolPosition == ListSymbolPosition.INSIDE) {
@@ -111,7 +112,11 @@ public class ListItemRenderer extends DivRenderer {
                 symbolAddedInside = true;
             }
         }
-        return super.layout(layoutContext);
+        LayoutResult result = super.layout(layoutContext);
+        if (LayoutResult.PARTIAL == result.getStatus()) {
+            result.getOverflowRenderer().deleteOwnProperty(Property.MIN_HEIGHT);
+        }
+        return result;
     }
 
     @Override

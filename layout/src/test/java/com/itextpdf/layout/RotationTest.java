@@ -535,7 +535,7 @@ public class RotationTest extends ExtendedITextTest{
         String extremeLongText = longText + longText + longText;
         doc.add(new Div().
                 setBackgroundColor(Color.GREEN).
-                setHeight(300).setWidth(300).
+                setMinHeight(300).setWidth(300).
                 add(new Div().
                         setBackgroundColor(Color.RED).
                         setWidth(30).

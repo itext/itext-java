@@ -52,6 +52,7 @@ import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.FontKerning;
+import com.itextpdf.layout.property.HeightType;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;

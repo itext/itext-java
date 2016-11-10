@@ -130,7 +130,6 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 logger.warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
                             }
                             renderer = result.getOverflowRenderer();
-
                             continue;
                         }
                         storedArea = currentArea;
@@ -144,6 +143,10 @@ public abstract class RootRenderer extends AbstractRenderer {
                     }
                 }
                 renderer = result.getOverflowRenderer();
+            }
+
+            if (null != result && null != result.getSplitRenderer()) {
+                renderer = result.getSplitRenderer();
             }
 
             // Keep renderer until next element is added for future keep with next adjustments

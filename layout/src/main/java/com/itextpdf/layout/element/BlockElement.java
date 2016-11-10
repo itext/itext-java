@@ -44,6 +44,7 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
+import com.itextpdf.layout.property.HeightType;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
 
@@ -369,5 +370,32 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
     public T setRotationAngle(double angleInRadians) {
         setProperty(Property.ROTATION_ANGLE, (float) angleInRadians);
         return (T) (Object) this;
+    }
+
+    @Override
+    public T setHeight(float height) {
+        super.setHeight(height);
+        overrideHeightProperties(height);
+        return (T) (Object) this;
+    }
+
+    public T setMaxHeight(float maxHeight) {
+        setProperty(Property.MAX_HEIGHT, maxHeight);
+        return (T) (Object) this;
+    }
+
+    public T setMinHeight(float minHeight) {
+        setProperty(Property.MIN_HEIGHT, minHeight);
+        return (T) (Object) this;
+    }
+
+    // call only after setting Height property value
+    private void overrideHeightProperties(float height) {
+        if (!hasProperty(Property.MAX_HEIGHT) || height < (float) getProperty(Property.MAX_HEIGHT)) {
+            setMaxHeight(height);
+        }
+        if (!hasProperty(Property.MIN_HEIGHT) || height > (float) getProperty(Property.MIN_HEIGHT)) {
+            setMinHeight(height);
+        }
     }
 }
