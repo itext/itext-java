@@ -622,12 +622,12 @@ public class TableRenderer extends AbstractRenderer {
                     } else if (currentRow[col] != null) {
                         if (hasContent) {
                             columnsWithCellToBeEnlarged[col] = true;
+                            // for the future
+                            splitResult[1].rows.get(0)[col].setBorders(getBorders()[0], 0);
                         }
                         for (int j = col; j < col + currentRow[col].getPropertyAsInteger(Property.COLSPAN); j++) {
                             horizontalBorders.get(row + 1).set(j, getBorders()[2]);
                         }
-                        // for the future
-                        currentRow[col].getModelElement().setBorderTop(getBorders()[0]);
                     }
                 }
 
@@ -646,8 +646,10 @@ public class TableRenderer extends AbstractRenderer {
                             Cell overflowCell = currentRow[col].getModelElement();
                             currentRow[col].isLastRendererForModelElement = false;
                             childRenderers.add(currentRow[col]);
+                            Border topBorder = currentRow[col].<Border>getProperty(Property.BORDER_TOP);
                             currentRow[col] = null;
                             rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) overflowCell.getRenderer().setParent(this);
+                            rows.get(targetOverflowRowIndex[col])[col].setProperty(Property.BORDER_TOP, topBorder);
                         } else {
                             childRenderers.add(currentRow[col]);
                             // shift all cells in the column up
@@ -660,9 +662,11 @@ public class TableRenderer extends AbstractRenderer {
                             // so we should process the last cell in the column as in the case 1 == minRowspan
                             if (i != row + minRowspan - 1 && null != rows.get(i)[col]) {
                                 Cell overflowCell = rows.get(i)[col].getModelElement();
+                                Border topBorder = rows.get(i)[col].<Border>getProperty(Property.BORDER_TOP);
                                 rows.get(i)[col].isLastRendererForModelElement = false;
                                 rows.get(i)[col] = null;
                                 rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) overflowCell.getRenderer().setParent(this);
+                                rows.get(targetOverflowRowIndex[col])[col].setProperty(Property.BORDER_TOP, topBorder);
                             }
                         }
                     }

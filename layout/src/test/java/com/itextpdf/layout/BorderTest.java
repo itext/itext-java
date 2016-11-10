@@ -881,7 +881,7 @@ public class BorderTest extends ExtendedITextTest {
     public void splitCellsTest05() throws IOException, InterruptedException {
         fileName = "splitCellsTest05.pdf";
         Document doc = createDocument();
-        doc.getPdfDocument().setDefaultPageSize(new PageSize(130,150)); // 150
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(130,150));
 
         String textAlphabet = "Cell";
 
@@ -891,6 +891,78 @@ public class BorderTest extends ExtendedITextTest {
         table.addCell(new Cell().add(textAlphabet));
         table.addCell(new Cell().add(textAlphabet));
         table.addCell(new Cell().add(textAlphabet));
+
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void splitCellsTest06() throws IOException, InterruptedException {
+        fileName = "splitCellsTest06.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(300,150));
+
+        doc.add(new Paragraph("No more"));
+        doc.add(new Paragraph("place"));
+        doc.add(new Paragraph("here"));
+
+
+        Table table = new Table(3);
+        Cell cell = new Cell(3, 1);
+        cell.add("G");
+        cell.add("R");
+        cell.add("P");
+        table.addCell(cell);
+        table.addCell("middle row 1");
+        cell = new Cell(3, 1);
+        cell.add("A");
+        cell.add("B");
+        cell.add("C");
+        table.addCell(cell);
+        table.addCell("middle row 2");
+        table.addCell("middle row 3");
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Ignore
+    @Test
+    public void splitCellsTest07() throws IOException, InterruptedException {
+        fileName = "splitCellsTest07.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(130,150));
+
+        String textAlphabet = "Cell";
+
+        Table table = new Table(3);
+        table.addCell(new Cell().add(textAlphabet+ "1"));
+        table.addCell(new Cell(2, 1).add(textAlphabet + "2"));
+        table.addCell(new Cell().add(textAlphabet+ "3"));
+        table.addCell(new Cell().add(textAlphabet+ "4"));
+        table.addCell(new Cell().add(textAlphabet+ "5"));
+
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Ignore
+    @Test
+    public void splitCellsTest08() throws IOException, InterruptedException {
+        fileName = "splitCellsTest08.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(130,160));
+
+        String textAlphabet = "Cell";
+
+        Table table = new Table(3);
+        table.addCell(new Cell().add(textAlphabet+ "1"));
+        table.addCell(new Cell(2, 1).add(textAlphabet + "2").setBorder(new SolidBorder(Color.GREEN, 4)));
+        table.addCell(new Cell().add(textAlphabet+ "3"));
+        table.addCell(new Cell().add(textAlphabet+ "4"));
+        table.addCell(new Cell().add(textAlphabet+ "5"));
 
         doc.add(table);
 
