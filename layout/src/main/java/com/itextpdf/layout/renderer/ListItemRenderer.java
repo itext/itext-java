@@ -79,38 +79,7 @@ public class ListItemRenderer extends DivRenderer {
             // TODO this is actually MinHeight.
             setProperty(Property.MIN_HEIGHT, symbolRenderer.getOccupiedArea().getBBox().getHeight());
         }
-        ListSymbolPosition symbolPosition = getProperty(Property.LIST_SYMBOL_POSITION);
-        if (symbolPosition == ListSymbolPosition.INSIDE) {
-            if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ParagraphRenderer) {
-                ParagraphRenderer paragraphRenderer = (ParagraphRenderer) childRenderers.get(0);
-                Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
-                if (symbolIndent != null) {
-                    symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
-                }
-                paragraphRenderer.childRenderers.add(0, symbolRenderer);
-                symbolAddedInside = true;
-            } else if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ImageRenderer) {
-                IRenderer paragraphRenderer = new Paragraph().setMargin(0).createRendererSubTree();
-                Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
-                if (symbolIndent != null) {
-                    symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
-                }
-                paragraphRenderer.addChild(symbolRenderer);
-                paragraphRenderer.addChild(childRenderers.get(0));
-                childRenderers.set(0, paragraphRenderer);
-                symbolAddedInside = true;
-            }
-            if (!symbolAddedInside) {
-                IRenderer paragraphRenderer = new Paragraph().setMargin(0).createRendererSubTree();
-                Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
-                if (symbolIndent != null) {
-                    symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
-                }
-                paragraphRenderer.addChild(symbolRenderer);
-                childRenderers.add(0, paragraphRenderer);
-                symbolAddedInside = true;
-            }
-        }
+        applyListSymbolPosition();
         LayoutResult result = super.layout(layoutContext);
         if (LayoutResult.PARTIAL == result.getStatus()) {
             result.getOverflowRenderer().deleteOwnProperty(Property.MIN_HEIGHT);
@@ -225,5 +194,40 @@ public class ListItemRenderer extends DivRenderer {
         // TODO retain all the properties ?
         overflowRenderer.setProperty(Property.MARGIN_LEFT, this.<Object>getProperty(Property.MARGIN_LEFT));
         return overflowRenderer;
+    }
+
+    private void applyListSymbolPosition() {
+        ListSymbolPosition symbolPosition = getProperty(Property.LIST_SYMBOL_POSITION);
+        if (symbolPosition == ListSymbolPosition.INSIDE) {
+            if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ParagraphRenderer) {
+                ParagraphRenderer paragraphRenderer = (ParagraphRenderer) childRenderers.get(0);
+                Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
+                if (symbolIndent != null) {
+                    symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
+                }
+                paragraphRenderer.childRenderers.add(0, symbolRenderer);
+                symbolAddedInside = true;
+            } else if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ImageRenderer) {
+                IRenderer paragraphRenderer = new Paragraph().setMargin(0).createRendererSubTree();
+                Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
+                if (symbolIndent != null) {
+                    symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
+                }
+                paragraphRenderer.addChild(symbolRenderer);
+                paragraphRenderer.addChild(childRenderers.get(0));
+                childRenderers.set(0, paragraphRenderer);
+                symbolAddedInside = true;
+            }
+            if (!symbolAddedInside) {
+                IRenderer paragraphRenderer = new Paragraph().setMargin(0).createRendererSubTree();
+                Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
+                if (symbolIndent != null) {
+                    symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
+                }
+                paragraphRenderer.addChild(symbolRenderer);
+                childRenderers.add(0, paragraphRenderer);
+                symbolAddedInside = true;
+            }
+        }
     }
 }

@@ -80,27 +80,23 @@ public class ListRenderer extends BlockRenderer {
             List<IRenderer> symbolRenderers = new ArrayList<>();
             int listItemNum = (int) this.<Integer>getProperty(Property.LIST_START, 1);
             for (int i = 0; i < childRenderers.size(); i++) {
-                if (childRenderers.get(i).getModelElement() instanceof ListItem) {
-                    childRenderers.get(i).setParent(this);
-                    IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum++, childRenderers.get(i));
-                    childRenderers.get(i).setParent(null);
-                    symbolRenderers.add(currentSymbolRenderer);
-                    LayoutResult listSymbolLayoutResult = currentSymbolRenderer.setParent(this).layout(layoutContext);
-                    currentSymbolRenderer.setParent(null);
-                    if (listSymbolLayoutResult.getStatus() != LayoutResult.FULL) {
-                        return new LayoutResult(LayoutResult.NOTHING, null, null, this, listSymbolLayoutResult.getCauseOfNothing());
-                    }
+                childRenderers.get(i).setParent(this);
+                IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum++, childRenderers.get(i));
+                childRenderers.get(i).setParent(null);
+                symbolRenderers.add(currentSymbolRenderer);
+                LayoutResult listSymbolLayoutResult = currentSymbolRenderer.setParent(this).layout(layoutContext);
+                currentSymbolRenderer.setParent(null);
+                if (listSymbolLayoutResult.getStatus() != LayoutResult.FULL) {
+                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, listSymbolLayoutResult.getCauseOfNothing());
                 }
             }
 
             float maxSymbolWidth = 0;
             for (int i = 0; i < childRenderers.size(); i++) {
-                if (childRenderers.get(i).getModelElement() instanceof ListItem) {
-                    IRenderer symbolRenderer = symbolRenderers.get(i);
-                    IRenderer listItemRenderer = childRenderers.get(i);
-                    if (listItemRenderer.getProperty(Property.LIST_SYMBOL_POSITION) != ListSymbolPosition.INSIDE) {
-                        maxSymbolWidth = Math.max(maxSymbolWidth, symbolRenderer.getOccupiedArea().getBBox().getWidth());
-                    }
+                IRenderer symbolRenderer = symbolRenderers.get(i);
+                IRenderer listItemRenderer = childRenderers.get(i);
+                if (listItemRenderer.getProperty(Property.LIST_SYMBOL_POSITION) != ListSymbolPosition.INSIDE) {
+                    maxSymbolWidth = Math.max(maxSymbolWidth, symbolRenderer.getOccupiedArea().getBBox().getWidth());
                 }
             }
 
@@ -114,10 +110,8 @@ public class ListRenderer extends BlockRenderer {
                     calculatedMargin += maxSymbolWidth + (symbolIndent != null ? symbolIndent : 0f);
                 }
                 childRenderer.setProperty(Property.MARGIN_LEFT, calculatedMargin);
-                if (childRenderer.getModelElement() instanceof ListItem) {
-                    IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
-                    ((ListItemRenderer) childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);
-                }
+                IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
+                ((ListItemRenderer) childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);
             }
         }
         LayoutResult result = super.layout(layoutContext);
