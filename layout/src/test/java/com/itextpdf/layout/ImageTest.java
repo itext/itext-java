@@ -243,6 +243,9 @@ public class ImageTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
     public void imageTest09() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageTest09.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest09.pdf";
@@ -354,6 +357,9 @@ public class ImageTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
     public void imageTest15() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageTest15.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest15.pdf";
@@ -372,7 +378,7 @@ public class ImageTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
-    @Test()@Ignore("DEVSIX-928")
+    @Test()
     public void imageTest16() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageTest16.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest16.pdf";
@@ -390,6 +396,34 @@ public class ImageTest extends ExtendedITextTest {
 
         doc.close();
 
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test()
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 50)
+    })
+    public void imageTest17() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageTest17.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageTest17.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document doc = new Document(pdfDoc);
+
+        Image image1 = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        image1.setBorder(new SolidBorder(Color.BLUE, 5));
+        Image image2 = new Image(ImageDataFactory.create(sourceFolder + "scarf.jpg"));
+        image2.setBorder(new SolidBorder(Color.BLUE, 5));
+
+        for (int i = 0; i <= 24; i++) {
+            image1.setRotationAngle(i * Math.PI / 12);
+            image2.setRotationAngle(i * Math.PI / 12);
+            doc.add(image1);
+            doc.add(image2);
+        }
+
+        doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 

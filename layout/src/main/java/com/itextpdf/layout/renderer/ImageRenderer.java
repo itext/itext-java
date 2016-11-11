@@ -62,6 +62,7 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 public class ImageRenderer extends AbstractRenderer {
 
@@ -264,15 +265,15 @@ public class ImageRenderer extends AbstractRenderer {
         return null;
     }
 
-    protected ImageRenderer autoScale(LayoutArea area) {
-        if (width > area.getBBox().getWidth()) {
-            setProperty(Property.HEIGHT, area.getBBox().getWidth() / width * imageHeight);
-            setProperty(Property.WIDTH, UnitValue.createPointValue(area.getBBox().getWidth()));
-            // if still image is not scaled properly
-            if (this.getPropertyAsFloat(Property.HEIGHT) > area.getBBox().getHeight()) {
-                setProperty(Property.WIDTH, UnitValue.createPointValue(area.getBBox().getHeight() / (float) this.getPropertyAsFloat(Property.HEIGHT) * (this.<UnitValue>getProperty(Property.WIDTH)).getValue()));
-                setProperty(Property.HEIGHT, area.getBBox().getHeight());
-            }
+    protected ImageRenderer autoScale(LayoutArea layoutArea) {
+        Rectangle area = layoutArea.getBBox().clone();
+        applyMargins(area, false);
+        applyBorderBox(area, false);
+        // if rotation was applied, width would be equal to the width of rectangle bounding the rotated image
+        float angleScaleCoef = imageWidth / (float) width;
+        if (width > angleScaleCoef*area.getWidth()) {
+            setProperty(Property.HEIGHT, area.getWidth() / width * imageHeight);
+            setProperty(Property.WIDTH, UnitValue.createPointValue(angleScaleCoef * area.getWidth()));
         }
 
         return this;
@@ -322,9 +323,7 @@ public class ImageRenderer extends AbstractRenderer {
         }
         // Rotating image can cause fitting into area problems.
         // So let's find scaling coefficient
-        // TODO
         float scaleCoeff = 1;
-        // hasProperty(Property) checks only properties field, cannot use it
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.AUTO_SCALE))) {
             scaleCoeff = Math.min(maxWidth / (float) width, maxHeight / (float) height);
             height *= scaleCoeff;
@@ -339,6 +338,7 @@ public class ImageRenderer extends AbstractRenderer {
             width *= scaleCoeff;
         }
         pivotY *= scaleCoeff;
+        deltaX *= scaleCoeff;
         return scaleCoeff;
     }
 

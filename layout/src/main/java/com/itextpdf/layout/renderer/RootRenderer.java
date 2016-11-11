@@ -44,6 +44,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -102,6 +103,8 @@ public abstract class RootRenderer extends AbstractRenderer {
                         }
                         ((ImageRenderer)result.getOverflowRenderer()).autoScale(currentArea);
                         result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
+                        Logger logger = LoggerFactory.getLogger(RootRenderer.class);
+                        logger.warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
                     } else {
                         if (currentArea.isEmptyArea() && !(renderer instanceof AreaBreakRenderer)) {
                             if (Boolean.TRUE.equals(result.getOverflowRenderer().getModelElement().<Boolean>getProperty(Property.KEEP_TOGETHER))) {
