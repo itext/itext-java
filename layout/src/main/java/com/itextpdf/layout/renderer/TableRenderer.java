@@ -782,8 +782,8 @@ public class TableRenderer extends AbstractRenderer {
         applyMargins(occupiedArea.getBBox(), new float[]{topTableBorderWidth / 2, 0, bottomTableBorderWidth / 2, 0}, true);
         layoutBox.<Rectangle>applyMargins(0, 0, bottomTableBorderWidth / 2, 0, false);
 
-        if ((Boolean.TRUE.equals(getProperty(Property.EXTEND_FINAL_ROW)) ||
-                (Boolean.TRUE.equals(getProperty(Property.EXTEND_LAST_ROW)) && Boolean.FALSE.equals(hasProperty(Property.EXTEND_FINAL_ROW))))
+        if ((Boolean.TRUE.equals(getPropertyAsBoolean(Property.EXTEND_FINAL_ROW)) ||
+                (Boolean.TRUE.equals(getPropertyAsBoolean(Property.EXTEND_LAST_ROW)) && Boolean.FALSE.equals(hasProperty(Property.EXTEND_FINAL_ROW))))
                 && 0 != rows.size()) {
             extendLastRow(rows.get(rows.size() - 1), layoutBox);
         }
