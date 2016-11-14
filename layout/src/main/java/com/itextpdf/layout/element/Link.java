@@ -99,7 +99,7 @@ public class Link extends Text {
      * @return a {@link PdfLinkAnnotation}
      */
     public PdfLinkAnnotation getLinkAnnotation() {
-        return getProperty(Property.LINK_ANNOTATION);
+        return this.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION);
     }
 
     @Override
