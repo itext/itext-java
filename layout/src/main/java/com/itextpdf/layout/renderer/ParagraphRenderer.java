@@ -117,7 +117,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
         Float blockMaxHeight = retrieveMaxHeight();
         if (null != blockMaxHeight && parentBBox.getHeight() > blockMaxHeight) {
-            parentBBox.moveUp(parentBBox.getHeight()-blockMaxHeight).setHeight(blockMaxHeight);
+            parentBBox.moveUp(parentBBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
         }
 
         List<Rectangle> areas;
@@ -222,8 +222,8 @@ public class ParagraphRenderer extends BlockRenderer {
                             }
                             if (parentBBox.getHeight() == blockMaxHeight) {
                                 occupiedArea.getBBox()
-                                        .moveDown(blockMaxHeight - occupiedArea.getBBox().getHeight())
-                                        .setHeight(blockMaxHeight);
+                                        .moveDown((float) blockMaxHeight - occupiedArea.getBBox().getHeight())
+                                        .setHeight((float) blockMaxHeight);
                                 return new LayoutResult(LayoutResult.FULL, occupiedArea, split[0], null);
                             }
                             split[1].setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());

@@ -113,12 +113,12 @@ public class ListItemRenderer extends DivRenderer {
         if (symbolRenderer != null && !symbolAddedInside) {
             symbolRenderer.setParent(parent);
             float x = occupiedArea.getBBox().getX();
-            ListSymbolPosition symbolPosition = getProperty(Property.LIST_SYMBOL_POSITION);
+            ListSymbolPosition symbolPosition = (ListSymbolPosition)this.<Object>getProperty(Property.LIST_SYMBOL_POSITION);
             if (symbolPosition != ListSymbolPosition.DEFAULT) {
                 Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
-                x -= symbolAreaWidth + (symbolIndent == null ? 0 : symbolIndent);
+                x -= symbolAreaWidth + (float) (symbolIndent == null ? 0 : symbolIndent);
                 if (symbolPosition == ListSymbolPosition.OUTSIDE) {
-                    x += getPropertyAsFloat(Property.MARGIN_LEFT);
+                    x += (float) this.getPropertyAsFloat(Property.MARGIN_LEFT);
                 }
             }
             if (childRenderers.size() > 0) {
@@ -197,7 +197,7 @@ public class ListItemRenderer extends DivRenderer {
     }
 
     private void applyListSymbolPosition() {
-        ListSymbolPosition symbolPosition = getProperty(Property.LIST_SYMBOL_POSITION);
+        ListSymbolPosition symbolPosition = (ListSymbolPosition)this.<Object>getProperty(Property.LIST_SYMBOL_POSITION);
         if (symbolPosition == ListSymbolPosition.INSIDE) {
             if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ParagraphRenderer) {
                 ParagraphRenderer paragraphRenderer = (ParagraphRenderer) childRenderers.get(0);

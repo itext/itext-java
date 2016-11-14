@@ -106,7 +106,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         Float blockMaxHeight = retrieveMaxHeight();
         if (!isFixedLayout() && null != blockMaxHeight && blockMaxHeight < parentBBox.getHeight()
                 && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-            parentBBox.moveUp(parentBBox.getHeight()-blockMaxHeight).setHeight(blockMaxHeight);
+            parentBBox.moveUp(parentBBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
         }
 
         List<Rectangle> areas;
@@ -227,8 +227,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             }
                             if (parentBBox.getHeight() == blockMaxHeight) {
                                 occupiedArea.getBBox()
-                                        .moveDown(blockMaxHeight - occupiedArea.getBBox().getHeight())
-                                        .setHeight(blockMaxHeight);
+                                        .moveDown((float) blockMaxHeight - occupiedArea.getBBox().getHeight())
+                                        .setHeight((float) blockMaxHeight);
                                 return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
                             }
                             overflowRenderer.setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
@@ -265,11 +265,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         IRenderer overflowRenderer = null;
         Float blockMinHeight = retrieveMinHeight();
-        if (!Boolean.TRUE.equals(getProperty(Property.FORCED_PLACEMENT)) && null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
+        if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
             float blockBottom = occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight());
             if (blockBottom >= layoutContext.getArea().getBBox().getBottom()) {
                 occupiedArea.getBBox().setY(blockBottom).setHeight((float) blockMinHeight);
-            } else if (!isFixedLayout()){
+            } else if (!isFixedLayout()) {
                 occupiedArea.getBBox()
                         .increaseHeight(occupiedArea.getBBox().getBottom() - layoutContext.getArea().getBBox().getBottom())
                         .setY(layoutContext.getArea().getBBox().getBottom());
@@ -438,9 +438,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
 
             // transforms apply from bottom to top
-            rotationTransform.translate((float)rotationPointX, (float)rotationPointY); // move point back at place
+            rotationTransform.translate((float) rotationPointX, (float) rotationPointY); // move point back at place
             rotationTransform.rotate(angle); // rotate
-            rotationTransform.translate((float)-rotationPointX, (float)-rotationPointY); // move rotation point to origin
+            rotationTransform.translate((float) -rotationPointX, (float) -rotationPointY); // move rotation point to origin
 
             List<Point> rotatedPoints = transformPoints(rectangleToPointsList(occupiedArea.getBBox()), rotationTransform);
             Rectangle newBBox = calculateBBox(rotatedPoints);
@@ -484,11 +484,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
      * This method creates {@link AffineTransform} instance that could be used
      * to rotate content inside the occupied area. Be aware that it should be used only after
      * layout rendering is finished and correct occupied area for the rotated element is calculated.
+     *
      * @return {@link AffineTransform} that rotates the content and places it inside occupied area.
      */
     protected AffineTransform createRotationTransformInsideOccupiedArea() {
         Float angle = this.<Float>getProperty(Property.ROTATION_ANGLE);
-        AffineTransform rotationTransform = AffineTransform.getRotateInstance((float)angle);
+        AffineTransform rotationTransform = AffineTransform.getRotateInstance((float) angle);
 
         Rectangle contentBox = this.getOccupiedAreaBBox();
         List<Point> rotatedContentBoxPoints = transformPoints(rectangleToPointsList(contentBox), rotationTransform);
@@ -529,8 +530,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
     /**
      * This method calculates the shift needed to be applied to the points in order to position
      * upper and left borders of their bounding box at the given lines.
-     * @param left x coordinate at which points bbox left border is to be aligned
-     * @param top y coordinate at which points bbox upper border is to be aligned
+     *
+     * @param left   x coordinate at which points bbox left border is to be aligned
+     * @param top    y coordinate at which points bbox upper border is to be aligned
      * @param points the points, which bbox will be aligned at the given position
      * @return array of two floats, where first element denotes x-coordinate shift and the second
      * element denotes y-coordinate shift which are needed to align points bbox at the given lines.
@@ -545,7 +547,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         float dx = (float) (left - minX);
         float dy = (float) (top - maxY);
-        return new float[] {dx, dy};
+        return new float[]{dx, dy};
     }
 
     private List<Point> clipPolygon(List<Point> points, Point clipLineBeg, Point clipLineEnd) {

@@ -390,10 +390,10 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
 
     // call only after setting Height property value
     private void overrideHeightProperties(float height) {
-        if (!hasProperty(Property.MAX_HEIGHT) || height < (float) getProperty(Property.MAX_HEIGHT)) {
+        if (!hasProperty(Property.MAX_HEIGHT) || height < this.<Float>getProperty(Property.MAX_HEIGHT)) {
             setMaxHeight(height);
         }
-        if (!hasProperty(Property.MIN_HEIGHT) || height > (float) getProperty(Property.MIN_HEIGHT)) {
+        if (!hasProperty(Property.MIN_HEIGHT) || height > this.<Float>getProperty(Property.MIN_HEIGHT)) {
             setMinHeight(height);
         }
     }

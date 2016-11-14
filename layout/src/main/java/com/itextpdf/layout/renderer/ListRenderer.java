@@ -95,7 +95,7 @@ public class ListRenderer extends BlockRenderer {
             for (int i = 0; i < childRenderers.size(); i++) {
                 IRenderer symbolRenderer = symbolRenderers.get(i);
                 IRenderer listItemRenderer = childRenderers.get(i);
-                if (listItemRenderer.getProperty(Property.LIST_SYMBOL_POSITION) != ListSymbolPosition.INSIDE) {
+                if ((ListSymbolPosition)listItemRenderer.<Object>getProperty(Property.LIST_SYMBOL_POSITION) != ListSymbolPosition.INSIDE) {
                     maxSymbolWidth = Math.max(maxSymbolWidth, symbolRenderer.getOccupiedArea().getBBox().getWidth());
                 }
             }
@@ -105,9 +105,9 @@ public class ListRenderer extends BlockRenderer {
             for (IRenderer childRenderer : childRenderers) {
                 childRenderer.setParent(this);
                 childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
-                float calculatedMargin = childRenderer.getProperty(Property.MARGIN_LEFT, (Float) 0f);
-                if (childRenderer.getProperty(Property.LIST_SYMBOL_POSITION) == ListSymbolPosition.DEFAULT) {
-                    calculatedMargin += maxSymbolWidth + (symbolIndent != null ? symbolIndent : 0f);
+                float calculatedMargin = (float) childRenderer.getProperty(Property.MARGIN_LEFT, (Float) 0f);
+                if ((ListSymbolPosition)childRenderer.<Object>getProperty(Property.LIST_SYMBOL_POSITION) == ListSymbolPosition.DEFAULT) {
+                    calculatedMargin += maxSymbolWidth + (float) (symbolIndent != null ? symbolIndent : 0f);
                 }
                 childRenderer.setProperty(Property.MARGIN_LEFT, calculatedMargin);
                 IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
