@@ -69,7 +69,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, count = 2)
+            @LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, count = 1)
     })
     public void emptyParagraphsTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "emptyParagraphsTest01.pdf";
@@ -78,8 +78,8 @@ public class DefaultLayoutTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        // the next 3 lines should not cause any effect
         document.add(new Paragraph());
+        // this line should not cause any effect
         document.add(new Paragraph().setBackgroundColor(Color.GREEN));
         document.add(new Paragraph().setBorder(new SolidBorder(Color.BLUE, 3)));
 

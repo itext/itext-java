@@ -455,9 +455,9 @@ public abstract class AbstractRenderer implements IRenderer {
             float leftWidth = borders[3] != null ? borders[3].getWidth() : 0;
 
             Rectangle bBox = getBorderAreaBBox();
-            if (bBox.getWidth() <= 0 || bBox.getHeight() <= 0) {
+            if (bBox.getWidth() < 0 || bBox.getHeight() < 0) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "border"));
+                logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_SIZE, "border"));
                 return;
             }
             float x1 = bBox.getX();
@@ -473,22 +473,22 @@ public abstract class AbstractRenderer implements IRenderer {
 
             if (borders[0] != null) {
                 canvas.saveState();
-                borders[0].draw(canvas, x1, y2, x2, y2, leftWidth, rightWidth);
+                borders[0].draw(canvas, x1, y2, x2, y2, Border.Side.TOP, leftWidth, rightWidth);
                 canvas.restoreState();
             }
             if (borders[1] != null) {
                 canvas.saveState();
-                borders[1].draw(canvas, x2, y2, x2, y1, topWidth, bottomWidth);
+                borders[1].draw(canvas, x2, y2, x2, y1, Border.Side.RIGHT, topWidth, bottomWidth);
                 canvas.restoreState();
             }
             if (borders[2] != null) {
                 canvas.saveState();
-                borders[2].draw(canvas, x2, y1, x1, y1, rightWidth, leftWidth);
+                borders[2].draw(canvas, x2, y1, x1, y1, Border.Side.BOTTOM, rightWidth, leftWidth);
                 canvas.restoreState();
             }
             if (borders[3] != null) {
                 canvas.saveState();
-                borders[3].draw(canvas, x1, y1, x1, y2, bottomWidth, topWidth);
+                borders[3].draw(canvas, x1, y1, x1, y2, Border.Side.LEFT, bottomWidth, topWidth);
                 canvas.restoreState();
             }
 
