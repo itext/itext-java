@@ -53,6 +53,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
@@ -369,8 +370,7 @@ public abstract class AbstractRenderer implements IRenderer {
      */
     @Override
     public void draw(DrawContext drawContext) {
-        applyDestination(drawContext.getDocument());
-        applyAction(drawContext.getDocument());
+        applyDestinationsAndAnnotation(drawContext);
 
         boolean relativePosition = isRelativePosition();
         if (relativePosition) {
@@ -571,6 +571,12 @@ public abstract class AbstractRenderer implements IRenderer {
         return rect;
     }
 
+    protected void applyDestinationsAndAnnotation(DrawContext drawContext) {
+        applyDestination(drawContext.getDocument());
+        applyAction(drawContext.getDocument());
+        applyLinkAnnotation(drawContext.getDocument());
+    }
+
     protected Float retrieveWidth(float parentBoxWidth) {
         return retrieveUnitValue(parentBoxWidth, Property.WIDTH);
     }
@@ -754,7 +760,7 @@ public abstract class AbstractRenderer implements IRenderer {
             array.add(PdfName.XYZ);
             array.add(new PdfNumber(occupiedArea.getBBox().getX()));
             array.add(new PdfNumber(occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight()));
-            array.add(new PdfNumber(1));
+            array.add(new PdfNumber(0));
             document.addNamedDestination(destination, array.makeIndirect(document));
 
             deleteProperty(Property.DESTINATION);
@@ -772,7 +778,19 @@ public abstract class AbstractRenderer implements IRenderer {
             } else {
                 link.setBorder(new PdfArray(new float[]{0, 0, 0}));
             }
-            document.getPage(getOccupiedArea().getPageNumber()).addAnnotation(link);
+
+            setProperty(Property.LINK_ANNOTATION, link);
+        }
+    }
+
+    protected void applyLinkAnnotation(PdfDocument document) {
+        PdfLinkAnnotation linkAnnotation = this.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION);
+        if (linkAnnotation != null) {
+            Rectangle pdfBBox = calculateAbsolutePdfBBox();
+            linkAnnotation.setRectangle(new PdfArray(pdfBBox));
+
+            PdfPage page = document.getPage(occupiedArea.getPageNumber());
+            page.addAnnotation(linkAnnotation);
         }
     }
 

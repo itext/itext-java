@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LinkRenderer;
 
@@ -58,6 +59,7 @@ import com.itextpdf.layout.renderer.LinkRenderer;
  */
 public class Link extends Text {
 
+    @Deprecated
     protected PdfLinkAnnotation linkAnnotation;
 
     /**
@@ -68,7 +70,7 @@ public class Link extends Text {
      */
     public Link(String text, PdfLinkAnnotation linkAnnotation) {
         super(text);
-        this.linkAnnotation = linkAnnotation;
+        setProperty(Property.LINK_ANNOTATION, linkAnnotation);
         setRole(PdfName.Link);
     }
 
@@ -97,7 +99,7 @@ public class Link extends Text {
      * @return a {@link PdfLinkAnnotation}
      */
     public PdfLinkAnnotation getLinkAnnotation() {
-        return linkAnnotation;
+        return getProperty(Property.LINK_ANNOTATION);
     }
 
     @Override

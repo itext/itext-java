@@ -98,6 +98,7 @@ public final class Property {
     public static final int LEADING = 33;
     public static final int LEFT = 34;
     public static final int LINE_DRAWER = 35;
+    public static final int LINK_ANNOTATION = 88;
     public static final int LIST_START = 36;
     public static final int LIST_SYMBOL = 37;
     public static final int LIST_SYMBOL_ALIGNMENT = 38;

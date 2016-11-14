@@ -43,13 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
-import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Link;
-import com.itextpdf.layout.property.Property;
 
 public class LinkRenderer extends TextRenderer {
 
@@ -81,16 +75,7 @@ public class LinkRenderer extends TextRenderer {
             applyAbsolutePositioningTranslation(false);
         }
 
-        PdfLinkAnnotation linkAnnotation = ((Link)modelElement).getLinkAnnotation();
-        Rectangle pdfBBox = calculateAbsolutePdfBBox();
-        linkAnnotation.setRectangle(new PdfArray(pdfBBox));
 
-        if (isRelativePosition) {
-            applyAbsolutePositioningTranslation(true);
-        }
-
-        PdfPage page = drawContext.getDocument().getPage(occupiedArea.getPageNumber());
-        page.addAnnotation(linkAnnotation);
     }
 
     @Override

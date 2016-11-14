@@ -321,10 +321,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
     @Override
     public void draw(DrawContext drawContext) {
-        PdfDocument document = drawContext.getDocument();
-        applyDestination(document);
-        applyAction(document);
+        applyDestinationsAndAnnotation(drawContext);
 
+        PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
         TagTreePointer tagPointer = null;
         IAccessibleElement accessibleElement = null;
