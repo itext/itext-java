@@ -650,6 +650,16 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         }
     }
 
+    public Table setExtendLastRow(boolean isExtended) {
+        setProperty(Property.EXTEND_LAST_ROW, isExtended);
+        return this;
+    }
+
+    public Table setExtendFinalRow(boolean isExtended) {
+        setProperty(Property.EXTEND_FINAL_ROW, isExtended);
+        return this;
+    }
+
     @Override
     public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {

@@ -73,6 +73,8 @@ public final class Property {
     public static final int CHARACTER_SPACING = 15;
     public static final int COLSPAN = 16;
     public static final int DESTINATION = 17;
+    public static final int EXTEND_FINAL_ROW = 86;
+    public static final int EXTEND_LAST_ROW = 87;
     public static final int FIRST_LINE_INDENT = 18;
     public static final int FLUSH_ON_DRAW = 19;
     public static final int FONT = 20;

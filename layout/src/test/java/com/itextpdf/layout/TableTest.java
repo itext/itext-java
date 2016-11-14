@@ -883,6 +883,32 @@ public class TableTest extends ExtendedITextTest {
         }
     }
 
+    @Test
+    public void extendLastRowTest01() throws IOException, InterruptedException {
+        String testName = "extendLastRowTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "itext.png")));
+        Image image = new Image(xObject, 100);
+
+        Table table = new Table(2);
+        for (int i = 0; i < 20; i++) {
+            table.addCell(image);
+        }
+        doc.add(new Paragraph("Extend the last row on each page"));
+        table.setExtendLastRow(true);
+        doc.add(table);
+        doc.add(new Paragraph("Extend all last rows on each page except final one"));
+        table.setExtendFinalRow(false);
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
