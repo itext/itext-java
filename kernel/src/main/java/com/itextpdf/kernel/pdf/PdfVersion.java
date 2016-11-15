@@ -131,6 +131,11 @@ public class PdfVersion implements Comparable<PdfVersion>, Serializable {
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return getClass() == obj.getClass() && compareTo((PdfVersion) obj) == 0;
+    }
+
     private static PdfVersion createPdfVersion(int major, int minor) {
         PdfVersion pdfVersion = new PdfVersion(major, minor);
         values.add(pdfVersion);
