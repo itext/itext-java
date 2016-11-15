@@ -382,7 +382,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         Rectangle bBox = occupiedArea.getBBox().clone();
         Float rotationAngle = this.<Float>getProperty(Property.ROTATION_ANGLE);
         if (rotationAngle != null) {
-            if (!hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT) || !hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
+            if (!hasOwnProperty(Property.ROTATION_INITIAL_WIDTH) || !hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
                 Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
                 logger.error(MessageFormat.format(LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, getClass().getSimpleName()));
             } else {
