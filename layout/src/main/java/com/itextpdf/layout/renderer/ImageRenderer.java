@@ -187,6 +187,9 @@ public class ImageRenderer extends AbstractRenderer {
         }
 
         occupiedArea.getBBox().moveDown((float) height);
+        if (borders[3] != null) {
+            height += (float) Math.sin(angle) * borders[3].getWidth();
+        }
         occupiedArea.getBBox().setHeight((float) height);
         occupiedArea.getBBox().setWidth((float) width);
 
@@ -197,8 +200,9 @@ public class ImageRenderer extends AbstractRenderer {
             getMatrix(t, imageItselfScaledWidth, imageItselfScaledHeight);
         }
 
-        applyMargins(occupiedArea.getBBox(), true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
+        applyMargins(occupiedArea.getBBox(), true);
+
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null,
                 isPlacingForced ? this : null);
     }
@@ -268,7 +272,7 @@ public class ImageRenderer extends AbstractRenderer {
         if (isRelativePosition) {
             applyAbsolutePositioningTranslation(true);
         }
-
+        applyBorderBox(occupiedArea.getBBox(), getBorders(), true);
         applyMargins(occupiedArea.getBBox(), true);
 
         if (isTagged) {
@@ -346,10 +350,6 @@ public class ImageRenderer extends AbstractRenderer {
             }
 
             height = (float) (maxY - minY);
-            Border[] borders = getBorders();
-            if (borders[3] != null) {
-                height += (float) Math.sin(angle) * borders[3].getWidth();
-            }
             width = (float) (maxX - minX);
             pivotY = (float) (p00.getY() - minY);
 
