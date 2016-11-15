@@ -603,6 +603,7 @@ public class TableRenderer extends AbstractRenderer {
                         }
                         rows.get(targetOverflowRowIndex[col])[col].occupiedArea = cellOccupiedArea;
                     } else if (currentRow[col] != null) {
+                        rowspans[col] = currentRow[col].getModelElement().getRowspan();
                         if (hasContent) {
                             columnsWithCellToBeEnlarged[col] = true;
                             // for the future

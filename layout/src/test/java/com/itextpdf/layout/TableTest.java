@@ -807,7 +807,6 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-869")
     public void bigRowspanTest05() throws IOException, InterruptedException {
         String testName = "bigRowspanTest05.pdf";
         String outFileName = destinationFolder + testName;
@@ -823,11 +822,12 @@ public class TableTest extends ExtendedITextTest {
                 + "5. " + textContent + "6. " + textContent + "7. " + textContent + "8. " + textContent + "9. " + textContent;
 
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + textContent)))
-                .addCell(new Cell(2, 1).add(new Paragraph("cell 4, 2\n" + longTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 6, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 9, 2\n" + textContent)));
+                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)))
+                .addCell(new Cell(2, 1).add(new Paragraph("cell 1, 1 and 2\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + textContent)))
+                ;
 
         doc.add(table);
         doc.close();
