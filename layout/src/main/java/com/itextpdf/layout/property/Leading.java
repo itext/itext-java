@@ -101,7 +101,7 @@ public class Leading {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof Leading && type == ((Leading) obj).type && value == ((Leading) obj).value;
+        return getClass() == obj.getClass() && type == ((Leading) obj).type && value == ((Leading) obj).value;
     }
 
     @Override

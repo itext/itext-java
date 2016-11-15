@@ -134,8 +134,9 @@ public class LayoutArea {
      */
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof LayoutArea))
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         LayoutArea that = (LayoutArea) obj;
         return pageNumber == that.pageNumber && bBox.equalsWithEpsilon(that.bBox, AbstractRenderer.EPS);
     }

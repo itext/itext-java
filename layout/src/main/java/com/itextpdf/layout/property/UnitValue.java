@@ -131,7 +131,7 @@ public class UnitValue {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof UnitValue)) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         UnitValue other = (UnitValue) obj;
