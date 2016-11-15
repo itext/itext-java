@@ -963,4 +963,26 @@ public abstract class AbstractRenderer implements IRenderer {
 
         return points;
     }
+
+    /**
+     * This method calculates the shift needed to be applied to the points in order to position
+     * upper and left borders of their bounding box at the given lines.
+     * @param left x coordinate at which points bbox left border is to be aligned
+     * @param top y coordinate at which points bbox upper border is to be aligned
+     * @param points the points, which bbox will be aligned at the given position
+     * @return array of two floats, where first element denotes x-coordinate shift and the second
+     * element denotes y-coordinate shift which are needed to align points bbox at the given lines.
+     */
+    protected float[] calculateShiftToPositionBBoxOfPointsAt(float left, float top, List<Point> points) {
+        double minX = Double.MAX_VALUE;
+        double maxY = -Double.MAX_VALUE;
+        for (Point point : points) {
+            minX = Math.min(point.getX(), minX);
+            maxY = Math.max(point.getY(), maxY);
+        }
+
+        float dx = (float) (left - minX);
+        float dy = (float) (top - maxY);
+        return new float[] {dx, dy};
+    }
 }

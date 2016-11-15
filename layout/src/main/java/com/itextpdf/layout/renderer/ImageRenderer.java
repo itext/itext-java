@@ -62,7 +62,8 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+
+import java.util.List;
 
 public class ImageRenderer extends AbstractRenderer {
 
@@ -74,6 +75,9 @@ public class ImageRenderer extends AbstractRenderer {
     protected float deltaX;
     protected float imageWidth;
     protected float imageHeight;
+    private float imageItselfScaledWidth;
+    private float imageItselfScaledHeight;
+    private Rectangle initialOccupiedAreaBBox;
 
     float[] matrix = new float[6];
 
@@ -149,18 +153,23 @@ public class ImageRenderer extends AbstractRenderer {
             height = retrieveHeight();
         }
 
-        float imageItselfScaledWidth = (float) width;
-        float imageItselfScaledHeight = (float) height;
+        imageItselfScaledWidth = (float) width;
+        imageItselfScaledHeight = (float) height;
 
         // See in adjustPositionAfterRotation why angle = 0 is necessary
         if (null == angle) {
             angle = 0f;
         }
         t.rotate((float) angle);
+        initialOccupiedAreaBBox = getOccupiedAreaBBox().clone();
         float scaleCoef = adjustPositionAfterRotation((float) angle, layoutBox.getWidth(), layoutBox.getHeight());
 
         imageItselfScaledHeight *= scaleCoef;
         imageItselfScaledWidth *= scaleCoef;
+
+        initialOccupiedAreaBBox.moveDown(imageItselfScaledHeight);
+        initialOccupiedAreaBBox.setHeight(imageItselfScaledHeight);
+        initialOccupiedAreaBBox.setWidth(imageItselfScaledWidth);
         if (xObject instanceof PdfFormXObject) {
             t.scale(scaleCoef, scaleCoef);
         }
@@ -196,7 +205,29 @@ public class ImageRenderer extends AbstractRenderer {
 
     @Override
     public void draw(DrawContext drawContext) {
+        applyMargins(occupiedArea.getBBox(), false);
+        applyBorderBox(occupiedArea.getBBox(), getBorders(), false);
+
+        boolean isRelativePosition = isRelativePosition();
+        if (isRelativePosition) {
+            applyAbsolutePositioningTranslation(false);
+        }
+
+        if (fixedYPosition == null) {
+            fixedYPosition = occupiedArea.getBBox().getY() + pivotY;
+        }
+        if (fixedXPosition == null) {
+            fixedXPosition = occupiedArea.getBBox().getX();
+        }
+
+        Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
+        if (angle != null) {
+            applyConcatMatrix(drawContext, angle);
+        }
         super.draw(drawContext);
+        if (angle != null) {
+            drawContext.getCanvas().restoreState();
+        }
 
         PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
@@ -215,21 +246,6 @@ public class ImageRenderer extends AbstractRenderer {
                     isArtifact = true;
                 }
             }
-        }
-
-        applyMargins(occupiedArea.getBBox(), false);
-        applyBorderBox(occupiedArea.getBBox(), getBorders(), false);
-
-        boolean isRelativePosition = isRelativePosition();
-        if (isRelativePosition) {
-            applyAbsolutePositioningTranslation(false);
-        }
-
-        if (fixedYPosition == null) {
-            fixedYPosition = occupiedArea.getBBox().getY() + pivotY;
-        }
-        if (fixedXPosition == null) {
-            fixedXPosition = occupiedArea.getBBox().getX();
         }
 
         PdfCanvas canvas = drawContext.getCanvas();
@@ -263,6 +279,20 @@ public class ImageRenderer extends AbstractRenderer {
     @Override
     public IRenderer getNextRenderer() {
         return null;
+    }
+
+    @Override
+    public Rectangle getBorderAreaBBox() {
+        applyMargins(initialOccupiedAreaBBox, false);
+        applyBorderBox(initialOccupiedAreaBBox, getBorders(), false);
+
+        boolean isRelativePosition = isRelativePosition();
+        if (isRelativePosition) {
+            applyAbsolutePositioningTranslation(false);
+        }
+        applyMargins(initialOccupiedAreaBBox, true);
+        applyBorderBox(initialOccupiedAreaBBox, true);
+        return initialOccupiedAreaBBox;
     }
 
     protected ImageRenderer autoScale(LayoutArea layoutArea) {
@@ -316,6 +346,10 @@ public class ImageRenderer extends AbstractRenderer {
             }
 
             height = (float) (maxY - minY);
+            Border[] borders = getBorders();
+            if (borders[3] != null) {
+                height += (float) Math.sin(angle) * borders[3].getWidth();
+            }
             width = (float) (maxX - minX);
             pivotY = (float) (p00.getY() - minY);
 
@@ -351,5 +385,20 @@ public class ImageRenderer extends AbstractRenderer {
         if (fixedYPosition != null) {
             fixedYPosition += (float) t.getTranslateY();
         }
+    }
+    private void applyConcatMatrix(DrawContext drawContext, Float angle) {
+        drawContext.getCanvas().saveState();
+        AffineTransform rotationTransform = AffineTransform.getRotateInstance((float)angle);
+
+        Rectangle rect = getBorderAreaBBox();
+
+        List<Point> rotatedPoints = transformPoints(rectangleToPointsList(rect), rotationTransform);
+
+        float[] shift = calculateShiftToPositionBBoxOfPointsAt(rect.getX(), rect.getY() + rect.getHeight(), rotatedPoints);
+
+        double[] matrix = new double[6];
+        rotationTransform.getMatrix(matrix);
+
+        drawContext.getCanvas().concatMatrix(matrix[0], matrix[1], matrix[2], matrix[3], shift[0], shift[1]);
     }
 }
