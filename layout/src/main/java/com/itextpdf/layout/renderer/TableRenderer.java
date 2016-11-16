@@ -333,10 +333,14 @@ public class TableRenderer extends AbstractRenderer {
                 int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
                 int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
 
+                targetOverflowRowIndex[col] = currentCellInfo.finishRowInd;
+                // This cell came from the future (split occurred and we need to place cell with big rowpsan into the current area)
+                boolean currentCellHasBigRowspan = (row != currentCellInfo.finishRowInd);
+
                 // collapse boundary borders if necessary
                 // notice that bottom border collapse is handled afterwards
                 Border[] cellBorders = cell.getBorders();
-                if (0 == row - rowspan + 1) {
+                if (0 == row - rowspan + (currentCellHasBigRowspan ? 2 : 1)) {
                     cell.setProperty(Property.BORDER_TOP, getCollapsedBorder(cellBorders[0], borders[0]));
                 }
                 if (0 == col) {
@@ -345,11 +349,7 @@ public class TableRenderer extends AbstractRenderer {
                 if (tableModel.getNumberOfColumns() == col + colspan) {
                     cell.setProperty(Property.BORDER_RIGHT, getCollapsedBorder(cellBorders[1], borders[1]));
                 }
-
-                buildBordersArrays(cell, row, col);
-                targetOverflowRowIndex[col] = currentCellInfo.finishRowInd;
-                // This cell came from the future (split occurred and we need to place cell with big rowpsan into the current area)
-                boolean currentCellHasBigRowspan = (row != currentCellInfo.finishRowInd);
+                buildBordersArrays(cell, row + (currentCellHasBigRowspan ? 1 : 0), col);
 
                 float cellWidth = 0, colOffset = 0;
                 for (int k = col; k < col + colspan; k++) {
