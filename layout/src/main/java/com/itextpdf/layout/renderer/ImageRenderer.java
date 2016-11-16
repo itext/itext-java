@@ -188,7 +188,7 @@ public class ImageRenderer extends AbstractRenderer {
 
         occupiedArea.getBBox().moveDown((float) height);
         if (borders[3] != null) {
-            height += (float) Math.sin(angle) * borders[3].getWidth();
+            height += (float) Math.sin((float) angle) * borders[3].getWidth();
         }
         occupiedArea.getBBox().setHeight((float) height);
         occupiedArea.getBBox().setWidth((float) width);
@@ -226,6 +226,7 @@ public class ImageRenderer extends AbstractRenderer {
 
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
+            drawContext.getCanvas().saveState();
             applyConcatMatrix(drawContext, angle);
         }
         super.draw(drawContext);
@@ -387,7 +388,6 @@ public class ImageRenderer extends AbstractRenderer {
         }
     }
     private void applyConcatMatrix(DrawContext drawContext, Float angle) {
-        drawContext.getCanvas().saveState();
         AffineTransform rotationTransform = AffineTransform.getRotateInstance((float)angle);
 
         Rectangle rect = getBorderAreaBBox();
