@@ -190,12 +190,12 @@ public class TableRenderer extends AbstractRenderer {
                     borders = currentRow[0].getBorders();
                     leftTableBorderWidth = Math.max(null == borders[3] ? -1 : borders[3].getWidth(), leftTableBorderWidth);
                 }
-                // the last cell in a row can have big rowspan
+                // the last cell in a row can have big colspan
                 int lastInRow = currentRow.length - 1;
                 while (lastInRow >= 0 && null == currentRow[lastInRow]) {
                     lastInRow--;
                 }
-                if (lastInRow >= 0 && currentRow.length == lastInRow + currentRow[lastInRow].getPropertyAsInteger(Property.ROWSPAN)) {
+                if (lastInRow >= 0 && currentRow.length == lastInRow + currentRow[lastInRow].getPropertyAsInteger(Property.COLSPAN)) {
                     borders = currentRow[lastInRow].getBorders();
                     rightTableBorderWidth = Math.max(null == borders[1] ? -1 : borders[1].getWidth(), rightTableBorderWidth);
                 }
