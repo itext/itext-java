@@ -54,6 +54,8 @@ import com.itextpdf.io.source.WindowRandomAccessSource;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -62,9 +64,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Reads a PDF document.
@@ -648,7 +647,7 @@ public class PdfReader implements Closeable, Serializable {
                     if (reference.getGenNumber() != tokens.getGenNr()) {
                         if (fixedXref) {
                             Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                            logger.warn(MessageFormat.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE + " {0} {1} R", tokens.getObjNr(), tokens.getGenNr()));
+                            logger.warn(MessageFormat.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
                             return new PdfNull();
                         } else {
                             throw new PdfException(PdfException.InvalidIndirectReference1);
