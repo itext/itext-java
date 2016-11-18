@@ -71,7 +71,13 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.XMPUtils;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -91,13 +97,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 /**
  * This class provides means to compare two PDF files both by content and visually
@@ -1844,7 +1843,7 @@ public class CompareTool {
 
         @Override
         public boolean equals(Object obj) {
-            return obj instanceof ObjectPath && baseCmpObject.equals(((ObjectPath) obj).baseCmpObject) && baseOutObject.equals(((ObjectPath) obj).baseOutObject) &&
+            return obj.getClass() == getClass() && baseCmpObject.equals(((ObjectPath) obj).baseCmpObject) && baseOutObject.equals(((ObjectPath) obj).baseOutObject) &&
                     path.equals(((ObjectPath) obj).path);
         }
 
@@ -1893,7 +1892,7 @@ public class CompareTool {
 
             @Override
             public boolean equals(Object obj) {
-                return (obj instanceof IndirectPathItem && cmpObject.equals(((IndirectPathItem) obj).cmpObject)
+                return (obj.getClass() == getClass() && cmpObject.equals(((IndirectPathItem) obj).cmpObject)
                         && outObject.equals(((IndirectPathItem) obj).outObject));
             }
         }
@@ -1939,7 +1938,7 @@ public class CompareTool {
 
             @Override
             public boolean equals(Object obj) {
-                return obj instanceof DictPathItem && key.equals(((DictPathItem) obj).key);
+                return obj.getClass() == getClass() && key.equals(((DictPathItem) obj).key);
             }
 
             @Override
@@ -1988,7 +1987,7 @@ public class CompareTool {
 
             @Override
             public boolean equals(Object obj) {
-                return obj instanceof ArrayPathItem && index == ((ArrayPathItem) obj).index;
+                return obj.getClass() == getClass() && index == ((ArrayPathItem) obj).index;
             }
 
             @Override
@@ -2044,7 +2043,7 @@ public class CompareTool {
 
             @Override
             public boolean equals(Object obj) {
-                return obj instanceof OffsetPathItem && offset == ((OffsetPathItem) obj).offset;
+                return obj.getClass() == getClass() && offset == ((OffsetPathItem) obj).offset;
             }
 
             @Override
@@ -2108,7 +2107,7 @@ public class CompareTool {
 
         @Override
         public boolean equals(Object obj) {
-            return obj instanceof TrailerPath
+            return obj.getClass() == getClass()
                     && outDocument.equals(((TrailerPath) obj).outDocument)
                     && cmpDocument.equals(((TrailerPath) obj).cmpDocument)
                     && path.equals(((ObjectPath) obj).path);
