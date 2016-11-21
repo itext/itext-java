@@ -970,6 +970,54 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
+    public void splitCellsTest09() throws IOException, InterruptedException {
+        fileName = "splitCellsTest09.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(595,160));
+
+        String textAlphabet = "Cell";
+
+        Table table = new Table(3);
+        table.addCell(new Cell().add("1gsdfgsdfgsdfjghdlsfhgkjdfshgkjdsfgdsf gdsfg dfs gdfs gsdf gdfsgffgfgfgfgfgfffgfgfgdhsfjgdsfjgdfsgfgfg fg fg fg f gfg fgggggggggggggggfg fgf fgsd"));
+        table.addCell(new Cell(2, 1).add(textAlphabet+ "3"));
+        table.addCell(new Cell().add(textAlphabet+ "4").setBorder(new SolidBorder(Color.GREEN, 2)));
+        table.addCell(new Cell().add(textAlphabet+ "5"));
+        table.addCell(new Cell().add(textAlphabet+ "5"));
+
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void tableWithHeaderFooterTest01() throws IOException, InterruptedException {
+        fileName = "tableWithHeaderTest01.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(595, 1000));
+        String text = "Cell";
+
+        Table table = new Table(3);
+        for (int i = 0; i < 1; i++) {
+            table.addCell(new Cell().add(text + "1").setHeight(40));
+//            table.addCell(new Cell(2, 1).add(text + "2"));
+//            table.addCell(new Cell().add(text + "3"));
+            table.addCell(new Cell().add(text + "4").setHeight(40));
+            table.addCell(new Cell().add(text + "5").setHeight(40));
+        }
+        for (int i = 0; i < 3; i++) {
+            table.addHeaderCell(new Cell().add("Header").setHeight(40));
+            table.addFooterCell(new Cell().add("Header").setHeight(40));
+        }
+
+        table.setBorder(new SolidBorder(Color.GREEN, 100));
+
+        doc.add(table);
+        doc.add(new Table(1).addCell(new Cell().add("Hello")).setBorder(new SolidBorder(Color.BLACK, 10)));
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
     })

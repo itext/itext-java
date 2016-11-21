@@ -283,8 +283,8 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         // Apply halves of the borders. The other halves are applied on a Cell level
-        layoutBox.<Rectangle>applyMargins(topTableBorderWidth / 2, rightTableBorderWidth / 2, 0, leftTableBorderWidth / 2, false);
-
+        layoutBox.<Rectangle>applyMargins(0, rightTableBorderWidth / 2, 0, leftTableBorderWidth / 2, false);
+        layoutBox.decreaseHeight(topTableBorderWidth / 2);
         columnWidths = calculateScaledColumnWidths(tableModel, (float) tableWidth, leftTableBorderWidth, rightTableBorderWidth);
 
         LayoutResult[] splits = new LayoutResult[tableModel.getNumberOfColumns()];
@@ -380,8 +380,9 @@ public class TableRenderer extends AbstractRenderer {
                 LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea));
                 if (collapsedBottomBorder != null && null != cellResult.getOccupiedArea()) {
                     // apply the difference between collapsed table border and own cell border
-                    cellResult.getOccupiedArea().getBBox().<Rectangle>applyMargins(0, 0,
-                            (collapsedBottomBorder.getWidth() - (oldBottomBorder == null ? 0 : oldBottomBorder.getWidth())) / 2, 0, false);
+                    cellResult.getOccupiedArea().getBBox()
+                            .moveUp((collapsedBottomBorder.getWidth() - (oldBottomBorder == null ? 0 : oldBottomBorder.getWidth())) / 2)
+                            .decreaseHeight((collapsedBottomBorder.getWidth() - (oldBottomBorder == null ? 0 : oldBottomBorder.getWidth())) / 2);
                     cell.setProperty(Property.BORDER_BOTTOM, oldBottomBorder);
                 }
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
@@ -532,6 +533,7 @@ public class TableRenderer extends AbstractRenderer {
                     }
                     heights.set(heights.size() - 1, heights.get(heights.size() - 1) + bottomBorderWidthDifference);
                     occupiedArea.getBBox().moveDown(bottomBorderWidthDifference).increaseHeight(bottomBorderWidthDifference);
+                    layoutBox.decreaseHeight(bottomBorderWidthDifference);
                 }
 
                 // Correct occupied areas of all added cells
@@ -610,7 +612,7 @@ public class TableRenderer extends AbstractRenderer {
                             splitResult[1].rows.get(0)[col].setBorders(getBorders()[0], 0);
                         }
                         for (int j = col; j < col + currentRow[col].getPropertyAsInteger(Property.COLSPAN); j++) {
-                            horizontalBorders.get(row + 1).set(j, getBorders()[2]);
+                            horizontalBorders.get(row + (!hasContent && rowspans[col] > 1 ? 0 : 1)).set(j, getBorders()[2]);
                         }
                     }
                 }
@@ -780,8 +782,8 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         // Apply bottom and top border
-        applyMargins(occupiedArea.getBBox(), new float[]{topTableBorderWidth / 2, 0, bottomTableBorderWidth / 2, 0}, true);
-        layoutBox.<Rectangle>applyMargins(0, 0, bottomTableBorderWidth / 2, 0, false);
+        occupiedArea.getBBox().moveDown(bottomTableBorderWidth / 2).increaseHeight((topTableBorderWidth + bottomTableBorderWidth) / 2);
+        layoutBox.decreaseHeight(bottomTableBorderWidth / 2);
 
         if ((Boolean.TRUE.equals(getPropertyAsBoolean(Property.EXTEND_FINAL_ROW)) ||
                 (Boolean.TRUE.equals(getPropertyAsBoolean(Property.EXTEND_LAST_ROW)) && Boolean.FALSE.equals(hasProperty(Property.EXTEND_FINAL_ROW))))
