@@ -985,4 +985,22 @@ public abstract class AbstractRenderer implements IRenderer {
         float dy = (float) (top - maxY);
         return new float[] {dx, dy};
     }
+
+    protected void overrideHeightProperties() {
+        if (hasProperty(Property.HEIGHT)) {
+            Float height = getPropertyAsFloat(Property.HEIGHT);
+            if (!hasProperty(Property.MAX_HEIGHT) || height < this.<Float>getProperty(Property.MAX_HEIGHT)) {
+                setProperty(Property.MAX_HEIGHT, height);
+            }
+            if (!hasProperty(Property.MIN_HEIGHT) || height > this.<Float>getProperty(Property.MIN_HEIGHT)) {
+                setProperty(Property.MIN_HEIGHT, height);
+            }
+        }
+        if (hasProperty(Property.MIN_HEIGHT)) {
+            Float minHeight = getPropertyAsFloat(Property.MIN_HEIGHT);
+            if (hasProperty(Property.MAX_HEIGHT) && minHeight > this.<Float>getProperty(Property.MAX_HEIGHT)) {
+                setProperty(Property.MAX_HEIGHT, minHeight);
+            }
+        }
+    }
 }

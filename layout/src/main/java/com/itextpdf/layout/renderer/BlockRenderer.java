@@ -76,6 +76,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
+        overrideHeightProperties();
         int pageNumber = layoutContext.getArea().getPageNumber();
 
         boolean isPositioned = isPositioned();
@@ -187,7 +188,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             if (hasProperty(Property.MIN_HEIGHT)) {
                                 overflowRenderer.setProperty(Property.MIN_HEIGHT, retrieveMinHeight() - occupiedArea.getBBox().getHeight());
                             }
-
+                            if (hasProperty(Property.HEIGHT)) {
+                                overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                            }
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer, causeOfNothing);
                         } else {
                             childRenderers.set(childPos, result.getSplitRenderer());
@@ -236,6 +239,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         if (hasProperty(Property.MIN_HEIGHT)) {
                             overflowRenderer.setProperty(Property.MIN_HEIGHT, retrieveMinHeight() - occupiedArea.getBBox().getHeight());
                         }
+                        if (hasProperty(Property.HEIGHT)) {
+                            overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                        }
 
                         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                             return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
@@ -275,6 +281,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         .setY(layoutContext.getArea().getBBox().getBottom());
                 overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
                 overflowRenderer.setProperty(Property.MIN_HEIGHT, (float) blockMinHeight - occupiedArea.getBBox().getHeight());
+                if (hasProperty(Property.HEIGHT)) {
+                    overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                }
             } else {
                 occupiedArea.getBBox().moveDown((float) blockMinHeight - occupiedArea.getBBox().getHeight()).setHeight((float) blockMinHeight);
             }

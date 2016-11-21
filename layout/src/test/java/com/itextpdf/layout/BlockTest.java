@@ -68,39 +68,29 @@ public class BlockTest extends ExtendedITextTest {
 
         doc.add(new Paragraph("Paragraph's min height is set shorter than needed:"));
         p.deleteOwnProperty(Property.HEIGHT);
-        p.deleteOwnProperty(Property.MAX_HEIGHT);
-        p.deleteOwnProperty(Property.MIN_HEIGHT);
         p.setMinHeight(1300);
         doc.add(p);
         doc.add(new AreaBreak());
 
         doc.add(new Paragraph("Paragraph's max height is set shorter than needed:"));
-        p.deleteOwnProperty(Property.HEIGHT);
-        p.deleteOwnProperty(Property.MAX_HEIGHT);
         p.deleteOwnProperty(Property.MIN_HEIGHT);
         p.setMaxHeight(1300);
         doc.add(p);
         doc.add(new AreaBreak());
 
         doc.add(new Paragraph("Paragraph's height is set bigger than needed:"));
-        p.deleteOwnProperty(Property.HEIGHT);
         p.deleteOwnProperty(Property.MAX_HEIGHT);
-        p.deleteOwnProperty(Property.MIN_HEIGHT);
         p.setHeight(2500);
         doc.add(p);
         doc.add(new AreaBreak());
 
         doc.add(new Paragraph("Paragraph's min height is set bigger than needed:"));
         p.deleteOwnProperty(Property.HEIGHT);
-        p.deleteOwnProperty(Property.MAX_HEIGHT);
-        p.deleteOwnProperty(Property.MIN_HEIGHT);
         p.setMinHeight(2500);
         doc.add(p);
         doc.add(new AreaBreak());
 
         doc.add(new Paragraph("Paragraph's max height is set bigger than needed:"));
-        p.deleteOwnProperty(Property.HEIGHT);
-        p.deleteOwnProperty(Property.MAX_HEIGHT);
         p.deleteOwnProperty(Property.MIN_HEIGHT);
         p.setMaxHeight(2500);
         doc.add(p);
@@ -150,39 +140,29 @@ public class BlockTest extends ExtendedITextTest {
 
         doc.add(new Paragraph("Div's min height is set shorter than needed:"));
         div.deleteOwnProperty(Property.HEIGHT);
-        div.deleteOwnProperty(Property.MAX_HEIGHT);
-        div.deleteOwnProperty(Property.MIN_HEIGHT);
         div.setMinHeight(1000);
         doc.add(div);
         doc.add(new AreaBreak());
 
         doc.add(new Paragraph("Div's max height is set shorter than needed:"));
-        div.deleteOwnProperty(Property.HEIGHT);
-        div.deleteOwnProperty(Property.MAX_HEIGHT);
         div.deleteOwnProperty(Property.MIN_HEIGHT);
         div.setMaxHeight(1000);
         doc.add(div);
         doc.add(new AreaBreak());
 
         doc.add(new Paragraph("Div's height is set bigger than needed:"));
-        div.deleteOwnProperty(Property.HEIGHT);
         div.deleteOwnProperty(Property.MAX_HEIGHT);
-        div.deleteOwnProperty(Property.MIN_HEIGHT);
         div.setHeight(2500);
         doc.add(div);
         doc.add(new AreaBreak());
 
         doc.add(new Paragraph("Div's min height is set bigger than needed:"));
         div.deleteOwnProperty(Property.HEIGHT);
-        div.deleteOwnProperty(Property.MAX_HEIGHT);
-        div.deleteOwnProperty(Property.MIN_HEIGHT);
         div.setMinHeight(2500);
         doc.add(div);
         doc.add(new AreaBreak());
 
         doc.add(new Paragraph("Div's max height is set bigger than needed:"));
-        div.deleteOwnProperty(Property.HEIGHT);
-        div.deleteOwnProperty(Property.MAX_HEIGHT);
         div.deleteOwnProperty(Property.MIN_HEIGHT);
         div.setMaxHeight(2500);
         doc.add(div);

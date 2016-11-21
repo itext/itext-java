@@ -81,6 +81,7 @@ public class ParagraphRenderer extends BlockRenderer {
      */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
+        overrideHeightProperties();
         int pageNumber = layoutContext.getArea().getPageNumber();
         boolean anythingPlaced = false;
         boolean firstLineInBox = true;
@@ -231,6 +232,9 @@ public class ParagraphRenderer extends BlockRenderer {
                         if (hasProperty(Property.MIN_HEIGHT)) {
                             split[1].setProperty(Property.MIN_HEIGHT, retrieveMinHeight() - occupiedArea.getBBox().getHeight());
                         }
+                        if (hasProperty(Property.HEIGHT)) {
+                            split[1].setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                        }
                         if (anythingPlaced) {
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]);
                         } else {
@@ -289,9 +293,9 @@ public class ParagraphRenderer extends BlockRenderer {
                         .setY(layoutContext.getArea().getBBox().getBottom());
                 overflowRenderer = createOverflowRenderer(parent);
                 overflowRenderer.setProperty(Property.MIN_HEIGHT, (float) blockMinHeight - occupiedArea.getBBox().getHeight());
-                overflowRenderer.deleteOwnProperty(Property.HEIGHT);
-                overflowRenderer.deleteOwnProperty(Property.MAX_HEIGHT);
-
+                if (hasProperty(Property.HEIGHT)) {
+                    overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                }
             }
             applyVerticalAlignment();
         }

@@ -76,6 +76,7 @@ public class ListRenderer extends BlockRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
+        overrideHeightProperties();
         if (!hasOwnProperty(Property.LIST_SYMBOLS_INITIALIZED)) {
             List<IRenderer> symbolRenderers = new ArrayList<>();
             int listItemNum = (int) this.<Integer>getProperty(Property.LIST_START, 1);

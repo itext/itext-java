@@ -143,6 +143,7 @@ public class TableRenderer extends AbstractRenderer {
      */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
+        overrideHeightProperties();
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = area.getBBox().clone();
         if (!((Table) modelElement).isComplete()) {
@@ -751,8 +752,9 @@ public class TableRenderer extends AbstractRenderer {
                         .setY(layoutContext.getArea().getBBox().getBottom());
                 overflowRenderer = createOverflowRenderer(new Table.RowRange(((Table) modelElement).getNumberOfRows(), ((Table) modelElement).getNumberOfRows()));
                 overflowRenderer.setProperty(Property.MIN_HEIGHT, (float) blockMinHeight - occupiedArea.getBBox().getHeight());
-                overflowRenderer.deleteOwnProperty(Property.HEIGHT);
-                overflowRenderer.deleteOwnProperty(Property.MAX_HEIGHT);
+                if (hasProperty(Property.HEIGHT)) {
+                    overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                }
             }
             if (0 != childRenderers.size()) {
                 CellRenderer[] currentRow = rows.get(row - 1);
