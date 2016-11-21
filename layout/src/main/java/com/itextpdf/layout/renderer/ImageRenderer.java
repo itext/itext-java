@@ -78,6 +78,8 @@ public class ImageRenderer extends AbstractRenderer {
     private float imageItselfScaledWidth;
     private float imageItselfScaledHeight;
     private Rectangle initialOccupiedAreaBBox;
+    private float rotatedDeltaX;
+    private float rotatedDeltaY;
 
     float[] matrix = new float[6];
 
@@ -203,6 +205,10 @@ public class ImageRenderer extends AbstractRenderer {
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         applyMargins(occupiedArea.getBBox(), true);
 
+        if (angle != 0) {
+            applyRotationLayout((float) angle);
+        }
+
         return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null,
                 isPlacingForced ? this : null);
     }
@@ -226,6 +232,8 @@ public class ImageRenderer extends AbstractRenderer {
 
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
+            fixedXPosition += rotatedDeltaX;
+            fixedYPosition -= rotatedDeltaY;
             drawContext.getCanvas().saveState();
             applyConcatMatrix(drawContext, angle);
         }
@@ -389,7 +397,6 @@ public class ImageRenderer extends AbstractRenderer {
     }
     private void applyConcatMatrix(DrawContext drawContext, Float angle) {
         AffineTransform rotationTransform = AffineTransform.getRotateInstance((float)angle);
-
         Rectangle rect = getBorderAreaBBox();
 
         List<Point> rotatedPoints = transformPoints(rectangleToPointsList(rect), rotationTransform);
@@ -400,5 +407,44 @@ public class ImageRenderer extends AbstractRenderer {
         rotationTransform.getMatrix(matrix);
 
         drawContext.getCanvas().concatMatrix(matrix[0], matrix[1], matrix[2], matrix[3], shift[0], shift[1]);
+    }
+
+    private void applyRotationLayout(float angle) {
+        Border[] borders = getBorders();
+        Rectangle rect = getBorderAreaBBox();
+
+        float leftBorderWidth = borders[3] == null ? 0 : borders[3].getWidth();
+        float rightBorderWidth = borders[1] == null ? 0 : borders[1].getWidth();
+        float topBorderWidth = borders[0] == null ? 0 : borders[0].getWidth();
+        if (leftBorderWidth != 0) {
+            float gip = (float) Math.sqrt(Math.pow(topBorderWidth, 2) + Math.pow(leftBorderWidth, 2));
+            double atan = Math.atan(topBorderWidth / leftBorderWidth);
+            if (angle < 0) {
+                atan = -atan;
+            }
+            rotatedDeltaX = Math.abs((float)(gip * Math.cos(angle - atan) - leftBorderWidth));
+        } else {
+            rotatedDeltaX = 0;
+        }
+
+        rect.moveRight(rotatedDeltaX);
+        occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() + rotatedDeltaX);
+
+        if (rightBorderWidth != 0) {
+            float gip = (float) Math.sqrt(Math.pow(topBorderWidth, 2) + Math.pow(leftBorderWidth, 2));
+            double atan = Math.atan(rightBorderWidth / topBorderWidth);
+            if (angle < 0) {
+                atan = -atan;
+            }
+            rotatedDeltaY = Math.abs((float)(gip * Math.cos(angle - atan)  - topBorderWidth));
+        } else {
+            rotatedDeltaY = 0;
+        }
+
+        rect.moveDown(rotatedDeltaY);
+        if (angle < 0) {
+            rotatedDeltaY += rightBorderWidth;
+        }
+        occupiedArea.getBBox().increaseHeight(rotatedDeltaY);
     }
 }
