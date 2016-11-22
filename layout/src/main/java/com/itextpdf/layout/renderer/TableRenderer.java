@@ -799,7 +799,7 @@ public class TableRenderer extends AbstractRenderer {
         }
         adjustFooterAndFixOccupiedArea(layoutBox);
 
-        if (0 == childRenderers.size() && 0 == heights.get(0)) {
+        if (0 == childRenderers.size() && heights.size() > 0 && 0 == heights.get(0)) {
             heights.clear();
         }
 
