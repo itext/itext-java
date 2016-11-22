@@ -264,8 +264,4 @@ public final class StreamUtil {
         }
     }
 
-    public static Reader wrapInBufferedReader(Reader inputStreamReader) {
-        return new BufferedReader(inputStreamReader);
-    }
-
 }
