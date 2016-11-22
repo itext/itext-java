@@ -62,23 +62,48 @@ public class GlyphLine implements Serializable {
         this.glyphs = new ArrayList<>();
     }
 
+    /**
+     * Create a new line of Glyphs.
+     *
+     * @param glyphs list containing the glyphs
+     */
     public GlyphLine(List<Glyph> glyphs) {
         this.glyphs = glyphs;
         this.start = 0;
         this.end = glyphs.size();
     }
 
+    /**
+     * Create a new line of Glyphs from a slice of a List of Glyphs.
+     *
+     * @param glyphs list of Glyphs to slice
+     * @param start starting index of the slice
+     * @param end terminating index of the slice
+     */
     public GlyphLine(List<Glyph> glyphs, int start, int end) {
         this.glyphs = glyphs;
         this.start = start;
         this.end = end;
     }
 
+    /**
+     * Create a new line of Glyphs from a slice of a List of Glyphs, and add the actual text.
+     *
+     * @param glyphs list of Glyphs to slice
+     * @param actualText corresponding list containing the actual text the glyphs represent
+     * @param start starting index of the slice
+     * @param end terminating index of the slice
+     */
     protected GlyphLine(List<Glyph> glyphs, List<ActualText> actualText, int start, int end) {
         this(glyphs, start, end);
         this.actualText = actualText;
     }
 
+    /**
+     * Copy a line of Glyphs.
+     *
+     * @param other line of Glyphs to copy
+     */
     public GlyphLine(GlyphLine other) {
         this.glyphs = other.glyphs;
         this.actualText = other.actualText;
@@ -87,6 +112,12 @@ public class GlyphLine implements Serializable {
         this.idx = other.idx;
     }
 
+    /**
+     * Copy a slice of a line of Glyphs
+     * @param other line of Glyphs to copy
+     * @param start starting index of the slice
+     * @param end terminating index of the slice
+     */
     public GlyphLine(GlyphLine other, int start, int end) {
         this.glyphs = other.glyphs.subList(start, end);
         if (other.actualText != null) {
@@ -97,6 +128,12 @@ public class GlyphLine implements Serializable {
         this.idx = other.idx - start;
     }
 
+    /**
+     * Get the unicode string representation of the GlyphLine slice.
+     * @param start starting index of the slice
+     * @param end terminating index of the slice
+     * @return String containing the unicode representation of the slice.
+     */
     public String toUnicodeString(int start, int end) {
         ActualTextIterator iter = new ActualTextIterator(this, start, end);
         StringBuilder str = new StringBuilder();
@@ -113,6 +150,13 @@ public class GlyphLine implements Serializable {
         return str.toString();
     }
 
+    /**
+     * Copy a slice of this Glyphline.
+     *
+     * @param left leftmost index of the slice
+     * @param right rightmost index of the slice
+     * @return new Glyphline containing the copied slice
+     */
     public GlyphLine copy(int left, int right) {
         GlyphLine glyphLine = new GlyphLine();
         glyphLine.start = 0;

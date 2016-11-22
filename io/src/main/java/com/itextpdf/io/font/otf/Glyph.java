@@ -67,7 +67,7 @@ public class Glyph implements Serializable {
     private int unicode;
     // The Unicode text represented by this Glyph
     private char[] chars;
-    // ture, if this Glyph is Mark
+    // true, if this Glyph is Mark
     private final boolean isMark;
 
     // placement offset
@@ -80,23 +80,61 @@ public class Glyph implements Serializable {
     // Index delta to base glyph. If after a glyph there are several anchored glyphs we should know we to find base glyph.
     short anchorDelta = 0;
 
+    /**
+     * Construct a non-mark Glyph, retrieving characters from unicode.
+     *
+     * @param code code representation of the glyph in the font file
+     * @param width normalized width of the glyph
+     * @param unicode utf-32 representation of glyph if appears. Correct value is > -1
+     */
     public Glyph(int code, int width, int unicode) {
         this(code, width, unicode, null, false);
     }
 
+    /**
+     * Construct a non-mark Glyph, using the codepoint of the characters as unicode point.
+     *
+     * @param code code representation of the glyph in the font file
+     * @param width normalized width of the glyph
+     * @param chars The Unicode text represented by this Glyph.
+     */
     public Glyph(int code, int width, char[] chars) {
         this(code, width, codePoint(chars), chars, false);
     }
 
+    /**
+     * Construct a non-mark Glyph, retrieving characters from unicode.
+     *
+     * @param code code representation of the glyph in the font file
+     * @param width normalized width of the glyph
+     * @param unicode utf-32 representation of glyph if appears. Correct value is > -1
+     * @param bbox The normalized bounding box of this Glyph.
+     */
     public Glyph(int code, int width, int unicode, int[] bbox) {
         this(code, width, unicode, null, false);
         this.bbox = bbox;
     }
 
+    /**
+     * Construct a non-mark Glyph object with id -1 and characters retrieved from unicode.
+     *
+     * @param width normalized width of the glyph
+     * @param unicode utf-32 representation of glyph if appears. Correct value is > -1
+     */
     public Glyph(int width, int unicode) {
         this(-1, width, unicode, getChars(unicode), false);
     }
 
+    /**
+     * Construct a glyph object form the passed arguments.
+     *
+     * @param code code representation of the glyph in the font file
+     * @param width normalized width of the glyph
+     * @param unicode utf-32 representation of glyph if appears. Correct value is > -1
+     * @param chars The Unicode text represented by this Glyph.
+     *              if null is passed, the unicode value is used to retrieve the chars.
+     * @param IsMark True if the glyph is a Mark
+     */
     public Glyph(int code, int width, int unicode, char[] chars, boolean IsMark) {
         this.code = code;
         this.width = width;
@@ -105,6 +143,11 @@ public class Glyph implements Serializable {
         this.chars = chars != null ? chars : getChars(unicode);
     }
 
+    /**
+     * Copy a Glyph.
+     *
+     * @param glyph Glyph to copy
+     */
     public Glyph(Glyph glyph) {
         this.code = glyph.code;
         this.width = glyph.width;
@@ -120,6 +163,16 @@ public class Glyph implements Serializable {
         this.anchorDelta = glyph.anchorDelta;
     }
 
+    /**
+     * Copy a Glyph and assign new placement and advance offsets and a new index delta to base glyph
+     *
+     * @param glyph Glyph to copy
+     * @param xPlacement x - placement offset
+     * @param yPlacement y - placement offset
+     * @param xAdvance x - advance offset
+     * @param yAdvance y - advance offset
+     * @param anchorDelta Index delta to base glyph. If after a glyph there are several anchored glyphs we should know we to find base glyph.
+     */
     public Glyph(Glyph glyph, int xPlacement, int yPlacement, int xAdvance, int yAdvance, int anchorDelta) {
         this(glyph);
         this.xPlacement = (short) xPlacement;
@@ -129,6 +182,12 @@ public class Glyph implements Serializable {
         this.anchorDelta = (short) anchorDelta;
     }
 
+    /**
+     * Copy a glyph and assign the copied glyph a new unicode point and characters
+     *
+     * @param glyph glyph to copy
+     * @param unicode new unicode point
+     */
     public Glyph(Glyph glyph, int unicode) {
         this(glyph.code, glyph.width, unicode, getChars(unicode), glyph.isMark());
     }
@@ -231,6 +290,12 @@ public class Glyph implements Serializable {
         return result;
     }
 
+    /**
+     * Two Glyphs are equal if their unicode characters, code and normalized width are equal.
+     *
+     * @param obj
+     * @return True if this equals obj cast to Glyph, false otherwise.
+     */
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
