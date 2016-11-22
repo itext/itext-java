@@ -1,6 +1,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceCmyk;
 import com.itextpdf.kernel.color.DeviceGray;
@@ -9,24 +10,8 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.border.Border;
-import com.itextpdf.layout.border.DashedBorder;
-import com.itextpdf.layout.border.DottedBorder;
-import com.itextpdf.layout.border.DoubleBorder;
-import com.itextpdf.layout.border.GrooveBorder;
-import com.itextpdf.layout.border.InsetBorder;
-import com.itextpdf.layout.border.OutsetBorder;
-import com.itextpdf.layout.border.RidgeBorder;
-import com.itextpdf.layout.border.RoundDotsBorder;
-import com.itextpdf.layout.border.SolidBorder;
-import com.itextpdf.layout.element.AreaBreak;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.List;
-import com.itextpdf.layout.element.ListItem;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.renderer.TabRenderer;
-import com.itextpdf.layout.renderer.TableRenderer;
+import com.itextpdf.layout.border.*;
+import com.itextpdf.layout.element.*;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -1052,6 +1037,30 @@ public class BorderTest extends ExtendedITextTest {
         cell.add("TESCHTINK");
         mainTable.addCell(cell);
         doc.add(mainTable);
+        doc.close();
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test@Ignore("DEVSIX-944")
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+    })
+    public void rotatedBordersTest() throws IOException, InterruptedException {
+        fileName = "rotatedBordersTest.pdf";
+        Document doc = createDocument();
+        doc.setMargins(0, 0, 0, 0);
+
+        Paragraph p = new Paragraph("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
+                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
+                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n");
+        p.setBorder(new SolidBorder(50));
+        p.setRotationAngle(Math.PI / 6);
+        doc.add(p);
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        img.setBorder(new SolidBorder(50));
+        img.setRotationAngle(Math.PI / 6);
+        doc.add(img);
         doc.close();
 
         closeDocumentAndCompareOutputs(doc);
