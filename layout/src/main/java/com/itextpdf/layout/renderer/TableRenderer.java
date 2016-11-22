@@ -799,8 +799,8 @@ public class TableRenderer extends AbstractRenderer {
         }
         adjustFooterAndFixOccupiedArea(layoutBox);
 
-        if (0 == childRenderers.size() && (null != headerRenderer || null != footerRenderer)) { // TODO
-            occupiedArea.getBBox().setHeight(0);
+        if (0 == childRenderers.size() && 0 == heights.get(0)) {
+            heights.clear();
         }
 
         if (null == overflowRenderer) {
