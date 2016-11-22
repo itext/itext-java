@@ -43,6 +43,8 @@
  */
 package com.itextpdf.layout.layout;
 
+import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
+
 /**
  * Represents the context for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
  */
@@ -53,8 +55,15 @@ public class LayoutContext {
      */
     protected LayoutArea area;
 
+    protected MarginsCollapseInfo marginsCollapseInfo;
+
     public LayoutContext(LayoutArea area) {
         this.area = area;
+    }
+
+    public LayoutContext(LayoutArea area, MarginsCollapseInfo marginsCollapseInfo) {
+        this.area = area;
+        this.marginsCollapseInfo = marginsCollapseInfo;
     }
 
     /**
@@ -64,6 +73,10 @@ public class LayoutContext {
      */
     public LayoutArea getArea() {
         return area;
+    }
+
+    public MarginsCollapseInfo getMarginsCollapseInfo() {
+        return marginsCollapseInfo;
     }
 
     /**

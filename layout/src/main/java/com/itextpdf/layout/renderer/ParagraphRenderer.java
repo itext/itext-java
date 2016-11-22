@@ -51,6 +51,8 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.LineLayoutResult;
+import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
+import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
@@ -100,6 +102,11 @@ public class ParagraphRenderer extends BlockRenderer {
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
+        MarginsCollapseHandler marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
+        boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
+        if (marginsCollapsingEnabled) {
+            marginsCollapseHandler.startMarginsCollapse(parentBBox);
+        }
         float[] margins = getMargins();
         applyMargins(parentBBox, margins, false);
         Border[] borders = getBorders();
@@ -148,6 +155,10 @@ public class ParagraphRenderer extends BlockRenderer {
 
         float lastLineHeight = 0;
 
+        if (marginsCollapsingEnabled && childRenderers.size() > 0) {
+            // all Paragraph kids are inline elements, therefore we don't need to process them all; it would be sufficient to process only one kid
+            marginsCollapseHandler.startChildMarginsHandling(0, layoutBox);
+        }
         while (currentRenderer != null) {
             currentRenderer.setProperty(Property.TAB_DEFAULT, this.getPropertyAsFloat(Property.TAB_DEFAULT));
             currentRenderer.setProperty(Property.TAB_STOPS, this.<Object>getProperty(Property.TAB_STOPS));
@@ -207,8 +218,16 @@ public class ParagraphRenderer extends BlockRenderer {
                     if (keepTogether) {
                         return new LayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
                     } else {
+                        if (marginsCollapsingEnabled) {
+                            if (anythingPlaced) {
+                                // all Paragraph kids are inline elements, therefore we don't need to process them all; it would be sufficient to process only one kid
+                                marginsCollapseHandler.endChildMarginsHandling(0, layoutBox);
+                            }
+                            marginsCollapseHandler.endMarginsCollapse();
+                        }
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
+                        margins = getMargins();
                         applyMargins(occupiedArea.getBBox(), margins, true);
 
                         ParagraphRenderer[] split = split();
@@ -287,6 +306,10 @@ public class ParagraphRenderer extends BlockRenderer {
             occupiedArea.getBBox().moveDown(moveDown);
             occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
         }
+        if (marginsCollapsingEnabled && childRenderers.size() > 0) {
+            // all Paragraph kids are inline elements, therefore we don't need to process them all; it would be sufficient to process only one kid
+            marginsCollapseHandler.endChildMarginsHandling(0, layoutBox);
+        }
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         IRenderer overflowRenderer = null;
         Float blockMinHeight = retrieveMinHeight();
@@ -310,7 +333,11 @@ public class ParagraphRenderer extends BlockRenderer {
             correctPositionedLayout(layoutBox);
         }
 
+        if (marginsCollapsingEnabled) {
+            marginsCollapseHandler.endMarginsCollapse();
+        }
         applyBorderBox(occupiedArea.getBBox(), borders, true);
+        margins = getMargins();
         applyMargins(occupiedArea.getBBox(), margins, true);
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());

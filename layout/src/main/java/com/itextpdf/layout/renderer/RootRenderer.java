@@ -48,6 +48,8 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
+import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.property.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,12 +65,18 @@ public abstract class RootRenderer extends AbstractRenderer {
     protected int currentPageNumber;
     private IRenderer keepWithNextHangingRenderer;
     private LayoutResult keepWithNextHangingRendererLayoutResult;
+    private MarginsCollapseHandler marginsCollapseHandler = new MarginsCollapseHandler(this, null);
 
     public void addChild(IRenderer renderer) {
         super.addChild(renderer);
 
+
+        boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
         if (currentArea == null) {
             updateCurrentArea(null);
+            if (marginsCollapsingEnabled) {
+                marginsCollapseHandler = new MarginsCollapseHandler(this, null);
+            }
         }
 
         // Static layout
@@ -82,7 +90,11 @@ public abstract class RootRenderer extends AbstractRenderer {
 
             LayoutArea storedArea = null;
             LayoutArea nextStoredArea = null;
-            while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(new LayoutContext(currentArea.clone()))).getStatus() != LayoutResult.FULL) {
+            MarginsCollapseInfo childMarginsInfo = null;
+            if (marginsCollapsingEnabled && currentArea != null && renderer != null) {
+                childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
+            }
+            while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(new LayoutContext(currentArea.clone(), childMarginsInfo))).getStatus() != LayoutResult.FULL) {
                 if (result.getStatus() == LayoutResult.PARTIAL) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
                         ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
@@ -132,20 +144,28 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
                                 logger.warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
                             }
-                            renderer = result.getOverflowRenderer();
-                            continue;
-                        }
-                        storedArea = currentArea;
-                        if (nextStoredArea != null) {
-                            currentArea = nextStoredArea;
-                            currentPageNumber = nextStoredArea.getPageNumber();
-                            nextStoredArea = null;
                         } else {
-                            updateCurrentArea(result);
+                            storedArea = currentArea;
+                            if (nextStoredArea != null) {
+                                currentArea = nextStoredArea;
+                                currentPageNumber = nextStoredArea.getPageNumber();
+                                nextStoredArea = null;
+                            } else {
+                                updateCurrentArea(result);
+                            }
                         }
                     }
                 }
                 renderer = result.getOverflowRenderer();
+
+                if (marginsCollapsingEnabled) {
+                    marginsCollapseHandler.endChildMarginsHandling();
+                    marginsCollapseHandler = new MarginsCollapseHandler(this, null);
+                    childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
+                }
+            }
+            if (marginsCollapsingEnabled) {
+                marginsCollapseHandler.endChildMarginsHandling();
             }
 
             if (null != result && null != result.getSplitRenderer()) {

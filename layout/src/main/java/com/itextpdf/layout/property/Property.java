@@ -71,6 +71,7 @@ public final class Property {
     public static final int BORDER_TOP = 13;
     public static final int BOTTOM = 14;
     public static final int CHARACTER_SPACING = 15;
+    public static final int COLLAPSING_MARGINS = 89;
     public static final int COLSPAN = 16;
     public static final int DESTINATION = 17;
     public static final int FILL_AVAILABLE_AREA = 86;
@@ -161,7 +162,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 83;
+    private static final int MAX_INHERITED_PROPERTY_ID = 89;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -170,6 +171,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.BASE_DIRECTION] = true;
         INHERITED_PROPERTIES[Property.BOLD_SIMULATION] = true;
         INHERITED_PROPERTIES[Property.CHARACTER_SPACING] = true;
+        INHERITED_PROPERTIES[Property.COLLAPSING_MARGINS] = true;
         INHERITED_PROPERTIES[Property.FIRST_LINE_INDENT] = true;
         INHERITED_PROPERTIES[Property.FONT] = true;
         INHERITED_PROPERTIES[Property.FONT_COLOR] = true;
