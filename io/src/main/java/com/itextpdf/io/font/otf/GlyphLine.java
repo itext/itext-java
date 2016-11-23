@@ -155,7 +155,7 @@ public class GlyphLine implements Serializable {
      *
      * @param left leftmost index of the slice
      * @param right rightmost index of the slice
-     * @return new Glyphline containing the copied slice
+     * @return new GlyphLine containing the copied slice
      */
     public GlyphLine copy(int left, int right) {
         GlyphLine glyphLine = new GlyphLine();

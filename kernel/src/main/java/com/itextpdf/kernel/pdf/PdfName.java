@@ -872,6 +872,10 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
         return new PdfName(name, true);
     }
 
+    /**
+     * Create a PdfName from the passed string
+     * @param value
+     */
     public PdfName(String value) {
         super();
         assert value != null;
@@ -883,6 +887,10 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
         this.value = value;
     }
 
+    /**
+     * Create a PdfName from the passed bytes
+     * @param content
+     */
     public PdfName(byte[] content) {
         super(content);
     }
@@ -902,6 +910,13 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
         return value;
     }
 
+    /**
+     * Compare this PdfName to o.
+     *
+     * @param o PdfName to compare this object to/
+     * @return Comparison between both values or, if one of the values is null, Comparison between contents. If one of the values and one of the contents are equal to null, generate values and compare those.
+
+     */
     @Override
     public int compareTo(PdfName o) {
         if (value != null && o.value != null) {

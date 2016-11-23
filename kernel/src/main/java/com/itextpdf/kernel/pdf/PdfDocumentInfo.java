@@ -51,6 +51,12 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -21957940280527123L;
 
+    /**
+     * Create a PdfDocumentInfo based on the passed PdfDictionary and linked to the passed PdfDocument.
+     *
+     * @param pdfObject PdfDictionary containing PdfDocumentInfo
+     * @param pdfDocument PdfDocument the PdfDocumentInfo corresponds to.
+     */
 	public PdfDocumentInfo(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject == null ? new PdfDictionary() : pdfObject);
         if (pdfDocument.getWriter() != null) {
@@ -59,10 +65,16 @@ public class PdfDocumentInfo extends PdfObjectWrapper<PdfDictionary> {
         setForbidRelease();
     }
 
+    //Samuel: Wouldn't this raise a nullpointer exception?
     public PdfDocumentInfo(PdfDictionary pdfObject) {
         this(pdfObject, null);
     }
 
+    /**
+     * Create a default, empty PdfDocumentInfo and link it to the passed PdfDocument
+     *
+     * @param pdfDocument
+     */
     public PdfDocumentInfo(PdfDocument pdfDocument) {
         this(new PdfDictionary(), pdfDocument);
     }

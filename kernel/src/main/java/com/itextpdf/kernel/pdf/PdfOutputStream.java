@@ -83,10 +83,21 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
      */
     protected PdfEncryption crypto;
 
+    /**
+     * Create a pdfOutputSteam writing to the passed OutputStream.
+     *
+     * @param outputStream Outputstream to write to.
+     */
     public PdfOutputStream(java.io.OutputStream outputStream) {
         super(outputStream);
     }
 
+    /**
+     * Write a PdfObject to the outputstream.
+     *
+     * @param pdfObject PdfObject to write
+     * @return this PdfOutPutStream
+     */
     @SuppressWarnings("ConstantConditions")
     public PdfOutputStream write(PdfObject pdfObject) {
         if (pdfObject.checkState(PdfObject.MUST_BE_INDIRECT) && document != null) {
