@@ -57,6 +57,10 @@ public class PdfBoolean extends PdfPrimitiveObject {
 
     private boolean value;
 
+    /**
+     * Store a boolean value
+     * @param value value to store
+     */
     public PdfBoolean(boolean value) {
         this(value, false);
     }
