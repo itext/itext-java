@@ -171,4 +171,8 @@ public final class FileUtil {
     public static void createDirectories(String outPath) {
         new File(outPath).mkdirs();
     }
+
+    public static String getParentDirectory(String file) {
+        return new File(file).getParent();
+    }
 }
