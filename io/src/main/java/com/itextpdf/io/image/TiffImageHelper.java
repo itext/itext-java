@@ -110,7 +110,10 @@ class TiffImageHelper {
             TIFFDirectory dir = new TIFFDirectory(s, page - 1);
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_TILEWIDTH))
                 throw new IOException(IOException.TilesAreNotSupported);
-            int compression = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_COMPRESSION);
+            int compression = TIFFConstants.COMPRESSION_NONE;
+            if (dir.isTagPresent(TIFFConstants.TIFFTAG_COMPRESSION)) {
+                compression = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_COMPRESSION);
+            }
             switch (compression) {
                 case TIFFConstants.COMPRESSION_CCITTRLEW:
                 case TIFFConstants.COMPRESSION_CCITTRLE:
@@ -285,7 +288,10 @@ class TiffImageHelper {
 
     private static void processTiffImageColor(TIFFDirectory dir, RandomAccessFileOrArray s, TiffParameters tiff) {
         try {
-            int compression = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_COMPRESSION);
+            int compression = TIFFConstants.COMPRESSION_NONE;
+            if (dir.isTagPresent(TIFFConstants.TIFFTAG_COMPRESSION)) {
+                compression = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_COMPRESSION);
+            }
             int predictor = 1;
             TIFFLZWDecoder lzwDecoder = null;
             switch (compression) {
