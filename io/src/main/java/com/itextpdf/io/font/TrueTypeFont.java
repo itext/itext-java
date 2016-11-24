@@ -310,17 +310,17 @@ public class TrueTypeFont extends FontProgram {
 
         Map<Integer, int[]> cmap = getActiveCmap();
         int[] glyphWidths = fontParser.getGlyphWidthsByIndex();
+        int lastWidthIndex = glyphWidths.length - 1;
         unicodeToGlyph = new LinkedHashMap<>(cmap.size());
         codeToGlyph = new LinkedHashMap<>(glyphWidths.length);
         avgWidth = 0;
         for (int charCode : cmap.keySet()) {
             int index = cmap.get(charCode)[0];
-            if (index >= glyphWidths.length) {
-                Logger LOGGER = LoggerFactory.getLogger(TrueTypeFont.class);
-                LOGGER.warn(MessageFormat.format(LogMessageConstant.FONT_HAS_INVALID_GLYPH, getFontNames().getFontName(), index));
-                continue;
+            int widthIndex = index;
+            if (widthIndex >= glyphWidths.length) {
+                widthIndex = lastWidthIndex;
             }
-            Glyph glyph = new Glyph(index, glyphWidths[index], charCode, bBoxes != null ? bBoxes[index] : null);
+            Glyph glyph = new Glyph(index, glyphWidths[widthIndex], charCode, bBoxes != null ? bBoxes[index] : null);
             unicodeToGlyph.put(charCode, glyph);
             // This is done on purpose to keep the mapping to glyphs with smaller unicode values, in contrast with
             // larger values which often represent different forms of other characters.
