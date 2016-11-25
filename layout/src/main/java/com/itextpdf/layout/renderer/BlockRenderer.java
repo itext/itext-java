@@ -130,7 +130,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             LayoutResult result;
             childRenderer.setParent(this);
             while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox)))).getStatus() != LayoutResult.FULL) {
-                if (result.getOccupiedArea() != null) {
+                if (result.getOccupiedArea() != null && result.getStatus() != LayoutResult.NOTHING) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
                     layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
                 }
@@ -246,7 +246,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                             return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
                         } else {
-                            return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, LayoutResult.NOTHING == layoutResult ? result.getCauseOfNothing() : null);
+                            if (layoutResult != LayoutResult.NOTHING) {
+                                return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, null);
+                            } else {
+                                return new LayoutResult(layoutResult, null, splitRenderer, overflowRenderer, result.getCauseOfNothing());
+                            }
                         }
                     }
                 }
@@ -299,7 +303,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
+                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
                 }
             }
         }

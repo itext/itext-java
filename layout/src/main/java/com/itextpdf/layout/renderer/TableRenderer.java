@@ -688,7 +688,7 @@ public class TableRenderer extends AbstractRenderer {
                 }
 
                 if (isKeepTogether() && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, null == firstCauseOfNothing ? this : firstCauseOfNothing);
+                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, null == firstCauseOfNothing ? this : firstCauseOfNothing);
                 } else {
                     int status = (childRenderers.isEmpty() && (tableModel.isComplete() || footerRenderer == null))
                             ? LayoutResult.NOTHING
@@ -700,7 +700,11 @@ public class TableRenderer extends AbstractRenderer {
                         if (hasProperty(Property.HEIGHT)) {
                             splitResult[1].setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
                         }
-                        return new LayoutResult(status, occupiedArea, splitResult[0], splitResult[1], LayoutResult.NOTHING == status ? firstCauseOfNothing : null);
+                        if (status != LayoutResult.NOTHING) {
+                            return new LayoutResult(status, occupiedArea, splitResult[0], splitResult[1], null);
+                        } else {
+                            return new LayoutResult(status, null, splitResult[0], splitResult[1], firstCauseOfNothing);
+                        }
                     }
                 }
             } else {

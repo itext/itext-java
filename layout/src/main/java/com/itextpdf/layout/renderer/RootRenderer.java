@@ -153,17 +153,19 @@ public abstract class RootRenderer extends AbstractRenderer {
             }
 
             // Keep renderer until next element is added for future keep with next adjustments
-            if (renderer != null && Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.KEEP_WITH_NEXT))) {
-                if (Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
-                    Logger logger = LoggerFactory.getLogger(RootRenderer.class);
-                    logger.warn(LogMessageConstant.ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED);
+            if (renderer != null && result != null) {
+                if (Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.KEEP_WITH_NEXT))) {
+                    if (Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
+                        Logger logger = LoggerFactory.getLogger(RootRenderer.class);
+                        logger.warn(LogMessageConstant.ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED);
+                        updateCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
+                    } else {
+                        keepWithNextHangingRenderer = renderer;
+                        keepWithNextHangingRendererLayoutResult = result;
+                    }
+                } else if (result.getStatus() != LayoutResult.NOTHING) {
                     updateCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
-                } else {
-                    keepWithNextHangingRenderer = renderer;
-                    keepWithNextHangingRendererLayoutResult = result;
                 }
-            } else {
-                updateCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
             }
         } else if (positionedRenderers.size() > 0 && positionedRenderers.get(positionedRenderers.size() - 1) == renderer) {
             Integer positionedPageNumber = renderer.<Integer>getProperty(Property.PAGE_NUMBER);
@@ -244,9 +246,7 @@ public abstract class RootRenderer extends AbstractRenderer {
         if (currentArea != null) {
             currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
             currentArea.setEmptyArea(false);
-            if (renderer != null) {
-                processRenderer(renderer, resultRenderers);
-            }
+            processRenderer(renderer, resultRenderers);
         }
 
         if (!immediateFlush) {
