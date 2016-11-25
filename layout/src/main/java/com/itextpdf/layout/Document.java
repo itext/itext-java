@@ -48,7 +48,7 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.element.AreaBreak;
-import com.itextpdf.layout.element.BlockElement;
+import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.ILargeElement;
 import com.itextpdf.layout.renderer.DocumentRenderer;
@@ -134,7 +134,7 @@ public class Document extends RootElement<Document> {
     }
 
     @Override
-    public <T extends IElement> Document add(BlockElement<T> element) {
+    public Document add(IBlockElement element) {
         checkClosingStatus();
         super.add(element);
         if (element instanceof ILargeElement) {

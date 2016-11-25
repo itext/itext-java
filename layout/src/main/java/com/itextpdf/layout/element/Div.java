@@ -66,7 +66,7 @@ public class Div extends BlockElement<Div> {
      * @param element a {@link BlockElement}
      * @return this Element
      */
-    public <T extends IElement> Div add(BlockElement<T> element) {
+    public Div add(IBlockElement element) {
         childElements.add(element);
         return this;
     }

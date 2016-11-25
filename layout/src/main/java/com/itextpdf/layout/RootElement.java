@@ -50,6 +50,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.layout.element.BlockElement;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
@@ -101,7 +102,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      * @return this element
      * @see BlockElement
      */
-    public <T2 extends IElement> T add(BlockElement<T2> element) {
+    public T add(IBlockElement element) {
         childElements.add(element);
         ensureRootRendererNotNull().addChild(element.createRendererSubTree());
         return (T) (Object) this;

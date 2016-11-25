@@ -50,11 +50,12 @@ import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Cell} is one piece of data in an enclosing grid, the {@link Table}.
@@ -156,7 +157,7 @@ public class Cell extends BlockElement<Cell> {
      * @param element a {@link BlockElement}
      * @return this Element
      */
-    public <T extends IElement> Cell add(BlockElement<T> element) {
+    public Cell add(IBlockElement element) {
         childElements.add(element);
         return this;
     }

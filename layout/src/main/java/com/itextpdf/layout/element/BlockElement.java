@@ -55,7 +55,7 @@ import com.itextpdf.layout.property.VerticalAlignment;
  *
  * @param <T> the type of the implementation
  */
-public abstract class BlockElement<T extends IElement> extends AbstractElement<T> implements IAccessibleElement {
+public abstract class BlockElement<T extends IElement> extends AbstractElement<T> implements IAccessibleElement, IBlockElement {
 
     /**
      * Creates a BlockElement.
