@@ -224,6 +224,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             iterateFields(field.getKids(), fields);
         }
 
+        //There's an issue described in DEVSIX-573. When you create multiple fields with different fonts those font may
+        // have same names (F1, F2, etc). So only first of them will be save in default resources.
         if (field.getFormType() != null && (field.getFormType().equals(PdfName.Tx) || field.getFormType().equals(PdfName.Ch))) {
             List<PdfDictionary> resources = getResources(field.getPdfObject());
             for (PdfDictionary resDict : resources) {
