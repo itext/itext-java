@@ -611,6 +611,8 @@ public class TableRenderer extends AbstractRenderer {
                             columnsWithCellToBeEnlarged[col] = true;
                             // for the future
                             splitResult[1].rows.get(0)[col].setBorders(getBorders()[0], 0);
+                        } else {
+                            splitResult[1].rows.get(0)[col].deleteOwnProperty(Property.BORDER_TOP);
                         }
                         for (int j = col; j < col + currentRow[col].getPropertyAsInteger(Property.COLSPAN); j++) {
                             horizontalBorders.get(row + (!hasContent && rowspans[col] > 1 ? 0 : 1)).set(j, getBorders()[2]);
