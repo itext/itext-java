@@ -673,7 +673,8 @@ public class TableRenderer extends AbstractRenderer {
                     occupiedArea.getBBox().<Rectangle>applyMargins(topTableBorderWidth / 2, 0, 0, 0, false);
                     layoutBox.<Rectangle>applyMargins(topTableBorderWidth / 2, 0, 0, 0, true);
                 }
-                if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.EXTEND_LAST_ROW))) {
+                if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))
+                        || Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))) {
                     extendLastRow(currentRow, layoutBox);
                 }
                 adjustFooterAndFixOccupiedArea(layoutBox);
@@ -793,9 +794,7 @@ public class TableRenderer extends AbstractRenderer {
         occupiedArea.getBBox().moveDown(bottomTableBorderWidth / 2).increaseHeight((topTableBorderWidth + bottomTableBorderWidth) / 2);
         layoutBox.decreaseHeight(bottomTableBorderWidth / 2);
 
-        if ((Boolean.TRUE.equals(getPropertyAsBoolean(Property.EXTEND_FINAL_ROW)) ||
-                (Boolean.TRUE.equals(getPropertyAsBoolean(Property.EXTEND_LAST_ROW)) && Boolean.FALSE.equals(hasProperty(Property.EXTEND_FINAL_ROW))))
-                && 0 != rows.size()) {
+        if ((Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) && 0 != rows.size()) {
             extendLastRow(rows.get(rows.size() - 1), layoutBox);
         }
 

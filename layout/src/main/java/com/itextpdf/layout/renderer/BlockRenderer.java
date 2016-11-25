@@ -130,9 +130,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
             LayoutResult result;
             childRenderer.setParent(this);
             while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox)))).getStatus() != LayoutResult.FULL) {
-                if (result.getOccupiedArea() != null && result.getStatus() != LayoutResult.NOTHING) {
+                if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))
+                        || Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
+                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
+                } else if (result.getOccupiedArea() != null && result.getStatus() != LayoutResult.NOTHING) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
-                    layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
                 }
 
                 if (childRenderer.getOccupiedArea() != null) {
@@ -158,8 +160,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     break;
                 } else {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
-
-                        // layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
 
                         if (currentAreaPos + 1 == areas.size()) {
                             AbstractRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
@@ -270,6 +270,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (null == causeOfNothing && null != result.getCauseOfNothing()) {
                 causeOfNothing = result.getCauseOfNothing();
             }
+        }
+
+        if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
+            occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
         }
 
         applyPaddings(occupiedArea.getBBox(), paddings, true);

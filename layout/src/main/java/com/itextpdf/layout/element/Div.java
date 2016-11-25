@@ -45,6 +45,7 @@ package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.DivRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 
@@ -101,6 +102,16 @@ public class Div extends BlockElement<Div> {
             tagProperties = new AccessibilityProperties();
         }
         return tagProperties;
+    }
+
+    public Div setFillAvailableArea(boolean fillArea) {
+        setProperty(Property.FILL_AVAILABLE_AREA, fillArea);
+        return this;
+    }
+
+    public Div setFillAvailableAreaOnSplit(boolean fillAreaOnSplit) {
+        setProperty(Property.FILL_AVAILABLE_AREA_ON_SPLIT, fillAreaOnSplit);
+        return this;
     }
 
     @Override

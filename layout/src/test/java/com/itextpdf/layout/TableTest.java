@@ -899,10 +899,11 @@ public class TableTest extends ExtendedITextTest {
             table.addCell(image);
         }
         doc.add(new Paragraph("Extend the last row on each page"));
-        table.setExtendLastRow(true);
+        table.setExtendBottomRow(true);
         doc.add(table);
         doc.add(new Paragraph("Extend all last rows on each page except final one"));
-        table.setExtendFinalRow(false);
+        table.setExtendBottomRow(false);
+        table.setExtendBottomRowOnSplit(true);
         doc.add(table);
 
         doc.close();

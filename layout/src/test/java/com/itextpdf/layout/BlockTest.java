@@ -2,24 +2,27 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.border.DoubleBorder;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class BlockTest extends ExtendedITextTest {
@@ -29,7 +32,7 @@ public class BlockTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -170,5 +173,102 @@ public class BlockTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void blockFillAvailableArea01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "blockFillAvailableArea01.pdf";
+        String cmpFileName = sourceFolder + "cmp_blockFillAvailableArea01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        String textByron =
+                "When a man hath no freedom to fight for at home,\n" +
+                        "    Let him combat for that of his neighbours;\n" +
+                        "Let him think of the glories of Greece and of Rome,\n" +
+                        "    And get knocked on the head for his labours.\n" +
+                        "\n" +
+                        "To do good to Mankind is the chivalrous plan,\n" +
+                        "    And is always as nobly requited;\n" +
+                        "Then battle for Freedom wherever you can,\n" +
+                        "    And, if not shot or hanged, you'll get knighted." +
+                        "To do good to Mankind is the chivalrous plan,\n" +
+                        "    And is always as nobly requited;\n" +
+                        "Then battle for Freedom wherever you can,\n" +
+                        "    And, if not shot or hanged, you'll get knighted." +
+                        "To do good to Mankind is the chivalrous plan,\n" +
+                        "    And is always as nobly requited;\n" +
+                        "Then battle for Freedom wherever you can,\n" +
+                        "    And, if not shot or hanged, you'll get knighted.";
+        textByron = textByron + textByron;
+
+        Document doc = new Document(pdfDocument);
+
+        DeviceRgb blue = new DeviceRgb(80, 114, 153);
+        Div text = new Div().add(new Paragraph(textByron));
+        Div image = new Div().add(new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg")).setHeight(500).setAutoScaleWidth(true));
+
+
+        doc.add(new Div().add(new Paragraph("Fill on split").setFontSize(30).setFontColor(blue).setTextAlignment(TextAlignment.CENTER))
+                .setVerticalAlignment(VerticalAlignment.MIDDLE).setFillAvailableArea(true))
+                .add(new AreaBreak());
+
+        doc.add(new Paragraph("text").setFontSize(18).setFontColor(blue));
+        Div div = createDiv(text, textByron, blue, true,
+                false, true);
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("image").setFontSize(18).setFontColor(blue));
+        div = createDiv(image, textByron, blue, false,
+                false, true);
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+
+        doc.add(new Div().add(new Paragraph("Fill always").setFontSize(30).setFontColor(blue).setTextAlignment(TextAlignment.CENTER))
+                .setVerticalAlignment(VerticalAlignment.MIDDLE).setFillAvailableArea(true))
+                .add(new AreaBreak());
+
+        doc.add(new Paragraph("text").setFontSize(18).setFontColor(blue));
+        div = createDiv(text, textByron, blue, true,
+                true, false);
+        doc.add(div);
+
+        doc.add(new Paragraph("image").setFontSize(18).setFontColor(blue));
+        div = createDiv(image, textByron, blue, false,
+                true, false);
+        doc.add(div);
+
+
+        doc.add(new Div().add(new Paragraph("No fill").setFontSize(30).setFontColor(blue).setTextAlignment(TextAlignment.CENTER))
+                .setVerticalAlignment(VerticalAlignment.MIDDLE).setFillAvailableArea(true))
+                .add(new AreaBreak());
+
+        doc.add(new Paragraph("text").setFontSize(18).setFontColor(blue));
+        div = createDiv(text, textByron, blue, true,
+                false, false);
+        doc.add(div);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("image").setFontSize(18).setFontColor(blue));
+        div = createDiv(image, textByron, blue, false,
+                false, false);
+        doc.add(div);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    private Div createDiv(Div innerOverflowDiv, String text, DeviceRgb backgroundColor, boolean keepTogether, boolean fillAlways, boolean fillOnSplit) {
+        Div div = new Div().setBorder(new DoubleBorder(10)).setBackgroundColor(new DeviceRgb(216, 243, 255)).setFillAvailableAreaOnSplit(fillOnSplit).setFillAvailableArea(fillAlways);
+        div.add(new Paragraph(text));
+        div.add(innerOverflowDiv
+                .setKeepTogether(keepTogether));
+
+        if (backgroundColor != null) {
+            innerOverflowDiv.setBackgroundColor(backgroundColor);
+        }
+        return div;
     }
 }
