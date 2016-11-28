@@ -260,11 +260,19 @@ public class LineRenderer extends AbstractRenderer {
             }
 
             if (children != null) {
+                boolean newLineFound = false;
                 List<RendererGlyph> lineGlyphs = new ArrayList<>();
                 for (IRenderer child : children) {
+                    if (newLineFound) {
+                        break;
+                    }
                     if (child instanceof TextRenderer) {
                         GlyphLine childLine = ((TextRenderer) child).line;
                         for (int i = childLine.start; i < childLine.end; i++) {
+                            if (TextRenderer.isNewLine(childLine, i)) {
+                                newLineFound = true;
+                                break;
+                            }
                             lineGlyphs.add(new RendererGlyph(childLine.get(i), (TextRenderer) child));
                         }
                     }
