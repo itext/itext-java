@@ -43,6 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Paragraph;
@@ -53,6 +54,8 @@ import com.itextpdf.layout.layout.LineLayoutResult;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,6 +85,7 @@ public class ParagraphRenderer extends BlockRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         overrideHeightProperties();
+        boolean wasHeightClipped = false;
         int pageNumber = layoutContext.getArea().getPageNumber();
         boolean anythingPlaced = false;
         boolean firstLineInBox = true;
@@ -119,6 +123,7 @@ public class ParagraphRenderer extends BlockRenderer {
         Float blockMaxHeight = retrieveMaxHeight();
         if (null != blockMaxHeight && parentBBox.getHeight() > blockMaxHeight) {
             parentBBox.moveUp(parentBBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
+            wasHeightClipped = true;
         }
 
         List<Rectangle> areas;
@@ -221,10 +226,12 @@ public class ParagraphRenderer extends BlockRenderer {
                             if (isPositioned) {
                                 correctPositionedLayout(layoutBox);
                             }
-                            if (parentBBox.getHeight() == blockMaxHeight) {
+                            if (wasHeightClipped) {
                                 occupiedArea.getBBox()
                                         .moveDown((float) blockMaxHeight - occupiedArea.getBBox().getHeight())
                                         .setHeight((float) blockMaxHeight);
+                                Logger logger = LoggerFactory.getLogger(ParagraphRenderer.class);
+                                logger.warn(LogMessageConstant.CLIP_ELEMENT);
                                 return new LayoutResult(LayoutResult.FULL, occupiedArea, split[0], null);
                             }
                             split[1].setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());

@@ -77,6 +77,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         overrideHeightProperties();
+        boolean wasHeightClipped = false;
         int pageNumber = layoutContext.getArea().getPageNumber();
 
         boolean isPositioned = isPositioned();
@@ -108,6 +109,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (!isFixedLayout() && null != blockMaxHeight && blockMaxHeight < parentBBox.getHeight()
                 && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
             parentBBox.moveUp(parentBBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
+            wasHeightClipped = true;
         }
 
         List<Rectangle> areas;
@@ -180,7 +182,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             applyMargins(occupiedArea.getBBox(), margins, true);
 
                             if (hasProperty(Property.MAX_HEIGHT)) {
-                                if (parentBBox.getHeight() == blockMaxHeight) {
+                                if (wasHeightClipped) {
+                                    Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                                    logger.warn(LogMessageConstant.CLIP_ELEMENT);
                                     return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
                                 }
                                 overflowRenderer.setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
@@ -228,10 +232,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             if (isPositioned) {
                                 correctPositionedLayout(layoutBox);
                             }
-                            if (parentBBox.getHeight() == blockMaxHeight) {
+                            if (wasHeightClipped) {
                                 occupiedArea.getBBox()
                                         .moveDown((float) blockMaxHeight - occupiedArea.getBBox().getHeight())
                                         .setHeight((float) blockMaxHeight);
+                                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                                logger.warn(LogMessageConstant.CLIP_ELEMENT);
                                 return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
                             }
                             overflowRenderer.setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());

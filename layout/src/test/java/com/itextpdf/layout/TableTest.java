@@ -1061,6 +1061,9 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 3)
+    })
     @Test
     public void tableWithSetHeightProperties01() throws IOException, InterruptedException {
         String testName = "tableWithSetHeightProperties01.pdf";
@@ -1134,6 +1137,9 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 3)
+    })
     @Test
     public void tableWithSetHeightProperties02() throws IOException, InterruptedException {
         String testName = "tableWithSetHeightProperties02.pdf";

@@ -337,6 +337,9 @@ public class ListTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 4)
+    })
     @Test
     public void listWithSetHeightProperties01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "listWithSetHeightProperties01.pdf";

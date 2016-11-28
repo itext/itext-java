@@ -1,5 +1,6 @@
 package com.itextpdf.layout;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceRgb;
@@ -17,6 +18,8 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.IOException;
 import org.junit.Assert;
@@ -35,6 +38,9 @@ public class BlockTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 2)
+    })
     @Test
     public void blockWithSetHeightProperties01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "blockWithSetHeightProperties01.pdf";
@@ -103,6 +109,9 @@ public class BlockTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 2)
+    })
     @Test
     public void blockWithSetHeightProperties02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "blockWithSetHeightProperties02.pdf";

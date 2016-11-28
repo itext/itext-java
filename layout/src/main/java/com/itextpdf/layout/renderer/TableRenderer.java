@@ -43,6 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -144,6 +145,7 @@ public class TableRenderer extends AbstractRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         overrideHeightProperties();
+        boolean wasHeightClipped = false;
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = area.getBBox().clone();
         if (!((Table) modelElement).isComplete()) {
@@ -237,6 +239,7 @@ public class TableRenderer extends AbstractRenderer {
         if (null != blockMaxHeight && blockMaxHeight < layoutBox.getHeight()
                 && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
             layoutBox.moveUp(layoutBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
+            wasHeightClipped = true;
         }
         float layoutBoxHeight = layoutBox.getHeight();
 
@@ -695,7 +698,11 @@ public class TableRenderer extends AbstractRenderer {
                             ? LayoutResult.NOTHING
                             : LayoutResult.PARTIAL;
                     if ((status == LayoutResult.NOTHING && Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)))
-                            || (null != blockMaxHeight && layoutBoxHeight == blockMaxHeight)) {
+                            || wasHeightClipped) {
+                        if (wasHeightClipped) {
+                            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                            logger.warn(LogMessageConstant.CLIP_ELEMENT);
+                        }
                         return new LayoutResult(LayoutResult.FULL, occupiedArea, splitResult[0], null);
                     } else {
                         if (hasProperty(Property.HEIGHT)) {

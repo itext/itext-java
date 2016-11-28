@@ -76,7 +76,6 @@ public class ListItemRenderer extends DivRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         if (symbolRenderer != null && this.<Object>getProperty(Property.HEIGHT) == null) {
-            // TODO this is actually MinHeight.
             setProperty(Property.MIN_HEIGHT, symbolRenderer.getOccupiedArea().getBBox().getHeight());
         }
         applyListSymbolPosition();
