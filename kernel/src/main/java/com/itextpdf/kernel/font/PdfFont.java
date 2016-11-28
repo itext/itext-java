@@ -144,6 +144,8 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public abstract GlyphLine createGlyphLine(String content);
 
+    public abstract int appendGlyphs(String content, int from, List<Glyph> to);
+
     /**
      * Converts the text into bytes to be placed in the document.
      * The conversion is done according to the font and the encoding and the characters
@@ -173,6 +175,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public abstract void writeText(String text, PdfOutputStream stream);
 
+    @Deprecated
     public void writeText(GlyphLine text, PdfOutputStream stream) {
         writeText(text, 0, text.size() - 1, stream);
     }

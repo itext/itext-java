@@ -372,6 +372,87 @@ public class PdfType0Font extends PdfFont {
     }
 
     @Override
+    public int appendGlyphs(String content, int from, List<Glyph> to) {
+        int process = 0;
+        int len = content.length() - from;
+        if (cidFontType == CID_FONT_TYPE_0) {
+            if (cmapEncoding.isDirect()) {
+                for (int k = 0; k < len; k++) {
+                    Glyph glyph = fontProgram.getGlyphByCode((int) content.charAt(k));
+                    if (isAppendableGlyph(glyph)) {
+                            to.add(glyph);
+                            process = k;
+                    } else {
+                        break;
+                    }
+                }
+            } else {
+                for (int k = 0; k < len; ++k) {
+                    int ch;
+                    if (TextUtil.isSurrogatePair(content, k)) {
+                        ch = TextUtil.convertToUtf32(content, k);
+                        k++;
+                    } else {
+                        ch = content.charAt(k);
+                    }
+                    Glyph glyph = getGlyph(ch);
+                    if (isAppendableGlyph(glyph)) {
+                        to.add(glyph);
+                        process = k;
+                    } else {
+                        break;
+                    }
+                }
+            }
+        } else if (cidFontType == CID_FONT_TYPE_2) {
+            TrueTypeFont ttf = (TrueTypeFont) fontProgram;
+            if (ttf.isFontSpecific()) {
+                byte[] b = PdfEncodings.convertToBytes(content, "symboltt");
+                len = b.length;
+                for (int k = 0; k < len; ++k) {
+                    Glyph glyph = fontProgram.getGlyph(b[k] & 0xff);
+                    if (isAppendableGlyph(glyph)) {
+                        to.add(glyph);
+                        process = k;
+                    } else {
+                        break;
+                    }
+                }
+            } else {
+                for (int k = 0; k < len; ++k) {
+                    int val;
+                    if (TextUtil.isSurrogatePair(content, k)) {
+                        val = TextUtil.convertToUtf32(content, k);
+                        k++;
+                    } else {
+                        val = content.charAt(k);
+                    }
+                    Glyph glyph = getGlyph(val);
+                    if (isAppendableGlyph(glyph)) {
+                        to.add(glyph);
+                        process = k;
+                    } else {
+                        break;
+                    }
+                }
+            }
+        } else {
+            throw new PdfException("font.has.no.suitable.cmap");
+        }
+        return process;
+    }
+
+    //TODO what if Glyphs contains only whitespaces and ignorable identifiers?
+    private boolean isAppendableGlyph(Glyph glyph) {
+        // If font is specific and glyph.getCode() = 0, unicode value will be also 0.
+        // Character.isIdentifierIgnorable(0) gets true.
+        return  glyph != null &&
+                (glyph.getCode() > 0
+                        || Character.isWhitespace(glyph.getUnicode())
+                        || Character.isIdentifierIgnorable(glyph.getUnicode()));
+    }
+
+    @Override
     // TODO refactor using decodeIntoGlyphLine?
     public String decode(PdfString content) {
         String cids = content.getValue();

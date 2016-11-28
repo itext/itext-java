@@ -104,6 +104,34 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     }
 
     @Override
+    public int appendGlyphs(String content, int from, List<Glyph> to) {
+        int index;
+        for (index = from; index < content.length(); index++) {
+            Glyph glyph;
+            if (fontEncoding.isFontSpecific()) {
+                glyph = fontProgram.getGlyphByCode(content.charAt(index));
+            } else {
+                glyph = getGlyph((int) content.charAt(index));
+            }
+            if (isAppendableGlyph(glyph)) {
+                to.add(glyph);
+            } else {
+                break;
+            }
+        }
+        return index - from;
+    }
+
+    private boolean isAppendableGlyph(Glyph glyph) {
+        // If font is specific and glyph.getCode() = 0, unicode value will be also 0.
+        // Character.isIdentifierIgnorable(0) gets true.
+        return  glyph != null &&
+                (glyph.getCode() > 0
+                        || Character.isWhitespace(glyph.getUnicode())
+                        || Character.isIdentifierIgnorable(glyph.getUnicode()));
+    }
+
+    @Override
     public T getFontProgram() {
         return (T) fontProgram;
     }
