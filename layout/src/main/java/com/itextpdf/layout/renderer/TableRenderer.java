@@ -1009,17 +1009,6 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
 
-//        for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
-//            UnitValue columnUnitWidth = tableModel.getColumnWidth(col);
-//            float columnWidth;
-//            if (columnUnitWidth.isPointValue()) {
-//                columnWidth = columnUnitWidth.getValue();
-//            } else {
-//                columnWidth = tableWidth * columnUnitWidth.getValue() / 100;
-//            }
-//            scaledWidths[col] = columnWidth;
-//            widthSum += scaledWidths[col];
-//        }
         for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
             scaledWidths[col] *= (tableWidth - leftBorderWidth / 2 - rightBorderWidth / 2) / widthSum;
         }
