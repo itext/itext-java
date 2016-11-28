@@ -102,7 +102,7 @@ public class LogListener extends TestWatcher {
     * */
     private boolean equalsMessageByTemplate(String message, String template) {
         if (template.indexOf("{") > 0 && template.indexOf("}") > 0) {
-            String templateWithoutParameters = template.replaceAll("\\{.*?\\} ?", ".*?");
+            String templateWithoutParameters = template.replaceAll("\\{[0-9]+?\\}", "(.|\\\\s)*?");
             return message.matches(templateWithoutParameters);
         } else {
             return message.contains(template);
