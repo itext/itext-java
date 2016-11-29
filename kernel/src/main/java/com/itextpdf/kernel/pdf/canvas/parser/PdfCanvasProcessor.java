@@ -89,6 +89,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -159,7 +160,7 @@ public class PdfCanvasProcessor {
     /**
      * The font cache
      */
-    private Map<Integer, PdfFont> cachedFonts = new HashMap<>();
+    private Map<Integer, WeakReference<PdfFont>> cachedFonts = new HashMap<>();
 
     /**
      * A stack containing marked content info.
@@ -476,10 +477,11 @@ public class PdfCanvasProcessor {
      */
     protected PdfFont getFont(PdfDictionary fontDict) {
         int n = fontDict.getIndirectReference().getObjNumber();
-        PdfFont font = cachedFonts.get(n);
+        WeakReference<PdfFont> fontRef = cachedFonts.get(n);
+        PdfFont font = fontRef == null ? null: fontRef.get();
         if (font == null) {
             font = PdfFontFactory.createFont(fontDict);
-            cachedFonts.put(n, font);
+            cachedFonts.put(n, new WeakReference<>(font));
         }
         return font;
     }

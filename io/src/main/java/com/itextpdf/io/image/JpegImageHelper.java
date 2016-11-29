@@ -119,6 +119,12 @@ class JpegImageHelper {
      */
     private static final byte[] PS_8BIM_RESO = {0x38, 0x42, 0x49, 0x4d, 0x03, (byte) 0xed};
 
+    /**
+     * Process the passed Image data as a JPEG image.
+     * Image is loaded and all image attributes are initialized and/or updated.
+     *
+     * @param image the image to process as a JPEG image
+     */
     public static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.JPEG)
             throw new IllegalArgumentException("JPEG image expected");
