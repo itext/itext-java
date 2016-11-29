@@ -61,6 +61,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -443,6 +444,7 @@ public class ParagraphRenderer extends BlockRenderer {
     protected ParagraphRenderer createSplitRenderer(IRenderer parent) {
         ParagraphRenderer splitRenderer = createSplitRenderer();
         splitRenderer.parent = parent;
+        splitRenderer.properties = new HashMap<>(properties);
         return splitRenderer;
     }
 

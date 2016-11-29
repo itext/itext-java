@@ -362,6 +362,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         splitRenderer.modelElement = modelElement;
         splitRenderer.occupiedArea = occupiedArea;
         splitRenderer.isLastRendererForModelElement = false;
+        splitRenderer.properties = new HashMap<>(properties);
         return splitRenderer;
     }
 
