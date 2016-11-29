@@ -61,14 +61,13 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class BlockRenderer extends AbstractRenderer {
 
@@ -92,10 +91,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
         MarginsCollapseHandler marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
         if (marginsCollapsingEnabled) {
-        marginsCollapseHandler.startMarginsCollapse(parentBBox);
+            marginsCollapseHandler.startMarginsCollapse(parentBBox);
         }
-        float[] margins = getMargins();
-        applyMargins(parentBBox, margins, false);
+        applyMargins(parentBBox, false);
         Border[] borders = getBorders();
         applyBorderBox(parentBBox, borders, false);
 
@@ -117,10 +115,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
             float heightDelta = parentBBox.getHeight() - (float) blockMaxHeight;
             if (marginsCollapsingEnabled) {
-            marginsCollapseHandler.processFixedHeightAdjustment(heightDelta);
+                marginsCollapseHandler.processFixedHeightAdjustment(heightDelta);
             }
             parentBBox.moveUp(heightDelta).setHeight((float) blockMaxHeight);
-			wasHeightClipped = true;
+            wasHeightClipped = true;
         }
 
         List<Rectangle> areas;
@@ -144,7 +142,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             childRenderer.setParent(this);
             MarginsCollapseInfo childMarginsInfo = null;
             if (marginsCollapsingEnabled) {
-                childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(childPos, layoutBox);
+                childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(childRenderer, layoutBox);
             }
             while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox), childMarginsInfo))).getStatus() != LayoutResult.FULL) {
                 if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))
@@ -180,7 +178,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
                         if (currentAreaPos + 1 == areas.size()) {
                             if (marginsCollapsingEnabled) {
-                                marginsCollapseHandler.endChildMarginsHandling(childPos, layoutBox);
+                                marginsCollapseHandler.endChildMarginsHandling();
                                 marginsCollapseHandler.endMarginsCollapse();
                             }
 
@@ -199,8 +197,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
                             applyPaddings(occupiedArea.getBBox(), paddings, true);
                             applyBorderBox(occupiedArea.getBBox(), borders, true);
-                            margins = getMargins();
-                            applyMargins(occupiedArea.getBBox(), margins, true);
+                            applyMargins(occupiedArea.getBBox(), true);
 
                             if (hasProperty(Property.MAX_HEIGHT)) {
                                 if (wasHeightClipped) {
@@ -250,8 +247,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
-                        margins = getMargins();
-                        applyMargins(occupiedArea.getBBox(), margins, true);
+                        applyMargins(occupiedArea.getBBox(), true);
 
                         if (hasProperty(Property.MAX_HEIGHT)) {
                             if (isPositioned) {
@@ -290,7 +286,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
             occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
             if (marginsCollapsingEnabled) {
-            marginsCollapseHandler.endChildMarginsHandling(childPos, layoutBox);
+                marginsCollapseHandler.endChildMarginsHandling();
             }
             if (result.getStatus() == LayoutResult.FULL) {
                 layoutBox.setHeight(result.getOccupiedArea().getBBox().getY() - layoutBox.getY());
@@ -336,10 +332,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         if (marginsCollapsingEnabled) {
-        marginsCollapseHandler.endMarginsCollapse();
+            marginsCollapseHandler.endMarginsCollapse();
         }
-        margins = getMargins();
-        applyMargins(occupiedArea.getBBox(), margins, true);
+        applyMargins(occupiedArea.getBBox(), true);
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {

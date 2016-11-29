@@ -59,6 +59,7 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
@@ -129,7 +130,7 @@ public class TableRenderer extends AbstractRenderer {
             rows.get(cell.getRow() - rowRange.getStartRow() + cell.getRowspan() - 1)[cell.getCol()] = (CellRenderer) renderer;
         } else {
             Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-            logger.error("Only BlockRenderer with Cell layout element could be added");
+            logger.error("Only CellRenderer could be added");
         }
     }
 
@@ -165,6 +166,11 @@ public class TableRenderer extends AbstractRenderer {
         // value is the previous row number of the cell
         Map<Integer, Integer> rowMoves = new HashMap<Integer, Integer>();
 
+        MarginsCollapseHandler marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
+        boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
+        if (marginsCollapsingEnabled) {
+            marginsCollapseHandler.startMarginsCollapse(layoutBox);
+        }
         applyMargins(layoutBox, false);
 
         Border[] borders;
@@ -241,7 +247,6 @@ public class TableRenderer extends AbstractRenderer {
             layoutBox.moveUp(layoutBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
             wasHeightClipped = true;
         }
-        float layoutBoxHeight = layoutBox.getHeight();
 
         occupiedArea = new LayoutArea(area.getPageNumber(),
                 new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - topTableBorderWidth / 2, (float) tableWidth, 0));
@@ -576,6 +581,9 @@ public class TableRenderer extends AbstractRenderer {
             }
 
             if (split) {
+                if (marginsCollapsingEnabled) {
+                    marginsCollapseHandler.endMarginsCollapse();
+                }
                 TableRenderer[] splitResult = split(row, hasContent);
                 int[] rowspans = new int[currentRow.length];
                 boolean[] columnsWithCellToBeEnlarged = new boolean[currentRow.length];
@@ -803,6 +811,10 @@ public class TableRenderer extends AbstractRenderer {
 
         if ((Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) && 0 != rows.size()) {
             extendLastRow(rows.get(rows.size() - 1), layoutBox);
+        }
+
+        if (marginsCollapsingEnabled) {
+            marginsCollapseHandler.endMarginsCollapse();
         }
 
         applyMargins(occupiedArea.getBBox(), true);

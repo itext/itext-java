@@ -81,14 +81,11 @@ public class MarginsCollapseHandler {
             rendererChildren = new ArrayList<>();
         }
         rendererChildren.add(child);
-        return startChildMarginsHandling(processedChildrenNum++, layoutBox);
-    }
 
-    public MarginsCollapseInfo startChildMarginsHandling(int childIndex, Rectangle layoutBox) {
+        int childIndex = processedChildrenNum++;
         prevChildMarginInfo = childMarginInfo;
         childMarginInfo = null;
 
-        IRenderer child = getRendererChild(childIndex);
         boolean childIsBlockElement = isBlockElement(child);
 
         prepareBoxForLayoutAttempt(layoutBox, childIndex, childIsBlockElement);
@@ -126,10 +123,7 @@ public class MarginsCollapseHandler {
     }
 
     public void endChildMarginsHandling() {
-        endChildMarginsHandling(processedChildrenNum - 1, null);
-    }
-
-    public void endChildMarginsHandling(int childIndex, Rectangle layoutBox) {
+        int childIndex = processedChildrenNum - 1;
         if (childMarginInfo != null) {
             if (firstNotEmptyKidIndex == childIndex && childMarginInfo.isSelfCollapsing()) {
                 firstNotEmptyKidIndex = childIndex + 1;
@@ -142,12 +136,6 @@ public class MarginsCollapseHandler {
         if (firstNotEmptyKidIndex == childIndex && firstChildMarginAdjoinedToParent(renderer)) {
             if (!collapseInfo.isSelfCollapsing()) {
                 getRidOfCollapseArtifactsAtopOccupiedArea();
-                if (childMarginInfo != null) {
-                    float buffSpaceDiff = collapseInfo.getBufferSpace() - childMarginInfo.getBufferSpace();
-                    if (buffSpaceDiff > 0) {
-                        layoutBox.moveDown(buffSpaceDiff);
-                    }
-                }
             }
         }
 
@@ -330,16 +318,18 @@ public class MarginsCollapseHandler {
     }
 
     private static boolean marginsCouldBeSelfCollapsing(IRenderer renderer) {
-        return !hasBottomBorders(renderer) && !hasTopBorders(renderer) && !hasBottomPadding(renderer) && !hasTopPadding(renderer) && !hasPositiveHeight(renderer);
+        return !(renderer instanceof TableRenderer) // table is never self-collapsing for now
+                && !hasBottomBorders(renderer) && !hasTopBorders(renderer)
+                && !hasBottomPadding(renderer) && !hasTopPadding(renderer) && !hasPositiveHeight(renderer);
     }
 
     private static boolean firstChildMarginAdjoinedToParent(IRenderer parent) {
-        return !(parent instanceof RootRenderer) && !hasTopBorders(parent) && !hasTopPadding(parent);
+        return !(parent instanceof RootRenderer) && !(parent instanceof TableRenderer) && !hasTopBorders(parent) && !hasTopPadding(parent);
 
     }
 
     private static boolean lastChildMarginAdjoinedToParent(IRenderer parent) {
-        return !(parent instanceof RootRenderer) && !hasBottomBorders(parent) && !hasBottomPadding(parent) && !hasHeightProp(parent);
+        return !(parent instanceof RootRenderer) && !(parent instanceof TableRenderer) && !hasBottomBorders(parent) && !hasBottomPadding(parent) && !hasHeightProp(parent);
 
     }
 
