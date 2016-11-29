@@ -954,7 +954,7 @@ public class CompareTool {
         loadPagesFromReader(cmpDocument, cmpPages, cmpPagesRef);
 
         if (outPages.size() != cmpPages.size())
-            return compareVisually(outPath, differenceImagePrefix, ignoredAreas);
+            return compareVisuallyAndCombineReports("Documents have different numbers of pages.", outPath, differenceImagePrefix, ignoredAreas, null);
 
         CompareResult compareResult = new CompareResult(compareByContentErrorsLimit);
         List<Integer> equalPages = new ArrayList<>(cmpPages.size());
@@ -995,16 +995,22 @@ public class CompareTool {
             System.out.flush();
             return null;
         } else {
-            System.out.println("Fail");
-            System.out.flush();
-            String compareByContentReport = "Compare by content report:\n" + compareResult.getReport();
-            System.out.println(compareByContentReport);
-            System.out.flush();
-            String message = compareVisually(outPath, differenceImagePrefix, ignoredAreas, equalPages);
-            if (message == null || message.length() == 0)
-                return "Compare by content fails. No visual differences";
-            return message;
+            return compareVisuallyAndCombineReports(compareResult.getReport(), outPath, differenceImagePrefix, ignoredAreas, equalPages);
         }
+    }
+
+    private String compareVisuallyAndCombineReports(String compareByFailContentReason, String outPath, String differenceImagePrefix,
+                                                    Map<Integer, List<Rectangle>> ignoredAreas,
+                                                    List<Integer> equalPages) throws IOException, InterruptedException {
+        System.out.println("Fail");
+        System.out.flush();
+        String compareByContentReport = "Compare by content report:\n" + compareByFailContentReason;
+        System.out.println(compareByContentReport);
+        System.out.flush();
+        String message = compareVisually(outPath, differenceImagePrefix, ignoredAreas, equalPages);
+        if (message == null || message.length() == 0)
+            return "Compare by content fails. No visual differences";
+        return message;
     }
 
     private void loadPagesFromReader(PdfDocument doc, List<PdfDictionary> pages, List<PdfIndirectReference> pagesRef) {
