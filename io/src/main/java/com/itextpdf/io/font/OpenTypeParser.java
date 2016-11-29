@@ -46,7 +46,6 @@ package com.itextpdf.io.font;
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.IntHashtable;
 
 import java.io.File;
@@ -459,12 +458,19 @@ class OpenTypeParser implements Serializable {
                 throw new IOException("table.1.does.not.exist").setMessageParams("hmtx");
             }
         }
+        glyphWidthsByIndex = new int[Math.max(readMaxGlyphId(), numberOfHMetrics)];
         raf.seek(table_location[0]);
-        glyphWidthsByIndex = new int[numberOfHMetrics];
         for (int k = 0; k < numberOfHMetrics; ++k) {
             glyphWidthsByIndex[k] = raf.readUnsignedShort() * TrueTypeFont.UNITS_NORMALIZATION / unitsPerEm;
             @SuppressWarnings("unused")
             int leftSideBearing = raf.readShort() * TrueTypeFont.UNITS_NORMALIZATION / unitsPerEm;
+        }
+        // If the font is monospaced, only one entry need be in the array, but that entry is required.
+        // The last entry applies to all subsequent glyphs.
+        if (numberOfHMetrics > 0) {
+            for (int k = numberOfHMetrics; k < glyphWidthsByIndex.length; k++) {
+                glyphWidthsByIndex[k] = glyphWidthsByIndex[numberOfHMetrics - 1];
+            }
         }
     }
 

@@ -50,14 +50,13 @@ import com.itextpdf.io.font.otf.GlyphPositioningTableReader;
 import com.itextpdf.io.font.otf.GlyphSubstitutionTableReader;
 import com.itextpdf.io.font.otf.OpenTypeGdefTableReader;
 import com.itextpdf.io.util.IntHashtable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TrueTypeFont extends FontProgram {
 
@@ -310,12 +309,13 @@ public class TrueTypeFont extends FontProgram {
 
         Map<Integer, int[]> cmap = getActiveCmap();
         int[] glyphWidths = fontParser.getGlyphWidthsByIndex();
+        int maxGlyphId = fontMetrics.getMaxGlyphId();
         unicodeToGlyph = new LinkedHashMap<>(cmap.size());
-        codeToGlyph = new LinkedHashMap<>(glyphWidths.length);
+        codeToGlyph = new LinkedHashMap<>(maxGlyphId);
         avgWidth = 0;
         for (int charCode : cmap.keySet()) {
             int index = cmap.get(charCode)[0];
-            if (index >= glyphWidths.length) {
+            if (index >= maxGlyphId) {
                 Logger LOGGER = LoggerFactory.getLogger(TrueTypeFont.class);
                 LOGGER.warn(MessageFormat.format(LogMessageConstant.FONT_HAS_INVALID_GLYPH, getFontNames().getFontName(), index));
                 continue;

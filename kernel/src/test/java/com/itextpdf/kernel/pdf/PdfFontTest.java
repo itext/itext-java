@@ -1192,9 +1192,6 @@ public class PdfFontTest extends ExtendedITextTest {
     }
     
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.FONT_HAS_INVALID_GLYPH, count = 131)
-    })
     public void testPdfFontFactoryTtc() throws IOException, InterruptedException {
         String filename = destinationFolder + "testPdfFontFactoryTtc.pdf";
         String cmpFilename = sourceFolder + "cmp_testPdfFontFactoryTtc.pdf";
@@ -1220,9 +1217,6 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.FONT_HAS_INVALID_GLYPH, count = 131)
-    })
     public void testWriteTTC() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithTTC.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTTC.pdf";
