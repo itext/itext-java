@@ -43,6 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontMetrics;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
@@ -73,6 +74,8 @@ import com.itextpdf.layout.property.FontKerning;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.splitting.ISplitCharacters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -466,6 +469,11 @@ public class TextRenderer extends AbstractRenderer {
 
     @Override
     public void draw(DrawContext drawContext) {
+        if (occupiedArea == null) {
+            Logger logger = LoggerFactory.getLogger(RootRenderer.class);
+            logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
+            return;
+        }
         super.draw(drawContext);
 
         PdfDocument document = drawContext.getDocument();
