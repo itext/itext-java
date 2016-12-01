@@ -131,6 +131,7 @@ public class TextRenderer extends AbstractRenderer {
         super(other);
         this.text = other.text;
         this.line = other.line;
+        this.yLineOffset = other.yLineOffset;
         this.strToBeConverted = other.strToBeConverted;
         this.otfFeaturesApplied = other.otfFeaturesApplied;
         this.tabAnchorCharacterPosition = other.tabAnchorCharacterPosition;
