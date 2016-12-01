@@ -898,6 +898,20 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
 
+        if (footerRenderer != null) {
+            boolean lastFooter = isLastRendererForModelElement && modelElement.isComplete() && !modelElement.isSkipLastFooter();
+            boolean notToTagFooter = drawContext.isTaggingEnabled() && !lastFooter;
+            if (notToTagFooter) {
+                drawContext.setTaggingEnabled(false);
+                drawContext.getCanvas().openTag(new CanvasArtifact());
+            }
+            footerRenderer.draw(drawContext);
+            if (notToTagFooter) {
+                drawContext.getCanvas().closeTag();
+                drawContext.setTaggingEnabled(true);
+            }
+        }
+
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement && !childRenderers.isEmpty();
         TagTreePointer tagPointer = null;
         boolean shouldHaveFooterOrHeaderTag = modelElement.getHeader() != null || modelElement.getFooter() != null;
@@ -951,20 +965,6 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         drawBorders(drawContext);
-
-        if (footerRenderer != null) {
-            boolean lastFooter = isLastRendererForModelElement && modelElement.isComplete() && !modelElement.isSkipLastFooter();
-            boolean notToTagFooter = drawContext.isTaggingEnabled() && !lastFooter;
-            if (notToTagFooter) {
-                drawContext.setTaggingEnabled(false);
-                drawContext.getCanvas().openTag(new CanvasArtifact());
-            }
-            footerRenderer.draw(drawContext);
-            if (notToTagFooter) {
-                drawContext.getCanvas().closeTag();
-                drawContext.setTaggingEnabled(true);
-            }
-        }
     }
 
     /**
@@ -1094,6 +1094,10 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     protected void drawBorders(DrawContext drawContext) {
+        drawBorders(drawContext, true, true);
+    }
+
+    protected void drawBorders(DrawContext drawContext, boolean drawTop, boolean drawBottom) {
         if (occupiedArea.getBBox().getHeight() < EPS || heights.size() == 0) {
             return;
         }
@@ -1122,38 +1126,31 @@ public class TableRenderer extends AbstractRenderer {
             drawContext.getCanvas().openTag(new CanvasArtifact());
         }
 
-        // Notice that we draw boundary borders after all the others are drawn
+        if (drawTop) {
+            drawHorizontalBorder(0, startX, startY, drawContext.getCanvas());
+        }
+
         float y1 = startY;
         if (heights.size() > 0) {
             y1 -= (float) heights.get(0);
         }
-
         for (int i = 1; i < horizontalBorders.size() - 1; i++) {
             drawHorizontalBorder(i, startX, y1, drawContext.getCanvas());
             if (i < heights.size()) {
                 y1 -= (float) heights.get(i);
             }
         }
-
-        float x1 = startX;
-        if (columnWidths.length > 0) {
-            x1 += columnWidths[0];
+        if (drawBottom) {
+            drawHorizontalBorder(horizontalBorders.size() - 1, startX, y1, drawContext.getCanvas());
         }
 
-        for (int i = 1; i < verticalBorders.size(); i++) {
+        float x1 = startX;
+        for (int i = 0; i < verticalBorders.size(); i++) {
             drawVerticalBorder(i, startY, x1, drawContext.getCanvas());
             if (i < columnWidths.length) {
                 x1 += columnWidths[i];
             }
         }
-        // draw boundary borders
-        drawVerticalBorder(0, startY, startX, drawContext.getCanvas());
-        drawHorizontalBorder(0, startX, startY, drawContext.getCanvas());
-        y1 = startY;
-        for (int i = 0; i < heights.size(); i++) {
-            y1 -= heights.get(i);
-        }
-        drawHorizontalBorder(horizontalBorders.size() - 1, startX, y1, drawContext.getCanvas());
 
         if (isTagged) {
             drawContext.getCanvas().closeTag();
