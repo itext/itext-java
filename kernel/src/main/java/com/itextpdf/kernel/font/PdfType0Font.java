@@ -68,6 +68,8 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfOutputStream;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -79,9 +81,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PdfType0Font extends PdfFont {
 
@@ -428,9 +427,12 @@ public class PdfType0Font extends PdfFont {
                 code <<= 8;
                 code |= cids.charAt(i);
             }
-            Glyph glyph = fontProgram.getGlyphByCode(cmapEncoding.getCidCode(code));
-            if (glyph == null)
-                System.err.println(code);
+            int glyphCode = cmapEncoding.getCidCode(code);
+            Glyph glyph = fontProgram.getGlyphByCode(glyphCode);
+            if (glyph == null) {
+                Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
+                logger.warn(MessageFormat.format(LogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, glyphCode));
+            }
             width += glyph != null ? glyph.getWidth() : notdef.getWidth();
         }
         return width;

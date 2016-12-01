@@ -1,5 +1,6 @@
 package com.itextpdf.kernel.pdf.canvas.parser;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.LineSegment;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -10,17 +11,18 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.ITextExtractionStrategy;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class TextRenderInfoTest extends ExtendedITextTest {
@@ -39,10 +41,9 @@ public class TextRenderInfoTest extends ExtendedITextTest {
     /**
      * Test introduced to exclude a bug related to a Unicode quirk for
      * Japanese. TextRenderInfo threw an AIOOBE for some characters.
-     *
-     * @throws java.lang.Exception
      */
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE)})
     public void testUnicodeEmptyString() throws Exception {
         StringBuilder sb = new StringBuilder();
         String inFile = "japanese_text.pdf";
