@@ -19,6 +19,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -331,6 +332,30 @@ public class ListTest extends ExtendedITextTest {
                 .add(new ListItem("fox").setListSymbol(ListNumberingType.ZAPF_DINGBATS_2))
                 .add(new ListItem("jumps over the lazy").setListSymbol(ListNumberingType.ZAPF_DINGBATS_3))
                 .add(new ListItem("dog").setListSymbol(ListNumberingType.ZAPF_DINGBATS_4));
+        document.add(list);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-962")
+    public void listItemTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listItemTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_listItemTest02.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+        document.setFontColor(Color.WHITE);
+        List list = new List();
+        Style liStyle = new Style().setMargins(20, 0, 20, 0).setBackgroundColor(Color.BLACK);
+        list.add((ListItem) new ListItem("").addStyle(liStyle))
+                .add((ListItem) new ListItem("fox").addStyle(liStyle))
+                .add((ListItem) new ListItem("").addStyle(liStyle))
+                .add((ListItem) new ListItem("dog").addStyle(liStyle));
+        document.add(list.setBackgroundColor(Color.BLUE));
+
+        document.add(new Paragraph("separation between lists"));
+        liStyle.setMargin(0);
         document.add(list);
         document.close();
 
