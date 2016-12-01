@@ -359,15 +359,15 @@ public class AccessibleAttributesApplier {
             for (int i = 1; i < borders.length; i++) {
                 Border border = borders[i];
                 if (border != null) {
-                    if (!border.getColor().equals(borders[0].getColor())) {
+                    if (null == borders[0] || !border.getColor().equals(borders[0].getColor())) {
                         allColorsEqual = false;
                     }
 
-                    if (border.getWidth() != borders[0].getWidth()) {
+                    if (null == borders[0] || border.getWidth() != borders[0].getWidth()) {
                         allWidthsEqual = false;
                     }
 
-                    if (border.getType() != borders[0].getType()) {
+                    if (null == borders[0] || border.getType() != borders[0].getType()) {
                         allTypesEqual = false;
                     }
                 }

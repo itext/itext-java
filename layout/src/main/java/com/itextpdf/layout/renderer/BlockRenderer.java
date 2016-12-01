@@ -61,13 +61,14 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class BlockRenderer extends AbstractRenderer {
 
@@ -261,14 +262,14 @@ public abstract class BlockRenderer extends AbstractRenderer {
                                 logger.warn(LogMessageConstant.CLIP_ELEMENT);
                                 return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
                             }
-                            overflowRenderer.setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
+                            //overflowRenderer.setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
                         }
-                        if (hasProperty(Property.MIN_HEIGHT)) {
-                            overflowRenderer.setProperty(Property.MIN_HEIGHT, retrieveMinHeight() - occupiedArea.getBBox().getHeight());
-                        }
-                        if (hasProperty(Property.HEIGHT)) {
-                            overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
-                        }
+//                        if (hasProperty(Property.MIN_HEIGHT)) {
+//                            overflowRenderer.setProperty(Property.MIN_HEIGHT, retrieveMinHeight() - occupiedArea.getBBox().getHeight());
+//                        }
+//                        if (hasProperty(Property.HEIGHT)) {
+//                            overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+//                        }
 
                         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                             return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
