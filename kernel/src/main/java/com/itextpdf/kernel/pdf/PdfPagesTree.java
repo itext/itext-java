@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,6 +104,9 @@ class PdfPagesTree implements Serializable {
      * @return the {@see PdfPage} at the specified position in this list
      */
     public PdfPage getPage(int pageNum) {
+        if (pageNum < 1 || pageNum > getNumberOfPages()) {
+            throw new PdfException(MessageFormat.format(PdfException.CannotFindThePageNumber, pageNum));
+        }
         --pageNum;
         PdfPage pdfPage = pages.get(pageNum);
         if (pdfPage == null) {

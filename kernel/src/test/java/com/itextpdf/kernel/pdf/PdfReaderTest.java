@@ -626,6 +626,31 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
+    public void pagesTest11() throws IOException {
+        String filename = sourceFolder + "hello.pdf";
+
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument document = new PdfDocument(reader);
+        try {
+            document.getPage(-30);
+        } catch (PdfException pdfException) {
+            Assert.assertEquals(MessageFormat.format(PdfException.CannotFindThePageNumber, -30), pdfException.getMessage());
+        }
+        try {
+            document.getPage(0);
+        } catch (PdfException pdfException) {
+            Assert.assertEquals(MessageFormat.format(PdfException.CannotFindThePageNumber, 0), pdfException.getMessage());
+        }
+        document.getPage(1);
+        try {
+            document.getPage(25);
+        } catch (PdfException pdfException) {
+            Assert.assertEquals(MessageFormat.format(PdfException.CannotFindThePageNumber, 25), pdfException.getMessage());
+        }
+        document.close();
+    }
+
+    @Test
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR, count = 1))
     public void correctSimpleDoc1() throws IOException {
         String filename = sourceFolder + "correctSimpleDoc1.pdf";
