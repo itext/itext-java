@@ -503,4 +503,55 @@ public class ImageTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void imageWithBordersSurroundedByTextTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageBordersTextTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageBordersTextTest.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        Document doc = new Document(pdfDoc);
+
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        Image image = new Image(xObject, 100);
+
+        Paragraph p = new Paragraph();
+        p.setBorder(new SolidBorder(Color.GREEN, 5));
+        p.add(new Text("before image"));
+        p.add(image);
+        image.setBorder(new SolidBorder(Color.BLUE, 5));
+        p.add(new Text("after image"));
+        doc.add(p);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void imageInParagraphBorderTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageParagraphBorderTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageParagraphBorderTest.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        Document doc = new Document(pdfDoc);
+
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        Image image = new Image(xObject, 100);
+
+        Paragraph p = new Paragraph();
+        p.setBorder(new SolidBorder(Color.GREEN, 5));
+        p.add(image);
+        image.setBorder(new SolidBorder(Color.BLUE, 5));
+        doc.add(p);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
 }

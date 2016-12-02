@@ -500,9 +500,9 @@ public class LineRenderer extends AbstractRenderer {
             if (renderer instanceof TextRenderer) {
                 ((TextRenderer) renderer).moveYLineTo(actualYLine);
             } else if (renderer instanceof ImageRenderer) {
-                renderer.getOccupiedArea().getBBox().setY(occupiedArea.getBBox().getY() - maxDescent);
+                renderer.move(0, actualYLine - renderer.getOccupiedArea().getBBox().getBottom());
             } else {
-                renderer.getOccupiedArea().getBBox().setY(occupiedArea.getBBox().getY());
+                renderer.move(0, occupiedArea.getBBox().getY() - renderer.getOccupiedArea().getBBox().getBottom());
             }
         }
         return this;

@@ -316,6 +316,21 @@ public class ImageRenderer extends AbstractRenderer {
         return initialOccupiedAreaBBox;
     }
 
+    @Override
+    public void move(float dxRight, float dyUp) {
+        super.move(dxRight, dyUp);
+        if (initialOccupiedAreaBBox != null) {
+            initialOccupiedAreaBBox.moveRight(dxRight);
+            initialOccupiedAreaBBox.moveUp(dyUp);
+        }
+        if (fixedXPosition != null) {
+            fixedXPosition += dxRight;
+        }
+        if (fixedYPosition != null) {
+            fixedYPosition += dyUp;
+        }
+    }
+
     protected ImageRenderer autoScale(LayoutArea layoutArea) {
         Rectangle area = layoutArea.getBBox().clone();
         applyMargins(area, false);
