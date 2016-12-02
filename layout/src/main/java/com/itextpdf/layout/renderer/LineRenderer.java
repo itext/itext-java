@@ -337,7 +337,7 @@ public class LineRenderer extends AbstractRenderer {
 
                 if (result.getStatus() == LayoutResult.PARTIAL) {
                     LineRenderer overflow = (LineRenderer) result.getOverflowRenderer();
-                    if (levels != null) {
+                    if (levels != null && overflow != null) {
                         overflow.levels = new byte[levels.length - lineLevels.length];
                         System.arraycopy(levels, lineLevels.length, overflow.levels, 0, overflow.levels.length);
                         if (overflow.levels.length == 0) {
@@ -345,7 +345,7 @@ public class LineRenderer extends AbstractRenderer {
                         }
                     }
                 } else if (result.getStatus() == LayoutResult.NOTHING) {
-                    if (levels != null) {
+                    if (levels != null && result.getOverflowRenderer() != null) {
                         ((LineRenderer)result.getOverflowRenderer()).levels = levels;
                     }
                 }
