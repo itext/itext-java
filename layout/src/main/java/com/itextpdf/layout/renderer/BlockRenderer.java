@@ -372,6 +372,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
     @Override
     public void draw(DrawContext drawContext) {
+        if (occupiedArea == null) {
+            Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+            logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
+            return;
+        }
         applyDestinationsAndAnnotation(drawContext);
 
         PdfDocument document = drawContext.getDocument();

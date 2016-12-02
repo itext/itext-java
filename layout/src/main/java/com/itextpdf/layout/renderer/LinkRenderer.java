@@ -43,7 +43,10 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.layout.element.Link;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LinkRenderer extends TextRenderer {
 
@@ -68,6 +71,11 @@ public class LinkRenderer extends TextRenderer {
 
     @Override
     public void draw(DrawContext drawContext) {
+        if (occupiedArea == null) {
+            Logger logger = LoggerFactory.getLogger(LinkRenderer.class);
+            logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
+            return;
+        }
         super.draw(drawContext);
 
         boolean isRelativePosition = isRelativePosition();

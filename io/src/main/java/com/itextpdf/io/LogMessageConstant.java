@@ -76,7 +76,7 @@ public final class LogMessageConstant {
     public static final String PDF_READER_CLOSING_FAILED = "PdfReader closing failed due to the error occurred!";
     public static final String PDF_WRITER_CLOSING_FAILED = "PdfWriter closing failed due to the error occurred!";
     public static final String POPUP_ENTRY_IS_NOT_POPUP_ANNOTATION = "Popup entry in the markup annotations refers not to the annotation with Popup subtype.";
-    public static final String OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED = "Occupied area hasn't been initialized.";
+    public static final String OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED = "Occupied area hasn't been initialized. Drawing won't be performed";
     public static final String OCSP_STATUS_IS_REVOKED = "OCSP status is revoked.";
     public static final String OCSP_STATUS_IS_UNKNOWN = "OCSP status is unknown.";
     public static final String ONE_OF_GROUPED_SOURCES_CLOSING_FAILED = "Closing of one of the grouped sources failed.";

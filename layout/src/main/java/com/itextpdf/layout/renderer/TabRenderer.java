@@ -43,6 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
@@ -51,6 +52,8 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TabRenderer extends AbstractRenderer {
     /**
@@ -75,6 +78,11 @@ public class TabRenderer extends AbstractRenderer {
 
     @Override
     public void draw(DrawContext drawContext) {
+        if (occupiedArea == null) {
+            Logger logger = LoggerFactory.getLogger(TabRenderer.class);
+            logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
+            return;
+        }
         ILineDrawer leader = this.<ILineDrawer>getProperty(Property.TAB_LEADER);
         if (leader == null)
             return;

@@ -43,6 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
@@ -53,6 +54,8 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.ListSymbolAlignment;
 import com.itextpdf.layout.property.ListSymbolPosition;
 import com.itextpdf.layout.property.Property;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ListItemRenderer extends DivRenderer {
 
@@ -88,6 +91,11 @@ public class ListItemRenderer extends DivRenderer {
 
     @Override
     public void draw(DrawContext drawContext) {
+        if (occupiedArea == null) {
+            Logger logger = LoggerFactory.getLogger(ListItemRenderer.class);
+            logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
+            return;
+        }
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
         TagTreePointer tagPointer = null;
         if (isTagged) {

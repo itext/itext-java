@@ -471,7 +471,7 @@ public class TextRenderer extends AbstractRenderer {
     @Override
     public void draw(DrawContext drawContext) {
         if (occupiedArea == null) {
-            Logger logger = LoggerFactory.getLogger(RootRenderer.class);
+            Logger logger = LoggerFactory.getLogger(TextRenderer.class);
             logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
             return;
         }
