@@ -12,6 +12,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.*;
 import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -571,7 +572,7 @@ public class BorderTest extends ExtendedITextTest {
         table.setBorder(new SolidBorder(Color.RED, 5));
 
         Cell cell;
-        table.addCell(new Cell(1,2).add("first").setBorder(Border.NO_BORDER));
+        table.addCell(new Cell(1, 2).add("first").setBorder(Border.NO_BORDER));
 
         cell = new Cell(1, 2).add("second");
         cell.setBorder(Border.NO_BORDER);
@@ -818,7 +819,7 @@ public class BorderTest extends ExtendedITextTest {
     public void splitCellsTest03() throws IOException, InterruptedException {
         fileName = "splitCellsTest03.pdf";
         Document doc = createDocument();
-        doc.getPdfDocument().setDefaultPageSize(new PageSize(100, 150));
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(100, 160));
 
         String textAlphabet = "ABCDEFGHIJKLMNOPQRSTUWXYZ";
 
@@ -830,10 +831,6 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
-    @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
-    })
     public void splitCellsTest04() throws IOException, InterruptedException {
         fileName = "splitCellsTest04.pdf";
         Document doc = createDocument();
@@ -922,7 +919,7 @@ public class BorderTest extends ExtendedITextTest {
         String textAlphabet = "Cell";
 
         Table table = new Table(3);
-        table.addCell(new Cell().add(textAlphabet+ "1"));
+        table.addCell(new Cell().add(textAlphabet + "1"));
         table.addCell(new Cell(2, 1).add(textAlphabet + "2"));
         table.addCell(new Cell().add(textAlphabet+ "3"));
         table.addCell(new Cell().add(textAlphabet+ "4"));
@@ -938,15 +935,15 @@ public class BorderTest extends ExtendedITextTest {
     public void splitCellsTest08() throws IOException, InterruptedException {
         fileName = "splitCellsTest08.pdf";
         Document doc = createDocument();
-        doc.getPdfDocument().setDefaultPageSize(new PageSize(130,160));
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(130, 160));
 
         String textAlphabet = "Cell";
 
         Table table = new Table(3);
         table.addCell(new Cell().add(textAlphabet+ "1"));
         table.addCell(new Cell(2, 1).add(textAlphabet + "2").setBorder(new SolidBorder(Color.GREEN, 4)));
-        table.addCell(new Cell().add(textAlphabet+ "3"));
-        table.addCell(new Cell().add(textAlphabet+ "4"));
+        table.addCell(new Cell().add(textAlphabet + "3"));
+        table.addCell(new Cell().add(textAlphabet + "4"));
         table.addCell(new Cell().add(textAlphabet+ "5"));
 
         doc.add(table);
@@ -963,7 +960,7 @@ public class BorderTest extends ExtendedITextTest {
         String textAlphabet = "Cell";
 
         Table table = new Table(3);
-        table.addCell(new Cell().add("1gsdfgsdfgsdfjghdlsfhgkjdfshgkjdsfgdsf gdsfg dfs gdfs gsdf gdfsgffgfgfgfgfgfffgfgfgdhsfjgdsfjgdfsgfgfg fg fg fg f gfg fgggggggggggggggfg fgf fgsd"));
+        table.addCell(new Cell().add("Make Gretzky great again! Make Gretzky great again! Make Gretzky great again! Make Gretzky great again! Make Gretzky great again! Make Gretzky great again!"));
         table.addCell(new Cell(2, 1).add(textAlphabet+ "3"));
         table.addCell(new Cell().add(textAlphabet+ "4").setBorder(new SolidBorder(Color.GREEN, 2)));
         table.addCell(new Cell().add(textAlphabet+ "5"));
@@ -976,18 +973,16 @@ public class BorderTest extends ExtendedITextTest {
 
     @Test
     public void tableWithHeaderFooterTest01() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderTest01.pdf";
+        fileName = "tableWithHeaderFooterTest01.pdf";
         Document doc = createDocument();
-        doc.getPdfDocument().setDefaultPageSize(new PageSize(595, 1000));
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(1000, 1000));
         String text = "Cell";
 
         Table table = new Table(3);
-        for (int i = 0; i < 1; i++) {
-            table.addCell(new Cell().add(text + "1").setHeight(40));
-//            table.addCell(new Cell(2, 1).add(text + "2"));
-//            table.addCell(new Cell().add(text + "3"));
-            table.addCell(new Cell().add(text + "4").setHeight(40));
-            table.addCell(new Cell().add(text + "5").setHeight(40));
+        for (int i = 0; i < 2; i++) {
+            table.addCell(new Cell().add(text + "1").setHeight(40).setBorderBottom(new SolidBorder(Color.MAGENTA, 100)));
+            table.addCell(new Cell().add(text + "4").setHeight(40).setBorderBottom(new SolidBorder(Color.MAGENTA, 100)));
+            table.addCell(new Cell().add(text + "5").setHeight(40).setBorderBottom(new SolidBorder(Color.MAGENTA, 100)));
         }
         for (int i = 0; i < 3; i++) {
             table.addHeaderCell(new Cell().add("Header").setHeight(40));
@@ -998,6 +993,91 @@ public class BorderTest extends ExtendedITextTest {
 
         doc.add(table);
         doc.add(new Table(1).addCell(new Cell().add("Hello")).setBorder(new SolidBorder(Color.BLACK, 10)));
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void tableWithHeaderFooterTest02() throws IOException, InterruptedException {
+        fileName = "tableWithHeaderFooterTest02.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(595, 1500));
+        Table table = new Table(2);
+
+        table.addHeaderCell(new Cell().setHeight(30).add("Header1").setBorderTop(new SolidBorder(Color.RED, 100)));
+        table.addHeaderCell(new Cell().setHeight(30).add("Header2").setBorderTop(new SolidBorder(Color.RED, 200)));
+
+        table.addFooterCell(new Cell().setHeight(30).add("Footer1").setBorderTop(new SolidBorder(Color.RED, 100)));
+        table.addFooterCell(new Cell().setHeight(30).add("Footer2").setBorderTop(new SolidBorder(Color.RED, 200)));
+        table.addFooterCell(new Cell().setHeight(30).add("Footer3"));
+        table.addFooterCell(new Cell().setHeight(30).add("Footer4"));
+
+        for (int i =1; i < 43; i+=2) {
+            table.addCell(new Cell().setHeight(30).add("Cell" + i).setBorderBottom(new SolidBorder(Color.BLUE, 400)).setBorderRight(new SolidBorder(20)));
+            table.addCell(new Cell().setHeight(30).add("Cell" + (i+1)).setBorderBottom(new SolidBorder(Color.BLUE, 100)).setBorderLeft(new SolidBorder(20)));
+        }
+
+        table.setSkipLastFooter(true);
+        table.setSkipFirstHeader(true);
+        doc.add(table);
+        doc.add(new Table(1).addCell("Hello").setBorder(new SolidBorder(Color.ORANGE, 2)));
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void tableWithHeaderFooter03() throws IOException, InterruptedException {
+        fileName = "tableWithHeaderFooterTest03.pdf";
+        Document doc = createDocument();
+
+        Table table = new Table(1);
+        table.addHeaderCell(new Cell().add("Header").setHeight(400).setBorder(new SolidBorder(Color.BLUE, 40)));
+        table.setBorder(new SolidBorder(Color.GREEN, 100));
+        doc.add(table);
+        doc.add(new Table(1).addCell("Hello").setBorder(new SolidBorder(Color.MAGENTA, 5)));
+        doc.add(new AreaBreak());
+
+        table = new Table(1);
+        table.addFooterCell(new Cell().add("Footer").setHeight(400).setBorder(new SolidBorder(Color.BLUE, 40)));
+        table.setBorder(new SolidBorder(Color.GREEN, 100));
+        doc.add(table);
+
+        doc.add(new Table(1).addCell("Hello").setBorder(new SolidBorder(Color.MAGENTA, 5)));
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void tableWithHeaderFooter04() throws IOException, InterruptedException {
+        fileName = "tableWithHeaderFooterTest04.pdf";
+        Document doc = createDocument();
+
+        Table table = new Table(1);
+        table.addHeaderCell(new Cell().add("Header").setBorder(new SolidBorder(Color.BLUE, 40)));
+        table.addCell(new Cell().add("Cell").setBorder(new SolidBorder(Color.MAGENTA, 30)));
+        table.addFooterCell(new Cell().add("Footer").setBorder(new SolidBorder(Color.BLUE, 20)));
+        doc.add(table);
+
+        doc.add(new Table(1).addCell("Hello").setBorder(new SolidBorder(Color.MAGENTA, 5)));
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void tableWithHeaderFooter05() throws IOException, InterruptedException {
+        fileName = "tableWithHeaderFooterTest05.pdf";
+        Document doc = createDocument();
+        Table table = new Table(1);
+        table.addCell(new Cell().add("Cell").setBorder(new SolidBorder(Color.MAGENTA, 30)).setHeight(30));
+        table.addFooterCell(new Cell().add("Footer").setBorder(new SolidBorder(Color.BLUE, 50)).setHeight(30));
+        table.setBorder(new SolidBorder(100));
+        table.setSkipLastFooter(true);
+        doc.add(table);
+        doc.add(new Table(1).addCell("Hello").setBorder(new SolidBorder(Color.ORANGE, 5)));
+
+        table.deleteOwnProperty(Property.BORDER);
+        doc.add(table);
+        doc.add(new Table(1).addCell("Hello").setBorder(new SolidBorder(Color.ORANGE, 5)));
 
         closeDocumentAndCompareOutputs(doc);
     }
