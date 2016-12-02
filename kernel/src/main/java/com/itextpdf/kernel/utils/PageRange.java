@@ -257,7 +257,7 @@ public class PageRange {
             if (page <= nbPages) {
                 return Collections.singletonList(page);
             } else {
-                return Collections.emptyList();
+                return Collections.<Integer>emptyList();
             }
         }
 
@@ -491,7 +491,7 @@ public class PageRange {
                 allPages.addAll(conditions.get(0).getAllPages());
             }
             for (IPageRangePart cond : conditions) {
-                allPages.retainAll(cond.getAllPages());
+                allPages = retainAll(allPages, cond.getAllPages());
             }
             return allPages;
         }
@@ -503,9 +503,19 @@ public class PageRange {
                 allPages.addAll(conditions.get(0).getAllPages(nbPages));
             }
             for (IPageRangePart cond : conditions) {
-                allPages.retainAll(cond.getAllPages(nbPages));
+                allPages = retainAll(allPages, cond.getAllPages(nbPages));
             }
             return allPages;
+        }
+        
+        private List<Integer> retainAll(List<Integer> first, List<Integer> second) {
+            List<Integer> result = new ArrayList<>();
+            for (Integer x : first) {
+                if (second.contains(x)) {
+                    result.add(x);
+                }
+            }
+            return result;
         }
 
         @Override
