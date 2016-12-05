@@ -491,7 +491,7 @@ public class PageRange {
                 allPages.addAll(conditions.get(0).getAllPages());
             }
             for (IPageRangePart cond : conditions) {
-                allPages = retainAll(allPages, cond.getAllPages());
+                allPages.retainAll(cond.getAllPages());
             }
             return allPages;
         }
@@ -503,21 +503,11 @@ public class PageRange {
                 allPages.addAll(conditions.get(0).getAllPages(nbPages));
             }
             for (IPageRangePart cond : conditions) {
-                allPages = retainAll(allPages, cond.getAllPages(nbPages));
+                allPages.retainAll(cond.getAllPages(nbPages));
             }
             return allPages;
         }
         
-        private List<Integer> retainAll(List<Integer> first, List<Integer> second) {
-            List<Integer> result = new ArrayList<>();
-            for (Integer x : first) {
-                if (second.contains(x)) {
-                    result.add(x);
-                }
-            }
-            return result;
-        }
-
         @Override
         public boolean isPageInRange(int pageNumber) {
             for (IPageRangePart cond : conditions) {

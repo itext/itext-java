@@ -1563,7 +1563,7 @@ public class TableRenderer extends AbstractRenderer {
                         if (null != border && widths[0] < border.getWidth()) {
                             widths[0] = border.getWidth();
                         }
-                        col += rowList.get(row)[col].getPropertyAsInteger(Property.COLSPAN);
+                        col += (int)rowList.get(row)[col].getPropertyAsInteger(Property.COLSPAN);
                         row = 0;
                     } else {
                         row++;

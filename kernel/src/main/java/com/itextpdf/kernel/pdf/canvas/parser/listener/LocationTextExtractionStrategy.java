@@ -629,8 +629,8 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
     }
 
     private static class TextChunkMarks {
-        private List<TextChunk> preceding = new ArrayList<>();
-        private List<TextChunk> succeeding = new ArrayList<>();
+        List<TextChunk> preceding = new ArrayList<>();
+        List<TextChunk> succeeding = new ArrayList<>();
     }
 
 }
