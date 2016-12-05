@@ -83,8 +83,6 @@ public class MarginsCollapseHandler {
         rendererChildren.add(child);
 
         int childIndex = processedChildrenNum++;
-        prevChildMarginInfo = childMarginInfo;
-        childMarginInfo = null;
 
         boolean childIsBlockElement = isBlockElement(child);
 
@@ -147,7 +145,8 @@ public class MarginsCollapseHandler {
             }
         }
 
-        prevChildMarginInfo = null; // a sign that last kid processing finished successfully
+        prevChildMarginInfo = childMarginInfo;
+        childMarginInfo = null;
     }
 
     public void startMarginsCollapse(Rectangle parentBBox) {
@@ -169,13 +168,8 @@ public class MarginsCollapseHandler {
     }
 
     public void endMarginsCollapse() {
-        if (prevChildMarginInfo != null) {
-            // last kid processing finished with NOTHING
-            childMarginInfo = prevChildMarginInfo;
-        }
-
-        if (childMarginInfo != null && childMarginInfo.isSelfCollapsing() && childMarginInfo.isIgnoreOwnMarginTop()) {
-            collapseInfo.getCollapseBefore().joinMargin(childMarginInfo.getCollapseAfter());
+        if (prevChildMarginInfo != null && prevChildMarginInfo.isSelfCollapsing() && prevChildMarginInfo.isIgnoreOwnMarginTop()) {
+            collapseInfo.getCollapseBefore().joinMargin(prevChildMarginInfo.getCollapseAfter());
         }
 
         boolean couldBeSelfCollapsing = MarginsCollapseHandler.marginsCouldBeSelfCollapsing(renderer);
@@ -188,9 +182,9 @@ public class MarginsCollapseHandler {
         collapseInfo.setSelfCollapsing(collapseInfo.isSelfCollapsing() && couldBeSelfCollapsing);
 
         MarginsCollapse ownCollapseAfter;
-        boolean lastChildMarginJoinedToParent = childMarginInfo != null && childMarginInfo.isIgnoreOwnMarginBottom();
+        boolean lastChildMarginJoinedToParent = prevChildMarginInfo != null && prevChildMarginInfo.isIgnoreOwnMarginBottom();
         if (lastChildMarginJoinedToParent) {
-            ownCollapseAfter = childMarginInfo.getOwnCollapseAfter();
+            ownCollapseAfter = prevChildMarginInfo.getOwnCollapseAfter();
         } else {
             ownCollapseAfter = new MarginsCollapse();
         }
@@ -198,8 +192,8 @@ public class MarginsCollapseHandler {
         collapseInfo.setOwnCollapseAfter(ownCollapseAfter);
 
         if (collapseInfo.isSelfCollapsing()) {
-            if (childMarginInfo != null) {
-                collapseInfo.setCollapseAfter(childMarginInfo.getCollapseAfter());
+            if (prevChildMarginInfo != null) {
+                collapseInfo.setCollapseAfter(prevChildMarginInfo.getCollapseAfter());
             } else {
                 collapseInfo.getCollapseAfter().joinMargin(collapseInfo.getCollapseBefore());
                 collapseInfo.getOwnCollapseAfter().joinMargin(collapseInfo.getCollapseBefore());
@@ -216,7 +210,7 @@ public class MarginsCollapseHandler {
             }
 
             if (lastChildMarginJoinedToParent) {
-                collapseInfo.setCollapseAfter(childMarginInfo.getCollapseAfter());
+                collapseInfo.setCollapseAfter(prevChildMarginInfo.getCollapseAfter());
             }
             if (!collapseInfo.isIgnoreOwnMarginBottom()) {
                 float collapsedMargins = collapseInfo.getCollapseAfter().getCollapsedMarginsSize();
