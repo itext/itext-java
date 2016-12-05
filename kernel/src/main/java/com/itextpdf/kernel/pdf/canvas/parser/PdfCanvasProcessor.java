@@ -478,7 +478,7 @@ public class PdfCanvasProcessor {
     protected PdfFont getFont(PdfDictionary fontDict) {
         int n = fontDict.getIndirectReference().getObjNumber();
         WeakReference<PdfFont> fontRef = cachedFonts.get(n);
-        PdfFont font = fontRef == null ? null: fontRef.get();
+        PdfFont font = (PdfFont)(fontRef == null ? null: fontRef.get());
         if (font == null) {
             font = PdfFontFactory.createFont(fontDict);
             cachedFonts.put(n, new WeakReference<>(font));
