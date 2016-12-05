@@ -159,30 +159,33 @@ public class PageRange {
     }
 
     /**
-     * Gets the list if pages that have been added to the range so far.
+     * Gets the list of pages that have been added to the range so far.
+     * 
+     * This method has been deprecated in favor of an alternative method that
+     * requires the user to supply the total number of pages in the document.
+     * This number is necessary in order to limit open-ended ranges like "4-".
      *
      * @return the list containing page numbers added to the range
+     * @deprecated Please use {@link #getQualifyingPageNums(int)}
      */
+    @Deprecated
     public List<Integer> getAllPages() {
-        List<Integer> allPages = new ArrayList<>();
-        for (int ind = 0; ind < sequences.size(); ind++) {
-            allPages.addAll(sequences.get(ind).getAllPages());
-        }
-        return allPages;
+        // supply a reasonably high default for users who haven't switched
+        return getQualifyingPageNums(10000);
     }
 
     /**
-     * Gets the list if pages that have been added to the range so far.
+     * Gets the list of pages that have been added to the range so far.
      *
      * @param nbPages number of pages of the document to get the pages, to list
      * only the pages eligible for this document.
      * @return the list containing page numbers added to the range matching this
      * document
      */
-    public List<Integer> getAllPages(int nbPages) {
+    public List<Integer> getQualifyingPageNums(int nbPages) {
         List<Integer> allPages = new ArrayList<>();
-        for (int ind = 0; ind < sequences.size(); ind++) {
-            allPages.addAll(sequences.get(ind).getAllPages(nbPages));
+        for (IPageRangePart sequence : sequences) {
+            allPages.addAll(sequence.getAllPagesInRange(nbPages));
         }
         return allPages;
     }
@@ -195,8 +198,8 @@ public class PageRange {
      * <code>false</code> otherwise
      */
     public boolean isPageInRange(int pageNumber) {
-        for (int ind = 0; ind < sequences.size(); ind++) {
-            if (sequences.get(ind).isPageInRange(pageNumber)) {
+        for (IPageRangePart sequence : sequences) {
+            if (sequence.isPageInRange(pageNumber)) {
                 return true;
             }
         }
@@ -229,9 +232,9 @@ public class PageRange {
      */
     public static interface IPageRangePart {
 
-        public List<Integer> getAllPages();
+        //public List<Integer> getAllPages();
 
-        public List<Integer> getAllPages(int nbPages);
+        public List<Integer> getAllPagesInRange(int nbPages);
 
         public boolean isPageInRange(int pageNumber);
     }
@@ -248,12 +251,7 @@ public class PageRange {
         }
 
         @Override
-        public List<Integer> getAllPages() {
-            return Collections.singletonList(page);
-        }
-
-        @Override
-        public List<Integer> getAllPages(int nbPages) {
+        public List<Integer> getAllPagesInRange(int nbPages) {
             if (page <= nbPages) {
                 return Collections.singletonList(page);
             } else {
@@ -303,16 +301,7 @@ public class PageRange {
         }
 
         @Override
-        public List<Integer> getAllPages() {
-            List<Integer> allPages = new ArrayList<>();
-            for (int pageInRange = start; pageInRange <= end; pageInRange++) {
-                allPages.add(pageInRange);
-            }
-            return allPages;
-        }
-
-        @Override
-        public List<Integer> getAllPages(int nbPages) {
+        public List<Integer> getAllPagesInRange(int nbPages) {
             List<Integer> allPages = new ArrayList<>();
             for (int pageInRange = start; pageInRange <= end && pageInRange <= nbPages; pageInRange++) {
                 allPages.add(pageInRange);
@@ -360,13 +349,7 @@ public class PageRange {
         }
 
         @Override
-        public List<Integer> getAllPages() {
-            // Return only the first element, we do not know the last page...
-            return Collections.singletonList(start);
-        }
-
-        @Override
-        public List<Integer> getAllPages(int nbPages) {
+        public List<Integer> getAllPagesInRange(int nbPages) {
             List<Integer> allPages = new ArrayList<>();
             for (int pageInRange = start; pageInRange <= nbPages; pageInRange++) {
                 allPages.add(pageInRange);
@@ -423,17 +406,7 @@ public class PageRange {
         }
 
         @Override
-        public List<Integer> getAllPages() {
-            // Return only the first element, we do not know the last page...
-            if (isOdd) {
-                return Collections.singletonList(1);
-            } else {
-                return Collections.singletonList(2);
-            }
-        }
-
-        @Override
-        public List<Integer> getAllPages(int nbPages) {
+        public List<Integer> getAllPagesInRange(int nbPages) {
             List<Integer> allPages = new ArrayList<>();
             for (int pageInRange = (mod == 0 ? 2 : mod); pageInRange <= nbPages; pageInRange += 2) {
                 allPages.add(pageInRange);
@@ -485,25 +458,13 @@ public class PageRange {
         }
 
         @Override
-        public List<Integer> getAllPages() {
+        public List<Integer> getAllPagesInRange(int nbPages) {
             List<Integer> allPages = new ArrayList<>();
             if (!conditions.isEmpty()) {
-                allPages.addAll(conditions.get(0).getAllPages());
+                allPages.addAll(conditions.get(0).getAllPagesInRange(nbPages));
             }
             for (IPageRangePart cond : conditions) {
-                allPages.retainAll(cond.getAllPages());
-            }
-            return allPages;
-        }
-
-        @Override
-        public List<Integer> getAllPages(int nbPages) {
-            List<Integer> allPages = new ArrayList<>();
-            if (!conditions.isEmpty()) {
-                allPages.addAll(conditions.get(0).getAllPages(nbPages));
-            }
-            for (IPageRangePart cond : conditions) {
-                allPages.retainAll(cond.getAllPages(nbPages));
+                allPages.retainAll(cond.getAllPagesInRange(nbPages));
             }
             return allPages;
         }
