@@ -54,7 +54,9 @@ import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
@@ -94,6 +96,7 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
      * Creates a new text extraction renderer, with a custom strategy for
      * creating new TextChunkLocation objects based on the input of the
      * TextRenderInfo.
+     *
      * @param strat the custom strategy
      */
     public LocationTextExtractionStrategy(ITextChunkLocationStrategy strat) {
@@ -104,6 +107,7 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
      * Changes the behavior of text extraction so that if the parameter is set to {@code true},
      * /ActualText marked content property will be used instead of raw decoded bytes.
      * Beware: the logic is not stable yet.
+     *
      * @param useActualText true to use /ActualText, false otherwise
      * @return this object
      */
@@ -116,6 +120,7 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
      * Sets if text flows from left to right or from right to left.
      * Call this method with <code>true</code> argument for extracting Arabic, Hebrew or other
      * text with right-to-left writing direction.
+     *
      * @param rightToLeftRunDirection value specifying whether the direction should be right to left
      * @return this object
      */
@@ -127,6 +132,7 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
     /**
      * Gets the value of the property which determines if /ActualText will be used when extracting
      * the text
+     *
      * @return true if /ActualText value is used, false otherwise
      */
     public boolean isUseActualText() {
@@ -184,12 +190,8 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
     public String getResultantText() {
         if (DUMP_STATE) dumpState();
 
-        List<TextChunk> textChunks = locationalResult;
-        if (rightToLeftRunDirection) {
-            Collections.sort(textChunks, new TextChunkComparator(new TextChunkLocationComparator(false)));
-        } else {
-            Collections.sort(textChunks);
-        }
+        List<TextChunk> textChunks = new ArrayList<>(locationalResult);
+        sortWithMarks(textChunks);
 
         StringBuilder sb = new StringBuilder();
         TextChunk lastChunk = null;
@@ -271,6 +273,85 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
         return lastActualText;
     }
 
+    private void sortWithMarks(List<TextChunk> textChunks) {
+        Map<TextChunk, TextChunkMarks> marks = new HashMap<>();
+        List<TextChunk> toSort = new ArrayList<>();
+
+        for (int markInd = 0; markInd < textChunks.size(); markInd++) {
+            ITextChunkLocation location = textChunks.get(markInd).getLocation();
+            if (location.getStartLocation().equals(location.getEndLocation())) {
+                boolean foundBaseToAttachTo = false;
+                for (int baseInd = 0; baseInd < textChunks.size(); baseInd++) {
+                    if (markInd != baseInd) {
+                        ITextChunkLocation baseLocation = textChunks.get(baseInd).getLocation();
+                        if (!baseLocation.getStartLocation().equals(baseLocation.getEndLocation()) && containsMark(baseLocation, location)) {
+                            TextChunkMarks currentMarks = marks.get(textChunks.get(baseInd));
+                            if (currentMarks == null) {
+                                currentMarks = new TextChunkMarks();
+                                marks.put(textChunks.get(baseInd), currentMarks);
+                            }
+
+                            if (markInd < baseInd) {
+                                currentMarks.preceding.add(textChunks.get(markInd));
+                            } else {
+                                currentMarks.succeeding.add(textChunks.get(markInd));
+                            }
+
+                            foundBaseToAttachTo = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!foundBaseToAttachTo) {
+                    toSort.add(textChunks.get(markInd));
+                }
+            } else {
+                toSort.add(textChunks.get(markInd));
+            }
+        }
+
+        if (rightToLeftRunDirection) {
+            Collections.sort(toSort, new TextChunkComparator(new TextChunkLocationComparator(false)));
+        } else {
+            Collections.sort(toSort);
+        }
+
+        textChunks.clear();
+
+        for (TextChunk current : toSort) {
+            TextChunkMarks currentMarks = marks.get(current);
+            if (currentMarks != null) {
+                if (!rightToLeftRunDirection) {
+                    for (int j = 0; j < currentMarks.preceding.size(); j++) {
+                        textChunks.add(currentMarks.preceding.get(j));
+                    }
+                } else {
+                    for (int j = currentMarks.succeeding.size() - 1; j >= 0; j--) {
+                        textChunks.add(currentMarks.succeeding.get(j));
+                    }
+                }
+            }
+            textChunks.add(current);
+            if (currentMarks != null) {
+                if (!rightToLeftRunDirection) {
+                    for (int j = 0; j < currentMarks.succeeding.size(); j++) {
+                        textChunks.add(currentMarks.succeeding.get(j));
+                    }
+                } else {
+                    for (int j = currentMarks.preceding.size() - 1; j >= 0; j--) {
+                        textChunks.add(currentMarks.preceding.get(j));
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean containsMark(ITextChunkLocation baseLocation, ITextChunkLocation markLocation) {
+        return baseLocation.getStartLocation().get(Vector.I1) <= markLocation.getStartLocation().get(Vector.I1) && baseLocation.getEndLocation().get(Vector.I1) >= markLocation.getEndLocation().get(Vector.I1) &&
+                Math.abs(baseLocation.distPerpendicular() - markLocation.distPerpendicular()) <= DIACRITICAL_MARKS_ALLOWED_VERTICAL_DEVIATION;
+    }
+
     public interface ITextChunkLocationStrategy {
         ITextChunkLocation createLocation(TextRenderInfo renderInfo, LineSegment baseline);
     }
@@ -301,7 +382,9 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
      * Represents a chunk of text, it's orientation, and location relative to the orientation vector
      */
     public static class TextChunk implements Comparable<TextChunk> {
-        /** the text of the chunk */
+        /**
+         * the text of the chunk
+         */
         protected final String text;
         protected final ITextChunkLocation location;
 
@@ -313,7 +396,7 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
         /**
          * @return the text captured by this chunk
          */
-        public String getText(){
+        public String getText() {
             return text;
         }
 
@@ -346,22 +429,38 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
     public static class TextChunkLocationDefaultImp implements ITextChunkLocation {
         private static final TextChunkLocationComparator defaultComparator = new TextChunkLocationComparator();
 
-        /** the starting location of the chunk */
+        /**
+         * the starting location of the chunk
+         */
         private final Vector startLocation;
-        /** the ending location of the chunk */
+        /**
+         * the ending location of the chunk
+         */
         private final Vector endLocation;
-        /** unit vector in the orientation of the chunk */
+        /**
+         * unit vector in the orientation of the chunk
+         */
         private final Vector orientationVector;
-        /** the orientation as a scalar for quick sorting */
+        /**
+         * the orientation as a scalar for quick sorting
+         */
         private final int orientationMagnitude;
-        /** perpendicular distance to the orientation unit vector (i.e. the Y position in an unrotated coordinate system)
-         * we round to the nearest integer to handle the fuzziness of comparing floats */
+        /**
+         * perpendicular distance to the orientation unit vector (i.e. the Y position in an unrotated coordinate system)
+         * we round to the nearest integer to handle the fuzziness of comparing floats
+         */
         private final int distPerpendicular;
-        /** distance of the start of the chunk parallel to the orientation unit vector (i.e. the X position in an unrotated coordinate system) */
+        /**
+         * distance of the start of the chunk parallel to the orientation unit vector (i.e. the X position in an unrotated coordinate system)
+         */
         private final float distParallelStart;
-        /** distance of the end of the chunk parallel to the orientation unit vector (i.e. the X position in an unrotated coordinate system) */
+        /**
+         * distance of the end of the chunk parallel to the orientation unit vector (i.e. the X position in an unrotated coordinate system)
+         */
         private final float distParallelEnd;
-        /** the width of a single space character in the font of the chunk */
+        /**
+         * the width of a single space character in the font of the chunk
+         */
         private final float charSpaceWidth;
 
         public TextChunkLocationDefaultImp(Vector startLocation, Vector endLocation, float charSpaceWidth) {
@@ -374,36 +473,47 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
                 oVector = new Vector(1, 0, 0);
             }
             orientationVector = oVector.normalize();
-            orientationMagnitude = (int)(Math.atan2(orientationVector.get(Vector.I2), orientationVector.get(Vector.I1))*1000);
+            orientationMagnitude = (int) (Math.atan2(orientationVector.get(Vector.I2), orientationVector.get(Vector.I1)) * 1000);
 
             // see http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
             // the two vectors we are crossing are in the same plane, so the result will be purely
             // in the z-axis (out of plane) direction, so we just take the I3 component of the result
-            Vector origin = new Vector(0,0,1);
-            distPerpendicular = (int)(startLocation.subtract(origin)).cross(orientationVector).get(Vector.I3);
+            Vector origin = new Vector(0, 0, 1);
+            distPerpendicular = (int) (startLocation.subtract(origin)).cross(orientationVector).get(Vector.I3);
 
             distParallelStart = orientationVector.dot(startLocation);
             distParallelEnd = orientationVector.dot(endLocation);
         }
 
 
-        public int orientationMagnitude() {return orientationMagnitude;}
-        public int distPerpendicular() {return distPerpendicular;}
-        public float distParallelStart() {return distParallelStart; }
-        public float distParallelEnd() { return distParallelEnd;}
+        public int orientationMagnitude() {
+            return orientationMagnitude;
+        }
+
+        public int distPerpendicular() {
+            return distPerpendicular;
+        }
+
+        public float distParallelStart() {
+            return distParallelStart;
+        }
+
+        public float distParallelEnd() {
+            return distParallelEnd;
+        }
 
 
         /**
          * @return the start location of the text
          */
-        public Vector getStartLocation(){
+        public Vector getStartLocation() {
             return startLocation;
         }
 
         /**
          * @return the end location of the text
          */
-        public Vector getEndLocation(){
+        public Vector getEndLocation() {
             return endLocation;
         }
 
@@ -437,10 +547,11 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
          * in the direction of this chunk's orientation vector.  Note that it's a bad idea
          * to call this for chunks that aren't on the same line and orientation, but we don't
          * explicitly check for that condition for performance reasons.
+         *
          * @param other
          * @return the number of spaces between the end of 'other' and the beginning of this chunk
          */
-        public float distanceFromEndOf(ITextChunkLocation other){
+        public float distanceFromEndOf(ITextChunkLocation other) {
             return distParallelStart() - other.distParallelEnd();
         }
 
@@ -501,13 +612,6 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
         public int compare(ITextChunkLocation first, ITextChunkLocation second) {
             if (first == second) return 0; // not really needed, but just in case
 
-            LineSegment mySegment = new LineSegment(first.getStartLocation(), first.getEndLocation());
-            LineSegment otherSegment = new LineSegment(second.getStartLocation(), second.getEndLocation());
-            if (second.getStartLocation().equals(second.getEndLocation()) && mySegment.containsSegment(otherSegment) || first.getStartLocation().equals(first.getEndLocation()) && otherSegment.containsSegment(mySegment)) {
-                // Return 0 to save order due to stable sort. This handles situation of mark glyphs that have zero width
-                return 0;
-            }
-
             int result;
             result = Integer.compare(first.orientationMagnitude(), second.orientationMagnitude());
             if (result != 0) {
@@ -515,13 +619,18 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
             }
 
             int distPerpendicularDiff = first.distPerpendicular() - second.distPerpendicular();
-            if (Math.abs(distPerpendicularDiff) > DIACRITICAL_MARKS_ALLOWED_VERTICAL_DEVIATION || distPerpendicularDiff != 0 && (mySegment.getLength() > 0 && otherSegment.getLength() > 0)) {
+            if (distPerpendicularDiff != 0) {
                 return distPerpendicularDiff;
             }
 
             return leftToRight ? Float.compare(first.distParallelStart(), second.distParallelStart()) :
-                                 -Float.compare(first.distParallelEnd(), second.distParallelEnd());
+                    -Float.compare(first.distParallelEnd(), second.distParallelEnd());
         }
+    }
+
+    private static class TextChunkMarks {
+        private List<TextChunk> preceding = new ArrayList<>();
+        private List<TextChunk> succeeding = new ArrayList<>();
     }
 
 }
