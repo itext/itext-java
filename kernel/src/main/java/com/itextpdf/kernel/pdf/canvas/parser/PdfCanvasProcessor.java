@@ -63,14 +63,6 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Path;
-import com.itextpdf.kernel.pdf.canvas.CanvasTag;
-import com.itextpdf.kernel.pdf.canvas.parser.data.ClippingPathInfo;
-import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
-import com.itextpdf.kernel.pdf.canvas.parser.data.ImageRenderInfo;
-import com.itextpdf.kernel.pdf.canvas.parser.data.PathRenderInfo;
-import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
-import com.itextpdf.kernel.pdf.canvas.parser.util.PdfCanvasParser;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
@@ -82,7 +74,15 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.pdf.canvas.parser.data.ClippingPathInfo;
+import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
+import com.itextpdf.kernel.pdf.canvas.parser.data.ImageRenderInfo;
+import com.itextpdf.kernel.pdf.canvas.parser.data.PathRenderInfo;
+import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
+import com.itextpdf.kernel.pdf.canvas.parser.util.PdfCanvasParser;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
@@ -94,7 +94,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -994,7 +993,7 @@ public class PdfCanvasProcessor {
                 PdfColorSpace underlyingCs = ((PdfSpecialCs.UncoloredTilingPattern)pdfColorSpace).getUnderlyingColorSpace();
                 if (patternName instanceof PdfName) {
                     PdfPattern pattern = resources.getPattern((PdfName) patternName);
-                    if (pattern instanceof PdfPattern.Tiling) {
+                    if (pattern instanceof PdfPattern.Tiling && !((PdfPattern.Tiling) pattern).isColored()) {
                         return new PatternColor((PdfPattern.Tiling) pattern, underlyingCs, getColorants(underlyingOperands));
                     }
                 }
