@@ -6,6 +6,7 @@ import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
@@ -14,6 +15,7 @@ import com.itextpdf.layout.element.Link;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -171,4 +173,26 @@ public class LinkTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
+
+
+    @Test
+    public void simpleMarginsTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "simpleMarginsTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_simpleMarginsTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
+        Link link = new Link("TestLink", action);
+        link.setBorder(new SolidBorder(Color.BLUE, 20));
+        link.setProperty(Property.MARGIN_LEFT, 50);
+        link.setProperty(Property.MARGIN_RIGHT, 50);
+
+        doc.add(new Paragraph(link).setBorder(new SolidBorder(10)));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
 }

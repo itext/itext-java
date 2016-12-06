@@ -280,7 +280,7 @@ public class TextRenderer extends AbstractRenderer {
                     applyMargins(occupiedArea.getBBox(), margins, true);
                     // Force to place what we can
                     if (line.start == -1) {
-                       line.start = currentTextPos;
+                        line.start = currentTextPos;
                     }
                     line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth - 1);
                     // the line does not fit because of height - full overflow
@@ -444,7 +444,7 @@ public class TextRenderer extends AbstractRenderer {
                     }
                 }
                 if (selectedEntry != null) {
-                    Character.UnicodeScript selectScript = ((Map.Entry<Character.UnicodeScript, Integer>)selectedEntry).getKey();
+                    Character.UnicodeScript selectScript = ((Map.Entry<Character.UnicodeScript, Integer>) selectedEntry).getKey();
                     if ((selectScript == Character.UnicodeScript.ARABIC || selectScript == Character.UnicodeScript.HEBREW) && parent instanceof LineRenderer) {
                         setProperty(Property.BASE_DIRECTION, BaseDirection.DEFAULT_BIDI);
                     }
@@ -459,7 +459,7 @@ public class TextRenderer extends AbstractRenderer {
                 TypographyUtils.applyOtfScript(font.getFontProgram(), text, script);
             }
 
-            FontKerning fontKerning = (FontKerning)this.<FontKerning>getProperty(Property.FONT_KERNING, FontKerning.NO);
+            FontKerning fontKerning = (FontKerning) this.<FontKerning>getProperty(Property.FONT_KERNING, FontKerning.NO);
             if (fontKerning == FontKerning.YES) {
                 TypographyUtils.applyKerning(font.getFontProgram(), text);
             }
@@ -499,6 +499,7 @@ public class TextRenderer extends AbstractRenderer {
             }
         }
 
+        applyMargins(occupiedArea.getBBox(), getMargins(), false);
         applyBorderBox(occupiedArea.getBBox(), false);
 
         boolean isRelativePosition = isRelativePosition();
@@ -577,7 +578,7 @@ public class TextRenderer extends AbstractRenderer {
                 }
             };
 
-            boolean appearanceStreamLayout = Boolean.TRUE.equals (getPropertyAsBoolean(Property.APPEARANCE_STREAM_LAYOUT));
+            boolean appearanceStreamLayout = Boolean.TRUE.equals(getPropertyAsBoolean(Property.APPEARANCE_STREAM_LAYOUT));
 
             if (hasOwnProperty(Property.REVERSED)) {
                 boolean writeReversedChars = !appearanceStreamLayout;
@@ -638,6 +639,7 @@ public class TextRenderer extends AbstractRenderer {
         }
 
         applyBorderBox(occupiedArea.getBBox(), true);
+        applyMargins(occupiedArea.getBBox(), getMargins(), true);
 
         if (isTagged) {
             tagPointer.moveToParent();
