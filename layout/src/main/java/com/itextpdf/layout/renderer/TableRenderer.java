@@ -346,7 +346,7 @@ public class TableRenderer extends AbstractRenderer {
         int[] targetOverflowRowIndex = new int[tableModel.getNumberOfColumns()];
 
         horizontalBorders.add(tableModel.getLastRowBottomBorder());
-
+        boolean isLastRowFull = true;
         for (row = 0; row < rows.size(); row++) {
             // if forced placement was earlier set, this means the element did not fit into the area, and in this case
             // we only want to place the first row in a forced way, not the next ones, otherwise they will be invisible
@@ -369,6 +369,8 @@ public class TableRenderer extends AbstractRenderer {
             for (col = 0; col < currentRow.length; col++) {
                 if (currentRow[col] != null) {
                     cellProcessingQueue.addLast(new CellRendererInfo(currentRow[col], col, row));
+                } else if (row == rows.size()-1) {
+                    isLastRowFull = false;
                 }
             }
             // the element which was the first to cause Layout.Nothing
@@ -834,6 +836,10 @@ public class TableRenderer extends AbstractRenderer {
                 childRenderers.addAll(currChildRenderers);
                 currChildRenderers.clear();
             }
+        }
+        if (!isLastRowFull) {
+            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+            logger.warn(LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE);
         }
 
         // if table is empty we still need to process  table borders
