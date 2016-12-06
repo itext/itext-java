@@ -109,6 +109,7 @@ public class TextLayoutResult extends LayoutResult {
     /**
      * Indicates whether split was forced by new line symbol in rendered text.
      * The value will be set as true if, for example, the rendered text contains '\n' symbol.
+     * This value can also be true even if the text was fully placed, but had line break at the end.
      *
      * @return whether split was forced by new line or not.
      */
@@ -117,7 +118,7 @@ public class TextLayoutResult extends LayoutResult {
     }
 
     /**
-     * Sets {@link #setSplitForcedByNewline}
+     * Sets {@link #isSplitForcedByNewline}
      *
      * @param isSplitForcedByNewline indicates that split was forced by new line symbol in rendered text.
      * @return {@link com.itextpdf.layout.layout.TextLayoutResult this layout result} the setting was applied on.

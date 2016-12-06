@@ -190,7 +190,9 @@ public class LineRenderer extends AbstractRenderer {
             }
             occupiedArea.setBBox(new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight, curWidth, maxHeight));
 
-            if (childResult.getStatus() != LayoutResult.FULL) {
+            boolean newLineOccurred = (childResult instanceof TextLayoutResult && ((TextLayoutResult)childResult).isSplitForcedByNewline());
+            boolean shouldBreakLayouting = childResult.getStatus() != LayoutResult.FULL || newLineOccurred;
+            if (shouldBreakLayouting) {
                 LineRenderer[] split = split();
                 split[0].childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
 
@@ -206,7 +208,7 @@ public class LineRenderer extends AbstractRenderer {
                     split[1].childRenderers.add(childRenderer);
                     split[1].childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                 } else {
-                    if (childResult.getStatus() == LayoutResult.PARTIAL) {
+                    if (childResult.getStatus() == LayoutResult.PARTIAL || childResult.getStatus() == LayoutResult.FULL) {
                         split[0].addChild(childResult.getSplitRenderer());
                         anythingPlaced = true;
                     }
@@ -226,12 +228,16 @@ public class LineRenderer extends AbstractRenderer {
                 }
 
                 IRenderer causeOfNothing = childResult.getStatus() == LayoutResult.NOTHING ? childResult.getCauseOfNothing() : childRenderer;
-                if (anythingPlaced) {
-                    result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], causeOfNothing);
+                if (split[1] == null) {
+                    result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, split[0], split[1], causeOfNothing);
                 } else {
-                    result = new LineLayoutResult(LayoutResult.NOTHING, null, split[0], split[1], causeOfNothing);
+                    if (anythingPlaced) {
+                        result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], causeOfNothing);
+                    } else {
+                        result = new LineLayoutResult(LayoutResult.NOTHING, null, split[0], split[1], causeOfNothing);
+                    }
                 }
-                if (childResult.getStatus() == LayoutResult.PARTIAL && childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isSplitForcedByNewline()) {
+                if (newLineOccurred) {
                     result.setSplitForcedByNewline(true);
                 }
                 break;
@@ -337,7 +343,7 @@ public class LineRenderer extends AbstractRenderer {
 
                 if (result.getStatus() == LayoutResult.PARTIAL) {
                     LineRenderer overflow = (LineRenderer) result.getOverflowRenderer();
-                    if (levels != null && overflow != null) {
+                    if (levels != null) {
                         overflow.levels = new byte[levels.length - lineLevels.length];
                         System.arraycopy(levels, lineLevels.length, overflow.levels, 0, overflow.levels.length);
                         if (overflow.levels.length == 0) {
@@ -345,7 +351,7 @@ public class LineRenderer extends AbstractRenderer {
                         }
                     }
                 } else if (result.getStatus() == LayoutResult.NOTHING) {
-                    if (levels != null && result.getOverflowRenderer() != null) {
+                    if (levels != null) {
                         ((LineRenderer)result.getOverflowRenderer()).levels = levels;
                     }
                 }

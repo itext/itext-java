@@ -389,7 +389,10 @@ public class TextRenderer extends AbstractRenderer {
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         applyMargins(occupiedArea.getBBox(), margins, true);
 
-        if (result != null) {
+        if (result == null) {
+            result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null,
+                    isPlacingForcedWhileNothing ? this : null);
+        } else {
             TextRenderer[] split;
             if (isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol) {
                 // ignore '\n'
@@ -397,18 +400,15 @@ public class TextRenderer extends AbstractRenderer {
             } else {
                 split = split(currentTextPos);
             }
-            // if (split[1].length() > 0 && split[1].charAt(0) != null && split[1].charAt(0) == '\n') {
-            if (isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol) {
-                result.setSplitForcedByNewline(true);
-            }
+            result.setSplitForcedByNewline(isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol || isSplitForcedByImmediateNewLine);
             result.setSplitRenderer(split[0]);
             // no sense to process empty renderer
             if (split[1].text.start != split[1].text.end) {
                 result.setOverflowRenderer(split[1]);
+            } else {
+                // LayoutResult with partial status should have non-null overflow renderer
+                result.setStatus(LayoutResult.FULL);
             }
-        } else {
-            result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null,
-                    isPlacingForcedWhileNothing ? this : null);
         }
 
         return result;

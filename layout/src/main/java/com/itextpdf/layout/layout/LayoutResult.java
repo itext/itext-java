@@ -136,6 +136,13 @@ public class LayoutResult {
     }
 
     /**
+     * Sets the status of {@link IRenderer#layout(LayoutContext)}.
+     */
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    /**
      * Gets the {@link LayoutArea layout area} occupied by the content during {@link IRenderer#layout(LayoutContext) layouting}.
      *
      * @return the {@link LayoutArea layout area} occupied by the content
