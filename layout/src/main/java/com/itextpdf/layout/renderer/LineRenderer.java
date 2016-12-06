@@ -255,8 +255,6 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
 
-        // Consider for now that all the children have the same font, and that after reordering text pieces
-        // can be reordered, but cannot be split.
         if (baseDirection != null && baseDirection != BaseDirection.NO_BIDI) {
             List<IRenderer> children = null;
             if (result.getStatus() == LayoutResult.PARTIAL) {
@@ -349,10 +347,6 @@ public class LineRenderer extends AbstractRenderer {
                         if (overflow.levels.length == 0) {
                             overflow.levels = null;
                         }
-                    }
-                } else if (result.getStatus() == LayoutResult.NOTHING) {
-                    if (levels != null) {
-                        ((LineRenderer)result.getOverflowRenderer()).levels = levels;
                     }
                 }
             }
