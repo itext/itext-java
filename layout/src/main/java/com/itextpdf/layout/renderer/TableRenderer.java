@@ -420,7 +420,7 @@ public class TableRenderer extends AbstractRenderer {
                 LayoutArea cellArea = new LayoutArea(layoutContext.getArea().getPageNumber(), cellLayoutBox);
                 VerticalAlignment verticalAlignment = cell.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT);
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, null);
-                UnitValue cellWidthProperty = cell.getProperty(Property.WIDTH);
+                UnitValue cellWidthProperty = cell.<UnitValue>getProperty(Property.WIDTH);
                 if (cellWidthProperty != null && cellWidthProperty.isPercentValue()) {
                     cell.setProperty(Property.WIDTH, UnitValue.createPointValue(cellWidth));
                 }
