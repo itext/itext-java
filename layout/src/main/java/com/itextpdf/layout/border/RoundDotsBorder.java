@@ -48,7 +48,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.color.Color;
 
 /**
- * Draws a border with rounded dots aroudn the element it's been set to. For square dots see {@link com.itextpdf.layout.border.DottedBorder}.
+ * Draws a border with rounded dots around the element it's been set to. For square dots see {@link com.itextpdf.layout.border.DottedBorder}.
  */
 public class RoundDotsBorder extends Border {
 
@@ -163,6 +163,9 @@ public class RoundDotsBorder extends Border {
      */
     protected float getDotsGap(double distance, float initialGap) {
         double gapsNum = Math.ceil(distance / initialGap);
+        if (gapsNum == 0) {
+            return initialGap;
+        }
         return (float) (distance / gapsNum);
     }
 

@@ -164,6 +164,9 @@ public class DottedBorder extends Border {
      */
     protected float getDotsGap(double distance, float initialGap) {
         double gapsNum = Math.ceil(distance / initialGap);
+        if (gapsNum == 0) {
+            return initialGap;
+        }
         return (float) (distance / gapsNum);
     }
 
