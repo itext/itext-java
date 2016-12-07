@@ -117,7 +117,7 @@ public class LineRenderer extends AbstractRenderer {
         }
 
         boolean anythingPlaced = false;
-        TabStop nextTabStop = null;
+        TabStop hangingTabStop = null;
 
         LineLayoutResult result = null;
 
@@ -131,15 +131,15 @@ public class LineRenderer extends AbstractRenderer {
                 childRenderer.deleteOwnProperty(Property.CHARACTER_SPACING);
                 childRenderer.deleteOwnProperty(Property.WORD_SPACING);
             } else if (childRenderer instanceof TabRenderer) {
-                if (nextTabStop != null) {
+                if (hangingTabStop != null) {
                     IRenderer tabRenderer = childRenderers.get(childPos - 1);
                     tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
                     curWidth += tabRenderer.getOccupiedArea().getBBox().getWidth();
                 }
-                nextTabStop = calculateTab(childRenderer, curWidth, layoutBox.getWidth());
+                hangingTabStop = calculateTab(childRenderer, curWidth, layoutBox.getWidth());
                 if (childPos == childRenderers.size() - 1)
-                    nextTabStop = null;
-                if (nextTabStop != null) {
+                    hangingTabStop = null;
+                if (hangingTabStop != null) {
                     ++childPos;
                     continue;
                 }
@@ -149,9 +149,9 @@ public class LineRenderer extends AbstractRenderer {
                 ((TextRenderer) childRenderer).trimFirst();
             }
 
-            if (nextTabStop != null && nextTabStop.getTabAlignment() == TabAlignment.ANCHOR
+            if (hangingTabStop != null && hangingTabStop.getTabAlignment() == TabAlignment.ANCHOR
                     && childRenderer instanceof TextRenderer) {
-                childRenderer.setProperty(Property.TAB_ANCHOR, nextTabStop.getTabAnchor());
+                childRenderer.setProperty(Property.TAB_ANCHOR, hangingTabStop.getTabAnchor());
             }
 
             childResult = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
@@ -169,9 +169,9 @@ public class LineRenderer extends AbstractRenderer {
             maxDescent = Math.min(maxDescent, childDescent);
             float maxHeight = maxAscent - maxDescent;
 
-            if (nextTabStop != null) {
+            if (hangingTabStop != null) {
                 IRenderer tabRenderer = childRenderers.get(childPos - 1);
-                float tabWidth = calculateTab(layoutBox, curWidth, nextTabStop, childRenderer, childResult, tabRenderer);
+                float tabWidth = calculateTab(layoutBox, curWidth, hangingTabStop, childRenderer, childResult, tabRenderer);
 
                 tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
                 childResult.getOccupiedArea().getBBox().moveRight(tabWidth);
@@ -179,12 +179,12 @@ public class LineRenderer extends AbstractRenderer {
                     childResult.getSplitRenderer().getOccupiedArea().getBBox().moveRight(tabWidth);
 
                 float tabAndNextElemWidth = tabWidth + childResult.getOccupiedArea().getBBox().getWidth();
-                if (nextTabStop.getTabAlignment() == TabAlignment.RIGHT && curWidth + tabAndNextElemWidth < nextTabStop.getTabPosition()) {
-                    curWidth = nextTabStop.getTabPosition();
+                if (hangingTabStop.getTabAlignment() == TabAlignment.RIGHT && curWidth + tabAndNextElemWidth < hangingTabStop.getTabPosition()) {
+                    curWidth = hangingTabStop.getTabPosition();
                 } else {
                     curWidth += tabAndNextElemWidth;
                 }
-                nextTabStop = null;
+                hangingTabStop = null;
             } else {
                 curWidth += childResult.getOccupiedArea().getBBox().getWidth();
             }

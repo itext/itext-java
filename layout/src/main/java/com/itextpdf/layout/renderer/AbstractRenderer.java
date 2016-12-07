@@ -635,7 +635,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @param rect a rectangle margins will be applied on.
      * @param reverse indicates whether margins will be applied
-     *                inside (in case of false) or outside (in case of false) the rectangle.
+     *                inside (in case of false) or outside (in case of true) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
      * @see #getMargins
      */
@@ -649,7 +649,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param rect a rectangle margins will be applied on.
      * @param margins the margins to be applied on the given rectangle
      * @param reverse indicates whether margins will be applied
-     *                inside (in case of false) or outside (in case of false) the rectangle.
+     *                inside (in case of false) or outside (in case of true) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
      */
     protected Rectangle applyMargins(Rectangle rect, float[] margins, boolean reverse) {
