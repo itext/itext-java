@@ -66,12 +66,7 @@ import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Table}
@@ -425,6 +420,11 @@ public class TableRenderer extends AbstractRenderer {
                 LayoutArea cellArea = new LayoutArea(layoutContext.getArea().getPageNumber(), cellLayoutBox);
                 VerticalAlignment verticalAlignment = cell.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT);
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, null);
+                UnitValue cellWidthProperty = cell.getProperty(Property.WIDTH);
+                if (cellWidthProperty != null && cellWidthProperty.isPercentValue()) {
+                    cell.setProperty(Property.WIDTH, UnitValue.createPointValue(cellWidth));
+                }
+
 
                 // Increase bottom borders widths up to the table's (or footer's) if necessary to perform #layout() correctly
                 Border oldBottomBorder = cell.getBorders()[2];
