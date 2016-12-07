@@ -85,6 +85,14 @@ public class TextLayoutResult extends LayoutResult {
         super(status, occupiedArea, splitRenderer, overflowRenderer, cause);
     }
 
+    public TextLayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, float minWidth, float maxWidth) {
+        super(status, occupiedArea, splitRenderer, overflowRenderer, minWidth, maxWidth);
+    }
+
+    public TextLayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause, float minWidth, float maxWidth) {
+        super(status, occupiedArea, splitRenderer, overflowRenderer, cause, minWidth, maxWidth);
+    }
+
     /**
      * Indicates whether some word in a rendered text was splitted during {@link com.itextpdf.layout.renderer.IRenderer#layout layout}.
      * The value will be set as true if, for example, the rendered words width is bigger than the width of layout area.

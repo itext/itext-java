@@ -147,6 +147,9 @@ public class TextRenderer extends AbstractRenderer {
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
 
+        float borderMarginWidth = area.getBBox().getWidth() - layoutBox.getWidth();
+        float minWidth = 0, maxWidth = area.getBBox().getWidth();
+
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         boolean anythingPlaced = false;
@@ -272,6 +275,7 @@ public class TextRenderer extends AbstractRenderer {
                 currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
                 currentTextPos = nonBreakablePartEnd + 1;
                 currentLineWidth += nonBreakablePartFullWidth;
+                minWidth = Math.max(nonBreakablePartFullWidth, minWidth);
                 anythingPlaced = true;
             } else {
                 // check if line height exceeds the allowed height
@@ -285,7 +289,7 @@ public class TextRenderer extends AbstractRenderer {
                     line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth - 1);
                     // the line does not fit because of height - full overflow
                     TextRenderer[] splitResult = split(initialLineTextPos);
-                    return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1], this);
+                    return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1], this, minWidth + borderMarginWidth, maxWidth);
                 } else {
                     // cannot fit a word as a whole
 
@@ -322,6 +326,8 @@ public class TextRenderer extends AbstractRenderer {
                                         currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
 
                                         currentLineWidth += currentHyphenationChoicePreTextWidth;
+                                        minWidth = Math.max(currentHyphenationChoicePreTextWidth, minWidth);
+
                                         currentTextPos += pre.length();
 
                                         break;
@@ -344,7 +350,7 @@ public class TextRenderer extends AbstractRenderer {
                             currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
                             currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
                             currentLineWidth += nonBreakablePartWidthWhichDoesNotExceedAllowedWidth;
-
+                            minWidth = Math.max(nonBreakablePartWidthWhichDoesNotExceedAllowedWidth, minWidth);
                         } else {
                             // process empty line (e.g. '\n')
                             currentLineAscender = ascender;
@@ -355,23 +361,22 @@ public class TextRenderer extends AbstractRenderer {
                     }
                     if (line.end <= line.start) {
                         return new TextLayoutResult(LayoutResult.NOTHING,
-                                occupiedArea, null, this, this);
+                                occupiedArea, null, this, this, minWidth + borderMarginWidth, maxWidth);
                     } else {
-                        result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, null, null).setWordHasBeenSplit(wordSplit);
+                        result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, null, null, minWidth + borderMarginWidth, maxWidth).setWordHasBeenSplit(wordSplit);
                     }
 
                     break;
                 }
             }
         }
-
         // indicates whether the placing is forced while the layout result is LayoutResult.NOTHING
         boolean isPlacingForcedWhileNothing = false;
         if (currentLineHeight > layoutBox.getHeight()) {
             if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                 applyBorderBox(occupiedArea.getBBox(), borders, true);
                 applyMargins(occupiedArea.getBBox(), margins, true);
-                return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
+                return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this, minWidth + borderMarginWidth, maxWidth);
             } else {
                 isPlacingForcedWhileNothing = true;
             }
@@ -391,7 +396,7 @@ public class TextRenderer extends AbstractRenderer {
 
         if (result == null) {
             result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null,
-                    isPlacingForcedWhileNothing ? this : null);
+                    isPlacingForcedWhileNothing ? this : null, minWidth + borderMarginWidth, maxWidth);
         } else {
             TextRenderer[] split;
             if (isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol) {

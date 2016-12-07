@@ -79,6 +79,8 @@ public class LineRenderer extends AbstractRenderer {
         maxAscent = 0;
         maxDescent = 0;
         int childPos = 0;
+        float minWidth = 0;
+        float maxWidth = layoutBox.getWidth();
 
         BaseDirection baseDirection = this.<BaseDirection>getProperty(Property.BASE_DIRECTION);
         for (IRenderer renderer : childRenderers) {
@@ -135,6 +137,7 @@ public class LineRenderer extends AbstractRenderer {
                     IRenderer tabRenderer = childRenderers.get(childPos - 1);
                     tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
                     curWidth += tabRenderer.getOccupiedArea().getBBox().getWidth();
+                    minWidth = Math.max(tabRenderer.getOccupiedArea().getBBox().getWidth(), minWidth);
                 }
                 hangingTabStop = calculateTab(childRenderer, curWidth, layoutBox.getWidth());
                 if (childPos == childRenderers.size() - 1)
@@ -184,9 +187,11 @@ public class LineRenderer extends AbstractRenderer {
                 } else {
                     curWidth += tabAndNextElemWidth;
                 }
+                minWidth = Math.max(tabWidth + childResult.getMinFullWidth(), minWidth);
                 hangingTabStop = null;
             } else {
                 curWidth += childResult.getOccupiedArea().getBBox().getWidth();
+                minWidth = Math.max(childResult.getMinFullWidth(), minWidth);
             }
             occupiedArea.setBBox(new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight, curWidth, maxHeight));
 
@@ -229,12 +234,12 @@ public class LineRenderer extends AbstractRenderer {
 
                 IRenderer causeOfNothing = childResult.getStatus() == LayoutResult.NOTHING ? childResult.getCauseOfNothing() : childRenderer;
                 if (split[1] == null) {
-                    result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, split[0], split[1], causeOfNothing);
+                    result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, split[0], split[1], causeOfNothing, minWidth, maxWidth);
                 } else {
                     if (anythingPlaced) {
-                        result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], causeOfNothing);
+                        result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], causeOfNothing, minWidth, maxWidth);
                     } else {
-                        result = new LineLayoutResult(LayoutResult.NOTHING, null, split[0], split[1], causeOfNothing);
+                        result = new LineLayoutResult(LayoutResult.NOTHING, null, split[0], split[1], causeOfNothing, 0, 0);
                     }
                 }
                 if (newLineOccurred) {
@@ -249,9 +254,9 @@ public class LineRenderer extends AbstractRenderer {
 
         if (result == null) {
             if (anythingPlaced || 0 == childRenderers.size()) {
-                result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+                result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, null, null, minWidth, maxWidth);
             } else {
-                result = new LineLayoutResult(LayoutResult.NOTHING, null, null, this, this);
+                result = new LineLayoutResult(LayoutResult.NOTHING, null, null, this, this, 0, 0);
             }
         }
 
