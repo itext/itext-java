@@ -98,9 +98,8 @@ public final class Version {
             version = new Version();
             synchronized (version) {
                 try {
-                    String licenseKeyClassFullName = "com.itextpdf.licensekey.LicenseKey";
                     String licenseeInfoMethodName = "getLicenseeInfo";
-                    Class<?> klass = Class.forName(licenseKeyClassFullName);
+                    Class<?> klass = getLicenseKeyClass();
                     if (klass != null) {
                         Method m = klass.getMethod(licenseeInfoMethodName);
                         String[] info = (String[]) m.invoke(klass.newInstance(), null);
@@ -224,6 +223,11 @@ public final class Version {
         if (cause != null && cause.getMessage() != null && cause.getMessage().contains("expired")) {
             expired = true;
         }
+    }
+
+    private static Class<?> getLicenseKeyClass() throws ClassNotFoundException {
+        String licenseKeyClassFullName = "com.itextpdf.licensekey.LicenseKey";
+        return Class.forName(licenseKeyClassFullName);
     }
 
 }

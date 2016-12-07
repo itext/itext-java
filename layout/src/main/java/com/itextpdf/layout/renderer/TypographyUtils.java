@@ -99,7 +99,7 @@ class TypographyUtils {
     static {
         boolean moduleFound = false;
         try {
-            Class<?> type = Class.forName(TYPOGRAPHY_PACKAGE + SHAPER);
+            Class<?> type = getTypographyClass(TYPOGRAPHY_PACKAGE + SHAPER);
             if (type != null) {
                 moduleFound = true;
             }
@@ -291,10 +291,14 @@ class TypographyUtils {
     private static Class<?> findClass(String className) throws ClassNotFoundException {
         Class<?> c = cachedClasses.get(className);
         if (c == null) {
-            c = Class.forName(className);
+            c = getTypographyClass(className);
             cachedClasses.put(className, c);
         }
         return c;
+    }
+
+    private static Class<?> getTypographyClass(String typographyClassName) throws ClassNotFoundException {
+        return Class.forName(typographyClassName);
     }
 
     private static class TypographyMethodSignature {
