@@ -1,5 +1,6 @@
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -10,10 +11,13 @@ import com.itextpdf.kernel.pdf.annot.*;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
+import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -140,7 +144,31 @@ public class PdfAnnotationTest extends ExtendedITextTest {
         PdfLinkAnnotation link = (PdfLinkAnnotation)annotations.get(0);
         Assert.assertEquals(page, link.getPage());
         document.close();
+    }
 
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET)})
+    public void linkAnnotationActionDestinationTest() throws IOException, InterruptedException {
+        String fileName = "linkAnnotationActionDestinationTest.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + fileName)));
+        PdfArray array = new PdfArray();
+        array.add(pdfDocument.addNewPage().getPdfObject());
+        array.add(PdfName.XYZ);
+        array.add(new PdfNumber(36));
+        array.add(new PdfNumber(100));
+        array.add(new PdfNumber(1));
+
+        PdfDestination dest = PdfDestination.makeDestination(array);
+
+        PdfLinkAnnotation link = new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0));
+        link.setAction(PdfAction.createGoTo("abc"));
+        link.setDestination(dest);
+
+        pdfDocument.getPage(1).addAnnotation(link);
+
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
     }
 
     @Test

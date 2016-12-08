@@ -48,9 +48,11 @@ package com.itextpdf.io;
  */
 public final class LogMessageConstant {
 
+    public static final String ACTION_WAS_SET_TO_LINK_ANNOTATION_WITH_DESTINATION = "Action was set for a link annotation containing destination. The old destination will be cleared.";
     public static final String CLIP_ELEMENT = "Element content was clipped because some height properties are set.";
     public static final String COLORANT_INTENSITIES_INVALID = "Some of colorant intensities are invalid: they are bigger than 1 or less than 0. We will force them to become 1 or 0 respectively.";
     public static final String COULD_NOT_FIND_GLYPH_WITH_CODE = "Could not find glyph with the following code: {0}";
+    public static final String DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET = "Destinations are not permitted for link annotations that already have actions. The old action will be removed.";
     public static final String DOCUMENT_ALREADY_HAS_FIELD = "The document already has field {0}. Annotations of the fields with this name will be added to the existing one as children. If you want to have separate fields, please, rename them manually before copying.";
     public static final String DOCUMENT_SERIALIZATION_EXCEPTION_RAISED = "Unhandled exception while serialization";
     public static final String DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT = "DirectOnly object cannot be indirect";

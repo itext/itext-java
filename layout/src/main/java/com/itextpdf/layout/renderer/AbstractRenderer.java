@@ -770,16 +770,18 @@ public abstract class AbstractRenderer implements IRenderer {
     protected void applyAction(PdfDocument document) {
         PdfAction action = this.<PdfAction>getProperty(Property.ACTION);
         if (action != null) {
-            PdfLinkAnnotation link = new PdfLinkAnnotation(getOccupiedArea().getBBox());
-            link.setAction(action);
-            Border border = this.<Border>getProperty(Property.BORDER);
-            if (border != null) {
-                link.setBorder(new PdfArray(new float[]{0, 0, border.getWidth()}));
-            } else {
-                link.setBorder(new PdfArray(new float[]{0, 0, 0}));
+            PdfLinkAnnotation link = this.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION);
+            if (link == null) {
+                link = new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0));
+                Border border = this.<Border>getProperty(Property.BORDER);
+                if (border != null) {
+                    link.setBorder(new PdfArray(new float[]{0, 0, border.getWidth()}));
+                } else {
+                    link.setBorder(new PdfArray(new float[]{0, 0, 0}));
+                }
+                setProperty(Property.LINK_ANNOTATION, link);
             }
-
-            setProperty(Property.LINK_ANNOTATION, link);
+            link.setAction(action);
         }
     }
 
