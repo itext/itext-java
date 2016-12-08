@@ -1,15 +1,23 @@
 package com.itextpdf.layout.element;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 
-public class WidthUtils {
-    private static final float eps = 0.00001f;
+public class MinMaxWidthUtils {
+    private static final float eps = 0.0001f;
 
-    public static float toEffectiveWidth(Paragraph p, float fullWidth) {
-        return fullWidth - getBorderWidth(p) - getMarginsWidth(p) - getPaddingWidth(p) + eps;
+    public static float toEffectiveWidth(BlockElement b, float fullWidth) {
+        return fullWidth - getBorderWidth(b) - getMarginsWidth(b) + eps;
+    }
+
+    public static LayoutResult tryLayoutWithInfHeight(IRenderer renderer, float availableWidth) {
+        return renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
     }
     
     private static float getBorderWidth(IElement element) {

@@ -148,7 +148,7 @@ public class TextRenderer extends AbstractRenderer {
         applyBorderBox(layoutBox, borders, false);
 
         float borderMarginWidth = area.getBBox().getWidth() - layoutBox.getWidth();
-        float minWidth = 0, maxWidth = area.getBBox().getWidth();
+        float minWidth = 0, maxFullWidth = area.getBBox().getWidth();
 
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
@@ -289,7 +289,7 @@ public class TextRenderer extends AbstractRenderer {
                     line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth - 1);
                     // the line does not fit because of height - full overflow
                     TextRenderer[] splitResult = split(initialLineTextPos);
-                    return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1], this, minWidth + borderMarginWidth, maxWidth);
+                    return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, splitResult[0], splitResult[1], this, minWidth + borderMarginWidth, maxFullWidth);
                 } else {
                     // cannot fit a word as a whole
 
@@ -361,9 +361,9 @@ public class TextRenderer extends AbstractRenderer {
                     }
                     if (line.end <= line.start) {
                         return new TextLayoutResult(LayoutResult.NOTHING,
-                                occupiedArea, null, this, this, minWidth + borderMarginWidth, maxWidth);
+                                occupiedArea, null, this, this, minWidth + borderMarginWidth, maxFullWidth);
                     } else {
-                        result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, null, null, minWidth + borderMarginWidth, maxWidth).setWordHasBeenSplit(wordSplit);
+                        result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, null, null, minWidth + borderMarginWidth, maxFullWidth).setWordHasBeenSplit(wordSplit);
                     }
 
                     break;
@@ -376,7 +376,7 @@ public class TextRenderer extends AbstractRenderer {
             if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                 applyBorderBox(occupiedArea.getBBox(), borders, true);
                 applyMargins(occupiedArea.getBBox(), margins, true);
-                return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this, minWidth + borderMarginWidth, maxWidth);
+                return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this, minWidth + borderMarginWidth, maxFullWidth);
             } else {
                 isPlacingForcedWhileNothing = true;
             }
@@ -396,7 +396,7 @@ public class TextRenderer extends AbstractRenderer {
 
         if (result == null) {
             result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null,
-                    isPlacingForcedWhileNothing ? this : null, minWidth + borderMarginWidth, maxWidth);
+                    isPlacingForcedWhileNothing ? this : null, minWidth + borderMarginWidth, maxFullWidth);
         } else {
             TextRenderer[] split;
             if (isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol) {

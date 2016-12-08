@@ -95,7 +95,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
         float additionalWidth = 0;
         float minWidth = 0;
-        float maxWidth;
+        float maxFullWidth = parentBBox.getWidth();
 
         if (0 == childRenderers.size()) {
             anythingPlaced = true;
@@ -135,7 +135,6 @@ public class ParagraphRenderer extends BlockRenderer {
         applyPaddings(parentBBox, paddings, false);
         paddingsWidth -= parentBBox.getWidth();
         additionalWidth += paddingsWidth;
-        maxWidth = parentBBox.getWidth();
 
         Float blockMaxHeight = retrieveMaxHeight();
         if (null != blockMaxHeight && parentBBox.getHeight() > blockMaxHeight) {
@@ -228,7 +227,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 } else {
                     boolean keepTogether = isKeepTogether();
                     if (keepTogether) {
-                        return new LayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing(), 0, maxWidth + additionalWidth);
+                        return new LayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing(), 0, maxFullWidth);
                     } else {
                         if (marginsCollapsingEnabled) {
                             if (anythingPlaced) {
@@ -261,7 +260,7 @@ public class ParagraphRenderer extends BlockRenderer {
                                         .setHeight((float) blockMaxHeight);
                                 Logger logger = LoggerFactory.getLogger(ParagraphRenderer.class);
                                 logger.warn(LogMessageConstant.CLIP_ELEMENT);
-                                return new LayoutResult(LayoutResult.FULL, occupiedArea, split[0], null, minWidth + additionalWidth, maxWidth + additionalWidth);
+                                return new LayoutResult(LayoutResult.FULL, occupiedArea, split[0], null, minWidth + additionalWidth, maxFullWidth);
                             }
                             split[1].setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
                         }
@@ -272,7 +271,7 @@ public class ParagraphRenderer extends BlockRenderer {
                             split[1].setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
                         }
                         if (anythingPlaced) {
-                            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], minWidth + additionalWidth, maxWidth + additionalWidth);
+                            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], minWidth + additionalWidth, maxFullWidth);
                         } else {
                             if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                                 occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), currentRenderer.getOccupiedArea().getBBox()));
@@ -284,12 +283,12 @@ public class ParagraphRenderer extends BlockRenderer {
                                     int firstNotRendered = currentRenderer.childRenderers.indexOf(childNotRendered);
                                     currentRenderer.childRenderers.retainAll(currentRenderer.childRenderers.subList(0, firstNotRendered));
                                     split[1].childRenderers.removeAll(split[1].childRenderers.subList(0, firstNotRendered));
-                                    return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, this, split[1], minWidth + additionalWidth, maxWidth + additionalWidth);
+                                    return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, this, split[1], minWidth + additionalWidth, maxFullWidth);
                                 } else {
-                                    return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, this, minWidth + additionalWidth, maxWidth + additionalWidth);
+                                    return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, this, minWidth + additionalWidth, maxFullWidth);
                                 }
                             } else {
-                                return new LayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing(), minWidth + additionalWidth, maxWidth + additionalWidth);
+                                return new LayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing(), minWidth + additionalWidth, maxFullWidth);
                             }
                         }
                     }
@@ -349,16 +348,18 @@ public class ParagraphRenderer extends BlockRenderer {
         applyMargins(occupiedArea.getBBox(), true);
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
+            minWidth = occupiedArea.getBBox().getWidth();
+            additionalWidth = 0;
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, this, minWidth + additionalWidth, maxWidth + additionalWidth);
+                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, this, minWidth + additionalWidth, maxFullWidth);
                 }
             }
         }
         if (null == overflowRenderer) {
-            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, minWidth + additionalWidth, maxWidth + additionalWidth);
+            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, minWidth + additionalWidth, maxFullWidth);
         } else {
-            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, this, overflowRenderer, minWidth + additionalWidth, maxWidth + additionalWidth);
+            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, this, overflowRenderer, minWidth + additionalWidth, maxFullWidth);
         }
     }
 
