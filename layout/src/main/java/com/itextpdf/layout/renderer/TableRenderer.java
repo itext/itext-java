@@ -161,9 +161,10 @@ public class TableRenderer extends AbstractRenderer {
         // value is the previous row number of the cell
         Map<Integer, Integer> rowMoves = new HashMap<Integer, Integer>();
 
-        MarginsCollapseHandler marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
+        MarginsCollapseHandler marginsCollapseHandler = null;
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
         if (marginsCollapsingEnabled) {
+            marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
             marginsCollapseHandler.startMarginsCollapse(layoutBox);
         }
         applyMargins(layoutBox, false);

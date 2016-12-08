@@ -65,7 +65,7 @@ public class MarginsCollapseHandler {
     private int firstNotEmptyKidIndex = 0;
 
     private int processedChildrenNum = 0;
-    private List<IRenderer> rendererChildren;
+    private List<IRenderer> rendererChildren = new ArrayList<>();
 
     public MarginsCollapseHandler(IRenderer renderer, MarginsCollapseInfo marginsCollapseInfo) {
         this.renderer = renderer;
@@ -77,9 +77,6 @@ public class MarginsCollapseHandler {
     }
 
     public MarginsCollapseInfo startChildMarginsHandling(IRenderer child, Rectangle layoutBox) {
-        if (rendererChildren == null) {
-            rendererChildren = new ArrayList<>();
-        }
         rendererChildren.add(child);
 
         int childIndex = processedChildrenNum++;
@@ -140,9 +137,7 @@ public class MarginsCollapseHandler {
         if (prevChildMarginInfo != null) {
             fixPrevChildOccupiedArea(childIndex);
 
-            if (prevChildMarginInfo.isSelfCollapsing() && prevChildMarginInfo.isIgnoreOwnMarginTop()) {
-                collapseInfo.getCollapseBefore().joinMargin(prevChildMarginInfo.getOwnCollapseAfter());
-            }
+            updatePrevKidIfSelfCollapsedAndTopAdjoinedToParent(prevChildMarginInfo.getOwnCollapseAfter());
         }
 
         prevChildMarginInfo = childMarginInfo;
@@ -168,15 +163,14 @@ public class MarginsCollapseHandler {
     }
 
     public void endMarginsCollapse() {
-        if (prevChildMarginInfo != null && prevChildMarginInfo.isSelfCollapsing() && prevChildMarginInfo.isIgnoreOwnMarginTop()) {
-            collapseInfo.getCollapseBefore().joinMargin(prevChildMarginInfo.getCollapseAfter());
+        if (prevChildMarginInfo != null) {
+            updatePrevKidIfSelfCollapsedAndTopAdjoinedToParent(prevChildMarginInfo.getCollapseAfter());
         }
 
         boolean couldBeSelfCollapsing = MarginsCollapseHandler.marginsCouldBeSelfCollapsing(renderer);
         if (firstChildMarginAdjoinedToParent(renderer)) {
             if (collapseInfo.isSelfCollapsing() && !couldBeSelfCollapsing) {
-                float indentTop = collapseInfo.getCollapseBefore().getCollapsedMarginsSize();
-                renderer.getOccupiedArea().getBBox().moveDown(indentTop);
+                addMarginToSelfCollapsedKid();
             }
         }
         collapseInfo.setSelfCollapsing(collapseInfo.isSelfCollapsing() && couldBeSelfCollapsing);
@@ -218,6 +212,12 @@ public class MarginsCollapseHandler {
             }
         }
 
+    }
+
+    private void updatePrevKidIfSelfCollapsedAndTopAdjoinedToParent(MarginsCollapse collapseAfter) {
+        if (prevChildMarginInfo.isSelfCollapsing() && prevChildMarginInfo.isIgnoreOwnMarginTop()) {
+            collapseInfo.getCollapseBefore().joinMargin(collapseAfter);
+        }
     }
 
     private void prepareBoxForLayoutAttempt(Rectangle layoutBox, int childIndex, boolean childIsBlockElement) {
@@ -298,12 +298,13 @@ public class MarginsCollapseHandler {
         }
     }
 
-    private IRenderer getRendererChild(int index) {
-        if (rendererChildren != null) {
-            return rendererChildren.get(index);
-        }
+    private void addMarginToSelfCollapsedKid() {
+        float indentTop = collapseInfo.getCollapseBefore().getCollapsedMarginsSize();
+        renderer.getOccupiedArea().getBBox().moveDown(indentTop);
+    }
 
-        return this.renderer.getChildRenderers().get(index);
+    private IRenderer getRendererChild(int index) {
+        return rendererChildren.get(index);
     }
 
     private void getRidOfCollapseArtifactsAtopOccupiedArea() {

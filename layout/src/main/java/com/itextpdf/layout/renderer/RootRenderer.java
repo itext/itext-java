@@ -65,7 +65,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     protected int currentPageNumber;
     private IRenderer keepWithNextHangingRenderer;
     private LayoutResult keepWithNextHangingRendererLayoutResult;
-    private MarginsCollapseHandler marginsCollapseHandler = new MarginsCollapseHandler(this, null);
+    private MarginsCollapseHandler marginsCollapseHandler;
 
     public void addChild(IRenderer renderer) {
         super.addChild(renderer);

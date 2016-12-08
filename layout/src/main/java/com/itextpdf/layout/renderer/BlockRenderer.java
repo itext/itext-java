@@ -89,9 +89,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
 
-        MarginsCollapseHandler marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
+        MarginsCollapseHandler marginsCollapseHandler = null;
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
         if (marginsCollapsingEnabled) {
+            marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
             marginsCollapseHandler.startMarginsCollapse(parentBBox);
         }
         applyMargins(parentBBox, false);
