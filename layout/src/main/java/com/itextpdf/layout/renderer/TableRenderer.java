@@ -1393,6 +1393,11 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     private void buildBordersArrays(CellRenderer cell, int row, int col) {
+        //We should check if the row number is less than horizontal borders array size. It can happen if the cell with
+        //big rowspan doesn't fit current area and is going to be placed partial.
+        if (row > horizontalBorders.size()) {
+            row = horizontalBorders.size() - 1;
+        }
         if (cell != null) {
             buildBordersArrays(cell, row, true, false);
         }
