@@ -318,8 +318,7 @@ public class LineRenderer extends AbstractRenderer {
                     int offset = 0;
                     while (pos < lineGlyphs.size()) {
                         IRenderer renderer = lineGlyphs.get(pos).renderer;
-                        TextRenderer newRenderer = new TextRenderer((TextRenderer) renderer);
-                        newRenderer.deleteOwnProperty(Property.REVERSED);
+                        TextRenderer newRenderer = new TextRenderer((TextRenderer) renderer).removeReversedRanges();
                         children.add(newRenderer);
                         newRenderer.line = new GlyphLine(newRenderer.line);
                         List<Glyph> replacementGlyphs = new ArrayList<>();
@@ -330,7 +329,7 @@ public class LineRenderer extends AbstractRenderer {
                                     reversed = true;
                                 } else {
                                     if (reversed) {
-                                        List<int[]> reversedRange = createOrGetReversedProperty(newRenderer);
+                                        List<int[]> reversedRange = newRenderer.initReversedRanges();
                                         reversedRange.add(new int[]{initialPos - offset, pos - offset});
                                         reversed = false;
                                     }
@@ -343,7 +342,7 @@ public class LineRenderer extends AbstractRenderer {
                         }
 
                         if (reversed) {
-                            List<int[]> reversedRange = createOrGetReversedProperty(newRenderer);
+                            List<int[]> reversedRange = newRenderer.initReversedRanges();
                             reversedRange.add(new int[]{initialPos - offset, pos - 1 - offset});
                             reversed = false;
                             initialPos = pos;
@@ -547,13 +546,6 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
         return false;
-    }
-
-    private List<int[]> createOrGetReversedProperty(TextRenderer newRenderer) {
-        if (!newRenderer.hasOwnProperty(Property.REVERSED)) {
-            newRenderer.setProperty(Property.REVERSED, new ArrayList<int[]>());
-        }
-        return newRenderer.<List<int[]>>getOwnProperty(Property.REVERSED);
     }
 
     private IRenderer getLastChildRenderer() {

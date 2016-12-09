@@ -107,6 +107,8 @@ public class TextRenderer extends AbstractRenderer {
 
     protected float tabAnchorCharacterPosition = -1;
 
+    protected List<int[]> reversedRanges;
+
     /**
      * Creates a TextRenderer from its corresponding layout object.
      *
@@ -136,6 +138,7 @@ public class TextRenderer extends AbstractRenderer {
         this.strToBeConverted = other.strToBeConverted;
         this.otfFeaturesApplied = other.otfFeaturesApplied;
         this.tabAnchorCharacterPosition = other.tabAnchorCharacterPosition;
+        this.reversedRanges = other.reversedRanges;
     }
 
     @Override
@@ -583,24 +586,21 @@ public class TextRenderer extends AbstractRenderer {
 
             boolean appearanceStreamLayout = Boolean.TRUE.equals(getPropertyAsBoolean(Property.APPEARANCE_STREAM_LAYOUT));
 
-            if (hasOwnProperty(Property.REVERSED)) {
+            if (getReversedRanges() != null) {
                 boolean writeReversedChars = !appearanceStreamLayout;
-                List<int[]> reversedRanges = this.<List<int[]>>getOwnProperty(Property.REVERSED);
                 ArrayList<Integer> removedIds = new ArrayList<>();
                 for (int i = line.start; i < line.end; i++) {
                     if (!filter.accept(line.get(i))) {
                         removedIds.add(i);
                     }
                 }
-                if (reversedRanges != null) {
-                    for (int[] range : reversedRanges) {
-                        updateRangeBasedOnRemovedCharacters(removedIds, range);
-                    }
+                for (int[] range : getReversedRanges()) {
+                    updateRangeBasedOnRemovedCharacters(removedIds, range);
                 }
                 line = line.filter(filter);
                 if (writeReversedChars) {
                     canvas.showText(line, new ReversedCharsIterator(reversedRanges, line).
-                            setUseReversed(writeReversedChars));
+                            setUseReversed(true));
                 } else {
                     canvas.showText(line);
                 }
@@ -822,6 +822,22 @@ public class TextRenderer extends AbstractRenderer {
     @Override
     public IRenderer getNextRenderer() {
         return new TextRenderer((Text) modelElement, null);
+    }
+
+    List<int[]> getReversedRanges() {
+        return reversedRanges;
+    }
+
+    List<int[]> initReversedRanges() {
+        if (reversedRanges == null) {
+            reversedRanges = new ArrayList<>();
+        }
+        return reversedRanges;
+    }
+
+    TextRenderer removeReversedRanges() {
+        reversedRanges = null;
+        return this;
     }
 
     /**
