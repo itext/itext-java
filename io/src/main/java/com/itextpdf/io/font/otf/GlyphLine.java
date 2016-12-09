@@ -150,6 +150,11 @@ public class GlyphLine implements Serializable {
         return str.toString();
     }
 
+    @Override
+    public String toString() {
+        return toUnicodeString(start, end);
+    }
+
     /**
      * Copy a slice of this Glyphline.
      *

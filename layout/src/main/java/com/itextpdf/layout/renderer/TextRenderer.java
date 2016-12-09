@@ -805,7 +805,7 @@ public class TextRenderer extends AbstractRenderer {
 
     @Override
     public String toString() {
-        return line != null ? line.toUnicodeString(line.start, line.end) : strToBeConverted;
+        return line != null ? line.toString() : null;
     }
 
     /**

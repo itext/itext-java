@@ -58,7 +58,9 @@ import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TabAlignment;
 import com.itextpdf.layout.property.UnitValue;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -79,6 +81,29 @@ public class LineRenderer extends AbstractRenderer {
         maxAscent = 0;
         maxDescent = 0;
         int childPos = 0;
+
+        // Trim first
+        int totalNumberOfTrimmedGlyphs = 0;
+        for (IRenderer renderer : childRenderers) {
+            if (renderer instanceof TextRenderer) {
+                TextRenderer textRenderer = (TextRenderer) renderer.setParent(this);
+                GlyphLine currentText = textRenderer.getText();
+                if (currentText != null) {
+                    int prevTextStart = currentText.start;
+                    textRenderer.trimFirst();
+                    int numOfTrimmedGlyphs = textRenderer.getText().start - prevTextStart;
+                    totalNumberOfTrimmedGlyphs += numOfTrimmedGlyphs;
+                }
+                if (textRenderer.length() > 0) {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+        if (totalNumberOfTrimmedGlyphs != 0 && levels != null) {
+            levels = Arrays.copyOfRange(levels, totalNumberOfTrimmedGlyphs, levels.length);
+        }
 
         BaseDirection baseDirection = this.<BaseDirection>getProperty(Property.BASE_DIRECTION);
         for (IRenderer renderer : childRenderers) {
@@ -143,10 +168,6 @@ public class LineRenderer extends AbstractRenderer {
                     ++childPos;
                     continue;
                 }
-            }
-
-            if (!anythingPlaced && childRenderer instanceof TextRenderer) {
-                ((TextRenderer) childRenderer).trimFirst();
             }
 
             if (hangingTabStop != null && hangingTabStop.getTabAlignment() == TabAlignment.ANCHOR
