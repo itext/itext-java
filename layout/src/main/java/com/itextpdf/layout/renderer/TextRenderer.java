@@ -102,6 +102,7 @@ public class TextRenderer extends AbstractRenderer {
     protected GlyphLine text;
     protected GlyphLine line;
     protected String strToBeConverted;
+    private PdfFont font;
 
     protected boolean otfFeaturesApplied = false;
 
@@ -160,7 +161,6 @@ public class TextRenderer extends AbstractRenderer {
         float textRise = (float) this.getPropertyAsFloat(Property.TEXT_RISE);
         Float characterSpacing = this.getPropertyAsFloat(Property.CHARACTER_SPACING);
         Float wordSpacing = this.getPropertyAsFloat(Property.WORD_SPACING);
-        PdfFont font = this.getPropertyAsFont(Property.FONT);
         float hScale = (float) this.getProperty(Property.HORIZONTAL_SCALING, (Float) 1f);
         ISplitCharacters splitCharacters = this.<ISplitCharacters>getProperty(Property.SPLIT_CHARACTERS);
         float italicSkewAddition = Boolean.TRUE.equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION)) ? ITALIC_ANGLE * fontSize : 0;
@@ -169,7 +169,7 @@ public class TextRenderer extends AbstractRenderer {
         line = new GlyphLine(text);
         line.start = line.end = -1;
 
-        float[] ascenderDescender = calculateAscenderDescender(font);
+        float[] ascenderDescender = calculateAscenderDescender(getFont());
         float ascender = ascenderDescender[0];
         float descender = ascenderDescender[1];
 
@@ -318,7 +318,7 @@ public class TextRenderer extends AbstractRenderer {
                                         }
                                         line.end = Math.max(line.end, currentTextPos + pre.length());
                                         GlyphLine lineCopy = line.copy(line.start, line.end);
-                                        lineCopy.add(font.getGlyph(hyphenationConfig.getHyphenSymbol()));
+                                        lineCopy.add(getFont().getGlyph(hyphenationConfig.getHyphenSymbol()));
                                         lineCopy.end++;
                                         line = lineCopy;
 
@@ -460,14 +460,13 @@ public class TextRenderer extends AbstractRenderer {
                 }
             }
 
-            PdfFont font = getPropertyAsFont(Property.FONT);
-            if (isOtfFont(font) && script != null) {
-                TypographyUtils.applyOtfScript(font.getFontProgram(), text, script);
+            if (hasOtfFont() && script != null) {
+                TypographyUtils.applyOtfScript(getFont().getFontProgram(), text, script);
             }
 
             FontKerning fontKerning = (FontKerning) this.<FontKerning>getProperty(Property.FONT_KERNING, FontKerning.NO);
             if (fontKerning == FontKerning.YES) {
-                TypographyUtils.applyKerning(font.getFontProgram(), text);
+                TypographyUtils.applyKerning(getFont().getFontProgram(), text);
             }
 
             otfFeaturesApplied = true;
@@ -516,7 +515,6 @@ public class TextRenderer extends AbstractRenderer {
         float leftBBoxX = occupiedArea.getBBox().getX();
 
         if (line.end > line.start) {
-            PdfFont font = getPropertyAsFont(Property.FONT);
             float fontSize = (float) this.getPropertyAsFloat(Property.FONT_SIZE);
             Color fontColor = getPropertyAsColor(Property.FONT_COLOR);
             Integer textRenderingMode = this.<Integer>getProperty(Property.TEXT_RENDERING_MODE);
@@ -540,7 +538,7 @@ public class TextRenderer extends AbstractRenderer {
             } else if (isArtifact) {
                 canvas.openTag(new CanvasArtifact());
             }
-            canvas.saveState().beginText().setFontAndSize(font, fontSize);
+            canvas.saveState().beginText().setFontAndSize(getFont(), fontSize);
 
             if (skew != null && skew.length == 2) {
                 canvas.setTextMatrix(1, skew[0], skew[1], 1, leftBBoxX, getYLine());
@@ -767,8 +765,9 @@ public class TextRenderer extends AbstractRenderer {
      * @param text the replacement text
      */
     public void setText(String text) {
-        GlyphLine glyphLine = convertToGlyphLine(text);
-        setText(glyphLine, glyphLine.start, glyphLine.end);
+        strToBeConverted = text;
+        //strToBeConverted will be null after next method.
+        convertWaitingStringToGlyphLine();
     }
 
     /**
@@ -877,12 +876,11 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private GlyphLine convertToGlyphLine(String text) {
-        PdfFont font = getPropertyAsFont(Property.FONT);
-        return font.createGlyphLine(text);
+        return getFont().createGlyphLine(text);
     }
 
-    private boolean isOtfFont(PdfFont font) {
-        return font instanceof PdfType0Font && font.getFontProgram() instanceof TrueTypeFont;
+    private boolean hasOtfFont() {
+        return getFont() instanceof PdfType0Font && getFont().getFontProgram() instanceof TrueTypeFont;
     }
 
     @Override
@@ -1072,10 +1070,19 @@ public class TextRenderer extends AbstractRenderer {
 
     private void convertWaitingStringToGlyphLine() {
         if (strToBeConverted != null) {
-            GlyphLine glyphLine = convertToGlyphLine(strToBeConverted);
-            setText(glyphLine, glyphLine.start, glyphLine.end);
+            //yes we save font only while converting original string to synchronize glyphline and font.
+            font = getPropertyAsFont(Property.FONT);
+            text = convertToGlyphLine(strToBeConverted);
+            otfFeaturesApplied = false;
             strToBeConverted = null;
         }
+    }
+
+    private PdfFont getFont() {
+        if (font == null) {
+            return getPropertyAsFont(Property.FONT);
+        }
+        return font;
     }
 
     private static class ReversedCharsIterator implements Iterator<GlyphLine.GlyphLinePart> {
