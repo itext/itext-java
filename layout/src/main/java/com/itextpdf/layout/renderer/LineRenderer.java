@@ -129,7 +129,7 @@ public class LineRenderer extends AbstractRenderer {
                 if (child instanceof TextRenderer) {
                     GlyphLine text = ((TextRenderer) child).getText();
                     for (int i = text.start; i < text.end; i++) {
-                        if (TextRenderer.isNewLine(text, i)) {
+                        if (TextUtil.isNewLine(text.get(i))) {
                             newLineFound = true;
                             break;
                         }
@@ -295,7 +295,7 @@ public class LineRenderer extends AbstractRenderer {
                     if (child instanceof TextRenderer) {
                         GlyphLine childLine = ((TextRenderer) child).line;
                         for (int i = childLine.start; i < childLine.end; i++) {
-                            if (TextRenderer.isNewLine(childLine, i)) {
+                            if (TextUtil.isNewLine(childLine.get(i))) {
                                 newLineFound = true;
                                 break;
                             }
