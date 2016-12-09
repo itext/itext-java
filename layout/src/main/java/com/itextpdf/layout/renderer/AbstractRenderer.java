@@ -805,9 +805,7 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected boolean isNotFittingLayoutArea(LayoutArea layoutArea) {
-        Rectangle area = applyMargins(layoutArea.getBBox().clone(), false);
-        area = applyPaddings(area, false);
-        return !isPositioned() && (occupiedArea.getBBox().getHeight() > area.getHeight() || occupiedArea.getBBox().getWidth() > area.getWidth());
+        return !isPositioned() && (occupiedArea.getBBox().getHeight() > layoutArea.getBBox().getHeight() || occupiedArea.getBBox().getWidth() > layoutArea.getBBox().getWidth());
     }
 
     /**
