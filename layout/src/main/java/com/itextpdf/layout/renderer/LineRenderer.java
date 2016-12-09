@@ -46,6 +46,7 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
+import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.TabStop;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -320,13 +321,12 @@ public class LineRenderer extends AbstractRenderer {
                         TextRenderer newRenderer = new TextRenderer((TextRenderer) renderer);
                         newRenderer.deleteOwnProperty(Property.REVERSED);
                         children.add(newRenderer);
-                        ((TextRenderer) children.get(children.size() - 1)).line = new GlyphLine(((TextRenderer) children.get(children.size() - 1)).line);
-                        GlyphLine gl = ((TextRenderer) children.get(children.size() - 1)).line;
+                        newRenderer.line = new GlyphLine(newRenderer.line);
                         List<Glyph> replacementGlyphs = new ArrayList<>();
                         while (pos < lineGlyphs.size() && lineGlyphs.get(pos).renderer == renderer) {
                             if (pos + 1 < lineGlyphs.size()) {
                                 if (reorder[pos] == reorder[pos + 1] + 1 &&
-                                        !TextRenderer.isSpaceGlyph(lineGlyphs.get(pos + 1).glyph) && !TextRenderer.isSpaceGlyph(lineGlyphs.get(pos).glyph)) {
+                                        !TextUtil.isSpaceGlyph(lineGlyphs.get(pos + 1).glyph) && !TextUtil.isSpaceGlyph(lineGlyphs.get(pos).glyph)) {
                                     reversed = true;
                                 } else {
                                     if (reversed) {
@@ -349,7 +349,7 @@ public class LineRenderer extends AbstractRenderer {
                             initialPos = pos;
                         }
                         offset = initialPos;
-                        gl.setGlyphs(replacementGlyphs);
+                        newRenderer.line.setGlyphs(replacementGlyphs);
                     }
 
                     float currentXPos = layoutContext.getArea().getBBox().getLeft();

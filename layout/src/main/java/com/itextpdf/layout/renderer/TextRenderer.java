@@ -49,6 +49,7 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfType0Font;
@@ -157,7 +158,7 @@ public class TextRenderer extends AbstractRenderer {
         Float characterSpacing = this.getPropertyAsFloat(Property.CHARACTER_SPACING);
         Float wordSpacing = this.getPropertyAsFloat(Property.WORD_SPACING);
         PdfFont font = this.getPropertyAsFont(Property.FONT);
-        Float hScale = this.getProperty(Property.HORIZONTAL_SCALING, (Float) 1f);
+        float hScale = (float) this.getProperty(Property.HORIZONTAL_SCALING, (Float) 1f);
         ISplitCharacters splitCharacters = this.<ISplitCharacters>getProperty(Property.SPLIT_CHARACTERS);
         float italicSkewAddition = Boolean.TRUE.equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION)) ? ITALIC_ANGLE * fontSize : 0;
         float boldSimulationAddition = Boolean.TRUE.equals(getPropertyAsBoolean(Property.BOLD_SIMULATION)) ? BOLD_SIMULATION_STROKE_COEFF * fontSize : 0;
@@ -210,7 +211,7 @@ public class TextRenderer extends AbstractRenderer {
             int firstCharacterWhichExceedsAllowedWidth = -1;
 
             for (int ind = currentTextPos; ind < text.end; ind++) {
-                if (isNewLine(text, ind)) {
+                if (TextUtil.isNewLine(text.get(ind))) {
                     isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol = true;
                     firstCharacterWhichExceedsAllowedWidth = ind + 1;
                     if (currentTextPos == firstPrintPos) {
@@ -257,7 +258,7 @@ public class TextRenderer extends AbstractRenderer {
 
                 if (splitCharacters.isSplitCharacter(text, ind) || ind + 1 == text.end ||
                         splitCharacters.isSplitCharacter(text, ind + 1) &&
-                                isSpaceGlyph(text.get(ind + 1))) {
+                                TextUtil.isSpaceGlyph(text.get(ind + 1))) {
                     nonBreakablePartEnd = ind;
                     break;
                 }
@@ -675,19 +676,20 @@ public class TextRenderer extends AbstractRenderer {
         convertWaitingStringToGlyphLine();
 
         if (text != null) {
-            Glyph glyph;
-            while (text.start < text.end && (glyph = text.get(text.start)).hasValidUnicode() && isSpaceGlyph(glyph) && !isNewLine(text, text.start)) {
+            //isSpaceChar exclude newline symbols
+            while (text.start < text.end && Character.isSpaceChar(text.get(text.start).getUnicode())) {
                 text.start++;
             }
         }
     }
 
     /**
-     * Trims any whitespace characters from the end of the {@link GlyphLine} to
-     * be rendered.
+     * Trims any whitespace characters from the end of the rendered {@link GlyphLine}.
      *
      * @return the amount of space in points which the text was trimmed by
+     * @deprecated visibility will be changed to package.
      */
+    @Deprecated
     public float trimLast() {
         float trimmedSpace = 0;
 
@@ -697,12 +699,12 @@ public class TextRenderer extends AbstractRenderer {
         float fontSize = (float) this.getPropertyAsFloat(Property.FONT_SIZE);
         Float characterSpacing = this.getPropertyAsFloat(Property.CHARACTER_SPACING);
         Float wordSpacing = this.getPropertyAsFloat(Property.WORD_SPACING);
-        Float hScale = this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
+        float hScale = (float) this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
 
         int firstNonSpaceCharIndex = line.end - 1;
         while (firstNonSpaceCharIndex >= line.start) {
             Glyph currentGlyph = line.get(firstNonSpaceCharIndex);
-            if (!currentGlyph.hasValidUnicode() || !isSpaceGlyph(currentGlyph)) {
+            if (!TextUtil.isSpaceGlyph(currentGlyph)) {
                 break;
             }
 
@@ -822,13 +824,12 @@ public class TextRenderer extends AbstractRenderer {
         return new TextRenderer((Text) modelElement, null);
     }
 
+    /**
+     * @deprecated Use {@link TextUtil#isNewLine(Glyph)} instead.
+     */
+    @Deprecated
     protected static boolean isNewLine(GlyphLine text, int ind) {
-        int unicode = text.get(ind).getUnicode();
-        return unicode == '\n' || unicode == '\r';
-    }
-
-    static boolean isSpaceGlyph(Glyph glyph) {
-        return Character.isWhitespace((char) glyph.getUnicode()) || Character.isSpaceChar((char) glyph.getUnicode());
+        return TextUtil.isNewLine(text.get(ind));
     }
 
     static float[] calculateAscenderDescender(PdfFont font) {
@@ -847,7 +848,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private TextRenderer[] splitIgnoreFirstNewLine(int currentTextPos) {
-        if (text.get(currentTextPos).hasValidUnicode() && text.get(currentTextPos).getUnicode() == '\r') {
+        if (text.get(currentTextPos).getUnicode() == '\r') {
             int next = currentTextPos + 1 < text.end ? text.get(currentTextPos + 1).getUnicode() : -1;
             if (next == '\n') {
                 return split(currentTextPos + 2);
@@ -899,7 +900,7 @@ public class TextRenderer extends AbstractRenderer {
         int spaces = 0;
         for (int i = line.start; i < line.end; i++) {
             Glyph currentGlyph = line.get(i);
-            if (currentGlyph.hasValidUnicode() && currentGlyph.getUnicode() == ' ') {
+            if (currentGlyph.getUnicode() == ' ') {
                 spaces++;
             }
         }
@@ -957,7 +958,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     protected float calculateLineWidth() {
-        return getGlyphLineWidth(line, (float) this.getPropertyAsFloat(Property.FONT_SIZE), this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f),
+        return getGlyphLineWidth(line, (float) this.getPropertyAsFloat(Property.FONT_SIZE), (float) this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f),
                 this.getPropertyAsFloat(Property.CHARACTER_SPACING), this.getPropertyAsFloat(Property.WORD_SPACING));
     }
 
@@ -1002,7 +1003,7 @@ public class TextRenderer extends AbstractRenderer {
         if (characterSpacing != null) {
             resultWidth += (float) characterSpacing * (float) hScale * TEXT_SPACE_COEFF;
         }
-        if (wordSpacing != null && g.hasValidUnicode() && g.getUnicode() == ' ') {
+        if (wordSpacing != null && g.getUnicode() == ' ') {
             resultWidth += (float) wordSpacing * (float) hScale * TEXT_SPACE_COEFF;
         }
         return resultWidth;
@@ -1012,7 +1013,7 @@ public class TextRenderer extends AbstractRenderer {
         return xAdvance * fontSize * (float) hScale;
     }
 
-    private float getGlyphLineWidth(GlyphLine glyphLine, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {
+    private float getGlyphLineWidth(GlyphLine glyphLine, float fontSize, float hScale, Float characterSpacing, Float wordSpacing) {
         float width = 0;
         for (int i = glyphLine.start; i < glyphLine.end; i++) {
             if (!noPrint(glyphLine.get(i))) {
@@ -1026,7 +1027,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private int[] getWordBoundsForHyphenation(GlyphLine text, int leftTextPos, int rightTextPos, int wordMiddleCharPos) {
-        while (wordMiddleCharPos >= leftTextPos && !isGlyphPartOfWordForHyphenation(text.get(wordMiddleCharPos)) && !isWhitespaceGlyph(text.get(wordMiddleCharPos))) {
+        while (wordMiddleCharPos >= leftTextPos && !isGlyphPartOfWordForHyphenation(text.get(wordMiddleCharPos)) && !isSpaceGlyph(text.get(wordMiddleCharPos))) {
             wordMiddleCharPos--;
         }
         if (wordMiddleCharPos >= leftTextPos) {
@@ -1045,12 +1046,12 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private boolean isGlyphPartOfWordForHyphenation(Glyph g) {
-        return g.hasValidUnicode() && (Character.isLetter((char) g.getUnicode()) ||
-                Character.isDigit((char) g.getUnicode()) || '\u00ad' == g.getUnicode());
+        return Character.isLetter((char) g.getUnicode()) ||
+                Character.isDigit((char) g.getUnicode()) || '\u00ad' == g.getUnicode();
     }
 
-    private boolean isWhitespaceGlyph(Glyph g) {
-        return g.hasValidUnicode() && g.getUnicode() == ' ';
+    private boolean isSpaceGlyph(Glyph g) {
+        return g.getUnicode() == ' ';
     }
 
     private void convertWaitingStringToGlyphLine() {

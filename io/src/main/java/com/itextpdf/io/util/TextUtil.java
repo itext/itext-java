@@ -43,6 +43,8 @@
  */
 package com.itextpdf.io.util;
 
+import com.itextpdf.io.font.otf.Glyph;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -206,5 +208,16 @@ public final class TextUtil {
 
     public static String charToString(char ch) {
         return String.valueOf(ch);
+    }
+
+    public static boolean isNewLine(Glyph glyph) {
+        int unicode = glyph.getUnicode();
+        return unicode == '\n' || unicode == '\r';
+    }
+
+    public static boolean isSpaceGlyph(Glyph glyph) {
+        //\r and \n are whitespaces, but not space chars.
+        //\u00a0 is SpaceChar, but not whitespace.
+        return Character.isSpaceChar((char) glyph.getUnicode()) || Character.isWhitespace((char) glyph.getUnicode());
     }
 }
