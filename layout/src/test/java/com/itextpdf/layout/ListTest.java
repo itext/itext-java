@@ -448,7 +448,6 @@ public class ListTest extends ExtendedITextTest {
         nestedList.setHeight(400);
         nestedItem.setHeight(300);
         doc.add(list);
-        doc.add(new AreaBreak());
 
         doc.close();
 

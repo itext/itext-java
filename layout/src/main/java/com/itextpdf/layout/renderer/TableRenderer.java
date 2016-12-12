@@ -718,6 +718,7 @@ public class TableRenderer extends AbstractRenderer {
                             rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) cellOverflow.setParent(splitResult[1]);
                         } else {
                             rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) currentRow[col].setParent(splitResult[1]);
+                            rows.get(targetOverflowRowIndex[col])[col].deleteOwnProperty(Property.BORDER_TOP);
                         }
                         rows.get(targetOverflowRowIndex[col])[col].occupiedArea = cellOccupiedArea;
                     } else if (currentRow[col] != null) {

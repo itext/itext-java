@@ -177,13 +177,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     break;
                 } else {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
-
                         if (currentAreaPos + 1 == areas.size()) {
                             if (marginsCollapsingEnabled) {
-                                marginsCollapseHandler.endChildMarginsHandling();
-                                marginsCollapseHandler.endMarginsCollapse();
+                                //if (anythingPlaced) {
+                                    marginsCollapseHandler.endChildMarginsHandling();
+                                //}
                             }
-
                             AbstractRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
                             splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
                             splitRenderer.childRenderers.add(result.getSplitRenderer());
@@ -197,16 +196,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                             overflowRenderer.childRenderers = overflowRendererChildren;
 
-                            applyPaddings(occupiedArea.getBBox(), paddings, true);
-                            applyBorderBox(occupiedArea.getBBox(), borders, true);
-                            applyMargins(occupiedArea.getBBox(), true);
-
                             if (hasProperty(Property.MAX_HEIGHT)) {
-                                if (wasHeightClipped) {
-                                    Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                                    logger.warn(LogMessageConstant.CLIP_ELEMENT);
-                                    return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
-                                }
                                 overflowRenderer.setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
                             }
                             if (hasProperty(Property.MIN_HEIGHT)) {
@@ -215,7 +205,27 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             if (hasProperty(Property.HEIGHT)) {
                                 overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
                             }
-                            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer, causeOfNothing);
+                            if (wasHeightClipped) {
+                                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                                logger.warn(LogMessageConstant.CLIP_ELEMENT);
+                                occupiedArea.getBBox()
+                                        .moveDown((float)blockMaxHeight - occupiedArea.getBBox().getHeight())
+                                        .setHeight((float)blockMaxHeight);
+                            }
+
+                            applyPaddings(occupiedArea.getBBox(), paddings, true);
+                            applyBorderBox(occupiedArea.getBBox(), borders, true);
+                            if (marginsCollapsingEnabled) {
+                                marginsCollapseHandler.endMarginsCollapse();
+                                splitRenderer.setProperty(Property.MARGIN_TOP, getProperty(Property.MARGIN_TOP));
+                                splitRenderer.setProperty(Property.MARGIN_BOTTOM, getProperty(Property.MARGIN_BOTTOM));
+                            }
+                            applyMargins(occupiedArea.getBBox(), true);
+                            if (wasHeightClipped) {
+                                return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
+                            } else {
+                                return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer, causeOfNothing);
+                            }
                         } else {
                             childRenderers.set(childPos, result.getSplitRenderer());
                             childRenderers.add(childPos + 1, result.getOverflowRenderer());
@@ -227,7 +237,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         int layoutResult = anythingPlaced && !keepTogether ? LayoutResult.PARTIAL : LayoutResult.NOTHING;
 
                         if (marginsCollapsingEnabled) {
-                            marginsCollapseHandler.endMarginsCollapse();
+                            //if (anythingPlaced) {
+                                marginsCollapseHandler.endChildMarginsHandling();
+                            //}
                         }
                         AbstractRenderer splitRenderer = createSplitRenderer(layoutResult);
                         splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
@@ -247,33 +259,38 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
                         }
 
-                        applyPaddings(occupiedArea.getBBox(), paddings, true);
-                        applyBorderBox(occupiedArea.getBBox(), borders, true);
-                        applyMargins(occupiedArea.getBBox(), true);
-
                         if (hasProperty(Property.MAX_HEIGHT)) {
                             if (isPositioned) {
                                 correctPositionedLayout(layoutBox);
                             }
-                            if (wasHeightClipped) {
-                                occupiedArea.getBBox()
-                                        .moveDown((float) blockMaxHeight - occupiedArea.getBBox().getHeight())
-                                        .setHeight((float) blockMaxHeight);
-                                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                                logger.warn(LogMessageConstant.CLIP_ELEMENT);
-                                return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
-                            }
-                            //overflowRenderer.setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
+                            overflowRenderer.setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
                         }
-//                        if (hasProperty(Property.MIN_HEIGHT)) {
-//                            overflowRenderer.setProperty(Property.MIN_HEIGHT, retrieveMinHeight() - occupiedArea.getBBox().getHeight());
-//                        }
-//                        if (hasProperty(Property.HEIGHT)) {
-//                            overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
-//                        }
+                        if (hasProperty(Property.MIN_HEIGHT)) {
+                            overflowRenderer.setProperty(Property.MIN_HEIGHT, retrieveMinHeight() - occupiedArea.getBBox().getHeight());
+                        }
+                        if (hasProperty(Property.HEIGHT)) {
+                            overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                        }
 
-                        if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+                        if (wasHeightClipped) {
+                            occupiedArea.getBBox()
+                                    .moveDown((float) blockMaxHeight - occupiedArea.getBBox().getHeight())
+                                    .setHeight((float) blockMaxHeight);
+                            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                            logger.warn(LogMessageConstant.CLIP_ELEMENT);
+                        }
+
+                        applyPaddings(occupiedArea.getBBox(), paddings, true);
+                        applyBorderBox(occupiedArea.getBBox(), borders, true);
+                        if (marginsCollapsingEnabled) {
+                            marginsCollapseHandler.endMarginsCollapse();
+                        }
+                        applyMargins(occupiedArea.getBBox(), true);
+                        //splitRenderer.occupiedArea = occupiedArea.clone();
+
+
+                        if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || wasHeightClipped) {
+                            return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
                         } else {
                             if (layoutResult != LayoutResult.NOTHING) {
                                 return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, null);
@@ -307,24 +324,24 @@ public abstract class BlockRenderer extends AbstractRenderer {
             occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
         }
 
-        applyPaddings(occupiedArea.getBBox(), paddings, true);
         IRenderer overflowRenderer = null;
         Float blockMinHeight = retrieveMinHeight();
         if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
-            float blockBottom = occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight());
-            if (blockBottom >= layoutContext.getArea().getBBox().getBottom()) {
-                occupiedArea.getBBox().setY(blockBottom).setHeight((float) blockMinHeight);
-            } else if (!isFixedLayout()) {
-                occupiedArea.getBBox()
-                        .increaseHeight(occupiedArea.getBBox().getBottom() - layoutContext.getArea().getBBox().getBottom())
-                        .setY(layoutContext.getArea().getBBox().getBottom());
-                overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
-                overflowRenderer.setProperty(Property.MIN_HEIGHT, (float) blockMinHeight - occupiedArea.getBBox().getHeight());
-                if (hasProperty(Property.HEIGHT)) {
-                    overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
-                }
-            } else {
+            if (isFixedLayout()) {
                 occupiedArea.getBBox().moveDown((float) blockMinHeight - occupiedArea.getBBox().getHeight()).setHeight((float) blockMinHeight);
+            } else {
+                float blockBottom = Math.max(occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight()), layoutContext.getArea().getBBox().getBottom() /*parentBBox.getBottom()*/);
+                occupiedArea.getBBox()
+                        .increaseHeight(occupiedArea.getBBox().getBottom() - blockBottom)
+                        .setY(blockBottom);
+                blockMinHeight -= occupiedArea.getBBox().getHeight();
+                if (!isFixedLayout() && blockMinHeight > 0) {
+                    overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
+                    overflowRenderer.setProperty(Property.MIN_HEIGHT, (float) blockMinHeight);
+                    if (hasProperty(Property.HEIGHT)) {
+                        overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                    }
+                }
             }
         }
 
@@ -332,6 +349,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             correctPositionedLayout(layoutBox);
         }
 
+        applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         if (marginsCollapsingEnabled) {
             marginsCollapseHandler.endMarginsCollapse();

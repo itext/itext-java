@@ -55,12 +55,13 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Paragraph}
@@ -221,12 +222,7 @@ public class ParagraphRenderer extends BlockRenderer {
                             if (anythingPlaced) {
                                 marginsCollapseHandler.endChildMarginsHandling();
                             }
-                            marginsCollapseHandler.endMarginsCollapse();
                         }
-                        applyPaddings(occupiedArea.getBBox(), paddings, true);
-                        applyBorderBox(occupiedArea.getBBox(), borders, true);
-                        applyMargins(occupiedArea.getBBox(), true);
-
                         ParagraphRenderer[] split = split();
                         split[0].lines = lines;
                         for (LineRenderer line : lines) {
@@ -242,14 +238,6 @@ public class ParagraphRenderer extends BlockRenderer {
                             if (isPositioned) {
                                 correctPositionedLayout(layoutBox);
                             }
-                            if (wasHeightClipped) {
-                                occupiedArea.getBBox()
-                                        .moveDown((float) blockMaxHeight - occupiedArea.getBBox().getHeight())
-                                        .setHeight((float) blockMaxHeight);
-                                Logger logger = LoggerFactory.getLogger(ParagraphRenderer.class);
-                                logger.warn(LogMessageConstant.CLIP_ELEMENT);
-                                return new LayoutResult(LayoutResult.FULL, occupiedArea, split[0], null);
-                            }
                             split[1].setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
                         }
                         if (hasProperty(Property.MIN_HEIGHT)) {
@@ -258,7 +246,26 @@ public class ParagraphRenderer extends BlockRenderer {
                         if (hasProperty(Property.HEIGHT)) {
                             split[1].setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
                         }
-                        if (anythingPlaced) {
+                        if (wasHeightClipped) {
+                            split[0].getOccupiedArea().getBBox()
+                                    .moveDown((float) blockMaxHeight - occupiedArea.getBBox().getHeight())
+                                    .setHeight((float) blockMaxHeight);
+                            Logger logger = LoggerFactory.getLogger(ParagraphRenderer.class);
+                            logger.warn(LogMessageConstant.CLIP_ELEMENT);
+                        }
+                        applyPaddings(occupiedArea.getBBox(), paddings, true);
+                        applyBorderBox(occupiedArea.getBBox(), borders, true);
+                        if (marginsCollapsingEnabled) {
+                            marginsCollapseHandler.endMarginsCollapse();
+                            split[0].setProperty(Property.MARGIN_TOP, getProperty(Property.MARGIN_TOP));
+                            split[0].setProperty(Property.MARGIN_BOTTOM, getProperty(Property.MARGIN_BOTTOM));
+
+                        }
+                        applyMargins(occupiedArea.getBBox(), true);
+
+                        if (wasHeightClipped) {
+                            return new LayoutResult(LayoutResult.FULL, occupiedArea, split[0], null);
+                        } else if (anythingPlaced) {
                             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]);
                         } else {
                             if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
@@ -306,7 +313,6 @@ public class ParagraphRenderer extends BlockRenderer {
         if (marginsCollapsingEnabled && childRenderers.size() > 0) {
             marginsCollapseHandler.endChildMarginsHandling();
         }
-        applyPaddings(occupiedArea.getBBox(), paddings, true);
         IRenderer overflowRenderer = null;
         Float blockMinHeight = retrieveMinHeight();
         if (null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
@@ -332,6 +338,7 @@ public class ParagraphRenderer extends BlockRenderer {
         if (marginsCollapsingEnabled) {
             marginsCollapseHandler.endMarginsCollapse();
         }
+        applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         applyMargins(occupiedArea.getBBox(), true);
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
@@ -444,7 +451,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
     protected ParagraphRenderer[] split() {
         ParagraphRenderer splitRenderer = createSplitRenderer(parent);
-        splitRenderer.occupiedArea = occupiedArea.clone();
+        splitRenderer.occupiedArea = occupiedArea;
         splitRenderer.isLastRendererForModelElement = false;
 
         ParagraphRenderer overflowRenderer = createOverflowRenderer(parent);

@@ -5,18 +5,18 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class CollapsingMarginsTest extends ExtendedITextTest {
@@ -101,7 +101,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
         Document doc = new Document(pdfDocument);
         doc.setProperty(Property.COLLAPSING_MARGINS, true);
 
-        doc.add(new Paragraph("marker text").setMargin(0));
+        //  doc.add(new Paragraph("marker text").setMargin(0));
 
         Paragraph p = new Paragraph(textByron);
         for (int i = 0; i < 3; i++) {
