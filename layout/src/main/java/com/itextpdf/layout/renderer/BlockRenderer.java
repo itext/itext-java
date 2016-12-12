@@ -179,9 +179,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
                         if (currentAreaPos + 1 == areas.size()) {
                             if (marginsCollapsingEnabled) {
-                                //if (anythingPlaced) {
-                                    marginsCollapseHandler.endChildMarginsHandling();
-                                //}
+                                marginsCollapseHandler.endChildMarginsHandling();
                             }
                             AbstractRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
                             splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
@@ -209,8 +207,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
                                 Logger logger = LoggerFactory.getLogger(TableRenderer.class);
                                 logger.warn(LogMessageConstant.CLIP_ELEMENT);
                                 occupiedArea.getBBox()
-                                        .moveDown((float)blockMaxHeight - occupiedArea.getBBox().getHeight())
-                                        .setHeight((float)blockMaxHeight);
+                                        .moveDown((float) blockMaxHeight - occupiedArea.getBBox().getHeight())
+                                        .setHeight((float) blockMaxHeight);
                             }
 
                             applyPaddings(occupiedArea.getBBox(), paddings, true);
@@ -235,12 +233,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     } else if (result.getStatus() == LayoutResult.NOTHING) {
                         boolean keepTogether = isKeepTogether();
                         int layoutResult = anythingPlaced && !keepTogether ? LayoutResult.PARTIAL : LayoutResult.NOTHING;
-
-                        if (marginsCollapsingEnabled) {
-                            //if (anythingPlaced) {
-                                //marginsCollapseHandler.endChildMarginsHandling();
-                            //}
-                        }
                         AbstractRenderer splitRenderer = createSplitRenderer(layoutResult);
                         splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
                         for (IRenderer renderer : splitRenderer.childRenderers) {
