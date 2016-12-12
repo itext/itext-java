@@ -89,7 +89,6 @@ public class PdfException extends RuntimeException {
     public static final String CannotGetPdfStreamBytes = "Cannot get PdfStream bytes.";
     public static final String CannotRetrieveMediaBoxAttribute = "Invalid PDF. There is no media box attribute for page or its parents.";
     public static final String CannotFindImageDataOrEI = "Cannot find image data or EI.";
-    public static final String CannotFindThePageNumber = "Cannot find the page number {0}.";
     public static final String CannotFlushDocumentRootTagBeforeDocumentIsClosed = "Cannot flush document root tag before document is closed.";
     public static final String CannotFlushObject = "Cannot flush object.";
     public static final String CannotMoveToFlushedKid = "Cannot move to flushed kid.";
@@ -260,6 +259,7 @@ public class PdfException extends RuntimeException {
     public static final String PdfInderectObjectBelongToOtherPdfDocument = "pdf inderect object belong to other pdf document Copy object to current pdf document.";
     public static final String PdfIndirectObjectBelongsToOtherPdfDocument = "Pdf indirect object belongs to other PDF document. Copy object to current pdf document.";
     public static final String PdfVersionNotValid = "PDF version is not valid.";
+    public static final String RequestedPageNumberIsOutOfBounds = "Requested page number {0} is out of bounds.";
     public static final String PngFilterUnknown = "PNG filter unknown.";
     public static final String ResourcesCannotBeNull = "Resources cannot be null.";
     public static final String ResourcesDoNotContainExtgstateEntryUnableToProcessOperator1 = "Resources do not contain ExtGState entry. Unable to process operator {0}.";

@@ -634,18 +634,18 @@ public class PdfReaderTest extends ExtendedITextTest {
         try {
             document.getPage(-30);
         } catch (PdfException pdfException) {
-            Assert.assertEquals(MessageFormat.format(PdfException.CannotFindThePageNumber, -30), pdfException.getMessage());
+            Assert.assertEquals(MessageFormat.format(PdfException.RequestedPageNumberIsOutOfBounds, -30), pdfException.getMessage());
         }
         try {
             document.getPage(0);
         } catch (PdfException pdfException) {
-            Assert.assertEquals(MessageFormat.format(PdfException.CannotFindThePageNumber, 0), pdfException.getMessage());
+            Assert.assertEquals(MessageFormat.format(PdfException.RequestedPageNumberIsOutOfBounds, 0), pdfException.getMessage());
         }
         document.getPage(1);
         try {
             document.getPage(25);
         } catch (PdfException pdfException) {
-            Assert.assertEquals(MessageFormat.format(PdfException.CannotFindThePageNumber, 25), pdfException.getMessage());
+            Assert.assertEquals(MessageFormat.format(PdfException.RequestedPageNumberIsOutOfBounds, 25), pdfException.getMessage());
         }
         document.close();
     }
