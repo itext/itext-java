@@ -101,7 +101,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
         Document doc = new Document(pdfDocument);
         doc.setProperty(Property.COLLAPSING_MARGINS, true);
 
-        //  doc.add(new Paragraph("marker text").setMargin(0));
+        doc.add(new Paragraph("marker text").setMargin(0));
 
         Paragraph p = new Paragraph(textByron);
         for (int i = 0; i < 3; i++) {

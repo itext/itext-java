@@ -238,7 +238,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
                         if (marginsCollapsingEnabled) {
                             //if (anythingPlaced) {
-                                marginsCollapseHandler.endChildMarginsHandling();
+                                //marginsCollapseHandler.endChildMarginsHandling();
                             //}
                         }
                         AbstractRenderer splitRenderer = createSplitRenderer(layoutResult);
@@ -284,6 +284,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
                         if (marginsCollapsingEnabled) {
                             marginsCollapseHandler.endMarginsCollapse();
+                            splitRenderer.setProperty(Property.MARGIN_TOP, getProperty(Property.MARGIN_TOP));
+                            splitRenderer.setProperty(Property.MARGIN_BOTTOM, getProperty(Property.MARGIN_BOTTOM));
                         }
                         applyMargins(occupiedArea.getBBox(), true);
                         //splitRenderer.occupiedArea = occupiedArea.clone();
