@@ -81,14 +81,6 @@ public class LineLayoutResult extends LayoutResult {
         super(status, occupiedArea, splitRenderer, overflowRenderer, cause);
     }
 
-    public LineLayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, float minWidth, float maxWidth) {
-        super(status, occupiedArea, splitRenderer, overflowRenderer, minWidth, maxWidth);
-    }
-
-    public LineLayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause, float minWidth, float maxWidth) {
-        super(status, occupiedArea, splitRenderer, overflowRenderer, cause, minWidth, maxWidth);
-    }
-
     /**
      * Indicates whether split was forced by new line symbol in rendered text.
      * The value will be set as true if, for example,

@@ -82,7 +82,7 @@ public class LineSeparatorRenderer extends BlockRenderer {
             calculatedWidth = occupiedArea.getBBox().getWidth();
         }
         if ((occupiedArea.getBBox().getHeight() < height || occupiedArea.getBBox().getWidth() < calculatedWidth) && !hasOwnProperty(Property.FORCED_PLACEMENT)) {
-            return new LayoutResult(LayoutResult.NOTHING, null, null, this, this, 0, 0);
+            return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
         }
 
         occupiedArea.getBBox().setWidth((float) calculatedWidth).moveUp(occupiedArea.getBBox().getHeight() - height).setHeight(height);
@@ -93,12 +93,12 @@ public class LineSeparatorRenderer extends BlockRenderer {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, this, 0, parentBBox.getWidth());
+                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
                 }
             }
         }
 
-        return new LayoutResult(LayoutResult.FULL, occupiedArea, this, null, 0, occupiedArea.getBBox().getWidth());
+        return new LayoutResult(LayoutResult.FULL, occupiedArea, this, null);
     }
 
     /**

@@ -42,7 +42,9 @@
  */
 package com.itextpdf.layout.margincollapse;
 
-public class MarginsCollapseInfo {
+import java.io.Serializable;
+
+public class MarginsCollapseInfo implements Serializable {
     private boolean ignoreOwnMarginTop;
     private boolean ignoreOwnMarginBottom;
     private MarginsCollapse collapseBefore;

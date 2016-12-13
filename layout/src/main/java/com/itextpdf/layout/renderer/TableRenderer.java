@@ -60,6 +60,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
@@ -1163,6 +1164,11 @@ public class TableRenderer extends AbstractRenderer {
         overflowRenderer.addAllProperties(getOwnProperties());
         overflowRenderer.isOriginalNonSplitRenderer = false;
         return overflowRenderer;
+    }
+
+    @Override
+    MinMaxWidth getMinMaxWidth(float availableWidth) {
+        return null;
     }
 
     @Override

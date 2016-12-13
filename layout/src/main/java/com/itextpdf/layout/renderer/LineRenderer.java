@@ -53,6 +53,9 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.LineLayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
+import com.itextpdf.layout.minmaxwidth.handler.MaxSumWidthHandler;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.minmaxwidth.handler.AbstractWidthHandler;
 import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
@@ -70,6 +73,9 @@ public class LineRenderer extends AbstractRenderer {
 
     protected byte[] levels;
 
+    //saved value of min max width calculations after the last layout
+    private MinMaxWidth countedMinMaxWidth;
+
     @Override
     public LineLayoutResult layout(LayoutContext layoutContext) {
         Rectangle layoutBox = layoutContext.getArea().getBBox().clone();
@@ -79,8 +85,10 @@ public class LineRenderer extends AbstractRenderer {
         maxAscent = 0;
         maxDescent = 0;
         int childPos = 0;
-        float minWidth = 0;
-        float maxWidth = layoutBox.getWidth();
+
+        countedMinMaxWidth = new MinMaxWidth(0, layoutBox.getWidth());
+        setProperty(Property.MIN_MAX_WIDTH, countedMinMaxWidth);
+        AbstractWidthHandler widthHandler = new MaxSumWidthHandler(countedMinMaxWidth);
 
         BaseDirection baseDirection = this.<BaseDirection>getProperty(Property.BASE_DIRECTION);
         for (IRenderer renderer : childRenderers) {
@@ -137,7 +145,8 @@ public class LineRenderer extends AbstractRenderer {
                     IRenderer tabRenderer = childRenderers.get(childPos - 1);
                     tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
                     curWidth += tabRenderer.getOccupiedArea().getBBox().getWidth();
-                    minWidth = Math.max(tabRenderer.getOccupiedArea().getBBox().getWidth(), minWidth);
+                    widthHandler.updateMinChildWidth(tabRenderer.getOccupiedArea().getBBox().getWidth());
+                    widthHandler.updateMaxChildWidth(tabRenderer.getOccupiedArea().getBBox().getWidth());
                 }
                 hangingTabStop = calculateTab(childRenderer, curWidth, layoutBox.getWidth());
                 if (childPos == childRenderers.size() - 1)
@@ -158,6 +167,14 @@ public class LineRenderer extends AbstractRenderer {
             }
 
             childResult = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
+
+            float minChildWidth = 0;
+            float maxChildWidth = 0;
+            if (childRenderer.hasOwnProperty(Property.MIN_MAX_WIDTH)) {
+                MinMaxWidth childMinMaxWidth = childRenderer.<MinMaxWidth>getOwnProperty(Property.MIN_MAX_WIDTH);
+                minChildWidth = childMinMaxWidth.getMinWidth();
+                maxChildWidth = childMinMaxWidth.getMaxWidth();
+            }
 
             float childAscent = 0;
             float childDescent = 0;
@@ -187,11 +204,13 @@ public class LineRenderer extends AbstractRenderer {
                 } else {
                     curWidth += tabAndNextElemWidth;
                 }
-                minWidth = Math.max(tabWidth + childResult.getMinFullWidth(), minWidth);
+                widthHandler.updateMinChildWidth(tabWidth + minChildWidth);
+                widthHandler.updateMaxChildWidth(tabWidth + maxChildWidth);
                 hangingTabStop = null;
             } else {
                 curWidth += childResult.getOccupiedArea().getBBox().getWidth();
-                minWidth = Math.max(childResult.getMinFullWidth(), minWidth);
+                widthHandler.updateMinChildWidth(minChildWidth);
+                widthHandler.updateMaxChildWidth(maxChildWidth);
             }
             occupiedArea.setBBox(new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight, curWidth, maxHeight));
 
@@ -234,12 +253,12 @@ public class LineRenderer extends AbstractRenderer {
 
                 IRenderer causeOfNothing = childResult.getStatus() == LayoutResult.NOTHING ? childResult.getCauseOfNothing() : childRenderer;
                 if (split[1] == null) {
-                    result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, split[0], split[1], causeOfNothing, minWidth, maxWidth);
+                    result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, split[0], split[1], causeOfNothing);
                 } else {
                     if (anythingPlaced) {
-                        result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], causeOfNothing, minWidth, maxWidth);
+                        result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], causeOfNothing);
                     } else {
-                        result = new LineLayoutResult(LayoutResult.NOTHING, null, split[0], split[1], causeOfNothing, 0, 0);
+                        result = new LineLayoutResult(LayoutResult.NOTHING, null, split[0], split[1], causeOfNothing);
                     }
                 }
                 if (newLineOccurred) {
@@ -254,9 +273,9 @@ public class LineRenderer extends AbstractRenderer {
 
         if (result == null) {
             if (anythingPlaced || 0 == childRenderers.size()) {
-                result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, null, null, minWidth, maxWidth);
+                result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
             } else {
-                result = new LineLayoutResult(LayoutResult.NOTHING, null, null, this, this, 0, 0);
+                result = new LineLayoutResult(LayoutResult.NOTHING, null, null, this, this);
             }
         }
 
@@ -529,6 +548,12 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
         return false;
+    }
+
+    @Override
+    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
+        LayoutResult result = layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
+        return result.getStatus() != LayoutResult.NOTHING ? countedMinMaxWidth : new MinMaxWidth(0, availableWidth);
     }
 
     private List<int[]> createOrGetReversedProperty(TextRenderer newRenderer) {

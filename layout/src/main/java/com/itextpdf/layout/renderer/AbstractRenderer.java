@@ -64,6 +64,8 @@ import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
@@ -792,6 +794,10 @@ public abstract class AbstractRenderer implements IRenderer {
             PdfPage page = document.getPage(occupiedArea.getPageNumber());
             page.addAnnotation(linkAnnotation);
         }
+    }
+
+    MinMaxWidth getMinMaxWidth(float availableWidth) {
+        return MinMaxWidthUtils.countDefaultMinMaxWidth(this, availableWidth);
     }
 
     /**

@@ -123,22 +123,13 @@ public class LayoutResult {
      * @param overflowRenderer the renderer to draw the overflowed part of the content
      * @param cause the first renderer to produce {@link LayoutResult#NOTHING}
      */
-    public LayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause) {
-        this(status, occupiedArea, splitRenderer, overflowRenderer, cause, 0, Float.MAX_VALUE);
-    }
-    
-    public LayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, float minWidth, float maxWidth) {
-        this(status, occupiedArea, splitRenderer, overflowRenderer, null, minWidth, maxWidth);
-    }
 
-    public LayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause, float minWidth, float maxWidth) {
+    public LayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause) {
         this.status = status;
         this.occupiedArea = occupiedArea;
         this.splitRenderer = splitRenderer;
         this.overflowRenderer = overflowRenderer;
         this.causeOfNothing = cause;
-        this.minFullWidth = minWidth;
-        this.maxFullWidth = maxWidth;
     }
 
     /**
@@ -214,14 +205,6 @@ public class LayoutResult {
      */
     public IRenderer getCauseOfNothing() {
         return causeOfNothing;
-    }
-
-    public float getMinFullWidth() {
-        return minFullWidth;
-    }
-
-    public float getMaxFullWidth() {
-        return maxFullWidth;
     }
 
     /**

@@ -1,18 +1,18 @@
-package com.itextpdf.layout;
+package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.element.MinMaxWidthUtils;
-import com.itextpdf.layout.layout.LayoutArea;
-import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.test.ExtendedITextTest;
@@ -46,8 +46,8 @@ public class MinWidthTest extends ExtendedITextTest {
 
         String str = "Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.";
         Paragraph p = new Paragraph(new Text(str).setBorder(new SolidBorder(Color.BLACK, 5))).setBorder(new SolidBorder(Color.BLUE, 5));
-        LayoutResult result = MinMaxWidthUtils.tryLayoutWithInfHeight(p.createRendererSubTree().setParent(doc.getRenderer()), doc.getPageEffectiveArea(PageSize.A4).getWidth());
-        p.setWidth(MinMaxWidthUtils.toEffectiveWidth(p, result.getMinFullWidth()));
+        MinMaxWidth result = ((AbstractRenderer)p.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
+        p.setWidth(MinMaxWidthUtils.toEffectiveWidth(p, result.getMinWidth()));
         doc.add(p);
         doc.close();
 
@@ -66,8 +66,8 @@ public class MinWidthTest extends ExtendedITextTest {
         Paragraph p = new Paragraph(new Text(str)).setPadding(1f).setBorder(new SolidBorder(Color.BLACK, 2)).setMargin(3).setBackgroundColor(Color.LIGHT_GRAY);
         Div d = new Div().setPadding(4f).setBorder(new SolidBorder(Color.GREEN, 5)).setMargin(6);
         d.add(p);
-        LayoutResult result = MinMaxWidthUtils.tryLayoutWithInfHeight(d.createRendererSubTree().setParent(doc.getRenderer()), doc.getPageEffectiveArea(PageSize.A4).getWidth());
-        d.setWidth(MinMaxWidthUtils.toEffectiveWidth(d, result.getMinFullWidth()));
+        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
+        d.setWidth(MinMaxWidthUtils.toEffectiveWidth(d, result.getMinWidth()));
         doc.add(d);
         doc.close();
 
@@ -87,8 +87,8 @@ public class MinWidthTest extends ExtendedITextTest {
         Div d = new Div().setPadding(4f).setBorder(new SolidBorder(Color.GREEN, 5)).setMargin(6);
         d.add(p);
         d.add(new Paragraph(("iText")).setRotationAngle(Math.PI/8).setBorder(new SolidBorder(Color.BLUE, 2f)));
-        LayoutResult result = MinMaxWidthUtils.tryLayoutWithInfHeight(d.createRendererSubTree().setParent(doc.getRenderer()), doc.getPageEffectiveArea(PageSize.A4).getWidth());
-        d.setWidth(MinMaxWidthUtils.toEffectiveWidth(d, result.getMinFullWidth()));
+        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
+        d.setWidth(MinMaxWidthUtils.toEffectiveWidth(d, result.getMinWidth()));
         doc.add(d);
         doc.close();
 
@@ -109,8 +109,8 @@ public class MinWidthTest extends ExtendedITextTest {
         Div d = new Div().setPadding(4f).setBorder(new SolidBorder(Color.GREEN, 5)).setMargin(6);
         d.add(p);
         d.add(new Paragraph(("iText")));
-        LayoutResult result = MinMaxWidthUtils.tryLayoutWithInfHeight(d.createRendererSubTree().setParent(doc.getRenderer()), doc.getPageEffectiveArea(PageSize.A4).getWidth());
-        d.setWidth(MinMaxWidthUtils.toEffectiveWidth(d, result.getMinFullWidth()));
+        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
+        d.setWidth(MinMaxWidthUtils.toEffectiveWidth(d, result.getMinWidth()));
         doc.add(d);
         doc.close();
 
@@ -131,8 +131,8 @@ public class MinWidthTest extends ExtendedITextTest {
         d.add(p);
         Div dRotated = new Div().setRotationAngle(Math.PI/8).setBorder(new SolidBorder(Color.BLUE, 2f));
         d.add(dRotated.add(new Paragraph(("iText"))));
-        LayoutResult result = MinMaxWidthUtils.tryLayoutWithInfHeight(d.createRendererSubTree().setParent(doc.getRenderer()), doc.getPageEffectiveArea(PageSize.A4).getWidth());
-        d.setWidth(MinMaxWidthUtils.toEffectiveWidth(d, result.getMinFullWidth()));
+        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
+        d.setWidth(MinMaxWidthUtils.toEffectiveWidth(d, result.getMinWidth()));
         doc.add(d);
         doc.close();
 
@@ -153,8 +153,8 @@ public class MinWidthTest extends ExtendedITextTest {
         Div dRotated = new Div().setPadding(4f).setBorder(new SolidBorder(Color.GREEN, 5)).setMargin(6);
         dRotated.add(p).setRotationAngle(Math.PI * 3 / 8);
         Div d = new Div().add(new Paragraph(("iText"))).add(dRotated).setBorder(new SolidBorder(Color.BLUE, 2f));
-        LayoutResult result = MinMaxWidthUtils.tryLayoutWithInfHeight(d.createRendererSubTree().setParent(doc.getRenderer()), doc.getPageEffectiveArea(PageSize.A4).getWidth());
-        d.setWidth(MinMaxWidthUtils.toEffectiveWidth(d, result.getMinFullWidth()));
+        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
+        d.setWidth(MinMaxWidthUtils.toEffectiveWidth(d, result.getMinWidth()));
         doc.add(d);
         doc.close();
 
@@ -181,8 +181,8 @@ public class MinWidthTest extends ExtendedITextTest {
         String str = "Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.";
         Paragraph p = new Paragraph(new Text(str)).setPadding(1f).setBorder(new SolidBorder(Color.BLACK, 2)).setMargin(3).setBackgroundColor(Color.LIGHT_GRAY);
         curr.add(p);
-        LayoutResult result = MinMaxWidthUtils.tryLayoutWithInfHeight(externalDiv.createRendererSubTree().setParent(doc.getRenderer()), doc.getPageEffectiveArea(PageSize.A4).getWidth());
-        externalDiv.setWidth(MinMaxWidthUtils.toEffectiveWidth(externalDiv, result.getMinFullWidth()));
+        MinMaxWidth result = ((AbstractRenderer)externalDiv.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
+        externalDiv.setWidth(MinMaxWidthUtils.toEffectiveWidth(externalDiv, result.getMinWidth()));
         doc.add(externalDiv);
         doc.close();
 
