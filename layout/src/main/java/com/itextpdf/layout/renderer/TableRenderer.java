@@ -709,7 +709,7 @@ public class TableRenderer extends AbstractRenderer {
                             if (splits[col].getStatus() == LayoutResult.PARTIAL) {
                                 cellOverflow.setBorders(Border.NO_BORDER, 0);
                                 cellSplit.setBorders(Border.NO_BORDER, 2);
-                            } else if (!cellOverflow.hasProperty(Property.BORDER_TOP) || Border.NO_BORDER != cellOverflow.getProperty(Property.BORDER_TOP)){
+                            } else if (Border.NO_BORDER != cellOverflow.<Border>getProperty(Property.BORDER_TOP)){
                                 cellOverflow.deleteOwnProperty(Property.BORDER_TOP);
                             }
                             for (int j = col; j < col + cellOverflow.getPropertyAsInteger(Property.COLSPAN); j++) {

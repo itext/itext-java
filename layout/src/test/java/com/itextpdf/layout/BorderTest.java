@@ -695,7 +695,6 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
-    @Ignore
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
@@ -833,6 +832,7 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
+    @Test
     public void splitCellsTest04() throws IOException, InterruptedException {
         fileName = "splitCellsTest04.pdf";
         Document doc = createDocument();

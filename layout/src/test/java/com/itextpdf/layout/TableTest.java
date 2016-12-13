@@ -992,9 +992,8 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
-    @Ignore("DEVISX-929")
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 9)
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     @Test
     public void splitTableOnShortPage() throws IOException, InterruptedException {
@@ -1003,7 +1002,7 @@ public class TableTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        Document doc = new Document(pdfDoc, new PageSize(300, 90));
+        Document doc = new Document(pdfDoc, new PageSize(300, 98));
 
         doc.add(new Paragraph("Table with setKeepTogether(true):"));
         Table table = new Table(3);
