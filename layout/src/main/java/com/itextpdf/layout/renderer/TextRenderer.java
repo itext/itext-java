@@ -165,17 +165,9 @@ public class TextRenderer extends AbstractRenderer {
         line = new GlyphLine(text);
         line.start = line.end = -1;
 
-        FontMetrics fontMetrics = font.getFontProgram().getFontMetrics();
-        float ascender;
-        float descender;
-        if (fontMetrics.getWinAscender() == 0 || fontMetrics.getWinDescender() == 0 ||
-                fontMetrics.getTypoAscender() == fontMetrics.getWinAscender() && fontMetrics.getTypoDescender() == fontMetrics.getWinDescender()) {
-            ascender = fontMetrics.getTypoAscender() * TYPO_ASCENDER_SCALE_COEFF;
-            descender = fontMetrics.getTypoDescender() * TYPO_ASCENDER_SCALE_COEFF;
-        } else {
-            ascender = fontMetrics.getWinAscender();
-            descender = fontMetrics.getWinDescender();
-        }
+        float[] ascenderDescender = calculateAscenderDescender(font);
+        float ascender = ascenderDescender[0];
+        float descender = ascenderDescender[1];
 
         float currentLineAscender = 0;
         float currentLineDescender = 0;
@@ -834,6 +826,21 @@ public class TextRenderer extends AbstractRenderer {
 
     static boolean isSpaceGlyph(Glyph glyph) {
         return Character.isWhitespace((char) glyph.getUnicode()) || Character.isSpaceChar((char) glyph.getUnicode());
+    }
+
+    static float[] calculateAscenderDescender(PdfFont font) {
+        FontMetrics fontMetrics = font.getFontProgram().getFontMetrics();
+        float ascender;
+        float descender;
+        if (fontMetrics.getWinAscender() == 0 || fontMetrics.getWinDescender() == 0 ||
+                fontMetrics.getTypoAscender() == fontMetrics.getWinAscender() && fontMetrics.getTypoDescender() == fontMetrics.getWinDescender()) {
+            ascender = fontMetrics.getTypoAscender() * TYPO_ASCENDER_SCALE_COEFF;
+            descender = fontMetrics.getTypoDescender() * TYPO_ASCENDER_SCALE_COEFF;
+        } else {
+            ascender = fontMetrics.getWinAscender();
+            descender = fontMetrics.getWinDescender();
+        }
+        return new float[] {ascender, descender};
     }
 
     private TextRenderer[] splitIgnoreFirstNewLine(int currentTextPos) {

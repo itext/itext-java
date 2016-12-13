@@ -44,6 +44,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
@@ -78,8 +79,10 @@ public class ListItemRenderer extends DivRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        if (symbolRenderer != null && this.<Object>getProperty(Property.HEIGHT) == null) {
-            setProperty(Property.MIN_HEIGHT, symbolRenderer.getOccupiedArea().getBBox().getHeight());
+        if (symbolRenderer != null && this.<Object>getProperty(Property.HEIGHT) == null && !isListSymbolEmpty(symbolRenderer)) {
+            float[] ascenderDescender = calculateAscenderDescender();
+            float minHeight = Math.max(symbolRenderer.getOccupiedArea().getBBox().getHeight(), ascenderDescender[0] - ascenderDescender[1]);
+            setProperty(Property.MIN_HEIGHT, minHeight);
         }
         applyListSymbolPosition();
         LayoutResult result = super.layout(layoutContext);
@@ -128,8 +131,18 @@ public class ListItemRenderer extends DivRenderer {
                     x += (float) this.getPropertyAsFloat(Property.MARGIN_LEFT);
                 }
             }
+            applyMargins(occupiedArea.getBBox(), false);
+            applyBorderBox(occupiedArea.getBBox(), false);
             if (childRenderers.size() > 0) {
-                Float yLine = ((AbstractRenderer) childRenderers.get(0)).getFirstYLineRecursively();
+                Float yLine = null;
+                for (int i = 0; i < childRenderers.size(); i++) {
+                    if (childRenderers.get(i).getOccupiedArea().getBBox().getHeight() > 0) {
+                        yLine = ((AbstractRenderer) childRenderers.get(0)).getFirstYLineRecursively();
+                        if (yLine != null) {
+                            break;
+                        }
+                    }
+                }
                 if (yLine != null) {
                     if (symbolRenderer instanceof TextRenderer) {
                         ((TextRenderer) symbolRenderer).moveYLineTo((float) yLine);
@@ -141,9 +154,15 @@ public class ListItemRenderer extends DivRenderer {
                             (symbolRenderer.getOccupiedArea().getBBox().getY() + symbolRenderer.getOccupiedArea().getBBox().getHeight()));
                 }
             } else {
-                symbolRenderer.move(0, occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() -
-                        symbolRenderer.getOccupiedArea().getBBox().getHeight() - symbolRenderer.getOccupiedArea().getBBox().getY());
+                if (symbolRenderer instanceof TextRenderer) {
+                    ((TextRenderer) symbolRenderer).moveYLineTo(occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - calculateAscenderDescender()[0]);
+                } else {
+                    symbolRenderer.move(0, occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() -
+                            symbolRenderer.getOccupiedArea().getBBox().getHeight() - symbolRenderer.getOccupiedArea().getBBox().getY());
+                }
             }
+            applyBorderBox(occupiedArea.getBBox(), true);
+            applyMargins(occupiedArea.getBBox(), true);
 
             ListSymbolAlignment listSymbolAlignment = (ListSymbolAlignment)parent.<ListSymbolAlignment>getProperty(Property.LIST_SYMBOL_ALIGNMENT,
                     ListSymbolAlignment.RIGHT);
@@ -236,5 +255,19 @@ public class ListItemRenderer extends DivRenderer {
                 symbolAddedInside = true;
             }
         }
+    }
+
+    private boolean isListSymbolEmpty(IRenderer listSymbolRenderer) {
+        return listSymbolRenderer instanceof TextRenderer && ((TextRenderer) listSymbolRenderer).getText().toString().length() == 0;
+    }
+
+    private float[] calculateAscenderDescender() {
+        PdfFont listItemFont = getPropertyAsFont(Property.FONT);
+        Float fontSize = getPropertyAsFloat(Property.FONT_SIZE);
+        if (listItemFont != null && fontSize != null) {
+            float[] ascenderDescender = TextRenderer.calculateAscenderDescender(listItemFont);
+            return new float[] {fontSize * ascenderDescender[0] / TextRenderer.TEXT_SPACE_COEFF, fontSize * ascenderDescender[1] / TextRenderer.TEXT_SPACE_COEFF};
+        }
+        return new float[] {0, 0};
     }
 }
