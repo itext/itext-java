@@ -388,7 +388,7 @@ public class TableRenderer extends AbstractRenderer {
                 // collapse boundary borders if necessary
                 // notice that bottom border collapse is handled afterwards
                 Border[] cellBorders = cell.getBorders();
-                if (0 == row - rowspan + 1) {
+                if (0 >= row - rowspan + 1) {
                     Border collapsed =  getCollapsedBorder(cellBorders[0],
                             null != headerRenderer ? headerRenderer.horizontalBorders.get(headerRenderer.horizontalBorders.size()-1).get(col) : borders[0]);
                     if (null != headerRenderer && collapsed == cellBorders[0]) {
@@ -453,8 +453,10 @@ public class TableRenderer extends AbstractRenderer {
 
                 if (currentCellHasBigRowspan) {
                     // cell from the future
-                    if (cellResult.getStatus() == LayoutResult.PARTIAL) {
+                    if (cellResult.getStatus() != LayoutResult.FULL) {
                         splits[col] = cellResult;
+                    }
+                    if (cellResult.getStatus() == LayoutResult.PARTIAL) {
                         currentRow[col] = (CellRenderer) cellResult.getSplitRenderer();
                     } else {
                         rows.get(currentCellInfo.finishRowInd)[col] = null;
@@ -707,7 +709,7 @@ public class TableRenderer extends AbstractRenderer {
                             if (splits[col].getStatus() == LayoutResult.PARTIAL) {
                                 cellOverflow.setBorders(Border.NO_BORDER, 0);
                                 cellSplit.setBorders(Border.NO_BORDER, 2);
-                            } else {
+                            } else if (!cellOverflow.hasProperty(Property.BORDER_TOP) || Border.NO_BORDER != cellOverflow.getProperty(Property.BORDER_TOP)){
                                 cellOverflow.deleteOwnProperty(Property.BORDER_TOP);
                             }
                             for (int j = col; j < col + cellOverflow.getPropertyAsInteger(Property.COLSPAN); j++) {
@@ -727,7 +729,7 @@ public class TableRenderer extends AbstractRenderer {
                             columnsWithCellToBeEnlarged[col] = true;
                             // for the future
                             splitResult[1].rows.get(0)[col].setBorders(getBorders()[0], 0);
-                        } else {
+                        } else if (Border.NO_BORDER != currentRow[col].getProperty(Property.BORDER_TOP)){
                             splitResult[1].rows.get(0)[col].deleteOwnProperty(Property.BORDER_TOP);
                         }
                         for (int j = col; j < col + currentRow[col].getPropertyAsInteger(Property.COLSPAN); j++) {
