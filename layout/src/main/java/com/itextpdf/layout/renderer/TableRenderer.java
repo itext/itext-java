@@ -729,7 +729,7 @@ public class TableRenderer extends AbstractRenderer {
                             columnsWithCellToBeEnlarged[col] = true;
                             // for the future
                             splitResult[1].rows.get(0)[col].setBorders(getBorders()[0], 0);
-                        } else if (Border.NO_BORDER != currentRow[col].getProperty(Property.BORDER_TOP)){
+                        } else if (Border.NO_BORDER != currentRow[col].<Border>getProperty(Property.BORDER_TOP)){
                             splitResult[1].rows.get(0)[col].deleteOwnProperty(Property.BORDER_TOP);
                         }
                         for (int j = col; j < col + currentRow[col].getPropertyAsInteger(Property.COLSPAN); j++) {
