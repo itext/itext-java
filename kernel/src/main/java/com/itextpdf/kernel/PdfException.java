@@ -125,6 +125,7 @@ public class PdfException extends RuntimeException {
     public static final String CodabarMustHaveOneAbcdAsStartStopCharacter = "Codabar must have one of 'ABCD' as start/stop character.";
     @Deprecated
     public static final String CodabarStartStopCharacterAreOnlyExtremes = "In codabar, start/stop characters are only allowed at the extremes.";
+    @Deprecated
     public static final String ColorNotFound = "Color not found.";
     public static final String ColorSpaceNotFound = "ColorSpace not found.";
     public static final String ContentStreamMustNotInvokeOperatorsThatSpecifyColorsOrOtherColorRelatedParameters = "Content stream must not invoke operators that specify colors or other color related parameters in the graphics state.";
@@ -305,6 +306,7 @@ public class PdfException extends RuntimeException {
     public static final String UnknownPdfException = "Unknown PdfException.";
     public static final String UnknownHashAlgorithm1 = "Unknown hash algorithm: {0}.";
     public static final String UnknownKeyAlgorithm1 = "Unknown key algorithm: {0}.";
+    @Deprecated
     public static final String UnknownColorFormatMustBeRGBorRRGGBB = "Unknown color format: must be rgb or rrggbb.";
     public static final String UnsupportedDefaultColorSpaceName1 = "Unsupported default color space name. Was {0}, but should be DefaultCMYK, DefaultGray or DefaultRGB";
     public static final String UnsupportedXObjectType = "Unsupported XObject type.";

@@ -43,9 +43,12 @@
  */
 package com.itextpdf.kernel.color;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.io.LogMessageConstant;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is a HashMap that contains the names of colors as a key and the
@@ -236,7 +239,9 @@ public class WebColors extends HashMap<String, int[]> {
                 color[2] = Integer.parseInt(colorName.substring(4), 16);
                 return new DeviceRgb(color[0], color[1], color[2]);
             }
-            throw new PdfException(PdfException.UnknownColorFormatMustBeRGBorRRGGBB);
+            Logger logger = LoggerFactory.getLogger(WebColors.class);
+            logger.error(LogMessageConstant.UNKNOWN_COLOR_FORMAT_MUST_BE_RGB_OR_RRGGBB);
+            return new DeviceRgb(0, 0, 0);
         }
 
         if (colorName.startsWith("rgb(")) {
@@ -267,7 +272,9 @@ public class WebColors extends HashMap<String, int[]> {
         }
 
         if (!NAMES.containsKey(colorName)) {
-            throw new PdfException(PdfException.ColorNotFound).setMessageParams(colorName);
+            Logger logger = LoggerFactory.getLogger(WebColors.class);
+            logger.error(MessageFormat.format(LogMessageConstant.COLOR_NOT_FOUND, colorName));
+            return new DeviceRgb(0, 0, 0);
         }
         color = NAMES.get(colorName);
         return new DeviceRgb(color[0], color[1], color[2]);
