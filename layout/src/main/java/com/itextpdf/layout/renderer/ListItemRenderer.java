@@ -137,7 +137,7 @@ public class ListItemRenderer extends DivRenderer {
                 Float yLine = null;
                 for (int i = 0; i < childRenderers.size(); i++) {
                     if (childRenderers.get(i).getOccupiedArea().getBBox().getHeight() > 0) {
-                        yLine = ((AbstractRenderer) childRenderers.get(0)).getFirstYLineRecursively();
+                        yLine = ((AbstractRenderer) childRenderers.get(i)).getFirstYLineRecursively();
                         if (yLine != null) {
                             break;
                         }
