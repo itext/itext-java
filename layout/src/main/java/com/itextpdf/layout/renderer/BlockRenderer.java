@@ -276,8 +276,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
                         if (marginsCollapsingEnabled) {
                             marginsCollapseHandler.endMarginsCollapse();
-                            splitRenderer.setProperty(Property.MARGIN_TOP, getProperty(Property.MARGIN_TOP));
-                            splitRenderer.setProperty(Property.MARGIN_BOTTOM, getProperty(Property.MARGIN_BOTTOM));
+                            splitRenderer.setProperty(Property.MARGIN_TOP, this.<Float>getProperty(Property.MARGIN_TOP));
+                            splitRenderer.setProperty(Property.MARGIN_BOTTOM, this.<Float>getProperty(Property.MARGIN_BOTTOM));
                         }
                         applyMargins(occupiedArea.getBBox(), true);
                         //splitRenderer.occupiedArea = occupiedArea.clone();

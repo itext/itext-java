@@ -263,10 +263,10 @@ public class ListItemRenderer extends DivRenderer {
 
     private float[] calculateAscenderDescender() {
         PdfFont listItemFont = getPropertyAsFont(Property.FONT);
-        Float fontSize = getPropertyAsFloat(Property.FONT_SIZE);
+        Float fontSize = this.getPropertyAsFloat(Property.FONT_SIZE);
         if (listItemFont != null && fontSize != null) {
             float[] ascenderDescender = TextRenderer.calculateAscenderDescender(listItemFont);
-            return new float[] {fontSize * ascenderDescender[0] / TextRenderer.TEXT_SPACE_COEFF, fontSize * ascenderDescender[1] / TextRenderer.TEXT_SPACE_COEFF};
+            return new float[] {(float)fontSize * ascenderDescender[0] / TextRenderer.TEXT_SPACE_COEFF, (float)fontSize * ascenderDescender[1] / TextRenderer.TEXT_SPACE_COEFF};
         }
         return new float[] {0, 0};
     }
