@@ -18,6 +18,8 @@
 package com.itextpdf.layout.hyphenation;
 
 import com.itextpdf.io.util.ResourceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,9 +28,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>This class is the main entry point to the hyphenation package.
@@ -39,6 +38,8 @@ import org.slf4j.LoggerFactory;
 public final class Hyphenator {
 
     private static final String HYPHENATION_DEFAULT_RESOURCE = "com/itextpdf/hyph/";
+
+    private static final char SOFT_HYPHEN = '\u00ad';
 
     /**
      * Logging instance.
@@ -281,35 +282,16 @@ public final class Hyphenator {
      * @return the hyphenation result
      */
     public static Hyphenation hyphenate(String lang, String country, Map<String, String> hyphPathNames, String word, int leftMin, int rightMin) {
-        HyphenationTree hTree = getHyphenationTree(lang, country, hyphPathNames);
-        if (hTree == null) {
-            log.warn("Soft hyphen unicode symbols will be used as hints for hyphenation");
-            final char softHyphen = '\u00ad';
-            List<Integer> softHyphens = new ArrayList<>();
-            int lastSoftHyphenIndex = -1;
-            int curSoftHyphenIndex;
-            while ((curSoftHyphenIndex = word.indexOf(softHyphen, lastSoftHyphenIndex + 1)) > 0) {
-                softHyphens.add(curSoftHyphenIndex);
-                lastSoftHyphenIndex = curSoftHyphenIndex;
+        // If a word contains soft hyphens, then hyphenation based on soft hyphens has higher priority
+        if (wordContainsSoftHyphens(word)) {
+            return hyphenateBasedOnSoftHyphens(word, leftMin, rightMin);
+        } else {
+            HyphenationTree hTree = null;
+            if (lang != null) {
+                hTree = getHyphenationTree(lang, country, hyphPathNames);
             }
-            int leftInd = 0, rightInd = softHyphens.size() - 1;
-            while (leftInd < softHyphens.size() && word.substring(0, softHyphens.get(leftInd)).replace(String.valueOf(softHyphen), "").length() < leftMin) {
-                leftInd++;
-            }
-            while (rightInd >= 0 && word.substring(softHyphens.get(rightInd) + 1).replace(String.valueOf(softHyphen), "").length() < rightMin) {
-                rightInd--;
-            }
-            if (leftInd <= rightInd) {
-                int[] hyphenationPoints = new int[rightInd - leftInd + 1];
-                for (int i = leftInd; i <= rightInd; i++) {
-                    hyphenationPoints[i - leftInd] = softHyphens.get(i);
-                }
-                return new Hyphenation(word, hyphenationPoints);
-            } else {
-                return null;
-            }
+            return hTree != null ? hTree.hyphenate(word, leftMin, rightMin) : null;
         }
-        return hTree.hyphenate(word, leftMin, rightMin);
     }
 
     /**
@@ -334,5 +316,35 @@ public final class Hyphenator {
      */
     public Hyphenation hyphenate(String word) {
         return hyphenate(lang, country, hyphPathNames, word, leftMin, rightMin);
+    }
+
+    private static boolean wordContainsSoftHyphens(String word) {
+        return word.indexOf(SOFT_HYPHEN) >= 0;
+    }
+
+    private static Hyphenation hyphenateBasedOnSoftHyphens(String word, int leftMin, int rightMin) {
+        List<Integer> softHyphens = new ArrayList<>();
+        int lastSoftHyphenIndex = -1;
+        int curSoftHyphenIndex;
+        while ((curSoftHyphenIndex = word.indexOf(SOFT_HYPHEN, lastSoftHyphenIndex + 1)) > 0) {
+            softHyphens.add(curSoftHyphenIndex);
+            lastSoftHyphenIndex = curSoftHyphenIndex;
+        }
+        int leftInd = 0, rightInd = softHyphens.size() - 1;
+        while (leftInd < softHyphens.size() && word.substring(0, softHyphens.get(leftInd)).replace(String.valueOf(SOFT_HYPHEN), "").length() < leftMin) {
+            leftInd++;
+        }
+        while (rightInd >= 0 && word.substring(softHyphens.get(rightInd) + 1).replace(String.valueOf(SOFT_HYPHEN), "").length() < rightMin) {
+            rightInd--;
+        }
+        if (leftInd <= rightInd) {
+            int[] hyphenationPoints = new int[rightInd - leftInd + 1];
+            for (int i = leftInd; i <= rightInd; i++) {
+                hyphenationPoints[i - leftInd] = softHyphens.get(i);
+            }
+            return new Hyphenation(word, hyphenationPoints);
+        } else {
+            return null;
+        }
     }
 }
