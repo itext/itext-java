@@ -96,12 +96,6 @@ public class LayoutResult {
     protected IRenderer causeOfNothing;
 
     /**
-     * The min and max possible width of rendered element including margins, borders, etc.
-     */
-    protected float minFullWidth;
-    protected float maxFullWidth;
-
-    /**
      * Creates the {@link LayoutResult result of {@link IRenderer#layout(LayoutContext) layouting}}.
      * The {@link LayoutResult#causeOfNothing} will be set as null.
      *

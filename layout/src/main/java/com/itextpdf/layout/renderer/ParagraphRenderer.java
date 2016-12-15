@@ -51,6 +51,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.LineLayoutResult;
+import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.handler.MaxMaxWidthHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
@@ -73,9 +74,6 @@ public class ParagraphRenderer extends BlockRenderer {
 
     protected float previousDescent = 0;
     protected List<LineRenderer> lines = null;
-
-    //saved value of min max width calculations after the last layout
-    private MinMaxWidth countedMinMaxWidth;
 
     /**
      * Creates a ParagraphRenderer from its corresponding layout object.
@@ -119,8 +117,8 @@ public class ParagraphRenderer extends BlockRenderer {
         float[] paddings = getPaddings();
         float additionalWidth = applyBordersPaddingsMargins(parentBBox, borders, paddings, isPositioned);
 
-        countedMinMaxWidth = new MinMaxWidth(additionalWidth, layoutContext.getArea().getBBox().getWidth());
-        AbstractWidthHandler widthHandler = new MaxMaxWidthHandler(countedMinMaxWidth);
+        MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, layoutContext.getArea().getBBox().getWidth());
+        AbstractWidthHandler widthHandler = new MaxMaxWidthHandler(minMaxWidth);
 
         Float blockMaxHeight = retrieveMaxHeight();
         if (null != blockMaxHeight && parentBBox.getHeight() > blockMaxHeight) {
@@ -159,16 +157,15 @@ public class ParagraphRenderer extends BlockRenderer {
             currentRenderer.setProperty(Property.TAB_STOPS, this.<Object>getProperty(Property.TAB_STOPS));
 
             float lineIndent = anythingPlaced ? 0 : (float) this.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
-            float availableWidth = layoutBox.getWidth() - lineIndent;
-            Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), availableWidth, layoutBox.getHeight());
+            float childBBoxWidth = layoutBox.getWidth() - lineIndent;
+            Rectangle childLayoutBox = new Rectangle(layoutBox.getX() + lineIndent, layoutBox.getY(), childBBoxWidth, layoutBox.getHeight());
             LineLayoutResult result = ((LineRenderer) currentRenderer.setParent(this)).layout(new LayoutContext(new LayoutArea(pageNumber, childLayoutBox)));
 
             float minChildWidth = 0;
             float maxChildWidth = 0;
-            if (currentRenderer.hasOwnProperty(Property.MIN_MAX_WIDTH)) {
-                MinMaxWidth childMinMaxWidth = currentRenderer.<MinMaxWidth>getOwnProperty(Property.MIN_MAX_WIDTH);
-                minChildWidth = childMinMaxWidth.getMinWidth();
-                maxChildWidth = childMinMaxWidth.getMaxWidth();
+            if (result instanceof MinMaxWidthLayoutResult) {
+                minChildWidth = ((MinMaxWidthLayoutResult)result).getNotNullMinMaxWidth(childBBoxWidth).getMinWidth();
+                maxChildWidth = ((MinMaxWidthLayoutResult)result).getNotNullMinMaxWidth(childBBoxWidth).getMaxWidth();
             }
 
             widthHandler.updateMinChildWidth(minChildWidth + lineIndent);
@@ -188,7 +185,7 @@ public class ParagraphRenderer extends BlockRenderer {
                     processedRenderer.justify(layoutBox.getWidth() - lineIndent);
                 }
             } else if (textAlignment != TextAlignment.LEFT && processedRenderer != null) {
-                float deltaX = availableWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
+                float deltaX = childBBoxWidth - processedRenderer.getOccupiedArea().getBBox().getWidth();
                 switch (textAlignment) {
                     case RIGHT:
                         processedRenderer.move(deltaX, 0);
@@ -222,7 +219,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 } else {
                     boolean keepTogether = isKeepTogether();
                     if (keepTogether) {
-                        return new LayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
+                        return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
                     } else {
                         if (marginsCollapsingEnabled) {
                             if (anythingPlaced) {
@@ -255,7 +252,7 @@ public class ParagraphRenderer extends BlockRenderer {
                                         .setHeight((float) blockMaxHeight);
                                 Logger logger = LoggerFactory.getLogger(ParagraphRenderer.class);
                                 logger.warn(LogMessageConstant.CLIP_ELEMENT);
-                                return new LayoutResult(LayoutResult.FULL, occupiedArea, split[0], null);
+                                return new MinMaxWidthLayoutResult(LayoutResult.FULL, occupiedArea, split[0], null).setMinMaxWidth(minMaxWidth);
                             }
                             split[1].setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
                         }
@@ -266,7 +263,7 @@ public class ParagraphRenderer extends BlockRenderer {
                             split[1].setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
                         }
                         if (anythingPlaced) {
-                            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]);
+                            return new MinMaxWidthLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]).setMinMaxWidth(minMaxWidth);
                         } else {
                             if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                                 occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), currentRenderer.getOccupiedArea().getBBox()));
@@ -278,12 +275,12 @@ public class ParagraphRenderer extends BlockRenderer {
                                     int firstNotRendered = currentRenderer.childRenderers.indexOf(childNotRendered);
                                     currentRenderer.childRenderers.retainAll(currentRenderer.childRenderers.subList(0, firstNotRendered));
                                     split[1].childRenderers.removeAll(split[1].childRenderers.subList(0, firstNotRendered));
-                                    return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, this, split[1]);
+                                    return new MinMaxWidthLayoutResult(LayoutResult.PARTIAL, occupiedArea, this, split[1]).setMinMaxWidth(minMaxWidth);
                                 } else {
-                                    return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, this);
+                                    return new MinMaxWidthLayoutResult(LayoutResult.FULL, occupiedArea, null, null, this).setMinMaxWidth(minMaxWidth);
                                 }
                             } else {
-                                return new LayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
+                                return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
                             }
                         }
                     }
@@ -343,19 +340,19 @@ public class ParagraphRenderer extends BlockRenderer {
         applyMargins(occupiedArea.getBBox(), true);
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
-            countedMinMaxWidth.setChildrenMinWidth(occupiedArea.getBBox().getWidth());
-            countedMinMaxWidth.setChildrenMaxWidth(occupiedArea.getBBox().getWidth());
-            countedMinMaxWidth.setAdditionalWidth(0);
+            minMaxWidth.setChildrenMinWidth(occupiedArea.getBBox().getWidth());
+            minMaxWidth.setChildrenMaxWidth(occupiedArea.getBBox().getWidth());
+            minMaxWidth.setAdditionalWidth(0);
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
+                    return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, this);
                 }
             }
         }
         if (null == overflowRenderer) {
-            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+            return new MinMaxWidthLayoutResult(LayoutResult.FULL, occupiedArea, null, null).setMinMaxWidth(minMaxWidth);
         } else {
-            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, this, overflowRenderer);
+            return new MinMaxWidthLayoutResult(LayoutResult.PARTIAL, occupiedArea, this, overflowRenderer).setMinMaxWidth(minMaxWidth);
         }
     }
 
@@ -455,8 +452,8 @@ public class ParagraphRenderer extends BlockRenderer {
 
     @Override
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        LayoutResult result = layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
-        return result.getStatus() != LayoutResult.NOTHING ? countedMinMaxWidth : new MinMaxWidth(0, availableWidth);
+        MinMaxWidthLayoutResult result = (MinMaxWidthLayoutResult)layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
+        return result.getNotNullMinMaxWidth(availableWidth);
     }
 
     protected ParagraphRenderer[] split() {

@@ -11,4 +11,11 @@ public abstract class AbstractWidthHandler {
 
     abstract public void updateMinChildWidth(float childMinWidth);
     abstract public void updateMaxChildWidth(float childMaxWidth);
+
+    public void updateMinMaxWidth(MinMaxWidth minMaxWidth) {
+        if (minMaxWidth != null) {
+            updateMaxChildWidth(minMaxWidth.getMaxWidth());
+            updateMinChildWidth(minMaxWidth.getMinWidth());
+        }
+    }
 }

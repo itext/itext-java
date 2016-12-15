@@ -52,6 +52,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.LineLayoutResult;
+import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.minmaxwidth.handler.MaxSumWidthHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
@@ -73,9 +74,6 @@ public class LineRenderer extends AbstractRenderer {
 
     protected byte[] levels;
 
-    //saved value of min max width calculations after the last layout
-    private MinMaxWidth countedMinMaxWidth;
-
     @Override
     public LineLayoutResult layout(LayoutContext layoutContext) {
         Rectangle layoutBox = layoutContext.getArea().getBBox().clone();
@@ -86,9 +84,8 @@ public class LineRenderer extends AbstractRenderer {
         maxDescent = 0;
         int childPos = 0;
 
-        countedMinMaxWidth = new MinMaxWidth(0, layoutBox.getWidth());
-        setProperty(Property.MIN_MAX_WIDTH, countedMinMaxWidth);
-        AbstractWidthHandler widthHandler = new MaxSumWidthHandler(countedMinMaxWidth);
+        MinMaxWidth minMaxWidth = new MinMaxWidth(0, layoutBox.getWidth());
+        AbstractWidthHandler widthHandler = new MaxSumWidthHandler(minMaxWidth);
 
         BaseDirection baseDirection = this.<BaseDirection>getProperty(Property.BASE_DIRECTION);
         for (IRenderer renderer : childRenderers) {
@@ -170,10 +167,9 @@ public class LineRenderer extends AbstractRenderer {
 
             float minChildWidth = 0;
             float maxChildWidth = 0;
-            if (childRenderer.hasOwnProperty(Property.MIN_MAX_WIDTH)) {
-                MinMaxWidth childMinMaxWidth = childRenderer.<MinMaxWidth>getOwnProperty(Property.MIN_MAX_WIDTH);
-                minChildWidth = childMinMaxWidth.getMinWidth();
-                maxChildWidth = childMinMaxWidth.getMaxWidth();
+            if (childResult instanceof MinMaxWidthLayoutResult) {
+                minChildWidth = ((MinMaxWidthLayoutResult)childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMinWidth();
+                maxChildWidth = ((MinMaxWidthLayoutResult)childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMaxWidth();
             }
 
             float childAscent = 0;
@@ -379,6 +375,7 @@ public class LineRenderer extends AbstractRenderer {
         if (anythingPlaced) {
             LineRenderer processed = result.getStatus() == LayoutResult.FULL ? this : (LineRenderer) result.getSplitRenderer();
             processed.adjustChildrenYLine().trimLast();
+            result.setMinMaxWidth(minMaxWidth);
         }
 
         return result;
@@ -552,8 +549,8 @@ public class LineRenderer extends AbstractRenderer {
 
     @Override
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        LayoutResult result = layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
-        return result.getStatus() != LayoutResult.NOTHING ? countedMinMaxWidth : new MinMaxWidth(0, availableWidth);
+        LineLayoutResult result = (LineLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
+        return result.getNotNullMinMaxWidth(availableWidth);
     }
 
     private List<int[]> createOrGetReversedProperty(TextRenderer newRenderer) {

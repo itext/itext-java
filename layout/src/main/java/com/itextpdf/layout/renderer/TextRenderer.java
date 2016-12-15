@@ -109,9 +109,6 @@ public class TextRenderer extends AbstractRenderer {
 
     protected float tabAnchorCharacterPosition = -1;
 
-    //saved value of min max width calculations after the last layout
-    private MinMaxWidth countedMinMaxWidth;
-
     /**
      * Creates a TextRenderer from its corresponding layout object.
      *
@@ -153,8 +150,7 @@ public class TextRenderer extends AbstractRenderer {
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
 
-        countedMinMaxWidth =  new MinMaxWidth(area.getBBox().getWidth() - layoutBox.getWidth(), area.getBBox().getWidth());
-        setProperty(Property.MIN_MAX_WIDTH, countedMinMaxWidth);
+        MinMaxWidth countedMinMaxWidth =  new MinMaxWidth(area.getBBox().getWidth() - layoutBox.getWidth(), area.getBBox().getWidth());
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(countedMinMaxWidth);
 
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
@@ -424,6 +420,7 @@ public class TextRenderer extends AbstractRenderer {
             }
         }
 
+        result.setMinMaxWidth(countedMinMaxWidth);
         return result;
     }
 
@@ -898,8 +895,8 @@ public class TextRenderer extends AbstractRenderer {
 
     @Override
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        LayoutResult result = layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
-        return result.getStatus() != LayoutResult.NOTHING ? countedMinMaxWidth : new MinMaxWidth(0, availableWidth);
+        TextLayoutResult result = (TextLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
+        return result.getNotNullMinMaxWidth(availableWidth);
     }
 
     protected int getNumberOfSpaces() {

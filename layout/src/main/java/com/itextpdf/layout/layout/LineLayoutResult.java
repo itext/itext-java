@@ -48,7 +48,7 @@ import com.itextpdf.layout.renderer.IRenderer;
 /**
  * Represents the result of a line {@link com.itextpdf.layout.renderer.LineRenderer#layout(LayoutContext) layouting}.
  */
-public class LineLayoutResult extends LayoutResult {
+public class LineLayoutResult extends MinMaxWidthLayoutResult {
 
     /**
      * Indicates whether split was forced by new line symbol or not.

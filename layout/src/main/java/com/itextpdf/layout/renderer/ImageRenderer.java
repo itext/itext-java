@@ -61,6 +61,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
@@ -188,7 +189,7 @@ public class ImageRenderer extends AbstractRenderer {
             if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                 isPlacingForced = true;
             } else {
-                return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
+                return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
             }
         }
 
@@ -213,8 +214,8 @@ public class ImageRenderer extends AbstractRenderer {
             applyRotationLayout((float) angle);
         }
 
-        setProperty(Property.MIN_MAX_WIDTH, new MinMaxWidth(0, area.getBBox().getWidth(), occupiedArea.getBBox().getWidth(), occupiedArea.getBBox().getWidth()));
-        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, isPlacingForced ? this : null);
+        return new MinMaxWidthLayoutResult(LayoutResult.FULL, occupiedArea, null, null, isPlacingForced ? this : null)
+                .setMinMaxWidth(new MinMaxWidth(0, area.getBBox().getWidth(), occupiedArea.getBBox().getWidth(), occupiedArea.getBBox().getWidth()));
     }
 
     @Override
