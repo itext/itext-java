@@ -8,8 +8,10 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
@@ -184,6 +186,92 @@ public class MinWidthTest extends ExtendedITextTest {
         MinMaxWidth result = ((AbstractRenderer)externalDiv.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
         externalDiv.setWidth(MinMaxWidthUtils.toEffectiveWidth(externalDiv, result.getMinWidth()));
         doc.add(externalDiv);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void simpleTableTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "simpleTableTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_simpleTableTest.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Cell cell1 = new Cell().add("I am table")
+                .setBorder(new SolidBorder(Color.RED, 60))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER)
+                .setPadding(0);
+        Cell cell2 = new Cell().add("I am table")
+                .setBorder(new SolidBorder(Color.YELLOW, 10))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER)
+                .setPadding(0);
+
+        Table table = new Table(2).setBorder(new SolidBorder(Color.BLUE, 20))
+                .addCell(cell1.clone(true)).addCell(cell2.clone(true))
+                .addCell(cell1.clone(true)).addCell(cell2.clone(true));
+
+        TableRenderer renderer = (TableRenderer) table.createRendererSubTree().setParent(doc.getRenderer());
+        MinMaxWidth minMaxWidth = renderer.getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
+
+        Table minTable = new Table(renderer.getMinColumnWidth()).setMarginTop(10)
+                .setBorder(new SolidBorder(Color.BLUE, 20)).setWidth(minMaxWidth.getMinWidth())
+                .addCell(cell1.clone(true)).addCell(cell2.clone(true))
+                .addCell(cell1.clone(true)).addCell(cell2.clone(true));
+
+        Table maxTable = new Table(renderer.getMaxColumWidth()).setMarginTop(10)
+                .setBorder(new SolidBorder(Color.BLUE, 20)).setWidth(minMaxWidth.getMaxWidth())
+                .addCell(cell1.clone(true)).addCell(cell2.clone(true))
+                .addCell(cell1.clone(true)).addCell(cell2.clone(true));
+
+        doc.add(table);
+        doc.add(minTable);
+        doc.add(maxTable);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void colspanTableTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "colspanTableTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_colspanTableTest.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Cell bigCell = new Cell(1, 2).add("I am veryveryvery big cell")
+                .setBorder(new SolidBorder(Color.RED, 60))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER)
+                .setPadding(0);
+        Cell cell = new Cell().add("I am cell")
+                .setBorder(new SolidBorder(Color.YELLOW, 10))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER)
+                .setPadding(0);
+
+        Table table = new Table(3).setBorder(new SolidBorder(Color.BLUE, 20))
+                .addCell(cell.clone(true)).addCell(bigCell.clone(true))
+                .addCell(cell.clone(true)).addCell(cell.clone(true)).addCell(cell.clone(true));
+
+        TableRenderer renderer = (TableRenderer) table.createRendererSubTree().setParent(doc.getRenderer());
+        MinMaxWidth minMaxWidth = renderer.getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
+
+        Table minTable = new Table(renderer.getMinColumnWidth()).setMarginTop(10)
+                .setBorder(new SolidBorder(Color.BLUE, 20)).setWidth(minMaxWidth.getMinWidth())
+                .addCell(cell.clone(true)).addCell(bigCell.clone(true))
+                .addCell(cell.clone(true)).addCell(cell.clone(true)).addCell(cell.clone(true));
+
+        Table maxTable = new Table(renderer.getMaxColumWidth()).setMarginTop(10)
+                .setBorder(new SolidBorder(Color.BLUE, 20)).setWidth(minMaxWidth.getMaxWidth())
+                .addCell(cell.clone(true)).addCell(bigCell.clone(true))
+                .addCell(cell.clone(true)).addCell(cell.clone(true)).addCell(cell.clone(true));
+
+        doc.add(table);
+        doc.add(minTable);
+        doc.add(maxTable);
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));

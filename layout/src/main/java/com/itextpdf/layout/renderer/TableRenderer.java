@@ -93,6 +93,9 @@ public class TableRenderer extends AbstractRenderer {
     private float[] columnWidths = null;
     private List<Float> heights = new ArrayList<>();
 
+    private float[] countedMinColumnWidth;
+    private float[] countedMaxColumnWidth;
+
     private TableRenderer() {
     }
 
@@ -159,6 +162,8 @@ public class TableRenderer extends AbstractRenderer {
         // so we need to clear the results of previous #layout() invocation
         heights.clear();
         childRenderers.clear();
+        countedMinColumnWidth = null;
+        countedMaxColumnWidth = null;
 
         // Cells' up moves occured while split processing
         // key is column number (there can be only one move during one split)
@@ -1160,11 +1165,16 @@ public class TableRenderer extends AbstractRenderer {
     @Override
     MinMaxWidth getMinMaxWidth(float availableWidth) {
         Rectangle layoutBox = new Rectangle(availableWidth, AbstractRenderer.INF);
+        Table tableModel = (Table) getModelElement();
+        Float tableWidth = retrieveWidth(layoutBox.getWidth());
+        float additionalWidth = 0;
+        int nrow = rows.size();
+        int ncol = tableModel.getNumberOfColumns();
 
         // we can invoke #layout() twice (processing KEEP_TOGETHER for instance)
         // so we need to clear the results of previous #layout() invocation
-        heights.clear();
-        childRenderers.clear();
+        countedMinColumnWidth = new float[ncol];
+        countedMaxColumnWidth = new float[ncol];
         horizontalBorders = new ArrayList<>();
         verticalBorders = new ArrayList<>();
 
@@ -1173,13 +1183,9 @@ public class TableRenderer extends AbstractRenderer {
         float rightTableBorderWidth = collapsedTableBorderWidths[1];
         float leftTableBorderWidth = collapsedTableBorderWidths[3];
 
-        Table tableModel = (Table) getModelElement();
-        Float tableWidth = retrieveWidth(layoutBox.getWidth());
+        MinMaxWidth[][] cellsMinMaxWidth = new MinMaxWidth[nrow][ncol];
+        int[][] cellsColspan = new int[nrow][ncol];
 
-        MinMaxWidth total;
-        float additionalWidth = 0;
-
-        MinMaxWidth[][] cellsMinMaxWidth = new MinMaxWidth[tableModel.getNumberOfRows()][tableModel.getNumberOfColumns()];
         if (tableModel.getFooter() != null) {
             footerRenderer = initFooterOrHeaderRenderer(true);
             collapsedTableBorderWidths = getCollapsedBorderWidths(footerRenderer.rows, footerRenderer.getBorders(), false);
@@ -1198,20 +1204,18 @@ public class TableRenderer extends AbstractRenderer {
             rightTableBorderWidth = Math.max(rightTableBorderWidth, rightHeaderBorderWidth);
         }
 
-
-        // collapse top border
         Border[] borders = getBorders();
         // Apply halves of the borders. The other halves are applied on a Cell level
         layoutBox.<Rectangle>applyMargins(0, rightTableBorderWidth / 2, 0, leftTableBorderWidth / 2, false);
         tableWidth -= rightTableBorderWidth / 2 + leftTableBorderWidth / 2;
         additionalWidth = availableWidth - layoutBox.getWidth();
-        total = new MinMaxWidth(additionalWidth, availableWidth);
 
         horizontalBorders.add(tableModel.getLastRowBottomBorder());
-        for (int row = 0; row < rows.size(); ++row) {
-            for (int col = 0; col < rows.get(row).length; ++col) {
-                CellRenderer cell = (CellRenderer) rows.get(row)[col].setParent(this);
+        for (int row = 0; row < nrow; ++row) {
+            for (int col = 0; col < ncol; ++col) {
+                CellRenderer cell = (CellRenderer) rows.get(row)[col];
                 if (cell != null) {
+                    cell.setParent(this);
                     Border[] cellBorders = cell.getBorders();
                     int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
                     int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
@@ -1222,24 +1226,55 @@ public class TableRenderer extends AbstractRenderer {
                         cell.setProperty(Property.BORDER_RIGHT, getCollapsedBorder(cellBorders[1], borders[1]));
                     }
                     buildBordersArrays(cell, row, col);
-                    cellsMinMaxWidth[row][col] = cell.getMinMaxWidth(tableWidth);
-                    for (int i = 0; i < rowspan && row - i >= 0; ++i) {
-                        cellsMinMaxWidth[row - i][col] = cell.getMinMaxWidth(tableWidth);
+                    //We place the width of big cells in each row of in last column its occupied place and save it's colspan for convenience.
+                    int finishCol = col + colspan - 1;
+                    cellsMinMaxWidth[row][finishCol] = cell.getMinMaxWidth(tableWidth);
+                    cellsColspan[row][finishCol] = colspan;
+                    for (int i = 1; i < rowspan; ++i) {
+                        cellsMinMaxWidth[row - i][finishCol] = cellsMinMaxWidth[row][finishCol];
+                        cellsColspan[row - i][finishCol] = colspan;
                     }
                 }
             }
         }
 
-        MaxMaxWidthHandler tableHandler = new MaxMaxWidthHandler(total);
-        for (int row = 0; row < rows.size(); ++row) {
-            MinMaxWidth rowMinMaxWidth = new MinMaxWidth(0, tableWidth);
-            AbstractWidthHandler rowHandler = new SumSumWidthHandler(rowMinMaxWidth);
-            for (int col = 0; col < rows.get(row).length; ++col) {
-                rowHandler.updateMinMaxWidth(cellsMinMaxWidth[row][col]);
+        //The DP is used to count each column width.
+        //In next arrays at the index i will be the corresponding sum width first i columns.
+        float[] maxColumnsWidth = new float[ncol];
+        float[] minColumnsWidth = new float[ncol];
+        if (ncol > 0) {
+            for (int row = 0; row < nrow; ++row) {
+                if (cellsMinMaxWidth[row][0] != null) {
+                    maxColumnsWidth[0] = Math.max(maxColumnsWidth[0], cellsMinMaxWidth[row][0].getMaxWidth());
+                    minColumnsWidth[0] = Math.max(minColumnsWidth[0], cellsMinMaxWidth[row][0].getMinWidth());
+                }
             }
-            tableHandler.updateMinMaxWidth(rowMinMaxWidth);
+            countedMaxColumnWidth[0] = maxColumnsWidth[0];
+            countedMinColumnWidth[0] = minColumnsWidth[0];
         }
-        return total;
+        int curColspan;
+        for (int col = 1; col < ncol; ++col) {
+            for (int row = 0; row < nrow; ++row) {
+                if (cellsMinMaxWidth[row][col] != null) {
+                    curColspan = cellsColspan[row][col];
+                    maxColumnsWidth[col] = Math.max(maxColumnsWidth[col], cellsMinMaxWidth[row][col].getMaxWidth() + maxColumnsWidth[col - curColspan]);
+                    minColumnsWidth[col] = Math.max(minColumnsWidth[col], cellsMinMaxWidth[row][col].getMinWidth() + minColumnsWidth[col - curColspan]);
+                }
+            }
+        }
+        for (int col = 1; col < ncol; ++col) {
+            countedMinColumnWidth[col] = minColumnsWidth[col] - minColumnsWidth[col - 1];
+            countedMaxColumnWidth[col] = maxColumnsWidth[col] - maxColumnsWidth[col - 1];
+        }
+        return new MinMaxWidth(additionalWidth, availableWidth, minColumnsWidth[ncol - 1], maxColumnsWidth[ncol - 1]);
+    }
+
+    float[] getMinColumnWidth() {
+        return countedMinColumnWidth;
+    }
+
+    float[] getMaxColumWidth() {
+        return countedMaxColumnWidth;
     }
 
     @Override

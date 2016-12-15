@@ -14,6 +14,10 @@ import com.itextpdf.layout.renderer.IRenderer;
 public class MinMaxWidthUtils {
     private static final float eps = 0.0001f;
 
+    public static float getEps() {
+        return eps;
+    }
+
     public static float toEffectiveWidth(BlockElement b, float fullWidth) {
         return fullWidth - getBorderWidth(b) - getMarginsWidth(b) + eps;
     }
