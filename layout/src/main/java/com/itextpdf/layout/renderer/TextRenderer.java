@@ -645,8 +645,10 @@ public class TextRenderer extends AbstractRenderer {
     public void drawBackground(DrawContext drawContext) {
         Background background = this.<Background>getProperty(Property.BACKGROUND);
         Float textRise = this.getPropertyAsFloat(Property.TEXT_RISE);
-        float bottomBBoxY = occupiedArea.getBBox().getY();
-        float leftBBoxX = occupiedArea.getBBox().getX();
+        Rectangle bBox = getOccupiedAreaBBox();
+        Rectangle backgroundArea = applyMargins(bBox, false);
+        float bottomBBoxY = backgroundArea.getY();
+        float leftBBoxX = backgroundArea.getX();
         if (background != null) {
             boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
             PdfCanvas canvas = drawContext.getCanvas();
@@ -655,8 +657,8 @@ public class TextRenderer extends AbstractRenderer {
             }
             canvas.saveState().setFillColor(background.getColor());
             canvas.rectangle(leftBBoxX - background.getExtraLeft(), bottomBBoxY + (float) textRise - background.getExtraBottom(),
-                    occupiedArea.getBBox().getWidth() + background.getExtraLeft() + background.getExtraRight(),
-                    occupiedArea.getBBox().getHeight() - (float) textRise + background.getExtraTop() + background.getExtraBottom());
+                    backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
+                    backgroundArea.getHeight() - (float) textRise + background.getExtraTop() + background.getExtraBottom());
             canvas.fill().restoreState();
             if (isTagged) {
                 canvas.closeTag();
