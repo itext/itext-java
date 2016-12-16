@@ -154,8 +154,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
                 }
 
-                if (childRenderer.getOccupiedArea() != null) {
-                    alignChildHorizontally(childRenderer, layoutBox.getWidth());
+                if (result.getSplitRenderer() != null) {
+                    alignChildHorizontally(result.getSplitRenderer(), layoutBox.getWidth());
                 }
 
                 // Save the first renderer to produce LayoutResult.NOTHING
