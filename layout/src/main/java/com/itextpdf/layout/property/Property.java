@@ -182,6 +182,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.HYPHENATION] = true;
         INHERITED_PROPERTIES[Property.ITALIC_SIMULATION] = true;
         INHERITED_PROPERTIES[Property.KEEP_TOGETHER] = true;
+        INHERITED_PROPERTIES[Property.LEADING] = true;
         INHERITED_PROPERTIES[Property.LIST_SYMBOL] = true;
         INHERITED_PROPERTIES[Property.LIST_SYMBOL_PRE_TEXT] = true;
         INHERITED_PROPERTIES[Property.LIST_SYMBOL_POSITION] = true;
