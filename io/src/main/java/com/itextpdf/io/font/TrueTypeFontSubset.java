@@ -53,6 +53,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Subsets a True Type font by removing the unneeded glyphs from the font.
@@ -232,7 +233,7 @@ class TrueTypeFontSubset {
         rf.seek(directoryOffset);
         int id = rf.readInt();
         if (id != 0x00010000) {
-            throw new IOException("1.is.not.a.true.type.file").setMessageParams(fileName);
+            throw new IOException(IOException.NotAtTrueTypeFile).setMessageParams(fileName);
         }
         int num_tables = rf.readUnsignedShort();
         rf.skipBytes(6);
@@ -249,13 +250,13 @@ class TrueTypeFontSubset {
     protected void readLoca() throws java.io.IOException {
         int[] tableLocation = tableDirectory.get("head");
         if (tableLocation == null) {
-            throw new IOException("table.1.does.not.exist.in.2", "head").setMessageParams(fileName);
+            throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("head",fileName);
         }
         rf.seek(tableLocation[TABLE_OFFSET] + HEAD_LOCA_FORMAT_OFFSET);
         locaShortTable = rf.readUnsignedShort() == 0;
         tableLocation = tableDirectory.get("loca");
         if (tableLocation == null) {
-            throw new IOException("table.1.does.not.exist.in.2", "loca").setMessageParams(fileName);
+            throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("loca",fileName);
         }
         rf.seek(tableLocation[TABLE_OFFSET]);
         if (locaShortTable) {

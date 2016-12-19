@@ -190,6 +190,8 @@ public class IOException extends RuntimeException {
     @Deprecated
     public static final String WrongNumberOfComponentsInIccProfile = "ICC profile contains {0} components the image data contains {1} components.";
     public static final String IccProfileContains0ComponentsWhileImageDataContains1Components = "ICC profile contains {0} components, while the image data contains {1} components.";
+    public static final String NotAtTrueTypeFile = "{0} is not a true type file";
+    public static final String TableDoesNotExistsIn = "Table {0} does not exist in {1}";
 
     /**
      * Object for more details
