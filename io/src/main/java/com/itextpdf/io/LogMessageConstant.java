@@ -53,6 +53,7 @@ public final class LogMessageConstant {
     public static final String COLOR_NOT_FOUND = "Color ''{0}'' not found. Defaulting to black color.";
     public static final String COLORANT_INTENSITIES_INVALID = "Some of colorant intensities are invalid: they are bigger than 1 or less than 0. We will force them to become 1 or 0 respectively.";
     public static final String COULD_NOT_FIND_GLYPH_WITH_CODE = "Could not find glyph with the following code: {0}";
+    public static final String CUSTOM_PRODUCER_LINE_WAS_OVERRIDDEN = "The custom producer line was overridden with default one. If you want to create documents with custom producer line please contact our support team at itextpdf.com.";
     public static final String DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET = "Destinations are not permitted for link annotations that already have actions. The old action will be removed.";
     public static final String DOCUMENT_ALREADY_HAS_FIELD = "The document already has field {0}. Annotations of the fields with this name will be added to the existing one as children. If you want to have separate fields, please, rename them manually before copying.";
     public static final String DOCUMENT_SERIALIZATION_EXCEPTION_RAISED = "Unhandled exception while serialization";
