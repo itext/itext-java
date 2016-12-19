@@ -1,9 +1,11 @@
 package com.itextpdf.layout;
 
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
@@ -54,6 +56,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
 
         table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -81,6 +84,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
 
         table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -106,11 +110,12 @@ public class LargeElementTest extends ExtendedITextTest {
         table.setSkipLastFooter(true);
 
         for (int i = 0; i < 350; i++) {
-            table.addCell(new Cell().add(new Paragraph(String.valueOf(i+1))));
+            table.addCell(new Cell().add(new Paragraph(String.valueOf(i + 1))));
             table.flush();
         }
 
         table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -138,13 +143,14 @@ public class LargeElementTest extends ExtendedITextTest {
 
         for (int i = 0; i < 350; i++) {
             table.flush();
-            table.addCell(new Cell().add(new Paragraph(String.valueOf(i+1))));
+            table.addCell(new Cell().add(new Paragraph(String.valueOf(i + 1))));
         }
 
         // That's the trick. complete() is called when table has non-empty content, so the last row is better laid out.
         // Compare with #largeTableWithHeaderFooterTest01A. When we flush last row before calling complete(), we don't yet know
         // if there will be any more rows. Flushing last row implicitly by calling complete solves this problem.
         table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -178,6 +184,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
 
         table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -211,6 +218,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
 
         table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -241,6 +249,7 @@ public class LargeElementTest extends ExtendedITextTest {
         }
 
         table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 

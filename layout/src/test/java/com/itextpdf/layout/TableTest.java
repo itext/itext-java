@@ -12,6 +12,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
@@ -1248,7 +1249,7 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        doc.add(new Table(1).setHeight(400)/*.addCell(new Cell().add("").setHeight(30))*/.setBorder(new SolidBorder(Color.ORANGE, 100)));
+        doc.add(new Table(1).setBorderTop(new SolidBorder(Color.ORANGE, 100)).setBorderBottom(new SolidBorder(Color.MAGENTA, 100)));
         doc.add(new Table(1).addCell("Hello").setBorder(new SolidBorder(Color.GREEN, 2)));
 
         doc.close();

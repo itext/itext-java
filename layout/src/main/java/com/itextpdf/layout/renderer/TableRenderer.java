@@ -329,9 +329,12 @@ public class TableRenderer extends AbstractRenderer {
 
         // Apply halves of the borders. The other halves are applied on a Cell level
         layoutBox.<Rectangle>applyMargins(0, rightTableBorderWidth / 2, 0, leftTableBorderWidth / 2, false);
-        if (!tableModel.isEmpty() || tableModel.isComplete()) {
+        if (!tableModel.isEmpty()) {
             layoutBox.decreaseHeight(topTableBorderWidth / 2);
-            occupiedArea.getBBox().moveDown(topTableBorderWidth/2).increaseHeight(topTableBorderWidth/2);
+            occupiedArea.getBBox().moveDown(topTableBorderWidth / 2).increaseHeight(topTableBorderWidth / 2);
+        } else if (tableModel.isComplete() && 0 == tableModel.getLastRowBottomBorder().size()){
+            layoutBox.decreaseHeight(topTableBorderWidth);
+            occupiedArea.getBBox().moveDown(topTableBorderWidth).increaseHeight(topTableBorderWidth);
         }
 
         columnWidths = calculateScaledColumnWidths(tableModel, (float) tableWidth, leftTableBorderWidth, rightTableBorderWidth);
@@ -875,10 +878,36 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         // Apply bottom and top border
-        if (null == footerRenderer && (!tableModel.isEmpty() || tableModel.isComplete())) {
-            occupiedArea.getBBox().moveDown(bottomTableBorderWidth / 2).increaseHeight((bottomTableBorderWidth) / 2);
-            layoutBox.decreaseHeight(bottomTableBorderWidth / 2);
+        if (tableModel.isComplete()) {
+            if (null == footerRenderer){
+                if (childRenderers.size() != 0) {
+                    occupiedArea.getBBox().moveDown(bottomTableBorderWidth / 2).increaseHeight((bottomTableBorderWidth) / 2);
+                    layoutBox.decreaseHeight(bottomTableBorderWidth / 2);
+                } else {
+                    List<Border> borderList = tableModel.getLastRowBottomBorder();
+                    if (borderList.size() > 0) {
+                        for (Border border : borderList) {
+                            if (null != border && border.getWidth() > bottomTableBorderWidth) {
+                                bottomTableBorderWidth = border.getWidth();
+                            }
+                        }
+                    }
+                    occupiedArea.getBBox().moveDown(bottomTableBorderWidth).increaseHeight((bottomTableBorderWidth));
+                    layoutBox.decreaseHeight(bottomTableBorderWidth);
+                }
+            }
+        } else {
+            if (null == footerRenderer) {
+                if (childRenderers.size() != 0) {
+                    occupiedArea.getBBox().moveUp(bottomTableBorderWidth / 2).decreaseHeight((bottomTableBorderWidth / 2));
+                    layoutBox.increaseHeight(bottomTableBorderWidth / 2);
+                }
+            } else {
+                occupiedArea.getBBox().moveUp(bottomTableBorderWidth).decreaseHeight((bottomTableBorderWidth));
+                layoutBox.increaseHeight(bottomTableBorderWidth);
+            }
         }
+
         if ((Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) && 0 != rows.size()) {
             extendLastRow(rows.get(rows.size() - 1), layoutBox);
         }
@@ -907,8 +936,18 @@ public class TableRenderer extends AbstractRenderer {
 
         applyMargins(occupiedArea.getBBox(), true);
         if ((tableModel.isSkipLastFooter() || !tableModel.isComplete()) && null != footerRenderer) {
+            if (tableModel.getLastRowBottomBorder().size() > 0) {
+                List<Border> lastBottomBorders = footerRenderer.horizontalBorders.get(footerRenderer.horizontalBorders.size()-1);
+                for (Border border : lastBottomBorders) {
+                    if (null != border && bottomTableBorderWidth < border.getWidth()) {
+                        bottomTableBorderWidth = border.getWidth();
+                    }
+                }
+            }
             footerRenderer = null;
-            occupiedArea.getBBox().moveDown(bottomTableBorderWidth).increaseHeight(bottomTableBorderWidth);
+            if (0 != rows.size() || tableModel.isComplete()) {
+                occupiedArea.getBBox().moveDown(bottomTableBorderWidth).increaseHeight(bottomTableBorderWidth);
+            }
         }
         adjustFooterAndFixOccupiedArea(layoutBox);
 
@@ -1210,6 +1249,9 @@ public class TableRenderer extends AbstractRenderer {
             }
             if (null != borders[0]) {
                 startY -= borders[0].getWidth() / 2;
+                heights.set(0, borders[0].getWidth());
+            } else if (null != borders[2]) {
+                startY -= borders[2].getWidth() / 2;
             }
         }
 
