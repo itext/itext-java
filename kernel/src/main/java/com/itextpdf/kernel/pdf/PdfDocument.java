@@ -693,9 +693,6 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 }
                 String producer = null;
                 if (reader == null) {
-                    if (!info.getProducer().equals(Version.getInstance().getVersion()) && Version.getInstance().getVersion().contains("licensed")) {
-                        LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.CUSTOM_PRODUCER_LINE_WAS_OVERRIDDEN);
-                    }
                     producer = Version.getInstance().getVersion();
                 } else {
                     if (info.getPdfObject().containsKey(PdfName.Producer)) {
