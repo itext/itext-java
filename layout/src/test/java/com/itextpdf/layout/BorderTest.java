@@ -148,7 +148,6 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
-    @Ignore("DEVSIX-796")
     @Test
     public void simpleBorderTest04() throws IOException, InterruptedException {
         fileName = "simpleBorderTest04.pdf";
@@ -911,7 +910,7 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
-    @Ignore
+    @Ignore("DEVSIX-931")
     @Test
     public void splitCellsTest07() throws IOException, InterruptedException {
         fileName = "splitCellsTest07.pdf";
@@ -932,7 +931,7 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
-    @Ignore
+    @Ignore("DEVSIX-930")
     @Test
     public void splitCellsTest08() throws IOException, InterruptedException {
         fileName = "splitCellsTest08.pdf";

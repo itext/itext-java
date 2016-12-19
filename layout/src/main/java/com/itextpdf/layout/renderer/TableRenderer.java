@@ -937,7 +937,7 @@ public class TableRenderer extends AbstractRenderer {
         applyMargins(occupiedArea.getBBox(), true);
         if ((tableModel.isSkipLastFooter() || !tableModel.isComplete()) && null != footerRenderer) {
             if (tableModel.getLastRowBottomBorder().size() > 0) {
-                List<Border> lastBottomBorders = footerRenderer.horizontalBorders.get(footerRenderer.horizontalBorders.size()-1);
+                List<Border> lastBottomBorders = footerRenderer.horizontalBorders.get(0);
                 for (Border border : lastBottomBorders) {
                     if (null != border && bottomTableBorderWidth < border.getWidth()) {
                         bottomTableBorderWidth = border.getWidth();
