@@ -86,7 +86,6 @@ public final class Property {
     public static final int FULL = 25;
     public static final int FORCED_PLACEMENT = 26;
     public static final int HEIGHT = 27;
-
     public static final int HORIZONTAL_ALIGNMENT = 28;
     /**
      * Value of 1 is equivalent to no scaling
@@ -146,10 +145,10 @@ public final class Property {
     public static final int TEXT_RISE = 72;
     public static final int TOP = 73;
     public static final int UNDERLINE = 74;
+    public static final int VERTICAL_ALIGNMENT = 75;
     /**
      * Value of 1 is equivalent to no scaling
      **/
-    public static final int VERTICAL_ALIGNMENT = 75;
     public static final int VERTICAL_SCALING = 76;
     public static final int WIDTH = 77;
     public static final int WORD_SPACING = 78;
@@ -200,10 +199,10 @@ public final class Property {
 
     /**
      * This method checks whether a Property, in order to be picked up by the
-     * rendering engine, must be defined on the current element or renderer 
+     * rendering engine, must be defined on the current element or renderer
      * (<code>return false</code>), or may be defined in one of its parent
-     * elements or renderers (<code>return true</code>). 
-     * 
+     * elements or renderers (<code>return true</code>).
+     *
      * @param property the ID, defined in this class, of the property to check
      * @return whether the property type is inheritable
      */
