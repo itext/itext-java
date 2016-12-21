@@ -46,11 +46,12 @@ package com.itextpdf.signatures;
 import com.itextpdf.io.util.DateTimeUtil;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.tsp.TimeStampToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.KeyStore;
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
@@ -59,6 +60,9 @@ import java.util.*;
  */
 public class CertificateVerification {
 
+
+    /** The Logger instance. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(CrlClientOnline.class);
     /**
      * Verifies a single certificate for the current date.
      * @param cert the certificate to verify
@@ -225,10 +229,12 @@ public class CertificateVerification {
         try {
             for (X509Certificate certStoreX509 : SignUtils.getCertificates(keystore)) {
                 try {
+
                     SignUtils.isSignatureValid(ts, certStoreX509, provider);
                     return true;
                 }
                 catch (Exception ex) {
+                    LOGGER.error(ex.getMessage(),ex);
                 }
             }
         }
