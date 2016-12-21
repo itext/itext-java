@@ -61,10 +61,14 @@ import java.util.*;
 public class CertificateVerification {
 
 
-    /** The Logger instance. */
+    /**
+     * The Logger instance.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(CrlClientOnline.class);
+
     /**
      * Verifies a single certificate for the current date.
+     *
      * @param cert the certificate to verify
      * @param crls the certificate revocation list or <CODE>null</CODE>
      * @return a <CODE>String</CODE> with the error description or <CODE>null</CODE>
@@ -76,8 +80,9 @@ public class CertificateVerification {
 
     /**
      * Verifies a single certificate.
-     * @param cert the certificate to verify
-     * @param crls the certificate revocation list or <CODE>null</CODE>
+     *
+     * @param cert     the certificate to verify
+     * @param crls     the certificate revocation list or <CODE>null</CODE>
      * @param calendar the date, shall not be null
      * @return a <CODE>String</CODE> with the error description or <CODE>null</CODE>
      * if no error
@@ -87,8 +92,7 @@ public class CertificateVerification {
             return "Has unsupported critical extension";
         try {
             cert.checkValidity(calendar.getTime());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return e.getMessage();
         }
         if (crls != null) {
@@ -103,9 +107,10 @@ public class CertificateVerification {
 
     /**
      * Verifies a certificate chain against a KeyStore for the current date.
-     * @param certs the certificate chain
+     *
+     * @param certs    the certificate chain
      * @param keystore the <CODE>KeyStore</CODE>
-     * @param crls the certificate revocation list or <CODE>null</CODE>
+     * @param crls     the certificate revocation list or <CODE>null</CODE>
      * @return <CODE>null</CODE> if the certificate chain could be validated or a
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
@@ -116,9 +121,10 @@ public class CertificateVerification {
 
     /**
      * Verifies a certificate chain against a KeyStore.
-     * @param certs the certificate chain
+     *
+     * @param certs    the certificate chain
      * @param keystore the <CODE>KeyStore</CODE>
-     * @param crls the certificate revocation list or <CODE>null</CODE>
+     * @param crls     the certificate revocation list or <CODE>null</CODE>
      * @param calendar the date, shall not be null
      * @return <CODE>null</CODE> if the certificate chain could be validated or a
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
@@ -127,7 +133,7 @@ public class CertificateVerification {
     public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore, Collection<CRL> crls, Calendar calendar) {
         List<VerificationException> result = new ArrayList<>();
         for (int k = 0; k < certs.length; ++k) {
-            X509Certificate cert = (X509Certificate)certs[k];
+            X509Certificate cert = (X509Certificate) certs[k];
             String err = verifyCertificate(cert, crls, calendar);
             if (err != null)
                 result.add(new VerificationException(cert, err));
@@ -139,27 +145,23 @@ public class CertificateVerification {
                         try {
                             cert.verify(certStoreX509.getPublicKey());
                             return result;
-                        }
-                        catch (Exception e) {
+                        } catch (Exception e) {
                             continue;
                         }
-                    }
-                    catch (Exception ex) {
+                    } catch (Exception ex) {
                     }
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
             }
             int j;
             for (j = 0; j < certs.length; ++j) {
                 if (j == k)
                     continue;
-                X509Certificate certNext = (X509Certificate)certs[j];
+                X509Certificate certNext = (X509Certificate) certs[j];
                 try {
                     cert.verify(certNext.getPublicKey());
                     break;
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                 }
             }
             if (j == certs.length) {
@@ -173,7 +175,8 @@ public class CertificateVerification {
 
     /**
      * Verifies a certificate chain against a KeyStore for the current date.
-     * @param certs the certificate chain
+     *
+     * @param certs    the certificate chain
      * @param keystore the <CODE>KeyStore</CODE>
      * @return <CODE>null</CODE> if the certificate chain could be validated or a
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
@@ -185,7 +188,8 @@ public class CertificateVerification {
 
     /**
      * Verifies a certificate chain against a KeyStore.
-     * @param certs the certificate chain
+     *
+     * @param certs    the certificate chain
      * @param keystore the <CODE>KeyStore</CODE>
      * @param calendar the date, shall not be null
      * @return <CODE>null</CODE> if the certificate chain could be validated or a
@@ -198,47 +202,58 @@ public class CertificateVerification {
 
     /**
      * Verifies an OCSP response against a KeyStore.
-     * @param ocsp the OCSP response
+     *
+     * @param ocsp     the OCSP response
      * @param keystore the <CODE>KeyStore</CODE>
      * @param provider the provider or <CODE>null</CODE> to use the BouncyCastle provider
      * @return <CODE>true</CODE> is a certificate was found
      */
     public static boolean verifyOcspCertificates(BasicOCSPResp ocsp, KeyStore keystore, String provider) {
+        List<Exception> exceptionsThrown = new ArrayList<>();
         try {
             for (X509Certificate certStoreX509 : SignUtils.getCertificates(keystore)) {
                 try {
                     return SignUtils.isSignatureValid(ocsp, certStoreX509, provider);
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
+                    exceptionsThrown.add(ex);
                 }
             }
+        } catch (Exception e) {
+            exceptionsThrown.add(e);
         }
-        catch (Exception e) {
+        for (Exception ex : exceptionsThrown) {
+            LOGGER.error(ex.getMessage(), ex);
         }
         return false;
     }
 
     /**
      * Verifies a time stamp against a KeyStore.
-     * @param ts the time stamp
+     *
+     * @param ts       the time stamp
      * @param keystore the <CODE>KeyStore</CODE>
      * @param provider the provider or <CODE>null</CODE> to use the BouncyCastle provider
      * @return <CODE>true</CODE> is a certificate was found
      */
     public static boolean verifyTimestampCertificates(TimeStampToken ts, KeyStore keystore, String provider) {
+        List<Exception> exceptionsThrown = new ArrayList<>();
         try {
             for (X509Certificate certStoreX509 : SignUtils.getCertificates(keystore)) {
                 try {
 
                     SignUtils.isSignatureValid(ts, certStoreX509, provider);
                     return true;
-                }
-                catch (Exception ex) {
-                    LOGGER.error(ex.getMessage(),ex);
+                } catch (Exception ex) {
+                    exceptionsThrown.add(ex);
+
                 }
             }
+        } catch (Exception e) {
+            exceptionsThrown.add(e);
         }
-        catch (Exception e) {
+
+        for (Exception ex : exceptionsThrown) {
+            LOGGER.error(ex.getMessage(), ex);
         }
         return false;
     }
