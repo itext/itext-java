@@ -185,8 +185,18 @@ public class TextRenderer extends AbstractRenderer {
         // true in situations like "Hello\nWorld"
         boolean isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol = false;
 
+        // For example, if a first character is a RTL mark (U+200F), and the second is a newline, we need to break anyway
+        int firstPrintPos = currentTextPos;
+        while (firstPrintPos < text.end && noPrint(text.get(firstPrintPos))) {
+            firstPrintPos++;
+        }
+
         while (currentTextPos < text.end) {
             if (noPrint(text.get(currentTextPos))) {
+                if (line.start == -1) {
+                    line.start = currentTextPos;
+                }
+                line.end = Math.max(line.end, currentTextPos + 1);
                 currentTextPos++;
                 continue;
             }
@@ -203,7 +213,7 @@ public class TextRenderer extends AbstractRenderer {
                 if (isNewLine(text, ind)) {
                     isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol = true;
                     firstCharacterWhichExceedsAllowedWidth = ind + 1;
-                    if (text.start == currentTextPos) {
+                    if (currentTextPos == firstPrintPos) {
                         isSplitForcedByImmediateNewLine = true;
                         // Notice that in that case we do not need to ignore the new line symbol ('\n')
                         isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol = false;
@@ -583,16 +593,7 @@ public class TextRenderer extends AbstractRenderer {
                 }
                 if (reversedRanges != null) {
                     for (int[] range : reversedRanges) {
-                        int shift = Collections.binarySearch(removedIds, range[0]);
-                        if (shift < 0) {
-                            shift = -shift - 1;
-                        }
-                        range[0] -= shift;
-                        shift = Collections.binarySearch(removedIds, range[1] - 1);
-                        if (shift < 0) {
-                            shift = -shift - 1;
-                        }
-                        range[1] -= shift;
+                        updateRangeBasedOnRemovedCharacters(removedIds, range);
                     }
                 }
                 line = line.filter(filter);
@@ -958,6 +959,31 @@ public class TextRenderer extends AbstractRenderer {
     protected float calculateLineWidth() {
         return getGlyphLineWidth(line, (float) this.getPropertyAsFloat(Property.FONT_SIZE), this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f),
                 this.getPropertyAsFloat(Property.CHARACTER_SPACING), this.getPropertyAsFloat(Property.WORD_SPACING));
+    }
+
+    static void updateRangeBasedOnRemovedCharacters(List<Integer> removedIds, int[] range) {
+        int shift = numberOfElementsLessThan(removedIds, range[0]);
+        range[0] -= shift;
+        shift = numberOfElementsLessThanOrEquual(removedIds, range[1] - 1);
+        range[1] -= shift;
+    }
+
+    private static int numberOfElementsLessThan(List<Integer> numbers, int n) {
+        int x = Collections.binarySearch(numbers, n);
+        if (x >= 0) {
+            return x;
+        } else {
+            return -x - 1;
+        }
+    }
+
+    private static int numberOfElementsLessThanOrEquual(List<Integer> numbers, int n) {
+        int x = Collections.binarySearch(numbers, n);
+        if (x >= 0) {
+            return x + 1;
+        } else {
+            return -x - 1;
+        }
     }
 
     private static boolean noPrint(Glyph g) {
