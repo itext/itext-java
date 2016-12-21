@@ -261,7 +261,7 @@ public class TextRenderer extends AbstractRenderer {
 
                 if (splitCharacters.isSplitCharacter(text, ind) || ind + 1 == text.end ||
                         splitCharacters.isSplitCharacter(text, ind + 1) &&
-                                TextUtil.isSpaceGlyph(text.get(ind + 1))) {
+                                TextUtil.isSpaceOrWhitespace(text.get(ind + 1))) {
                     nonBreakablePartEnd = ind;
                     break;
                 }
@@ -674,8 +674,9 @@ public class TextRenderer extends AbstractRenderer {
         convertWaitingStringToGlyphLine();
 
         if (text != null) {
-            //isSpaceChar exclude newline symbols
-            while (text.start < text.end && Character.isSpaceChar(text.get(text.start).getUnicode())) {
+            Glyph glyph;
+            while (text.start < text.end
+                    && TextUtil.isSpaceOrWhitespace(glyph = text.get(text.start)) && !TextUtil.isNewLine(glyph)) {
                 text.start++;
             }
         }
@@ -702,7 +703,7 @@ public class TextRenderer extends AbstractRenderer {
         int firstNonSpaceCharIndex = line.end - 1;
         while (firstNonSpaceCharIndex >= line.start) {
             Glyph currentGlyph = line.get(firstNonSpaceCharIndex);
-            if (!TextUtil.isSpaceGlyph(currentGlyph)) {
+            if (!TextUtil.isSpaceOrWhitespace(currentGlyph)) {
                 break;
             }
 
@@ -1041,7 +1042,8 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private int[] getWordBoundsForHyphenation(GlyphLine text, int leftTextPos, int rightTextPos, int wordMiddleCharPos) {
-        while (wordMiddleCharPos >= leftTextPos && !isGlyphPartOfWordForHyphenation(text.get(wordMiddleCharPos)) && !isSpaceGlyph(text.get(wordMiddleCharPos))) {
+        while (wordMiddleCharPos >= leftTextPos && !isGlyphPartOfWordForHyphenation(text.get(wordMiddleCharPos))
+                && !TextUtil.isUni0020(text.get(wordMiddleCharPos))) {
             wordMiddleCharPos--;
         }
         if (wordMiddleCharPos >= leftTextPos) {
@@ -1062,10 +1064,6 @@ public class TextRenderer extends AbstractRenderer {
     private boolean isGlyphPartOfWordForHyphenation(Glyph g) {
         return Character.isLetter((char) g.getUnicode()) ||
                 Character.isDigit((char) g.getUnicode()) || '\u00ad' == g.getUnicode();
-    }
-
-    private boolean isSpaceGlyph(Glyph g) {
-        return g.getUnicode() == ' ';
     }
 
     private void convertWaitingStringToGlyphLine() {

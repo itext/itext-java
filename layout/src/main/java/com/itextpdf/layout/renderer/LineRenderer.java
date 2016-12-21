@@ -325,7 +325,7 @@ public class LineRenderer extends AbstractRenderer {
                         while (pos < lineGlyphs.size() && lineGlyphs.get(pos).renderer == renderer) {
                             if (pos + 1 < lineGlyphs.size()) {
                                 if (reorder[pos] == reorder[pos + 1] + 1 &&
-                                        !TextUtil.isSpaceGlyph(lineGlyphs.get(pos + 1).glyph) && !TextUtil.isSpaceGlyph(lineGlyphs.get(pos).glyph)) {
+                                        !TextUtil.isSpaceOrWhitespace(lineGlyphs.get(pos + 1).glyph) && !TextUtil.isSpaceOrWhitespace(lineGlyphs.get(pos).glyph)) {
                                     reversed = true;
                                 } else {
                                     if (reversed) {

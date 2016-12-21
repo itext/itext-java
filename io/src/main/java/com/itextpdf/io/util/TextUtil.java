@@ -215,9 +215,13 @@ public final class TextUtil {
         return unicode == '\n' || unicode == '\r';
     }
 
-    public static boolean isSpaceGlyph(Glyph glyph) {
-        //\r and \n are whitespaces, but not space chars.
+    public static boolean isSpaceOrWhitespace(Glyph glyph) {
+        //\r, \n, and \t are whitespaces, but not space chars.
         //\u00a0 is SpaceChar, but not whitespace.
         return Character.isSpaceChar((char) glyph.getUnicode()) || Character.isWhitespace((char) glyph.getUnicode());
+    }
+
+    public static boolean isUni0020(Glyph g) {
+        return g.getUnicode() == ' ';
     }
 }
