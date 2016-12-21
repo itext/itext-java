@@ -129,7 +129,11 @@ public class ParagraphRenderer extends BlockRenderer {
 
         Float blockMaxHeight = retrieveMaxHeight();
         if (null != blockMaxHeight && parentBBox.getHeight() > blockMaxHeight) {
-            parentBBox.moveUp(parentBBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
+            float heightDelta = parentBBox.getHeight() - (float) blockMaxHeight;
+            if (marginsCollapsingEnabled) {
+                marginsCollapseHandler.processFixedHeightAdjustment(heightDelta);
+            }
+            parentBBox.moveUp(heightDelta).setHeight((float) blockMaxHeight);
             wasHeightClipped = true;
         }
 
