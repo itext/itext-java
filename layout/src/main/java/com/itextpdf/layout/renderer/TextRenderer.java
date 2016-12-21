@@ -980,7 +980,7 @@ public class TextRenderer extends AbstractRenderer {
     static void updateRangeBasedOnRemovedCharacters(ArrayList<Integer> removedIds, int[] range) {
         int shift = numberOfElementsLessThan(removedIds, range[0]);
         range[0] -= shift;
-        shift = numberOfElementsLessThanOrEquual(removedIds, range[1] - 1);
+        shift = numberOfElementsLessThanOrEqual(removedIds, range[1] - 1);
         range[1] -= shift;
     }
 
@@ -993,7 +993,7 @@ public class TextRenderer extends AbstractRenderer {
         }
     }
 
-    private static int numberOfElementsLessThanOrEquual(ArrayList<Integer> numbers, int n) {
+    private static int numberOfElementsLessThanOrEqual(ArrayList<Integer> numbers, int n) {
         int x = Collections.binarySearch(numbers, n);
         if (x >= 0) {
             return x + 1;
