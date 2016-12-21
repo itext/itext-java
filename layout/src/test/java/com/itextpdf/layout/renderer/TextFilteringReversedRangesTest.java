@@ -6,14 +6,13 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Category(UnitTest.class)
 public class TextFilteringReversedRangesTest {
 
     @Test
     public void test01() {
-        List<Integer> removedIds = new ArrayList<>();
+        ArrayList<Integer> removedIds = new ArrayList<>();
         removedIds.add(0);
 
         int[] range = new int[] {0, 1};
@@ -23,7 +22,7 @@ public class TextFilteringReversedRangesTest {
 
     @Test
     public void test02() {
-        List<Integer> removedIds = new ArrayList<>();
+        ArrayList<Integer> removedIds = new ArrayList<>();
         removedIds.add(10);
 
         int[] range = new int[] {0, 5};
@@ -33,7 +32,7 @@ public class TextFilteringReversedRangesTest {
 
     @Test
     public void test03() {
-        List<Integer> removedIds = new ArrayList<>();
+        ArrayList<Integer> removedIds = new ArrayList<>();
         removedIds.add(0);
         removedIds.add(3);
         removedIds.add(10);
