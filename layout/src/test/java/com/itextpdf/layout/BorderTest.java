@@ -931,7 +931,6 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
-    @Ignore("DEVSIX-930")
     @Test
     public void splitCellsTest08() throws IOException, InterruptedException {
         fileName = "splitCellsTest08.pdf";
