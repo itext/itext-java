@@ -1553,7 +1553,7 @@ public class TableRenderer extends AbstractRenderer {
             for (int k = colN; k <= colspan + colN; k++) {
                 ArrayList<Border> borders = verticalBorders.get(k);
                 if (borders.size() < row + rowspan) {
-                    for (int j = borders.size(); j < row + rowspan; j++) {
+                    for (int l = borders.size(); l < row + rowspan; l++) {
                         borders.add(null);
                     }
                 }
