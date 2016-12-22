@@ -73,7 +73,8 @@ public class MarginsCollapseHandler {
     }
 
     public void processFixedHeightAdjustment(float heightDelta) {
-        collapseInfo.setBufferSpace(collapseInfo.getBufferSpace() + heightDelta);
+        collapseInfo.setBufferSpaceOnTop(collapseInfo.getBufferSpaceOnTop() + heightDelta);
+        collapseInfo.setBufferSpaceOnBottom(collapseInfo.getBufferSpaceOnBottom() + heightDelta);
     }
 
     public MarginsCollapseInfo startChildMarginsHandling(IRenderer child, Rectangle layoutBox) {
@@ -112,12 +113,15 @@ public class MarginsCollapseHandler {
         MarginsCollapse childCollapseAfter = ignoreChildBottomMargin ? parentCollapseAfter : new MarginsCollapse();
         MarginsCollapseInfo childMarginsInfo = new MarginsCollapseInfo(ignoreChildTopMargin, ignoreChildBottomMargin, childCollapseBefore, childCollapseAfter);
         if (ignoreChildTopMargin && childIndex == firstNotEmptyKidIndex) {
-            childMarginsInfo.setBufferSpace(collapseInfo.getBufferSpace());
+            childMarginsInfo.setBufferSpaceOnTop(collapseInfo.getBufferSpaceOnTop());
+        }
+        if (ignoreChildBottomMargin) {
+            childMarginsInfo.setBufferSpaceOnBottom(collapseInfo.getBufferSpaceOnBottom());
         }
         return childMarginsInfo;
     }
 
-    public void endChildMarginsHandling() {
+    public void endChildMarginsHandling(Rectangle layoutBox) {
         int childIndex = processedChildrenNum - 1;
         if (childMarginInfo != null) {
             if (firstNotEmptyKidIndex == childIndex && childMarginInfo.isSelfCollapsing()) {
@@ -131,6 +135,9 @@ public class MarginsCollapseHandler {
         if (firstNotEmptyKidIndex == childIndex && firstChildMarginAdjoinedToParent(renderer)) {
             if (!collapseInfo.isSelfCollapsing()) {
                 getRidOfCollapseArtifactsAtopOccupiedArea();
+                if (childMarginInfo != null) {
+                    processUsedChildBufferSpaceOnTop(layoutBox);
+                }
             }
         }
 
@@ -150,7 +157,7 @@ public class MarginsCollapseHandler {
 
         if (!firstChildMarginAdjoinedToParent(renderer)) {
             float topIndent = collapseInfo.getCollapseBefore().getCollapsedMarginsSize();
-            adjustBoxPosAndHeight(parentBBox, topIndent);
+            applyTopMargin(parentBBox, topIndent);
         }
         if (!lastChildMarginAdjoinedToParent(renderer)) {
             float bottomIndent = collapseInfo.getCollapseAfter().getCollapsedMarginsSize();
@@ -246,7 +253,7 @@ public class MarginsCollapseHandler {
         if (!childIsBlockElement) {
             if (childIndex == firstNotEmptyKidIndex && firstChildMarginAdjoinedToParent(renderer)) {
                 float topIndent = collapseInfo.getCollapseBefore().getCollapsedMarginsSize();
-                adjustBoxPosAndHeight(layoutBox, topIndent);
+                applyTopMargin(layoutBox, topIndent);
             }
             if (lastChildMarginAdjoinedToParent(renderer)) {
                 float bottomIndent = collapseInfo.getCollapseAfter().getCollapsedMarginsSize();
@@ -255,22 +262,56 @@ public class MarginsCollapseHandler {
         }
     }
 
-    private void adjustBoxPosAndHeight(Rectangle box, float topIndent) {
-        float bufferLeftovers = collapseInfo.getBufferSpace() - topIndent;
-        if (bufferLeftovers >= 0) {
-            collapseInfo.setBufferSpace(bufferLeftovers);
+    private void applyTopMargin(Rectangle box, float topIndent) {
+        float bufferLeftoversOnTop = collapseInfo.getBufferSpaceOnTop() - topIndent;
+        subtractUsedTopBufferFromBottomBuffer(bufferLeftoversOnTop > 0 ? topIndent : collapseInfo.getBufferSpaceOnTop());
+        
+        if (bufferLeftoversOnTop >= 0) {
+            collapseInfo.setBufferSpaceOnTop(bufferLeftoversOnTop);
             box.moveDown(topIndent);
         } else {
-            box.moveDown(collapseInfo.getBufferSpace());
-            collapseInfo.setBufferSpace(0);
-            box.setHeight(box.getHeight() + bufferLeftovers);
-
+            box.moveDown(collapseInfo.getBufferSpaceOnTop());
+            collapseInfo.setBufferSpaceOnTop(0);
+            box.setHeight(box.getHeight() + bufferLeftoversOnTop);
         }
     }
 
     private void applyBottomMargin(Rectangle box, float bottomIndent) {
-        box.setY(box.getY() + bottomIndent);
-        box.setHeight(box.getHeight() - bottomIndent);
+        // Here we don't subtract used buffer space from topBuffer, because every kid is assumed to be 
+        // the last one on the page, and so every kid always has parent's bottom buffer, however only the true last kid
+        // uses it for real. Also, bottom margin are always applied after top margins, so it doesn't matter anyway.
+
+        float bottomIndentLeftovers = bottomIndent - collapseInfo.getBufferSpaceOnBottom();
+        if (bottomIndentLeftovers < 0) {
+            collapseInfo.setBufferSpaceOnBottom(-bottomIndentLeftovers);
+        } else {
+            collapseInfo.setBufferSpaceOnBottom(0);
+            box.setY(box.getY() + bottomIndentLeftovers);
+            box.setHeight(box.getHeight() - bottomIndentLeftovers);
+        }
+    }
+
+    private void processUsedChildBufferSpaceOnTop(Rectangle layoutBox) {
+        float childUsedBufferSpaceOnTop = collapseInfo.getBufferSpaceOnTop() - childMarginInfo.getBufferSpaceOnTop();
+        if (childUsedBufferSpaceOnTop > 0) {
+            collapseInfo.setBufferSpaceOnTop(childMarginInfo.getBufferSpaceOnTop());
+            // usage of top buffer space on child is expressed by moving layout box down instead of making it smaller,
+            // so in order to process next kids correctly, we need to move parent layout box also
+            layoutBox.moveDown(childUsedBufferSpaceOnTop);
+
+            subtractUsedTopBufferFromBottomBuffer(childUsedBufferSpaceOnTop);
+        }
+    }
+
+    private void subtractUsedTopBufferFromBottomBuffer(float usedTopBuffer) {
+        if (collapseInfo.getBufferSpaceOnTop() > collapseInfo.getBufferSpaceOnBottom()) {
+            float bufferLeftoversOnTop = collapseInfo.getBufferSpaceOnTop() - usedTopBuffer;
+            if (bufferLeftoversOnTop < collapseInfo.getBufferSpaceOnBottom()) {
+                collapseInfo.setBufferSpaceOnBottom(bufferLeftoversOnTop);
+            }
+        } else {
+            collapseInfo.setBufferSpaceOnBottom(collapseInfo.getBufferSpaceOnBottom() - usedTopBuffer);
+        }
     }
 
     private void fixPrevChildOccupiedArea(int childIndex) {

@@ -159,13 +159,13 @@ public abstract class RootRenderer extends AbstractRenderer {
                 renderer = result.getOverflowRenderer();
 
                 if (marginsCollapsingEnabled) {
-                    marginsCollapseHandler.endChildMarginsHandling();
+                    marginsCollapseHandler.endChildMarginsHandling(currentArea.getBBox());
                     marginsCollapseHandler = new MarginsCollapseHandler(this, null);
                     childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
                 }
             }
             if (marginsCollapsingEnabled) {
-                marginsCollapseHandler.endChildMarginsHandling();
+                marginsCollapseHandler.endChildMarginsHandling(currentArea.getBBox());
             }
 
             if (null != result && null != result.getSplitRenderer()) {

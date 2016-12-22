@@ -179,7 +179,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
                         if (currentAreaPos + 1 == areas.size()) {
                             if (marginsCollapsingEnabled) {
-                                marginsCollapseHandler.endChildMarginsHandling();
+                                marginsCollapseHandler.endChildMarginsHandling(layoutBox);
                             }
                             AbstractRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
                             splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
@@ -299,7 +299,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
             occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
             if (marginsCollapsingEnabled) {
-                marginsCollapseHandler.endChildMarginsHandling();
+                marginsCollapseHandler.endChildMarginsHandling(layoutBox);
             }
             if (result.getStatus() == LayoutResult.FULL) {
                 layoutBox.setHeight(result.getOccupiedArea().getBBox().getY() - layoutBox.getY());

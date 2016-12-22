@@ -224,7 +224,7 @@ public class ParagraphRenderer extends BlockRenderer {
                     } else {
                         if (marginsCollapsingEnabled) {
                             if (anythingPlaced) {
-                                marginsCollapseHandler.endChildMarginsHandling();
+                                marginsCollapseHandler.endChildMarginsHandling(layoutBox);
                             }
                         }
                         ParagraphRenderer[] split = split();
@@ -315,7 +315,7 @@ public class ParagraphRenderer extends BlockRenderer {
             occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
         }
         if (marginsCollapsingEnabled && childRenderers.size() > 0) {
-            marginsCollapseHandler.endChildMarginsHandling();
+            marginsCollapseHandler.endChildMarginsHandling(layoutBox);
         }
         IRenderer overflowRenderer = null;
         Float blockMinHeight = retrieveMinHeight();
