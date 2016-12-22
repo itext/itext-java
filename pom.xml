@@ -6,6 +6,7 @@
     <artifactId>root</artifactId>
     <version>7.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
+
     <name>iText 7</name>
     <description>A Free Java-PDF library</description>
     <url>http://itextpdf.com/</url>
@@ -64,11 +65,12 @@
 
     <modules>
         <module>barcodes</module>
-        <module>io</module>
-        <module>kernel</module>
+        <module>font-asian</module>
         <module>forms</module>
         <module>hyph</module>
-        <module>font-asian</module>
+        <module>io</module>
+        <module>itextcore</module>
+        <module>kernel</module>
         <module>layout</module>
         <module>pdfa</module>
         <module>pdftest</module>
