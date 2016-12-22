@@ -223,36 +223,38 @@ public class ListItemRenderer extends DivRenderer {
     }
 
     private void applyListSymbolPosition() {
-        ListSymbolPosition symbolPosition = (ListSymbolPosition)this.<Object>getProperty(Property.LIST_SYMBOL_POSITION);
-        if (symbolPosition == ListSymbolPosition.INSIDE) {
-            if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ParagraphRenderer) {
-                ParagraphRenderer paragraphRenderer = (ParagraphRenderer) childRenderers.get(0);
-                Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
-                if (symbolIndent != null) {
-                    symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
+        if (symbolRenderer != null) {
+            ListSymbolPosition symbolPosition = (ListSymbolPosition) this.<Object>getProperty(Property.LIST_SYMBOL_POSITION);
+            if (symbolPosition == ListSymbolPosition.INSIDE) {
+                if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ParagraphRenderer) {
+                    ParagraphRenderer paragraphRenderer = (ParagraphRenderer) childRenderers.get(0);
+                    Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
+                    if (symbolIndent != null) {
+                        symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
+                    }
+                    paragraphRenderer.childRenderers.add(0, symbolRenderer);
+                    symbolAddedInside = true;
+                } else if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ImageRenderer) {
+                    IRenderer paragraphRenderer = new Paragraph().setMargin(0).createRendererSubTree();
+                    Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
+                    if (symbolIndent != null) {
+                        symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
+                    }
+                    paragraphRenderer.addChild(symbolRenderer);
+                    paragraphRenderer.addChild(childRenderers.get(0));
+                    childRenderers.set(0, paragraphRenderer);
+                    symbolAddedInside = true;
                 }
-                paragraphRenderer.childRenderers.add(0, symbolRenderer);
-                symbolAddedInside = true;
-            } else if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ImageRenderer) {
-                IRenderer paragraphRenderer = new Paragraph().setMargin(0).createRendererSubTree();
-                Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
-                if (symbolIndent != null) {
-                    symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
+                if (!symbolAddedInside) {
+                    IRenderer paragraphRenderer = new Paragraph().setMargin(0).createRendererSubTree();
+                    Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
+                    if (symbolIndent != null) {
+                        symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
+                    }
+                    paragraphRenderer.addChild(symbolRenderer);
+                    childRenderers.add(0, paragraphRenderer);
+                    symbolAddedInside = true;
                 }
-                paragraphRenderer.addChild(symbolRenderer);
-                paragraphRenderer.addChild(childRenderers.get(0));
-                childRenderers.set(0, paragraphRenderer);
-                symbolAddedInside = true;
-            }
-            if (!symbolAddedInside) {
-                IRenderer paragraphRenderer = new Paragraph().setMargin(0).createRendererSubTree();
-                Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
-                if (symbolIndent != null) {
-                    symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
-                }
-                paragraphRenderer.addChild(symbolRenderer);
-                childRenderers.add(0, paragraphRenderer);
-                symbolAddedInside = true;
             }
         }
     }
