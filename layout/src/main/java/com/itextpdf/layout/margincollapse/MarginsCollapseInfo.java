@@ -56,6 +56,9 @@ public class MarginsCollapseInfo {
     private float bufferSpaceOnTop;
     private float bufferSpaceOnBottom;
 
+    private float usedBufferSpaceOnTop;
+    private float usedBufferSpaceOnBottom;
+
     MarginsCollapseInfo() {
         this.ignoreOwnMarginTop = false;
         this.ignoreOwnMarginBottom = false;
@@ -64,6 +67,8 @@ public class MarginsCollapseInfo {
         this.isSelfCollapsing = true;
         this.bufferSpaceOnTop = 0;
         this.bufferSpaceOnBottom = 0;
+        this.usedBufferSpaceOnTop = 0;
+        this.usedBufferSpaceOnBottom = 0;
     }
 
     MarginsCollapseInfo(boolean ignoreOwnMarginTop, boolean ignoreOwnMarginBottom, MarginsCollapse collapseBefore, MarginsCollapse collapseAfter) {
@@ -74,6 +79,8 @@ public class MarginsCollapseInfo {
         this.isSelfCollapsing = true;
         this.bufferSpaceOnTop = 0;
         this.bufferSpaceOnBottom = 0;
+        this.usedBufferSpaceOnTop = 0;
+        this.usedBufferSpaceOnBottom = 0;
     }
 
     MarginsCollapse getCollapseBefore() {
@@ -122,5 +129,21 @@ public class MarginsCollapseInfo {
 
     void setBufferSpaceOnBottom(float bufferSpaceOnBottom) {
         this.bufferSpaceOnBottom = bufferSpaceOnBottom;
+    }
+
+    float getUsedBufferSpaceOnTop() {
+        return usedBufferSpaceOnTop;
+    }
+
+    void setUsedBufferSpaceOnTop(float usedBufferSpaceOnTop) {
+        this.usedBufferSpaceOnTop = usedBufferSpaceOnTop;
+    }
+
+    float getUsedBufferSpaceOnBottom() {
+        return usedBufferSpaceOnBottom;
+    }
+
+    void setUsedBufferSpaceOnBottom(float usedBufferSpaceOnBottom) {
+        this.usedBufferSpaceOnBottom = usedBufferSpaceOnBottom;
     }
 }
