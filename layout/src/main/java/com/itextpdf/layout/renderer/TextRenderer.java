@@ -1069,7 +1069,6 @@ public class TextRenderer extends AbstractRenderer {
     private void convertWaitingStringToGlyphLine() {
         if (strToBeConverted != null) {
             //yes we save font only while converting original string to synchronize glyphline and font.
-            font = getPropertyAsFont(Property.FONT);
             text = convertToGlyphLine(strToBeConverted);
             otfFeaturesApplied = false;
             strToBeConverted = null;
@@ -1078,7 +1077,7 @@ public class TextRenderer extends AbstractRenderer {
 
     private PdfFont getFont() {
         if (font == null) {
-            return getPropertyAsFont(Property.FONT);
+            font = getPropertyAsFont(Property.FONT);
         }
         return font;
     }
