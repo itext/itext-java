@@ -99,10 +99,11 @@ public class TextRenderer extends AbstractRenderer {
 
     protected float yLineOffset;
 
+    //font shall be stored only during converting original string to GlyphLine
+    private PdfFont font;
     protected GlyphLine text;
     protected GlyphLine line;
     protected String strToBeConverted;
-    private PdfFont font;
 
     protected boolean otfFeaturesApplied = false;
 
@@ -1068,6 +1069,7 @@ public class TextRenderer extends AbstractRenderer {
 
     private void convertWaitingStringToGlyphLine() {
         if (strToBeConverted != null) {
+            font = null;
             //yes we save font only while converting original string to synchronize glyphline and font.
             text = convertToGlyphLine(strToBeConverted);
             otfFeaturesApplied = false;
