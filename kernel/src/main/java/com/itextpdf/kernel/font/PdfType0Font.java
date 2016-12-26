@@ -448,7 +448,7 @@ public class PdfType0Font extends PdfFont {
         // Character.isIdentifierIgnorable(0) gets true.
         return  glyph != null &&
                 (glyph.getCode() > 0
-                        || Character.isWhitespace(glyph.getUnicode())
+                        || Character.isWhitespace((char) glyph.getUnicode())
                         || Character.isIdentifierIgnorable(glyph.getUnicode()));
     }
 
