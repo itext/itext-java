@@ -85,14 +85,15 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
@@ -2251,7 +2252,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return an array of Strings containing the names of the appearance states
      */
     public String[] getAppearanceStates() {
-        Set<String> names = new HashSet<>();
+        Set<String> names = new LinkedHashSet<>();
         PdfString stringOpt = getPdfObject().getAsString(PdfName.Opt);
         if (stringOpt != null) {
             names.add(stringOpt.toUnicodeString());
