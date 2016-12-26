@@ -114,10 +114,14 @@ public class ParagraphRenderer extends BlockRenderer {
 
         boolean isPositioned = isPositioned();
 
-        if (isPositioned) {
-            float x = (float) this.getPropertyAsFloat(Property.X);
-            float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
-            parentBBox.setX(relativeX + x);
+        if (isPositioned()) {
+            if (isFixedLayout()) {
+                float x = (float) this.getPropertyAsFloat(Property.X);
+                float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
+                parentBBox.setX(relativeX + x);
+            } else {
+                // TODO
+            }
         }
 
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
@@ -309,11 +313,10 @@ public class ParagraphRenderer extends BlockRenderer {
             }
         }
 
-        if (!isPositioned) {
-            float moveDown = Math.min((leadingValue - lastLineHeight) / 2, occupiedArea.getBBox().getY() - layoutBox.getY());
-            occupiedArea.getBBox().moveDown(moveDown);
-            occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
-        }
+        float moveDown = Math.min((leadingValue - lastLineHeight) / 2, occupiedArea.getBBox().getY() - layoutBox.getY());
+        occupiedArea.getBBox().moveDown(moveDown);
+        occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
+
         if (marginsCollapsingEnabled && childRenderers.size() > 0) {
             marginsCollapseHandler.endChildMarginsHandling(layoutBox);
         }

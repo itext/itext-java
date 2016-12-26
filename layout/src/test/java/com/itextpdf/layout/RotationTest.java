@@ -22,13 +22,12 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class RotationTest extends ExtendedITextTest{
@@ -65,9 +64,9 @@ public class RotationTest extends ExtendedITextTest{
         int x1 = 350;
         int y1 = 600;
         int width1 = 100;
-        document.add(new Paragraph("text to be rotatedg").setRotationAngle((Math.PI / 6)).setFixedPosition(x1, y1, width1)
+        document.add(new Paragraph("text to be rotatedg").setMargin(0).setRotationAngle((Math.PI / 6)).setFixedPosition(x1, y1, width1)
                 .setBorder(border));
-        document.add(new Paragraph("text to be rotatedg").setFixedPosition(x1, y1, width1)
+        document.add(new Paragraph("text to be rotatedg").setMargin(0).setFixedPosition(x1, y1, width1)
                 .setBorder(border));
 
         String longText = "loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
@@ -75,8 +74,8 @@ public class RotationTest extends ExtendedITextTest{
         int x2 = 50;
         int y2 = 300;
         int width2 = 450;
-        document.add(new Paragraph(longText).setRotationAngle((Math.PI / 6)).setFixedPosition(x2, y2, width2));
-        document.add(new Paragraph(longText).setFixedPosition(x2, y2, width2));
+        document.add(new Paragraph(longText).setMargin(0).setRotationAngle((Math.PI / 6)).setFixedPosition(x2, y2, width2));
+        document.add(new Paragraph(longText).setMargin(0).setFixedPosition(x2, y2, width2));
 
         document.close();
 
@@ -93,8 +92,8 @@ public class RotationTest extends ExtendedITextTest{
 
         String longText = "loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
                 "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooong text";
-        document.add(new Paragraph(longText).setRotationAngle(-(Math.PI / 6)).setFixedPosition(50, 50, 450));
-        document.add(new Paragraph(longText).setFixedPosition(50, 50, 450));
+        document.add(new Paragraph(longText).setMargin(0).setRotationAngle(-(Math.PI / 6)).setFixedPosition(50, 50, 450));
+        document.add(new Paragraph(longText).setMargin(0).setFixedPosition(50, 50, 450));
 
         document.close();
 
@@ -113,8 +112,8 @@ public class RotationTest extends ExtendedITextTest{
         float x = 50;
         float y = 380;
         float width = 200;
-        document.add(new Paragraph(simpleText).setRotationAngle((Math.PI / 2)).setFixedPosition(x, y, width));
-        document.add(new Paragraph(simpleText).setFixedPosition(x, y, width));
+        document.add(new Paragraph(simpleText).setMargin(0).setRotationAngle((Math.PI / 2)).setFixedPosition(x, y, width));
+        document.add(new Paragraph(simpleText).setMargin(0).setFixedPosition(x, y, width));
 
         PdfCanvas canvas = new PdfCanvas(pdfDocument.getFirstPage());
         drawCross(canvas, x, y);
@@ -136,7 +135,7 @@ public class RotationTest extends ExtendedITextTest{
         float x = 50;
         float y = 380;
         float width = 100;
-        document.add(new Paragraph(simpleText).setRotationAngle(-(Math.PI / 4)).setBackgroundColor(Color.RED).setFixedPosition(x, y, width));
+        document.add(new Paragraph(simpleText).setMargin(0).setRotationAngle(-(Math.PI / 4)).setBackgroundColor(Color.RED).setFixedPosition(x, y, width));
 
         PdfCanvas canvas = new PdfCanvas(pdfDocument.getFirstPage());
         drawCross(canvas, x, y);

@@ -596,9 +596,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     protected void correctPositionedLayout(Rectangle layoutBox) {
-        float y = (float) this.getPropertyAsFloat(Property.Y);
-        float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
-        move(0, relativeY + y - occupiedArea.getBBox().getY());
+        if (isFixedLayout()) {
+            float y = (float) this.getPropertyAsFloat(Property.Y);
+            float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
+            move(0, relativeY + y - occupiedArea.getBBox().getY());
+        } else {
+            //TODO
+        }
     }
 
     private List<Point> clipPolygon(List<Point> points, Point clipLineBeg, Point clipLineEnd) {

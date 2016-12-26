@@ -231,7 +231,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      * @return this object
      */
     public T showTextAligned(String text, float x, float y, TextAlignment textAlign, VerticalAlignment vertAlign, float angle) {
-        Paragraph p = new Paragraph(text);
+        Paragraph p = new Paragraph(text).setMultipliedLeading(1).setMargin(0);
         return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, angle);
     }
 
@@ -247,7 +247,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      * @return this object
      */
     public T showTextAlignedKerned(String text, float x, float y, TextAlignment textAlign, VerticalAlignment vertAlign, float radAngle) {
-        Paragraph p = new Paragraph(text).setFontKerning(FontKerning.YES);
+        Paragraph p = new Paragraph(text).setMultipliedLeading(1).setMargin(0).setFontKerning(FontKerning.YES);
         return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, radAngle);
     }
 

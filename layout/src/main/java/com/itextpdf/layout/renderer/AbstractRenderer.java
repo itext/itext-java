@@ -653,9 +653,6 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link Rectangle border box} of the renderer
      */
     protected Rectangle applyMargins(Rectangle rect, float[] margins, boolean reverse) {
-        if (isPositioned())
-            return rect;
-
         return rect.<Rectangle>applyMargins(margins[0], margins[1], margins[2], margins[3], reverse);
     }
 
@@ -814,7 +811,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link boolean}
      */
     protected boolean isPositioned() {
-        return isFixedLayout();
+        return !isStaticLayout();
     }
 
     /**
@@ -825,6 +822,11 @@ public abstract class AbstractRenderer implements IRenderer {
     protected boolean isFixedLayout() {
         Object positioning = this.<Object>getProperty(Property.POSITION);
         return Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
+    }
+
+    protected boolean isStaticLayout() {
+        Object positioning = this.<Object>getProperty(Property.POSITION);
+        return positioning == null || Integer.valueOf(LayoutPosition.STATIC).equals(positioning);
     }
 
     protected boolean isRelativePosition() {

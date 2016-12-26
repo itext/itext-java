@@ -173,7 +173,7 @@ public class LinkTest extends ExtendedITextTest {
         PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
 
         Link link = new Link("TestLink", action);
-        doc.add(new Paragraph(link).setRotationAngle(Math.PI / 4).setFixedPosition(300, 623, 100));
+        doc.add(new Paragraph(link).setMargin(0).setRotationAngle(Math.PI / 4).setFixedPosition(300, 623, 100));
 
         doc.close();
 

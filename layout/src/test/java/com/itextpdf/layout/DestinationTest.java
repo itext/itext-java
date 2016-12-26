@@ -8,14 +8,13 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.IOException;
-import java.text.MessageFormat;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
+import java.text.MessageFormat;
 
 @Category(IntegrationTest.class)
 public class DestinationTest extends ExtendedITextTest {
@@ -37,7 +36,7 @@ public class DestinationTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
         Text text = new Text(MessageFormat.format("Page {0}", 10));
         text.setProperty(Property.DESTINATION, "p10");
-        doc.add(new Paragraph(text).setFixedPosition(1, 549, 742, 40));
+        doc.add(new Paragraph(text).setFixedPosition(1, 549, 742, 40).setMargin(0));
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
