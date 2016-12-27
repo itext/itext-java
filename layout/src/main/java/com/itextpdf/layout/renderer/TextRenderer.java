@@ -510,7 +510,7 @@ public class TextRenderer extends AbstractRenderer {
 
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
-            applyAbsolutePositioningTranslation(false);
+            applyRelativePositioningTranslation(false);
         }
 
         float leftBBoxX = occupiedArea.getBBox().getX();
@@ -628,7 +628,7 @@ public class TextRenderer extends AbstractRenderer {
         }
 
         if (isRelativePosition) {
-            applyAbsolutePositioningTranslation(false);
+            applyRelativePositioningTranslation(false);
         }
 
         applyBorderBox(occupiedArea.getBBox(), true);

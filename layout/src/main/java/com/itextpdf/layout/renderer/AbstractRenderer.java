@@ -153,6 +153,27 @@ public abstract class AbstractRenderer implements IRenderer {
             } else {
                 root.addChild(renderer);
             }
+        } else if (positioning == LayoutPosition.ABSOLUTE) {
+            AbstractRenderer positionedParent = this;
+            while (!positionedParent.isPositioned()) {
+                IRenderer parent = positionedParent.parent;
+                if (parent instanceof AbstractRenderer) {
+                    positionedParent = (AbstractRenderer) parent;
+                } else {
+                    break;
+                }
+            }
+            if (positionedParent == this) {
+                positionedRenderers.add(renderer);
+            } else {
+                positionedParent.addChild(renderer);
+            }
+        }
+
+        // Fetch positioned renderers from non-positioned child because they might be stuck there because child's parent was null previously
+        if (renderer instanceof AbstractRenderer && !((AbstractRenderer) renderer).isPositioned() && ((AbstractRenderer) renderer).positionedRenderers.size() > 0) {
+            positionedRenderers.addAll(((AbstractRenderer) renderer).positionedRenderers);
+            ((AbstractRenderer) renderer).positionedRenderers.clear();
         }
     }
 
@@ -375,15 +396,16 @@ public abstract class AbstractRenderer implements IRenderer {
 
         boolean relativePosition = isRelativePosition();
         if (relativePosition) {
-            applyAbsolutePositioningTranslation(false);
+            applyRelativePositioningTranslation(false);
         }
 
         drawBackground(drawContext);
         drawBorder(drawContext);
         drawChildren(drawContext);
+        drawPositionedChildren(drawContext);
 
         if (relativePosition) {
-            applyAbsolutePositioningTranslation(true);
+            applyRelativePositioningTranslation(true);
         }
 
         flushed = true;
@@ -757,11 +779,51 @@ public abstract class AbstractRenderer implements IRenderer {
         return rect.<Rectangle>applyMargins(topWidth, rightWidth, bottomWidth, leftWidth, reverse);
     }
 
-    protected void applyAbsolutePositioningTranslation(boolean reverse) {
-        float top = (float) this.getPropertyAsFloat(Property.TOP);
-        float bottom = (float) this.getPropertyAsFloat(Property.BOTTOM);
-        float left = (float) this.getPropertyAsFloat(Property.LEFT);
-        float right = (float) this.getPropertyAsFloat(Property.RIGHT);
+    protected void applyAbsolutePosition(Rectangle rect) {
+        Float top = this.getPropertyAsFloat(Property.TOP);
+        Float bottom = this.getPropertyAsFloat(Property.BOTTOM);
+        Float left = this.getPropertyAsFloat(Property.LEFT);
+        Float right = this.getPropertyAsFloat(Property.RIGHT);
+
+        float initialHeight = rect.getHeight();
+        float initialWidth = rect.getWidth();
+
+        if (top != null) {
+            rect.setHeight(rect.getHeight() - top);
+        }
+        if (left != null) {
+            rect.setX(rect.getX() + (float)left).setWidth(rect.getWidth() - left);
+        }
+
+        if (right != null) {
+            UnitValue width = this.<UnitValue>getProperty(Property.WIDTH);
+            if (left == null && width != null) {
+                float widthValue = width.isPointValue() ? width.getValue() : (width.getValue() * initialWidth);
+                float placeLeft = rect.getWidth() - widthValue;
+                if (placeLeft > 0) {
+                    float computedRight = Math.min(placeLeft, (float)right);
+                    rect.setX(rect.getX() + rect.getWidth() - computedRight - widthValue);
+                }
+            } else if (width == null) {
+                rect.setWidth(rect.getWidth() - (float)right);
+            }
+        }
+
+        if (bottom != null) {
+            Float minHeight = getPropertyAsFloat(Property.MIN_HEIGHT);
+            if (minHeight != null) {
+                rect.setHeight((float)minHeight + (float)bottom);
+            } else {
+                setProperty(Property.MIN_HEIGHT, rect.getHeight() - (float)bottom);
+            }
+        }
+    }
+
+    protected void applyRelativePositioningTranslation(boolean reverse) {
+        float top = (float)this.getPropertyAsFloat(Property.TOP, 0f);
+        float bottom = (float)this.getPropertyAsFloat(Property.BOTTOM, 0f);
+        float left = (float)this.getPropertyAsFloat(Property.LEFT, 0f);
+        float right = (float)this.getPropertyAsFloat(Property.RIGHT, 0f);
 
         int reverseMultiplier = reverse ? -1 : 1;
 
@@ -855,6 +917,11 @@ public abstract class AbstractRenderer implements IRenderer {
     protected boolean isRelativePosition() {
         Integer positioning = this.getPropertyAsInteger(Property.POSITION);
         return Integer.valueOf(LayoutPosition.RELATIVE).equals(positioning);
+    }
+
+    protected boolean isAbsolutePosition() {
+        Integer positioning = this.getPropertyAsInteger(Property.POSITION);
+        return Integer.valueOf(LayoutPosition.ABSOLUTE).equals(positioning);
     }
 
     protected boolean isKeepTogether() {
@@ -1033,6 +1100,12 @@ public abstract class AbstractRenderer implements IRenderer {
         }
         if (null != minHeight) {
             setProperty(Property.MIN_HEIGHT, minHeight);
+        }
+    }
+
+    void drawPositionedChildren(DrawContext drawContext) {
+        for (IRenderer positionedChild : positionedRenderers) {
+            positionedChild.draw(drawContext);
         }
     }
 }

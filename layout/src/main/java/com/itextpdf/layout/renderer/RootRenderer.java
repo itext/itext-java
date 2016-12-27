@@ -44,7 +44,6 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -68,8 +67,21 @@ public abstract class RootRenderer extends AbstractRenderer {
     private MarginsCollapseHandler marginsCollapseHandler;
 
     public void addChild(IRenderer renderer) {
+        // Some positioned renderers might have been fetched from non-positioned child and added to this renderer,
+        // so we use this generic mechanism of determining which renderers have been just added.
+        int numberOfChildRenderers = childRenderers.size();
+        int numberOfPositionedChildRenderers = positionedRenderers.size();
         super.addChild(renderer);
-
+        List<IRenderer> addedRenderers = new ArrayList<>(1);
+        List<IRenderer> addedPositionedRenderers = new ArrayList<>(1);
+        while (childRenderers.size() > numberOfChildRenderers) {
+            addedRenderers.add(childRenderers.get(numberOfChildRenderers));
+            childRenderers.remove(numberOfChildRenderers);
+        }
+        while (positionedRenderers.size() > numberOfPositionedChildRenderers) {
+            addedPositionedRenderers.add(positionedRenderers.get(numberOfPositionedChildRenderers));
+            positionedRenderers.remove(numberOfPositionedChildRenderers);
+        }
 
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
         if (currentArea == null) {
@@ -80,8 +92,8 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
 
         // Static layout
-        if (currentArea != null && !childRenderers.isEmpty() && childRenderers.get(childRenderers.size() - 1) == renderer) {
-            childRenderers.remove(childRenderers.size() - 1);
+        for (int i = 0; currentArea != null && i < addedRenderers.size(); i++) {
+            renderer = addedRenderers.get(i);
 
             processWaitingKeepWithNextElement(renderer);
 
@@ -187,7 +199,11 @@ public abstract class RootRenderer extends AbstractRenderer {
                     updateCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
                 }
             }
-        } else if (positionedRenderers.size() > 0 && positionedRenderers.get(positionedRenderers.size() - 1) == renderer) {
+        }
+
+        for (int i = 0; i < addedPositionedRenderers.size(); i++) {
+            positionedRenderers.add(addedPositionedRenderers.get(i));
+            renderer = positionedRenderers.get(positionedRenderers.size() - 1);
             Integer positionedPageNumber = renderer.<Integer>getProperty(Property.PAGE_NUMBER);
             if (positionedPageNumber == null)
                 positionedPageNumber = currentPageNumber;
