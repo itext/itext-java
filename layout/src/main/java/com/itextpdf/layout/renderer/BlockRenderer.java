@@ -89,6 +89,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
 
+        Float blockWidth = retrieveWidth(parentBBox.getWidth());
+
         MarginsCollapseHandler marginsCollapseHandler = null;
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
         if (marginsCollapsingEnabled) {
@@ -105,12 +107,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
             parentBBox.setX(relativeX + x);
         }
 
-        Float blockWidth = retrieveWidth(parentBBox.getWidth());
+        float[] paddings = getPaddings();
+        applyPaddings(parentBBox, paddings, false);
+
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
             parentBBox.setWidth((float) blockWidth);
         }
-        float[] paddings = getPaddings();
-        applyPaddings(parentBBox, paddings, false);
 
         Float blockMaxHeight = retrieveMaxHeight();
         if (!isFixedLayout() && null != blockMaxHeight && blockMaxHeight < parentBBox.getHeight()

@@ -94,6 +94,8 @@ public class ParagraphRenderer extends BlockRenderer {
         LineRenderer currentRenderer = (LineRenderer) new LineRenderer().setParent(this);
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
 
+        Float blockWidth = retrieveWidth(parentBBox.getWidth());
+
         if (0 == childRenderers.size()) {
             anythingPlaced = true;
             currentRenderer = null;
@@ -124,12 +126,12 @@ public class ParagraphRenderer extends BlockRenderer {
             }
         }
 
-        Float blockWidth = retrieveWidth(parentBBox.getWidth());
+        float[] paddings = getPaddings();
+        applyPaddings(parentBBox, paddings, false);
+
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
             parentBBox.setWidth((float) blockWidth);
         }
-        float[] paddings = getPaddings();
-        applyPaddings(parentBBox, paddings, false);
 
         Float blockMaxHeight = retrieveMaxHeight();
         if (null != blockMaxHeight && parentBBox.getHeight() > blockMaxHeight) {

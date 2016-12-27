@@ -48,7 +48,7 @@ public class PositioningTest extends ExtendedITextTest {
 
         Paragraph p = new Paragraph().
                 setBorder(new SolidBorder(new DeviceGray(0), 5)).
-                setWidth(300).
+                setWidth(260).
                 setPaddings(20, 20, 20, 20).
                 add("Here is a line of text.").
                 add(new Text("This part is shifted\n up a bit,").setRelativePosition(0, -10, 0, 0).setBackgroundColor(new DeviceGray(0.8f))).
@@ -71,7 +71,7 @@ public class PositioningTest extends ExtendedITextTest {
 
         Paragraph p = new Paragraph().
                 setBorder(new SolidBorder(new DeviceGray(0), 5)).
-                        setWidth(180).
+                        setWidth(140).
                         setPaddings(20, 20, 20, 20).
                         add("Here is a line of text.").
                         add(new Text("This part is shifted\n up a bit,").setRelativePosition(0, -10, 0, 0).setBackgroundColor(new DeviceGray(0.8f))).

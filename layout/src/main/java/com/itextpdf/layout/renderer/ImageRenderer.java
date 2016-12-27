@@ -99,13 +99,14 @@ public class ImageRenderer extends AbstractRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea().clone();
         Rectangle layoutBox = area.getBBox();
+        width = retrieveWidth(layoutBox.getWidth());
+        height = retrieveHeight();
+
         applyMargins(layoutBox, false);
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
-        width = retrieveWidth(layoutBox.getWidth());
-        height = retrieveHeight();
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
         PdfXObject xObject = ((Image) (getModelElement())).getXObject();
