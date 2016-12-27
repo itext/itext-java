@@ -62,6 +62,7 @@ public final class Property {
     public static final int AUTO_SCALE_HEIGHT = 4;
     public static final int AUTO_SCALE_WIDTH = 5;
     public static final int BACKGROUND = 6;
+    public static final int BACKGROUND_IMAGE = 90;
     public static final int BASE_DIRECTION = 7;
     public static final int BOLD_SIMULATION = 8;
     public static final int BORDER = 9;
@@ -162,7 +163,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 89;
+    private static final int MAX_INHERITED_PROPERTY_ID = 90;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];

@@ -65,6 +65,7 @@ import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.BackgroundImage;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
@@ -396,26 +397,48 @@ public abstract class AbstractRenderer implements IRenderer {
      */
     public void drawBackground(DrawContext drawContext) {
         Background background = this.<Background>getProperty(Property.BACKGROUND);
-        if (background != null) {
-
+        BackgroundImage backgroundImage = this.<BackgroundImage>getProperty(Property.BACKGROUND_IMAGE);
+        if (background != null || backgroundImage != null) {
             Rectangle bBox = getOccupiedAreaBBox();
-
             boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
             if (isTagged) {
                 drawContext.getCanvas().openTag(new CanvasArtifact());
             }
             Rectangle backgroundArea = applyMargins(bBox, false);
-            if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
-                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
-                return;
-            }
-            drawContext.getCanvas().saveState().setFillColor(background.getColor()).
-                    rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
-                            backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
-                            backgroundArea.getHeight() + background.getExtraTop() + background.getExtraBottom()).
-                    fill().restoreState();
+            if (background != null) {
+                if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
+                    Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                    logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
+                    return;
+                }
+                drawContext.getCanvas().saveState().setFillColor(background.getColor()).
+                        rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
+                                backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
+                                backgroundArea.getHeight() + background.getExtraTop() + background.getExtraBottom()).
+                        fill().restoreState();
 
+            }
+            applyBorderBox(backgroundArea, false);
+            if (backgroundImage != null && backgroundImage.getImage() != null) {
+                if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
+                    Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                    logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
+                    return;
+                }
+                Rectangle imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getY() + backgroundArea.getHeight() - backgroundImage.getImage().getHeight(),
+                        backgroundImage.getImage().getWidth(), backgroundImage.getImage().getHeight());
+                drawContext.getCanvas().saveState().rectangle(backgroundArea).clip().newPath();
+                float initialX = imageRectangle.getX();
+                do {
+                    imageRectangle.setX(initialX);
+                    do {
+                        drawContext.getCanvas().addXObject(backgroundImage.getImage(), imageRectangle);
+                        imageRectangle.moveRight(backgroundImage.getImage().getWidth());
+                    } while (backgroundImage.isRepeatX() && imageRectangle.getLeft() < backgroundArea.getRight());
+                    imageRectangle.moveDown(backgroundImage.getImage().getHeight());
+                } while (backgroundImage.isRepeatY() && imageRectangle.getTop() > backgroundArea.getBottom());
+                drawContext.getCanvas().restoreState();
+            }
             if (isTagged) {
                 drawContext.getCanvas().closeTag();
             }
