@@ -65,6 +65,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     private IRenderer keepWithNextHangingRenderer;
     private LayoutResult keepWithNextHangingRendererLayoutResult;
     private MarginsCollapseHandler marginsCollapseHandler;
+    private LayoutArea initialCurrentArea;
 
     public void addChild(IRenderer renderer) {
         // Some positioned renderers might have been fetched from non-positioned child and added to this renderer,
@@ -85,7 +86,7 @@ public abstract class RootRenderer extends AbstractRenderer {
 
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
         if (currentArea == null) {
-            updateCurrentArea(null);
+            updateCurrentAndInitialArea(null);
             if (marginsCollapsingEnabled) {
                 marginsCollapseHandler = new MarginsCollapseHandler(this, null);
             }
@@ -117,13 +118,13 @@ public abstract class RootRenderer extends AbstractRenderer {
                             currentPageNumber = nextStoredArea.getPageNumber();
                             nextStoredArea = null;
                         } else {
-                            updateCurrentArea(result);
+                            updateCurrentAndInitialArea(result);
                         }
                     }
                 } else if (result.getStatus() == LayoutResult.NOTHING) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
                         if (currentArea.getBBox().getHeight() < ((ImageRenderer) result.getOverflowRenderer()).imageHeight && !currentArea.isEmptyArea()) {
-                            updateCurrentArea(result);
+                            updateCurrentAndInitialArea(result);
                         }
                         ((ImageRenderer)result.getOverflowRenderer()).autoScale(currentArea);
                         result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
@@ -163,7 +164,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 currentPageNumber = nextStoredArea.getPageNumber();
                                 nextStoredArea = null;
                             } else {
-                                updateCurrentArea(result);
+                                updateCurrentAndInitialArea(result);
                             }
                         }
                     }
@@ -207,7 +208,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             Integer positionedPageNumber = renderer.<Integer>getProperty(Property.PAGE_NUMBER);
             if (positionedPageNumber == null)
                 positionedPageNumber = currentPageNumber;
-            renderer.setParent(this).layout(new LayoutContext(new LayoutArea((int) positionedPageNumber, currentArea.getBBox().clone())));
+            renderer.setParent(this).layout(new LayoutContext(new LayoutArea((int) positionedPageNumber, initialCurrentArea.getBBox().clone())));
 
             if (immediateFlush) {
                 flushSingleRenderer(renderer);
@@ -260,7 +261,7 @@ public abstract class RootRenderer extends AbstractRenderer {
 
     public LayoutArea getCurrentArea() {
         if (currentArea == null) {
-            updateCurrentArea(null);
+            updateCurrentAndInitialArea(null);
         }
         return currentArea;
     }
@@ -314,7 +315,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                     LayoutResult firstElementSplitLayoutResult = keepWithNextHangingRenderer.setParent(this).layout(new LayoutContext(firstElementSplitLayoutArea.clone()));
                     if (firstElementSplitLayoutResult.getStatus() == LayoutResult.PARTIAL) {
                         LayoutArea storedArea = currentArea;
-                        updateCurrentArea(firstElementSplitLayoutResult);
+                        updateCurrentAndInitialArea(firstElementSplitLayoutResult);
                         LayoutResult firstElementOverflowLayoutResult = firstElementSplitLayoutResult.getOverflowRenderer().layout(new LayoutContext(currentArea.clone()));
                         if (firstElementOverflowLayoutResult.getStatus() == LayoutResult.FULL) {
                             LayoutArea secondElementLayoutArea = currentArea.clone();
@@ -326,7 +327,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 currentArea = firstElementSplitLayoutArea;
                                 currentPageNumber = firstElementSplitLayoutArea.getPageNumber();
                                 updateCurrentAreaAndProcessRenderer(firstElementSplitLayoutResult.getSplitRenderer(), new ArrayList<IRenderer>(), firstElementSplitLayoutResult);
-                                updateCurrentArea(firstElementSplitLayoutResult);
+                                updateCurrentAndInitialArea(firstElementSplitLayoutResult);
                                 updateCurrentAreaAndProcessRenderer(firstElementSplitLayoutResult.getOverflowRenderer(), new ArrayList<IRenderer>(), firstElementOverflowLayoutResult);
                             }
                         }
@@ -339,7 +340,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             }
             if (!ableToProcessKeepWithNext && !currentArea.isEmptyArea()) {
                 LayoutArea storedArea = currentArea;
-                updateCurrentArea(null);
+                updateCurrentAndInitialArea(null);
                 LayoutResult firstElementLayoutResult = keepWithNextHangingRenderer.setParent(this).layout(new LayoutContext(currentArea.clone()));
                 if (firstElementLayoutResult.getStatus() == LayoutResult.FULL) {
                     LayoutArea secondElementLayoutArea = currentArea.clone();
@@ -364,4 +365,10 @@ public abstract class RootRenderer extends AbstractRenderer {
             keepWithNextHangingRendererLayoutResult = null;
         }
     }
+
+    private void updateCurrentAndInitialArea(LayoutResult overflowResult) {
+        updateCurrentArea(overflowResult);
+        initialCurrentArea = new LayoutArea(currentArea.getPageNumber(), currentArea.getBBox().clone());
+    }
+
 }
