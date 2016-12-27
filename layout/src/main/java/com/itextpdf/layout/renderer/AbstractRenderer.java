@@ -989,20 +989,27 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void overrideHeightProperties() {
-        if (hasProperty(Property.HEIGHT)) {
-            Float height = this.<Float>getProperty(Property.HEIGHT);
-            if (!hasProperty(Property.MAX_HEIGHT) || height < this.<Float>getProperty(Property.MAX_HEIGHT)) {
-                setProperty(Property.MAX_HEIGHT, height);
+        Float height = this.<Float>getProperty(Property.HEIGHT);
+        Float maxHeight = this.<Float>getProperty(Property.MAX_HEIGHT);
+        Float minHeight = this.<Float>getProperty(Property.MIN_HEIGHT);
+        if (null != height) {
+            if (null == maxHeight || height < maxHeight) {
+                maxHeight = height;
+            } else {
+                height = maxHeight;
             }
-            if (!hasProperty(Property.MIN_HEIGHT) || height > this.<Float>getProperty(Property.MIN_HEIGHT)) {
-                setProperty(Property.MIN_HEIGHT, height);
+            if (null == minHeight || height > minHeight) {
+                minHeight = height;
             }
         }
-        if (hasProperty(Property.MIN_HEIGHT)) {
-            Float minHeight = this.<Float>getProperty(Property.MIN_HEIGHT);
-            if (hasProperty(Property.MAX_HEIGHT) && minHeight > this.<Float>getProperty(Property.MAX_HEIGHT)) {
-                setProperty(Property.MAX_HEIGHT, minHeight);
-            }
+        if (null != maxHeight && null != minHeight && minHeight > maxHeight) {
+            maxHeight = minHeight;
+        }
+        if (null != maxHeight) {
+            setProperty(Property.MAX_HEIGHT, maxHeight);
+        }
+        if (null != minHeight) {
+            setProperty(Property.MIN_HEIGHT, minHeight);
         }
     }
 }
