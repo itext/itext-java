@@ -706,6 +706,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 if (properties.appendMode) {
                     if (structTreeRoot != null && structTreeRoot.getPdfObject().isModified()) {
                         tryFlushTagStructure();
+                    } else if (tagStructureContext != null) {
+                        tagStructureContext.removeAllConnectionsToTags();
                     }
                     if (catalog.isOCPropertiesMayHaveChanged() && catalog.getOCProperties(false).getPdfObject().isModified()) {
                         catalog.getOCProperties(false).flush();

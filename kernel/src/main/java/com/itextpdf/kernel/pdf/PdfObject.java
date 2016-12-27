@@ -151,6 +151,11 @@ public abstract class PdfObject implements Serializable {
         try {
             PdfDocument document = getIndirectReference().getDocument();
             if (document != null) {
+                if (document.isAppendMode() && !isModified()) {
+                    Logger logger = LoggerFactory.getLogger(PdfObject.class);
+                    logger.info(LogMessageConstant.PDF_OBJECT_FLUSHING_NOT_PERFORMED);
+                    return;
+                }
                 document.checkIsoConformance(this, IsoKey.PDF_OBJECT);
                 document.flushObject(this, canBeInObjStm && getType() != STREAM
                         && getType() != INDIRECT_REFERENCE && getIndirectReference().getGenNumber() == 0);
