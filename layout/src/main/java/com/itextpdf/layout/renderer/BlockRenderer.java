@@ -358,7 +358,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             LayoutArea area = new LayoutArea(occupiedArea.getPageNumber(), occupiedArea.getBBox().clone());
             applyBorderBox(area.getBBox(), false);
             for (IRenderer childPositionedRenderer : positionedRenderers) {
-                childPositionedRenderer.layout(new LayoutContext(area));
+                childPositionedRenderer.setParent(this).layout(new LayoutContext(area));
             }
             applyBorderBox(area.getBBox(), true);
         }
