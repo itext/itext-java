@@ -86,9 +86,7 @@ public abstract class PdfObjectWrapper<T extends PdfObject> implements Serializa
     }
 
     public PdfObjectWrapper<T> setModified() {
-        if (pdfObject != null) {
-            pdfObject.setModified();
-        }
+        pdfObject.setModified();
         return this;
     }
 

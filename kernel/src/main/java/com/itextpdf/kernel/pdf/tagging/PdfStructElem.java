@@ -191,8 +191,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public void setAttributes(PdfObject attributes) {
-        setModified();
-        getPdfObject().put(PdfName.A, attributes);
+        put(PdfName.A, attributes);
     }
 
     public PdfString getLang() {
@@ -200,8 +199,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public void setLang(PdfString lang) {
-        setModified();
-        getPdfObject().put(PdfName.Lang, lang);
+        put(PdfName.Lang, lang);
     }
 
     public PdfString getAlt() {
@@ -209,8 +207,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public void setAlt(PdfString alt) {
-        setModified();
-        getPdfObject().put(PdfName.Alt, alt);
+        put(PdfName.Alt, alt);
     }
 
     public PdfString getActualText() {
@@ -218,8 +215,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public void setActualText(PdfString actualText) {
-        setModified();
-        getPdfObject().put(PdfName.ActualText, actualText);
+        put(PdfName.ActualText, actualText);
     }
 
     public PdfString getE() {
@@ -227,8 +223,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public void setE(PdfString e) {
-        setModified();
-        getPdfObject().put(PdfName.E, e);
+        put(PdfName.E, e);
     }
 
     @Override
@@ -237,8 +232,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public void setRole(PdfName role) {
-        setModified();
-        getPdfObject().put(PdfName.S, role);
+        put(PdfName.S, role);
     }
 
     public PdfStructElem addKid(PdfStructElem kid) {
