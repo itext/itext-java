@@ -63,28 +63,26 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 public class ImageRenderer extends AbstractRenderer {
 
-    private Float height;
-    private Float width;
     protected Float fixedXPosition;
     protected Float fixedYPosition;
     protected float pivotY;
     protected float deltaX;
     protected float imageWidth;
     protected float imageHeight;
+    float[] matrix = new float[6];
+    private Float height;
+    private Float width;
     private float imageItselfScaledWidth;
     private float imageItselfScaledHeight;
     private Rectangle initialOccupiedAreaBBox;
     private float rotatedDeltaX;
     private float rotatedDeltaY;
-
-    float[] matrix = new float[6];
 
     /**
      * Creates an ImageRenderer from its corresponding layout object.
@@ -154,7 +152,7 @@ public class ImageRenderer extends AbstractRenderer {
         } else if (null != retrieveMaxHeight() && height > retrieveMaxHeight()) {
             width *= retrieveMaxHeight() / height;
             height = retrieveMaxHeight();
-        } else if (null != retrieveHeight() && height != retrieveHeight()) {
+        } else if (null != retrieveHeight() && !height.equals(retrieveHeight())) {
             width *= retrieveHeight() / height;
             height = retrieveHeight();
         }
@@ -338,7 +336,7 @@ public class ImageRenderer extends AbstractRenderer {
         applyBorderBox(area, false);
         // if rotation was applied, width would be equal to the width of rectangle bounding the rotated image
         float angleScaleCoef = imageWidth / (float) width;
-        if (width > angleScaleCoef*area.getWidth()) {
+        if (width > angleScaleCoef * area.getWidth()) {
             setProperty(Property.HEIGHT, area.getWidth() / width * imageHeight);
             setProperty(Property.WIDTH, UnitValue.createPointValue(angleScaleCoef * area.getWidth()));
         }
@@ -361,7 +359,7 @@ public class ImageRenderer extends AbstractRenderer {
         if (angle != 0) {
             AffineTransform t = AffineTransform.getRotateInstance(angle);
             Point p00 = t.transform(new Point(0, 0), new Point());
-            Point p01 = t.transform(new Point(0, (float)height), new Point());
+            Point p01 = t.transform(new Point(0, (float) height), new Point());
             Point p10 = t.transform(new Point((float) width, 0), new Point());
             Point p11 = t.transform(new Point((float) width, (float) height), new Point());
 
@@ -419,8 +417,9 @@ public class ImageRenderer extends AbstractRenderer {
             fixedYPosition += (float) t.getTranslateY();
         }
     }
+
     private void applyConcatMatrix(DrawContext drawContext, Float angle) {
-        AffineTransform rotationTransform = AffineTransform.getRotateInstance((float)angle);
+        AffineTransform rotationTransform = AffineTransform.getRotateInstance((float) angle);
         Rectangle rect = getBorderAreaBBox();
 
         List<Point> rotatedPoints = transformPoints(rectangleToPointsList(rect), rotationTransform);
@@ -446,7 +445,7 @@ public class ImageRenderer extends AbstractRenderer {
             if (angle < 0) {
                 atan = -atan;
             }
-            rotatedDeltaX = Math.abs((float)(gip * Math.cos(angle - atan) - leftBorderWidth));
+            rotatedDeltaX = Math.abs((float) (gip * Math.cos(angle - atan) - leftBorderWidth));
         } else {
             rotatedDeltaX = 0;
         }
@@ -460,7 +459,7 @@ public class ImageRenderer extends AbstractRenderer {
             if (angle < 0) {
                 atan = -atan;
             }
-            rotatedDeltaY = Math.abs((float)(gip * Math.cos(angle - atan)  - topBorderWidth));
+            rotatedDeltaY = Math.abs((float) (gip * Math.cos(angle - atan) - topBorderWidth));
         } else {
             rotatedDeltaY = 0;
         }
