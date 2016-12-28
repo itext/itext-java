@@ -349,14 +349,18 @@ public abstract class BlockRenderer extends AbstractRenderer {
             correctPositionedLayout(layoutBox);
         }
 
-        for (IRenderer childPositionedRenderer : positionedRenderers) {
-            childPositionedRenderer.layout(new LayoutContext(new LayoutArea(occupiedArea.getPageNumber(), occupiedArea.getBBox().clone())));
-        }
-
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         if (marginsCollapsingEnabled) {
             marginsCollapseHandler.endMarginsCollapse();
+        }
+        if (positionedRenderers.size() > 0) {
+            LayoutArea area = new LayoutArea(occupiedArea.getPageNumber(), occupiedArea.getBBox().clone());
+            applyBorderBox(area.getBBox(), false);
+            for (IRenderer childPositionedRenderer : positionedRenderers) {
+                childPositionedRenderer.layout(new LayoutContext(area));
+            }
+            applyBorderBox(area.getBBox(), true);
         }
         applyMargins(occupiedArea.getBBox(), true);
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {

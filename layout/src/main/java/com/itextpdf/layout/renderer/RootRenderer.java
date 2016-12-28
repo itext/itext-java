@@ -46,6 +46,7 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
@@ -208,7 +209,18 @@ public abstract class RootRenderer extends AbstractRenderer {
             Integer positionedPageNumber = renderer.<Integer>getProperty(Property.PAGE_NUMBER);
             if (positionedPageNumber == null)
                 positionedPageNumber = currentPageNumber;
-            renderer.setParent(this).layout(new LayoutContext(new LayoutArea((int) positionedPageNumber, initialCurrentArea.getBBox().clone())));
+
+            LayoutArea layoutArea;
+            // For position=absolute, if none of the top, bottom, left, right properties are provided,
+            // the content should be displayed in the flow of the current content, not overlapping it.
+            // The behavior is just if it would be statically positioned except it does not affect other elements
+            if (Integer.valueOf(LayoutPosition.ABSOLUTE).equals(renderer.getProperty(Property.POSITION)) &&
+                    !renderer.hasProperty(Property.TOP) && !renderer.hasProperty(Property.BOTTOM) && !renderer.hasProperty(Property.LEFT) && !renderer.hasProperty(Property.RIGHT)) {
+                layoutArea = new LayoutArea((int) positionedPageNumber, currentArea.getBBox().clone());
+            } else {
+                layoutArea = new LayoutArea((int) positionedPageNumber, initialCurrentArea.getBBox().clone());
+            }
+            renderer.setParent(this).layout(new LayoutContext(layoutArea));
 
             if (immediateFlush) {
                 flushSingleRenderer(renderer);
