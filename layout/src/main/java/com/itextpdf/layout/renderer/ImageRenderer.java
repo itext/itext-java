@@ -107,9 +107,10 @@ public class ImageRenderer extends AbstractRenderer {
 
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
-        PdfXObject xObject = ((Image) (getModelElement())).getXObject();
-        imageWidth = xObject.getWidth();
-        imageHeight = xObject.getHeight();
+        Image modelElement = (Image) (getModelElement());
+        PdfXObject xObject = modelElement.getXObject();
+        imageWidth = modelElement.getImageWidth();
+        imageHeight = modelElement.getImageHeight();
 
         if (width == null && height == null) {
             width = imageWidth;
