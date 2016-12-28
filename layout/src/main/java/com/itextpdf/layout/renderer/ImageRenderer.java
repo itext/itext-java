@@ -228,7 +228,7 @@ public class ImageRenderer extends AbstractRenderer {
 
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
-            applyAbsolutePositioningTranslation(false);
+            applyRelativePositioningTranslation(false);
         }
 
         if (fixedYPosition == null) {
@@ -287,7 +287,7 @@ public class ImageRenderer extends AbstractRenderer {
         }
 
         if (isRelativePosition) {
-            applyAbsolutePositioningTranslation(true);
+            applyRelativePositioningTranslation(true);
         }
         applyBorderBox(occupiedArea.getBBox(), getBorders(), true);
         applyMargins(occupiedArea.getBBox(), true);
@@ -309,7 +309,7 @@ public class ImageRenderer extends AbstractRenderer {
 
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
-            applyAbsolutePositioningTranslation(false);
+            applyRelativePositioningTranslation(false);
         }
         applyMargins(initialOccupiedAreaBBox, true);
         applyBorderBox(initialOccupiedAreaBBox, true);

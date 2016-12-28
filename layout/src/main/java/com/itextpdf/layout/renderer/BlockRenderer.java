@@ -85,7 +85,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         boolean isPositioned = isPositioned();
 
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
-        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null || isPositioned) {
+        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null || isFixedLayout()) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
 
@@ -102,9 +102,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
         applyBorderBox(parentBBox, borders, false);
 
         if (isPositioned) {
-            float x = (float) this.getPropertyAsFloat(Property.X);
-            float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
-            parentBBox.setX(relativeX + x);
+            if (isFixedLayout()) {
+                float x = (float) this.getPropertyAsFloat(Property.X);
+                float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
+                parentBBox.setX(relativeX + x);
+            } else if (isAbsolutePosition()) {
+                applyAbsolutePosition(parentBBox);
+            }
         }
 
         float[] paddings = getPaddings();
@@ -350,6 +354,14 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (marginsCollapsingEnabled) {
             marginsCollapseHandler.endMarginsCollapse();
         }
+        if (positionedRenderers.size() > 0) {
+            LayoutArea area = new LayoutArea(occupiedArea.getPageNumber(), occupiedArea.getBBox().clone());
+            applyBorderBox(area.getBBox(), false);
+            for (IRenderer childPositionedRenderer : positionedRenderers) {
+                childPositionedRenderer.layout(new LayoutContext(area));
+            }
+            applyBorderBox(area.getBBox(), true);
+        }
         applyMargins(occupiedArea.getBBox(), true);
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
@@ -423,7 +435,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
-            applyAbsolutePositioningTranslation(false);
+            applyRelativePositioningTranslation(false);
         }
 
         beginRotationIfApplied(drawContext.getCanvas());
@@ -431,11 +443,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
         drawBackground(drawContext);
         drawBorder(drawContext);
         drawChildren(drawContext);
+        drawPositionedChildren(drawContext);
 
         endRotationIfApplied(drawContext.getCanvas());
 
         if (isRelativePosition) {
-            applyAbsolutePositioningTranslation(true);
+            applyRelativePositioningTranslation(true);
         }
 
         if (isTagged) {
