@@ -63,9 +63,10 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class ImageRenderer extends AbstractRenderer {
 
@@ -96,13 +97,18 @@ public class ImageRenderer extends AbstractRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea().clone();
-        Rectangle layoutBox = area.getBBox();
+        Rectangle layoutBox = area.getBBox().clone();
         width = retrieveWidth(layoutBox.getWidth());
         height = retrieveHeight();
 
         applyMargins(layoutBox, false);
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
+
+        if (isAbsolutePosition()) {
+            applyAbsolutePosition(layoutBox);
+        }
+
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);

@@ -121,8 +121,8 @@ public class ParagraphRenderer extends BlockRenderer {
                 float x = (float) this.getPropertyAsFloat(Property.X);
                 float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
                 parentBBox.setX(relativeX + x);
-            } else {
-                // TODO
+            }  else if (isAbsolutePosition()) {
+                applyAbsolutePosition(parentBBox);
             }
         }
 
