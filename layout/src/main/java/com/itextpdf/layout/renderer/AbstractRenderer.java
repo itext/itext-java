@@ -788,7 +788,7 @@ public abstract class AbstractRenderer implements IRenderer {
         float initialHeight = rect.getHeight();
         float initialWidth = rect.getWidth();
 
-        Float minHeight = getPropertyAsFloat(Property.MIN_HEIGHT);
+        Float minHeight = this.getPropertyAsFloat(Property.MIN_HEIGHT);
 
         if (minHeight != null && rect.getHeight() < (float)minHeight) {
             float difference = (float)minHeight - rect.getHeight();
@@ -796,10 +796,10 @@ public abstract class AbstractRenderer implements IRenderer {
         }
 
         if (top != null) {
-            rect.setHeight(rect.getHeight() - top);
+            rect.setHeight(rect.getHeight() - (float)top);
         }
         if (left != null) {
-            rect.setX(rect.getX() + (float)left).setWidth(rect.getWidth() - left);
+            rect.setX(rect.getX() + (float)left).setWidth(rect.getWidth() - (float)left);
         }
 
         if (right != null) {
@@ -821,7 +821,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 rect.setHeight((float)minHeight + (float)bottom);
             } else {
                 float minHeightValue = rect.getHeight() - (float)bottom;
-                Float currentMaxHeight = getPropertyAsFloat(Property.MAX_HEIGHT);
+                Float currentMaxHeight = this.getPropertyAsFloat(Property.MAX_HEIGHT);
                 if (currentMaxHeight != null) {
                     minHeightValue = Math.min(minHeightValue, (float)currentMaxHeight);
                 }
