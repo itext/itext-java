@@ -116,6 +116,19 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     }
 
     @Override
+    public boolean containsGlyph(String text, int from) {
+        //TODO TrueType what if font is specific?
+        int ch = text.charAt(from);
+        if (fontEncoding.isFontSpecific()) {
+            return fontProgram.getGlyphByCode(ch) != null;
+        } else {
+            return fontEncoding.canEncode(ch)
+                    && getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(ch)) != null;
+        }
+    }
+
+
+    @Override
     public void flush() {
         //TODO make subtype class member and simplify this method
         if (newFont) {

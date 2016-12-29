@@ -127,7 +127,7 @@ public abstract class AbstractRenderer implements IRenderer {
         this.positionedRenderers = other.positionedRenderers;
         this.modelElement = other.modelElement;
         this.flushed = other.flushed;
-        this.occupiedArea = other.occupiedArea.clone();
+        this.occupiedArea = other.occupiedArea != null ? other.occupiedArea.clone() : null;
         this.parent = other.parent;
         this.properties.putAll(other.properties);
         this.isLastRendererForModelElement = other.isLastRendererForModelElement;

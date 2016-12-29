@@ -82,7 +82,9 @@ public final class Property {
     public static final int FONT = 20;
     public static final int FONT_COLOR = 21;
     public static final int FONT_KERNING = 22;
+    @Deprecated
     public static final int FONT_SCRIPT = 23;
+    public static final int FONT_PROVIDER = 91;
     public static final int FONT_SIZE = 24;
     public static final int FULL = 25;
     public static final int FORCED_PLACEMENT = 26;
@@ -163,7 +165,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 90;
+    private static final int MAX_INHERITED_PROPERTY_ID = 91;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -178,6 +180,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.FONT_COLOR] = true;
         INHERITED_PROPERTIES[Property.FONT_KERNING] = true;
         INHERITED_PROPERTIES[Property.FONT_SCRIPT] = true;
+        INHERITED_PROPERTIES[Property.FONT_PROVIDER] = true;
         INHERITED_PROPERTIES[Property.FONT_SIZE] = true;
         INHERITED_PROPERTIES[Property.FORCED_PLACEMENT] = true;
         INHERITED_PROPERTIES[Property.HYPHENATION] = true;

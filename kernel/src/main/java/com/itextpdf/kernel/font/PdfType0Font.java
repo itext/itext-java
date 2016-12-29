@@ -230,6 +230,36 @@ public class PdfType0Font extends PdfFont {
     }
 
     @Override
+    public boolean containsGlyph(String text, int from) {
+        if (cidFontType == CID_FONT_TYPE_0) {
+            if (cmapEncoding.isDirect()) {
+                return fontProgram.getGlyphByCode((int) text.charAt(from)) != null;
+            } else {
+                return containsUnicodeGlyph(text, from);
+            }
+        } else if (cidFontType == CID_FONT_TYPE_2) {
+            if (fontProgram.isFontSpecific()) {
+                byte[] b = PdfEncodings.convertToBytes(text.charAt(from), "symboltt");
+                return b.length > 0 && fontProgram.getGlyph(b[0] & 0xff) != null;
+            } else {
+                return containsUnicodeGlyph(text, from);
+            }
+        } else {
+            throw new PdfException("font.has.no.suitable.cmap");
+        }
+    }
+
+    private boolean containsUnicodeGlyph(String text, int from) {
+        int ch;
+        if (TextUtil.isSurrogatePair(text, from)) {
+            ch = TextUtil.convertToUtf32(text, from);
+        } else {
+            ch = text.charAt(from);
+        }
+        return getFontProgram().getGlyph(ch) != null;
+    }
+
+    @Override
     public byte[] convertToBytes(String text) {
         int len = text.length();
         char[] glyphs = new char[len];
@@ -340,10 +370,8 @@ public class PdfType0Font extends PdfFont {
                 }
             }
         } else if (cidFontType == CID_FONT_TYPE_2) {
-            TrueTypeFont ttf = (TrueTypeFont) fontProgram;
             int len = content.length();
-
-            if (ttf.isFontSpecific()) {
+            if (fontProgram.isFontSpecific()) {
                 byte[] b = PdfEncodings.convertToBytes(content, "symboltt");
                 len = b.length;
                 for (int k = 0; k < len; ++k) {
@@ -372,69 +400,106 @@ public class PdfType0Font extends PdfFont {
     }
 
     @Override
-    public int appendGlyphs(String content, int from, List<Glyph> to) {
-        int process = 0;
-        int len = content.length() - from;
+    public int appendGlyphs(String text, int from, int to, List<Glyph> glyphs) {
         if (cidFontType == CID_FONT_TYPE_0) {
             if (cmapEncoding.isDirect()) {
-                for (int k = 0; k < len; k++) {
-                    Glyph glyph = fontProgram.getGlyphByCode((int) content.charAt(k));
-                    if (isAppendableGlyph(glyph)) {
-                            to.add(glyph);
-                            process = k;
+                int processed = 0;
+                for (int k = from; k <= to; k++) {
+                    Glyph glyph = fontProgram.getGlyphByCode((int) text.charAt(k));
+                    if (glyph != null && (isAppendableGlyph(glyph))) {
+                        glyphs.add(glyph);
+                        processed++;
                     } else {
                         break;
                     }
+                }
+                return processed;
+            } else {
+                return appendUniGlyphs(text, from, to, glyphs);
+            }
+        } else if (cidFontType == CID_FONT_TYPE_2) {
+            if (fontProgram.isFontSpecific()) {
+                int processed = 0;
+                for (int k = from; k <= to; k++) {
+                    Glyph glyph = fontProgram.getGlyph(text.charAt(k) & 0xff);
+                    if (glyph != null && (isAppendableGlyph(glyph))) {
+                        glyphs.add(glyph);
+                        processed++;
+                    } else {
+                        break;
+                    }
+                }
+                return processed;
+            } else {
+                return appendUniGlyphs(text, from, to, glyphs);
+            }
+        } else {
+            throw new PdfException("font.has.no.suitable.cmap");
+        }
+    }
+
+    private int appendUniGlyphs(String text, int from, int to, List<Glyph> glyphs) {
+        int processed = 0;
+        for (int k = from; k <= to; ++k) {
+            int val;
+            int currentlyProcessed = processed;
+            if (TextUtil.isSurrogatePair(text, k)) {
+                val = TextUtil.convertToUtf32(text, k);
+                processed += 2;
+            } else {
+                val = text.charAt(k);
+                processed++;
+            }
+            Glyph glyph = getGlyph(val);
+            if (isAppendableGlyph(glyph)) {
+                glyphs.add(glyph);
+            } else {
+                processed = currentlyProcessed;
+                break;
+            }
+        }
+        return processed;
+    }
+
+    @Override
+    public int appendAnyGlyph(String text, int from, List<Glyph> glyphs) {
+        int process = 1;
+
+        if (cidFontType == CID_FONT_TYPE_0) {
+            if (cmapEncoding.isDirect()) {
+                Glyph glyph = fontProgram.getGlyphByCode((int) text.charAt(from));
+                if (glyph != null) {
+                    glyphs.add(glyph);
                 }
             } else {
-                for (int k = 0; k < len; ++k) {
-                    int ch;
-                    if (TextUtil.isSurrogatePair(content, k)) {
-                        ch = TextUtil.convertToUtf32(content, k);
-                        k++;
-                    } else {
-                        ch = content.charAt(k);
-                    }
-                    Glyph glyph = getGlyph(ch);
-                    if (isAppendableGlyph(glyph)) {
-                        to.add(glyph);
-                        process = k;
-                    } else {
-                        break;
-                    }
+                int ch;
+                if (TextUtil.isSurrogatePair(text, from)) {
+                    ch = TextUtil.convertToUtf32(text, from);
+                    process = 2;
+                } else {
+                    ch = text.charAt(from);
                 }
+                glyphs.add(getGlyph(ch));
             }
         } else if (cidFontType == CID_FONT_TYPE_2) {
             TrueTypeFont ttf = (TrueTypeFont) fontProgram;
             if (ttf.isFontSpecific()) {
-                byte[] b = PdfEncodings.convertToBytes(content, "symboltt");
-                len = b.length;
-                for (int k = 0; k < len; ++k) {
-                    Glyph glyph = fontProgram.getGlyph(b[k] & 0xff);
-                    if (isAppendableGlyph(glyph)) {
-                        to.add(glyph);
-                        process = k;
-                    } else {
-                        break;
+                byte[] b = PdfEncodings.convertToBytes(text, "symboltt");
+                if (b.length > 0) {
+                    Glyph glyph = fontProgram.getGlyph(b[0] & 0xff);
+                    if (glyph != null) {
+                        glyphs.add(glyph);
                     }
                 }
             } else {
-                for (int k = 0; k < len; ++k) {
-                    int val;
-                    if (TextUtil.isSurrogatePair(content, k)) {
-                        val = TextUtil.convertToUtf32(content, k);
-                        k++;
-                    } else {
-                        val = content.charAt(k);
-                    }
-                    Glyph glyph = getGlyph(val);
-                    if (isAppendableGlyph(glyph)) {
-                        to.add(glyph);
-                        process = k;
-                    } else {
-                        break;
-                    }
+                int ch;
+                if (TextUtil.isSurrogatePair(text, from)) {
+                    ch = TextUtil.convertToUtf32(text, from);
+                    process = 2;
+                } else {
+                    ch = text.charAt(from);
                 }
+                glyphs.add(getGlyph(ch));
             }
         } else {
             throw new PdfException("font.has.no.suitable.cmap");
@@ -442,14 +507,14 @@ public class PdfType0Font extends PdfFont {
         return process;
     }
 
+
     //TODO what if Glyphs contains only whitespaces and ignorable identifiers?
     private boolean isAppendableGlyph(Glyph glyph) {
         // If font is specific and glyph.getCode() = 0, unicode value will be also 0.
         // Character.isIdentifierIgnorable(0) gets true.
-        return  glyph != null &&
-                (glyph.getCode() > 0
+        return  glyph.getCode() > 0
                         || Character.isWhitespace((char) glyph.getUnicode())
-                        || Character.isIdentifierIgnorable(glyph.getUnicode()));
+                        || Character.isIdentifierIgnorable(glyph.getUnicode());
     }
 
     @Override

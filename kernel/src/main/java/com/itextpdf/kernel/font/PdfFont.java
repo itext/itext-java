@@ -144,7 +144,19 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public abstract GlyphLine createGlyphLine(String content);
 
-    public abstract int appendGlyphs(String content, int from, List<Glyph> to);
+    /**
+     *
+     * @param text
+     * @param from
+     * @param glyphs
+     * @param appendNotdefs
+     * @return number of processed chars from #text.
+     */
+    public abstract int appendGlyphs(String text, int from, int to, List<Glyph> glyphs);
+
+    public abstract int appendAnyGlyph(String text, int from, List<Glyph> glyphs);
+
+    public abstract boolean containsGlyph(String text, int from);
 
     /**
      * Converts the text into bytes to be placed in the document.
@@ -545,5 +557,12 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             markObjectAsIndirect(obj);
             return false;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "PdfFont{" +
+                "fontProgram=" + fontProgram +
+                '}';
     }
 }

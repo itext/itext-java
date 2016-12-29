@@ -291,4 +291,10 @@ public abstract class FontProgram implements Serializable {
             codeToGlyph.put(space.getCode(), space);
         }
     }
+
+    @Override
+    public String toString() {
+        String name = getFontNames().getFontName();
+        return name.length() > 0 ? name : super.toString();
+    }
 }

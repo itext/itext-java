@@ -86,6 +86,8 @@ public class LineRenderer extends AbstractRenderer {
 
         updateChildrenParent();
 
+        resolveChildrenFonts();
+
         int totalNumberOfTrimmedGlyphs = trimFirst();
 
         BaseDirection baseDirection = applyOtf();
@@ -666,6 +668,27 @@ public class LineRenderer extends AbstractRenderer {
             levels = unicodeIdsReorderingList.size() > 0 ? TypographyUtils.getBidiLevels(baseDirection, ArrayUtil.toArray(unicodeIdsReorderingList)) : null;
         }
     }
+
+    /**
+     * While resolving TextRenderer may split into several ones with different fonts.
+     */
+    private void resolveChildrenFonts() {
+        List<IRenderer> newChildRenderers = new ArrayList<>(childRenderers.size());
+        for (IRenderer child : childRenderers) {
+            if (child instanceof TextRenderer) {
+                newChildRenderers.addAll(((TextRenderer)child).resolveFonts());
+            } else {
+                newChildRenderers.add(child);
+            }
+        }
+
+        //TODO It might be one textRenderer with resolved font.
+        // this mean, that some TextRenderer has been split into several with different fonts.
+        //if (newChildRenderers.size() > childRenderers.size()) {
+            childRenderers = newChildRenderers;
+        //}
+    }
+
 
     static class RendererGlyph {
         public RendererGlyph(Glyph glyph, TextRenderer textRenderer) {
