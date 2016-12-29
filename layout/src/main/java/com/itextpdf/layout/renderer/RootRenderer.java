@@ -214,8 +214,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             // For position=absolute, if none of the top, bottom, left, right properties are provided,
             // the content should be displayed in the flow of the current content, not overlapping it.
             // The behavior is just if it would be statically positioned except it does not affect other elements
-            if (Integer.valueOf(LayoutPosition.ABSOLUTE).equals(renderer.<Integer>getProperty(Property.POSITION)) &&
-                    !renderer.hasProperty(Property.TOP) && !renderer.hasProperty(Property.BOTTOM) && !renderer.hasProperty(Property.LEFT) && !renderer.hasProperty(Property.RIGHT)) {
+            if (Integer.valueOf(LayoutPosition.ABSOLUTE).equals(renderer.<Integer>getProperty(Property.POSITION)) && AbstractRenderer.noAbsolutePositionInfo(renderer)) {
                 layoutArea = new LayoutArea((int) positionedPageNumber, currentArea.getBBox().clone());
             } else {
                 layoutArea = new LayoutArea((int) positionedPageNumber, initialCurrentArea.getBBox().clone());

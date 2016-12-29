@@ -154,8 +154,12 @@ public abstract class AbstractRenderer implements IRenderer {
                 root.addChild(renderer);
             }
         } else if (positioning == LayoutPosition.ABSOLUTE) {
+            // For position=absolute, if none of the top, bottom, left, right properties are provided,
+            // the content should be displayed in the flow of the current content, not overlapping it.
+            // The behavior is just if it would be statically positioned except it does not affect other elements
             AbstractRenderer positionedParent = this;
-            while (!positionedParent.isPositioned()) {
+            boolean noPositionInfo = AbstractRenderer.noAbsolutePositionInfo(renderer);
+            while (!positionedParent.isPositioned() && !noPositionInfo) {
                 IRenderer parent = positionedParent.parent;
                 if (parent instanceof AbstractRenderer) {
                     positionedParent = (AbstractRenderer) parent;
@@ -172,8 +176,19 @@ public abstract class AbstractRenderer implements IRenderer {
 
         // Fetch positioned renderers from non-positioned child because they might be stuck there because child's parent was null previously
         if (renderer instanceof AbstractRenderer && !((AbstractRenderer) renderer).isPositioned() && ((AbstractRenderer) renderer).positionedRenderers.size() > 0) {
-            positionedRenderers.addAll(((AbstractRenderer) renderer).positionedRenderers);
-            ((AbstractRenderer) renderer).positionedRenderers.clear();
+            // For position=absolute, if none of the top, bottom, left, right properties are provided,
+            // the content should be displayed in the flow of the current content, not overlapping it.
+            // The behavior is just if it would be statically positioned except it does not affect other elements
+            int pos = 0;
+            List<IRenderer> childPositionedRenderers = ((AbstractRenderer) renderer).positionedRenderers;
+            while (pos < childPositionedRenderers.size()) {
+                if (AbstractRenderer.noAbsolutePositionInfo(childPositionedRenderers.get(pos))) {
+                    pos++;
+                } else {
+                    positionedRenderers.add(childPositionedRenderers.get(pos));
+                    childPositionedRenderers.remove(pos);
+                }
+            }
         }
     }
 
@@ -1114,9 +1129,14 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    static boolean noAbsolutePositionInfo(IRenderer renderer) {
+        return !renderer.hasProperty(Property.TOP) && !renderer.hasProperty(Property.BOTTOM) && !renderer.hasProperty(Property.LEFT) && !renderer.hasProperty(Property.RIGHT);
+    }
+
     void drawPositionedChildren(DrawContext drawContext) {
         for (IRenderer positionedChild : positionedRenderers) {
             positionedChild.draw(drawContext);
         }
     }
+
 }
