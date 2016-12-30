@@ -1,5 +1,6 @@
 package com.itextpdf.layout.font;
 
+import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.kernel.font.PdfFont;
 
 import java.util.ArrayList;
@@ -20,8 +21,19 @@ public class FontProvider {
         fonts.add(font);
     }
 
-    public FontSelector getSelector(String fontFamily) {
-        return new NamedFontSelector(getAllFonts(), fontFamily);
+    protected FontSelector getSelector(String fontFamily) {
+        return getSelector(fontFamily, FontConstants.UNDEFINED);
+    }
+
+    /**
+     *
+     * @param fontFamily
+     * @param style Shall be {@link FontConstants#UNDEFINED}, {@link FontConstants#NORMAL}, {@link FontConstants#ITALIC},
+     * {@link FontConstants#BOLD}, or {@link FontConstants#BOLDITALIC}
+     * @return an instance of {@link FontSelector}.
+     */
+    protected FontSelector getSelector(String fontFamily, int style) {
+        return new NamedFontSelector(getAllFonts(), fontFamily, style);
     }
 
     public FontSelectorStrategy getStrategy(String text, String fontFamily) {

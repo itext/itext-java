@@ -82,6 +82,7 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
     }
 
     private static boolean isSignificantUnicodeScript(Character.UnicodeScript unicodeScript) {
+        // Character.UnicodeScript.UNKNOWN will be handled as significant unicode script
         return unicodeScript != Character.UnicodeScript.COMMON && unicodeScript != Character.UnicodeScript.INHERITED;
     }
 
