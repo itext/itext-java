@@ -14,7 +14,7 @@ public class NamedFontSelector extends FontSelector {
 
     public NamedFontSelector(List<PdfFont> allFonts, String fontFamily, int style) {
         this.fonts = allFonts;
-        Collections.sort(allFonts, getComparator(fontFamily, style));
+        Collections.sort(allFonts, getComparator(fontFamily != null ? fontFamily : "", style));
     }
 
     @Override

@@ -4,25 +4,45 @@ import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.kernel.font.PdfFont;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 // initial big collection of fonts, entry point for all font selector logic.
 // FontProvider depends from PdfDocument, due to PdfFont.
-// TODO it might works with FontPrograms.
 public class FontProvider {
 
     private List<PdfFont> fonts = new ArrayList<>();
+    protected Map<FontSelectorKey, FontSelector> fontSelectorCache;
 
-    public List<PdfFont> getAllFonts() {
+    public FontProvider(List<PdfFont> pdfFonts) {
+        this.fonts = pdfFonts;
+        this.fontSelectorCache = new HashMap<>();
+    }
+
+    public FontProvider() {
+        this(new ArrayList<PdfFont>());
+    }
+
+    public List<PdfFont> getFonts() {
         return fonts;
     }
 
+    /**
+     * Note, this operation will reset internal FontSelector cache.
+     * @param font
+     */
     public void addFont(PdfFont font) {
         fonts.add(font);
+        fontSelectorCache.clear();
     }
 
-    protected FontSelector getSelector(String fontFamily) {
-        return getSelector(fontFamily, FontConstants.UNDEFINED);
+    public FontSelectorStrategy getStrategy(String text, String fontFamily, int style) {
+        return new ComplexFontSelectorStrategy(text, getSelector(fontFamily, style));
+    }
+
+    public FontSelectorStrategy getStrategy(String text, String fontFamily) {
+        return getStrategy(text, fontFamily, FontConstants.UNDEFINED);
     }
 
     /**
@@ -33,10 +53,40 @@ public class FontProvider {
      * @return an instance of {@link FontSelector}.
      */
     protected FontSelector getSelector(String fontFamily, int style) {
-        return new NamedFontSelector(getAllFonts(), fontFamily, style);
+        FontSelectorKey key = new FontSelectorKey(fontFamily, style);
+        if (fontSelectorCache.containsKey(key)) {
+            return fontSelectorCache.get(key);
+        } else {
+            FontSelector fontSelector = new NamedFontSelector(fonts, fontFamily, style);
+            fontSelectorCache.put(key, fontSelector);
+            return fontSelector;
+        }
     }
 
-    public FontSelectorStrategy getStrategy(String text, String fontFamily) {
-        return new ComplexFontSelectorStrategy(text, getSelector(fontFamily));
+    private static class FontSelectorKey {
+        String fontFamily;
+        int style;
+
+        public FontSelectorKey(String fontFamily, int style) {
+            this.fontFamily = fontFamily;
+            this.style = style;
+        }
+
+        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            FontSelectorKey that = (FontSelectorKey) o;
+
+            return style == that.style
+                    && (fontFamily != null ? fontFamily.equals(that.fontFamily) : that.fontFamily == null);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = fontFamily != null ? fontFamily.hashCode() : 0;
+            result = 31 * result + style;
+            return result;
+        }
     }
 }
