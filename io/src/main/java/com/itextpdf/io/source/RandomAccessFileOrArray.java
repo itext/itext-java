@@ -65,7 +65,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
     /**
      * The source that backs this object
      */
-    private final IRandomAccessSource byteSource;
+    private IRandomAccessSource byteSource;
 
     /**
      * The physical location in the underlying byte source.
@@ -98,6 +98,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * @return the new view
      */
     public RandomAccessFileOrArray createView() {
+        ensureByteSourceIsThreadSafe();
         return new RandomAccessFileOrArray(new IndependentRandomAccessSource(byteSource));
     }
 
@@ -108,6 +109,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * @return the byte source view.
      */
     public IRandomAccessSource createSourceView() {
+        ensureByteSourceIsThreadSafe();
         return new IndependentRandomAccessSource(byteSource);
     }
 
@@ -599,5 +601,11 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
         byte[] buf = new byte[length];
         readFully(buf);
         return new String(buf, encoding);
+    }
+
+    private void ensureByteSourceIsThreadSafe() {
+        if (!(byteSource instanceof ThreadSafeRandomAccessSource)) {
+            byteSource = new ThreadSafeRandomAccessSource(byteSource);
+        }
     }
 }
