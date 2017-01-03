@@ -453,9 +453,9 @@ class OpenTypeParser implements Serializable {
         table_location = tables.get("hmtx");
         if (table_location == null) {
             if (fileName != null) {
-                throw new IOException("table.1.does.not.exist.in.2").setMessageParams("hmtx", fileName);
+                throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("hmtx", fileName);
             } else {
-                throw new IOException("table.1.does.not.exist").setMessageParams("hmtx");
+                throw new IOException(IOException.TableDoesNotExist).setMessageParams("hmtx");
             }
         }
         glyphWidthsByIndex = new int[Math.max(readMaxGlyphId(), numberOfHMetrics)];
@@ -522,9 +522,9 @@ class OpenTypeParser implements Serializable {
         tableLocation = tables.get("head");
         if (tableLocation == null) {
             if (fileName != null) {
-                throw new IOException("table.1.does.not.exist.in.2").setMessageParams("head", fileName);
+                throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("head", fileName);
             } else {
-                throw new IOException("table.1.does.not.exist").setMessageParams("head");
+                throw new IOException(IOException.TableDoesNotExist).setMessageParams("head");
             }
         }
         raf.seek(tableLocation[0] + FontConstants.HEAD_LOCA_FORMAT_OFFSET);
@@ -552,9 +552,9 @@ class OpenTypeParser implements Serializable {
         tableLocation = tables.get("glyf");
         if (tableLocation == null) {
             if (fileName != null) {
-                throw new IOException("table.1.does.not.exist.in.2").setMessageParams("glyf", fileName);
+                throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("glyf", fileName);
             } else {
-                throw new IOException("table.1.does.not.exist").setMessageParams("glyf");
+                throw new IOException(IOException.TableDoesNotExist).setMessageParams("glyf");
             }
         }
         int tableGlyphOffset = tableLocation[0];
@@ -595,9 +595,9 @@ class OpenTypeParser implements Serializable {
         table_location = tables.get("name");
         if (table_location == null) {
             if (fileName != null) {
-                throw new IOException("table.1.does.not.exist.in.2").setMessageParams("name", fileName);
+                throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("name", fileName);
             } else {
-                throw new IOException("table.1.does.not.exist").setMessageParams("name");
+                throw new IOException(IOException.TableDoesNotExist).setMessageParams("name");
             }
         }
         allNameEntries = new LinkedHashMap<>();
@@ -646,9 +646,9 @@ class OpenTypeParser implements Serializable {
         table_location = tables.get("hhea");
         if (table_location == null) {
             if (fileName != null) {
-                throw new IOException("table.1.does.not.exist.in.2").setMessageParams("hhea", fileName);
+                throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("hhea", fileName);
             } else {
-                throw new IOException("table.1.does.not.exist").setMessageParams("hhea");
+                throw new IOException(IOException.TableDoesNotExist).setMessageParams("hhea");
             }
         }
         raf.seek(table_location[0] + 4);
@@ -677,9 +677,9 @@ class OpenTypeParser implements Serializable {
         table_location = tables.get("head");
         if (table_location == null) {
             if (fileName != null) {
-                throw new IOException("table.1.does.not.exist.in.2").setMessageParams("head", fileName);
+                throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("head", fileName);
             } else {
-                throw new IOException("table.1.does.not.exist").setMessageParams("head");
+                throw new IOException(IOException.TableDoesNotExist).setMessageParams("head");
             }
         }
         raf.seek(table_location[0] + 16);
@@ -706,9 +706,9 @@ class OpenTypeParser implements Serializable {
         table_location = tables.get("OS/2");
         if (table_location == null) {
             if (fileName != null) {
-                throw new IOException("table.1.does.not.exist.in.2").setMessageParams("os/2", fileName);
+                throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("os/2", fileName);
             } else {
-                throw new IOException("table.1.does.not.exist").setMessageParams("os/2");
+                throw new IOException(IOException.TableDoesNotExist).setMessageParams("os/2");
             }
         }
         os_2 = new WindowsMetrics();
@@ -790,9 +790,9 @@ class OpenTypeParser implements Serializable {
         table_location = tables.get("cmap");
         if (table_location == null) {
             if (fileName != null) {
-                throw new IOException("table.1.does.not.exist.in.2").setMessageParams("cmap", fileName);
+                throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("cmap", fileName);
             } else {
-                throw new IOException("table.1.does.not.exist").setMessageParams("cmap");
+                throw new IOException(IOException.TableDoesNotExist).setMessageParams("cmap");
             }
         }
         raf.seek(table_location[0]);

@@ -82,12 +82,22 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
     private boolean isBack = false;
 
     /**
+     * Creates a RandomAccessFileOrArray that wraps the specified byte source.  The byte source will be closed when
+     * this RandomAccessFileOrArray is closed.
+     *
+     * @param byteSource the byte source to wrap
+     */
+    public RandomAccessFileOrArray(IRandomAccessSource byteSource) {
+        this.byteSource = byteSource;
+    }
+
+    /**
      * Creates an independent view of this object (with it's own file pointer and push back queue).  Closing the new object will not close this object.
      * Closing this object will have adverse effect on the view.
      *
      * @return the new view
      */
-    public RandomAccessFileOrArray createView(){
+    public RandomAccessFileOrArray createView() {
         return new RandomAccessFileOrArray(new IndependentRandomAccessSource(byteSource));
     }
 
@@ -99,16 +109,6 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      */
     public IRandomAccessSource createSourceView() {
         return new IndependentRandomAccessSource(byteSource);
-    }
-
-    /**
-     * Creates a RandomAccessFileOrArray that wraps the specified byte source.  The byte source will be closed when
-     * this RandomAccessFileOrArray is closed.
-     *
-     * @param byteSource the byte source to wrap
-     */
-    public RandomAccessFileOrArray(IRandomAccessSource byteSource){
-        this.byteSource = byteSource;
     }
 
     /**
@@ -128,7 +128,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * @throws java.io.IOException in case of any reading error.
      */
     public int read() throws java.io.IOException {
-        if(isBack) {
+        if (isBack) {
             isBack = false;
             return back & 0xff;
         }
@@ -139,7 +139,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
     /**
      * Reads the specified amount of bytes to the buffer applying the offset.
      *
-     * @param b destination buffer
+     * @param b   destination buffer
      * @param off offset at which to start storing characters
      * @param len maximum number of characters to read
      * @return the number of bytes actually read or -1 in case of EOF
@@ -155,7 +155,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
             --len;
             count++;
         }
-        if (len > 0){
+        if (len > 0) {
             int byteSourceCount = byteSource.get(byteSourcePosition, b, off, len);
             if (byteSourceCount > 0) {
                 count += byteSourceCount;
@@ -215,8 +215,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
             isBack = false;
             if (n == 1) {
                 return 1;
-            }
-            else {
+            } else {
                 --n;
                 adj = 1;
             }
@@ -240,7 +239,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * {@inheritDoc}
      */
     public int skipBytes(int n) throws java.io.IOException {
-        return (int)skip(n);
+        return (int) skip(n);
     }
 
     /**
@@ -279,7 +278,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * Gets the current position of the source considering the pushed byte to the source.
      *
      * @return the index of last read byte in the source in
-     *         or the index of last read byte in source - 1 in case byte was pushed.
+     * or the index of last read byte in source - 1 in case byte was pushed.
      * @throws java.io.IOException in case of any I/O error.
      */
     public long getPosition() throws java.io.IOException {
@@ -303,7 +302,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
         int ch = this.read();
         if (ch < 0)
             throw new EOFException();
-        return (byte)(ch);
+        return (byte) (ch);
     }
 
     /**
@@ -324,7 +323,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
         int ch2 = this.read();
         if ((ch1 | ch2) < 0)
             throw new EOFException();
-        return (short)((ch1 << 8) + ch2);
+        return (short) ((ch1 << 8) + ch2);
     }
 
     /**
@@ -342,18 +341,18 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * This method blocks until the two bytes are read, the end of the
      * stream is detected, or an exception is thrown.
      *
-     * @return     the next two bytes of this stream, interpreted as a signed
-     *             16-bit number.
-     * @exception  EOFException  if this stream reaches the end before reading
-     *               two bytes.
-     * @exception  java.io.IOException   if an I/O error occurs.
+     * @return the next two bytes of this stream, interpreted as a signed
+     * 16-bit number.
+     * @throws EOFException        if this stream reaches the end before reading
+     *                             two bytes.
+     * @throws java.io.IOException if an I/O error occurs.
      */
     public final short readShortLE() throws java.io.IOException {
         int ch1 = this.read();
         int ch2 = this.read();
         if ((ch1 | ch2) < 0)
             throw new EOFException();
-        return (short)((ch2 << 8) + ch1);
+        return (short) ((ch2 << 8) + ch1);
     }
 
     /**
@@ -381,11 +380,11 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * This method blocks until the two bytes are read, the end of the
      * stream is detected, or an exception is thrown.
      *
-     * @return     the next two bytes of this stream, interpreted as an
-     *             unsigned 16-bit integer.
-     * @exception  EOFException  if this stream reaches the end before reading
-     *               two bytes.
-     * @exception  java.io.IOException   if an I/O error occurs.
+     * @return the next two bytes of this stream, interpreted as an
+     * unsigned 16-bit integer.
+     * @throws EOFException        if this stream reaches the end before reading
+     *                             two bytes.
+     * @throws java.io.IOException if an I/O error occurs.
      */
     public final int readUnsignedShortLE() throws java.io.IOException {
         int ch1 = this.read();
@@ -403,7 +402,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
         int ch2 = this.read();
         if ((ch1 | ch2) < 0)
             throw new EOFException();
-        return (char)((ch1 << 8) + ch2);
+        return (char) ((ch1 << 8) + ch2);
     }
 
     /**
@@ -420,17 +419,17 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * This method blocks until the two bytes are read, the end of the
      * stream is detected, or an exception is thrown.
      *
-     * @return     the next two bytes of this stream as a Unicode character.
-     * @exception  EOFException  if this stream reaches the end before reading
-     *               two bytes.
-     * @exception  java.io.IOException   if an I/O error occurs.
+     * @return the next two bytes of this stream as a Unicode character.
+     * @throws EOFException        if this stream reaches the end before reading
+     *                             two bytes.
+     * @throws java.io.IOException if an I/O error occurs.
      */
     public final char readCharLE() throws java.io.IOException {
         int ch1 = this.read();
         int ch2 = this.read();
         if ((ch1 | ch2) < 0)
             throw new EOFException();
-        return (char)((ch2 << 8) + ch2);
+        return (char) ((ch2 << 8) + ch2);
     }
 
     /**
@@ -460,10 +459,10 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * This method blocks until the four bytes are read, the end of the
      * stream is detected, or an exception is thrown.
      *
-     * @return     the next four bytes of this stream, interpreted as an {@code int}.
-     * @exception  EOFException  if this stream reaches the end before reading
-     *               four bytes.
-     * @exception  java.io.IOException   if an I/O error occurs.
+     * @return the next four bytes of this stream, interpreted as an {@code int}.
+     * @throws EOFException        if this stream reaches the end before reading
+     *                             four bytes.
+     * @throws java.io.IOException if an I/O error occurs.
      */
     public final int readIntLE() throws java.io.IOException {
         int ch1 = this.read();
@@ -488,10 +487,10 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * This method blocks until the four bytes are read, the end of the
      * stream is detected, or an exception is thrown.
      *
-     * @return     the next four bytes of this stream, interpreted as a {@code long}.
-     * @exception  EOFException  if this stream reaches the end before reading
-     *               four bytes.
-     * @exception  java.io.IOException   if an I/O error occurs.
+     * @return the next four bytes of this stream, interpreted as a {@code long}.
+     * @throws EOFException        if this stream reaches the end before reading
+     *                             four bytes.
+     * @throws java.io.IOException if an I/O error occurs.
      */
     public final long readUnsignedInt() throws java.io.IOException {
         long ch1 = this.read();
@@ -517,13 +516,13 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * {@inheritDoc}
      */
     public long readLong() throws java.io.IOException {
-        return ((long)(readInt()) << 32) + (readInt() & 0xFFFFFFFFL);
+        return ((long) (readInt()) << 32) + (readInt() & 0xFFFFFFFFL);
     }
 
     public final long readLongLE() throws java.io.IOException {
         int i1 = readIntLE();
         int i2 = readIntLE();
-        return ((long)i2 << 32) + (i1 & 0xFFFFFFFFL);
+        return ((long) i2 << 32) + (i1 & 0xFFFFFFFFL);
     }
 
     /**
@@ -570,7 +569,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
                     }
                     break;
                 default:
-                    input.append((char)c);
+                    input.append((char) c);
                     break;
             }
         }
@@ -591,7 +590,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
     /**
      * Reads a {@code String} from the font file as bytes using the given encoding.
      *
-     * @param length the length of bytes to read
+     * @param length   the length of bytes to read
      * @param encoding the given encoding
      * @return the {@code String} read
      * @throws java.io.IOException the font file could not be read

@@ -45,7 +45,6 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,19 +52,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Subsets a True Type font by removing the unneeded glyphs from the font.
  *
- * @author  Paulo Soares
+ * @author Paulo Soares
  */
 class TrueTypeFontSubset {
 
     static final String[] tableNamesSimple = {"cvt ", "fpgm", "glyf", "head", "hhea", "hmtx", "loca", "maxp", "prep"};
     static final String[] tableNamesCmap = {"cmap", "OS/2"};
     static final String[] tableNamesExtra = {"cmap", "OS/2", "name", "post"};
-    static final int[] entrySelectors = {0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,4,4,4,4,4};
+    static final int[] entrySelectors = {0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4};
     static final int TABLE_CHECKSUM = 0;
     static final int TABLE_OFFSET = 1;
     static final int TABLE_LENGTH = 2;
@@ -85,9 +83,13 @@ class TrueTypeFontSubset {
      * and position 2 is the length of the table.
      */
     protected Map<String, int[]> tableDirectory;
-    /** The file in use. */
+    /**
+     * The file in use.
+     */
     protected RandomAccessFileOrArray rf;
-    /** The file name. */
+    /**
+     * The file name.
+     */
     protected String fileName;
     protected boolean includeCmap;
     protected boolean includeExtras;
@@ -107,10 +109,11 @@ class TrueTypeFontSubset {
 
     /**
      * Creates a new TrueTypeFontSubSet
+     *
      * @param directoryOffset The offset from the start of the file to the table directory
-     * @param fileName the file name of the font
-     * @param glyphsUsed the glyphs used
-     * @param includeCmap {@code true} if the table cmap is to be included in the generated font
+     * @param fileName        the file name of the font
+     * @param glyphsUsed      the glyphs used
+     * @param includeCmap     {@code true} if the table cmap is to be included in the generated font
      */
     TrueTypeFontSubset(String fileName, RandomAccessFileOrArray rf, Set<Integer> glyphsUsed, int directoryOffset, boolean includeCmap, boolean includeExtras) {
         this.fileName = fileName;
@@ -124,9 +127,10 @@ class TrueTypeFontSubset {
 
     /**
      * Does the actual work of subsetting the font.
+     *
+     * @return the subset font
      * @throws java.io.IOException on error
      * @on error
-     * @return the subset font
      */
     byte[] process() throws java.io.IOException {
         try {
@@ -140,7 +144,8 @@ class TrueTypeFontSubset {
         } finally {
             try {
                 rf.close();
-            } catch (Exception ignore) { }
+            } catch (Exception ignore) {
+            }
         }
     }
 
@@ -250,13 +255,13 @@ class TrueTypeFontSubset {
     protected void readLoca() throws java.io.IOException {
         int[] tableLocation = tableDirectory.get("head");
         if (tableLocation == null) {
-            throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("head",fileName);
+            throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("head", fileName);
         }
         rf.seek(tableLocation[TABLE_OFFSET] + HEAD_LOCA_FORMAT_OFFSET);
         locaShortTable = rf.readUnsignedShort() == 0;
         tableLocation = tableDirectory.get("loca");
         if (tableLocation == null) {
-            throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("loca",fileName);
+            throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("loca", fileName);
         }
         rf.seek(tableLocation[TABLE_OFFSET]);
         if (locaShortTable) {
@@ -265,8 +270,7 @@ class TrueTypeFontSubset {
             for (int k = 0; k < entries; ++k) {
                 locaTable[k] = rf.readUnsignedShort() * 2;
             }
-        }
-        else {
+        } else {
             int entries = tableLocation[TABLE_LENGTH] / 4;
             locaTable = new int[entries];
             for (int k = 0; k < entries; ++k) {
@@ -327,7 +331,7 @@ class TrueTypeFontSubset {
     protected void flatGlyphs() throws java.io.IOException {
         int[] tableLocation = tableDirectory.get("glyf");
         if (tableLocation == null)
-            throw new IOException("table.1.does.not.exist.in.2").setMessageParams("glyf", fileName);
+            throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("glyf", fileName);
         int glyph0 = 0;
         if (!glyphsUsed.contains(glyph0)) {
             glyphsUsed.add(glyph0);
@@ -352,7 +356,7 @@ class TrueTypeFontSubset {
             return;
         }
         rf.skipBytes(8);
-        for(;;) {
+        for (; ; ) {
             int flags = rf.readUnsignedShort();
             int cGlyph = rf.readUnsignedShort();
             if (!glyphsUsed.contains(cGlyph)) {
@@ -382,6 +386,7 @@ class TrueTypeFontSubset {
 
     /**
      * Reads a {@code String} from the font file as bytes using the Cp1252 encoding.
+     *
      * @param length the length of bytes to read
      * @return the {@code String} read
      * @throws java.io.IOException the font file could not be read
@@ -397,15 +402,15 @@ class TrueTypeFontSubset {
     }
 
     protected void writeFontShort(int n) {
-        outFont[fontPtr++] = (byte)(n >> 8);
-        outFont[fontPtr++] = (byte)n;
+        outFont[fontPtr++] = (byte) (n >> 8);
+        outFont[fontPtr++] = (byte) n;
     }
 
     protected void writeFontInt(int n) {
-        outFont[fontPtr++] = (byte)(n >> 24);
-        outFont[fontPtr++] = (byte)(n >> 16);
-        outFont[fontPtr++] = (byte)(n >> 8);
-        outFont[fontPtr++] = (byte)n;
+        outFont[fontPtr++] = (byte) (n >> 24);
+        outFont[fontPtr++] = (byte) (n >> 16);
+        outFont[fontPtr++] = (byte) (n >> 8);
+        outFont[fontPtr++] = (byte) n;
     }
 
     protected void writeFontString(String s) {
