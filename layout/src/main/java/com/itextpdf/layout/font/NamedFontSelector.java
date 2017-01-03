@@ -10,7 +10,7 @@ import java.util.List;
 
 public class NamedFontSelector extends FontSelector {
 
-    List<PdfFont> fonts;
+    private List<PdfFont> fonts;
 
     public NamedFontSelector(List<PdfFont> allFonts, String fontFamily, int style) {
         this.fonts = allFonts;
@@ -67,12 +67,8 @@ public class NamedFontSelector extends FontSelector {
 
             if (res != 0) return res;
 
-            //TODO lowercase full name to fontprogram
-            String fullFontName1 = fp1.getFontNames().getFullName()[0][3].toLowerCase();
-            String fullFontName2 = fp2.getFontNames().getFullName()[0][3].toLowerCase();
-
-            res = (fullFontName2.contains(fontFamily) ? 1 : 0)
-                    - (fullFontName1.contains(fontFamily) ? 1 : 0);
+            res = (fp2.getFontNames().getFullNameLowerCase().contains(fontFamily) ? 1 : 0)
+                    - (fp1.getFontNames().getFullNameLowerCase().contains(fontFamily) ? 1 : 0);
             return res;
         }
     }
