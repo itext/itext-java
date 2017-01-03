@@ -119,7 +119,6 @@ public class IntHashtable implements Cloneable, Serializable {
      *             than zero, or if the load factor is nonpositive.
      */
     public IntHashtable(int initialCapacity, float loadFactor) {
-        super();
         if (initialCapacity < 0) {
             throw new IllegalArgumentException(MessageFormat.format("Illegal Capacity: {0}", initialCapacity));
         }
