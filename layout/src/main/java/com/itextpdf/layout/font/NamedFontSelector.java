@@ -4,6 +4,7 @@ import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.kernel.font.PdfFont;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -13,7 +14,7 @@ public class NamedFontSelector extends FontSelector {
     private List<PdfFont> fonts;
 
     public NamedFontSelector(List<PdfFont> allFonts, String fontFamily, int style) {
-        this.fonts = allFonts;
+        this.fonts = new ArrayList<>(allFonts);
         Collections.sort(allFonts, getComparator(fontFamily != null ? fontFamily : "", style));
     }
 

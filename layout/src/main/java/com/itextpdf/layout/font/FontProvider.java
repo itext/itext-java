@@ -24,10 +24,6 @@ public class FontProvider {
         this(new ArrayList<PdfFont>());
     }
 
-    public List<PdfFont> getFonts() {
-        return fonts;
-    }
-
     /**
      * Note, this operation will reset internal FontSelector cache.
      * @param font

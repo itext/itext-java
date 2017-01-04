@@ -147,7 +147,7 @@ public class FontNames implements Serializable {
 
     public String getFullNameLowerCase() {
         if (fullNameLowerCase == null) {
-            fullNameLowerCase = fullName[0][3];
+            fullNameLowerCase = fullName[0][3].toLowerCase();
         }
         return fullNameLowerCase;
     }

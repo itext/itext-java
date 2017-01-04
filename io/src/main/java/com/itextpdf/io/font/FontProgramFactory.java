@@ -203,23 +203,21 @@ public final class FontProgramFactory {
                 fontBuilt = new Type1Font(name, null, null, null);
             } else if (isCidFont) {
                 fontBuilt = new CidFont(name, FontCache.getCompatibleCmaps(baseName));
-            } else {
-                if (baseName.toLowerCase().endsWith(".ttf") || baseName.toLowerCase().endsWith(".otf")) {
-                    if (fontProgram != null) {
-                        fontBuilt = new TrueTypeFont(fontProgram);
-                    } else {
-                        fontBuilt = new TrueTypeFont(name);
-                    }
+            } else if (baseName.toLowerCase().endsWith(".ttf") || baseName.toLowerCase().endsWith(".otf")) {
+                if (fontProgram != null) {
+                    fontBuilt = new TrueTypeFont(fontProgram);
                 } else {
-                    int ttcSplit = baseName.toLowerCase().indexOf(".ttc,");
-                    if (ttcSplit > 0) {
-                        try {
-                            String ttcName = baseName.substring(0, ttcSplit + 4);//count(.ttc) = 4
-                            int ttcIndex = Integer.parseInt(baseName.substring(ttcSplit + 5));//count(.ttc,) = 5)
-                            fontBuilt = new TrueTypeFont(ttcName, ttcIndex);
-                        } catch (NumberFormatException nfe) {
-                            throw new IOException(nfe.getMessage(), nfe);
-                        }
+                    fontBuilt = new TrueTypeFont(name);
+                }
+            } else {
+                int ttcSplit = baseName.toLowerCase().indexOf(".ttc,");
+                if (ttcSplit > 0) {
+                    try {
+                        String ttcName = baseName.substring(0, ttcSplit + 4);//count(.ttc) = 4
+                        int ttcIndex = Integer.parseInt(baseName.substring(ttcSplit + 5));//count(.ttc,) = 5)
+                        fontBuilt = new TrueTypeFont(ttcName, ttcIndex);
+                    } catch (NumberFormatException nfe) {
+                        throw new IOException(nfe.getMessage(), nfe);
                     }
                 }
             }
