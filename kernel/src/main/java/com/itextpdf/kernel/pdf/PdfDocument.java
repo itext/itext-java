@@ -740,9 +740,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         crypto = reader.decrypt.getPdfObject();
                     }
                 } else {
-                    if (structTreeRoot != null) {
-                        tryFlushTagStructure();
-                    }
+
                     if (catalog.isOCPropertiesMayHaveChanged()) {
                         catalog.getPdfObject().put(PdfName.OCProperties, catalog.getOCProperties(false).getPdfObject());
                         catalog.getOCProperties(false).flush();
@@ -762,6 +760,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
                     for (int pageNum = 1; pageNum <= getNumberOfPages(); pageNum++) {
                         getPage(pageNum).flush();
+                    }
+                    if (structTreeRoot != null) {
+                        tryFlushTagStructure();
                     }
                     catalog.getPdfObject().flush(false);
                     info.flush();

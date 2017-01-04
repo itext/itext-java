@@ -1018,7 +1018,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     private void tryFlushPageTags() {
         try {
-            getDocument().getTagStructureContext().flushPageTags(this);
+            if(!getDocument().isClosing) {
+                getDocument().getTagStructureContext().flushPageTags(this);
+            }
             getDocument().getStructTreeRoot().createParentTreeEntryForPage(this);
         } catch (Exception ex) {
             throw new PdfException(PdfException.TagStructureFlushingFailedItMightBeCorrupted, ex);
