@@ -1,38 +1,37 @@
 package com.itextpdf.layout.font;
 
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.io.font.FontProgram;
-import com.itextpdf.kernel.font.PdfFont;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 public class NamedFontSelector extends FontSelector {
 
-    private List<PdfFont> fonts;
+    private List<FontProgramInfo> fonts;
 
-    public NamedFontSelector(List<PdfFont> allFonts, String fontFamily, int style) {
+    public NamedFontSelector(Set<FontProgramInfo> allFonts, String fontFamily, int style) {
         this.fonts = new ArrayList<>(allFonts);
-        Collections.sort(allFonts, getComparator(fontFamily != null ? fontFamily : "", style));
+        Collections.sort(this.fonts, getComparator(fontFamily != null ? fontFamily : "", style));
     }
 
     @Override
-    public PdfFont bestMatch() {
+    public FontProgramInfo bestMatch() {
         return fonts.get(0);
     }
 
     @Override
-    public Iterable<PdfFont> getFonts() {
+    public Iterable<FontProgramInfo> getFonts() {
         return fonts;
     }
 
-    protected Comparator<PdfFont> getComparator(String fontFamily, int style) {
+    protected Comparator<FontProgramInfo> getComparator(String fontFamily, int style) {
         return new PdfFontComparator(fontFamily, style);
     }
 
-    private static class PdfFontComparator implements Comparator<PdfFont> {
+    private static class PdfFontComparator implements Comparator<FontProgramInfo> {
         String fontFamily;
         int style;
 
@@ -51,25 +50,22 @@ public class NamedFontSelector extends FontSelector {
         }
 
         @Override
-        public int compare(PdfFont o1, PdfFont o2) {
-            FontProgram fp1 = o1.getFontProgram();
-            FontProgram fp2 = o2.getFontProgram();
-
+        public int compare(FontProgramInfo o1, FontProgramInfo o2) {
             int res = 0;
             if ((style & FontConstants.BOLD) == 0) {
-                res = (fp2.getFontNames().isBold() ? 1 : 0)
-                        - (fp1.getFontNames().isBold() ? 1 : 0);
+                res = (o2.getNames().isBold() ? 1 : 0)
+                        - (o1.getNames().isBold() ? 1 : 0);
             }
 
             if ((style & FontConstants.ITALIC) == 0) {
-                res += (fp2.getFontNames().isItalic() ? 1 : 0)
-                        - (fp1.getFontNames().isItalic() ? 1 : 0);
+                res += (o2.getNames().isItalic() ? 1 : 0)
+                        - (o1.getNames().isItalic() ? 1 : 0);
             }
 
             if (res != 0) return res;
 
-            res = (fp2.getFontNames().getFullNameLowerCase().contains(fontFamily) ? 1 : 0)
-                    - (fp1.getFontNames().getFullNameLowerCase().contains(fontFamily) ? 1 : 0);
+            res = (o2.getNames().getFullNameLowerCase().contains(fontFamily) ? 1 : 0)
+                    - (o1.getNames().getFullNameLowerCase().contains(fontFamily) ? 1 : 0);
             return res;
         }
     }

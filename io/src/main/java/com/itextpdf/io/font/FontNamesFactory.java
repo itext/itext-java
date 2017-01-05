@@ -7,22 +7,22 @@ public final class FontNamesFactory {
     @SuppressWarnings("FieldCanBeLocal")
     private static boolean FETCH_CACHED_FIRST = true;
 
-    public static FontNames fetchFontNames(String name, byte[] fontProgram) {
-        String baseName = FontProgram.getBaseName(name);
+    public static FontNames fetchFontNames(String fontName, byte[] fontProgram) {
+        String baseName = FontProgram.getBaseName(fontName);
 
         //yes, we trying to find built-in standard font with original name, not baseName.
-        boolean isBuiltinFonts14 = FontConstants.BUILTIN_FONTS_14.contains(name);
+        boolean isBuiltinFonts14 = FontConstants.BUILTIN_FONTS_14.contains(fontName);
         boolean isCidFont = !isBuiltinFonts14 && FontCache.isPredefinedCidFont(baseName);
 
         FontNames fontNames = null;
         if (FETCH_CACHED_FIRST) {
-            fontNames = fetchCachedFontNames(name, fontProgram);
+            fontNames = fetchCachedFontNames(fontName, fontProgram);
             if (fontNames != null) {
                 return fontNames;
             }
         }
 
-        if (name == null) {
+        if (fontName == null) {
             if (fontProgram != null) {
                 try {
                     fontNames = fetchTrueTypeNames(null, fontProgram);
@@ -37,12 +37,12 @@ public final class FontNamesFactory {
             }
         } else {
             try {
-                if (isBuiltinFonts14 || name.toLowerCase().endsWith(".afm") || name.toLowerCase().endsWith(".pfm")) {
-                    fontNames = fetchType1Names(name, null);
+                if (isBuiltinFonts14 || fontName.toLowerCase().endsWith(".afm") || fontName.toLowerCase().endsWith(".pfm")) {
+                    fontNames = fetchType1Names(fontName, null);
                 } else if (isCidFont) {
-                    fontNames = fetchCidFontNames(name);
+                    fontNames = fetchCidFontNames(fontName);
                 } else if (baseName.toLowerCase().endsWith(".ttf") || baseName.toLowerCase().endsWith(".otf")) {
-                    fontNames = fetchTrueTypeNames(name, fontProgram);
+                    fontNames = fetchTrueTypeNames(fontName, fontProgram);
                 } else {
                     fontNames = fetchTTCNames(baseName);
                 }
@@ -53,10 +53,10 @@ public final class FontNamesFactory {
         return fontNames;
     }
 
-    private static FontNames fetchCachedFontNames(String name, byte[] fontProgram)  {
+    private static FontNames fetchCachedFontNames(String fontName, byte[] fontProgram)  {
         String fontKey;
-        if (name != null) {
-            fontKey = name;
+        if (fontName != null) {
+            fontKey = fontName;
         } else {
             fontKey = Integer.toString(ArrayUtil.hashCode(fontProgram));
         }
@@ -84,10 +84,10 @@ public final class FontNamesFactory {
         }
     }
 
-    private static FontNames fetchTrueTypeNames(String name, byte[] fontProgram) throws java.io.IOException {
+    private static FontNames fetchTrueTypeNames(String fontName, byte[] fontProgram) throws java.io.IOException {
         OpenTypeParser parser;
-        if (name != null) {
-            parser = new OpenTypeParser(name);
+        if (fontName != null) {
+            parser = new OpenTypeParser(fontName);
         } else {
             parser = new OpenTypeParser(fontProgram);
         }
@@ -101,13 +101,13 @@ public final class FontNamesFactory {
         return fontParser.getFontNames();
     }
 
-    private static FontNames fetchType1Names(String name, byte[] afm) throws java.io.IOException {
-        Type1Font fp = new Type1Font(name, null, afm, null);
+    private static FontNames fetchType1Names(String fontName, byte[] afm) throws java.io.IOException {
+        Type1Font fp = new Type1Font(fontName, null, afm, null);
         return fp.getFontNames();
     }
 
-    private static FontNames fetchCidFontNames(String name) {
-        CidFont font = new CidFont(name, null);
+    private static FontNames fetchCidFontNames(String fontName) {
+        CidFont font = new CidFont(fontName, null);
         return font.getFontNames();
     }
 }

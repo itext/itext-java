@@ -7,33 +7,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
-    PdfFont font;
-    FontSelector selector;
+    private PdfFont font;
+    private FontSelector selector;
 
-    public ComplexFontSelectorStrategy(String text, FontSelector selector) {
-        super(text);
+    public ComplexFontSelectorStrategy(String text, FontSelector selector, FontProvider provider) {
+        super(text, provider);
         this.font = null;
         this.selector = selector;
     }
 
     @Override
-    public PdfFont getFont() {
+    public PdfFont getCurrentFont() {
         return font;
     }
 
     @Override
     public List<Glyph> nextGlyphs() {
-        List<Glyph> glyphs = new ArrayList<>();
-        font = null;
-
-        int nextUnignorable = nextUnignorableIndex();
-        for (PdfFont f : selector.getFonts()) {
-            if (f.containsGlyph(text, nextUnignorable)) {
-                font = f;
+        int nextUnignorable = nextSignificantIndex();
+        for (FontProgramInfo f : selector.getFonts()) {
+            font = f.getPdfFont(provider);
+            if (font.containsGlyph(text, nextUnignorable)) {
                 break;
+            } else {
+                font = null;
             }
         }
-
+        List<Glyph> glyphs = new ArrayList<>();
         if (font != null) {
             Character.UnicodeScript unicodeScript = nextSignificantUnicodeScript(nextUnignorable);
             int to = nextUnignorable;
@@ -49,7 +48,7 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
 
             index += font.appendGlyphs(text, index, to, glyphs);
         } else {
-            font = selector.bestMatch();
+            font = selector.bestMatch().getPdfFont(provider);
             if (index != nextUnignorable) {
                 index += font.appendGlyphs(text, index, nextUnignorable - 1, glyphs);
             }
@@ -58,7 +57,7 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
         return glyphs;
     }
 
-    protected int nextUnignorableIndex() {
+    private int nextSignificantIndex() {
         int nextValidChar = index;
         for (; nextValidChar < text.length(); nextValidChar++) {
             if (!Character.isIdentifierIgnorable(text.charAt(nextValidChar))) {
@@ -68,7 +67,7 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
         return nextValidChar;
     }
 
-    protected Character.UnicodeScript nextSignificantUnicodeScript(int from) {
+    private Character.UnicodeScript nextSignificantUnicodeScript(int from) {
         for (int i = from; i < text.length(); i++) {
             int codePoint = text.codePointAt(i);
             Character.UnicodeScript unicodeScript = Character.UnicodeScript.of(codePoint);

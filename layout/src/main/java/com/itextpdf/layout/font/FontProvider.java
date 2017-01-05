@@ -1,40 +1,75 @@
 package com.itextpdf.layout.font;
 
 import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.FontProgramFactory;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 // initial big collection of fonts, entry point for all font selector logic.
 // FontProvider depends from PdfDocument, due to PdfFont.
 public class FontProvider {
 
-    private List<PdfFont> fonts = new ArrayList<>();
-    protected Map<FontSelectorKey, FontSelector> fontSelectorCache;
+    private FontSet fontSet;
+    private Map<FontProgramInfo, PdfFont> pdfFonts = new HashMap<>();
 
-    public FontProvider(List<PdfFont> pdfFonts) {
-        this.fonts = pdfFonts;
-        this.fontSelectorCache = new HashMap<>();
+    public FontProvider(FontSet fontSet) {
+        this.fontSet = fontSet;
     }
 
     public FontProvider() {
-        this(new ArrayList<PdfFont>());
+        this.fontSet = new FontSet();
     }
 
-    /**
-     * Note, this operation will reset internal FontSelector cache.
-     * @param font
-     */
-    public void addFont(PdfFont font) {
-        fonts.add(font);
-        fontSelectorCache.clear();
+    public boolean addFont(FontProgram fontProgram, String encoding) {
+        return fontSet.addFont(fontProgram, encoding);
+    }
+
+    public boolean addFont(String fontProgram, String encoding) {
+        return fontSet.addFont(fontProgram, encoding);
+    }
+
+    public boolean addFont(byte[] fontProgram, String encoding) {
+        return fontSet.addFont(fontProgram, encoding);
+    }
+
+    public void addFont(String fontProgram) {
+        addFont(fontProgram, null);
+    }
+
+    public void addFont(FontProgram fontProgram) {
+        addFont(fontProgram, getDefaultEncoding(fontProgram));
+    }
+
+    public void addFont(byte[] fontProgram) {
+        addFont(fontProgram, null);
+    }
+
+    public String getDefaultEncoding(FontProgram fontProgram) {
+        if (fontProgram instanceof Type1Font) {
+            return PdfEncodings.WINANSI;
+        } else {
+            return PdfEncodings.IDENTITY_H;
+        }
+    }
+
+    public boolean getDefaultCacheFlag() {
+        return true;
+    }
+
+    public boolean getDefaultEmbeddingFlag() {
+        return true;
     }
 
     public FontSelectorStrategy getStrategy(String text, String fontFamily, int style) {
-        return new ComplexFontSelectorStrategy(text, getSelector(fontFamily, style));
+        return new ComplexFontSelectorStrategy(text, getSelector(fontFamily, style), this);
     }
 
     public FontSelectorStrategy getStrategy(String text, String fontFamily) {
@@ -48,41 +83,40 @@ public class FontProvider {
      * {@link FontConstants#BOLD}, or {@link FontConstants#BOLDITALIC}
      * @return an instance of {@link FontSelector}.
      */
-    protected FontSelector getSelector(String fontFamily, int style) {
+    public final FontSelector getSelector(String fontFamily, int style) {
         FontSelectorKey key = new FontSelectorKey(fontFamily, style);
-        if (fontSelectorCache.containsKey(key)) {
-            return fontSelectorCache.get(key);
+        if (fontSet.getFontSelectorCache().containsKey(key)) {
+            return fontSet.getFontSelectorCache().get(key);
         } else {
-            FontSelector fontSelector = new NamedFontSelector(fonts, fontFamily, style);
-            fontSelectorCache.put(key, fontSelector);
+            FontSelector fontSelector = createFontSelector(fontSet.getFonts(), fontFamily, style);
+            fontSet.getFontSelectorCache().put(key, fontSelector);
             return fontSelector;
         }
     }
 
-    private static class FontSelectorKey {
-        String fontFamily;
-        int style;
+    protected FontSelector createFontSelector(Set<FontProgramInfo> fonts, String fontFamily, int style) {
+        return new NamedFontSelector(fonts, fontFamily, style);
+    }
 
-        public FontSelectorKey(String fontFamily, int style) {
-            this.fontFamily = fontFamily;
-            this.style = style;
-        }
-
-        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            FontSelectorKey that = (FontSelectorKey) o;
-
-            return style == that.style
-                    && (fontFamily != null ? fontFamily.equals(that.fontFamily) : that.fontFamily == null);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = fontFamily != null ? fontFamily.hashCode() : 0;
-            result = 31 * result + style;
-            return result;
+    protected PdfFont createPdfFont(FontProgramInfo fontInfo) throws IOException {
+        if (pdfFonts.containsKey(fontInfo)) {
+            return pdfFonts.get(fontInfo);
+        } else {
+            FontProgram fontProgram;
+            if (fontSet.getFontPrograms().containsKey(fontInfo)) {
+                fontProgram = fontSet.getFontPrograms().get(fontInfo);
+            } else if (fontInfo.getFontProgram() != null) {
+                fontProgram = FontProgramFactory.createFont(fontInfo.getFontProgram(), getDefaultCacheFlag());
+            } else {
+                fontProgram = FontProgramFactory.createFont(fontInfo.getFontName(), getDefaultCacheFlag());
+            }
+            String encoding = fontInfo.getEncoding();
+            if (encoding == null || encoding.length() == 0) {
+                encoding = getDefaultEncoding(fontProgram);
+            }
+            PdfFont pdfFont = PdfFontFactory.createFont(fontProgram, encoding, getDefaultEmbeddingFlag());
+            pdfFonts.put(fontInfo, pdfFont);
+            return pdfFont;
         }
     }
 }
