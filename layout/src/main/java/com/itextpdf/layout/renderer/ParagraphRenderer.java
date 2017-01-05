@@ -266,7 +266,7 @@ public class ParagraphRenderer extends BlockRenderer {
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
                         if (marginsCollapsingEnabled) {
-                            marginsCollapseHandler.endMarginsCollapse();
+                            marginsCollapseHandler.endMarginsCollapse(layoutBox);
                             split[0].setProperty(Property.MARGIN_TOP, this.getPropertyAsFloat(Property.MARGIN_TOP));
                             split[0].setProperty(Property.MARGIN_BOTTOM, this.getPropertyAsFloat(Property.MARGIN_BOTTOM));
 
@@ -345,7 +345,7 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         if (marginsCollapsingEnabled) {
-            marginsCollapseHandler.endMarginsCollapse();
+            marginsCollapseHandler.endMarginsCollapse(layoutBox);
         }
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);

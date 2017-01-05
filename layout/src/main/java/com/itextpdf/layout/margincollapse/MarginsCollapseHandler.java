@@ -169,7 +169,7 @@ public class MarginsCollapseHandler {
         ignoreModelBottomMargin(renderer);
     }
 
-    public void endMarginsCollapse() {
+    public void endMarginsCollapse(Rectangle layoutBox) {
         if (prevChildMarginInfo != null) {
             updatePrevKidIfSelfCollapsedAndTopAdjoinedToParent(prevChildMarginInfo.getCollapseAfter());
         }
@@ -177,7 +177,7 @@ public class MarginsCollapseHandler {
         boolean couldBeSelfCollapsing = MarginsCollapseHandler.marginsCouldBeSelfCollapsing(renderer);
         if (firstChildMarginAdjoinedToParent(renderer)) {
             if (collapseInfo.isSelfCollapsing() && !couldBeSelfCollapsing) {
-                addMarginToSelfCollapsedKid();
+                addNotYetAppliedTopMargin(layoutBox);
             }
         }
         collapseInfo.setSelfCollapsing(collapseInfo.isSelfCollapsing() && couldBeSelfCollapsing);
@@ -350,11 +350,14 @@ public class MarginsCollapseHandler {
         }
     }
 
-    private void addMarginToSelfCollapsedKid() {
+    private void addNotYetAppliedTopMargin(Rectangle layoutBox) {
         // normally, space for margins is added when content is met, however if all kids were self-collapsing (i.e. 
-        // had no content) we need to add it when no more adjoining margins will be met
+        // had no content) or if there were no kids, we need to add it when no more adjoining margins will be met
         float indentTop = collapseInfo.getCollapseBefore().getCollapsedMarginsSize();
         renderer.getOccupiedArea().getBBox().moveDown(indentTop);
+
+        // even though all kids have been already drawn, we still need to adjust layout box in case we are in the block of fixed size  
+        applyTopMargin(layoutBox, indentTop);
     }
 
     private IRenderer getRendererChild(int index) {

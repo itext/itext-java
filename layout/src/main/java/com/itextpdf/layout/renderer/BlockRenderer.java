@@ -220,7 +220,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             applyPaddings(occupiedArea.getBBox(), paddings, true);
                             applyBorderBox(occupiedArea.getBBox(), borders, true);
                             if (marginsCollapsingEnabled) {
-                                marginsCollapseHandler.endMarginsCollapse();
+                                marginsCollapseHandler.endMarginsCollapse(layoutBox);
                                 splitRenderer.setProperty(Property.MARGIN_TOP, this.getPropertyAsFloat(Property.MARGIN_TOP));
                                 splitRenderer.setProperty(Property.MARGIN_BOTTOM, this.getPropertyAsFloat(Property.MARGIN_BOTTOM));
                             }
@@ -281,7 +281,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
                         if (marginsCollapsingEnabled) {
-                            marginsCollapseHandler.endMarginsCollapse();
+                            marginsCollapseHandler.endMarginsCollapse(layoutBox);
                             splitRenderer.setProperty(Property.MARGIN_TOP, this.getPropertyAsFloat(Property.MARGIN_TOP));
                             splitRenderer.setProperty(Property.MARGIN_BOTTOM, this.getPropertyAsFloat(Property.MARGIN_BOTTOM));
                         }
@@ -352,7 +352,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         if (marginsCollapsingEnabled) {
-            marginsCollapseHandler.endMarginsCollapse();
+            marginsCollapseHandler.endMarginsCollapse(layoutBox);
         }
         if (positionedRenderers.size() > 0) {
             LayoutArea area = new LayoutArea(occupiedArea.getPageNumber(), occupiedArea.getBBox().clone());

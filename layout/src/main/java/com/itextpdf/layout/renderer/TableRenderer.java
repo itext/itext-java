@@ -691,7 +691,7 @@ public class TableRenderer extends AbstractRenderer {
 
             if (split) {
                 if (marginsCollapsingEnabled) {
-                    marginsCollapseHandler.endMarginsCollapse();
+                    marginsCollapseHandler.endMarginsCollapse(layoutBox);
                 }
                 TableRenderer[] splitResult = split(row, hasContent);
                 int[] rowspans = new int[currentRow.length];
@@ -931,7 +931,7 @@ public class TableRenderer extends AbstractRenderer {
 
 
         if (marginsCollapsingEnabled) {
-            marginsCollapseHandler.endMarginsCollapse();
+            marginsCollapseHandler.endMarginsCollapse(layoutBox);
         }
 
         applyMargins(occupiedArea.getBBox(), true);
