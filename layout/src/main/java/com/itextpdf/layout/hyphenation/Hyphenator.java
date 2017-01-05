@@ -41,6 +41,8 @@ public final class Hyphenator {
 
     private static final char SOFT_HYPHEN = '\u00ad';
 
+    private static final Object staticLock = new Object();
+
     /**
      * Logging instance.
      */
@@ -90,11 +92,13 @@ public final class Hyphenator {
      *
      * @param directory directory to register
      */
-    public static synchronized void registerAdditionalHyphenationFileDirectory(String directory) {
-        if (additionalHyphenationFileDirectories == null) {
-            additionalHyphenationFileDirectories = new ArrayList<>();
+    public static void registerAdditionalHyphenationFileDirectory(String directory) {
+        synchronized (staticLock) {
+            if (additionalHyphenationFileDirectories == null) {
+                additionalHyphenationFileDirectories = new ArrayList<>();
+            }
+            additionalHyphenationFileDirectories.add(directory);
         }
-        additionalHyphenationFileDirectories.add(directory);
     }
 
     /**
@@ -102,9 +106,11 @@ public final class Hyphenator {
      *
      * @return the default (static) hyphenation tree cache
      */
-    public static synchronized HyphenationTreeCache getHyphenationTreeCache() {
-        if (hTreeCache == null) {
-            hTreeCache = new HyphenationTreeCache();
+    public static HyphenationTreeCache getHyphenationTreeCache() {
+        synchronized (staticLock) {
+            if (hTreeCache == null) {
+                hTreeCache = new HyphenationTreeCache();
+            }
         }
         return hTreeCache;
     }
@@ -112,8 +118,10 @@ public final class Hyphenator {
     /**
      * Clears the default hyphenation tree cache. This method can be used if the underlying data files are changed at runtime.
      */
-    public static synchronized void clearHyphenationTreeCache() {
-        hTreeCache = new HyphenationTreeCache();
+    public static void clearHyphenationTreeCache() {
+        synchronized (staticLock) {
+            hTreeCache = new HyphenationTreeCache();
+        }
     }
 
     /**
