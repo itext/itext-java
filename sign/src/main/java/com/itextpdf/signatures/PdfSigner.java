@@ -942,7 +942,7 @@ public class PdfSigner {
                 os.writeLong(range[k]).write(' ');
             }
             os.write(']');
-            System.arraycopy(bos.toByteArray(), 0, bout, (int) byteRangePosition, bos.size());
+            System.arraycopy(bos.toByteArray(), 0, bout, (int) byteRangePosition, (int)bos.size());
         } else {
             try {
                 raf = FileUtil.getRandomAccessFile(tempFile);
@@ -1011,7 +1011,7 @@ public class PdfSigner {
                 if (bous.size() > lit.getBytesCount())
                     throw new IllegalArgumentException("The key is too big");
                 if (tempFile == null) {
-                    System.arraycopy(bous.toByteArray(), 0, bout, (int) lit.getPosition(), bous.size());
+                    System.arraycopy(bous.toByteArray(), 0, bout, (int) lit.getPosition(), (int)bous.size());
                 } else {
                     raf.seek(lit.getPosition());
                     raf.write(bous.toByteArray(), 0, (int) bous.size());
