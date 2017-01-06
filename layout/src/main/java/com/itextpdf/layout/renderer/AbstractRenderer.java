@@ -58,6 +58,7 @@ import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.border.Border;
@@ -68,6 +69,7 @@ import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BackgroundImage;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -336,6 +338,16 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
+     * Returns a property with a certain key, as a {@link TransparentColor}.
+     *
+     * @param property an {@link Property enum value}
+     * @return a {@link TransparentColor}
+     */
+    public TransparentColor getPropertyAsTransparentColor(int property) {
+        return this.<TransparentColor>getProperty(property);
+    }
+
+    /**
      * Returns a property with a certain key, as a floating point value.
      *
      * @param property an {@link Property enum value}
@@ -448,8 +460,11 @@ public abstract class AbstractRenderer implements IRenderer {
                     logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
                     return;
                 }
-                drawContext.getCanvas().saveState().setFillColor(background.getColor()).
-                        rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
+                TransparentColor backgroundColor = new TransparentColor(background.getColor(), background.getOpacity());
+                drawContext.getCanvas().saveState().setFillColor(backgroundColor.getColor());
+                backgroundColor.applyFillTransparency(drawContext.getCanvas());
+                drawContext.getCanvas()
+                        .rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
                                 backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
                                 backgroundArea.getHeight() + background.getExtraTop() + background.getExtraBottom()).
                         fill().restoreState();
@@ -532,24 +547,16 @@ public abstract class AbstractRenderer implements IRenderer {
             }
 
             if (borders[0] != null) {
-                canvas.saveState();
                 borders[0].draw(canvas, x1, y2, x2, y2, Border.Side.TOP, leftWidth, rightWidth);
-                canvas.restoreState();
             }
             if (borders[1] != null) {
-                canvas.saveState();
                 borders[1].draw(canvas, x2, y2, x2, y1, Border.Side.RIGHT, topWidth, bottomWidth);
-                canvas.restoreState();
             }
             if (borders[2] != null) {
-                canvas.saveState();
                 borders[2].draw(canvas, x2, y1, x1, y1, Border.Side.BOTTOM, rightWidth, leftWidth);
-                canvas.restoreState();
             }
             if (borders[3] != null) {
-                canvas.saveState();
                 borders[3].draw(canvas, x1, y1, x1, y2, Border.Side.LEFT, bottomWidth, topWidth);
-                canvas.restoreState();
             }
 
             if (isTagged) {

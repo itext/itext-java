@@ -77,6 +77,17 @@ public class DottedBorder extends Border {
     }
 
     /**
+     * Creates a DottedBorder with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity width of the border
+     */
+    public DottedBorder(Color color, float width, float opacity) {
+        super(color, width, opacity);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -121,11 +132,16 @@ public class DottedBorder extends Border {
                 break;
         }
 
-        canvas.setLineWidth(width);
-        canvas.setStrokeColor(color);
-        canvas.setLineDash(width, adjustedGap, width + adjustedGap/2)
+        canvas
+                .saveState()
+                .setLineWidth(width)
+                .setStrokeColor(transparentColor.getColor());
+        transparentColor.applyStrokeTransparency(canvas);
+        canvas
+                .setLineDash(width, adjustedGap, width + adjustedGap/2)
                 .moveTo(x1, y1).lineTo(x2, y2)
-                .stroke();
+                .stroke()
+                .restoreState();
 
     }
 
@@ -144,15 +160,17 @@ public class DottedBorder extends Border {
             adjustedGap -= width;
         }
 
-        canvas.
-                saveState().
-                setLineWidth(width).
-                setStrokeColor(color).
-                setLineDash(width, adjustedGap, width + adjustedGap / 2).
-                moveTo(x1, y1).
-                lineTo(x2, y2).
-                stroke().
-                restoreState();
+        canvas
+                .saveState()
+                .setLineWidth(width)
+                .setStrokeColor(transparentColor.getColor());
+        transparentColor.applyStrokeTransparency(canvas);
+        canvas
+                .setLineDash(width, adjustedGap, width + adjustedGap / 2)
+                .moveTo(x1, y1)
+                .lineTo(x2, y2)
+                .stroke()
+                .restoreState();
     }
 
     /**

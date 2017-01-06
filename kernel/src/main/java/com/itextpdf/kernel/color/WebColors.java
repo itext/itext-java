@@ -63,6 +63,8 @@ public class WebColors extends HashMap<String, int[]> {
      */
     public static final WebColors NAMES = new WebColors();
 
+    private static final double RGB_MAX_VAL = 255.;
+    
     static {
         NAMES.put("aliceblue", new int[]{0xf0, 0xf8, 0xff, 0xff});
         NAMES.put("antiquewhite", new int[]{0xfa, 0xeb, 0xd7, 0xff});
@@ -213,10 +215,20 @@ public class WebColors extends HashMap<String, int[]> {
      * @param name a name such as black, violet, cornflowerblue or #RGB or
      *             #RRGGBB or RGB or RRGGBB or rgb(R,G,B)
      * @return the corresponding DeviceRgb object. Never returns null.
-     * @throws IllegalArgumentException if the String isn't a know representation of a color.
      */
     public static DeviceRgb getRGBColor(String name) {
-        int[] color = {0, 0, 0, 255};
+        float[] rgbaColor = getRGBAColor(name);
+        return new DeviceRgb(rgbaColor[0], rgbaColor[1], rgbaColor[2]);
+    }
+
+    /**
+     * Gives an array of four floats that contain RGBA values, each value is between 0 and 1. 
+     * @param name a name such as black, violet, cornflowerblue or #RGB or
+     *             #RRGGBB or RGB or RRGGBB or rgb(R,G,B) or rgb(R,G,B,A)
+     * @return the corresponding array of four floats.
+     */
+    public static float[] getRGBAColor(String name) {
+        float[] color = {0, 0, 0, 1};
         String colorName = name.toLowerCase();
         boolean colorStrWithoutHash = missingHashColorFormat(colorName);
         if (colorName.startsWith("#") || colorStrWithoutHash) {
@@ -226,58 +238,54 @@ public class WebColors extends HashMap<String, int[]> {
             }
             if (colorName.length() == 3) {
                 String red = colorName.substring(0, 1);
-                color[0] = Integer.parseInt(red + red, 16);
+                color[0] = (float) (Integer.parseInt(red + red, 16) / RGB_MAX_VAL);
                 String green = colorName.substring(1, 2);
-                color[1] = Integer.parseInt(green + green, 16);
+                color[1] = (float) (Integer.parseInt(green + green, 16) / RGB_MAX_VAL);
                 String blue = colorName.substring(2);
-                color[2] = Integer.parseInt(blue + blue, 16);
-                return new DeviceRgb(color[0], color[1], color[2]);
+                color[2] = (float) (Integer.parseInt(blue + blue, 16) / RGB_MAX_VAL);
+            } else if (colorName.length() == 6) {
+                color[0] = (float) (Integer.parseInt(colorName.substring(0, 2), 16) / RGB_MAX_VAL);
+                color[1] = (float) (Integer.parseInt(colorName.substring(2, 4), 16) / RGB_MAX_VAL);
+                color[2] = (float) (Integer.parseInt(colorName.substring(4), 16) / RGB_MAX_VAL);
+            } else {
+                Logger logger = LoggerFactory.getLogger(WebColors.class);
+                logger.error(LogMessageConstant.UNKNOWN_COLOR_FORMAT_MUST_BE_RGB_OR_RRGGBB);
             }
-            if (colorName.length() == 6) {
-                color[0] = Integer.parseInt(colorName.substring(0, 2), 16);
-                color[1] = Integer.parseInt(colorName.substring(2, 4), 16);
-                color[2] = Integer.parseInt(colorName.substring(4), 16);
-                return new DeviceRgb(color[0], color[1], color[2]);
-            }
-            Logger logger = LoggerFactory.getLogger(WebColors.class);
-            logger.error(LogMessageConstant.UNKNOWN_COLOR_FORMAT_MUST_BE_RGB_OR_RRGGBB);
-            return new DeviceRgb(0, 0, 0);
-        }
-
-        if (colorName.startsWith("rgb(")) {
+        } else if (colorName.startsWith("rgb(")) {
             final String delim = "rgb(), \t\r\n\f";
             StringTokenizer tok = new StringTokenizer(colorName, delim);
-            for (int k = 0; k < 3; ++k) {
-                if (tok.hasMoreTokens()) {
-                    color[k] = getRGBChannelValue(tok.nextToken());
-                    color[k] = Math.max(0, color[k]);
-                    color[k] = Math.min(255, color[k]);
-                }
-            }
-            return new DeviceRgb(color[0], color[1], color[2]);
-        }
-
-        if (colorName.startsWith("rgba(")) {
+            parseRGBColors(color, tok);
+        } else if (colorName.startsWith("rgba(")) {
             final String delim = "rgba(), \t\r\n\f";
             StringTokenizer tok = new StringTokenizer(colorName, delim);
-            for (int k = 0; k < 3; ++k) {
-                if (tok.hasMoreTokens()) {
-                    color[k] = getRGBChannelValue(tok.nextToken());
-                    color[k] = Math.max(0, color[k]);
-                    color[k] = Math.min(255, color[k]);
-                }
+            parseRGBColors(color, tok);
+            if (tok.hasMoreElements()) {
+                color[3] = Float.parseFloat(tok.nextToken());
+                color[3] = Math.max(0, color[3]);
+                color[3] = Math.min(1f, color[3]);
             }
 
-            return new DeviceRgb(color[0], color[1], color[2]);
-        }
-
-        if (!NAMES.containsKey(colorName)) {
+        } else if (!NAMES.containsKey(colorName)) {
             Logger logger = LoggerFactory.getLogger(WebColors.class);
             logger.error(MessageFormat.format(LogMessageConstant.COLOR_NOT_FOUND, colorName));
-            return new DeviceRgb(0, 0, 0);
+        } else {
+            int[] intColor = NAMES.get(colorName);
+            color[0] = (float) (intColor[0] / RGB_MAX_VAL);
+            color[1] = (float) (intColor[1] / RGB_MAX_VAL);
+            color[2] = (float) (intColor[2] / RGB_MAX_VAL);
         }
-        color = NAMES.get(colorName);
-        return new DeviceRgb(color[0], color[1], color[2]);
+
+        return color;
+    }
+
+    private static void parseRGBColors(float[] color, StringTokenizer tok) {
+        for (int k = 0; k < 3; ++k) {
+            if (tok.hasMoreTokens()) {
+                color[k] = getRGBChannelValue(tok.nextToken());
+                color[k] = Math.max(0, color[k]);
+                color[k] = Math.min(1f, color[k]);
+            }
+        }
     }
 
     /**
@@ -299,12 +307,12 @@ public class WebColors extends HashMap<String, int[]> {
         return false;
     }
 
-    private static int getRGBChannelValue(String rgbChannel) {
+    private static float getRGBChannelValue(String rgbChannel) {
         if (rgbChannel.endsWith("%")) {
-            return Integer.parseInt(rgbChannel.substring(0,
-                    rgbChannel.length() - 1)) * 255 / 100;
+            return (float) (Integer.parseInt(rgbChannel.substring(0,
+                                rgbChannel.length() - 1)) / 100.);
         } else {
-            return Integer.parseInt(rgbChannel);
+            return (float) (Integer.parseInt(rgbChannel) / RGB_MAX_VAL);
         }
 
     }

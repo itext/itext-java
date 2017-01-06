@@ -2,6 +2,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.test.annotations.type.UnitTest;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
@@ -22,7 +23,7 @@ public class StylesTest extends ExtendedITextTest {
                 .addStyle(myStyle)
                 .setFontColor(Color.GREEN);
 
-        Assert.assertEquals(Color.GREEN, p.getRenderer().<Color>getProperty(Property.FONT_COLOR));
+        Assert.assertEquals(Color.GREEN, p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
     }
 
     @Test
@@ -32,7 +33,7 @@ public class StylesTest extends ExtendedITextTest {
 
         Paragraph p = new Paragraph("text").addStyle(myStyle);
 
-        Assert.assertEquals(Color.RED, p.getRenderer().<Color>getProperty(Property.FONT_COLOR));
+        Assert.assertEquals(Color.RED, p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
     }
 
 }

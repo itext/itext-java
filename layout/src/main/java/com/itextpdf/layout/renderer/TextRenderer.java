@@ -75,6 +75,7 @@ import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.FontKerning;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 import org.slf4j.Logger;
@@ -520,7 +521,7 @@ public class TextRenderer extends AbstractRenderer {
 
         if (line.end > line.start) {
             float fontSize = (float) this.getPropertyAsFloat(Property.FONT_SIZE);
-            Color fontColor = getPropertyAsColor(Property.FONT_COLOR);
+            TransparentColor fontColor = getPropertyAsTransparentColor(Property.FONT_COLOR);
             Integer textRenderingMode = this.<Integer>getProperty(Property.TEXT_RENDERING_MODE);
             Float textRise = this.getPropertyAsFloat(Property.TEXT_RISE);
             Float characterSpacing = this.getPropertyAsFloat(Property.CHARACTER_SPACING);
@@ -563,13 +564,17 @@ public class TextRenderer extends AbstractRenderer {
                     canvas.setLineWidth((float) strokeWidth);
                 }
                 Color strokeColor = getPropertyAsColor(Property.STROKE_COLOR);
-                if (strokeColor == null)
-                    strokeColor = fontColor;
-                if (strokeColor != null)
+                if (strokeColor == null && fontColor != null) {
+                    strokeColor = fontColor.getColor();
+                }
+                if (strokeColor != null) {
                     canvas.setStrokeColor(strokeColor);
+                }
             }
-            if (fontColor != null)
-                canvas.setFillColor(fontColor);
+            if (fontColor != null) {
+                canvas.setFillColor(fontColor.getColor());
+                fontColor.applyFillTransparency(canvas);
+            }
             if (textRise != null && textRise != 0)
                 canvas.setTextRise((float) textRise);
             if (characterSpacing != null && characterSpacing != 0)
@@ -956,12 +961,18 @@ public class TextRenderer extends AbstractRenderer {
         return new TextRenderer[]{splitRenderer, overflowRenderer};
     }
 
+    @Deprecated
     protected void drawSingleUnderline(Underline underline, Color fontStrokeColor, PdfCanvas canvas, float fontSize, float italicAngleTan) {
-        Color underlineColor = underline.getColor() != null ? underline.getColor() : fontStrokeColor;
+        drawSingleUnderline(underline, new TransparentColor(fontStrokeColor), canvas, fontSize, italicAngleTan);    
+    }
+    
+    protected void drawSingleUnderline(Underline underline, TransparentColor fontStrokeColor, PdfCanvas canvas, float fontSize, float italicAngleTan) {
+        TransparentColor underlineColor = underline.getColor() != null ? new TransparentColor(underline.getColor(), underline.getOpacity()) : fontStrokeColor;
         canvas.saveState();
 
         if (underlineColor != null) {
-            canvas.setStrokeColor(underlineColor);
+            canvas.setStrokeColor(underlineColor.getColor());
+            underlineColor.applyStrokeTransparency(canvas);
         }
         canvas.setLineCapStyle(underline.getLineCapStyle());
         float underlineThickness = underline.getThickness(fontSize);
