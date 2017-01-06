@@ -138,6 +138,7 @@ public class TextRenderer extends AbstractRenderer {
         super(other);
         this.text = other.text;
         this.line = other.line;
+        this.font = other.font;
         this.yLineOffset = other.yLineOffset;
         this.strToBeConverted = other.strToBeConverted;
         this.otfFeaturesApplied = other.otfFeaturesApplied;
@@ -172,7 +173,7 @@ public class TextRenderer extends AbstractRenderer {
         line = new GlyphLine(text);
         line.start = line.end = -1;
 
-        float[] ascenderDescender = calculateAscenderDescender(getFont());
+        float[] ascenderDescender = calculateAscenderDescender(font);
         float ascender = ascenderDescender[0];
         float descender = ascenderDescender[1];
 
@@ -321,7 +322,7 @@ public class TextRenderer extends AbstractRenderer {
                                         }
                                         line.end = Math.max(line.end, currentTextPos + pre.length());
                                         GlyphLine lineCopy = line.copy(line.start, line.end);
-                                        lineCopy.add(getFont().getGlyph(hyphenationConfig.getHyphenSymbol()));
+                                        lineCopy.add(font.getGlyph(hyphenationConfig.getHyphenSymbol()));
                                         lineCopy.end++;
                                         line = lineCopy;
 
@@ -464,12 +465,12 @@ public class TextRenderer extends AbstractRenderer {
             }
 
             if (hasOtfFont() && script != null) {
-                TypographyUtils.applyOtfScript(getFont().getFontProgram(), text, script);
+                TypographyUtils.applyOtfScript(font.getFontProgram(), text, script);
             }
 
             FontKerning fontKerning = (FontKerning) this.<FontKerning>getProperty(Property.FONT_KERNING, FontKerning.NO);
             if (fontKerning == FontKerning.YES) {
-                TypographyUtils.applyKerning(getFont().getFontProgram(), text);
+                TypographyUtils.applyKerning(font.getFontProgram(), text);
             }
 
             otfFeaturesApplied = true;
@@ -541,7 +542,7 @@ public class TextRenderer extends AbstractRenderer {
             } else if (isArtifact) {
                 canvas.openTag(new CanvasArtifact());
             }
-            canvas.saveState().beginText().setFontAndSize(getFont(), fontSize);
+            canvas.saveState().beginText().setFontAndSize(font, fontSize);
 
             if (skew != null && skew.length == 2) {
                 canvas.setTextMatrix(1, skew[0], skew[1], 1, leftBBoxX, getYLine());
@@ -880,11 +881,12 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private GlyphLine convertToGlyphLine(String text) {
-        return getFont().createGlyphLine(text);
+        font = getPropertyAsFont(Property.FONT);
+        return font.createGlyphLine(text);
     }
 
     private boolean hasOtfFont() {
-        return getFont() instanceof PdfType0Font && getFont().getFontProgram() instanceof TrueTypeFont;
+        return font instanceof PdfType0Font && font.getFontProgram() instanceof TrueTypeFont;
     }
 
     @Override
@@ -1094,7 +1096,6 @@ public class TextRenderer extends AbstractRenderer {
 
     private void convertWaitingStringToGlyphLine() {
         if (strToBeConverted != null) {
-            font = null;
             //yes we save font only while converting original string to synchronize glyphline and font.
             text = convertToGlyphLine(strToBeConverted);
             otfFeaturesApplied = false;
@@ -1108,13 +1109,6 @@ public class TextRenderer extends AbstractRenderer {
         this.otfFeaturesApplied = false;
         this.strToBeConverted = null;
         setProperty(Property.FONT, font);
-    }
-
-    private PdfFont getFont() {
-        if (font == null) {
-            font = getPropertyAsFont(Property.FONT);
-        }
-        return font;
     }
 
     private static class ReversedCharsIterator implements Iterator<GlyphLine.GlyphLinePart> {
