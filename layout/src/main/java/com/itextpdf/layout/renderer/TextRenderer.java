@@ -984,11 +984,11 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     protected List<TextRenderer> resolveFonts() {
-        Object font = getProperty(Property.FONT);
+        Object font = this.<Object>getProperty(Property.FONT);
         if (font instanceof PdfFont) {
             return Collections.<TextRenderer>singletonList(this);
         } else if (font instanceof String) {
-            FontProvider provider = (FontProvider) getProperty(Property.FONT_PROVIDER);
+            FontProvider provider = this.<FontProvider>getProperty(Property.FONT_PROVIDER);
             if (provider == null) {
                 throw new IllegalStateException("Invalid font type. FontProvider expected. Cannot resolve font with string value");
             }

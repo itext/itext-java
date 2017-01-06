@@ -43,6 +43,7 @@
 package com.itextpdf.layout.font;
 
 import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.font.PdfFont;
 
 import java.util.ArrayList;
@@ -84,12 +85,12 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
             Character.UnicodeScript unicodeScript = nextSignificantUnicodeScript(nextUnignorable);
             int to = nextUnignorable;
             for (int i = nextUnignorable; i < text.length(); i++) {
-                int codePoint = text.codePointAt(i);
+                int codePoint = isSurrogatePair(text, i) ? TextUtil.convertToUtf32(text, i) : (int) text.charAt(i);
                 Character.UnicodeScript currScript = Character.UnicodeScript.of(codePoint);
                 if (isSignificantUnicodeScript(currScript) && currScript != unicodeScript) {
                     break;
                 }
-                if (isSurrogatePair(codePoint)) i++;
+                if (codePoint > 0xFFFF) i++;
                 to = i;
             }
 
@@ -116,13 +117,17 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
 
     private Character.UnicodeScript nextSignificantUnicodeScript(int from) {
         for (int i = from; i < text.length(); i++) {
-            int codePoint = text.codePointAt(i);
+            int codePoint;
+            if (isSurrogatePair(text, i)) {
+                codePoint = TextUtil.convertToUtf32(text, i);
+                i++;
+            } else {
+                codePoint = (int) text.charAt(i);
+            }
             Character.UnicodeScript unicodeScript = Character.UnicodeScript.of(codePoint);
             if (isSignificantUnicodeScript(unicodeScript)) {
                 return unicodeScript;
             }
-
-            if (isSurrogatePair(codePoint)) i++;
         }
         return Character.UnicodeScript.COMMON;
     }
@@ -132,8 +137,9 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
         return unicodeScript != Character.UnicodeScript.COMMON && unicodeScript != Character.UnicodeScript.INHERITED;
     }
 
-    private static boolean isSurrogatePair(int codePoint) {
-        //lazy surrogate pair check
-        return codePoint > 0xFFFF;
+    //This method doesn't perform additional checks if compare with TextUtil#isSurrogatePair()
+    private static boolean isSurrogatePair(String text, int idx) {
+        return TextUtil.isSurrogateHigh(text.charAt(idx)) && idx < text.length() - 1
+                && TextUtil.isSurrogateLow(text.charAt(idx + 1));
     }
 }
