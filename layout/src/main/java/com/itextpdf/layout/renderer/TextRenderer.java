@@ -63,6 +63,8 @@ import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.font.FontSelectorStrategy;
 import com.itextpdf.layout.hyphenation.Hyphenation;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -978,6 +980,29 @@ public class TextRenderer extends AbstractRenderer {
                 this.getPropertyAsFloat(Property.CHARACTER_SPACING), this.getPropertyAsFloat(Property.WORD_SPACING));
     }
 
+    protected List<TextRenderer> resolveFonts() {
+        Object font = getProperty(Property.FONT);
+        if (font instanceof PdfFont) {
+            return Collections.<TextRenderer>singletonList(this);
+        } else if (font instanceof String) {
+            FontProvider provider = (FontProvider) getProperty(Property.FONT_PROVIDER);
+            if (provider == null) {
+                throw new IllegalStateException("Invalid font type. FontProvider expected. Cannot resolve font with string value");
+            }
+            List<TextRenderer> renderers = new ArrayList<>();
+
+            FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted, (String) font);
+            while (!strategy.EndOfText()) {
+                TextRenderer textRenderer = new TextRenderer(this);
+                textRenderer.setGlyphLineAndFont(strategy.nextGlyphs(), strategy.getCurrentFont());
+                renderers.add(textRenderer);
+            }
+            return renderers;
+        } else {
+            throw new IllegalStateException("Invalid font type.");
+        }
+    }
+
     static void updateRangeBasedOnRemovedCharacters(ArrayList<Integer> removedIds, int[] range) {
         int shift = numberOfElementsLessThan(removedIds, range[0]);
         range[0] -= shift;
@@ -1075,6 +1100,14 @@ public class TextRenderer extends AbstractRenderer {
             otfFeaturesApplied = false;
             strToBeConverted = null;
         }
+    }
+
+    private void setGlyphLineAndFont(List<Glyph> glyphs, PdfFont font) {
+        this.text = new GlyphLine(glyphs);
+        this.font = font;
+        this.otfFeaturesApplied = false;
+        this.strToBeConverted = null;
+        setProperty(Property.FONT, font);
     }
 
     private PdfFont getFont() {

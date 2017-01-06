@@ -64,7 +64,7 @@ public abstract class FontProgram implements Serializable {
     protected Map<Integer, Glyph> unicodeToGlyph = new HashMap<>();
     protected boolean isFontSpecific;
 
-    protected FontNames fontNames = new FontNames();
+    protected FontNames fontNames;
     protected FontMetrics fontMetrics = new FontMetrics();
     protected FontIdentification fontIdentification = new FontIdentification();
 
@@ -290,5 +290,11 @@ public abstract class FontProgram implements Serializable {
         if (space != null) {
             codeToGlyph.put(space.getCode(), space);
         }
+    }
+
+    @Override
+    public String toString() {
+        String name = getFontNames().getFontName();
+        return name.length() > 0 ? name : super.toString();
     }
 }

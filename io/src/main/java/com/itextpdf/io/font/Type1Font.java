@@ -84,7 +84,12 @@ public class Type1Font extends FontProgram {
         }
     }
 
+    protected Type1Font() {
+        fontNames = new FontNames();
+    }
+
     protected Type1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb) throws java.io.IOException {
+        this();
         checkFilePath(metricsPath);
         checkFilePath(binaryPath);
 
@@ -93,6 +98,7 @@ public class Type1Font extends FontProgram {
     }
 
     protected Type1Font(String baseFont) {
+        this();
         getFontNames().setFontName(baseFont);
     }
 

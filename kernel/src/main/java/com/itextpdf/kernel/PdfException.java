@@ -205,6 +205,7 @@ public class PdfException extends RuntimeException {
     public static final String InvalidXrefStream = "Invalid xref stream.";
     public static final String InvalidXrefTable = "Invalid xref table.";
     public static final String IoException = "I/O exception.";
+    public static final String IoExceptionWhileCreatingFont = "I/O exception while creating Font";
     @Deprecated
     public static final String IsNotAnAcceptableValueForTheField = "{0} is not an acceptable value for the field {1}.";
     @Deprecated

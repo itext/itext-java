@@ -61,6 +61,7 @@ public class CidFont extends FontProgram {
 
     CidFont(String fontName, Set<String> cmaps) {
         compatibleCmaps = cmaps;
+        fontNames = new FontNames();
         initializeCidFontNameAndStyle(fontName);
         Map<String, Object> fontDesc = CidFontProperties.getAllFonts().get(fontNames.getFontName());
         if (fontDesc == null) {
@@ -106,6 +107,7 @@ public class CidFont extends FontProgram {
         } else {
             fontNames.setFontName(fontName);
         }
+        fontNames.setFullName(new String[][]{new String[]{"", "", "", fontNames.getFontName()}});
     }
 
     private void initializeCidFontProperties(Map<String, Object> fontDesc) {

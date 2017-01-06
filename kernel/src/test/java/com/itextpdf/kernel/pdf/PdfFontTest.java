@@ -4,6 +4,8 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.CidFont;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.FontNames;
+import com.itextpdf.io.font.FontNamesFactory;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeCollection;
@@ -27,7 +29,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.List;
@@ -1374,5 +1375,79 @@ public class PdfFontTest extends ExtendedITextTest {
         Assert.assertTrue(list2.size() == 5);
     }
 
+    @Test
+    public void kozminNames() throws Exception {
+        FontNames names = FontNamesFactory.fetchFontNames("KozMinPro-Regular", null);
+        Assert.assertEquals(names.getFontName(), "KozMinPro-Regular");
+        Assert.assertEquals(names.getFullName()[0][3], "KozMinPro-Regular");
+        Assert.assertEquals(names.getFullNameLowerCase(), "kozminpro-regular");
+        Assert.assertEquals(names.getFontWeight(), 400);
+        Assert.assertEquals(names.getFontWidth(), 5);
+        Assert.assertEquals(names.allowEmbedding(), false);
 
+    }
+
+    @Test
+    public void helveticaNames() throws Exception {
+        FontNames names = FontNamesFactory.fetchFontNames("Helvetica", null);
+        Assert.assertEquals(names.getFontName(), "Helvetica");
+        Assert.assertEquals(names.getFullName()[0][3], "Helvetica");
+        Assert.assertEquals(names.getFullNameLowerCase(), "helvetica");
+        Assert.assertEquals(names.getFontWeight(), 500);
+        Assert.assertEquals(names.getFontWidth(), 5);
+        Assert.assertEquals(names.allowEmbedding(), false);
+    }
+
+    @Test
+    public void otfByStringNames() throws Exception {
+        FontNames names = FontNamesFactory.fetchFontNames(fontsFolder + "Puritan2.otf", null);
+        Assert.assertEquals(names.getFontName(), "Puritan2");
+        Assert.assertEquals(names.getFullName()[0][3], "Puritan 2.0 Regular");
+        Assert.assertEquals(names.getFamilyName()[0][3], "Puritan 2.0");
+        Assert.assertEquals(names.getFullNameLowerCase(), "puritan 2.0 regular");
+        Assert.assertEquals(names.getStyle(), "Normal");
+        Assert.assertEquals(names.getFontWeight(), 400);
+        Assert.assertEquals(names.getFontWidth(), 5);
+        Assert.assertEquals(names.allowEmbedding(), true);
+
+    }
+
+    @Test
+    public void otfByStreamNames() throws Exception {
+        FontNames names = FontNamesFactory.fetchFontNames(null, StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "Puritan2.otf")));
+        Assert.assertEquals(names.getFontName(), "Puritan2");
+        Assert.assertEquals(names.getFullName()[0][3], "Puritan 2.0 Regular");
+        Assert.assertEquals(names.getFamilyName()[0][3], "Puritan 2.0");
+        Assert.assertEquals(names.getFullNameLowerCase(), "puritan 2.0 regular");
+        Assert.assertEquals(names.getStyle(), "Normal");
+        Assert.assertEquals(names.getFontWeight(), 400);
+        Assert.assertEquals(names.getFontWidth(), 5);
+        Assert.assertEquals(names.allowEmbedding(), true);
+    }
+
+    @Test
+    public void ttfByStringNames() throws Exception {
+        FontNames names = FontNamesFactory.fetchFontNames(fontsFolder + "abserif4_5.ttf", null);
+        Assert.assertEquals(names.getFontName(), "AboriginalSerif");
+        Assert.assertEquals(names.getFullName()[0][3], "Aboriginal Serif");
+        Assert.assertEquals(names.getFamilyName()[0][3], "Aboriginal Serif");
+        Assert.assertEquals(names.getFullNameLowerCase(), "aboriginal serif");
+        Assert.assertEquals(names.getStyle(), "Regular");
+        Assert.assertEquals(names.getFontWeight(), 400);
+        Assert.assertEquals(names.getFontWidth(), 5);
+        Assert.assertEquals(names.allowEmbedding(), true);
+    }
+
+    @Test
+    public void ttfByStreamNames() throws Exception {
+        FontNames names = FontNamesFactory.fetchFontNames(null, StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "abserif4_5.ttf")));
+        Assert.assertEquals(names.getFontName(), "AboriginalSerif");
+        Assert.assertEquals(names.getFullName()[0][3], "Aboriginal Serif");
+        Assert.assertEquals(names.getFamilyName()[0][3], "Aboriginal Serif");
+        Assert.assertEquals(names.getFullNameLowerCase(), "aboriginal serif");
+        Assert.assertEquals(names.getStyle(), "Regular");
+        Assert.assertEquals(names.getFontWeight(), 400);
+        Assert.assertEquals(names.getFontWidth(), 5);
+        Assert.assertEquals(names.allowEmbedding(), true);
+    }
 }
