@@ -6,6 +6,11 @@ import com.itextpdf.kernel.font.PdfFont;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Complex FontSelectorStrategy split text based on {@link java.lang.Character.UnicodeScript}.
+ * If unicode script changes, a new font will be found.
+ * If there is no suitable font, only one notdef glyph from {@link FontSelector#bestMatch()} will be added.
+ */
 public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
     private PdfFont font;
     private FontSelector selector;

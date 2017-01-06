@@ -1,5 +1,10 @@
 package com.itextpdf.layout.font;
 
+/**
+ * Key for {@link FontSelector} caching.
+ *
+ * @see FontSet#getFontSelectorCache().
+ */
 final class FontSelectorKey {
     String fontFamily;
     int style;

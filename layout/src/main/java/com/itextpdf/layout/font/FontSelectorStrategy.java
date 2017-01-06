@@ -5,6 +5,10 @@ import com.itextpdf.kernel.font.PdfFont;
 
 import java.util.List;
 
+/**
+ * {@link FontSelectorStrategy} responsible for splitting text into sub texts with font.
+ * {@link #nextGlyphs()} will create next sub text and set current font.
+ */
 public abstract class FontSelectorStrategy {
 
     protected String text;

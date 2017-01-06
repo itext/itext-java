@@ -1,17 +1,20 @@
 package com.itextpdf.layout.font;
 
 import com.itextpdf.io.font.FontProgram;
-import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.FileUtil;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Reusable font set for FontProgram related data.
+ *
+ * @see FontProvider
+ */
 public class FontSet {
     //"fontName+encoding" or "hash(fontProgram)+encoding" as key
     private static Map<String, FontProgramInfo> fontInfoCache = new ConcurrentHashMap<>();
@@ -48,6 +51,13 @@ public class FontSet {
         return addDirectory(dir, false);
     }
 
+    /**
+     * Add not supported for auto creating FontPrograms.
+     *
+     * @param fontProgram
+     * @param encoding    FontEncoding for creating {@link com.itextpdf.kernel.font.PdfFont}.
+     * @return false, if fontProgram is null, otherwise true.
+     */
     public boolean addFont(FontProgram fontProgram, String encoding) {
         if (fontProgram == null) {
             return false;
@@ -83,10 +93,6 @@ public class FontSet {
         return fonts;
     }
 
-    public Map<FontProgramInfo, FontProgram> getFontPrograms() {
-        return fontPrograms;
-    }
-
     protected boolean addFont(String fontName, byte[] fontProgram, String encoding) {
         if (fontName == null && fontProgram == null) {
             return false;
@@ -105,6 +111,10 @@ public class FontSet {
         }
         addFontInfo(fontInfo);
         return true;
+    }
+
+    Map<FontProgramInfo, FontProgram> getFontPrograms() {
+        return fontPrograms;
     }
 
     Map<FontSelectorKey, FontSelector> getFontSelectorCache() {

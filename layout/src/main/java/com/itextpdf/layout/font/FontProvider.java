@@ -1,5 +1,6 @@
 package com.itextpdf.layout.font;
 
+import com.itextpdf.io.font.FontCache;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
@@ -7,14 +8,23 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-// initial big collection of fonts, entry point for all font selector logic.
-// FontProvider depends from PdfDocument, due to PdfFont.
+/**
+ * Main entry point of font selector logic.
+ * Contains reusable {@link FontSet} and collection of {@link PdfFont}s.
+ * FontProvider depends from {@link PdfDocument}, due to {@link PdfFont}, it cannot be reused for different documents,
+ * but a new instance of FontProvider could be created with {@link FontProvider#getFontSet()}.
+ * FontProvider the only end point for creating PdfFont, {@link #getPdfFont(FontProgramInfo)},
+ * {@link FontProgramInfo} shal call this method.
+ * <p>
+ * Note, FontProvider does not close created {@link FontProgram}s, because of possible conflicts with {@link FontCache}.
+ */
 public class FontProvider {
 
     private FontSet fontSet;
@@ -52,6 +62,14 @@ public class FontProvider {
         addFont(fontProgram, null);
     }
 
+    public int addDirectory(String dir) {
+        return fontSet.addDirectory(dir);
+    }
+
+    public FontSet getFontSet() {
+        return fontSet;
+    }
+
     public String getDefaultEncoding(FontProgram fontProgram) {
         if (fontProgram instanceof Type1Font) {
             return PdfEncodings.WINANSI;
@@ -69,7 +87,7 @@ public class FontProvider {
     }
 
     public FontSelectorStrategy getStrategy(String text, String fontFamily, int style) {
-        return new ComplexFontSelectorStrategy(text, getSelector(fontFamily, style), this);
+        return new ComplexFontSelectorStrategy(text, getFontSelector(fontFamily, style), this);
     }
 
     public FontSelectorStrategy getStrategy(String text, String fontFamily) {
@@ -77,13 +95,15 @@ public class FontProvider {
     }
 
     /**
+     * Create {@link FontSelector} or get from cache.
      *
-     * @param fontFamily
-     * @param style Shall be {@link FontConstants#UNDEFINED}, {@link FontConstants#NORMAL}, {@link FontConstants#ITALIC},
-     * {@link FontConstants#BOLD}, or {@link FontConstants#BOLDITALIC}
+     * @param fontFamily target font family
+     * @param style      Shall be {@link FontConstants#UNDEFINED}, {@link FontConstants#NORMAL}, {@link FontConstants#ITALIC},
+     *                   {@link FontConstants#BOLD}, or {@link FontConstants#BOLDITALIC}
      * @return an instance of {@link FontSelector}.
+     * @see #createFontSelector(Set, String, int)}
      */
-    public final FontSelector getSelector(String fontFamily, int style) {
+    public final FontSelector getFontSelector(String fontFamily, int style) {
         FontSelectorKey key = new FontSelectorKey(fontFamily, style);
         if (fontSet.getFontSelectorCache().containsKey(key)) {
             return fontSet.getFontSelectorCache().get(key);
@@ -94,11 +114,28 @@ public class FontProvider {
         }
     }
 
+    /**
+     * Create a new instance of {@link FontSelector}. While caching is main responsibility of {@link #getFontSelector(String, int)},
+     * this method just create a new instance of {@link FontSelector}.
+     *
+     * @param fonts      Set of all available fonts in current context.
+     * @param fontFamily target font family
+     * @param style      Shall be {@link FontConstants#UNDEFINED}, {@link FontConstants#NORMAL}, {@link FontConstants#ITALIC},
+     *                   {@link FontConstants#BOLD}, or {@link FontConstants#BOLDITALIC}
+     * @return an instance of {@link FontSelector}.
+     */
     protected FontSelector createFontSelector(Set<FontProgramInfo> fonts, String fontFamily, int style) {
-        return new NamedFontSelector(fonts, fontFamily, style);
+        return new FontSelector(fonts, fontFamily, style);
     }
 
-    protected PdfFont createPdfFont(FontProgramInfo fontInfo) throws IOException {
+    /**
+     * Get from cache or create a new instance of {@link PdfFont}.
+     *
+     * @param fontInfo font info, to create {@link FontProgram} and {@link PdfFont}.
+     * @return cached or new instance of {@link PdfFont}.
+     * @throws IOException on I/O exceptions in {@link FontProgramFactory}.
+     */
+    protected PdfFont getPdfFont(FontProgramInfo fontInfo) throws IOException {
         if (pdfFonts.containsKey(fontInfo)) {
             return pdfFonts.get(fontInfo);
         } else {

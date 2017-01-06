@@ -10,6 +10,10 @@ import com.itextpdf.kernel.font.PdfFont;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * Contains all font related data to create {@link FontProgram} and {@link PdfFont}.
+ * {@link FontNames} fetches with {@link FontNamesFactory}.
+ */
 public final class FontProgramInfo {
 
     private final String fontName;
@@ -40,7 +44,7 @@ public final class FontProgramInfo {
 
     public PdfFont getPdfFont(FontProvider fontProvider) {
         try {
-            return fontProvider.createPdfFont(this);
+            return fontProvider.getPdfFont(this);
         } catch (IOException e) {
             throw new PdfException(PdfException.IoExceptionWhileCreatingFont, e);
         }
