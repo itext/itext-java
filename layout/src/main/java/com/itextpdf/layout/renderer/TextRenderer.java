@@ -148,7 +148,7 @@ public class TextRenderer extends AbstractRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        convertWaitingStringToGlyphLine();
+        updateFontAndText();
 
         LayoutArea area = layoutContext.getArea();
         float[] margins = getMargins();
@@ -425,7 +425,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     public void applyOtf() {
-        convertWaitingStringToGlyphLine();
+        updateFontAndText();
         Character.UnicodeScript script = this.<Character.UnicodeScript>getProperty(Property.FONT_SCRIPT);
         if (!otfFeaturesApplied) {
             if (script == null && TypographyUtils.isTypographyModuleInitialized()) {
@@ -675,7 +675,7 @@ public class TextRenderer extends AbstractRenderer {
      * to be rendered.
      */
     public void trimFirst() {
-        convertWaitingStringToGlyphLine();
+        updateFontAndText();
 
         if (text != null) {
             Glyph glyph;
@@ -772,7 +772,7 @@ public class TextRenderer extends AbstractRenderer {
     public void setText(String text) {
         strToBeConverted = text;
         //strToBeConverted will be null after next method.
-        convertWaitingStringToGlyphLine();
+        updateFontAndText();
     }
 
     /**
@@ -791,7 +791,7 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     public GlyphLine getText() {
-        convertWaitingStringToGlyphLine();
+        updateFontAndText();
         return text;
     }
 
@@ -881,7 +881,6 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     private GlyphLine convertToGlyphLine(String text) {
-        font = getPropertyAsFont(Property.FONT);
         return font.createGlyphLine(text);
     }
 
@@ -938,6 +937,7 @@ public class TextRenderer extends AbstractRenderer {
     protected TextRenderer[] split(int initialOverflowTextPos) {
         TextRenderer splitRenderer = createSplitRenderer();
         splitRenderer.setText(text, text.start, initialOverflowTextPos);
+        splitRenderer.font = font;
         splitRenderer.line = line;
         splitRenderer.occupiedArea = occupiedArea.clone();
         splitRenderer.parent = parent;
@@ -948,6 +948,7 @@ public class TextRenderer extends AbstractRenderer {
 
         TextRenderer overflowRenderer = createOverflowRenderer();
         overflowRenderer.setText(text, initialOverflowTextPos, text.end);
+        overflowRenderer.font = font;
         overflowRenderer.otfFeaturesApplied = otfFeaturesApplied;
         overflowRenderer.parent = parent;
         overflowRenderer.addAllProperties(getOwnProperties());
@@ -1094,9 +1095,9 @@ public class TextRenderer extends AbstractRenderer {
                 Character.isDigit((char) g.getUnicode()) || '\u00ad' == g.getUnicode();
     }
 
-    private void convertWaitingStringToGlyphLine() {
+    private void updateFontAndText() {
         if (strToBeConverted != null) {
-            //yes we save font only while converting original string to synchronize glyphline and font.
+            font = getPropertyAsFont(Property.FONT);
             text = convertToGlyphLine(strToBeConverted);
             otfFeaturesApplied = false;
             strToBeConverted = null;
