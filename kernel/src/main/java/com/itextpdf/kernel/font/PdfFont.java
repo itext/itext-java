@@ -145,15 +145,26 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     public abstract GlyphLine createGlyphLine(String content);
 
     /**
+     * Append all supported glyphs and return number of processed chars.
+     * Composite font supports surrogate pairs.
      *
-     * @param text
-     * @param from
-     * @param glyphs
-     * @param appendNotdefs
-     * @return number of processed chars from #text.
+     * @param text String to convert to glyphs.
+     * @param from from index of the text.
+     * @param to to index of the text.
+     * @param glyphs array for a new glyphs, shall not be null.
+     * @return number of processed chars from text.
      */
     public abstract int appendGlyphs(String text, int from, int to, List<Glyph> glyphs);
 
+    /**
+     * Append any single glyph, even notdef.
+     * Returns number of processed chars: 2 in case surrogate pair, otherwise 1.
+     *
+     * @param text String to convert to glyphs.
+     * @param from from index of the text.
+     * @param glyphs array for a new glyph, shall not be null.
+     * @return number of processed chars: 2 in case surrogate pair, otherwise 1
+     */
     public abstract int appendAnyGlyph(String text, int from, List<Glyph> glyphs);
 
     public abstract boolean containsGlyph(String text, int from);
