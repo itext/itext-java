@@ -543,6 +543,7 @@ public class TextRenderer extends AbstractRenderer {
             } else if (isArtifact) {
                 canvas.openTag(new CanvasArtifact());
             }
+            beginElementOpacityApplying(drawContext);
             canvas.saveState().beginText().setFontAndSize(font, fontSize);
 
             if (skew != null && skew.length == 2) {
@@ -619,6 +620,7 @@ public class TextRenderer extends AbstractRenderer {
             }
 
             canvas.endText().restoreState();
+            endElementOpacityApplying(drawContext);
             if (isTagged || isArtifact) {
                 canvas.closeTag();
             }

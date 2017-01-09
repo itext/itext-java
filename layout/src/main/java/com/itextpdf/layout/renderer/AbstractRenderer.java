@@ -426,16 +426,38 @@ public abstract class AbstractRenderer implements IRenderer {
             applyRelativePositioningTranslation(false);
         }
 
+        beginElementOpacityApplying(drawContext);
         drawBackground(drawContext);
         drawBorder(drawContext);
         drawChildren(drawContext);
         drawPositionedChildren(drawContext);
+        endElementOpacityApplying(drawContext);
 
         if (relativePosition) {
             applyRelativePositioningTranslation(true);
         }
 
         flushed = true;
+    }
+
+    protected void beginElementOpacityApplying(DrawContext drawContext) {
+        Float opacity = this.getPropertyAsFloat(Property.OPACITY);
+        if (opacity != null && opacity < 1f) {
+            PdfExtGState extGState = new PdfExtGState();
+            extGState
+                    .setStrokeOpacity(opacity)
+                    .setFillOpacity(opacity);
+            drawContext.getCanvas()
+                    .saveState()
+                    .setExtGState(extGState);
+        }
+    }
+
+    protected void endElementOpacityApplying(DrawContext drawContext) {
+        Float opacity = this.getPropertyAsFloat(Property.OPACITY);
+        if (opacity != null && opacity < 1f) {
+            drawContext.getCanvas().restoreState();
+        }
     }
 
     /**

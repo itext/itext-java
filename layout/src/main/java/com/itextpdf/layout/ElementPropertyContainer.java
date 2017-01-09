@@ -739,4 +739,9 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
         setProperty(Property.DESTINATION, destination);
         return (T) (Object) this;
     }
+    
+    public T setOpacity(Float opacity) {
+        setProperty(Property.OPACITY, opacity);
+        return (T) (Object) this;
+    }
 }

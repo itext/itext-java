@@ -176,7 +176,9 @@ public class ListItemRenderer extends DivRenderer {
                 if (isTagged) {
                     tagPointer.addTag(0, PdfName.Lbl);
                 }
+                beginElementOpacityApplying(drawContext);
                 symbolRenderer.draw(drawContext);
+                endElementOpacityApplying(drawContext);
                 if (isTagged) {
                     tagPointer.moveToParent();
                 }
