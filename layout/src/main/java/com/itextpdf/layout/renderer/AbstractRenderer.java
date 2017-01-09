@@ -445,8 +445,8 @@ public abstract class AbstractRenderer implements IRenderer {
         if (opacity != null && opacity < 1f) {
             PdfExtGState extGState = new PdfExtGState();
             extGState
-                    .setStrokeOpacity(opacity)
-                    .setFillOpacity(opacity);
+                    .setStrokeOpacity((float) opacity)
+                    .setFillOpacity((float) opacity);
             drawContext.getCanvas()
                     .saveState()
                     .setExtGState(extGState);
