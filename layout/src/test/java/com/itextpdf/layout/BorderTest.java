@@ -1083,6 +1083,67 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
+    public void tableWithHeaderFooterTest06() throws IOException, InterruptedException {
+        fileName = "tableWithHeaderFooterTest06.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(PageSize.A6.rotate());
+        Table table = new Table(5);
+        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(Color.RED, 20));
+        table.addHeaderCell(cell);
+        cell = new Cell(1, 5).add(new Paragraph("Continue on next page")).setHeight(30).setBorderTop(new SolidBorder(Color.MAGENTA, 20));
+        table.addFooterCell(cell);
+        for (int i = 0; i < 50; i++) {
+            table.addCell(new Cell().setBorderLeft(new SolidBorder(Color.BLUE, 0.5f)).setBorderRight(new SolidBorder(Color.BLUE, 0.5f)).setHeight(30).setBorderBottom(new SolidBorder(Color.BLUE, 2*i + 1 > 50 ? 50 : 2*i + 1)).setBorderTop(new SolidBorder(Color.GREEN,  (50 - 2*i + 1 >= 0) ? 50 - 2*i + 1 : 0)).add(new Paragraph(String.valueOf(i + 1))));
+        }
+        doc.add(table);
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void tableWithHeaderFooterTest07() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderFooterTest07.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A7.rotate());
+
+        Table table= new Table(2);
+        table.addFooterCell(new Cell(1,2).setHeight(30).add("Footer"));
+        table.addCell(new Cell().add("0abcdefghijklmnopqrstuvwxyz1abcdefghijklmnopqrstuvwxyz2abcdefghijklmnopq"));
+        table.addCell(new Cell().add("0bbbbbbbbbbbbbbbbbbbbbbbbbbbb").setBorderBottom(new SolidBorder(50)));
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableWithHeaderFooterTest08() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderFooterTest08.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A7.rotate());
+
+        Table table = new Table(2);
+        table.addFooterCell(new Cell(1,2).setHeight(50).add("Footer"));
+        table.addCell(new Cell().add("Cell1").setHeight(50));
+        table.addCell(new Cell().add("Cell2").setHeight(50));
+        table.setSkipLastFooter(true);
+        table.setBorderBottom(new SolidBorder(Color.RED, 30));
+        doc.add(table);
+
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Hello"));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
     })

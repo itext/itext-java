@@ -60,7 +60,7 @@ import java.util.List;
 /**
  * A {@link Table} is a layout element that represents data in a two-dimensional
  * grid. It is filled with {@link Cell cells}, ordered in rows and columns.
- * 
+ *
  * It is an implementation of {@link ILargeElement}, which means it can be flushed
  * to the canvas, in order to reclaim memory that is locked up.
  */
@@ -409,7 +409,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     /**
      * Adds a new cell to the table. The implementation decides for itself which
      * row the cell will be placed on.
-     * 
+     *
      * @param cell {@code Cell} to add.
      * @return this element
      */
@@ -477,7 +477,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     /**
      * Returns a cell as specified by its location. If the cell is in a col-span
      * or row-span and is not the top left cell, then <code>null</code> is returned.
-     * 
+     *
      * @param row the row of the cell. indexes are zero-based
      * @param column the column of the cell. indexes are zero-based
      * @return the cell at the specified position.
@@ -572,12 +572,12 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     @Override
     public void flush() {
         Cell[] row = null;
+        int rowNum = rows.size();
         if (!rows.isEmpty()) {
             row = rows.get(rows.size() - 1);
         }
-
         document.add(this);
-        if (row != null) {
+        if (row != null && rowNum != rows.size()) {
             lastAddedRow = row;
         }
     }
@@ -616,7 +616,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Gets the markup properties of the bottom border of the (current) last row.
-     * 
+     *
      * @return an array of {@link Border} objects
      */
     public ArrayList<Border> getLastRowBottomBorder() {
@@ -624,13 +624,17 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         if (lastAddedRow != null) {
             for (int i = 0; i < lastAddedRow.length; i++) {
                 Cell cell = lastAddedRow[i];
+                Border border = null;
                 if (cell != null) {
-                    Border border = cell.<Border>getProperty(Property.BORDER);
-                    if (border == null) {
+                    if (cell.hasProperty(Property.BORDER_BOTTOM)) {
                         border = cell.<Border>getProperty(Property.BORDER_BOTTOM);
+                    } else if (cell.hasProperty(Property.BORDER)){
+                        border = cell.<Border>getProperty(Property.BORDER);
+                    } else {
+                        border = cell.<Border>getDefaultProperty(Property.BORDER);
                     }
-                    horizontalBorder.add(border);
                 }
+                horizontalBorder.add(border);
             }
         }
 
