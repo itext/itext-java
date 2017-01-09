@@ -1008,7 +1008,7 @@ public class TextRenderer extends AbstractRenderer {
             List<TextRenderer> renderers = new ArrayList<>();
 
             FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted, (String) font);
-            while (!strategy.EndOfText()) {
+            while (!strategy.endOfText()) {
                 TextRenderer textRenderer = new TextRenderer(this);
                 textRenderer.setGlyphLineAndFont(strategy.nextGlyphs(), strategy.getCurrentFont());
                 renderers.add(textRenderer);
