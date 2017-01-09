@@ -63,7 +63,7 @@ public class WebColors extends HashMap<String, int[]> {
      */
     public static final WebColors NAMES = new WebColors();
 
-    private static final double RGB_MAX_VAL = 255.;
+    private static final double RGB_MAX_VAL = 255.0;
     
     static {
         NAMES.put("aliceblue", new int[]{0xf0, 0xf8, 0xff, 0xff});
@@ -259,7 +259,7 @@ public class WebColors extends HashMap<String, int[]> {
             final String delim = "rgba(), \t\r\n\f";
             StringTokenizer tok = new StringTokenizer(colorName, delim);
             parseRGBColors(color, tok);
-            if (tok.hasMoreElements()) {
+            if (tok.hasMoreTokens()) {
                 color[3] = Float.parseFloat(tok.nextToken());
                 color[3] = Math.max(0, color[3]);
                 color[3] = Math.min(1f, color[3]);
@@ -310,7 +310,7 @@ public class WebColors extends HashMap<String, int[]> {
     private static float getRGBChannelValue(String rgbChannel) {
         if (rgbChannel.endsWith("%")) {
             return (float) (Integer.parseInt(rgbChannel.substring(0,
-                                rgbChannel.length() - 1)) / 100.);
+                                rgbChannel.length() - 1)) / 100.0);
         } else {
             return (float) (Integer.parseInt(rgbChannel) / RGB_MAX_VAL);
         }
