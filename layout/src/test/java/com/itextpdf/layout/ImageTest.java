@@ -24,6 +24,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -543,6 +544,32 @@ public class ImageTest extends ExtendedITextTest {
 
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Image image = new Image(xObject, 100);
+
+        Paragraph p = new Paragraph();
+        p.setBorder(new SolidBorder(Color.GREEN, 5));
+        p.add(image);
+        image.setBorder(new SolidBorder(Color.BLUE, 5));
+        doc.add(p);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+    
+    @Test
+    @Ignore("DEVSIX-1022")
+    public void imageRelativePositionTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageRelativePositionTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageRelativePositionTest.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+
+        PdfDocument pdfDoc = new PdfDocument(writer);
+
+        Document doc = new Document(pdfDoc);
+
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        Image image = new Image(xObject, 100).setRelativePosition(30, 30, 0, 0);
 
         Paragraph p = new Paragraph();
         p.setBorder(new SolidBorder(Color.GREEN, 5));
