@@ -52,6 +52,7 @@ public final class LogMessageConstant {
     public static final String ATTEMPT_TO_MOVE_TO_FLUSHED_PARENT = "An attempt is made to move the tag tree pointer to the tag parent which has been already flushed. Tag tree pointer is moved to the root tag instead.";
     public static final String CLIP_ELEMENT = "Element content was clipped because some height properties are set.";
     public static final String COLOR_NOT_FOUND = "Color ''{0}'' not found. Defaulting to black color.";
+    public static final String COLOR_NOT_PARSED = "Color ''{0}'' wasn''t parsed. It has invalid value. Defaulting to black color.";
     public static final String COLORANT_INTENSITIES_INVALID = "Some of colorant intensities are invalid: they are bigger than 1 or less than 0. We will force them to become 1 or 0 respectively.";
     public static final String COULD_NOT_FIND_GLYPH_WITH_CODE = "Could not find glyph with the following code: {0}";
     public static final String DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET = "Destinations are not permitted for link annotations that already have actions. The old action will be removed.";
