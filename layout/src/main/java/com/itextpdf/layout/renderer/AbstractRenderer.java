@@ -476,12 +476,12 @@ public abstract class AbstractRenderer implements IRenderer {
                 drawContext.getCanvas().openTag(new CanvasArtifact());
             }
             Rectangle backgroundArea = applyMargins(bBox, false);
+            if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
+                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
+                return;
+            }
             if (background != null) {
-                if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
-                    Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                    logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
-                    return;
-                }
                 TransparentColor backgroundColor = new TransparentColor(background.getColor(), background.getOpacity());
                 drawContext.getCanvas().saveState().setFillColor(backgroundColor.getColor());
                 backgroundColor.applyFillTransparency(drawContext.getCanvas());
@@ -496,6 +496,11 @@ public abstract class AbstractRenderer implements IRenderer {
                 applyBorderBox(backgroundArea, false);
                 Rectangle imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundImage.getImage().getHeight(),
                         backgroundImage.getImage().getWidth(), backgroundImage.getImage().getHeight());
+                if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
+                    Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                    logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
+                    return;
+                }
                 applyBorderBox(backgroundArea, true);
                 drawContext.getCanvas().saveState().rectangle(backgroundArea).clip().newPath();
                 float initialX = backgroundImage.isRepeatX() ? imageRectangle.getX() - imageRectangle.getWidth() : imageRectangle.getX();
