@@ -73,7 +73,7 @@ public class Background {
     /**
      * Creates a background with a specified color and opacity.
      * @param color the background color
-     * @param opacity the opacity of the background color
+     * @param opacity the opacity of the background color; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
      */
     public Background(Color color, float opacity) {
         this(color, opacity, 0, 0, 0, 0);
@@ -98,7 +98,7 @@ public class Background {
      * must be counted as part of the background and therefore colored.
      * These values are allowed to be negative.
      * @param color the background color
-     * @param opacity the opacity of the background color
+     * @param opacity the opacity of the background color; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
      * @param extraLeft extra coloring to the left side
      * @param extraTop extra coloring at the top
      * @param extraRight extra coloring to the right side

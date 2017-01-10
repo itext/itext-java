@@ -314,7 +314,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * Sets the font color of this Element and the opacity of the text.
      *
      * @param fontColor a {@link Color} for the text in this Element.
-     * @param opacity an opacity for the text in this Element.
+     * @param opacity an opacity for the text in this Element; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent.
      * @return this Element.
      */
     public T setFontColor(Color fontColor, float opacity) {
@@ -395,7 +395,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * Specifies a background color for the Element.
      *
      * @param backgroundColor the background color
-     * @param opacity the background color opacity
+     * @param opacity the background color opacity; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent.
      * @return this Element.
      */
     public T setBackgroundColor(Color backgroundColor, float opacity) {
@@ -422,7 +422,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * must be counted as part of the background and therefore colored.
      *
      * @param backgroundColor the background color
-     * @param opacity         the background color opacity
+     * @param opacity         the background color opacity; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
      * @param extraLeft       extra coloring to the left side
      * @param extraTop        extra coloring at the top
      * @param extraRight      extra coloring to the right side
@@ -668,7 +668,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      *
      * @param color        the color of the line or <CODE>null</CODE> to follow the
      *                     text color
-     * @param opacity      the opacity of the line 
+     * @param opacity      the opacity of the line; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
      * @param thickness    the absolute thickness of the line
      * @param thicknessMul the thickness multiplication factor with the font size
      * @param yPosition    the absolute y position relative to the baseline
@@ -739,7 +739,13 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
         setProperty(Property.DESTINATION, destination);
         return (T) (Object) this;
     }
-    
+
+    /**
+     * Sets an opacity of the given element. It will affect element content, borders and background. Note, that it will also
+     * affect all element children, as they are the content of the given element.
+     * @param opacity a float between 0 and 1, where 1 stands for fully opaque element and 0 - for fully transparent
+     * @return this Element.
+     */
     public T setOpacity(Float opacity) {
         setProperty(Property.OPACITY, opacity);
         return (T) (Object) this;

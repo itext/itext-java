@@ -92,7 +92,7 @@ public class Underline {
      * Mutatis mutandis for the y-position.
      * 
      * @param color the {@link Color} of the underline
-     * @param opacity  a float defining the opacity of the underline
+     * @param opacity  a float defining the opacity of the underline; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
      * @param thickness  a float defining the minimum thickness in points of the underline
      * @param thicknessMul  a float defining the font size dependent component of the thickness of the underline
      * @param yPosition a float defining the default absolute vertical distance in points from the text's base line
@@ -119,7 +119,7 @@ public class Underline {
 
     /**
      * Gets the opacity of the underline color.
-     * @return a {@link Color}
+     * @return a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
      */
     public float getOpacity() {
         return transparentColor.getOpacity();

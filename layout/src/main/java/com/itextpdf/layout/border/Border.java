@@ -158,7 +158,7 @@ public abstract class Border {
      *
      * @param color the color which the border should have
      * @param width the width which the border should have
-     * @param opacity the opacity which border should have
+     * @param opacity the opacity which border should have; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
      */
     protected Border(Color color, float width, float opacity) {
         this.color = color;
@@ -254,7 +254,7 @@ public abstract class Border {
     /**
      * Gets the opacity of the {@link Border border}
      * 
-     * @return the border opacity
+     * @return the border opacity; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
      */
     public float getOpacity() {
         return transparentColor.getOpacity();
