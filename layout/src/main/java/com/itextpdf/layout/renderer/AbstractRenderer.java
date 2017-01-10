@@ -492,24 +492,22 @@ public abstract class AbstractRenderer implements IRenderer {
                         fill().restoreState();
 
             }
-            applyBorderBox(backgroundArea, false);
             if (backgroundImage != null && backgroundImage.getImage() != null) {
-                if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
-                    Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                    logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
-                    return;
-                }
-                Rectangle imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getY() + backgroundArea.getHeight() - backgroundImage.getImage().getHeight(),
+                applyBorderBox(backgroundArea, false);
+                Rectangle imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundImage.getImage().getHeight(),
                         backgroundImage.getImage().getWidth(), backgroundImage.getImage().getHeight());
+                applyBorderBox(backgroundArea, true);
                 drawContext.getCanvas().saveState().rectangle(backgroundArea).clip().newPath();
-                float initialX = imageRectangle.getX();
+                float initialX = backgroundImage.isRepeatX() ? imageRectangle.getX() - imageRectangle.getWidth() : imageRectangle.getX();
+                float initialY = backgroundImage.isRepeatY() ? imageRectangle.getTop() : imageRectangle.getY();
+                imageRectangle.setY(initialY);
                 do {
                     imageRectangle.setX(initialX);
                     do {
                         drawContext.getCanvas().addXObject(backgroundImage.getImage(), imageRectangle);
-                        imageRectangle.moveRight(backgroundImage.getImage().getWidth());
+                        imageRectangle.moveRight(imageRectangle.getWidth());
                     } while (backgroundImage.isRepeatX() && imageRectangle.getLeft() < backgroundArea.getRight());
-                    imageRectangle.moveDown(backgroundImage.getImage().getHeight());
+                    imageRectangle.moveDown(imageRectangle.getHeight());
                 } while (backgroundImage.isRepeatY() && imageRectangle.getTop() > backgroundArea.getBottom());
                 drawContext.getCanvas().restoreState();
             }
