@@ -36,8 +36,8 @@
     <mailingLists>
         <mailingList>
             <name>iText on StackOverflow</name>
-            <subscribe>http://stackoverflow.com/questions/tagged/itext</subscribe>
-            <archive>http://stackoverflow.com/questions/tagged/itext</archive>
+            <subscribe>http://stackoverflow.com/questions/tagged/itext7</subscribe>
+            <archive>http://stackoverflow.com/questions/tagged/itext7</archive>
             <otherArchives>
                 <otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
                 <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
@@ -49,8 +49,8 @@
     </mailingLists>
 
     <scm>
-        <connection>scm:git:git@gitlab.itextsupport.com:itext7/itextcore.git</connection>
-        <url>scm:git:git@gitlab.itextsupport.com:itext7/itextcore.git</url>
+        <connection>ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
+        <url>ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</url>
     </scm>
 
     <issueManagement>
