@@ -97,13 +97,13 @@ public final class FontNamesFactory {
 
     private static FontNames fetchCachedFontNames(String fontName, byte[] fontProgram)  {
         FontProgram fontFound;
-        FontCache.FontCacheKey cacheKey; 
+        FontCacheKey key; 
         if (fontName != null) {
-            cacheKey = FontCache.FontCacheKey.createFontCacheKey(fontName);
+            key = FontCacheKey.create(fontName);
         } else {
-            cacheKey = FontCache.FontCacheKey.createFontCacheKey(fontProgram);
+            key = FontCacheKey.create(fontProgram);
         }
-        fontFound = FontCache.getFont(cacheKey);
+        fontFound = FontCache.getFont(key);
         return fontFound != null ? fontFound.getFontNames() : null;
     }
 

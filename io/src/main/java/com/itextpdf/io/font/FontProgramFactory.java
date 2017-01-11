@@ -171,7 +171,7 @@ public final class FontProgramFactory {
         boolean isCidFont = !isBuiltinFonts14 && FontCache.isPredefinedCidFont(baseName);
 
         FontProgram fontFound;
-        FontCache.FontCacheKey fontKey = null;
+        FontCacheKey fontKey = null;
         if (cached) {
             fontKey = createFontCacheKey(name, fontProgram);
             fontFound = FontCache.getFont(fontKey);
@@ -235,7 +235,7 @@ public final class FontProgramFactory {
     @Deprecated
     public static FontProgram createType1Font(String name, byte[] afm, byte[] pfb, boolean cached) throws java.io.IOException {
         FontProgram fontProgram;
-        FontCache.FontCacheKey fontKey = null;
+        FontCacheKey fontKey = null;
         if (cached) {
             fontKey = createFontCacheKey(name, afm);
             fontProgram = FontCache.getFont(fontKey);
@@ -300,7 +300,7 @@ public final class FontProgramFactory {
      * is true, otherwise it will always be created new
      */
     public static FontProgram createFont(String ttc, int ttcIndex, boolean cached) throws java.io.IOException {
-        FontCache.FontCacheKey fontCacheKey = FontCache.FontCacheKey.createFontCacheKey(ttc, ttcIndex);
+        FontCacheKey fontCacheKey = FontCacheKey.create(ttc, ttcIndex);
         if (cached) {
             FontProgram fontFound = FontCache.getFont(fontCacheKey);
             if (fontFound != null) {
@@ -322,7 +322,7 @@ public final class FontProgramFactory {
      * is true, otherwise it will always be created new
      */
     public static FontProgram createFont(byte[] ttc, int ttcIndex, boolean cached) throws java.io.IOException {
-        FontCache.FontCacheKey fontKey = FontCache.FontCacheKey.createFontCacheKey(ttc, ttcIndex);
+        FontCacheKey fontKey = FontCacheKey.create(ttc, ttcIndex);
         if (cached) {
             FontProgram fontFound = FontCache.getFont(fontKey);
             if (fontFound != null) {
@@ -452,7 +452,7 @@ public final class FontProgramFactory {
 
     private static FontProgram createType1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb, boolean cached) throws java.io.IOException {
         FontProgram fontProgram;
-        FontCache.FontCacheKey fontKey = null;
+        FontCacheKey fontKey = null;
         if (cached) {
             fontKey = createFontCacheKey(metricsPath, afm);
             fontProgram = FontCache.getFont(fontKey);
@@ -465,14 +465,14 @@ public final class FontProgramFactory {
         return cached ? FontCache.saveFont(fontProgram, fontKey) : fontProgram;
     }
 
-    private static FontCache.FontCacheKey createFontCacheKey(String name, byte[] fontProgram) {
-        FontCache.FontCacheKey cacheKey;
+    private static FontCacheKey createFontCacheKey(String name, byte[] fontProgram) {
+        FontCacheKey key;
         if (name != null) {
-            cacheKey = FontCache.FontCacheKey.createFontCacheKey(name);
+            key = FontCacheKey.create(name);
         } else {
-            cacheKey = FontCache.FontCacheKey.createFontCacheKey(fontProgram);
+            key = FontCacheKey.create(fontProgram);
         }
-        return cacheKey;
+        return key;
     }
 
 }
