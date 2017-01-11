@@ -43,14 +43,14 @@ public class StylesTest extends ExtendedITextTest {
 
         Paragraph p = new Paragraph("text").addStyle(myStyle);
 
-        Assert.assertEquals(Color.RED, p.getRenderer().<Color>getProperty(Property.FONT_COLOR));
+        Assert.assertEquals(Color.RED, p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
 
         Style myStyle2 = new Style();
         myStyle2.setFontColor(Color.GREEN);
 
         p.addStyle(myStyle2);
 
-        Assert.assertEquals(Color.GREEN, p.getRenderer().<Color>getProperty(Property.FONT_COLOR));
+        Assert.assertEquals(Color.GREEN, p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
     }
 
 }
