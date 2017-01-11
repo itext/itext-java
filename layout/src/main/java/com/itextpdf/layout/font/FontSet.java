@@ -135,7 +135,7 @@ public class FontSet {
         return fonts;
     }
 
-    protected boolean addFont(String fontName, byte[] fontProgram, String encoding) {
+    boolean addFont(String fontName, byte[] fontProgram, String encoding) {
         if (fontName == null && fontProgram == null) {
             return false;
         }

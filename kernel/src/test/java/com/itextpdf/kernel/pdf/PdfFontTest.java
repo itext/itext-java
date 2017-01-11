@@ -1377,7 +1377,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
     @Test
     public void kozminNames() throws Exception {
-        FontNames names = FontNamesFactory.fetchFontNames("KozMinPro-Regular", null);
+        FontNames names = FontNamesFactory.fetchFontNames("KozMinPro-Regular");
         Assert.assertEquals(names.getFontName(), "KozMinPro-Regular");
         Assert.assertEquals(names.getFullName()[0][3], "KozMinPro-Regular");
         Assert.assertEquals(names.getFullNameLowerCase(), "kozminpro-regular");
@@ -1389,7 +1389,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
     @Test
     public void helveticaNames() throws Exception {
-        FontNames names = FontNamesFactory.fetchFontNames("Helvetica", null);
+        FontNames names = FontNamesFactory.fetchFontNames("Helvetica");
         Assert.assertEquals(names.getFontName(), "Helvetica");
         Assert.assertEquals(names.getFullName()[0][3], "Helvetica");
         Assert.assertEquals(names.getFullNameLowerCase(), "helvetica");
@@ -1400,7 +1400,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
     @Test
     public void otfByStringNames() throws Exception {
-        FontNames names = FontNamesFactory.fetchFontNames(fontsFolder + "Puritan2.otf", null);
+        FontNames names = FontNamesFactory.fetchFontNames(fontsFolder + "Puritan2.otf");
         Assert.assertEquals(names.getFontName(), "Puritan2");
         Assert.assertEquals(names.getFullName()[0][3], "Puritan 2.0 Regular");
         Assert.assertEquals(names.getFamilyName()[0][3], "Puritan 2.0");
@@ -1414,7 +1414,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
     @Test
     public void otfByStreamNames() throws Exception {
-        FontNames names = FontNamesFactory.fetchFontNames(null, StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "Puritan2.otf")));
+        FontNames names = FontNamesFactory.fetchFontNames(StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "Puritan2.otf")));
         Assert.assertEquals(names.getFontName(), "Puritan2");
         Assert.assertEquals(names.getFullName()[0][3], "Puritan 2.0 Regular");
         Assert.assertEquals(names.getFamilyName()[0][3], "Puritan 2.0");
@@ -1427,7 +1427,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
     @Test
     public void ttfByStringNames() throws Exception {
-        FontNames names = FontNamesFactory.fetchFontNames(fontsFolder + "abserif4_5.ttf", null);
+        FontNames names = FontNamesFactory.fetchFontNames(fontsFolder + "abserif4_5.ttf");
         Assert.assertEquals(names.getFontName(), "AboriginalSerif");
         Assert.assertEquals(names.getFullName()[0][3], "Aboriginal Serif");
         Assert.assertEquals(names.getFamilyName()[0][3], "Aboriginal Serif");
@@ -1440,7 +1440,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
     @Test
     public void ttfByStreamNames() throws Exception {
-        FontNames names = FontNamesFactory.fetchFontNames(null, StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "abserif4_5.ttf")));
+        FontNames names = FontNamesFactory.fetchFontNames(StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "abserif4_5.ttf")));
         Assert.assertEquals(names.getFontName(), "AboriginalSerif");
         Assert.assertEquals(names.getFullName()[0][3], "Aboriginal Serif");
         Assert.assertEquals(names.getFamilyName()[0][3], "Aboriginal Serif");

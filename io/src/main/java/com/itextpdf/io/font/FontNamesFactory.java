@@ -49,47 +49,62 @@ public final class FontNamesFactory {
     @SuppressWarnings("FieldCanBeLocal")
     private static boolean FETCH_CACHED_FIRST = true;
 
-    public static FontNames fetchFontNames(String fontName, byte[] fontProgram) {
-        String baseName = FontProgram.getBaseName(fontName);
+    public static FontNames fetchFontNames(String fontName) {
+        if (fontName == null || fontName.length() == 0) {
+            return null;
+        }
 
+        String baseName = FontProgram.getBaseName(fontName);
         //yes, we trying to find built-in standard font with original name, not baseName.
         boolean isBuiltinFonts14 = FontConstants.BUILTIN_FONTS_14.contains(fontName);
         boolean isCidFont = !isBuiltinFonts14 && FontCache.isPredefinedCidFont(baseName);
 
         FontNames fontNames = null;
         if (FETCH_CACHED_FIRST) {
-            fontNames = fetchCachedFontNames(fontName, fontProgram);
+            fontNames = fetchCachedFontNames(fontName, null);
             if (fontNames != null) {
                 return fontNames;
             }
         }
 
-        if (fontName == null) {
-            if (fontProgram != null) {
-                try {
-                    fontNames = fetchTrueTypeNames(null, fontProgram);
-                } catch (Exception ignored) {
-                }
-                if (fontNames == null) {
-                    try {
-                        fontNames = fetchType1Names(null, fontProgram);
-                    } catch (Exception ignored) {
-                    }
-                }
+        try {
+            if (isBuiltinFonts14 || fontName.toLowerCase().endsWith(".afm") || fontName.toLowerCase().endsWith(".pfm")) {
+                fontNames = fetchType1Names(fontName, null);
+            } else if (isCidFont) {
+                fontNames = fetchCidFontNames(fontName);
+            } else if (baseName.toLowerCase().endsWith(".ttf") || baseName.toLowerCase().endsWith(".otf")) {
+                fontNames = fetchTrueTypeNames(fontName);
+            } else {
+                fontNames = fetchTTCNames(baseName);
             }
-        } else {
+        } catch (Exception ignored) {
+            fontNames = null;
+        }
+
+        return fontNames;
+    }
+
+    public static FontNames fetchFontNames(byte[] fontProgram) {
+        if (fontProgram == null || fontProgram.length == 0) {
+            return null;
+        }
+
+        FontNames fontNames = null;
+        if (FETCH_CACHED_FIRST) {
+            fontNames = fetchCachedFontNames(null, fontProgram);
+            if (fontNames != null) {
+                return fontNames;
+            }
+        }
+
+        try {
+            fontNames = fetchTrueTypeNames(fontProgram);
+        } catch (Exception ignored) {
+        }
+        if (fontNames == null) {
             try {
-                if (isBuiltinFonts14 || fontName.toLowerCase().endsWith(".afm") || fontName.toLowerCase().endsWith(".pfm")) {
-                    fontNames = fetchType1Names(fontName, null);
-                } else if (isCidFont) {
-                    fontNames = fetchCidFontNames(fontName);
-                } else if (baseName.toLowerCase().endsWith(".ttf") || baseName.toLowerCase().endsWith(".otf")) {
-                    fontNames = fetchTrueTypeNames(fontName, fontProgram);
-                } else {
-                    fontNames = fetchTTCNames(baseName);
-                }
+                fontNames = fetchType1Names(null, fontProgram);
             } catch (Exception ignored) {
-                fontNames = null;
             }
         }
         return fontNames;
@@ -127,16 +142,16 @@ public final class FontNamesFactory {
         }
     }
 
-    private static FontNames fetchTrueTypeNames(String fontName, byte[] fontProgram) throws java.io.IOException {
-        OpenTypeParser parser;
-        if (fontName != null) {
-            parser = new OpenTypeParser(fontName);
-        } else {
-            parser = new OpenTypeParser(fontProgram);
+    private static FontNames fetchTrueTypeNames(String fontName) throws java.io.IOException {
+        try(OpenTypeParser parser = new OpenTypeParser(fontName)) {
+            return fetchOpenTypeNames(parser);
         }
-        FontNames names = fetchOpenTypeNames(parser);
-        parser.close();
-        return names;
+    }
+
+    private static FontNames fetchTrueTypeNames(byte[] fontProgram) throws java.io.IOException {
+        try(OpenTypeParser parser = new OpenTypeParser(fontProgram)) {
+            return fetchOpenTypeNames(parser);
+        }
     }
 
     private static FontNames fetchOpenTypeNames(OpenTypeParser fontParser) throws java.io.IOException {
@@ -145,6 +160,7 @@ public final class FontNamesFactory {
     }
 
     private static FontNames fetchType1Names(String fontName, byte[] afm) throws java.io.IOException {
+        //TODO close original stream, may be separate static method should introduced
         Type1Font fp = new Type1Font(fontName, null, afm, null);
         return fp.getFontNames();
     }

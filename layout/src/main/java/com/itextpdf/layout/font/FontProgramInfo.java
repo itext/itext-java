@@ -77,7 +77,12 @@ public final class FontProgramInfo {
     }
 
     static FontProgramInfo create(String fontName, byte[] fontProgram, String encoding) {
-        FontNames names = FontNamesFactory.fetchFontNames(fontName, fontProgram);
+        FontNames names;
+        if (fontName != null) {
+            names = FontNamesFactory.fetchFontNames(fontName);
+        } else {
+            names = FontNamesFactory.fetchFontNames(fontProgram);
+        }
         if (names == null) {
             return null;
         }
