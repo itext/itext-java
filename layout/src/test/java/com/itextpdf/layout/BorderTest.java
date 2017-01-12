@@ -1159,7 +1159,6 @@ public class BorderTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
-    @Ignore("DEVSIX-997")
     @Test
     public void tableWithHeaderFooterTest09() throws IOException, InterruptedException {
         String testName = "tableWithHeaderFooterTest09.pdf";
@@ -1168,11 +1167,11 @@ public class BorderTest extends ExtendedITextTest {
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)), PageSize.A4.rotate());
         Cell headerCell1 = new Cell().add("I am header")
-                .setBorder(new SolidBorder(Color.GREEN, 10))
+                .setBorder(new SolidBorder(Color.GREEN, 30))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER);
         Cell headerCell2 = new Cell().add("I am header")
-                .setBorder(new SolidBorder(Color.GREEN, 10))
+                .setBorder(new SolidBorder(Color.GREEN, 30))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER);
 
@@ -1184,23 +1183,34 @@ public class BorderTest extends ExtendedITextTest {
                 .setBorder(new SolidBorder(Color.RED, 200))
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER);
-//        Cell tableCell3 = new Cell().add("I am table")
-//                .setBorder(new SolidBorder(Color.YELLOW, 30))
-//                .setBorderBottom(Border.NO_BORDER)
-//                .setBorderTop(Border.NO_BORDER);
-//        Cell tableCell4 = new Cell().add("I am table")
-//                .setBorder(new SolidBorder(Color.YELLOW, 30))
-//                .setBorderBottom(Border.NO_BORDER)
-//                .setBorderTop(Border.NO_BORDER);
 
         Table table = new Table(new float[]{350, 350}).setBorder(new SolidBorder(Color.BLUE, 20))
                 .addHeaderCell(headerCell1).addHeaderCell(headerCell2)
-                .addCell(tableCell1).addCell(tableCell2)
-                //.addCell(tableCell3).addCell(tableCell4)
-                ;
+                .addCell(tableCell1).addCell(tableCell2);
+        doc.add(table);
+        doc.add(new AreaBreak());
 
-        table.getHeader().setBorder(new SolidBorder(Color.BLACK, 50));
+        headerCell1 = new Cell().add("I am header")
+                .setBorder(new SolidBorder(Color.GREEN, 200))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER);
+        headerCell2 = new Cell().add("I am header")
+                .setBorder(new SolidBorder(Color.GREEN, 200))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER);
 
+        tableCell1 = new Cell().add("I am table")
+                .setBorder(new SolidBorder(Color.RED, 30))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER);
+        tableCell2 = new Cell().add("I am table")
+                .setBorder(new SolidBorder(Color.RED, 30))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER);
+
+        table = new Table(new float[]{350, 350}).setBorder(new SolidBorder(Color.BLUE, 20))
+                .addHeaderCell(headerCell1).addHeaderCell(headerCell2)
+                .addCell(tableCell1).addCell(tableCell2);
         doc.add(table);
 
         doc.close();

@@ -208,6 +208,9 @@ public class TableRenderer extends AbstractRenderer {
                 tableWidth = layoutBox.getWidth() * totalColumnWidthInPercent / 100;
             }
         }
+        if (layoutBox.getWidth() > tableWidth) {
+            layoutBox.setWidth(tableWidth);
+        }
 
         if (null != blockMaxHeight && blockMaxHeight < layoutBox.getHeight()
                 && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
@@ -243,6 +246,9 @@ public class TableRenderer extends AbstractRenderer {
 
             // apply the difference to set footer and table left/right margins identical
             layoutBox.<Rectangle>applyMargins(0, Math.max(0, rightTableBorderWidth - rightFooterBorderWidth) / 2, 0, Math.max(0, leftTableBorderWidth - leftFooterBorderWidth) / 2, false);
+            if (hasProperty(Property.WIDTH)) {
+                footerRenderer.setProperty(Property.WIDTH, new UnitValue(1, layoutBox.getWidth()));
+            }
 
             LayoutResult result = footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             if (result.getStatus() != LayoutResult.FULL) {
@@ -297,7 +303,9 @@ public class TableRenderer extends AbstractRenderer {
 
             // apply the difference to set header and table left/right margins identical
             layoutBox.<Rectangle>applyMargins(0, Math.max(0, rightTableBorderWidth - rightHeaderBorderWidth) / 2, 0, Math.max(0, leftTableBorderWidth - leftHeaderBorderWidth) / 2, false);
-
+            if (hasProperty(Property.WIDTH)) {
+                headerRenderer.setProperty(Property.WIDTH, new UnitValue(1, layoutBox.getWidth()));
+            }
             LayoutResult result = headerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
             if (result.getStatus() != LayoutResult.FULL) {
                 return new LayoutResult(LayoutResult.NOTHING, null, null, this, result.getCauseOfNothing());
@@ -399,7 +407,7 @@ public class TableRenderer extends AbstractRenderer {
                 }
             }
             // such situation can occur if (the table is complete and empty) or (there was a row where each cell is rowspanned)
-            if (cellProcessingQueue.isEmpty()) {
+            if (0 == cellProcessingQueue.size()) {
                 // we shouldn't consider this row in borders building
                 rows.remove(currentRow);
                 row--;
@@ -719,6 +727,10 @@ public class TableRenderer extends AbstractRenderer {
                 // apply the difference to set footer and table left/right margins identical
                 layoutBox.<Rectangle>applyMargins(0, -collapsedTableBorderWidths[1] / 2,
                         0, -collapsedTableBorderWidths[3] / 2, false);
+                if (hasProperty(Property.WIDTH)) {
+                    footerRenderer.setProperty(Property.WIDTH, new UnitValue(1, layoutBox.getWidth()));
+                }
+
                 footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
                 layoutBox.<Rectangle>applyMargins(0, -collapsedTableBorderWidths[1] / 2,
                         0, -collapsedTableBorderWidths[3] / 2, true);
@@ -906,9 +918,9 @@ public class TableRenderer extends AbstractRenderer {
                             if (null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
                                 float blockBottom = Math.max(occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight()), layoutBox.getBottom());
                                 if (0 == heights.size()) {
-                                    heights.add(blockMinHeight - occupiedArea.getBBox().getHeight() / 2);
+                                    heights.add(((float) blockMinHeight) - occupiedArea.getBBox().getHeight() / 2);
                                 } else {
-                                    heights.set(heights.size()-1, heights.get(heights.size()-1) + blockMinHeight - occupiedArea.getBBox().getHeight());
+                                    heights.set(heights.size()-1, heights.get(heights.size()-1) + ((float)blockMinHeight) - occupiedArea.getBBox().getHeight());
                                 }
                                 occupiedArea.getBBox()
                                         .increaseHeight(occupiedArea.getBBox().getBottom() - blockBottom)
