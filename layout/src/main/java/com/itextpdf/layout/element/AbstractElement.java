@@ -52,9 +52,9 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.IRenderer;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Defines the most common properties that most {@link IElement} implementations
@@ -66,7 +66,7 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
 
     protected IRenderer nextRenderer;
     protected List<IElement> childElements = new ArrayList<>();
-    protected LinkedList<Style> styles;
+    protected Set<Style> styles;
 
     @Override
     public IRenderer getRenderer() {
@@ -110,9 +110,7 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
     public <T1> T1 getProperty(int property) {
         Object result = super.<T1>getProperty(property);
         if (styles != null && styles.size() > 0 && result == null && !super.hasProperty(property)) {
-            Iterator<Style> listItReverse = styles.descendingIterator();
-            while(listItReverse.hasNext()) {
-                Style style = listItReverse.next();
+            for (Style style : styles) {
                 result = style.<T1>getProperty(property);
                 if (result != null || super.hasProperty(property)) {
                     break;
@@ -130,7 +128,7 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
      */
     public T addStyle(Style style) {
         if (styles == null) {
-            styles = new LinkedList<>();
+            styles = new LinkedHashSet<>();
         }
         styles.add(style);
         return (T) (Object)this;
