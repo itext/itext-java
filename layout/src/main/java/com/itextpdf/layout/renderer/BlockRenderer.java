@@ -438,6 +438,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             applyRelativePositioningTranslation(false);
         }
 
+        beginElementOpacityApplying(drawContext);
         beginRotationIfApplied(drawContext.getCanvas());
 
         drawBackground(drawContext);
@@ -446,7 +447,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
         drawPositionedChildren(drawContext);
 
         endRotationIfApplied(drawContext.getCanvas());
-
+        endElementOpacityApplying(drawContext);
+        
         if (isRelativePosition) {
             applyRelativePositioningTranslation(true);
         }

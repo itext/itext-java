@@ -45,6 +45,7 @@ package com.itextpdf.layout.border;
 
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.property.TransparentColor;
 
 /**
  * Represents a border.
@@ -104,8 +105,17 @@ public abstract class Border {
     /**
      * The color of the border.
      * @see Color
+     * @deprecated use {@link Border#transparentColor} instead
      */
+    @Deprecated
     protected Color color;
+
+    /**
+     * The color of the border.
+     * @see TransparentColor
+     */
+    protected TransparentColor transparentColor;
+
     /**
      * The width of the border.
      */
@@ -139,9 +149,23 @@ public abstract class Border {
      */
     protected Border(Color color, float width) {
         this.color = color;
+        this.transparentColor = new TransparentColor(color);
         this.width = width;
     }
 
+    /**
+     * Creates a {@link Border border} with given width, {@link Color color} and opacity.
+     *
+     * @param color the color which the border should have
+     * @param width the width which the border should have
+     * @param opacity the opacity which border should have; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
+     */
+    protected Border(Color color, float width, float opacity) {
+        this.color = color;
+        this.transparentColor = new TransparentColor(color, opacity);
+        this.width = width;
+    }
+    
     /**
      * <p>
      * All borders are supposed to be drawn in such way, that inner content of the element is on the right from the
@@ -224,7 +248,16 @@ public abstract class Border {
      * @return the {@link Color color}
      */
     public Color getColor() {
-        return color;
+        return transparentColor.getColor();
+    }
+
+    /**
+     * Gets the opacity of the {@link Border border}
+     * 
+     * @return the border opacity; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
+     */
+    public float getOpacity() {
+        return transparentColor.getOpacity();
     }
 
     /**
@@ -241,6 +274,7 @@ public abstract class Border {
      */
     public void setColor(Color color) {
         this.color = color;
+        this.transparentColor = new TransparentColor(color, this.transparentColor.getOpacity());
     }
 
     /**
@@ -262,8 +296,9 @@ public abstract class Border {
         if (anObject instanceof Border) {
             Border anotherBorder = (Border) anObject;
             if (anotherBorder.getType() != getType()
-                    || anotherBorder.getColor() != getColor()
-                    || anotherBorder.getWidth() != getWidth()) {
+                    || !anotherBorder.getColor().equals(getColor())
+                    || anotherBorder.getWidth() != getWidth()
+                    || anotherBorder.transparentColor.getOpacity() != transparentColor.getOpacity()) {
                 return false;
             }
         } else {
@@ -281,6 +316,7 @@ public abstract class Border {
 
         if (h == 0) {
             h = (int) getWidth() * 31 + getColor().hashCode();
+            h = h * 31 + (int) transparentColor.getOpacity();
             hash = h;
         }
 

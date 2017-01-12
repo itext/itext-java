@@ -140,6 +140,9 @@ public class LogListener extends TestWatcher {
 
     private void checkLogMessages(Description description) {
         Annotation annotation = description.getAnnotation(LogMessages.class);
+        if (annotation == null) {
+            annotation = description.getTestClass().getAnnotation(LogMessages.class);
+        }
         int checkedMessages = 0;
         if (annotation != null) {
             LogMessages logMessages = (LogMessages) annotation;

@@ -155,6 +155,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public static final int HIDDEN = 1;
     public static final int VISIBLE_BUT_DOES_NOT_PRINT = 2;
     public static final int HIDDEN_BUT_PRINTABLE = 3;
+    public static final int VISIBLE = 4;
 
     public static final int FF_READ_ONLY = makeFieldFlag(1);
     public static final int FF_REQUIRED = makeFieldFlag(2);
@@ -1721,8 +1722,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * @param visibility
-     * @return the edited field
+     * Set the visibility flags of the form field annotation
+     * Options are: HIDDEN, HIDDEN_BUT_PRINTABLE, VISIBLE, VISIBLE_BUT_DOES_NOT_PRINT
+     * @param visibility visibility option
+     * @return the edited form field annotation
      */
     public PdfFormField setVisibility(int visibility) {
         switch (visibility) {
@@ -1734,6 +1737,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             case HIDDEN_BUT_PRINTABLE:
                 getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT | PdfAnnotation.NO_VIEW));
                 break;
+            case VISIBLE:
             default:
                 getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT));
                 break;

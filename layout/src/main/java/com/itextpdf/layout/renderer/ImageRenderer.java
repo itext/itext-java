@@ -283,7 +283,9 @@ public class ImageRenderer extends AbstractRenderer {
         }
 
         PdfXObject xObject = ((Image) (getModelElement())).getXObject();
+        beginElementOpacityApplying(drawContext);
         canvas.addXObject(xObject, matrix[0], matrix[1], matrix[2], matrix[3], (float) fixedXPosition + deltaX, (float) fixedYPosition);
+        endElementOpacityApplying(drawContext);
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FLUSH_ON_DRAW))) {
             xObject.flush();
         }

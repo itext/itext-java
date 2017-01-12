@@ -77,6 +77,17 @@ public class RoundDotsBorder extends Border {
     }
 
     /**
+     * Creates a RoundDotsBorder with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity width of the border
+     */
+    public RoundDotsBorder(Color color, float width, float opacity) {
+        super(color, width, opacity);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -117,13 +128,15 @@ public class RoundDotsBorder extends Border {
                 break;
         }
 
-        canvas.setStrokeColor(color);
-        canvas.setLineWidth(width);
-        canvas.setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND);
-
+        canvas.saveState()
+                .setStrokeColor(transparentColor.getColor())
+                .setLineWidth(width)
+                .setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND);
+        transparentColor.applyStrokeTransparency(canvas);
         canvas.setLineDash(0, adjustedGap, adjustedGap/2)
                 .moveTo(x1, y1).lineTo(x2, y2)
-                .stroke();
+                .stroke()
+                .restoreState();
     }
 
     /**
@@ -145,7 +158,8 @@ public class RoundDotsBorder extends Border {
             x2 -= width;
         }
 
-        canvas.setStrokeColor(color);
+        canvas.setStrokeColor(transparentColor.getColor());
+        transparentColor.applyStrokeTransparency(canvas);
         canvas.setLineWidth(width);
         canvas.setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND);
 

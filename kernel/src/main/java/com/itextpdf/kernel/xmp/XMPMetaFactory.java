@@ -47,6 +47,8 @@ import java.io.OutputStream;
  * @since 30.01.2006
  */
 public final class XMPMetaFactory {
+    private static final Object staticLock = new Object();
+
     /**
      * The singleton instance of the <code>XMPSchemaRegistry</code>.
      */
@@ -247,54 +249,56 @@ public final class XMPMetaFactory {
      *
      * @return Returns the version information.
      */
-    public static synchronized XMPVersionInfo getVersionInfo() {
-        if (versionInfo == null) {
-            try {
-                final int major = 5;
-                final int minor = 1;
-                final int micro = 0;
-                final int engBuild = 3;
-                final boolean debug = false;
+    public static XMPVersionInfo getVersionInfo() {
+        synchronized (staticLock) {
+            if (versionInfo == null) {
+                try {
+                    final int major = 5;
+                    final int minor = 1;
+                    final int micro = 0;
+                    final int engBuild = 3;
+                    final boolean debug = false;
 
-                // Adobe XMP Core 5.0-jc001 DEBUG-<branch>.<changelist>, 2009 Jan 28 15:22:38-CET
-                final String message = "Adobe XMP Core 5.1.0-jc003";
+                    // Adobe XMP Core 5.0-jc001 DEBUG-<branch>.<changelist>, 2009 Jan 28 15:22:38-CET
+                    final String message = "Adobe XMP Core 5.1.0-jc003";
 
 
-                versionInfo = new XMPVersionInfo() {
-                    public int getMajor() {
-                        return major;
-                    }
+                    versionInfo = new XMPVersionInfo() {
+                        public int getMajor() {
+                            return major;
+                        }
 
-                    public int getMinor() {
-                        return minor;
-                    }
+                        public int getMinor() {
+                            return minor;
+                        }
 
-                    public int getMicro() {
-                        return micro;
-                    }
+                        public int getMicro() {
+                            return micro;
+                        }
 
-                    public boolean isDebug() {
-                        return debug;
-                    }
+                        public boolean isDebug() {
+                            return debug;
+                        }
 
-                    public int getBuild() {
-                        return engBuild;
-                    }
+                        public int getBuild() {
+                            return engBuild;
+                        }
 
-                    public String getMessage() {
-                        return message;
-                    }
+                        public String getMessage() {
+                            return message;
+                        }
 
-                    public String toString() {
-                        return message;
-                    }
-                };
+                        public String toString() {
+                            return message;
+                        }
+                    };
 
-            } catch (Throwable e) {
-                // EMTPY, severe error would be detected during the tests
-                System.out.println(e);
+                } catch (Throwable e) {
+                    // EMTPY, severe error would be detected during the tests
+                    System.out.println(e);
+                }
             }
+            return versionInfo;
         }
-        return versionInfo;
     }
 }

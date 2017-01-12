@@ -63,7 +63,7 @@ public abstract class FontSelectorStrategy {
         this.provider = provider;
     }
 
-    public boolean EndOfText() {
+    public boolean endOfText() {
         return text == null || index >= text.length();
     }
 

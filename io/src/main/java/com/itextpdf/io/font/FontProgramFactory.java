@@ -171,13 +171,9 @@ public final class FontProgramFactory {
         boolean isCidFont = !isBuiltinFonts14 && FontCache.isPredefinedCidFont(baseName);
 
         FontProgram fontFound;
-        String fontKey = null;
+        FontCacheKey fontKey = null;
         if (cached) {
-            if (name != null) {
-                fontKey = name;
-            } else {
-                fontKey = Integer.toString(ArrayUtil.hashCode(fontProgram));
-            }
+            fontKey = createFontCacheKey(name, fontProgram);
             fontFound = FontCache.getFont(fontKey);
             if (fontFound != null) {
                 return fontFound;
@@ -239,13 +235,9 @@ public final class FontProgramFactory {
     @Deprecated
     public static FontProgram createType1Font(String name, byte[] afm, byte[] pfb, boolean cached) throws java.io.IOException {
         FontProgram fontProgram;
-        String fontKey = null;
+        FontCacheKey fontKey = null;
         if (cached) {
-            if (name != null) {
-                fontKey = name;
-            } else {
-                fontKey = Integer.toString(ArrayUtil.hashCode(afm));
-            }
+            fontKey = createFontCacheKey(name, afm);
             fontProgram = FontCache.getFont(fontKey);
             if (fontProgram != null) {
                 return fontProgram;
@@ -308,14 +300,15 @@ public final class FontProgramFactory {
      * is true, otherwise it will always be created new
      */
     public static FontProgram createFont(String ttc, int ttcIndex, boolean cached) throws java.io.IOException {
+        FontCacheKey fontCacheKey = FontCacheKey.create(ttc, ttcIndex);
         if (cached) {
-            FontProgram fontFound = FontCache.getFont(ttc + ttcIndex);
+            FontProgram fontFound = FontCache.getFont(fontCacheKey);
             if (fontFound != null) {
                 return fontFound;
             }
         }
         FontProgram fontBuilt = new TrueTypeFont(ttc, ttcIndex);
-        return cached ? FontCache.saveFont(fontBuilt, ttc + ttcIndex) : fontBuilt;
+        return cached ? FontCache.saveFont(fontBuilt, fontCacheKey) : fontBuilt;
     }
 
     /**
@@ -329,9 +322,8 @@ public final class FontProgramFactory {
      * is true, otherwise it will always be created new
      */
     public static FontProgram createFont(byte[] ttc, int ttcIndex, boolean cached) throws java.io.IOException {
-        String fontKey = null;
+        FontCacheKey fontKey = FontCacheKey.create(ttc, ttcIndex);
         if (cached) {
-            fontKey = Integer.toString(ArrayUtil.hashCode(ttc)) + Integer.toString(ttcIndex);
             FontProgram fontFound = FontCache.getFont(fontKey);
             if (fontFound != null) {
                 return fontFound;
@@ -460,13 +452,9 @@ public final class FontProgramFactory {
 
     private static FontProgram createType1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb, boolean cached) throws java.io.IOException {
         FontProgram fontProgram;
-        String fontKey = null;
+        FontCacheKey fontKey = null;
         if (cached) {
-            if (metricsPath != null) {
-                fontKey = metricsPath;
-            } else {
-                fontKey = Integer.toString(ArrayUtil.hashCode(afm));
-            }
+            fontKey = createFontCacheKey(metricsPath, afm);
             fontProgram = FontCache.getFont(fontKey);
             if (fontProgram != null) {
                 return fontProgram;
@@ -475,6 +463,16 @@ public final class FontProgramFactory {
 
         fontProgram = new Type1Font(metricsPath, binaryPath, afm, pfb);
         return cached ? FontCache.saveFont(fontProgram, fontKey) : fontProgram;
+    }
+
+    private static FontCacheKey createFontCacheKey(String name, byte[] fontProgram) {
+        FontCacheKey key;
+        if (name != null) {
+            key = FontCacheKey.create(name);
+        } else {
+            key = FontCacheKey.create(fontProgram);
+        }
+        return key;
     }
 
 }
