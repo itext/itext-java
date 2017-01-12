@@ -209,7 +209,7 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
         if (layoutBox.getWidth() > tableWidth) {
-            layoutBox.setWidth(tableWidth);
+            layoutBox.setWidth((float)tableWidth);
         }
 
         if (null != blockMaxHeight && blockMaxHeight < layoutBox.getHeight()
