@@ -10,6 +10,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
@@ -578,6 +579,63 @@ public class ImageTest extends ExtendedITextTest {
         doc.add(p);
 
         doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 2)})
+    public void imageInTableTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageInTableTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageInTableTest01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        Table table = new Table(1);
+        table.setMaxHeight(300);
+        table.setBorder(new SolidBorder(Color.BLUE, 10));
+
+        Cell c = new Cell().add(img.setHeight(500));
+        table.addCell(c);
+        document.add(table);
+        document.add(new Table(1).addCell("Is my occupied area right?"));
+        document.add(new AreaBreak());
+
+        table.setMinHeight(150);
+        document.add(table);
+        document.add(new Table(1).addCell("Is my occupied area right?"));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 2)})
+    public void imageInTableTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageInTableTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageInTableTest02.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        Table table = new Table(1);
+        table.setMaxHeight(300);
+        table.setBorder(new SolidBorder(Color.BLUE, 10));
+
+        Cell c = new Cell().add(img.setHeight(500));
+        table.addCell("First cell");
+        table.addCell(c);
+        document.add(table);
+        document.add(new Table(1).addCell("Is my occupied area right?"));
+        document.add(new AreaBreak());
+
+        table.setMinHeight(150);
+        document.add(table);
+        document.add(new Table(1).addCell("Is my occupied area right?"));
+
+        document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }

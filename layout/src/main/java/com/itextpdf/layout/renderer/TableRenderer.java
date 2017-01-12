@@ -146,6 +146,9 @@ public class TableRenderer extends AbstractRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         overrideHeightProperties();
+        Float blockMinHeight = retrieveMinHeight();
+        Float blockMaxHeight = retrieveMaxHeight();
+
         boolean wasHeightClipped = false;
         LayoutArea area = layoutContext.getArea();
         Rectangle layoutBox = area.getBBox().clone();
@@ -205,8 +208,7 @@ public class TableRenderer extends AbstractRenderer {
                 tableWidth = layoutBox.getWidth() * totalColumnWidthInPercent / 100;
             }
         }
-        // Float blockHeight = retrieveHeight();
-        Float blockMaxHeight = retrieveMaxHeight();
+
         if (null != blockMaxHeight && blockMaxHeight < layoutBox.getHeight()
                 && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
             layoutBox.moveUp(layoutBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
@@ -395,6 +397,19 @@ public class TableRenderer extends AbstractRenderer {
                 if (currentRow[col] != null) {
                     cellProcessingQueue.addLast(new CellRendererInfo(currentRow[col], col, row));
                 }
+            }
+            // such situation can occur if (the table is complete and empty) or (there was a row where each cell is rowspanned)
+            if (cellProcessingQueue.isEmpty()) {
+                // we shouldn't consider this row in borders building
+                rows.remove(currentRow);
+                row--;
+                if (row + 1 == rows.size()) {
+                    Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                    logger.warn(LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE);
+                    // Correct occupied areas of all added cells
+                    correctCellsOccupiedAreas(row, targetOverflowRowIndex);
+                }
+                continue;
             }
             // the element which was the first to cause Layout.Nothing
             IRenderer firstCauseOfNothing = null;
@@ -678,30 +693,7 @@ public class TableRenderer extends AbstractRenderer {
                 }
 
                 // Correct occupied areas of all added cells
-                for (int k = 0; k <= row; k++) {
-                    currentRow = rows.get(k);
-                    if (k < row || (row + 1 == heights.size())) {
-                        for (col = 0; col < currentRow.length; col++) {
-                            CellRenderer cell = currentRow[col];
-                            if (cell == null) {
-                                continue;
-                            }
-                            float height = 0;
-                            int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
-                            for (int l = k; l > ((k == row + 1) ? targetOverflowRowIndex[col] : k) - rowspan && l >= 0; l--) {
-                                height += (float) heights.get(l);
-                            }
-                            // Correcting cell bbox only. We don't need #move() here.
-                            // This is because of BlockRenderer's specificity regarding occupied area.
-                            float shift = height - cell.getOccupiedArea().getBBox().getHeight();
-                            Rectangle bBox = cell.getOccupiedArea().getBBox();
-                            bBox.moveDown(shift);
-                            bBox.setHeight(height);
-                            cell.applyVerticalAlignment();
-                        }
-                    }
-                }
-                currentRow = rows.get(row);
+                correctCellsOccupiedAreas(row, targetOverflowRowIndex);
             }
             // process footer with collapsed borders
             if ((split || processAsLast || row == rows.size() - 1) && null != footerRenderer) {
@@ -771,10 +763,8 @@ public class TableRenderer extends AbstractRenderer {
                             } else if (Border.NO_BORDER != cellOverflow.<Border>getProperty(Property.BORDER_TOP)) {
                                 cellOverflow.deleteOwnProperty(Property.BORDER_TOP);
                             }
-                            if (splits[col].getStatus() != LayoutResult.NOTHING) {
-                                for (int j = col; j < col + cellOverflow.getPropertyAsInteger(Property.COLSPAN); j++) {
-                                    horizontalBorders.get(!hasContent && splits[col].getStatus() == LayoutResult.PARTIAL ? row : row + 1).set(j, getBorders()[2]);
-                                }
+                            for (int j = col; j < col + cellOverflow.getPropertyAsInteger(Property.COLSPAN); j++) {
+                                horizontalBorders.get(!hasContent && splits[col].getStatus() == LayoutResult.PARTIAL ? row : row + 1).set(j, getBorders()[2]);
                             }
                             cellOverflow.deleteOwnProperty(Property.BORDER_BOTTOM);
                             cellOverflow.setBorders(cellOverflow.getBorders()[2], 2);
@@ -853,6 +843,22 @@ public class TableRenderer extends AbstractRenderer {
                     } else {
                         occupiedArea.getBBox().moveUp(topTableBorderWidth / 2).decreaseHeight(topTableBorderWidth / 2);
                         layoutBox.increaseHeight(topTableBorderWidth / 2);
+                        // process bottom border of the last added row if there is no footer
+                        if (!tableModel.isComplete() || 0 != lastFlushedRowBottomBorder.size()) {
+                            bottomTableBorderWidth = null == widestLustFlushedBorder ? 0f : widestLustFlushedBorder.getWidth();
+                            occupiedArea.getBBox().moveDown(bottomTableBorderWidth).increaseHeight(bottomTableBorderWidth);
+
+                            splitResult[0].horizontalBorders.clear();
+                            splitResult[0].horizontalBorders.add(lastFlushedRowBottomBorder);
+
+                            // hack to process 'margins'
+                            splitResult[0].setBorders(widestLustFlushedBorder, 2);
+                            splitResult[0].setBorders(Border.NO_BORDER, 0);
+                            if (0 != splitResult[0].verticalBorders.size()) {
+                                splitResult[0].setBorders(splitResult[0].verticalBorders.get(0).get(0), 3);
+                                splitResult[0].setBorders(splitResult[0].verticalBorders.get(verticalBorders.size() - 1).get(0), 1);
+                            }
+                        }
                     }
                 }
                 if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))
@@ -860,23 +866,6 @@ public class TableRenderer extends AbstractRenderer {
                     extendLastRow(currentRow, layoutBox);
                 }
                 adjustFooterAndFixOccupiedArea(layoutBox);
-
-                // process bottom border of the last added row if there is no footer
-                if ((!tableModel.isComplete() || 0 != lastFlushedRowBottomBorder.size()) && null == footerRenderer) {
-                    bottomTableBorderWidth = null == widestLustFlushedBorder ? 0f : widestLustFlushedBorder.getWidth();
-                    occupiedArea.getBBox().moveDown(bottomTableBorderWidth).increaseHeight(bottomTableBorderWidth);
-
-                    splitResult[0].horizontalBorders.clear();
-                    splitResult[0].horizontalBorders.add(lastFlushedRowBottomBorder);
-
-                    // hack to process 'margins'
-                    splitResult[0].setBorders(widestLustFlushedBorder, 2);
-                    splitResult[0].setBorders(Border.NO_BORDER, 0);
-                    if (0 != splitResult[0].verticalBorders.size()) {
-                        splitResult[0].setBorders(splitResult[0].verticalBorders.get(0).get(0), 3);
-                        splitResult[0].setBorders(splitResult[0].verticalBorders.get(verticalBorders.size() - 1).get(0), 1);
-                    }
-                }
 
                 // On the next page we need to process rows without any changes except moves connected to actual cell splitting
                 for (Map.Entry<Integer, Integer> entry : rowMoves.entrySet()) {
@@ -899,6 +888,32 @@ public class TableRenderer extends AbstractRenderer {
                         if (wasHeightClipped) {
                             Logger logger = LoggerFactory.getLogger(TableRenderer.class);
                             logger.warn(LogMessageConstant.CLIP_ELEMENT);
+                            // Process borders
+                            if (status == LayoutResult.NOTHING) {
+                                ArrayList<Border> topBorders = new ArrayList<Border>();
+                                ArrayList<Border> bottomBorders = new ArrayList<Border>();
+                                for (int i = 0; i < tableModel.getNumberOfColumns(); i++) {
+                                    topBorders.add(borders[0]);
+                                    bottomBorders.add(borders[2]);
+                                }
+                                horizontalBorders.clear();
+                                horizontalBorders.add(topBorders);
+                                horizontalBorders.add(bottomBorders);
+                                float bordersWidth = (null == borders[0] ? 0 : borders[0].getWidth()) + (null == borders[2] ? 0 : borders[2].getWidth());
+                                occupiedArea.getBBox().moveDown(bordersWidth).increaseHeight(bordersWidth);
+                            }
+                            // Notice that we extend the table only on the current page
+                            if (null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
+                                float blockBottom = Math.max(occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight()), layoutBox.getBottom());
+                                if (0 == heights.size()) {
+                                    heights.add(blockMinHeight - occupiedArea.getBBox().getHeight() / 2);
+                                } else {
+                                    heights.set(heights.size()-1, heights.get(heights.size()-1) + blockMinHeight - occupiedArea.getBBox().getHeight());
+                                }
+                                occupiedArea.getBBox()
+                                        .increaseHeight(occupiedArea.getBBox().getBottom() - blockBottom)
+                                        .setY(blockBottom);
+                            }
                         }
                         return new LayoutResult(LayoutResult.FULL, occupiedArea, splitResult[0], null);
                     } else {
@@ -982,7 +997,7 @@ public class TableRenderer extends AbstractRenderer {
             rightVerticalBorders.add(borders[1]);
             verticalBorders = new ArrayList<>();
             verticalBorders.add(leftVerticalBorders);
-            for (int i = 0; i < ((Table) modelElement).getNumberOfColumns() - 1; i++) {
+            for (int i = 0; i < tableModel.getNumberOfColumns() - 1; i++) {
                 verticalBorders.add(new ArrayList<Border>());
             }
             verticalBorders.add(rightVerticalBorders);
@@ -1025,11 +1040,14 @@ public class TableRenderer extends AbstractRenderer {
             extendLastRow(rows.get(rows.size() - 1), layoutBox);
         }
 
-
-        Float blockMinHeight = retrieveMinHeight();
         if (null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
-            float blockBottom = Math.max(occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight()), layoutContext.getArea().getBBox().getBottom());
-            heights.set(heights.size() - 1, heights.get(heights.size() - 1) + occupiedArea.getBBox().getBottom() - blockBottom);
+            float blockBottom = Math.max(occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight()), layoutBox.getBottom());
+            if (0 != heights.size()) {
+                heights.set(heights.size() - 1, heights.get(heights.size() - 1) + occupiedArea.getBBox().getBottom() - blockBottom);
+            } else {
+                heights.add((occupiedArea.getBBox().getBottom() - blockBottom) + occupiedArea.getBBox().getHeight()/2);
+            }
+
             occupiedArea.getBBox()
                     .increaseHeight(occupiedArea.getBBox().getBottom() - blockBottom)
                     .setY(blockBottom);
@@ -1372,7 +1390,9 @@ public class TableRenderer extends AbstractRenderer {
             if (null != borders[0]) {
                 startY -= borders[0].getWidth() / 2;
                 if (null != borders[2]) {
-                    heights.set(0, borders[0].getWidth()/2 + borders[2].getWidth()/2);
+                    if (0 == heights.size()) {
+                        heights.add(0, borders[0].getWidth() / 2 + borders[2].getWidth() / 2);
+                    }
                 }
             } else if (null != borders[2]) {
                 startY -= borders[2].getWidth() / 2;
@@ -1564,6 +1584,33 @@ public class TableRenderer extends AbstractRenderer {
                 j++;
                 if (j == rowNum) {
                     break;
+                }
+            }
+        }
+    }
+
+    private void correctCellsOccupiedAreas(int row, int[] targetOverflowRowIndex) {
+        // Correct occupied areas of all added cells
+        for (int k = 0; k <= row; k++) {
+            CellRenderer[] currentRow = rows.get(k);
+            if (k < row || (row + 1 == heights.size())) {
+                for (int col = 0; col < currentRow.length; col++) {
+                    CellRenderer cell = currentRow[col];
+                    if (cell == null) {
+                        continue;
+                    }
+                    float height = 0;
+                    int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
+                    for (int l = k; l > ((k == row + 1) ? targetOverflowRowIndex[col] : k) - rowspan && l >= 0; l--) {
+                        height += (float) heights.get(l);
+                    }
+                    // Correcting cell bbox only. We don't need #move() here.
+                    // This is because of BlockRenderer's specificity regarding occupied area.
+                    float shift = height - cell.getOccupiedArea().getBBox().getHeight();
+                    Rectangle bBox = cell.getOccupiedArea().getBBox();
+                    bBox.moveDown(shift);
+                    bBox.setHeight(height);
+                    cell.applyVerticalAlignment();
                 }
             }
         }
