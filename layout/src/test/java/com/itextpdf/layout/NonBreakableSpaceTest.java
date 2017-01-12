@@ -40,4 +40,23 @@ public class NonBreakableSpaceTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, diffPrefix));
     }
+    
+    @Test
+    public void consecutiveSpacesTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "consecutiveSpacesTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_consecutiveSpacesTest.pdf";
+        String diffPrefix = "diff_consecutiveSpacesTest_";
+
+        Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        document.add(new Paragraph("aaa\u00a0\u00a0\u00a0bbb").setWidth(100).setBorder(new SolidBorder(Color.RED, 10)));
+        document.add(new Paragraph("aaa\u00a0bbb").setWidth(100).setBorder(new SolidBorder(Color.GREEN, 10)));
+        document.add(new Paragraph("aaa   bbb").setWidth(100).setBorder(new SolidBorder(Color.BLUE, 10)));
+        document.add(new Paragraph("aaa bbb").setWidth(100).setBorder(new SolidBorder(Color.BLACK, 10)));
+        Paragraph p = new Paragraph();
+        p.add("aaa\u00a0\u00a0\u00a0bbb").add("ccc   ddd");
+        document.add(p);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, diffPrefix));
+    }
 }
