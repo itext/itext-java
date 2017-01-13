@@ -138,6 +138,7 @@ public final class Property {
     public static final int STROKE_COLOR = 63;
     public static final int STROKE_WIDTH = 64;
     public static final int SKEW = 65;
+    public static final int TABLE_LAYOUT = 93;
     public static final int TAB_ANCHOR = 66;
     public static final int TAB_DEFAULT = 67;
     public static final int TAB_LEADER = 68;
