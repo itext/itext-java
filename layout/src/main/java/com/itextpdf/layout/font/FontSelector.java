@@ -49,19 +49,23 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
- * Sort given font set according to font name and font style.
+ * Sort given set of fonts according to font name and style.
  */
 public class FontSelector {
 
     protected List<FontProgramInfo> fonts;
 
-    public FontSelector(Set<FontProgramInfo> allFonts, String fontFamily, int style) {
+    /**
+     * Create new FontSelector instance.
+     * @param allFonts Unsorted set of all available fonts.
+     * @param fontFamilies sorted list of preferred font families.
+     */
+    public FontSelector(Set<FontProgramInfo> allFonts, List<String> fontFamilies, int style) {
         this.fonts = new ArrayList<>(allFonts);
         //Possible issue in .NET, virtual member in constructor.
-        Collections.sort(this.fonts, getComparator(fontFamily != null ? fontFamily : "", style));
+        Collections.sort(this.fonts, getComparator(fontFamilies, style));
     }
 
     /**
@@ -79,16 +83,59 @@ public class FontSelector {
         return fonts;
     }
 
-    protected Comparator<FontProgramInfo> getComparator(String fontFamily, int style) {
-        return new PdfFontComparator(fontFamily, style);
+    protected Comparator<FontProgramInfo> getComparator(List<String> fontFamilies, int style) {
+        return new PdfFontComparator(fontFamilies, style);
     }
 
     private static class PdfFontComparator implements Comparator<FontProgramInfo> {
-        String fontFamily;
-        int style;
+        List<String> fontFamilies;
+        List<Integer> fontStyles;
 
-        PdfFontComparator(String fontFamily, int style) {
-            this.fontFamily = fontFamily.toLowerCase();
+        PdfFontComparator(List<String> fontFamilies, int style) {
+            this.fontFamilies = new ArrayList<>();
+            this.fontStyles = new ArrayList<>();
+            if (fontFamilies != null && fontFamilies.size() > 0) {
+                for (String fontFamily : fontFamilies) {
+                    String lowercaseFontFamily = fontFamily.toLowerCase();
+                    this.fontFamilies.add(lowercaseFontFamily);
+                    this.fontStyles.add(parseFontStyle(lowercaseFontFamily, style));
+                }
+            } else {
+                this.fontFamilies.add("");
+                this.fontStyles.add(style);
+            }
+        }
+
+        @Override
+        public int compare(FontProgramInfo o1, FontProgramInfo o2) {
+            int res = 0;
+            for (int i = 0; i < fontFamilies.size() && res == 0; i++) {
+                int style = fontStyles.get(i);
+                if ((style & FontConstants.BOLD) == 0) {
+                    res = (o2.getNames().isBold() ? 1 : 0)
+                            - (o1.getNames().isBold() ? 1 : 0);
+                }
+                if ((style & FontConstants.ITALIC) == 0) {
+                    res += (o2.getNames().isItalic() ? 1 : 0)
+                            - (o1.getNames().isItalic() ? 1 : 0);
+                }
+                if (res == 0) {
+                    String fontName = fontFamilies.get(i);
+                    res = (o2.getNames().getFullNameLowerCase().contains(fontName) ? 1 : 0)
+                            - (o1.getNames().getFullNameLowerCase().contains(fontName) ? 1 : 0);
+
+                    // In most cases full font name will be enough.
+                    // It's trick for 'bad' fonts.
+                    if (res == 0) {
+                        res = (o2.getNames().getFontNameLowerCase().contains(fontName) ? 1 : 0)
+                                - (o1.getNames().getFontNameLowerCase().contains(fontName) ? 1 : 0);
+                    }
+                }
+            }
+            return res;
+        }
+
+        private static int parseFontStyle(String fontFamily, int style) {
             if (style == FontConstants.UNDEFINED) {
                 style = FontConstants.NORMAL;
                 if (fontFamily.contains("bold")) {
@@ -98,27 +145,7 @@ public class FontSelector {
                     style |= FontConstants.ITALIC;
                 }
             }
-            this.style = style;
-        }
-
-        @Override
-        public int compare(FontProgramInfo o1, FontProgramInfo o2) {
-            int res = 0;
-            if ((style & FontConstants.BOLD) == 0) {
-                res = (o2.getNames().isBold() ? 1 : 0)
-                        - (o1.getNames().isBold() ? 1 : 0);
-            }
-
-            if ((style & FontConstants.ITALIC) == 0) {
-                res += (o2.getNames().isItalic() ? 1 : 0)
-                        - (o1.getNames().isItalic() ? 1 : 0);
-            }
-
-            if (res != 0) return res;
-
-            res = (o2.getNames().getFullNameLowerCase().contains(fontFamily) ? 1 : 0)
-                    - (o1.getNames().getFullNameLowerCase().contains(fontFamily) ? 1 : 0);
-            return res;
+            return style;
         }
     }
 }

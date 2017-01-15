@@ -54,6 +54,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -128,46 +129,46 @@ public class FontProvider {
         return true;
     }
 
-    public FontSelectorStrategy getStrategy(String text, String fontFamily, int style) {
-        return new ComplexFontSelectorStrategy(text, getFontSelector(fontFamily, style), this);
+    public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, int style) {
+        return new ComplexFontSelectorStrategy(text, getFontSelector(fontFamilies, style), this);
     }
 
-    public FontSelectorStrategy getStrategy(String text, String fontFamily) {
-        return getStrategy(text, fontFamily, FontConstants.UNDEFINED);
+    public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies) {
+        return getStrategy(text, fontFamilies, FontConstants.UNDEFINED);
     }
 
     /**
      * Create {@link FontSelector} or get from cache.
      *
-     * @param fontFamily target font family
+     * @param fontFamilies target font families
      * @param style      Shall be {@link FontConstants#UNDEFINED}, {@link FontConstants#NORMAL}, {@link FontConstants#ITALIC},
      *                   {@link FontConstants#BOLD}, or {@link FontConstants#BOLDITALIC}
      * @return an instance of {@link FontSelector}.
-     * @see #createFontSelector(Set, String, int)}
+     * @see #createFontSelector(Set, List, int) }
      */
-    public final FontSelector getFontSelector(String fontFamily, int style) {
-        FontSelectorKey key = new FontSelectorKey(fontFamily, style);
+    public final FontSelector getFontSelector(List<String> fontFamilies, int style) {
+        FontSelectorKey key = new FontSelectorKey(fontFamilies, style);
         if (fontSet.getFontSelectorCache().containsKey(key)) {
             return fontSet.getFontSelectorCache().get(key);
         } else {
-            FontSelector fontSelector = createFontSelector(fontSet.getFonts(), fontFamily, style);
+            FontSelector fontSelector = createFontSelector(fontSet.getFonts(), fontFamilies, style);
             fontSet.getFontSelectorCache().put(key, fontSelector);
             return fontSelector;
         }
     }
 
     /**
-     * Create a new instance of {@link FontSelector}. While caching is main responsibility of {@link #getFontSelector(String, int)},
+     * Create a new instance of {@link FontSelector}. While caching is main responsibility of {@link #getFontSelector(List, int)},
      * this method just create a new instance of {@link FontSelector}.
      *
      * @param fonts      Set of all available fonts in current context.
-     * @param fontFamily target font family
+     * @param fontFamilies target font families
      * @param style      Shall be {@link FontConstants#UNDEFINED}, {@link FontConstants#NORMAL}, {@link FontConstants#ITALIC},
      *                   {@link FontConstants#BOLD}, or {@link FontConstants#BOLDITALIC}
      * @return an instance of {@link FontSelector}.
      */
-    protected FontSelector createFontSelector(Set<FontProgramInfo> fonts, String fontFamily, int style) {
-        return new FontSelector(fonts, fontFamily, style);
+    protected FontSelector createFontSelector(Set<FontProgramInfo> fonts, List<String> fontFamilies, int style) {
+        return new FontSelector(fonts, fontFamilies, style);
     }
 
     /**

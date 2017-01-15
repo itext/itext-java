@@ -135,4 +135,17 @@ public final class FontProgramInfo {
         result = 31 * result + (encoding != null ? encoding.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        String name = names.getFontName();
+        if (name.length() > 0) {
+            if (encoding != null) {
+                return String.format("%s+%s", name, encoding);
+            } else {
+                return name;
+            }
+        }
+        return super.toString();
+    }
 }

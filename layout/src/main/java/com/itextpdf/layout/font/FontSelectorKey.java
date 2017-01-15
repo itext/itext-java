@@ -42,17 +42,20 @@
  */
 package com.itextpdf.layout.font;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Key for {@link FontSelector} caching.
  *
  * @see FontSet#getFontSelectorCache().
  */
 final class FontSelectorKey {
-    String fontFamily;
+    List<String> fontFamilies;
     int style;
 
-    public FontSelectorKey(String fontFamily, int style) {
-        this.fontFamily = fontFamily;
+    public FontSelectorKey(List<String> fontFamilies, int style) {
+        this.fontFamilies = new ArrayList<>(fontFamilies);
         this.style = style;
     }
 
@@ -63,12 +66,12 @@ final class FontSelectorKey {
         FontSelectorKey that = (FontSelectorKey) o;
 
         return style == that.style
-                && (fontFamily != null ? fontFamily.equals(that.fontFamily) : that.fontFamily == null);
+                && (fontFamilies != null ? fontFamilies.equals(that.fontFamilies) : that.fontFamilies == null);
     }
 
     @Override
     public int hashCode() {
-        int result = fontFamily != null ? fontFamily.hashCode() : 0;
+        int result = fontFamilies != null ? fontFamilies.hashCode() : 0;
         result = 31 * result + style;
         return result;
     }

@@ -63,6 +63,7 @@ import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSelectorStrategy;
 import com.itextpdf.layout.hyphenation.Hyphenation;
@@ -1007,7 +1008,7 @@ public class TextRenderer extends AbstractRenderer {
             }
             List<TextRenderer> renderers = new ArrayList<>();
 
-            FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted, (String) font);
+            FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted, FontFamilySplitter.splitFontFamily((String) font));
             while (!strategy.endOfText()) {
                 TextRenderer textRenderer = new TextRenderer(this);
                 textRenderer.setGlyphLineAndFont(strategy.nextGlyphs(), strategy.getCurrentFont());

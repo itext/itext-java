@@ -109,6 +109,8 @@ public class FontNames implements Serializable {
     protected Map<Integer, List<String[]>> allNames;
 
     private String fullNameLowerCase = null;
+    private String fontNameLowerCase = null;
+
     // name, ID = 4
     private String[][] fullName;
     // name, ID = 1 or 16
@@ -150,6 +152,13 @@ public class FontNames implements Serializable {
             fullNameLowerCase = fullName[0][3].toLowerCase();
         }
         return fullNameLowerCase;
+    }
+
+    public String getFontNameLowerCase() {
+        if (fontNameLowerCase == null) {
+            fontNameLowerCase = fontName.toLowerCase();
+        }
+        return fontNameLowerCase;
     }
 
     public String getFontName() {
@@ -323,5 +332,11 @@ public class FontNames implements Serializable {
             array[i] = list.get(i);
         }
         return array;
+    }
+
+    @Override
+    public String toString() {
+        String name = getFontName();
+        return name.length() > 0 ? name : super.toString();
     }
 }
