@@ -4,6 +4,8 @@ import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
@@ -44,8 +46,8 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         doc.setFontProvider(sel);
         doc.setProperty(Property.FONT, "Puritan");
-        com.itextpdf.layout.element.Text text = new com.itextpdf.layout.element.Text(s).setBackgroundColor(Color.LIGHT_GRAY);
-        com.itextpdf.layout.element.Paragraph paragraph = new com.itextpdf.layout.element.Paragraph(text);
+        Text text = new Text(s).setBackgroundColor(Color.LIGHT_GRAY);
+        Paragraph paragraph = new Paragraph(text);
         doc.add(paragraph);
         doc.close();
 
@@ -69,8 +71,8 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         doc.setFontProvider(sel);
         doc.setProperty(Property.FONT, "'Puritan', \"FreeSans\"");
-        com.itextpdf.layout.element.Text text = new com.itextpdf.layout.element.Text(s).setBackgroundColor(Color.LIGHT_GRAY);
-        com.itextpdf.layout.element.Paragraph paragraph = new com.itextpdf.layout.element.Paragraph(text);
+        Text text = new Text(s).setBackgroundColor(Color.LIGHT_GRAY);
+        Paragraph paragraph = new Paragraph(text);
         doc.add(paragraph);
         doc.close();
 
@@ -91,8 +93,33 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         doc.setFontProvider(sel);
         doc.setProperty(Property.FONT, "Puritan");
-        com.itextpdf.layout.element.Text text = new com.itextpdf.layout.element.Text(s).setBackgroundColor(Color.LIGHT_GRAY);
-        com.itextpdf.layout.element.Paragraph paragraph = new com.itextpdf.layout.element.Paragraph(text);
+        Text text = new Text(s).setBackgroundColor(Color.LIGHT_GRAY);
+        Paragraph paragraph = new Paragraph(text);
+        doc.add(paragraph);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void standardPdfFonts() throws Exception {
+        String outFileName = destinationFolder + "standardPdfFonts.pdf";
+        String cmpFileName = sourceFolder + "cmp_standardPdfFonts.pdf";
+
+        FontProvider sel = new FontProvider();
+        sel.addStandardPdfFonts();
+
+
+        String s = "Hello world!";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+        doc.setFontProvider(sel);
+
+        Paragraph paragraph = new Paragraph(s);
+        paragraph.setProperty(Property.FONT, "Courier");
+        doc.add(paragraph);
+        paragraph = new Paragraph(s);
+        paragraph.setProperty(Property.FONT, "Times-Roman");
         doc.add(paragraph);
         doc.close();
 

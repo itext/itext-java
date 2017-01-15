@@ -10,9 +10,9 @@ import java.util.regex.Pattern;
  */
 public final class FontFamilySplitter {
 
-    private static final Pattern FONT_FAMILY_PATTERN = Pattern.compile("^ *(\\w+) *$");
-    private static final Pattern FONT_FAMILY_PATTERN_QUOTED = Pattern.compile("^ *(('[\\w ]+')|(\"[\\w ]+\")) *$");
-    private static final Pattern FONT_FAMILY_PATTERN_QUOTED_SELECT = Pattern.compile("\\w+( +\\w+)*");
+    private static final Pattern FONT_FAMILY_PATTERN = Pattern.compile("^ *([\\w-]+) *$");
+    private static final Pattern FONT_FAMILY_PATTERN_QUOTED = Pattern.compile("^ *(('[\\w -]+')|(\"[\\w -]+\")) *$");
+    private static final Pattern FONT_FAMILY_PATTERN_QUOTED_SELECT = Pattern.compile("[\\w-]+( +[\\w-]+)*");
 
     public static List<String> splitFontFamily(String fontFamily) {
         if (fontFamily == null) {

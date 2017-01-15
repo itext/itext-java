@@ -44,6 +44,16 @@ public class FontFamilySplitterTest {
                         "Puritan\n" +
                         "'Free Sans',\n"+
                         "Free Sans\n"+
+                        "'Free-Sans',\n"+
+                        "Free-Sans\n"+
+                        "  'Free-Sans' , Puritan\n"+
+                        "Free-Sans; Puritan\n"+
+                        "  \"Free-Sans\" , Puritan\n"+
+                        "Free-Sans; Puritan\n"+
+                        "  Free-Sans , Puritan\n"+
+                        "Free-Sans; Puritan\n"+
+                        "  Free-Sans\n"+
+                        "Free-Sans\n"+
                         "\"Puritan\", Free Sans\n" +
                         "Puritan\n" +
                         "'Puritan' FreeSans\n" +
