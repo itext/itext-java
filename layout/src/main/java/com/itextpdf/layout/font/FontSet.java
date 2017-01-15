@@ -47,7 +47,7 @@ import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.FileUtil;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,7 +60,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FontSet {
     //"fontName+encoding" or "hash(fontProgram)+encoding" as key
     private static Map<String, FontProgramInfo> fontInfoCache = new ConcurrentHashMap<>();
-    private Set<FontProgramInfo> fonts = new HashSet<>();
+    private Set<FontProgramInfo> fonts = new LinkedHashSet<>();
     private Map<FontProgramInfo, FontProgram> fontPrograms = new HashMap<>();
     private Map<FontSelectorKey, FontSelector> fontSelectorCache = new HashMap<>();
 
