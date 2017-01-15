@@ -70,7 +70,6 @@ public class List extends BlockElement<List> {
      */
     public List() {
         super();
-        setListSymbol(DEFAULT_LIST_SYMBOL);
     }
 
     /**
@@ -85,6 +84,8 @@ public class List extends BlockElement<List> {
     @Override
     public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
+            case Property.LIST_SYMBOL:
+                return (T1) (Object) new Text(DEFAULT_LIST_SYMBOL);
             case Property.LIST_SYMBOL_PRE_TEXT:
                 return (T1) (Object) "";
             case Property.LIST_SYMBOL_POST_TEXT:
