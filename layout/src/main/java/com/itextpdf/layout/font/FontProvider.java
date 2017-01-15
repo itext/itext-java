@@ -48,6 +48,7 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.Type1Font;
+import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -93,20 +94,63 @@ public class FontProvider {
         return fontSet.addFont(fontProgram, encoding);
     }
 
-    public void addFont(String fontProgram) {
-        addFont(fontProgram, null);
+    public boolean addFont(String fontProgram) {
+        return addFont(fontProgram, null);
     }
 
-    public void addFont(FontProgram fontProgram) {
-        addFont(fontProgram, getDefaultEncoding(fontProgram));
+    public boolean addFont(FontProgram fontProgram) {
+        return addFont(fontProgram, getDefaultEncoding(fontProgram));
     }
 
-    public void addFont(byte[] fontProgram) {
-        addFont(fontProgram, null);
+    public boolean addFont(byte[] fontProgram) {
+        return addFont(fontProgram, null);
     }
 
     public int addDirectory(String dir) {
         return fontSet.addDirectory(dir);
+    }
+
+    public int addSystemFonts() {
+        int count = 0;
+        String[] withSubDirs = {
+                FileUtil.getFontsDir(),
+                "/usr/share/X11/fonts",
+                "/usr/X/lib/X11/fonts",
+                "/usr/openwin/lib/X11/fonts",
+                "/usr/share/fonts",
+                "/usr/X11R6/lib/X11/fonts"
+        };
+        for (String directory : withSubDirs) {
+            count += fontSet.addDirectory(directory, true);
+        }
+
+        String[] withoutSubDirs = {
+                "/Library/Fonts",
+                "/System/Library/Fonts"
+        };
+        for (String directory : withoutSubDirs) {
+            count += fontSet.addDirectory(directory, false);
+        }
+
+        return count;
+    }
+
+    public int addStandardPdfFonts() {
+        addFont(FontConstants.COURIER);
+        addFont(FontConstants.COURIER_BOLD);
+        addFont(FontConstants.COURIER_BOLDOBLIQUE);
+        addFont(FontConstants.COURIER_OBLIQUE);
+        addFont(FontConstants.HELVETICA);
+        addFont(FontConstants.HELVETICA_BOLD);
+        addFont(FontConstants.HELVETICA_BOLDOBLIQUE);
+        addFont(FontConstants.HELVETICA_OBLIQUE);
+        addFont(FontConstants.SYMBOL);
+        addFont(FontConstants.TIMES_ROMAN);
+        addFont(FontConstants.TIMES_BOLD);
+        addFont(FontConstants.TIMES_BOLDITALIC);
+        addFont(FontConstants.TIMES_ITALIC);
+        addFont(FontConstants.ZAPFDINGBATS);
+        return 14;
     }
 
     public FontSet getFontSet() {
