@@ -10,6 +10,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -35,6 +36,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         FontProvider sel = new FontProvider();
         sel.addFont(fontsFolder + "Puritan2.otf");
         sel.addFont(fontsFolder + "NotoSans-Regular.ttf");
+        sel.addFont(fontsFolder + "FreeSans.ttf");
 
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
@@ -43,6 +45,32 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         doc.setFontProvider(sel);
         doc.setProperty(Property.FONT, "Puritan");
+        com.itextpdf.layout.element.Text text = new com.itextpdf.layout.element.Text(s).setBackgroundColor(Color.LIGHT_GRAY);
+        com.itextpdf.layout.element.Paragraph paragraph = new com.itextpdf.layout.element.Paragraph(text);
+        doc.add(paragraph);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1024")
+    public void cyrillicAndLatinGroup2() throws Exception {
+        String outFileName = destinationFolder + "cyrillicAndLatinGroup2.pdf";
+        String cmpFileName = sourceFolder + "cmp_cyrillicAndLatinGroup2.pdf";
+
+        FontProvider sel = new FontProvider();
+        sel.addFont(fontsFolder + "Puritan2.otf");
+        sel.addFont(fontsFolder + "NotoSans-Regular.ttf");
+        sel.addFont(fontsFolder + "FreeSans.ttf");
+
+
+        String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
+        Document doc = new Document(pdfDoc);
+
+        doc.setFontProvider(sel);
+        doc.setProperty(Property.FONT, "'Puritan', \"FreeSans\"");
         com.itextpdf.layout.element.Text text = new com.itextpdf.layout.element.Text(s).setBackgroundColor(Color.LIGHT_GRAY);
         com.itextpdf.layout.element.Paragraph paragraph = new com.itextpdf.layout.element.Paragraph(text);
         doc.add(paragraph);
