@@ -15,6 +15,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolAlignment;
 import com.itextpdf.layout.property.Property;
@@ -455,5 +456,20 @@ public class ListTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void listSetSymbol() throws Exception {
+        List list = new List();
+        //Assert.assertEquals("- ", ((Text) list.getProperty(Property.LIST_SYMBOL)).getText());
+        Assert.assertEquals(null, list.getProperty(Property.LIST_SYMBOL));
+        list.setListSymbol("* ");
+        Assert.assertEquals("* ", ((Text) list.getProperty(Property.LIST_SYMBOL)).getText());
+
+        list = new List();
+        Style style = new Style();
+        style.setProperty(Property.LIST_SYMBOL, new Text("* "));
+        list.addStyle(style);
+        Assert.assertEquals("* ", ((Text) list.getProperty(Property.LIST_SYMBOL)).getText());
     }
 }
