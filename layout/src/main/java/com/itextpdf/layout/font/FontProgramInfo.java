@@ -42,6 +42,7 @@
  */
 package com.itextpdf.layout.font;
 
+import com.itextpdf.io.font.FontCacheKey;
 import com.itextpdf.io.font.FontNames;
 import com.itextpdf.io.font.FontNamesFactory;
 import com.itextpdf.io.font.FontProgram;
@@ -51,12 +52,16 @@ import com.itextpdf.kernel.font.PdfFont;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Contains all font related data to create {@link FontProgram} and {@link PdfFont}.
  * {@link FontNames} fetches with {@link FontNamesFactory}.
  */
 public final class FontProgramInfo {
+
+    private static final Map<FontCacheKey, FontNames> fontNamesCache = new ConcurrentHashMap<>();
 
     private final String fontName;
     private final byte[] fontProgram;
@@ -76,17 +81,26 @@ public final class FontProgramInfo {
         return new FontProgramInfo(fontProgram.getFontNames().getFontName(), null, encoding, fontProgram.getFontNames());
     }
 
-    static FontProgramInfo create(String fontName, byte[] fontProgram, String encoding) {
+    static FontProgramInfo create(String fontName, String encoding) {
+        FontCacheKey cacheKey = FontCacheKey.create(fontName);
         FontNames names;
-        if (fontName != null) {
+        if (fontNamesCache.containsKey(cacheKey)) {
+            names = fontNamesCache.get(cacheKey);
+        } else {
             names = FontNamesFactory.fetchFontNames(fontName);
+        }
+        return names != null ? new FontProgramInfo(fontName, null, encoding, names) : null;
+    }
+
+    static FontProgramInfo create(byte[] fontProgram, String encoding) {
+        FontCacheKey cacheKey = FontCacheKey.create(fontProgram);
+        FontNames names;
+        if (fontNamesCache.containsKey(cacheKey)) {
+            names = fontNamesCache.get(cacheKey);
         } else {
             names = FontNamesFactory.fetchFontNames(fontProgram);
         }
-        if (names == null) {
-            return null;
-        }
-        return new FontProgramInfo(fontName, fontProgram, encoding, names);
+        return names != null ? new FontProgramInfo(null, fontProgram, encoding, names) : null;
     }
 
     public PdfFont getPdfFont(FontProvider fontProvider) {

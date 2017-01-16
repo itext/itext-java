@@ -43,14 +43,12 @@
 package com.itextpdf.layout.font;
 
 import com.itextpdf.io.font.FontProgram;
-import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.FileUtil;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Reusable font set for FontProgram related data.
@@ -58,8 +56,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @see FontProvider
  */
 public class FontSet {
-    //"fontName+encoding" or "hash(fontProgram)+encoding" as key
-    private static Map<String, FontProgramInfo> fontInfoCache = new ConcurrentHashMap<>();
+
     private Set<FontProgramInfo> fonts = new LinkedHashSet<>();
     private Map<FontProgramInfo, FontProgram> fontPrograms = new HashMap<>();
     private Map<FontSelectorKey, FontSelector> fontSelectorCache = new HashMap<>();
@@ -119,16 +116,12 @@ public class FontSet {
         return addFont(null, fontProgram, encoding);
     }
 
-    public void addFont(String fontProgram) {
-        addFont(fontProgram, null);
+    public boolean addFont(String fontProgram) {
+        return addFont(fontProgram, null);
     }
 
-    public void addFont(FontProgram fontProgram) {
-        addFont(fontProgram, null);
-    }
-
-    public void addFont(byte[] fontProgram) {
-        addFont(fontProgram, null);
+    public boolean addFont(byte[] fontProgram) {
+        return addFont(fontProgram, null);
     }
 
     public Set<FontProgramInfo> getFonts() {
@@ -136,23 +129,13 @@ public class FontSet {
     }
 
     boolean addFont(String fontName, byte[] fontProgram, String encoding) {
-        if (fontName == null && fontProgram == null) {
+        if (fontName != null) {
+            return addFontInfo(FontProgramInfo.create(fontName, encoding));
+        } else if (fontProgram != null) {
+            return addFontInfo(FontProgramInfo.create(fontProgram, encoding));
+        } else {
             return false;
         }
-        String fontInfoKey = calculateFontProgramInfoKey(fontName, fontProgram, encoding);
-        FontProgramInfo fontInfo;
-        if (fontInfoCache.containsKey(fontInfoKey)) {
-            fontInfo = fontInfoCache.get(fontInfoKey);
-        } else {
-            fontInfo = FontProgramInfo.create(fontName, fontProgram, encoding);
-            if (fontInfo != null) {
-                fontInfoCache.put(fontInfoKey, fontInfo);
-            } else {
-                return false;
-            }
-        }
-        addFontInfo(fontInfo);
-        return true;
     }
 
     Map<FontProgramInfo, FontProgram> getFontPrograms() {
@@ -163,18 +146,13 @@ public class FontSet {
         return fontSelectorCache;
     }
 
-    private String calculateFontProgramInfoKey(String fontName, byte[] fontProgram, String encoding) {
-        String key;
-        if (fontName != null) {
-            key = fontName;
+    private boolean addFontInfo(FontProgramInfo fontInfo) {
+        if (fontInfo != null) {
+            fonts.add(fontInfo);
+            fontSelectorCache.clear();
+            return true;
         } else {
-            key = Integer.toHexString(ArrayUtil.hashCode(fontProgram));
+            return false;
         }
-        return key + encoding;
-    }
-
-    private void addFontInfo(FontProgramInfo fontInfo) {
-        fonts.add(fontInfo);
-        fontSelectorCache.clear();
     }
 }

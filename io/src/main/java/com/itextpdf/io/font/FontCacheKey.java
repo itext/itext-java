@@ -44,20 +44,21 @@ package com.itextpdf.io.font;
 
 import java.util.Arrays;
 
-abstract class FontCacheKey {
-    static FontCacheKey create(String fontName) {
+public abstract class FontCacheKey {
+
+    public static FontCacheKey create(String fontName) {
         return new FontCacheStringKey(fontName);
     }
 
-    static FontCacheKey create(String fontName, int ttcIndex) {
+    public static FontCacheKey create(String fontName, int ttcIndex) {
         return new FontCacheTtcKey(fontName, ttcIndex);
     }
 
-    static FontCacheKey create(byte[] fontProgram) {
+    public static FontCacheKey create(byte[] fontProgram) {
         return new FontCacheBytesKey(fontProgram);
     }
 
-    static FontCacheKey create(byte[] fontProgram, int ttcIndex) {
+    public static FontCacheKey create(byte[] fontProgram, int ttcIndex) {
         return new FontCacheTtcKey(fontProgram, ttcIndex);
     }
 
