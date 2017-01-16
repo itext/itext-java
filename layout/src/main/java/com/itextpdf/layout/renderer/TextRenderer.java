@@ -63,6 +63,7 @@ import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.font.FontCharacteristic;
 import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSelectorStrategy;
@@ -82,13 +83,7 @@ import com.itextpdf.layout.splitting.ISplitCharacters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
@@ -993,7 +988,8 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     protected float calculateLineWidth() {
-        return getGlyphLineWidth(line, (float) this.getPropertyAsFloat(Property.FONT_SIZE), (float) this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f),
+        return getGlyphLineWidth(line, (float) this.getPropertyAsFloat(Property.FONT_SIZE),
+                (float) this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f),
                 this.getPropertyAsFloat(Property.CHARACTER_SPACING), this.getPropertyAsFloat(Property.WORD_SPACING));
     }
 
@@ -1008,7 +1004,16 @@ public class TextRenderer extends AbstractRenderer {
             }
             List<TextRenderer> renderers = new ArrayList<>();
 
-            FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted, FontFamilySplitter.splitFontFamily((String) font));
+            FontCharacteristic fc = new FontCharacteristic();
+            if (this.hasProperty(Property.FONT_WEIGHT)) {
+                fc.setFontWeight((String) this.<Object>getProperty(Property.FONT_WEIGHT));
+            }
+            if (this.hasProperty(Property.FONT_STYLE)) {
+                fc.setFontStyle((String) this.<Object>getProperty(Property.FONT_STYLE));
+            }
+
+            FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
+                    FontFamilySplitter.splitFontFamily((String) font), fc);
             while (!strategy.endOfText()) {
                 TextRenderer textRenderer = new TextRenderer(this);
                 textRenderer.setGlyphLineAndFont(strategy.nextGlyphs(), strategy.getCurrentFont());
