@@ -83,22 +83,20 @@ public final class FontProgramInfo {
 
     static FontProgramInfo create(String fontName, String encoding) {
         FontCacheKey cacheKey = FontCacheKey.create(fontName);
-        FontNames names;
-        if (fontNamesCache.containsKey(cacheKey)) {
-            names = fontNamesCache.get(cacheKey);
-        } else {
+        FontNames names = getFontNamesFromCache(cacheKey);
+        if (names == null) {
             names = FontNamesFactory.fetchFontNames(fontName);
+            putFontNamesToCache(cacheKey, names);
         }
         return names != null ? new FontProgramInfo(fontName, null, encoding, names) : null;
     }
 
     static FontProgramInfo create(byte[] fontProgram, String encoding) {
         FontCacheKey cacheKey = FontCacheKey.create(fontProgram);
-        FontNames names;
-        if (fontNamesCache.containsKey(cacheKey)) {
-            names = fontNamesCache.get(cacheKey);
-        } else {
+        FontNames names = getFontNamesFromCache(cacheKey);
+        if (names == null) {
             names = FontNamesFactory.fetchFontNames(fontProgram);
+            putFontNamesToCache(cacheKey, names);
         }
         return names != null ? new FontProgramInfo(null, fontProgram, encoding, names) : null;
     }
@@ -143,13 +141,6 @@ public final class FontProgramInfo {
         return hash;
     }
 
-    private static int calculateHashCode(String fontName, byte[] bytes, String encoding) {
-        int result = fontName != null ? fontName.hashCode() : 0;
-        result = 31 * result + ArrayUtil.hashCode(bytes);
-        result = 31 * result + (encoding != null ? encoding.hashCode() : 0);
-        return result;
-    }
-
     @Override
     public String toString() {
         String name = names.getFontName();
@@ -161,5 +152,22 @@ public final class FontProgramInfo {
             }
         }
         return super.toString();
+    }
+
+    private static int calculateHashCode(String fontName, byte[] bytes, String encoding) {
+        int result = fontName != null ? fontName.hashCode() : 0;
+        result = 31 * result + ArrayUtil.hashCode(bytes);
+        result = 31 * result + (encoding != null ? encoding.hashCode() : 0);
+        return result;
+    }
+
+    private static FontNames getFontNamesFromCache(FontCacheKey key) {
+        return fontNamesCache.get(key);
+    }
+
+    private static void putFontNamesToCache(FontCacheKey key, FontNames names) {
+        if (names != null) {
+            fontNamesCache.put(key, names);
+        }
     }
 }
