@@ -1,6 +1,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.color.Color;
@@ -556,7 +557,7 @@ public class ImageTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
-    
+
     @Test
     @Ignore("DEVSIX-1022")
     public void imageRelativePositionTest() throws IOException, InterruptedException {
@@ -639,4 +640,5 @@ public class ImageTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
+
 }
