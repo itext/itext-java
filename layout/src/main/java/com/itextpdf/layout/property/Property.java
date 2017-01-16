@@ -82,7 +82,14 @@ public final class Property {
     public static final int FONT = 20;
     public static final int FONT_COLOR = 21;
     public static final int FONT_KERNING = 22;
-    @Deprecated
+    /**
+     * Note, this property will be applied only if {@link #FONT} has String value.
+     */
+    public static final int FONT_STYLE = 94;
+    /**
+     * Note, this property will be applied only if {@link #FONT} has String value.
+     */
+    public static final int FONT_WEIGHT = 95;
     public static final int FONT_SCRIPT = 23;
     public static final int FONT_PROVIDER = 91;
     public static final int FONT_SIZE = 24;
@@ -167,7 +174,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 91;
+    private static final int MAX_INHERITED_PROPERTY_ID = 95;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -181,9 +188,11 @@ public final class Property {
         INHERITED_PROPERTIES[Property.FONT] = true;
         INHERITED_PROPERTIES[Property.FONT_COLOR] = true;
         INHERITED_PROPERTIES[Property.FONT_KERNING] = true;
-        INHERITED_PROPERTIES[Property.FONT_SCRIPT] = true;
         INHERITED_PROPERTIES[Property.FONT_PROVIDER] = true;
+        INHERITED_PROPERTIES[Property.FONT_SCRIPT] = true;
         INHERITED_PROPERTIES[Property.FONT_SIZE] = true;
+        INHERITED_PROPERTIES[Property.FONT_STYLE] = true;
+        INHERITED_PROPERTIES[Property.FONT_WEIGHT] = true;
         INHERITED_PROPERTIES[Property.FORCED_PLACEMENT] = true;
         INHERITED_PROPERTIES[Property.HYPHENATION] = true;
         INHERITED_PROPERTIES[Property.ITALIC_SIMULATION] = true;
