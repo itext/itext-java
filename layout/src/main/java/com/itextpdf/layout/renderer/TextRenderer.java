@@ -486,8 +486,8 @@ public class TextRenderer extends AbstractRenderer {
             logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
             return;
         }
-        super.draw(drawContext);
 
+        // Set up marked content before super.draw so that annotations are placed within marked content
         PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
         boolean isArtifact = false;
@@ -509,6 +509,8 @@ public class TextRenderer extends AbstractRenderer {
                 }
             }
         }
+
+        super.draw(drawContext);
 
         applyMargins(occupiedArea.getBBox(), getMargins(), false);
         applyBorderBox(occupiedArea.getBBox(), false);
@@ -622,9 +624,6 @@ public class TextRenderer extends AbstractRenderer {
 
             canvas.endText().restoreState();
             endElementOpacityApplying(drawContext);
-            if (isTagged || isArtifact) {
-                canvas.closeTag();
-            }
 
             Object underlines = this.<Object>getProperty(Property.UNDERLINE);
             if (underlines instanceof List) {
@@ -635,6 +634,10 @@ public class TextRenderer extends AbstractRenderer {
                 }
             } else if (underlines instanceof Underline) {
                 drawSingleUnderline((Underline) underlines, fontColor, canvas, fontSize, italicSimulation ? ITALIC_ANGLE : 0);
+            }
+
+            if (isTagged || isArtifact) {
+                canvas.closeTag();
             }
         }
 
