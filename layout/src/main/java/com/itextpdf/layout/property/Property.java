@@ -83,10 +83,12 @@ public final class Property {
     public static final int FONT_COLOR = 21;
     public static final int FONT_KERNING = 22;
     /**
+     * String value. 'normal'|'italic'|'oblique'
      * Note, this property will be applied only if {@link #FONT} has String value.
      */
     public static final int FONT_STYLE = 94;
     /**
+     * String value. 'normal'|'bold'|number
      * Note, this property will be applied only if {@link #FONT} has String value.
      */
     public static final int FONT_WEIGHT = 95;

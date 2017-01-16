@@ -42,8 +42,6 @@
  */
 package com.itextpdf.layout.font;
 
-import com.itextpdf.io.font.FontConstants;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -62,10 +60,10 @@ public class FontSelector {
      * @param allFonts Unsorted set of all available fonts.
      * @param fontFamilies sorted list of preferred font families.
      */
-    public FontSelector(Set<FontProgramInfo> allFonts, List<String> fontFamilies, int style) {
+    public FontSelector(Set<FontProgramInfo> allFonts, List<String> fontFamilies, FontCharacteristic fc) {
         this.fonts = new ArrayList<>(allFonts);
         //Possible issue in .NET, virtual member in constructor.
-        Collections.sort(this.fonts, getComparator(fontFamilies, style));
+        Collections.sort(this.fonts, getComparator(fontFamilies, fc));
     }
 
     /**
@@ -83,26 +81,26 @@ public class FontSelector {
         return fonts;
     }
 
-    protected Comparator<FontProgramInfo> getComparator(List<String> fontFamilies, int style) {
-        return new PdfFontComparator(fontFamilies, style);
+    protected Comparator<FontProgramInfo> getComparator(List<String> fontFamilies, FontCharacteristic fc) {
+        return new PdfFontComparator(fontFamilies, fc);
     }
 
     private static class PdfFontComparator implements Comparator<FontProgramInfo> {
         List<String> fontFamilies;
-        List<Integer> fontStyles;
+        List<FontCharacteristic> fontStyles;
 
-        PdfFontComparator(List<String> fontFamilies, int style) {
+        PdfFontComparator(List<String> fontFamilies, FontCharacteristic fc) {
             this.fontFamilies = new ArrayList<>();
             this.fontStyles = new ArrayList<>();
             if (fontFamilies != null && fontFamilies.size() > 0) {
                 for (String fontFamily : fontFamilies) {
                     String lowercaseFontFamily = fontFamily.toLowerCase();
                     this.fontFamilies.add(lowercaseFontFamily);
-                    this.fontStyles.add(parseFontStyle(lowercaseFontFamily, style));
+                    this.fontStyles.add(parseFontStyle(lowercaseFontFamily, fc));
                 }
             } else {
                 this.fontFamilies.add("");
-                this.fontStyles.add(style);
+                this.fontStyles.add(fc);
             }
         }
 
@@ -110,12 +108,12 @@ public class FontSelector {
         public int compare(FontProgramInfo o1, FontProgramInfo o2) {
             int res = 0;
             for (int i = 0; i < fontFamilies.size() && res == 0; i++) {
-                int style = fontStyles.get(i);
-                if ((style & FontConstants.BOLD) == 0) {
+                FontCharacteristic fc = fontStyles.get(i);
+                if (fc.isBold()) {
                     res = (o2.getNames().isBold() ? 1 : 0)
                             - (o1.getNames().isBold() ? 1 : 0);
                 }
-                if ((style & FontConstants.ITALIC) == 0) {
+                if (fc.isItalic()) {
                     res += (o2.getNames().isItalic() ? 1 : 0)
                             - (o1.getNames().isItalic() ? 1 : 0);
                 }
@@ -135,17 +133,19 @@ public class FontSelector {
             return res;
         }
 
-        private static int parseFontStyle(String fontFamily, int style) {
-            if (style == FontConstants.UNDEFINED) {
-                style = FontConstants.NORMAL;
+        private static FontCharacteristic parseFontStyle(String fontFamily, FontCharacteristic fc) {
+            if (fc == null) {
+                fc = new FontCharacteristic();
+            }
+            if (fc.isUndefined()) {
                 if (fontFamily.contains("bold")) {
-                    style |= FontConstants.BOLD;
+                    fc.setBoldFlag(true);
                 }
                 if (fontFamily.contains("italic") || fontFamily.contains("oblique")) {
-                    style |= FontConstants.ITALIC;
+                    fc.setItalicFlag(true);
                 }
             }
-            return style;
+            return fc;
         }
     }
 }

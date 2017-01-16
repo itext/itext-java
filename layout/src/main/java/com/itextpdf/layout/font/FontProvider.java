@@ -173,46 +173,44 @@ public class FontProvider {
         return true;
     }
 
-    public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, int style) {
-        return new ComplexFontSelectorStrategy(text, getFontSelector(fontFamilies, style), this);
+    public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, FontCharacteristic fc) {
+        return new ComplexFontSelectorStrategy(text, getFontSelector(fontFamilies, fc), this);
     }
 
     public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies) {
-        return getStrategy(text, fontFamilies, FontConstants.UNDEFINED);
+        return getStrategy(text, fontFamilies, null);
     }
 
     /**
      * Create {@link FontSelector} or get from cache.
      *
      * @param fontFamilies target font families
-     * @param style      Shall be {@link FontConstants#UNDEFINED}, {@link FontConstants#NORMAL}, {@link FontConstants#ITALIC},
-     *                   {@link FontConstants#BOLD}, or {@link FontConstants#BOLDITALIC}
+     * @param fc      instance of {@link FontCharacteristic}.
      * @return an instance of {@link FontSelector}.
-     * @see #createFontSelector(Set, List, int) }
+     * @see #createFontSelector(Set, List, FontCharacteristic) }
      */
-    public final FontSelector getFontSelector(List<String> fontFamilies, int style) {
-        FontSelectorKey key = new FontSelectorKey(fontFamilies, style);
+    public final FontSelector getFontSelector(List<String> fontFamilies, FontCharacteristic fc) {
+        FontSelectorKey key = new FontSelectorKey(fontFamilies, fc);
         if (fontSet.getFontSelectorCache().containsKey(key)) {
             return fontSet.getFontSelectorCache().get(key);
         } else {
-            FontSelector fontSelector = createFontSelector(fontSet.getFonts(), fontFamilies, style);
+            FontSelector fontSelector = createFontSelector(fontSet.getFonts(), fontFamilies, fc);
             fontSet.getFontSelectorCache().put(key, fontSelector);
             return fontSelector;
         }
     }
 
     /**
-     * Create a new instance of {@link FontSelector}. While caching is main responsibility of {@link #getFontSelector(List, int)},
+     * Create a new instance of {@link FontSelector}. While caching is main responsibility of {@link #getFontSelector(List, FontCharacteristic)},
      * this method just create a new instance of {@link FontSelector}.
      *
      * @param fonts      Set of all available fonts in current context.
      * @param fontFamilies target font families
-     * @param style      Shall be {@link FontConstants#UNDEFINED}, {@link FontConstants#NORMAL}, {@link FontConstants#ITALIC},
-     *                   {@link FontConstants#BOLD}, or {@link FontConstants#BOLDITALIC}
+     * @param fc         instance of {@link FontCharacteristic}.
      * @return an instance of {@link FontSelector}.
      */
-    protected FontSelector createFontSelector(Set<FontProgramInfo> fonts, List<String> fontFamilies, int style) {
-        return new FontSelector(fonts, fontFamilies, style);
+    protected FontSelector createFontSelector(Set<FontProgramInfo> fonts, List<String> fontFamilies, FontCharacteristic fc) {
+        return new FontSelector(fonts, fontFamilies, fc);
     }
 
     /**
