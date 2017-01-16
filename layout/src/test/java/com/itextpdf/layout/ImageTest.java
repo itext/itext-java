@@ -1,6 +1,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.color.Color;
@@ -639,4 +640,29 @@ public class ImageTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 3)})
+    public void tiffImageTestTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "tiffImageTestTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_tiffImageTestTest01.pdf";
+        String imgPath = sourceFolder + "sample-error-image.JPG";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
+
+        ImageData id = ImageDataFactory.create(imgPath);
+        ImageData idAsTiff = ImageDataFactory.createTiff(UrlUtil.toURL(imgPath), true, 1, true);
+        ImageData idAsTiffFalse = ImageDataFactory.createTiff(UrlUtil.toURL(imgPath), false, 1, false);
+
+        document.add(new Image(id));
+        document.add(new Image(idAsTiff));
+        document.add(new Image(idAsTiffFalse));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+
 }

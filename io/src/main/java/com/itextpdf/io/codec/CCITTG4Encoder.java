@@ -240,7 +240,7 @@ public class CCITTG4Encoder {
          * Scan full bytes for all 1's.
          */
         while (bits >= 8) {
-            if (bp[pos] != -1)	/* end of run */
+            if (bp[pos] != (byte) 0xff)	/* end of run */
                 return (span + oneruns[bp[pos] & 0xff]);
             span += 8;
             bits -= 8;
