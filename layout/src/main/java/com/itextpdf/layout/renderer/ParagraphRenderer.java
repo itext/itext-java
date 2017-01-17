@@ -110,24 +110,11 @@ public class ParagraphRenderer extends BlockRenderer {
             marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
             marginsCollapseHandler.startMarginsCollapse(parentBBox);
         }
-        applyMargins(parentBBox, false);
+
         Border[] borders = getBorders();
-        applyBorderBox(parentBBox, borders, false);
-
         boolean isPositioned = isPositioned();
-
-        if (isPositioned()) {
-            if (isFixedLayout()) {
-                float x = (float) this.getPropertyAsFloat(Property.X);
-                float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
-                parentBBox.setX(relativeX + x);
-            }  else if (isAbsolutePosition()) {
-                applyAbsolutePosition(parentBBox);
-            }
-        }
-
         float[] paddings = getPaddings();
-        applyPaddings(parentBBox, paddings, false);
+        applyBordersPaddingsMargins(parentBBox, borders, paddings);
 
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
             parentBBox.setWidth((float) blockWidth);

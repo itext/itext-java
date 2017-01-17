@@ -97,22 +97,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
             marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
             marginsCollapseHandler.startMarginsCollapse(parentBBox);
         }
-        applyMargins(parentBBox, false);
+
+
         Border[] borders = getBorders();
-        applyBorderBox(parentBBox, borders, false);
-
-        if (isPositioned) {
-            if (isFixedLayout()) {
-                float x = (float) this.getPropertyAsFloat(Property.X);
-                float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
-                parentBBox.setX(relativeX + x);
-            } else if (isAbsolutePosition()) {
-                applyAbsolutePosition(parentBBox);
-            }
-        }
-
         float[] paddings = getPaddings();
-        applyPaddings(parentBBox, paddings, false);
+        applyBordersPaddingsMargins(parentBBox, borders, paddings);
 
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
             parentBBox.setWidth((float) blockWidth);
@@ -620,6 +609,24 @@ public abstract class BlockRenderer extends AbstractRenderer {
         } else {
             //TODO
         }
+    }
+
+    protected float applyBordersPaddingsMargins(Rectangle parentBBox, Border[] borders, float[] paddings) {
+        float parentWidth  = parentBBox.getWidth();
+
+        applyMargins(parentBBox, false);
+        applyBorderBox(parentBBox, borders, false);
+        if (isPositioned()) {
+            if (isFixedLayout()) {
+                float x = (float) this.getPropertyAsFloat(Property.X);
+                float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
+                parentBBox.setX(relativeX + x);
+            }  else if (isAbsolutePosition()) {
+                applyAbsolutePosition(parentBBox);
+            }
+        }
+        applyPaddings(parentBBox, paddings, false);
+        return parentWidth - parentBBox.getWidth();
     }
 
     private List<Point> clipPolygon(List<Point> points, Point clipLineBeg, Point clipLineEnd) {
