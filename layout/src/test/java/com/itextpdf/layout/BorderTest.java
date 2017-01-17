@@ -576,6 +576,27 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
+    public void wideBorderTest04() throws IOException, InterruptedException {
+        fileName = "wideBorderTest04.pdf";
+        outFileName = destinationFolder + fileName;
+        cmpFileName = sourceFolder + cmpPrefix + fileName;
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument, new PageSize(200, 150));
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(Color.RED, 5));
+        for (int i = 0; i < 5; i++) {
+            table.addCell(new Cell().add("Cell " + i));
+        }
+        table.addCell(new Cell().add("Cell 5").setBorderTop(new SolidBorder(Color.GREEN, 20)));
+
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
     public void borderCollapseTest01() throws IOException, InterruptedException {
         fileName = "borderCollapseTest01.pdf";
         outFileName = destinationFolder + fileName;
@@ -1184,9 +1205,22 @@ public class BorderTest extends ExtendedITextTest {
                 .setBorderBottom(Border.NO_BORDER)
                 .setBorderTop(Border.NO_BORDER);
 
+        Cell footerCell1 = new Cell().add("I am footer")
+                .setBorder(new SolidBorder(Color.GREEN, 30))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER);
+        Cell footerCell2 = new Cell().add("I am footer")
+                .setBorder(new SolidBorder(Color.GREEN, 30))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER);
+
         Table table = new Table(new float[]{350, 350}).setBorder(new SolidBorder(Color.BLUE, 20))
                 .addHeaderCell(headerCell1).addHeaderCell(headerCell2)
-                .addCell(tableCell1).addCell(tableCell2);
+                .addCell(tableCell1).addCell(tableCell2)
+                .addFooterCell(footerCell1).addFooterCell(footerCell2);
+        table.getHeader().setBorderLeft(new SolidBorder(Color.MAGENTA, 40));
+        table.getFooter().setBorderRight(new SolidBorder(Color.MAGENTA, 40));
+
         doc.add(table);
         doc.add(new AreaBreak());
 
@@ -1217,6 +1251,64 @@ public class BorderTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
+
+    @Test
+    public void tableWithHeaderFooterTest10() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderFooterTest10.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A6.rotate());
+
+        Table table = new Table(3);
+        table.addFooterCell(new Cell(1, 3).setHeight(70).add("Footer"));
+        table.addHeaderCell(new Cell(1, 3).setHeight(30).add("Header"));
+
+        for (int i = 0; i < 2; i++) {
+            table.addCell(new Cell().add(i + ": Bazz :").setBorder(new SolidBorder(Color.BLACK, 10)));
+            table.addCell(new Cell().add("To infinity").setBorder(new SolidBorder(Color.YELLOW, 30)));
+            table.addCell(new Cell().add(" and beyond!").setBorder(new SolidBorder(Color.RED, 20)));
+        }
+
+        table.setSkipLastFooter(true);
+        doc.add(table);
+
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableWithHeaderFooterTest11() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderFooterTest11.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(3);
+        table.setBorder(new SolidBorder(100));
+        table.addFooterCell(new Cell(1, 3).setHeight(100).add("Footer"));
+        table.addHeaderCell(new Cell(1, 3).setHeight(30).add("Header"));
+
+        for (int i = 0; i < 100; i++) {
+            table.addCell(new Cell().add(i + ": Bazz :").setBorder(new SolidBorder(Color.BLACK, 10)));
+            table.addCell(new Cell().add("To infinity").setBorder(new SolidBorder(Color.YELLOW, 30)));
+            table.addCell(new Cell().add(" and beyond!").setBorder(new SolidBorder(Color.RED, 20)));
+        }
+
+        table.setSkipLastFooter(true);
+        doc.add(table);
+
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
 
     @Test
     @LogMessages(messages = {
