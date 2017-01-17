@@ -502,7 +502,7 @@ public class TableRenderer extends AbstractRenderer {
                         if (null != currentRow[tempCol]) {
                             currentRow[tempCol].deleteOwnProperty(Property.BORDER_BOTTOM);
                             oldBottomBorder = currentRow[tempCol].getBorders()[2];
-                            int tempColspan = currentRow[tempCol].getPropertyAsInteger(Property.COLSPAN);
+                            int tempColspan = (int) currentRow[tempCol].getPropertyAsInteger(Property.COLSPAN);
                             for (int k = tempCol; k < tempCol + tempColspan; k++) {
                                 horizontalBorders.get(row + 1).set(k, oldBottomBorder);
                             }
