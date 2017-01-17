@@ -15,8 +15,6 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -216,13 +214,15 @@ public class MinWidthTest extends ExtendedITextTest {
         TableRenderer renderer = (TableRenderer) table.createRendererSubTree().setParent(doc.getRenderer());
         MinMaxWidth minMaxWidth = renderer.getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
 
-        Table minTable = new Table(renderer.getMinColumnWidth()).setMarginTop(10)
-                .setBorder(new SolidBorder(Color.BLUE, 20)).setWidth(minMaxWidth.getMinWidth())
+        Table minTable = new Table(MinMaxWidthUtils.toEffectiveTableColumnWidth(renderer.getMinColumnWidth()))
+                .setWidth(MinMaxWidthUtils.toEffectiveWidth(table, minMaxWidth.getMinWidth()))
+                .setMarginTop(10).setBorder(new SolidBorder(Color.BLUE, 20))
                 .addCell(cell1.clone(true)).addCell(cell2.clone(true))
                 .addCell(cell1.clone(true)).addCell(cell2.clone(true));
 
-        Table maxTable = new Table(renderer.getMaxColumWidth()).setMarginTop(10)
-                .setBorder(new SolidBorder(Color.BLUE, 20)).setWidth(minMaxWidth.getMaxWidth())
+        Table maxTable = new Table(MinMaxWidthUtils.toEffectiveTableColumnWidth(renderer.getMaxColumnWidth()))
+                .setWidth(MinMaxWidthUtils.toEffectiveWidth(table, minMaxWidth.getMaxWidth()))
+                .setMarginTop(10).setBorder(new SolidBorder(Color.BLUE, 20))
                 .addCell(cell1.clone(true)).addCell(cell2.clone(true))
                 .addCell(cell1.clone(true)).addCell(cell2.clone(true));
 
@@ -259,13 +259,15 @@ public class MinWidthTest extends ExtendedITextTest {
         TableRenderer renderer = (TableRenderer) table.createRendererSubTree().setParent(doc.getRenderer());
         MinMaxWidth minMaxWidth = renderer.getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
 
-        Table minTable = new Table(renderer.getMinColumnWidth()).setMarginTop(10)
-                .setBorder(new SolidBorder(Color.BLUE, 20)).setWidth(minMaxWidth.getMinWidth())
+        Table minTable = new Table(MinMaxWidthUtils.toEffectiveTableColumnWidth(renderer.getMinColumnWidth()))
+                .setWidth(MinMaxWidthUtils.toEffectiveWidth(table, minMaxWidth.getMinWidth()))
+                .setMarginTop(10).setBorder(new SolidBorder(Color.BLUE, 20))
                 .addCell(cell.clone(true)).addCell(bigCell.clone(true))
                 .addCell(cell.clone(true)).addCell(cell.clone(true)).addCell(cell.clone(true));
 
-        Table maxTable = new Table(renderer.getMaxColumWidth()).setMarginTop(10)
-                .setBorder(new SolidBorder(Color.BLUE, 20)).setWidth(minMaxWidth.getMaxWidth())
+        Table maxTable = new Table(MinMaxWidthUtils.toEffectiveTableColumnWidth(renderer.getMaxColumnWidth()))
+                .setWidth(MinMaxWidthUtils.toEffectiveWidth(table, minMaxWidth.getMaxWidth()))
+                .setMarginTop(10).setBorder(new SolidBorder(Color.BLUE, 20))
                 .addCell(cell.clone(true)).addCell(bigCell.clone(true))
                 .addCell(cell.clone(true)).addCell(cell.clone(true)).addCell(cell.clone(true));
 
@@ -275,5 +277,70 @@ public class MinWidthTest extends ExtendedITextTest {
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void headerFooterTableTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "headerFooterTableTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_headerFooterTableTest.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Cell bigCell = new Cell().add("veryveryveryvery big cell")
+                .setBorder(new SolidBorder(Color.RED, 40))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER)
+                .setPadding(0);
+        Cell mediumCell = new Cell().add("mediumsize cell")
+                .setBorder(new SolidBorder(Color.GREEN, 30))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER)
+                .setPadding(0);
+        Cell cell = new Cell().add("cell")
+                .setBorder(new SolidBorder(Color.BLUE, 10))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER)
+                .setPadding(0);
+
+        Table table = new Table(3)
+                .setBorder(new SolidBorder(Color.BLACK, 20))
+                .addCell(mediumCell.clone(true)).addCell(mediumCell.clone(true)).addCell(mediumCell.clone(true))
+                .addFooterCell(cell.clone(true)).addFooterCell(cell.clone(true)).addFooterCell(bigCell.clone(true))
+                .addHeaderCell(bigCell.clone(true)).addHeaderCell(cell.clone(true)).addHeaderCell(cell.clone(true));
+
+        TableRenderer renderer = (TableRenderer) table.createRendererSubTree().setParent(doc.getRenderer());
+        MinMaxWidth minMaxWidth = renderer.getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
+
+        Table minTable = new Table(MinMaxWidthUtils.toEffectiveTableColumnWidth(renderer.getMinColumnWidth()))
+                .setWidth(MinMaxWidthUtils.toEffectiveWidth(table, minMaxWidth.getMinWidth()))
+                .setBorder(new SolidBorder(Color.BLACK, 20)).setMarginTop(20)
+                .addCell(mediumCell.clone(true)).addCell(mediumCell.clone(true)).addCell(mediumCell.clone(true))
+                .addFooterCell(cell.clone(true)).addFooterCell(cell.clone(true)).addFooterCell(bigCell.clone(true))
+                .addHeaderCell(bigCell.clone(true)).addHeaderCell(cell.clone(true)).addHeaderCell(cell.clone(true));
+
+        Table maxTable = new Table(MinMaxWidthUtils.toEffectiveTableColumnWidth(renderer.getMaxColumnWidth()))
+                .setWidth(MinMaxWidthUtils.toEffectiveWidth(table, minMaxWidth.getMaxWidth()))
+                .setBorder(new SolidBorder(Color.BLACK, 20)).setMarginTop(20)
+                .addCell(mediumCell.clone(true)).addCell(mediumCell.clone(true)).addCell(mediumCell.clone(true))
+                .addFooterCell(cell.clone(true)).addFooterCell(cell.clone(true)).addFooterCell(bigCell.clone(true))
+                .addHeaderCell(bigCell.clone(true)).addHeaderCell(cell.clone(true)).addHeaderCell(cell.clone(true));
+
+        doc.add(table);
+        doc.add(minTable);
+        doc.add(maxTable);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    private float[] getTableColsWidth(float[] colWidth, Border[] borders) {
+        float[] result = colWidth.clone();
+        if (borders[1] != null) {
+            result[colWidth.length - 1] += borders[1].getWidth() / 2;
+        }
+        if (borders[3] != null) {
+            result[0] += borders[3].getWidth() / 2;
+        }
+        return result;
     }
 }

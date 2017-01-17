@@ -61,9 +61,6 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
-import com.itextpdf.layout.minmaxwidth.handler.AbstractWidthHandler;
-import com.itextpdf.layout.minmaxwidth.handler.MaxMaxWidthHandler;
-import com.itextpdf.layout.minmaxwidth.handler.SumSumWidthHandler;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
@@ -1405,6 +1402,9 @@ public class TableRenderer extends AbstractRenderer {
             collapsedTableBorderWidths = getCollapsedBorderWidths(footerRenderer.rows, footerRenderer.getBorders(), false);
             leftTableBorderWidth = Math.max(leftTableBorderWidth, collapsedTableBorderWidths[3]);
             rightTableBorderWidth = Math.max(rightTableBorderWidth, collapsedTableBorderWidths[1]);
+            footerRenderer.getMinMaxWidth(availableWidth -
+                    (leftTableBorderWidth - collapsedTableBorderWidths[3]) / 2 -
+                    (rightTableBorderWidth - collapsedTableBorderWidths[1]) / 2);
         }
 
         boolean isFirstHeader = rowRange.getStartRow() == 0 && isOriginalNonSplitRenderer;
@@ -1413,10 +1413,11 @@ public class TableRenderer extends AbstractRenderer {
             borders = getBorders();
             headerRenderer = initFooterOrHeaderRenderer(false, borders);
             collapsedTableBorderWidths = getCollapsedBorderWidths(headerRenderer.rows, headerRenderer.getBorders(), false);
-            float rightHeaderBorderWidth = collapsedTableBorderWidths[1];
-            float leftHeaderBorderWidth = collapsedTableBorderWidths[3];
-            leftTableBorderWidth = Math.max(leftTableBorderWidth, leftHeaderBorderWidth);
-            rightTableBorderWidth = Math.max(rightTableBorderWidth, rightHeaderBorderWidth);
+            leftTableBorderWidth = Math.max(leftTableBorderWidth, collapsedTableBorderWidths[3]);
+            rightTableBorderWidth = Math.max(rightTableBorderWidth, collapsedTableBorderWidths[1]);
+            headerRenderer.getMinMaxWidth(availableWidth -
+                    (leftTableBorderWidth - collapsedTableBorderWidths[3]) / 2 -
+                    (rightTableBorderWidth - collapsedTableBorderWidths[1]) / 2);
         }
 
         borders = getBorders();
@@ -1481,14 +1482,33 @@ public class TableRenderer extends AbstractRenderer {
             countedMinColumnWidth[col] = minColumnsWidth[col] - minColumnsWidth[col - 1];
             countedMaxColumnWidth[col] = maxColumnsWidth[col] - maxColumnsWidth[col - 1];
         }
-        return new MinMaxWidth(additionalWidth, availableWidth, minColumnsWidth[ncol - 1], maxColumnsWidth[ncol - 1]);
+
+        if (tableModel.getFooter() != null) {
+            for (int i = 0; i < ncol; ++i) {
+                countedMaxColumnWidth[i] = Math.max(countedMaxColumnWidth[i], footerRenderer.getMaxColumnWidth()[i]);
+                countedMinColumnWidth[i] = Math.max(countedMinColumnWidth[i], footerRenderer.getMinColumnWidth()[i]);
+            }
+        }
+        if (tableModel.getHeader() != null && headerShouldBeApplied) {
+            for (int i = 0; i < ncol; ++i) {
+                countedMaxColumnWidth[i] = Math.max(countedMaxColumnWidth[i], headerRenderer.getMaxColumnWidth()[i]);
+                countedMinColumnWidth[i] = Math.max(countedMinColumnWidth[i], headerRenderer.getMinColumnWidth()[i]);
+            }
+        }
+        float minColTotalWidth = 0;
+        float maxColTotalWidth = 0;
+        for (int i = 0; i< ncol; ++i) {
+            minColTotalWidth += countedMinColumnWidth[i];
+            maxColTotalWidth += countedMaxColumnWidth[i];
+        }
+        return new MinMaxWidth(additionalWidth, availableWidth, minColTotalWidth, maxColTotalWidth);
     }
 
     float[] getMinColumnWidth() {
         return countedMinColumnWidth;
     }
 
-    float[] getMaxColumWidth() {
+    float[] getMaxColumnWidth() {
         return countedMaxColumnWidth;
     }
 

@@ -4,6 +4,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.BlockElement;
 import com.itextpdf.layout.element.IElement;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -19,7 +20,19 @@ public class MinMaxWidthUtils {
     }
 
     public static float toEffectiveWidth(BlockElement b, float fullWidth) {
-        return fullWidth - getBorderWidth(b) - getMarginsWidth(b) - getPaddingWidth(b) + eps;
+        if (b instanceof Table) {
+            return fullWidth + ((Table) b).getNumberOfColumns() * eps;
+        } else {
+            return fullWidth - getBorderWidth(b) - getMarginsWidth(b) - getPaddingWidth(b) + eps;
+        }
+    }
+
+    public static float[] toEffectiveTableColumnWidth(float[] tableColumnWidth) {
+        float[] result = tableColumnWidth.clone();
+        for (int i = 0; i < result.length; ++i) {
+            result[i] += eps;
+        }
+        return result;
     }
 
     public static MinMaxWidth countDefaultMinMaxWidth(IRenderer renderer, float availableWidth) {
