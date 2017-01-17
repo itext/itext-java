@@ -1302,20 +1302,12 @@ public class TableTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        class CustomRenderer extends TableRenderer {
-            public CustomRenderer(Table modelElement, Table.RowRange rowRange) {
-                super(modelElement, rowRange);
-            }
-        }
-
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(2);
         table.setBorder(new SolidBorder(Color.GREEN, 100));
-
-
-
+        
         for (int i = 0; i < 10; i++) {
             table.addCell(new Cell().add("Cell No." + i));
         }
@@ -1326,5 +1318,11 @@ public class TableTest extends ExtendedITextTest {
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
 
+    }
+
+    static class CustomRenderer extends TableRenderer {
+        public CustomRenderer(Table modelElement, Table.RowRange rowRange) {
+            super(modelElement, rowRange);
+        }
     }
 }
