@@ -44,9 +44,8 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.Version;
@@ -72,19 +71,33 @@ import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
-import com.itextpdf.kernel.xmp.*;
+import com.itextpdf.kernel.xmp.PdfConst;
+import com.itextpdf.kernel.xmp.XMPConst;
+import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPMeta;
+import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main enter point to work with PDF document.
@@ -142,6 +155,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * Document version.
      */
     protected PdfVersion pdfVersion = PdfVersion.PDF_1_7;
+
+    /**
+     * The ID entry that represents a change in a document.
+     */
+    protected PdfString modifiedDocumentId;
 
     /**
      * List of indirect objects used in the document.
@@ -780,6 +798,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     }
 
                 }
+
                 byte[] originalFileID = null;
                 if (crypto == null && writer.crypto != null) {
                     originalFileID = writer.crypto.getDocumentId();
@@ -802,9 +821,20 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         originalFileID = PdfEncryption.generateNewDocumentId();
                     }
                 }
+                byte[] secondId;
+
+                if ( modifiedDocumentId != null ) {
+                    secondId = ByteUtils.getIsoBytes(modifiedDocumentId.getValue());
+                } else {
+                    if ( isModified ) {
+                        secondId = PdfEncryption.generateNewDocumentId();
+                    } else {
+                        secondId = originalFileID;
+                    }
+                }
                 // if originalFIleID comes from crypto, it means that no need in checking modified state.
                 // For crypto purposes new documentId always generated.
-                fileId = PdfEncryption.createInfoId(originalFileID, isModified);
+                fileId = PdfEncryption.createInfoId(originalFileID, secondId);
 
                 // The following two operators prevents the possible inconsistency between root and info
                 // entries existing in the trailer object and corresponding fields. This inconsistency
@@ -1413,6 +1443,17 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
+     * The /ID entry of a document contains an array with two entries. The first one represents the initial document id.
+     * The second one should be the same entry, unless the document has been modified. iText will by default generate
+     * a modified id. But if you'd like you can set this id yourself using this setter.
+     *
+     * @param modifiedDocumentId the new modified document id
+     */
+    public void setModifiedDocumentId(PdfString modifiedDocumentId) {
+        this.modifiedDocumentId = modifiedDocumentId;
+    }
+
+    /**
      * Create a new instance of {@link PdfFont} or load already created one.
      *
      * Note, PdfFont which created with {@link PdfFontFactory#createFont(PdfDictionary)} won't be cached
@@ -1587,6 +1628,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 trailer = new PdfDictionary();
                 trailer.put(PdfName.Root, catalog.getPdfObject().getIndirectReference());
                 trailer.put(PdfName.Info, info.getPdfObject().getIndirectReference());
+
+                if ( reader !=  null ) {
+                    // If the reader's trailer contains an ID entry, let's copy it over to the new trailer
+                    if ( reader.trailer.containsKey(PdfName.ID)) {
+                        trailer.put(PdfName.ID, reader.trailer.getAsArray(PdfName.ID));
+                    }
+                }
             }
             if (properties.appendMode) {       // Due to constructor reader and writer not null.
                 assert reader != null;
