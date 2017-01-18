@@ -1290,11 +1290,11 @@ public class BorderTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(3);
-        table.setBorder(new SolidBorder(100));
-        table.addFooterCell(new Cell(1, 3).setHeight(100).add("Footer"));
+        table.setBorder(new SolidBorder(90));
+        table.addFooterCell(new Cell(1, 3).setHeight(150).add("Footer"));
         table.addHeaderCell(new Cell(1, 3).setHeight(30).add("Header"));
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             table.addCell(new Cell().add(i + ": Bazz :").setBorder(new SolidBorder(Color.BLACK, 10)));
             table.addCell(new Cell().add("To infinity").setBorder(new SolidBorder(Color.YELLOW, 30)));
             table.addCell(new Cell().add(" and beyond!").setBorder(new SolidBorder(Color.RED, 20)));

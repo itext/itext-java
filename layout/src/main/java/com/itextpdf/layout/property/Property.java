@@ -93,8 +93,8 @@ public final class Property {
     public static final int FONT_SCRIPT = 23;
     public static final int FONT_PROVIDER = 91;
     public static final int FONT_SIZE = 24;
-    public static final int FULL = 25;
     public static final int FORCED_PLACEMENT = 26;
+    public static final int FULL = 25;
     public static final int HEIGHT = 27;
     public static final int HORIZONTAL_ALIGNMENT = 28;
     /**
@@ -102,6 +102,8 @@ public final class Property {
      **/
     public static final int HORIZONTAL_SCALING = 29;
     public static final int HYPHENATION = 30;
+    public static final int IGNORE_FOOTER = 96;
+    public static final int IGNORE_HEADER = 97;
     public static final int ITALIC_SIMULATION = 31;
     public static final int KEEP_TOGETHER = 32;
     public static final int KEEP_WITH_NEXT = 81;
