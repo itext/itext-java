@@ -109,7 +109,6 @@ public class FontSelectorTest extends ExtendedITextTest {
         FontProvider sel = new FontProvider();
         sel.addStandardPdfFonts();
 
-
         String s = "Hello world!";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new FileOutputStream(outFileName)));
         Document doc = new Document(pdfDoc);
@@ -121,6 +120,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         paragraph = new Paragraph(s);
         paragraph.setProperty(Property.FONT, "Times-Roman");
         doc.add(paragraph);
+
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));

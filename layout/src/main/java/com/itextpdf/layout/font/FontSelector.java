@@ -53,14 +53,14 @@ import java.util.Set;
  */
 public class FontSelector {
 
-    protected List<FontProgramInfo> fonts;
+    protected List<FontInfo> fonts;
 
     /**
      * Create new FontSelector instance.
      * @param allFonts Unsorted set of all available fonts.
      * @param fontFamilies sorted list of preferred font families.
      */
-    public FontSelector(Set<FontProgramInfo> allFonts, List<String> fontFamilies, FontCharacteristic fc) {
+    public FontSelector(Set<FontInfo> allFonts, List<String> fontFamilies, FontCharacteristic fc) {
         this.fonts = new ArrayList<>(allFonts);
         //Possible issue in .NET, virtual member in constructor.
         Collections.sort(this.fonts, getComparator(fontFamilies, fc));
@@ -70,22 +70,22 @@ public class FontSelector {
      * The best font match.
      * If any font from {@link #getFonts()} doesn't contain requested glyphs, this font will be used.
      */
-    public final FontProgramInfo bestMatch() {
+    public final FontInfo bestMatch() {
         return fonts.get(0);
     }
 
     /**
      * Sorted set of fonts.
      */
-    public final Iterable<FontProgramInfo> getFonts() {
+    public final Iterable<FontInfo> getFonts() {
         return fonts;
     }
 
-    protected Comparator<FontProgramInfo> getComparator(List<String> fontFamilies, FontCharacteristic fc) {
+    protected Comparator<FontInfo> getComparator(List<String> fontFamilies, FontCharacteristic fc) {
         return new PdfFontComparator(fontFamilies, fc);
     }
 
-    private static class PdfFontComparator implements Comparator<FontProgramInfo> {
+    private static class PdfFontComparator implements Comparator<FontInfo> {
         List<String> fontFamilies;
         List<FontCharacteristic> fontStyles;
 
@@ -105,28 +105,21 @@ public class FontSelector {
         }
 
         @Override
-        public int compare(FontProgramInfo o1, FontProgramInfo o2) {
+        public int compare(FontInfo o1, FontInfo o2) {
             int res = 0;
             for (int i = 0; i < fontFamilies.size() && res == 0; i++) {
                 FontCharacteristic fc = fontStyles.get(i);
-                if (fc.isBold()) {
-                    res = (o2.getNames().isBold() ? 1 : 0)
-                            - (o1.getNames().isBold() ? 1 : 0);
-                }
-                if (fc.isItalic()) {
-                    res += (o2.getNames().isItalic() ? 1 : 0)
-                            - (o1.getNames().isItalic() ? 1 : 0);
-                }
+                res = characteristicsSimilarity(fc, o2) - characteristicsSimilarity(fc, o1);
                 if (res == 0) {
                     String fontName = fontFamilies.get(i);
-                    res = (o2.getNames().getFullNameLowerCase().contains(fontName) ? 1 : 0)
-                            - (o1.getNames().getFullNameLowerCase().contains(fontName) ? 1 : 0);
+                    res = (o2.getDescriptor().getFullNameLowerCase().contains(fontName) ? 1 : 0)
+                            - (o1.getDescriptor().getFullNameLowerCase().contains(fontName) ? 1 : 0);
 
                     // In most cases full font name will be enough.
                     // It's trick for 'bad' fonts.
                     if (res == 0) {
-                        res = (o2.getNames().getFontNameLowerCase().contains(fontName) ? 1 : 0)
-                                - (o1.getNames().getFontNameLowerCase().contains(fontName) ? 1 : 0);
+                        res = (o2.getDescriptor().getFontNameLowerCase().contains(fontName) ? 1 : 0)
+                                - (o1.getDescriptor().getFontNameLowerCase().contains(fontName) ? 1 : 0);
                     }
                 }
             }
@@ -146,6 +139,37 @@ public class FontSelector {
                 }
             }
             return fc;
+        }
+
+        private static int characteristicsSimilarity(FontCharacteristic fc, FontInfo fontInfo) {
+            boolean isFontBold = fontInfo.getDescriptor().isBold() || fontInfo.getDescriptor().getFontWeight() > 500;
+            boolean isFontItalic = fontInfo.getDescriptor().isItalic() || fontInfo.getDescriptor().getItalicAngle() < 0;
+            int score = 0;
+            if (fc.isBold()) {
+                if (isFontBold) {
+                    score += 5;
+                } else {
+                    score -= 5;
+                }
+            } else {
+                if (isFontBold) {
+                    score -= 3;
+                }
+            }
+
+            if (fc.isItalic()) {
+                if (isFontItalic) {
+                    score += 5;
+                } else {
+                    score -= 5;
+                }
+            } else {
+                if (isFontItalic) {
+                    score -= 3;
+                }
+            }
+
+            return score;
         }
     }
 }

@@ -64,15 +64,15 @@ import java.util.Set;
  * Contains reusable {@link FontSet} and collection of {@link PdfFont}s.
  * FontProvider depends from {@link PdfDocument}, due to {@link PdfFont}, it cannot be reused for different documents,
  * but a new instance of FontProvider could be created with {@link FontProvider#getFontSet()}.
- * FontProvider the only end point for creating PdfFont, {@link #getPdfFont(FontProgramInfo)},
- * {@link FontProgramInfo} shal call this method.
+ * FontProvider the only end point for creating PdfFont, {@link #getPdfFont(FontInfo)},
+ * {@link FontInfo} shall call this method.
  * <p>
  * Note, FontProvider does not close created {@link FontProgram}s, because of possible conflicts with {@link FontCache}.
  */
 public class FontProvider {
 
     private FontSet fontSet;
-    private Map<FontProgramInfo, PdfFont> pdfFonts = new HashMap<>();
+    private Map<FontInfo, PdfFont> pdfFonts = new HashMap<>();
 
     public FontProvider(FontSet fontSet) {
         this.fontSet = fontSet;
@@ -209,7 +209,7 @@ public class FontProvider {
      * @param fc         instance of {@link FontCharacteristic}.
      * @return an instance of {@link FontSelector}.
      */
-    protected FontSelector createFontSelector(Set<FontProgramInfo> fonts, List<String> fontFamilies, FontCharacteristic fc) {
+    protected FontSelector createFontSelector(Set<FontInfo> fonts, List<String> fontFamilies, FontCharacteristic fc) {
         return new FontSelector(fonts, fontFamilies, fc);
     }
 
@@ -220,7 +220,7 @@ public class FontProvider {
      * @return cached or new instance of {@link PdfFont}.
      * @throws IOException on I/O exceptions in {@link FontProgramFactory}.
      */
-    protected PdfFont getPdfFont(FontProgramInfo fontInfo) throws IOException {
+    protected PdfFont getPdfFont(FontInfo fontInfo) throws IOException {
         if (pdfFonts.containsKey(fontInfo)) {
             return pdfFonts.get(fontInfo);
         } else {

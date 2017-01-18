@@ -72,13 +72,17 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
     @Override
     public List<Glyph> nextGlyphs() {
         int nextUnignorable = nextSignificantIndex();
-        for (FontProgramInfo f : selector.getFonts()) {
-            font = f.getPdfFont(provider);
-            if (font.containsGlyph(text, nextUnignorable)) {
-                break;
-            } else {
-                font = null;
+        if (nextUnignorable < text.length()) {
+            for (FontInfo f : selector.getFonts()) {
+                font = f.getPdfFont(provider);
+                if (font.containsGlyph(text, nextUnignorable)) {
+                    break;
+                } else {
+                    font = null;
+                }
             }
+        } else {
+            nextUnignorable = 0;
         }
         List<Glyph> glyphs = new ArrayList<>();
         if (font != null) {
@@ -108,7 +112,7 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
     private int nextSignificantIndex() {
         int nextValidChar = index;
         for (; nextValidChar < text.length(); nextValidChar++) {
-            if (!Character.isIdentifierIgnorable(text.charAt(nextValidChar))) {
+            if (!Character.isIdentifierIgnorable(text.charAt(nextValidChar)) && !Character.isWhitespace(text.charAt(nextValidChar))) {
                 break;
             }
         }

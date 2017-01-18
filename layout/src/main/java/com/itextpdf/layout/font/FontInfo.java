@@ -43,9 +43,9 @@
 package com.itextpdf.layout.font;
 
 import com.itextpdf.io.font.FontCacheKey;
-import com.itextpdf.io.font.FontNames;
-import com.itextpdf.io.font.FontNamesFactory;
 import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.FontProgramDescriptor;
+import com.itextpdf.io.font.FontProgramDescriptorFactory;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
@@ -57,48 +57,49 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Contains all font related data to create {@link FontProgram} and {@link PdfFont}.
- * {@link FontNames} fetches with {@link FontNamesFactory}.
+ * {@link FontProgramDescriptor} fetches with {@link FontProgramDescriptorFactory}.
  */
-public final class FontProgramInfo {
+public final class FontInfo {
 
-    private static final Map<FontCacheKey, FontNames> fontNamesCache = new ConcurrentHashMap<>();
+    private static final Map<FontCacheKey, FontProgramDescriptor> fontNamesCache = new ConcurrentHashMap<>();
 
     private final String fontName;
     private final byte[] fontProgram;
-    private final String encoding;
-    private final FontNames names;
+    private final FontProgramDescriptor descriptor;
     private final int hash;
+    private final String encoding;
 
-    private FontProgramInfo(String fontName, byte[] fontProgram, String encoding, FontNames names) {
+    private FontInfo(String fontName, byte[] fontProgram, String encoding, FontProgramDescriptor descriptor) {
         this.fontName = fontName;
         this.fontProgram = fontProgram;
         this.encoding = encoding;
-        this.names = names;
+        this.descriptor = descriptor;
         this.hash = calculateHashCode(fontName, fontProgram, encoding);
     }
 
-    static FontProgramInfo create(FontProgram fontProgram, String encoding) {
-        return new FontProgramInfo(fontProgram.getFontNames().getFontName(), null, encoding, fontProgram.getFontNames());
+    static FontInfo create(FontProgram fontProgram, String encoding) {
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontProgram);
+        return new FontInfo(descriptor.getFontName(), null, encoding, descriptor);
     }
 
-    static FontProgramInfo create(String fontName, String encoding) {
+    static FontInfo create(String fontName, String encoding) {
         FontCacheKey cacheKey = FontCacheKey.create(fontName);
-        FontNames names = getFontNamesFromCache(cacheKey);
-        if (names == null) {
-            names = FontNamesFactory.fetchFontNames(fontName);
-            putFontNamesToCache(cacheKey, names);
+        FontProgramDescriptor descriptor = getFontNamesFromCache(cacheKey);
+        if (descriptor == null) {
+            descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontName);
+            putFontNamesToCache(cacheKey, descriptor);
         }
-        return names != null ? new FontProgramInfo(fontName, null, encoding, names) : null;
+        return descriptor != null ? new FontInfo(fontName, null, encoding, descriptor) : null;
     }
 
-    static FontProgramInfo create(byte[] fontProgram, String encoding) {
+    static FontInfo create(byte[] fontProgram, String encoding) {
         FontCacheKey cacheKey = FontCacheKey.create(fontProgram);
-        FontNames names = getFontNamesFromCache(cacheKey);
-        if (names == null) {
-            names = FontNamesFactory.fetchFontNames(fontProgram);
-            putFontNamesToCache(cacheKey, names);
+        FontProgramDescriptor descriptor = getFontNamesFromCache(cacheKey);
+        if (descriptor == null) {
+            descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontProgram);
+            putFontNamesToCache(cacheKey, descriptor);
         }
-        return names != null ? new FontProgramInfo(null, fontProgram, encoding, names) : null;
+        return descriptor != null ? new FontInfo(null, fontProgram, encoding, descriptor) : null;
     }
 
     public PdfFont getPdfFont(FontProvider fontProvider) {
@@ -109,8 +110,8 @@ public final class FontProgramInfo {
         }
     }
 
-    public FontNames getNames() {
-        return names;
+    public FontProgramDescriptor getDescriptor() {
+        return descriptor;
     }
 
     public String getFontName() {
@@ -128,9 +129,9 @@ public final class FontProgramInfo {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FontProgramInfo)) return false;
+        if (!(o instanceof FontInfo)) return false;
 
-        FontProgramInfo that = (FontProgramInfo) o;
+        FontInfo that = (FontInfo) o;
         return (fontName != null ? fontName.equals(that.fontName) : that.fontName == null)
                 && Arrays.equals(fontProgram, that.fontProgram)
                 && (encoding != null ? encoding.equals(that.encoding) : that.encoding == null);
@@ -143,7 +144,7 @@ public final class FontProgramInfo {
 
     @Override
     public String toString() {
-        String name = names.getFontName();
+        String name = descriptor.getFontName();
         if (name.length() > 0) {
             if (encoding != null) {
                 return String.format("%s+%s", name, encoding);
@@ -161,13 +162,13 @@ public final class FontProgramInfo {
         return result;
     }
 
-    private static FontNames getFontNamesFromCache(FontCacheKey key) {
+    private static FontProgramDescriptor getFontNamesFromCache(FontCacheKey key) {
         return fontNamesCache.get(key);
     }
 
-    private static void putFontNamesToCache(FontCacheKey key, FontNames names) {
-        if (names != null) {
-            fontNamesCache.put(key, names);
+    private static void putFontNamesToCache(FontCacheKey key, FontProgramDescriptor descriptor) {
+        if (descriptor != null) {
+            fontNamesCache.put(key, descriptor);
         }
     }
 }
