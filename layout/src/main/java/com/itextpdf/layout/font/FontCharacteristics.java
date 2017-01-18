@@ -2,37 +2,37 @@ package com.itextpdf.layout.font;
 
 import com.itextpdf.io.font.FontWeight;
 
-public final class FontCharacteristic {
+public final class FontCharacteristics {
     private boolean isItalic = false;
     private boolean isBold = false;
     private short fontWeight = 400;
     private boolean undefined = true;
 
-    public FontCharacteristic setFontWeight(FontWeight fw) {
-        this.fontWeight = FontCharacteristicUtils.calculateFontWeightNumber(fw);
+    public FontCharacteristics setFontWeight(FontWeight fw) {
+        this.fontWeight = FontCharacteristicsUtils.calculateFontWeightNumber(fw);
         modified();
         return this;
     }
 
-    public FontCharacteristic setFontWeight(short fw) {
+    public FontCharacteristics setFontWeight(short fw) {
         if (fw > 0) {
-            this.fontWeight = FontCharacteristicUtils.normalizeFontWeight(fw);
+            this.fontWeight = FontCharacteristicsUtils.normalizeFontWeight(fw);
             modified();
         }
         return this;
     }
 
-    public FontCharacteristic setFontWeight(String fw) {
-        return setFontWeight(FontCharacteristicUtils.parseFontWeight(fw));
+    public FontCharacteristics setFontWeight(String fw) {
+        return setFontWeight(FontCharacteristicsUtils.parseFontWeight(fw));
     }
 
-    public FontCharacteristic setBoldFlag(boolean isBold) {
+    public FontCharacteristics setBoldFlag(boolean isBold) {
         this.isBold = isBold;
         if (this.isBold) modified();
         return this;
     }
 
-    public FontCharacteristic setItalicFlag(boolean isItalic) {
+    public FontCharacteristics setItalicFlag(boolean isItalic) {
         this.isItalic = isItalic;
         if (this.isItalic) modified();
         return this;
@@ -42,7 +42,7 @@ public final class FontCharacteristic {
      * Set font style
      * @param fs shall be 'normal', 'italic' or 'oblique'.
      */
-    public FontCharacteristic setFontStyle(String fs) {
+    public FontCharacteristics setFontStyle(String fs) {
         if (fs != null && fs.length() > 0) {
             fs = fs.trim().toLowerCase();
             if (fs.equals("normal")) {
@@ -68,7 +68,7 @@ public final class FontCharacteristic {
     }
 
     public FontWeight getFontWeight() {
-        return FontCharacteristicUtils.calculateFontWeight(fontWeight);
+        return FontCharacteristicsUtils.calculateFontWeight(fontWeight);
     }
 
     public boolean isUndefined() {
@@ -84,7 +84,7 @@ public final class FontCharacteristic {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        FontCharacteristic that = (FontCharacteristic) o;
+        FontCharacteristics that = (FontCharacteristics) o;
 
         return isItalic == that.isItalic
                 && isBold == that.isBold

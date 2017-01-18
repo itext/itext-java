@@ -63,7 +63,7 @@ import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.font.FontCharacteristic;
+import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSelectorStrategy;
@@ -1004,7 +1004,7 @@ public class TextRenderer extends AbstractRenderer {
             }
             List<TextRenderer> renderers = new ArrayList<>();
 
-            FontCharacteristic fc = createFontCharacteristics();
+            FontCharacteristics fc = createFontCharacteristics();
 
             FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
                     FontFamilySplitter.splitFontFamily((String) font), fc);

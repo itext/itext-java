@@ -60,7 +60,7 @@ public class FontSelector {
      * @param allFonts Unsorted set of all available fonts.
      * @param fontFamilies sorted list of preferred font families.
      */
-    public FontSelector(Set<FontInfo> allFonts, List<String> fontFamilies, FontCharacteristic fc) {
+    public FontSelector(Set<FontInfo> allFonts, List<String> fontFamilies, FontCharacteristics fc) {
         this.fonts = new ArrayList<>(allFonts);
         //Possible issue in .NET, virtual member in constructor.
         Collections.sort(this.fonts, getComparator(fontFamilies, fc));
@@ -81,15 +81,15 @@ public class FontSelector {
         return fonts;
     }
 
-    protected Comparator<FontInfo> getComparator(List<String> fontFamilies, FontCharacteristic fc) {
+    protected Comparator<FontInfo> getComparator(List<String> fontFamilies, FontCharacteristics fc) {
         return new PdfFontComparator(fontFamilies, fc);
     }
 
     private static class PdfFontComparator implements Comparator<FontInfo> {
         List<String> fontFamilies;
-        List<FontCharacteristic> fontStyles;
+        List<FontCharacteristics> fontStyles;
 
-        PdfFontComparator(List<String> fontFamilies, FontCharacteristic fc) {
+        PdfFontComparator(List<String> fontFamilies, FontCharacteristics fc) {
             this.fontFamilies = new ArrayList<>();
             this.fontStyles = new ArrayList<>();
             if (fontFamilies != null && fontFamilies.size() > 0) {
@@ -108,7 +108,7 @@ public class FontSelector {
         public int compare(FontInfo o1, FontInfo o2) {
             int res = 0;
             for (int i = 0; i < fontFamilies.size() && res == 0; i++) {
-                FontCharacteristic fc = fontStyles.get(i);
+                FontCharacteristics fc = fontStyles.get(i);
                 res = characteristicsSimilarity(fc, o2) - characteristicsSimilarity(fc, o1);
                 if (res == 0) {
                     String fontName = fontFamilies.get(i);
@@ -126,9 +126,9 @@ public class FontSelector {
             return res;
         }
 
-        private static FontCharacteristic parseFontStyle(String fontFamily, FontCharacteristic fc) {
+        private static FontCharacteristics parseFontStyle(String fontFamily, FontCharacteristics fc) {
             if (fc == null) {
-                fc = new FontCharacteristic();
+                fc = new FontCharacteristics();
             }
             if (fc.isUndefined()) {
                 if (fontFamily.contains("bold")) {
@@ -141,7 +141,7 @@ public class FontSelector {
             return fc;
         }
 
-        private static int characteristicsSimilarity(FontCharacteristic fc, FontInfo fontInfo) {
+        private static int characteristicsSimilarity(FontCharacteristics fc, FontInfo fontInfo) {
             boolean isFontBold = fontInfo.getDescriptor().isBold() || fontInfo.getDescriptor().getFontWeight() > 500;
             boolean isFontItalic = fontInfo.getDescriptor().isItalic() || fontInfo.getDescriptor().getItalicAngle() < 0;
             int score = 0;
