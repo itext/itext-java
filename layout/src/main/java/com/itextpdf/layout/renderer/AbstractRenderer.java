@@ -63,6 +63,9 @@ import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.IElement;
+import com.itextpdf.layout.font.FontCharacteristic;
+import com.itextpdf.layout.font.FontFamilySplitter;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.property.Background;
@@ -1168,6 +1171,34 @@ public abstract class AbstractRenderer implements IRenderer {
     void drawPositionedChildren(DrawContext drawContext) {
         for (IRenderer positionedChild : positionedRenderers) {
             positionedChild.draw(drawContext);
+        }
+    }
+
+    FontCharacteristic createFontCharacteristics() {
+        FontCharacteristic fc = new FontCharacteristic();
+        if (this.hasProperty(Property.FONT_WEIGHT)) {
+            fc.setFontWeight((String) this.<Object>getProperty(Property.FONT_WEIGHT));
+        }
+        if (this.hasProperty(Property.FONT_STYLE)) {
+            fc.setFontStyle((String) this.<Object>getProperty(Property.FONT_STYLE));
+        }
+        return fc;
+    }
+
+    PdfFont resolveFirstPdfFont() {
+        // TODO this mechanism does not take text into account
+        Object font = this.<Object>getProperty(Property.FONT);
+        if (font instanceof PdfFont) {
+            return (PdfFont) font;
+        } else if (font instanceof String) {
+            FontProvider provider = this.<FontProvider>getProperty(Property.FONT_PROVIDER);
+            if (provider == null) {
+                throw new IllegalStateException("Invalid font type. FontProvider expected. Cannot resolve font with string value");
+            }
+            FontCharacteristic fc = createFontCharacteristics();
+            return provider.getFontSelector(FontFamilySplitter.splitFontFamily((String) font), fc).bestMatch().getPdfFont(provider);
+        } else {
+            throw new IllegalStateException("String or PdfFont expected as value of FONT property");
         }
     }
 
