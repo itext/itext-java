@@ -718,6 +718,10 @@ public class TableRenderer extends AbstractRenderer {
                         occupiedArea.getBBox().moveDown(heightDiff).increaseHeight(heightDiff);
                         layoutBox.decreaseHeight(heightDiff);
                     }
+                } else {
+                    for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
+                        horizontalBorders.get(1).set(col, borders[2]);
+                    }
                 }
                 // Correct occupied areas of all added cells
                 correctCellsOccupiedAreas(row, targetOverflowRowIndex);
@@ -807,8 +811,10 @@ public class TableRenderer extends AbstractRenderer {
                                 } else if (Border.NO_BORDER != cellOverflow.<Border>getProperty(Property.BORDER_TOP)) {
                                     cellOverflow.deleteOwnProperty(Property.BORDER_TOP);
                                 }
-                                for (int j = col; j < col + cellOverflow.getPropertyAsInteger(Property.COLSPAN); j++) {
-                                    horizontalBorders.get(!hasContent && splits[col].getStatus() == LayoutResult.PARTIAL ? row : row + 1).set(j, getBorders()[2]);
+                                if (hasContent) {
+                                    for (int j = col; j < col + cellOverflow.getPropertyAsInteger(Property.COLSPAN); j++) {
+                                        horizontalBorders.get(row + 1).set(j, getBorders()[2]);
+                                    }
                                 }
                                 cellOverflow.deleteOwnProperty(Property.BORDER_BOTTOM);
                                 cellOverflow.setBorders(cellOverflow.getBorders()[2], 2);
@@ -824,11 +830,11 @@ public class TableRenderer extends AbstractRenderer {
                                 columnsWithCellToBeEnlarged[col] = true;
                                 // for the future
                                 splitResult[1].rows.get(0)[col].setBorders(getBorders()[0], 0);
+                                for (int j = col; j < col + currentRow[col].getPropertyAsInteger(Property.COLSPAN); j++) {
+                                    horizontalBorders.get(row + 1).set(j, getBorders()[2]);
+                                }
                             } else if (Border.NO_BORDER != currentRow[col].<Border>getProperty(Property.BORDER_TOP)) {
                                 splitResult[1].rows.get(0)[col].deleteOwnProperty(Property.BORDER_TOP);
-                            }
-                            for (int j = col; j < col + currentRow[col].getPropertyAsInteger(Property.COLSPAN); j++) {
-                                horizontalBorders.get(row + (!hasContent && rowspans[col] > 1 ? 0 : 1)).set(j, getBorders()[2]);
                             }
                         }
                     }
