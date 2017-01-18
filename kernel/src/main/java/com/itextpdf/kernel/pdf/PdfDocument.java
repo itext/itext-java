@@ -162,6 +162,11 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     protected PdfString modifiedDocumentId;
 
     /**
+     * The original second id when the document is read initially.
+     */
+    private PdfString originalModifiedDocumentId;
+
+    /**
      * List of indirect objects used in the document.
      */
     final PdfXrefTable xref = new PdfXrefTable();
@@ -826,10 +831,20 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 if ( modifiedDocumentId != null ) {
                     secondId = ByteUtils.getIsoBytes(modifiedDocumentId.getValue());
                 } else {
-                    if ( isModified ) {
-                        secondId = PdfEncryption.generateNewDocumentId();
+                    if ( originalModifiedDocumentId != null ) {
+                        PdfString newModifiedId = reader.trailer.getAsArray(PdfName.ID).getAsString(1);
+
+                        if (!originalModifiedDocumentId.equals(newModifiedId)) {
+                            secondId = ByteUtils.getIsoBytes(newModifiedId.getValue());
+                        } else {
+                            secondId = PdfEncryption.generateNewDocumentId();
+                        }
                     } else {
-                        secondId = originalFileID;
+                        if (isModified) {
+                            secondId = PdfEncryption.generateNewDocumentId();
+                        } else {
+                            secondId = originalFileID;
+                        }
                     }
                 }
                 // if originalFIleID comes from crypto, it means that no need in checking modified state.
@@ -1574,6 +1589,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 }
                 pdfVersion = reader.headerPdfVersion;
                 trailer = new PdfDictionary(reader.trailer);
+
+                PdfArray id = reader.trailer.getAsArray(PdfName.ID);
+
+                if (id != null) {
+                     originalModifiedDocumentId = id.getAsString(1);
+                }
+
                 catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true));
                 if (catalog.getPdfObject().containsKey(PdfName.Version)) {
                     // The version of the PDF specification to which the document conforms (for example, 1.4)
