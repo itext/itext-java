@@ -114,7 +114,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         if (fontEncoding.isFontSpecific()) {
             for (int i = from; i <= to; i++) {
                 Glyph glyph = fontProgram.getGlyphByCode(text.charAt(i) & 0xFF);
-                if (glyph != null && (isAppendableGlyph(glyph))) {
+                if (glyph != null) {
                     glyphs.add(glyph);
                     processed++;
                 } else {
@@ -124,7 +124,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         } else {
             for (int i = from; i <= to; i++) {
                 Glyph glyph = getGlyph((int) text.charAt(i));
-                if (glyph != null && (isAppendableGlyph(glyph))) {
+                if (glyph != null && (containsGlyph(text, i) || isAppendableGlyph(glyph))) {
                     glyphs.add(glyph);
                     processed++;
                 } else {
