@@ -4,8 +4,8 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.CidFont;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.FontEncoding;
-import com.itextpdf.io.font.FontNames;
-import com.itextpdf.io.font.FontNamesFactory;
+import com.itextpdf.io.font.FontProgramDescriptor;
+import com.itextpdf.io.font.FontProgramDescriptorFactory;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeCollection;
@@ -27,17 +27,16 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.List;
 
 @Category(IntegrationTest.class)
 public class PdfFontTest extends ExtendedITextTest {
@@ -1377,77 +1376,59 @@ public class PdfFontTest extends ExtendedITextTest {
 
     @Test
     public void kozminNames() throws Exception {
-        FontNames names = FontNamesFactory.fetchFontNames("KozMinPro-Regular");
-        Assert.assertEquals(names.getFontName(), "KozMinPro-Regular");
-        Assert.assertEquals(names.getFullName()[0][3], "KozMinPro-Regular");
-        Assert.assertEquals(names.getFullNameLowerCase(), "kozminpro-regular");
-        Assert.assertEquals(names.getFontWeight(), 400);
-        Assert.assertEquals(names.getFontWidth(), 5);
-        Assert.assertEquals(names.allowEmbedding(), false);
-
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("KozMinPro-Regular");
+        Assert.assertEquals(descriptor.getFontName(), "KozMinPro-Regular");
+        Assert.assertEquals(descriptor.getFullNameLowerCase(), "KozMinPro-Regular".toLowerCase());
+        Assert.assertEquals(descriptor.getFontWeight(), 400);
     }
 
     @Test
     public void helveticaNames() throws Exception {
-        FontNames names = FontNamesFactory.fetchFontNames("Helvetica");
-        Assert.assertEquals(names.getFontName(), "Helvetica");
-        Assert.assertEquals(names.getFullName()[0][3], "Helvetica");
-        Assert.assertEquals(names.getFullNameLowerCase(), "helvetica");
-        Assert.assertEquals(names.getFontWeight(), 500);
-        Assert.assertEquals(names.getFontWidth(), 5);
-        Assert.assertEquals(names.allowEmbedding(), false);
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("Helvetica");
+        Assert.assertEquals(descriptor.getFontName(), "Helvetica");
+        Assert.assertEquals(descriptor.getFullNameLowerCase(), "Helvetica".toLowerCase());
+        Assert.assertEquals(descriptor.getFullNameLowerCase(), "helvetica");
+        Assert.assertEquals(descriptor.getFontWeight(), 500);
     }
 
     @Test
     public void otfByStringNames() throws Exception {
-        FontNames names = FontNamesFactory.fetchFontNames(fontsFolder + "Puritan2.otf");
-        Assert.assertEquals(names.getFontName(), "Puritan2");
-        Assert.assertEquals(names.getFullName()[0][3], "Puritan 2.0 Regular");
-        Assert.assertEquals(names.getFamilyName()[0][3], "Puritan 2.0");
-        Assert.assertEquals(names.getFullNameLowerCase(), "puritan 2.0 regular");
-        Assert.assertEquals(names.getStyle(), "Normal");
-        Assert.assertEquals(names.getFontWeight(), 400);
-        Assert.assertEquals(names.getFontWidth(), 5);
-        Assert.assertEquals(names.allowEmbedding(), true);
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontsFolder + "Puritan2.otf");
+        Assert.assertEquals(descriptor.getFontName(), "Puritan2");
+        Assert.assertEquals(descriptor.getFullNameLowerCase(), "Puritan 2.0 Regular".toLowerCase());
+        Assert.assertEquals(descriptor.getFamilyNameLowerCase(), "Puritan 2.0".toLowerCase());
+        Assert.assertEquals(descriptor.getStyle(), "Normal");
+        Assert.assertEquals(descriptor.getFontWeight(), 400);
 
     }
 
     @Test
     public void otfByStreamNames() throws Exception {
-        FontNames names = FontNamesFactory.fetchFontNames(StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "Puritan2.otf")));
-        Assert.assertEquals(names.getFontName(), "Puritan2");
-        Assert.assertEquals(names.getFullName()[0][3], "Puritan 2.0 Regular");
-        Assert.assertEquals(names.getFamilyName()[0][3], "Puritan 2.0");
-        Assert.assertEquals(names.getFullNameLowerCase(), "puritan 2.0 regular");
-        Assert.assertEquals(names.getStyle(), "Normal");
-        Assert.assertEquals(names.getFontWeight(), 400);
-        Assert.assertEquals(names.getFontWidth(), 5);
-        Assert.assertEquals(names.allowEmbedding(), true);
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "Puritan2.otf")));
+        Assert.assertEquals(descriptor.getFontName(), "Puritan2");
+        Assert.assertEquals(descriptor.getFullNameLowerCase(), "Puritan 2.0 Regular".toLowerCase());
+        Assert.assertEquals(descriptor.getFamilyNameLowerCase(), "Puritan 2.0".toLowerCase());
+        Assert.assertEquals(descriptor.getStyle(), "Normal");
+        Assert.assertEquals(descriptor.getFontWeight(), 400);
     }
 
     @Test
     public void ttfByStringNames() throws Exception {
-        FontNames names = FontNamesFactory.fetchFontNames(fontsFolder + "abserif4_5.ttf");
-        Assert.assertEquals(names.getFontName(), "AboriginalSerif");
-        Assert.assertEquals(names.getFullName()[0][3], "Aboriginal Serif");
-        Assert.assertEquals(names.getFamilyName()[0][3], "Aboriginal Serif");
-        Assert.assertEquals(names.getFullNameLowerCase(), "aboriginal serif");
-        Assert.assertEquals(names.getStyle(), "Regular");
-        Assert.assertEquals(names.getFontWeight(), 400);
-        Assert.assertEquals(names.getFontWidth(), 5);
-        Assert.assertEquals(names.allowEmbedding(), true);
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontsFolder + "abserif4_5.ttf");
+        Assert.assertEquals(descriptor.getFontName(), "AboriginalSerif");
+        Assert.assertEquals(descriptor.getFullNameLowerCase(), "Aboriginal Serif".toLowerCase());
+        Assert.assertEquals(descriptor.getFamilyNameLowerCase(), "Aboriginal Serif".toLowerCase());
+        Assert.assertEquals(descriptor.getStyle(), "Regular");
+        Assert.assertEquals(descriptor.getFontWeight(), 400);
     }
 
     @Test
     public void ttfByStreamNames() throws Exception {
-        FontNames names = FontNamesFactory.fetchFontNames(StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "abserif4_5.ttf")));
-        Assert.assertEquals(names.getFontName(), "AboriginalSerif");
-        Assert.assertEquals(names.getFullName()[0][3], "Aboriginal Serif");
-        Assert.assertEquals(names.getFamilyName()[0][3], "Aboriginal Serif");
-        Assert.assertEquals(names.getFullNameLowerCase(), "aboriginal serif");
-        Assert.assertEquals(names.getStyle(), "Regular");
-        Assert.assertEquals(names.getFontWeight(), 400);
-        Assert.assertEquals(names.getFontWidth(), 5);
-        Assert.assertEquals(names.allowEmbedding(), true);
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "abserif4_5.ttf")));
+        Assert.assertEquals(descriptor.getFontName(), "AboriginalSerif");
+        Assert.assertEquals(descriptor.getFullNameLowerCase(), "Aboriginal Serif".toLowerCase());
+        Assert.assertEquals(descriptor.getFamilyNameLowerCase(), "Aboriginal Serif".toLowerCase());
+        Assert.assertEquals(descriptor.getStyle(), "Regular");
+        Assert.assertEquals(descriptor.getFontWeight(), 400);
     }
 }

@@ -447,10 +447,10 @@ class OpenTypeParser implements Serializable, Closeable {
         readNameTable();
         readHeadTable();
         readOs_2Table();
+        readPostTable();
         if (all) {
             checkCff();
             readHheaTable();
-            readPostTable();
             readGlyphWidths();
             readCmapTable();
         }
