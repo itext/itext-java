@@ -45,6 +45,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.util.TextUtil;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
 import com.itextpdf.kernel.numbering.GreekAlphabetNumbering;
@@ -84,8 +85,15 @@ public class ListRenderer extends BlockRenderer {
                 childRenderers.get(i).setParent(this);
                 IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum++, childRenderers.get(i));
                 childRenderers.get(i).setParent(null);
+
+                currentSymbolRenderer.setParent(this);
+                // Workaround for the case when font is specified as string
+                if (currentSymbolRenderer instanceof AbstractRenderer && currentSymbolRenderer.getProperty(Property.FONT) instanceof String) {
+                    PdfFont actualPdfFont = ((AbstractRenderer)currentSymbolRenderer).resolveFirstPdfFont();
+                    currentSymbolRenderer.setProperty(Property.FONT, actualPdfFont);
+                }
                 symbolRenderers.add(currentSymbolRenderer);
-                LayoutResult listSymbolLayoutResult = currentSymbolRenderer.setParent(this).layout(layoutContext);
+                LayoutResult listSymbolLayoutResult = currentSymbolRenderer.layout(layoutContext);
                 currentSymbolRenderer.setParent(null);
                 if (listSymbolLayoutResult.getStatus() != LayoutResult.FULL) {
                     return new LayoutResult(LayoutResult.NOTHING, null, null, this, listSymbolLayoutResult.getCauseOfNothing());

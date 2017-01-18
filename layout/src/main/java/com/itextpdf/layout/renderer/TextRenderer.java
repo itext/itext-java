@@ -1004,13 +1004,7 @@ public class TextRenderer extends AbstractRenderer {
             }
             List<TextRenderer> renderers = new ArrayList<>();
 
-            FontCharacteristic fc = new FontCharacteristic();
-            if (this.hasProperty(Property.FONT_WEIGHT)) {
-                fc.setFontWeight((String) this.<Object>getProperty(Property.FONT_WEIGHT));
-            }
-            if (this.hasProperty(Property.FONT_STYLE)) {
-                fc.setFontStyle((String) this.<Object>getProperty(Property.FONT_STYLE));
-            }
+            FontCharacteristic fc = createFontCharacteristics();
 
             FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
                     FontFamilySplitter.splitFontFamily((String) font), fc);
