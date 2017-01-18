@@ -271,7 +271,11 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfObject createInfoId(byte[] firstId, byte[] secondId) {
         if ( firstId.length < 16 ) {
-            firstId = generateNewDocumentId();
+            firstId = padByteArrayTo16(firstId);
+        }
+
+        if ( secondId.length < 16 ) {
+            secondId = padByteArrayTo16(secondId);
         }
 
         com.itextpdf.io.source.ByteBuffer buf = new com.itextpdf.io.source.ByteBuffer(90);
@@ -285,6 +289,14 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         buf.append('>').append(']');
 
         return new PdfLiteral(buf.toByteArray());
+    }
+
+    private static byte[] padByteArrayTo16(byte[] documentId) {
+        byte[] paddingBytes = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+
+        System.arraycopy(documentId, 0, paddingBytes, 0, documentId.length);
+
+        return paddingBytes;
     }
 
     /**
