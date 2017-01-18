@@ -324,7 +324,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         .increaseHeight(occupiedArea.getBBox().getBottom() - blockBottom)
                         .setY(blockBottom);
                 blockMinHeight -= occupiedArea.getBBox().getHeight();
-                if (!isFixedLayout() && blockMinHeight > 0) {
+                if (!isFixedLayout() && blockMinHeight > AbstractRenderer.EPS) {
                     overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
                     overflowRenderer.setProperty(Property.MIN_HEIGHT, (float) blockMinHeight);
                     if (hasProperty(Property.HEIGHT)) {
