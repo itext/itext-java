@@ -243,19 +243,47 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         return md5.digest(s.getBytes(StandardCharsets.ISO_8859_1));
     }
 
+    /**
+     * Creates a PdfLiteral that contains an array of two id entries. These entries are both hexadecimal
+     * strings containing 16 hex characters. The first entry is the original id, the second entry
+     * should be different from the first one if the document has changed.
+     *
+     * @param id the first id
+     * @param modified whether the document has been changed or not
+     * @return PdfObject containing the two entries.
+     */
     public static PdfObject createInfoId(byte[] id, boolean modified) {
+        if ( modified ) {
+            return createInfoId(id, generateNewDocumentId());
+        } else {
+            return createInfoId(id, id);
+        }
+    }
+
+    /**
+     * Creates a PdfLiteral that contains an array of two id entries. These entries are both hexadecimal
+     * strings containing 16 hex characters. The first entry is the original id, the second entry
+     * should be different from the first one if the document has changed.
+     *
+     * @param firstId the first id
+     * @param secondId the second id
+     * @return PdfObject containing the two entries.
+     */
+    public static PdfObject createInfoId(byte[] firstId, byte[] secondId) {
+        if ( firstId.length < 16 ) {
+            firstId = generateNewDocumentId();
+        }
+
         com.itextpdf.io.source.ByteBuffer buf = new com.itextpdf.io.source.ByteBuffer(90);
         buf.append('[').append('<');
-        if (id.length != 16)
-            id = generateNewDocumentId();
-        for (int k = 0; k < 16; ++k)
-            buf.appendHex(id[k]);
+
+        for (int k = 0; k < firstId.length; ++k)
+            buf.appendHex(firstId[k]);
         buf.append('>').append('<');
-        if (modified)
-            id = generateNewDocumentId();
-        for (int k = 0; k < 16; ++k)
-            buf.appendHex(id[k]);
+        for (int k = 0; k < secondId.length; ++k)
+            buf.appendHex(secondId[k]);
         buf.append('>').append(']');
+
         return new PdfLiteral(buf.toByteArray());
     }
 
