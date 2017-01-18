@@ -109,18 +109,15 @@ public class FontSelector {
             int res = 0;
             for (int i = 0; i < fontFamilies.size() && res == 0; i++) {
                 FontCharacteristics fc = fontStyles.get(i);
-                res = characteristicsSimilarity(fc, o2) - characteristicsSimilarity(fc, o1);
-                if (res == 0) {
-                    String fontName = fontFamilies.get(i);
-                    res = (o2.getDescriptor().getFullNameLowerCase().contains(fontName) ? 1 : 0)
-                            - (o1.getDescriptor().getFullNameLowerCase().contains(fontName) ? 1 : 0);
+                String fontName = fontFamilies.get(i);
 
-                    // In most cases full font name will be enough.
-                    // It's trick for 'bad' fonts.
-                    if (res == 0) {
-                        res = (o2.getDescriptor().getFontNameLowerCase().contains(fontName) ? 1 : 0)
-                                - (o1.getDescriptor().getFontNameLowerCase().contains(fontName) ? 1 : 0);
-                    }
+                if (fontName.equalsIgnoreCase("monospace")) {
+                    fc.setMonospaceFlag(true);
+                }
+
+                res = characteristicsSimilarity(fontName, fc, o2) - characteristicsSimilarity(fontName, fc, o1);
+                if (res != 0) {
+                    return res;
                 }
             }
             return res;
@@ -141,9 +138,10 @@ public class FontSelector {
             return fc;
         }
 
-        private static int characteristicsSimilarity(FontCharacteristics fc, FontInfo fontInfo) {
+        private static int characteristicsSimilarity(String fontName, FontCharacteristics fc, FontInfo fontInfo) {
             boolean isFontBold = fontInfo.getDescriptor().isBold() || fontInfo.getDescriptor().getFontWeight() > 500;
             boolean isFontItalic = fontInfo.getDescriptor().isItalic() || fontInfo.getDescriptor().getItalicAngle() < 0;
+            boolean isFontMonospace = fontInfo.getDescriptor().isMonospace();
             int score = 0;
             if (fc.isBold()) {
                 if (isFontBold) {
@@ -167,6 +165,24 @@ public class FontSelector {
                 if (isFontItalic) {
                     score -= 3;
                 }
+            }
+
+            if (fc.isMonospace()) {
+                if (isFontMonospace) {
+                    score += 5;
+                } else {
+                    score -= 5;
+                }
+            } else {
+                if (isFontMonospace) {
+                    score -= 1;
+                }
+            }
+
+            if (fontInfo.getDescriptor().getFullNameLowerCase().equals(fontName) || fontInfo.getDescriptor().getFontNameLowerCase().equals(fontName)) {
+                score += 10;
+            } else if (fontInfo.getDescriptor().getFullNameLowerCase().contains(fontName) || fontInfo.getDescriptor().getFontNameLowerCase().contains(fontName)) {
+                score += 7;
             }
 
             return score;

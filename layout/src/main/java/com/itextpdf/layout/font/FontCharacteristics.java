@@ -7,6 +7,18 @@ public final class FontCharacteristics {
     private boolean isBold = false;
     private short fontWeight = 400;
     private boolean undefined = true;
+    private boolean isMonospace = false;
+
+    public FontCharacteristics() {
+    }
+
+    public FontCharacteristics(FontCharacteristics other) {
+        this();
+        this.isItalic = other.isItalic;
+        this.isBold = other.isBold;
+        this.fontWeight = other.fontWeight;
+        this.undefined = other.undefined;
+    }
 
     public FontCharacteristics setFontWeight(FontWeight fw) {
         this.fontWeight = FontCharacteristicsUtils.calculateFontWeightNumber(fw);
@@ -38,6 +50,12 @@ public final class FontCharacteristics {
         return this;
     }
 
+    public FontCharacteristics setMonospaceFlag(boolean isMonospace) {
+        this.isMonospace = isMonospace;
+        if (this.isMonospace) modified();
+        return this;
+    }
+
     /**
      * Set font style
      * @param fs shall be 'normal', 'italic' or 'oblique'.
@@ -61,6 +79,10 @@ public final class FontCharacteristics {
 
     public boolean isBold() {
         return isBold || fontWeight > 600;
+    }
+
+    public boolean isMonospace() {
+        return isMonospace;
     }
 
     public short getFontWeightNumber() {
