@@ -52,9 +52,9 @@ import java.util.List;
  */
 final class FontSelectorKey {
     private List<String> fontFamilies;
-    private FontCharacteristic fc;
+    private FontCharacteristics fc;
 
-    public FontSelectorKey(List<String> fontFamilies, FontCharacteristic fc) {
+    public FontSelectorKey(List<String> fontFamilies, FontCharacteristics fc) {
         this.fontFamilies = new ArrayList<>(fontFamilies);
         this.fc = fc;
     }

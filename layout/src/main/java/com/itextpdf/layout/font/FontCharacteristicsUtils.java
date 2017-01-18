@@ -2,7 +2,7 @@ package com.itextpdf.layout.font;
 
 import com.itextpdf.io.font.FontWeight;
 
-final class FontCharacteristicUtils {
+final class FontCharacteristicsUtils {
 
     static FontWeight calculateFontWeight(short fw) {
         switch (fw) {

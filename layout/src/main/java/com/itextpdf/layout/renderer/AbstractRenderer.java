@@ -63,7 +63,7 @@ import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.IElement;
-import com.itextpdf.layout.font.FontCharacteristic;
+import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -1174,8 +1174,8 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    FontCharacteristic createFontCharacteristics() {
-        FontCharacteristic fc = new FontCharacteristic();
+    FontCharacteristics createFontCharacteristics() {
+        FontCharacteristics fc = new FontCharacteristics();
         if (this.hasProperty(Property.FONT_WEIGHT)) {
             fc.setFontWeight((String) this.<Object>getProperty(Property.FONT_WEIGHT));
         }
@@ -1195,7 +1195,7 @@ public abstract class AbstractRenderer implements IRenderer {
             if (provider == null) {
                 throw new IllegalStateException("Invalid font type. FontProvider expected. Cannot resolve font with string value");
             }
-            FontCharacteristic fc = createFontCharacteristics();
+            FontCharacteristics fc = createFontCharacteristics();
             return provider.getFontSelector(FontFamilySplitter.splitFontFamily((String) font), fc).bestMatch().getPdfFont(provider);
         } else {
             throw new IllegalStateException("String or PdfFont expected as value of FONT property");

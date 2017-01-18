@@ -173,7 +173,7 @@ public class FontProvider {
         return true;
     }
 
-    public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, FontCharacteristic fc) {
+    public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, FontCharacteristics fc) {
         return new ComplexFontSelectorStrategy(text, getFontSelector(fontFamilies, fc), this);
     }
 
@@ -185,11 +185,11 @@ public class FontProvider {
      * Create {@link FontSelector} or get from cache.
      *
      * @param fontFamilies target font families
-     * @param fc      instance of {@link FontCharacteristic}.
+     * @param fc      instance of {@link FontCharacteristics}.
      * @return an instance of {@link FontSelector}.
-     * @see #createFontSelector(Set, List, FontCharacteristic) }
+     * @see #createFontSelector(Set, List, FontCharacteristics) }
      */
-    public final FontSelector getFontSelector(List<String> fontFamilies, FontCharacteristic fc) {
+    public final FontSelector getFontSelector(List<String> fontFamilies, FontCharacteristics fc) {
         FontSelectorKey key = new FontSelectorKey(fontFamilies, fc);
         if (fontSet.getFontSelectorCache().containsKey(key)) {
             return fontSet.getFontSelectorCache().get(key);
@@ -201,15 +201,15 @@ public class FontProvider {
     }
 
     /**
-     * Create a new instance of {@link FontSelector}. While caching is main responsibility of {@link #getFontSelector(List, FontCharacteristic)},
+     * Create a new instance of {@link FontSelector}. While caching is main responsibility of {@link #getFontSelector(List, FontCharacteristics)},
      * this method just create a new instance of {@link FontSelector}.
      *
      * @param fonts      Set of all available fonts in current context.
      * @param fontFamilies target font families
-     * @param fc         instance of {@link FontCharacteristic}.
+     * @param fc         instance of {@link FontCharacteristics}.
      * @return an instance of {@link FontSelector}.
      */
-    protected FontSelector createFontSelector(Set<FontInfo> fonts, List<String> fontFamilies, FontCharacteristic fc) {
+    protected FontSelector createFontSelector(Set<FontInfo> fonts, List<String> fontFamilies, FontCharacteristics fc) {
         return new FontSelector(fonts, fontFamilies, fc);
     }
 
