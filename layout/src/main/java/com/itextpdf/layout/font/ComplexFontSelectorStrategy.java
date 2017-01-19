@@ -81,8 +81,6 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
                     break;
                 }
             }
-        } else {
-            nextUnignorable = 0;
         }
         List<Glyph> glyphs = new ArrayList<>();
         boolean anyGlyphsAppended = false;
@@ -109,7 +107,9 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
             if (index != nextUnignorable) {
                 index += font.appendGlyphs(text, index, nextUnignorable - 1, glyphs);
             }
-            index += font.appendAnyGlyph(text, nextUnignorable, glyphs);
+            while (index <= nextUnignorable && index < text.length()) {
+                index += font.appendAnyGlyph(text, index, glyphs);
+            }
         }
         return glyphs;
     }
