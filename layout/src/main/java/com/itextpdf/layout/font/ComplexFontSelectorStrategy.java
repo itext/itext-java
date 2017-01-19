@@ -71,20 +71,21 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
 
     @Override
     public List<Glyph> nextGlyphs() {
+        font = null;
         int nextUnignorable = nextSignificantIndex();
         if (nextUnignorable < text.length()) {
             for (FontInfo f : selector.getFonts()) {
-                font = f.getPdfFont(provider);
-                if (font.containsGlyph(text, nextUnignorable)) {
+                PdfFont currentFont = f.getPdfFont(provider);
+                if (currentFont.containsGlyph(text, nextUnignorable)) {
+                    font = currentFont;
                     break;
-                } else {
-                    font = null;
                 }
             }
         } else {
             nextUnignorable = 0;
         }
         List<Glyph> glyphs = new ArrayList<>();
+        boolean anyGlyphsAppended = false;
         if (font != null) {
             Character.UnicodeScript unicodeScript = nextSignificantUnicodeScript(nextUnignorable);
             int to = nextUnignorable;
@@ -98,8 +99,12 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
                 to = i;
             }
 
-            index += font.appendGlyphs(text, index, to, glyphs);
-        } else {
+            int numOfAppendedGlyphs = font.appendGlyphs(text, index, to, glyphs);
+            anyGlyphsAppended = numOfAppendedGlyphs > 0;
+            assert anyGlyphsAppended;
+            index += numOfAppendedGlyphs;
+        }
+        if (!anyGlyphsAppended) {
             font = selector.bestMatch().getPdfFont(provider);
             if (index != nextUnignorable) {
                 index += font.appendGlyphs(text, index, nextUnignorable - 1, glyphs);
@@ -112,7 +117,7 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
     private int nextSignificantIndex() {
         int nextValidChar = index;
         for (; nextValidChar < text.length(); nextValidChar++) {
-            if (!Character.isIdentifierIgnorable(text.charAt(nextValidChar)) && !Character.isWhitespace(text.charAt(nextValidChar))) {
+            if (!TextUtil.isWhitespaceOrNonPrintable(text.charAt(nextValidChar))) {
                 break;
             }
         }

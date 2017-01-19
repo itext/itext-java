@@ -1049,7 +1049,7 @@ public class TextRenderer extends AbstractRenderer {
             return false;
         }
         int c = g.getUnicode();
-        return c >= 0x200b && c <= 0x200f || c >= 0x202a && c <= 0x202e || c == '\u00AD';
+        return TextUtil.isNonPrintable(c);
     }
 
     private float getCharWidth(Glyph g, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {

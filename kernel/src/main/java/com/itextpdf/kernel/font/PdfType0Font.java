@@ -507,14 +507,11 @@ public class PdfType0Font extends PdfFont {
         return process;
     }
 
-
     //TODO what if Glyphs contains only whitespaces and ignorable identifiers?
     private boolean isAppendableGlyph(Glyph glyph) {
         // If font is specific and glyph.getCode() = 0, unicode value will be also 0.
         // Character.isIdentifierIgnorable(0) gets true.
-        return  glyph.getCode() > 0
-                        || Character.isWhitespace((char) glyph.getUnicode())
-                        || Character.isIdentifierIgnorable(glyph.getUnicode());
+        return glyph.getCode() > 0 || TextUtil.isWhitespaceOrNonPrintable(glyph.getUnicode());
     }
 
     @Override

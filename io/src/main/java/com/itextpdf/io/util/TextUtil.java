@@ -224,4 +224,12 @@ public final class TextUtil {
     public static boolean isUni0020(Glyph g) {
         return g.getUnicode() == ' ';
     }
+
+    public static boolean isNonPrintable(int c) {
+        return Character.isIdentifierIgnorable(c) || c == '\u00AD';
+    }
+
+    public static boolean isWhitespaceOrNonPrintable(int code) {
+        return Character.isWhitespace(code) || isNonPrintable(code);
+    }
 }
