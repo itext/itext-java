@@ -53,6 +53,7 @@ import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -159,9 +160,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     private boolean isAppendableGlyph(Glyph glyph) {
         // If font is specific and glyph.getCode() = 0, unicode value will be also 0.
         // Character.isIdentifierIgnorable(0) gets true.
-        return  glyph.getCode() > 0
-                        || Character.isWhitespace((char) glyph.getUnicode())
-                        || Character.isIdentifierIgnorable(glyph.getUnicode());
+        return glyph.getCode() > 0 || TextUtil.isWhitespaceOrNonPrintable(glyph.getUnicode());
     }
 
     @Override
