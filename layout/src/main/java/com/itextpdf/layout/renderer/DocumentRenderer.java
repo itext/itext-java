@@ -93,7 +93,7 @@ public class DocumentRenderer extends RootRenderer {
         }
         PageSize lastPageSize = ensureDocumentHasNPages(currentPageNumber, customPageSize);
         if (lastPageSize == null) {
-            lastPageSize = new PageSize(document.getPdfDocument().getPage(currentPageNumber).getPageSize());
+            lastPageSize = new PageSize(document.getPdfDocument().getPage(currentPageNumber).getTrimBox());
         }
         return (currentArea = new LayoutArea(currentPageNumber, document.getPageEffectiveArea(lastPageSize)));
     }

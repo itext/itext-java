@@ -77,7 +77,7 @@ import java.util.Map;
  *
  * @param <T> this type
  */
-public abstract class RootElement<T extends IPropertyContainer> extends ElementPropertyContainer<T> implements Closeable{
+public abstract class RootElement<T extends IPropertyContainer> extends ElementPropertyContainer<T> implements Closeable {
 
     protected boolean immediateFlush = true;
     protected PdfDocument pdfDocument;
