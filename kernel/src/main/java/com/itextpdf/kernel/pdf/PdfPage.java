@@ -572,6 +572,30 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Sets the BleedBox object, that defines the region to which the contents of the page shall be clipped 
+     * when output in a production environment.
+     * 
+     * @param rectangle the {@link Rectangle} object to set, expressed in default user space units.
+     * @return this {@link PdfPage} instance.
+     */
+    public PdfPage setBleedBox(Rectangle rectangle) {
+        put(PdfName.BleedBox, new PdfArray(rectangle));
+        return this;
+    }
+
+    /**
+     * Gets the {@link Rectangle} object specified by page's BleedBox, that define the region to which the 
+     * contents of the page shall be clipped when output in a production environment.
+     *
+     * @return the {@link Rectangle} object specified by page's BleedBox, expressed in default user space units.
+     *         CropBox by default.
+     */
+    public Rectangle getBleedBox() {
+        Rectangle bleedBox = getPdfObject().getAsRectangle(PdfName.BleedBox);
+        return bleedBox == null ? getCropBox() : bleedBox;
+    }
+
+    /**
      * Sets the ArtBox object, that define the extent of the page’s meaningful content
      * (including potential white space) as intended by the page’s creator.
      *
