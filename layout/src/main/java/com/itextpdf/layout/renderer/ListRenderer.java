@@ -88,7 +88,7 @@ public class ListRenderer extends BlockRenderer {
 
                 currentSymbolRenderer.setParent(this);
                 // Workaround for the case when font is specified as string
-                if (currentSymbolRenderer instanceof AbstractRenderer && currentSymbolRenderer.getProperty(Property.FONT) instanceof String) {
+                if (currentSymbolRenderer instanceof AbstractRenderer && currentSymbolRenderer.<Object>getProperty(Property.FONT) instanceof String) {
                     PdfFont actualPdfFont = ((AbstractRenderer)currentSymbolRenderer).resolveFirstPdfFont();
                     currentSymbolRenderer.setProperty(Property.FONT, actualPdfFont);
                 }
