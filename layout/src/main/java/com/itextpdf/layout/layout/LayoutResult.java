@@ -43,8 +43,12 @@
  */
 package com.itextpdf.layout.layout;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.renderer.IRenderer;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents the result of content {@link IRenderer#layout(LayoutContext) layouting}.
@@ -95,6 +99,8 @@ public class LayoutResult {
      */
     protected IRenderer causeOfNothing;
 
+    protected Map<Rectangle, Float> floatRenderers = new HashMap<>();
+
     /**
      * Creates the {@link LayoutResult result of {@link IRenderer#layout(LayoutContext) layouting}}.
      * The {@link LayoutResult#causeOfNothing} will be set as null.
@@ -124,6 +130,22 @@ public class LayoutResult {
         this.splitRenderer = splitRenderer;
         this.overflowRenderer = overflowRenderer;
         this.causeOfNothing = cause;
+    }
+
+    /**
+     * Creates the {@link LayoutResult result of {@link IRenderer#layout(LayoutContext) layouting}}.
+     *
+     * @param status the status of {@link IRenderer#layout(LayoutContext)}
+     * @param occupiedArea the area occupied by the content
+     * @param splitRenderer the renderer to draw the splitted part of the content
+     * @param overflowRenderer the renderer to draw the overflowed part of the content
+     * @param cause the first renderer to produce {@link LayoutResult#NOTHING}
+     * @param floatRenderers the list of float renderers may affect this renderer
+     */
+    public LayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer,
+                        IRenderer cause, Map<Rectangle, Float> floatRenderers) {
+        this(status, occupiedArea, splitRenderer, overflowRenderer, cause);
+        this.floatRenderers = floatRenderers;
     }
 
     /**
@@ -199,6 +221,10 @@ public class LayoutResult {
      */
     public IRenderer getCauseOfNothing() {
         return causeOfNothing;
+    }
+
+    public Map<Rectangle, Float> getFloatRenderers() {
+        return floatRenderers;
     }
 
     /**

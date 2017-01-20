@@ -64,6 +64,8 @@ import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
+import com.itextpdf.layout.property.FloatPropertyValue;
+import com.itextpdf.layout.property.HorizontalAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +75,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Table}
@@ -228,6 +231,19 @@ public class TableRenderer extends AbstractRenderer {
                 && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
             layoutBox.moveUp(layoutBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
             wasHeightClipped = true;
+        }
+
+        Map<Rectangle, Float> floatRenderers = layoutContext.getFloatedRenderers();
+        FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
+        if (floatPropertyValue != null) {
+            if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
+                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
+            } else if (floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
+                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
+            }
+        }
+        if (floatRenderers != null) {
+            adjustLineRendererAccordingToFloatRenderers(floatRenderers, layoutBox, layoutContext.getArea().getBBox().getWidth());
         }
 
         int numberOfColumns = ((Table) getModelElement()).getNumberOfColumns();
@@ -407,7 +423,8 @@ public class TableRenderer extends AbstractRenderer {
                 bordersHandler.applyCellIndents(cellArea.getBBox(), cellIndents[0], cellIndents[1], cellIndents[2] + widestRowBottomBorderWidth, cellIndents[3], false);
                 // update cell width
                 cellWidth = cellArea.getBBox().getWidth();
-                LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea));
+                LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea, null, floatRenderers));
+                floatRenderers = cellResult.getFloatRenderers();
 
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
                 // width of BlockRenderer depends on child areas, while in cell case it is hardly define.
@@ -541,6 +558,7 @@ public class TableRenderer extends AbstractRenderer {
                     rowHeight = Math.max(rowHeight, cellResult.getOccupiedArea().getBBox().getHeight() + bordersHandler.getCellVerticalAddition(cellIndents) - rowspanOffset);
                 }
             }
+            rowHeight = fixRowHeightIfFloatRendererPresented(rowHeight, floatRenderers.keySet());
 
             if (hasContent) {
                 heights.add(rowHeight);
@@ -863,10 +881,16 @@ public class TableRenderer extends AbstractRenderer {
             bordersHandler.skipFooter(getBorders());
         }
         adjustFooterAndFixOccupiedArea(layoutBox);
+        reduceFloatRenderersOccupiedArea(floatRenderers);
 
-        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRenderers,layoutContext.getArea().getBBox().getWidth());
+
+        if (editedArea == null) {
+            editedArea = occupiedArea;
+        }
+
+        return new LayoutResult(LayoutResult.FULL, editedArea, null, null, null, floatRenderers);
     }
-
 
     /**
      * {@inheritDoc}
@@ -1367,6 +1391,16 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
+    protected float fixRowHeightIfFloatRendererPresented(float rowHeight, Set<Rectangle> floatRenderers) {
+        float maxHeight = 0;
+        for (Rectangle floatRenderer: floatRenderers) {
+            float floatRendererHeight = floatRenderer.getHeight();
+            if (floatRendererHeight > maxHeight) {
+                maxHeight = floatRendererHeight;
+            }
+        }
+        return rowHeight + maxHeight;
+    }
     /**
      * If there is some space left, we move footer up, because initially footer will be at the very bottom of the area.
      * We also adjust occupied area by footer size if it is present.

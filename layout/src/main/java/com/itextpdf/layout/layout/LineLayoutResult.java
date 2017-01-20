@@ -43,7 +43,11 @@
  */
 package com.itextpdf.layout.layout;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.renderer.IRenderer;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents the result of a line {@link com.itextpdf.layout.renderer.LineRenderer#layout(LayoutContext) layouting}.
@@ -54,6 +58,8 @@ public class LineLayoutResult extends MinMaxWidthLayoutResult {
      * Indicates whether split was forced by new line symbol or not.
      */
     protected boolean splitForcedByNewline;
+
+    protected Map<Rectangle, Float> currentLineFloatRenderers = new HashMap<>();
 
     /**
      * Creates the {@link LayoutResult result of {@link com.itextpdf.layout.renderer.LineRenderer#layout(LayoutContext) layouting}}.
@@ -102,5 +108,13 @@ public class LineLayoutResult extends MinMaxWidthLayoutResult {
     public LineLayoutResult setSplitForcedByNewline(boolean isSplitForcedByNewline) {
         this.splitForcedByNewline = isSplitForcedByNewline;
         return this;
+    }
+
+    public Map<Rectangle, Float> getCurrentLineFloatRenderers() {
+        return currentLineFloatRenderers;
+    }
+
+    public void setCurrentLineFloatRenderers(Map<Rectangle, Float> currentLineFloatRenderers) {
+        this.currentLineFloatRenderers = currentLineFloatRenderers;
     }
 }

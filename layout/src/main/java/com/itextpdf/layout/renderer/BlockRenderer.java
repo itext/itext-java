@@ -61,8 +61,10 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
+import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +74,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class BlockRenderer extends AbstractRenderer {
 
@@ -91,6 +94,15 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null || isFixedLayout()) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
+        Map<Rectangle, Float> floatRenderers = layoutContext.getFloatedRenderers();
+        FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
+        if (floatPropertyValue != null) {
+            if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
+                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.LEFT);
+            } else if (floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
+                setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
+            }
+        }
 
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
 
@@ -106,9 +118,14 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         Border[] borders = getBorders();
         float[] paddings = getPaddings();
-        applyBordersPaddingsMargins(parentBBox, borders, paddings);
+        float adjustValue = applyBordersPaddingsMargins(parentBBox, borders, paddings);
+
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
             parentBBox.setWidth((float) blockWidth);
+        }
+
+        if (floatRenderers != null) {
+            adjustLineRendererAccordingToFloatRenderers(floatRenderers, parentBBox, layoutContext.getArea().getBBox().getWidth() - adjustValue);
         }
 
         Float blockMaxHeight = retrieveMaxHeight();
@@ -146,7 +163,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (marginsCollapsingEnabled) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(childRenderer, layoutBox);
             }
-            while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox), childMarginsInfo))).getStatus() != LayoutResult.FULL) {
+            while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox), childMarginsInfo, floatRenderers)))
+                    .getStatus() != LayoutResult.FULL) {
+                floatRenderers = result.getFloatRenderers();
                 if (marginsCollapsingEnabled) {
                     if (result.getStatus() != LayoutResult.NOTHING) {
                         marginsCollapseHandler.endChildMarginsHandling(layoutBox);
@@ -155,7 +174,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         marginsCollapseHandler.endMarginsCollapse(layoutBox);
                     }
                 }
-                
                 if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))
                         || Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
@@ -294,14 +312,15 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
                         } else {
                             if (layoutResult != LayoutResult.NOTHING) {
-                                return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, null).setAreaBreak(result.getAreaBreak());
+                                return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, null, result.getFloatRenderers()).setAreaBreak(result.getAreaBreak());
                             } else {
-                                return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing()).setAreaBreak(result.getAreaBreak());
+                                return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing(), result.getFloatRenderers()).setAreaBreak(result.getAreaBreak());
                             }
                         }
                     }
                 }
             }
+            floatRenderers = result.getFloatRenderers();
             anythingPlaced = true;
 
             if (result.getOccupiedArea() != null) {
@@ -373,15 +392,22 @@ public abstract class BlockRenderer extends AbstractRenderer {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
+                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, this, floatRenderers);
                 }
             }
         }
         applyVerticalAlignment();
+        reduceFloatRenderersOccupiedArea(floatRenderers);
+
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRenderers,layoutContext.getArea().getBBox().getWidth());
+
+        if (editedArea == null) {
+            editedArea = occupiedArea;
+        }
         if (null == overflowRenderer) {
-            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, causeOfNothing);
+            return new LayoutResult(LayoutResult.FULL, editedArea, null, null, causeOfNothing, floatRenderers);
         } else {
-            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, this, overflowRenderer, causeOfNothing);
+            return new LayoutResult(LayoutResult.PARTIAL, editedArea, this, overflowRenderer, causeOfNothing, floatRenderers);
         }
     }
 
@@ -621,6 +647,53 @@ public abstract class BlockRenderer extends AbstractRenderer {
         } else {
             //TODO
         }
+    }
+
+    protected LayoutArea applyFloatRenderers(List<IRenderer> floatRenderers) {
+        LayoutArea editedArea = occupiedArea.clone();
+        float maxHeight = 0;
+        if (!hasProperty(Property.FLOAT)) {
+            for(int i = floatRenderers.size() - 1; i >= 0; i--) {
+                IRenderer floatRenderer = floatRenderers.get(i);
+                Rectangle floatRendererBBox = floatRenderer.getOccupiedArea().getBBox();
+
+                floatRendererBBox.setHeight(floatRendererBBox.getHeight() - occupiedArea.getBBox().getHeight());
+                if (maxHeight > floatRendererBBox.getHeight()) {
+                    maxHeight = floatRendererBBox.getHeight();
+                }
+            }
+        }
+        if (floatRenderers.size() > 0) {
+            if (maxHeight >= 0) {
+                editedArea.getBBox().setHeight(0);
+            } else {
+                editedArea.getBBox().setHeight(-maxHeight);
+            }
+        }
+
+        for(int i = floatRenderers.size() - 1; i >= 0; i--) {
+            if (floatRenderers.get(i).getOccupiedArea().getBBox().getHeight() <= 0) {
+                floatRenderers.remove(i);
+            }
+        }
+
+        return editedArea;
+    }
+
+    protected void adjustLineRendererAccordingToFloatRenderers(List<IRenderer> floatRenderers, Rectangle layoutBox) {
+        float maxHeight = 0;
+        for (IRenderer floatRenderer : floatRenderers) {
+            Rectangle floatRendererBBox = floatRenderer.getOccupiedArea().getBBox();
+            if (floatRendererBBox != null) {
+                if (maxHeight < floatRendererBBox.getHeight()) {
+                    maxHeight = floatRendererBBox.getHeight();
+                }
+                if (!hasProperty(Property.FLOAT)) {
+                    layoutBox.setWidth(layoutBox.getWidth() + floatRendererBBox.getWidth());
+                }
+            }
+        }
+        layoutBox.moveUp(maxHeight);
     }
 
     protected float applyBordersPaddingsMargins(Rectangle parentBBox, Border[] borders, float[] paddings) {

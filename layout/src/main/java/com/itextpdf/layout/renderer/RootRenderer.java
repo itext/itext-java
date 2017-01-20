@@ -44,6 +44,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
@@ -56,7 +57,9 @@ import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class RootRenderer extends AbstractRenderer {
 
@@ -67,6 +70,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     private LayoutResult keepWithNextHangingRendererLayoutResult;
     private MarginsCollapseHandler marginsCollapseHandler;
     private LayoutArea initialCurrentArea;
+    private Map<Rectangle, Float> floatedRenderers = new HashMap<>();
 
     public void addChild(IRenderer renderer) {
         // Some positioned renderers might have been fetched from non-positioned child and added to this renderer,
@@ -108,7 +112,9 @@ public abstract class RootRenderer extends AbstractRenderer {
             if (marginsCollapsingEnabled && currentArea != null && renderer != null) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
             }
-            while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(new LayoutContext(currentArea.clone(), childMarginsInfo))).getStatus() != LayoutResult.FULL) {
+            while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(
+                    new LayoutContext(currentArea.clone(), childMarginsInfo, floatedRenderers)))
+                    .getStatus() != LayoutResult.FULL) {
                 if (result.getStatus() == LayoutResult.PARTIAL) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
                         ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
@@ -178,6 +184,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                     childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
                 }
             }
+            floatedRenderers = result.getFloatRenderers();
             if (marginsCollapsingEnabled) {
                 marginsCollapseHandler.endChildMarginsHandling(currentArea.getBBox());
             }
@@ -283,9 +290,9 @@ public abstract class RootRenderer extends AbstractRenderer {
 
     protected void shrinkCurrentAreaAndProcessRenderer(IRenderer renderer, List<IRenderer> resultRenderers, LayoutResult result) {
         if (currentArea != null) {
-            float resultHeight = result.getOccupiedArea().getBBox().getHeight();
-            currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - resultHeight);
-            if (currentArea.isEmptyArea() && resultHeight > 0) {
+            float resultRendererHeight = result.getOccupiedArea().getBBox().getHeight();
+            currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - resultRendererHeight);
+            if (currentArea.isEmptyArea() && resultRendererHeight > 0) {
                 currentArea.setEmptyArea(false);
             }
             processRenderer(renderer, resultRenderers);
@@ -384,5 +391,4 @@ public abstract class RootRenderer extends AbstractRenderer {
         updateCurrentArea(overflowResult);
         initialCurrentArea = currentArea == null ? null : currentArea.clone();
     }
-
 }

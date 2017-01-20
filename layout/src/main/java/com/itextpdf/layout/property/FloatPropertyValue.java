@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2017 iText Group NV
+    Copyright (c) 1998-2016 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -41,67 +41,14 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.layout.layout;
-
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
-
-import java.util.HashMap;
-import java.util.Map;
+package com.itextpdf.layout.property;
 
 /**
- * Represents the context for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
+ * A specialized enum containing potential property values for {@link
+ * com.itextpdf.layout.property.Property#FLOAT}.
  */
-public class LayoutContext {
-    
-    /**
-     * The {@link LayoutArea area} the content to be placed on.
-     */
-    protected LayoutArea area;
-
-    protected MarginsCollapseInfo marginsCollapseInfo;
-
-    protected Map<Rectangle, Float> floatedRenderers = new HashMap<>();
-
-    public LayoutContext(LayoutArea area) {
-        this.area = area;
-    }
-
-    public LayoutContext(LayoutArea area, MarginsCollapseInfo marginsCollapseInfo) {
-        this.area = area;
-        this.marginsCollapseInfo = marginsCollapseInfo;
-    }
-
-    public LayoutContext(LayoutArea area, MarginsCollapseInfo marginsCollapseInfo, Map<Rectangle, Float> floatedRenderers) {
-        this.area = area;
-        this.marginsCollapseInfo = marginsCollapseInfo;
-        if (floatedRenderers != null) {
-            this.floatedRenderers.putAll(floatedRenderers);
-        }
-    }
-
-    /**
-     * Gets the {@link LayoutArea area} the content to be placed on.
-     *
-     * @return the area for content layouting.
-     */
-    public LayoutArea getArea() {
-        return area;
-    }
-
-    public MarginsCollapseInfo getMarginsCollapseInfo() {
-        return marginsCollapseInfo;
-    }
-
-    public Map<Rectangle, Float> getFloatedRenderers() {
-        return floatedRenderers;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return area.toString();
-    }
+public enum FloatPropertyValue {
+    LEFT,
+    NONE,
+    RIGHT
 }

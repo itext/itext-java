@@ -76,6 +76,7 @@ import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.property.FloatPropertyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1179,6 +1180,58 @@ public abstract class AbstractRenderer implements IRenderer {
         if (null != minHeight) {
             setProperty(Property.MIN_HEIGHT, minHeight);
         }
+    }
+
+    /**
+     * This method reduces occupied area of each float renderer affects current renderer.
+     * @param floatRenderers
+     */
+    protected void reduceFloatRenderersOccupiedArea(Map<Rectangle, Float> floatRenderers) {
+        List<Rectangle> renderersToRemove = new ArrayList<>();
+        if (!hasProperty(Property.FLOAT)) {
+            for (Rectangle floatRenderer : floatRenderers.keySet()) {
+                float floatRendererHeight = floatRenderers.get(floatRenderer);
+                floatRendererHeight -= occupiedArea.getBBox().getHeight();
+                floatRenderers.put(floatRenderer, floatRendererHeight);
+                if (floatRendererHeight <= 0) {
+                    renderersToRemove.add(floatRenderer);
+                }
+            }
+        }
+
+        for (Rectangle rect : renderersToRemove) {
+            floatRenderers.remove(rect);
+        }
+    }
+
+    protected LayoutArea applyFloatPropertyOnCurrentArea(Map<Rectangle, Float> floatRenderers, float availableWidth) {
+        LayoutArea editedArea = null;
+        if (hasProperty(Property.FLOAT) && occupiedArea.getBBox().getWidth() < availableWidth) {
+            editedArea = occupiedArea.clone();
+            floatRenderers.put(occupiedArea.getBBox(), editedArea.getBBox().getHeight());
+            editedArea.getBBox().moveUp(editedArea.getBBox().getHeight());
+            editedArea.getBBox().setHeight(0);
+        }
+
+        return editedArea;
+    }
+
+    protected void adjustLineRendererAccordingToFloatRenderers(Map<Rectangle, Float> floatRenderers, Rectangle layoutBox, float allowedWidth) {
+        float maxWidth = 0;
+        for (Rectangle floatRenderer : floatRenderers.keySet()) {
+            FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
+            if (floatPropertyValue == null || !floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
+                float width = floatRenderer.getWidth();
+                if (width > maxWidth) {
+                    maxWidth = width;
+                }
+            }
+        }
+        maxWidth = layoutBox.getWidth() + maxWidth;
+        if (floatRenderers.size() > 0 && maxWidth > allowedWidth) {
+            maxWidth = allowedWidth;
+        }
+        layoutBox.setWidth(maxWidth);
     }
 
     static boolean noAbsolutePositionInfo(IRenderer renderer) {
