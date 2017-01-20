@@ -430,16 +430,9 @@ public class BorderTest extends ExtendedITextTest {
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 50f));
         table.addCell(cell);
-
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 50f));
         table.addCell(cell);
-
-
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 50f));
         table.addCell(cell);
@@ -447,7 +440,9 @@ public class BorderTest extends ExtendedITextTest {
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 50f));
         table.addCell(cell);
-
+        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell.setBorder(new SolidBorder(Color.RED, 50f));
+        table.addCell(cell);
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 50f));
         table.addCell(cell);
@@ -496,6 +491,7 @@ public class BorderTest extends ExtendedITextTest {
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 45f));
         table.addCell(cell);
+
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 40f));
         table.addCell(cell);
@@ -515,6 +511,7 @@ public class BorderTest extends ExtendedITextTest {
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 102f));
         table.addCell(cell);
+
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 11f));
         table.addCell(cell);
@@ -524,6 +521,7 @@ public class BorderTest extends ExtendedITextTest {
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 44f));
         table.addCell(cell);
+
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 27f));
         table.addCell(cell);
