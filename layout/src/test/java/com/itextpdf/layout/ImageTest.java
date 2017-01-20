@@ -24,19 +24,18 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.IOException;
-
 @Category(IntegrationTest.class)
 public class ImageTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/ImageTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/ImageTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/ImageTest/";
 
     @BeforeClass
     public static void beforeClass() {
@@ -446,7 +445,7 @@ public class ImageTest extends ExtendedITextTest {
         int rowCount = 60;
         PdfWriter writer = new PdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
+        Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Table table = new Table(8);
         table.setWidthPercent(100);
@@ -557,7 +556,7 @@ public class ImageTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
-    
+
     @Test
     @Ignore("DEVSIX-1022")
     public void imageRelativePositionTest() throws IOException, InterruptedException {
@@ -591,7 +590,7 @@ public class ImageTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_imageInTableTest01.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
+        Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Table table = new Table(1);
         table.setMaxHeight(300);
@@ -619,7 +618,7 @@ public class ImageTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_imageInTableTest02.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
+        Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Table table = new Table(1);
         table.setMaxHeight(300);
@@ -649,7 +648,7 @@ public class ImageTest extends ExtendedITextTest {
         String imgPath = sourceFolder + "sample-error-image.JPG";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
+        Document document = new Document(pdfDoc);
 
         ImageData id = ImageDataFactory.create(imgPath);
         ImageData idAsTiff = ImageDataFactory.createTiff(UrlUtil.toURL(imgPath), true, 1, true);
@@ -658,6 +657,23 @@ public class ImageTest extends ExtendedITextTest {
         document.add(new Image(id));
         document.add(new Image(idAsTiff));
         document.add(new Image(idAsTiffFalse));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-1045")
+    public void fixedPositionImageTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "fixedPositionImageTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_fixedPositionImageTest01.pdf";
+        String imgPath = sourceFolder + "Desert.jpg";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdfDoc);
+
+        document.add(new Image(ImageDataFactory.create(imgPath), 12, pdfDoc.getDefaultPageSize().getHeight() - 36, 24).setBorder(new SolidBorder(Color.RED, 5)));
 
         document.close();
 
