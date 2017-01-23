@@ -407,11 +407,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 if (!tagPointer.isElementConnectedToTag(accessibleElement)) {
                     AccessibleAttributesApplier.applyLayoutAttributes(role, this, document);
 
-                    if (role.equals(PdfName.TD)) {
+                    if (role.equals(PdfName.TD) || role.equals(PdfName.TH)) {
                         AccessibleAttributesApplier.applyTableAttributes(this);
                     }
 
-                    if (role.equals(PdfName.List)) {
+                    if (role.equals(PdfName.L)) {
                         AccessibleAttributesApplier.applyListAttributes(this);
                     }
 

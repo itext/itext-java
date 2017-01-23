@@ -14,6 +14,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
@@ -161,14 +162,21 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Table table = new Table(3);
 
+        Cell cell = new Cell(1, 3).add(new Paragraph("full-width header"));
+        cell.setRole(PdfName.TH);
+        table.addHeaderCell(cell);
         for (int i = 0; i < 3; ++i) {
-            table.addHeaderCell("header " + i);
+            cell = new Cell().add(new Paragraph("header " + i));
+            cell.setRole(PdfName.TH);
+            table.addHeaderCell(cell);
         }
 
         for (int i = 0; i < 3; ++i) {
             table.addFooterCell("footer " + i);
         }
 
+        cell = new Cell(1, 3).add(new Paragraph("full-width paragraph"));
+        table.addCell(cell);
         for (int i = 0; i < 5; ++i) {
             table.addCell(createParagraph2());
         }
@@ -292,7 +300,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDocument);
 
-        List list = new List();
+        List list = new List(ListNumberingType.DECIMAL);
         list.add("item 1");
         list.add("item 2");
         list.add("item 3");
