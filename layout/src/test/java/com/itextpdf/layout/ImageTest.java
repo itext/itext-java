@@ -1,7 +1,6 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.color.Color;
@@ -11,25 +10,19 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
-import com.itextpdf.layout.element.AreaBreak;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.List;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class ImageTest extends ExtendedITextTest {
@@ -634,29 +627,6 @@ public class ImageTest extends ExtendedITextTest {
         table.setMinHeight(150);
         document.add(table);
         document.add(new Table(1).addCell("Is my occupied area right?"));
-
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
-    }
-
-    @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 3)})
-    public void tiffImageTestTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "tiffImageTestTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_tiffImageTestTest01.pdf";
-        String imgPath = sourceFolder + "sample-error-image.JPG";
-
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        Document document = new Document(pdfDoc);
-
-        ImageData id = ImageDataFactory.create(imgPath);
-        ImageData idAsTiff = ImageDataFactory.createTiff(UrlUtil.toURL(imgPath), true, 1, true);
-        ImageData idAsTiffFalse = ImageDataFactory.createTiff(UrlUtil.toURL(imgPath), false, 1, false);
-
-        document.add(new Image(id));
-        document.add(new Image(idAsTiff));
-        document.add(new Image(idAsTiffFalse));
 
         document.close();
 
