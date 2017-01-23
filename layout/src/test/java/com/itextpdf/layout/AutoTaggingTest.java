@@ -304,8 +304,14 @@ public class AutoTaggingTest extends ExtendedITextTest {
         list.add("item 1");
         list.add("item 2");
         list.add("item 3");
-
         doc.add(list);
+
+        list = new List(ListNumberingType.DISC);
+        list.add("item 1");
+        list.add("item 2");
+        list.add("item 3");
+        doc.add(list);
+
         doc.close();
 
         compareResult("listTest01.pdf", "cmp_listTest01.pdf");

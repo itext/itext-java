@@ -258,6 +258,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Diamond = createDirectName("Diamond");
     public static final PdfName Difference = createDirectName("Difference");
     public static final PdfName Differences = createDirectName("Differences");
+    public static final PdfName Disc = createDirectName("Disc");
     public static final PdfName Div = createDirectName("Div");
     public static final PdfName DigestLocation = createDirectName("DigestLocation");
     public static final PdfName DigestMethod = createDirectName("DigestMethod");

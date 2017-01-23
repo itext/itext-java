@@ -52,6 +52,9 @@ import com.itextpdf.layout.IPropertyContainer;
  * {@link IPropertyContainer}.
  */
 public enum ListNumberingType {
+    DISC,
+    CIRCLE,
+    SQUARE,
     DECIMAL,
     DECIMAL_LEADING_ZERO,
     ROMAN_LOWER,

@@ -164,10 +164,17 @@ public class List extends BlockElement<List> {
      * @return this list.
      */
     public List setListSymbol(ListNumberingType listNumberingType) {
-        // Do not draw any points after ZapfDingbats special number symbol
-        if (listNumberingType == ListNumberingType.ZAPF_DINGBATS_1 || listNumberingType == ListNumberingType.ZAPF_DINGBATS_2 ||
-                listNumberingType == ListNumberingType.ZAPF_DINGBATS_3 || listNumberingType == ListNumberingType.ZAPF_DINGBATS_4) {
-            setPostSymbolText(" ");
+        // Do not draw any points after symbolic or ZapfDingbats special number symbol
+        switch (listNumberingType) {
+            case DISC:
+            case CIRCLE:
+            case SQUARE:
+            case ZAPF_DINGBATS_1:
+            case ZAPF_DINGBATS_2:
+            case ZAPF_DINGBATS_3:
+            case ZAPF_DINGBATS_4:
+                setProperty(Property.LIST_SYMBOL_POST_TEXT, " ");
+                break;
         }
         setProperty(Property.LIST_SYMBOL, listNumberingType);
         return this;
