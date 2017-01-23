@@ -8,9 +8,11 @@ import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.*;
@@ -301,6 +303,24 @@ public class AutoTaggingTest extends ExtendedITextTest {
         doc.close();
 
         compareResult("listTest01.pdf", "cmp_listTest01.pdf");
+    }
+
+    @Test
+    public void linkTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "linkTest01.pdf"));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
+        Link link = new Link("linked text", action);
+        link.setUnderline();
+        link.getLinkAnnotation().put(PdfName.Border, new PdfArray(new int[] { 0, 0, 0 }));
+
+        doc.add(new Paragraph("before ").add(link).add(" after"));
+        doc.close();
+
+        compareResult("linkTest01.pdf", "cmp_linkTest01.pdf");
     }
 
     @Test
