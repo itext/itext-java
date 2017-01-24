@@ -66,8 +66,6 @@ public final class Property {
     public static final int BASE_DIRECTION = 7;
     public static final int BOLD_SIMULATION = 8;
     public static final int BORDER = 9;
-    public static final int BORDERS_COLLAPSED = 96;
-    public static final int BORDERS_INITIALIZED = 97;
     public static final int BORDER_BOTTOM = 10;
     public static final int BORDER_LEFT = 11;
     public static final int BORDER_RIGHT = 12;
