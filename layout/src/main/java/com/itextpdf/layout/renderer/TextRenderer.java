@@ -993,27 +993,31 @@ public class TextRenderer extends AbstractRenderer {
                 this.getPropertyAsFloat(Property.CHARACTER_SPACING), this.getPropertyAsFloat(Property.WORD_SPACING));
     }
 
-    protected List<TextRenderer> resolveFonts() {
+    /**
+     * Resolve {@link Property#FONT} string value.
+     *
+     * @param addTo add all processed renderers to.
+     * @return true, if new {@link TextRenderer} has been created.
+     */
+    protected boolean resolveFonts(List<IRenderer> addTo) {
         Object font = this.<Object>getProperty(Property.FONT);
         if (font instanceof PdfFont) {
-            return Collections.<TextRenderer>singletonList(this);
+            addTo.add(this);
+            return false;
         } else if (font instanceof String) {
             FontProvider provider = this.<FontProvider>getProperty(Property.FONT_PROVIDER);
             if (provider == null) {
                 throw new IllegalStateException("Invalid font type. FontProvider expected. Cannot resolve font with string value");
             }
-            List<TextRenderer> renderers = new ArrayList<>();
-
             FontCharacteristics fc = createFontCharacteristics();
-
             FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
                     FontFamilySplitter.splitFontFamily((String) font), fc);
             while (!strategy.endOfText()) {
                 TextRenderer textRenderer = new TextRenderer(this);
                 textRenderer.setGlyphLineAndFont(strategy.nextGlyphs(), strategy.getCurrentFont());
-                renderers.add(textRenderer);
+                addTo.add(textRenderer);
             }
-            return renderers;
+            return true;
         } else {
             throw new IllegalStateException("Invalid font type.");
         }

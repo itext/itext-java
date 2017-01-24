@@ -674,19 +674,21 @@ public class LineRenderer extends AbstractRenderer {
      */
     private void resolveChildrenFonts() {
         List<IRenderer> newChildRenderers = new ArrayList<>(childRenderers.size());
+        boolean updateChildRendrers = false;
         for (IRenderer child : childRenderers) {
             if (child instanceof TextRenderer) {
-                newChildRenderers.addAll(((TextRenderer)child).resolveFonts());
+                if (((TextRenderer)child).resolveFonts(newChildRenderers)) {
+                    updateChildRendrers = true;
+                }
             } else {
                 newChildRenderers.add(child);
             }
         }
 
-        //TODO It might be one textRenderer with resolved font.
-        // this mean, that some TextRenderer has been split into several with different fonts.
-        //if (newChildRenderers.size() > childRenderers.size()) {
+        // this mean, that some TextRenderer has been replaced.
+        if (updateChildRendrers) {
             childRenderers = newChildRenderers;
-        //}
+        }
     }
 
 
