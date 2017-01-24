@@ -11,15 +11,16 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.border.SolidBorder;
-import com.itextpdf.layout.element.*;
-import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
-import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.renderer.DocumentRenderer;
-import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -1318,7 +1319,33 @@ public class TableTest extends ExtendedITextTest {
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
 
+    @Test
+    // This test checks that the table occupies exactly one page and does not draw its footer.
+    // A naive algorithm would have this table on two pages with only one row with data on the second page
+    // However, as setSkipLastFooter is true, we can lay out that row with data on the first page and avoid unnecessary footer placement.
+    public void skipLastRowTest() throws IOException, InterruptedException {
+        String testName = "skipLastRowTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(2);
+        table.addHeaderCell("Header 1");
+        table.addHeaderCell("Header 2");
+        table.addFooterCell(new Cell(1, 2).add("Footer"));
+        table.setSkipLastFooter(true);
+        for (int i = 0; i < 33; i++) {
+            table.addCell("text 1");
+            table.addCell("text 2");
+        }
+
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     static class CustomRenderer extends TableRenderer {
