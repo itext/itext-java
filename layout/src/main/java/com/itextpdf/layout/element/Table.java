@@ -619,8 +619,8 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      *
      * @return an array of {@link Border} objects
      */
-    public ArrayList<Border> getLastRowBottomBorder() {
-        ArrayList<Border> horizontalBorder = new ArrayList<>();
+    public List<Border> getLastRowBottomBorder() {
+        List<Border> horizontalBorder = new ArrayList<>();
         if (lastAddedRow != null) {
             for (int i = 0; i < lastAddedRow.length; i++) {
                 Cell cell = lastAddedRow[i];

@@ -89,8 +89,8 @@ public class TableRenderer extends AbstractRenderer {
      * True for newly created renderer. For split renderers this is set to false. Used for tricky layout.
      */
     protected boolean isOriginalNonSplitRenderer = true;
-    private ArrayList<ArrayList<Border>> horizontalBorders;
-    private ArrayList<ArrayList<Border>> verticalBorders;
+    private List<List<Border>> horizontalBorders;
+    private List<List<Border>> verticalBorders;
     private float[] columnWidths = null;
     private List<Float> heights = new ArrayList<>();
 
@@ -243,7 +243,7 @@ public class TableRenderer extends AbstractRenderer {
 
             if (!tableModel.isEmpty()) {
                 float maxFooterTopBorderWidth = 0;
-                ArrayList<Border> footerTopBorders = footerRenderer.horizontalBorders.get(0);
+                List<Border> footerTopBorders = footerRenderer.horizontalBorders.get(0);
                 for (Border border : footerTopBorders) {
                     if (null != border && border.getWidth() > maxFooterTopBorderWidth) {
                         maxFooterTopBorderWidth = border.getWidth();
@@ -292,7 +292,7 @@ public class TableRenderer extends AbstractRenderer {
             occupiedArea.getBBox().moveDown(headerHeight).increaseHeight(headerHeight);
 
             float maxHeaderBottomBorderWidth = 0;
-            ArrayList<Border> rowBorders = headerRenderer.horizontalBorders.get(headerRenderer.horizontalBorders.size() - 1);
+            List<Border> rowBorders = headerRenderer.horizontalBorders.get(headerRenderer.horizontalBorders.size() - 1);
             for (Border border : rowBorders) {
                 if (null != border && maxHeaderBottomBorderWidth < border.getWidth()) {
                     maxHeaderBottomBorderWidth = border.getWidth();
@@ -319,7 +319,7 @@ public class TableRenderer extends AbstractRenderer {
                 occupiedArea.getBBox().moveUp(topTableBorderWidth).decreaseHeight(topTableBorderWidth);
             }
         }
-        ArrayList<Border> lastFlushedRowBottomBorder = tableModel.getLastRowBottomBorder();
+        List<Border> lastFlushedRowBottomBorder = tableModel.getLastRowBottomBorder();
         Border widestLustFlushedBorder = null;
         for (Border border : lastFlushedRowBottomBorder) {
             if (null != border && (null == widestLustFlushedBorder || widestLustFlushedBorder.getWidth() < border.getWidth())) {
@@ -945,8 +945,8 @@ public class TableRenderer extends AbstractRenderer {
                             logger.warn(LogMessageConstant.CLIP_ELEMENT);
                             // Process borders
                             if (status == LayoutResult.NOTHING) {
-                                ArrayList<Border> topBorders = new ArrayList<Border>();
-                                ArrayList<Border> bottomBorders = new ArrayList<Border>();
+                                List<Border> topBorders = new ArrayList<Border>();
+                                List<Border> bottomBorders = new ArrayList<Border>();
                                 for (int i = 0; i < tableModel.getNumberOfColumns(); i++) {
                                     topBorders.add(borders[0]);
                                     bottomBorders.add(borders[2]);
@@ -1020,13 +1020,13 @@ public class TableRenderer extends AbstractRenderer {
 
         // if table is empty we still need to process table borders
         if (0 == childRenderers.size() && null == headerRenderer && null == footerRenderer) {
-            ArrayList<Border> topHorizontalBorders = new ArrayList<Border>();
-            ArrayList<Border> bottomHorizontalBorders = new ArrayList<Border>();
+            List<Border> topHorizontalBorders = new ArrayList<Border>();
+            List<Border> bottomHorizontalBorders = new ArrayList<Border>();
             for (int i = 0; i < tableModel.getNumberOfColumns(); i++) {
                 bottomHorizontalBorders.add(Border.NO_BORDER);
             }
-            ArrayList<Border> leftVerticalBorders = new ArrayList<Border>();
-            ArrayList<Border> rightVerticalBorders = new ArrayList<Border>();
+            List<Border> leftVerticalBorders = new ArrayList<Border>();
+            List<Border> rightVerticalBorders = new ArrayList<Border>();
 
             // process bottom border of the last added row
             if (tableModel.isComplete() && 0 != lastFlushedRowBottomBorder.size()) {
@@ -1508,7 +1508,7 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     private void drawHorizontalBorder(int i, float startX, float y1, PdfCanvas canvas) {
-        ArrayList<Border> borders = horizontalBorders.get(i);
+        List<Border> borders = horizontalBorders.get(i);
         float x1 = startX;
         float x2 = x1 + columnWidths[0];
         if (i == 0) {
@@ -1563,7 +1563,7 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     private void drawVerticalBorder(int i, float startY, float x1, PdfCanvas canvas) {
-        ArrayList<Border> borders = verticalBorders.get(i);
+        List<Border> borders = verticalBorders.get(i);
         float y1 = startY;
         float y2 = y1;
         if (!heights.isEmpty()) {
@@ -1609,7 +1609,7 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
-    private boolean[] collapseFooterBorders(ArrayList<Border> tableBottomBorders, int colNum, int rowNum) {
+    private boolean[] collapseFooterBorders(List<Border> tableBottomBorders, int colNum, int rowNum) {
         boolean[] useFooterBorders = new boolean[colNum];
         int j = 0;
         int i = 0;
@@ -1640,7 +1640,7 @@ public class TableRenderer extends AbstractRenderer {
         return useFooterBorders;
     }
 
-    private void fixFooterBorders(ArrayList<Border> tableBottomBorders, int colNum, int rowNum, boolean[] useFooterBorders) {
+    private void fixFooterBorders(List<Border> tableBottomBorders, int colNum, int rowNum, boolean[] useFooterBorders) {
         int j = 0;
         int i = 0;
         while (i < colNum) {
@@ -1800,7 +1800,7 @@ public class TableRenderer extends AbstractRenderer {
         if (rowspan > 1) {
             int numOfColumns = ((Table) getModelElement()).getNumberOfColumns();
             for (int k = row - rowspan + 1; k <= row; k++) {
-                ArrayList<Border> borders = horizontalBorders.get(k);
+                List<Border> borders = horizontalBorders.get(k);
                 if (borders.size() < numOfColumns) {
                     for (int j = borders.size(); j < numOfColumns; j++) {
                         borders.add(null);
@@ -1823,7 +1823,7 @@ public class TableRenderer extends AbstractRenderer {
         // process big colspan
         if (colspan > 1) {
             for (int k = colN; k <= colspan + colN; k++) {
-                ArrayList<Border> borders = verticalBorders.get(k);
+                List<Border> borders = verticalBorders.get(k);
                 if (borders.size() < row + rowspan) {
                     for (int l = borders.size(); l < row + rowspan; l++) {
                         borders.add(null);
@@ -1914,13 +1914,13 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
-    private boolean checkAndReplaceBorderInArray(ArrayList<ArrayList<Border>> borderArray, int i, int j, Border borderToAdd, boolean hasPriority) {
+    private boolean checkAndReplaceBorderInArray(List<List<Border>> borderArray, int i, int j, Border borderToAdd, boolean hasPriority) {
         if (borderArray.size() <= i) {
             for (int count = borderArray.size(); count <= i; count++) {
                 borderArray.add(new ArrayList<Border>());
             }
         }
-        ArrayList<Border> borders = borderArray.get(i);
+        List<Border> borders = borderArray.get(i);
         if (borders.isEmpty()) {
             for (int count = 0; count < j; count++) {
                 borders.add(null);
