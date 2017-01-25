@@ -173,6 +173,15 @@ public class ListRenderer extends BlockRenderer {
             ListNumberingType numberingType = (ListNumberingType) defaultListSymbol;
             String numberText;
             switch (numberingType) {
+                case DISC:
+                    numberText = "\u2022";
+                    break;
+                case CIRCLE:
+                    numberText = "\u25E6";
+                    break;
+                case SQUARE:
+                    numberText = "\u25AA";
+                    break;
                 case DECIMAL:
                     numberText = String.valueOf(index);
                     break;

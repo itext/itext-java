@@ -43,8 +43,11 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -78,6 +81,7 @@ public class ListTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/ListTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/ListTest/";
+    public static final String fontFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeClass
     public static void beforeClass() {
@@ -117,8 +121,15 @@ public class ListTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
+        // Default font doesn't include characters needed to draw DISC, CIRCLE, and SQUARE
+        // FreeSans.ttf includes DISC and SQUARE
+        // FreeSans.otf includes all 3: http://ftp.gnu.org/gnu/freefont/freefont-otf-20120503.tar.gz
+        PdfFont unicodeFont = PdfFontFactory.createFont(fontFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H);
 
         java.util.List<List> lists = new ArrayList<>();
+        lists.add(new List(ListNumberingType.DISC).setFont(unicodeFont));
+        lists.add(new List(ListNumberingType.CIRCLE).setFont(unicodeFont));
+        lists.add(new List(ListNumberingType.SQUARE).setFont(unicodeFont));
         lists.add(new List(ListNumberingType.DECIMAL));
         lists.add(new List(ListNumberingType.ROMAN_LOWER));
         lists.add(new List(ListNumberingType.ROMAN_UPPER));
@@ -402,6 +413,23 @@ public class ListTest extends ExtendedITextTest {
 
         document.add(new Paragraph("separation between lists"));
         liStyle.setMargin(0);
+        document.add(list);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void listItemTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listItemTest03.pdf";
+        String cmpFileName = sourceFolder + "cmp_listItemTest03.pdf";
+        PdfFont unicodeFont = PdfFontFactory.createFont(fontFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H);
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+        List list = new List().setFont(unicodeFont);
+        list.add(new ListItem("The quick brown").setListSymbol(ListNumberingType.DISC))
+                .add(new ListItem("fox").setListSymbol(ListNumberingType.CIRCLE))
+                .add(new ListItem("jumps over the lazy dog").setListSymbol(ListNumberingType.SQUARE));
         document.add(list);
         document.close();
 
