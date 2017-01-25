@@ -105,6 +105,9 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
     public T add(IBlockElement element) {
         childElements.add(element);
         ensureRootRendererNotNull().addChild(element.createRendererSubTree());
+        if (immediateFlush) {
+            childElements.remove(childElements.size() - 1);
+        }
         return (T) (Object) this;
     }
 
@@ -118,6 +121,9 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
     public T add(Image image) {
         childElements.add(image);
         ensureRootRendererNotNull().addChild(image.createRendererSubTree());
+        if (immediateFlush) {
+            childElements.remove(childElements.size() - 1);
+        }
         return (T) (Object) this;
     }
 

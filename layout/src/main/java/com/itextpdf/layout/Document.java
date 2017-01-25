@@ -130,8 +130,12 @@ public class Document extends RootElement<Document> {
      * @return this element
      */
     public Document add(AreaBreak areaBreak) {
+        checkClosingStatus();
         childElements.add(areaBreak);
         ensureRootRendererNotNull().addChild(areaBreak.createRendererSubTree());
+        if (immediateFlush) {
+            childElements.remove(childElements.size() - 1);
+        }
         return this;
     }
 
