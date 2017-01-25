@@ -153,4 +153,16 @@ public interface IRenderer extends IPropertyContainer {
      * @return new renderer instance
      */
     IRenderer getNextRenderer();
+
+    /**
+     * Gets the parent renderer or null if this is the root of the hierarchy.
+     * @return parent renderer
+     */
+    IRenderer getParent();
+
+    /**
+     * Gets the root renderer of the hierarchy (itself if this renderer is the root).
+     * @return root renderer
+     */
+    IRenderer getRoot();
 }

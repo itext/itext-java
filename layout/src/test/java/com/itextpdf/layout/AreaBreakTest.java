@@ -9,6 +9,8 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.AreaBreakType;
+import com.itextpdf.layout.renderer.DocumentRenderer;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -71,6 +73,20 @@ public class AreaBreakTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void pageBreakTest04() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "pageBreak4.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        AreaBreak areaBreak = new AreaBreak(AreaBreakType.NEXT_PAGE);
+        document.add(new Paragraph("Hello World!")).add(areaBreak);
+        IRenderer areaBreakRenderer = areaBreak.getRenderer();
+        Assert.assertNull(areaBreakRenderer.getParent());
+        Assert.assertEquals(areaBreakRenderer, areaBreakRenderer.getRoot());
     }
 
     @Test
