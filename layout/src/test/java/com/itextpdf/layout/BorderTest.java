@@ -988,21 +988,22 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
-    @Ignore("DEVSIX-931")
     @Test
     public void splitCellsTest07() throws IOException, InterruptedException {
         fileName = "splitCellsTest07.pdf";
         Document doc = createDocument();
-        doc.getPdfDocument().setDefaultPageSize(new PageSize(130, 150));
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(130, 180));
 
         String textAlphabet = "Cell";
 
         Table table = new Table(3);
         table.addCell(new Cell().add(textAlphabet + "1"));
-        table.addCell(new Cell(2, 1).add(textAlphabet + "2"));
+        table.addCell(new Cell(2, 1).add(textAlphabet + "222"));
         table.addCell(new Cell().add(textAlphabet + "3"));
-        table.addCell(new Cell().add(textAlphabet + "4"));
-        table.addCell(new Cell().add(textAlphabet + "5"));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet + "4")).setKeepTogether(true));
+        table.addCell(new Cell().add(new Paragraph(textAlphabet + "5")).setKeepTogether(true));
+
+        table.setBorderBottom(new SolidBorder(Color.BLUE, 1));
 
         doc.add(table);
 

@@ -426,6 +426,9 @@ public class TableRenderer extends AbstractRenderer {
                 CellRenderer cell = currentCellInfo.cellRenderer;
                 int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
                 int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
+                if (1 != rowspan) {
+                    cellWithBigRowspanAdded = true;
+                }
 
                 targetOverflowRowIndex[col] = currentCellInfo.finishRowInd;
                 // This cell came from the future (split occurred and we need to place cell with big rowpsan into the current area)
@@ -601,7 +604,6 @@ public class TableRenderer extends AbstractRenderer {
                                             if (verticalAlignment != null && verticalAlignment.equals(VerticalAlignment.BOTTOM)) {
                                                 if (row + addRenderer.getPropertyAsInteger(Property.ROWSPAN) - 1 < addRow) {
                                                     cellProcessingQueue.addLast(new CellRendererInfo(addRenderer, addCol, addRow));
-                                                    cellWithBigRowspanAdded = true;
                                                 } else {
                                                     horizontalBorders.get(row + 1).set(addCol, addRenderer.getBorders()[2]);
                                                     if (addCol == 0) {
@@ -620,17 +622,9 @@ public class TableRenderer extends AbstractRenderer {
                                                 }
                                             } else if (row + addRenderer.getPropertyAsInteger(Property.ROWSPAN) - 1 >= addRow) {
                                                 cellProcessingQueue.addLast(new CellRendererInfo(addRenderer, addCol, addRow));
-                                                cellWithBigRowspanAdded = true;
                                             }
                                             break;
                                         }
-                                    }
-                                } else {
-                                    // if cell in current row has big rowspan
-                                    // we need to process it specially too,
-                                    // because some problems (for instance, borders related) can occur
-                                    if (cell.getModelElement().getRowspan() > 1) {
-                                        cellWithBigRowspanAdded = true;
                                     }
                                 }
                             }
@@ -831,15 +825,23 @@ public class TableRenderer extends AbstractRenderer {
                             rows.get(targetOverflowRowIndex[col])[col].occupiedArea = cellOccupiedArea;
                         } else if (currentRow[col] != null) {
                             rowspans[col] = currentRow[col].getModelElement().getRowspan();
-                            if (hasContent && split) {
+                            boolean isBigRowspannedCell = 1 != rowspans[col];
+                            if (hasContent || isBigRowspannedCell) {
                                 columnsWithCellToBeEnlarged[col] = true;
+                                if (isBigRowspannedCell && !processAsLast) {
+                                    childRenderers.add(currentRow[col]);
+                                }
                                 // for the future
                                 splitResult[1].rows.get(0)[col].setBorders(getBorders()[0], 0);
-                                for (int j = col; j < col + currentRow[col].getPropertyAsInteger(Property.COLSPAN); j++) {
-                                    horizontalBorders.get(row + 1).set(j, getBorders()[2]);
+                            } else {
+                                if (Border.NO_BORDER != currentRow[col].<Border>getProperty(Property.BORDER_TOP)) {
+                                    splitResult[1].rows.get(0)[col].deleteOwnProperty(Property.BORDER_TOP);
                                 }
-                            } else if (Border.NO_BORDER != currentRow[col].<Border>getProperty(Property.BORDER_TOP)) {
-                                splitResult[1].rows.get(0)[col].deleteOwnProperty(Property.BORDER_TOP);
+                            }
+                            if (!processAsLast) {
+                                for (int j = col; j < col + currentRow[col].getPropertyAsInteger(Property.COLSPAN); j++) {
+                                    horizontalBorders.get(row + (hasContent ? 1 : 0)).set(j, getBorders()[2]);
+                                }
                             }
                         }
                     }
