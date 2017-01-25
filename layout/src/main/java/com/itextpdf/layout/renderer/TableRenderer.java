@@ -1471,7 +1471,7 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         //The DP is used to count each column width.
-        //In next arrays at the index i will be the corresponding sum width first i columns.
+        //In next two arrays at the index 'i' will be the sum of corresponding widths of first 'i' columns.
         float[] maxColumnsWidth = new float[ncol + 1];
         float[] minColumnsWidth = new float[ncol + 1];
         minColumnsWidth[0] = 0;
@@ -1481,8 +1481,8 @@ public class TableRenderer extends AbstractRenderer {
             for (int row = 0; row < nrow; ++row) {
                 if (cellsMinMaxWidth[row][col] != null) {
                     curColspan = cellsColspan[row][col];
-                    maxColumnsWidth[col + 1] = Math.max(maxColumnsWidth[col], cellsMinMaxWidth[row][col].getMaxWidth() + maxColumnsWidth[col - curColspan + 1]);
-                    minColumnsWidth[col + 1] = Math.max(minColumnsWidth[col], cellsMinMaxWidth[row][col].getMinWidth() + minColumnsWidth[col - curColspan + 1]);
+                    maxColumnsWidth[col + 1] = Math.max(maxColumnsWidth[col + 1], cellsMinMaxWidth[row][col].getMaxWidth() + maxColumnsWidth[col - curColspan + 1]);
+                    minColumnsWidth[col + 1] = Math.max(minColumnsWidth[col + 1], cellsMinMaxWidth[row][col].getMinWidth() + minColumnsWidth[col - curColspan + 1]);
                 }
             }
         }
