@@ -558,6 +558,11 @@ public class TableRenderer extends AbstractRenderer {
                                 if (hasProperty(Property.WIDTH)) {
                                     overflowRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(layoutBox.getWidth()));
                                 }
+                                // we have already applied margins on layoutBox
+                                overflowRenderer.setProperty(Property.MARGIN_TOP, 0);
+                                overflowRenderer.setProperty(Property.MARGIN_RIGHT, 0);
+                                overflowRenderer.setProperty(Property.MARGIN_BOTTOM, 0);
+                                overflowRenderer.setProperty(Property.MARGIN_LEFT, 0);
                                 if (LayoutResult.FULL == overflowRenderer.layout(new LayoutContext(potentialArea)).getStatus()) {
                                     footerRenderer = null;
                                     // fix layout area and table bottom border
