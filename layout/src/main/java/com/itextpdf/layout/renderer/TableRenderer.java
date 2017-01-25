@@ -221,7 +221,7 @@ public class TableRenderer extends AbstractRenderer {
 
         // collapse all cell borders
         if (null != rows && isOriginalNonSplitRenderer && !isFooterRenderer() && !isHeaderRenderer()) {
-            collapseAllBorders(borders, 0, rows.size() - 1, tableModel.getNumberOfColumns());
+            collapseAllBordersAndEmptyRows(borders, 0, rows.size() - 1, tableModel.getNumberOfColumns());
         } else {
             updateFirstRowBorders(tableModel.getNumberOfColumns());
         }
@@ -1392,7 +1392,7 @@ public class TableRenderer extends AbstractRenderer {
 
         this.initializeBorders(tableModel.getLastRowBottomBorder(), true);
         if (null != rows) {
-            this.collapseAllBorders(getBorders(), 0, rows.size() - 1, tableModel.getNumberOfColumns());
+            this.collapseAllBordersAndEmptyRows(getBorders(), 0, rows.size() - 1, tableModel.getNumberOfColumns());
         }
         float rightTableBorderWidth = getMaxRightWidth(getBorders()[1]);
         float leftTableBorderWidth = getMaxLeftWidth(getBorders()[3]);
@@ -1777,8 +1777,9 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
-    private void collapseAllBorders(Border[] tableBorders, int startRow, int finishRow, int colN) {
+    private void collapseAllBordersAndEmptyRows(Border[] tableBorders, int startRow, int finishRow, int colN) {
         CellRenderer[] currentRow;
+        int[] rowsToDelete = new int[colN];
         for (int row = startRow; row <= finishRow; row++) {
             currentRow = rows.get(row);
             boolean hasCells = false;
@@ -1788,6 +1789,18 @@ public class TableRenderer extends AbstractRenderer {
                     prepareBuildingBordersArrays(currentRow[col], tableBorders, colN, row, col);
                     buildBordersArrays(currentRow[col], row, col);
                     hasCells = true;
+                    if (rowsToDelete[col] > 0) {
+                        int rowspan = (int) currentRow[col].getPropertyAsInteger(Property.ROWSPAN) - rowsToDelete[col];
+                        if (rowspan < 1) {
+                            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                            logger.warn(LogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING);
+                            rowspan = 1;
+                        }
+                        currentRow[col].setProperty(Property.ROWSPAN, rowspan);
+                    }
+                    for (int i = 0; i < colspan; ++i) {
+                        rowsToDelete[col + i] = 0;
+                    }
                     col += colspan - 1;
                 } else {
                     if (horizontalBorders.get(row).size() <= col) {
@@ -1799,6 +1812,9 @@ public class TableRenderer extends AbstractRenderer {
                 rows.remove(currentRow);
                 row--;
                 finishRow--;
+                for (int i = 0; i < colN; ++i) {
+                    ++rowsToDelete[i];
+                }
                 if (row == finishRow) {
                     Logger logger = LoggerFactory.getLogger(TableRenderer.class);
                     logger.warn(LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE);
@@ -2262,7 +2278,7 @@ public class TableRenderer extends AbstractRenderer {
 
     private TableRenderer processRendererBorders(int numberOfColumns) {
         initializeBorders(new ArrayList<Border>(), true);
-        collapseAllBorders(getBorders(), rowRange.getStartRow(), rowRange.getFinishRow(), numberOfColumns);
+        collapseAllBordersAndEmptyRows(getBorders(), rowRange.getStartRow(), rowRange.getFinishRow(), numberOfColumns);
         return this;
     }
 
