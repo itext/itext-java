@@ -53,4 +53,12 @@ public class MinMaxWidth implements Serializable {
     public float getMinWidth() {
         return Math.min(childrenMinWidth + additionalWidth, getMaxWidth());
     }
+
+    @Override
+    public String toString() {
+        return "min=" + (childrenMinWidth + additionalWidth) +
+                ", max=" + (childrenMaxWidth + additionalWidth) +
+                "; (" + availableWidth +
+                ")";
+    }
 }
