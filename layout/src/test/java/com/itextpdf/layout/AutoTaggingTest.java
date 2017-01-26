@@ -111,10 +111,9 @@ public class AutoTaggingTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         Table table = new Table(3);
+        Image image = new Image(ImageDataFactory.create(sourceFolder + imageName)).setWidth(100).setAutoScale(true);
 
         table.addCell(createParagraph1());
-        Image image = new Image(ImageDataFactory.create(sourceFolder + imageName));
-        image.setAutoScale(true);
         table.addCell(image);
         table.addCell(createParagraph2());
         table.addCell(image);
