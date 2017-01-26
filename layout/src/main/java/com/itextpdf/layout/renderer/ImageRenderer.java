@@ -143,14 +143,18 @@ public class ImageRenderer extends AbstractRenderer {
         if (horizontalScaling != 1) {
             if (xObject instanceof PdfFormXObject) {
                 t.scale((float) horizontalScaling, 1);
+                width = imageWidth * (float) horizontalScaling;
+            } else {
+                width *= (float) horizontalScaling;
             }
-            width *= (float) horizontalScaling;
         }
         if (verticalScaling != 1) {
             if (xObject instanceof PdfFormXObject) {
                 t.scale(1, (float) verticalScaling);
+                height = imageHeight * (float) verticalScaling;
+            } else {
+                height *= (float) verticalScaling;
             }
-            height *= (float) verticalScaling;
         }
 
         if (null != retrieveMinHeight() && height < retrieveMinHeight()) {
