@@ -828,6 +828,33 @@ public abstract class AbstractRenderer implements IRenderer {
         return rect.<Rectangle>applyMargins(topWidth, rightWidth, bottomWidth, leftWidth, reverse);
     }
 
+    protected float applyBordersPaddingsMargins(Rectangle parentBBox, Border[] borders, float[] paddings, boolean isPositioned) {
+        float borderMarginPaddingWidth = 0;
+
+        float marginBorderWidth = parentBBox.getWidth();
+        applyMargins(parentBBox, false);
+        applyBorderBox(parentBBox, borders, false);
+        marginBorderWidth -= parentBBox.getWidth();
+        borderMarginPaddingWidth += marginBorderWidth;
+
+        if (isPositioned) {
+            float x = (float) this.getPropertyAsFloat(Property.X);
+            float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
+            parentBBox.setX(relativeX + x);
+        }
+
+        Float blockWidth = retrieveWidth(parentBBox.getWidth());
+        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
+            parentBBox.setWidth((float) blockWidth);
+        }
+        float paddingsWidth = parentBBox.getWidth();
+        applyPaddings(parentBBox, paddings, false);
+        paddingsWidth -= parentBBox.getWidth();
+        borderMarginPaddingWidth += paddingsWidth;
+
+        return borderMarginPaddingWidth;
+    }
+
     protected void applyAbsolutePosition(Rectangle rect) {
         Float top = this.getPropertyAsFloat(Property.TOP);
         Float bottom = this.getPropertyAsFloat(Property.BOTTOM);

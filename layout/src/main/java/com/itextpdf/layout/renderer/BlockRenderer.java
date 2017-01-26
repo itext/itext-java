@@ -655,34 +655,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
     }
 
-    protected float applyBordersPaddingsMargins(Rectangle parentBBox, Border[] borders, float[] paddings, boolean isPositioned) {
-        float borderMarginPaddingWidth = 0;
-
-        float marginBorderWidth = parentBBox.getWidth();
-        applyMargins(parentBBox, false);
-        applyBorderBox(parentBBox, borders, false);
-        marginBorderWidth -= parentBBox.getWidth();
-        borderMarginPaddingWidth += marginBorderWidth;
-
-        if (isPositioned) {
-            float x = (float) this.getPropertyAsFloat(Property.X);
-            float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
-            parentBBox.setX(relativeX + x);
-        }
-
-        Float blockWidth = retrieveWidth(parentBBox.getWidth());
-        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
-            parentBBox.setWidth((float) blockWidth);
-        }
-        float paddingsWidth = parentBBox.getWidth();
-        applyPaddings(parentBBox, paddings, false);
-        paddingsWidth -= parentBBox.getWidth();
-        borderMarginPaddingWidth += paddingsWidth;
-
-        return borderMarginPaddingWidth;
-    }
-
-
     private List<Point> clipPolygon(List<Point> points, Point clipLineBeg, Point clipLineEnd) {
         List<Point> filteredPoints = new ArrayList<>();
 

@@ -341,6 +341,20 @@ public class ImageRenderer extends AbstractRenderer {
         }
     }
 
+    MinMaxWidth getMinMaxWidth(float availableWidth) {
+        Rectangle area = new Rectangle(availableWidth, AbstractRenderer.INF);
+        float additionalWidth = applyBordersPaddingsMargins(area, getBorders(), getPaddings(), isPositioned());
+        float imageWidth = ((Image)modelElement).getImageWidth();
+        UnitValue width = this.<UnitValue>getProperty(Property.WIDTH);
+        if (width == null || width.getValue() < 0) {
+            return new MinMaxWidth(additionalWidth, availableWidth, imageWidth, imageWidth);
+        } else if (width.isPercentValue()) {
+            return new MinMaxWidth(additionalWidth, availableWidth, 0, imageWidth);
+        } else {
+            return new MinMaxWidth(additionalWidth, availableWidth, width.getValue(), width.getValue());
+        }
+    }
+
     protected ImageRenderer autoScale(LayoutArea layoutArea) {
         Rectangle area = layoutArea.getBBox().clone();
         applyMargins(area, false);

@@ -60,6 +60,7 @@ public class UnitValue {
      */
     public UnitValue(int unitType, float value) {
         this.unitType = unitType;
+        assert !Float.isNaN(value);
         this.value = value;
     }
 
@@ -110,6 +111,7 @@ public class UnitValue {
      * @param value a <code>float</code>
      */
     public void setValue(float value) {
+        assert !Float.isNaN(value);
         this.value = value;
     }
 
