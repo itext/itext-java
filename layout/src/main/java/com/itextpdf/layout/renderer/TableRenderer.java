@@ -1492,23 +1492,34 @@ public class TableRenderer extends AbstractRenderer {
                 y1 -= (float) heights.get(i);
             }
         }
-        if (drawBottom) {
-            drawHorizontalBorder(horizontalBorders.size() - 1, startX, y1, drawContext.getCanvas());
-        }
 
         float x1 = startX;
-        for (int i = 0; i < verticalBorders.size(); i++) {
+        if (columnWidths.length > 0) {
+            x1 += columnWidths[0];
+        }
+        for (int i = 1; i < verticalBorders.size() - 1; i++) {
             drawVerticalBorder(i, startY, x1, drawContext.getCanvas());
             if (i < columnWidths.length) {
                 x1 += columnWidths[i];
             }
         }
 
+        // Draw bounding borders. Vertical borders are the last to draw in order to collapse with header / footer
+        if (drawTop) {
+            drawHorizontalBorder(0, startX, startY, drawContext.getCanvas());
+        }
+        if (drawBottom) {
+            drawHorizontalBorder(horizontalBorders.size() - 1, startX, y1, drawContext.getCanvas());
+        }
+        // draw left
+        drawVerticalBorder(0, startY, startX, drawContext.getCanvas());
+        // draw right
+        drawVerticalBorder(verticalBorders.size() - 1, startY, x1, drawContext.getCanvas());
+
         if (isTagged) {
             drawContext.getCanvas().closeTag();
         }
     }
-
     private void drawHorizontalBorder(int i, float startX, float y1, PdfCanvas canvas) {
         List<Border> borders = horizontalBorders.get(i);
         float x1 = startX;
