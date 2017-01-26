@@ -655,13 +655,15 @@ public class LineRenderer extends AbstractRenderer {
                 if (child instanceof TextRenderer) {
                     GlyphLine text = ((TextRenderer) child).getText();
                     for (int i = text.start; i < text.end; i++) {
-                        if (TextUtil.isNewLine(text.get(i))) {
+                        Glyph glyph = text.get(i);
+                        if (TextUtil.isNewLine(glyph)) {
                             newLineFound = true;
                             break;
                         }
                         // we assume all the chars will have the same bidi group
                         // we also assume pairing symbols won't get merged with other ones
-                        unicodeIdsReorderingList.add(text.get(i).getUnicode());
+                        int unicode = glyph.hasValidUnicode() ? glyph.getUnicode() : glyph.getUnicodeChars()[0];
+                        unicodeIdsReorderingList.add(unicode);
                     }
                 }
             }
