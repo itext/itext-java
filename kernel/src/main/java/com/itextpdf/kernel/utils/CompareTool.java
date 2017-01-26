@@ -318,6 +318,8 @@ public class CompareTool {
      */
     public String compareVisually(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
         init(outPdf, cmpPdf);
+        System.out.println("Out pdf: file:///" + UrlUtil.toNormalizedURI(outPdf).getPath());
+        System.out.println("Cmp pdf: file:///" + UrlUtil.toNormalizedURI(cmpPdf).getPath() + "\n");
         return compareVisually(outPath, differenceImagePrefix, ignoredAreas);
     }
 
@@ -436,6 +438,8 @@ public class CompareTool {
      */
     public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas, byte[] outPass, byte[] cmpPass) throws InterruptedException, IOException {
         init(outPdf, cmpPdf);
+        System.out.println("Out pdf: file:///" + UrlUtil.toNormalizedURI(outPdf).getPath());
+        System.out.println("Cmp pdf: file:///" + UrlUtil.toNormalizedURI(cmpPdf).getPath() + "\n");
         setPassword(outPass, cmpPass);
         return compareByContent(outPath, differenceImagePrefix, ignoredAreas);
     }
