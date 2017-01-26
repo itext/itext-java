@@ -28,6 +28,7 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -736,8 +737,8 @@ public class BorderTest extends ExtendedITextTest {
         fileName = "infiniteLoopTest01.pdf";
         Document doc = createDocument();
 
-        Table table = new Table(new float[]{1, 3});
-        table.setWidthPercent(50);
+        Table table = new Table(new UnitValue[]{UnitValue.createPercentValue(25), UnitValue.createPercentValue(75)});
+        table.setWidthPercent(50).setProperty(Property.TABLE_LAYOUT, "fixed");
         Cell cell;
 
         // row 1, cell 1
@@ -1317,7 +1318,7 @@ public class BorderTest extends ExtendedITextTest {
         Document doc = createDocument();
 
         Table table = new Table(1);
-        table.setWidth(10);
+        table.setWidth(10).setProperty(Property.TABLE_LAYOUT, "fixed");
         Cell cell;
         // row 1, cell 1
         cell = new Cell().add("1ORD");

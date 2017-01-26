@@ -971,6 +971,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{5});
+        table.setWidth(5).setProperty(Property.TABLE_LAYOUT, "fixed");
         Cell cell = new Cell();
         Paragraph p = new Paragraph(new Text("a"));
         cell.add(p);
