@@ -84,27 +84,32 @@ public class TrueTypeFont extends FontProgram {
     private byte[] fontStreamBytes;
 
     protected TrueTypeFont() {
+        fontNames = new FontNames();
     }
 
     public TrueTypeFont(String path) throws java.io.IOException {
         checkFilePath(path);
         fontParser = new OpenTypeParser(path);
+        fontParser.loadTables(true);
         initializeFontProperties();
     }
 
     public TrueTypeFont(byte[] ttf) throws java.io.IOException {
         fontParser = new OpenTypeParser(ttf);
+        fontParser.loadTables(true);
         initializeFontProperties();
     }
 
     TrueTypeFont(String ttcPath, int ttcIndex) throws java.io.IOException {
         checkFilePath(ttcPath);
         fontParser = new OpenTypeParser(ttcPath, ttcIndex);
+        fontParser.loadTables(true);
         initializeFontProperties();
     }
 
     TrueTypeFont(byte[] ttc, int ttcIndex) throws java.io.IOException {
         fontParser = new OpenTypeParser(ttc, ttcIndex);
+        fontParser.loadTables(true);
         initializeFontProperties();
     }
 
@@ -242,33 +247,7 @@ public class TrueTypeFont extends FontProgram {
         bBoxes = fontParser.readBbox(head.unitsPerEm);
 
         // font names group
-        fontNames.setAllNames(fontParser.getAllNameEntries());
-        fontNames.setFontName(fontParser.getPsFontName());
-        fontNames.setFullName(fontNames.getNames(4));
-        String[][] otfFamilyName = fontNames.getNames(16);
-        if (otfFamilyName != null) {
-            fontNames.setFamilyName(otfFamilyName);
-        } else {
-            fontNames.setFamilyName(fontNames.getNames(1));
-        }
-        String[][] subfamily = fontNames.getNames(2);
-        if (subfamily != null) {
-            fontNames.setStyle(subfamily[0][3]);
-        }
-        String[][] otfSubFamily = fontNames.getNames(17);
-        if (otfFamilyName != null) {
-            fontNames.setSubfamily(otfSubFamily);
-        } else {
-            fontNames.setSubfamily(subfamily);
-        }
-        String[][] cidName = fontNames.getNames(20);
-        if (cidName != null) {
-            fontNames.setCidFontName(cidName[0][3]);
-        }
-        fontNames.setWeight(os_2.usWeightClass);
-        fontNames.setWidth(os_2.usWidthClass);
-        fontNames.setMacStyle(head.macStyle);
-        fontNames.setAllowEmbedding(os_2.fsType != 2);
+        fontNames = fontParser.getFontNames();
 
         // font metrics group
         fontMetrics.setUnitsPerEm(head.unitsPerEm);
@@ -373,5 +352,12 @@ public class TrueTypeFont extends FontProgram {
             bit <<= 1;
         }
         return ret;
+    }
+
+    public void close() throws java.io.IOException {
+        if (fontParser != null) {
+            fontParser.close();
+        }
+        fontParser = null;
     }
 }

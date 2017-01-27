@@ -111,9 +111,9 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
         Object result = super.<T1>getProperty(property);
         if (styles != null && styles.size() > 0 && result == null && !super.hasProperty(property)) {
             for (Style style : styles) {
-                result = style.<T1>getProperty(property);
-                if (result != null || super.hasProperty(property)) {
-                    break;
+                T1 foundInStyle = style.<T1>getProperty(property);
+                if (foundInStyle != null || style.hasProperty(property)) {
+                    result = foundInStyle;
                 }
             }
         }

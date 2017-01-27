@@ -165,7 +165,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfPage} instance.
      */
     public PdfPage setRotation(int degAngle) {
-        getPdfObject().put(PdfName.Rotate, new PdfNumber(degAngle));
+        put(PdfName.Rotate, new PdfNumber(degAngle));
         return this;
     }
 
@@ -279,7 +279,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             }
             if (resources == null) {
                 resources = new PdfDictionary();
-                getPdfObject().put(PdfName.Resources, resources);
+                put(PdfName.Resources, resources);
             }
             this.resources = new PdfResources(resources);
             this.resources.setReadOnly(readOnly);
@@ -294,7 +294,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfPage} instance.
      */
     public PdfPage setResources(PdfResources pdfResources) {
-        getPdfObject().put(PdfName.Resources, pdfResources.getPdfObject());
+        put(PdfName.Resources, pdfResources.getPdfObject());
         this.resources = pdfResources;
         return this;
     }
@@ -310,7 +310,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         xmp.getOutputStream().write(xmpMetadata);
         xmp.put(PdfName.Type, PdfName.Metadata);
         xmp.put(PdfName.Subtype, PdfName.XML);
-        getPdfObject().put(PdfName.Metadata, xmp);
+        put(PdfName.Metadata, xmp);
     }
 
     /**
@@ -534,7 +534,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfPage} instance.
      */
     public PdfPage setMediaBox(Rectangle rectangle) {
-        getPdfObject().put(PdfName.MediaBox, new PdfArray(rectangle));
+        put(PdfName.MediaBox, new PdfArray(rectangle));
         return this;
     }
 
@@ -567,7 +567,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfPage} instance.
      */
     public PdfPage setCropBox(Rectangle rectangle) {
-        getPdfObject().put(PdfName.CropBox, new PdfArray(rectangle));
+        put(PdfName.CropBox, new PdfArray(rectangle));
         return this;
     }
 
@@ -584,7 +584,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             Logger logger = LoggerFactory.getLogger(PdfPage.class);
             logger.warn(LogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
         }
-        getPdfObject().put(PdfName.ArtBox, new PdfArray(rectangle));
+        put(PdfName.ArtBox, new PdfArray(rectangle));
         return this;
     }
 
@@ -612,7 +612,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             Logger logger = LoggerFactory.getLogger(PdfPage.class);
             logger.warn(LogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
         }
-        getPdfObject().put(PdfName.TrimBox, new PdfArray(rectangle));
+        put(PdfName.TrimBox, new PdfArray(rectangle));
         return this;
     }
 
@@ -768,7 +768,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public PdfPage addAnnotation(int index, PdfAnnotation annotation, boolean tagAnnotation) {
         if (getDocument().isTagged() && tagAnnotation) {
             TagTreePointer tagPointer = getDocument().getTagStructureContext().getAutoTaggingPointer();
-            PdfPage prevPage = tagPointer.getCurrentPage(); // TODO what about if current tagging stream is set
+            PdfPage prevPage = tagPointer.getCurrentPage();
             tagPointer.setPageForTagging(this).addAnnotationTag(annotation);
             if (prevPage != null) {
                 tagPointer.setPageForTagging(prevPage);
@@ -808,6 +808,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
             if (annots.isEmpty()) {
                 getPdfObject().remove(PdfName.Annots);
+                setModified();
+            } else if (annots.getIndirectReference() == null) {
+                setModified();
             }
         }
 
@@ -931,6 +934,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfPage put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
         return this;
     }
 
@@ -969,7 +973,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (annots == null && create) {
             annots = new PdfArray();
             put(PdfName.Annots, annots);
-            setModified();
         }
         return annots;
     }
@@ -993,8 +996,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (contents instanceof PdfStream) {
             array = new PdfArray();
             array.add(contents);
-            getPdfObject().put(PdfName.Contents, array);
-            setModified();
+            put(PdfName.Contents, array);
         } else if (contents instanceof PdfArray) {
             array = (PdfArray) contents;
         } else {
@@ -1016,7 +1018,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     private void tryFlushPageTags() {
         try {
-            getDocument().getTagStructureContext().flushPageTags(this);
+            if(!getDocument().isClosing) {
+                getDocument().getTagStructureContext().flushPageTags(this);
+            }
             getDocument().getStructTreeRoot().createParentTreeEntryForPage(this);
         } catch (Exception ex) {
             throw new PdfException(PdfException.TagStructureFlushingFailedItMightBeCorrupted, ex);

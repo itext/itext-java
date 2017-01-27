@@ -2,18 +2,20 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Link;
 import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
@@ -26,7 +28,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
@@ -89,6 +90,33 @@ public class LinkTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ACTION_WAS_SET_TO_LINK_ANNOTATION_WITH_DESTINATION)})
+    public void linkTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "linkTest03.pdf";
+        String cmpFileName = sourceFolder + "cmp_linkTest03.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        PdfArray array = new PdfArray();
+        array.add(doc.getPdfDocument().addNewPage().getPdfObject());
+        array.add(PdfName.XYZ);
+        array.add(new PdfNumber(36));
+        array.add(new PdfNumber(100));
+        array.add(new PdfNumber(1));
+
+        PdfDestination dest = PdfDestination.makeDestination(array);
+
+        Link link = new Link("TestLink", dest);
+        link.setAction(PdfAction.createURI("http://itextpdf.com/", false));
+        doc.add(new Paragraph(link));
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
     public void borderedLinkTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "borderedLinkTest.pdf";
         String cmpFileName = sourceFolder + "cmp_borderedLinkTest.pdf";
@@ -116,23 +144,23 @@ public class LinkTest extends ExtendedITextTest {
      * Author: mkl.
      */
     @Test
-    public void testCreateLocalLinkInRotatedCell () throws IOException , InterruptedException {
-        String outFileName = destinationFolder + "linkInRotatedCell.pdf" ;
+    public void testCreateLocalLinkInRotatedCell() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "linkInRotatedCell.pdf";
         String cmpFileName = sourceFolder + "cmp_linkInRotatedCell.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName)) ;
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document document = new Document(pdfDocument);
-        Table table = new Table(2 );
+        Table table = new Table(2);
 
-        Link chunk = new Link("Click here" , PdfAction.createURI("http://itextpdf.com/"));
-        table.addCell( new Cell().add(new Paragraph().add(chunk)).setRotationAngle(Math. PI / 2 ));
+        Link chunk = new Link("Click here", PdfAction.createURI("http://itextpdf.com/"));
+        table.addCell(new Cell().add(new Paragraph().add(chunk)).setRotationAngle(Math.PI / 2));
 
-        chunk = new Link("Click here 2" , PdfAction.createURI ("http://itextpdf.com/" ));
-        table.addCell( new Paragraph().add(chunk));
+        chunk = new Link("Click here 2", PdfAction.createURI("http://itextpdf.com/"));
+        table.addCell(new Paragraph().add(chunk));
 
-        document.add(table) ;
-        document.close() ;
+        document.add(table);
+        document.close();
 
-        Assert. assertNull( new CompareTool().compareByContent(outFileName, cmpFileName , destinationFolder , "diff")) ;
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
     @Test
@@ -145,7 +173,7 @@ public class LinkTest extends ExtendedITextTest {
         PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
 
         Link link = new Link("TestLink", action);
-        doc.add(new Paragraph(link).setRotationAngle(Math.PI / 4).setFixedPosition(300, 623, 100));
+        doc.add(new Paragraph(link).setMargin(0).setRotationAngle(Math.PI / 4).setFixedPosition(300, 623, 100));
 
         doc.close();
 

@@ -70,7 +70,7 @@ public class SigningTest {
         String fieldName =  "Signature1";
         sign(src, fieldName, dest, chain, pk,
                 DigestAlgorithms.SHA256, provider.getName(),
-                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false);
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, false);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
                 "diff_", getTestMap(new Rectangle(67, 690, 155, 15))));
@@ -85,7 +85,7 @@ public class SigningTest {
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk,
                 DigestAlgorithms.SHA256, provider.getName(),
-                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false);
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false, false);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
                 "diff_", getTestMap(new Rectangle(67, 725, 155, 15))));
@@ -100,7 +100,7 @@ public class SigningTest {
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk,
                 DigestAlgorithms.SHA256, provider.getName(),
-                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false);
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, false, false);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
                 "diff_", getTestMap(new Rectangle(67, 725, 155, 15))));
@@ -115,17 +115,43 @@ public class SigningTest {
         String fieldName = "Signature1";
         sign(src, fieldName, dest, chain, pk,
                 DigestAlgorithms.SHA256, provider.getName(),
-                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, true);
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", null, true, false);
+    }
+
+    @Test
+    public void signingTaggedDocument() throws GeneralSecurityException, IOException, InterruptedException {
+        String src = sourceFolder + "simpleTaggedDocument.pdf";
+        String dest = destinationFolder + "signedTaggedDocument.pdf";
+
+        Rectangle rect = new Rectangle(36, 648, 200, 100);
+        
+        String fieldName = "Signature1";
+        sign(src, fieldName, dest, chain, pk,
+                DigestAlgorithms.SHA256, provider.getName(),
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, false);
+    }
+
+    @Test
+    public void signingTaggedDocumentAppendMode() throws GeneralSecurityException, IOException, InterruptedException {
+        String src = sourceFolder + "simpleTaggedDocument.pdf";
+        String dest = destinationFolder + "signedTaggedDocumentAppendMode.pdf";
+
+        Rectangle rect = new Rectangle(36, 648, 200, 100);
+        
+        String fieldName = "Signature1";
+        sign(src, fieldName, dest, chain, pk,
+                DigestAlgorithms.SHA256, provider.getName(),
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true);
     }
 
     protected void sign(String src, String name, String dest,
-                     Certificate[] chain, PrivateKey pk,
-                     String digestAlgorithm, String provider, PdfSigner.CryptoStandard subfilter,
-                     String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance)
+                        Certificate[] chain, PrivateKey pk,
+                        String digestAlgorithm, String provider, PdfSigner.CryptoStandard subfilter,
+                        String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance, boolean isAppendMode)
             throws GeneralSecurityException, IOException {
 
         PdfReader reader = new PdfReader(src);
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), false);
+        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), isAppendMode);
 
         // Creating the appearance
         PdfSignatureAppearance appearance = signer.getSignatureAppearance()

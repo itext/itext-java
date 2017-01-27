@@ -9,7 +9,12 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
-import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.List;
+import com.itextpdf.layout.element.ListItem;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolAlignment;
 import com.itextpdf.layout.property.Property;
@@ -19,7 +24,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -339,7 +343,6 @@ public class ListTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-962")
     public void listItemTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "listItemTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_listItemTest02.pdf";
@@ -448,7 +451,6 @@ public class ListTest extends ExtendedITextTest {
         nestedList.setHeight(400);
         nestedItem.setHeight(300);
         doc.add(list);
-        doc.add(new AreaBreak());
 
         doc.close();
 

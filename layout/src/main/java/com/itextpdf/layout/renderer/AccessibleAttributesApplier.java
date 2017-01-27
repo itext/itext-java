@@ -63,6 +63,7 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.property.UnitValue;
 
@@ -168,9 +169,9 @@ public class AccessibleAttributesApplier {
         }
         applyPaddingAttribute(renderer, attributes);
 
-        Color color = renderer.getPropertyAsColor(Property.FONT_COLOR);
-        if (color != null && color instanceof DeviceRgb) {
-            attributes.put(PdfName.Color, new PdfArray(color.getColorValue()));
+        TransparentColor transparentColor = renderer.getPropertyAsTransparentColor(Property.FONT_COLOR);
+        if (transparentColor != null && transparentColor.getColor() instanceof DeviceRgb) {
+            attributes.put(PdfName.Color, new PdfArray(transparentColor.getColor().getColorValue()));
         }
     }
 

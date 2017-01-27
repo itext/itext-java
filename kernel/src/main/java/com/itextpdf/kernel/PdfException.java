@@ -89,7 +89,6 @@ public class PdfException extends RuntimeException {
     public static final String CannotGetPdfStreamBytes = "Cannot get PdfStream bytes.";
     public static final String CannotRetrieveMediaBoxAttribute = "Invalid PDF. There is no media box attribute for page or its parents.";
     public static final String CannotFindImageDataOrEI = "Cannot find image data or EI.";
-    public static final String CannotFindThePageNumber = "Cannot find the page number {0}.";
     public static final String CannotFlushDocumentRootTagBeforeDocumentIsClosed = "Cannot flush document root tag before document is closed.";
     public static final String CannotFlushObject = "Cannot flush object.";
     public static final String CannotMoveToFlushedKid = "Cannot move to flushed kid.";
@@ -126,6 +125,7 @@ public class PdfException extends RuntimeException {
     public static final String CodabarMustHaveOneAbcdAsStartStopCharacter = "Codabar must have one of 'ABCD' as start/stop character.";
     @Deprecated
     public static final String CodabarStartStopCharacterAreOnlyExtremes = "In codabar, start/stop characters are only allowed at the extremes.";
+    @Deprecated
     public static final String ColorNotFound = "Color not found.";
     public static final String ColorSpaceNotFound = "ColorSpace not found.";
     public static final String ContentStreamMustNotInvokeOperatorsThatSpecifyColorsOrOtherColorRelatedParameters = "Content stream must not invoke operators that specify colors or other color related parameters in the graphics state.";
@@ -205,6 +205,7 @@ public class PdfException extends RuntimeException {
     public static final String InvalidXrefStream = "Invalid xref stream.";
     public static final String InvalidXrefTable = "Invalid xref table.";
     public static final String IoException = "I/O exception.";
+    public static final String IoExceptionWhileCreatingFont = "I/O exception while creating Font";
     @Deprecated
     public static final String IsNotAnAcceptableValueForTheField = "{0} is not an acceptable value for the field {1}.";
     @Deprecated
@@ -260,6 +261,7 @@ public class PdfException extends RuntimeException {
     public static final String PdfInderectObjectBelongToOtherPdfDocument = "pdf inderect object belong to other pdf document Copy object to current pdf document.";
     public static final String PdfIndirectObjectBelongsToOtherPdfDocument = "Pdf indirect object belongs to other PDF document. Copy object to current pdf document.";
     public static final String PdfVersionNotValid = "PDF version is not valid.";
+    public static final String RequestedPageNumberIsOutOfBounds = "Requested page number {0} is out of bounds.";
     public static final String PngFilterUnknown = "PNG filter unknown.";
     public static final String ResourcesCannotBeNull = "Resources cannot be null.";
     public static final String ResourcesDoNotContainExtgstateEntryUnableToProcessOperator1 = "Resources do not contain ExtGState entry. Unable to process operator {0}.";
@@ -305,6 +307,7 @@ public class PdfException extends RuntimeException {
     public static final String UnknownPdfException = "Unknown PdfException.";
     public static final String UnknownHashAlgorithm1 = "Unknown hash algorithm: {0}.";
     public static final String UnknownKeyAlgorithm1 = "Unknown key algorithm: {0}.";
+    @Deprecated
     public static final String UnknownColorFormatMustBeRGBorRRGGBB = "Unknown color format: must be rgb or rrggbb.";
     public static final String UnsupportedDefaultColorSpaceName1 = "Unsupported default color space name. Was {0}, but should be DefaultCMYK, DefaultGray or DefaultRGB";
     public static final String UnsupportedXObjectType = "Unsupported XObject type.";

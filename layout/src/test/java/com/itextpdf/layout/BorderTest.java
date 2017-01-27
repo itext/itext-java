@@ -10,8 +10,23 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.border.*;
-import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.border.DashedBorder;
+import com.itextpdf.layout.border.DottedBorder;
+import com.itextpdf.layout.border.DoubleBorder;
+import com.itextpdf.layout.border.GrooveBorder;
+import com.itextpdf.layout.border.InsetBorder;
+import com.itextpdf.layout.border.OutsetBorder;
+import com.itextpdf.layout.border.RidgeBorder;
+import com.itextpdf.layout.border.RoundDotsBorder;
+import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.List;
+import com.itextpdf.layout.element.ListItem;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -148,7 +163,6 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
-    @Ignore("DEVSIX-796")
     @Test
     public void simpleBorderTest04() throws IOException, InterruptedException {
         fileName = "simpleBorderTest04.pdf";
@@ -391,7 +405,7 @@ public class BorderTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
-        Document doc  = new Document(pdfDocument, new PageSize(842,842));
+        Document doc = new Document(pdfDocument, new PageSize(842, 842));
 
         Table table = new Table(3);
         table.setBorder(new SolidBorder(Color.GREEN, 91f));
@@ -562,7 +576,28 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
-    public void borderCollapseTest01() throws IOException, InterruptedException  {
+    public void wideBorderTest04() throws IOException, InterruptedException {
+        fileName = "wideBorderTest04.pdf";
+        outFileName = destinationFolder + fileName;
+        cmpFileName = sourceFolder + cmpPrefix + fileName;
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument, new PageSize(200, 150));
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(Color.RED, 5));
+        for (int i = 0; i < 5; i++) {
+            table.addCell(new Cell().add("Cell " + i));
+        }
+        table.addCell(new Cell().add("Cell 5").setBorderTop(new SolidBorder(Color.GREEN, 20)));
+
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void borderCollapseTest01() throws IOException, InterruptedException {
         fileName = "borderCollapseTest01.pdf";
         outFileName = destinationFolder + fileName;
         cmpFileName = sourceFolder + cmpPrefix + fileName;
@@ -586,7 +621,7 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
-    public void borderCollapseTest02() throws IOException, InterruptedException  {
+    public void borderCollapseTest02() throws IOException, InterruptedException {
         fileName = "borderCollapseTest02.pdf";
         outFileName = destinationFolder + fileName;
         cmpFileName = sourceFolder + cmpPrefix + fileName;
@@ -623,7 +658,7 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
-    public void borderCollapseTest03() throws IOException, InterruptedException  {
+    public void borderCollapseTest03() throws IOException, InterruptedException {
         fileName = "borderCollapseTest03.pdf";
         outFileName = destinationFolder + fileName;
         cmpFileName = sourceFolder + cmpPrefix + fileName;
@@ -668,7 +703,7 @@ public class BorderTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
-        Document doc  = new Document(pdfDocument, new PageSize(842, 400));
+        Document doc = new Document(pdfDocument, new PageSize(842, 400));
 
         Table table = new Table(2);
         table.setBorder(new SolidBorder(Color.GREEN, 90f));
@@ -695,7 +730,6 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
-    @Ignore
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
@@ -833,10 +867,11 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
+    @Test
     public void splitCellsTest04() throws IOException, InterruptedException {
         fileName = "splitCellsTest04.pdf";
         Document doc = createDocument();
-        doc.getPdfDocument().setDefaultPageSize(new PageSize(595, 100+72));
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(595, 100 + 72));
 
         String text = "When a man hath no freedom to fight for at home,\n" +
                 "    Let him combat for that of his neighbours;\n" +
@@ -865,7 +900,7 @@ public class BorderTest extends ExtendedITextTest {
     public void splitCellsTest05() throws IOException, InterruptedException {
         fileName = "splitCellsTest05.pdf";
         Document doc = createDocument();
-        doc.getPdfDocument().setDefaultPageSize(new PageSize(130,150));
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(130, 150));
 
         String textAlphabet = "Cell";
 
@@ -885,7 +920,7 @@ public class BorderTest extends ExtendedITextTest {
     public void splitCellsTest06() throws IOException, InterruptedException {
         fileName = "splitCellsTest06.pdf";
         Document doc = createDocument();
-        doc.getPdfDocument().setDefaultPageSize(new PageSize(300,150));
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(300, 150));
 
         doc.add(new Paragraph("No more"));
         doc.add(new Paragraph("place"));
@@ -911,28 +946,27 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
-    @Ignore
+    @Ignore("DEVSIX-931")
     @Test
     public void splitCellsTest07() throws IOException, InterruptedException {
         fileName = "splitCellsTest07.pdf";
         Document doc = createDocument();
-        doc.getPdfDocument().setDefaultPageSize(new PageSize(130,150));
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(130, 150));
 
         String textAlphabet = "Cell";
 
         Table table = new Table(3);
         table.addCell(new Cell().add(textAlphabet + "1"));
         table.addCell(new Cell(2, 1).add(textAlphabet + "2"));
-        table.addCell(new Cell().add(textAlphabet+ "3"));
-        table.addCell(new Cell().add(textAlphabet+ "4"));
-        table.addCell(new Cell().add(textAlphabet+ "5"));
+        table.addCell(new Cell().add(textAlphabet + "3"));
+        table.addCell(new Cell().add(textAlphabet + "4"));
+        table.addCell(new Cell().add(textAlphabet + "5"));
 
         doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
     }
 
-    @Ignore
     @Test
     public void splitCellsTest08() throws IOException, InterruptedException {
         fileName = "splitCellsTest08.pdf";
@@ -942,11 +976,11 @@ public class BorderTest extends ExtendedITextTest {
         String textAlphabet = "Cell";
 
         Table table = new Table(3);
-        table.addCell(new Cell().add(textAlphabet+ "1"));
+        table.addCell(new Cell().add(textAlphabet + "1"));
         table.addCell(new Cell(2, 1).add(textAlphabet + "2").setBorder(new SolidBorder(Color.GREEN, 4)));
         table.addCell(new Cell().add(textAlphabet + "3"));
         table.addCell(new Cell().add(textAlphabet + "4"));
-        table.addCell(new Cell().add(textAlphabet+ "5"));
+        table.addCell(new Cell().add(textAlphabet + "5"));
 
         doc.add(table);
 
@@ -957,16 +991,16 @@ public class BorderTest extends ExtendedITextTest {
     public void splitCellsTest09() throws IOException, InterruptedException {
         fileName = "splitCellsTest09.pdf";
         Document doc = createDocument();
-        doc.getPdfDocument().setDefaultPageSize(new PageSize(595,160));
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(595, 160));
 
         String textAlphabet = "Cell";
 
         Table table = new Table(3);
         table.addCell(new Cell().add("Make Gretzky great again! Make Gretzky great again! Make Gretzky great again! Make Gretzky great again! Make Gretzky great again! Make Gretzky great again!"));
-        table.addCell(new Cell(2, 1).add(textAlphabet+ "3"));
-        table.addCell(new Cell().add(textAlphabet+ "4").setBorder(new SolidBorder(Color.GREEN, 2)));
-        table.addCell(new Cell().add(textAlphabet+ "5"));
-        table.addCell(new Cell().add(textAlphabet+ "5"));
+        table.addCell(new Cell(2, 1).add(textAlphabet + "3"));
+        table.addCell(new Cell().add(textAlphabet + "4").setBorder(new SolidBorder(Color.GREEN, 2)));
+        table.addCell(new Cell().add(textAlphabet + "5"));
+        table.addCell(new Cell().add(textAlphabet + "5"));
 
         doc.add(table);
 
@@ -1014,9 +1048,9 @@ public class BorderTest extends ExtendedITextTest {
         table.addFooterCell(new Cell().setHeight(30).add("Footer3"));
         table.addFooterCell(new Cell().setHeight(30).add("Footer4"));
 
-        for (int i =1; i < 43; i+=2) {
+        for (int i = 1; i < 43; i += 2) {
             table.addCell(new Cell().setHeight(30).add("Cell" + i).setBorderBottom(new SolidBorder(Color.BLUE, 400)).setBorderRight(new SolidBorder(20)));
-            table.addCell(new Cell().setHeight(30).add("Cell" + (i+1)).setBorderBottom(new SolidBorder(Color.BLUE, 100)).setBorderLeft(new SolidBorder(20)));
+            table.addCell(new Cell().setHeight(30).add("Cell" + (i + 1)).setBorderBottom(new SolidBorder(Color.BLUE, 100)).setBorderLeft(new SolidBorder(20)));
         }
 
         table.setSkipLastFooter(true);
@@ -1028,6 +1062,7 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)})
     public void tableWithHeaderFooter03() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest03.pdf";
         Document doc = createDocument();
@@ -1085,6 +1120,197 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
+    public void tableWithHeaderFooterTest06() throws IOException, InterruptedException {
+        fileName = "tableWithHeaderFooterTest06.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(PageSize.A6.rotate());
+        Table table = new Table(5);
+        Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(Color.RED, 20));
+        table.addHeaderCell(cell);
+        cell = new Cell(1, 5).add(new Paragraph("Continue on next page")).setHeight(30).setBorderTop(new SolidBorder(Color.MAGENTA, 20));
+        table.addFooterCell(cell);
+        for (int i = 0; i < 50; i++) {
+            table.addCell(new Cell().setBorderLeft(new SolidBorder(Color.BLUE, 0.5f)).setBorderRight(new SolidBorder(Color.BLUE, 0.5f)).setHeight(30).setBorderBottom(new SolidBorder(Color.BLUE, 2 * i + 1 > 50 ? 50 : 2 * i + 1)).setBorderTop(new SolidBorder(Color.GREEN, (50 - 2 * i + 1 >= 0) ? 50 - 2 * i + 1 : 0)).add(new Paragraph(String.valueOf(i + 1))));
+        }
+        doc.add(table);
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void tableWithHeaderFooterTest07() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderFooterTest07.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A7.rotate());
+
+        Table table = new Table(2);
+        table.addFooterCell(new Cell(1, 2).setHeight(30).add("Footer"));
+        table.addCell(new Cell().add("0abcdefghijklmnopqrstuvwxyz1abcdefghijklmnopqrstuvwxyz2abcdefghijklmnopq"));
+        table.addCell(new Cell().add("0bbbbbbbbbbbbbbbbbbbbbbbbbbbb").setBorderBottom(new SolidBorder(50)));
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableWithHeaderFooterTest08() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderFooterTest08.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A7.rotate());
+
+        Table table = new Table(2);
+        table.addFooterCell(new Cell(1, 2).setHeight(50).add("Footer"));
+        table.addCell(new Cell().add("Cell1").setHeight(50));
+        table.addCell(new Cell().add("Cell2").setHeight(50));
+        table.setSkipLastFooter(true);
+        table.setBorderBottom(new SolidBorder(Color.RED, 30));
+        doc.add(table);
+
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Hello"));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableWithHeaderFooterTest09() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderFooterTest09.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)), PageSize.A4.rotate());
+        Cell headerCell1 = new Cell().add("I am header")
+                .setBorder(new SolidBorder(Color.GREEN, 30))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER);
+        Cell headerCell2 = new Cell().add("I am header")
+                .setBorder(new SolidBorder(Color.GREEN, 30))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER);
+
+        Cell tableCell1 = new Cell().add("I am table")
+                .setBorder(new SolidBorder(Color.RED, 200))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER);
+        Cell tableCell2 = new Cell().add("I am table")
+                .setBorder(new SolidBorder(Color.RED, 200))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER);
+
+        Cell footerCell1 = new Cell().add("I am footer")
+                .setBorder(new SolidBorder(Color.GREEN, 30))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER);
+        Cell footerCell2 = new Cell().add("I am footer")
+                .setBorder(new SolidBorder(Color.GREEN, 30))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER);
+
+        Table table = new Table(new float[]{350, 350}).setBorder(new SolidBorder(Color.BLUE, 20))
+                .addHeaderCell(headerCell1).addHeaderCell(headerCell2)
+                .addCell(tableCell1).addCell(tableCell2)
+                .addFooterCell(footerCell1).addFooterCell(footerCell2);
+        table.getHeader().setBorderLeft(new SolidBorder(Color.MAGENTA, 40));
+        table.getFooter().setBorderRight(new SolidBorder(Color.MAGENTA, 40));
+
+        doc.add(table);
+        doc.add(new AreaBreak());
+
+        headerCell1 = new Cell().add("I am header")
+                .setBorder(new SolidBorder(Color.GREEN, 200))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER);
+        headerCell2 = new Cell().add("I am header")
+                .setBorder(new SolidBorder(Color.GREEN, 200))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER);
+
+        tableCell1 = new Cell().add("I am table")
+                .setBorder(new SolidBorder(Color.RED, 30))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER);
+        tableCell2 = new Cell().add("I am table")
+                .setBorder(new SolidBorder(Color.RED, 30))
+                .setBorderBottom(Border.NO_BORDER)
+                .setBorderTop(Border.NO_BORDER);
+
+        table = new Table(new float[]{350, 350}).setBorder(new SolidBorder(Color.BLUE, 20))
+                .addHeaderCell(headerCell1).addHeaderCell(headerCell2)
+                .addCell(tableCell1).addCell(tableCell2);
+        doc.add(table);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableWithHeaderFooterTest10() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderFooterTest10.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A6.rotate());
+
+        Table table = new Table(3);
+        table.addFooterCell(new Cell(1, 3).setHeight(70).add("Footer"));
+        table.addHeaderCell(new Cell(1, 3).setHeight(30).add("Header"));
+
+        for (int i = 0; i < 2; i++) {
+            table.addCell(new Cell().add(i + ": Bazz :").setBorder(new SolidBorder(Color.BLACK, 10)));
+            table.addCell(new Cell().add("To infinity").setBorder(new SolidBorder(Color.YELLOW, 30)));
+            table.addCell(new Cell().add(" and beyond!").setBorder(new SolidBorder(Color.RED, 20)));
+        }
+
+        table.setSkipLastFooter(true);
+        doc.add(table);
+
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableWithHeaderFooterTest11() throws IOException, InterruptedException {
+        String testName = "tableWithHeaderFooterTest11.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(3);
+        table.setBorder(new SolidBorder(100));
+        table.addFooterCell(new Cell(1, 3).setHeight(100).add("Footer"));
+        table.addHeaderCell(new Cell(1, 3).setHeight(30).add("Header"));
+
+        for (int i = 0; i < 100; i++) {
+            table.addCell(new Cell().add(i + ": Bazz :").setBorder(new SolidBorder(Color.BLACK, 10)));
+            table.addCell(new Cell().add("To infinity").setBorder(new SolidBorder(Color.YELLOW, 30)));
+            table.addCell(new Cell().add(" and beyond!").setBorder(new SolidBorder(Color.RED, 20)));
+        }
+
+        table.setSkipLastFooter(true);
+        doc.add(table);
+
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+
+    @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
     })
@@ -1124,7 +1350,8 @@ public class BorderTest extends ExtendedITextTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
-    @Test@Ignore("DEVSIX-944")
+    @Test
+    @Ignore("DEVSIX-944")
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
     })

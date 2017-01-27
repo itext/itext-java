@@ -601,6 +601,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         }
         dic.put(key, action.getPdfObject());
         wrapper.getPdfObject().put(PdfName.AA, dic);
+        wrapper.getPdfObject().setModified();
     }
 
     /**

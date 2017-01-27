@@ -110,6 +110,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource, Serializable 
         if (position >= byteBuffer.limit())
             return -1;
 
+        // Not thread safe!
         byteBuffer.position((int)position);
         int bytesFromThisBuffer = Math.min(len, byteBuffer.remaining());
         byteBuffer.get(bytes, off, bytesFromThisBuffer);

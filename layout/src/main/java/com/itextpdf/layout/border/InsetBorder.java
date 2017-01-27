@@ -90,6 +90,39 @@ public class InsetBorder extends Border3D {
     }
 
     /**
+     * Creates a InsetBorder instance with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity opacity of the border
+     */
+    public InsetBorder(DeviceRgb color, float width, float opacity) {
+        super(color, width, opacity);
+    }
+
+    /**
+     * Creates a InsetBorder instance with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity opacity of the border
+     */
+    public InsetBorder(DeviceCmyk color, float width, float opacity) {
+        super(color, width, opacity);
+    }
+
+    /**
+     * Creates a InsetBorder instance with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity opacity of the border
+     */
+    public InsetBorder(DeviceGray color, float width, float opacity) {
+        super(color, width, opacity);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

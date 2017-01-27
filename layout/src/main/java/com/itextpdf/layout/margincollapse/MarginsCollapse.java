@@ -56,7 +56,7 @@ class MarginsCollapse implements Serializable {
         }
     }
 
-    public void joinMargin(MarginsCollapse marginsCollapse) {
+    void joinMargin(MarginsCollapse marginsCollapse) {
         joinMargin(marginsCollapse.maxPositiveMargin);
         joinMargin(marginsCollapse.minNegativeMargin);
     }

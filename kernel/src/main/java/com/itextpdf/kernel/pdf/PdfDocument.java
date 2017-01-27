@@ -691,11 +691,23 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     }
                     catalog.getPdfObject().put(PdfName.Metadata, xmp);
                 }
+                String producer = null;
+                if (reader == null) {
+                    producer = Version.getInstance().getVersion();
+                } else {
+                    if (info.getPdfObject().containsKey(PdfName.Producer)) {
+                        producer = info.getPdfObject().getAsString(PdfName.Producer).toUnicodeString();
+                    }
+                    producer = addModifiedPostfix(producer);
+                }
+                info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
                 checkIsoConformance();
                 PdfObject crypto = null;
                 if (properties.appendMode) {
                     if (structTreeRoot != null && structTreeRoot.getPdfObject().isModified()) {
                         tryFlushTagStructure();
+                    } else if (tagStructureContext != null) {
+                        tagStructureContext.removeAllConnectionsToTags();
                     }
                     if (catalog.isOCPropertiesMayHaveChanged() && catalog.getOCProperties(false).getPdfObject().isModified()) {
                         catalog.getOCProperties(false).flush();
@@ -728,9 +740,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         crypto = reader.decrypt.getPdfObject();
                     }
                 } else {
-                    if (structTreeRoot != null) {
-                        tryFlushTagStructure();
-                    }
+
                     if (catalog.isOCPropertiesMayHaveChanged()) {
                         catalog.getPdfObject().put(PdfName.OCProperties, catalog.getOCProperties(false).getPdfObject());
                         catalog.getOCProperties(false).flush();
@@ -750,6 +760,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
 
                     for (int pageNum = 1; pageNum <= getNumberOfPages(); pageNum++) {
                         getPage(pageNum).flush();
+                    }
+                    if (structTreeRoot != null) {
+                        tryFlushTagStructure();
                     }
                     catalog.getPdfObject().flush(false);
                     info.flush();
@@ -1558,34 +1571,19 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     writer.crypto = reader.decrypt;
                 }
                 writer.document = this;
+                String producer = null;
                 if (reader == null) {
                     catalog = new PdfCatalog(this);
                     info = new PdfDocumentInfo(this).addCreationDate();
-                    info.addModDate();
-                    info.getPdfObject().put(PdfName.Producer, new PdfString(Version.getInstance().getVersion()));
+                    producer = Version.getInstance().getVersion();
                 } else {
-                    info.addModDate();
-                    String producer = null;
                     if (info.getPdfObject().containsKey(PdfName.Producer)) {
                         producer = info.getPdfObject().getAsString(PdfName.Producer).toUnicodeString();
                     }
-                    Version version = Version.getInstance();
-                    if (producer == null || !version.getVersion().contains(version.getProduct())) {
-                        producer = version.getVersion();
-                    } else {
-                        int idx = producer.indexOf("; modified using");
-                        StringBuilder buf;
-                        if (idx == -1) {
-                            buf = new StringBuilder(producer);
-                        } else {
-                            buf = new StringBuilder(producer.substring(0, idx));
-                        }
-                        buf.append("; modified using ");
-                        buf.append(version.getVersion());
-                        producer = buf.toString();
-                    }
-                    info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
+                    producer = addModifiedPostfix(producer);
                 }
+                info.addModDate();
+                info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
                 trailer = new PdfDictionary();
                 trailer.put(PdfName.Root, catalog.getPdfObject().getIndirectReference());
                 trailer.put(PdfName.Info, info.getPdfObject().getIndirectReference());
@@ -2065,5 +2063,23 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         eventDispatcher = new EventDispatcher();
+    }
+
+    private String addModifiedPostfix(String producer) {
+        Version version = Version.getInstance();
+        if (producer == null || !version.getVersion().contains(version.getProduct())) {
+            return version.getVersion();
+        } else {
+            int idx = producer.indexOf("; modified using");
+            StringBuilder buf;
+            if (idx == -1) {
+                buf = new StringBuilder(producer);
+            } else {
+                buf = new StringBuilder(producer.substring(0, idx));
+            }
+            buf.append("; modified using ");
+            buf.append(version.getVersion());
+            return buf.toString();
+        }
     }
 }

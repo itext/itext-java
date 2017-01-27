@@ -72,21 +72,20 @@ import java.util.List;
 
 public class ImageRenderer extends AbstractRenderer {
 
-    private Float height;
-    private Float width;
     protected Float fixedXPosition;
     protected Float fixedYPosition;
     protected float pivotY;
     protected float deltaX;
     protected float imageWidth;
     protected float imageHeight;
+    float[] matrix = new float[6];
+    private Float height;
+    private Float width;
     private float imageItselfScaledWidth;
     private float imageItselfScaledHeight;
     private Rectangle initialOccupiedAreaBBox;
     private float rotatedDeltaX;
     private float rotatedDeltaY;
-
-    float[] matrix = new float[6];
 
     /**
      * Creates an ImageRenderer from its corresponding layout object.
@@ -100,19 +99,26 @@ public class ImageRenderer extends AbstractRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea().clone();
-        Rectangle layoutBox = area.getBBox();
+        Rectangle layoutBox = area.getBBox().clone();
+        width = retrieveWidth(layoutBox.getWidth());
+        height = retrieveHeight();
+
         applyMargins(layoutBox, false);
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
+
+        if (isAbsolutePosition()) {
+            applyAbsolutePosition(layoutBox);
+        }
+
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
-        width = retrieveWidth(layoutBox.getWidth());
-        height = retrieveHeight();
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
-        PdfXObject xObject = ((Image) (getModelElement())).getXObject();
-        imageWidth = xObject.getWidth();
-        imageHeight = xObject.getHeight();
+        Image modelElement = (Image) (getModelElement());
+        PdfXObject xObject = modelElement.getXObject();
+        imageWidth = modelElement.getImageWidth();
+        imageHeight = modelElement.getImageHeight();
 
         if (width == null && height == null) {
             width = imageWidth;
@@ -155,7 +161,7 @@ public class ImageRenderer extends AbstractRenderer {
         } else if (null != retrieveMaxHeight() && height > retrieveMaxHeight()) {
             width *= retrieveMaxHeight() / height;
             height = retrieveMaxHeight();
-        } else if (null != retrieveHeight() && height != retrieveHeight()) {
+        } else if (null != retrieveHeight() && !height.equals(retrieveHeight())) {
             width *= retrieveHeight() / height;
             height = retrieveHeight();
         }
@@ -230,7 +236,7 @@ public class ImageRenderer extends AbstractRenderer {
 
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
-            applyAbsolutePositioningTranslation(false);
+            applyRelativePositioningTranslation(false);
         }
 
         if (fixedYPosition == null) {
@@ -279,7 +285,9 @@ public class ImageRenderer extends AbstractRenderer {
         }
 
         PdfXObject xObject = ((Image) (getModelElement())).getXObject();
+        beginElementOpacityApplying(drawContext);
         canvas.addXObject(xObject, matrix[0], matrix[1], matrix[2], matrix[3], (float) fixedXPosition + deltaX, (float) fixedYPosition);
+        endElementOpacityApplying(drawContext);
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FLUSH_ON_DRAW))) {
             xObject.flush();
         }
@@ -289,7 +297,7 @@ public class ImageRenderer extends AbstractRenderer {
         }
 
         if (isRelativePosition) {
-            applyAbsolutePositioningTranslation(true);
+            applyRelativePositioningTranslation(true);
         }
         applyBorderBox(occupiedArea.getBBox(), getBorders(), true);
         applyMargins(occupiedArea.getBBox(), true);
@@ -311,7 +319,7 @@ public class ImageRenderer extends AbstractRenderer {
 
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
-            applyAbsolutePositioningTranslation(false);
+            applyRelativePositioningTranslation(false);
         }
         applyMargins(initialOccupiedAreaBBox, true);
         applyBorderBox(initialOccupiedAreaBBox, true);
@@ -339,7 +347,7 @@ public class ImageRenderer extends AbstractRenderer {
         applyBorderBox(area, false);
         // if rotation was applied, width would be equal to the width of rectangle bounding the rotated image
         float angleScaleCoef = imageWidth / (float) width;
-        if (width > angleScaleCoef*area.getWidth()) {
+        if (width > angleScaleCoef * area.getWidth()) {
             setProperty(Property.HEIGHT, area.getWidth() / width * imageHeight);
             setProperty(Property.WIDTH, UnitValue.createPointValue(angleScaleCoef * area.getWidth()));
         }
@@ -362,7 +370,7 @@ public class ImageRenderer extends AbstractRenderer {
         if (angle != 0) {
             AffineTransform t = AffineTransform.getRotateInstance(angle);
             Point p00 = t.transform(new Point(0, 0), new Point());
-            Point p01 = t.transform(new Point(0, (float)height), new Point());
+            Point p01 = t.transform(new Point(0, (float) height), new Point());
             Point p10 = t.transform(new Point((float) width, 0), new Point());
             Point p11 = t.transform(new Point((float) width, (float) height), new Point());
 
@@ -420,8 +428,9 @@ public class ImageRenderer extends AbstractRenderer {
             fixedYPosition += (float) t.getTranslateY();
         }
     }
+
     private void applyConcatMatrix(DrawContext drawContext, Float angle) {
-        AffineTransform rotationTransform = AffineTransform.getRotateInstance((float)angle);
+        AffineTransform rotationTransform = AffineTransform.getRotateInstance((float) angle);
         Rectangle rect = getBorderAreaBBox();
 
         List<Point> rotatedPoints = transformPoints(rectangleToPointsList(rect), rotationTransform);
@@ -447,7 +456,7 @@ public class ImageRenderer extends AbstractRenderer {
             if (angle < 0) {
                 atan = -atan;
             }
-            rotatedDeltaX = Math.abs((float)(gip * Math.cos(angle - atan) - leftBorderWidth));
+            rotatedDeltaX = Math.abs((float) (gip * Math.cos(angle - atan) - leftBorderWidth));
         } else {
             rotatedDeltaX = 0;
         }
@@ -461,7 +470,7 @@ public class ImageRenderer extends AbstractRenderer {
             if (angle < 0) {
                 atan = -atan;
             }
-            rotatedDeltaY = Math.abs((float)(gip * Math.cos(angle - atan)  - topBorderWidth));
+            rotatedDeltaY = Math.abs((float) (gip * Math.cos(angle - atan) - topBorderWidth));
         } else {
             rotatedDeltaY = 0;
         }

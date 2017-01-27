@@ -51,6 +51,8 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.ILargeElement;
+import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
@@ -192,13 +194,6 @@ public class Document extends RootElement<Document> {
         }
     }
 
-    @Override
-    protected RootRenderer ensureRootRendererNotNull() {
-        if (rootRenderer == null)
-            rootRenderer = new DocumentRenderer(this, immediateFlush);
-        return rootRenderer;
-    }
-
     /**
      * Gets the left margin, measured in points
      *
@@ -295,6 +290,36 @@ public class Document extends RootElement<Document> {
      */
     public Rectangle getPageEffectiveArea(PageSize pageSize) {
         return new Rectangle(pageSize.getLeft() + leftMargin, pageSize.getBottom() + bottomMargin, pageSize.getWidth() - leftMargin - rightMargin, pageSize.getHeight() - bottomMargin - topMargin);
+    }
+
+    /**
+     * Gets {@link FontProvider} if presents.
+     *
+     * @return instance of {@link FontProvider} if exists, otherwise null.
+     */
+    public FontProvider getFontProvider() {
+        Object fontProvider = this.<Object>getProperty(Property.FONT_PROVIDER);
+        if (fontProvider instanceof FontProvider) {
+            return (FontProvider) fontProvider;
+        }
+        return null;
+    }
+
+    /**
+     * Sets {@link FontProvider}.
+     * Note, font provider is inherited property.
+     *
+     * @param fontProvider instance of {@link FontProvider}.
+     */
+    public void setFontProvider(FontProvider fontProvider) {
+        setProperty(Property.FONT_PROVIDER, fontProvider);
+    }
+
+    @Override
+    protected RootRenderer ensureRootRendererNotNull() {
+        if (rootRenderer == null)
+            rootRenderer = new DocumentRenderer(this, immediateFlush);
+        return rootRenderer;
     }
 
     /**

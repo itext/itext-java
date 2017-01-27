@@ -53,7 +53,9 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
  * as the value for {@link com.itextpdf.layout.property.Property#UNDERLINE}
  */
 public class Underline {
+    @Deprecated
     protected Color color;
+    protected TransparentColor transparentColor;
     protected float thickness;
     protected float thicknessMul;
     protected float yPosition;
@@ -77,7 +79,29 @@ public class Underline {
      * @param lineCapStyle the way the underline finishes at its edges. {@link PdfCanvasConstants.LineCapStyle}
      */
     public Underline(Color color, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {
+        this(color, 1f, thickness, thicknessMul, yPosition, yPositionMul, lineCapStyle);
+    }
+
+    /**
+     * Creates an Underline. Both the thickness and vertical positioning under
+     * the text element's base line can be set to a fixed value, or a variable
+     * one depending on the element's font size.
+     * If you want a fixed-width thickness, set <code>thicknessMul</code> to 0;
+     * if you want a thickness solely dependent on the font size, set
+     * <code>thickness</code> to 0.
+     * Mutatis mutandis for the y-position.
+     * 
+     * @param color the {@link Color} of the underline
+     * @param opacity  a float defining the opacity of the underline; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
+     * @param thickness  a float defining the minimum thickness in points of the underline
+     * @param thicknessMul  a float defining the font size dependent component of the thickness of the underline
+     * @param yPosition a float defining the default absolute vertical distance in points from the text's base line
+     * @param yPositionMul  a float defining the font size dependent component of the vertical positioning of the underline
+     * @param lineCapStyle the way the underline finishes at its edges. {@link PdfCanvasConstants.LineCapStyle}
+     */
+    public Underline(Color color, float opacity, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {
         this.color = color;
+        this.transparentColor = new TransparentColor(color, opacity);
         this.thickness = thickness;
         this.thicknessMul = thicknessMul;
         this.yPosition = yPosition;
@@ -90,7 +114,15 @@ public class Underline {
      * @return a {@link Color}
      */
     public Color getColor() {
-        return color;
+        return transparentColor.getColor();
+    }
+
+    /**
+     * Gets the opacity of the underline color.
+     * @return a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
+     */
+    public float getOpacity() {
+        return transparentColor.getOpacity();
     }
 
     /**

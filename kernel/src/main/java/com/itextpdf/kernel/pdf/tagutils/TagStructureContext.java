@@ -208,6 +208,7 @@ public class TagStructureContext implements Serializable {
             }
         }
         annotDic.remove(PdfName.StructParent);
+        annotDic.setModified();
 
         if (structElem != null) {
             return new TagTreePointer(document).setCurrentStructElem(structElem);
@@ -371,8 +372,8 @@ public class TagStructureContext implements Serializable {
 
     /**
      * Method for internal usages.
-     * Essentially, all it does is just making sure that for connected tags properties are
-     * up to date with connected accessible elements properties.
+     * Essentially, all it does is just making sure that for connected tags the properties are
+     * up to date with the connected accessible elements properties.
      */
     public void actualizeTagsProperties() {
         for (Map.Entry<IAccessibleElement, PdfStructElem> structToModel : connectedModelToStruct.entrySet()) {

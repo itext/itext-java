@@ -46,6 +46,7 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
+import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.TabStop;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -62,7 +63,9 @@ import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TabAlignment;
 import com.itextpdf.layout.property.UnitValue;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -72,6 +75,7 @@ public class LineRenderer extends AbstractRenderer {
     protected float maxAscent;
     protected float maxDescent;
 
+    // bidi levels
     protected byte[] levels;
 
     @Override
@@ -86,46 +90,19 @@ public class LineRenderer extends AbstractRenderer {
 
         MinMaxWidth minMaxWidth = new MinMaxWidth(0, layoutBox.getWidth());
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(minMaxWidth);
+        
+        updateChildrenParent();
 
-        BaseDirection baseDirection = this.<BaseDirection>getProperty(Property.BASE_DIRECTION);
-        for (IRenderer renderer : childRenderers) {
-            if (renderer instanceof TextRenderer) {
-                renderer.setParent(this);
-                ((TextRenderer) renderer).applyOtf();
-                renderer.setParent(null);
-                if (baseDirection == null || baseDirection == BaseDirection.NO_BIDI) {
-                    baseDirection = renderer.<BaseDirection>getOwnProperty(Property.BASE_DIRECTION);
-                }
-            }
-        }
+        resolveChildrenFonts();
 
-        List<Integer> unicodeIdsReorderingList = null;
-        if (levels == null && baseDirection != null && baseDirection != BaseDirection.NO_BIDI) {
-            unicodeIdsReorderingList = new ArrayList<>();
-            boolean newLineFound = false;
-            for (IRenderer child : childRenderers) {
-                if (newLineFound) {
-                    break;
-                }
-                if (child instanceof TextRenderer) {
-                    GlyphLine text = ((TextRenderer) child).getText();
-                    for (int i = text.start; i < text.end; i++) {
-                        if (TextRenderer.isNewLine(text, i)) {
-                            newLineFound = true;
-                            break;
-                        }
-                        // we assume all the chars will have the same bidi group
-                        // we also assume pairing symbols won't get merged with other ones
-                        unicodeIdsReorderingList.add(text.get(i).getUnicode());
-                    }
-                }
-            }
-            levels = unicodeIdsReorderingList.size() > 0 ? TypographyUtils.getBidiLevels(baseDirection, ArrayUtil.toArray(unicodeIdsReorderingList)) : null;
-        }
+        int totalNumberOfTrimmedGlyphs = trimFirst();
+
+        BaseDirection baseDirection = applyOtf();
+
+        updateBidiLevels(totalNumberOfTrimmedGlyphs, baseDirection);
 
         boolean anythingPlaced = false;
         TabStop hangingTabStop = null;
-
         LineLayoutResult result = null;
 
         while (childPos < childRenderers.size()) {
@@ -154,16 +131,12 @@ public class LineRenderer extends AbstractRenderer {
                 }
             }
 
-            if (!anythingPlaced && childRenderer instanceof TextRenderer) {
-                ((TextRenderer) childRenderer).trimFirst();
-            }
-
             if (hangingTabStop != null && hangingTabStop.getTabAlignment() == TabAlignment.ANCHOR
                     && childRenderer instanceof TextRenderer) {
                 childRenderer.setProperty(Property.TAB_ANCHOR, hangingTabStop.getTabAnchor());
             }
 
-            childResult = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
+            childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
 
             float minChildWidth = 0;
             float maxChildWidth = 0;
@@ -293,7 +266,7 @@ public class LineRenderer extends AbstractRenderer {
                     if (child instanceof TextRenderer) {
                         GlyphLine childLine = ((TextRenderer) child).line;
                         for (int i = childLine.start; i < childLine.end; i++) {
-                            if (TextRenderer.isNewLine(childLine, i)) {
+                            if (TextUtil.isNewLine(childLine.get(i))) {
                                 newLineFound = true;
                                 break;
                             }
@@ -316,20 +289,18 @@ public class LineRenderer extends AbstractRenderer {
                     int offset = 0;
                     while (pos < lineGlyphs.size()) {
                         IRenderer renderer = lineGlyphs.get(pos).renderer;
-                        TextRenderer newRenderer = new TextRenderer((TextRenderer) renderer);
-                        newRenderer.deleteOwnProperty(Property.REVERSED);
+                        TextRenderer newRenderer = new TextRenderer((TextRenderer) renderer).removeReversedRanges();
                         children.add(newRenderer);
-                        ((TextRenderer) children.get(children.size() - 1)).line = new GlyphLine(((TextRenderer) children.get(children.size() - 1)).line);
-                        GlyphLine gl = ((TextRenderer) children.get(children.size() - 1)).line;
+                        newRenderer.line = new GlyphLine(newRenderer.line);
                         List<Glyph> replacementGlyphs = new ArrayList<>();
                         while (pos < lineGlyphs.size() && lineGlyphs.get(pos).renderer == renderer) {
                             if (pos + 1 < lineGlyphs.size()) {
                                 if (reorder[pos] == reorder[pos + 1] + 1 &&
-                                        !TextRenderer.isSpaceGlyph(lineGlyphs.get(pos + 1).glyph) && !TextRenderer.isSpaceGlyph(lineGlyphs.get(pos).glyph)) {
+                                        !TextUtil.isSpaceOrWhitespace(lineGlyphs.get(pos + 1).glyph) && !TextUtil.isSpaceOrWhitespace(lineGlyphs.get(pos).glyph)) {
                                     reversed = true;
                                 } else {
                                     if (reversed) {
-                                        List<int[]> reversedRange = createOrGetReversedProperty(newRenderer);
+                                        List<int[]> reversedRange = newRenderer.initReversedRanges();
                                         reversedRange.add(new int[]{initialPos - offset, pos - offset});
                                         reversed = false;
                                     }
@@ -342,18 +313,20 @@ public class LineRenderer extends AbstractRenderer {
                         }
 
                         if (reversed) {
-                            List<int[]> reversedRange = createOrGetReversedProperty(newRenderer);
+                            List<int[]> reversedRange = newRenderer.initReversedRanges();
                             reversedRange.add(new int[]{initialPos - offset, pos - 1 - offset});
                             reversed = false;
                             initialPos = pos;
                         }
                         offset = initialPos;
-                        gl.setGlyphs(replacementGlyphs);
+                        newRenderer.line.setGlyphs(replacementGlyphs);
                     }
 
                     float currentXPos = layoutContext.getArea().getBBox().getLeft();
                     for (IRenderer child : children) {
                         float currentWidth = ((TextRenderer) child).calculateLineWidth();
+                        float[] margins = ((TextRenderer) child).getMargins();
+                        currentWidth += margins[1] + margins[3];
                         ((TextRenderer) child).occupiedArea.getBBox().setX(currentXPos).setWidth(currentWidth);
                         currentXPos += currentWidth;
                     }
@@ -553,13 +526,6 @@ public class LineRenderer extends AbstractRenderer {
         return result.getNotNullMinMaxWidth(availableWidth);
     }
 
-    private List<int[]> createOrGetReversedProperty(TextRenderer newRenderer) {
-        if (!newRenderer.hasOwnProperty(Property.REVERSED)) {
-            newRenderer.setProperty(Property.REVERSED, new ArrayList<int[]>());
-        }
-        return newRenderer.<List<int[]>>getOwnProperty(Property.REVERSED);
-    }
-
     private IRenderer getLastChildRenderer() {
         return childRenderers.get(childRenderers.size() - 1);
     }
@@ -648,6 +614,108 @@ public class LineRenderer extends AbstractRenderer {
         tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue((float) tabWidth));
         tabRenderer.setProperty(Property.MIN_HEIGHT, maxAscent - maxDescent);
     }
+
+    private void updateChildrenParent() {
+        for (IRenderer renderer : childRenderers) {
+            renderer.setParent(this);
+        }
+    }
+
+    /**
+     * Trim first child text renderers.
+     *
+     * @return total number of trimmed glyphs.
+     */
+    private int trimFirst() {
+        int totalNumberOfTrimmedGlyphs = 0;
+        for (IRenderer renderer : childRenderers) {
+            if (renderer instanceof TextRenderer) {
+                TextRenderer textRenderer = (TextRenderer) renderer;
+                GlyphLine currentText = textRenderer.getText();
+                if (currentText != null) {
+                    int prevTextStart = currentText.start;
+                    textRenderer.trimFirst();
+                    int numOfTrimmedGlyphs = textRenderer.getText().start - prevTextStart;
+                    totalNumberOfTrimmedGlyphs += numOfTrimmedGlyphs;
+                }
+                if (textRenderer.length() > 0) {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+        return totalNumberOfTrimmedGlyphs;
+    }
+
+    /**
+     * Apply OTF features and return the last(!) base direction of child renderer
+     *
+     * @return the last(!) base direction of child renderer.
+     */
+    private BaseDirection applyOtf() {
+        BaseDirection baseDirection = this.<BaseDirection>getProperty(Property.BASE_DIRECTION);
+        for (IRenderer renderer : childRenderers) {
+            if (renderer instanceof TextRenderer) {
+                ((TextRenderer) renderer).applyOtf();
+                if (baseDirection == null || baseDirection == BaseDirection.NO_BIDI) {
+                    baseDirection = renderer.<BaseDirection>getOwnProperty(Property.BASE_DIRECTION);
+                }
+            }
+        }
+        return baseDirection;
+    }
+
+    private void updateBidiLevels(int totalNumberOfTrimmedGlyphs, BaseDirection baseDirection) {
+        if (totalNumberOfTrimmedGlyphs != 0 && levels != null) {
+            levels = Arrays.copyOfRange(levels, totalNumberOfTrimmedGlyphs, levels.length);
+        }
+
+        List<Integer> unicodeIdsReorderingList = null;
+        if (levels == null && baseDirection != null && baseDirection != BaseDirection.NO_BIDI) {
+            unicodeIdsReorderingList = new ArrayList<>();
+            boolean newLineFound = false;
+            for (IRenderer child : childRenderers) {
+                if (newLineFound) {
+                    break;
+                }
+                if (child instanceof TextRenderer) {
+                    GlyphLine text = ((TextRenderer) child).getText();
+                    for (int i = text.start; i < text.end; i++) {
+                        if (TextUtil.isNewLine(text.get(i))) {
+                            newLineFound = true;
+                            break;
+                        }
+                        // we assume all the chars will have the same bidi group
+                        // we also assume pairing symbols won't get merged with other ones
+                        unicodeIdsReorderingList.add(text.get(i).getUnicode());
+                    }
+                }
+            }
+            levels = unicodeIdsReorderingList.size() > 0 ? TypographyUtils.getBidiLevels(baseDirection, ArrayUtil.toArray(unicodeIdsReorderingList)) : null;
+        }
+    }
+
+    /**
+     * While resolving TextRenderer may split into several ones with different fonts.
+     */
+    private void resolveChildrenFonts() {
+        List<IRenderer> newChildRenderers = new ArrayList<>(childRenderers.size());
+        for (IRenderer child : childRenderers) {
+            if (child instanceof TextRenderer) {
+                newChildRenderers.addAll(((TextRenderer)child).resolveFonts());
+            } else {
+                newChildRenderers.add(child);
+            }
+        }
+
+        //TODO It might be one textRenderer with resolved font.
+        // this mean, that some TextRenderer has been split into several with different fonts.
+        //if (newChildRenderers.size() > childRenderers.size()) {
+            childRenderers = newChildRenderers;
+        //}
+    }
+
 
     static class RendererGlyph {
         public RendererGlyph(Glyph glyph, TextRenderer textRenderer) {

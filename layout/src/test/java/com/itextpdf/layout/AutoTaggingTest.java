@@ -12,6 +12,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
@@ -205,6 +206,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -239,6 +241,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -400,6 +403,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -436,6 +440,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 

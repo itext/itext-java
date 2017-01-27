@@ -19,7 +19,7 @@ public class MinMaxWidthUtils {
     }
 
     public static float toEffectiveWidth(BlockElement b, float fullWidth) {
-        return fullWidth - getBorderWidth(b) - getMarginsWidth(b) + eps;
+        return fullWidth - getBorderWidth(b) - getMarginsWidth(b) - getPaddingWidth(b) + eps;
     }
 
     public static MinMaxWidth countDefaultMinMaxWidth(IRenderer renderer, float availableWidth) {

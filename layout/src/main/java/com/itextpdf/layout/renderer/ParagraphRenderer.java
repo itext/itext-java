@@ -59,12 +59,13 @@ import com.itextpdf.layout.minmaxwidth.handler.AbstractWidthHandler;
 import com.itextpdf.layout.property.Leading;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Paragraph}
@@ -97,6 +98,8 @@ public class ParagraphRenderer extends BlockRenderer {
         LineRenderer currentRenderer = (LineRenderer) new LineRenderer().setParent(this);
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
 
+        Float blockWidth = retrieveWidth(parentBBox.getWidth());
+
         if (0 == childRenderers.size()) {
             anythingPlaced = true;
             currentRenderer = null;
@@ -107,22 +110,29 @@ public class ParagraphRenderer extends BlockRenderer {
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
-        MarginsCollapseHandler marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
+        MarginsCollapseHandler marginsCollapseHandler = null;
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
         if (marginsCollapsingEnabled) {
+            marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
             marginsCollapseHandler.startMarginsCollapse(parentBBox);
         }
-
         Border[] borders = getBorders();
         float[] paddings = getPaddings();
-        float additionalWidth = applyBordersPaddingsMargins(parentBBox, borders, paddings, isPositioned);
+        float additionalWidth = applyBordersPaddingsMargins(parentBBox, borders, paddings);
+        if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
+            parentBBox.setWidth((float) blockWidth);
+        }
 
         MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, layoutContext.getArea().getBBox().getWidth());
         AbstractWidthHandler widthHandler = new MaxMaxWidthHandler(minMaxWidth);
 
         Float blockMaxHeight = retrieveMaxHeight();
         if (null != blockMaxHeight && parentBBox.getHeight() > blockMaxHeight) {
-            parentBBox.moveUp(parentBBox.getHeight() - (float) blockMaxHeight).setHeight((float) blockMaxHeight);
+            float heightDelta = parentBBox.getHeight() - (float) blockMaxHeight;
+            if (marginsCollapsingEnabled) {
+                marginsCollapseHandler.processFixedHeightAdjustment(heightDelta);
+            }
+            parentBBox.moveUp(heightDelta).setHeight((float) blockMaxHeight);
             wasHeightClipped = true;
         }
 
@@ -223,14 +233,9 @@ public class ParagraphRenderer extends BlockRenderer {
                     } else {
                         if (marginsCollapsingEnabled) {
                             if (anythingPlaced) {
-                                marginsCollapseHandler.endChildMarginsHandling();
+                                marginsCollapseHandler.endChildMarginsHandling(layoutBox);
                             }
-                            marginsCollapseHandler.endMarginsCollapse();
                         }
-                        applyPaddings(occupiedArea.getBBox(), paddings, true);
-                        applyBorderBox(occupiedArea.getBBox(), borders, true);
-                        applyMargins(occupiedArea.getBBox(), true);
-
                         ParagraphRenderer[] split = split();
                         split[0].lines = lines;
                         for (LineRenderer line : lines) {
@@ -246,14 +251,6 @@ public class ParagraphRenderer extends BlockRenderer {
                             if (isPositioned) {
                                 correctPositionedLayout(layoutBox);
                             }
-                            if (wasHeightClipped) {
-                                occupiedArea.getBBox()
-                                        .moveDown((float) blockMaxHeight - occupiedArea.getBBox().getHeight())
-                                        .setHeight((float) blockMaxHeight);
-                                Logger logger = LoggerFactory.getLogger(ParagraphRenderer.class);
-                                logger.warn(LogMessageConstant.CLIP_ELEMENT);
-                                return new MinMaxWidthLayoutResult(LayoutResult.FULL, occupiedArea, split[0], null).setMinMaxWidth(minMaxWidth);
-                            }
                             split[1].setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
                         }
                         if (hasProperty(Property.MIN_HEIGHT)) {
@@ -262,7 +259,26 @@ public class ParagraphRenderer extends BlockRenderer {
                         if (hasProperty(Property.HEIGHT)) {
                             split[1].setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
                         }
-                        if (anythingPlaced) {
+                        if (wasHeightClipped) {
+                            split[0].getOccupiedArea().getBBox()
+                                    .moveDown((float) blockMaxHeight - occupiedArea.getBBox().getHeight())
+                                    .setHeight((float) blockMaxHeight);
+                            Logger logger = LoggerFactory.getLogger(ParagraphRenderer.class);
+                            logger.warn(LogMessageConstant.CLIP_ELEMENT);
+                        }
+                        applyPaddings(occupiedArea.getBBox(), paddings, true);
+                        applyBorderBox(occupiedArea.getBBox(), borders, true);
+                        if (marginsCollapsingEnabled) {
+                            marginsCollapseHandler.endMarginsCollapse(layoutBox);
+                            split[0].setProperty(Property.MARGIN_TOP, this.getPropertyAsFloat(Property.MARGIN_TOP));
+                            split[0].setProperty(Property.MARGIN_BOTTOM, this.getPropertyAsFloat(Property.MARGIN_BOTTOM));
+
+                        }
+                        applyMargins(occupiedArea.getBBox(), true);
+
+                        if (wasHeightClipped) {
+                            return new MinMaxWidthLayoutResult(LayoutResult.FULL, occupiedArea, split[0], null).setMinMaxWidth(minMaxWidth);
+                        } else if (anythingPlaced) {
                             return new MinMaxWidthLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1]).setMinMaxWidth(minMaxWidth);
                         } else {
                             if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
@@ -302,15 +318,13 @@ public class ParagraphRenderer extends BlockRenderer {
             }
         }
 
-        if (!isPositioned) {
-            float moveDown = Math.min((leadingValue - lastLineHeight) / 2, occupiedArea.getBBox().getY() - layoutBox.getY());
-            occupiedArea.getBBox().moveDown(moveDown);
-            occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
-        }
+        float moveDown = Math.min((leadingValue - lastLineHeight) / 2, occupiedArea.getBBox().getY() - layoutBox.getY());
+        occupiedArea.getBBox().moveDown(moveDown);
+        occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
+
         if (marginsCollapsingEnabled && childRenderers.size() > 0) {
-            marginsCollapseHandler.endChildMarginsHandling();
+            marginsCollapseHandler.endChildMarginsHandling(layoutBox);
         }
-        applyPaddings(occupiedArea.getBBox(), paddings, true);
         IRenderer overflowRenderer = null;
         Float blockMinHeight = retrieveMinHeight();
         if (null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
@@ -334,8 +348,9 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         if (marginsCollapsingEnabled) {
-            marginsCollapseHandler.endMarginsCollapse();
+            marginsCollapseHandler.endMarginsCollapse(layoutBox);
         }
+        applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         applyMargins(occupiedArea.getBBox(), true);
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
@@ -382,8 +397,11 @@ public class ParagraphRenderer extends BlockRenderer {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (lines != null && lines.size() > 0) {
-            for (LineRenderer lineRenderer : lines) {
-                sb.append(lineRenderer.toString()).append("\n");
+            for (int i = 0; i < lines.size(); i++) {
+                if (i > 0) {
+                    sb.append("\n");
+                }
+                sb.append(lines.get(i).toString());
             }
         } else {
             for (IRenderer renderer : childRenderers) {
@@ -458,7 +476,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
     protected ParagraphRenderer[] split() {
         ParagraphRenderer splitRenderer = createSplitRenderer(parent);
-        splitRenderer.occupiedArea = occupiedArea.clone();
+        splitRenderer.occupiedArea = occupiedArea;
         splitRenderer.isLastRendererForModelElement = false;
 
         ParagraphRenderer overflowRenderer = createOverflowRenderer(parent);

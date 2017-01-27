@@ -43,9 +43,14 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.*;
-
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfObjectWrapper;
+import com.itextpdf.kernel.pdf.PdfPage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -95,6 +100,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     /**
      * Gets list of the direct kids of StructTreeRoot.
      * If certain kid is flushed, there will be a {@code null} in the list on it's place.
+     *
      * @return list of the direct kids of StructTreeRoot.
      */
     @Override
@@ -124,6 +130,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         if (k == null) {
             k = new PdfArray();
             getPdfObject().put(PdfName.K, k);
+            setModified();
             if (kObj != null) {
                 k.add(kObj);
             }
@@ -136,6 +143,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         if (roleMap == null) {
             roleMap = new PdfDictionary();
             getPdfObject().put(PdfName.RoleMap, roleMap);
+            setModified();
         }
         return roleMap;
     }
@@ -143,6 +151,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     /**
      * Creates and flushes parent tree entry for the page.
      * Effectively this means that new content mustn't be added to the page.
+     *
      * @param page {@link PdfPage} for which to create parent tree entry. Typically this page is flushed after this call.
      */
     public void createParentTreeEntryForPage(PdfPage page) {
@@ -181,7 +190,9 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
         getPdfObject().put(PdfName.ParentTree, getParentTreeHandler().buildParentTree());
         getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber((int) getDocument().getNextStructParentIndex()));
-        flushAllKids(this);
+        if (!getDocument().isAppendMode()) {
+            flushAllKids(this);
+        }
         super.flush();
     }
 
@@ -192,7 +203,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * otherwise an exception is thrown.
      *
      * @param destDocument document to copy structure to. Shall not be current document.
-     * @param page2page  association between original page and copied page.
+     * @param page2page    association between original page and copied page.
      */
     public void copyTo(PdfDocument destDocument, Map<PdfPage, PdfPage> page2page) {
         StructureTreeCopier.copyTo(destDocument, page2page, getDocument());
@@ -204,7 +215,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      * NOTE: Works only for {@code PdfStructTreeRoot} that is read from the document opened in reading mode,
      * otherwise an exception is thrown.
      *
-     * @param destDocument       document to copy structure to.
+     * @param destDocument     document to copy structure to.
      * @param insertBeforePage indicates where the structure to be inserted.
      * @param page2page        association between original page and copied page.
      */
@@ -230,12 +241,15 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     }
 
     void addKidObject(int index, PdfDictionary structElem) {
-        if (index == -1)
+        if (index == -1) {
             getKidsObject().add(structElem);
-        else
+        } else {
             getKidsObject().add(index, structElem);
-        if (PdfStructElem.isStructElem(structElem))
+        }
+        if (PdfStructElem.isStructElem(structElem)) {
             structElem.put(PdfName.P, getPdfObject());
+        }
+        setModified();
     }
 
     @Override

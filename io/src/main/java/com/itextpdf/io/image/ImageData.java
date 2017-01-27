@@ -58,6 +58,11 @@ import java.util.Map;
 
 public abstract class ImageData {
 
+    /** a static that is used for attributing a unique id to each image. */
+    private static long serialId = 0;
+
+    private static final Object staticLock = new Object();
+
     protected URL url;
 
     protected int[] transparency;
@@ -339,13 +344,11 @@ public abstract class ImageData {
         data = stream.toByteArray();
     }
 
-
-    /** a static that is used for attributing a unique id to each image. */
-    private static long serialId = 0;
-
     /** Creates a new serial id.
      * @return the new serialId */
-    private static synchronized Long getSerialId() {
-        return ++serialId;
+    private static Long getSerialId() {
+        synchronized (staticLock) {
+            return ++serialId;
+        }
     }
 }

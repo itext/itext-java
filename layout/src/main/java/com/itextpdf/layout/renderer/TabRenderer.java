@@ -92,7 +92,9 @@ public class TabRenderer extends AbstractRenderer {
             drawContext.getCanvas().openTag(new CanvasArtifact());
         }
 
+        beginElementOpacityApplying(drawContext);
         leader.draw(drawContext.getCanvas(), occupiedArea.getBBox());
+        endElementOpacityApplying(drawContext);
 
         if (isTagged) {
             drawContext.getCanvas().closeTag();

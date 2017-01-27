@@ -89,18 +89,79 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     @Override
     public GlyphLine createGlyphLine(String content) {
         List<Glyph> glyphs = new ArrayList<>(content.length());
-        for (int i = 0; i < content.length(); i++) {
-            Glyph glyph;
-            if (fontEncoding.isFontSpecific()) {
-                glyph = fontProgram.getGlyphByCode(content.charAt(i));
-            } else {
-                glyph = getGlyph((int) content.charAt(i));
+        if (fontEncoding.isFontSpecific()) {
+            for (int i = 0; i < content.length(); i++) {
+                Glyph glyph = fontProgram.getGlyphByCode(content.charAt(i));
+                if (glyph != null) {
+                    glyphs.add(glyph);
+                }
             }
-            if (glyph != null) {
-                glyphs.add(glyph);
+        } else {
+            for (int i = 0; i < content.length(); i++) {
+                Glyph glyph = getGlyph((int) content.charAt(i));
+                if (glyph != null) {
+                    glyphs.add(glyph);
+                }
             }
         }
         return new GlyphLine(glyphs);
+    }
+
+    @Override
+    public int appendGlyphs(String text, int from, int to, List<Glyph> glyphs) {
+        int processed = 0;
+
+        if (fontEncoding.isFontSpecific()) {
+            for (int i = from; i <= to; i++) {
+                Glyph glyph = fontProgram.getGlyphByCode(text.charAt(i) & 0xFF);
+                if (glyph != null && (isAppendableGlyph(glyph))) {
+                    glyphs.add(glyph);
+                    processed++;
+                } else {
+                    break;
+                }
+            }
+        } else {
+            for (int i = from; i <= to; i++) {
+                Glyph glyph = getGlyph((int) text.charAt(i));
+                if (glyph != null && (isAppendableGlyph(glyph))) {
+                    glyphs.add(glyph);
+                    processed++;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        return processed;
+    }
+
+    @Override
+    public int appendAnyGlyph(String text, int from, List<Glyph> glyphs) {
+        Glyph glyph;
+        if (fontEncoding.isFontSpecific()) {
+            glyph = fontProgram.getGlyphByCode(text.charAt(from));
+        } else {
+            glyph = getGlyph((int) text.charAt(from));
+        }
+
+        if (glyph != null) {
+            glyphs.add(glyph);
+        }
+        return 1;
+    }
+
+    /**
+     * Checks whether the glyph is appendable, i.e. has valid unicode and code values
+     *
+     * @param glyph not-null {@link Glyph}
+     */
+    private boolean isAppendableGlyph(Glyph glyph) {
+        // If font is specific and glyph.getCode() = 0, unicode value will be also 0.
+        // Character.isIdentifierIgnorable(0) gets true.
+        return  glyph.getCode() > 0
+                        || Character.isWhitespace((char) glyph.getUnicode())
+                        || Character.isIdentifierIgnorable(glyph.getUnicode());
     }
 
     @Override

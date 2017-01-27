@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf;
 
 import java.io.Serializable;
 import java.security.cert.Certificate;
+import java.util.Random;
 
 public class EncryptionProperties implements Serializable {
 
@@ -81,7 +82,13 @@ public class EncryptionProperties implements Serializable {
     public EncryptionProperties setStandardEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionAlgorithm) {
         clearEncryption();
         this.userPassword = userPassword;
-        this.ownerPassword = ownerPassword;
+        if(ownerPassword != null) {
+            this.ownerPassword = ownerPassword;
+        }else{
+            int r =(int) (Integer.MAX_VALUE * Math.random());
+            this.ownerPassword = Integer.toHexString(r).getBytes();
+
+        }
         this.standardEncryptPermissions = permissions;
         this.encryptionAlgorithm = encryptionAlgorithm;
 

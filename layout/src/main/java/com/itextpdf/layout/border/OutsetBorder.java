@@ -90,6 +90,39 @@ public class OutsetBorder extends Border3D {
     }
 
     /**
+     * Creates a OutsetBorder instance with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity opacity of the border
+     */
+    public OutsetBorder(DeviceRgb color, float width, float opacity) {
+        super(color, width, opacity);
+    }
+
+    /**
+     * Creates a OutsetBorder instance with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity opacity of the border
+     */
+    public OutsetBorder(DeviceCmyk color, float width, float opacity) {
+        super(color, width, opacity);
+    }
+
+    /**
+     * Creates a OutsetBorder instance with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity opacity of the border
+     */
+    public OutsetBorder(DeviceGray color, float width, float opacity) {
+        super(color, width, opacity);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

@@ -80,6 +80,17 @@ public class DashedBorder extends Border {
     }
 
     /**
+     * Creates a DashedBorder with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity width of the border
+     */
+    public DashedBorder(Color color, float width, float opacity) {
+        super(color, width, opacity);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -125,12 +136,16 @@ public class DashedBorder extends Border {
                 break;
         }
 
-        canvas.setLineWidth(width);
-        canvas.setStrokeColor(color);
-
-        canvas.setLineDash(dash, adjustedGap, dash + adjustedGap/2)
+        canvas
+                .saveState()
+                .setLineWidth(width)
+                .setStrokeColor(transparentColor.getColor());
+        transparentColor.applyStrokeTransparency(canvas);
+        canvas
+                .setLineDash(dash, adjustedGap, dash + adjustedGap/2)
                 .moveTo(x1, y1).lineTo(x2, y2)
-                .stroke();
+                .stroke()
+                .restoreState();
     }
 
     /**
@@ -151,7 +166,9 @@ public class DashedBorder extends Border {
 
         canvas.
                 saveState().
-                setStrokeColor(color).
+                setStrokeColor(transparentColor.getColor());
+        transparentColor.applyStrokeTransparency(canvas);
+        canvas.
                 setLineDash(dash, adjustedGap, dash + adjustedGap / 2).
                 setLineWidth(width).
                 moveTo(x1, y1).
@@ -169,6 +186,9 @@ public class DashedBorder extends Border {
      */
     protected float getDotsGap(double distance, float initialGap) {
         double gapsNum = Math.ceil(distance / initialGap);
+        if (gapsNum == 0) {
+            return initialGap;
+        }
         return (float) (distance / gapsNum);
     }
 }

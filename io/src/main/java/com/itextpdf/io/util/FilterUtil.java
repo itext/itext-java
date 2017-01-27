@@ -45,6 +45,8 @@ package com.itextpdf.io.util;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.codec.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -58,6 +60,9 @@ import java.util.zip.InflaterInputStream;
  * Be aware that it's API and functionality may be changed in future.
  */
 public final class FilterUtil {
+
+    /** The Logger instance. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(FilterUtil.class);
 
     private FilterUtil() {
     }
@@ -85,6 +90,14 @@ public final class FilterUtil {
             return output.toByteArray();
         } catch (Exception e) {
             return strict ? null : output.toByteArray();
+        }finally {
+            try {
+                zip.close();
+                output.close();
+            }catch(Exception e){
+                //Log the error
+                LOGGER.error(e.getMessage(),e);
+            }
         }
     }
 

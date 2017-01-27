@@ -54,8 +54,12 @@ public class MarginsCollapseInfo implements Serializable {
     private MarginsCollapse ownCollapseAfter;
     private boolean isSelfCollapsing;
 
-    // when a parent has a fixed height this field tells kid how much free space parent has for the margin collapsed with kid
-    private float bufferSpace;
+    // when a parent has a fixed height these fields tells kid how much free space parent has for the margin collapsed with kid
+    private float bufferSpaceOnTop;
+    private float bufferSpaceOnBottom;
+
+    private float usedBufferSpaceOnTop;
+    private float usedBufferSpaceOnBottom;
 
     MarginsCollapseInfo() {
         this.ignoreOwnMarginTop = false;
@@ -63,7 +67,10 @@ public class MarginsCollapseInfo implements Serializable {
         this.collapseBefore = new MarginsCollapse();
         this.collapseAfter = new MarginsCollapse();
         this.isSelfCollapsing = true;
-        this.bufferSpace = 0;
+        this.bufferSpaceOnTop = 0;
+        this.bufferSpaceOnBottom = 0;
+        this.usedBufferSpaceOnTop = 0;
+        this.usedBufferSpaceOnBottom = 0;
     }
 
     MarginsCollapseInfo(boolean ignoreOwnMarginTop, boolean ignoreOwnMarginBottom, MarginsCollapse collapseBefore, MarginsCollapse collapseAfter) {
@@ -72,7 +79,10 @@ public class MarginsCollapseInfo implements Serializable {
         this.collapseBefore = collapseBefore;
         this.collapseAfter = collapseAfter;
         this.isSelfCollapsing = true;
-        this.bufferSpace = 0;
+        this.bufferSpaceOnTop = 0;
+        this.bufferSpaceOnBottom = 0;
+        this.usedBufferSpaceOnTop = 0;
+        this.usedBufferSpaceOnBottom = 0;
     }
 
     MarginsCollapse getCollapseBefore() {
@@ -107,11 +117,35 @@ public class MarginsCollapseInfo implements Serializable {
         return ignoreOwnMarginBottom;
     }
 
-    float getBufferSpace() {
-        return bufferSpace;
+    float getBufferSpaceOnTop() {
+        return bufferSpaceOnTop;
     }
 
-    void setBufferSpace(float bufferSpace) {
-        this.bufferSpace = bufferSpace;
+    void setBufferSpaceOnTop(float bufferSpaceOnTop) {
+        this.bufferSpaceOnTop = bufferSpaceOnTop;
+    }
+
+    float getBufferSpaceOnBottom() {
+        return bufferSpaceOnBottom;
+    }
+
+    void setBufferSpaceOnBottom(float bufferSpaceOnBottom) {
+        this.bufferSpaceOnBottom = bufferSpaceOnBottom;
+    }
+
+    float getUsedBufferSpaceOnTop() {
+        return usedBufferSpaceOnTop;
+    }
+
+    void setUsedBufferSpaceOnTop(float usedBufferSpaceOnTop) {
+        this.usedBufferSpaceOnTop = usedBufferSpaceOnTop;
+    }
+
+    float getUsedBufferSpaceOnBottom() {
+        return usedBufferSpaceOnBottom;
+    }
+
+    void setUsedBufferSpaceOnBottom(float usedBufferSpaceOnBottom) {
+        this.usedBufferSpaceOnBottom = usedBufferSpaceOnBottom;
     }
 }

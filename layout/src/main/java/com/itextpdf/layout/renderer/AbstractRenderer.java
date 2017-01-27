@@ -58,6 +58,7 @@ import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.border.Border;
@@ -67,8 +68,10 @@ import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.Background;
+import com.itextpdf.layout.property.BackgroundImage;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,7 +131,7 @@ public abstract class AbstractRenderer implements IRenderer {
         this.positionedRenderers = other.positionedRenderers;
         this.modelElement = other.modelElement;
         this.flushed = other.flushed;
-        this.occupiedArea = other.occupiedArea.clone();
+        this.occupiedArea = other.occupiedArea != null ? other.occupiedArea.clone() : null;
         this.parent = other.parent;
         this.properties.putAll(other.properties);
         this.isLastRendererForModelElement = other.isLastRendererForModelElement;
@@ -153,6 +156,42 @@ public abstract class AbstractRenderer implements IRenderer {
                 positionedRenderers.add(renderer);
             } else {
                 root.addChild(renderer);
+            }
+        } else if (positioning == LayoutPosition.ABSOLUTE) {
+            // For position=absolute, if none of the top, bottom, left, right properties are provided,
+            // the content should be displayed in the flow of the current content, not overlapping it.
+            // The behavior is just if it would be statically positioned except it does not affect other elements
+            AbstractRenderer positionedParent = this;
+            boolean noPositionInfo = AbstractRenderer.noAbsolutePositionInfo(renderer);
+            while (!positionedParent.isPositioned() && !noPositionInfo) {
+                IRenderer parent = positionedParent.parent;
+                if (parent instanceof AbstractRenderer) {
+                    positionedParent = (AbstractRenderer) parent;
+                } else {
+                    break;
+                }
+            }
+            if (positionedParent == this) {
+                positionedRenderers.add(renderer);
+            } else {
+                positionedParent.addChild(renderer);
+            }
+        }
+
+        // Fetch positioned renderers from non-positioned child because they might be stuck there because child's parent was null previously
+        if (renderer instanceof AbstractRenderer && !((AbstractRenderer) renderer).isPositioned() && ((AbstractRenderer) renderer).positionedRenderers.size() > 0) {
+            // For position=absolute, if none of the top, bottom, left, right properties are provided,
+            // the content should be displayed in the flow of the current content, not overlapping it.
+            // The behavior is just if it would be statically positioned except it does not affect other elements
+            int pos = 0;
+            List<IRenderer> childPositionedRenderers = ((AbstractRenderer) renderer).positionedRenderers;
+            while (pos < childPositionedRenderers.size()) {
+                if (AbstractRenderer.noAbsolutePositionInfo(childPositionedRenderers.get(pos))) {
+                    pos++;
+                } else {
+                    positionedRenderers.add(childPositionedRenderers.get(pos));
+                    childPositionedRenderers.remove(pos);
+                }
             }
         }
     }
@@ -301,6 +340,16 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
+     * Returns a property with a certain key, as a {@link TransparentColor}.
+     *
+     * @param property an {@link Property enum value}
+     * @return a {@link TransparentColor}
+     */
+    public TransparentColor getPropertyAsTransparentColor(int property) {
+        return this.<TransparentColor>getProperty(property);
+    }
+
+    /**
      * Returns a property with a certain key, as a floating point value.
      *
      * @param property an {@link Property enum value}
@@ -376,18 +425,41 @@ public abstract class AbstractRenderer implements IRenderer {
 
         boolean relativePosition = isRelativePosition();
         if (relativePosition) {
-            applyAbsolutePositioningTranslation(false);
+            applyRelativePositioningTranslation(false);
         }
 
+        beginElementOpacityApplying(drawContext);
         drawBackground(drawContext);
         drawBorder(drawContext);
         drawChildren(drawContext);
+        drawPositionedChildren(drawContext);
+        endElementOpacityApplying(drawContext);
 
         if (relativePosition) {
-            applyAbsolutePositioningTranslation(true);
+            applyRelativePositioningTranslation(true);
         }
 
         flushed = true;
+    }
+
+    protected void beginElementOpacityApplying(DrawContext drawContext) {
+        Float opacity = this.getPropertyAsFloat(Property.OPACITY);
+        if (opacity != null && opacity < 1f) {
+            PdfExtGState extGState = new PdfExtGState();
+            extGState
+                    .setStrokeOpacity((float) opacity)
+                    .setFillOpacity((float) opacity);
+            drawContext.getCanvas()
+                    .saveState()
+                    .setExtGState(extGState);
+        }
+    }
+
+    protected void endElementOpacityApplying(DrawContext drawContext) {
+        Float opacity = this.getPropertyAsFloat(Property.OPACITY);
+        if (opacity != null && opacity < 1f) {
+            drawContext.getCanvas().restoreState();
+        }
     }
 
     /**
@@ -398,10 +470,9 @@ public abstract class AbstractRenderer implements IRenderer {
      */
     public void drawBackground(DrawContext drawContext) {
         Background background = this.<Background>getProperty(Property.BACKGROUND);
-        if (background != null) {
-
+        BackgroundImage backgroundImage = this.<BackgroundImage>getProperty(Property.BACKGROUND_IMAGE);
+        if (background != null || backgroundImage != null) {
             Rectangle bBox = getOccupiedAreaBBox();
-
             boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
             if (isTagged) {
                 drawContext.getCanvas().openTag(new CanvasArtifact());
@@ -412,12 +483,41 @@ public abstract class AbstractRenderer implements IRenderer {
                 logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
                 return;
             }
-            drawContext.getCanvas().saveState().setFillColor(background.getColor()).
-                    rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
-                            backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
-                            backgroundArea.getHeight() + background.getExtraTop() + background.getExtraBottom()).
-                    fill().restoreState();
+            if (background != null) {
+                TransparentColor backgroundColor = new TransparentColor(background.getColor(), background.getOpacity());
+                drawContext.getCanvas().saveState().setFillColor(backgroundColor.getColor());
+                backgroundColor.applyFillTransparency(drawContext.getCanvas());
+                drawContext.getCanvas()
+                        .rectangle(backgroundArea.getX() - background.getExtraLeft(), backgroundArea.getY() - background.getExtraBottom(),
+                                backgroundArea.getWidth() + background.getExtraLeft() + background.getExtraRight(),
+                                backgroundArea.getHeight() + background.getExtraTop() + background.getExtraBottom()).
+                        fill().restoreState();
 
+            }
+            if (backgroundImage != null && backgroundImage.getImage() != null) {
+                applyBorderBox(backgroundArea, false);
+                Rectangle imageRectangle = new Rectangle(backgroundArea.getX(), backgroundArea.getTop() - backgroundImage.getImage().getHeight(),
+                        backgroundImage.getImage().getWidth(), backgroundImage.getImage().getHeight());
+                if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
+                    Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                    logger.error(MessageFormat.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background-image"));
+                    return;
+                }
+                applyBorderBox(backgroundArea, true);
+                drawContext.getCanvas().saveState().rectangle(backgroundArea).clip().newPath();
+                float initialX = backgroundImage.isRepeatX() ? imageRectangle.getX() - imageRectangle.getWidth() : imageRectangle.getX();
+                float initialY = backgroundImage.isRepeatY() ? imageRectangle.getTop() : imageRectangle.getY();
+                imageRectangle.setY(initialY);
+                do {
+                    imageRectangle.setX(initialX);
+                    do {
+                        drawContext.getCanvas().addXObject(backgroundImage.getImage(), imageRectangle);
+                        imageRectangle.moveRight(imageRectangle.getWidth());
+                    } while (backgroundImage.isRepeatX() && imageRectangle.getLeft() < backgroundArea.getRight());
+                    imageRectangle.moveDown(imageRectangle.getHeight());
+                } while (backgroundImage.isRepeatY() && imageRectangle.getTop() > backgroundArea.getBottom());
+                drawContext.getCanvas().restoreState();
+            }
             if (isTagged) {
                 drawContext.getCanvas().closeTag();
             }
@@ -474,24 +574,16 @@ public abstract class AbstractRenderer implements IRenderer {
             }
 
             if (borders[0] != null) {
-                canvas.saveState();
                 borders[0].draw(canvas, x1, y2, x2, y2, Border.Side.TOP, leftWidth, rightWidth);
-                canvas.restoreState();
             }
             if (borders[1] != null) {
-                canvas.saveState();
                 borders[1].draw(canvas, x2, y2, x2, y1, Border.Side.RIGHT, topWidth, bottomWidth);
-                canvas.restoreState();
             }
             if (borders[2] != null) {
-                canvas.saveState();
                 borders[2].draw(canvas, x2, y1, x1, y1, Border.Side.BOTTOM, rightWidth, leftWidth);
-                canvas.restoreState();
             }
             if (borders[3] != null) {
-                canvas.saveState();
                 borders[3].draw(canvas, x1, y1, x1, y2, Border.Side.LEFT, bottomWidth, topWidth);
-                canvas.restoreState();
             }
 
             if (isTagged) {
@@ -655,9 +747,6 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link Rectangle border box} of the renderer
      */
     protected Rectangle applyMargins(Rectangle rect, float[] margins, boolean reverse) {
-        if (isPositioned())
-            return rect;
-
         return rect.<Rectangle>applyMargins(margins[0], margins[1], margins[2], margins[3], reverse);
     }
 
@@ -739,11 +828,62 @@ public abstract class AbstractRenderer implements IRenderer {
         return rect.<Rectangle>applyMargins(topWidth, rightWidth, bottomWidth, leftWidth, reverse);
     }
 
-    protected void applyAbsolutePositioningTranslation(boolean reverse) {
-        float top = (float) this.getPropertyAsFloat(Property.TOP);
-        float bottom = (float) this.getPropertyAsFloat(Property.BOTTOM);
-        float left = (float) this.getPropertyAsFloat(Property.LEFT);
-        float right = (float) this.getPropertyAsFloat(Property.RIGHT);
+    protected void applyAbsolutePosition(Rectangle rect) {
+        Float top = this.getPropertyAsFloat(Property.TOP);
+        Float bottom = this.getPropertyAsFloat(Property.BOTTOM);
+        Float left = this.getPropertyAsFloat(Property.LEFT);
+        Float right = this.getPropertyAsFloat(Property.RIGHT);
+
+        float initialHeight = rect.getHeight();
+        float initialWidth = rect.getWidth();
+
+        Float minHeight = this.getPropertyAsFloat(Property.MIN_HEIGHT);
+
+        if (minHeight != null && rect.getHeight() < (float)minHeight) {
+            float difference = (float)minHeight - rect.getHeight();
+            rect.moveDown(difference).setHeight(rect.getHeight() + difference);
+        }
+
+        if (top != null) {
+            rect.setHeight(rect.getHeight() - (float)top);
+        }
+        if (left != null) {
+            rect.setX(rect.getX() + (float)left).setWidth(rect.getWidth() - (float)left);
+        }
+
+        if (right != null) {
+            UnitValue width = this.<UnitValue>getProperty(Property.WIDTH);
+            if (left == null && width != null) {
+                float widthValue = width.isPointValue() ? width.getValue() : (width.getValue() * initialWidth);
+                float placeLeft = rect.getWidth() - widthValue;
+                if (placeLeft > 0) {
+                    float computedRight = Math.min(placeLeft, (float)right);
+                    rect.setX(rect.getX() + rect.getWidth() - computedRight - widthValue);
+                }
+            } else if (width == null) {
+                rect.setWidth(rect.getWidth() - (float)right);
+            }
+        }
+
+        if (bottom != null) {
+            if (minHeight != null) {
+                rect.setHeight((float)minHeight + (float)bottom);
+            } else {
+                float minHeightValue = rect.getHeight() - (float)bottom;
+                Float currentMaxHeight = this.getPropertyAsFloat(Property.MAX_HEIGHT);
+                if (currentMaxHeight != null) {
+                    minHeightValue = Math.min(minHeightValue, (float)currentMaxHeight);
+                }
+                setProperty(Property.MIN_HEIGHT, minHeightValue);
+            }
+        }
+    }
+
+    protected void applyRelativePositioningTranslation(boolean reverse) {
+        float top = (float)this.getPropertyAsFloat(Property.TOP, 0f);
+        float bottom = (float)this.getPropertyAsFloat(Property.BOTTOM, 0f);
+        float left = (float)this.getPropertyAsFloat(Property.LEFT, 0f);
+        float right = (float)this.getPropertyAsFloat(Property.RIGHT, 0f);
 
         int reverseMultiplier = reverse ? -1 : 1;
 
@@ -772,16 +912,18 @@ public abstract class AbstractRenderer implements IRenderer {
     protected void applyAction(PdfDocument document) {
         PdfAction action = this.<PdfAction>getProperty(Property.ACTION);
         if (action != null) {
-            PdfLinkAnnotation link = new PdfLinkAnnotation(getOccupiedArea().getBBox());
-            link.setAction(action);
-            Border border = this.<Border>getProperty(Property.BORDER);
-            if (border != null) {
-                link.setBorder(new PdfArray(new float[]{0, 0, border.getWidth()}));
-            } else {
-                link.setBorder(new PdfArray(new float[]{0, 0, 0}));
+            PdfLinkAnnotation link = this.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION);
+            if (link == null) {
+                link = new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0));
+                Border border = this.<Border>getProperty(Property.BORDER);
+                if (border != null) {
+                    link.setBorder(new PdfArray(new float[]{0, 0, border.getWidth()}));
+                } else {
+                    link.setBorder(new PdfArray(new float[]{0, 0, 0}));
+                }
+                setProperty(Property.LINK_ANNOTATION, link);
             }
-
-            setProperty(Property.LINK_ANNOTATION, link);
+            link.setAction(action);
         }
     }
 
@@ -809,9 +951,7 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected boolean isNotFittingLayoutArea(LayoutArea layoutArea) {
-        Rectangle area = applyMargins(layoutArea.getBBox().clone(), false);
-        area = applyPaddings(area, false);
-        return !isPositioned() && (occupiedArea.getBBox().getHeight() > area.getHeight() || occupiedArea.getBBox().getWidth() > area.getWidth());
+        return !isPositioned() && (occupiedArea.getBBox().getHeight() > layoutArea.getBBox().getHeight() || occupiedArea.getBBox().getWidth() > layoutArea.getBBox().getWidth());
     }
 
     /**
@@ -820,7 +960,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link boolean}
      */
     protected boolean isPositioned() {
-        return isFixedLayout();
+        return !isStaticLayout();
     }
 
     /**
@@ -833,9 +973,19 @@ public abstract class AbstractRenderer implements IRenderer {
         return Integer.valueOf(LayoutPosition.FIXED).equals(positioning);
     }
 
+    protected boolean isStaticLayout() {
+        Object positioning = this.<Object>getProperty(Property.POSITION);
+        return positioning == null || Integer.valueOf(LayoutPosition.STATIC).equals(positioning);
+    }
+
     protected boolean isRelativePosition() {
         Integer positioning = this.getPropertyAsInteger(Property.POSITION);
         return Integer.valueOf(LayoutPosition.RELATIVE).equals(positioning);
+    }
+
+    protected boolean isAbsolutePosition() {
+        Integer positioning = this.getPropertyAsInteger(Property.POSITION);
+        return Integer.valueOf(LayoutPosition.ABSOLUTE).equals(positioning);
     }
 
     protected boolean isKeepTogether() {
@@ -993,20 +1143,38 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void overrideHeightProperties() {
-        if (hasProperty(Property.HEIGHT)) {
-            Float height = this.<Float>getProperty(Property.HEIGHT);
-            if (!hasProperty(Property.MAX_HEIGHT) || height < this.<Float>getProperty(Property.MAX_HEIGHT)) {
-                setProperty(Property.MAX_HEIGHT, height);
+        Float height = this.<Float>getProperty(Property.HEIGHT);
+        Float maxHeight = this.<Float>getProperty(Property.MAX_HEIGHT);
+        Float minHeight = this.<Float>getProperty(Property.MIN_HEIGHT);
+        if (null != height) {
+            if (null == maxHeight || height < maxHeight) {
+                maxHeight = height;
+            } else {
+                height = maxHeight;
             }
-            if (!hasProperty(Property.MIN_HEIGHT) || height > this.<Float>getProperty(Property.MIN_HEIGHT)) {
-                setProperty(Property.MIN_HEIGHT, height);
+            if (null == minHeight || height > minHeight) {
+                minHeight = height;
             }
         }
-        if (hasProperty(Property.MIN_HEIGHT)) {
-            Float minHeight = this.<Float>getProperty(Property.MIN_HEIGHT);
-            if (hasProperty(Property.MAX_HEIGHT) && minHeight > this.<Float>getProperty(Property.MAX_HEIGHT)) {
-                setProperty(Property.MAX_HEIGHT, minHeight);
-            }
+        if (null != maxHeight && null != minHeight && minHeight > maxHeight) {
+            maxHeight = minHeight;
+        }
+        if (null != maxHeight) {
+            setProperty(Property.MAX_HEIGHT, maxHeight);
+        }
+        if (null != minHeight) {
+            setProperty(Property.MIN_HEIGHT, minHeight);
         }
     }
+
+    static boolean noAbsolutePositionInfo(IRenderer renderer) {
+        return !renderer.hasProperty(Property.TOP) && !renderer.hasProperty(Property.BOTTOM) && !renderer.hasProperty(Property.LEFT) && !renderer.hasProperty(Property.RIGHT);
+    }
+
+    void drawPositionedChildren(DrawContext drawContext) {
+        for (IRenderer positionedChild : positionedRenderers) {
+            positionedChild.draw(drawContext);
+        }
+    }
+
 }

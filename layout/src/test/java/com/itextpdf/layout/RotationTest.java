@@ -16,18 +16,18 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class RotationTest extends ExtendedITextTest{
@@ -64,9 +64,9 @@ public class RotationTest extends ExtendedITextTest{
         int x1 = 350;
         int y1 = 600;
         int width1 = 100;
-        document.add(new Paragraph("text to be rotatedg").setRotationAngle((Math.PI / 6)).setFixedPosition(x1, y1, width1)
+        document.add(new Paragraph("text to be rotatedg").setMargin(0).setRotationAngle((Math.PI / 6)).setFixedPosition(x1, y1, width1)
                 .setBorder(border));
-        document.add(new Paragraph("text to be rotatedg").setFixedPosition(x1, y1, width1)
+        document.add(new Paragraph("text to be rotatedg").setMargin(0).setFixedPosition(x1, y1, width1)
                 .setBorder(border));
 
         String longText = "loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
@@ -74,8 +74,8 @@ public class RotationTest extends ExtendedITextTest{
         int x2 = 50;
         int y2 = 300;
         int width2 = 450;
-        document.add(new Paragraph(longText).setRotationAngle((Math.PI / 6)).setFixedPosition(x2, y2, width2));
-        document.add(new Paragraph(longText).setFixedPosition(x2, y2, width2));
+        document.add(new Paragraph(longText).setMargin(0).setRotationAngle((Math.PI / 6)).setFixedPosition(x2, y2, width2));
+        document.add(new Paragraph(longText).setMargin(0).setFixedPosition(x2, y2, width2));
 
         document.close();
 
@@ -92,8 +92,8 @@ public class RotationTest extends ExtendedITextTest{
 
         String longText = "loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
                 "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooong text";
-        document.add(new Paragraph(longText).setRotationAngle(-(Math.PI / 6)).setFixedPosition(50, 50, 450));
-        document.add(new Paragraph(longText).setFixedPosition(50, 50, 450));
+        document.add(new Paragraph(longText).setMargin(0).setRotationAngle(-(Math.PI / 6)).setFixedPosition(50, 50, 450));
+        document.add(new Paragraph(longText).setMargin(0).setFixedPosition(50, 50, 450));
 
         document.close();
 
@@ -112,8 +112,8 @@ public class RotationTest extends ExtendedITextTest{
         float x = 50;
         float y = 380;
         float width = 200;
-        document.add(new Paragraph(simpleText).setRotationAngle((Math.PI / 2)).setFixedPosition(x, y, width));
-        document.add(new Paragraph(simpleText).setFixedPosition(x, y, width));
+        document.add(new Paragraph(simpleText).setMargin(0).setRotationAngle((Math.PI / 2)).setFixedPosition(x, y, width));
+        document.add(new Paragraph(simpleText).setMargin(0).setFixedPosition(x, y, width));
 
         PdfCanvas canvas = new PdfCanvas(pdfDocument.getFirstPage());
         drawCross(canvas, x, y);
@@ -135,7 +135,7 @@ public class RotationTest extends ExtendedITextTest{
         float x = 50;
         float y = 380;
         float width = 100;
-        document.add(new Paragraph(simpleText).setRotationAngle(-(Math.PI / 4)).setBackgroundColor(Color.RED).setFixedPosition(x, y, width));
+        document.add(new Paragraph(simpleText).setMargin(0).setRotationAngle(-(Math.PI / 4)).setBackgroundColor(Color.RED).setFixedPosition(x, y, width));
 
         PdfCanvas canvas = new PdfCanvas(pdfDocument.getFirstPage());
         drawCross(canvas, x, y);
@@ -546,6 +546,117 @@ public class RotationTest extends ExtendedITextTest{
                 setRotationAngle(Math.PI / 8)
         );
 
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    //TODO: currently is incorrect. See DEVSIX-988
+    public void fixedWidthRotationTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "fixedWidthRotationTest01.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "fixedWidthRotationTest01.pdf";
+
+        Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Text text = new Text("Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.");
+        Div d = new Div()
+                .setWidth(300)
+                .setBorder(new SolidBorder(Color.RED, 5))
+                .setPadding(5);
+        Paragraph p = new Paragraph(text)
+                .setWidth(600)
+                .setRotationAngle(Math.PI/2)
+                .setBorder(new SolidBorder(Color.BLUE, 5));
+        doc.add(d.add(p));
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    //TODO: currently is incorrect. See DEVSIX-988
+    public void fixedWidthRotationTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "fixedWidthRotationTest02.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "fixedWidthRotationTest02.pdf";
+
+        Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Text text = new Text("Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.");
+        Div d = new Div()
+                .setWidth(300)
+                .setBorder(new SolidBorder(Color.RED, 5))
+                .setPadding(5);
+        Paragraph p = new Paragraph(text)
+                .setWidth(500)
+                .setRotationAngle(Math.PI * 3 / 8)
+                .setBorder(new SolidBorder(Color.BLUE, 5));
+        doc.add(d.add(p));
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    //TODO: currently is incorrect. See DEVSIX-988
+    public void fixedWidthRotationTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "fixedWidthRotationTest03.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "fixedWidthRotationTest03.pdf";
+
+        Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Text text = new Text("Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.");
+        Div d = new Div()
+                .setWidth(300)
+                .setBorder(new SolidBorder(Color.RED, 5))
+                .setPadding(5);
+        Div d1 = new Div().add(new Paragraph(text))
+                .setWidth(500)
+                .setRotationAngle(Math.PI * 5 / 8)
+                .setBorder(new SolidBorder(Color.BLUE, 5));
+        doc.add(d.add(d1));
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    //TODO: currently is incorrect. See DEVSIX-989
+    public void marginsRotatedTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "marginsRotatedTest01.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "marginsRotatedTest01.pdf";
+
+        Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Text text = new Text("Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.");
+        Div d = new Div()
+                .setWidth(400)
+                .setBorder(new SolidBorder(Color.RED, 5));
+        Div d1 = new Div().add(new Paragraph(text))
+                .setWidth(200)
+                .setRotationAngle(Math.PI / 4)
+                .setMargins(100, 10, 100, 10)
+                .setBorder(new SolidBorder(Color.BLUE, 5));
+        doc.add(d.add(d1));
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    //TODO: currently is incorrect. See DEVSIX-989
+    public void marginsRotatedTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "marginsRotatedTest02.pdf";
+        String cmpFileName = sourceFolder + cmpPrefix + "marginsRotatedTest02.pdf";
+
+        Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        doc.setProperty(Property.COLLAPSING_MARGINS, true);
+        Text text = new Text("Hello. I am a fairly long paragraph. I really want you to process me correctly. You heard that? Correctly!!! Even if you will have to wrap me.");
+        Div d = new Div()
+                .setWidth(400)
+                .setBorder(new SolidBorder(Color.RED, 5));
+        Div d1 = new Div().add(new Paragraph(text))
+                .setWidth(200)
+                .setRotationAngle(Math.PI / 4)
+                .setMargins(100, 10, 100, 10)
+                .setBorder(new SolidBorder(Color.BLUE, 5));
+        doc.add(d.add(d1).add(new Paragraph("Hello").setMargin(50).setBorder(new SolidBorder(Color.GREEN, 5))));
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));

@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.io.font.FontNames;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.TrueTypeFont;

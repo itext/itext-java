@@ -62,6 +62,7 @@ public final class Property {
     public static final int AUTO_SCALE_HEIGHT = 4;
     public static final int AUTO_SCALE_WIDTH = 5;
     public static final int BACKGROUND = 6;
+    public static final int BACKGROUND_IMAGE = 90;
     public static final int BASE_DIRECTION = 7;
     public static final int BOLD_SIMULATION = 8;
     public static final int BORDER = 9;
@@ -81,12 +82,20 @@ public final class Property {
     public static final int FONT = 20;
     public static final int FONT_COLOR = 21;
     public static final int FONT_KERNING = 22;
+    /**
+     * Note, this property will be applied only if {@link #FONT} has String value.
+     */
+    public static final int FONT_STYLE = 94;
+    /**
+     * Note, this property will be applied only if {@link #FONT} has String value.
+     */
+    public static final int FONT_WEIGHT = 95;
     public static final int FONT_SCRIPT = 23;
+    public static final int FONT_PROVIDER = 91;
     public static final int FONT_SIZE = 24;
     public static final int FULL = 25;
     public static final int FORCED_PLACEMENT = 26;
     public static final int HEIGHT = 27;
-
     public static final int HORIZONTAL_ALIGNMENT = 28;
     /**
      * Value of 1 is equivalent to no scaling
@@ -115,12 +124,14 @@ public final class Property {
     public static final int MAX_HEIGHT = 84;
     public static final int MIN_HEIGHT = 85;
 
+    public static final int OPACITY = 92;
     public static final int PADDING_BOTTOM = 47;
     public static final int PADDING_LEFT = 48;
     public static final int PADDING_RIGHT = 49;
     public static final int PADDING_TOP = 50;
     public static final int PAGE_NUMBER = 51;
     public static final int POSITION = 52;
+    @Deprecated
     public static final int REVERSED = 53;
     public static final int RIGHT = 54;
     public static final int ROTATION_ANGLE = 55;
@@ -134,6 +145,7 @@ public final class Property {
     public static final int STROKE_COLOR = 63;
     public static final int STROKE_WIDTH = 64;
     public static final int SKEW = 65;
+    public static final int TABLE_LAYOUT = 93;
     public static final int TAB_ANCHOR = 66;
     public static final int TAB_DEFAULT = 67;
     public static final int TAB_LEADER = 68;
@@ -146,10 +158,10 @@ public final class Property {
     public static final int TEXT_RISE = 72;
     public static final int TOP = 73;
     public static final int UNDERLINE = 74;
+    public static final int VERTICAL_ALIGNMENT = 75;
     /**
      * Value of 1 is equivalent to no scaling
      **/
-    public static final int VERTICAL_ALIGNMENT = 75;
     public static final int VERTICAL_SCALING = 76;
     public static final int WIDTH = 77;
     public static final int WORD_SPACING = 78;
@@ -162,7 +174,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 89;
+    private static final int MAX_INHERITED_PROPERTY_ID = 95;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -176,12 +188,16 @@ public final class Property {
         INHERITED_PROPERTIES[Property.FONT] = true;
         INHERITED_PROPERTIES[Property.FONT_COLOR] = true;
         INHERITED_PROPERTIES[Property.FONT_KERNING] = true;
+        INHERITED_PROPERTIES[Property.FONT_PROVIDER] = true;
         INHERITED_PROPERTIES[Property.FONT_SCRIPT] = true;
         INHERITED_PROPERTIES[Property.FONT_SIZE] = true;
+        INHERITED_PROPERTIES[Property.FONT_STYLE] = true;
+        INHERITED_PROPERTIES[Property.FONT_WEIGHT] = true;
         INHERITED_PROPERTIES[Property.FORCED_PLACEMENT] = true;
         INHERITED_PROPERTIES[Property.HYPHENATION] = true;
         INHERITED_PROPERTIES[Property.ITALIC_SIMULATION] = true;
         INHERITED_PROPERTIES[Property.KEEP_TOGETHER] = true;
+        INHERITED_PROPERTIES[Property.LEADING] = true;
         INHERITED_PROPERTIES[Property.LIST_SYMBOL] = true;
         INHERITED_PROPERTIES[Property.LIST_SYMBOL_PRE_TEXT] = true;
         INHERITED_PROPERTIES[Property.LIST_SYMBOL_POSITION] = true;
@@ -199,10 +215,10 @@ public final class Property {
 
     /**
      * This method checks whether a Property, in order to be picked up by the
-     * rendering engine, must be defined on the current element or renderer 
+     * rendering engine, must be defined on the current element or renderer
      * (<code>return false</code>), or may be defined in one of its parent
-     * elements or renderers (<code>return true</code>). 
-     * 
+     * elements or renderers (<code>return true</code>).
+     *
      * @param property the ID, defined in this class, of the property to check
      * @return whether the property type is inheritable
      */

@@ -9,24 +9,24 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.border.SolidBorder;
-import com.itextpdf.layout.element.AreaBreak;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.renderer.DocumentRenderer;
+import com.itextpdf.layout.renderer.IRenderer;
+import com.itextpdf.layout.renderer.TableRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -835,6 +835,27 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
+    public void bigRowspanTest06() throws IOException, InterruptedException {
+        String testName = "bigRowspanTest06.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(2)
+                .addCell(new Cell(2, 1).add("col 1 row 2"))
+                .addCell(new Cell(2, 1).add("col 2 row 2"))
+                .addCell(new Cell(1, 1).add("col 1 row 3"))
+                .addCell(new Cell(1, 1).add("col 2 row 3"));
+
+        table.setBorderTop(new SolidBorder(Color.GREEN, 50)).setBorderBottom(new SolidBorder(Color.ORANGE, 40));
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     public void differentPageOrientationTest01() throws IOException, InterruptedException {
         String testName = "differentPageOrientationTest01.pdf";
         String outFileName = destinationFolder + testName;
@@ -992,9 +1013,8 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
-    @Ignore("DEVISX-929")
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 9)
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     @Test
     public void splitTableOnShortPage() throws IOException, InterruptedException {
@@ -1003,7 +1023,7 @@ public class TableTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        Document doc = new Document(pdfDoc, new PageSize(300, 90));
+        Document doc = new Document(pdfDoc, new PageSize(300, 98));
 
         doc.add(new Paragraph("Table with setKeepTogether(true):"));
         Table table = new Table(3);
@@ -1241,6 +1261,7 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)})
     public void emptyTableTest01() throws IOException, InterruptedException {
         String testName = "emptyTableTest01.pdf";
         String outFileName = destinationFolder + testName;
@@ -1249,11 +1270,59 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        doc.add(new Table(1).setHeight(400)/*.addCell(new Cell().add("").setHeight(30))*/.setBorder(new SolidBorder(Color.ORANGE, 100)));
-        doc.add(new Table(1).addCell("Hello").setBorder(new SolidBorder(Color.GREEN, 2)));
+        doc.add(new Table(1)
+                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
+                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
+                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
+                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
+                .addCell(new Cell().add("Hello"))
+        );
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new AreaBreak());
+
+
+        doc.add(new Table(1)
+                .setBorderTop(new SolidBorder(Color.ORANGE, 50))
+                .setBorderBottom(new SolidBorder(Color.MAGENTA, 100))
+        );
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        doc.add(new AreaBreak());
+
+        doc.add(new Table(1).setMinHeight(300).setBorderRight(new SolidBorder(Color.ORANGE, 5)).setBorderTop(new SolidBorder(100)).setBorderBottom(new SolidBorder(Color.BLUE, 50)));
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 1)})
+    public void tableWithCustomRendererTest01() throws IOException, InterruptedException {
+        String testName = "tableWithCustomRendererTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(Color.GREEN, 100));
+        
+        for (int i = 0; i < 10; i++) {
+            table.addCell(new Cell().add("Cell No." + i));
+        }
+        table.setNextRenderer(new CustomRenderer(table, new Table.RowRange(0, 10)));
+
+        doc.add(table);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
 
+    }
+
+    static class CustomRenderer extends TableRenderer {
+        public CustomRenderer(Table modelElement, Table.RowRange rowRange) {
+            super(modelElement, rowRange);
+        }
     }
 }

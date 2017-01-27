@@ -105,7 +105,7 @@ class PdfPagesTree implements Serializable {
      */
     public PdfPage getPage(int pageNum) {
         if (pageNum < 1 || pageNum > getNumberOfPages()) {
-            throw new PdfException(MessageFormat.format(PdfException.CannotFindThePageNumber, pageNum));
+            throw new IndexOutOfBoundsException(MessageFormat.format(PdfException.RequestedPageNumberIsOutOfBounds, pageNum));
         }
         --pageNum;
         PdfPage pdfPage = pages.get(pageNum);

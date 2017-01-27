@@ -305,7 +305,7 @@ class FontRegisterProvider {
                 }
             } else if (path.toLowerCase().endsWith(".afm") || path.toLowerCase().endsWith(".pfm")) {
                 FontProgram fontProgram = FontProgramFactory.createFont(path);
-                String fullName = fontProgram.getFontNames().getFullName()[0][3].toLowerCase();
+                String fullName = fontProgram.getFontNames().getFullNameLowerCase();
                 String familyName = fontProgram.getFontNames().getFamilyName()[0][3].toLowerCase();
                 String psName = fontProgram.getFontNames().getFontName().toLowerCase();
                 registerFontFamily(familyName, fullName, null);

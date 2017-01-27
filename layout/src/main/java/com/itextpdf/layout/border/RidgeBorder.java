@@ -90,6 +90,39 @@ public class RidgeBorder extends Border3D {
     }
 
     /**
+     * Creates a RidgeBorder instance with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity opacity of the border
+     */
+    public RidgeBorder(DeviceRgb color, float width, float opacity) {
+        super(color, width, opacity);
+    }
+
+    /**
+     * Creates a RidgeBorder instance with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity opacity of the border
+     */
+    public RidgeBorder(DeviceCmyk color, float width, float opacity) {
+        super(color, width, opacity);
+    }
+
+    /**
+     * Creates a RidgeBorder instance with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity opacity of the border
+     */
+    public RidgeBorder(DeviceGray color, float width, float opacity) {
+        super(color, width, opacity);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

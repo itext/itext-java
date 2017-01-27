@@ -55,7 +55,6 @@ import java.lang.annotation.Target;
  * the required number of times.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
 public @interface LogMessages {
     /**
      * Container for the log messages.

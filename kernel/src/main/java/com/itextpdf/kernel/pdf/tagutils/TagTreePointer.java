@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.tagutils;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -68,6 +69,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@code TagTreePointer} class is used to modify the document's tag tree. At any given moment, instance of this class
@@ -461,7 +464,9 @@ public class TagTreePointer implements Serializable {
 
         IPdfStructElem parent = getCurrentStructElem().getParent();
         if (parent == null) {
-            //TODO log that parent is flushed
+            Logger logger = LoggerFactory.getLogger(TagTreePointer.class);
+            logger.warn(LogMessageConstant.ATTEMPT_TO_MOVE_TO_FLUSHED_PARENT);
+            
             moveToRoot();
         } else {
             setCurrentStructElem((PdfStructElem) parent);
@@ -750,6 +755,7 @@ public class TagTreePointer implements Serializable {
         if (pageObject == null) {
             pageObject = kidPage;
             elem.getPdfObject().put(PdfName.Pg, kidPage);
+            elem.setModified();
         }
 
         return kidPage.equals(pageObject);

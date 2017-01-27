@@ -653,7 +653,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 if (xObject != null && xObject.getPdfObject().get(PdfName.Subtype) != null) {
                     Rectangle box = fieldObject.getAsRectangle(PdfName.Rect);
                     if (page.isFlushed()) {
-                        throw new PdfException(PdfException.PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
+                        throw new PdfException(PdfException.PageAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
                     }
                     PdfCanvas canvas = new PdfCanvas(page);
 
@@ -890,7 +890,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary pageDic = annot.getPageObject();
         if (pageDic != null) {
             if (warnIfPageFlushed && pageDic.isFlushed()) {
-                throw new PdfException(PdfException.PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
+                throw new PdfException(PdfException.PageAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
             }
             PdfDocument doc = pageDic.getIndirectReference().getDocument();
             PdfPage widgetPage = doc.getPage(pageDic);

@@ -48,7 +48,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.color.Color;
 
 /**
- * Draws a border with rounded dots aroudn the element it's been set to. For square dots see {@link com.itextpdf.layout.border.DottedBorder}.
+ * Draws a border with rounded dots around the element it's been set to. For square dots see {@link com.itextpdf.layout.border.DottedBorder}.
  */
 public class RoundDotsBorder extends Border {
 
@@ -74,6 +74,17 @@ public class RoundDotsBorder extends Border {
      */
     public RoundDotsBorder(Color color, float width) {
         super(color, width);
+    }
+
+    /**
+     * Creates a RoundDotsBorder with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity width of the border
+     */
+    public RoundDotsBorder(Color color, float width, float opacity) {
+        super(color, width, opacity);
     }
 
     /**
@@ -117,13 +128,15 @@ public class RoundDotsBorder extends Border {
                 break;
         }
 
-        canvas.setStrokeColor(color);
-        canvas.setLineWidth(width);
-        canvas.setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND);
-
+        canvas.saveState()
+                .setStrokeColor(transparentColor.getColor())
+                .setLineWidth(width)
+                .setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND);
+        transparentColor.applyStrokeTransparency(canvas);
         canvas.setLineDash(0, adjustedGap, adjustedGap/2)
                 .moveTo(x1, y1).lineTo(x2, y2)
-                .stroke();
+                .stroke()
+                .restoreState();
     }
 
     /**
@@ -145,7 +158,8 @@ public class RoundDotsBorder extends Border {
             x2 -= width;
         }
 
-        canvas.setStrokeColor(color);
+        canvas.setStrokeColor(transparentColor.getColor());
+        transparentColor.applyStrokeTransparency(canvas);
         canvas.setLineWidth(width);
         canvas.setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND);
 
@@ -163,6 +177,9 @@ public class RoundDotsBorder extends Border {
      */
     protected float getDotsGap(double distance, float initialGap) {
         double gapsNum = Math.ceil(distance / initialGap);
+        if (gapsNum == 0) {
+            return initialGap;
+        }
         return (float) (distance / gapsNum);
     }
 

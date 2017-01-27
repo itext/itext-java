@@ -84,7 +84,6 @@ public class LogListener extends TestWatcher {
         after();
     }
 
-
     private int contains(String loggingStatement) {
         List<ILoggingEvent> list = listAppender.list;
         int index = 0;
@@ -102,7 +101,7 @@ public class LogListener extends TestWatcher {
     * */
     private boolean equalsMessageByTemplate(String message, String template) {
         if (template.indexOf("{") > 0 && template.indexOf("}") > 0) {
-            String templateWithoutParameters = template.replaceAll("\\{[0-9]+?\\}", "(.|\\\\s)*?");
+            String templateWithoutParameters = template.replace("''", "'").replaceAll("\\{[0-9]+?\\}", "(.|\\\\s)*?");
             return message.matches(templateWithoutParameters);
         } else {
             return message.contains(template);
@@ -141,6 +140,9 @@ public class LogListener extends TestWatcher {
 
     private void checkLogMessages(Description description) {
         Annotation annotation = description.getAnnotation(LogMessages.class);
+        if (annotation == null) {
+            annotation = description.getTestClass().getAnnotation(LogMessages.class);
+        }
         int checkedMessages = 0;
         if (annotation != null) {
             LogMessages logMessages = (LogMessages) annotation;
