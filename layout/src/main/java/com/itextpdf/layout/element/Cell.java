@@ -229,7 +229,12 @@ public class Cell extends BlockElement<Cell> {
 
     @Override
     public String toString() {
-        return MessageFormat.format("Cell{row={0}, col={1}, rowspan={2}, colspan={3}}", row, col, rowspan, colspan);
+        return "Cell{" +
+                "row=" + row +
+                ", col=" + col +
+                ", rowspan=" + rowspan +
+                ", colspan=" + colspan +
+                '}';
     }
 
     @Override

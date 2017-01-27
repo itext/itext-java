@@ -145,4 +145,9 @@ public class UnitValue {
         hash = 71 * hash + Float.floatToIntBits(this.value);
         return hash;
     }
+
+    @Override
+    public String toString() {
+        return value + (unitType == PERCENT ? "%" : "pt");
+    }
 }

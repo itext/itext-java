@@ -101,12 +101,9 @@ public class Table extends BlockElement<Table> implements ILargeElement {
             throw new IllegalArgumentException("the.widths.array.in.pdfptable.constructor.can.not.have.zero.length");
         }
         this.columnWidths = new UnitValue[columnWidths.length];
-        float width = 0;
         for (int i = 0; i < columnWidths.length; i++) {
             this.columnWidths[i] = UnitValue.createPointValue(columnWidths[i]);
-            width += columnWidths[i];
         }
-        super.setWidth(width);
         initializeRows();
     }
 
@@ -173,9 +170,8 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         }
         this.columnWidths = new UnitValue[numColumns];
         for (int k = 0; k < numColumns; ++k) {
-            this.columnWidths[k] = UnitValue.createPointValue(1);
+            this.columnWidths[k] = UnitValue.createPercentValue((float)100/numColumns);
         }
-        super.setWidth(UnitValue.createPercentValue(100));
         initializeRows();
     }
 
@@ -733,7 +729,8 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     private void ensureHeaderIsInitialized() {
         if (header == null) {
             header = new Table(columnWidths);
-            header.setWidth(getWidth());
+            UnitValue width = getWidth();
+            if (width != null) header.setWidth(width);
             header.setRole(PdfName.THead);
         }
     }
@@ -741,7 +738,8 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     private void ensureFooterIsInitialized() {
         if (footer == null) {
             footer = new Table(columnWidths);
-            footer.setWidth(getWidth());
+            UnitValue width = getWidth();
+            if (width != null) footer.setWidth(width);
             footer.setRole(PdfName.TFoot);
         }
     }
