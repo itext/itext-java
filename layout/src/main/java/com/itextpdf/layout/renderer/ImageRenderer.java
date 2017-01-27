@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -145,14 +145,18 @@ public class ImageRenderer extends AbstractRenderer {
         if (horizontalScaling != 1) {
             if (xObject instanceof PdfFormXObject) {
                 t.scale((float) horizontalScaling, 1);
+                width = imageWidth * (float) horizontalScaling;
+            } else {
+                width *= (float) horizontalScaling;
             }
-            width *= (float) horizontalScaling;
         }
         if (verticalScaling != 1) {
             if (xObject instanceof PdfFormXObject) {
                 t.scale(1, (float) verticalScaling);
+                height = imageHeight * (float) verticalScaling;
+            } else {
+                height *= (float) verticalScaling;
             }
-            height *= (float) verticalScaling;
         }
 
         if (null != retrieveMinHeight() && height < retrieveMinHeight()) {

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -53,6 +53,7 @@ import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -114,7 +115,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         if (fontEncoding.isFontSpecific()) {
             for (int i = from; i <= to; i++) {
                 Glyph glyph = fontProgram.getGlyphByCode(text.charAt(i) & 0xFF);
-                if (glyph != null && (isAppendableGlyph(glyph))) {
+                if (glyph != null) {
                     glyphs.add(glyph);
                     processed++;
                 } else {
@@ -124,7 +125,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         } else {
             for (int i = from; i <= to; i++) {
                 Glyph glyph = getGlyph((int) text.charAt(i));
-                if (glyph != null && (isAppendableGlyph(glyph))) {
+                if (glyph != null && (containsGlyph(text, i) || isAppendableGlyph(glyph))) {
                     glyphs.add(glyph);
                     processed++;
                 } else {
@@ -159,9 +160,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     private boolean isAppendableGlyph(Glyph glyph) {
         // If font is specific and glyph.getCode() = 0, unicode value will be also 0.
         // Character.isIdentifierIgnorable(0) gets true.
-        return  glyph.getCode() > 0
-                        || Character.isWhitespace((char) glyph.getUnicode())
-                        || Character.isIdentifierIgnorable(glyph.getUnicode());
+        return glyph.getCode() > 0 || TextUtil.isWhitespaceOrNonPrintable(glyph.getUnicode());
     }
 
     @Override

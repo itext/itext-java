@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -51,28 +51,27 @@ import java.util.List;
  * @see FontSet#getFontSelectorCache().
  */
 final class FontSelectorKey {
-    List<String> fontFamilies;
-    int style;
+    private List<String> fontFamilies;
+    private FontCharacteristics fc;
 
-    public FontSelectorKey(List<String> fontFamilies, int style) {
+    public FontSelectorKey(List<String> fontFamilies, FontCharacteristics fc) {
         this.fontFamilies = new ArrayList<>(fontFamilies);
-        this.style = style;
+        this.fc = fc;
     }
 
-    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         FontSelectorKey that = (FontSelectorKey) o;
 
-        return style == that.style
-                && (fontFamilies != null ? fontFamilies.equals(that.fontFamilies) : that.fontFamilies == null);
+        if (fontFamilies != null ? !fontFamilies.equals(that.fontFamilies) : that.fontFamilies != null) return false;
+        return fc != null ? fc.equals(that.fc) : that.fc == null;
     }
 
     @Override
     public int hashCode() {
         int result = fontFamilies != null ? fontFamilies.hashCode() : 0;
-        result = 31 * result + style;
+        result = 31 * result + (fc != null ? fc.hashCode() : 0);
         return result;
     }
 }

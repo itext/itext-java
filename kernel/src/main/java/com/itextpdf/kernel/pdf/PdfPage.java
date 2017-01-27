@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -569,6 +569,30 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public PdfPage setCropBox(Rectangle rectangle) {
         put(PdfName.CropBox, new PdfArray(rectangle));
         return this;
+    }
+
+    /**
+     * Sets the BleedBox object, that defines the region to which the contents of the page shall be clipped 
+     * when output in a production environment.
+     * 
+     * @param rectangle the {@link Rectangle} object to set, expressed in default user space units.
+     * @return this {@link PdfPage} instance.
+     */
+    public PdfPage setBleedBox(Rectangle rectangle) {
+        put(PdfName.BleedBox, new PdfArray(rectangle));
+        return this;
+    }
+
+    /**
+     * Gets the {@link Rectangle} object specified by page's BleedBox, that define the region to which the 
+     * contents of the page shall be clipped when output in a production environment.
+     *
+     * @return the {@link Rectangle} object specified by page's BleedBox, expressed in default user space units.
+     *         CropBox by default.
+     */
+    public Rectangle getBleedBox() {
+        Rectangle bleedBox = getPdfObject().getAsRectangle(PdfName.BleedBox);
+        return bleedBox == null ? getCropBox() : bleedBox;
     }
 
     /**

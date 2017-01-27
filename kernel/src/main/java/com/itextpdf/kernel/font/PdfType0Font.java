@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -507,14 +507,11 @@ public class PdfType0Font extends PdfFont {
         return process;
     }
 
-
     //TODO what if Glyphs contains only whitespaces and ignorable identifiers?
     private boolean isAppendableGlyph(Glyph glyph) {
         // If font is specific and glyph.getCode() = 0, unicode value will be also 0.
         // Character.isIdentifierIgnorable(0) gets true.
-        return  glyph.getCode() > 0
-                        || Character.isWhitespace((char) glyph.getUnicode())
-                        || Character.isIdentifierIgnorable(glyph.getUnicode());
+        return glyph.getCode() > 0 || TextUtil.isWhitespaceOrNonPrintable(glyph.getUnicode());
     }
 
     @Override

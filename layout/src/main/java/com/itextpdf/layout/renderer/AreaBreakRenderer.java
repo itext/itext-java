@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -74,9 +74,6 @@ public class AreaBreakRenderer implements IRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        LayoutArea occupiedArea = layoutContext.getArea().clone();
-        occupiedArea.getBBox().setHeight(0);
-        occupiedArea.getBBox().setWidth(0);
         return new LayoutResult(LayoutResult.NOTHING, null, null, null, this).setAreaBreak(areaBreak);
     }
 

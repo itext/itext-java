@@ -1,3 +1,45 @@
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2017 iText Group NV
+    Authors: iText Software.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
@@ -8,12 +50,15 @@ import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
@@ -160,14 +205,21 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Table table = new Table(3);
 
+        Cell cell = new Cell(1, 3).add(new Paragraph("full-width header"));
+        cell.setRole(PdfName.TH);
+        table.addHeaderCell(cell);
         for (int i = 0; i < 3; ++i) {
-            table.addHeaderCell("header " + i);
+            cell = new Cell().add(new Paragraph("header " + i));
+            cell.setRole(PdfName.TH);
+            table.addHeaderCell(cell);
         }
 
         for (int i = 0; i < 3; ++i) {
             table.addFooterCell("footer " + i);
         }
 
+        cell = new Cell(1, 3).add(new Paragraph("full-width paragraph"));
+        table.addCell(cell);
         for (int i = 0; i < 5; ++i) {
             table.addCell(createParagraph2());
         }
@@ -291,7 +343,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDocument);
 
-        List list = new List();
+        List list = new List(ListNumberingType.DECIMAL);
         list.add("item 1");
         list.add("item 2");
         list.add("item 3");
@@ -300,6 +352,24 @@ public class AutoTaggingTest extends ExtendedITextTest {
         doc.close();
 
         compareResult("listTest01.pdf", "cmp_listTest01.pdf");
+    }
+
+    @Test
+    public void linkTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "linkTest01.pdf"));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
+        Link link = new Link("linked text", action);
+        link.setUnderline();
+        link.getLinkAnnotation().put(PdfName.Border, new PdfArray(new int[] { 0, 0, 0 }));
+
+        doc.add(new Paragraph("before ").add(link).add(" after"));
+        doc.close();
+
+        compareResult("linkTest01.pdf", "cmp_linkTest01.pdf");
     }
 
     @Test

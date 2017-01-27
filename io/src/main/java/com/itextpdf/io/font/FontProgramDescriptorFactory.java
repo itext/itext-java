@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,13 +43,11 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
-import com.itextpdf.io.util.ArrayUtil;
 
-public final class FontNamesFactory {
-    @SuppressWarnings("FieldCanBeLocal")
+public final class FontProgramDescriptorFactory {
     private static boolean FETCH_CACHED_FIRST = true;
 
-    public static FontNames fetchFontNames(String fontName) {
+    public static FontProgramDescriptor fetchDescriptor(String fontName) {
         if (fontName == null || fontName.length() == 0) {
             return null;
         }
@@ -59,70 +57,74 @@ public final class FontNamesFactory {
         boolean isBuiltinFonts14 = FontConstants.BUILTIN_FONTS_14.contains(fontName);
         boolean isCidFont = !isBuiltinFonts14 && FontCache.isPredefinedCidFont(baseName);
 
-        FontNames fontNames = null;
+        FontProgramDescriptor fontDescriptor = null;
         if (FETCH_CACHED_FIRST) {
-            fontNames = fetchCachedFontNames(fontName, null);
-            if (fontNames != null) {
-                return fontNames;
+            fontDescriptor = fetchCachedDescriptor(fontName, null);
+            if (fontDescriptor != null) {
+                return fontDescriptor;
             }
         }
 
         try {
             if (isBuiltinFonts14 || fontName.toLowerCase().endsWith(".afm") || fontName.toLowerCase().endsWith(".pfm")) {
-                fontNames = fetchType1Names(fontName, null);
+                fontDescriptor = fetchType1FontDescriptor(fontName, null);
             } else if (isCidFont) {
-                fontNames = fetchCidFontNames(fontName);
+                fontDescriptor = fetchCidFontDescriptor(fontName);
             } else if (baseName.toLowerCase().endsWith(".ttf") || baseName.toLowerCase().endsWith(".otf")) {
-                fontNames = fetchTrueTypeNames(fontName);
+                fontDescriptor = fetchTrueTypeFontDescriptor(fontName);
             } else {
-                fontNames = fetchTTCNames(baseName);
+                fontDescriptor = fetchTTCDescriptor(baseName);
             }
         } catch (Exception ignored) {
-            fontNames = null;
+            fontDescriptor = null;
         }
 
-        return fontNames;
+        return fontDescriptor;
     }
 
-    public static FontNames fetchFontNames(byte[] fontProgram) {
+    public static FontProgramDescriptor fetchDescriptor(byte[] fontProgram) {
         if (fontProgram == null || fontProgram.length == 0) {
             return null;
         }
 
-        FontNames fontNames = null;
+        FontProgramDescriptor fontDescriptor = null;
         if (FETCH_CACHED_FIRST) {
-            fontNames = fetchCachedFontNames(null, fontProgram);
-            if (fontNames != null) {
-                return fontNames;
+            fontDescriptor = fetchCachedDescriptor(null, fontProgram);
+            if (fontDescriptor != null) {
+                return fontDescriptor;
             }
         }
 
         try {
-            fontNames = fetchTrueTypeNames(fontProgram);
+            fontDescriptor = fetchTrueTypeFontDescriptor(fontProgram);
         } catch (Exception ignored) {
         }
-        if (fontNames == null) {
+        if (fontDescriptor == null) {
             try {
-                fontNames = fetchType1Names(null, fontProgram);
+                fontDescriptor = fetchType1FontDescriptor(null, fontProgram);
             } catch (Exception ignored) {
             }
         }
-        return fontNames;
+        return fontDescriptor;
     }
 
-    private static FontNames fetchCachedFontNames(String fontName, byte[] fontProgram)  {
+    public static FontProgramDescriptor fetchDescriptor(FontProgram fontProgram) {
+        return fetchDescriptorFromFontProgram(fontProgram);
+    }
+
+    private static FontProgramDescriptor fetchCachedDescriptor(String fontName, byte[] fontProgram) {
         FontProgram fontFound;
-        FontCacheKey key; 
+        FontCacheKey key;
         if (fontName != null) {
             key = FontCacheKey.create(fontName);
         } else {
             key = FontCacheKey.create(fontProgram);
         }
         fontFound = FontCache.getFont(key);
-        return fontFound != null ? fontFound.getFontNames() : null;
+        return fontFound != null ? fetchDescriptorFromFontProgram(fontFound) : null;
     }
 
-    private static FontNames fetchTTCNames(String baseName) throws java.io.IOException {
+    private static FontProgramDescriptor fetchTTCDescriptor(String baseName) throws java.io.IOException {
         int ttcSplit = baseName.toLowerCase().indexOf(".ttc,");
         if (ttcSplit > 0) {
             String ttcName;
@@ -134,39 +136,44 @@ public final class FontNamesFactory {
                 throw new IOException(nfe.getMessage(), nfe);
             }
             OpenTypeParser parser = new OpenTypeParser(ttcName, ttcIndex);
-            FontNames names = fetchOpenTypeNames(parser);
+            FontProgramDescriptor descriptor = fetchOpenTypeFontDescriptor(parser);
             parser.close();
-            return names;
+            return descriptor;
         } else {
             return null;
         }
     }
 
-    private static FontNames fetchTrueTypeNames(String fontName) throws java.io.IOException {
-        try(OpenTypeParser parser = new OpenTypeParser(fontName)) {
-            return fetchOpenTypeNames(parser);
+    private static FontProgramDescriptor fetchTrueTypeFontDescriptor(String fontName) throws java.io.IOException {
+        try (OpenTypeParser parser = new OpenTypeParser(fontName)) {
+            return fetchOpenTypeFontDescriptor(parser);
         }
     }
 
-    private static FontNames fetchTrueTypeNames(byte[] fontProgram) throws java.io.IOException {
-        try(OpenTypeParser parser = new OpenTypeParser(fontProgram)) {
-            return fetchOpenTypeNames(parser);
+    private static FontProgramDescriptor fetchTrueTypeFontDescriptor(byte[] fontProgram) throws java.io.IOException {
+        try (OpenTypeParser parser = new OpenTypeParser(fontProgram)) {
+            return fetchOpenTypeFontDescriptor(parser);
         }
     }
 
-    private static FontNames fetchOpenTypeNames(OpenTypeParser fontParser) throws java.io.IOException {
+    private static FontProgramDescriptor fetchOpenTypeFontDescriptor(OpenTypeParser fontParser) throws java.io.IOException {
         fontParser.loadTables(false);
-        return fontParser.getFontNames();
+        return new FontProgramDescriptor(fontParser.getFontNames(), fontParser.getPostTable().italicAngle,
+                fontParser.getPostTable().isFixedPitch);
     }
 
-    private static FontNames fetchType1Names(String fontName, byte[] afm) throws java.io.IOException {
+    private static FontProgramDescriptor fetchType1FontDescriptor(String fontName, byte[] afm) throws java.io.IOException {
         //TODO close original stream, may be separate static method should introduced
         Type1Font fp = new Type1Font(fontName, null, afm, null);
-        return fp.getFontNames();
+        return new FontProgramDescriptor(fp.getFontNames(), fp.getFontMetrics());
     }
 
-    private static FontNames fetchCidFontNames(String fontName) {
+    private static FontProgramDescriptor fetchCidFontDescriptor(String fontName) {
         CidFont font = new CidFont(fontName, null);
-        return font.getFontNames();
+        return new FontProgramDescriptor(font.getFontNames(), font.getFontMetrics());
+    }
+
+    private static FontProgramDescriptor fetchDescriptorFromFontProgram(FontProgram fontProgram) {
+        return new FontProgramDescriptor(fontProgram.getFontNames(), fontProgram.getFontMetrics());
     }
 }

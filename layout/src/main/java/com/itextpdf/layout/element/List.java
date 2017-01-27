@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -70,7 +70,6 @@ public class List extends BlockElement<List> {
      */
     public List() {
         super();
-        setListSymbol(DEFAULT_LIST_SYMBOL);
     }
 
     /**
@@ -85,6 +84,8 @@ public class List extends BlockElement<List> {
     @Override
     public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
+            case Property.LIST_SYMBOL:
+                return (T1) (Object) new Text(DEFAULT_LIST_SYMBOL);
             case Property.LIST_SYMBOL_PRE_TEXT:
                 return (T1) (Object) "";
             case Property.LIST_SYMBOL_POST_TEXT:

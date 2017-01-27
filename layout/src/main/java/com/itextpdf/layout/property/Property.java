@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -83,18 +83,20 @@ public final class Property {
     public static final int FONT_COLOR = 21;
     public static final int FONT_KERNING = 22;
     /**
+     * String value. 'normal'|'italic'|'oblique'
      * Note, this property will be applied only if {@link #FONT} has String value.
      */
     public static final int FONT_STYLE = 94;
     /**
+     * String value. 'normal'|'bold'|number
      * Note, this property will be applied only if {@link #FONT} has String value.
      */
     public static final int FONT_WEIGHT = 95;
     public static final int FONT_SCRIPT = 23;
     public static final int FONT_PROVIDER = 91;
     public static final int FONT_SIZE = 24;
-    public static final int FULL = 25;
     public static final int FORCED_PLACEMENT = 26;
+    public static final int FULL = 25;
     public static final int HEIGHT = 27;
     public static final int HORIZONTAL_ALIGNMENT = 28;
     /**
@@ -102,6 +104,8 @@ public final class Property {
      **/
     public static final int HORIZONTAL_SCALING = 29;
     public static final int HYPHENATION = 30;
+    public static final int IGNORE_FOOTER = 96;
+    public static final int IGNORE_HEADER = 97;
     public static final int ITALIC_SIMULATION = 31;
     public static final int KEEP_TOGETHER = 32;
     public static final int KEEP_WITH_NEXT = 81;

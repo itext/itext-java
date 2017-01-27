@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -71,16 +71,19 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
 
     @Override
     public List<Glyph> nextGlyphs() {
+        font = null;
         int nextUnignorable = nextSignificantIndex();
-        for (FontProgramInfo f : selector.getFonts()) {
-            font = f.getPdfFont(provider);
-            if (font.containsGlyph(text, nextUnignorable)) {
-                break;
-            } else {
-                font = null;
+        if (nextUnignorable < text.length()) {
+            for (FontInfo f : selector.getFonts()) {
+                PdfFont currentFont = f.getPdfFont(provider);
+                if (currentFont.containsGlyph(text, nextUnignorable)) {
+                    font = currentFont;
+                    break;
+                }
             }
         }
         List<Glyph> glyphs = new ArrayList<>();
+        boolean anyGlyphsAppended = false;
         if (font != null) {
             Character.UnicodeScript unicodeScript = nextSignificantUnicodeScript(nextUnignorable);
             int to = nextUnignorable;
@@ -94,13 +97,19 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
                 to = i;
             }
 
-            index += font.appendGlyphs(text, index, to, glyphs);
-        } else {
+            int numOfAppendedGlyphs = font.appendGlyphs(text, index, to, glyphs);
+            anyGlyphsAppended = numOfAppendedGlyphs > 0;
+            assert anyGlyphsAppended;
+            index += numOfAppendedGlyphs;
+        }
+        if (!anyGlyphsAppended) {
             font = selector.bestMatch().getPdfFont(provider);
             if (index != nextUnignorable) {
                 index += font.appendGlyphs(text, index, nextUnignorable - 1, glyphs);
             }
-            index += font.appendAnyGlyph(text, nextUnignorable, glyphs);
+            while (index <= nextUnignorable && index < text.length()) {
+                index += font.appendAnyGlyph(text, index, glyphs);
+            }
         }
         return glyphs;
     }
@@ -108,7 +117,7 @@ public class ComplexFontSelectorStrategy extends FontSelectorStrategy {
     private int nextSignificantIndex() {
         int nextValidChar = index;
         for (; nextValidChar < text.length(); nextValidChar++) {
-            if (!Character.isIdentifierIgnorable(text.charAt(nextValidChar))) {
+            if (!TextUtil.isWhitespaceOrNonPrintable(text.charAt(nextValidChar))) {
                 break;
             }
         }

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -326,7 +326,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         .increaseHeight(occupiedArea.getBBox().getBottom() - blockBottom)
                         .setY(blockBottom);
                 blockMinHeight -= occupiedArea.getBBox().getHeight();
-                if (!isFixedLayout() && blockMinHeight > 0) {
+                if (!isFixedLayout() && blockMinHeight > AbstractRenderer.EPS) {
                     overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
                     overflowRenderer.setProperty(Property.MIN_HEIGHT, (float) blockMinHeight);
                     if (hasProperty(Property.HEIGHT)) {
@@ -409,11 +409,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 if (!tagPointer.isElementConnectedToTag(accessibleElement)) {
                     AccessibleAttributesApplier.applyLayoutAttributes(role, this, document);
 
-                    if (role.equals(PdfName.TD)) {
+                    if (role.equals(PdfName.TD) || role.equals(PdfName.TH)) {
                         AccessibleAttributesApplier.applyTableAttributes(this);
                     }
 
-                    if (role.equals(PdfName.List)) {
+                    if (role.equals(PdfName.L)) {
                         AccessibleAttributesApplier.applyListAttributes(this);
                     }
 

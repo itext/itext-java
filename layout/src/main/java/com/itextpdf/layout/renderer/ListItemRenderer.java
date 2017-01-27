@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -266,7 +266,7 @@ public class ListItemRenderer extends DivRenderer {
     }
 
     private float[] calculateAscenderDescender() {
-        PdfFont listItemFont = getPropertyAsFont(Property.FONT);
+        PdfFont listItemFont = resolveFirstPdfFont();
         Float fontSize = this.getPropertyAsFloat(Property.FONT_SIZE);
         if (listItemFont != null && fontSize != null) {
             float[] ascenderDescender = TextRenderer.calculateAscenderDescender(listItemFont);
@@ -274,4 +274,5 @@ public class ListItemRenderer extends DivRenderer {
         }
         return new float[] {0, 0};
     }
+
 }

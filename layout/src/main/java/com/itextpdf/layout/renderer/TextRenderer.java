@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -63,6 +63,7 @@ import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.font.FontCharacteristics;
 import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSelectorStrategy;
@@ -85,13 +86,7 @@ import com.itextpdf.layout.splitting.ISplitCharacters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
@@ -496,8 +491,8 @@ public class TextRenderer extends AbstractRenderer {
             logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
             return;
         }
-        super.draw(drawContext);
 
+        // Set up marked content before super.draw so that annotations are placed within marked content
         PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
         boolean isArtifact = false;
@@ -519,6 +514,8 @@ public class TextRenderer extends AbstractRenderer {
                 }
             }
         }
+
+        super.draw(drawContext);
 
         applyMargins(occupiedArea.getBBox(), getMargins(), false);
         applyBorderBox(occupiedArea.getBBox(), false);
@@ -632,9 +629,6 @@ public class TextRenderer extends AbstractRenderer {
 
             canvas.endText().restoreState();
             endElementOpacityApplying(drawContext);
-            if (isTagged || isArtifact) {
-                canvas.closeTag();
-            }
 
             Object underlines = this.<Object>getProperty(Property.UNDERLINE);
             if (underlines instanceof List) {
@@ -645,6 +639,10 @@ public class TextRenderer extends AbstractRenderer {
                 }
             } else if (underlines instanceof Underline) {
                 drawSingleUnderline((Underline) underlines, fontColor, canvas, fontSize, italicSimulation ? ITALIC_ANGLE : 0);
+            }
+
+            if (isTagged || isArtifact) {
+                canvas.closeTag();
             }
         }
 
@@ -1009,28 +1007,36 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     protected float calculateLineWidth() {
-        return getGlyphLineWidth(line, (float) this.getPropertyAsFloat(Property.FONT_SIZE), (float) this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f),
+        return getGlyphLineWidth(line, (float) this.getPropertyAsFloat(Property.FONT_SIZE),
+                (float) this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f),
                 this.getPropertyAsFloat(Property.CHARACTER_SPACING), this.getPropertyAsFloat(Property.WORD_SPACING));
     }
 
-    protected List<TextRenderer> resolveFonts() {
+    /**
+     * Resolve {@link Property#FONT} string value.
+     *
+     * @param addTo add all processed renderers to.
+     * @return true, if new {@link TextRenderer} has been created.
+     */
+    protected boolean resolveFonts(List<IRenderer> addTo) {
         Object font = this.<Object>getProperty(Property.FONT);
         if (font instanceof PdfFont) {
-            return Collections.<TextRenderer>singletonList(this);
+            addTo.add(this);
+            return false;
         } else if (font instanceof String) {
             FontProvider provider = this.<FontProvider>getProperty(Property.FONT_PROVIDER);
             if (provider == null) {
                 throw new IllegalStateException("Invalid font type. FontProvider expected. Cannot resolve font with string value");
             }
-            List<TextRenderer> renderers = new ArrayList<>();
-
-            FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted, FontFamilySplitter.splitFontFamily((String) font));
+            FontCharacteristics fc = createFontCharacteristics();
+            FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
+                    FontFamilySplitter.splitFontFamily((String) font), fc);
             while (!strategy.endOfText()) {
                 TextRenderer textRenderer = new TextRenderer(this);
                 textRenderer.setGlyphLineAndFont(strategy.nextGlyphs(), strategy.getCurrentFont());
-                renderers.add(textRenderer);
+                addTo.add(textRenderer);
             }
-            return renderers;
+            return true;
         } else {
             throw new IllegalStateException("Invalid font type.");
         }
@@ -1066,7 +1072,7 @@ public class TextRenderer extends AbstractRenderer {
             return false;
         }
         int c = g.getUnicode();
-        return c >= 0x200b && c <= 0x200f || c >= 0x202a && c <= 0x202e || c == '\u00AD';
+        return TextUtil.isNonPrintable(c);
     }
 
     private float getCharWidth(Glyph g, float fontSize, Float hScale, Float characterSpacing, Float wordSpacing) {

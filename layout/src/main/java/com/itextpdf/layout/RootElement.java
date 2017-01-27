@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -77,7 +77,7 @@ import java.util.Map;
  *
  * @param <T> this type
  */
-public abstract class RootElement<T extends IPropertyContainer> extends ElementPropertyContainer<T> implements Closeable{
+public abstract class RootElement<T extends IPropertyContainer> extends ElementPropertyContainer<T> implements Closeable {
 
     protected boolean immediateFlush = true;
     protected PdfDocument pdfDocument;
@@ -105,6 +105,9 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
     public T add(IBlockElement element) {
         childElements.add(element);
         ensureRootRendererNotNull().addChild(element.createRendererSubTree());
+        if (immediateFlush) {
+            childElements.remove(childElements.size() - 1);
+        }
         return (T) (Object) this;
     }
 
@@ -118,6 +121,9 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
     public T add(Image image) {
         childElements.add(image);
         ensureRootRendererNotNull().addChild(image.createRendererSubTree());
+        if (immediateFlush) {
+            childElements.remove(childElements.size() - 1);
+        }
         return (T) (Object) this;
     }
 

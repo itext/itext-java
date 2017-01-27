@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -64,15 +64,15 @@ import java.util.Set;
  * Contains reusable {@link FontSet} and collection of {@link PdfFont}s.
  * FontProvider depends from {@link PdfDocument}, due to {@link PdfFont}, it cannot be reused for different documents,
  * but a new instance of FontProvider could be created with {@link FontProvider#getFontSet()}.
- * FontProvider the only end point for creating PdfFont, {@link #getPdfFont(FontProgramInfo)},
- * {@link FontProgramInfo} shal call this method.
+ * FontProvider the only end point for creating PdfFont, {@link #getPdfFont(FontInfo)},
+ * {@link FontInfo} shall call this method.
  * <p>
  * Note, FontProvider does not close created {@link FontProgram}s, because of possible conflicts with {@link FontCache}.
  */
 public class FontProvider {
 
     private FontSet fontSet;
-    private Map<FontProgramInfo, PdfFont> pdfFonts = new HashMap<>();
+    private Map<FontInfo, PdfFont> pdfFonts = new HashMap<>();
 
     public FontProvider(FontSet fontSet) {
         this.fontSet = fontSet;
@@ -173,46 +173,44 @@ public class FontProvider {
         return true;
     }
 
-    public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, int style) {
-        return new ComplexFontSelectorStrategy(text, getFontSelector(fontFamilies, style), this);
+    public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies, FontCharacteristics fc) {
+        return new ComplexFontSelectorStrategy(text, getFontSelector(fontFamilies, fc), this);
     }
 
     public FontSelectorStrategy getStrategy(String text, List<String> fontFamilies) {
-        return getStrategy(text, fontFamilies, FontConstants.UNDEFINED);
+        return getStrategy(text, fontFamilies, null);
     }
 
     /**
      * Create {@link FontSelector} or get from cache.
      *
      * @param fontFamilies target font families
-     * @param style      Shall be {@link FontConstants#UNDEFINED}, {@link FontConstants#NORMAL}, {@link FontConstants#ITALIC},
-     *                   {@link FontConstants#BOLD}, or {@link FontConstants#BOLDITALIC}
+     * @param fc      instance of {@link FontCharacteristics}.
      * @return an instance of {@link FontSelector}.
-     * @see #createFontSelector(Set, List, int) }
+     * @see #createFontSelector(Set, List, FontCharacteristics) }
      */
-    public final FontSelector getFontSelector(List<String> fontFamilies, int style) {
-        FontSelectorKey key = new FontSelectorKey(fontFamilies, style);
+    public final FontSelector getFontSelector(List<String> fontFamilies, FontCharacteristics fc) {
+        FontSelectorKey key = new FontSelectorKey(fontFamilies, fc);
         if (fontSet.getFontSelectorCache().containsKey(key)) {
             return fontSet.getFontSelectorCache().get(key);
         } else {
-            FontSelector fontSelector = createFontSelector(fontSet.getFonts(), fontFamilies, style);
+            FontSelector fontSelector = createFontSelector(fontSet.getFonts(), fontFamilies, fc);
             fontSet.getFontSelectorCache().put(key, fontSelector);
             return fontSelector;
         }
     }
 
     /**
-     * Create a new instance of {@link FontSelector}. While caching is main responsibility of {@link #getFontSelector(List, int)},
+     * Create a new instance of {@link FontSelector}. While caching is main responsibility of {@link #getFontSelector(List, FontCharacteristics)},
      * this method just create a new instance of {@link FontSelector}.
      *
      * @param fonts      Set of all available fonts in current context.
      * @param fontFamilies target font families
-     * @param style      Shall be {@link FontConstants#UNDEFINED}, {@link FontConstants#NORMAL}, {@link FontConstants#ITALIC},
-     *                   {@link FontConstants#BOLD}, or {@link FontConstants#BOLDITALIC}
+     * @param fc         instance of {@link FontCharacteristics}.
      * @return an instance of {@link FontSelector}.
      */
-    protected FontSelector createFontSelector(Set<FontProgramInfo> fonts, List<String> fontFamilies, int style) {
-        return new FontSelector(fonts, fontFamilies, style);
+    protected FontSelector createFontSelector(Set<FontInfo> fonts, List<String> fontFamilies, FontCharacteristics fc) {
+        return new FontSelector(fonts, fontFamilies, fc);
     }
 
     /**
@@ -222,7 +220,7 @@ public class FontProvider {
      * @return cached or new instance of {@link PdfFont}.
      * @throws IOException on I/O exceptions in {@link FontProgramFactory}.
      */
-    protected PdfFont getPdfFont(FontProgramInfo fontInfo) throws IOException {
+    protected PdfFont getPdfFont(FontInfo fontInfo) throws IOException {
         if (pdfFonts.containsKey(fontInfo)) {
             return pdfFonts.get(fontInfo);
         } else {

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,8 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.IOException;
 import com.itextpdf.io.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -52,9 +54,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * If you are using True Type fonts, you can declare the paths of the different ttf- and ttc-files
@@ -305,7 +304,7 @@ class FontRegisterProvider {
                 }
             } else if (path.toLowerCase().endsWith(".afm") || path.toLowerCase().endsWith(".pfm")) {
                 FontProgram fontProgram = FontProgramFactory.createFont(path);
-                String fullName = fontProgram.getFontNames().getFullNameLowerCase();
+                String fullName = fontProgram.getFontNames().getFullName()[0][3].toLowerCase();
                 String familyName = fontProgram.getFontNames().getFamilyName()[0][3].toLowerCase();
                 String psName = fontProgram.getFontNames().getFontName().toLowerCase();
                 registerFontFamily(familyName, fullName, null);

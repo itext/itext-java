@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -42,8 +42,6 @@
  */
 package com.itextpdf.layout.font;
 
-import com.itextpdf.io.font.FontConstants;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -55,97 +53,139 @@ import java.util.Set;
  */
 public class FontSelector {
 
-    protected List<FontProgramInfo> fonts;
+    protected List<FontInfo> fonts;
 
     /**
      * Create new FontSelector instance.
      * @param allFonts Unsorted set of all available fonts.
      * @param fontFamilies sorted list of preferred font families.
      */
-    public FontSelector(Set<FontProgramInfo> allFonts, List<String> fontFamilies, int style) {
+    public FontSelector(Set<FontInfo> allFonts, List<String> fontFamilies, FontCharacteristics fc) {
         this.fonts = new ArrayList<>(allFonts);
         //Possible issue in .NET, virtual member in constructor.
-        Collections.sort(this.fonts, getComparator(fontFamilies, style));
+        Collections.sort(this.fonts, getComparator(fontFamilies, fc));
     }
 
     /**
      * The best font match.
      * If any font from {@link #getFonts()} doesn't contain requested glyphs, this font will be used.
      */
-    public final FontProgramInfo bestMatch() {
+    public final FontInfo bestMatch() {
         return fonts.get(0);
     }
 
     /**
      * Sorted set of fonts.
      */
-    public final Iterable<FontProgramInfo> getFonts() {
+    public final Iterable<FontInfo> getFonts() {
         return fonts;
     }
 
-    protected Comparator<FontProgramInfo> getComparator(List<String> fontFamilies, int style) {
-        return new PdfFontComparator(fontFamilies, style);
+    protected Comparator<FontInfo> getComparator(List<String> fontFamilies, FontCharacteristics fc) {
+        return new PdfFontComparator(fontFamilies, fc);
     }
 
-    private static class PdfFontComparator implements Comparator<FontProgramInfo> {
+    private static class PdfFontComparator implements Comparator<FontInfo> {
         List<String> fontFamilies;
-        List<Integer> fontStyles;
+        List<FontCharacteristics> fontStyles;
 
-        PdfFontComparator(List<String> fontFamilies, int style) {
+        PdfFontComparator(List<String> fontFamilies, FontCharacteristics fc) {
             this.fontFamilies = new ArrayList<>();
             this.fontStyles = new ArrayList<>();
             if (fontFamilies != null && fontFamilies.size() > 0) {
                 for (String fontFamily : fontFamilies) {
                     String lowercaseFontFamily = fontFamily.toLowerCase();
                     this.fontFamilies.add(lowercaseFontFamily);
-                    this.fontStyles.add(parseFontStyle(lowercaseFontFamily, style));
+                    this.fontStyles.add(parseFontStyle(lowercaseFontFamily, fc));
                 }
             } else {
                 this.fontFamilies.add("");
-                this.fontStyles.add(style);
+                this.fontStyles.add(fc);
             }
         }
 
         @Override
-        public int compare(FontProgramInfo o1, FontProgramInfo o2) {
+        public int compare(FontInfo o1, FontInfo o2) {
             int res = 0;
             for (int i = 0; i < fontFamilies.size() && res == 0; i++) {
-                int style = fontStyles.get(i);
-                if ((style & FontConstants.BOLD) == 0) {
-                    res = (o2.getNames().isBold() ? 1 : 0)
-                            - (o1.getNames().isBold() ? 1 : 0);
-                }
-                if ((style & FontConstants.ITALIC) == 0) {
-                    res += (o2.getNames().isItalic() ? 1 : 0)
-                            - (o1.getNames().isItalic() ? 1 : 0);
-                }
-                if (res == 0) {
-                    String fontName = fontFamilies.get(i);
-                    res = (o2.getNames().getFullNameLowerCase().contains(fontName) ? 1 : 0)
-                            - (o1.getNames().getFullNameLowerCase().contains(fontName) ? 1 : 0);
+                FontCharacteristics fc = fontStyles.get(i);
+                String fontName = fontFamilies.get(i);
 
-                    // In most cases full font name will be enough.
-                    // It's trick for 'bad' fonts.
-                    if (res == 0) {
-                        res = (o2.getNames().getFontNameLowerCase().contains(fontName) ? 1 : 0)
-                                - (o1.getNames().getFontNameLowerCase().contains(fontName) ? 1 : 0);
-                    }
+                if (fontName.equalsIgnoreCase("monospace")) {
+                    fc.setMonospaceFlag(true);
+                }
+
+                res = characteristicsSimilarity(fontName, fc, o2) - characteristicsSimilarity(fontName, fc, o1);
+                if (res != 0) {
+                    return res;
                 }
             }
             return res;
         }
 
-        private static int parseFontStyle(String fontFamily, int style) {
-            if (style == FontConstants.UNDEFINED) {
-                style = FontConstants.NORMAL;
+        private static FontCharacteristics parseFontStyle(String fontFamily, FontCharacteristics fc) {
+            if (fc == null) {
+                fc = new FontCharacteristics();
+            }
+            if (fc.isUndefined()) {
                 if (fontFamily.contains("bold")) {
-                    style |= FontConstants.BOLD;
+                    fc.setBoldFlag(true);
                 }
                 if (fontFamily.contains("italic") || fontFamily.contains("oblique")) {
-                    style |= FontConstants.ITALIC;
+                    fc.setItalicFlag(true);
                 }
             }
-            return style;
+            return fc;
+        }
+
+        private static int characteristicsSimilarity(String fontName, FontCharacteristics fc, FontInfo fontInfo) {
+            boolean isFontBold = fontInfo.getDescriptor().isBold() || fontInfo.getDescriptor().getFontWeight() > 500;
+            boolean isFontItalic = fontInfo.getDescriptor().isItalic() || fontInfo.getDescriptor().getItalicAngle() < 0;
+            boolean isFontMonospace = fontInfo.getDescriptor().isMonospace();
+            int score = 0;
+            if (fc.isBold()) {
+                if (isFontBold) {
+                    score += 5;
+                } else {
+                    score -= 5;
+                }
+            } else {
+                if (isFontBold) {
+                    score -= 3;
+                }
+            }
+
+            if (fc.isItalic()) {
+                if (isFontItalic) {
+                    score += 5;
+                } else {
+                    score -= 5;
+                }
+            } else {
+                if (isFontItalic) {
+                    score -= 3;
+                }
+            }
+
+            if (fc.isMonospace()) {
+                if (isFontMonospace) {
+                    score += 5;
+                } else {
+                    score -= 5;
+                }
+            } else {
+                if (isFontMonospace) {
+                    score -= 1;
+                }
+            }
+
+            if (fontInfo.getDescriptor().getFullNameLowerCase().equals(fontName) || fontInfo.getDescriptor().getFontNameLowerCase().equals(fontName)) {
+                score += 10;
+            } else if (fontInfo.getDescriptor().getFullNameLowerCase().contains(fontName) || fontInfo.getDescriptor().getFontNameLowerCase().contains(fontName)) {
+                score += 7;
+            }
+
+            return score;
         }
     }
 }

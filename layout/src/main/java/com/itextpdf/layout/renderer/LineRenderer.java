@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -682,13 +682,15 @@ public class LineRenderer extends AbstractRenderer {
                 if (child instanceof TextRenderer) {
                     GlyphLine text = ((TextRenderer) child).getText();
                     for (int i = text.start; i < text.end; i++) {
-                        if (TextUtil.isNewLine(text.get(i))) {
+                        Glyph glyph = text.get(i);
+                        if (TextUtil.isNewLine(glyph)) {
                             newLineFound = true;
                             break;
                         }
                         // we assume all the chars will have the same bidi group
                         // we also assume pairing symbols won't get merged with other ones
-                        unicodeIdsReorderingList.add(text.get(i).getUnicode());
+                        int unicode = glyph.hasValidUnicode() ? glyph.getUnicode() : glyph.getUnicodeChars()[0];
+                        unicodeIdsReorderingList.add(unicode);
                     }
                 }
             }
@@ -701,19 +703,21 @@ public class LineRenderer extends AbstractRenderer {
      */
     private void resolveChildrenFonts() {
         List<IRenderer> newChildRenderers = new ArrayList<>(childRenderers.size());
+        boolean updateChildRendrers = false;
         for (IRenderer child : childRenderers) {
             if (child instanceof TextRenderer) {
-                newChildRenderers.addAll(((TextRenderer)child).resolveFonts());
+                if (((TextRenderer)child).resolveFonts(newChildRenderers)) {
+                    updateChildRendrers = true;
+                }
             } else {
                 newChildRenderers.add(child);
             }
         }
 
-        //TODO It might be one textRenderer with resolved font.
-        // this mean, that some TextRenderer has been split into several with different fonts.
-        //if (newChildRenderers.size() > childRenderers.size()) {
+        // this mean, that some TextRenderer has been replaced.
+        if (updateChildRendrers) {
             childRenderers = newChildRenderers;
-        //}
+        }
     }
 
 

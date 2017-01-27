@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -57,8 +57,8 @@ import java.util.Set;
  */
 public class FontSet {
 
-    private Set<FontProgramInfo> fonts = new LinkedHashSet<>();
-    private Map<FontProgramInfo, FontProgram> fontPrograms = new HashMap<>();
+    private Set<FontInfo> fonts = new LinkedHashSet<>();
+    private Map<FontInfo, FontProgram> fontPrograms = new HashMap<>();
     private Map<FontSelectorKey, FontSelector> fontSelectorCache = new HashMap<>();
 
     public int addDirectory(String dir, boolean scanSubdirectories) {
@@ -102,7 +102,7 @@ public class FontSet {
             return false;
         }
 
-        FontProgramInfo fontInfo = FontProgramInfo.create(fontProgram, encoding);
+        FontInfo fontInfo = FontInfo.create(fontProgram, encoding);
         addFontInfo(fontInfo);
         fontPrograms.put(fontInfo, fontProgram);
         return true;
@@ -124,21 +124,21 @@ public class FontSet {
         return addFont(fontProgram, null);
     }
 
-    public Set<FontProgramInfo> getFonts() {
+    public Set<FontInfo> getFonts() {
         return fonts;
     }
 
     boolean addFont(String fontName, byte[] fontProgram, String encoding) {
         if (fontName != null) {
-            return addFontInfo(FontProgramInfo.create(fontName, encoding));
+            return addFontInfo(FontInfo.create(fontName, encoding));
         } else if (fontProgram != null) {
-            return addFontInfo(FontProgramInfo.create(fontProgram, encoding));
+            return addFontInfo(FontInfo.create(fontProgram, encoding));
         } else {
             return false;
         }
     }
 
-    Map<FontProgramInfo, FontProgram> getFontPrograms() {
+    Map<FontInfo, FontProgram> getFontPrograms() {
         return fontPrograms;
     }
 
@@ -146,7 +146,7 @@ public class FontSet {
         return fontSelectorCache;
     }
 
-    private boolean addFontInfo(FontProgramInfo fontInfo) {
+    private boolean addFontInfo(FontInfo fontInfo) {
         if (fontInfo != null) {
             fonts.add(fontInfo);
             fontSelectorCache.clear();

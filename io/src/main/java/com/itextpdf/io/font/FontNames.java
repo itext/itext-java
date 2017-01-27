@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -108,9 +108,6 @@ public class FontNames implements Serializable {
 
     protected Map<Integer, List<String[]>> allNames;
 
-    private String fullNameLowerCase = null;
-    private String fontNameLowerCase = null;
-
     // name, ID = 4
     private String[][] fullName;
     // name, ID = 1 or 16
@@ -145,20 +142,6 @@ public class FontNames implements Serializable {
 
     public String[][] getFullName() {
         return fullName;
-    }
-
-    public String getFullNameLowerCase() {
-        if (fullNameLowerCase == null) {
-            fullNameLowerCase = fullName[0][3].toLowerCase();
-        }
-        return fullNameLowerCase;
-    }
-
-    public String getFontNameLowerCase() {
-        if (fontNameLowerCase == null) {
-            fontNameLowerCase = fontName.toLowerCase();
-        }
-        return fontNameLowerCase;
     }
 
     public String getFontName() {

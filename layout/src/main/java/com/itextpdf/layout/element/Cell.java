@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -229,12 +229,7 @@ public class Cell extends BlockElement<Cell> {
 
     @Override
     public String toString() {
-        return "Cell{" +
-                "row=" + row +
-                ", col=" + col +
-                ", rowspan=" + rowspan +
-                ", colspan=" + colspan +
-                '}';
+        return MessageFormat.format("Cell[row={0}, col={1}, rowspan={2}, colspan={3}]", row, col, rowspan, colspan);
     }
 
     @Override

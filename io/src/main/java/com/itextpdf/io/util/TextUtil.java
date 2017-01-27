@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -223,5 +223,13 @@ public final class TextUtil {
 
     public static boolean isUni0020(Glyph g) {
         return g.getUnicode() == ' ';
+    }
+
+    public static boolean isNonPrintable(int c) {
+        return Character.isIdentifierIgnorable(c) || c == '\u00AD';
+    }
+
+    public static boolean isWhitespaceOrNonPrintable(int code) {
+        return Character.isWhitespace(code) || isNonPrintable(code);
     }
 }

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -615,8 +615,8 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      *
      * @return an array of {@link Border} objects
      */
-    public ArrayList<Border> getLastRowBottomBorder() {
-        ArrayList<Border> horizontalBorder = new ArrayList<>();
+    public List<Border> getLastRowBottomBorder() {
+        List<Border> horizontalBorder = new ArrayList<>();
         if (lastAddedRow != null) {
             for (int i = 0; i < lastAddedRow.length; i++) {
                 Cell cell = lastAddedRow[i];
