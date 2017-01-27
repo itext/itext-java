@@ -106,6 +106,7 @@ public class CellRenderer extends BlockRenderer {
         // Avoid rotation
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         boolean avoidRotation = null != angle && hasProperty(Property.BACKGROUND);
+        boolean restoreRotation = hasOwnProperty(Property.ROTATION_ANGLE);
         if (avoidRotation) {
             AffineTransform transform = new AffineTransform(ctm.get(0), ctm.get(1), ctm.get(3), ctm.get(4), ctm.get(6), ctm.get(7));
             try {
@@ -115,14 +116,18 @@ public class CellRenderer extends BlockRenderer {
             }
             transform.concatenate(new AffineTransform());
             canvas.concatMatrix(transform);
-            deleteProperty(Property.ROTATION_ANGLE);
+            setProperty(Property.ROTATION_ANGLE, null);
         }
 
         super.drawBackground(drawContext);
 
         // restore concat matrix and rotation angle
         if (avoidRotation) {
-            setProperty(Property.ROTATION_ANGLE, angle);
+            if (restoreRotation) {
+                setProperty(Property.ROTATION_ANGLE, angle);
+            } else {
+                deleteOwnProperty(Property.ROTATION_ANGLE);
+            }
             canvas.concatMatrix(new AffineTransform(ctm.get(0), ctm.get(1), ctm.get(3), ctm.get(4), ctm.get(6), ctm.get(7)));
         }
     }
