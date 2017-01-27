@@ -224,8 +224,16 @@ public class ImageRenderer extends AbstractRenderer {
             applyRotationLayout((float) angle);
         }
 
+        float unscaledWidth = occupiedArea.getBBox().getWidth() / scaleCoef;
+        MinMaxWidth minMaxWidth = new MinMaxWidth(0, area.getBBox().getWidth(), unscaledWidth, unscaledWidth);
+        UnitValue rendererWidth = this.<UnitValue>getProperty(Property.WIDTH);
+        if (rendererWidth != null && rendererWidth.isPercentValue()) {
+            minMaxWidth.setChildrenMinWidth(0);
+            float coeff = imageWidth / retrieveWidth(area.getBBox().getWidth());
+            minMaxWidth.setChildrenMaxWidth(unscaledWidth * coeff);
+        }
         return new MinMaxWidthLayoutResult(LayoutResult.FULL, occupiedArea, null, null, isPlacingForced ? this : null)
-                .setMinMaxWidth(new MinMaxWidth(0, area.getBBox().getWidth(), occupiedArea.getBBox().getWidth(), occupiedArea.getBBox().getWidth()));
+                .setMinMaxWidth(minMaxWidth);
     }
 
     @Override
@@ -345,18 +353,9 @@ public class ImageRenderer extends AbstractRenderer {
         }
     }
 
+    @Override
     MinMaxWidth getMinMaxWidth(float availableWidth) {
-        Rectangle area = new Rectangle(availableWidth, AbstractRenderer.INF);
-        float additionalWidth = applyBordersPaddingsMargins(area, getBorders(), getPaddings(), isPositioned());
-        float imageWidth = ((Image)modelElement).getImageWidth();
-        UnitValue width = this.<UnitValue>getProperty(Property.WIDTH);
-        if (width == null || width.getValue() < 0) {
-            return new MinMaxWidth(additionalWidth, availableWidth, imageWidth, imageWidth);
-        } else if (width.isPercentValue()) {
-            return new MinMaxWidth(additionalWidth, availableWidth, 0, imageWidth);
-        } else {
-            return new MinMaxWidth(additionalWidth, availableWidth, width.getValue(), width.getValue());
-        }
+        return ((MinMaxWidthLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))))).getMinMaxWidth();
     }
 
     protected ImageRenderer autoScale(LayoutArea layoutArea) {

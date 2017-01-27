@@ -172,6 +172,60 @@ public class MinWidthTest extends ExtendedITextTest {
     }
 
     @Test
+    public void divWithPercentImage() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "divPercentImage.pdf";
+        String cmpFileName = sourceFolder + "cmp_divPercentImage.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg"));
+        Image img = new Image(imageXObject);
+        Div d = new Div().add(img).setBorder(new SolidBorder(Color.BLUE, 2f)).setMarginBottom(10);
+
+        Image imgPercent = new Image(imageXObject).setWidthPercent(50);
+        Div dPercent = new Div().add(imgPercent).setBorder(new SolidBorder(Color.BLUE, 2f));
+
+        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
+        d.setWidth(toEffectiveWidth(d, result.getMinWidth()));
+        MinMaxWidth resultPercent = ((AbstractRenderer)dPercent.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
+        dPercent.setWidth(toEffectiveWidth(dPercent, resultPercent.getMaxWidth()));
+
+        doc.add(d);
+        doc.add(dPercent);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void divWithRotatedPercentImage() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "divRotatedPercentImage.pdf";
+        String cmpFileName = sourceFolder + "cmp_divRotatedPercentImage.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg"));
+        Image img = new Image(imageXObject).setRotationAngle(Math.PI * 3 / 8);
+        Div d = new Div().add(img).setBorder(new SolidBorder(Color.BLUE, 2f)).setMarginBottom(10);
+
+        Image imgPercent = new Image(imageXObject).setWidthPercent(50).setRotationAngle(Math.PI * 3 / 8);
+        Div dPercent = new Div().add(imgPercent).setBorder(new SolidBorder(Color.BLUE, 2f));
+
+        MinMaxWidth result = ((AbstractRenderer)d.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
+        d.setWidth(toEffectiveWidth(d, result.getMinWidth()));
+        MinMaxWidth resultPercent = ((AbstractRenderer)dPercent.createRendererSubTree().setParent(doc.getRenderer())).getMinMaxWidth(doc.getPageEffectiveArea(PageSize.A4).getWidth());
+        dPercent.setWidth(toEffectiveWidth(dPercent, resultPercent.getMaxWidth()));
+
+        doc.add(d);
+        doc.add(dPercent);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
     public void multipleDivTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "multipleDivTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_multipleDivTest01.pdf";
