@@ -101,7 +101,7 @@ public class TextRenderer extends AbstractRenderer {
 
     protected float yLineOffset;
 
-    //font shall be stored only during converting original string to GlyphLine
+    // font should be stored only during converting original string to GlyphLine, however now it's not true
     private PdfFont font;
     protected GlyphLine text;
     protected GlyphLine line;
@@ -112,6 +112,8 @@ public class TextRenderer extends AbstractRenderer {
     protected float tabAnchorCharacterPosition = -1;
 
     protected List<int[]> reversedRanges;
+    
+    protected GlyphLine savedWordBreakAtLineEnding;
 
     /**
      * Creates a TextRenderer from its corresponding layout object.
@@ -187,14 +189,18 @@ public class TextRenderer extends AbstractRenderer {
         float currentLineWidth = 0;
         int previousCharPos = -1;
 
+        Glyph wordBreakGlyphAtLineEnding = null;
+
         Character tabAnchorCharacter = this.<Character>getProperty(Property.TAB_ANCHOR);
 
         TextLayoutResult result = null;
 
-        // true in situations like "\nHello World"
-        boolean isSplitForcedByImmediateNewLine = false;
+        // true in situations like "\nHello World" or "Hello\nWorld" 
+        boolean isSplitForcedByNewLine = false;
+        // needed in situation like "\nHello World" or " Hello World", when split occurs on first character, but we want to leave it on previous line  
+        boolean forcePartialSplitOnFirstChar = false;
         // true in situations like "Hello\nWorld"
-        boolean isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol = false;
+        boolean ignoreNewLineSymbol = false;
 
         // For example, if a first character is a RTL mark (U+200F), and the second is a newline, we need to break anyway
         int firstPrintPos = currentTextPos;
@@ -222,12 +228,14 @@ public class TextRenderer extends AbstractRenderer {
 
             for (int ind = currentTextPos; ind < text.end; ind++) {
                 if (TextUtil.isNewLine(text.get(ind))) {
-                    isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol = true;
+                    wordBreakGlyphAtLineEnding = text.get(ind); 
+                    isSplitForcedByNewLine = true;
                     firstCharacterWhichExceedsAllowedWidth = ind + 1;
-                    if (currentTextPos == firstPrintPos) {
-                        isSplitForcedByImmediateNewLine = true;
+                    if (ind != firstPrintPos) {
+                        ignoreNewLineSymbol = true;
+                    } else {
                         // Notice that in that case we do not need to ignore the new line symbol ('\n')
-                        isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol = false;
+                        forcePartialSplitOnFirstChar = true;
                     }
                     break;
                 }
@@ -248,6 +256,14 @@ public class TextRenderer extends AbstractRenderer {
                 }
                 if ((nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition) > layoutBox.getWidth() - currentLineWidth && firstCharacterWhichExceedsAllowedWidth == -1) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
+                    if (TextUtil.isSpaceOrWhitespace(text.get(ind))) {
+                        wordBreakGlyphAtLineEnding = currentGlyph;
+                        if (ind == firstPrintPos) {
+                            forcePartialSplitOnFirstChar = true;
+                            firstCharacterWhichExceedsAllowedWidth = ind + 1;
+                            break;
+                        }
+                    }
                 }
                 if (firstCharacterWhichExceedsAllowedWidth == -1) {
                     nonBreakablePartWidthWhichDoesNotExceedAllowedWidth += glyphWidth + xAdvance;
@@ -349,15 +365,15 @@ public class TextRenderer extends AbstractRenderer {
                         }
                     }
 
-                    if ((nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) || (isSplitForcedByImmediateNewLine)) {
+                    if ((nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) || (forcePartialSplitOnFirstChar)) {
                         // if the word is too long for a single line we will have to split it
-                        wordSplit = true;
+                        wordSplit = !forcePartialSplitOnFirstChar;
                         if (line.start == -1) {
                             line.start = currentTextPos;
                         }
                         currentTextPos = firstCharacterWhichExceedsAllowedWidth;
                         line.end = Math.max(line.end, firstCharacterWhichExceedsAllowedWidth);
-                        if (nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied) {
+                        if (wordSplit) {
                             currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
                             currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
                             currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
@@ -369,7 +385,7 @@ public class TextRenderer extends AbstractRenderer {
                             currentLineAscender = ascender;
                             currentLineDescender = descender;
                             currentLineHeight = (currentLineAscender - currentLineDescender) * fontSize / TEXT_SPACE_COEFF + textRise;
-                            currentLineWidth += getCharWidth(line.get(0), fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
+                            currentLineWidth += getCharWidth(line.get(line.start), fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
                         }
                     }
                     if (line.end <= line.start) {
@@ -410,14 +426,18 @@ public class TextRenderer extends AbstractRenderer {
             result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null, isPlacingForcedWhileNothing ? this : null);
         } else {
             TextRenderer[] split;
-            if (isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol) {
+            if (ignoreNewLineSymbol) {
                 // ignore '\n'
                 split = splitIgnoreFirstNewLine(currentTextPos);
             } else {
                 split = split(currentTextPos);
             }
-            result.setSplitForcedByNewline(isSplitForcedByNewLineAndWeNeedToIgnoreNewLineSymbol || isSplitForcedByImmediateNewLine);
+            result.setSplitForcedByNewline(isSplitForcedByNewLine);
             result.setSplitRenderer(split[0]);
+            if (wordBreakGlyphAtLineEnding != null) {
+                split[0].saveWordBreakIfNotYetSaved(wordBreakGlyphAtLineEnding); 
+            }
+            
             // no sense to process empty renderer
             if (split[1].text.start != split[1].text.end) {
                 result.setOverflowRenderer(split[1]);
@@ -527,7 +547,7 @@ public class TextRenderer extends AbstractRenderer {
 
         float leftBBoxX = occupiedArea.getBBox().getX();
 
-        if (line.end > line.start) {
+        if (line.end > line.start || savedWordBreakAtLineEnding != null) {
             float fontSize = (float) this.getPropertyAsFloat(Property.FONT_SIZE);
             TransparentColor fontColor = getPropertyAsTransparentColor(Property.FONT_COLOR);
             Integer textRenderingMode = this.<Integer>getProperty(Property.TEXT_RENDERING_MODE);
@@ -625,6 +645,9 @@ public class TextRenderer extends AbstractRenderer {
                     line.setActualText(line.start, line.end, null);
                 }
                 canvas.showText(line.filter(filter));
+            }
+            if (savedWordBreakAtLineEnding != null) {
+                canvas.showText(savedWordBreakAtLineEnding);
             }
 
             canvas.endText().restoreState();
@@ -726,6 +749,7 @@ public class TextRenderer extends AbstractRenderer {
             if (!TextUtil.isSpaceOrWhitespace(currentGlyph)) {
                 break;
             }
+            saveWordBreakIfNotYetSaved(currentGlyph);
 
             float currentCharWidth = getCharWidth(currentGlyph, fontSize, hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
             float xAdvance = firstNonSpaceCharIndex > line.start ? scaleXAdvance(line.get(firstNonSpaceCharIndex - 1).getXAdvance(), fontSize, hScale) / TEXT_SPACE_COEFF : 0;
@@ -1146,6 +1170,16 @@ public class TextRenderer extends AbstractRenderer {
         this.otfFeaturesApplied = false;
         this.strToBeConverted = null;
         setProperty(Property.FONT, font);
+    }
+
+    private void saveWordBreakIfNotYetSaved(Glyph wordBreak) {
+        if (savedWordBreakAtLineEnding == null) {
+            if (TextUtil.isNewLine(wordBreak)) {
+                wordBreak = font.getGlyph('\u0020'); // we don't want to print '\n' in content stream
+            }
+            // it's word-break character at the end of the line, which we want to save after trimming 
+            savedWordBreakAtLineEnding = new GlyphLine(Collections.<Glyph>singletonList(wordBreak));
+        }
     }
 
     private static class ReversedCharsIterator implements Iterator<GlyphLine.GlyphLinePart> {
