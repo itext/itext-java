@@ -556,18 +556,14 @@ public class TableRenderer extends AbstractRenderer {
                                 overflowRenderer.rows = rows.subList(row, rows.size());
                                 overflowRenderer.setProperty(Property.IGNORE_HEADER, true);
                                 overflowRenderer.setProperty(Property.IGNORE_FOOTER, true);
-                                overflowRenderer.setBorders(Border.NO_BORDER, 0);
-
-                                // apply the difference to set table and its continuation left/right margins identical
-                                layoutBox.<Rectangle>applyMargins(0, -rightBorderMaxWidth, 0, -leftBorderMaxWidth / 2, false);
-                                if (hasProperty(Property.WIDTH)) {
-                                    overflowRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(layoutBox.getWidth()));
-                                }
-                                // we have already applied margins on layoutBox
                                 overflowRenderer.setProperty(Property.MARGIN_TOP, 0);
-                                overflowRenderer.setProperty(Property.MARGIN_RIGHT, 0);
                                 overflowRenderer.setProperty(Property.MARGIN_BOTTOM, 0);
                                 overflowRenderer.setProperty(Property.MARGIN_LEFT, 0);
+                                overflowRenderer.setProperty(Property.MARGIN_RIGHT, 0);
+                                // init borders
+                                overflowRenderer.initializeBorders(new ArrayList<Border>(), true);
+                                overflowRenderer.collapseAllBordersAndEmptyRows(overflowRenderer.getBorders(), 0,  rowRange.getFinishRow() - rowRange.getStartRow() - row, numberOfColumns);
+                                prepareFooterOrHeaderRendererForLayout(overflowRenderer, layoutBox.getWidth());
                                 if (LayoutResult.FULL == overflowRenderer.layout(new LayoutContext(potentialArea)).getStatus()) {
                                     footerRenderer = null;
                                     // fix layout area and table bottom border
@@ -575,7 +571,6 @@ public class TableRenderer extends AbstractRenderer {
                                     deleteOwnProperty(Property.BORDER_BOTTOM);
                                     borders = getBorders();
                                     processAsLast = false;
-
                                     cellProcessingQueue.clear();
                                     for (addCol = 0; addCol < currentRow.length; addCol++) {
                                         if (currentRow[addCol] != null) {
@@ -1778,7 +1773,7 @@ public class TableRenderer extends AbstractRenderer {
                 int colspan = (int) rows.get(row)[col].getPropertyAsInteger(Property.COLSPAN);
                 for (int i = col; i < col + colspan; i++) {
                     topBorders.add(rows.get(row)[col].getBorders()[0]);
-                    collapsedBottomBorder = getCollapsedBorder(collapsedBottomBorder, horizontalBorders.get(1).get(i));
+                    collapsedBottomBorder = getCollapsedBorder(collapsedBottomBorder, horizontalBorders.get(row + 1).get(i));
                 }
                 rows.get(row)[col].setBorders(collapsedBottomBorder, 2);
                 col += colspan;
