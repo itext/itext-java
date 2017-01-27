@@ -122,20 +122,9 @@ public class Table extends BlockElement<Table> implements ILargeElement {
             throw new IllegalArgumentException("the.widths.array.in.pdfptable.constructor.can.not.have.zero.length");
         }
         this.columnWidths = new UnitValue[columnWidths.length];
-        float totalWidth = 0;
-        boolean percentValuesPresentedInTableColumns = false;
         for (int i = 0; i < columnWidths.length; i++) {
-            this.columnWidths[i] = columnWidths[i];
-            if (columnWidths[i].isPointValue()) {
-                totalWidth += columnWidths[i].getValue();
-            } else if (columnWidths[i].isPercentValue()) {
-                percentValuesPresentedInTableColumns = true;
-            }
+            this.columnWidths[i] = columnWidths[i] != null ? columnWidths[i] : UnitValue.createPointValue(-1);
         }
-        if (percentValuesPresentedInTableColumns) {
-            totalWidth = 0;
-        }
-        super.setWidth(totalWidth);
         initializeRows();
     }
 
@@ -182,25 +171,6 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      */
     public Table(int numColumns) {
         this(numColumns, false);
-    }
-
-    /**
-     * Sets the full width of the table.
-     *
-     * @param width the full width of the table.
-     * @return this element
-     */
-    @Override
-    public Table setWidth(UnitValue width) {
-        if (width.isPointValue() && width.getValue() == 0) {
-            width = UnitValue.createPercentValue(100);
-        }
-        UnitValue currWidth = getWidth();
-        if (!width.equals(currWidth)) {
-            super.setWidth(width);
-            calculateWidths();
-        }
-        return this;
     }
 
     /**
@@ -668,16 +638,12 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         return tagProperties;
     }
 
+    /**
+     * @deprecated This method do nothing after implementation table column width algorithms.
+     */
+    @Deprecated
     protected void calculateWidths() {
-        UnitValue width = getWidth();
-        float total = 0;
-        int numCols = getNumberOfColumns();
-        for (int k = 0; k < numCols; ++k) {
-            total += columnWidths[k].getValue();
-        }
-        for (int k = 0; k < numCols; ++k) {
-            columnWidths[k] = UnitValue.createPointValue(width.getValue() * columnWidths[k].getValue() / total);
-        }
+
     }
 
     protected java.util.List<RowRange> getRowGroups() {
