@@ -504,14 +504,14 @@ public class ListTest extends ExtendedITextTest {
     public void listSetSymbol() throws Exception {
         List list = new List();
         //Assert.assertEquals("- ", ((Text) list.getProperty(Property.LIST_SYMBOL)).getText());
-        Assert.assertEquals(null, list.getProperty(Property.LIST_SYMBOL));
+        Assert.assertEquals(null, list.<Object>getProperty(Property.LIST_SYMBOL));
         list.setListSymbol("* ");
-        Assert.assertEquals("* ", ((Text) list.getProperty(Property.LIST_SYMBOL)).getText());
+        Assert.assertEquals("* ", ((Text) list.<Object>getProperty(Property.LIST_SYMBOL)).getText());
 
         list = new List();
         Style style = new Style();
         style.setProperty(Property.LIST_SYMBOL, new Text("* "));
         list.addStyle(style);
-        Assert.assertEquals("* ", ((Text) list.getProperty(Property.LIST_SYMBOL)).getText());
+        Assert.assertEquals("* ", ((Text) list.<Object>getProperty(Property.LIST_SYMBOL)).getText());
     }
 }
