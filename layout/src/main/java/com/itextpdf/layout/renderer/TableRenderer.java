@@ -229,6 +229,7 @@ public class TableRenderer extends AbstractRenderer {
             updateFirstRowBorders(tableModel.getNumberOfColumns());
         }
 
+        // TODO save and apply left and right border max widths on each page even after they were drawn
         float topTableBorderWidth = getMaxTopWidth(null); // first row own top border. We will use it in header processing
         float rightTableBorderWidth = getMaxRightWidth(borders[1]);
         float bottomTableBorderWidth = 0;
@@ -1398,12 +1399,17 @@ public class TableRenderer extends AbstractRenderer {
         Float tableWidth = retrieveWidth(layoutBox.getWidth());
         applyMargins(layoutBox, false);
 
-        float rightTableBorderWidth = collapsedTableBorderWidths[1];
-        float leftTableBorderWidth = collapsedTableBorderWidths[3];
+        Table tableModel = (Table) getModelElement();
+
+        this.initializeBorders(tableModel.getLastRowBottomBorder(), true);
+        if (null != rows) {
+            this.collapseAllBorders(getBorders(), 0, rows.size() - 1, tableModel.getNumberOfColumns());
+        }
+        float rightTableBorderWidth = getMaxRightWidth(getBorders()[1]);
+        float leftTableBorderWidth = getMaxLeftWidth(getBorders()[3]);
 
         ColumnMinMaxWidth footerColWidth = null, headerColWidth = null;
 
-        Table tableModel = (Table) getModelElement();
         int numberOfColumns =tableModel.getNumberOfColumns();
         if (tableModel.getFooter() != null) {
             footerRenderer = initFooterOrHeaderRenderer(true, getBorders());
@@ -1416,7 +1422,7 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         boolean isFirstHeader = rowRange.getStartRow() == 0 && isOriginalNonSplitRenderer;
-        boolean headerShouldBeApplied = !rows.isEmpty() && (!isOriginalNonSplitRenderer || isFirstHeader && !tableModel.isSkipFirstHeader());
+        boolean headerShouldBeApplied = (!rows.isEmpty() || tableModel.isComplete()) && (!isOriginalNonSplitRenderer || isFirstHeader && !tableModel.isSkipFirstHeader());
         if (tableModel.getHeader() != null && headerShouldBeApplied) {
             headerRenderer = initFooterOrHeaderRenderer(false, getBorders());
             headerRenderer.processRendererBorders(numberOfColumns);
@@ -1425,6 +1431,9 @@ public class TableRenderer extends AbstractRenderer {
             leftTableBorderWidth = Math.max(leftTableBorderWidth, leftHeaderBorderWidth);
             rightTableBorderWidth = Math.max(rightTableBorderWidth, rightHeaderBorderWidth);
             headerColWidth = headerRenderer.countRegionMinMaxWidth(availableWidth - leftTableBorderWidth / 2 - rightTableBorderWidth / 2, null, null);
+        }
+        if (null != rows && 0 != rows.size()) {
+            this.correctFirstRowTopBorders(getBorders()[0], tableModel.getNumberOfColumns());
         }
 
         // Apply halves of the borders. The other halves are applied on a Cell level
@@ -1442,7 +1451,6 @@ public class TableRenderer extends AbstractRenderer {
         int nrow = rows.size();
         int ncol = tableModel.getNumberOfColumns();
         MinMaxWidth[][] cellsMinMaxWidth = new MinMaxWidth[nrow][ncol];
-        Border[] borders = getBorders();
         ColumnMinMaxWidth result = new ColumnMinMaxWidth(ncol);
 
         int[][] cellsColspan = new int[nrow][ncol];
