@@ -1483,10 +1483,12 @@ public class TableRenderer extends AbstractRenderer {
             headerRenderer = null;
             rightBorderMaxWidth = 0;
             leftBorderMaxWidth = 0;
+            horizontalBorders = null;
+            verticalBorders = null;
             //TODO do we need it?
             // delete set properties
-            //deleteOwnProperty(Property.BORDER_BOTTOM);
-            //deleteOwnProperty(Property.BORDER_TOP);
+            deleteOwnProperty(Property.BORDER_BOTTOM);
+            deleteOwnProperty(Property.BORDER_TOP);
         }
 
         return tableColWidth.setLayoutBoxWidth(layoutBox.getWidth());
