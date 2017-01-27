@@ -286,7 +286,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             if (layoutResult != LayoutResult.NOTHING) {
                                 return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, null);
                             } else {
-                                return new LayoutResult(layoutResult, null, splitRenderer, overflowRenderer, result.getCauseOfNothing());
+                                return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing());
                             }
                         }
                     }

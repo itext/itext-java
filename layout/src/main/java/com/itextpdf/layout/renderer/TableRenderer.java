@@ -803,22 +803,15 @@ public class TableRenderer extends AbstractRenderer {
                             }
                             LayoutArea cellOccupiedArea = currentRow[col].getOccupiedArea();
                             if (hasContent || cellWithBigRowspanAdded || splits[col].getStatus() == LayoutResult.NOTHING) {
-                                currentRow[col] = null;
                                 CellRenderer cellOverflow = (CellRenderer) splits[col].getOverflowRenderer();
-                                if (splits[col].getStatus() == LayoutResult.PARTIAL) {
-                                    cellOverflow.setBorders(Border.NO_BORDER, 0);
-                                    cellSplit.setBorders(Border.NO_BORDER, 2);
-                                } else if (Border.NO_BORDER != cellOverflow.<Border>getProperty(Property.BORDER_TOP)) {
-                                    cellOverflow.deleteOwnProperty(Property.BORDER_TOP);
-                                }
-                                if (hasContent) {
+                                cellOverflow.deleteOwnProperty(Property.BORDER_BOTTOM);
+                                cellOverflow.deleteOwnProperty(Property.BORDER_TOP);
+                                if (null != cellSplit) {
                                     for (int j = col; j < col + cellOverflow.getPropertyAsInteger(Property.COLSPAN); j++) {
-                                        splitResult[0].horizontalBorders.get(row + 1).set(j, getBorders()[2]);
-                                        splitResult[1].horizontalBorders.get(0).set(j, getBorders()[2]);
+                                        splitResult[0].horizontalBorders.get(row + (hasContent ? 1 : 0)).set(j, currentRow[col].getBorders()[2]);
                                     }
                                 }
-                                cellOverflow.deleteOwnProperty(Property.BORDER_BOTTOM);
-                                cellOverflow.setBorders(cellOverflow.getBorders()[2], 2);
+                                currentRow[col] = null;
                                 rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) cellOverflow.setParent(splitResult[1]);
                             } else {
                                 rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) currentRow[col].setParent(splitResult[1]);
@@ -833,17 +826,13 @@ public class TableRenderer extends AbstractRenderer {
                                 if (isBigRowspannedCell && !processAsLast) {
                                     childRenderers.add(currentRow[col]);
                                 }
-                                // for the future
-                                splitResult[1].rows.get(0)[col].setBorders(getBorders()[0], 0);
                             } else {
                                 if (Border.NO_BORDER != currentRow[col].<Border>getProperty(Property.BORDER_TOP)) {
                                     splitResult[1].rows.get(0)[col].deleteOwnProperty(Property.BORDER_TOP);
                                 }
                             }
-                            if (!processAsLast) {
-                                for (int j = col; j < col + currentRow[col].getPropertyAsInteger(Property.COLSPAN); j++) {
-                                    horizontalBorders.get(row + (hasContent ? 1 : 0)).set(j, getBorders()[2]);
-                                }
+                            for (int j = col; j < col + currentRow[col].getPropertyAsInteger(Property.COLSPAN); j++) {
+                                horizontalBorders.get(row + (hasContent ? 1 : 0)).set(j, currentRow[col].getBorders()[2]);
                             }
                         }
                     }
@@ -864,13 +853,11 @@ public class TableRenderer extends AbstractRenderer {
                                 Cell overflowCell = currentRow[col].getModelElement().clone(true); // we will change properties
                                 currentRow[col].isLastRendererForModelElement = false;
                                 childRenderers.add(currentRow[col]);
-                                Border topBorder = currentRow[col].<Border>getProperty(Property.BORDER_TOP);
                                 currentRow[col] = null;
                                 rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) overflowCell.getRenderer().setParent(this);
                                 rows.get(targetOverflowRowIndex[col])[col].deleteProperty(Property.HEIGHT);
                                 rows.get(targetOverflowRowIndex[col])[col].deleteProperty(Property.MIN_HEIGHT);
                                 rows.get(targetOverflowRowIndex[col])[col].deleteProperty(Property.MAX_HEIGHT);
-                                rows.get(targetOverflowRowIndex[col])[col].setProperty(Property.BORDER_TOP, topBorder);
                             } else {
                                 childRenderers.add(currentRow[col]);
                                 // shift all cells in the column up
@@ -883,11 +870,9 @@ public class TableRenderer extends AbstractRenderer {
                                 // so we should process the last cell in the column as in the case 1 == minRowspan
                                 if (i != row + minRowspan - 1 && null != rows.get(i)[col]) {
                                     Cell overflowCell = rows.get(i)[col].getModelElement();
-                                    Border topBorder = rows.get(i)[col].<Border>getProperty(Property.BORDER_TOP);
                                     rows.get(i)[col].isLastRendererForModelElement = false;
                                     rows.get(i)[col] = null;
                                     rows.get(targetOverflowRowIndex[col])[col] = (CellRenderer) overflowCell.getRenderer().setParent(this);
-                                    rows.get(targetOverflowRowIndex[col])[col].setProperty(Property.BORDER_TOP, topBorder);
                                 }
                             }
                             rows.get(targetOverflowRowIndex[col])[col].occupiedArea = cellOccupiedArea;
