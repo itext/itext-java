@@ -634,25 +634,21 @@ public abstract class BlockRenderer extends AbstractRenderer {
     @Override
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
         Rectangle area = new Rectangle(availableWidth, AbstractRenderer.INF);
-        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
-            return MinMaxWidthUtils.countDefaultMinMaxWidth(this, availableWidth);
-        } else {
-            float additionalWidth = applyBordersPaddingsMargins(area, getBorders(), getPaddings(), isPositioned());
-            MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, availableWidth);
-            AbstractWidthHandler handler = new MaxMaxWidthHandler(minMaxWidth);
-            for (IRenderer childRenderer : childRenderers) {
-                MinMaxWidth childMinMaxWidth;
-                childRenderer.setParent(this);
-                if (childRenderer instanceof AbstractRenderer) {
-                    childMinMaxWidth = ((AbstractRenderer)childRenderer).getMinMaxWidth(area.getWidth());
-                } else {
-                    childMinMaxWidth = MinMaxWidthUtils.countDefaultMinMaxWidth(childRenderer, area.getWidth());
-                }
-                handler.updateMaxChildWidth(childMinMaxWidth.getMaxWidth());
-                handler.updateMinChildWidth(childMinMaxWidth.getMinWidth());
+        float additionalWidth = applyBordersPaddingsMargins(area, getBorders(), getPaddings(), isPositioned());
+        MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, availableWidth);
+        AbstractWidthHandler handler = new MaxMaxWidthHandler(minMaxWidth);
+        for (IRenderer childRenderer : childRenderers) {
+            MinMaxWidth childMinMaxWidth;
+            childRenderer.setParent(this);
+            if (childRenderer instanceof AbstractRenderer) {
+                childMinMaxWidth = ((AbstractRenderer)childRenderer).getMinMaxWidth(area.getWidth());
+            } else {
+                childMinMaxWidth = MinMaxWidthUtils.countDefaultMinMaxWidth(childRenderer, area.getWidth());
             }
-            return minMaxWidth;
+            handler.updateMaxChildWidth(childMinMaxWidth.getMaxWidth());
+            handler.updateMinChildWidth(childMinMaxWidth.getMinWidth());
         }
+        return MinMaxWidthUtils.countRotationMinMaxWidth(minMaxWidth, this);
     }
 
     private List<Point> clipPolygon(List<Point> points, Point clipLineBeg, Point clipLineEnd) {

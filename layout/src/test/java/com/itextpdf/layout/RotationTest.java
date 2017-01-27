@@ -362,7 +362,7 @@ public class RotationTest extends ExtendedITextTest{
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{50, 50});
-        table.setWidth(100).setProperty(Property.TABLE_LAYOUT, "fixed");
+        table.setWidth(100);
         table.addCell(new Cell().add(new Paragraph("cell 1, 1").setRotationAngle((Math.PI / 2))))
                 .addCell(new Cell().add(new Paragraph("cell 1, 2").setRotationAngle((Math.PI / 3))))
                 .addCell(new Cell().add(new Paragraph("cell 2, 1").setRotationAngle((Math.PI / 3))))
@@ -386,7 +386,7 @@ public class RotationTest extends ExtendedITextTest{
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{25, 50});
-        table.setWidth(75).setProperty(Property.TABLE_LAYOUT, "fixed");
+        table.setWidth(75);
         table.addCell(new Cell().add(new Paragraph("cell 1, 1").setRotationAngle((Math.PI / 2))))
                 .addCell(new Cell().add(new Paragraph("cell 1, 2").setRotationAngle((Math.PI / 3))))
                 .addCell(new Cell().add(new Paragraph("cell 2, 1")))
@@ -409,7 +409,7 @@ public class RotationTest extends ExtendedITextTest{
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(1);
-        table.setWidth(50).setProperty(Property.TABLE_LAYOUT, "fixed");
+        table.setWidth(50);
         table.addCell(new Cell()
                         .add(new Paragraph("Hello"))
                         .setRotationAngle(Math.PI * 70 / 180.0)

@@ -1,5 +1,6 @@
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -16,6 +17,8 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
@@ -97,6 +100,7 @@ public class MinWidthTest extends ExtendedITextTest {
 
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void divWithBigRotatedParagraph() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "divBigRotatedParagraphTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_divBigRotatedParagraphTest01.pdf";

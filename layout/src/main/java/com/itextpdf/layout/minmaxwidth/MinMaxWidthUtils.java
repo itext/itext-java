@@ -10,7 +10,11 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.AbstractRenderer;
+import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
+
+import static java.lang.Math.PI;
+import static java.lang.Math.min;
 
 public class MinMaxWidthUtils {
     private static final float eps = 0.01f;
@@ -40,10 +44,33 @@ public class MinMaxWidthUtils {
         return result;
     }
 
+    //heuristic method
+    public static MinMaxWidth countRotationMinMaxWidth(MinMaxWidth minMaxWidth, BlockRenderer renderer) {
+        Float rotation = renderer.getPropertyAsFloat(Property.ROTATION_ANGLE);
+        if (rotation != null && renderer.getModelElement() instanceof BlockElement) {
+            float angle = rotation.floatValue();
+            boolean restoreRendererProperty = renderer.hasOwnProperty(Property.ROTATION_ANGLE);
+            renderer.setProperty(Property.ROTATION_ANGLE, new Float(0));
+            float width = toEffectiveWidth((BlockElement) renderer.getModelElement(), minMaxWidth.getAvailableWidth());
+            LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(width, AbstractRenderer.INF))));
+            if (restoreRendererProperty) {
+                renderer.setProperty(Property.ROTATION_ANGLE, rotation);
+            } else {
+                renderer.deleteOwnProperty(Property.ROTATION_ANGLE);
+            }
+            if (result.getOccupiedArea() != null) {
+                double a = result.getOccupiedArea().getBBox().getWidth();
+                double b = result.getOccupiedArea().getBBox().getHeight();
+                return new MinMaxWidth(0, minMaxWidth.getAvailableWidth(), (float) Math.sqrt(2 * a * b), (float) Math.sqrt(a * a + b * b));
+            }
+        }
+        return minMaxWidth;
+    }
+
     public static MinMaxWidth countDefaultMinMaxWidth(IRenderer renderer, float availableWidth) {
         LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
         return result.getStatus() == LayoutResult.NOTHING ? new MinMaxWidth(0, availableWidth) :
-                new MinMaxWidth(0, availableWidth, result.getOccupiedArea().getBBox().getWidth(), result.getOccupiedArea().getBBox().getWidth());
+                new MinMaxWidth(0, availableWidth, 0, result.getOccupiedArea().getBBox().getWidth());
     }
     
     private static float getBorderWidth(IElement element) {

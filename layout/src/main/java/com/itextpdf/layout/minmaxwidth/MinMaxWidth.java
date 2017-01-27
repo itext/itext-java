@@ -42,6 +42,10 @@ public class MinMaxWidth implements Serializable {
         return additionalWidth;
     }
 
+    public float getAvailableWidth() {
+        return availableWidth;
+    }
+
     public void setAdditionalWidth(float additionalWidth) {
         this.additionalWidth = additionalWidth;
     }

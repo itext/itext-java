@@ -53,6 +53,7 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.LineLayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.minmaxwidth.handler.MaxMaxWidthHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.handler.AbstractWidthHandler;
@@ -471,7 +472,7 @@ public class ParagraphRenderer extends BlockRenderer {
     @Override
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
         MinMaxWidthLayoutResult result = (MinMaxWidthLayoutResult)layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
-        return result.getNotNullMinMaxWidth(availableWidth);
+        return MinMaxWidthUtils.countRotationMinMaxWidth(result.getNotNullMinMaxWidth(availableWidth), this);
     }
 
     protected ParagraphRenderer[] split() {
