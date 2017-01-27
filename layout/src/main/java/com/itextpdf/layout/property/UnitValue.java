@@ -83,6 +83,32 @@ public class UnitValue {
     }
 
     /**
+     * Creates an array of UnitValue PERCENT objects with specified values.
+     * @param values the values to be stored.
+     * @return a new array of {@link UnitValue#PERCENT} {@link UnitValue}
+     */
+    public static UnitValue[] createPercentArray(float[] values) {
+        UnitValue[] resultArray = new UnitValue[values.length];
+        for (int i = 0; i < values.length; i++) {
+            resultArray[i] = UnitValue.createPercentValue(values[i]);
+        }
+        return resultArray;
+    }
+
+    /**
+     * Creates an array of UnitValue POINT objects with specified values.
+     * @param values the values to be stored.
+     * @return a new array of {@link UnitValue#POINT} {@link UnitValue}
+     */
+    public static UnitValue[] createPointArray(float[] values) {
+        UnitValue[] resultArray = new UnitValue[values.length];
+        for (int i = 0; i < values.length; i++) {
+            resultArray[i] = UnitValue.createPointValue(values[i]);
+        }
+        return resultArray;
+    }
+
+    /**
      * Returns the unit this value is stored in, either points (pt) or percent(%)
      * @return either 1 for {@link UnitValue#POINT} or 2 for {@link UnitValue#PERCENT}
      */
