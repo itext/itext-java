@@ -356,9 +356,6 @@ public class ParagraphRenderer extends BlockRenderer {
         applyMargins(occupiedArea.getBBox(), true);
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
-            minMaxWidth.setChildrenMinWidth(occupiedArea.getBBox().getWidth());
-            minMaxWidth.setChildrenMaxWidth(occupiedArea.getBBox().getWidth());
-            minMaxWidth.setAdditionalWidth(0);
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                     return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, this);
@@ -472,7 +469,7 @@ public class ParagraphRenderer extends BlockRenderer {
     @Override
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
         MinMaxWidthLayoutResult result = (MinMaxWidthLayoutResult)layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
-        return MinMaxWidthUtils.countRotationMinMaxWidth(result.getNotNullMinMaxWidth(availableWidth), this);
+        return countRotationMinMaxWidth(result.getNotNullMinMaxWidth(availableWidth));
     }
 
     protected ParagraphRenderer[] split() {
