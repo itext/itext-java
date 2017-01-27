@@ -50,10 +50,12 @@ import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
@@ -515,6 +517,127 @@ public class AutoTaggingTest extends ExtendedITextTest {
         doc.close();
 
         compareResult("flushingTest03.pdf", "cmp_tableTest04.pdf");
+    }
+
+    @Test
+    public void wordBreaksLineEndingsTest01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(
+                new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest01.pdf",
+                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        String s = "Beaver was settled in 1856 by Mormon pioneers traveling this road.";
+        StringBuilder text = new StringBuilder();
+        for (int i = 0; i < 10; ++i) {
+            text.append(s);
+            text.append(" ");
+        }
+        Paragraph p = new Paragraph(text.toString().trim());
+        doc.add(p);
+
+        doc.close();
+
+        compareResult("wordBreaksLineEndingsTest01.pdf", "cmp_wordBreaksLineEndingsTest01.pdf");
+    }
+
+    @Test
+    public void wordBreaksLineEndingsTest02() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(
+                new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest02.pdf",
+                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        String s = "Beaver was settled in 1856 by Mormon pioneers traveling this road.";
+        Paragraph p = new Paragraph(s + " Beaver was settled in 1856 by").add(" Mormon pioneers traveling this road.");
+        doc.add(p);
+
+        doc.close();
+
+        compareResult("wordBreaksLineEndingsTest02.pdf", "cmp_wordBreaksLineEndingsTest02.pdf");
+    }
+
+    @Test
+    public void wordBreaksLineEndingsTest03() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(
+                new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest03.pdf",
+                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        String s = "Beaver was settled in 1856 by\nMormon pioneers traveling this road.";
+        Paragraph p = new Paragraph(s);
+        doc.add(p);
+
+        String s1 = "Beaver was settled in 1856 by \n Mormon pioneers traveling this road.";
+        Paragraph p1 = new Paragraph(s1);
+        doc.add(p1);
+
+        String s2 = "\nBeaver was settled in 1856 by Mormon pioneers traveling this road.";
+        Paragraph p2 = new Paragraph(s2);
+        doc.add(p2);
+
+        String s3_1 = "Beaver was settled in 1856 by";
+        String s3_2 = "\nMormon pioneers traveling this road.";
+        Paragraph p3 = new Paragraph(s3_1).add(s3_2);
+        doc.add(p3);
+
+        doc.close();
+
+        compareResult("wordBreaksLineEndingsTest03.pdf", "cmp_wordBreaksLineEndingsTest03.pdf");
+    }
+
+    @Test
+    public void wordBreaksLineEndingsTest04() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(
+                new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest04.pdf",
+                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        String s = "ShortWord Beaverwassettledin1856byMormonpioneerstravelingthisroadBeaverwassettledin1856byMormonpioneerstravelingthisroad.";
+        Paragraph p = new Paragraph(s);
+        doc.add(p);
+
+        String s1 = "ShortWord " +
+                "                                                                                          " +
+                "                                                                                          " +
+                "and another short word.";
+        Paragraph p1 = new Paragraph(s1);
+        doc.add(p1);
+
+        doc.close();
+
+        compareResult("wordBreaksLineEndingsTest04.pdf", "cmp_wordBreaksLineEndingsTest04.pdf");
+    }
+
+    @Test
+    public void wordBreaksLineEndingsTest05() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(
+                new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest05.pdf",
+                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        String s = "t\n";
+        Paragraph p = new Paragraph(s).add("\n").add(s);
+        doc.add(p);
+
+        Paragraph p1 = new Paragraph(s);
+        doc.add(p1);
+
+        Paragraph p2 = new Paragraph(s).add("another t");
+        doc.add(p2);
+
+        doc.close();
+
+        compareResult("wordBreaksLineEndingsTest05.pdf", "cmp_wordBreaksLineEndingsTest05.pdf");
     }
 
     private Paragraph createParagraph1() throws IOException {

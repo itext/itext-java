@@ -114,7 +114,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
 
         String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
 
-        Assert.assertEquals("A\nB\nC\nD", text);
+        Assert.assertEquals("A \nB \nC \nD", text);
     }
 
     @Test
@@ -126,7 +126,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
 
         String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
 
-        Assert.assertEquals("A\nB\nC\nD", text);
+        Assert.assertEquals("A \nB \nC \nD", text);
     }
 
     @Test
@@ -138,7 +138,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
 
         String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), createRenderListenerForTest());
 
-        Assert.assertEquals("A\nB\nC\nD", text);
+        Assert.assertEquals("A \nB \nC \nD", text);
     }
 
     @Test
