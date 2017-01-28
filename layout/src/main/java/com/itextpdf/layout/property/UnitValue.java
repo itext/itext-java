@@ -65,6 +65,13 @@ public class UnitValue {
     }
 
     /**
+     * Creates a copy of UnitValue object.
+     */
+    public UnitValue(UnitValue unitValue) {
+        this(unitValue.unitType, unitValue.value);
+    }
+
+    /**
      * Creates a UnitValue POINT object with a specified value.
      * @param value the value to be stored.
      * @return a new {@link UnitValue#POINT} {@link UnitValue}

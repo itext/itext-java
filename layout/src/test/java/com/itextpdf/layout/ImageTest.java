@@ -54,6 +54,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -627,7 +628,9 @@ public class ImageTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
-        Table table = new Table(1);
+        Table table = new Table(1)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
         table.setMaxHeight(300);
         table.setBorder(new SolidBorder(Color.BLUE, 10));
 
@@ -655,7 +658,9 @@ public class ImageTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
-        Table table = new Table(1);
+        Table table = new Table(1)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
         table.setMaxHeight(300);
         table.setBorder(new SolidBorder(Color.BLUE, 10));
 

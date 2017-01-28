@@ -62,6 +62,7 @@ import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -157,7 +158,9 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Table table = new Table(3);
+        Table table = new Table(3)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
         Image image = new Image(ImageDataFactory.create(sourceFolder + imageName)).setWidth(100).setAutoScale(true);
 
         table.addCell(createParagraph1());
@@ -184,7 +187,9 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Table table = new Table(3);
+        Table table = new Table(3)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
 
         for (int i = 0; i < 5; ++i) {
             table.addCell(createParagraph2());
@@ -205,7 +210,10 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Table table = new Table(3);
+        Table table = new Table(3)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
+
 
         Cell cell = new Cell(1, 3).add(new Paragraph("full-width header"));
         cell.setRole(PdfName.TH);

@@ -900,7 +900,10 @@ public class BorderTest extends ExtendedITextTest {
 
         String textAlphabet = "ABCDEFGHIJKLMNOPQRSTUWXYZ";
 
-        Table table = new Table(1);
+        Table table = new Table(1)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
+
         table.addCell(new Cell().add(textAlphabet).setBorder(new SolidBorder(4)));
         table.addFooterCell(new Cell().add("Footer"));
         doc.add(table);
@@ -945,7 +948,9 @@ public class BorderTest extends ExtendedITextTest {
 
         String textAlphabet = "Cell";
 
-        Table table = new Table(3);
+        Table table = new Table(3)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
         table.addCell(new Cell().add(textAlphabet));
         table.addCell(new Cell(2, 1).add(textAlphabet));
         table.addCell(new Cell().add(textAlphabet));
@@ -995,7 +1000,9 @@ public class BorderTest extends ExtendedITextTest {
 
         String textAlphabet = "Cell";
 
-        Table table = new Table(3);
+        Table table = new Table(3)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
         table.addCell(new Cell().add(textAlphabet + "1"));
         table.addCell(new Cell(2, 1).add(textAlphabet + "222"));
         table.addCell(new Cell().add(textAlphabet + "3"));
@@ -1017,7 +1024,9 @@ public class BorderTest extends ExtendedITextTest {
 
         String textAlphabet = "Cell";
 
-        Table table = new Table(3);
+        Table table = new Table(3)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
         table.addCell(new Cell().add(textAlphabet + "1"));
         table.addCell(new Cell(2, 1).add(textAlphabet + "2").setBorder(new SolidBorder(Color.GREEN, 4)));
         table.addCell(new Cell().add(textAlphabet + "3"));
@@ -1189,7 +1198,9 @@ public class BorderTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A7.rotate());
 
-        Table table = new Table(2);
+        Table table = new Table(2)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
         table.addFooterCell(new Cell(1, 2).setHeight(30).add("Footer"));
         table.addCell(new Cell().add("0abcdefghijklmnopqrstuvwxyz1abcdefghijklmnopqrstuvwxyz2abcdefghijklmnopq"));
         table.addCell(new Cell().add("0bbbbbbbbbbbbbbbbbbbbbbbbbbbb").setBorderBottom(new SolidBorder(50)));
