@@ -138,7 +138,7 @@ final class TableWidths {
                 float remainWidth = 0;
                 //if there is no information, try to set max width
                 for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
-                    if (!widths[i].isFixed) {
+                    if (!widths[i].isFixed && !widths[i].isPercent) {
                         remainWidth += widths[i].max - widths[i].width;
                         flexibleCols++;
                     }
@@ -146,7 +146,7 @@ final class TableWidths {
                 if (remainWidth > 0) {
                     if (flexibleCols > 0) {
                         for (int i = cell.getCol(); i < cell.getCol() + cell.getColspan(); i++) {
-                            if (!widths[i].isFixed) {
+                            if (!widths[i].isFixed && !widths[i].isPercent) {
                                 widths[i].addPoints(remainWidth / flexibleCols);
                             }
                         }
