@@ -189,6 +189,7 @@ public class TextRenderer extends AbstractRenderer {
         float currentLineWidth = 0;
         int previousCharPos = -1;
 
+        savedWordBreakAtLineEnding = null;
         Glyph wordBreakGlyphAtLineEnding = null;
 
         Character tabAnchorCharacter = this.<Character>getProperty(Property.TAB_ANCHOR);
