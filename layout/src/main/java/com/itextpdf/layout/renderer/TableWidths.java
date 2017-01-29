@@ -1,7 +1,6 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.Property;
@@ -66,7 +65,7 @@ final class TableWidths {
                             if (!widths[i].isPercent) {
                                 pointColumns++;
                             } else {
-                                percentSum += widths[i].getPercent();
+                                percentSum += widths[i].width;
                             }
                         }
                         float percentAddition = cellWidth.getValue() - percentSum;
@@ -192,30 +191,57 @@ final class TableWidths {
             }
         } else {
             float sumOfPercents = 0;
-            // minTableWidth included fixed columns.
+            // minTableWidth include only non percent columns.
             float minTableWidth = 0;
             float totalNonPercent = 0;
 
+            // validate sumOfPercents, last columns will be set min width, if sum > 100.
             for (int i = 0; i < widths.length; i++) {
                 if (widths[i].isPercent) {
-                    //some magic...
-                    if (sumOfPercents < 100 && sumOfPercents + widths[i].width >= 100) {
+                    if (sumOfPercents < 100 && sumOfPercents + widths[i].width > 100) {
                         widths[i].width -= sumOfPercents + widths[i].width - 100;
+                        sumOfPercents += widths[i].width;
+                        warn100percent();
                     } else if (sumOfPercents >= 100) {
                         widths[i].resetPoints(widths[i].min);
                         minTableWidth += widths[i].width;
+                        warn100percent();
+                    } else {
+                        sumOfPercents += widths[i].width;
                     }
-                    sumOfPercents += widths[i].width;
                 } else {
                     minTableWidth += widths[i].min;
                     totalNonPercent += widths[i].width;
                 }
             }
+            assert sumOfPercents <= 100;
 
-            if (sumOfPercents >= 100) {
+            boolean toBalance = true;
+            if (unspecifiedTableWidth) {
+                float tableWidthBasedOnPercents = sumOfPercents < 100
+                        ? totalNonPercent * 100 / (100 - sumOfPercents) : 0;
+                for (int i = 0; i < numberOfColumns; i++) {
+                    if (widths[i].isPercent) {
+                        tableWidthBasedOnPercents = Math.max(widths[i].max * 100 / widths[i].width, tableWidthBasedOnPercents);
+                    }
+                }
+                if (tableWidthBasedOnPercents <= tableWidth) {
+                    tableWidth = tableWidthBasedOnPercents;
+                    //we don't need more space, columns are done.
+                    toBalance = false;
+                }
+            }
+
+            if (!toBalance) {
+                for (int i = 0; i < numberOfColumns; i++) {
+                    widths[i].finalWidth = widths[i].isPercent
+                            ? tableWidth * widths[i].width / 100
+                            : widths[i].width;
+                }
+            } else if (sumOfPercents >= 100) {
                 sumOfPercents = 100;
-                float remainingWidth = tableWidth - minTableWidth;
                 boolean recalculatePercents = false;
+                float remainingWidth = tableWidth - minTableWidth;
                 for (int i = 0; i < numberOfColumns; i++) {
                     if (widths[i].isPercent) {
                         if (remainingWidth * widths[i].width >= widths[i].min) {
@@ -237,106 +263,87 @@ final class TableWidths {
                     }
                 }
             } else {
-                //hasExtraSpace means that we have some extra space and(!) may extend columns.
-                //columns shouldn't be more than its max value in case unspecified table width.
+                // We either have some extra space and may extend columns in case fixed table width,
+                // or have to decrease columns to fit table width.
+                //
+                // columns shouldn't be more than its max value in case unspecified table width.
                 //columns shouldn't be more than its percentage value.
-                boolean toBalance = true;
-                if (unspecifiedTableWidth) {
-                    float tableWidthBasedOnPercents = totalNonPercent * 100 / (100 - sumOfPercents);
-                    for (int i = 0; i < numberOfColumns; i++) {
-                        if (widths[i].isPercent) {
-                            tableWidthBasedOnPercents = Math.max(widths[i].min * 100 / widths[i].width, tableWidthBasedOnPercents);
-                        }
-                    }
-                    if (tableWidthBasedOnPercents <= tableWidth) {
-                        for (int i = 0; i < numberOfColumns; i++) {
-                            widths[i].finalWidth = widths[i].isPercent
-                                    ? tableWidthBasedOnPercents * widths[i].width / 100
-                                    : widths[i].width;
-                        }
-                        //we don't need more space, columns are done.
-                        toBalance = false;
-                    }
-                }
 
-                //need to decrease some column.
-                if (toBalance) {
-                    // opposite to sumOfPercents, which is sum of percent values.
-                    float totalPercent = 0;
-                    float minTotalNonPercent = 0;
-                    float fixedAddition = 0;
-                    float flexibleAddition = 0;
-                    //sum of non fixed non percent columns.
-                    for (int i = 0; i < numberOfColumns; i++) {
-                        if (widths[i].isPercent) {
-                            if (tableWidth * widths[i].width >= widths[i].min) {
-                                widths[i].finalWidth = tableWidth * widths[i].width / 100;
-                                totalPercent += widths[i].finalWidth;
-                            } else {
-                                sumOfPercents -= widths[i].width;
-                                widths[i].resetPoints(widths[i].min);
-                                widths[i].finalWidth = widths[i].min;
-                                minTotalNonPercent += widths[i].min;
-                            }
+                // opposite to sumOfPercents, which is sum of percent values.
+                float totalPercent = 0;
+                float minTotalNonPercent = 0;
+                float fixedAddition = 0;
+                float flexibleAddition = 0;
+                //sum of non fixed non percent columns.
+                for (int i = 0; i < numberOfColumns; i++) {
+                    if (widths[i].isPercent) {
+                        if (tableWidth * widths[i].width >= widths[i].min) {
+                            widths[i].finalWidth = tableWidth * widths[i].width / 100;
+                            totalPercent += widths[i].finalWidth;
                         } else {
+                            sumOfPercents -= widths[i].width;
+                            widths[i].resetPoints(widths[i].min);
                             widths[i].finalWidth = widths[i].min;
                             minTotalNonPercent += widths[i].min;
-                            float addition = widths[i].width - widths[i].min;
-                            if (widths[i].isFixed) {
-                                fixedAddition += addition;
-                            } else {
-                                flexibleAddition += addition;
+                        }
+                    } else {
+                        widths[i].finalWidth = widths[i].min;
+                        minTotalNonPercent += widths[i].min;
+                        float addition = widths[i].width - widths[i].min;
+                        if (widths[i].isFixed) {
+                            fixedAddition += addition;
+                        } else {
+                            flexibleAddition += addition;
+                        }
+                    }
+                }
+                if (totalPercent + minTotalNonPercent > tableWidth) {
+                    // collision between minWidth and percent value.
+                    float extraWidth = tableWidth - minTotalNonPercent;
+                    if (sumOfPercents > 0) {
+                        for (int i = 0; i < numberOfColumns; i++) {
+                            if (widths[i].isPercent) {
+                                widths[i].finalWidth = extraWidth * widths[i].width / sumOfPercents;
                             }
                         }
                     }
-                    if (totalPercent + minTotalNonPercent > tableWidth) {
-                        // collision between minWidth and percent value.
-                        float extraWidth = tableWidth - minTotalNonPercent;
-                        if (sumOfPercents > 0) {
-                            for (int i = 0; i < numberOfColumns; i++) {
-                                if (widths[i].isPercent) {
-                                    widths[i].finalWidth = extraWidth * widths[i].width / sumOfPercents;
-                                }
+                } else {
+                    float extraWidth = tableWidth - totalPercent - minTotalNonPercent;
+                    if (extraWidth < fixedAddition) {
+                        for (int i = 0; i < numberOfColumns; i++) {
+                            if (!widths[i].isPercent && widths[i].isFixed) {
+                                widths[i].finalWidth += (widths[i].width - widths[i].min) * extraWidth / fixedAddition;
                             }
                         }
                     } else {
-                        float extraWidth = tableWidth - totalPercent - minTotalNonPercent;
-                        if (extraWidth < fixedAddition) {
+                        extraWidth -= fixedAddition;
+                        if (extraWidth < flexibleAddition) {
                             for (int i = 0; i < numberOfColumns; i++) {
-                                if (!widths[i].isPercent && widths[i].isFixed) {
-                                    widths[i].finalWidth += (widths[i].width - widths[i].min) * extraWidth / fixedAddition;
+                                if (!widths[i].isPercent) {
+                                    if (widths[i].isFixed) {
+                                        widths[i].finalWidth = widths[i].width;
+                                    } else {
+                                        widths[i].finalWidth += (widths[i].width - widths[i].min) * extraWidth / flexibleAddition;
+                                    }
                                 }
                             }
                         } else {
-                            extraWidth -= fixedAddition;
-                            if (extraWidth < flexibleAddition) {
-                                for (int i = 0; i < numberOfColumns; i++) {
-                                    if (!widths[i].isPercent) {
-                                        if (widths[i].isFixed) {
-                                            widths[i].finalWidth = widths[i].width;
-                                        } else {
-                                            widths[i].finalWidth += (widths[i].width - widths[i].min) * extraWidth / flexibleAddition;
-                                        }
+                            float totalFixed = 0;
+                            float totalFlexible = 0;
+                            for (int i = 0; i < numberOfColumns; i++) {
+                                if (!widths[i].isPercent) {
+                                    if (widths[i].isFixed) {
+                                        widths[i].finalWidth = widths[i].width;
+                                        totalFixed += widths[i].width;
+                                    } else {
+                                        totalFlexible += widths[i].width;
                                     }
                                 }
-                            } else {
-                                float totalFixed = 0;
-                                float totalFlexible = 0;
-                                for (int i = 0; i < numberOfColumns; i++) {
-                                    if (!widths[i].isPercent) {
-                                        if (widths[i].isFixed) {
-                                            widths[i].finalWidth = widths[i].width;
-                                            totalFixed += widths[i].width;
-                                        } else {
-                                            totalFlexible += widths[i].width;
-                                        }
-                                    }
-                                }
-                                extraWidth = tableWidth - totalPercent - totalFixed;
-                                for (int i = 0; i < numberOfColumns; i++) {
-                                    if (!widths[i].isPercent && !widths[i].isFixed) {
-                                        widths[i].finalWidth = widths[i].width * extraWidth / totalFlexible;
-                                    }
+                            }
+                            extraWidth = tableWidth - totalPercent - totalFixed;
+                            for (int i = 0; i < numberOfColumns; i++) {
+                                if (!widths[i].isPercent && !widths[i].isFixed) {
+                                    widths[i].finalWidth = widths[i].width * extraWidth / totalFlexible;
                                 }
                             }
                         }
@@ -473,6 +480,11 @@ final class TableWidths {
         }
     }
 
+    private void warn100percent() {
+        Logger logger = LoggerFactory.getLogger(TableWidths.class);
+        logger.warn(LogMessageConstant.SUM_OF_TABLE_COLUMNS_IS_GREATER_THAN_100);
+    }
+
     private float[] extractWidths() {
         float actualWidth = 0;
         float[] columnWidths = new float[widths.length];
@@ -508,32 +520,25 @@ final class TableWidths {
             this.max = max > 0 ? Math.min(max + MinMaxWidthUtils.getEps(), 32760) : 0;
         }
 
-        /**
-         * Gets percents based on 1.
-         */
-        public float getPercent() {
-            return width;
-        }
-
-        public ColumnWidthData setPoints(float width) {
+        ColumnWidthData setPoints(float width) {
             assert !isPercent;
             this.width = Math.max(this.width, width);
             return this;
         }
 
-        public ColumnWidthData resetPoints(float width) {
+        ColumnWidthData resetPoints(float width) {
             this.width = width;
             this.isPercent = false;
             return this;
         }
 
-        public ColumnWidthData addPoints(float width) {
+        ColumnWidthData addPoints(float width) {
             assert !isPercent;
             this.width += width;
             return this;
         }
 
-        public ColumnWidthData setPercents(float percent) {
+        ColumnWidthData setPercents(float percent) {
             if (isPercent) {
                 width = Math.max(width, percent);
             } else {
@@ -543,13 +548,13 @@ final class TableWidths {
             return this;
         }
 
-        public ColumnWidthData addPercents(float width) {
+        ColumnWidthData addPercents(float width) {
             assert isPercent;
             this.width += width;
             return this;
         }
 
-        public ColumnWidthData setFixed(boolean fixed) {
+        ColumnWidthData setFixed(boolean fixed) {
             this.isFixed = fixed;
             return this;
         }
@@ -559,7 +564,7 @@ final class TableWidths {
          *
          * @return true, if {@link #min} greater than {@link #width}.
          */
-        public boolean hasCollision() {
+        boolean hasCollision() {
             assert !isPercent;
             return min > width;
         }
@@ -570,7 +575,7 @@ final class TableWidths {
          * @param availableWidth additional available point width.
          * @return true, if {@link #min} greater than ({@link #width} + additionalWidth).
          */
-        public boolean checkCollision(float availableWidth) {
+        boolean checkCollision(float availableWidth) {
             assert !isPercent;
             return min > width + availableWidth;
         }

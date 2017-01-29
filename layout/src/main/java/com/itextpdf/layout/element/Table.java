@@ -195,6 +195,14 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     }
 
     /**
+     * Set {@link Property#WIDTH} = 100%.
+     */
+    public Table useAllAvailableWidth() {
+        setProperty(Property.WIDTH, UnitValue.createPercentValue(100));
+        return this;
+    }
+
+    /**
      * Returns the column width for the specified column.
      *
      * @param column index of the column
