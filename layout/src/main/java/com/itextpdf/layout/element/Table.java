@@ -117,7 +117,6 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * @param largeTable whether parts of the table will be written before all data is added.
      */
     public Table(UnitValue[] columnWidths, boolean largeTable) {
-        //this.isComplete = !largeTable;
         if (columnWidths == null) {
             throw new NullPointerException("The widths array in table constructor can not be null.");
         }

@@ -91,13 +91,16 @@ public class UnitValue {
 
     /**
      * Creates an array of UnitValue PERCENT objects with specified values.
+     *
      * @param values the values to be stored.
-     * @return a new array of {@link UnitValue#PERCENT} {@link UnitValue}
+     * @return a new normalized (Σ=100%) array of {@link UnitValue#PERCENT} {@link UnitValue}.
      */
     public static UnitValue[] createPercentArray(float[] values) {
         UnitValue[] resultArray = new UnitValue[values.length];
+        float sum = 0;
+        for (float val : values) sum += val;
         for (int i = 0; i < values.length; i++) {
-            resultArray[i] = UnitValue.createPercentValue(values[i]);
+            resultArray[i] = UnitValue.createPercentValue(100 * values[i] / sum);
         }
         return resultArray;
     }

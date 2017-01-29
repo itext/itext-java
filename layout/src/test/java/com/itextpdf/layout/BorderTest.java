@@ -779,7 +779,7 @@ public class BorderTest extends ExtendedITextTest {
         fileName = "infiniteLoopTest01.pdf";
         Document doc = createDocument();
 
-        Table table = new Table(new UnitValue[]{UnitValue.createPercentValue(25), UnitValue.createPercentValue(75)});
+        Table table = new Table(UnitValue.createPercentArray(new float[]{1, 3}));
         table.setWidthPercent(50).setProperty(Property.TABLE_LAYOUT, "fixed");
         Cell cell;
 
