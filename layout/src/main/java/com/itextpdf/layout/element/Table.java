@@ -123,6 +123,8 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         if (columnWidths.length == 0) {
             throw new IllegalArgumentException("The widths array in table constructor can not have zero length.");
         }
+        //TODO remove in 7.1. It shall work as html tables.
+        if (hasOnlyPercents(columnWidths)) useAllAvailableWidth();
         this.columnWidths = normalizeColumnWidths(columnWidths);
         initializeLargeTable(largeTable);
         initializeRows();
@@ -165,8 +167,10 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         }
         this.columnWidths = new UnitValue[numColumns];
         for (int k = 0; k < numColumns; ++k) {
-            this.columnWidths[k] = UnitValue.createPercentValue((float)100/numColumns);
+            this.columnWidths[k] = UnitValue.createPercentValue((float) 100 / numColumns);
         }
+        //TODO remove in 7.1. It shall work as html tables.
+        useAllAvailableWidth();
         this.columnWidths = normalizeColumnWidths(numColumns, true);
         initializeLargeTable(largeTable);
         initializeRows();
@@ -748,6 +752,15 @@ public class Table extends BlockElement<Table> implements ILargeElement {
             setWidth(UnitValue.createPercentValue(100));
             setFixedLayout();
         }
+    }
+
+    private static boolean hasOnlyPercents(UnitValue[] columnWidths) {
+        for (UnitValue col : columnWidths) {
+            if (col == null || col.isPointValue() || col.getValue() < 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static UnitValue[] normalizeColumnWidths(float[] pointColumnWidths) {
