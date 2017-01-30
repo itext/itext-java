@@ -530,6 +530,8 @@ final class TableWidths {
         boolean isFixed = false;
 
         ColumnWidthData(float min, float max) {
+            assert min >= 0;
+            assert max >= 0;
             this.min = min > 0 ? min + MinMaxWidthUtils.getEps() : 0;
             // All browsers implement a size limit on the cell's max width.
             // This limit is based on KHTML's representation that used 16 bits widths.
