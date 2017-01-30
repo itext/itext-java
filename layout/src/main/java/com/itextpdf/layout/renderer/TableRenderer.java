@@ -1436,16 +1436,19 @@ public class TableRenderer extends AbstractRenderer {
 
     @Override
     MinMaxWidth getMinMaxWidth(float availableWidth) {
-        return countTableMinMaxWidth(availableWidth, true).toTableMinMaxWidth(availableWidth);
+        return countTableMinMaxWidth(availableWidth, true, false).toTableMinMaxWidth(availableWidth);
     }
 
-    private ColumnMinMaxWidth countTableMinMaxWidth(float availableWidth, boolean initializeBorders) {
+    private ColumnMinMaxWidth countTableMinMaxWidth(float availableWidth, boolean initializeBorders, boolean isTableBeingLayouted) {
         Rectangle layoutBox = new Rectangle(availableWidth, AbstractRenderer.INF);
         Float tableWidth = retrieveWidth(layoutBox.getWidth());
         applyMargins(layoutBox, false);
         if (initializeBorders) {
             initializeBorders(((Table) getModelElement()).getLastRowBottomBorder(), true);
             initializeHeaderAndFooter(true);
+            if (!isTableBeingLayouted) {
+                saveCellsProperties();
+            }
             collapseAllBorders();
         }
 
@@ -1475,6 +1478,9 @@ public class TableRenderer extends AbstractRenderer {
             leftBorderMaxWidth = 0;
             horizontalBorders = null;
             verticalBorders = null;
+            if (!isTableBeingLayouted) {
+                restoreCellsProperties();
+            }
             //TODO do we need it?
             // delete set properties
             deleteOwnProperty(Property.BORDER_BOTTOM);
@@ -2289,7 +2295,7 @@ public class TableRenderer extends AbstractRenderer {
             if (tableWidths.hasFixedLayout()) {
                 countedColumnWidth = tableWidths.fixedLayout();
             } else {
-                ColumnMinMaxWidth minMax = countTableMinMaxWidth(availableWidth, false);
+                ColumnMinMaxWidth minMax = countTableMinMaxWidth(availableWidth, false, true);
                 countedColumnWidth = tableWidths.autoLayout(minMax.getMinWidth(), minMax.getMaxWidth());
             }
         }
@@ -2303,6 +2309,35 @@ public class TableRenderer extends AbstractRenderer {
         return sum + rightBorderMaxWidth / 2 + leftBorderMaxWidth / 2;
 
     }
+
+    protected TableRenderer saveCellsProperties() {
+        CellRenderer[] currentRow;
+        int colN = ((Table)getModelElement()).getNumberOfColumns();
+        for (int row = 0; row < rows.size(); row++) {
+            currentRow = rows.get(row);
+            for (int col = 0; col < colN; col++) {
+                if (null != currentRow[col]) {
+                    currentRow[col].saveProperties();
+                }
+            }
+        }
+        return this;
+    }
+
+    protected TableRenderer restoreCellsProperties() {
+        CellRenderer[] currentRow;
+        int colN = ((Table)getModelElement()).getNumberOfColumns();
+        for (int row = 0; row < rows.size(); row++) {
+            currentRow = rows.get(row);
+            for (int col = 0; col < colN; col++) {
+                if (null != currentRow[col]) {
+                    currentRow[col].restoreProperties();
+                }
+            }
+        }
+        return this;
+    }
+
 
     /**
      * This are a structs used for convenience in layout.
