@@ -269,6 +269,8 @@ final class TableWidths {
                             sumOfPercents -= widths[i].width;
                             recalculatePercents = true;
                         }
+                    } else {
+                        widths[i].finalWidth = widths[i].min;
                     }
                 }
                 if (recalculatePercents) {
