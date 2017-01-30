@@ -470,7 +470,7 @@ public class ParagraphRenderer extends BlockRenderer {
     @Override
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
         MinMaxWidthLayoutResult result = (MinMaxWidthLayoutResult)layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
-        return countRotationMinMaxWidth(result.getNotNullMinMaxWidth(availableWidth));
+        return countRotationMinMaxWidth(correctMinMaxWidth(result.getNotNullMinMaxWidth(availableWidth)));
     }
 
     protected ParagraphRenderer[] split() {

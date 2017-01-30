@@ -652,13 +652,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
             handler.updateMaxChildWidth(childMinMaxWidth.getMaxWidth());
             handler.updateMinChildWidth(childMinMaxWidth.getMinWidth());
         }
-        return countRotationMinMaxWidth(minMaxWidth);
+        return countRotationMinMaxWidth(correctMinMaxWidth(minMaxWidth));
     }
 
     //Heuristic method.
     //We assume that the area of block stays the same when we try to layout it
     //with different available width (available width is between min-width and max-width).
-    protected MinMaxWidth countRotationMinMaxWidth(MinMaxWidth minMaxWidth) {
+    MinMaxWidth countRotationMinMaxWidth(MinMaxWidth minMaxWidth) {
         Float rotation = getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (rotation != null) {
             boolean restoreRendererRotation = hasOwnProperty(Property.ROTATION_ANGLE);
@@ -686,6 +686,15 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 //We assume that the biggest diagonal is when block element have maxWidth.
                 return new MinMaxWidth(0, minMaxWidth.getAvailableWidth(), (float) resultMinWidth, (float) Math.sqrt(a * a + b * b));
             }
+        }
+        return minMaxWidth;
+    }
+
+    MinMaxWidth correctMinMaxWidth(MinMaxWidth minMaxWidth) {
+        Float width = retrieveWidth(0);
+        if (width != null && width > 0 && width >= minMaxWidth.getChildrenMinWidth()) {
+            minMaxWidth.setChildrenMaxWidth((float) width);
+            minMaxWidth.setChildrenMinWidth((float) width);
         }
         return minMaxWidth;
     }
