@@ -1810,7 +1810,7 @@ public class TableRenderer extends AbstractRenderer {
         }
         col = 0;
         while (col < colN) {
-            if (null != rows.get(row)[col]) {
+            if (null != rows.get(row)[col] && row + 1 == (int) rows.get(row)[col].getPropertyAsInteger(Property.ROWSPAN)) {
                 Border oldTopBorder = rows.get(row)[col].getBorders()[0];
                 Border resultCellTopBorder = null;
                 Border collapsedBorder = null;

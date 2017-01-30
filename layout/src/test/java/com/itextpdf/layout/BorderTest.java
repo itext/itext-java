@@ -170,6 +170,31 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
+    public void incompleteTableTest02() throws IOException, InterruptedException {
+        fileName = "incompleteTableTest02.pdf";
+        Document doc = createDocument();
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(Color.GREEN, 5));
+        Cell cell;
+        // row 1, cell 1
+        cell = new Cell().add("One");
+        table.addCell(cell);
+        table.startNewRow();
+        // row 2, cell 1
+        cell = new Cell().add("Two");
+        table.addCell(cell);
+        // row 2, cell 2
+        cell = new Cell().add("Three");
+        table.addCell(cell);
+
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+
+    @Test
     public void simpleBorderTest02() throws IOException, InterruptedException {
         fileName = "simpleBorderTest02.pdf";
         Document doc = createDocument();
