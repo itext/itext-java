@@ -156,7 +156,7 @@ public class TableRenderer extends AbstractRenderer {
         return (Table)getModelElement();
     }
 
-    private void initializeHeaderAndFooter() {
+    private void initializeHeaderAndFooter(boolean isFirstOnThePage) {
         Table table = (Table)getModelElement();
         Border[] tableBorder = getBorders();
 
@@ -170,7 +170,7 @@ public class TableRenderer extends AbstractRenderer {
 
         Table headerElement = table.getHeader();
         boolean isFirstHeader = rowRange.getStartRow() == 0 && isOriginalNonSplitRenderer;
-        boolean headerShouldBeApplied = !rows.isEmpty() && (!isOriginalNonSplitRenderer || isFirstHeader && !table.isSkipFirstHeader())
+        boolean headerShouldBeApplied = !rows.isEmpty() && (isFirstOnThePage && (!table.isSkipFirstHeader() || !isFirstHeader))
                 && !Boolean.TRUE.equals(this.<Boolean>getOwnProperty(Property.IGNORE_HEADER));
         if (headerElement != null && headerShouldBeApplied) {
             headerRenderer = initFooterOrHeaderRenderer(false, tableBorder);
@@ -288,7 +288,7 @@ public class TableRenderer extends AbstractRenderer {
             initializeBorders(lastFlushedRowBottomBorder, area.isEmptyArea());
         }
 
-        initializeHeaderAndFooter();
+        initializeHeaderAndFooter(0 == rowRange.getStartRow() || area.isEmptyArea());
         collapseAllBorders();
 
         if (isOriginalRenderer()) {
@@ -1440,7 +1440,7 @@ public class TableRenderer extends AbstractRenderer {
         applyMargins(layoutBox, false);
         if (initializeBorders) {
             initializeBorders(((Table)getModelElement()).getLastRowBottomBorder(), true);
-            initializeHeaderAndFooter();
+            initializeHeaderAndFooter(true);
             collapseAllBorders();
         }
 
