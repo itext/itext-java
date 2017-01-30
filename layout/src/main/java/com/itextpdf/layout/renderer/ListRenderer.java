@@ -83,19 +83,22 @@ public class ListRenderer extends BlockRenderer {
             int listItemNum = (int) this.<Integer>getProperty(Property.LIST_START, 1);
             for (int i = 0; i < childRenderers.size(); i++) {
                 childRenderers.get(i).setParent(this);
-                IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum++, childRenderers.get(i));
+                IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum, childRenderers.get(i));
                 childRenderers.get(i).setParent(null);
-
-                currentSymbolRenderer.setParent(this);
-                // Workaround for the case when font is specified as string
-                if (currentSymbolRenderer instanceof AbstractRenderer && currentSymbolRenderer.<Object>getProperty(Property.FONT) instanceof String) {
-                    PdfFont actualPdfFont = ((AbstractRenderer)currentSymbolRenderer).resolveFirstPdfFont();
-                    currentSymbolRenderer.setProperty(Property.FONT, actualPdfFont);
+                LayoutResult listSymbolLayoutResult = null;
+                if (currentSymbolRenderer != null) {
+                    ++listItemNum;
+                    currentSymbolRenderer.setParent(this);
+                    // Workaround for the case when font is specified as string
+                    if (currentSymbolRenderer instanceof AbstractRenderer && currentSymbolRenderer.<Object>getProperty(Property.FONT) instanceof String) {
+                        PdfFont actualPdfFont = ((AbstractRenderer) currentSymbolRenderer).resolveFirstPdfFont();
+                        currentSymbolRenderer.setProperty(Property.FONT, actualPdfFont);
+                    }
+                    listSymbolLayoutResult = currentSymbolRenderer.layout(layoutContext);
+                    currentSymbolRenderer.setParent(null);
                 }
                 symbolRenderers.add(currentSymbolRenderer);
-                LayoutResult listSymbolLayoutResult = currentSymbolRenderer.layout(layoutContext);
-                currentSymbolRenderer.setParent(null);
-                if (listSymbolLayoutResult.getStatus() != LayoutResult.FULL) {
+                if (listSymbolLayoutResult != null && listSymbolLayoutResult.getStatus() != LayoutResult.FULL) {
                     return new LayoutResult(LayoutResult.NOTHING, null, null, this, listSymbolLayoutResult.getCauseOfNothing());
                 }
             }
@@ -103,9 +106,11 @@ public class ListRenderer extends BlockRenderer {
             float maxSymbolWidth = 0;
             for (int i = 0; i < childRenderers.size(); i++) {
                 IRenderer symbolRenderer = symbolRenderers.get(i);
-                IRenderer listItemRenderer = childRenderers.get(i);
-                if ((ListSymbolPosition)listItemRenderer.<Object>getProperty(Property.LIST_SYMBOL_POSITION) != ListSymbolPosition.INSIDE) {
-                    maxSymbolWidth = Math.max(maxSymbolWidth, symbolRenderer.getOccupiedArea().getBBox().getWidth());
+                if (symbolRenderer != null) {
+                    IRenderer listItemRenderer = childRenderers.get(i);
+                    if ((ListSymbolPosition) listItemRenderer.<Object>getProperty(Property.LIST_SYMBOL_POSITION) != ListSymbolPosition.INSIDE) {
+                        maxSymbolWidth = Math.max(maxSymbolWidth, symbolRenderer.getOccupiedArea().getBBox().getWidth());
+                    }
                 }
             }
 
@@ -242,6 +247,8 @@ public class ListRenderer extends BlockRenderer {
                 textRenderer = new TextRenderer(textElement);
             }
             return textRenderer;
+        } else if (defaultListSymbol == null) { 
+            return null;
         } else {
             throw new IllegalStateException();
         }
