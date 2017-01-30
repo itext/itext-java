@@ -1174,6 +1174,19 @@ public abstract class AbstractRenderer implements IRenderer {
         return !renderer.hasProperty(Property.TOP) && !renderer.hasProperty(Property.BOTTOM) && !renderer.hasProperty(Property.LEFT) && !renderer.hasProperty(Property.RIGHT);
     }
 
+    void shrinkOccupiedAreaForAbsolutePosition() {
+        // In case of absolute positioning and not specified left, right, width values, the parent box is shrunk to fit
+        // the children. It does not occupy all the available width if it does not need to.
+        if (isAbsolutePosition()) {
+            Float left = this.getPropertyAsFloat(Property.LEFT);
+            Float right = this.getPropertyAsFloat(Property.RIGHT);
+            UnitValue width = this.<UnitValue>getProperty(Property.WIDTH);
+            if (left == null && right == null && width == null) {
+                occupiedArea.getBBox().setWidth(0);
+            }
+        }
+    }
+
     void drawPositionedChildren(DrawContext drawContext) {
         for (IRenderer positionedChild : positionedRenderers) {
             positionedChild.draw(drawContext);

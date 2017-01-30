@@ -128,6 +128,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         occupiedArea = new LayoutArea(pageNumber, new Rectangle(parentBBox.getX(), parentBBox.getY() + parentBBox.getHeight(), parentBBox.getWidth(), 0));
+        shrinkOccupiedAreaForAbsolutePosition();
         int currentAreaPos = 0;
 
         Rectangle layoutBox = areas.get(0).clone();
@@ -152,7 +153,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 }
 
                 if (result.getSplitRenderer() != null) {
-                    alignChildHorizontally(result.getSplitRenderer(), layoutBox.getWidth());
+                    // Use occupied area's bbox width so that for absolutely positioned renderers we do not align using full width
+                    // in case when parent box should wrap around child boxes.
+                    // TODO in the latter case, all elements should be layouted first so that we know maximum width needed to place all children and then apply horizontal alignment
+                    alignChildHorizontally(result.getSplitRenderer(), occupiedArea.getBBox().getWidth());
                 }
 
                 // Save the first renderer to produce LayoutResult.NOTHING
@@ -303,7 +307,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (result.getStatus() == LayoutResult.FULL) {
                 layoutBox.setHeight(result.getOccupiedArea().getBBox().getY() - layoutBox.getY());
                 if (childRenderer.getOccupiedArea() != null) {
-                    alignChildHorizontally(childRenderer, layoutBox.getWidth());
+                    // Use occupied area's bbox width so that for absolutely positioned renderers we do not align using full width
+                    // in case when parent box should wrap around child boxes.
+                    // TODO in the latter case, all elements should be layouted first so that we know maximum width needed to place all children and then apply horizontal alignment
+                    alignChildHorizontally(childRenderer, occupiedArea.getBBox().getWidth());
                 }
             }
 

@@ -145,6 +145,7 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         occupiedArea = new LayoutArea(pageNumber, new Rectangle(parentBBox.getX(), parentBBox.getY() + parentBBox.getHeight(), parentBBox.getWidth(), 0));
+        shrinkOccupiedAreaForAbsolutePosition();
 
         int currentAreaPos = 0;
         Rectangle layoutBox = areas.get(0).clone();
