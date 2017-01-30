@@ -691,8 +691,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     MinMaxWidth correctMinMaxWidth(MinMaxWidth minMaxWidth) {
-        Float width = retrieveWidth(0);
-        if (width != null && width > 0 && width >= minMaxWidth.getChildrenMinWidth()) {
+        Float width = retrieveWidth(-1);
+        if (width != null && width >= 0 && width >= minMaxWidth.getChildrenMinWidth()) {
             minMaxWidth.setChildrenMaxWidth((float) width);
             minMaxWidth.setChildrenMinWidth((float) width);
         }
