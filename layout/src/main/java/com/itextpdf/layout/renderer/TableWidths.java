@@ -172,12 +172,19 @@ final class TableWidths {
             UnitValue colWidth = getTable().getColumnWidth(i);
             if (colWidth.getValue() >= 0) {
                 if (colWidth.isPercentValue()) {
-                    widths[i].setPercents(colWidth.getValue());
+                    if (!widths[i].isPercent && widths[i].isFixed && widths[i].width > widths[i].min) {
+                        widths[i].max = widths[i].width;
+                        widths[i].setFixed(false);
+                    }
+                    if (!widths[i].isPercent) {
+                        widths[i].setPercents(colWidth.getValue());
+                    }
+
                 } else if (!widths[i].isPercent && colWidth.getValue() >= widths[i].min) {
-                    if (!widths[i].isFixed) {
-                        widths[i].resetPoints(colWidth.getValue());
-                    } else {
+                    if (widths[i].isFixed) {
                         widths[i].setPoints(colWidth.getValue());
+                    } else {
+                        widths[i].resetPoints(colWidth.getValue());
                     }
                 }
             }
@@ -238,6 +245,7 @@ final class TableWidths {
                 for (int i = 0; i < widths.length; i++) {
                     widths[i].width = 100 * widths[i].width / sumOfPercents;
                 }
+                sumOfPercents = 100;
             }
 
             if (!toBalance) {
@@ -317,7 +325,7 @@ final class TableWidths {
                     }
                 } else {
                     float extraWidth = tableWidth - totalPercent - minTotalNonPercent;
-                    if (extraWidth < fixedAddition) {
+                    if (fixedAddition > 0 && (extraWidth < fixedAddition || flexibleAddition == 0)) {
                         for (int i = 0; i < numberOfColumns; i++) {
                             if (!widths[i].isPercent && widths[i].isFixed) {
                                 widths[i].finalWidth += (widths[i].width - widths[i].min) * extraWidth / fixedAddition;
@@ -514,7 +522,7 @@ final class TableWidths {
 
     private static class ColumnWidthData {
         final float min;
-        final float max;
+        float max;
         float width = 0;
         float finalWidth = -1;
         boolean isPercent = false;

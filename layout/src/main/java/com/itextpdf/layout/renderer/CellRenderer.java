@@ -72,6 +72,11 @@ public class CellRenderer extends BlockRenderer {
         return (Cell) super.getModelElement();
     }
 
+    @Override
+    protected Float retrieveWidth(float parentBoxWidth) {
+        return null;
+    }
+
     /**
      * {@inheritDoc}
      */
