@@ -1530,6 +1530,9 @@ public class TableRenderer extends AbstractRenderer {
                     curColspan = cellsColspan[row][col];
                     maxColumnsWidth[col + 1] = Math.max(maxColumnsWidth[col + 1], cellsMinMaxWidth[row][col].getMaxWidth() + maxColumnsWidth[col - curColspan + 1]);
                     minColumnsWidth[col + 1] = Math.max(minColumnsWidth[col + 1], cellsMinMaxWidth[row][col].getMinWidth() + minColumnsWidth[col - curColspan + 1]);
+                } else {
+                    maxColumnsWidth[col + 1] = maxColumnsWidth[col];
+                    minColumnsWidth[col + 1] = minColumnsWidth[col];
                 }
             }
         }
