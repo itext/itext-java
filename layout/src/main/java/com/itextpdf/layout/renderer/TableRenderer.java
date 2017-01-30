@@ -730,7 +730,7 @@ public class TableRenderer extends AbstractRenderer {
                     }
                 }
                 // Correct occupied areas of all added cells
-                correctCellsOccupiedAreas(row, targetOverflowRowIndex);
+                correctCellsOccupiedAreas(splits, row, targetOverflowRowIndex);
             }
             // process footer with collapsed borders
             if ((split || processAsLast || row == rows.size() - 1) && null != footerRenderer) {
@@ -1997,13 +1997,13 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
-    private void correctCellsOccupiedAreas(int row, int[] targetOverflowRowIndex) {
+    private void correctCellsOccupiedAreas(LayoutResult[] splits, int row, int[] targetOverflowRowIndex) {
         // Correct occupied areas of all added cells
         for (int k = 0; k <= row; k++) {
             CellRenderer[] currentRow = rows.get(k);
             if (k < row || (row + 1 == heights.size())) {
                 for (int col = 0; col < currentRow.length; col++) {
-                    CellRenderer cell = currentRow[col];
+                    CellRenderer cell = (k < row || null == splits[col]) ? currentRow[col] : (CellRenderer) splits[col].getSplitRenderer();
                     if (cell == null) {
                         continue;
                     }
