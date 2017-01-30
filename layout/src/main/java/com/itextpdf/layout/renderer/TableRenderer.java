@@ -597,27 +597,29 @@ public class TableRenderer extends AbstractRenderer {
                                     for (int addRow = row + 1; addRow < rows.size(); addRow++) {
                                         if (rows.get(addRow)[addCol] != null) {
                                             CellRenderer addRenderer = rows.get(addRow)[addCol];
+                                            // TODO DEVSIX-1060
                                             verticalAlignment = addRenderer.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT);
-                                            if (verticalAlignment != null && verticalAlignment.equals(VerticalAlignment.BOTTOM)) {
-                                                if (row + addRenderer.getPropertyAsInteger(Property.ROWSPAN) - 1 < addRow) {
-                                                    cellProcessingQueue.addLast(new CellRendererInfo(addRenderer, addCol, addRow));
-                                                } else {
-                                                    horizontalBorders.get(row + 1).set(addCol, addRenderer.getBorders()[2]);
-                                                    if (addCol == 0) {
-                                                        for (int i = row; i >= 0; i--) {
-                                                            if (!checkAndReplaceBorderInArray(verticalBorders, addCol, i, addRenderer.getBorders()[3], false)) {
-                                                                break;
-                                                            }
-                                                        }
-                                                    } else if (addCol == numberOfColumns - 1) {
-                                                        for (int i = row; i >= 0; i--) {
-                                                            if (!checkAndReplaceBorderInArray(verticalBorders, addCol + 1, i, addRenderer.getBorders()[1], true)) {
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            } else if (row + addRenderer.getPropertyAsInteger(Property.ROWSPAN) - 1 >= addRow) {
+//                                            if (verticalAlignment != null && verticalAlignment.equals(VerticalAlignment.BOTTOM)) {
+//                                                if (row + addRenderer.getPropertyAsInteger(Property.ROWSPAN) - 1 < addRow) {
+//                                                    cellProcessingQueue.addLast(new CellRendererInfo(addRenderer, addCol, addRow));
+//                                                } else {
+//                                                    horizontalBorders.get(row + 1).set(addCol, addRenderer.getBorders()[2]);
+//                                                    if (addCol == 0) {
+//                                                        for (int i = row; i >= 0; i--) {
+//                                                            if (!checkAndReplaceBorderInArray(verticalBorders, addCol, i, addRenderer.getBorders()[3], false)) {
+//                                                                break;
+//                                                            }
+//                                                        }
+//                                                    } else if (addCol == numberOfColumns - 1) {
+//                                                        for (int i = row; i >= 0; i--) {
+//                                                            if (!checkAndReplaceBorderInArray(verticalBorders, addCol + 1, i, addRenderer.getBorders()[1], true)) {
+//                                                                break;
+//                                                            }
+//                                                        }
+//                                                    }
+//                                                }
+//                                            } else
+                                            if (row + addRenderer.getPropertyAsInteger(Property.ROWSPAN) - 1 >= addRow) {
                                                 cellProcessingQueue.addLast(new CellRendererInfo(addRenderer, addCol, addRow));
                                             }
                                             break;
@@ -1354,6 +1356,9 @@ public class TableRenderer extends AbstractRenderer {
         splitRenderer.countedColumnWidth = countedColumnWidth;
         splitRenderer.totalWidthForColumns = totalWidthForColumns;
         TableRenderer overflowRenderer = createOverflowRenderer(new Table.RowRange(rowRange.getStartRow() + row, rowRange.getFinishRow()));
+        if (0 == row && !hasContent) {
+            overflowRenderer.isOriginalNonSplitRenderer = true;
+        }
         overflowRenderer.rows = rows.subList(row, rows.size());
         splitRenderer.occupiedArea = occupiedArea;
 
