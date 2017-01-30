@@ -119,7 +119,6 @@ public class LineRenderer extends AbstractRenderer {
                     IRenderer tabRenderer = childRenderers.get(childPos - 1);
                     tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
                     curWidth += tabRenderer.getOccupiedArea().getBBox().getWidth();
-                    widthHandler.updateMinChildWidth(tabRenderer.getOccupiedArea().getBBox().getWidth());
                     widthHandler.updateMaxChildWidth(tabRenderer.getOccupiedArea().getBBox().getWidth());
                 }
                 hangingTabStop = calculateTab(childRenderer, curWidth, layoutBox.getWidth());
@@ -173,7 +172,7 @@ public class LineRenderer extends AbstractRenderer {
                 } else {
                     curWidth += tabAndNextElemWidth;
                 }
-                widthHandler.updateMinChildWidth(tabWidth + minChildWidth);
+                widthHandler.updateMinChildWidth(minChildWidth);
                 widthHandler.updateMaxChildWidth(tabWidth + maxChildWidth);
                 hangingTabStop = null;
             } else {
