@@ -636,7 +636,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
     @Override
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
         Rectangle area = new Rectangle(availableWidth, AbstractRenderer.INF);
-        float additionalWidth = applyBordersPaddingsMargins(area, getBorders(), getPaddings(), isPositioned());
+        float additionalWidth = applyBordersPaddingsMargins(area, getBorders(), getPaddings());
         MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, availableWidth);
         AbstractWidthHandler handler = new MaxMaxWidthHandler(minMaxWidth);
         for (IRenderer childRenderer : childRenderers) {
