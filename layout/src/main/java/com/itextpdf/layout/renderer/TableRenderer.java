@@ -153,11 +153,11 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     private Table getTable() {
-        return (Table)getModelElement();
+        return (Table) getModelElement();
     }
 
     private void initializeHeaderAndFooter(boolean isFirstOnThePage) {
-        Table table = (Table)getModelElement();
+        Table table = (Table) getModelElement();
         Border[] tableBorder = getBorders();
 
         Table footerElement = table.getFooter();
@@ -562,7 +562,7 @@ public class TableRenderer extends AbstractRenderer {
                                 overflowRenderer.setProperty(Property.MARGIN_RIGHT, 0);
                                 // init borders
                                 overflowRenderer.initializeBorders(new ArrayList<Border>(), true);
-                                overflowRenderer.collapseAllBordersAndEmptyRows(overflowRenderer.getBorders(), 0,  rowRange.getFinishRow() - rowRange.getStartRow() - row, numberOfColumns);
+                                overflowRenderer.collapseAllBordersAndEmptyRows(overflowRenderer.getBorders(), 0, rowRange.getFinishRow() - rowRange.getStartRow() - row, numberOfColumns);
                                 prepareFooterOrHeaderRendererForLayout(overflowRenderer, layoutBox.getWidth());
                                 if (LayoutResult.FULL == overflowRenderer.layout(new LayoutContext(potentialArea)).getStatus()) {
                                     footerRenderer = null;
@@ -669,7 +669,7 @@ public class TableRenderer extends AbstractRenderer {
                     rowHeight = 0;
                     if (split && (hasContent)) {
                         //TODO
-                        horizontalBorders.add(row + 1, (List<Border>)((ArrayList<Border>) horizontalBorders.get(row + 1)).clone());
+                        horizontalBorders.add(row + 1, (List<Border>) ((ArrayList<Border>) horizontalBorders.get(row + 1)).clone());
                     }
                     for (col = 0; col < currentRow.length; col++) {
                         if (hasContent || (cellWithBigRowspanAdded && null == rows.get(row - 1)[col])) {
@@ -781,7 +781,7 @@ public class TableRenderer extends AbstractRenderer {
                 if (marginsCollapsingEnabled) {
                     marginsCollapseHandler.endMarginsCollapse(layoutBox);
                 }
-                TableRenderer[] splitResult = !split && processAsLast ? split(row + 1, false) : split(row, hasContent);
+                TableRenderer[] splitResult = !split && processAsLast ? split(row + 1, false, cellWithBigRowspanAdded) : split(row, hasContent, cellWithBigRowspanAdded);
                 // delete #layout() related properties
                 if (null != headerRenderer || null != footerRenderer) {
                     if (null != headerRenderer || tableModel.isEmpty()) {
@@ -1330,6 +1330,11 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     protected TableRenderer[] split(int row, boolean hasContent) {
+        return split(row, false, false);
+    }
+
+
+    protected TableRenderer[] split(int row, boolean hasContent, boolean cellWithBigRowspanAdded) {
         TableRenderer splitRenderer = createSplitRenderer(new Table.RowRange(rowRange.getStartRow(), rowRange.getStartRow() + row));
         splitRenderer.rows = rows.subList(0, row);
         int rowN = row;
@@ -1356,7 +1361,7 @@ public class TableRenderer extends AbstractRenderer {
         splitRenderer.countedColumnWidth = countedColumnWidth;
         splitRenderer.totalWidthForColumns = totalWidthForColumns;
         TableRenderer overflowRenderer = createOverflowRenderer(new Table.RowRange(rowRange.getStartRow() + row, rowRange.getFinishRow()));
-        if (0 == row && !hasContent) {
+        if (0 == row && !(hasContent || cellWithBigRowspanAdded)) {
             overflowRenderer.isOriginalNonSplitRenderer = true;
         }
         overflowRenderer.rows = rows.subList(row, rows.size());
@@ -1366,7 +1371,7 @@ public class TableRenderer extends AbstractRenderer {
         //splitRenderer.horizontalBorders.addAll(horizontalBorders);
         for (int i = rowN; i < horizontalBorders.size(); i++) {
             //TODO
-            overflowRenderer.horizontalBorders.add((List<Border>)((ArrayList<Border>) horizontalBorders.get(i)).clone());
+            overflowRenderer.horizontalBorders.add((List<Border>) ((ArrayList<Border>) horizontalBorders.get(i)).clone());
         }
         overflowRenderer.verticalBorders = new ArrayList<>();
         //splitRenderer.verticalBorders.addAll(verticalBorders);
@@ -1439,7 +1444,7 @@ public class TableRenderer extends AbstractRenderer {
         Float tableWidth = retrieveWidth(layoutBox.getWidth());
         applyMargins(layoutBox, false);
         if (initializeBorders) {
-            initializeBorders(((Table)getModelElement()).getLastRowBottomBorder(), true);
+            initializeBorders(((Table) getModelElement()).getLastRowBottomBorder(), true);
             initializeHeaderAndFooter(true);
             collapseAllBorders();
         }
@@ -1648,6 +1653,7 @@ public class TableRenderer extends AbstractRenderer {
             drawContext.getCanvas().closeTag();
         }
     }
+
     private void drawHorizontalBorder(int i, float startX, float y1, PdfCanvas canvas) {
         List<Border> borders = horizontalBorders.get(i);
         float x1 = startX;
