@@ -399,8 +399,12 @@ public class TableRenderer extends AbstractRenderer {
         for (row = 0; row < rows.size(); row++) {
             // if forced placement was earlier set, this means the element did not fit into the area, and in this case
             // we only want to place the first row in a forced way, not the next ones, otherwise they will be invisible
-            if (row == 1 && Boolean.TRUE.equals(this.<Boolean>getOwnProperty(Property.FORCED_PLACEMENT))) {
-                deleteOwnProperty(Property.FORCED_PLACEMENT);
+            if (row == 1 && Boolean.TRUE.equals(this.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
+                if (Boolean.TRUE.equals(this.<Boolean>getOwnProperty(Property.FORCED_PLACEMENT))) {
+                    deleteOwnProperty(Property.FORCED_PLACEMENT);
+                } else {
+                    setProperty(Property.FORCED_PLACEMENT, false);
+                }
             }
 
             CellRenderer[] currentRow = rows.get(row);
