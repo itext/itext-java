@@ -170,7 +170,7 @@ public class ListRenderer extends BlockRenderer {
 
     static Object getListItemOrListProperty(IRenderer listItem, int propertyId) {
         return listItem.hasProperty(propertyId) ? listItem.<Object>getProperty(propertyId) :
-                (listItem instanceof AbstractRenderer && ((AbstractRenderer) listItem).parent != null ? ((AbstractRenderer) listItem).parent.getProperty(propertyId) : null);
+                (listItem instanceof AbstractRenderer && ((AbstractRenderer) listItem).parent != null ? ((AbstractRenderer) listItem).parent.<Object>getProperty(propertyId) : null);
     }
 
     private IRenderer createListSymbolRenderer(int index, IRenderer renderer) {
