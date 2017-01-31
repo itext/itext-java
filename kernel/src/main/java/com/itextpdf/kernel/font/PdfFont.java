@@ -425,19 +425,24 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             if (Character.isWhitespace(ch)) {
                 lastWhiteSpace = i;
             }
-            tokenLength += getWidth(ch, fontSize);
-            if (tokenLength >= maxWidth || ch == '\n') {
+            float currentCharWidth = getWidth(ch, fontSize);
+            if (tokenLength + currentCharWidth >= maxWidth || ch == '\n') {
                 if (startPos < lastWhiteSpace) {
                     resultString.add(text.substring(startPos, lastWhiteSpace));
                     startPos = lastWhiteSpace + 1;
                     tokenLength = 0;
                     i = lastWhiteSpace;
+                } else if (startPos != i) {
+                    resultString.add(text.substring(startPos, i));
+                    startPos = i;
+                    tokenLength = currentCharWidth;
                 } else {
-                    resultString.add(text.substring(startPos, i + 1));
+                    resultString.add(text.substring(startPos, startPos + 1));
                     startPos = i + 1;
                     tokenLength = 0;
-                    i = i + 1;
                 }
+            } else {
+                tokenLength += currentCharWidth;
             }
         }
 
