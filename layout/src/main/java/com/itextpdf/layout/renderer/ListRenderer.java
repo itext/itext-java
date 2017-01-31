@@ -108,7 +108,7 @@ public class ListRenderer extends BlockRenderer {
                 IRenderer symbolRenderer = symbolRenderers.get(i);
                 if (symbolRenderer != null) {
                     IRenderer listItemRenderer = childRenderers.get(i);
-                    if ((ListSymbolPosition) getListItemOrListProperty(listItemRenderer, Property.LIST_SYMBOL_POSITION) != ListSymbolPosition.INSIDE) {
+                    if ((ListSymbolPosition) getListItemOrListProperty(listItemRenderer, this, Property.LIST_SYMBOL_POSITION) != ListSymbolPosition.INSIDE) {
                         maxSymbolWidth = Math.max(maxSymbolWidth, symbolRenderer.getOccupiedArea().getBBox().getWidth());
                     }
                 }
@@ -120,7 +120,7 @@ public class ListRenderer extends BlockRenderer {
                 childRenderer.setParent(this);
                 childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
                 float calculatedMargin = (float) childRenderer.getProperty(Property.MARGIN_LEFT, (Float) 0f);
-                if ((ListSymbolPosition) getListItemOrListProperty(childRenderer, Property.LIST_SYMBOL_POSITION) == ListSymbolPosition.DEFAULT) {
+                if ((ListSymbolPosition) getListItemOrListProperty(childRenderer, this, Property.LIST_SYMBOL_POSITION) == ListSymbolPosition.DEFAULT) {
                     calculatedMargin += maxSymbolWidth + (float) (symbolIndent != null ? symbolIndent : 0f);
                 }
                 childRenderer.setProperty(Property.MARGIN_LEFT, calculatedMargin);
@@ -168,13 +168,12 @@ public class ListRenderer extends BlockRenderer {
         return symbolRenderer;
     }
 
-    static Object getListItemOrListProperty(IRenderer listItem, int propertyId) {
-        return listItem.hasProperty(propertyId) ? listItem.<Object>getProperty(propertyId) :
-                (listItem instanceof AbstractRenderer && ((AbstractRenderer) listItem).parent != null ? ((AbstractRenderer) listItem).parent.<Object>getProperty(propertyId) : null);
+    static Object getListItemOrListProperty(IRenderer listItem, IRenderer list, int propertyId) {
+        return listItem.hasProperty(propertyId) ? listItem.<Object>getProperty(propertyId) : list.<Object>getProperty(propertyId);
     }
 
     private IRenderer createListSymbolRenderer(int index, IRenderer renderer) {
-        Object defaultListSymbol = getListItemOrListProperty(renderer, Property.LIST_SYMBOL);
+        Object defaultListSymbol = getListItemOrListProperty(renderer, this, Property.LIST_SYMBOL);
         if (defaultListSymbol instanceof Text) {
             return new TextRenderer((Text) defaultListSymbol);
         } else if (defaultListSymbol instanceof Image) {
@@ -222,7 +221,7 @@ public class ListRenderer extends BlockRenderer {
                 default:
                     throw new IllegalStateException();
             }
-            Text textElement = new Text(getListItemOrListProperty(renderer, Property.LIST_SYMBOL_PRE_TEXT) + numberText + getListItemOrListProperty(renderer, Property.LIST_SYMBOL_POST_TEXT));
+            Text textElement = new Text(getListItemOrListProperty(renderer, this, Property.LIST_SYMBOL_PRE_TEXT) + numberText + getListItemOrListProperty(renderer, this, Property.LIST_SYMBOL_POST_TEXT));
             IRenderer textRenderer;
             // Be careful. There is a workaround here. For Greek symbols we first set a dummy font with document=null
             // in order for the metrics to be taken into account correctly during layout.
