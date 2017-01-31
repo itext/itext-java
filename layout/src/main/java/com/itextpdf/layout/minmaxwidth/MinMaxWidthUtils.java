@@ -11,6 +11,7 @@ import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 
 public class MinMaxWidthUtils {
+
     private static final float eps = 0.01f;
     private static final float max = 32760f;
 

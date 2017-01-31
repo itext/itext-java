@@ -446,7 +446,7 @@ final class TableWidths {
         fixedTableLayout = "fixed".equals(tableRenderer
                 .<String>getProperty(Property.TABLE_LAYOUT, "auto").toLowerCase());
         UnitValue width = tableRenderer.<UnitValue>getProperty(Property.WIDTH);
-        if (fixedTableLayout && width  != null && width .getValue() >= 0) {
+        if (fixedTableLayout && width != null && width.getValue() >= 0) {
             fixedTableWidth = true;
             tableWidth = retrieveTableWidth(width, availableWidth);
             minWidth = width.isPercentValue() ? 0 : tableWidth;
@@ -457,7 +457,7 @@ final class TableWidths {
             if (calculateTableMaxWidth) {
                 fixedTableWidth = false;
                 tableWidth = retrieveTableWidth(availableWidth);
-            } else if (width  != null && width .getValue() >= 0) {
+            } else if (width != null && width.getValue() >= 0) {
                 fixedTableWidth = true;
                 tableWidth = retrieveTableWidth(width, availableWidth);
             } else {
@@ -533,7 +533,7 @@ final class TableWidths {
             actualWidth += widths[i].finalWidth;
             minWidth += widths[i].min;
         }
-        if (actualWidth > tableWidth + MinMaxWidthUtils.getEps()*widths.length) {
+        if (actualWidth > tableWidth + MinMaxWidthUtils.getEps() * widths.length) {
             Logger logger = LoggerFactory.getLogger(TableWidths.class);
             logger.warn(LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH);
         }
@@ -543,6 +543,11 @@ final class TableWidths {
     //endregion
 
     //region Internal classes
+
+    @Override
+    public String toString() {
+        return "width=" + tableWidth + (fixedTableWidth ? "!!" : "");
+    }
 
     private static class ColumnWidthData {
         final float min;
@@ -633,6 +638,8 @@ final class TableWidths {
         }
     }
 
+    //endregion
+
     private static class CellInfo implements Comparable<CellInfo> {
         private static final byte HEADER = 1;
         private static final byte BODY = 2;
@@ -695,12 +702,5 @@ final class TableWidths {
             }
             return region == o.region ? getRow() - o.getRow() : region - o.region;
         }
-    }
-
-    //endregion
-
-    @Override
-    public String toString() {
-        return "width=" + tableWidth + (fixedTableWidth ? "!!" : "");
     }
 }

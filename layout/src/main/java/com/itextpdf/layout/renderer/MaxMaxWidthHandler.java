@@ -1,10 +1,10 @@
-package com.itextpdf.layout.minmaxwidth.handler;
+package com.itextpdf.layout.renderer;
 
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 
-public class MaxSumWidthHandler extends AbstractWidthHandler {
+class MaxMaxWidthHandler extends AbstractWidthHandler {
 
-    public MaxSumWidthHandler(MinMaxWidth minMaxWidth) {
+    public MaxMaxWidthHandler(MinMaxWidth minMaxWidth) {
         super(minMaxWidth);
     }
 
@@ -15,6 +15,6 @@ public class MaxSumWidthHandler extends AbstractWidthHandler {
 
     @Override
     public void updateMaxChildWidth(float childMaxWidth) {
-        minMaxWidth.setChildrenMaxWidth(minMaxWidth.getChildrenMaxWidth() + childMaxWidth);
+        minMaxWidth.setChildrenMaxWidth(Math.max(minMaxWidth.getChildrenMaxWidth(), childMaxWidth));
     }
 }

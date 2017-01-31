@@ -61,8 +61,6 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.minmaxwidth.handler.AbstractWidthHandler;
-import com.itextpdf.layout.minmaxwidth.handler.MaxMaxWidthHandler;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
