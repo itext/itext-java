@@ -53,16 +53,19 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolAlignment;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -128,6 +131,29 @@ public class ListTest extends ExtendedITextTest {
                 add("One").add("Two").add("Three").add("Four").add((ListItem) new ListItem().add(nestedList));
         document.add(list);
 
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void listNestedInTableTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listNestedInTableTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_listNestedInTableTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument, PageSize.A9.rotate());
+
+        List list = new List(ListNumberingType.DECIMAL).
+                add("first string").
+                add("second string").
+                add("third string").
+                add("fourth string");
+
+        Table table = new Table(1);
+        table.addCell(new Cell().add(list).setVerticalAlignment(VerticalAlignment.BOTTOM));
+
+        document.add(table);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));

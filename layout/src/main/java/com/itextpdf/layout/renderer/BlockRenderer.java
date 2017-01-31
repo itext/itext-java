@@ -59,6 +59,8 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
@@ -98,11 +100,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
             marginsCollapseHandler.startMarginsCollapse(parentBBox);
         }
 
-
         Border[] borders = getBorders();
         float[] paddings = getPaddings();
         applyBordersPaddingsMargins(parentBBox, borders, paddings);
-
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
             parentBBox.setWidth((float) blockWidth);
         }
@@ -126,6 +126,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         occupiedArea = new LayoutArea(pageNumber, new Rectangle(parentBBox.getX(), parentBBox.getY() + parentBBox.getHeight(), parentBBox.getWidth(), 0));
+        shrinkOccupiedAreaForAbsolutePosition();
         int currentAreaPos = 0;
 
         Rectangle layoutBox = areas.get(0).clone();
@@ -150,7 +151,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 }
 
                 if (result.getSplitRenderer() != null) {
-                    alignChildHorizontally(result.getSplitRenderer(), layoutBox.getWidth());
+                    // Use occupied area's bbox width so that for absolutely positioned renderers we do not align using full width
+                    // in case when parent box should wrap around child boxes.
+                    // TODO in the latter case, all elements should be layouted first so that we know maximum width needed to place all children and then apply horizontal alignment
+                    alignChildHorizontally(result.getSplitRenderer(), occupiedArea.getBBox().getWidth());
                 }
 
                 // Save the first renderer to produce LayoutResult.NOTHING
@@ -286,7 +290,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             if (layoutResult != LayoutResult.NOTHING) {
                                 return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, null);
                             } else {
-                                return new LayoutResult(layoutResult, null, splitRenderer, overflowRenderer, result.getCauseOfNothing());
+                                return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing());
                             }
                         }
                     }
@@ -301,7 +305,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (result.getStatus() == LayoutResult.FULL) {
                 layoutBox.setHeight(result.getOccupiedArea().getBBox().getY() - layoutBox.getY());
                 if (childRenderer.getOccupiedArea() != null) {
-                    alignChildHorizontally(childRenderer, layoutBox.getWidth());
+                    // Use occupied area's bbox width so that for absolutely positioned renderers we do not align using full width
+                    // in case when parent box should wrap around child boxes.
+                    // TODO in the latter case, all elements should be layouted first so that we know maximum width needed to place all children and then apply horizontal alignment
+                    alignChildHorizontally(childRenderer, occupiedArea.getBBox().getWidth());
                 }
             }
 
@@ -474,11 +481,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
         VerticalAlignment verticalAlignment = this.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT);
         if (verticalAlignment != null && verticalAlignment != VerticalAlignment.TOP && childRenderers.size() > 0) {
             LayoutArea lastChildOccupiedArea = childRenderers.get(childRenderers.size() - 1).getOccupiedArea();
-            if (lastChildOccupiedArea == null) {
-                // TODO normally, vertical alignment applying shall not be called on the renderer which has not processed kids, or kids processed with NOTHING result,
-                // however it seems that this is the case for the table cells in certain situations. 
-                return;
-            }
             float deltaY = lastChildOccupiedArea.getBBox().getY() - getInnerAreaBBox().getY();
             switch (verticalAlignment) {
                 case BOTTOM:
@@ -629,6 +631,70 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
         applyPaddings(parentBBox, paddings, false);
         return parentWidth - parentBBox.getWidth();
+    }
+
+    @Override
+    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
+        Rectangle area = new Rectangle(availableWidth, AbstractRenderer.INF);
+        float additionalWidth = applyBordersPaddingsMargins(area, getBorders(), getPaddings());
+        MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, availableWidth);
+        AbstractWidthHandler handler = new MaxMaxWidthHandler(minMaxWidth);
+        for (IRenderer childRenderer : childRenderers) {
+            MinMaxWidth childMinMaxWidth;
+            childRenderer.setParent(this);
+            if (childRenderer instanceof AbstractRenderer) {
+                childMinMaxWidth = ((AbstractRenderer)childRenderer).getMinMaxWidth(area.getWidth());
+            } else {
+                childMinMaxWidth = MinMaxWidthUtils.countDefaultMinMaxWidth(childRenderer, area.getWidth());
+            }
+            handler.updateMaxChildWidth(childMinMaxWidth.getMaxWidth());
+            handler.updateMinChildWidth(childMinMaxWidth.getMinWidth());
+        }
+        return countRotationMinMaxWidth(correctMinMaxWidth(minMaxWidth));
+    }
+
+    //Heuristic method.
+    //We assume that the area of block stays the same when we try to layout it
+    //with different available width (available width is between min-width and max-width).
+    MinMaxWidth countRotationMinMaxWidth(MinMaxWidth minMaxWidth) {
+        Float rotation = getPropertyAsFloat(Property.ROTATION_ANGLE);
+        if (rotation != null) {
+            boolean restoreRendererRotation = hasOwnProperty(Property.ROTATION_ANGLE);
+            setProperty(Property.ROTATION_ANGLE, null);
+            LayoutResult result = layout(new LayoutContext(new LayoutArea(1, new Rectangle(minMaxWidth.getMaxWidth() + MinMaxWidthUtils.getEps(), AbstractRenderer.INF))));
+            if (restoreRendererRotation) {
+                setProperty(Property.ROTATION_ANGLE, rotation);
+            } else {
+                deleteOwnProperty(Property.ROTATION_ANGLE);
+            }
+            if (result.getOccupiedArea() != null) {
+                double a = result.getOccupiedArea().getBBox().getWidth();
+                double b = result.getOccupiedArea().getBBox().getHeight();
+                double m = minMaxWidth.getMinWidth();
+                double s = a * b;
+                //Note, that the width of occupied area containing rotated block is less than the diagonal of this block, so:
+                //width < sqrt(a^2 + b^2)
+                //a^2 + b^2 = (s/b)^2 + b^2 >= 2s
+                //(s/b)^2 + b^2 = 2s,  if b = s/b = sqrt(s)
+                double resultMinWidth =  Math.sqrt(2 * s);
+                //Note, that if the sqrt(s) < m (width of unrotated block is out of possible range), than the min value of (s/b)^2 + b^2 >= 2s should be when b = m
+                if ( Math.sqrt(s) < minMaxWidth.getMinWidth()) {
+                    resultMinWidth = Math.max(resultMinWidth, Math.sqrt((s / m) * (s / m) + m * m));
+                }
+                //We assume that the biggest diagonal is when block element have maxWidth.
+                return new MinMaxWidth(0, minMaxWidth.getAvailableWidth(), (float) resultMinWidth, (float) Math.sqrt(a * a + b * b));
+            }
+        }
+        return minMaxWidth;
+    }
+
+    MinMaxWidth correctMinMaxWidth(MinMaxWidth minMaxWidth) {
+        Float width = retrieveWidth(-1);
+        if (width != null && width >= 0 && width >= minMaxWidth.getChildrenMinWidth()) {
+            minMaxWidth.setChildrenMaxWidth((float) width);
+            minMaxWidth.setChildrenMinWidth((float) width);
+        }
+        return minMaxWidth;
     }
 
     private List<Point> clipPolygon(List<Point> points, Point clipLineBeg, Point clipLineEnd) {

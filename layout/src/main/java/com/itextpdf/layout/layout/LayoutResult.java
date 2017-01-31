@@ -105,11 +105,7 @@ public class LayoutResult {
      * @param overflowRenderer the renderer to draw the overflowed part of the content
      */
     public LayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer) {
-        this.status = status;
-        this.occupiedArea = occupiedArea;
-        this.splitRenderer = splitRenderer;
-        this.overflowRenderer = overflowRenderer;
-        causeOfNothing = null;
+        this(status, occupiedArea, splitRenderer, overflowRenderer, null);
     }
 
     /**
@@ -121,9 +117,13 @@ public class LayoutResult {
      * @param overflowRenderer the renderer to draw the overflowed part of the content
      * @param cause the first renderer to produce {@link LayoutResult#NOTHING}
      */
+
     public LayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause) {
-        this(status, occupiedArea, splitRenderer, overflowRenderer);
-        causeOfNothing = cause;
+        this.status = status;
+        this.occupiedArea = occupiedArea;
+        this.splitRenderer = splitRenderer;
+        this.overflowRenderer = overflowRenderer;
+        this.causeOfNothing = cause;
     }
 
     /**

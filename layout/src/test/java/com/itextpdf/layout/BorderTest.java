@@ -70,6 +70,7 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -167,6 +168,31 @@ public class BorderTest extends ExtendedITextTest {
 
         closeDocumentAndCompareOutputs(doc);
     }
+
+    @Test
+    public void incompleteTableTest02() throws IOException, InterruptedException {
+        fileName = "incompleteTableTest02.pdf";
+        Document doc = createDocument();
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(Color.GREEN, 5));
+        Cell cell;
+        // row 1, cell 1
+        cell = new Cell().add("One");
+        table.addCell(cell);
+        table.startNewRow();
+        // row 2, cell 1
+        cell = new Cell().add("Two");
+        table.addCell(cell);
+        // row 2, cell 2
+        cell = new Cell().add("Three");
+        table.addCell(cell);
+
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
 
     @Test
     public void simpleBorderTest02() throws IOException, InterruptedException {
@@ -472,16 +498,9 @@ public class BorderTest extends ExtendedITextTest {
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 50f));
         table.addCell(cell);
-
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 50f));
         table.addCell(cell);
-
-
-        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
-        cell.setBorder(new SolidBorder(Color.RED, 50f));
-        table.addCell(cell);
-
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 50f));
         table.addCell(cell);
@@ -489,7 +508,9 @@ public class BorderTest extends ExtendedITextTest {
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 50f));
         table.addCell(cell);
-
+        cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
+        cell.setBorder(new SolidBorder(Color.RED, 50f));
+        table.addCell(cell);
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 50f));
         table.addCell(cell);
@@ -538,6 +559,7 @@ public class BorderTest extends ExtendedITextTest {
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 45f));
         table.addCell(cell);
+
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 40f));
         table.addCell(cell);
@@ -557,6 +579,7 @@ public class BorderTest extends ExtendedITextTest {
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 102f));
         table.addCell(cell);
+
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 11f));
         table.addCell(cell);
@@ -566,6 +589,7 @@ public class BorderTest extends ExtendedITextTest {
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 44f));
         table.addCell(cell);
+
         cell = new Cell().add("Borders shouldn't be layouted outside the layout area.");
         cell.setBorder(new SolidBorder(Color.RED, 27f));
         table.addCell(cell);
@@ -780,8 +804,8 @@ public class BorderTest extends ExtendedITextTest {
         fileName = "infiniteLoopTest01.pdf";
         Document doc = createDocument();
 
-        Table table = new Table(new float[]{1, 3});
-        table.setWidthPercent(50);
+        Table table = new Table(UnitValue.createPercentArray(new float[]{1, 3}));
+        table.setWidthPercent(50).setProperty(Property.TABLE_LAYOUT, "fixed");
         Cell cell;
 
         // row 1, cell 1
@@ -901,7 +925,10 @@ public class BorderTest extends ExtendedITextTest {
 
         String textAlphabet = "ABCDEFGHIJKLMNOPQRSTUWXYZ";
 
-        Table table = new Table(1);
+        Table table = new Table(1)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
+
         table.addCell(new Cell().add(textAlphabet).setBorder(new SolidBorder(4)));
         table.addFooterCell(new Cell().add("Footer"));
         doc.add(table);
@@ -946,7 +973,9 @@ public class BorderTest extends ExtendedITextTest {
 
         String textAlphabet = "Cell";
 
-        Table table = new Table(3);
+        Table table = new Table(3)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
         table.addCell(new Cell().add(textAlphabet));
         table.addCell(new Cell(2, 1).add(textAlphabet));
         table.addCell(new Cell().add(textAlphabet));
@@ -996,7 +1025,9 @@ public class BorderTest extends ExtendedITextTest {
 
         String textAlphabet = "Cell";
 
-        Table table = new Table(3);
+        Table table = new Table(3)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
         table.addCell(new Cell().add(textAlphabet + "1"));
         table.addCell(new Cell(2, 1).add(textAlphabet + "222"));
         table.addCell(new Cell().add(textAlphabet + "3"));
@@ -1018,7 +1049,9 @@ public class BorderTest extends ExtendedITextTest {
 
         String textAlphabet = "Cell";
 
-        Table table = new Table(3);
+        Table table = new Table(3)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
         table.addCell(new Cell().add(textAlphabet + "1"));
         table.addCell(new Cell(2, 1).add(textAlphabet + "2").setBorder(new SolidBorder(Color.GREEN, 4)));
         table.addCell(new Cell().add(textAlphabet + "3"));
@@ -1190,7 +1223,9 @@ public class BorderTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A7.rotate());
 
-        Table table = new Table(2);
+        Table table = new Table(2)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
         table.addFooterCell(new Cell(1, 2).setHeight(30).add("Footer"));
         table.addCell(new Cell().add("0abcdefghijklmnopqrstuvwxyz1abcdefghijklmnopqrstuvwxyz2abcdefghijklmnopq"));
         table.addCell(new Cell().add("0bbbbbbbbbbbbbbbbbbbbbbbbbbbb").setBorderBottom(new SolidBorder(50)));
@@ -1362,7 +1397,7 @@ public class BorderTest extends ExtendedITextTest {
         Document doc = createDocument();
 
         Table table = new Table(1);
-        table.setWidth(10);
+        table.setWidth(10).setProperty(Property.TABLE_LAYOUT, "fixed");
         Cell cell;
         // row 1, cell 1
         cell = new Cell().add("1ORD");

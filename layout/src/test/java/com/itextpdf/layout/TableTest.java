@@ -73,6 +73,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
@@ -986,7 +987,9 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        Table table = new Table(1);
+        Table table = new Table(1)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
         Cell cell = new Cell();
         String str = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         String result = "";
@@ -1015,11 +1018,64 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{5});
+        table.setWidth(5).setProperty(Property.TABLE_LAYOUT, "fixed");
         Cell cell = new Cell();
         Paragraph p = new Paragraph(new Text("a"));
         cell.add(p);
         table.addCell(cell);
         doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void nestedTablesCollapseTest01() throws IOException, InterruptedException {
+        String testName = "nestedTablesCollapseTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Cell cell;
+        Table outertable = new Table(1);
+        Table innertable = new Table(2);
+
+        // first row
+        // column 1
+        cell = new Cell().add("Record Ref:");
+        cell.setBorder(Border.NO_BORDER);
+        innertable.addCell(cell);
+        // column 2
+        cell = new Cell().add("GN Staff");
+        cell.setPaddingLeft(2);
+        innertable.addCell(cell);
+        // spacing
+        cell = new Cell(1, 2);
+        cell.setHeight(3);
+        cell.setBorder(Border.NO_BORDER);
+        innertable.addCell(cell);
+        // second row
+        // column 1
+        cell = new Cell().add("Hospital:");
+        cell.setBorder(Border.NO_BORDER);
+        innertable.addCell(cell);
+        // column 2
+        cell = new Cell().add("Derby Royal");
+        cell.setPaddingLeft(2);
+        innertable.addCell(cell);
+        // spacing
+        cell = new Cell(1, 2);
+        cell.setHeight(3);
+        cell.setBorder(Border.NO_BORDER);
+        innertable.addCell(cell);
+
+        // first nested table
+        cell = new Cell().add(innertable);
+        outertable.addCell(cell);
+        // add the table
+        doc.add(outertable);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));

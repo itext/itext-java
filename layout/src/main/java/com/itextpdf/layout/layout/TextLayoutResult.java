@@ -48,7 +48,7 @@ import com.itextpdf.layout.renderer.IRenderer;
 /**
  * Represents the result of a text {@link com.itextpdf.layout.renderer.TextRenderer#layout(LayoutContext) layout}.
  */
-public class TextLayoutResult extends LayoutResult {
+public class TextLayoutResult extends MinMaxWidthLayoutResult {
 
     /**
      * Indicates whether some word was splitted during {@link com.itextpdf.layout.renderer.TextRenderer#layout(LayoutContext) layout}.

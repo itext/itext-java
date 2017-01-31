@@ -52,7 +52,13 @@ import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.property.Property;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class CellRenderer extends BlockRenderer {
+
+    // TODO delete after refactoring
+    protected Map<Integer, Object> oldProperties = new HashMap<>();
 
     /**
      * Creates a CellRenderer from its corresponding layout object.
@@ -70,6 +76,11 @@ public class CellRenderer extends BlockRenderer {
     @Override
     public Cell getModelElement() {
         return (Cell) super.getModelElement();
+    }
+
+    @Override
+    protected Float retrieveWidth(float parentBoxWidth) {
+        return null;
     }
 
     /**
@@ -155,5 +166,23 @@ public class CellRenderer extends BlockRenderer {
     @Override
     public IRenderer getNextRenderer() {
         return new CellRenderer(getModelElement());
+    }
+
+    protected IRenderer saveProperties() {
+        if (null != properties) {
+            oldProperties = new HashMap<Integer, Object>();
+        } else {
+            oldProperties.clear();
+        }
+        oldProperties.putAll(properties);
+        return this;
+    }
+
+    protected IRenderer restoreProperties() {
+        if (null != oldProperties) {
+            properties.clear();
+            properties.putAll(oldProperties);
+        }
+        return this;
     }
 }

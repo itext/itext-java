@@ -73,6 +73,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BaseDirection;
 import com.itextpdf.layout.property.FontKerning;
@@ -154,6 +155,9 @@ public class TextRenderer extends AbstractRenderer {
         Rectangle layoutBox = applyMargins(area.getBBox().clone(), margins, false);
         Border[] borders = getBorders();
         applyBorderBox(layoutBox, borders, false);
+
+        MinMaxWidth countedMinMaxWidth =  new MinMaxWidth(area.getBBox().getWidth() - layoutBox.getWidth(), area.getBBox().getWidth());
+        AbstractWidthHandler widthHandler = new MaxSumWidthHandler(countedMinMaxWidth);
 
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 
@@ -296,6 +300,8 @@ public class TextRenderer extends AbstractRenderer {
                 currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
                 currentTextPos = nonBreakablePartEnd + 1;
                 currentLineWidth += nonBreakablePartFullWidth;
+                widthHandler.updateMinChildWidth(nonBreakablePartWidthWhichDoesNotExceedAllowedWidth);
+                widthHandler.updateMaxChildWidth(nonBreakablePartWidthWhichDoesNotExceedAllowedWidth);
                 anythingPlaced = true;
             } else {
                 // check if line height exceeds the allowed height
@@ -346,6 +352,9 @@ public class TextRenderer extends AbstractRenderer {
                                         currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
 
                                         currentLineWidth += currentHyphenationChoicePreTextWidth;
+                                        widthHandler.updateMinChildWidth(currentHyphenationChoicePreTextWidth);
+                                        widthHandler.updateMaxChildWidth(currentHyphenationChoicePreTextWidth);
+
                                         currentTextPos += pre.length();
 
                                         break;
@@ -368,7 +377,8 @@ public class TextRenderer extends AbstractRenderer {
                             currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
                             currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
                             currentLineWidth += nonBreakablePartWidthWhichDoesNotExceedAllowedWidth;
-
+                            widthHandler.updateMinChildWidth(nonBreakablePartWidthWhichDoesNotExceedAllowedWidth);
+                            widthHandler.updateMaxChildWidth(nonBreakablePartWidthWhichDoesNotExceedAllowedWidth);
                         } else {
                             // process empty line (e.g. '\n')
                             currentLineAscender = ascender;
@@ -378,8 +388,7 @@ public class TextRenderer extends AbstractRenderer {
                         }
                     }
                     if (line.end <= line.start) {
-                        return new TextLayoutResult(LayoutResult.NOTHING,
-                                occupiedArea, null, this, this);
+                        return new TextLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
                     } else {
                         result = new TextLayoutResult(LayoutResult.PARTIAL, occupiedArea, null, null).setWordHasBeenSplit(wordSplit);
                     }
@@ -388,7 +397,6 @@ public class TextRenderer extends AbstractRenderer {
                 }
             }
         }
-
         // indicates whether the placing is forced while the layout result is LayoutResult.NOTHING
         boolean isPlacingForcedWhileNothing = false;
         if (currentLineHeight > layoutBox.getHeight()) {
@@ -414,8 +422,7 @@ public class TextRenderer extends AbstractRenderer {
         applyMargins(occupiedArea.getBBox(), margins, true);
 
         if (result == null) {
-            result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null,
-                    isPlacingForcedWhileNothing ? this : null);
+            result = new TextLayoutResult(LayoutResult.FULL, occupiedArea, null, null, isPlacingForcedWhileNothing ? this : null);
         } else {
             TextRenderer[] split;
             if (ignoreNewLineSymbol) {
@@ -439,6 +446,7 @@ public class TextRenderer extends AbstractRenderer {
             }
         }
 
+        result.setMinMaxWidth(countedMinMaxWidth);
         return result;
     }
 
@@ -942,6 +950,12 @@ public class TextRenderer extends AbstractRenderer {
             }
         }
         return count;
+    }
+
+    @Override
+    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
+        TextLayoutResult result = (TextLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
+        return result.getNotNullMinMaxWidth(availableWidth);
     }
 
     protected int getNumberOfSpaces() {

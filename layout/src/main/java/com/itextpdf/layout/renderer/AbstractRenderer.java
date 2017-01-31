@@ -68,6 +68,8 @@ import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.BackgroundImage;
 import com.itextpdf.layout.property.HorizontalAlignment;
@@ -623,6 +625,9 @@ public abstract class AbstractRenderer implements IRenderer {
         for (IRenderer childRenderer : childRenderers) {
             childRenderer.move(dxRight, dyUp);
         }
+        for (IRenderer childRenderer : positionedRenderers) {
+            childRenderer.move(dxRight, dyUp);
+        }
     }
 
     /**
@@ -939,6 +944,10 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
+    MinMaxWidth getMinMaxWidth(float availableWidth) {
+        return MinMaxWidthUtils.countDefaultMinMaxWidth(this, availableWidth);
+    }
+
     /**
      * @deprecated Use {@link #isNotFittingLayoutArea(LayoutArea)} instead.
      */
@@ -1166,6 +1175,19 @@ public abstract class AbstractRenderer implements IRenderer {
 
     static boolean noAbsolutePositionInfo(IRenderer renderer) {
         return !renderer.hasProperty(Property.TOP) && !renderer.hasProperty(Property.BOTTOM) && !renderer.hasProperty(Property.LEFT) && !renderer.hasProperty(Property.RIGHT);
+    }
+
+    void shrinkOccupiedAreaForAbsolutePosition() {
+        // In case of absolute positioning and not specified left, right, width values, the parent box is shrunk to fit
+        // the children. It does not occupy all the available width if it does not need to.
+        if (isAbsolutePosition()) {
+            Float left = this.getPropertyAsFloat(Property.LEFT);
+            Float right = this.getPropertyAsFloat(Property.RIGHT);
+            UnitValue width = this.<UnitValue>getProperty(Property.WIDTH);
+            if (left == null && right == null && width == null) {
+                occupiedArea.getBBox().setWidth(0);
+            }
+        }
     }
 
     void drawPositionedChildren(DrawContext drawContext) {

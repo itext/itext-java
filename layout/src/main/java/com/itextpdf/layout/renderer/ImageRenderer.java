@@ -61,6 +61,8 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import org.slf4j.Logger;
@@ -197,7 +199,7 @@ public class ImageRenderer extends AbstractRenderer {
             if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                 isPlacingForced = true;
             } else {
-                return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
+                return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
             }
         }
 
@@ -222,8 +224,16 @@ public class ImageRenderer extends AbstractRenderer {
             applyRotationLayout((float) angle);
         }
 
-        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null,
-                isPlacingForced ? this : null);
+        float unscaledWidth = occupiedArea.getBBox().getWidth() / scaleCoef;
+        MinMaxWidth minMaxWidth = new MinMaxWidth(0, area.getBBox().getWidth(), unscaledWidth, unscaledWidth);
+        UnitValue rendererWidth = this.<UnitValue>getProperty(Property.WIDTH);
+        if (rendererWidth != null && rendererWidth.isPercentValue()) {
+            minMaxWidth.setChildrenMinWidth(0);
+            float coeff = imageWidth / retrieveWidth(area.getBBox().getWidth());
+            minMaxWidth.setChildrenMaxWidth(unscaledWidth * coeff);
+        }
+        return new MinMaxWidthLayoutResult(LayoutResult.FULL, occupiedArea, null, null, isPlacingForced ? this : null)
+                .setMinMaxWidth(minMaxWidth);
     }
 
     @Override
@@ -341,6 +351,11 @@ public class ImageRenderer extends AbstractRenderer {
         if (fixedYPosition != null) {
             fixedYPosition += dyUp;
         }
+    }
+
+    @Override
+    MinMaxWidth getMinMaxWidth(float availableWidth) {
+        return ((MinMaxWidthLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))))).getMinMaxWidth();
     }
 
     protected ImageRenderer autoScale(LayoutArea layoutArea) {
