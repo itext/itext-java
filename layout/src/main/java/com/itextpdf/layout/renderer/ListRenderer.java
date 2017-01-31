@@ -81,7 +81,7 @@ public class ListRenderer extends BlockRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         overrideHeightProperties();
-        LayoutResult errorResult = tryAlignListItemsHorizontally(layoutContext);
+        LayoutResult errorResult = initializeListSymbols(layoutContext);
         if (errorResult != null) {
             return errorResult;
         }
@@ -118,7 +118,7 @@ public class ListRenderer extends BlockRenderer {
 
     @Override
     protected MinMaxWidth getMinMaxWidth(float availableWidth) {
-        LayoutResult errorResult = tryAlignListItemsHorizontally(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
+        LayoutResult errorResult = initializeListSymbols(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
         if (errorResult != null) {
             return MinMaxWidthUtils.countDefaultMinMaxWidth(this, availableWidth);
         }
@@ -282,7 +282,7 @@ public class ListRenderer extends BlockRenderer {
         }
     }
 
-    private LayoutResult tryAlignListItemsHorizontally(LayoutContext layoutContext) {
+    private LayoutResult initializeListSymbols(LayoutContext layoutContext) {
         if (!hasOwnProperty(Property.LIST_SYMBOLS_INITIALIZED)) {
             List<IRenderer> symbolRenderers = new ArrayList<>();
             int listItemNum = (int) this.<Integer>getProperty(Property.LIST_START, 1);
