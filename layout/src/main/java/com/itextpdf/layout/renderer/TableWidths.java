@@ -1,6 +1,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.Property;
@@ -17,27 +18,30 @@ final class TableWidths {
 
     private TableRenderer tableRenderer;
     private int numberOfColumns;
-    private float[] collapsedTableBorders;
+    private float rightBorderMaxWidth;
+    private float leftBorderMaxWidth;
     private ColumnWidthData[] widths;
     private List<CellInfo> cells;
 
     private float tableWidth;
-    private boolean unspecifiedTableWidth;
+    private boolean fixedTableWidth;
+    private boolean fixedTableLayout = false;
+    private float minWidth;
 
-    TableWidths(TableRenderer tableRenderer, float availableWidth, float[] collapsedTableBorders) {
+    TableWidths(TableRenderer tableRenderer, float availableWidth, boolean calculateTableMaxWidth, float rightBorderMaxWidth, float leftBorderMaxWidth) {
         this.tableRenderer = tableRenderer;
         numberOfColumns = ((Table) tableRenderer.getModelElement()).getNumberOfColumns();
-        this.collapsedTableBorders = collapsedTableBorders != null ? collapsedTableBorders : new float[]{0, 0, 0, 0};
-        calculateTableWidth(availableWidth);
+        this.rightBorderMaxWidth = rightBorderMaxWidth;
+        this.leftBorderMaxWidth = leftBorderMaxWidth;
+        calculateTableWidth(availableWidth, calculateTableMaxWidth);
     }
 
     boolean hasFixedLayout() {
-        if (unspecifiedTableWidth) {
-            return false;
-        } else {
-            String layout = tableRenderer.<String>getProperty(Property.TABLE_LAYOUT, "auto");
-            return "fixed".equals(layout.toLowerCase());
-        }
+        return fixedTableLayout;
+    }
+
+    float getMinWidth() {
+        return minWidth;
     }
 
     float[] autoLayout(float[] minWidths, float[] maxWidths) {
@@ -224,7 +228,7 @@ final class TableWidths {
             assert sumOfPercents <= 100;
 
             boolean toBalance = true;
-            if (unspecifiedTableWidth) {
+            if (!fixedTableWidth) {
                 float tableWidthBasedOnPercents = sumOfPercents < 100
                         ? totalNonPercent * 100 / (100 - sumOfPercents) : 0;
                 for (int i = 0; i < numberOfColumns; i++) {
@@ -438,24 +442,40 @@ final class TableWidths {
 
     //region Common methods
 
-    private void calculateTableWidth(float availableWidth) {
-        Float originalTableWidth = tableRenderer.retrieveUnitValue(availableWidth, Property.WIDTH);
-        if (originalTableWidth == null || Float.isNaN(originalTableWidth) || originalTableWidth <= 0) {
-            tableWidth = availableWidth;
-            unspecifiedTableWidth = true;
+    private void calculateTableWidth(float availableWidth, boolean calculateTableMaxWidth) {
+        fixedTableLayout = "fixed".equals(tableRenderer
+                .<String>getProperty(Property.TABLE_LAYOUT, "auto").toLowerCase());
+        UnitValue width = tableRenderer.<UnitValue>getProperty(Property.WIDTH);
+        if (fixedTableLayout && width  != null && width .getValue() >= 0) {
+            fixedTableWidth = true;
+            tableWidth = retrieveTableWidth(width, availableWidth);
+            minWidth = width.isPercentValue() ? 0 : tableWidth;
         } else {
-            tableWidth = originalTableWidth < availableWidth ? originalTableWidth : availableWidth;
-            unspecifiedTableWidth = false;
+            fixedTableLayout = false;
+            //min width will initialize later
+            minWidth = -1;
+            if (calculateTableMaxWidth) {
+                fixedTableWidth = false;
+                tableWidth = retrieveTableWidth(availableWidth);
+            } else if (width  != null && width .getValue() >= 0) {
+                fixedTableWidth = true;
+                tableWidth = retrieveTableWidth(width, availableWidth);
+            } else {
+                fixedTableWidth = false;
+                tableWidth = retrieveTableWidth(availableWidth);
+            }
         }
-        tableWidth -= getMaxLeftBorder() / 2 + getMaxRightBorder() / 2;
     }
 
-    private float getMaxLeftBorder() {
-        return collapsedTableBorders[3];
+    private float retrieveTableWidth(UnitValue width, float availableWidth) {
+        return retrieveTableWidth(width.isPercentValue()
+                ? width.getValue() * availableWidth / 100
+                : width.getValue());
     }
 
-    private float getMaxRightBorder() {
-        return collapsedTableBorders[1];
+    private float retrieveTableWidth(float width) {
+        float result = width - rightBorderMaxWidth / 2 - leftBorderMaxWidth / 2;
+        return result > 0 ? result : 0;
     }
 
     private Table getTable() {
@@ -505,11 +525,13 @@ final class TableWidths {
 
     private float[] extractWidths() {
         float actualWidth = 0;
+        minWidth = 0;
         float[] columnWidths = new float[widths.length];
         for (int i = 0; i < widths.length; i++) {
             assert widths[i].finalWidth >= 0;
             columnWidths[i] = widths[i].finalWidth;
             actualWidth += widths[i].finalWidth;
+            minWidth += widths[i].min;
         }
         if (actualWidth > tableWidth + MinMaxWidthUtils.getEps()*widths.length) {
             Logger logger = LoggerFactory.getLogger(TableWidths.class);
@@ -644,8 +666,23 @@ final class TableWidths {
             return cell.getModelElement().getRowspan();
         }
 
+        //TODO DEVSIX-1057, DEVSIX-1021
         UnitValue getWidth() {
-            return cell.<UnitValue>getProperty(Property.WIDTH);
+            UnitValue widthValue = cell.<UnitValue>getProperty(Property.WIDTH);
+            if (widthValue == null || widthValue.isPercentValue()) {
+                return widthValue;
+            } else {
+                Border[] borders = cell.getBorders();
+                if (borders[1] != null) {
+                    widthValue.setValue(widthValue.getValue() + borders[1].getWidth() / 2);
+                }
+                if (borders[3] != null) {
+                    widthValue.setValue(widthValue.getValue() + borders[3].getWidth() / 2);
+                }
+                float[] paddings = cell.getPaddings();
+                widthValue.setValue(widthValue.getValue() + paddings[1] + paddings[3]);
+                return widthValue;
+            }
         }
 
         @Override
@@ -664,6 +701,6 @@ final class TableWidths {
 
     @Override
     public String toString() {
-        return "width=" + tableWidth + (unspecifiedTableWidth ? "" : "!!");
+        return "width=" + tableWidth + (fixedTableWidth ? "!!" : "");
     }
 }

@@ -292,7 +292,7 @@ public class TableRenderer extends AbstractRenderer {
         collapseAllBorders();
 
         if (isOriginalRenderer()) {
-            calculateColumnWidths(layoutBox.getWidth(), new float[]{0, rightBorderMaxWidth, 0, leftBorderMaxWidth});
+            calculateColumnWidths(layoutBox.getWidth(), false);
         }
         float tableWidth = getTableWidth();
 
@@ -2296,16 +2296,22 @@ public class TableRenderer extends AbstractRenderer {
         return parent instanceof TableRenderer && ((TableRenderer) parent).footerRenderer == this;
     }
 
-    private void calculateColumnWidths(float availableWidth, float[] borders) {
+    /**
+     * Returns minWidth
+     */
+    private float calculateColumnWidths(float availableWidth, boolean calculateTableMaxWidth) {
         if (countedColumnWidth == null || totalWidthForColumns != availableWidth) {
-            TableWidths tableWidths = new TableWidths(this, availableWidth, borders);
+            TableWidths tableWidths = new TableWidths(this, availableWidth, calculateTableMaxWidth, rightBorderMaxWidth, leftBorderMaxWidth);
             if (tableWidths.hasFixedLayout()) {
                 countedColumnWidth = tableWidths.fixedLayout();
+                return tableWidths.getMinWidth();
             } else {
                 ColumnMinMaxWidth minMax = countTableMinMaxWidth(availableWidth, false, true);
-                countedColumnWidth = tableWidths.autoLayout(minMax.getMinWidth(), minMax.getMaxWidth());
+                countedColumnWidth = tableWidths.autoLayout(minMax.getMinWidths(), minMax.getMaxWidths());
+                return tableWidths.getMinWidth();
             }
         }
+        return -1;
     }
 
     private float getTableWidth() {
@@ -2368,11 +2374,11 @@ public class TableRenderer extends AbstractRenderer {
         private float[] maxWidth;
         private float layoutBoxWidth;
 
-        float[] getMinWidth() {
+        float[] getMinWidths() {
             return minWidth;
         }
 
-        float[] getMaxWidth() {
+        float[] getMaxWidths() {
             return maxWidth;
         }
 
