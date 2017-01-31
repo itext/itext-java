@@ -113,6 +113,27 @@ public class ListTest extends ExtendedITextTest {
     }
 
     @Test
+    public void nestedListTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "nestedListTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_nestedListTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        List nestedList = new List().setSymbolIndent(20).
+                setMarginLeft(25).
+                add("One").add("Two").add("Three");
+
+        List list = new List(ListNumberingType.DECIMAL).setSymbolIndent(20).
+                add("One").add("Two").add("Three").add("Four").add((ListItem) new ListItem().add(nestedList));
+        document.add(list);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
     public void listNumberingTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "listNumberingTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_listNumberingTest01.pdf";
