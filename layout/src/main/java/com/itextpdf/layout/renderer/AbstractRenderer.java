@@ -625,6 +625,9 @@ public abstract class AbstractRenderer implements IRenderer {
         for (IRenderer childRenderer : childRenderers) {
             childRenderer.move(dxRight, dyUp);
         }
+        for (IRenderer childRenderer : positionedRenderers) {
+            childRenderer.move(dxRight, dyUp);
+        }
     }
 
     /**
