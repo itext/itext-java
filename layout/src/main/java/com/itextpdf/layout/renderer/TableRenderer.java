@@ -701,7 +701,7 @@ public class TableRenderer extends AbstractRenderer {
                         if (collapsedWithNextRowBorderWidth != collapsedBorderWidth) {
                             cell.setBorders(collapsedWithTableBorder, 2);
                             for (int i = col; i < col + cell.getPropertyAsInteger(Property.COLSPAN); i++) {
-                                horizontalBorders.get(rowN + 1).set(i, collapsedWithTableBorder);
+                                horizontalBorders.get(row + (hasContent ? 1 : 0)).set(i, collapsedWithTableBorder);
                             }
                             // apply the difference between collapsed table border and own cell border
                             cell.occupiedArea.getBBox()
@@ -814,7 +814,7 @@ public class TableRenderer extends AbstractRenderer {
                                 cellOverflow.deleteOwnProperty(Property.BORDER_TOP);
                                 if (null != cellSplit) {
                                     for (int j = col; j < col + cellOverflow.getPropertyAsInteger(Property.COLSPAN); j++) {
-                                        splitResult[0].horizontalBorders.get(row + (hasContent ? 1 : 0)).set(j, currentRow[col].getBorders()[2]);
+                                        splitResult[0].horizontalBorders.get(row + (hasContent ? 1 : 0)).set(j, getCollapsedBorder(currentRow[col].getBorders()[2], borders[2]));
                                     }
                                 }
                                 currentRow[col] = null;
@@ -825,8 +825,10 @@ public class TableRenderer extends AbstractRenderer {
                             }
                             rows.get(targetOverflowRowIndex[col])[col].occupiedArea = cellOccupiedArea;
                         } else if (currentRow[col] != null) {
-                            rowspans[col] = currentRow[col].getModelElement().getRowspan();
-                            boolean isBigRowspannedCell = 1 != rowspans[col];
+                            if (hasContent) {
+                                rowspans[col] = currentRow[col].getModelElement().getRowspan();
+                            }
+                            boolean isBigRowspannedCell = 1 != currentRow[col].getModelElement().getRowspan();
                             if (hasContent || isBigRowspannedCell) {
                                 columnsWithCellToBeEnlarged[col] = true;
                                 if (isBigRowspannedCell && !processAsLast) {
@@ -838,7 +840,7 @@ public class TableRenderer extends AbstractRenderer {
                                 }
                             }
                             for (int j = col; j < col + currentRow[col].getPropertyAsInteger(Property.COLSPAN); j++) {
-                                horizontalBorders.get(row + (hasContent ? 1 : 0)).set(j, currentRow[col].getBorders()[2]);
+                                horizontalBorders.get(row + (hasContent ? 1 : 0)).set(j, getCollapsedBorder(currentRow[col].getBorders()[2], borders[2]));
                             }
                         }
                     }
@@ -1814,7 +1816,7 @@ public class TableRenderer extends AbstractRenderer {
         }
         col = 0;
         while (col < colN) {
-            if (null != rows.get(row)[col] && row + 1 == (int) rows.get(row)[col].getPropertyAsInteger(Property.ROWSPAN)) {
+            if (null != rows.get(row)[col] && row + 1 <= (int) rows.get(row)[col].getPropertyAsInteger(Property.ROWSPAN)) {
                 Border oldTopBorder = rows.get(row)[col].getBorders()[0];
                 Border resultCellTopBorder = null;
                 Border collapsedBorder = null;
