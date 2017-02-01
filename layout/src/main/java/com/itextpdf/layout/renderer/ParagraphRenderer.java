@@ -487,4 +487,12 @@ public class ParagraphRenderer extends BlockRenderer {
             overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0);
         }
     }
+
+    public List<LineRenderer> getLines() {
+        return lines;
+    }
+
+    public void setLines(List<LineRenderer> lines) {
+        this.lines = lines;
+    }
 }
