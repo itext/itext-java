@@ -1463,7 +1463,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc, PageSize.A8.rotate());
 
         Table table = new Table(2);
-        table.setBorder(new SolidBorder(Color.GREEN, 5));
+        table.setBorder(new SolidBorder(Color.GREEN, 15));
 
         table.addCell(new Cell().add(gretzky));
         table.addCell(new Cell().add(gretzky));
@@ -1486,7 +1486,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc, PageSize.A7.rotate());
 
         Table table = new Table(2);
-        table.setBorder(new SolidBorder(Color.GREEN, 5));
+        table.setBorder(new SolidBorder(Color.GREEN, 15));
 
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "itext.png")));
         Image image = new Image(xObject, 50);
@@ -1518,7 +1518,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc, PageSize.A8.rotate());
 
         Table table = new Table(2);
-        table.setBorder(new SolidBorder(Color.GREEN, 5));
+        table.setBorder(new SolidBorder(Color.GREEN, 15));
 
         table.addCell(new Cell().add(gretzky));
         table.addCell(new Cell(2, 1).add(gretzky));
@@ -1544,7 +1544,7 @@ public class TableTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc, PageSize.A7.rotate());
 
         Table table = new Table(2);
-        table.setBorder(new SolidBorder(Color.GREEN, 5));
+        table.setBorder(new SolidBorder(Color.GREEN, 15));
 
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "itext.png")));
         Image image = new Image(xObject, 50);
@@ -1553,8 +1553,8 @@ public class TableTest extends ExtendedITextTest {
         table.addCell(new Cell().add(gretzky));
         table.addCell(new Cell(2, 1).add(gretzky));
         table.addCell(new Cell().add(image));
-//        table.addCell(new Cell().add(gretzky));
-//        table.addCell(new Cell().add(gretzky));
+        table.addCell(new Cell().add(gretzky));
+        table.addCell(new Cell().add(gretzky));
 
         doc.add(table);
 

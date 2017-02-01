@@ -2,14 +2,11 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.layout.border.Border;
-import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 
 public class TableBorders {
@@ -23,6 +20,9 @@ public class TableBorders {
     protected List<CellRenderer[]> rows;
 
     protected int numberOfColumns;
+
+    protected int horizontalBordersIndexOffset = 0;
+    protected int verticalBordersIndexOffset = 0;
 
 //    protected LayoutResult[] splits;
 //
@@ -87,6 +87,20 @@ public class TableBorders {
         return this;
     }
 
+    protected TableBorders updateTopBorder() {
+        // TODO update with header
+        // TODO Update cell properties
+        List<Border> topBorders = horizontalBorders.get(horizontalBordersIndexOffset);
+        Border topTableBorder = tableBoundingBorders[0];
+        for (int col = 0; col < numberOfColumns; col++) {
+            if (null == topBorders.get(col) || (null != topTableBorder && topBorders.get(col).getWidth() < topTableBorder.getWidth())) {
+                topBorders.set(col, topTableBorder);
+            }
+        }
+
+        return this;
+    }
+
     protected TableBorders processSplit(int splitRow, boolean hasContent, boolean cellWithBigRowspanAdded) {
         CellRenderer[] currentRow = rows.get(splitRow);
         CellRenderer[] lastRowOnCurrentPage = new CellRenderer[numberOfColumns];
@@ -132,10 +146,9 @@ public class TableBorders {
             splitRow++;
         }
         addNewBorder(splitRow + 1); // the first row on the next page
+        splitRow += horizontalBordersIndexOffset;
 
         List<Border> lastBorderOnCurrentPage = horizontalBorders.get(splitRow);
-        List<Border> firstBorderOnTheNextPage = horizontalBorders.get(splitRow + 1);
-
 
         for (int col = 0; col < numberOfColumns; col++) {
             CellRenderer cell = lastRowOnCurrentPage[col];
@@ -154,23 +167,32 @@ public class TableBorders {
             col += lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN) - 1;
         }
 
-        for (int col = 0; col < numberOfColumns; col++) {
-            CellRenderer cell = lastRowOnCurrentPage[col];
 
-            Border cellModelTopBorder = cell.getModelElement().getProperty(Property.BORDER_TOP);
-            if (null == cellModelTopBorder) {
-                cellModelTopBorder = cell.getModelElement().getProperty(Property.BORDER);
-            }
+        if (splitRow != horizontalBorders.size() - 1) {
+            List<Border> firstBorderOnTheNextPage = horizontalBorders.get(splitRow + 1);
 
-            Border cellCollapsedTopBorder = getCollapsedBorder(cellModelTopBorder, tableBoundingBorders[0]);
+            for (int col = 0; col < numberOfColumns; col++) {
+                CellRenderer cell = lastRowOnCurrentPage[col];
+
+                Border cellModelTopBorder = cell.getModelElement().getProperty(Property.BORDER_TOP);
+                if (null == cellModelTopBorder) {
+                    cellModelTopBorder = cell.getModelElement().getProperty(Property.BORDER);
+                }
+
+                Border cellCollapsedTopBorder = getCollapsedBorder(cellModelTopBorder, tableBoundingBorders[0]);
 
                 // fix the last border on the page
                 for (int i = col; i < col + cell.getPropertyAsInteger(Property.COLSPAN); i++) {
                     firstBorderOnTheNextPage.set(i, cellCollapsedTopBorder);
                 }
-            col += lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN) - 1;
+                col += lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN) - 1;
+            }
         }
 
+        // update row offest
+        horizontalBordersIndexOffset = splitRow + 1;
+
+        // TODO update vertical borders
         return this;
     }
 
@@ -329,6 +351,23 @@ public class TableBorders {
         }
         return width;
     }
+
+    protected int getCurrentHorizontalBordersIndexOffset() {
+        return horizontalBordersIndexOffset;
+    }
+
+    protected int getCurrentVerticalBordersIndexOffset() {
+        return verticalBordersIndexOffset;
+    }
+
+
+//    protected List<List<Border>> getRendererHorizontalBorders(int startIndex, int numOfRows) {
+//        return horizontalBorders.subList(startIndex, startIndex + numOfRows + 1);
+//    }
+//
+//    protected List<List<Border>> getRendererVerticalBorders(int startIndex, int numOfRows) {
+//        // return horizontalBorders.subList(startIndex, startIndex + numOfRows + 1);
+//    }
 
     // endregion
 
