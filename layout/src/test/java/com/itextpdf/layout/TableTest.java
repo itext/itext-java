@@ -1375,27 +1375,28 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        doc.add(new Table(1)
-                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
-                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
-                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
-                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
-                .addCell(new Cell().add("Hello"))
-        );
-        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
-        doc.add(new AreaBreak());
-
-
+//        doc.add(new Table(1)
+//                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
+//                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
+//                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
+//                .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
+//                .addCell(new Cell().add("Hello"))
+//        );
+//        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+//        doc.add(new AreaBreak());
+//
+//
         doc.add(new Table(1)
                 .setBorderTop(new SolidBorder(Color.ORANGE, 50))
                 .setBorderBottom(new SolidBorder(Color.MAGENTA, 100))
         );
-        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
-        doc.add(new AreaBreak());
 
-        doc.add(new Table(1).setMinHeight(300).setBorderRight(new SolidBorder(Color.ORANGE, 5)).setBorderTop(new SolidBorder(100)).setBorderBottom(new SolidBorder(Color.BLUE, 50)));
-        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
-
+//        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+//        doc.add(new AreaBreak());
+//
+//        doc.add(new Table(1).setMinHeight(300).setBorderRight(new SolidBorder(Color.ORANGE, 5)).setBorderTop(new SolidBorder(100)).setBorderBottom(new SolidBorder(Color.BLUE, 50)));
+//        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
+//
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
@@ -1447,6 +1448,30 @@ public class TableTest extends ExtendedITextTest {
         }
 
         doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableSplitTest00() throws IOException, InterruptedException {
+        String testName = "tableSplitTest00.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        String gretzky = "Make Gretzky great again!";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A8.rotate());
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(Color.GREEN, 15));
+        for (int col = 0; col < 100; col++) {
+            table.addCell(new Cell().add(gretzky));
+            table.addCell(new Cell().add(gretzky));
+        }
+
+        doc.add(table);
+
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }

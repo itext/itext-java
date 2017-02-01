@@ -101,7 +101,7 @@ public class TableBorders {
         return this;
     }
 
-    protected TableBorders processSplit(int splitRow, boolean hasContent, boolean cellWithBigRowspanAdded) {
+    protected TableBorders processSplit(int splitRow, boolean split, boolean hasContent, boolean cellWithBigRowspanAdded) {
         CellRenderer[] currentRow = rows.get(splitRow);
         CellRenderer[] lastRowOnCurrentPage = new CellRenderer[numberOfColumns];
         CellRenderer[] firstRowOnTheNextPage = new CellRenderer[numberOfColumns];
@@ -140,13 +140,22 @@ public class TableBorders {
             curPageIndex--;
             nextPageIndex--;
         }
-
+        verticalBordersIndexOffset += splitRow;
+        splitRow += horizontalBordersIndexOffset;
         if (hasContent) {
-            addNewBorder(splitRow + 1); // the last row on current page
+            if (split) {
+                addNewHorizontalBorder(splitRow + 1); // the last row on current page
+                addNewVerticalBorder(verticalBordersIndexOffset);
+                verticalBordersIndexOffset++;
+            }
             splitRow++;
         }
-        addNewBorder(splitRow + 1); // the first row on the next page
-        splitRow += horizontalBordersIndexOffset;
+        if (split) {
+            addNewHorizontalBorder(splitRow + 1); // the first row on the next page
+        }
+
+        // here splitRow is the last horizontal border index on current page
+        // and splitRow + 1 is the first horizontal border index on the next page
 
         List<Border> lastBorderOnCurrentPage = horizontalBorders.get(splitRow);
 
@@ -156,6 +165,12 @@ public class TableBorders {
             Border cellModelBottomBorder = cell.getModelElement().getProperty(Property.BORDER_BOTTOM);
             if (null == cellModelBottomBorder) {
                 cellModelBottomBorder = cell.getModelElement().getProperty(Property.BORDER);
+                if (null == cellModelBottomBorder) {
+                    cellModelBottomBorder = cell.getModelElement().getDefaultProperty(Property.BORDER_BOTTOM); // TODO
+                    if (null == cellModelBottomBorder) {
+                        cellModelBottomBorder = cell.getModelElement().getDefaultProperty(Property.BORDER);
+                    }
+                }
             }
             Border cellCollapsedBottomBorder = getCollapsedBorder(cellModelBottomBorder, tableBoundingBorders[2]);
 
@@ -177,6 +192,12 @@ public class TableBorders {
                 Border cellModelTopBorder = cell.getModelElement().getProperty(Property.BORDER_TOP);
                 if (null == cellModelTopBorder) {
                     cellModelTopBorder = cell.getModelElement().getProperty(Property.BORDER);
+                    if (null == cellModelTopBorder) {
+                        cellModelTopBorder = cell.getModelElement().getDefaultProperty(Property.BORDER_BOTTOM); // TODO
+                        if (null == cellModelTopBorder) {
+                            cellModelTopBorder = cell.getModelElement().getDefaultProperty(Property.BORDER);
+                        }
+                    }
                 }
 
                 Border cellCollapsedTopBorder = getCollapsedBorder(cellModelTopBorder, tableBoundingBorders[0]);
@@ -619,8 +640,16 @@ public class TableBorders {
     }
 
     // TODO
-    protected TableBorders addNewBorder(int row) {
-        horizontalBorders.add(row, (List<Border>) ((ArrayList<Border>) horizontalBorders.get(row)).clone());
+    protected TableBorders addNewHorizontalBorder(int index) {
+        horizontalBorders.add(index, (List<Border>) ((ArrayList<Border>) horizontalBorders.get(index)).clone());
+        return this;
+    }
+
+    // TODO
+    protected TableBorders addNewVerticalBorder(int index) {
+        for (int i = 0; i < numberOfColumns + 1; i++) {
+            verticalBorders.get(i).add(index, verticalBorders.get(i).get(index));
+        }
         return this;
     }
 
