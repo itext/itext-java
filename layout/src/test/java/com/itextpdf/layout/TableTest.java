@@ -868,10 +868,15 @@ public class TableTest extends ExtendedITextTest {
 
         Table table = new Table(new float[]{250, 250})
                 .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)))
-                .addCell(new Cell(2, 1).add(new Paragraph("cell 1, 1 and 2\n" + longTextContent)))
+                .addCell(new Cell(6, 1).add(new Paragraph("cell 1, 1 and 2\n" + longTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + textContent)))
                 .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 6, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 7, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 7, 2\n" + textContent)))
+
                 ;
 
         doc.add(table);
@@ -1442,6 +1447,117 @@ public class TableTest extends ExtendedITextTest {
         }
 
         doc.add(table);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableSplitTest01() throws IOException, InterruptedException {
+        String testName = "tableSplitTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        String gretzky = "Make Gretzky great again!";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A8.rotate());
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(Color.GREEN, 5));
+
+        table.addCell(new Cell().add(gretzky));
+        table.addCell(new Cell().add(gretzky));
+
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableSplitTest02() throws IOException, InterruptedException {
+        String testName = "tableSplitTest02.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        String gretzky = "Make Gretzky great again!";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A7.rotate());
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(Color.GREEN, 5));
+
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "itext.png")));
+        Image image = new Image(xObject, 50);
+
+
+        table.addCell(new Cell().add(gretzky));
+        table.addCell(new Cell().add(gretzky));
+        table.addCell(new Cell().add(image));
+        table.addCell(new Cell().add(gretzky));
+        table.addCell(new Cell().add(gretzky));
+        table.addCell(new Cell().add(gretzky));
+
+
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableSplitTest03() throws IOException, InterruptedException {
+        String testName = "tableSplitTest03.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        String gretzky = "Make Gretzky great again!";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A8.rotate());
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(Color.GREEN, 5));
+
+        table.addCell(new Cell().add(gretzky));
+        table.addCell(new Cell(2, 1).add(gretzky));
+        table.addCell(new Cell().add(gretzky));
+        table.addCell(new Cell().add(gretzky));
+        table.addCell(new Cell().add(gretzky));
+
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableSplitTest04() throws IOException, InterruptedException {
+        String testName = "tableSplitTest04.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        String gretzky = "Make Gretzky great again!";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A7.rotate());
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(Color.GREEN, 5));
+
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "itext.png")));
+        Image image = new Image(xObject, 50);
+
+
+        table.addCell(new Cell().add(gretzky));
+        table.addCell(new Cell(2, 1).add(gretzky));
+        table.addCell(new Cell().add(image));
+//        table.addCell(new Cell().add(gretzky));
+//        table.addCell(new Cell().add(gretzky));
+
+        doc.add(table);
+
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }

@@ -1,17 +1,15 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.layout.border.Border;
-import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 public class TableBorders {
@@ -22,63 +20,27 @@ public class TableBorders {
     protected Border[] headerBoundingBorders = null;
     protected Border[] footerBoundingBorders = null;
 
+    protected List<CellRenderer[]> rows;
 
     protected int numberOfColumns;
 
-    protected LayoutResult[] splits;
+//    protected LayoutResult[] splits;
+//
+//    protected boolean hasContent;
+//
+//    protected boolean cellWithBigRowspanAdded;
+//
+//    protected int splitRow;
 
-    protected boolean hasContent;
-
-    protected boolean cellWithBigRowspanAdded;
+    public TableBorders(List<CellRenderer[]> rows, int numberOfColumns) {
+        this.rows = rows;
+        this.numberOfColumns = numberOfColumns;
+    }
 
 
     // region collapse methods
 
-    // collapse with table border or header bottom borders
-    protected void correctFirstRowTopBorders(Border tableBorder, int colN) {
-        int col = 0;
-        int row = 0;
-        List<Border> topBorders = horizontalBorders.get(0);
-        List<Border> bordersToBeCollapsedWith = null != headerRenderer
-                ? headerRenderer.horizontalBorders.get(headerRenderer.horizontalBorders.size() - 1)
-                : new ArrayList<Border>();
-        if (null == headerRenderer) {
-            for (col = 0; col < colN; col++) {
-                bordersToBeCollapsedWith.add(tableBorder);
-            }
-        }
-        col = 0;
-        while (col < colN) {
-            if (null != rows.get(row)[col] && row + 1 == (int) rows.get(row)[col].getPropertyAsInteger(Property.ROWSPAN)) {
-                Border oldTopBorder = rows.get(row)[col].getBorders()[0];
-                Border resultCellTopBorder = null;
-                Border collapsedBorder = null;
-                int colspan = (int) rows.get(row)[col].getPropertyAsInteger(Property.COLSPAN);
-                for (int i = col; i < col + colspan; i++) {
-                    collapsedBorder = getCollapsedBorder(oldTopBorder, bordersToBeCollapsedWith.get(i));
-                    if (null == topBorders.get(i) || (null != collapsedBorder && topBorders.get(i).getWidth() < collapsedBorder.getWidth())) {
-                        topBorders.set(i, collapsedBorder);
-                    }
-                    if (null == resultCellTopBorder || (null != collapsedBorder && resultCellTopBorder.getWidth() < collapsedBorder.getWidth())) {
-                        resultCellTopBorder = collapsedBorder;
-                    }
-                }
-                rows.get(row)[col].setBorders(resultCellTopBorder, 0);
-                col += colspan;
-                row = 0;
-            } else {
-                row++;
-                if (row == rows.size()) {
-                    break;
-                }
-            }
-        }
-        if (null != headerRenderer) {
-            headerRenderer.horizontalBorders.set(headerRenderer.horizontalBorders.size() - 1, topBorders);
-        }
-    }
-
-    protected void collapseAllBordersAndEmptyRows(List<CellRenderer[]> rows , Border[] tableBorders, int startRow, int finishRow, int colN) {
+    protected TableBorders collapseAllBordersAndEmptyRows(List<CellRenderer[]> rows, Border[] tableBorders, int startRow, int finishRow, int colN) {
         CellRenderer[] currentRow;
         int[] rowsToDelete = new int[colN];
         for (int row = startRow; row <= finishRow; row++) {
@@ -122,6 +84,94 @@ public class TableBorders {
                 }
             }
         }
+        return this;
+    }
+
+    protected TableBorders processSplit(int splitRow, boolean hasContent, boolean cellWithBigRowspanAdded) {
+        CellRenderer[] currentRow = rows.get(splitRow);
+        CellRenderer[] lastRowOnCurrentPage = new CellRenderer[numberOfColumns];
+        CellRenderer[] firstRowOnTheNextPage = new CellRenderer[numberOfColumns];
+
+        int curPageIndex = 0;
+        int nextPageIndex = 0;
+        int row;
+        for (int col = 0; col < numberOfColumns; col++) {
+            if (hasContent || (cellWithBigRowspanAdded && null == rows.get(splitRow - 1)[col])) {
+                if (0 == curPageIndex) {
+                    lastRowOnCurrentPage[col] = currentRow[col];
+                    curPageIndex = lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN);
+                }
+                if (0 == nextPageIndex) {
+                    firstRowOnTheNextPage[col] = currentRow[col];;
+                    nextPageIndex = firstRowOnTheNextPage[col].getPropertyAsInteger(Property.COLSPAN);
+                }
+            } else {
+                if (0 == curPageIndex) {
+                    lastRowOnCurrentPage[col] = rows.get(splitRow - 1)[col];
+                    curPageIndex = lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN);
+                }
+                if (0 == nextPageIndex) {
+                    row = splitRow+1;
+                    while (row < rows.size() && null == rows.get(row)[col]) {
+                        row++;
+                    }
+                    if (row == rows.size()) {
+                        nextPageIndex = 1;
+                    } else {
+                        firstRowOnTheNextPage[col] = rows.get(row)[col];
+                        nextPageIndex = firstRowOnTheNextPage[col].getPropertyAsInteger(Property.COLSPAN);
+                    }
+                }
+            }
+            curPageIndex--;
+            nextPageIndex--;
+        }
+
+        if (hasContent) {
+            addNewBorder(splitRow + 1); // the last row on current page
+            splitRow++;
+        }
+        addNewBorder(splitRow + 1); // the first row on the next page
+
+        List<Border> lastBorderOnCurrentPage = horizontalBorders.get(splitRow);
+        List<Border> firstBorderOnTheNextPage = horizontalBorders.get(splitRow + 1);
+
+
+        for (int col = 0; col < numberOfColumns; col++) {
+            CellRenderer cell = lastRowOnCurrentPage[col];
+
+            Border cellModelBottomBorder = cell.getModelElement().getProperty(Property.BORDER_BOTTOM);
+            if (null == cellModelBottomBorder) {
+                cellModelBottomBorder = cell.getModelElement().getProperty(Property.BORDER);
+            }
+            Border cellCollapsedBottomBorder = getCollapsedBorder(cellModelBottomBorder, tableBoundingBorders[2]);
+
+            // fix the last border on the page
+            for (int i = col; i < col + cell.getPropertyAsInteger(Property.COLSPAN); i++) {
+                lastBorderOnCurrentPage.set(i, cellCollapsedBottomBorder);
+            }
+
+            col += lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN) - 1;
+        }
+
+        for (int col = 0; col < numberOfColumns; col++) {
+            CellRenderer cell = lastRowOnCurrentPage[col];
+
+            Border cellModelTopBorder = cell.getModelElement().getProperty(Property.BORDER_TOP);
+            if (null == cellModelTopBorder) {
+                cellModelTopBorder = cell.getModelElement().getProperty(Property.BORDER);
+            }
+
+            Border cellCollapsedTopBorder = getCollapsedBorder(cellModelTopBorder, tableBoundingBorders[0]);
+
+                // fix the last border on the page
+                for (int i = col; i < col + cell.getPropertyAsInteger(Property.COLSPAN); i++) {
+                    firstBorderOnTheNextPage.set(i, cellCollapsedTopBorder);
+                }
+            col += lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN) - 1;
+        }
+
+        return this;
     }
 
     // important to invoke on each new page
@@ -152,6 +202,50 @@ public class TableBorders {
                 }
             }
         }
+    }
+
+    // collapse with table border or header bottom borders
+    protected void correctFirstRowTopBorders(Border tableBorder, int colN) {
+//        int col = 0;
+//        int row = 0;
+//        List<Border> topBorders = horizontalBorders.get(0);
+//        List<Border> bordersToBeCollapsedWith = null != headerRenderer
+//                ? headerRenderer.horizontalBorders.get(headerRenderer.horizontalBorders.size() - 1)
+//                : new ArrayList<Border>();
+//        if (null == headerRenderer) {
+//            for (col = 0; col < colN; col++) {
+//                bordersToBeCollapsedWith.add(tableBorder);
+//            }
+//        }
+//        col = 0;
+//        while (col < colN) {
+//            if (null != rows.get(row)[col] && row + 1 == (int) rows.get(row)[col].getPropertyAsInteger(Property.ROWSPAN)) {
+//                Border oldTopBorder = rows.get(row)[col].getBorders()[0];
+//                Border resultCellTopBorder = null;
+//                Border collapsedBorder = null;
+//                int colspan = (int) rows.get(row)[col].getPropertyAsInteger(Property.COLSPAN);
+//                for (int i = col; i < col + colspan; i++) {
+//                    collapsedBorder = getCollapsedBorder(oldTopBorder, bordersToBeCollapsedWith.get(i));
+//                    if (null == topBorders.get(i) || (null != collapsedBorder && topBorders.get(i).getWidth() < collapsedBorder.getWidth())) {
+//                        topBorders.set(i, collapsedBorder);
+//                    }
+//                    if (null == resultCellTopBorder || (null != collapsedBorder && resultCellTopBorder.getWidth() < collapsedBorder.getWidth())) {
+//                        resultCellTopBorder = collapsedBorder;
+//                    }
+//                }
+//                rows.get(row)[col].setBorders(resultCellTopBorder, 0);
+//                col += colspan;
+//                row = 0;
+//            } else {
+//                row++;
+//                if (row == rows.size()) {
+//                    break;
+//                }
+//            }
+//        }
+//        if (null != headerRenderer) {
+//            headerRenderer.horizontalBorders.set(headerRenderer.horizontalBorders.size() - 1, topBorders);
+//        }
     }
 
     // endregion
@@ -240,8 +334,8 @@ public class TableBorders {
 
     // region setters
 
-    protected TableBorders setLayoutResults(LayoutResult[] splits) {
-        this.splits = splits;
+    protected TableBorders setRows(List<CellRenderer[]> rows) {
+        this.rows = rows;
         return this;
     }
 
@@ -549,5 +643,23 @@ public class TableBorders {
 //        }
     }
 
-    // endregion
+// endregion
+
+
+    /**
+     * This are a structs used for convenience in layout.
+     */
+    private static class CellRendererInfo {
+        public CellRenderer cellRenderer;
+        public int column;
+        public int finishRowInd;
+
+        public CellRendererInfo(CellRenderer cellRenderer, int column, int finishRow) {
+            this.cellRenderer = cellRenderer;
+            this.column = column;
+            // When a cell has a rowspan, this is the index of the finish row of the cell.
+            // Otherwise, this is simply the index of the row of the cell in the {@link #rows} array.
+            this.finishRowInd = finishRow;
+        }
+    }
 }
