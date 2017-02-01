@@ -1500,10 +1500,14 @@ public class TableRenderer extends AbstractRenderer {
         Table tableModel = (Table) getModelElement();
         int nrow = rows.size();
         int ncol = tableModel.getNumberOfColumns();
-        MinMaxWidth[][] cellsMinMaxWidth = new MinMaxWidth[nrow][ncol];
+        MinMaxWidth[][] cellsMinMaxWidth = new MinMaxWidth[nrow][];
+        int[][] cellsColspan = new int[nrow][];
+        for (int i = 0; i < cellsMinMaxWidth.length; i++) {
+            cellsMinMaxWidth[i] = new MinMaxWidth[ncol];
+            cellsColspan[i] = new int[ncol];
+        }
         ColumnMinMaxWidth result = new ColumnMinMaxWidth(ncol);
 
-        int[][] cellsColspan = new int[nrow][ncol];
         for (int row = 0; row < nrow; ++row) {
             for (int col = 0; col < ncol; ++col) {
                 CellRenderer cell = rows.get(row)[col];
