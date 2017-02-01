@@ -2,6 +2,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.property.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,14 +145,14 @@ public class TableBorders {
         splitRow += horizontalBordersIndexOffset;
         if (hasContent) {
             if (split) {
-                addNewHorizontalBorder(splitRow + 1); // the last row on current page
-                addNewVerticalBorder(verticalBordersIndexOffset);
+                addNewHorizontalBorder(splitRow + 1, true); // the last row on current page
+                addNewVerticalBorder(verticalBordersIndexOffset, true);
                 verticalBordersIndexOffset++;
             }
             splitRow++;
         }
         if (split) {
-            addNewHorizontalBorder(splitRow + 1); // the first row on the next page
+            addNewHorizontalBorder(splitRow + 1, false); // the first row on the next page
         }
 
         // here splitRow is the last horizontal border index on current page
@@ -162,16 +163,7 @@ public class TableBorders {
         for (int col = 0; col < numberOfColumns; col++) {
             CellRenderer cell = lastRowOnCurrentPage[col];
 
-            Border cellModelBottomBorder = cell.getModelElement().getProperty(Property.BORDER_BOTTOM);
-            if (null == cellModelBottomBorder) {
-                cellModelBottomBorder = cell.getModelElement().getProperty(Property.BORDER);
-                if (null == cellModelBottomBorder) {
-                    cellModelBottomBorder = cell.getModelElement().getDefaultProperty(Property.BORDER_BOTTOM); // TODO
-                    if (null == cellModelBottomBorder) {
-                        cellModelBottomBorder = cell.getModelElement().getDefaultProperty(Property.BORDER);
-                    }
-                }
-            }
+            Border cellModelBottomBorder = getCellSideBorder(cell.getModelElement(), Property.BORDER_BOTTOM);
             Border cellCollapsedBottomBorder = getCollapsedBorder(cellModelBottomBorder, tableBoundingBorders[2]);
 
             // fix the last border on the page
@@ -187,19 +179,8 @@ public class TableBorders {
             List<Border> firstBorderOnTheNextPage = horizontalBorders.get(splitRow + 1);
 
             for (int col = 0; col < numberOfColumns; col++) {
-                CellRenderer cell = lastRowOnCurrentPage[col];
-
-                Border cellModelTopBorder = cell.getModelElement().getProperty(Property.BORDER_TOP);
-                if (null == cellModelTopBorder) {
-                    cellModelTopBorder = cell.getModelElement().getProperty(Property.BORDER);
-                    if (null == cellModelTopBorder) {
-                        cellModelTopBorder = cell.getModelElement().getDefaultProperty(Property.BORDER_BOTTOM); // TODO
-                        if (null == cellModelTopBorder) {
-                            cellModelTopBorder = cell.getModelElement().getDefaultProperty(Property.BORDER);
-                        }
-                    }
-                }
-
+                CellRenderer cell = firstRowOnTheNextPage[col];
+                Border cellModelTopBorder = getCellSideBorder(cell.getModelElement(), Property.BORDER_TOP);
                 Border cellCollapsedTopBorder = getCollapsedBorder(cellModelTopBorder, tableBoundingBorders[0]);
 
                 // fix the last border on the page
@@ -213,7 +194,6 @@ public class TableBorders {
         // update row offest
         horizontalBordersIndexOffset = splitRow + 1;
 
-        // TODO update vertical borders
         return this;
     }
 
@@ -594,6 +574,20 @@ public class TableBorders {
         }
     }
 
+    private static Border getCellSideBorder(Cell cellModel, int borderType) {
+        Border cellModelSideBorder = cellModel.getProperty(borderType);
+        if (null == cellModelSideBorder && !cellModel.hasProperty(borderType)) {
+            cellModelSideBorder = cellModel.getProperty(Property.BORDER);
+            if (null == cellModelSideBorder && !cellModel.hasProperty(Property.BORDER)) {
+//                cellModelSideBorder = cellModel.getDefaultProperty(borderType); // TODO
+//                if (null == cellModelSideBorder && !cellModel.hasDefaultProperty(borderType)) {
+                    cellModelSideBorder = cellModel.getDefaultProperty(Property.BORDER);
+//                }
+            }
+        }
+        return cellModelSideBorder;
+    }
+
     // endregion
 
     // region lowlevel logic
@@ -640,15 +634,24 @@ public class TableBorders {
     }
 
     // TODO
-    protected TableBorders addNewHorizontalBorder(int index) {
-        horizontalBorders.add(index, (List<Border>) ((ArrayList<Border>) horizontalBorders.get(index)).clone());
+    protected TableBorders addNewHorizontalBorder(int index, boolean usePrevious) {
+        List<Border> newBorder;
+        if (usePrevious) {
+            newBorder = (List<Border>) ((ArrayList<Border>) horizontalBorders.get(index)).clone();
+        } else {
+            newBorder = new ArrayList<Border>();
+            for (int i = 0; i < numberOfColumns; i++) {
+                newBorder.add(Border.NO_BORDER);
+            }
+        }
+        horizontalBorders.add(index, newBorder);
         return this;
     }
 
     // TODO
-    protected TableBorders addNewVerticalBorder(int index) {
+    protected TableBorders addNewVerticalBorder(int index, boolean usePrevious) {
         for (int i = 0; i < numberOfColumns + 1; i++) {
-            verticalBorders.get(i).add(index, verticalBorders.get(i).get(index));
+            verticalBorders.get(i).add(index, usePrevious ? verticalBorders.get(i).get(index) : Border.NO_BORDER);
         }
         return this;
     }
@@ -713,21 +716,4 @@ public class TableBorders {
 
 // endregion
 
-
-    /**
-     * This are a structs used for convenience in layout.
-     */
-    private static class CellRendererInfo {
-        public CellRenderer cellRenderer;
-        public int column;
-        public int finishRowInd;
-
-        public CellRendererInfo(CellRenderer cellRenderer, int column, int finishRow) {
-            this.cellRenderer = cellRenderer;
-            this.column = column;
-            // When a cell has a rowspan, this is the index of the finish row of the cell.
-            // Otherwise, this is simply the index of the row of the cell in the {@link #rows} array.
-            this.finishRowInd = finishRow;
-        }
-    }
 }
