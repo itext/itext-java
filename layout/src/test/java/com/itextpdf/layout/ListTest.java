@@ -48,6 +48,7 @@ import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.draw.DashedLine;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.border.SolidBorder;
@@ -55,6 +56,7 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
@@ -114,6 +116,27 @@ public class ListTest extends ExtendedITextTest {
     }
 
     @Test
+    public void nestedListTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "nestedListTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_nestedListTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        List nestedList = new List().setSymbolIndent(20).
+                setMarginLeft(25).
+                add("One").add("Two").add("Three");
+
+        List list = new List(ListNumberingType.DECIMAL).setSymbolIndent(20).
+                add("One").add("Two").add("Three").add("Four").add((ListItem) new ListItem().add(nestedList));
+        document.add(list);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
     public void listNestedInTableTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "listNestedInTableTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_listNestedInTableTest01.pdf";
@@ -135,7 +158,6 @@ public class ListTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
-
 
     @Test
     public void listNumberingTest01() throws IOException, InterruptedException {
@@ -540,5 +562,31 @@ public class ListTest extends ExtendedITextTest {
         style.setProperty(Property.LIST_SYMBOL, new Text("* "));
         list.addStyle(style);
         Assert.assertEquals("* ", ((Text) list.<Object>getProperty(Property.LIST_SYMBOL)).getText());
+    }
+
+    @Test
+    public void listItemNullSymbol() throws Exception {
+        String outFileName = destinationFolder + "listItemNullSymbol.pdf";
+        String cmpFileName = sourceFolder + "cmp_listItemNullSymbol.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+        
+        List list = new List();
+        list.add(new ListItem("List item 1"));
+        Text listSymbolText = null;
+        ListItem listItem2 = new ListItem("List item 2").setListSymbol(listSymbolText);
+        list.add(listItem2);
+        list.add(new ListItem("List item 3"));
+
+        doc.add(list);
+        
+        doc.add(new LineSeparator(new DashedLine()));
+        
+        list.setListSymbol(ListNumberingType.ENGLISH_LOWER);
+        doc.add(list);
+        
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
     }
 }

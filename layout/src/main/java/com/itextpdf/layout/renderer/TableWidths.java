@@ -1,6 +1,49 @@
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2017 iText Group NV
+    Authors: iText Software.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.Property;
@@ -17,27 +60,30 @@ final class TableWidths {
 
     private TableRenderer tableRenderer;
     private int numberOfColumns;
-    private float[] collapsedTableBorders;
+    private float rightBorderMaxWidth;
+    private float leftBorderMaxWidth;
     private ColumnWidthData[] widths;
     private List<CellInfo> cells;
 
     private float tableWidth;
-    private boolean unspecifiedTableWidth;
+    private boolean fixedTableWidth;
+    private boolean fixedTableLayout = false;
+    private float minWidth;
 
-    TableWidths(TableRenderer tableRenderer, float availableWidth, float[] collapsedTableBorders) {
+    TableWidths(TableRenderer tableRenderer, float availableWidth, boolean calculateTableMaxWidth, float rightBorderMaxWidth, float leftBorderMaxWidth) {
         this.tableRenderer = tableRenderer;
         numberOfColumns = ((Table) tableRenderer.getModelElement()).getNumberOfColumns();
-        this.collapsedTableBorders = collapsedTableBorders != null ? collapsedTableBorders : new float[]{0, 0, 0, 0};
-        calculateTableWidth(availableWidth);
+        this.rightBorderMaxWidth = rightBorderMaxWidth;
+        this.leftBorderMaxWidth = leftBorderMaxWidth;
+        calculateTableWidth(availableWidth, calculateTableMaxWidth);
     }
 
     boolean hasFixedLayout() {
-        if (unspecifiedTableWidth) {
-            return false;
-        } else {
-            String layout = tableRenderer.<String>getProperty(Property.TABLE_LAYOUT, "auto");
-            return "fixed".equals(layout.toLowerCase());
-        }
+        return fixedTableLayout;
+    }
+
+    float getMinWidth() {
+        return minWidth;
     }
 
     float[] autoLayout(float[] minWidths, float[] maxWidths) {
@@ -224,7 +270,7 @@ final class TableWidths {
             assert sumOfPercents <= 100;
 
             boolean toBalance = true;
-            if (unspecifiedTableWidth) {
+            if (!fixedTableWidth) {
                 float tableWidthBasedOnPercents = sumOfPercents < 100
                         ? totalNonPercent * 100 / (100 - sumOfPercents) : 0;
                 for (int i = 0; i < numberOfColumns; i++) {
@@ -438,24 +484,40 @@ final class TableWidths {
 
     //region Common methods
 
-    private void calculateTableWidth(float availableWidth) {
-        Float originalTableWidth = tableRenderer.retrieveUnitValue(availableWidth, Property.WIDTH);
-        if (originalTableWidth == null || Float.isNaN(originalTableWidth) || originalTableWidth <= 0) {
-            tableWidth = availableWidth;
-            unspecifiedTableWidth = true;
+    private void calculateTableWidth(float availableWidth, boolean calculateTableMaxWidth) {
+        fixedTableLayout = "fixed".equals(tableRenderer
+                .<String>getProperty(Property.TABLE_LAYOUT, "auto").toLowerCase());
+        UnitValue width = tableRenderer.<UnitValue>getProperty(Property.WIDTH);
+        if (fixedTableLayout && width != null && width.getValue() >= 0) {
+            fixedTableWidth = true;
+            tableWidth = retrieveTableWidth(width, availableWidth);
+            minWidth = width.isPercentValue() ? 0 : tableWidth;
         } else {
-            tableWidth = originalTableWidth < availableWidth ? originalTableWidth : availableWidth;
-            unspecifiedTableWidth = false;
+            fixedTableLayout = false;
+            //min width will initialize later
+            minWidth = -1;
+            if (calculateTableMaxWidth) {
+                fixedTableWidth = false;
+                tableWidth = retrieveTableWidth(availableWidth);
+            } else if (width != null && width.getValue() >= 0) {
+                fixedTableWidth = true;
+                tableWidth = retrieveTableWidth(width, availableWidth);
+            } else {
+                fixedTableWidth = false;
+                tableWidth = retrieveTableWidth(availableWidth);
+            }
         }
-        tableWidth -= getMaxLeftBorder() / 2 + getMaxRightBorder() / 2;
     }
 
-    private float getMaxLeftBorder() {
-        return collapsedTableBorders[3];
+    private float retrieveTableWidth(UnitValue width, float availableWidth) {
+        return retrieveTableWidth(width.isPercentValue()
+                ? width.getValue() * availableWidth / 100
+                : width.getValue());
     }
 
-    private float getMaxRightBorder() {
-        return collapsedTableBorders[1];
+    private float retrieveTableWidth(float width) {
+        float result = width - rightBorderMaxWidth / 2 - leftBorderMaxWidth / 2;
+        return result > 0 ? result : 0;
     }
 
     private Table getTable() {
@@ -505,13 +567,15 @@ final class TableWidths {
 
     private float[] extractWidths() {
         float actualWidth = 0;
+        minWidth = 0;
         float[] columnWidths = new float[widths.length];
         for (int i = 0; i < widths.length; i++) {
             assert widths[i].finalWidth >= 0;
             columnWidths[i] = widths[i].finalWidth;
             actualWidth += widths[i].finalWidth;
+            minWidth += widths[i].min;
         }
-        if (actualWidth > tableWidth + MinMaxWidthUtils.getEps()*widths.length) {
+        if (actualWidth > tableWidth + MinMaxWidthUtils.getEps() * widths.length) {
             Logger logger = LoggerFactory.getLogger(TableWidths.class);
             logger.warn(LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH);
         }
@@ -521,6 +585,11 @@ final class TableWidths {
     //endregion
 
     //region Internal classes
+
+    @Override
+    public String toString() {
+        return "width=" + tableWidth + (fixedTableWidth ? "!!" : "");
+    }
 
     private static class ColumnWidthData {
         final float min;
@@ -611,6 +680,8 @@ final class TableWidths {
         }
     }
 
+    //endregion
+
     private static class CellInfo implements Comparable<CellInfo> {
         private static final byte HEADER = 1;
         private static final byte BODY = 2;
@@ -644,8 +715,23 @@ final class TableWidths {
             return cell.getModelElement().getRowspan();
         }
 
+        //TODO DEVSIX-1057, DEVSIX-1021
         UnitValue getWidth() {
-            return cell.<UnitValue>getProperty(Property.WIDTH);
+            UnitValue widthValue = cell.<UnitValue>getProperty(Property.WIDTH);
+            if (widthValue == null || widthValue.isPercentValue()) {
+                return widthValue;
+            } else {
+                Border[] borders = cell.getBorders();
+                if (borders[1] != null) {
+                    widthValue.setValue(widthValue.getValue() + borders[1].getWidth() / 2);
+                }
+                if (borders[3] != null) {
+                    widthValue.setValue(widthValue.getValue() + borders[3].getWidth() / 2);
+                }
+                float[] paddings = cell.getPaddings();
+                widthValue.setValue(widthValue.getValue() + paddings[1] + paddings[3]);
+                return widthValue;
+            }
         }
 
         @Override
@@ -658,12 +744,5 @@ final class TableWidths {
             }
             return region == o.region ? getRow() - o.getRow() : region - o.region;
         }
-    }
-
-    //endregion
-
-    @Override
-    public String toString() {
-        return "width=" + tableWidth + (unspecifiedTableWidth ? "" : "!!");
     }
 }

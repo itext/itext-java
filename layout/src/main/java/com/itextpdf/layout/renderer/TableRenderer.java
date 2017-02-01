@@ -305,7 +305,7 @@ public class TableRenderer extends AbstractRenderer {
         //collapseAllBorders();
 
         if (isOriginalRenderer()) {
-            calculateColumnWidths(layoutBox.getWidth(), new float[]{0, rightBorderMaxWidth, 0, leftBorderMaxWidth});
+            calculateColumnWidths(layoutBox.getWidth(), false);
         }
         float tableWidth = getTableWidth();
 
@@ -714,7 +714,7 @@ public class TableRenderer extends AbstractRenderer {
                             cell.setBorders(collapsedWithTableBorder, 2);
                         // TODO
 //                            for (int i = col; i < col + cell.getPropertyAsInteger(Property.COLSPAN); i++) {
-//                                bordersHandler.horizontalBorders.get(rowN + 1).set(i, collapsedWithTableBorder);
+//                                bordersHandler.horizontalBorders.get(row + (hasContent ? 1 : 0)).set(i, collapsedWithTableBorder);
 //                            }
                             // apply the difference between collapsed table border and own cell border
                             cell.occupiedArea.getBBox()
@@ -829,7 +829,7 @@ public class TableRenderer extends AbstractRenderer {
                                 // TODO
 //                                if (null != cellSplit) {
 //                                    for (int j = col; j < col + cellOverflow.getPropertyAsInteger(Property.COLSPAN); j++) {
-//                                        splitResult[0].horizontalBorders.get(row + (hasContent ? 1 : 0)).set(j, currentRow[col].getBorders()[2]);
+//                                        splitResult[0].horizontalBorders.get(row + (hasContent ? 1 : 0)).set(j, getCollapsedBorder(currentRow[col].getBorders()[2], borders[2]));
 //                                    }
 //                                }
                                 currentRow[col] = null;
@@ -856,7 +856,7 @@ public class TableRenderer extends AbstractRenderer {
                             }
                             // TODO
 //                            for (int j = col; j < col + currentRow[col].getPropertyAsInteger(Property.COLSPAN); j++) {
-//                                horizontalBorders.get(row + (hasContent ? 1 : 0)).set(j, currentRow[col].getBorders()[2]);
+//                                horizontalBorders.get(row + (hasContent ? 1 : 0)).set(j, getCollapsedBorder(currentRow[col].getBorders()[2], borders[2]));
 //                            }
                         }
                     }
@@ -1890,16 +1890,22 @@ public class TableRenderer extends AbstractRenderer {
         return parent instanceof TableRenderer && ((TableRenderer) parent).footerRenderer == this;
     }
 
-    private void calculateColumnWidths(float availableWidth, float[] borders) {
+    /**
+     * Returns minWidth
+     */
+    private float calculateColumnWidths(float availableWidth, boolean calculateTableMaxWidth) {
         if (countedColumnWidth == null || totalWidthForColumns != availableWidth) {
-            TableWidths tableWidths = new TableWidths(this, availableWidth, borders);
+            TableWidths tableWidths = new TableWidths(this, availableWidth, calculateTableMaxWidth, rightBorderMaxWidth, leftBorderMaxWidth);
             if (tableWidths.hasFixedLayout()) {
                 countedColumnWidth = tableWidths.fixedLayout();
+                return tableWidths.getMinWidth();
             } else {
                 ColumnMinMaxWidth minMax = countTableMinMaxWidth(availableWidth, false, true);
-                countedColumnWidth = tableWidths.autoLayout(minMax.getMinWidth(), minMax.getMaxWidth());
+                countedColumnWidth = tableWidths.autoLayout(minMax.getMinWidths(), minMax.getMaxWidths());
+                return tableWidths.getMinWidth();
             }
         }
+        return -1;
     }
 
     private float getTableWidth() {
@@ -1962,11 +1968,11 @@ public class TableRenderer extends AbstractRenderer {
         private float[] maxWidth;
         private float layoutBoxWidth;
 
-        float[] getMinWidth() {
+        float[] getMinWidths() {
             return minWidth;
         }
 
-        float[] getMaxWidth() {
+        float[] getMaxWidths() {
             return maxWidth;
         }
 

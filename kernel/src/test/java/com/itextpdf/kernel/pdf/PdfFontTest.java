@@ -1410,7 +1410,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void testSplitString() throws IOException {
         PdfFont font = PdfFontFactory.createFont();
         List<String> list1 = font.splitString("Hello", 12f, 10);
-        Assert.assertTrue(list1.size() == 2);
+        Assert.assertTrue(list1.size() == 3);
 
         List<String> list2 = font.splitString("Digitally signed by Dmitry Trusevich\nDate: 2015.10.25 14:43:56 MSK\nReason: Test 1\nLocation: Ghent", 12f, 176);
         Assert.assertTrue(list2.size() == 5);
