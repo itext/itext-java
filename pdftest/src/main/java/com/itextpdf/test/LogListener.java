@@ -63,6 +63,8 @@ import org.slf4j.helpers.SubstituteLoggerFactory;
 import java.lang.annotation.Annotation;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class LogListener extends TestWatcher {
@@ -101,8 +103,10 @@ public class LogListener extends TestWatcher {
     * */
     private boolean equalsMessageByTemplate(String message, String template) {
         if (template.indexOf("{") > 0 && template.indexOf("}") > 0) {
-            String templateWithoutParameters = template.replace("''", "'").replaceAll("\\{[0-9]+?\\}", "(.|\\\\s)*?");
-            return message.matches(templateWithoutParameters);
+            String templateWithoutParameters = template.replace("''", "'").replaceAll("\\{[0-9]+?\\}", "(.)*?");
+            Pattern p = Pattern.compile(templateWithoutParameters, Pattern.DOTALL);
+            Matcher m = p.matcher(message);
+            return m.matches();
         } else {
             return message.contains(template);
         }
