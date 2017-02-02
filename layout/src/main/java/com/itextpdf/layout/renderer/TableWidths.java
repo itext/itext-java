@@ -683,9 +683,9 @@ final class TableWidths {
     //endregion
 
     private static class CellInfo implements Comparable<CellInfo> {
-        private static final byte HEADER = 1;
-        private static final byte BODY = 2;
-        private static final byte FOOTER = 3;
+        static final byte HEADER = 1;
+        static final byte BODY = 2;
+        static final byte FOOTER = 3;
 
         private CellRenderer cell;
         private byte region;

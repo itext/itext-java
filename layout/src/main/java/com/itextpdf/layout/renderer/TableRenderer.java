@@ -1374,7 +1374,7 @@ public class TableRenderer extends AbstractRenderer {
         //splitRenderer.horizontalBorders.addAll(horizontalBorders);
         for (int i = rowN; i < horizontalBorders.size(); i++) {
             //TODO
-            overflowRenderer.horizontalBorders.add((List<Border>) ((ArrayList<Border>) horizontalBorders.get(i)).clone());
+            overflowRenderer.horizontalBorders.add(new ArrayList<Border>(horizontalBorders.get(i)));
         }
         overflowRenderer.verticalBorders = new ArrayList<>();
         //splitRenderer.verticalBorders.addAll(verticalBorders);
