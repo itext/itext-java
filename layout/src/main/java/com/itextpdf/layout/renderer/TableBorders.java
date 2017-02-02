@@ -88,17 +88,24 @@ public class TableBorders {
         return this;
     }
 
-    protected TableBorders correctTopBorder() {
-        // TODO update with header
-        // TODO Update cell properties
-        List<Border> topBorders = horizontalBorders.get(horizontalBordersIndexOffset);
-        Border topTableBorder = tableBoundingBorders[0];
-        for (int col = 0; col < numberOfColumns; col++) {
-            if (null == topBorders.get(col) || (null != topTableBorder && topBorders.get(col).getWidth() < topTableBorder.getWidth())) {
-                topBorders.set(col, topTableBorder);
+    protected TableBorders correctTopBorder(TableBorders headerTableBorders) {
+        List<Border> topBorders;
+        if (null != headerTableBorders) {
+            topBorders = headerTableBorders.horizontalBorders.get(headerTableBorders.horizontalBorders.size()-1);
+        } else {
+            topBorders = new ArrayList<Border>();
+            for (int col = 0; col < numberOfColumns; col++) {
+                topBorders.add(tableBoundingBorders[0]);
             }
         }
 
+        for (int col = 0; col < numberOfColumns; col++) {
+            topBorders.set(col, getCollapsedBorder(horizontalBorders.get(horizontalBordersIndexOffset).get(col), topBorders.get(col)));
+        }
+        updateTopBorder(topBorders, new boolean[numberOfColumns]);
+        if (null != headerTableBorders) {
+            headerTableBorders.updateBottomBorder(horizontalBorders.get(horizontalBordersIndexOffset), new boolean[numberOfColumns]);
+        }
         return this;
     }
 

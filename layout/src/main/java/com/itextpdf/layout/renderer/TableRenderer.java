@@ -279,10 +279,6 @@ public class TableRenderer extends AbstractRenderer {
                 }
             }
         }
-        // TODO add collapse method !!!
-        if (null != headerRenderer) {
-            headerRenderer.bordersHandler.updateBottomBorder(bordersHandler.horizontalBorders.get(0), new boolean[colN]);
-        }
     }
 
     protected boolean[] collapseFooterBorders(List<Border> tableBottomBorders, int colNum, int rowNum) {
@@ -470,12 +466,10 @@ public class TableRenderer extends AbstractRenderer {
         Border[] borders = getBorders();
         if (null != rows && 0 != rows.size()) {
             correctFirstRowTopBorders(borders[0], numberOfColumns);
+            bordersHandler.correctTopBorder(null == headerRenderer ? null : headerRenderer.bordersHandler);
         }
         float bottomTableBorderWidth = null == borders[2] ? 0 : borders[2].getWidth();
 
-        if (isOriginalNonSplitRenderer) {
-            bordersHandler.correctTopBorder();
-        }
         topTableBorderWidth = bordersHandler.getMaxTopWidth(borders[0]);
 
         // Apply halves of the borders. The other halves are applied on a Cell level
