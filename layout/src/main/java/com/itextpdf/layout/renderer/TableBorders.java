@@ -88,7 +88,7 @@ public class TableBorders {
         return this;
     }
 
-    protected TableBorders updateTopBorder() {
+    protected TableBorders correctTopBorder() {
         // TODO update with header
         // TODO Update cell properties
         List<Border> topBorders = horizontalBorders.get(horizontalBordersIndexOffset);
@@ -141,24 +141,24 @@ public class TableBorders {
             curPageIndex--;
             nextPageIndex--;
         }
-        verticalBordersIndexOffset += splitRow;
-        splitRow += horizontalBordersIndexOffset;
+        //verticalBordersIndexOffset += splitRow;
+        // splitRow += horizontalBordersIndexOffset;
         if (hasContent) {
             if (split) {
-                addNewHorizontalBorder(splitRow + 1, true); // the last row on current page
-                addNewVerticalBorder(verticalBordersIndexOffset, true);
-                verticalBordersIndexOffset++;
+                addNewHorizontalBorder(horizontalBordersIndexOffset + splitRow + 1, true); // the last row on current page
+                addNewVerticalBorder(verticalBordersIndexOffset + splitRow, true);
+                //verticalBordersIndexOffset++;
             }
             splitRow++;
         }
         if (split) {
-            addNewHorizontalBorder(splitRow + 1, false); // the first row on the next page
+            addNewHorizontalBorder(horizontalBordersIndexOffset + splitRow + 1, false); // the first row on the next page
         }
 
         // here splitRow is the last horizontal border index on current page
         // and splitRow + 1 is the first horizontal border index on the next page
 
-        List<Border> lastBorderOnCurrentPage = horizontalBorders.get(splitRow);
+        List<Border> lastBorderOnCurrentPage = horizontalBorders.get(horizontalBordersIndexOffset + splitRow);
 
         for (int col = 0; col < numberOfColumns; col++) {
             CellRenderer cell = lastRowOnCurrentPage[col];
@@ -175,8 +175,8 @@ public class TableBorders {
         }
 
 
-        if (splitRow != horizontalBorders.size() - 1) {
-            List<Border> firstBorderOnTheNextPage = horizontalBorders.get(splitRow + 1);
+        if (horizontalBordersIndexOffset + splitRow != horizontalBorders.size() - 1) {
+            List<Border> firstBorderOnTheNextPage = horizontalBorders.get(horizontalBordersIndexOffset + splitRow + 1);
 
             for (int col = 0; col < numberOfColumns; col++) {
                 CellRenderer cell = firstRowOnTheNextPage[col];
@@ -192,7 +192,10 @@ public class TableBorders {
         }
 
         // update row offest
-        horizontalBordersIndexOffset = splitRow + 1;
+        if (split) {
+            horizontalBordersIndexOffset += splitRow + 1;
+            verticalBordersIndexOffset += splitRow;
+        }
 
         return this;
     }
@@ -309,7 +312,7 @@ public class TableBorders {
 
     protected float getMaxTopWidth(Border tableBorder) {
         float width = null == tableBorder ? 0 : tableBorder.getWidth();
-        Border widestBorder = getWidestHorizontalBorder(0);
+        Border widestBorder = getWidestHorizontalBorder(horizontalBordersIndexOffset);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
             width = widestBorder.getWidth();
         }
@@ -334,6 +337,7 @@ public class TableBorders {
         return width;
     }
 
+    // TODO Do not use it =)
     protected float getMaxBottomWidth(Border tableBorder) {
         float width = null == tableBorder ? 0 : tableBorder.getWidth();
         Border widestBorder = getWidestHorizontalBorder(horizontalBorders.size()-1);
@@ -663,59 +667,27 @@ public class TableBorders {
 
     // region footer collapsing methods
 
-    protected boolean[] collapseFooterBorders(List<Border> tableBottomBorders, int colNum, int rowNum) {
-        // FIXME
-        boolean[] useFooterBorders = new boolean[colNum];
-//        int row = 0;
-//        int col = 0;
-//        while (col < colNum) {
-//            if (null != footerRenderer.rows.get(row)[col]) {
-//                Border oldBorder = footerRenderer.rows.get(row)[col].getBorders()[0];
-//                Border maxBorder = oldBorder;
-//                for (int k = col; k < col + footerRenderer.rows.get(row)[col].getModelElement().getColspan(); k++) {
-//                    Border collapsedBorder = tableBottomBorders.get(k);
-//                    if (null != collapsedBorder && (null == oldBorder || collapsedBorder.getWidth() >= oldBorder.getWidth())) {
-//                        if (null == maxBorder || maxBorder.getWidth() < collapsedBorder.getWidth()) {
-//                            maxBorder = collapsedBorder;
-//                        }
-//                    } else {
-//                        useFooterBorders[k] = true;
-//                    }
-//                }
-//                footerRenderer.rows.get(row)[col].setBorders(maxBorder, 0);
-//                col += footerRenderer.rows.get(row)[col].getModelElement().getColspan();
-//                row = 0;
-//            } else {
-//                row++;
-//                if (row == rowNum) {
-//                    break;
-//                }
-//            }
-//        }
-        return useFooterBorders;
+
+
+    protected TableBorders updateTopBorder(List<Border> newBorder, boolean[] useOldBorders) {
+        updateBorder(horizontalBorders.get(horizontalBordersIndexOffset), newBorder, useOldBorders);
+        return this;
     }
 
-    protected void fixFooterBorders(List<Border> tableBottomBorders, int colNum, int rowNum, boolean[] useFooterBorders) {
-        // FIXME
-//        int j = 0;
-//        int i = 0;
-//        while (i < colNum) {
-//            if (null != footerRenderer.rows.get(j)[i]) {
-//                for (int k = i; k < i + footerRenderer.rows.get(j)[i].getModelElement().getColspan(); k++) {
-//                    if (!useFooterBorders[k]) {
-//                        footerRenderer.horizontalBorders.get(j).set(k, tableBottomBorders.get(k));
-//                    }
-//                }
-//                i += footerRenderer.rows.get(j)[i].getModelElement().getColspan();
-//                j = 0;
-//            } else {
-//                j++;
-//                if (j == rowNum) {
-//                    break;
-//                }
-//            }
-//        }
+    protected TableBorders updateBottomBorder(List<Border> newBorder, boolean[] useOldBorders) {
+        updateBorder(horizontalBorders.get(horizontalBorders.size()-1), newBorder, useOldBorders);
+        return this;
     }
+
+    protected TableBorders updateBorder(List<Border> oldBorder, List<Border> newBorders, boolean[] isOldBorder) {
+        for (int i = 0; i < oldBorder.size(); i++) {
+            if (!isOldBorder[i]) {
+                oldBorder.set(i, newBorders.get(i));
+            }
+        }
+        return this;
+    }
+
 
 // endregion
 
