@@ -53,7 +53,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 final class TableWidths {
@@ -95,7 +94,7 @@ final class TableWidths {
 
         //region Process cells
 
-        HashSet<Integer> minColumns = new HashSet<>();
+        boolean[] minColumns = new boolean[numberOfColumns];
         for (CellInfo cell : cells) {
             //NOTE in automatic layout algorithm percents have higher priority
             UnitValue cellWidth = cell.getWidth();
@@ -137,7 +136,7 @@ final class TableWidths {
                         if (!widths[cell.getCol()].isPercent) {
                             widths[cell.getCol()].setPoints(cellWidth.getValue()).setFixed(true);
                             if (widths[cell.getCol()].hasCollision()) {
-                                minColumns.add(cell.getCol());
+                                minColumns[cell.getCol()] = true;
                             }
                         }
                     } else {
@@ -203,8 +202,8 @@ final class TableWidths {
                 }
             }
         }
-        for (Integer col : minColumns) {
-            if (!widths[col].isPercent && widths[col].isFixed && widths[col].hasCollision()) {
+        for (int col = 0; col < minColumns.length; col++) {
+            if (minColumns[col] && !widths[col].isPercent && widths[col].isFixed && widths[col].hasCollision()) {
                 minSum += widths[col].min - widths[col].width;
                 widths[col].setPoints(widths[col].min);
             }
