@@ -831,9 +831,6 @@ public class TableRenderer extends AbstractRenderer {
                             boolean isBigRowspannedCell = 1 != currentRow[col].getModelElement().getRowspan();
                             if (hasContent || isBigRowspannedCell) {
                                 columnsWithCellToBeEnlarged[col] = true;
-                                if (isBigRowspannedCell && !processAsLast) {
-                                    childRenderers.add(currentRow[col]);
-                                }
                             } else {
                                 if (Border.NO_BORDER != currentRow[col].<Border>getProperty(Property.BORDER_TOP)) {
                                     splitResult[1].rows.get(0)[col].deleteOwnProperty(Property.BORDER_TOP);
