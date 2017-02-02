@@ -53,16 +53,15 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.border.SolidBorder;
-import com.itextpdf.layout.element.BlockElement;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -490,7 +489,7 @@ public class MinWidthTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
-    private static float toEffectiveWidth(BlockElement b, float fullWidth) {
+    private static float toEffectiveWidth(IBlockElement b, float fullWidth) {
         if (b instanceof Table) {
             return fullWidth + ((Table) b).getNumberOfColumns() * MinMaxWidthUtils.getEps();
         } else {
@@ -500,9 +499,9 @@ public class MinWidthTest extends ExtendedITextTest {
     }
 
     private static float[] toEffectiveTableColumnWidth(float[] tableColumnWidth) {
-        float[] result = tableColumnWidth.clone();
+        float[] result = new float[tableColumnWidth.length];
         for (int i = 0; i < result.length; ++i) {
-            result[i] += MinMaxWidthUtils.getEps();
+            result[i] = tableColumnWidth[i] + MinMaxWidthUtils.getEps();
         }
         return result;
     }

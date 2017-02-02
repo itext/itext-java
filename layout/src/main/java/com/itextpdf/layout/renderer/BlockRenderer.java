@@ -657,7 +657,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
     //We assume that the area of block stays the same when we try to layout it
     //with different available width (available width is between min-width and max-width).
     MinMaxWidth countRotationMinMaxWidth(MinMaxWidth minMaxWidth) {
-        Float rotation = getPropertyAsFloat(Property.ROTATION_ANGLE);
+        Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (rotation != null) {
             boolean restoreRendererRotation = hasOwnProperty(Property.ROTATION_ANGLE);
             setProperty(Property.ROTATION_ANGLE, null);

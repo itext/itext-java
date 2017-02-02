@@ -95,7 +95,7 @@ final class TableWidths {
 
         //region Process cells
 
-        HashSet<Integer> minColumns = new HashSet<>(numberOfColumns);
+        HashSet<Integer> minColumns = new HashSet<>();
         for (CellInfo cell : cells) {
             //NOTE in automatic layout algorithm percents have higher priority
             UnitValue cellWidth = cell.getWidth();
@@ -444,7 +444,7 @@ final class TableWidths {
                     if (cellWidth != null && cellWidth >= 0) {
                         int colspan = cell.getModelElement().getColspan();
                         for (int j = 0; j < colspan; j++) {
-                            columnWidths[i + j] = cellWidth / colspan;
+                            columnWidths[i + j] = (float) cellWidth / colspan;
                         }
                         remainWidth -= columnWidths[i];
                         processedColumns++;

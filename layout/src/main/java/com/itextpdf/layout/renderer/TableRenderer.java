@@ -673,7 +673,7 @@ public class TableRenderer extends AbstractRenderer {
                     rowHeight = 0;
                     if (split && (hasContent)) {
                         //TODO
-                        horizontalBorders.add(row + 1, (List<Border>) ((ArrayList<Border>) horizontalBorders.get(row + 1)).clone());
+                        horizontalBorders.add(row + 1, new ArrayList<Border>(horizontalBorders.get(row + 1)));
                     }
                     for (col = 0; col < currentRow.length; col++) {
                         if (hasContent || (cellWithBigRowspanAdded && null == rows.get(row - 1)[col])) {
@@ -1444,7 +1444,7 @@ public class TableRenderer extends AbstractRenderer {
 
     private ColumnMinMaxWidth countTableMinMaxWidth(float availableWidth, boolean initializeBorders, boolean isTableBeingLayouted) {
         Rectangle layoutBox = new Rectangle(availableWidth, AbstractRenderer.INF);
-        Float tableWidth = retrieveWidth(layoutBox.getWidth());
+        float tableWidth = (float) retrieveWidth(layoutBox.getWidth());
         applyMargins(layoutBox, false);
         if (initializeBorders) {
             initializeBorders(((Table) getModelElement()).getLastRowBottomBorder(), true);
@@ -2373,8 +2373,8 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     private static class ColumnMinMaxWidth {
-        private float[] minWidth;
-        private float[] maxWidth;
+        float[] minWidth;
+        float[] maxWidth;
         private float layoutBoxWidth;
 
         float[] getMinWidths() {
