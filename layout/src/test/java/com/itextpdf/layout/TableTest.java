@@ -1587,6 +1587,59 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Test
+    public void simpleHeaderFooterTableTest01() throws IOException, InterruptedException {
+        String testName = "simpleHeaderFooterTableTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        String gretzky = "Make Gretzky great again!";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A7.rotate());
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(Color.GREEN, 15));
+
+        for (int i = 0; i < 10; i++) {
+            table.addCell(new Cell().add(gretzky));
+        }
+
+        table.addHeaderCell(new Cell(1, 2).setHeight(30).add(gretzky).setBorder(new SolidBorder(Color.RED, 0.5f)));
+
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void simpleHeaderFooterTableTest02() throws IOException, InterruptedException {
+        String testName = "simpleHeaderFooterTableTest02.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        String gretzky = "Make Gretzky great again!";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A7.rotate());
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(Color.GREEN, 15));
+
+        for (int i = 0; i < 10; i++) {
+            table.addCell(new Cell().add(gretzky));
+        }
+
+        table.addFooterCell(new Cell(1, 2).setHeight(30).add(gretzky).setBorder(new SolidBorder(Color.RED, 0.5f)));
+
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+
     static class CustomRenderer extends TableRenderer {
         public CustomRenderer(Table modelElement, Table.RowRange rowRange) {
             super(modelElement, rowRange);

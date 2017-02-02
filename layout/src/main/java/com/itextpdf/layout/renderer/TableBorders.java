@@ -126,7 +126,7 @@ public class TableBorders {
                     curPageIndex = lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN);
                 }
                 if (0 == nextPageIndex) {
-                    row = splitRow+1;
+                    row = splitRow;
                     while (row < rows.size() && null == rows.get(row)[col]) {
                         row++;
                     }
@@ -291,67 +291,58 @@ public class TableBorders {
 
     // region getters
 
-    protected Border getWidestBorder(int row) {
+    protected Border getWidestHorizontalBorder(int row) {
         Border theWidestBorder = null;
         if (row < horizontalBorders.size()) {
-            List<Border> list = horizontalBorders.get(row);
-            for (Border border : list) {
-                if (null != border && (null == theWidestBorder || border.getWidth() > theWidestBorder.getWidth())) {
-                    theWidestBorder = border;
-                }
-            }
+            theWidestBorder = getWidestBorder(horizontalBorders.get(row));
         }
         return theWidestBorder;
     }
 
-    protected float getMaxTopWidth(Border tableTopBorder) {
-        float width = null == tableTopBorder ? 0 : tableTopBorder.getWidth();
-        List<Border> topBorders = horizontalBorders.get(0);
-        if (0 != topBorders.size()) {
-            for (Border border : topBorders) {
-                if (null != border) {
-                    if (border.getWidth() > width) {
-                        width = border.getWidth();
-                    }
-                }
-            }
+    protected Border getWidestVerticalBorder(int col) {
+        Border theWidestBorder = null;
+        if (col < verticalBorders.size()) {
+            theWidestBorder = getWidestBorder(verticalBorders.get(col));
+        }
+        return theWidestBorder;
+    }
+
+    protected float getMaxTopWidth(Border tableBorder) {
+        float width = null == tableBorder ? 0 : tableBorder.getWidth();
+        Border widestBorder = getWidestHorizontalBorder(0);
+        if (null != widestBorder && widestBorder.getWidth() >= width) {
+            width = widestBorder.getWidth();
         }
         return width;
     }
 
-    protected float getMaxRightWidth(Border tableRightBorder) {
-        float width = null == tableRightBorder ? 0 : tableRightBorder.getWidth();
-        if (0 != verticalBorders.size()) {
-            List<Border> rightBorders = verticalBorders.get(verticalBorders.size() - 1);
-            if (0 != rightBorders.size()) {
-                for (Border border : rightBorders) {
-                    if (null != border) {
-                        if (border.getWidth() > width) {
-                            width = border.getWidth();
-                        }
-                    }
-                }
-            }
+    protected float getMaxRightWidth(Border tableBorder) {
+        float width = null == tableBorder ? 0 : tableBorder.getWidth();
+        Border widestBorder = getWidestVerticalBorder(horizontalBorders.size()-1);
+        if (null != widestBorder && widestBorder.getWidth() >= width) {
+            width = widestBorder.getWidth();
         }
         return width;
     }
 
-    protected float getMaxLeftWidth(Border tableLeftBorder) {
-        float width = null == tableLeftBorder ? 0 : tableLeftBorder.getWidth();
-        if (0 != verticalBorders.size()) {
-            List<Border> leftBorders = verticalBorders.get(0);
-            if (0 != leftBorders.size()) {
-                for (Border border : leftBorders) {
-                    if (null != border) {
-                        if (border.getWidth() > width) {
-                            width = border.getWidth();
-                        }
-                    }
-                }
-            }
+    protected float getMaxLeftWidth(Border tableBorder) {
+        float width = null == tableBorder ? 0 : tableBorder.getWidth();
+        Border widestBorder = getWidestVerticalBorder(0);
+        if (null != widestBorder && widestBorder.getWidth() >= width) {
+            width = widestBorder.getWidth();
         }
         return width;
     }
+
+    protected float getMaxBottomWidth(Border tableBorder) {
+        float width = null == tableBorder ? 0 : tableBorder.getWidth();
+        Border widestBorder = getWidestHorizontalBorder(horizontalBorders.size()-1);
+        if (null != widestBorder && widestBorder.getWidth() >= width) {
+            width = widestBorder.getWidth();
+        }
+        return width;
+    }
+
 
     protected int getCurrentHorizontalBordersIndexOffset() {
         return horizontalBordersIndexOffset;
@@ -586,6 +577,18 @@ public class TableBorders {
             }
         }
         return cellModelSideBorder;
+    }
+
+    private static Border getWidestBorder(List<Border> borderList) {
+        Border theWidestBorder = null;
+        if (0 != borderList.size()) {
+            for (Border border : borderList) {
+                if (null != border && (null == theWidestBorder || border.getWidth() > theWidestBorder.getWidth())) {
+                    theWidestBorder = border;
+                }
+            }
+        }
+        return theWidestBorder;
     }
 
     // endregion
