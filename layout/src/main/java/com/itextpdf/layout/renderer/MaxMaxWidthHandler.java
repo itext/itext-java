@@ -44,7 +44,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 
-class MaxMaxWidthHandler extends AbstractWidthHandler {
+public class MaxMaxWidthHandler extends AbstractWidthHandler {
 
     public MaxMaxWidthHandler(MinMaxWidth minMaxWidth) {
         super(minMaxWidth);
