@@ -299,7 +299,6 @@ public class MinWidthTest extends ExtendedITextTest {
     public void simpleTableTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "simpleTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_simpleTableTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
         Cell cell1 = new Cell().add("I am table")
@@ -344,7 +343,6 @@ public class MinWidthTest extends ExtendedITextTest {
     public void colspanTableTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "colspanTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_colspanTableTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
         Cell bigCell = new Cell(1, 2).add("I am veryveryvery big cell")
@@ -389,7 +387,6 @@ public class MinWidthTest extends ExtendedITextTest {
     public void colspanRowspanTableTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "colspanRowspanTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_colspanRowspanTableTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
         Cell colspanCell = new Cell(1, 2).add("I am veryveryvery big cell")
@@ -439,7 +436,6 @@ public class MinWidthTest extends ExtendedITextTest {
     public void headerFooterTableTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "headerFooterTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_headerFooterTableTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
         Cell bigCell = new Cell().add("veryveryveryvery big cell")
