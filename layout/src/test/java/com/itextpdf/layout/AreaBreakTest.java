@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.test.ExtendedITextTest;
@@ -126,6 +127,21 @@ public class AreaBreakTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         document.add(new AreaBreak(AreaBreakType.LAST_PAGE)).add(new Paragraph("Hello there on the last page!").setFontSize(30).setWidth(200).setMarginTop(250));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void areaBreakInsideDiv01Test() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "areaBreakInsideDiv01.pdf";
+        String cmpFileName = sourceFolder + "cmp_areaBreakInsideDiv01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+        Div div = new Div().add(new Paragraph("Hello")).add(new AreaBreak()).add(new Paragraph("World"));
+        document.add(div);
 
         document.close();
 

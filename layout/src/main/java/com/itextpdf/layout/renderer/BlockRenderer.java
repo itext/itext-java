@@ -239,7 +239,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
                         AbstractRenderer overflowRenderer = createOverflowRenderer(layoutResult);
                         List<IRenderer> overflowRendererChildren = new ArrayList<>();
-                        overflowRendererChildren.add(result.getOverflowRenderer());
+                        if (result.getOverflowRenderer() != null) {
+                            overflowRendererChildren.add(result.getOverflowRenderer());
+                        }
                         overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
 
                         overflowRenderer.childRenderers = overflowRendererChildren;

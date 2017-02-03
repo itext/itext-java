@@ -83,6 +83,17 @@ public class Div extends BlockElement<Div> {
         return this;
     }
 
+    /**
+     * Adds an area break to the div's contents.
+     *
+     * @param areaBreak an {@link AreaBreak}
+     * @return this Element
+     */
+    public Div add(AreaBreak areaBreak) {
+        childElements.add(areaBreak);
+        return this;
+    }
+
     @Override
     public PdfName getRole() {
         return role;
