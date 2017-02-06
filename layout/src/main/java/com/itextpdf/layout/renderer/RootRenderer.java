@@ -281,16 +281,7 @@ public abstract class RootRenderer extends AbstractRenderer {
 
     protected abstract LayoutArea updateCurrentArea(LayoutResult overflowResult);
 
-    private void processRenderer(IRenderer renderer, List<IRenderer> resultRenderers) {
-        alignChildHorizontally(renderer, currentArea.getBBox().getWidth());
-        if (immediateFlush) {
-            flushSingleRenderer(renderer);
-        } else {
-            resultRenderers.add(renderer);
-        }
-    }
-
-    private void updateCurrentAreaAndProcessRenderer(IRenderer renderer, List<IRenderer> resultRenderers, LayoutResult result) {
+    protected void updateCurrentAreaAndProcessRenderer(IRenderer renderer, List<IRenderer> resultRenderers, LayoutResult result) {
         if (currentArea != null) {
             float resultHeight = result.getOccupiedArea().getBBox().getHeight();
             currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - resultHeight);
@@ -302,6 +293,15 @@ public abstract class RootRenderer extends AbstractRenderer {
 
         if (!immediateFlush) {
             childRenderers.addAll(resultRenderers);
+        }
+    }
+
+    private void processRenderer(IRenderer renderer, List<IRenderer> resultRenderers) {
+        alignChildHorizontally(renderer, currentArea.getBBox().getWidth());
+        if (immediateFlush) {
+            flushSingleRenderer(renderer);
+        } else {
+            resultRenderers.add(renderer);
         }
     }
 
