@@ -234,6 +234,7 @@ public class ParagraphRenderer extends BlockRenderer {
                             if (anythingPlaced) {
                                 marginsCollapseHandler.endChildMarginsHandling(layoutBox);
                             }
+                            marginsCollapseHandler.endMarginsCollapse(layoutBox);
                         }
                         ParagraphRenderer[] split = split();
                         split[0].lines = lines;
@@ -267,12 +268,6 @@ public class ParagraphRenderer extends BlockRenderer {
                         }
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
-                        if (marginsCollapsingEnabled) {
-                            marginsCollapseHandler.endMarginsCollapse(layoutBox);
-                            split[0].setProperty(Property.MARGIN_TOP, this.getPropertyAsFloat(Property.MARGIN_TOP));
-                            split[0].setProperty(Property.MARGIN_BOTTOM, this.getPropertyAsFloat(Property.MARGIN_BOTTOM));
-
-                        }
                         applyMargins(occupiedArea.getBBox(), true);
 
                         if (wasHeightClipped) {
@@ -316,14 +311,18 @@ public class ParagraphRenderer extends BlockRenderer {
                 previousDescent = processedRenderer.getMaxDescent();
             }
         }
+        
+        if (marginsCollapsingEnabled) {
+            if (childRenderers.size() > 0) {
+                marginsCollapseHandler.endChildMarginsHandling(layoutBox);
+            }
+            marginsCollapseHandler.endMarginsCollapse(layoutBox);
+        }
 
         float moveDown = Math.min((leadingValue - lastLineHeight) / 2, occupiedArea.getBBox().getY() - layoutBox.getY());
         occupiedArea.getBBox().moveDown(moveDown);
         occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
 
-        if (marginsCollapsingEnabled && childRenderers.size() > 0) {
-            marginsCollapseHandler.endChildMarginsHandling(layoutBox);
-        }
         IRenderer overflowRenderer = null;
         Float blockMinHeight = retrieveMinHeight();
         if (null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
@@ -346,9 +345,6 @@ public class ParagraphRenderer extends BlockRenderer {
             correctPositionedLayout(layoutBox);
         }
 
-        if (marginsCollapsingEnabled) {
-            marginsCollapseHandler.endMarginsCollapse(layoutBox);
-        }
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         applyMargins(occupiedArea.getBBox(), true);

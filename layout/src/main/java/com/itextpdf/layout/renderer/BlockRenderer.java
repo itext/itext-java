@@ -143,6 +143,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(childRenderer, layoutBox);
             }
             while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox), childMarginsInfo))).getStatus() != LayoutResult.FULL) {
+                if (marginsCollapsingEnabled) {
+                    if (result.getStatus() != LayoutResult.NOTHING) {
+                        marginsCollapseHandler.endChildMarginsHandling(layoutBox);
+                    }
+                    marginsCollapseHandler.endMarginsCollapse(layoutBox);
+                }
+                
                 if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))
                         || Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
@@ -177,9 +184,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 } else {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
                         if (currentAreaPos + 1 == areas.size()) {
-                            if (marginsCollapsingEnabled) {
-                                marginsCollapseHandler.endChildMarginsHandling(layoutBox);
-                            }
                             AbstractRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
                             splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
                             splitRenderer.childRenderers.add(result.getSplitRenderer());
@@ -212,11 +216,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
                             applyPaddings(occupiedArea.getBBox(), paddings, true);
                             applyBorderBox(occupiedArea.getBBox(), borders, true);
-                            if (marginsCollapsingEnabled) {
-                                marginsCollapseHandler.endMarginsCollapse(layoutBox);
-                                splitRenderer.setProperty(Property.MARGIN_TOP, this.getPropertyAsFloat(Property.MARGIN_TOP));
-                                splitRenderer.setProperty(Property.MARGIN_BOTTOM, this.getPropertyAsFloat(Property.MARGIN_BOTTOM));
-                            }
                             applyMargins(occupiedArea.getBBox(), true);
                             if (wasHeightClipped) {
                                 return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
@@ -273,13 +272,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
-                        if (marginsCollapsingEnabled) {
-                            marginsCollapseHandler.endMarginsCollapse(layoutBox);
-                            if (splitRenderer != null) {
-                                splitRenderer.setProperty(Property.MARGIN_TOP, this.getPropertyAsFloat(Property.MARGIN_TOP));
-                                splitRenderer.setProperty(Property.MARGIN_BOTTOM, this.getPropertyAsFloat(Property.MARGIN_BOTTOM));
-                            }
-                        }
                         applyMargins(occupiedArea.getBBox(), true);
                         //splitRenderer.occupiedArea = occupiedArea.clone();
 
@@ -317,6 +309,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 causeOfNothing = result.getCauseOfNothing();
             }
         }
+        if (marginsCollapsingEnabled) {
+            marginsCollapseHandler.endMarginsCollapse(layoutBox);
+        }
 
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
             occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
@@ -349,9 +344,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
-        if (marginsCollapsingEnabled) {
-            marginsCollapseHandler.endMarginsCollapse(layoutBox);
-        }
         if (positionedRenderers.size() > 0) {
             LayoutArea area = new LayoutArea(occupiedArea.getPageNumber(), occupiedArea.getBBox().clone());
             applyBorderBox(area.getBBox(), false);
