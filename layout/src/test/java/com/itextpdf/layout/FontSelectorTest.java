@@ -112,7 +112,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
-        doc.setProperty(Property.FONT, "'Puritan', \"FreeSans\"");
+        doc.setFont("'Puritan', \"FreeSans\"");
         Text text = new Text(s).setBackgroundColor(Color.LIGHT_GRAY);
         Paragraph paragraph = new Paragraph(text);
         doc.add(paragraph);
@@ -134,7 +134,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
-        doc.setProperty(Property.FONT, "Puritan");
+        doc.setFont("Puritan");
         Text text = new Text(s).setBackgroundColor(Color.LIGHT_GRAY);
         Paragraph paragraph = new Paragraph(text);
         doc.add(paragraph);
@@ -157,7 +157,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         doc.setFontProvider(sel);
 
         Paragraph paragraph = new Paragraph(s);
-        paragraph.setProperty(Property.FONT, "Courier");
+        paragraph.setFont("Courier");
         doc.add(paragraph);
         paragraph = new Paragraph(s);
         paragraph.setProperty(Property.FONT, "Times-Roman");

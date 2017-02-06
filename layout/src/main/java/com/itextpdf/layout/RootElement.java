@@ -54,6 +54,7 @@ import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.property.FontKerning;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Leading;
@@ -125,6 +126,29 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
             childElements.remove(childElements.size() - 1);
         }
         return (T) (Object) this;
+    }
+
+    /**
+     * Gets {@link FontProvider} if presents.
+     *
+     * @return instance of {@link FontProvider} if exists, otherwise null.
+     */
+    public FontProvider getFontProvider() {
+        Object fontProvider = this.<Object>getProperty(Property.FONT_PROVIDER);
+        if (fontProvider instanceof FontProvider) {
+            return (FontProvider) fontProvider;
+        }
+        return null;
+    }
+
+    /**
+     * Sets {@link FontProvider}.
+     * Note, font provider is inherited property.
+     *
+     * @param fontProvider instance of {@link FontProvider}.
+     */
+    public void setFontProvider(FontProvider fontProvider) {
+        setProperty(Property.FONT_PROVIDER, fontProvider);
     }
 
     @Override
