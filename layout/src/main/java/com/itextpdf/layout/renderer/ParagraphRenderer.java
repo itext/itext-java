@@ -427,6 +427,14 @@ public class ParagraphRenderer extends BlockRenderer {
         }
     }
 
+    /**
+     * Gets the lines which are the result of the {@link #layout(LayoutContext)}.
+     * @return paragraph lines, or <code>null</code> if layout hasn't been called yet
+     */
+    public List<LineRenderer> getLines() {
+        return lines;
+    }
+
     @Override
     protected Float getFirstYLineRecursively() {
         if (lines == null || lines.size() == 0) {
