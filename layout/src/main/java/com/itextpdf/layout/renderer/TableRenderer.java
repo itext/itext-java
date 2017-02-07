@@ -522,7 +522,7 @@ public class TableRenderer extends AbstractRenderer {
             // the width of the widest bottom border of the row
             bottomTableBorderWidth = 0;
 
-            Border widestRowBottomBorder = bordersHandler.getWidestHorizontalBorder(row + 1);
+            Border widestRowBottomBorder = bordersHandler.getWidestHorizontalBorder(horizontalBordersIndexOffset + row + 1);
 
             // if cell is in the last row on the page, its borders shouldn't collapse with the next row borders
             boolean processAsLast = false;
@@ -745,6 +745,7 @@ public class TableRenderer extends AbstractRenderer {
                     this.deleteOwnProperty(Property.BORDER_TOP);
                 }
                 borders = getBorders();
+                bordersHandler.setTableBoundingBorders(borders);
             }
 
             if (split || processAsLast || row == rows.size() - 1) {

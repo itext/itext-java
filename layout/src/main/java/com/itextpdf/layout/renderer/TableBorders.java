@@ -127,20 +127,23 @@ public class TableBorders {
         int row;
         for (int col = 0; col < numberOfColumns; col++) {
             if (hasContent || (cellWithBigRowspanAdded && null == rows.get(splitRow - 1)[col])) {
-                if (0 == curPageIndex) {
-                    lastRowOnCurrentPage[col] = currentRow[col];
-                    curPageIndex = lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN);
-                }
-                if (0 == nextPageIndex) {
-                    firstRowOnTheNextPage[col] = currentRow[col];;
-                    nextPageIndex = firstRowOnTheNextPage[col].getPropertyAsInteger(Property.COLSPAN);
+                if (null != currentRow[col]) {
+                    if (0 >= curPageIndex) {
+                        lastRowOnCurrentPage[col] = currentRow[col];
+                        curPageIndex = lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN);
+                    }
+                    if (0 >= nextPageIndex) {
+                        firstRowOnTheNextPage[col] = currentRow[col];
+                        ;
+                        nextPageIndex = firstRowOnTheNextPage[col].getPropertyAsInteger(Property.COLSPAN);
+                    }
                 }
             } else {
-                if (0 == curPageIndex) {
+                if (0 >= curPageIndex) {
                     lastRowOnCurrentPage[col] = rows.get(splitRow - 1)[col];
                     curPageIndex = lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN);
                 }
-                if (0 == nextPageIndex) {
+                if (0 >= nextPageIndex) {
                     row = splitRow;
                     while (row < rows.size() && null == rows.get(row)[col]) {
                         row++;
@@ -176,17 +179,19 @@ public class TableBorders {
         List<Border> lastBorderOnCurrentPage = horizontalBorders.get(horizontalBordersIndexOffset + splitRow);
 
         for (int col = 0; col < numberOfColumns; col++) {
-            CellRenderer cell = lastRowOnCurrentPage[col];
+            if (null != lastRowOnCurrentPage[col]) {
+                CellRenderer cell = lastRowOnCurrentPage[col];
 
-            Border cellModelBottomBorder = getCellSideBorder(cell.getModelElement(), Property.BORDER_BOTTOM);
-            Border cellCollapsedBottomBorder = getCollapsedBorder(cellModelBottomBorder, tableBoundingBorders[2]);
+                Border cellModelBottomBorder = getCellSideBorder(cell.getModelElement(), Property.BORDER_BOTTOM);
+                Border cellCollapsedBottomBorder = getCollapsedBorder(cellModelBottomBorder, tableBoundingBorders[2]);
 
-            // fix the last border on the page
-            for (int i = col; i < col + cell.getPropertyAsInteger(Property.COLSPAN); i++) {
-                lastBorderOnCurrentPage.set(i, cellCollapsedBottomBorder);
+                // fix the last border on the page
+                for (int i = col; i < col + cell.getPropertyAsInteger(Property.COLSPAN); i++) {
+                    lastBorderOnCurrentPage.set(i, cellCollapsedBottomBorder);
+                }
+
+                col += lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN) - 1;
             }
-
-            col += lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN) - 1;
         }
 
 
@@ -194,15 +199,17 @@ public class TableBorders {
             List<Border> firstBorderOnTheNextPage = horizontalBorders.get(horizontalBordersIndexOffset + splitRow + 1);
 
             for (int col = 0; col < numberOfColumns; col++) {
-                CellRenderer cell = firstRowOnTheNextPage[col];
-                Border cellModelTopBorder = getCellSideBorder(cell.getModelElement(), Property.BORDER_TOP);
-                Border cellCollapsedTopBorder = getCollapsedBorder(cellModelTopBorder, tableBoundingBorders[0]);
+                if (null != firstRowOnTheNextPage[col]) {
+                    CellRenderer cell = firstRowOnTheNextPage[col];
+                    Border cellModelTopBorder = getCellSideBorder(cell.getModelElement(), Property.BORDER_TOP);
+                    Border cellCollapsedTopBorder = getCollapsedBorder(cellModelTopBorder, tableBoundingBorders[0]);
 
-                // fix the last border on the page
-                for (int i = col; i < col + cell.getPropertyAsInteger(Property.COLSPAN); i++) {
-                    firstBorderOnTheNextPage.set(i, cellCollapsedTopBorder);
+                    // fix the last border on the page
+                    for (int i = col; i < col + cell.getPropertyAsInteger(Property.COLSPAN); i++) {
+                        firstBorderOnTheNextPage.set(i, cellCollapsedTopBorder);
+                    }
+                    col += lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN) - 1;
                 }
-                col += lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN) - 1;
             }
         }
 
@@ -311,7 +318,7 @@ public class TableBorders {
 
     protected Border getWidestHorizontalBorder(int row) {
         Border theWidestBorder = null;
-        if (row < horizontalBorders.size()) {
+        if (row >= 0 && row < horizontalBorders.size()) {
             theWidestBorder = getWidestBorder(horizontalBorders.get(row));
         }
         return theWidestBorder;
@@ -319,7 +326,7 @@ public class TableBorders {
 
     protected Border getWidestVerticalBorder(int col) {
         Border theWidestBorder = null;
-        if (col < verticalBorders.size()) {
+        if (col >= 0 && col < verticalBorders.size()) {
             theWidestBorder = getWidestBorder(verticalBorders.get(col));
         }
         return theWidestBorder;
@@ -336,7 +343,7 @@ public class TableBorders {
 
     protected float getMaxRightWidth(Border tableBorder) {
         float width = null == tableBorder ? 0 : tableBorder.getWidth();
-        Border widestBorder = getWidestVerticalBorder(horizontalBorders.size()-1);
+        Border widestBorder = getWidestVerticalBorder(verticalBorders.size()-1);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
             width = widestBorder.getWidth();
         }
