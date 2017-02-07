@@ -61,10 +61,10 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
+import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +74,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public abstract class BlockRenderer extends AbstractRenderer {
 
@@ -94,7 +93,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null || isFixedLayout()) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
-        Map<Rectangle, Float> floatRenderers = layoutContext.getFloatedRenderers();
+        List<Rectangle> floatRenderers = layoutContext.getFloatedRenderers();
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
         if (floatPropertyValue != null) {
             if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {

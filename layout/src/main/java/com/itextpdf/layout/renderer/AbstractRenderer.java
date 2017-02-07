@@ -1171,13 +1171,13 @@ public abstract class AbstractRenderer implements IRenderer {
      * This method reduces occupied area of each float renderer affects current renderer.
      * @param floatRenderers
      */
-    protected void reduceFloatRenderersOccupiedArea(Map<Rectangle, Float> floatRenderers) {
+    protected void reduceFloatRenderersOccupiedArea(List<Rectangle> floatRenderers) {
         List<Rectangle> renderersToRemove = new ArrayList<>();
         if (!hasProperty(Property.FLOAT)) {
-            for (Rectangle floatRenderer : floatRenderers.keySet()) {
-                float floatRendererHeight = floatRenderers.get(floatRenderer);
+            for (Rectangle floatRenderer : floatRenderers) {
+                float floatRendererHeight = floatRenderer.getHeight();
                 floatRendererHeight -= occupiedArea.getBBox().getHeight();
-                floatRenderers.put(floatRenderer, floatRendererHeight);
+                floatRenderer.setHeight(floatRendererHeight);
                 if (floatRendererHeight <= 0) {
                     renderersToRemove.add(floatRenderer);
                 }
@@ -1189,11 +1189,11 @@ public abstract class AbstractRenderer implements IRenderer {
         }
     }
 
-    protected LayoutArea applyFloatPropertyOnCurrentArea(Map<Rectangle, Float> floatRenderers, float availableWidth) {
+    protected LayoutArea applyFloatPropertyOnCurrentArea(List<Rectangle> floatRenderers, float availableWidth) {
         LayoutArea editedArea = null;
         if (hasProperty(Property.FLOAT) && occupiedArea.getBBox().getWidth() < availableWidth) {
             editedArea = occupiedArea.clone();
-            floatRenderers.put(occupiedArea.getBBox(), editedArea.getBBox().getHeight());
+            floatRenderers.add(occupiedArea.getBBox());
             editedArea.getBBox().moveUp(editedArea.getBBox().getHeight());
             editedArea.getBBox().setHeight(0);
         }

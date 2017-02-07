@@ -71,7 +71,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Map;
 
 public class ImageRenderer extends AbstractRenderer implements ILeafElementRenderer {
 
@@ -114,7 +113,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             applyAbsolutePosition(layoutBox);
         }
 
-        Map<Rectangle, Float> floatRenderers = layoutContext.getFloatedRenderers();
+        List<Rectangle> floatRenderers = layoutContext.getFloatedRenderers();
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
         if (floatPropertyValue != null) {
             if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {

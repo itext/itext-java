@@ -233,7 +233,7 @@ public class TableRenderer extends AbstractRenderer {
             wasHeightClipped = true;
         }
 
-        Map<Rectangle, Float> floatRenderers = layoutContext.getFloatedRenderers();
+        List<Rectangle> floatRenderers = layoutContext.getFloatedRenderers();
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
         if (floatPropertyValue != null) {
             if (floatPropertyValue.equals(FloatPropertyValue.LEFT)) {
@@ -555,7 +555,7 @@ public class TableRenderer extends AbstractRenderer {
                     rowHeight = Math.max(rowHeight, cellResult.getOccupiedArea().getBBox().getHeight() + bordersHandler.getCellVerticalAddition(cellIndents) - rowspanOffset);
                 }
             }
-            rowHeight = fixRowHeightIfFloatRendererPresented(rowHeight, floatRenderers.keySet());
+            rowHeight = fixRowHeightIfFloatRendererPresented(rowHeight, floatRenderers);
 
             if (hasContent) {
                 heights.add(rowHeight);
@@ -1388,7 +1388,7 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
-    protected float fixRowHeightIfFloatRendererPresented(float rowHeight, Set<Rectangle> floatRenderers) {
+    protected float fixRowHeightIfFloatRendererPresented(float rowHeight, List<Rectangle> floatRenderers) {
         float maxHeight = 0;
         for (Rectangle floatRenderer: floatRenderers) {
             float floatRendererHeight = floatRenderer.getHeight();

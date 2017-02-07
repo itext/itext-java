@@ -46,8 +46,8 @@ package com.itextpdf.layout.layout;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.renderer.IRenderer;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents the result of a line {@link com.itextpdf.layout.renderer.LineRenderer#layout(LayoutContext) layouting}.
@@ -59,7 +59,7 @@ public class LineLayoutResult extends MinMaxWidthLayoutResult {
      */
     protected boolean splitForcedByNewline;
 
-    protected Map<Rectangle, Float> currentLineFloatRenderers = new HashMap<>();
+    protected List<Rectangle> currentLineFloatRenderers = new ArrayList<>();
 
     /**
      * Creates the {@link LayoutResult result of {@link com.itextpdf.layout.renderer.LineRenderer#layout(LayoutContext) layouting}}.
@@ -110,11 +110,11 @@ public class LineLayoutResult extends MinMaxWidthLayoutResult {
         return this;
     }
 
-    public Map<Rectangle, Float> getCurrentLineFloatRenderers() {
+    public List<Rectangle> getCurrentLineFloatRenderers() {
         return currentLineFloatRenderers;
     }
 
-    public void setCurrentLineFloatRenderers(Map<Rectangle, Float> currentLineFloatRenderers) {
+    public void setCurrentLineFloatRenderers(List<Rectangle> currentLineFloatRenderers) {
         this.currentLineFloatRenderers = currentLineFloatRenderers;
     }
 }

@@ -47,26 +47,16 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.layout.LayoutArea;
-import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.layout.LineLayoutResult;
-import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
+import com.itextpdf.layout.layout.*;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
-import com.itextpdf.layout.property.Leading;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.TextAlignment;
-import com.itextpdf.layout.property.HorizontalAlignment;
-import com.itextpdf.layout.property.FloatPropertyValue;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
-
+import com.itextpdf.layout.property.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
 
 /**
@@ -99,7 +89,7 @@ public class ParagraphRenderer extends BlockRenderer {
         boolean firstLineInBox = true;
         LineRenderer currentRenderer = (LineRenderer) new LineRenderer().setParent(this);
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
-        Map<Rectangle, Float> floatRenderers = layoutContext.getFloatedRenderers();
+        List<Rectangle> floatRenderers = layoutContext.getFloatedRenderers();
 
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
         FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
@@ -212,7 +202,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
             } else if (textAlignment != TextAlignment.LEFT && processedRenderer != null) {
                 float maxFloatWidth = 0;
-                for (Rectangle floatRenderer : floatRenderers.keySet()) {
+                for (Rectangle floatRenderer : floatRenderers) {
                     if (floatRenderer.getWidth() > maxFloatWidth) {
                         maxFloatWidth = floatRenderer.getWidth();
                     }

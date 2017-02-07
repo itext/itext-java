@@ -49,26 +49,11 @@ import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.TabStop;
-import com.itextpdf.layout.layout.LayoutArea;
-import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.layout.LineLayoutResult;
-import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
-import com.itextpdf.layout.layout.TextLayoutResult;
+import com.itextpdf.layout.layout.*;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
-import com.itextpdf.layout.property.BaseDirection;
-import com.itextpdf.layout.property.Leading;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.TabAlignment;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.property.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.NavigableMap;
+import java.util.*;
 
 public class LineRenderer extends AbstractRenderer {
 
@@ -77,17 +62,17 @@ public class LineRenderer extends AbstractRenderer {
 
     // bidi levels
     protected byte[] levels;
-    protected Map<Rectangle, Float> currentLineFloatRenderers = new HashMap<>();
+    protected List<Rectangle> currentLineFloatRenderers = new ArrayList<>();
 
     @Override
     public LineLayoutResult layout(LayoutContext layoutContext) {
         Rectangle layoutBox = layoutContext.getArea().getBBox().clone();
 
-        Map<Rectangle, Float> floatRenderers = layoutContext.getFloatedRenderers();
+        List<Rectangle> floatRenderers = layoutContext.getFloatedRenderers();
         if (floatRenderers != null) {
-            adjustLineRendererAccordingToFloatRenderers(floatRenderers.keySet(), layoutBox);
+            adjustLineRendererAccordingToFloatRenderers(floatRenderers, layoutBox);
         }
-        adjustLineRendererToCurrentLineFloatRendererers(currentLineFloatRenderers.keySet(), layoutBox);
+        adjustLineRendererToCurrentLineFloatRendererers(currentLineFloatRenderers, layoutBox);
 
         occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox.clone().moveDown(-layoutBox.getHeight()).setHeight(0));
 
@@ -185,7 +170,7 @@ public class LineRenderer extends AbstractRenderer {
             }
 
             if (childRenderer.hasProperty(Property.FLOAT)) {
-                currentLineFloatRenderers.put(childRenderer.getOccupiedArea().getBBox(), childRenderer.getOccupiedArea().getBBox().getHeight());
+                currentLineFloatRenderers.add(childRenderer.getOccupiedArea().getBBox());
             }
             float childAscent = 0;
             float childDescent = 0;
@@ -394,7 +379,7 @@ public class LineRenderer extends AbstractRenderer {
         }
 
         if (floatRenderers != null) {
-            result.getFloatRenderers().putAll(floatRenderers);
+            result.getFloatRenderers().addAll(floatRenderers);
         }
 
          return result;
@@ -577,7 +562,7 @@ public class LineRenderer extends AbstractRenderer {
         return result.getNotNullMinMaxWidth(availableWidth);
     }
 
-    protected void reduceFloatRenderersOccupiedArea(IRenderer processed, Map<Rectangle, Float> floatRenderers) {
+    protected void reduceFloatRenderersOccupiedArea(IRenderer processed, List<Rectangle> floatRenderers) {
         float currentFloatRendererHeight = 0;
         float maxNonFloatRenderersHeight = 0;
         for (IRenderer renderer : processed.getChildRenderers()) {
@@ -593,11 +578,9 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
         List<Rectangle> renderersToRemove = new ArrayList<>();
-        for (Rectangle floatRenderer : floatRenderers.keySet()) {
+        for (Rectangle floatRenderer : floatRenderers) {
             floatRenderer.setHeight(floatRenderer.getHeight() - maxNonFloatRenderersHeight);
-            if (floatRenderer.getHeight() > 0) {
-                floatRenderers.put(floatRenderer, floatRenderer.getHeight());
-            } else {
+            if (floatRenderer.getHeight() <= 0) {
                 renderersToRemove.add(floatRenderer);
             }
         }
@@ -778,7 +761,7 @@ public class LineRenderer extends AbstractRenderer {
         }
     }
 
-    private void adjustLineRendererAccordingToFloatRenderers(Set<Rectangle> floatRenderers, Rectangle layoutBox) {
+    private void adjustLineRendererAccordingToFloatRenderers(List<Rectangle> floatRenderers, Rectangle layoutBox) {
         float maxWidth = 0;
         float maxHeight = 0;
         for (Rectangle floatRenderer : floatRenderers) {
@@ -802,7 +785,7 @@ public class LineRenderer extends AbstractRenderer {
         }
     }
 
-    private void adjustLineRendererToCurrentLineFloatRendererers(Set<Rectangle> floatRenderers, Rectangle layoutBox) {
+    private void adjustLineRendererToCurrentLineFloatRendererers(List<Rectangle> floatRenderers, Rectangle layoutBox) {
         float maxWidth = 0;
         float maxHeight = 0;
         for (Rectangle floatRenderer : floatRenderers) {

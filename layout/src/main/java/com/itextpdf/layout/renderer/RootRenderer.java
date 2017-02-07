@@ -57,9 +57,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public abstract class RootRenderer extends AbstractRenderer {
 
@@ -70,7 +68,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     private LayoutResult keepWithNextHangingRendererLayoutResult;
     private MarginsCollapseHandler marginsCollapseHandler;
     private LayoutArea initialCurrentArea;
-    private Map<Rectangle, Float> floatedRenderers = new HashMap<>();
+    private List<Rectangle> floatedRenderers = new ArrayList<>();
 
     public void addChild(IRenderer renderer) {
         // Some positioned renderers might have been fetched from non-positioned child and added to this renderer,

@@ -47,8 +47,8 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.renderer.IRenderer;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents the result of content {@link IRenderer#layout(LayoutContext) layouting}.
@@ -99,7 +99,7 @@ public class LayoutResult {
      */
     protected IRenderer causeOfNothing;
 
-    protected Map<Rectangle, Float> floatRenderers = new HashMap<>();
+    protected List<Rectangle> floatRenderers = new ArrayList<>();
 
     /**
      * Creates the {@link LayoutResult result of {@link IRenderer#layout(LayoutContext) layouting}}.
@@ -143,7 +143,7 @@ public class LayoutResult {
      * @param floatRenderers the list of float renderers may affect this renderer
      */
     public LayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer,
-                        IRenderer cause, Map<Rectangle, Float> floatRenderers) {
+                        IRenderer cause, List<Rectangle> floatRenderers) {
         this(status, occupiedArea, splitRenderer, overflowRenderer, cause);
         this.floatRenderers = floatRenderers;
     }
@@ -223,7 +223,7 @@ public class LayoutResult {
         return causeOfNothing;
     }
 
-    public Map<Rectangle, Float> getFloatRenderers() {
+    public List<Rectangle> getFloatRenderers() {
         return floatRenderers;
     }
 
