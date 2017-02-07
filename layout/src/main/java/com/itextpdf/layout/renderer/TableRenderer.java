@@ -832,7 +832,7 @@ public class TableRenderer extends AbstractRenderer {
                     useFooterBorders = collapseFooterBorders(
                             0 != lastFlushedRowBottomBorder.size() && 0 == row
                                     ? lastFlushedRowBottomBorder
-                                    : bordersHandler.horizontalBorders.get(lastRow),
+                                    : bordersHandler.horizontalBorders.get(horizontalBordersIndexOffset + lastRow),
                             numberOfColumns,
                             rows.size());
                     layoutBox.increaseHeight(bottomTableBorderWidth / 2);
@@ -844,17 +844,17 @@ public class TableRenderer extends AbstractRenderer {
                 // apply the difference to set footer and table left/right margins identical
                 layoutBox.<Rectangle>applyMargins(0, -rightBorderMaxWidth / 2, 0, -leftBorderMaxWidth / 2, false);
                 prepareFooterOrHeaderRendererForLayout(footerRenderer, layoutBox.getWidth());
-                footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
+                LayoutResult res = footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
                 layoutBox.<Rectangle>applyMargins(0, -rightBorderMaxWidth / 2, 0, -leftBorderMaxWidth / 2, true);
                 float footerHeight = footerRenderer.getOccupiedAreaBBox().getHeight();
                 footerRenderer.move(0, -(layoutBox.getHeight() - footerHeight));
                 layoutBox.setY(footerRenderer.occupiedArea.getBBox().getTop()).setHeight(occupiedArea.getBBox().getBottom() - layoutBox.getBottom());
                 // fix footer borders
                 if (!tableModel.isEmpty()) {
-                    bordersHandler.updateTopBorder(
+                    footerRenderer.bordersHandler.updateTopBorder(
                             0 != lastFlushedRowBottomBorder.size() && 0 == row
                                     ? lastFlushedRowBottomBorder
-                                    : bordersHandler.horizontalBorders.get(lastRow),
+                                    : bordersHandler.horizontalBorders.get(horizontalBordersIndexOffset + lastRow),
                             useFooterBorders);
                 }
             }

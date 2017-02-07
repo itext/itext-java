@@ -88,6 +88,10 @@ public class TableBorders {
         return this;
     }
 
+    protected TableBorders correctTopBorder() {
+        return correctTopBorder(null);
+    }
+
     protected TableBorders correctTopBorder(TableBorders headerTableBorders) {
         List<Border> topBorders;
         if (null != headerTableBorders) {
@@ -110,6 +114,10 @@ public class TableBorders {
     }
 
     protected TableBorders processSplit(int splitRow, boolean split, boolean hasContent, boolean cellWithBigRowspanAdded) {
+        return processSplit(splitRow, split, hasContent, cellWithBigRowspanAdded, null);
+    }
+
+    protected TableBorders processSplit(int splitRow, boolean split, boolean hasContent, boolean cellWithBigRowspanAdded, TableBorders footerTableBorders) {
         CellRenderer[] currentRow = rows.get(splitRow);
         CellRenderer[] lastRowOnCurrentPage = new CellRenderer[numberOfColumns];
         CellRenderer[] firstRowOnTheNextPage = new CellRenderer[numberOfColumns];
