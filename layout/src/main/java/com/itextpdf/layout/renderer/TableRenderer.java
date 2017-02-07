@@ -1102,40 +1102,12 @@ public class TableRenderer extends AbstractRenderer {
 
         // if table is empty we still need to process table borders
         if (0 == childRenderers.size() && null == headerRenderer && null == footerRenderer) {
-            List<Border> topHorizontalBorders = new ArrayList<Border>();
-            List<Border> bottomHorizontalBorders = new ArrayList<Border>();
-            for (int i = 0; i < numberOfColumns; i++) {
-                bottomHorizontalBorders.add(Border.NO_BORDER);
-            }
-            List<Border> leftVerticalBorders = new ArrayList<Border>();
-            List<Border> rightVerticalBorders = new ArrayList<Border>();
-
-            // process bottom border of the last added row
+            bordersHandler.processEmptyTable(tableModel.isComplete() ? lastFlushedRowBottomBorder : null);
             if (tableModel.isComplete() && 0 != lastFlushedRowBottomBorder.size()) {
-                bottomHorizontalBorders = lastFlushedRowBottomBorder;
                 // hack to process 'margins'
                 setBorders(widestLustFlushedBorder, 2);
                 setBorders(Border.NO_BORDER, 0);
             }
-            // collapse with table bottom border
-            for (int i = 0; i < bottomHorizontalBorders.size(); i++) {
-                Border border = bottomHorizontalBorders.get(i);
-                if (null == border || (null != borders[2] && border.getWidth() < borders[2].getWidth())) {
-                    bottomHorizontalBorders.set(i, borders[2]);
-                }
-                topHorizontalBorders.add(borders[0]);
-            }
-            // TODO
-//            horizontalBorders.set(0, topHorizontalBorders);
-//            horizontalBorders.add(bottomHorizontalBorders);
-//            leftVerticalBorders.add(borders[3]);
-//            rightVerticalBorders.add(borders[1]);
-//            verticalBorders = new ArrayList<>();
-//            verticalBorders.add(leftVerticalBorders);
-//            for (int i = 0; i < numberOfColumns - 1; i++) {
-//                verticalBorders.add(new ArrayList<Border>());
-//            }
-//            verticalBorders.add(rightVerticalBorders);
         }
 
         // Apply bottom and top border
@@ -1510,7 +1482,8 @@ public class TableRenderer extends AbstractRenderer {
         float tableWidth = (float) retrieveWidth(layoutBox.getWidth());
         applyMargins(layoutBox, false);
         if (initializeBorders) {
-            // FIXME
+            bordersHandler = new TableBorders(rows, ((Table) getModelElement()).getNumberOfColumns());
+            bordersHandler.setTableBoundingBorders(getBorders());
             bordersHandler.initializeBorders(((Table) getModelElement()).getLastRowBottomBorder(), true);
             bordersHandler.setTableBoundingBorders(getBorders());
             initializeHeaderAndFooter(true);

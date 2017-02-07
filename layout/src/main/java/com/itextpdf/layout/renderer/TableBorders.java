@@ -95,7 +95,7 @@ public class TableBorders {
     protected TableBorders correctTopBorder(TableBorders headerTableBorders) {
         List<Border> topBorders;
         if (null != headerTableBorders) {
-            topBorders = headerTableBorders.horizontalBorders.get(headerTableBorders.horizontalBorders.size()-1);
+            topBorders = headerTableBorders.horizontalBorders.get(headerTableBorders.horizontalBorders.size() - 1);
         } else {
             topBorders = new ArrayList<Border>();
             for (int col = 0; col < numberOfColumns; col++) {
@@ -110,6 +110,41 @@ public class TableBorders {
         if (null != headerTableBorders) {
             headerTableBorders.updateBottomBorder(horizontalBorders.get(horizontalBordersIndexOffset), new boolean[numberOfColumns]);
         }
+        return this;
+    }
+
+    protected TableBorders processEmptyTable(List<Border> lastFlushedBorder) {
+        List<Border> topHorizontalBorders = new ArrayList<Border>();
+        List<Border> bottomHorizontalBorders = new ArrayList<Border>();
+        if (null != lastFlushedBorder && 0 != lastFlushedBorder.size()) {
+            bottomHorizontalBorders = lastFlushedBorder;
+        } else {
+            for (int i = 0; i < numberOfColumns; i++) {
+                bottomHorizontalBorders.add(Border.NO_BORDER);
+            }
+        }
+        List<Border> leftVerticalBorders = new ArrayList<Border>();
+        List<Border> rightVerticalBorders = new ArrayList<Border>();
+
+        // collapse with table bottom border
+        for (int i = 0; i < bottomHorizontalBorders.size(); i++) {
+            Border border = bottomHorizontalBorders.get(i);
+            if (null == border || (null != tableBoundingBorders[2] && border.getWidth() < tableBoundingBorders[2].getWidth())) {
+                bottomHorizontalBorders.set(i, tableBoundingBorders[2]);
+            }
+            topHorizontalBorders.add(tableBoundingBorders[0]);
+        }
+        horizontalBorders.set(0, topHorizontalBorders);
+        horizontalBorders.add(bottomHorizontalBorders);
+        leftVerticalBorders.add(tableBoundingBorders[3]);
+        rightVerticalBorders.add(tableBoundingBorders[1]);
+        verticalBorders = new ArrayList<>();
+        verticalBorders.add(leftVerticalBorders);
+        for (int i = 0; i < numberOfColumns - 1; i++) {
+            verticalBorders.add(new ArrayList<Border>());
+        }
+        verticalBorders.add(rightVerticalBorders);
+
         return this;
     }
 
@@ -343,7 +378,7 @@ public class TableBorders {
 
     protected float getMaxRightWidth(Border tableBorder) {
         float width = null == tableBorder ? 0 : tableBorder.getWidth();
-        Border widestBorder = getWidestVerticalBorder(verticalBorders.size()-1);
+        Border widestBorder = getWidestVerticalBorder(verticalBorders.size() - 1);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
             width = widestBorder.getWidth();
         }
@@ -362,7 +397,7 @@ public class TableBorders {
     // TODO Do not use it =)
     protected float getMaxBottomWidth(Border tableBorder) {
         float width = null == tableBorder ? 0 : tableBorder.getWidth();
-        Border widestBorder = getWidestHorizontalBorder(horizontalBorders.size()-1);
+        Border widestBorder = getWidestHorizontalBorder(horizontalBorders.size() - 1);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
             width = widestBorder.getWidth();
         }
@@ -598,7 +633,7 @@ public class TableBorders {
             if (null == cellModelSideBorder && !cellModel.hasProperty(Property.BORDER)) {
 //                cellModelSideBorder = cellModel.getDefaultProperty(borderType); // TODO
 //                if (null == cellModelSideBorder && !cellModel.hasDefaultProperty(borderType)) {
-                    cellModelSideBorder = cellModel.getDefaultProperty(Property.BORDER);
+                cellModelSideBorder = cellModel.getDefaultProperty(Property.BORDER);
 //                }
             }
         }
@@ -690,14 +725,13 @@ public class TableBorders {
     // region footer collapsing methods
 
 
-
     protected TableBorders updateTopBorder(List<Border> newBorder, boolean[] useOldBorders) {
         updateBorder(horizontalBorders.get(horizontalBordersIndexOffset), newBorder, useOldBorders);
         return this;
     }
 
     protected TableBorders updateBottomBorder(List<Border> newBorder, boolean[] useOldBorders) {
-        updateBorder(horizontalBorders.get(horizontalBorders.size()-1), newBorder, useOldBorders);
+        updateBorder(horizontalBorders.get(horizontalBorders.size() - 1), newBorder, useOldBorders);
         return this;
     }
 
