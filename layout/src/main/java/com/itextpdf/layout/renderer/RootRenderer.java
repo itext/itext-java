@@ -292,8 +292,11 @@ public abstract class RootRenderer extends AbstractRenderer {
 
     private void updateCurrentAreaAndProcessRenderer(IRenderer renderer, List<IRenderer> resultRenderers, LayoutResult result) {
         if (currentArea != null) {
-            currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
-            currentArea.setEmptyArea(false);
+            float resultHeight = result.getOccupiedArea().getBBox().getHeight();
+            currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - resultHeight);
+            if (currentArea.isEmptyArea() && resultHeight > 0) {
+                currentArea.setEmptyArea(false);
+            }
             processRenderer(renderer, resultRenderers);
         }
 

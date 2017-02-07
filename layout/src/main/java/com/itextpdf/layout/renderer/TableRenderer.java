@@ -913,9 +913,6 @@ public class TableRenderer extends AbstractRenderer {
                             boolean isBigRowspannedCell = 1 != currentRow[col].getModelElement().getRowspan();
                             if (hasContent || isBigRowspannedCell) {
                                 columnsWithCellToBeEnlarged[col] = true;
-                                if (isBigRowspannedCell && !processAsLast) {
-                                    childRenderers.add(currentRow[col]);
-                                }
                             } else {
                                 if (Border.NO_BORDER != currentRow[col].<Border>getProperty(Property.BORDER_TOP)) {
                                     splitResult[1].rows.get(0)[col].deleteOwnProperty(Property.BORDER_TOP);
@@ -1509,7 +1506,7 @@ public class TableRenderer extends AbstractRenderer {
 
     private ColumnMinMaxWidth countTableMinMaxWidth(float availableWidth, boolean initializeBorders, boolean isTableBeingLayouted) {
         Rectangle layoutBox = new Rectangle(availableWidth, AbstractRenderer.INF);
-        Float tableWidth = retrieveWidth(layoutBox.getWidth());
+        float tableWidth = (float) retrieveWidth(layoutBox.getWidth());
         applyMargins(layoutBox, false);
         if (initializeBorders) {
             // FIXME
@@ -1565,10 +1562,14 @@ public class TableRenderer extends AbstractRenderer {
         Table tableModel = (Table) getModelElement();
         int nrow = rows.size();
         int ncol = tableModel.getNumberOfColumns();
-        MinMaxWidth[][] cellsMinMaxWidth = new MinMaxWidth[nrow][ncol];
+        MinMaxWidth[][] cellsMinMaxWidth = new MinMaxWidth[nrow][];
+        int[][] cellsColspan = new int[nrow][];
+        for (int i = 0; i < cellsMinMaxWidth.length; i++) {
+            cellsMinMaxWidth[i] = new MinMaxWidth[ncol];
+            cellsColspan[i] = new int[ncol];
+        }
         ColumnMinMaxWidth result = new ColumnMinMaxWidth(ncol);
 
-        int[][] cellsColspan = new int[nrow][ncol];
         for (int row = 0; row < nrow; ++row) {
             for (int col = 0; col < ncol; ++col) {
                 CellRenderer cell = rows.get(row)[col];
@@ -2011,8 +2012,8 @@ public class TableRenderer extends AbstractRenderer {
     }
 
     private static class ColumnMinMaxWidth {
-        private float[] minWidth;
-        private float[] maxWidth;
+        float[] minWidth;
+        float[] maxWidth;
         private float layoutBoxWidth;
 
         float[] getMinWidths() {

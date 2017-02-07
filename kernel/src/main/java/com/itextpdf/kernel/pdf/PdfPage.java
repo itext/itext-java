@@ -108,6 +108,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (pdfDocument.isTagged()) {
             structParents = (int) pdfDocument.getNextStructParentIndex();
             getPdfObject().put(PdfName.StructParents, new PdfNumber(structParents));
+            setTabOrder(PdfName.S);
         }
     }
 
@@ -454,20 +455,20 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Flushes page and its content stream. If <code>flushContentStreams</code> is true, all content streams that are
+     * Flushes page and its content stream. If <code>flushResourcesContentStreams</code> is true, all content streams that are
      * rendered on this page (like FormXObjects, annotation appearance streams, patterns) and also all images associated
      * with this page will also be flushed.
      * <br>
      * For notes about tag structure flushing see {@link PdfPage#flush() PdfPage#flush() method}.
      * <br>
      * <br>
-     * If <code>PdfADocument</code> is used, flushing will be applied only if <code>flushContentStreams</code> is true.
+     * If <code>PdfADocument</code> is used, flushing will be applied only if <code>flushResourcesContentStreams</code> is true.
      *
-     * @param flushContentStreams if true all content streams that are rendered on this page (like form xObjects,
+     * @param flushResourcesContentStreams if true all content streams that are rendered on this page (like form xObjects,
      *                            annotation appearance streams, patterns) and also all images associated with this page
      *                            will be flushed.
      */
-    public void flush(boolean flushContentStreams) {
+    public void flush(boolean flushResourcesContentStreams) {
         // TODO log warning in case of failed flush in pdfa document case
         if (isFlushed()) {
             return;
@@ -480,9 +481,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (resources != null && resources.isModified() && !resources.isReadOnly()) {
             getPdfObject().put(PdfName.Resources, resources.getPdfObject());
         }
-        if (flushContentStreams) {
+        if (flushResourcesContentStreams) {
             getDocument().checkIsoConformance(this, IsoKey.PAGE);
-            flushContentStreams();
+            flushResourcesContentStreams();
         }
         int contentStreamCount = getContentStreamCount();
         for (int i = 0; i < contentStreamCount; i++) {
@@ -790,12 +791,17 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfPage} instance.
      */
     public PdfPage addAnnotation(int index, PdfAnnotation annotation, boolean tagAnnotation) {
-        if (getDocument().isTagged() && tagAnnotation) {
-            TagTreePointer tagPointer = getDocument().getTagStructureContext().getAutoTaggingPointer();
-            PdfPage prevPage = tagPointer.getCurrentPage();
-            tagPointer.setPageForTagging(this).addAnnotationTag(annotation);
-            if (prevPage != null) {
-                tagPointer.setPageForTagging(prevPage);
+        if (getDocument().isTagged()) {
+            if (tagAnnotation) {
+                TagTreePointer tagPointer = getDocument().getTagStructureContext().getAutoTaggingPointer();
+                PdfPage prevPage = tagPointer.getCurrentPage();
+                tagPointer.setPageForTagging(this).addAnnotationTag(annotation);
+                if (prevPage != null) {
+                    tagPointer.setPageForTagging(prevPage);
+                }
+            }
+            if (getTabOrder() == null) {
+                setTabOrder(PdfName.S);
             }
         }
 
@@ -949,6 +955,28 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Sets a name specifying the tab order that shall be used for annotations on the page.
+     * The possible values are {@link PdfName#R} (row order), {@link PdfName#C} (column order), and {@link PdfName#S} (structure order). 
+     * See ISO 32000 12.5, "Annotations" for details.
+     * @param tabOrder a {@link PdfName} specifying the annotations tab order. See method description for the allowed values.
+     * @return this {@link PdfPage} instance.
+     */
+    public PdfPage setTabOrder(PdfName tabOrder) {
+        put(PdfName.Tabs, tabOrder);
+        return this;
+    }
+
+    /**
+     * Gets a name specifying the tab order that shall be used for annotations on the page.
+     * The possible values are {@link PdfName#R} (row order), {@link PdfName#C} (column order), and {@link PdfName#S} (structure order). 
+     * See ISO 32000 12.5, "Annotations" for details.
+     * @return a {@link PdfName} specifying the annotations tab order or null if tab order is not defined.
+     */
+    public PdfName getTabOrder() {
+        return getPdfObject().getAsName(PdfName.Tabs);
+    }
+
+    /**
      * Helper method that associate specified value with specified key in the underlined {@link PdfDictionary}.
      * May be used in chain.
      *
@@ -1051,8 +1079,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private void flushContentStreams() {
-        flushContentStreams(getResources().getPdfObject());
+    private void flushResourcesContentStreams() {
+        flushResourcesContentStreams(getResources().getPdfObject());
 
         PdfArray annots = getAnnots(false);
         if (annots != null) {
@@ -1065,7 +1093,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private void flushContentStreams(PdfDictionary resources) {
+    private void flushResourcesContentStreams(PdfDictionary resources) {
         if (resources != null) {
             flushWithResources(resources.getAsDictionary(PdfName.XObject));
             flushWithResources(resources.getAsDictionary(PdfName.Pattern));
@@ -1081,7 +1109,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         for (PdfObject obj : objsCollection.values()) {
             if (obj.isFlushed())
                 continue;
-            flushContentStreams(((PdfDictionary) obj).getAsDictionary(PdfName.Resources));
+            flushResourcesContentStreams(((PdfDictionary) obj).getAsDictionary(PdfName.Resources));
             flushMustBeIndirectObject(obj);
         }
     }

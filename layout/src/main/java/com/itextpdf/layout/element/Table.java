@@ -194,7 +194,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     }
 
     public Table setAutoLayout() {
-        setProperty(Property.TABLE_LAYOUT, "fixed");
+        setProperty(Property.TABLE_LAYOUT, "auto");
         return this;
     }
 

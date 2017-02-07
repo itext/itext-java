@@ -53,16 +53,15 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.border.SolidBorder;
-import com.itextpdf.layout.element.BlockElement;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -300,7 +299,6 @@ public class MinWidthTest extends ExtendedITextTest {
     public void simpleTableTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "simpleTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_simpleTableTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
         Cell cell1 = new Cell().add("I am table")
@@ -345,7 +343,6 @@ public class MinWidthTest extends ExtendedITextTest {
     public void colspanTableTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "colspanTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_colspanTableTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
         Cell bigCell = new Cell(1, 2).add("I am veryveryvery big cell")
@@ -390,7 +387,6 @@ public class MinWidthTest extends ExtendedITextTest {
     public void colspanRowspanTableTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "colspanRowspanTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_colspanRowspanTableTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
         Cell colspanCell = new Cell(1, 2).add("I am veryveryvery big cell")
@@ -440,7 +436,6 @@ public class MinWidthTest extends ExtendedITextTest {
     public void headerFooterTableTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "headerFooterTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_headerFooterTableTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
         Cell bigCell = new Cell().add("veryveryveryvery big cell")
@@ -490,7 +485,7 @@ public class MinWidthTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
-    private static float toEffectiveWidth(BlockElement b, float fullWidth) {
+    private static float toEffectiveWidth(IBlockElement b, float fullWidth) {
         if (b instanceof Table) {
             return fullWidth + ((Table) b).getNumberOfColumns() * MinMaxWidthUtils.getEps();
         } else {
@@ -500,9 +495,9 @@ public class MinWidthTest extends ExtendedITextTest {
     }
 
     private static float[] toEffectiveTableColumnWidth(float[] tableColumnWidth) {
-        float[] result = tableColumnWidth.clone();
+        float[] result = new float[tableColumnWidth.length];
         for (int i = 0; i < result.length; ++i) {
-            result[i] += MinMaxWidthUtils.getEps();
+            result[i] = tableColumnWidth[i] + MinMaxWidthUtils.getEps();
         }
         return result;
     }

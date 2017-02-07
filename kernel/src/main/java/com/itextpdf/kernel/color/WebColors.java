@@ -44,11 +44,11 @@
 package com.itextpdf.kernel.color;
 
 import com.itextpdf.io.LogMessageConstant;
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.StringTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.StringTokenizer;
 
 /**
  * This class is a HashMap that contains the names of colors as a key and the
@@ -117,6 +117,7 @@ public class WebColors extends HashMap<String, int[]> {
         NAMES.put("gold", new int[]{0xff, 0xd7, 0x00, 0xff});
         NAMES.put("goldenrod", new int[]{0xda, 0xa5, 0x20, 0xff});
         NAMES.put("gray", new int[]{0x80, 0x80, 0x80, 0xff});
+        NAMES.put("grey", new int[]{0x80, 0x80, 0x80, 0xff});
         NAMES.put("green", new int[]{0x00, 0x80, 0x00, 0xff});
         NAMES.put("greenyellow", new int[]{0xad, 0xff, 0x2f, 0xff});
         NAMES.put("honeydew", new int[]{0xf0, 0xff, 0xf0, 0xff});
@@ -218,17 +219,21 @@ public class WebColors extends HashMap<String, int[]> {
      */
     public static DeviceRgb getRGBColor(String name) {
         float[] rgbaColor = getRGBAColor(name);
-        return new DeviceRgb(rgbaColor[0], rgbaColor[1], rgbaColor[2]);
+        if (rgbaColor == null) {
+            return new DeviceRgb(0, 0, 0);
+        } else {
+            return new DeviceRgb(rgbaColor[0], rgbaColor[1], rgbaColor[2]);
+        }
     }
 
     /**
      * Gives an array of four floats that contain RGBA values, each value is between 0 and 1. 
      * @param name a name such as black, violet, cornflowerblue or #RGB or
      *             #RRGGBB or RGB or RRGGBB or rgb(R,G,B) or rgb(R,G,B,A)
-     * @return the corresponding array of four floats.
+     * @return the corresponding array of four floats, or <code>null</code> if parsing failed.
      */
     public static float[] getRGBAColor(String name) {
-        float[] color = {0, 0, 0, 1};
+        float[] color = null;
         try {
             String colorName = name.toLowerCase();
             boolean colorStrWithoutHash = missingHashColorFormat(colorName);
@@ -239,12 +244,14 @@ public class WebColors extends HashMap<String, int[]> {
                 }
                 if (colorName.length() == 3) {
                     String red = colorName.substring(0, 1);
+                    color = new float[]{0, 0, 0, 1};
                     color[0] = (float) (Integer.parseInt(red + red, 16) / RGB_MAX_VAL);
                     String green = colorName.substring(1, 2);
                     color[1] = (float) (Integer.parseInt(green + green, 16) / RGB_MAX_VAL);
                     String blue = colorName.substring(2);
                     color[2] = (float) (Integer.parseInt(blue + blue, 16) / RGB_MAX_VAL);
                 } else if (colorName.length() == 6) {
+                    color = new float[]{0, 0, 0, 1};
                     color[0] = (float) (Integer.parseInt(colorName.substring(0, 2), 16) / RGB_MAX_VAL);
                     color[1] = (float) (Integer.parseInt(colorName.substring(2, 4), 16) / RGB_MAX_VAL);
                     color[2] = (float) (Integer.parseInt(colorName.substring(4), 16) / RGB_MAX_VAL);
@@ -255,28 +262,26 @@ public class WebColors extends HashMap<String, int[]> {
             } else if (colorName.startsWith("rgb(")) {
                 final String delim = "rgb(), \t\r\n\f";
                 StringTokenizer tok = new StringTokenizer(colorName, delim);
+                color = new float[]{0, 0, 0, 1};
                 parseRGBColors(color, tok);
             } else if (colorName.startsWith("rgba(")) {
                 final String delim = "rgba(), \t\r\n\f";
                 StringTokenizer tok = new StringTokenizer(colorName, delim);
+                color = new float[]{0, 0, 0, 1};
                 parseRGBColors(color, tok);
                 if (tok.hasMoreTokens()) {
                     color[3] = getAlphaChannelValue(tok.nextToken());
                 }
-
-            } else if (!NAMES.containsKey(colorName)) {
-                Logger logger = LoggerFactory.getLogger(WebColors.class);
-                logger.error(MessageFormat.format(LogMessageConstant.COLOR_NOT_FOUND, colorName));
-            } else {
+            } else if (NAMES.containsKey(colorName)) {
                 int[] intColor = NAMES.get(colorName);
+                color = new float[]{0, 0, 0, 1};
                 color[0] = (float) (intColor[0] / RGB_MAX_VAL);
                 color[1] = (float) (intColor[1] / RGB_MAX_VAL);
                 color[2] = (float) (intColor[2] / RGB_MAX_VAL);
             }
-        } catch (Exception e) {
-            Logger logger = LoggerFactory.getLogger(WebColors.class);
-            logger.error(MessageFormat.format(LogMessageConstant.COLOR_NOT_PARSED, name));
-            color = new float[]{0, 0, 0, 1};
+        } catch (Exception exc) {
+            // Will just return null in this case
+            color = null;
         }
 
         return color;

@@ -229,7 +229,7 @@ public class ImageRenderer extends AbstractRenderer {
         UnitValue rendererWidth = this.<UnitValue>getProperty(Property.WIDTH);
         if (rendererWidth != null && rendererWidth.isPercentValue()) {
             minMaxWidth.setChildrenMinWidth(0);
-            float coeff = imageWidth / retrieveWidth(area.getBBox().getWidth());
+            float coeff = imageWidth / (float) retrieveWidth(area.getBBox().getWidth());
             minMaxWidth.setChildrenMaxWidth(unscaledWidth * coeff);
         }
         return new MinMaxWidthLayoutResult(LayoutResult.FULL, occupiedArea, null, null, isPlacingForced ? this : null)

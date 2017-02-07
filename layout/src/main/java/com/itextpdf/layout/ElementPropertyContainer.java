@@ -47,6 +47,7 @@ import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.property.Background;
@@ -292,10 +293,22 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     /**
      * Sets the font of this Element.
      *
-     * @param font a {@link PdfFont font program}
+     * @param font a {@link PdfFont font}
      * @return this Element.
      */
     public T setFont(PdfFont font) {
+        setProperty(Property.FONT, font);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets the font of this Element. Note that {@link com.itextpdf.layout.font.FontProvider} shall be set as well.
+     * See {@link RootElement#setFontProvider(FontProvider)}
+     *
+     * @param font a font name to fetch from {@link com.itextpdf.layout.font.FontProvider}
+     * @return this Element.
+     */
+    public T setFont(String font) {
         setProperty(Property.FONT, font);
         return (T) (Object) this;
     }
