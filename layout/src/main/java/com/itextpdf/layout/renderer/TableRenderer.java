@@ -55,6 +55,7 @@ import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -627,49 +628,43 @@ public class TableRenderer extends AbstractRenderer {
                             // We check if we can fit all the rows right now and the split occurred only because we reserved
                             // space for footer before, and if yes we skip footer and write all the content right now.
                             if (null != footerRenderer && tableModel.isSkipLastFooter() && tableModel.isComplete()) {
-//                                LayoutArea potentialArea = new LayoutArea(area.getPageNumber(), layoutBox.clone());
-//                                // Fix layout area
-//                                Border widestRowTopBorder = bordersHandler.getWidestHorizontalBorder(row);
-//                                if (null != widestRowTopBorder) {
-//                                    potentialArea.getBBox().moveDown(widestRowTopBorder.getWidth() / 2).increaseHeight(widestRowTopBorder.getWidth() / 2);
-//                                }
-//                                float footerHeight = footerRenderer.getOccupiedArea().getBBox().getHeight();
-//                                potentialArea.getBBox().moveDown(footerHeight).increaseHeight(footerHeight);
-//
-//                                TableRenderer overflowRenderer = createOverflowRenderer(new Table.RowRange(rowRange.getStartRow() + row, rowRange.getFinishRow()));
-//                                overflowRenderer.rows = rows.subList(row, rows.size());
-//                                overflowRenderer.setProperty(Property.IGNORE_HEADER, true);
-//                                overflowRenderer.setProperty(Property.IGNORE_FOOTER, true);
-//                                overflowRenderer.setProperty(Property.MARGIN_TOP, 0);
-//                                overflowRenderer.setProperty(Property.MARGIN_BOTTOM, 0);
-//                                overflowRenderer.setProperty(Property.MARGIN_LEFT, 0);
-//                                overflowRenderer.setProperty(Property.MARGIN_RIGHT, 0);
-//                                // init borders
-//                                overflowRenderer.initializeBorders(new ArrayList<Border>(), true);
-//                                overflowRenderer.collapseAllBordersAndEmptyRows(overflowRenderer.getBorders(), 0, rowRange.getFinishRow() - rowRange.getStartRow() - row, numberOfColumns);
-//                                prepareFooterOrHeaderRendererForLayout(overflowRenderer, layoutBox.getWidth());
-//                                if (LayoutResult.FULL == overflowRenderer.layout(new LayoutContext(potentialArea)).getStatus()) {
-//                                    footerRenderer = null;
-//                                    // fix layout area and table bottom border
-//                                    layoutBox.increaseHeight(footerHeight).moveDown(footerHeight);
-//                                    deleteOwnProperty(Property.BORDER_BOTTOM);
-//                                    borders = getBorders();
-//                                    processAsLast = false;
-//                                    cellProcessingQueue.clear();
-//                                    for (addCol = 0; addCol < currentRow.length; addCol++) {
-//                                        if (currentRow[addCol] != null) {
-//                                            cellProcessingQueue.addLast(new CellRendererInfo(currentRow[addCol], addCol, row));
-//                                        }
-//                                    }
-//                                    // build borders of current row cells and find the widest one
-//                                    for (CellRendererInfo curCellInfo : cellProcessingQueue) {
-//                                        col = curCellInfo.column;
-//                                        cell = curCellInfo.cellRenderer;
-//                                        prepareBuildingBordersArrays(cell, borders, tableModel.getNumberOfColumns(), row, col);
-//                                        buildBordersArrays(cell, curCellInfo.finishRowInd, col);
-//                                    }
-//                                    continue;
-//                                }
+                                LayoutArea potentialArea = new LayoutArea(area.getPageNumber(), layoutBox.clone());
+                                // Fix layout area
+                                Border widestRowTopBorder = bordersHandler.getWidestHorizontalBorder(horizontalBordersIndexOffset + row);
+                                if (null != widestRowTopBorder) {
+                                    potentialArea.getBBox().moveDown(widestRowTopBorder.getWidth() / 2).increaseHeight(widestRowTopBorder.getWidth() / 2);
+                                }
+                                float footerHeight = footerRenderer.getOccupiedArea().getBBox().getHeight();
+                                potentialArea.getBBox().moveDown(footerHeight).increaseHeight(footerHeight);
+
+                                TableRenderer overflowRenderer = createOverflowRenderer(new Table.RowRange(rowRange.getStartRow() + row, rowRange.getFinishRow()));
+                                overflowRenderer.rows = rows.subList(row, rows.size());
+                                overflowRenderer.setProperty(Property.IGNORE_HEADER, true);
+                                overflowRenderer.setProperty(Property.IGNORE_FOOTER, true);
+                                overflowRenderer.setProperty(Property.MARGIN_TOP, 0);
+                                overflowRenderer.setProperty(Property.MARGIN_BOTTOM, 0);
+                                overflowRenderer.setProperty(Property.MARGIN_LEFT, 0);
+                                overflowRenderer.setProperty(Property.MARGIN_RIGHT, 0);
+
+                                overflowRenderer.rowRange = new Table.RowRange(0, rows.size() - row - 1);
+                                overflowRenderer.processRendererBorders(numberOfColumns);
+                                prepareFooterOrHeaderRendererForLayout(overflowRenderer, layoutBox.getWidth());
+                                if (LayoutResult.FULL == overflowRenderer.layout(new LayoutContext(potentialArea)).getStatus()) {
+                                    footerRenderer = null;
+                                    // fix layout area and table bottom border
+                                    layoutBox.increaseHeight(footerHeight).moveDown(footerHeight);
+                                    deleteOwnProperty(Property.BORDER_BOTTOM);
+                                    borders = getBorders();
+                                    bordersHandler.setTableBoundingBorders(borders);
+                                    processAsLast = false;
+                                    cellProcessingQueue.clear();
+                                    for (addCol = 0; addCol < currentRow.length; addCol++) {
+                                        if (currentRow[addCol] != null) {
+                                            cellProcessingQueue.addLast(new CellRendererInfo(currentRow[addCol], addCol, row));
+                                        }
+                                    }
+                                    continue;
+                                }
                             }
 
                             // Here we look for a cell with big rowspan (i.e. one which would not be normally processed in
@@ -1025,16 +1020,17 @@ public class TableRenderer extends AbstractRenderer {
                             logger.warn(LogMessageConstant.CLIP_ELEMENT);
                             // Process borders
                             if (status == LayoutResult.NOTHING) {
-                                ArrayList<Border> topBorders = new ArrayList<Border>();
-                                ArrayList<Border> bottomBorders = new ArrayList<Border>();
-                                for (int i = 0; i < numberOfColumns; i++) {
-                                    topBorders.add(borders[0]);
-                                    bottomBorders.add(borders[2]);
-                                }
-                                // TODO
-//                                horizontalBorders.clear();
-//                                horizontalBorders.add(topBorders);
-//                                horizontalBorders.add(bottomBorders);
+                                bordersHandler.processEmptyTable(null);
+//                                ArrayList<Border> topBorders = new ArrayList<Border>();
+//                                ArrayList<Border> bottomBorders = new ArrayList<Border>();
+//                                for (int i = 0; i < numberOfColumns; i++) {
+//                                    topBorders.add(borders[0]);
+//                                    bottomBorders.add(borders[2]);
+//                                }
+//                                // TODO
+////                                horizontalBorders.clear();
+////                                horizontalBorders.add(topBorders);
+////                                horizontalBorders.add(bottomBorders);
                                 float bordersWidth = (null == borders[0] ? 0 : borders[0].getWidth()) + (null == borders[2] ? 0 : borders[2].getWidth());
                                 occupiedArea.getBBox().moveDown(bordersWidth).increaseHeight(bordersWidth);
                             }
@@ -1055,6 +1051,12 @@ public class TableRenderer extends AbstractRenderer {
                     } else {
                         if (hasProperty(Property.HEIGHT)) {
                             splitResult[1].setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                        }
+                        if (hasProperty(Property.MAX_HEIGHT)) {
+                            splitResult[1].setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
+                        }
+                        if (hasProperty(Property.MAX_HEIGHT)) {
+                            splitResult[1].setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
                         }
                         if (status != LayoutResult.NOTHING) {
                             return new LayoutResult(status, occupiedArea, splitResult[0], splitResult[1], null);
@@ -1130,7 +1132,7 @@ public class TableRenderer extends AbstractRenderer {
             // the bottom border should be processed and placed lately
             if (0 != heights.size()) {
                 // TODO
-//                horizontalBorders.get(horizontalBorders.size() - 1).clear();
+                bordersHandler.horizontalBorders.get(bordersHandler.horizontalBorders.size() - 1).clear();
                 heights.set(heights.size() - 1, heights.get(heights.size() - 1) - bottomTableBorderWidth / 2);
             }
             if (null == footerRenderer) {
@@ -1658,6 +1660,9 @@ public class TableRenderer extends AbstractRenderer {
                 }
             } else if (null != borders[2]) {
                 startY -= borders[2].getWidth() / 2;
+            }
+            if (0 == heights.size()) {
+                heights.add(0f);
             }
         }
 

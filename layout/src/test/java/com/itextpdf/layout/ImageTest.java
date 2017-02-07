@@ -681,6 +681,34 @@ public class ImageTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 2)})
+    public void imageInTableTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "imageInTableTest03.pdf";
+        String cmpFileName = sourceFolder + "cmp_imageInTableTest03.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdfDoc);
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        Table table = new Table(1)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
+        table.setMaxHeight(800);
+        table.setBorder(new SolidBorder(Color.BLUE, 10));
+
+        for (int i = 0; i < 31; i++) {
+            table.addCell("Cell" + i);
+        }
+        Cell c = new Cell().add(img.setHeight(500));
+        table.addCell(c);
+        document.add(table);
+        document.add(new Table(1).addCell("Is my occupied area right?"));
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
     @Ignore("DEVSIX-1045")
     public void fixedPositionImageTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedPositionImageTest01.pdf";
