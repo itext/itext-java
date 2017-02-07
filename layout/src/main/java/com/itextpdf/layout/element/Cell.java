@@ -178,7 +178,9 @@ public class Cell extends BlockElement<Cell> {
      *
      * @param element a nested {@link Table}
      * @return this Element
+     * @deprecated use {@link #add(IBlockElement)} instead.
      */
+    @Deprecated
     public Cell add(Table element) {
         childElements.add(element);
         return this;
