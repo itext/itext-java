@@ -49,11 +49,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
@@ -70,23 +66,12 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.Background;
-import com.itextpdf.layout.property.BackgroundImage;
-import com.itextpdf.layout.property.HorizontalAlignment;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.TransparentColor;
-import com.itextpdf.layout.property.UnitValue;
-import com.itextpdf.layout.property.FloatPropertyValue;
+import com.itextpdf.layout.property.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Defines the most common properties and behavior that are shared by most
@@ -1214,24 +1199,6 @@ public abstract class AbstractRenderer implements IRenderer {
         }
 
         return editedArea;
-    }
-
-    protected void adjustLineRendererAccordingToFloatRenderers(Map<Rectangle, Float> floatRenderers, Rectangle layoutBox, float allowedWidth) {
-        float maxWidth = 0;
-        for (Rectangle floatRenderer : floatRenderers.keySet()) {
-            FloatPropertyValue floatPropertyValue = getProperty(Property.FLOAT);
-            if (floatPropertyValue == null || !floatPropertyValue.equals(FloatPropertyValue.RIGHT)) {
-                float width = floatRenderer.getWidth();
-                if (width > maxWidth) {
-                    maxWidth = width;
-                }
-            }
-        }
-        maxWidth = layoutBox.getWidth() + maxWidth;
-        if (floatRenderers.size() > 0 && maxWidth > allowedWidth) {
-            maxWidth = allowedWidth;
-        }
-        layoutBox.setWidth(maxWidth);
     }
 
     static boolean noAbsolutePositionInfo(IRenderer renderer) {

@@ -242,9 +242,6 @@ public class TableRenderer extends AbstractRenderer {
                 setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
             }
         }
-        if (floatRenderers != null) {
-            adjustLineRendererAccordingToFloatRenderers(floatRenderers, layoutBox, layoutContext.getArea().getBBox().getWidth());
-        }
 
         int numberOfColumns = ((Table) getModelElement()).getNumberOfColumns();
 

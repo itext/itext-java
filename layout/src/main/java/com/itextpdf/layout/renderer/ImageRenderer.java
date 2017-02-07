@@ -123,9 +123,6 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
                 setProperty(Property.HORIZONTAL_ALIGNMENT, HorizontalAlignment.RIGHT);
             }
         }
-        if (floatRenderers != null) {
-            adjustLineRendererAccordingToFloatRenderers(floatRenderers, layoutBox, layoutContext.getArea().getBBox().getWidth());
-        }
 
         occupiedArea = new LayoutArea(area.getPageNumber(), new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight(), 0, 0));
 

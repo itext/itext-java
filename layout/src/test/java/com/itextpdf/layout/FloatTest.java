@@ -79,7 +79,6 @@ public class FloatTest extends ExtendedITextTest {
         p.setBorder(new SolidBorder(1));
         Paragraph p1 = new Paragraph();
         p1.add("paragraph2");
-        p1.setWidth(70);
         p1.setBorder(new SolidBorder(1));
 
         p.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
@@ -87,7 +86,6 @@ public class FloatTest extends ExtendedITextTest {
         doc.add(p1);
         Paragraph p2 = new Paragraph();
         p2.add("paragraph3");
-        p2.setWidth(70);
         p2.setBorder(new SolidBorder(1));
         doc.add(p2);
         doc.add(p2);

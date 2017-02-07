@@ -137,10 +137,6 @@ public class ParagraphRenderer extends BlockRenderer {
         MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, layoutContext.getArea().getBBox().getWidth());
         AbstractWidthHandler widthHandler = new MaxMaxWidthHandler(minMaxWidth);
 
-        if (floatRenderers != null) {
-            adjustLineRendererAccordingToFloatRenderers(floatRenderers, parentBBox, layoutContext.getArea().getBBox().getWidth() - additionalWidth);
-        }
-
         Float blockMaxHeight = retrieveMaxHeight();
         if (null != blockMaxHeight && parentBBox.getHeight() > blockMaxHeight) {
             float heightDelta = parentBBox.getHeight() - (float) blockMaxHeight;

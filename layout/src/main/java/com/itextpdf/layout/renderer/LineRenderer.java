@@ -794,8 +794,12 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
 
-        layoutBox.moveRight(maxWidth);
-        layoutBox.setWidth(layoutBox.getWidth() - maxWidth);
+        if (!parent.hasProperty(Property.WIDTH)) {
+            layoutBox.moveRight(maxWidth);
+            layoutBox.setWidth(layoutBox.getWidth() - maxWidth);
+        } else {
+            layoutBox.moveDown(maxHeight);
+        }
     }
 
     private void adjustLineRendererToCurrentLineFloatRendererers(Set<Rectangle> floatRenderers, Rectangle layoutBox) {

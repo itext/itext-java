@@ -118,14 +118,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         Border[] borders = getBorders();
         float[] paddings = getPaddings();
-        float adjustValue = applyBordersPaddingsMargins(parentBBox, borders, paddings);
+         applyBordersPaddingsMargins(parentBBox, borders, paddings);
 
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
             parentBBox.setWidth((float) blockWidth);
-        }
-
-        if (floatRenderers != null) {
-            adjustLineRendererAccordingToFloatRenderers(floatRenderers, parentBBox, layoutContext.getArea().getBBox().getWidth() - adjustValue);
         }
 
         Float blockMaxHeight = retrieveMaxHeight();
@@ -647,53 +643,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
         } else {
             //TODO
         }
-    }
-
-    protected LayoutArea applyFloatRenderers(List<IRenderer> floatRenderers) {
-        LayoutArea editedArea = occupiedArea.clone();
-        float maxHeight = 0;
-        if (!hasProperty(Property.FLOAT)) {
-            for(int i = floatRenderers.size() - 1; i >= 0; i--) {
-                IRenderer floatRenderer = floatRenderers.get(i);
-                Rectangle floatRendererBBox = floatRenderer.getOccupiedArea().getBBox();
-
-                floatRendererBBox.setHeight(floatRendererBBox.getHeight() - occupiedArea.getBBox().getHeight());
-                if (maxHeight > floatRendererBBox.getHeight()) {
-                    maxHeight = floatRendererBBox.getHeight();
-                }
-            }
-        }
-        if (floatRenderers.size() > 0) {
-            if (maxHeight >= 0) {
-                editedArea.getBBox().setHeight(0);
-            } else {
-                editedArea.getBBox().setHeight(-maxHeight);
-            }
-        }
-
-        for(int i = floatRenderers.size() - 1; i >= 0; i--) {
-            if (floatRenderers.get(i).getOccupiedArea().getBBox().getHeight() <= 0) {
-                floatRenderers.remove(i);
-            }
-        }
-
-        return editedArea;
-    }
-
-    protected void adjustLineRendererAccordingToFloatRenderers(List<IRenderer> floatRenderers, Rectangle layoutBox) {
-        float maxHeight = 0;
-        for (IRenderer floatRenderer : floatRenderers) {
-            Rectangle floatRendererBBox = floatRenderer.getOccupiedArea().getBBox();
-            if (floatRendererBBox != null) {
-                if (maxHeight < floatRendererBBox.getHeight()) {
-                    maxHeight = floatRendererBBox.getHeight();
-                }
-                if (!hasProperty(Property.FLOAT)) {
-                    layoutBox.setWidth(layoutBox.getWidth() + floatRendererBBox.getWidth());
-                }
-            }
-        }
-        layoutBox.moveUp(maxHeight);
     }
 
     protected float applyBordersPaddingsMargins(Rectangle parentBBox, Border[] borders, float[] paddings) {
