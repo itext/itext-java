@@ -129,12 +129,16 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
     @Override
     public boolean containsGlyph(String text, int from) {
-        int ch = text.charAt(from);
-        if (fontEncoding.canEncode(ch)) {
+        return containsGlyph((int) text.charAt(from));
+    }
+
+    @Override
+    public boolean containsGlyph(int unicode) {
+        if (fontEncoding.canEncode(unicode)) {
             if (fontEncoding.isFontSpecific()) {
-                return getFontProgram().getGlyphByCode(ch) != null;
+                return getFontProgram().getGlyphByCode(unicode) != null;
             } else {
-                return getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(ch)) != null;
+                return getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(unicode)) != null;
             }
         } else {
             return false;

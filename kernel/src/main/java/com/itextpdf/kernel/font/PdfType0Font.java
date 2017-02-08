@@ -245,18 +245,28 @@ public class PdfType0Font extends PdfFont {
                 return containsUnicodeGlyph(text, from);
             }
         } else {
-            throw new PdfException("font.has.no.suitable.cmap");
+            throw new PdfException("Invalid CID font type: " + cidFontType);
         }
     }
 
-    private boolean containsUnicodeGlyph(String text, int from) {
-        int ch;
-        if (TextUtil.isSurrogatePair(text, from)) {
-            ch = TextUtil.convertToUtf32(text, from);
+    @Override
+    public boolean containsGlyph(int unicode) {
+        if (cidFontType == CID_FONT_TYPE_0) {
+            if (cmapEncoding.isDirect()) {
+                return fontProgram.getGlyphByCode(unicode) != null;
+            } else {
+                return getFontProgram().getGlyph(unicode) != null;
+            }
+        } else if (cidFontType == CID_FONT_TYPE_2) {
+            if (fontProgram.isFontSpecific()) {
+                byte[] b = PdfEncodings.convertToBytes((char) unicode, "symboltt");
+                return b.length > 0 && fontProgram.getGlyph(b[0] & 0xff) != null;
+            } else {
+                return getFontProgram().getGlyph(unicode) != null;
+            }
         } else {
-            ch = text.charAt(from);
+            throw new PdfException("Invalid CID font type: " + cidFontType);
         }
-        return getFontProgram().getGlyph(ch) != null;
     }
 
     @Override
@@ -756,6 +766,16 @@ public class PdfType0Font extends PdfFont {
                 }
             }
         }
+    }
+
+    private boolean containsUnicodeGlyph(String text, int from) {
+        int ch;
+        if (TextUtil.isSurrogatePair(text, from)) {
+            ch = TextUtil.convertToUtf32(text, from);
+        } else {
+            ch = text.charAt(from);
+        }
+        return getFontProgram().getGlyph(ch) != null;
     }
 
     private static String getOrdering(PdfDictionary cidFont) {
