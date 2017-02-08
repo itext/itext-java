@@ -61,6 +61,7 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
+import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
@@ -170,13 +171,17 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 }
 
                 // have more areas
-                if (currentAreaPos + 1 < areas.size()) {
+                if (currentAreaPos + 1 < areas.size() && !(result.getAreaBreak() != null && result.getAreaBreak().getType() == AreaBreakType.NEXT_PAGE)) {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
                         childRenderers.set(childPos, result.getSplitRenderer());
                         // TODO linkedList would make it faster
                         childRenderers.add(childPos + 1, result.getOverflowRenderer());
                     } else {
-                        childRenderers.set(childPos, result.getOverflowRenderer());
+                        if (result.getOverflowRenderer() != null) {
+                            childRenderers.set(childPos, result.getOverflowRenderer());
+                        } else {
+                            childRenderers.remove(childPos);
+                        }
                         childPos--;
                     }
                     layoutBox = areas.get(++currentAreaPos).clone();
@@ -277,14 +282,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         applyMargins(occupiedArea.getBBox(), true);
                         //splitRenderer.occupiedArea = occupiedArea.clone();
 
-
                         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || wasHeightClipped) {
                             return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
                         } else {
                             if (layoutResult != LayoutResult.NOTHING) {
-                                return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, null);
+                                return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, null).setAreaBreak(result.getAreaBreak());
                             } else {
-                                return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing());
+                                return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing()).setAreaBreak(result.getAreaBreak());
                             }
                         }
                     }
@@ -292,7 +296,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
             anythingPlaced = true;
 
-            occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+            if (result.getOccupiedArea() != null) {
+                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+            }
             if (marginsCollapsingEnabled) {
                 marginsCollapseHandler.endChildMarginsHandling(layoutBox);
             }
