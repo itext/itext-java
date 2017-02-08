@@ -11,17 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TableBorders {
-    protected List<List<Border>> horizontalBorders;
-    protected List<List<Border>> verticalBorders;
+    private List<List<Border>> horizontalBorders;
+    private List<List<Border>> verticalBorders;
 
-    protected Border[] tableBoundingBorders = null;
+    private Border[] tableBoundingBorders = null;
 
-    protected List<CellRenderer[]> rows;
+    private List<CellRenderer[]> rows;
 
-    protected final int numberOfColumns;
+    private final int numberOfColumns;
 
-    protected int horizontalBordersIndexOffset = 0;
-    protected int verticalBordersIndexOffset = 0;
+    private int horizontalBordersIndexOffset = 0;
+    private int verticalBordersIndexOffset = 0;
 
     public TableBorders(List<CellRenderer[]> rows, int numberOfColumns) {
         this.rows = rows;
@@ -297,7 +297,7 @@ public class TableBorders {
 
     // region getters
 
-    protected Border getWidestHorizontalBorder(int row) {
+    public Border getWidestHorizontalBorder(int row) {
         Border theWidestBorder = null;
         if (row >= 0 && row < horizontalBorders.size()) {
             theWidestBorder = getWidestBorder(horizontalBorders.get(row));
@@ -305,7 +305,15 @@ public class TableBorders {
         return theWidestBorder;
     }
 
-    protected Border getWidestVerticalBorder(int col) {
+    public Border getWidestHorizontalBorder(int row, int start, int end) {
+        Border theWidestBorder = null;
+        if (row >= 0 && row < horizontalBorders.size()) {
+            theWidestBorder = getWidestBorder(horizontalBorders.get(row), start, end);
+        }
+        return theWidestBorder;
+    }
+
+    public Border getWidestVerticalBorder(int col) {
         Border theWidestBorder = null;
         if (col >= 0 && col < verticalBorders.size()) {
             theWidestBorder = getWidestBorder(verticalBorders.get(col));
@@ -313,7 +321,15 @@ public class TableBorders {
         return theWidestBorder;
     }
 
-    protected float getMaxTopWidth(Border tableBorder) {
+    public Border getWidestVerticalBorder(int col, int start, int end) {
+        Border theWidestBorder = null;
+        if (col >= 0 && col < verticalBorders.size()) {
+            theWidestBorder = getWidestBorder(verticalBorders.get(col), start, end);
+        }
+        return theWidestBorder;
+    }
+
+    public float getMaxTopWidth(Border tableBorder) {
         float width = null == tableBorder ? 0 : tableBorder.getWidth();
         Border widestBorder = getWidestHorizontalBorder(horizontalBordersIndexOffset);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
@@ -322,7 +338,7 @@ public class TableBorders {
         return width;
     }
 
-    protected float getMaxBottomWidth(Border tableBorder) {
+    public float getMaxBottomWidth(Border tableBorder) {
         float width = null == tableBorder ? 0 : tableBorder.getWidth();
         Border widestBorder = getWidestHorizontalBorder(horizontalBorders.size() - 1);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
@@ -331,7 +347,7 @@ public class TableBorders {
         return width;
     }
 
-    protected float getMaxRightWidth(Border tableBorder) {
+    public float getMaxRightWidth(Border tableBorder) {
         float width = null == tableBorder ? 0 : tableBorder.getWidth();
         Border widestBorder = getWidestVerticalBorder(verticalBorders.size() - 1);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
@@ -340,7 +356,7 @@ public class TableBorders {
         return width;
     }
 
-    protected float getMaxLeftWidth(Border tableBorder) {
+    public float getMaxLeftWidth(Border tableBorder) {
         float width = null == tableBorder ? 0 : tableBorder.getWidth();
         Border widestBorder = getWidestVerticalBorder(0);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
@@ -349,13 +365,54 @@ public class TableBorders {
         return width;
     }
 
+    public List<Border> getHorizontalBorder(int row) {
+        return horizontalBorders.get(row);
+    }
 
-    protected int getCurrentHorizontalBordersIndexOffset() {
+    public List<Border> getVerticalBorder(int col) {
+        return verticalBorders.get(col);
+    }
+
+    // TODO after split this info is not valid
+    public List<Border> getFirstHorizontalBorder() { // TODO maybe on page
+        return horizontalBorders.get(horizontalBordersIndexOffset);
+    }
+
+    public List<Border> getLastHorizontalBorder() { // TODO maybe on page
+        return horizontalBorders.get(horizontalBorders.size()-1);
+    }
+
+    public List<Border> getFirstVerticalBorder() { // TODO maybe on page
+        return verticalBorders.get(0);
+    }
+
+    public List<Border> getLastVerticalBorder() { // TODO maybe on page
+        return verticalBorders.get(verticalBorders.size()-1);
+    }
+
+
+    public int getHorizontalBordersIndexOffset() {
         return horizontalBordersIndexOffset;
     }
 
-    protected int getCurrentVerticalBordersIndexOffset() {
+    public int getVerticalBordersIndexOffset() {
         return verticalBordersIndexOffset;
+    }
+
+    public int getNumberOfColumns() {
+        return numberOfColumns;
+    }
+
+    public Border[] getTableBoundingBorders() {
+        return tableBoundingBorders;
+    }
+
+    public int getVerticalBordersSize() {
+        return verticalBorders.size();
+    }
+
+    public int getHorizontalBordersSize() {
+        return verticalBorders.size();
     }
 
     // endregion
@@ -541,7 +598,7 @@ public class TableBorders {
         }
     }
 
-    private static Border getCellSideBorder(Cell cellModel, int borderType) {
+    public static Border getCellSideBorder(Cell cellModel, int borderType) {
         Border cellModelSideBorder = cellModel.getProperty(borderType);
         if (null == cellModelSideBorder && !cellModel.hasProperty(borderType)) {
             cellModelSideBorder = cellModel.getProperty(Property.BORDER);
@@ -555,7 +612,7 @@ public class TableBorders {
         return cellModelSideBorder;
     }
 
-    private static Border getWidestBorder(List<Border> borderList) {
+    public static Border getWidestBorder(List<Border> borderList) {
         Border theWidestBorder = null;
         if (0 != borderList.size()) {
             for (Border border : borderList) {
@@ -566,6 +623,19 @@ public class TableBorders {
         }
         return theWidestBorder;
     }
+
+    public static Border getWidestBorder(List<Border> borderList, int start, int end) {
+        Border theWidestBorder = null;
+        if (0 != borderList.size()) {
+            for (Border border : borderList.subList(start, end)) {
+                if (null != border && (null == theWidestBorder || border.getWidth() > theWidestBorder.getWidth())) {
+                    theWidestBorder = border;
+                }
+            }
+        }
+        return theWidestBorder;
+    }
+
 
     // endregion
 
