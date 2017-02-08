@@ -176,7 +176,7 @@ public class TableBorders {
                     lastBorderOnCurrentPage.set(i, cellCollapsedBottomBorder);
                 }
 
-                col += lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN) - 1;
+                col += cell.getPropertyAsInteger(Property.COLSPAN) - 1;
             }
         }
 
@@ -194,7 +194,7 @@ public class TableBorders {
                     for (int i = col; i < col + cell.getPropertyAsInteger(Property.COLSPAN); i++) {
                         firstBorderOnTheNextPage.set(i, cellCollapsedTopBorder);
                     }
-                    col += lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN) - 1;
+                    col += cell.getPropertyAsInteger(Property.COLSPAN) - 1;
                 }
             }
         }
@@ -260,15 +260,36 @@ public class TableBorders {
 
     // region intialisers
     protected void initializeBorders(List<Border> lastFlushedRowBottomBorder, boolean isFirstOnPage) {
-        // initialize borders
-        if (null == horizontalBorders) {
-            horizontalBorders = new ArrayList<>();
-            horizontalBorders.add(new ArrayList<Border>(lastFlushedRowBottomBorder));
-            verticalBorders = new ArrayList<>();
+        List<Border> tempBorders;
+
+        // initialize vertical borders
+        verticalBorders = new ArrayList<>();
+        if (0 != rows.size()) {
+            while (numberOfColumns + 1 > verticalBorders.size()) {
+                tempBorders = new ArrayList<Border>();
+                while (rows.size() > tempBorders.size()) {
+                    tempBorders.add(null);
+                }
+                verticalBorders.add(tempBorders);
+            }
         }
-        // The first row on the page shouldn't collapse with the last on the previous one
-        if (0 != lastFlushedRowBottomBorder.size() && isFirstOnPage) {
-            horizontalBorders.get(0).clear();
+
+        // initialize horizontal borders
+        horizontalBorders = new ArrayList<>();
+        while (rows.size() + 1 > horizontalBorders.size()) {
+            tempBorders = new ArrayList<Border>();
+            while (numberOfColumns > tempBorders.size()) {
+                tempBorders.add(null);
+            }
+            horizontalBorders.add(tempBorders);
+        }
+        // Notice that the first row on the page shouldn't collapse with the last on the previous one
+        if (null != lastFlushedRowBottomBorder && 0 < lastFlushedRowBottomBorder.size() && !isFirstOnPage) { // TODO
+            tempBorders = new ArrayList<Border>();
+            for (Border border : lastFlushedRowBottomBorder) {
+                tempBorders.add(border);
+            }
+            horizontalBorders.set(0, tempBorders);
         }
     }
 
@@ -550,28 +571,28 @@ public class TableBorders {
 
     // region lowlevel logic
     protected boolean checkAndReplaceBorderInArray(List<List<Border>> borderArray, int i, int j, Border borderToAdd, boolean hasPriority) {
-        if (borderArray.size() <= i) {
-            for (int count = borderArray.size(); count <= i; count++) {
-                borderArray.add(new ArrayList<Border>());
-            }
-        }
+//        if (borderArray.size() <= i) {
+//            for (int count = borderArray.size(); count <= i; count++) {
+//                borderArray.add(new ArrayList<Border>());
+//            }
+//        }
         List<Border> borders = borderArray.get(i);
-        if (borders.isEmpty()) {
-            for (int count = 0; count < j; count++) {
-                borders.add(null);
-            }
-            borders.add(borderToAdd);
-            return true;
-        }
-        if (borders.size() == j) {
-            borders.add(borderToAdd);
-            return true;
-        }
-        if (borders.size() < j) {
-            for (int count = borders.size(); count <= j; count++) {
-                borders.add(count, null);
-            }
-        }
+//        if (borders.isEmpty()) {
+//            for (int count = 0; count < j; count++) {
+//                borders.add(null);
+//            }
+//            borders.add(borderToAdd);
+//            return true;
+//        }
+//        if (borders.size() == j) {
+//            borders.add(borderToAdd);
+//            return true;
+//        }
+//        if (borders.size() < j) {
+//            for (int count = borders.size(); count <= j; count++) {
+//                borders.add(count, null);
+//            }
+//        }
         Border neighbour = borders.get(j);
         if (neighbour == null) {
             borders.set(j, borderToAdd);

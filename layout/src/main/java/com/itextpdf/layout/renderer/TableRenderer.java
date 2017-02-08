@@ -55,7 +55,6 @@ import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -976,6 +975,8 @@ public class TableRenderer extends AbstractRenderer {
                             bottomTableBorderWidth = null == widestLustFlushedBorder ? 0f : widestLustFlushedBorder.getWidth();
                             occupiedArea.getBBox().moveDown(bottomTableBorderWidth).increaseHeight(bottomTableBorderWidth);
 
+
+                            bordersHandler.updateTopBorder(lastFlushedRowBottomBorder, new boolean[numberOfColumns]);
                             // TODO
 //                            splitResult[0].horizontalBorders.clear();
 //                            splitResult[0].horizontalBorders.add(lastFlushedRowBottomBorder);
@@ -984,10 +985,8 @@ public class TableRenderer extends AbstractRenderer {
                             splitResult[0].setBorders(widestLustFlushedBorder, 2);
                             splitResult[0].setBorders(Border.NO_BORDER, 0);
                             // TODO
-//                            if (0 != splitResult[0].verticalBorders.size()) {
-//                                splitResult[0].setBorders(splitResult[0].verticalBorders.get(0).get(0), 3);
-//                                splitResult[0].setBorders(splitResult[0].verticalBorders.get(verticalBorders.size() - 1).get(0), 1);
-//                            }
+                                splitResult[0].setBorders(bordersHandler.getWidestVerticalBorder(0), 3);
+                                splitResult[0].setBorders(bordersHandler.getWidestVerticalBorder(numberOfColumns), 1);
                         }
                     }
                 }
