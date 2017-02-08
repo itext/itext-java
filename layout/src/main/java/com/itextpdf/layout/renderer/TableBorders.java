@@ -1,6 +1,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.property.Property;
@@ -23,6 +24,11 @@ public class TableBorders {
     private int horizontalBordersIndexOffset = 0;
     private int verticalBordersIndexOffset = 0;
 
+    private static Border noBorder;
+
+    static {
+        noBorder = new NoBorder();
+    }
     public TableBorders(List<CellRenderer[]> rows, int numberOfColumns) {
         this.rows = rows;
         this.numberOfColumns = numberOfColumns;
@@ -268,7 +274,7 @@ public class TableBorders {
             while (numberOfColumns + 1 > verticalBorders.size()) {
                 tempBorders = new ArrayList<Border>();
                 while (rows.size() > tempBorders.size()) {
-                    tempBorders.add(null);
+                    tempBorders.add(noBorder);
                 }
                 verticalBorders.add(tempBorders);
             }
@@ -279,7 +285,7 @@ public class TableBorders {
         while (rows.size() + 1 > horizontalBorders.size()) {
             tempBorders = new ArrayList<Border>();
             while (numberOfColumns > tempBorders.size()) {
-                tempBorders.add(null);
+                tempBorders.add(noBorder);
             }
             horizontalBorders.add(tempBorders);
         }
@@ -664,7 +670,7 @@ public class TableBorders {
 //            }
 //        }
         Border neighbour = borders.get(j);
-        if (neighbour == null) {
+        if (neighbour == null || noBorder.equals(neighbour)) {
             borders.set(j, borderToAdd);
             return true;
         } else {
@@ -722,7 +728,7 @@ public class TableBorders {
 
     protected TableBorders updateBorder(List<Border> oldBorder, List<Border> newBorders, boolean[] isOldBorder) {
         for (int i = 0; i < oldBorder.size(); i++) {
-            if (!isOldBorder[i]) {
+            if (!isOldBorder[i] && !noBorder.equals(oldBorder.get(i))) {
                 oldBorder.set(i, newBorders.get(i));
             }
         }
@@ -731,5 +737,27 @@ public class TableBorders {
 
 
 // endregion
+
+    private static class NoBorder extends Border {
+
+        protected NoBorder() {
+            super(0);
+        }
+
+        @Override
+        public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter) {
+            return;
+        }
+
+        @Override
+        public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
+            return;
+        }
+
+        @Override
+        public int getType() {
+            return -1;
+        }
+    }
 
 }

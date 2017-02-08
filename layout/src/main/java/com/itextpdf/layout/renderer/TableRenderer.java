@@ -1002,8 +1002,10 @@ public class TableRenderer extends AbstractRenderer {
                                         .setY(blockBottom);
                             }
                         }
+                        applyMargins(occupiedArea.getBBox(), true);
                         return new LayoutResult(LayoutResult.FULL, occupiedArea, splitResult[0], null);
                     } else {
+                        applyMargins(occupiedArea.getBBox(), true);
                         if (hasProperty(Property.HEIGHT)) {
                             splitResult[1].setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
                         }

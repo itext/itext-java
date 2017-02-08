@@ -1143,6 +1143,28 @@ public class TableTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
+    @Test
+    public void nestedTablesWithMarginsTest01() throws IOException, InterruptedException {
+        String testName = "nestedTablesWithMarginsTest01.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A8.rotate());
+
+        Table innerTable = new Table(1);
+        for (int i = 0; i < 4; i++) {
+            innerTable.addCell(new Cell().add("He`llo" + i));
+        }
+
+        Table outerTable = new Table(1)
+                .addCell(new Cell().add(innerTable));
+        outerTable.setMarginTop(10);
+        doc.add(outerTable);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
