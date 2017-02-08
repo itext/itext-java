@@ -12,29 +12,45 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TableBorders {
+    private static Border noBorder;
+
     private List<List<Border>> horizontalBorders;
     private List<List<Border>> verticalBorders;
 
-    private Border[] tableBoundingBorders = null;
+    private final int numberOfColumns;
+
+    private Border[] tableBoundingBorders;
 
     private List<CellRenderer[]> rows;
-
-    private final int numberOfColumns;
 
     private int horizontalBordersIndexOffset = 0;
     private int verticalBordersIndexOffset = 0;
 
-    private static Border noBorder;
+    // region constructors
 
     static {
         noBorder = new NoBorder();
     }
+
     public TableBorders(List<CellRenderer[]> rows, int numberOfColumns) {
         this.rows = rows;
         this.numberOfColumns = numberOfColumns;
+        verticalBorders = new ArrayList<>();
+        horizontalBorders = new ArrayList<>();
+        tableBoundingBorders = null;
     }
 
-    // region collapse methods
+    public TableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders) {
+        this.rows = rows;
+        this.numberOfColumns = numberOfColumns;
+        verticalBorders = new ArrayList<>();
+        horizontalBorders = new ArrayList<>();
+        setTableBoundingBorders(tableBoundingBorders);
+    }
+
+    // endregion
+
+    // region collapsing and correction
 
     protected TableBorders collapseAllBordersAndEmptyRows(List<CellRenderer[]> rows, Border[] tableBorders, int startRow, int finishRow, int colN) {
         CellRenderer[] currentRow;
@@ -128,8 +144,7 @@ public class TableBorders {
                         curPageIndex = lastRowOnCurrentPage[col].getPropertyAsInteger(Property.COLSPAN);
                     }
                     if (0 >= nextPageIndex) {
-                        firstRowOnTheNextPage[col] = currentRow[col];
-                        ;
+                        firstRowOnTheNextPage[col] = currentRow[col];;
                         nextPageIndex = firstRowOnTheNextPage[col].getPropertyAsInteger(Property.COLSPAN);
                     }
                 }
@@ -214,8 +229,6 @@ public class TableBorders {
         return this;
     }
 
-    // endregion
-
     protected TableBorders processEmptyTable(List<Border> lastFlushedBorder) {
         List<Border> topHorizontalBorders = new ArrayList<Border>();
         List<Border> bottomHorizontalBorders = new ArrayList<Border>();
@@ -223,7 +236,7 @@ public class TableBorders {
             topHorizontalBorders = lastFlushedBorder;
         } else {
             for (int i = 0; i < numberOfColumns; i++) {
-                topHorizontalBorders.add(Border.NO_BORDER);
+                topHorizontalBorders.add(null);
             }
         }
 
@@ -235,7 +248,6 @@ public class TableBorders {
             }
             bottomHorizontalBorders.add(tableBoundingBorders[2]);
         }
-        // TODO Think about initialization and building border arrays
         horizontalBorders.set(horizontalBordersIndexOffset, topHorizontalBorders);
         if (horizontalBorders.size() == horizontalBordersIndexOffset + 1) {
             horizontalBorders.add(bottomHorizontalBorders);
@@ -246,14 +258,14 @@ public class TableBorders {
         if (0 != verticalBorders.size()) {
             verticalBorders.get(0).set(verticalBordersIndexOffset, (tableBoundingBorders[3]));
             for (int i = 1; i < numberOfColumns; i++) {
-                verticalBorders.get(i).set(verticalBordersIndexOffset, Border.NO_BORDER);
+                verticalBorders.get(i).set(verticalBordersIndexOffset, null);
             }
             verticalBorders.get(verticalBorders.size() - 1).set(verticalBordersIndexOffset, (tableBoundingBorders[1]));
         } else {
             List<Border> tempBorders;
             for (int i = 0; i < numberOfColumns + 1; i++) {
                 tempBorders = new ArrayList<Border>();
-                tempBorders.add(Border.NO_BORDER);
+                tempBorders.add(null);
                 verticalBorders.add(tempBorders);
             }
             verticalBorders.get(0).set(0, tableBoundingBorders[3]);
@@ -264,12 +276,13 @@ public class TableBorders {
         return this;
     }
 
-    // region intialisers
+    // endregion
+
+    // region intializers
+
     protected void initializeBorders(List<Border> lastFlushedRowBottomBorder, boolean isFirstOnPage) {
         List<Border> tempBorders;
-
         // initialize vertical borders
-        verticalBorders = new ArrayList<>();
         if (0 != rows.size()) {
             while (numberOfColumns + 1 > verticalBorders.size()) {
                 tempBorders = new ArrayList<Border>();
@@ -279,9 +292,7 @@ public class TableBorders {
                 verticalBorders.add(tempBorders);
             }
         }
-
         // initialize horizontal borders
-        horizontalBorders = new ArrayList<>();
         while (rows.size() + 1 > horizontalBorders.size()) {
             tempBorders = new ArrayList<Border>();
             while (numberOfColumns > tempBorders.size()) {
@@ -379,20 +390,20 @@ public class TableBorders {
         return verticalBorders.get(col);
     }
 
-    // TODO after split this info is not valid
-    public List<Border> getFirstHorizontalBorder() { // TODO maybe on page
+    // TODO If one will call this method after splitting, the result will be not correct
+    public List<Border> getFirstHorizontalBorder() {
         return horizontalBorders.get(horizontalBordersIndexOffset);
     }
 
-    public List<Border> getLastHorizontalBorder() { // TODO maybe on page
+    public List<Border> getLastHorizontalBorder() {
         return horizontalBorders.get(horizontalBorders.size()-1);
     }
 
-    public List<Border> getFirstVerticalBorder() { // TODO maybe on page
+    public List<Border> getFirstVerticalBorder() {
         return verticalBorders.get(0);
     }
 
-    public List<Border> getLastVerticalBorder() { // TODO maybe on page
+    public List<Border> getLastVerticalBorder() {
         return verticalBorders.get(verticalBorders.size()-1);
     }
 
@@ -581,7 +592,7 @@ public class TableBorders {
 
     // endregion
 
-    //region static methods
+    //region static
 
     /**
      * Returns the collapsed border. We process collapse
@@ -609,10 +620,7 @@ public class TableBorders {
         if (null == cellModelSideBorder && !cellModel.hasProperty(borderType)) {
             cellModelSideBorder = cellModel.getProperty(Property.BORDER);
             if (null == cellModelSideBorder && !cellModel.hasProperty(Property.BORDER)) {
-//                cellModelSideBorder = cellModel.getDefaultProperty(borderType); // TODO
-//                if (null == cellModelSideBorder && !cellModel.hasDefaultProperty(borderType)) {
-                cellModelSideBorder = cellModel.getDefaultProperty(Property.BORDER);
-//                }
+                cellModelSideBorder = cellModel.getDefaultProperty(Property.BORDER); // TODO Mayvb we need to foresee the possibility of default side border property
             }
         }
         return cellModelSideBorder;
@@ -642,10 +650,10 @@ public class TableBorders {
         return theWidestBorder;
     }
 
-
     // endregion
 
     // region lowlevel logic
+
     protected boolean checkAndReplaceBorderInArray(List<List<Border>> borderArray, int i, int j, Border borderToAdd, boolean hasPriority) {
 //        if (borderArray.size() <= i) {
 //            for (int count = borderArray.size(); count <= i; count++) {
@@ -696,7 +704,7 @@ public class TableBorders {
         } else {
             newBorder = new ArrayList<Border>();
             for (int i = 0; i < numberOfColumns; i++) {
-                newBorder.add(Border.NO_BORDER);
+                newBorder.add(null);
             }
         }
         horizontalBorders.add(index, newBorder);
@@ -706,15 +714,14 @@ public class TableBorders {
     // TODO
     protected TableBorders addNewVerticalBorder(int index, boolean usePrevious) {
         for (int i = 0; i < numberOfColumns + 1; i++) {
-            verticalBorders.get(i).add(index, usePrevious ? verticalBorders.get(i).get(index) : Border.NO_BORDER);
+            verticalBorders.get(i).add(index, usePrevious ? verticalBorders.get(i).get(index) : null);
         }
         return this;
     }
 
     // endregion
 
-    // region footer collapsing methods
-
+    // region update
 
     protected TableBorders updateTopBorder(List<Border> newBorder, boolean[] useOldBorders) {
         updateBorder(horizontalBorders.get(horizontalBordersIndexOffset), newBorder, useOldBorders);
@@ -734,7 +741,6 @@ public class TableBorders {
         }
         return this;
     }
-
 
 // endregion
 
@@ -759,5 +765,4 @@ public class TableBorders {
             return -1;
         }
     }
-
 }
