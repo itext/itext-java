@@ -214,20 +214,20 @@ public class TableBorders {
         List<Border> topHorizontalBorders = new ArrayList<Border>();
         List<Border> bottomHorizontalBorders = new ArrayList<Border>();
         if (null != lastFlushedBorder && 0 != lastFlushedBorder.size()) {
-            bottomHorizontalBorders = lastFlushedBorder;
+            topHorizontalBorders = lastFlushedBorder;
         } else {
             for (int i = 0; i < numberOfColumns; i++) {
-                bottomHorizontalBorders.add(Border.NO_BORDER);
+                topHorizontalBorders.add(Border.NO_BORDER);
             }
         }
 
         // collapse with table bottom border
-        for (int i = 0; i < bottomHorizontalBorders.size(); i++) {
-            Border border = bottomHorizontalBorders.get(i);
-            if (null == border || (null != tableBoundingBorders[2] && border.getWidth() < tableBoundingBorders[2].getWidth())) {
-                bottomHorizontalBorders.set(i, tableBoundingBorders[2]);
+        for (int i = 0; i < topHorizontalBorders.size(); i++) {
+            Border border = topHorizontalBorders.get(i);
+            if (null == border || (null != tableBoundingBorders[0] && border.getWidth() < tableBoundingBorders[0].getWidth())) {
+                topHorizontalBorders.set(i, tableBoundingBorders[0]);
             }
-            topHorizontalBorders.add(tableBoundingBorders[0]);
+            bottomHorizontalBorders.add(tableBoundingBorders[2]);
         }
         // TODO Think about initialization and building border arrays
         horizontalBorders.set(horizontalBordersIndexOffset, topHorizontalBorders);

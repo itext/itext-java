@@ -1139,7 +1139,7 @@ public class BorderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)})
-    public void tableWithHeaderFooter03() throws IOException, InterruptedException {
+    public void tableWithHeaderFooterTest03() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest03.pdf";
         Document doc = createDocument();
 
@@ -1161,7 +1161,7 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderFooter04() throws IOException, InterruptedException {
+    public void tableWithHeaderFooterTest04() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest04.pdf";
         Document doc = createDocument();
 
@@ -1177,7 +1177,7 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableWithHeaderFooter05() throws IOException, InterruptedException {
+    public void tableWithHeaderFooterTest05() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest05.pdf";
         Document doc = createDocument();
         Table table = new Table(1);
