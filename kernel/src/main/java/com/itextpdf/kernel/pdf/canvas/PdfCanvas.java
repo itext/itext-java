@@ -209,7 +209,7 @@ public class PdfCanvas implements Serializable {
      * @param document      the document that the resulting content stream will be written to
      */
     public PdfCanvas(PdfStream contentStream, PdfResources resources, PdfDocument document) {
-        this.contentStream = contentStream;
+        this.contentStream = ensureStreamDataIsReadyToBeProcessed(contentStream);
         this.resources = resources;
         this.document = document;
     }
@@ -2206,7 +2206,7 @@ public class PdfCanvas implements Serializable {
             }
         }
         os.writeBytes(ID);
-        os.writeBytes(imageXObject.getPdfObject().getBytes()).writeNewLine().writeBytes(EI).writeNewLine();
+        os.writeBytes(imageXObject.getPdfObject().getBytes(false)).writeNewLine().writeBytes(EI).writeNewLine();
         restoreState();
     }
 
@@ -2372,8 +2372,21 @@ public class PdfCanvas implements Serializable {
     }
 
     private static PdfStream getPageStream(PdfPage page) {
-        PdfStream stream = page.getContentStream(page.getContentStreamCount() - 1);
+        PdfStream stream = page.getLastContentStream();
         return stream == null || stream.getOutputStream() == null || stream.containsKey(PdfName.Filter) ? page.newContentStreamAfter() : stream;
+    }
+
+    private PdfStream ensureStreamDataIsReadyToBeProcessed(PdfStream stream) {
+        if (!stream.isFlushed()) {
+            if (stream.getOutputStream() == null || stream.containsKey(PdfName.Filter)) {
+                try {
+                    stream.setData(stream.getBytes());
+                } catch (Exception ex) {
+                    // ignore
+                }
+            }
+        }
+        return stream;
     }
 
     /**

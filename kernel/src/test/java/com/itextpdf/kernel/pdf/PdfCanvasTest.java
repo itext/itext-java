@@ -76,6 +76,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.awt.Toolkit;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -1664,5 +1665,61 @@ public class PdfCanvasTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+    
+    @Test
+    public void canvasInitializationPageNoContentsKey() throws IOException, InterruptedException {
+        String srcFile = sourceFolder + "pageNoContents.pdf";
+        String cmpFile = sourceFolder + "cmp_pageNoContentsStamp.pdf";
+        String destFile = destinationFolder + "pageNoContentsStamp.pdf";
+        
+        PdfDocument document = new PdfDocument(new PdfReader(srcFile), new PdfWriter(destFile));
+        
+        PdfCanvas canvas = new PdfCanvas(document.getPage(1));
+        canvas.setLineWidth(5).rectangle(50, 680, 300, 50).stroke();
+        canvas.release();
+        
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
+    }
+    
+    @Test
+    public void canvasInitializationStampingExistingStream() throws IOException, InterruptedException {
+        String srcFile = sourceFolder + "pageWithContent.pdf";
+        String cmpFile = sourceFolder + "cmp_stampingExistingStream.pdf";
+        String destFile = destinationFolder + "stampingExistingStream.pdf";
+        
+        PdfDocument document = new PdfDocument(new PdfReader(srcFile), new PdfWriter(destFile));
+
+        PdfPage page = document.getPage(1);
+        PdfCanvas canvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), page.getDocument());
+        canvas.setLineWidth(5).rectangle(50, 680, 300, 50).stroke();
+        canvas.release();
+        
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
+    }
+    
+    @Test
+    public void canvasStampingJustCopiedStreamWithCompression() throws IOException, InterruptedException {
+        String srcFile = sourceFolder + "pageWithContent.pdf";
+        String cmpFile = sourceFolder + "cmp_stampingJustCopiedStreamWithCompression.pdf";
+        String destFile = destinationFolder + "stampingJustCopiedStreamWithCompression.pdf";
+        
+        PdfDocument srcDocument = new PdfDocument(new PdfReader(srcFile));
+        PdfDocument document = new PdfDocument(new PdfWriter(destFile));
+        srcDocument.copyPagesTo(1, 1, document);
+        srcDocument.close();
+        
+        PdfPage page = document.getPage(1);
+        PdfCanvas canvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), page.getDocument());
+        canvas.setLineWidth(5).rectangle(50, 680, 300, 50).stroke();
+        canvas.release();
+        
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
     }
 }
