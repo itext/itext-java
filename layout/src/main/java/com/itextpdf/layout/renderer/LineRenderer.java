@@ -47,6 +47,7 @@ import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.TextUtil;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.TabStop;
 import com.itextpdf.layout.layout.*;
@@ -64,6 +65,23 @@ public class LineRenderer extends AbstractRenderer {
     protected byte[] levels;
     protected List<Rectangle> currentLineFloatRenderers = new ArrayList<>();
 
+    protected LineRenderer() {
+        super();
+    }
+
+    protected LineRenderer(LineRenderer other) {
+        this.childRenderers = other.childRenderers;
+        this.positionedRenderers = other.positionedRenderers;
+        this.modelElement = other.modelElement;
+        this.flushed = other.flushed;
+        this.occupiedArea = other.occupiedArea != null ? other.occupiedArea.clone() : null;
+        this.parent = other.parent;
+        this.properties.putAll(other.properties);
+        this.isLastRendererForModelElement = other.isLastRendererForModelElement;
+        float[] ascenderAndDescender = calculateAscenderDescender();
+//        occupiedArea.getBBox().setHeight(ascenderAndDescender[0] - ascenderAndDescender[1]);
+    }
+
     @Override
     public LineLayoutResult layout(LayoutContext layoutContext) {
         Rectangle layoutBox = layoutContext.getArea().getBBox().clone();
@@ -72,7 +90,6 @@ public class LineRenderer extends AbstractRenderer {
         if (floatRenderers != null) {
             adjustLineRendererAccordingToFloatRenderers(floatRenderers, layoutBox);
         }
-        adjustLineRendererToCurrentLineFloatRendererers(currentLineFloatRenderers, layoutBox);
 
         occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), layoutBox.clone().moveDown(-layoutBox.getHeight()).setHeight(0));
 
@@ -170,7 +187,7 @@ public class LineRenderer extends AbstractRenderer {
             }
 
             if (childRenderer.hasProperty(Property.FLOAT)) {
-                currentLineFloatRenderers.add(childRenderer.getOccupiedArea().getBBox());
+                floatRenderers.add(childRenderer.getOccupiedArea().getBBox());
             }
             float childAscent = 0;
             float childDescent = 0;
@@ -247,19 +264,19 @@ public class LineRenderer extends AbstractRenderer {
 
                 IRenderer causeOfNothing = childResult.getStatus() == LayoutResult.NOTHING ? childResult.getCauseOfNothing() : childRenderer;
                 if (split[1] == null) {
-                    result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, split[0], split[1], causeOfNothing);
+                    result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, split[0], split[1], causeOfNothing, floatRenderers);
                 } else {
                     if (anythingPlaced) {
-                        result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], causeOfNothing);
+                        result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], causeOfNothing, floatRenderers);
                     } else {
-                        result = new LineLayoutResult(LayoutResult.NOTHING, null, split[0], split[1], causeOfNothing);
+                        result = new LineLayoutResult(LayoutResult.NOTHING, null, split[0], split[1], causeOfNothing, floatRenderers);
                     }
                 }
                 if (newLineOccurred) {
                     result.setSplitForcedByNewline(true);
                 }
 
-                result.setCurrentLineFloatRenderers(currentLineFloatRenderers);
+//                result.setCurrentLineFloatRenderers(currentLineFloatRenderers);
                 break;
             } else {
                 anythingPlaced = true;
@@ -371,18 +388,49 @@ public class LineRenderer extends AbstractRenderer {
                 }
             }
         }
+        LineRenderer processed = result.getStatus() == LayoutResult.FULL ? this : (LineRenderer) result.getSplitRenderer();
         if (anythingPlaced) {
-            LineRenderer processed = result.getStatus() == LayoutResult.FULL ? this : (LineRenderer) result.getSplitRenderer();
             processed.adjustChildrenYLine().trimLast();
             result.setMinMaxWidth(minMaxWidth);
-            reduceFloatRenderersOccupiedArea(processed, currentLineFloatRenderers);
+        } else if (floatRenderers.size() > 0) {
+            processed.getOccupiedArea().getBBox().setHeight(calculateAscenderDescender()[0] - calculateAscenderDescender()[1]);
+            for (Rectangle rend : floatRenderers) {
+                rend.setHeight(rend.getHeight() - processed.getOccupiedArea().getBBox().getHeight());
+            }
+        }
+
+        reduceFloatRenderersOccupiedArea(processed, floatRenderers);
+        List<IRenderer> currentLineChildRenderers = result.getStatus() == LayoutResult.FULL ? this.childRenderers : result.getSplitRenderer().getChildRenderers();
+        LayoutArea editedArea = applyFloatPropertyOnCurrentArea(currentLineChildRenderers, floatRenderers, layoutContext.getArea().getBBox().getWidth());
+        if (editedArea != null) {
+            processed.getOccupiedArea().setBBox(editedArea.getBBox());
         }
 
         if (floatRenderers != null) {
-            result.getFloatRenderers().addAll(floatRenderers);
+//            result.getFloatRenderers().addAll(floatRenderers);
         }
 
          return result;
+    }
+
+    protected LayoutArea applyFloatPropertyOnCurrentArea(List<IRenderer> childRenderers, List<Rectangle> floatRenderers, float availableWidth) {
+        LayoutArea editedArea = null;
+
+        float lineHeight = 0;
+        boolean lineHasFloatProperty = false;
+        for (IRenderer renderer : childRenderers) {
+            if (renderer.hasProperty(Property.FLOAT)) {
+                lineHasFloatProperty = true;
+            }else if (renderer.getOccupiedArea() != null && renderer.getOccupiedArea().getBBox().getHeight() > lineHeight) {
+                lineHeight = renderer.getOccupiedArea().getBBox().getHeight();
+            }
+        }
+        if (lineHasFloatProperty && lineHeight > 0) {
+            editedArea = occupiedArea.clone();
+            editedArea.getBBox().moveUp(editedArea.getBBox().getHeight() - lineHeight  + maxDescent);
+        }
+
+        return editedArea;
     }
 
     public float getMaxAscent() {
@@ -515,7 +563,7 @@ public class LineRenderer extends AbstractRenderer {
         LineRenderer overflowRenderer = createOverflowRenderer();
         overflowRenderer.parent = parent;
         overflowRenderer.addAllProperties(getOwnProperties());
-        overflowRenderer.currentLineFloatRenderers = currentLineFloatRenderers;
+//        overflowRenderer.currentLineFloatRenderers = currentLineFloatRenderers;
 
         return new LineRenderer[]{splitRenderer, overflowRenderer};
     }
@@ -766,7 +814,8 @@ public class LineRenderer extends AbstractRenderer {
         float maxHeight = 0;
         for (Rectangle floatRenderer : floatRenderers) {
             if (floatRenderer != null) {
-                if (floatRenderer.getX() <= layoutBox.getX() && !parent.hasProperty(Property.FLOAT)) {
+                FloatPropertyValue floatPropertyValue = parent.getProperty(Property.FLOAT);
+                if (floatRenderer.getX() <= layoutBox.getX() && (floatPropertyValue == null || !floatPropertyValue.equals(FloatPropertyValue.RIGHT))) {
                     if (maxWidth < floatRenderer.getWidth()) {
                         maxWidth = floatRenderer.getWidth();
                     }
@@ -777,12 +826,22 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
 
-        if (!parent.hasProperty(Property.WIDTH)) {
-            layoutBox.moveRight(maxWidth);
-            layoutBox.setWidth(layoutBox.getWidth() - maxWidth);
-        } else {
-            layoutBox.moveDown(maxHeight);
-        }
+        layoutBox.moveRight(maxWidth);
+        layoutBox.setWidth(layoutBox.getWidth() - maxWidth);
+
+//        if (!parent.hasProperty(Property.WIDTH)) {
+//            layoutBox.moveRight(maxWidth);
+//            layoutBox.setWidth(layoutBox.getWidth() - maxWidth);
+//
+//        } else if (layoutBox.getWidth() < maxWidth){
+//            layoutBox.setHeight(layoutBox.getHeight() - maxHeight);
+//            if (!parent.hasProperty(Property.FLOAT)) {
+//                floatRenderers.clear();
+//            }
+//        } else if (parent.hasProperty(Property.FLOAT)) {
+//            layoutBox.moveRight(maxWidth);
+//        }
+
     }
 
     private void adjustLineRendererToCurrentLineFloatRendererers(List<Rectangle> floatRenderers, Rectangle layoutBox) {
@@ -837,6 +896,16 @@ public class LineRenderer extends AbstractRenderer {
 
         public Glyph glyph;
         public TextRenderer renderer;
+    }
+
+    private float[] calculateAscenderDescender() {
+        PdfFont listItemFont = resolveFirstPdfFont();
+        Float fontSize = this.getPropertyAsFloat(Property.FONT_SIZE);
+        if (listItemFont != null && fontSize != null) {
+            float[] ascenderDescender = TextRenderer.calculateAscenderDescender(listItemFont);
+            return new float[] {(float)fontSize * ascenderDescender[0] / TextRenderer.TEXT_SPACE_COEFF, (float)fontSize * ascenderDescender[1] / TextRenderer.TEXT_SPACE_COEFF};
+        }
+        return new float[] {0, 0};
     }
 
 }

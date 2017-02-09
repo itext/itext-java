@@ -392,7 +392,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
         applyVerticalAlignment();
-        reduceFloatRenderersOccupiedArea(floatRenderers);
+//        reduceFloatRenderersOccupiedArea(floatRenderers);
 
         LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRenderers,layoutContext.getArea().getBBox().getWidth());
 

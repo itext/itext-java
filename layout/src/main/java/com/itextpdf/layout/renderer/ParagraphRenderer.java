@@ -192,6 +192,8 @@ public class ParagraphRenderer extends BlockRenderer {
                 processedRenderer = currentRenderer;
             } else if (result.getStatus() == LayoutResult.PARTIAL) {
                 processedRenderer = (LineRenderer) result.getSplitRenderer();
+            } else if (floatRenderers.size() > 0) {
+                processedRenderer = new LineRenderer((LineRenderer) result.getSplitRenderer());
             }
 
             TextAlignment textAlignment = (TextAlignment) this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT, TextAlignment.LEFT);
@@ -222,11 +224,11 @@ public class ParagraphRenderer extends BlockRenderer {
             if (processedRenderer != null && processedRenderer.containsImage()) {
                 leadingValue -= previousDescent;
             }
-            boolean doesNotFit = result.getStatus() == LayoutResult.NOTHING;
+            boolean doesNotFit = processedRenderer == null;
             float deltaY = 0;
             if (!doesNotFit) {
                 lastLineHeight = processedRenderer.getOccupiedArea().getBBox().getHeight();
-                if (result.getCurrentLineFloatRenderers().size() == 0) {
+                if (result.getFloatRenderers().size() == 0) {
                     deltaY = lastYLine - leadingValue - processedRenderer.getYLine();
                 }
 
@@ -373,7 +375,7 @@ public class ParagraphRenderer extends BlockRenderer {
             }
         }
 
-        reduceFloatRenderersOccupiedArea(floatRenderers);
+        //reduceFloatRenderersOccupiedArea(floatRenderers);
 
         LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRenderers,layoutContext.getArea().getBBox().getWidth());
 
