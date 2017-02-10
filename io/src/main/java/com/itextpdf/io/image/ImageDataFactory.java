@@ -495,6 +495,25 @@ public final class ImageDataFactory {
         return new RawImageData(bytes, ImageType.RAW);
     }
 
+    /**
+     * Checks if the type of image (based on first 8 bytes) is supported by factory.
+     * <br/>
+     * <br/>
+     * <b>Note:</b> if this method returns {@code true} it doesn't means that {@link #create(byte[])} won't throw exception
+     *
+     * @param source image raw bytes
+     * @return {@code true} if first eight bytes are recognised by factory as valid image type and {@code false} otherwise
+     */
+    public static boolean isSupportedType(byte[] source) {
+        byte[] imageType = readImageType(source);
+        if (imageType == null || imageType.length < 8) {
+            return false;
+        }
+        return imageTypeIs(imageType, gif) || imageTypeIs(imageType, jpeg) || imageTypeIs(imageType, jpeg2000_1)
+                || imageTypeIs(imageType, jpeg2000_2) || imageTypeIs(imageType, png) || imageTypeIs(imageType, bmp)
+                || imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2) || imageTypeIs(imageType, jbig2);
+    }
+
     private static ImageData createImageInstance(URL source, boolean recoverImage) {
         byte[] imageType = readImageType(source);
         if (imageTypeIs(imageType, gif)) {
