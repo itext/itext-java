@@ -52,16 +52,16 @@ public class TableBorders {
 
     // region collapsing and correction
 
-    protected TableBorders collapseAllBordersAndEmptyRows(List<CellRenderer[]> rows, Border[] tableBorders, int startRow, int finishRow, int colN) {
+    protected TableBorders collapseAllBordersAndEmptyRows(List<CellRenderer[]> rows, Border[] tableBorders, int startRow, int finishRow) {
         CellRenderer[] currentRow;
-        int[] rowsToDelete = new int[colN];
+        int[] rowsToDelete = new int[numberOfColumns];
         for (int row = startRow; row <= finishRow; row++) {
             currentRow = rows.get(row);
             boolean hasCells = false;
-            for (int col = 0; col < colN; col++) {
+            for (int col = 0; col < numberOfColumns; col++) {
                 if (null != currentRow[col]) {
                     int colspan = (int) currentRow[col].getPropertyAsInteger(Property.COLSPAN);
-                    prepareBuildingBordersArrays(currentRow[col], tableBorders, colN, row, col);
+                    prepareBuildingBordersArrays(currentRow[col], tableBorders, numberOfColumns, row, col);
                     buildBordersArrays(currentRow[col], row, col);
                     hasCells = true;
                     if (rowsToDelete[col] > 0) {
@@ -87,7 +87,7 @@ public class TableBorders {
                 rows.remove(currentRow);
                 row--;
                 finishRow--;
-                for (int i = 0; i < colN; i++) {
+                for (int i = 0; i < numberOfColumns; i++) {
                     rowsToDelete[i]++;
                 }
                 if (row == finishRow) {
@@ -346,8 +346,10 @@ public class TableBorders {
         return theWidestBorder;
     }
 
-    public float getMaxTopWidth(Border tableBorder) {
-        float width = null == tableBorder ? 0 : tableBorder.getWidth();
+    public float getMaxTopWidth(boolean collapseWithTableBorder) {
+        float width = collapseWithTableBorder
+                ? null == tableBoundingBorders[0] ? 0 : tableBoundingBorders[0].getWidth()
+                : 0;
         Border widestBorder = getWidestHorizontalBorder(horizontalBordersIndexOffset);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
             width = widestBorder.getWidth();
@@ -355,8 +357,10 @@ public class TableBorders {
         return width;
     }
 
-    public float getMaxBottomWidth(Border tableBorder) {
-        float width = null == tableBorder ? 0 : tableBorder.getWidth();
+    public float getMaxBottomWidth(boolean collapseWithTableBorder) {
+        float width = collapseWithTableBorder
+                ? null == tableBoundingBorders[2] ? 0 : tableBoundingBorders[2].getWidth()
+                : 0;
         Border widestBorder = getWidestHorizontalBorder(horizontalBorders.size() - 1);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
             width = widestBorder.getWidth();
@@ -364,8 +368,10 @@ public class TableBorders {
         return width;
     }
 
-    public float getMaxRightWidth(Border tableBorder) {
-        float width = null == tableBorder ? 0 : tableBorder.getWidth();
+    public float getMaxRightWidth(boolean collapseWithTableBorder) {
+        float width = collapseWithTableBorder
+                ? null == tableBoundingBorders[1] ? 0 : tableBoundingBorders[1].getWidth()
+                : 0;
         Border widestBorder = getWidestVerticalBorder(verticalBorders.size() - 1);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
             width = widestBorder.getWidth();
@@ -373,8 +379,10 @@ public class TableBorders {
         return width;
     }
 
-    public float getMaxLeftWidth(Border tableBorder) {
-        float width = null == tableBorder ? 0 : tableBorder.getWidth();
+    public float getMaxLeftWidth(boolean collapseWithTableBorder) {
+        float width = collapseWithTableBorder
+                ? null == tableBoundingBorders[3] ? 0 : tableBoundingBorders[3].getWidth()
+                : 0;
         Border widestBorder = getWidestVerticalBorder(0);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
             width = widestBorder.getWidth();
