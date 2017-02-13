@@ -347,6 +347,32 @@ public class AutoTaggingTest extends ExtendedITextTest {
     }
 
     @Test
+    public void tableTest07() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest07.pdf"));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(new float[]{130, 130, 260})
+                .addHeaderCell(new Cell().add(new Paragraph("hcell 1, 1")))
+                .addHeaderCell(new Cell().add(new Paragraph("hcell 1, 2")))
+                .addHeaderCell(new Cell().add(new Paragraph("hcell 1, 3")))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1")))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2")))
+                .addCell(new Cell().add(new Paragraph("cell 2, 3")))
+                .addCell(new Cell().add(new Paragraph("cell 3, 1")))
+                .addCell(new Cell().add(new Paragraph("cell 3, 2")))
+                .addCell(new Cell().add(new Paragraph("cell 3, 3")))
+                .addFooterCell(new Cell().add(new Paragraph("fcell 4, 1")))
+                .addFooterCell(new Cell().add(new Paragraph("fcell 4, 2")))
+                .addFooterCell(new Cell().add(new Paragraph("fcell 4, 3")));
+        doc.add(table);
+        doc.close();
+
+        compareResult("tableTest07.pdf", "cmp_tableTest07.pdf");
+    }
+
+    @Test
     public void listTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "listTest01.pdf"));
         pdfDocument.setTagged();
