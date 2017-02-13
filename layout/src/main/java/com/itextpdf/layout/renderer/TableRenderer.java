@@ -2010,7 +2010,7 @@ public class TableRenderer extends AbstractRenderer {
         float additionalCellHeight = 0;
         if (isLastRenderer) {
             if (null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight() + bottomTableBorderWidth / 2) {
-                additionalCellHeight = Math.min(layoutBox.getHeight() - bottomTableBorderWidth / 2, blockMinHeight - occupiedArea.getBBox().getHeight() - bottomTableBorderWidth / 2) / heights.size();
+                additionalCellHeight = Math.min(layoutBox.getHeight() - bottomTableBorderWidth / 2, (float) blockMinHeight - occupiedArea.getBBox().getHeight() - bottomTableBorderWidth / 2) / heights.size();
                 for (int i = 0; i < heights.size(); i++) {
                     heights.set(i, heights.get(i) + additionalCellHeight);
                 }
