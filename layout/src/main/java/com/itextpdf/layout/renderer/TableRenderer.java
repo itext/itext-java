@@ -734,7 +734,7 @@ public class TableRenderer extends AbstractRenderer {
                     }
                 }
                 // Correct occupied areas of all added cells
-                correctCellsOccupiedAreas(splits, row, targetOverflowRowIndex, blockMinHeight, layoutBox, bottomTableBorderWidth, row == rows.size() - 1);
+                correctCellsOccupiedAreas(splits, row, targetOverflowRowIndex, blockMinHeight, layoutBox, bottomTableBorderWidth, !split && row == rows.size() - 1);
             }
             // process footer with collapsed borders
             if ((split || processAsLast || row == rows.size() - 1) && null != footerRenderer) {
