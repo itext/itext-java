@@ -111,4 +111,17 @@
         </dependency>
     </dependencies>
 
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.revapi</groupId>
+          <artifactId>revapi-maven-plugin</artifactId>
+          <version>0.8.2</version>
+          <configuration>
+            <skip>true</skip>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+
 </project>
