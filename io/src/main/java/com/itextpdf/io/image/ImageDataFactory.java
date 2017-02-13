@@ -505,10 +505,10 @@ public final class ImageDataFactory {
      * @return {@code true} if first eight bytes are recognised by factory as valid image type and {@code false} otherwise
      */
     public static boolean isSupportedType(byte[] source) {
-        byte[] imageType = readImageType(source);
-        if (imageType == null || imageType.length < 8) {
+        if (source == null) {
             return false;
         }
+        byte[] imageType = readImageType(source);
         return imageTypeIs(imageType, gif) || imageTypeIs(imageType, jpeg) || imageTypeIs(imageType, jpeg2000_1)
                 || imageTypeIs(imageType, jpeg2000_2) || imageTypeIs(imageType, png) || imageTypeIs(imageType, bmp)
                 || imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2) || imageTypeIs(imageType, jbig2);
