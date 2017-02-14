@@ -247,7 +247,7 @@ public class TableRenderer extends AbstractRenderer {
         // Cells' up moves occured while split processing
         // key is column number (there can be only one move during one split)
         // value is the previous row number of the cell
-        Map<Integer, Integer> rowMoves = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> rowMoves = new HashMap<>();
 
         MarginsCollapseHandler marginsCollapseHandler = null;
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
@@ -687,7 +687,6 @@ public class TableRenderer extends AbstractRenderer {
                     while (0 != cellProcessingQueue.size()) {
                         CellRendererInfo cellInfo = cellProcessingQueue.pop();
                         col = cellInfo.column;
-                        int rowN = cellInfo.finishRowInd;
                         CellRenderer cell = cellInfo.cellRenderer;
                         float collapsedWithNextRowBorderWidth = null == cell.getBorders()[2] ? 0 : cell.getBorders()[2].getWidth();
                         cell.deleteOwnProperty(Property.BORDER_BOTTOM);
@@ -939,8 +938,8 @@ public class TableRenderer extends AbstractRenderer {
                             logger.warn(LogMessageConstant.CLIP_ELEMENT);
                             // Process borders
                             if (status == LayoutResult.NOTHING) {
-                                ArrayList<Border> topBorders = new ArrayList<Border>();
-                                ArrayList<Border> bottomBorders = new ArrayList<Border>();
+                                ArrayList<Border> topBorders = new ArrayList<>();
+                                ArrayList<Border> bottomBorders = new ArrayList<>();
                                 for (int i = 0; i < numberOfColumns; i++) {
                                     topBorders.add(borders[0]);
                                     bottomBorders.add(borders[2]);
@@ -1015,13 +1014,13 @@ public class TableRenderer extends AbstractRenderer {
 
         // if table is empty we still need to process table borders
         if (0 == childRenderers.size() && null == headerRenderer && null == footerRenderer) {
-            List<Border> topHorizontalBorders = new ArrayList<Border>();
-            List<Border> bottomHorizontalBorders = new ArrayList<Border>();
+            List<Border> topHorizontalBorders = new ArrayList<>();
+            List<Border> bottomHorizontalBorders = new ArrayList<>();
             for (int i = 0; i < numberOfColumns; i++) {
                 bottomHorizontalBorders.add(Border.NO_BORDER);
             }
-            List<Border> leftVerticalBorders = new ArrayList<Border>();
-            List<Border> rightVerticalBorders = new ArrayList<Border>();
+            List<Border> leftVerticalBorders = new ArrayList<>();
+            List<Border> rightVerticalBorders = new ArrayList<>();
 
             // process bottom border of the last added row
             if (tableModel.isComplete() && 0 != lastFlushedRowBottomBorder.size()) {
@@ -1290,41 +1289,12 @@ public class TableRenderer extends AbstractRenderer {
         }
     }
 
-    protected float[] calculateScaledColumnWidths(Table tableModel, float tableWidth, float leftBorderWidth, float rightBorderWidth) {
-        float[] scaledWidths = new float[tableModel.getNumberOfColumns()];
-        float widthSum = 0;
-        float totalPointWidth = 0;
-        int col;
-        for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
-            UnitValue columnUnitWidth = tableModel.getColumnWidth(col);
-            float columnWidth;
-            if (columnUnitWidth.isPercentValue()) {
-                columnWidth = tableWidth * columnUnitWidth.getValue() / 100;
-                scaledWidths[col] = columnWidth;
-                widthSum += columnWidth;
-            } else {
-                totalPointWidth += columnUnitWidth.getValue();
-            }
-        }
-        float freeTableSpaceWidth = tableWidth - widthSum;
-
-        if (totalPointWidth > 0) {
-            for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
-                float columnWidth;
-                UnitValue columnUnitWidth = tableModel.getColumnWidth(col);
-                if (columnUnitWidth.isPointValue()) {
-                    columnWidth = (freeTableSpaceWidth / totalPointWidth) * columnUnitWidth.getValue();
-                    scaledWidths[col] = columnWidth;
-                    widthSum += columnWidth;
-                }
-            }
-        }
-
-        for (col = 0; col < tableModel.getNumberOfColumns(); col++) {
-            scaledWidths[col] *= (tableWidth - leftBorderWidth / 2 - rightBorderWidth / 2) / widthSum;
-        }
-
-        return scaledWidths;
+    /**
+     * @deprecated Method will be removed in 7.1.
+     */
+    @Deprecated
+    protected float[] calculateScaledColumnWidths(Table tableModel, float tableWidth) {
+        return countedColumnWidth;
     }
 
     protected TableRenderer[] split(int row) {
@@ -1803,7 +1773,7 @@ public class TableRenderer extends AbstractRenderer {
 
     // collapse with table border or header bottom borders
     private void correctFirstRowTopBorders(Border tableBorder, int colN) {
-        int col = 0;
+        int col;
         int row = 0;
         List<Border> topBorders = horizontalBorders.get(0);
         List<Border> bordersToBeCollapsedWith = null != headerRenderer

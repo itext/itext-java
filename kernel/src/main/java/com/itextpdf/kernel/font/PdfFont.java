@@ -150,7 +150,9 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @return true if font contains glyph, represented with the unicode code point,
      * otherwise false.
      */
-    public abstract boolean containsGlyph(String text, int from);
+    public boolean containsGlyph(String text, int from) {
+        throw new java.lang.IllegalStateException("containsGlyph(String text, int from) must be overridden");
+    }
 
     public abstract GlyphLine createGlyphLine(String content);
 
@@ -164,7 +166,9 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param glyphs array for a new glyphs, shall not be null.
      * @return number of processed chars from text.
      */
-    public abstract int appendGlyphs(String text, int from, int to, List<Glyph> glyphs);
+    public int appendGlyphs(String text, int from, int to, List<Glyph> glyphs) {
+        throw new java.lang.IllegalStateException("appendGlyphs(String text, int from, int to, List<Glyph> glyphs) must be overridden");
+    }
 
     /**
      * Append any single glyph, even notdef.
@@ -175,7 +179,9 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param glyphs array for a new glyph, shall not be null.
      * @return number of processed chars: 2 in case surrogate pair, otherwise 1
      */
-    public abstract int appendAnyGlyph(String text, int from, List<Glyph> glyphs);
+    public int appendAnyGlyph(String text, int from, List<Glyph> glyphs) {
+        throw new java.lang.IllegalStateException("appendAnyGlyph(String text, int from, List<Glyph> glyphs) must be overridden");
+    }
 
     /**
      * Converts the text into bytes to be placed in the document.
@@ -196,7 +202,9 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param content the encoded string
      * @return the {@link GlyphLine} containing the glyphs encoded by the passed string
      */
-    public abstract GlyphLine decodeIntoGlyphLine(PdfString content);
+    public GlyphLine decodeIntoGlyphLine(PdfString content) {
+        throw new java.lang.IllegalStateException("decodeIntoGlyphLine(PdfString content) must be overridden");
+    }
 
     public abstract float getContentWidth(PdfString content);
 
