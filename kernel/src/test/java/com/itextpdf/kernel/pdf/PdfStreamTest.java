@@ -46,10 +46,14 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+
+import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+@Category(IntegrationTest.class)
 public class PdfStreamTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfStreamTest/";
@@ -59,7 +63,6 @@ public class PdfStreamTest extends ExtendedITextTest {
     public void before() {
         createOrClearDestinationFolder(destinationFolder);
     }
-
 
     @Test
     public void streamAppendDataOnJustCopiedWithCompression() throws IOException, InterruptedException {
