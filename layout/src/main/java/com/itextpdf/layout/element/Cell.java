@@ -174,19 +174,6 @@ public class Cell extends BlockElement<Cell> {
     }
 
     /**
-     * Adds an embedded table to the cell's contents.
-     *
-     * @param element a nested {@link Table}
-     * @return this Element
-     * @deprecated use {@link #add(IBlockElement)} instead.
-     */
-    @Deprecated
-    public Cell add(Table element) {
-        childElements.add(element);
-        return this;
-    }
-
-    /**
      * Directly adds a String of text to this cell. The content is wrapped in a
      * layout element.
      *
