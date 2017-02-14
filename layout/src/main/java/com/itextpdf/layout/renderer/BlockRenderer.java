@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -57,13 +57,20 @@ import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
+import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.VerticalAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 public abstract class BlockRenderer extends AbstractRenderer {
 
@@ -73,37 +80,43 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
+        overrideHeightProperties();
+        boolean wasHeightClipped = false;
         int pageNumber = layoutContext.getArea().getPageNumber();
 
         boolean isPositioned = isPositioned();
 
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
-        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null || isPositioned) {
+        if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null || isFixedLayout()) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
 
-        Float blockHeight = retrieveHeight();
-        if (!isFixedLayout() && blockHeight != null && blockHeight > parentBBox.getHeight() && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-            return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
-        }
-
-        float[] margins = getMargins();
-        applyMargins(parentBBox, margins, false);
-        Border[] borders = getBorders();
-        applyBorderBox(parentBBox, borders, false);
-
-        if (isPositioned) {
-            float x = (float) this.getPropertyAsFloat(Property.X);
-            float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
-            parentBBox.setX(relativeX + x);
-        }
-
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
+
+        MarginsCollapseHandler marginsCollapseHandler = null;
+        boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
+        if (marginsCollapsingEnabled) {
+            marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
+            marginsCollapseHandler.startMarginsCollapse(parentBBox);
+        }
+
+        Border[] borders = getBorders();
+        float[] paddings = getPaddings();
+        applyBordersPaddingsMargins(parentBBox, borders, paddings);
         if (blockWidth != null && (blockWidth < parentBBox.getWidth() || isPositioned)) {
             parentBBox.setWidth((float) blockWidth);
         }
-        float[] paddings = getPaddings();
-        applyPaddings(parentBBox, paddings, false);
+
+        Float blockMaxHeight = retrieveMaxHeight();
+        if (!isFixedLayout() && null != blockMaxHeight && blockMaxHeight < parentBBox.getHeight()
+                && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+            float heightDelta = parentBBox.getHeight() - (float) blockMaxHeight;
+            if (marginsCollapsingEnabled) {
+                marginsCollapseHandler.processFixedHeightAdjustment(heightDelta);
+            }
+            parentBBox.moveUp(heightDelta).setHeight((float) blockMaxHeight);
+            wasHeightClipped = true;
+        }
 
         List<Rectangle> areas;
         if (isPositioned) {
@@ -113,6 +126,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         occupiedArea = new LayoutArea(pageNumber, new Rectangle(parentBBox.getX(), parentBBox.getY() + parentBBox.getHeight(), parentBBox.getWidth(), 0));
+        shrinkOccupiedAreaForAbsolutePosition();
         int currentAreaPos = 0;
 
         Rectangle layoutBox = areas.get(0).clone();
@@ -124,14 +138,30 @@ public abstract class BlockRenderer extends AbstractRenderer {
             IRenderer childRenderer = childRenderers.get(childPos);
             LayoutResult result;
             childRenderer.setParent(this);
-            while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox)))).getStatus() != LayoutResult.FULL) {
-                if (result.getOccupiedArea() != null) {
+            MarginsCollapseInfo childMarginsInfo = null;
+            if (marginsCollapsingEnabled) {
+                childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(childRenderer, layoutBox);
+            }
+            while ((result = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(pageNumber, layoutBox), childMarginsInfo))).getStatus() != LayoutResult.FULL) {
+                if (marginsCollapsingEnabled) {
+                    if (result.getStatus() != LayoutResult.NOTHING) {
+                        marginsCollapseHandler.endChildMarginsHandling(layoutBox);
+                    }
+                    marginsCollapseHandler.endMarginsCollapse(layoutBox);
+                }
+                
+                if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))
+                        || Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
+                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
+                } else if (result.getOccupiedArea() != null && result.getStatus() != LayoutResult.NOTHING) {
                     occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
-                    layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
                 }
 
-                if (childRenderer.getOccupiedArea() != null) {
-                    alignChildHorizontally(childRenderer, layoutBox.getWidth());
+                if (result.getSplitRenderer() != null) {
+                    // Use occupied area's bbox width so that for absolutely positioned renderers we do not align using full width
+                    // in case when parent box should wrap around child boxes.
+                    // TODO in the latter case, all elements should be layouted first so that we know maximum width needed to place all children and then apply horizontal alignment
+                    alignChildHorizontally(result.getSplitRenderer(), occupiedArea.getBBox().getWidth());
                 }
 
                 // Save the first renderer to produce LayoutResult.NOTHING
@@ -153,9 +183,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     break;
                 } else {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
-
-                        layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
-
                         if (currentAreaPos + 1 == areas.size()) {
                             AbstractRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
                             splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
@@ -170,10 +197,31 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             overflowRendererChildren.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                             overflowRenderer.childRenderers = overflowRendererChildren;
 
+                            if (hasProperty(Property.MAX_HEIGHT)) {
+                                overflowRenderer.setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
+                            }
+                            if (hasProperty(Property.MIN_HEIGHT)) {
+                                overflowRenderer.setProperty(Property.MIN_HEIGHT, retrieveMinHeight() - occupiedArea.getBBox().getHeight());
+                            }
+                            if (hasProperty(Property.HEIGHT)) {
+                                overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                            }
+                            if (wasHeightClipped) {
+                                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                                logger.warn(LogMessageConstant.CLIP_ELEMENT);
+                                occupiedArea.getBBox()
+                                        .moveDown((float) blockMaxHeight - occupiedArea.getBBox().getHeight())
+                                        .setHeight((float) blockMaxHeight);
+                            }
+
                             applyPaddings(occupiedArea.getBBox(), paddings, true);
                             applyBorderBox(occupiedArea.getBBox(), borders, true);
-                            applyMargins(occupiedArea.getBBox(), margins, true);
-                            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer, causeOfNothing);
+                            applyMargins(occupiedArea.getBBox(), true);
+                            if (wasHeightClipped) {
+                                return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
+                            } else {
+                                return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, overflowRenderer, causeOfNothing);
+                            }
                         } else {
                             childRenderers.set(childPos, result.getSplitRenderer());
                             childRenderers.add(childPos + 1, result.getOverflowRenderer());
@@ -183,7 +231,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     } else if (result.getStatus() == LayoutResult.NOTHING) {
                         boolean keepTogether = isKeepTogether();
                         int layoutResult = anythingPlaced && !keepTogether ? LayoutResult.PARTIAL : LayoutResult.NOTHING;
-
                         AbstractRenderer splitRenderer = createSplitRenderer(layoutResult);
                         splitRenderer.childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
                         for (IRenderer renderer : splitRenderer.childRenderers) {
@@ -202,26 +249,58 @@ public abstract class BlockRenderer extends AbstractRenderer {
                             overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
                         }
 
+                        if (hasProperty(Property.MAX_HEIGHT)) {
+                            if (isPositioned) {
+                                correctPositionedLayout(layoutBox);
+                            }
+                            overflowRenderer.setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
+                        }
+                        if (hasProperty(Property.MIN_HEIGHT)) {
+                            overflowRenderer.setProperty(Property.MIN_HEIGHT, retrieveMinHeight() - occupiedArea.getBBox().getHeight());
+                        }
+                        if (hasProperty(Property.HEIGHT)) {
+                            overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                        }
+
+                        if (wasHeightClipped) {
+                            occupiedArea.getBBox()
+                                    .moveDown((float) blockMaxHeight - occupiedArea.getBBox().getHeight())
+                                    .setHeight((float) blockMaxHeight);
+                            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                            logger.warn(LogMessageConstant.CLIP_ELEMENT);
+                        }
+
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
-                        applyMargins(occupiedArea.getBBox(), margins, true);
+                        applyMargins(occupiedArea.getBBox(), true);
+                        //splitRenderer.occupiedArea = occupiedArea.clone();
 
-                        if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null);
+
+                        if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || wasHeightClipped) {
+                            return new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
                         } else {
-                            return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, LayoutResult.NOTHING == layoutResult ? result.getCauseOfNothing() : null);
+                            if (layoutResult != LayoutResult.NOTHING) {
+                                return new LayoutResult(layoutResult, occupiedArea, splitRenderer, overflowRenderer, null);
+                            } else {
+                                return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing());
+                            }
                         }
                     }
                 }
             }
-
             anythingPlaced = true;
 
             occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
+            if (marginsCollapsingEnabled) {
+                marginsCollapseHandler.endChildMarginsHandling(layoutBox);
+            }
             if (result.getStatus() == LayoutResult.FULL) {
-                layoutBox.setHeight(layoutBox.getHeight() - result.getOccupiedArea().getBBox().getHeight());
+                layoutBox.setHeight(result.getOccupiedArea().getBBox().getY() - layoutBox.getY());
                 if (childRenderer.getOccupiedArea() != null) {
-                    alignChildHorizontally(childRenderer, layoutBox.getWidth());
+                    // Use occupied area's bbox width so that for absolutely positioned renderers we do not align using full width
+                    // in case when parent box should wrap around child boxes.
+                    // TODO in the latter case, all elements should be layouted first so that we know maximum width needed to place all children and then apply horizontal alignment
+                    alignChildHorizontally(childRenderer, occupiedArea.getBBox().getWidth());
                 }
             }
 
@@ -230,29 +309,64 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 causeOfNothing = result.getCauseOfNothing();
             }
         }
+        if (marginsCollapsingEnabled) {
+            marginsCollapseHandler.endMarginsCollapse(layoutBox);
+        }
+
+        if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) {
+            occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), layoutBox));
+        }
+
+        IRenderer overflowRenderer = null;
+        Float blockMinHeight = retrieveMinHeight();
+        if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
+            if (isFixedLayout()) {
+                occupiedArea.getBBox().moveDown((float) blockMinHeight - occupiedArea.getBBox().getHeight()).setHeight((float) blockMinHeight);
+            } else {
+                float blockBottom = Math.max(occupiedArea.getBBox().getBottom() - ((float) blockMinHeight - occupiedArea.getBBox().getHeight()), layoutBox.getBottom());
+                occupiedArea.getBBox()
+                        .increaseHeight(occupiedArea.getBBox().getBottom() - blockBottom)
+                        .setY(blockBottom);
+                blockMinHeight -= occupiedArea.getBBox().getHeight();
+                if (!isFixedLayout() && blockMinHeight > AbstractRenderer.EPS) {
+                    overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
+                    overflowRenderer.setProperty(Property.MIN_HEIGHT, (float) blockMinHeight);
+                    if (hasProperty(Property.HEIGHT)) {
+                        overflowRenderer.setProperty(Property.HEIGHT, retrieveHeight() - occupiedArea.getBBox().getHeight());
+                    }
+                }
+            }
+        }
+
+        if (isPositioned) {
+            correctPositionedLayout(layoutBox);
+        }
 
         applyPaddings(occupiedArea.getBBox(), paddings, true);
-        if (blockHeight != null && blockHeight > occupiedArea.getBBox().getHeight()) {
-            occupiedArea.getBBox().moveDown((float) blockHeight - occupiedArea.getBBox().getHeight()).setHeight((float) blockHeight);
-        }
-        if (isPositioned) {
-            float y = (float) this.getPropertyAsFloat(Property.Y);
-            float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
-            move(0, relativeY + y - occupiedArea.getBBox().getY());
-        }
-
         applyBorderBox(occupiedArea.getBBox(), borders, true);
-        applyMargins(occupiedArea.getBBox(), margins, true);
+        if (positionedRenderers.size() > 0) {
+            LayoutArea area = new LayoutArea(occupiedArea.getPageNumber(), occupiedArea.getBBox().clone());
+            applyBorderBox(area.getBBox(), false);
+            for (IRenderer childPositionedRenderer : positionedRenderers) {
+                childPositionedRenderer.setParent(this).layout(new LayoutContext(area));
+            }
+            applyBorderBox(area.getBBox(), true);
+        }
+        applyMargins(occupiedArea.getBBox(), true);
         if (this.<Float>getProperty(Property.ROTATION_ANGLE) != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
+                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
                 }
             }
         }
         applyVerticalAlignment();
-        return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, causeOfNothing);
+        if (null == overflowRenderer) {
+            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, causeOfNothing);
+        } else {
+            return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, this, overflowRenderer, causeOfNothing);
+        }
     }
 
     protected AbstractRenderer createSplitRenderer(int layoutResult) {
@@ -261,6 +375,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         splitRenderer.modelElement = modelElement;
         splitRenderer.occupiedArea = occupiedArea;
         splitRenderer.isLastRendererForModelElement = false;
+        splitRenderer.properties = new HashMap<>(properties);
         return splitRenderer;
     }
 
@@ -274,10 +389,14 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
     @Override
     public void draw(DrawContext drawContext) {
-        PdfDocument document = drawContext.getDocument();
-        applyDestination(document);
-        applyAction(document);
+        if (occupiedArea == null) {
+            Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+            logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
+            return;
+        }
+        applyDestinationsAndAnnotation(drawContext);
 
+        PdfDocument document = drawContext.getDocument();
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
         TagTreePointer tagPointer = null;
         IAccessibleElement accessibleElement = null;
@@ -289,11 +408,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 if (!tagPointer.isElementConnectedToTag(accessibleElement)) {
                     AccessibleAttributesApplier.applyLayoutAttributes(role, this, document);
 
-                    if (role.equals(PdfName.TD)) {
+                    if (role.equals(PdfName.TD) || role.equals(PdfName.TH)) {
                         AccessibleAttributesApplier.applyTableAttributes(this);
                     }
 
-                    if (role.equals(PdfName.List)) {
+                    if (role.equals(PdfName.L)) {
                         AccessibleAttributesApplier.applyListAttributes(this);
                     }
 
@@ -306,19 +425,22 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
-            applyAbsolutePositioningTranslation(false);
+            applyRelativePositioningTranslation(false);
         }
 
+        beginElementOpacityApplying(drawContext);
         beginRotationIfApplied(drawContext.getCanvas());
 
         drawBackground(drawContext);
         drawBorder(drawContext);
         drawChildren(drawContext);
+        drawPositionedChildren(drawContext);
 
         endRotationIfApplied(drawContext.getCanvas());
-
+        endElementOpacityApplying(drawContext);
+        
         if (isRelativePosition) {
-            applyAbsolutePositioningTranslation(true);
+            applyRelativePositioningTranslation(true);
         }
 
         if (isTagged) {
@@ -336,7 +458,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         Rectangle bBox = occupiedArea.getBBox().clone();
         Float rotationAngle = this.<Float>getProperty(Property.ROTATION_ANGLE);
         if (rotationAngle != null) {
-            if (!hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT) || !hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
+            if (!hasOwnProperty(Property.ROTATION_INITIAL_WIDTH) || !hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
                 Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
                 logger.error(MessageFormat.format(LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, getClass().getSimpleName()));
             } else {
@@ -350,7 +472,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
     protected void applyVerticalAlignment() {
         VerticalAlignment verticalAlignment = this.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT);
         if (verticalAlignment != null && verticalAlignment != VerticalAlignment.TOP && childRenderers.size() > 0) {
-            float deltaY = childRenderers.get(childRenderers.size() - 1).getOccupiedArea().getBBox().getY() - getInnerAreaBBox().getY();
+            LayoutArea lastChildOccupiedArea = childRenderers.get(childRenderers.size() - 1).getOccupiedArea();
+            float deltaY = lastChildOccupiedArea.getBBox().getY() - getInnerAreaBBox().getY();
             switch (verticalAlignment) {
                 case BOTTOM:
                     for (IRenderer child : childRenderers) {
@@ -391,9 +514,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
 
             // transforms apply from bottom to top
-            rotationTransform.translate((float)rotationPointX, (float)rotationPointY); // move point back at place
+            rotationTransform.translate((float) rotationPointX, (float) rotationPointY); // move point back at place
             rotationTransform.rotate(angle); // rotate
-            rotationTransform.translate((float)-rotationPointX, (float)-rotationPointY); // move rotation point to origin
+            rotationTransform.translate((float) -rotationPointX, (float) -rotationPointY); // move rotation point to origin
 
             List<Point> rotatedPoints = transformPoints(rectangleToPointsList(occupiedArea.getBBox()), rotationTransform);
             Rectangle newBBox = calculateBBox(rotatedPoints);
@@ -437,11 +560,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
      * This method creates {@link AffineTransform} instance that could be used
      * to rotate content inside the occupied area. Be aware that it should be used only after
      * layout rendering is finished and correct occupied area for the rotated element is calculated.
+     *
      * @return {@link AffineTransform} that rotates the content and places it inside occupied area.
      */
     protected AffineTransform createRotationTransformInsideOccupiedArea() {
         Float angle = this.<Float>getProperty(Property.ROTATION_ANGLE);
-        AffineTransform rotationTransform = AffineTransform.getRotateInstance((float)angle);
+        AffineTransform rotationTransform = AffineTransform.getRotateInstance((float) angle);
 
         Rectangle contentBox = this.getOccupiedAreaBBox();
         List<Point> rotatedContentBoxPoints = transformPoints(rectangleToPointsList(contentBox), rotationTransform);
@@ -473,26 +597,96 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
     }
 
-    /**
-     * This method calculates the shift needed to be applied to the points in order to position
-     * upper and left borders of their bounding box at the given lines.
-     * @param left x coordinate at which points bbox left border is to be aligned
-     * @param top y coordinate at which points bbox upper border is to be aligned
-     * @param points the points, which bbox will be aligned at the given position
-     * @return array of two floats, where first element denotes x-coordinate shift and the second
-     * element denotes y-coordinate shift which are needed to align points bbox at the given lines.
-     */
-    private float[] calculateShiftToPositionBBoxOfPointsAt(float left, float top, List<Point> points) {
-        double minX = Double.MAX_VALUE;
-        double maxY = -Double.MAX_VALUE;
-        for (Point point : points) {
-            minX = Math.min(point.getX(), minX);
-            maxY = Math.max(point.getY(), maxY);
+    protected void correctPositionedLayout(Rectangle layoutBox) {
+        if (isFixedLayout()) {
+            float y = (float) this.getPropertyAsFloat(Property.Y);
+            float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
+            move(0, relativeY + y - occupiedArea.getBBox().getY());
+        } else {
+            //TODO
         }
+    }
 
-        float dx = (float) (left - minX);
-        float dy = (float) (top - maxY);
-        return new float[] {dx, dy};
+    protected float applyBordersPaddingsMargins(Rectangle parentBBox, Border[] borders, float[] paddings) {
+        float parentWidth  = parentBBox.getWidth();
+
+        applyMargins(parentBBox, false);
+        applyBorderBox(parentBBox, borders, false);
+        if (isPositioned()) {
+            if (isFixedLayout()) {
+                float x = (float) this.getPropertyAsFloat(Property.X);
+                float relativeX = isFixedLayout() ? 0 : parentBBox.getX();
+                parentBBox.setX(relativeX + x);
+            }  else if (isAbsolutePosition()) {
+                applyAbsolutePosition(parentBBox);
+            }
+        }
+        applyPaddings(parentBBox, paddings, false);
+        return parentWidth - parentBBox.getWidth();
+    }
+
+    @Override
+    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
+        Rectangle area = new Rectangle(availableWidth, AbstractRenderer.INF);
+        float additionalWidth = applyBordersPaddingsMargins(area, getBorders(), getPaddings());
+        MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth, availableWidth);
+        AbstractWidthHandler handler = new MaxMaxWidthHandler(minMaxWidth);
+        for (IRenderer childRenderer : childRenderers) {
+            MinMaxWidth childMinMaxWidth;
+            childRenderer.setParent(this);
+            if (childRenderer instanceof AbstractRenderer) {
+                childMinMaxWidth = ((AbstractRenderer)childRenderer).getMinMaxWidth(area.getWidth());
+            } else {
+                childMinMaxWidth = MinMaxWidthUtils.countDefaultMinMaxWidth(childRenderer, area.getWidth());
+            }
+            handler.updateMaxChildWidth(childMinMaxWidth.getMaxWidth());
+            handler.updateMinChildWidth(childMinMaxWidth.getMinWidth());
+        }
+        return countRotationMinMaxWidth(correctMinMaxWidth(minMaxWidth));
+    }
+
+    //Heuristic method.
+    //We assume that the area of block stays the same when we try to layout it
+    //with different available width (available width is between min-width and max-width).
+    MinMaxWidth countRotationMinMaxWidth(MinMaxWidth minMaxWidth) {
+        Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
+        if (rotation != null) {
+            boolean restoreRendererRotation = hasOwnProperty(Property.ROTATION_ANGLE);
+            setProperty(Property.ROTATION_ANGLE, null);
+            LayoutResult result = layout(new LayoutContext(new LayoutArea(1, new Rectangle(minMaxWidth.getMaxWidth() + MinMaxWidthUtils.getEps(), AbstractRenderer.INF))));
+            if (restoreRendererRotation) {
+                setProperty(Property.ROTATION_ANGLE, rotation);
+            } else {
+                deleteOwnProperty(Property.ROTATION_ANGLE);
+            }
+            if (result.getOccupiedArea() != null) {
+                double a = result.getOccupiedArea().getBBox().getWidth();
+                double b = result.getOccupiedArea().getBBox().getHeight();
+                double m = minMaxWidth.getMinWidth();
+                double s = a * b;
+                //Note, that the width of occupied area containing rotated block is less than the diagonal of this block, so:
+                //width < sqrt(a^2 + b^2)
+                //a^2 + b^2 = (s/b)^2 + b^2 >= 2s
+                //(s/b)^2 + b^2 = 2s,  if b = s/b = sqrt(s)
+                double resultMinWidth =  Math.sqrt(2 * s);
+                //Note, that if the sqrt(s) < m (width of unrotated block is out of possible range), than the min value of (s/b)^2 + b^2 >= 2s should be when b = m
+                if ( Math.sqrt(s) < minMaxWidth.getMinWidth()) {
+                    resultMinWidth = Math.max(resultMinWidth, Math.sqrt((s / m) * (s / m) + m * m));
+                }
+                //We assume that the biggest diagonal is when block element have maxWidth.
+                return new MinMaxWidth(0, minMaxWidth.getAvailableWidth(), (float) resultMinWidth, (float) Math.sqrt(a * a + b * b));
+            }
+        }
+        return minMaxWidth;
+    }
+
+    MinMaxWidth correctMinMaxWidth(MinMaxWidth minMaxWidth) {
+        Float width = retrieveWidth(-1);
+        if (width != null && width >= 0 && width >= minMaxWidth.getChildrenMinWidth()) {
+            minMaxWidth.setChildrenMaxWidth((float) width);
+            minMaxWidth.setChildrenMinWidth((float) width);
+        }
+        return minMaxWidth;
     }
 
     private List<Point> clipPolygon(List<Point> points, Point clipLineBeg, Point clipLineEnd) {

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -56,8 +56,7 @@ import java.util.SimpleTimeZone;
  * <P><BLOCKQUOTE>
  * (D:YYYYMMDDHHmmSSOHH'mm')
  * </BLOCKQUOTE><P>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 7.2 (page 183-184)
+ * See also ISO-320001 7.9.4, “Dates”.
  *
  * @see PdfString
  * @see java.util.GregorianCalendar

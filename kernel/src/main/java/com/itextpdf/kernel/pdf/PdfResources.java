@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -112,7 +112,8 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
      * @return added font resource name.
      */
     public PdfName addFont(PdfDocument pdfDocument, PdfFont font) {
-        pdfDocument.getDocumentFonts().add(font);
+        font.makeIndirect(pdfDocument);
+        pdfDocument.addFont(font);
         return addResource(font, fontNamesGen);
     }
 
@@ -151,6 +152,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
                     .setMessageParams(image.getClass().toString());
         }
         return addResource(image, imageNamesGen);
+    }
+
+    public PdfImageXObject getImage(PdfName name) {
+        PdfStream image = getResource(PdfName.Image).getAsStream(name);
+        return image != null ? new PdfImageXObject(image) : null;
     }
 
     /**
@@ -207,6 +213,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return name;
     }
 
+    public PdfFormXObject getForm(PdfName name) {
+        PdfStream form = getResource(PdfName.Form).getAsStream(name);
+        return form != null ? new PdfFormXObject(form) : null;
+    }
+
     /**
      * Adds {@link PdfExtGState} object to the resources.
      *
@@ -244,6 +255,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(extGState, egsNamesGen);
     }
 
+    public PdfExtGState getPdfExtGState(PdfName name) {
+        PdfDictionary dic = getResource(PdfName.ExtGState).getAsDictionary(name);
+        return dic != null ? new PdfExtGState(dic) : null;
+    }
+
     /**
      * Adds {@link PdfDictionary} to the resources as properties list.
      *
@@ -271,6 +287,10 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(properties, propNamesGen);
     }
 
+    public PdfObject getProperties(PdfName name) {
+        return getResourceObject(PdfName.Properties, name);
+    }
+
     /**
      * Adds {@link PdfColorSpace} object to the resources.
      *
@@ -289,6 +309,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfName addColorSpace(PdfObject colorSpace) {
         return addResource(colorSpace, csNamesGen);
+    }
+
+    public PdfColorSpace getColorSpace(PdfName name) {
+        PdfObject colorSpace = getResourceObject(PdfName.ColorSpace, name);
+        return colorSpace != null ? PdfColorSpace.makeColorSpace(colorSpace) : null;
     }
 
     /**
@@ -328,6 +353,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return addResource(pattern, patternNamesGen);
     }
 
+    public PdfPattern getPattern(PdfName name) {
+        PdfObject pattern = getResourceObject(PdfName.Pattern, name);
+        return pattern instanceof PdfDictionary ? PdfPattern.getPatternInstance((PdfDictionary) pattern) : null;
+    }
+
     /**
      * Adds {@link PdfShading} object to the resources.
      *
@@ -363,6 +393,11 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
                     .setMessageParams(shading.getClass().toString());
         }
         return addResource(shading, shadingNamesGen);
+    }
+
+    public PdfShading getShading(PdfName name) {
+        PdfObject shading = getResourceObject(PdfName.Shading, name);
+        return shading instanceof PdfDictionary ? PdfShading.makeShading((PdfDictionary) shading) : null;
     }
 
     protected boolean isReadOnly() {
@@ -511,6 +546,23 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfDictionary getResource(PdfName resType) {
         return getPdfObject().getAsDictionary(resType);
+    }
+
+    /**
+     * Get the {@link PdfObject} object with specified type and name.
+     *
+     * @param resType the resource type. Should be {@link PdfName#ColorSpace}, {@link PdfName#ExtGState},
+     *                {@link PdfName#Pattern}, {@link PdfName#Shading}, {@link PdfName#XObject}, {@link PdfName#Font}.
+     * @param resName the name of the resource object.
+     * @return the {@link PdfObject} with specified name in the resources of specified type or {@code null}
+     *         in case of incorrect type or missing resource with such name.
+     */
+    public PdfObject getResourceObject(PdfName resType, PdfName resName) {
+        PdfDictionary resource = getResource(resType);
+        if (resource != null) {
+            return resource.get(resName);
+        }
+        return null;
     }
 
     @Override

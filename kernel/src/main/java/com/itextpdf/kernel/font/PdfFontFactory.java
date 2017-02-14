@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -60,6 +60,9 @@ import java.util.Set;
 
 /**
  * This class provides helpful methods for creating fonts ready to be used in a {@link PdfDocument}
+ *
+ * Note, just created {@link PdfFont} is almost empty until it will be flushed,
+ * because it is impossible to fulfill font data until flush.
  */
 public final class PdfFontFactory {
 
@@ -77,17 +80,28 @@ public final class PdfFontFactory {
     private static boolean DEFAULT_CACHED = true;
 
     /**
-     * Creates a default font, namely {@link FontConstants#HELVETICA} standard font with {@link PdfEncodings#WINANSI} encoding.
+     * Creates a new instance of default font, namely {@link FontConstants#HELVETICA} standard font
+     * with {@link PdfEncodings#WINANSI} encoding.
+     * Note, if you want to reuse the same instance of default font, you may use
+     * {@link PdfDocument#getDefaultFont()}.
      *
      * @return created font
      * @throws IOException if error occurred while creating the font, e.g. metrics loading failure
      */
     public static PdfFont createFont() throws IOException {
-        return createFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
+        return createFont(FontConstants.HELVETICA, DEFAULT_ENCODING);
     }
 
     /**
-     * Creates a {@link PdfFont} by existing font dictionary.
+     * Creates a {@link PdfFont} by already existing font dictionary.
+     *
+     * Note, the font won't be added to any document,
+     * until you add it to {@link com.itextpdf.kernel.pdf.canvas.PdfCanvas}.
+     * While adding to {@link com.itextpdf.kernel.pdf.canvas.PdfCanvas}, or to
+     * {@link com.itextpdf.kernel.pdf.PdfResources} the font will be made indirect implicitly.
+     *
+     * {@link PdfDocument#getFont} method is strongly recommended if you want to get PdfFont by both
+     * existing font dictionary, or just created and hasn't flushed yet.
      *
      * @param fontDictionary the font dictionary to create the font from
      * @return created {@link PdfFont} instance
@@ -130,15 +144,15 @@ public final class PdfFontFactory {
     }
 
     /**
-     * Creates a {@link PdfFont} instance from the TrueTypeCollection represented by its byte contents.
+     * Creates a {@link PdfFont} instance from the TrueType Collection represented by its byte contents.
      *
-     * @param ttc      the byte contents of the TrueTypeCollection
+     * @param ttc      the byte contents of the TrueType Collection
      * @param ttcIndex the index of the font in the collection, zero-based
      * @param encoding the encoding of the font to be created. See {@link PdfEncodings}
      * @param embedded indicates whether the font is to be embedded into the target document
      * @param cached   indicates whether the font will be cached
      * @return created {@link PdfFont} instance
-     * @throws IOException in case the contents of the TrueTypeCollection is mal-formed or an error occurred during reading the font
+     * @throws IOException in case the contents of the TrueType Collection is mal-formed or an error occurred during reading the font
      */
     public static PdfFont createTtcFont(byte[] ttc, int ttcIndex, String encoding, boolean embedded, boolean cached) throws IOException {
         FontProgram fontProgram = FontProgramFactory.createFont(ttc, ttcIndex, cached);
@@ -146,7 +160,7 @@ public final class PdfFontFactory {
     }
 
     /**
-     * Creates a {@link PdfFont} instance from the TrueTypeCollection given by the path to the .ttc file.
+     * Creates a {@link PdfFont} instance from the TrueType Collection given by the path to the .ttc file.
      *
      * @param ttc      the path of the .ttc file
      * @param ttcIndex the index of the font in the collection, zero-based
@@ -154,7 +168,7 @@ public final class PdfFontFactory {
      * @param embedded indicates whether the font is to be embedded into the target document
      * @param cached   indicates whether the font will be cached
      * @return created {@link PdfFont} instance
-     * @throws IOException in case the file is not found, contents of the TrueTypeCollection is mal-formed
+     * @throws IOException in case the file is not found, contents of the TrueType Collection is mal-formed
      *                     or an error occurred during reading the font
      */
     public static PdfFont createTtcFont(String ttc, int ttcIndex, String encoding, boolean embedded, boolean cached) throws IOException {
@@ -303,7 +317,7 @@ public final class PdfFontFactory {
      * @throws IOException this exception is actually never thrown. Will be removed in 7.1.
      */
     public static PdfFont createFont(byte[] fontProgram, String encoding, boolean embedded, boolean cached) throws IOException {
-        FontProgram fp = FontProgramFactory.createFont(null, fontProgram, cached);
+        FontProgram fp = FontProgramFactory.createFont(fontProgram, cached);
         return createFont(fp, encoding, embedded);
     }
 
@@ -423,7 +437,7 @@ public final class PdfFontFactory {
 
     /**
      * Registers a .ttf, .otf, .afm, .pfm, or a .ttc font file.
-     * In case if TrueTypeCollection (.ttc), an additional parameter may be specified defining the index of the font
+     * In case if TrueType Collection (.ttc), an additional parameter may be specified defining the index of the font
      * to be registered, e.g. "path/to/font/collection.ttc,0". The index is zero-based.
      *
      * @param path the path to a font file

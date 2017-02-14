@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -93,20 +93,16 @@ public class BarcodeCodabar extends Barcode1D {
      */
     public BarcodeCodabar(PdfDocument document) {
         super(document);
-        try {
-            x = 0.8f;
-            n = 2;
-            font = PdfFontFactory.createFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
-            size = 8;
-            baseline = size;
-            barHeight = size * 3;
-            textAlignment = ALIGN_CENTER;
-            generateChecksum = false;
-            checksumText = false;
-            startStopText = false;
-        } catch (Exception e) {
-            throw new PdfException(e.getMessage(), e.getCause());
-        }
+        x = 0.8f;
+        n = 2;
+        font = document.getDefaultFont();
+        size = 8;
+        baseline = size;
+        barHeight = size * 3;
+        textAlignment = ALIGN_CENTER;
+        generateChecksum = false;
+        checksumText = false;
+        startStopText = false;
     }
 
     /**

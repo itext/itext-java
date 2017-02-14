@@ -1,3 +1,45 @@
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2017 iText Group NV
+    Authors: iText Software.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
@@ -6,11 +48,24 @@ import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.draw.DashedLine;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.LineSeparator;
+import com.itextpdf.layout.element.List;
+import com.itextpdf.layout.element.ListItem;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.ListSymbolAlignment;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -55,6 +110,50 @@ public class ListTest extends ExtendedITextTest {
                 add("Five").add("Six").add((ListItem) new ListItem().add(romanList2));
         document.add(list);
 
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void nestedListTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "nestedListTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_nestedListTest02.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        List nestedList = new List().setSymbolIndent(20).
+                setMarginLeft(25).
+                add("One").add("Two").add("Three");
+
+        List list = new List(ListNumberingType.DECIMAL).setSymbolIndent(20).
+                add("One").add("Two").add("Three").add("Four").add((ListItem) new ListItem().add(nestedList));
+        document.add(list);
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void listNestedInTableTest01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listNestedInTableTest01.pdf";
+        String cmpFileName = sourceFolder + "cmp_listNestedInTableTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument, PageSize.A9.rotate());
+
+        List list = new List(ListNumberingType.DECIMAL).
+                add("first string").
+                add("second string").
+                add("third string").
+                add("fourth string");
+
+        Table table = new Table(1);
+        table.addCell(new Cell().add(list).setVerticalAlignment(VerticalAlignment.BOTTOM));
+
+        document.add(table);
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
@@ -335,4 +434,159 @@ public class ListTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void listItemTest02() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listItemTest02.pdf";
+        String cmpFileName = sourceFolder + "cmp_listItemTest02.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+        document.setFontColor(Color.WHITE);
+        List list = new List();
+        Style liStyle = new Style().setMargins(20, 0, 20, 0).setBackgroundColor(Color.BLACK);
+        list.add((ListItem) new ListItem("").addStyle(liStyle))
+                .add((ListItem) new ListItem("fox").addStyle(liStyle))
+                .add((ListItem) new ListItem("").addStyle(liStyle))
+                .add((ListItem) new ListItem("dog").addStyle(liStyle));
+        document.add(list.setBackgroundColor(Color.BLUE));
+
+        document.add(new Paragraph("separation between lists"));
+        liStyle.setMargin(0);
+        document.add(list);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 4)
+    })
+    @Test
+    public void listWithSetHeightProperties01() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listWithSetHeightProperties01.pdf";
+        String cmpFileName = sourceFolder + "cmp_listWithSetHeightProperties01.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+
+        doc.add(new Paragraph("Default layout:"));
+        ListItem item = new ListItem();
+        ListItem nestedItem = new ListItem();
+        List list = new List(ListNumberingType.DECIMAL);
+        List nestedList = new List(ListNumberingType.ENGLISH_UPPER);
+        List nestedNestedList = new List(ListNumberingType.GREEK_LOWER);
+
+        nestedNestedList.add("Hello");
+        nestedNestedList.add("World");
+        nestedItem.add(nestedNestedList);
+
+        nestedList.add(nestedItem);
+        nestedList.add(nestedItem);
+
+        item.add(nestedList);
+        list.add(item);
+        list.add(item);
+
+        list.setBorder(new SolidBorder(Color.RED, 3));
+        doc.add(list);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("List's height is set shorter than needed:"));
+        list.setHeight(50);
+        doc.add(list);
+        doc.add(new AreaBreak());
+
+        list.deleteOwnProperty(Property.HEIGHT);
+        list.deleteOwnProperty(Property.MIN_HEIGHT);
+        list.deleteOwnProperty(Property.MAX_HEIGHT);
+        doc.add(new Paragraph("List's min height is set shorter than needed:"));
+        list.setMinHeight(50);
+        doc.add(list);
+        doc.add(new AreaBreak());
+
+        list.deleteOwnProperty(Property.HEIGHT);
+        list.deleteOwnProperty(Property.MIN_HEIGHT);
+        list.deleteOwnProperty(Property.MAX_HEIGHT);
+        doc.add(new Paragraph("List's max height is set shorter than needed:"));
+        list.setMaxHeight(50);
+        doc.add(list);
+        doc.add(new AreaBreak());
+
+        list.deleteOwnProperty(Property.HEIGHT);
+        list.deleteOwnProperty(Property.MIN_HEIGHT);
+        list.deleteOwnProperty(Property.MAX_HEIGHT);
+        doc.add(new Paragraph("List's height is set bigger than needed:"));
+        list.setHeight(1300);
+        doc.add(list);
+        doc.add(new AreaBreak());
+
+        list.deleteOwnProperty(Property.HEIGHT);
+        list.deleteOwnProperty(Property.MIN_HEIGHT);
+        list.deleteOwnProperty(Property.MAX_HEIGHT);
+        doc.add(new Paragraph("List's min height is set bigger than needed:"));
+        list.setMinHeight(1300);
+        doc.add(list);
+        doc.add(new AreaBreak());
+
+        list.deleteOwnProperty(Property.HEIGHT);
+        list.deleteOwnProperty(Property.MIN_HEIGHT);
+        list.deleteOwnProperty(Property.MAX_HEIGHT);
+        doc.add(new Paragraph("List's max height is set bigger than needed:"));
+        list.setMaxHeight(1300);
+        doc.add(list);
+        doc.add(new AreaBreak());
+
+        list.deleteOwnProperty(Property.HEIGHT);
+        list.deleteOwnProperty(Property.MIN_HEIGHT);
+        list.deleteOwnProperty(Property.MAX_HEIGHT);
+        doc.add(new Paragraph("Some list items' and nested lists' heights are set bigger or shorter than needed:"));
+        nestedList.setHeight(400);
+        nestedItem.setHeight(300);
+        doc.add(list);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void listSetSymbol() throws Exception {
+        List list = new List();
+        //Assert.assertEquals("- ", ((Text) list.getProperty(Property.LIST_SYMBOL)).getText());
+        Assert.assertEquals(null, list.<Object>getProperty(Property.LIST_SYMBOL));
+        list.setListSymbol("* ");
+        Assert.assertEquals("* ", ((Text) list.<Object>getProperty(Property.LIST_SYMBOL)).getText());
+
+        list = new List();
+        Style style = new Style();
+        style.setProperty(Property.LIST_SYMBOL, new Text("* "));
+        list.addStyle(style);
+        Assert.assertEquals("* ", ((Text) list.<Object>getProperty(Property.LIST_SYMBOL)).getText());
+    }
+
+    @Test
+    public void listItemNullSymbol() throws Exception {
+        String outFileName = destinationFolder + "listItemNullSymbol.pdf";
+        String cmpFileName = sourceFolder + "cmp_listItemNullSymbol.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+        
+        List list = new List();
+        list.add(new ListItem("List item 1"));
+        Text listSymbolText = null;
+        ListItem listItem2 = new ListItem("List item 2").setListSymbol(listSymbolText);
+        list.add(listItem2);
+        list.add(new ListItem("List item 3"));
+
+        doc.add(list);
+        
+        doc.add(new LineSeparator(new DashedLine()));
+        
+        list.setListSymbol(ListNumberingType.ENGLISH_LOWER);
+        doc.add(list);
+        
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
 }

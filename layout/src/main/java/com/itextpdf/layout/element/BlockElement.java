@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -55,7 +55,7 @@ import com.itextpdf.layout.property.VerticalAlignment;
  *
  * @param <T> the type of the implementation
  */
-public abstract class BlockElement<T extends IElement> extends AbstractElement<T> implements IAccessibleElement {
+public abstract class BlockElement<T extends IElement> extends AbstractElement<T> implements IAccessibleElement, IBlockElement {
 
     /**
      * Creates a BlockElement.
@@ -368,6 +368,22 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      */
     public T setRotationAngle(double angleInRadians) {
         setProperty(Property.ROTATION_ANGLE, (float) angleInRadians);
+        return (T) (Object) this;
+    }
+
+    @Override
+    public T setHeight(float height) {
+        super.setHeight(height);
+        return (T) (Object) this;
+    }
+
+    public T setMaxHeight(float maxHeight) {
+        setProperty(Property.MAX_HEIGHT, maxHeight);
+        return (T) (Object) this;
+    }
+
+    public T setMinHeight(float minHeight) {
+        setProperty(Property.MIN_HEIGHT, minHeight);
         return (T) (Object) this;
     }
 }

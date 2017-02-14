@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -86,6 +86,8 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.esf.SigPolicyQualifierInfo;
+import org.bouncycastle.asn1.esf.SigPolicyQualifiers;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.Extension;
@@ -296,6 +298,10 @@ class SignUtils {
 
     static Signature getSignatureHelper(String algorithm, String provider) throws NoSuchProviderException, NoSuchAlgorithmException {
         return provider == null ? Signature.getInstance(algorithm) : Signature.getInstance(algorithm, provider);
+    }
+
+    static SigPolicyQualifiers createSigPolicyQualifiers(SigPolicyQualifierInfo... sigPolicyQualifierInfo) {
+        return new SigPolicyQualifiers(sigPolicyQualifierInfo);
     }
 
     static Iterable<X509Certificate> getCertificates(final KeyStore keyStore) throws KeyStoreException {

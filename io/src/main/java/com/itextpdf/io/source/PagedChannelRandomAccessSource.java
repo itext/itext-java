@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,12 @@
 package com.itextpdf.io.source;
 
 import com.itextpdf.io.LogMessageConstant;
+
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -60,6 +66,7 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
     // the single size MRU case (24% speed improvement)
     public static final int DEFAULT_TOTAL_BUFSIZE = 1 << 26;
     public static final int DEFAULT_MAX_OPEN_BUFFERS = 16;
+    private static final long serialVersionUID = 4297575388315637274L;
 
     /**
      * The size of each of the buffers to use when mapping files into memory.  This must be greater than 0 and less than {@link Integer#MAX_VALUE}
@@ -170,7 +177,15 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
         }
     }
 
-    private static class MRU<E>{
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        throw new NotSerializableException(getClass().toString());
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        throw new NotSerializableException(getClass().toString());
+    }
+
+    private static class MRU<E> {
         /**
          * The maximum number of entries held by this MRU
          */

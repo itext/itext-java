@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -46,6 +46,8 @@ package com.itextpdf.kernel.color;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 
 public class CalRgb extends Color {
+
+    private static final long serialVersionUID = 3916506066056271822L;
 
     public CalRgb(PdfCieBasedCs.CalRgb cs) {
         this(cs, new float[cs.getNumberOfComponents()]);

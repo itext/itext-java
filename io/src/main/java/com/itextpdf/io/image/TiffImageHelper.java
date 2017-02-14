@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -74,6 +74,10 @@ class TiffImageHelper {
         Map<String, Object> additional;
     }
 
+    /**
+     * Processes the ImageData as a TIFF image.
+     * @param image image to process.
+     */
     public static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.TIFF)
             throw new IllegalArgumentException("TIFF image expected");
@@ -106,7 +110,10 @@ class TiffImageHelper {
             TIFFDirectory dir = new TIFFDirectory(s, page - 1);
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_TILEWIDTH))
                 throw new IOException(IOException.TilesAreNotSupported);
-            int compression = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_COMPRESSION);
+            int compression = TIFFConstants.COMPRESSION_NONE;
+            if (dir.isTagPresent(TIFFConstants.TIFFTAG_COMPRESSION)) {
+                compression = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_COMPRESSION);
+            }
             switch (compression) {
                 case TIFFConstants.COMPRESSION_CCITTRLEW:
                 case TIFFConstants.COMPRESSION_CCITTRLE:
@@ -281,7 +288,10 @@ class TiffImageHelper {
 
     private static void processTiffImageColor(TIFFDirectory dir, RandomAccessFileOrArray s, TiffParameters tiff) {
         try {
-            int compression = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_COMPRESSION);
+            int compression = TIFFConstants.COMPRESSION_NONE;
+            if (dir.isTagPresent(TIFFConstants.TIFFTAG_COMPRESSION)) {
+                compression = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_COMPRESSION);
+            }
             int predictor = 1;
             TIFFLZWDecoder lzwDecoder = null;
             switch (compression) {
@@ -548,8 +558,8 @@ class TiffImageHelper {
                         }
                     }
                     Object[] indexed = new Object[4];
-                    indexed[0] = "Indexed";
-                    indexed[1] = "DeviceRGB";
+                    indexed[0] = "/Indexed";
+                    indexed[1] = "/DeviceRGB";
                     indexed[2] = gColor - 1;
                     indexed[3] = PdfEncodings.convertToString(palette, null);
                     tiff.additional = new HashMap<>();

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -601,6 +601,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
         }
         dic.put(key, action.getPdfObject());
         wrapper.getPdfObject().put(PdfName.AA, dic);
+        wrapper.getPdfObject().setModified();
     }
 
     /**

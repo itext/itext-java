@@ -1,3 +1,45 @@
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2017 iText Group NV
+    Authors: iText Software.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
@@ -34,6 +76,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.awt.Toolkit;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -1622,5 +1665,61 @@ public class PdfCanvasTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+    
+    @Test
+    public void canvasInitializationPageNoContentsKey() throws IOException, InterruptedException {
+        String srcFile = sourceFolder + "pageNoContents.pdf";
+        String cmpFile = sourceFolder + "cmp_pageNoContentsStamp.pdf";
+        String destFile = destinationFolder + "pageNoContentsStamp.pdf";
+        
+        PdfDocument document = new PdfDocument(new PdfReader(srcFile), new PdfWriter(destFile));
+        
+        PdfCanvas canvas = new PdfCanvas(document.getPage(1));
+        canvas.setLineWidth(5).rectangle(50, 680, 300, 50).stroke();
+        canvas.release();
+        
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
+    }
+    
+    @Test
+    public void canvasInitializationStampingExistingStream() throws IOException, InterruptedException {
+        String srcFile = sourceFolder + "pageWithContent.pdf";
+        String cmpFile = sourceFolder + "cmp_stampingExistingStream.pdf";
+        String destFile = destinationFolder + "stampingExistingStream.pdf";
+        
+        PdfDocument document = new PdfDocument(new PdfReader(srcFile), new PdfWriter(destFile));
+
+        PdfPage page = document.getPage(1);
+        PdfCanvas canvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), page.getDocument());
+        canvas.setLineWidth(5).rectangle(50, 680, 300, 50).stroke();
+        canvas.release();
+        
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
+    }
+    
+    @Test
+    public void canvasStampingJustCopiedStreamWithCompression() throws IOException, InterruptedException {
+        String srcFile = sourceFolder + "pageWithContent.pdf";
+        String cmpFile = sourceFolder + "cmp_stampingJustCopiedStreamWithCompression.pdf";
+        String destFile = destinationFolder + "stampingJustCopiedStreamWithCompression.pdf";
+        
+        PdfDocument srcDocument = new PdfDocument(new PdfReader(srcFile));
+        PdfDocument document = new PdfDocument(new PdfWriter(destFile));
+        srcDocument.copyPagesTo(1, 1, document);
+        srcDocument.close();
+        
+        PdfPage page = document.getPage(1);
+        PdfCanvas canvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), page.getDocument());
+        canvas.setLineWidth(5).rectangle(50, 680, 300, 50).stroke();
+        canvas.release();
+        
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
     }
 }

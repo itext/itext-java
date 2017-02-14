@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,7 @@ package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.DivRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 
@@ -66,7 +67,7 @@ public class Div extends BlockElement<Div> {
      * @param element a {@link BlockElement}
      * @return this Element
      */
-    public <T extends IElement> Div add(BlockElement<T> element) {
+    public Div add(IBlockElement element) {
         childElements.add(element);
         return this;
     }
@@ -101,6 +102,16 @@ public class Div extends BlockElement<Div> {
             tagProperties = new AccessibilityProperties();
         }
         return tagProperties;
+    }
+
+    public Div setFillAvailableArea(boolean fillArea) {
+        setProperty(Property.FILL_AVAILABLE_AREA, fillArea);
+        return this;
+    }
+
+    public Div setFillAvailableAreaOnSplit(boolean fillAreaOnSplit) {
+        setProperty(Property.FILL_AVAILABLE_AREA_ON_SPLIT, fillAreaOnSplit);
+        return this;
     }
 
     @Override

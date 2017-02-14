@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -72,7 +72,7 @@ public abstract class Border3D extends Border {
      * Creates a Border3D instance with the specified width and color.
      *
      * @param color color of the border
-     * @param width with of the border
+     * @param width width of the border
      */
     protected Border3D(DeviceRgb color, float width) {
         super(color, width);
@@ -82,7 +82,7 @@ public abstract class Border3D extends Border {
      * Creates a Border3D instance with the specified width and color.
      *
      * @param color color of the border
-     * @param width with of the border
+     * @param width width of the border
      */
     protected Border3D(DeviceCmyk color, float width) {
         super(color, width);
@@ -92,10 +92,43 @@ public abstract class Border3D extends Border {
      * Creates a Border3D instance with the specified width and color.
      *
      * @param color color of the border
-     * @param width with of the border
+     * @param width width of the border
      */
     protected Border3D(DeviceGray color, float width) {
         super(color, width);
+    }
+
+    /**
+     * Creates a Border3D instance with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity opacity of the border
+     */
+    protected Border3D(DeviceRgb color, float width, float opacity) {
+        super(color, width, opacity);
+    }
+
+    /**
+     * Creates a Border3D instance with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity opacity of the border
+     */
+    protected Border3D(DeviceCmyk color, float width, float opacity) {
+        super(color, width, opacity);
+    }
+
+    /**
+     * Creates a Border3D instance with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity opacity of the border
+     */
+    protected Border3D(DeviceGray color, float width, float opacity) {
+        super(color, width, opacity);
     }
 
     /**
@@ -137,6 +170,7 @@ public abstract class Border3D extends Border {
                 break;
         }
 
+        canvas.saveState();
         setInnerHalfColor(canvas, borderSide);
         canvas.moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).lineTo(x4, y4).lineTo(x1, y1).fill();
 
@@ -169,6 +203,7 @@ public abstract class Border3D extends Border {
 
         setOuterHalfColor(canvas, borderSide);
         canvas.moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).lineTo(x4, y4).lineTo(x1, y1).fill();
+        canvas.restoreState();
     }
 
     /**
@@ -178,7 +213,9 @@ public abstract class Border3D extends Border {
     public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
         canvas.
                 saveState().
-                setStrokeColor(color).
+                setStrokeColor(transparentColor.getColor());
+        transparentColor.applyStrokeTransparency(canvas);
+        canvas.
                 setLineWidth(width).
                 moveTo(x1, y1).
                 lineTo(x2, y2).
@@ -187,9 +224,10 @@ public abstract class Border3D extends Border {
     }
 
     /**
-     * Makes the {@link Border#color color of the border } darker and returns the result
+     * Makes the {@link Border#transparentColor color of the border } darker and returns the result
      */
     protected Color getDarkerColor() {
+        Color color = this.transparentColor.getColor();
         if (color instanceof DeviceRgb)
             return DeviceRgb.makeDarker((DeviceRgb) color);
         else if (color instanceof DeviceCmyk)

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,11 @@
  */
 package com.itextpdf.io.font.otf;
 
-public abstract class ContextualSubstRule {
+import java.io.Serializable;
+
+public abstract class ContextualSubstRule implements Serializable {
+    private static final long serialVersionUID = -8640866820690910047L;
+
     /**
      * @return length of the context glyph sequence defined by this rule.
      */

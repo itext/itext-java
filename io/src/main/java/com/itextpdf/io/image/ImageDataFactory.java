@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -72,30 +72,77 @@ public final class ImageDataFactory {
     private ImageDataFactory() {
     }
 
+    /**
+     * Create an ImageData instance representing the image from the image bytes.
+     * @param bytes byte representation of the image.
+     * @param recoverImage whether to recover from a image error (for TIFF-images)
+     * @return The created ImageData object.
+     */
     public static ImageData create(byte[] bytes, boolean recoverImage) {
         return createImageInstance(bytes, recoverImage);
     }
 
+    /**
+     * Create an ImageData instance representing the image from the image bytes.
+     * @param bytes byte representation of the image.
+     * @return The created ImageData object.
+     */
     public static ImageData create(byte[] bytes) {
         return create(bytes, false);
     }
 
+    /**
+     * Create an ImageData instance representing the image from the file located at the specified url.
+     * @param url location of the image
+     * @param recoverImage whether to recover from a image error (for TIFF-images)
+     * @return The created ImageData object.
+     */
     public static ImageData create(URL url, boolean recoverImage) {
         return createImageInstance(url, recoverImage);
     }
 
+    /**
+     * Create an ImageData instance representing the image from the file located at the specified url.
+     * @param url location of the image
+     * @return The created ImageData object.
+     */
     public static ImageData create(URL url) {
         return create(url, false);
     }
 
+    /**
+     * Create an ImageData instance representing the image from the specified file.
+     * @param filename filename of the file containing the image
+     * @param recoverImage whether to recover from a image error (for TIFF-images)
+     * @return The created ImageData object.
+     * @throws MalformedURLException
+     */
     public static ImageData create(String filename, boolean recoverImage) throws MalformedURLException {
         return create(UrlUtil.toURL(filename), recoverImage);
     }
 
+    /**
+     * Create an ImageData instance representing the image from the specified file.
+     * @param filename filename of the file containing the image
+     * @return The created ImageData object.
+     * @throws MalformedURLException
+     */
     public static ImageData create(String filename) throws MalformedURLException {
         return create(filename, false);
     }
 
+    /**
+     * Create an ImageData instance from the passed parameters.
+     *
+     * @param width width of the image in pixels
+     * @param height height of the image in pixels
+     * @param reverseBits whether to reverse the bits stored in data (TIFF images).
+     * @param typeCCITT Type of CCITT encoding
+     * @param parameters colour space parameters
+     * @param data array containing raw image data
+     * @param transparency array containing transparency information
+     * @return created ImageData object.
+     */
     public static ImageData create(int width, int height, boolean reverseBits,
                                    int typeCCITT, int parameters, byte[] data,
                                    int[] transparency) {
@@ -114,6 +161,17 @@ public final class ImageDataFactory {
         return image;
     }
 
+    /**
+     * Create an ImageData instance from the passed parameters.
+     *
+     * @param width width of the image in pixels
+     * @param height height of the image in pixels
+     * @param components colour space components
+     * @param bpc bits per colour.
+     * @param data array containing raw image data
+     * @param transparency array containing transparency information
+     * @return created ImageData object.
+     */
     public static ImageData create(int width, int height, int components,
                                    int bpc, byte[] data, int[] transparency) {
         if (transparency != null && transparency.length != components * 2)
@@ -159,6 +217,14 @@ public final class ImageDataFactory {
         return AwtImageDataFactory.create(image, color, forceBW);
     }
 
+    /**
+     * Get a bitmap ImageData instance from the specified url.
+     *
+     * @param url location of the image.
+     * @param noHeader Whether the image contains a header.
+     * @param size size of the image
+     * @return created ImageData.
+     */
     public static ImageData createBmp(URL url, boolean noHeader, int size) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, bmp)) {
@@ -169,6 +235,14 @@ public final class ImageDataFactory {
         throw new IllegalArgumentException("BMP image expected.");
     }
 
+    /**
+     * Get a bitmap ImageData instance from the provided bytes.
+     *
+     * @param bytes array containing the raw image data
+     * @param noHeader Whether the image contains a header.
+     * @param size size of the image
+     * @return created ImageData.
+     */
     public static ImageData createBmp(byte[] bytes, boolean noHeader, int size) {
         byte[] imageType = readImageType(bytes);
         if (noHeader || imageTypeIs(imageType, bmp)) {
@@ -182,8 +256,8 @@ public final class ImageDataFactory {
     /**
      * Return a GifImage object. This object cannot be added to a document
      *
-     * @param bytes
-     * @return
+     * @param bytes array containing the raw image data
+     * @return GifImageData instance.
      */
     public static GifImageData createGif(byte[] bytes) {
         byte[] imageType = readImageType(bytes);
@@ -200,7 +274,7 @@ public final class ImageDataFactory {
      *
      * @param url   url of gif image
      * @param frame number of frame to be returned
-     * @return
+     * @return GifImageData instance.
      */
     public static ImageData createGifFrame(URL url, int frame) {
         byte[] imageType = readImageType(url);
@@ -330,6 +404,11 @@ public final class ImageDataFactory {
 
     }
 
+    /**
+     * Create a ImageData instance from a Jpeg image url
+     * @param url
+     * @return
+     */
     public static ImageData createJpeg(URL url) {
         byte[] imageType = readImageType(url);
         if (imageTypeIs(imageType, jpeg)) {
@@ -414,6 +493,25 @@ public final class ImageDataFactory {
 
     public static ImageData createRawImage(byte[] bytes) {
         return new RawImageData(bytes, ImageType.RAW);
+    }
+
+    /**
+     * Checks if the type of image (based on first 8 bytes) is supported by factory.
+     * <br/>
+     * <br/>
+     * <b>Note:</b> if this method returns {@code true} it doesn't means that {@link #create(byte[])} won't throw exception
+     *
+     * @param source image raw bytes
+     * @return {@code true} if first eight bytes are recognised by factory as valid image type and {@code false} otherwise
+     */
+    public static boolean isSupportedType(byte[] source) {
+        if (source == null) {
+            return false;
+        }
+        byte[] imageType = readImageType(source);
+        return imageTypeIs(imageType, gif) || imageTypeIs(imageType, jpeg) || imageTypeIs(imageType, jpeg2000_1)
+                || imageTypeIs(imageType, jpeg2000_2) || imageTypeIs(imageType, png) || imageTypeIs(imageType, bmp)
+                || imageTypeIs(imageType, tiff_1) || imageTypeIs(imageType, tiff_2) || imageTypeIs(imageType, jbig2);
     }
 
     private static ImageData createImageInstance(URL source, boolean recoverImage) {

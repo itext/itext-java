@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -147,6 +147,7 @@ class ParentTreeHandler implements Serializable {
         }
         pageToPageMcrs.remove(page.getPdfObject().getIndirectReference());
         updateStructParentTreeEntries(page.getStructParentIndex(), mcrs);
+        structTreeRoot.setModified();
     }
 
     public PdfDictionary buildParentTree() {
@@ -154,6 +155,10 @@ class ParentTreeHandler implements Serializable {
     }
 
     public void registerMcr(PdfMcr mcr) {
+        registerMcr(mcr, false);
+    }
+    
+    private void registerMcr(PdfMcr mcr, boolean registeringOnInit) {
         PdfDictionary mcrPageObject = mcr.getPageObject();
         if (mcrPageObject == null || (!(mcr instanceof PdfObjRef) && mcr.getMcid() < 0)) {
             Logger logger = LoggerFactory.getLogger(ParentTreeHandler.class);
@@ -179,6 +184,10 @@ class ParentTreeHandler implements Serializable {
         } else {
             pageMcrs.put(mcr.getMcid(), mcr);
         }
+        
+        if (!registeringOnInit) {
+            structTreeRoot.setModified();
+        }
     }
 
     public void unregisterMcr(PdfMcr mcrToUnregister) {
@@ -198,6 +207,7 @@ class ParentTreeHandler implements Serializable {
                     PdfNumber n = obj.getAsNumber(PdfName.StructParent);
                     if (n != null) {
                         pageMcrs.remove(structParentIndexIntoKey(n.intValue()));
+                        structTreeRoot.setModified();
                         return;
                     }
                 }
@@ -205,11 +215,13 @@ class ParentTreeHandler implements Serializable {
                 for (Map.Entry<Integer, PdfMcr> entry : pageMcrs.entrySet()) {
                     if (entry.getValue().getPdfObject() == mcrToUnregister.getPdfObject()) {
                         pageMcrs.remove(entry.getKey());
+                        structTreeRoot.setModified();
                         break;
                     }
                 }
             } else {
                 pageMcrs.remove(mcrToUnregister.getMcid());
+                structTreeRoot.setModified();
             }
         }
     }
@@ -251,7 +263,7 @@ class ParentTreeHandler implements Serializable {
         for (PdfStructElem mcrParent : mcrParents) {
             for (IPdfStructElem kid : mcrParent.getKids()) {
                 if (kid instanceof PdfMcr) {
-                    registerMcr((PdfMcr) kid);
+                    registerMcr((PdfMcr) kid, true);
                 }
             }
         }

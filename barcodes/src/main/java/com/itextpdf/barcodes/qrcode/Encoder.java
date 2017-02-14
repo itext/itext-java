@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -59,7 +59,7 @@ final class Encoder {
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  // 0x00-0x0f
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  // 0x10-0x1f
             36, -1, -1, -1, 37, 38, -1, -1, -1, -1, 39, 40, -1, 41, 42, 43,  // 0x20-0x2f
-            0,   1,  2,  3,  4,  5,  6,  7,  8,  9, 44, -1, -1, -1, -1, -1,  // 0x30-0x3f
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 44, -1, -1, -1, -1, -1,  // 0x30-0x3f
             -1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,  // 0x40-0x4f
             25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, -1, -1, -1, -1, -1,  // 0x50-0x5f
     };
@@ -81,22 +81,44 @@ final class Encoder {
     }
 
     /**
-     *  Encode "bytes" with the error correction level "ecLevel". The encoding mode will be chosen
+     * Encode "bytes" with the error correction level "ecLevel". The encoding mode will be chosen
      * internally by chooseMode(). On success, store the result in "qrCode".
-     *
+     * <p>
      * We recommend you to use QRCode.EC_LEVEL_L (the lowest level) for
      * "getECLevel" since our primary use is to show QR code on desktop screens. We don't need very
      * strong error correction for this purpose.
-     *
+     * <p>
      * Note that there is no way to encode bytes in MODE_KANJI. We might want to add EncodeWithMode()
      * with which clients can specify the encoding mode. For now, we don't need the functionality.
+     *
+     * @param content String to encode
+     * @param ecLevel Error-correction level to use
+     * @param qrCode QR code to store the result in
+     * @throws WriterException
      */
     public static void encode(String content, ErrorCorrectionLevel ecLevel, QRCode qrCode)
             throws WriterException {
         encode(content, ecLevel, null, qrCode);
     }
 
-    public static void encode(String content, ErrorCorrectionLevel ecLevel, Map<EncodeHintType,Object> hints,
+    /**
+     * Encode "bytes" with the error correction level "ecLevel". The encoding mode will be chosen
+     * internally by chooseMode(). On success, store the result in "qrCode".
+     * <p>
+     * We recommend you to use QRCode.EC_LEVEL_L (the lowest level) for
+     * "getECLevel" since our primary use is to show QR code on desktop screens. We don't need very
+     * strong error correction for this purpose.
+     * <p>
+     * Note that there is no way to encode bytes in MODE_KANJI. We might want to add EncodeWithMode()
+     * with which clients can specify the encoding mode. For now, we don't need the functionality.
+     *
+     * @param content String to encode
+     * @param ecLevel Error-correction level to use
+     * @param hints   Optional Map containing  encoding and suggested minimum version to use
+     * @param qrCode QR code to store the result in
+     * @throws WriterException
+     */
+    public static void encode(String content, ErrorCorrectionLevel ecLevel, Map<EncodeHintType, Object> hints,
                               QRCode qrCode) throws WriterException {
 
         String encoding = hints == null ? null : (String) hints.get(EncodeHintType.CHARACTER_SET);
@@ -105,8 +127,8 @@ final class Encoder {
         }
         int desiredMinVersion = (hints == null || hints.get(EncodeHintType.MIN_VERSION_NR) == null) ? 1 : (int) hints.get(EncodeHintType.MIN_VERSION_NR);
         //Check if desired level is within bounds of [1,40]
-        if(desiredMinVersion<1)desiredMinVersion = 1;
-        if(desiredMinVersion>40)desiredMinVersion = 40;
+        if (desiredMinVersion < 1) desiredMinVersion = 1;
+        if (desiredMinVersion > 40) desiredMinVersion = 40;
         // Step 1: Choose the mode (encoding).
         Mode mode = chooseMode(content, encoding);
 
@@ -159,7 +181,7 @@ final class Encoder {
 
     /**
      * @return the code point of the table used in alphanumeric mode or
-     *  -1 if there is no corresponding code in the table.
+     * -1 if there is no corresponding code in the table.
      */
     static int getAlphanumericCode(int code) {
         if (code < ALPHANUMERIC_TABLE.length) {
@@ -168,13 +190,23 @@ final class Encoder {
         return -1;
     }
 
+    /**
+     * Choose the best mode by examining the content.
+     *
+     * @param content content to examine
+     * @return mode to use
+     */
     public static Mode chooseMode(String content) {
         return chooseMode(content, null);
     }
 
     /**
      * Choose the best mode by examining the content. Note that 'encoding' is used as a hint;
-     * if it is Shift_JIS, and the input is only double-byte Kanji, then we return {@link Mode#KANJI}.
+     * if it is Shift_JIS, and the input is only double-byte Kanji, then we return {@link Mode#KANJI}
+     *
+     * @param content  content to examine
+     * @param encoding hint for the encoding to use
+     * @return mode to use
      */
     public static Mode chooseMode(String content, String encoding) {
         if ("Shift_JIS".equals(encoding)) {

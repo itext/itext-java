@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -46,18 +46,34 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
+import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.TabStop;
-import com.itextpdf.layout.layout.*;
-import com.itextpdf.layout.property.*;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.layout.LineLayoutResult;
+import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
+import com.itextpdf.layout.layout.TextLayoutResult;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.property.BaseDirection;
+import com.itextpdf.layout.property.Leading;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TabAlignment;
+import com.itextpdf.layout.property.UnitValue;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
 
 public class LineRenderer extends AbstractRenderer {
 
     protected float maxAscent;
     protected float maxDescent;
 
+    // bidi levels
     protected byte[] levels;
 
     @Override
@@ -70,45 +86,21 @@ public class LineRenderer extends AbstractRenderer {
         maxDescent = 0;
         int childPos = 0;
 
-        BaseDirection baseDirection = this.<BaseDirection>getProperty(Property.BASE_DIRECTION);
-        for (IRenderer renderer : childRenderers) {
-            if (renderer instanceof TextRenderer) {
-                renderer.setParent(this);
-                ((TextRenderer) renderer).applyOtf();
-                renderer.setParent(null);
-                if (baseDirection == null || baseDirection == BaseDirection.NO_BIDI) {
-                    baseDirection = renderer.<BaseDirection>getOwnProperty(Property.BASE_DIRECTION);
-                }
-            }
-        }
+        MinMaxWidth minMaxWidth = new MinMaxWidth(0, layoutBox.getWidth());
+        AbstractWidthHandler widthHandler = new MaxSumWidthHandler(minMaxWidth);
+        
+        updateChildrenParent();
 
-        List<Integer> unicodeIdsReorderingList = null;
-        if (levels == null && baseDirection != null && baseDirection != BaseDirection.NO_BIDI) {
-            unicodeIdsReorderingList = new ArrayList<>();
-            boolean newLineFound = false;
-            for (IRenderer child : childRenderers) {
-                if (newLineFound) {
-                    break;
-                }
-                if (child instanceof TextRenderer) {
-                    GlyphLine text = ((TextRenderer) child).getText();
-                    for (int i = text.start; i < text.end; i++) {
-                        if (TextRenderer.isNewLine(text, i)) {
-                            newLineFound = true;
-                            break;
-                        }
-                        // we assume all the chars will have the same bidi group
-                        // we also assume pairing symbols won't get merged with other ones
-                        unicodeIdsReorderingList.add(text.get(i).getUnicode());
-                    }
-                }
-            }
-            levels = unicodeIdsReorderingList.size() > 0 ? TypographyUtils.getBidiLevels(baseDirection, ArrayUtil.toArray(unicodeIdsReorderingList)) : null;
-        }
+        resolveChildrenFonts();
+
+        int totalNumberOfTrimmedGlyphs = trimFirst();
+
+        BaseDirection baseDirection = applyOtf();
+
+        updateBidiLevels(totalNumberOfTrimmedGlyphs, baseDirection);
 
         boolean anythingPlaced = false;
-        TabStop nextTabStop = null;
-
+        TabStop hangingTabStop = null;
         LineLayoutResult result = null;
 
         while (childPos < childRenderers.size()) {
@@ -121,30 +113,34 @@ public class LineRenderer extends AbstractRenderer {
                 childRenderer.deleteOwnProperty(Property.CHARACTER_SPACING);
                 childRenderer.deleteOwnProperty(Property.WORD_SPACING);
             } else if (childRenderer instanceof TabRenderer) {
-                if (nextTabStop != null) {
+                if (hangingTabStop != null) {
                     IRenderer tabRenderer = childRenderers.get(childPos - 1);
                     tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
                     curWidth += tabRenderer.getOccupiedArea().getBBox().getWidth();
+                    widthHandler.updateMaxChildWidth(tabRenderer.getOccupiedArea().getBBox().getWidth());
                 }
-                nextTabStop = calculateTab(childRenderer, curWidth, layoutBox.getWidth());
+                hangingTabStop = calculateTab(childRenderer, curWidth, layoutBox.getWidth());
                 if (childPos == childRenderers.size() - 1)
-                    nextTabStop = null;
-                if (nextTabStop != null) {
+                    hangingTabStop = null;
+                if (hangingTabStop != null) {
                     ++childPos;
                     continue;
                 }
             }
 
-            if (!anythingPlaced && childRenderer instanceof TextRenderer) {
-                ((TextRenderer) childRenderer).trimFirst();
-            }
-
-            if (nextTabStop != null && nextTabStop.getTabAlignment() == TabAlignment.ANCHOR
+            if (hangingTabStop != null && hangingTabStop.getTabAlignment() == TabAlignment.ANCHOR
                     && childRenderer instanceof TextRenderer) {
-                childRenderer.setProperty(Property.TAB_ANCHOR, nextTabStop.getTabAnchor());
+                childRenderer.setProperty(Property.TAB_ANCHOR, hangingTabStop.getTabAnchor());
             }
 
-            childResult = childRenderer.setParent(this).layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
+            childResult = childRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
+
+            float minChildWidth = 0;
+            float maxChildWidth = 0;
+            if (childResult instanceof MinMaxWidthLayoutResult) {
+                minChildWidth = ((MinMaxWidthLayoutResult)childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMinWidth();
+                maxChildWidth = ((MinMaxWidthLayoutResult)childResult).getNotNullMinMaxWidth(bbox.getWidth()).getMaxWidth();
+            }
 
             float childAscent = 0;
             float childDescent = 0;
@@ -159,9 +155,9 @@ public class LineRenderer extends AbstractRenderer {
             maxDescent = Math.min(maxDescent, childDescent);
             float maxHeight = maxAscent - maxDescent;
 
-            if (nextTabStop != null) {
+            if (hangingTabStop != null) {
                 IRenderer tabRenderer = childRenderers.get(childPos - 1);
-                float tabWidth = calculateTab(layoutBox, curWidth, nextTabStop, childRenderer, childResult, tabRenderer);
+                float tabWidth = calculateTab(layoutBox, curWidth, hangingTabStop, childRenderer, childResult, tabRenderer);
 
                 tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox)));
                 childResult.getOccupiedArea().getBBox().moveRight(tabWidth);
@@ -169,18 +165,24 @@ public class LineRenderer extends AbstractRenderer {
                     childResult.getSplitRenderer().getOccupiedArea().getBBox().moveRight(tabWidth);
 
                 float tabAndNextElemWidth = tabWidth + childResult.getOccupiedArea().getBBox().getWidth();
-                if (nextTabStop.getTabAlignment() == TabAlignment.RIGHT && curWidth + tabAndNextElemWidth < nextTabStop.getTabPosition()) {
-                    curWidth = nextTabStop.getTabPosition();
+                if (hangingTabStop.getTabAlignment() == TabAlignment.RIGHT && curWidth + tabAndNextElemWidth < hangingTabStop.getTabPosition()) {
+                    curWidth = hangingTabStop.getTabPosition();
                 } else {
                     curWidth += tabAndNextElemWidth;
                 }
-                nextTabStop = null;
+                widthHandler.updateMinChildWidth(minChildWidth);
+                widthHandler.updateMaxChildWidth(tabWidth + maxChildWidth);
+                hangingTabStop = null;
             } else {
                 curWidth += childResult.getOccupiedArea().getBBox().getWidth();
+                widthHandler.updateMinChildWidth(minChildWidth);
+                widthHandler.updateMaxChildWidth(maxChildWidth);
             }
             occupiedArea.setBBox(new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight, curWidth, maxHeight));
 
-            if (childResult.getStatus() != LayoutResult.FULL) {
+            boolean newLineOccurred = (childResult instanceof TextLayoutResult && ((TextLayoutResult)childResult).isSplitForcedByNewline());
+            boolean shouldBreakLayouting = childResult.getStatus() != LayoutResult.FULL || newLineOccurred;
+            if (shouldBreakLayouting) {
                 LineRenderer[] split = split();
                 split[0].childRenderers = new ArrayList<>(childRenderers.subList(0, childPos));
 
@@ -196,7 +198,7 @@ public class LineRenderer extends AbstractRenderer {
                     split[1].childRenderers.add(childRenderer);
                     split[1].childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
                 } else {
-                    if (childResult.getStatus() == LayoutResult.PARTIAL) {
+                    if (childResult.getStatus() == LayoutResult.PARTIAL || childResult.getStatus() == LayoutResult.FULL) {
                         split[0].addChild(childResult.getSplitRenderer());
                         anythingPlaced = true;
                     }
@@ -215,9 +217,17 @@ public class LineRenderer extends AbstractRenderer {
                     }
                 }
 
-                result = new LineLayoutResult(anythingPlaced ? LayoutResult.PARTIAL : LayoutResult.NOTHING, occupiedArea, split[0], split[1],
-                        childResult.getStatus() == LayoutResult.NOTHING ? childResult.getCauseOfNothing() : this);
-                if (childResult.getStatus() == LayoutResult.PARTIAL && childResult instanceof TextLayoutResult && ((TextLayoutResult) childResult).isSplitForcedByNewline()) {
+                IRenderer causeOfNothing = childResult.getStatus() == LayoutResult.NOTHING ? childResult.getCauseOfNothing() : childRenderer;
+                if (split[1] == null) {
+                    result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, split[0], split[1], causeOfNothing);
+                } else {
+                    if (anythingPlaced) {
+                        result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0], split[1], causeOfNothing);
+                    } else {
+                        result = new LineLayoutResult(LayoutResult.NOTHING, null, split[0], split[1], causeOfNothing);
+                    }
+                }
+                if (newLineOccurred) {
                     result.setSplitForcedByNewline(true);
                 }
                 break;
@@ -228,15 +238,13 @@ public class LineRenderer extends AbstractRenderer {
         }
 
         if (result == null) {
-            if (anythingPlaced) {
+            if (anythingPlaced || 0 == childRenderers.size()) {
                 result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, null, null);
             } else {
-                result = new LineLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
+                result = new LineLayoutResult(LayoutResult.NOTHING, null, null, this, this);
             }
         }
 
-        // Consider for now that all the children have the same font, and that after reordering text pieces
-        // can be reordered, but cannot be split.
         if (baseDirection != null && baseDirection != BaseDirection.NO_BIDI) {
             List<IRenderer> children = null;
             if (result.getStatus() == LayoutResult.PARTIAL) {
@@ -246,11 +254,19 @@ public class LineRenderer extends AbstractRenderer {
             }
 
             if (children != null) {
+                boolean newLineFound = false;
                 List<RendererGlyph> lineGlyphs = new ArrayList<>();
                 for (IRenderer child : children) {
+                    if (newLineFound) {
+                        break;
+                    }
                     if (child instanceof TextRenderer) {
                         GlyphLine childLine = ((TextRenderer) child).line;
                         for (int i = childLine.start; i < childLine.end; i++) {
+                            if (TextUtil.isNewLine(childLine.get(i))) {
+                                newLineFound = true;
+                                break;
+                            }
                             lineGlyphs.add(new RendererGlyph(childLine.get(i), (TextRenderer) child));
                         }
                     }
@@ -265,28 +281,24 @@ public class LineRenderer extends AbstractRenderer {
                 if (reorder != null) {
                     children.clear();
                     int pos = 0;
-                    List<int[]> reversedRanges = new ArrayList<>();
                     int initialPos = 0;
                     boolean reversed = false;
                     int offset = 0;
                     while (pos < lineGlyphs.size()) {
                         IRenderer renderer = lineGlyphs.get(pos).renderer;
-                        TextRenderer newRenderer = new TextRenderer((TextRenderer) renderer);
-                        newRenderer.deleteOwnProperty(Property.REVERSED);
+                        TextRenderer newRenderer = new TextRenderer((TextRenderer) renderer).removeReversedRanges();
                         children.add(newRenderer);
-                        ((TextRenderer) children.get(children.size() - 1)).line = new GlyphLine(((TextRenderer) children.get(children.size() - 1)).line);
-                        GlyphLine gl = ((TextRenderer) children.get(children.size() - 1)).line;
+                        newRenderer.line = new GlyphLine(newRenderer.line);
                         List<Glyph> replacementGlyphs = new ArrayList<>();
                         while (pos < lineGlyphs.size() && lineGlyphs.get(pos).renderer == renderer) {
-                            if (pos < lineGlyphs.size() - 1) {
-                                if (reorder[pos] == reorder[pos + 1] + 1) {
+                            if (pos + 1 < lineGlyphs.size()) {
+                                if (reorder[pos] == reorder[pos + 1] + 1 &&
+                                        !TextUtil.isSpaceOrWhitespace(lineGlyphs.get(pos + 1).glyph) && !TextUtil.isSpaceOrWhitespace(lineGlyphs.get(pos).glyph)) {
                                     reversed = true;
                                 } else {
                                     if (reversed) {
-                                        List<int[]> reversedRange = new ArrayList<>();
+                                        List<int[]> reversedRange = newRenderer.initReversedRanges();
                                         reversedRange.add(new int[]{initialPos - offset, pos - offset});
-                                        newRenderer.setProperty(Property.REVERSED, reversedRange);
-                                        reversedRanges.add(new int[]{initialPos - offset, pos - offset});
                                         reversed = false;
                                     }
                                     initialPos = pos + 1;
@@ -298,34 +310,20 @@ public class LineRenderer extends AbstractRenderer {
                         }
 
                         if (reversed) {
-                            List<int[]> reversedRange = new ArrayList<>();
+                            List<int[]> reversedRange = newRenderer.initReversedRanges();
                             reversedRange.add(new int[]{initialPos - offset, pos - 1 - offset});
-                            newRenderer.setProperty(Property.REVERSED, reversedRange);
-                            reversedRanges.add(new int[]{initialPos - offset, pos - 1 - offset});
                             reversed = false;
                             initialPos = pos;
                         }
                         offset = initialPos;
-                        gl.setGlyphs(replacementGlyphs);
-                    }
-                    if (reversed) {
-                        if (children.size() == 1) {
-                            offset = 0;
-                        }
-                        List<int[]> reversedRange = new ArrayList<>();
-                        reversedRange.add(new int[]{initialPos - offset, pos - offset - 1});
-                        lineGlyphs.get(pos - 1).renderer.setProperty(Property.REVERSED, reversedRange);
-                        reversedRanges.add(new int[]{initialPos - offset, pos - 1 - offset});
-                    }
-                    if (!reversedRanges.isEmpty()) {
-                        if (children.size() == 1) {
-                            lineGlyphs.get(0).renderer.setProperty(Property.REVERSED, reversedRanges);
-                        }
+                        newRenderer.line.setGlyphs(replacementGlyphs);
                     }
 
                     float currentXPos = layoutContext.getArea().getBBox().getLeft();
                     for (IRenderer child : children) {
                         float currentWidth = ((TextRenderer) child).calculateLineWidth();
+                        float[] margins = ((TextRenderer) child).getMargins();
+                        currentWidth += margins[1] + margins[3];
                         ((TextRenderer) child).occupiedArea.getBBox().setX(currentXPos).setWidth(currentWidth);
                         currentXPos += currentWidth;
                     }
@@ -340,10 +338,6 @@ public class LineRenderer extends AbstractRenderer {
                             overflow.levels = null;
                         }
                     }
-                } else if (result.getStatus() == LayoutResult.NOTHING) {
-                    if (levels != null) {
-                        ((LineRenderer)result.getOverflowRenderer()).levels = levels;
-                    }
                 }
             }
         }
@@ -351,6 +345,7 @@ public class LineRenderer extends AbstractRenderer {
         if (anythingPlaced) {
             LineRenderer processed = result.getStatus() == LayoutResult.FULL ? this : (LineRenderer) result.getSplitRenderer();
             processed.adjustChildrenYLine().trimLast();
+            result.setMinMaxWidth(minMaxWidth);
         }
 
         return result;
@@ -400,8 +395,8 @@ public class LineRenderer extends AbstractRenderer {
         float characterSpacing = (1 - ratio) * baseFactor;
 
         float lastRightPos = occupiedArea.getBBox().getX();
-        for (Iterator<IRenderer> iterator = childRenderers.iterator(); iterator.hasNext(); ) {
-            IRenderer child = iterator.next();
+        for (int i = 0; i < childRenderers.size(); ++i) {
+            IRenderer child = childRenderers.get(i);
             float childX = child.getOccupiedArea().getBBox().getX();
             child.move(lastRightPos - childX, 0);
             childX = lastRightPos;
@@ -409,7 +404,7 @@ public class LineRenderer extends AbstractRenderer {
                 float childHSCale = (float) ((TextRenderer) child).getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
                 child.setProperty(Property.CHARACTER_SPACING, characterSpacing / childHSCale);
                 child.setProperty(Property.WORD_SPACING, wordSpacing / childHSCale);
-                boolean isLastTextRenderer = !iterator.hasNext();
+                boolean isLastTextRenderer = i + 1 == childRenderers.size();
                 float widthAddition = (isLastTextRenderer ? (((TextRenderer) child).lineLength() - 1) : ((TextRenderer) child).lineLength()) * characterSpacing +
                         wordSpacing * ((TextRenderer) child).getNumberOfSpaces();
                 child.getOccupiedArea().getBBox().setWidth(child.getOccupiedArea().getBBox().getWidth() + widthAddition);
@@ -496,9 +491,9 @@ public class LineRenderer extends AbstractRenderer {
             if (renderer instanceof TextRenderer) {
                 ((TextRenderer) renderer).moveYLineTo(actualYLine);
             } else if (renderer instanceof ImageRenderer) {
-                renderer.getOccupiedArea().getBBox().setY(occupiedArea.getBBox().getY() - maxDescent);
+                renderer.move(0, actualYLine - renderer.getOccupiedArea().getBBox().getBottom());
             } else {
-                renderer.getOccupiedArea().getBBox().setY(occupiedArea.getBBox().getY());
+                renderer.move(0, occupiedArea.getBBox().getY() - renderer.getOccupiedArea().getBBox().getBottom());
             }
         }
         return this;
@@ -522,6 +517,12 @@ public class LineRenderer extends AbstractRenderer {
         return false;
     }
 
+    @Override
+    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
+        LineLayoutResult result = (LineLayoutResult) layout(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
+        return result.getNotNullMinMaxWidth(availableWidth);
+    }
+
     private IRenderer getLastChildRenderer() {
         return childRenderers.get(childRenderers.size() - 1);
     }
@@ -535,7 +536,7 @@ public class LineRenderer extends AbstractRenderer {
         if (tabStops != null)
             nextTabStopEntry = tabStops.higherEntry(curWidth);
         if (nextTabStopEntry != null) {
-            nextTabStop = nextTabStopEntry.getValue();
+            nextTabStop = ((Map.Entry<Float, TabStop>)nextTabStopEntry).getValue();
         }
 
         return nextTabStop;
@@ -557,7 +558,8 @@ public class LineRenderer extends AbstractRenderer {
 
         childRenderer.setProperty(Property.TAB_LEADER, nextTabStop.getTabLeader());
         childRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(nextTabStop.getTabPosition() - curWidth));
-        childRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
+        childRenderer.setProperty(Property.MIN_HEIGHT, maxAscent - maxDescent);
+
         if (nextTabStop.getTabAlignment() == TabAlignment.LEFT) {
             return null;
         }
@@ -596,7 +598,8 @@ public class LineRenderer extends AbstractRenderer {
             tabWidth -= (curWidth + childWidth + tabWidth) - layoutBox.getWidth();
 
         tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(tabWidth));
-        tabRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
+        tabRenderer.setProperty(Property.MIN_HEIGHT, maxAscent - maxDescent);
+
         return tabWidth;
     }
 
@@ -606,8 +609,114 @@ public class LineRenderer extends AbstractRenderer {
         if (curWidth + tabWidth > lineWidth)
             tabWidth = lineWidth - curWidth;
         tabRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue((float) tabWidth));
-        tabRenderer.setProperty(Property.HEIGHT, maxAscent - maxDescent);
+        tabRenderer.setProperty(Property.MIN_HEIGHT, maxAscent - maxDescent);
     }
+
+    private void updateChildrenParent() {
+        for (IRenderer renderer : childRenderers) {
+            renderer.setParent(this);
+        }
+    }
+
+    /**
+     * Trim first child text renderers.
+     *
+     * @return total number of trimmed glyphs.
+     */
+    private int trimFirst() {
+        int totalNumberOfTrimmedGlyphs = 0;
+        for (IRenderer renderer : childRenderers) {
+            if (renderer instanceof TextRenderer) {
+                TextRenderer textRenderer = (TextRenderer) renderer;
+                GlyphLine currentText = textRenderer.getText();
+                if (currentText != null) {
+                    int prevTextStart = currentText.start;
+                    textRenderer.trimFirst();
+                    int numOfTrimmedGlyphs = textRenderer.getText().start - prevTextStart;
+                    totalNumberOfTrimmedGlyphs += numOfTrimmedGlyphs;
+                }
+                if (textRenderer.length() > 0) {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+        return totalNumberOfTrimmedGlyphs;
+    }
+
+    /**
+     * Apply OTF features and return the last(!) base direction of child renderer
+     *
+     * @return the last(!) base direction of child renderer.
+     */
+    private BaseDirection applyOtf() {
+        BaseDirection baseDirection = this.<BaseDirection>getProperty(Property.BASE_DIRECTION);
+        for (IRenderer renderer : childRenderers) {
+            if (renderer instanceof TextRenderer) {
+                ((TextRenderer) renderer).applyOtf();
+                if (baseDirection == null || baseDirection == BaseDirection.NO_BIDI) {
+                    baseDirection = renderer.<BaseDirection>getOwnProperty(Property.BASE_DIRECTION);
+                }
+            }
+        }
+        return baseDirection;
+    }
+
+    private void updateBidiLevels(int totalNumberOfTrimmedGlyphs, BaseDirection baseDirection) {
+        if (totalNumberOfTrimmedGlyphs != 0 && levels != null) {
+            levels = Arrays.copyOfRange(levels, totalNumberOfTrimmedGlyphs, levels.length);
+        }
+
+        List<Integer> unicodeIdsReorderingList = null;
+        if (levels == null && baseDirection != null && baseDirection != BaseDirection.NO_BIDI) {
+            unicodeIdsReorderingList = new ArrayList<>();
+            boolean newLineFound = false;
+            for (IRenderer child : childRenderers) {
+                if (newLineFound) {
+                    break;
+                }
+                if (child instanceof TextRenderer) {
+                    GlyphLine text = ((TextRenderer) child).getText();
+                    for (int i = text.start; i < text.end; i++) {
+                        Glyph glyph = text.get(i);
+                        if (TextUtil.isNewLine(glyph)) {
+                            newLineFound = true;
+                            break;
+                        }
+                        // we assume all the chars will have the same bidi group
+                        // we also assume pairing symbols won't get merged with other ones
+                        int unicode = glyph.hasValidUnicode() ? glyph.getUnicode() : glyph.getUnicodeChars()[0];
+                        unicodeIdsReorderingList.add(unicode);
+                    }
+                }
+            }
+            levels = unicodeIdsReorderingList.size() > 0 ? TypographyUtils.getBidiLevels(baseDirection, ArrayUtil.toArray(unicodeIdsReorderingList)) : null;
+        }
+    }
+
+    /**
+     * While resolving TextRenderer may split into several ones with different fonts.
+     */
+    private void resolveChildrenFonts() {
+        List<IRenderer> newChildRenderers = new ArrayList<>(childRenderers.size());
+        boolean updateChildRendrers = false;
+        for (IRenderer child : childRenderers) {
+            if (child instanceof TextRenderer) {
+                if (((TextRenderer)child).resolveFonts(newChildRenderers)) {
+                    updateChildRendrers = true;
+                }
+            } else {
+                newChildRenderers.add(child);
+            }
+        }
+
+        // this mean, that some TextRenderer has been replaced.
+        if (updateChildRendrers) {
+            childRenderers = newChildRenderers;
+        }
+    }
+
 
     static class RendererGlyph {
         public RendererGlyph(Glyph glyph, TextRenderer textRenderer) {

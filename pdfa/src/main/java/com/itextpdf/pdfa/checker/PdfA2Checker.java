@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -99,6 +99,7 @@ public class PdfA2Checker extends PdfA1Checker {
 
     static final int MAX_PAGE_SIZE = 14400;
     static final int MIN_PAGE_SIZE = 3;
+    private static final long serialVersionUID = -5937712517954260687L;
 
     private boolean transparencyIsUsed = false;
     private boolean currentFillCsIsIccBasedCMYK = false;
@@ -703,7 +704,7 @@ public class PdfA2Checker extends PdfA1Checker {
         }
 
         if (PdfName.JPXDecode.equals(image.get(PdfName.Filter))) {
-            Jpeg2000ImageData jpgImage = (Jpeg2000ImageData) ImageDataFactory.createJpeg2000(image.getBytes());
+            Jpeg2000ImageData jpgImage = (Jpeg2000ImageData) ImageDataFactory.createJpeg2000(image.getBytes(false));
             Jpeg2000ImageData.Parameters params = jpgImage.getParameters();
 
             /* Concerning !params.isJpxBaseline check

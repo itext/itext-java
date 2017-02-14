@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -91,7 +91,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -155,6 +155,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public static final int HIDDEN = 1;
     public static final int VISIBLE_BUT_DOES_NOT_PRINT = 2;
     public static final int HIDDEN_BUT_PRINTABLE = 3;
+    public static final int VISIBLE = 4;
 
     public static final int FF_READ_ONLY = makeFieldFlag(1);
     public static final int FF_REQUIRED = makeFieldFlag(2);
@@ -1036,6 +1037,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         } else {
             regenerateField();
         }
+        this.setModified();
         return this;
     }
 
@@ -1720,8 +1722,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * @param visibility
-     * @return the edited field
+     * Set the visibility flags of the form field annotation
+     * Options are: HIDDEN, HIDDEN_BUT_PRINTABLE, VISIBLE, VISIBLE_BUT_DOES_NOT_PRINT
+     * @param visibility visibility option
+     * @return the edited form field annotation
      */
     public PdfFormField setVisibility(int visibility) {
         switch (visibility) {
@@ -1733,6 +1737,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             case HIDDEN_BUT_PRINTABLE:
                 getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT | PdfAnnotation.NO_VIEW));
                 break;
+            case VISIBLE:
             default:
                 getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT));
                 break;
@@ -1942,22 +1947,23 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 }
             } else if ((ff & PdfButtonFormField.FF_RADIO) != 0) {
                 PdfArray kids = getKids();
-                for (int i = 0; i < kids.size(); i++) {
-                    PdfObject kid = kids.get(i);
-                    if (kid.isIndirectReference()) {
-                        kid = ((PdfIndirectReference) kid).getRefersTo();
+                if (null != kids) {
+                    for (int i = 0; i < kids.size(); i++) {
+                        PdfObject kid = kids.get(i);
+                        if (kid.isIndirectReference()) {
+                            kid = ((PdfIndirectReference) kid).getRefersTo();
+                        }
+                        PdfFormField field = new PdfFormField((PdfDictionary) kid);
+                        PdfWidgetAnnotation widget = field.getWidgets().get(0);
+                        PdfDictionary buttonValues = field.getPdfObject().getAsDictionary(PdfName.AP).getAsDictionary(PdfName.N);
+                        String state;
+                        if (buttonValues.get(new PdfName(value)) != null) {
+                            state = value;
+                        } else {
+                            state = "Off";
+                        }
+                        widget.setAppearanceState(new PdfName(state));
                     }
-                    PdfFormField field = new PdfFormField((PdfDictionary) kid);
-                    PdfWidgetAnnotation widget = field.getWidgets().get(0);
-                    PdfDictionary buttonValues = field.getPdfObject().getAsDictionary(PdfName.AP).getAsDictionary(PdfName.N);
-                    String state;
-                    if (buttonValues.get(new PdfName(value)) != null) {
-                        state = value;
-                    } else {
-                        state = "Off";
-
-                    }
-                    widget.setAppearanceState(new PdfName(state));
                 }
             } else {
                 Rectangle rect = getRect(getPdfObject());
@@ -2250,7 +2256,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return an array of Strings containing the names of the appearance states
      */
     public String[] getAppearanceStates() {
-        Set<String> names = new HashSet<>();
+        Set<String> names = new LinkedHashSet<>();
         PdfString stringOpt = getPdfObject().getAsString(PdfName.Opt);
         if (stringOpt != null) {
             names.add(stringOpt.toUnicodeString());
@@ -2405,30 +2411,36 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
     protected Object[] getFontAndSize(PdfDictionary asNormal) throws IOException {
         Object[] fontAndSize = new Object[2];
-        PdfDictionary resources = null;
-        if (asNormal != null) {
-            resources = asNormal.getAsDictionary(PdfName.Resources);
-        }
-        if (resources == null) {
-            PdfDocument document = getDocument();
-            if (document != null) {
-                PdfDictionary acroformDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
-                if (acroformDictionary != null) {
-                    resources = acroformDictionary.getAsDictionary(PdfName.DR);
-                }
+        PdfDictionary normalResources = null;
+        PdfDictionary defaultResources = null;
+        PdfDocument document = getDocument();
+        if (document != null) {
+            PdfDictionary acroformDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
+            if (acroformDictionary != null) {
+                defaultResources = acroformDictionary.getAsDictionary(PdfName.DR);
             }
-
         }
-        if (resources != null) {
-            PdfDictionary fontDic = resources.getAsDictionary(PdfName.Font);
+        if (asNormal != null) {
+            normalResources = asNormal.getAsDictionary(PdfName.Resources);
+        }
+        if (defaultResources != null || normalResources != null) {
+            PdfDictionary normalFontDic = normalResources != null ? normalResources.getAsDictionary(PdfName.Font) : null;
+            PdfDictionary defaultFontDic = defaultResources != null ? defaultResources.getAsDictionary(PdfName.Font) : null;
             PdfString defaultAppearance = getDefaultAppearance();
-            if (fontDic != null && defaultAppearance != null) {
+            if ((normalFontDic != null || defaultFontDic != null) && defaultAppearance != null) {
                 Object[] dab = splitDAelements(defaultAppearance.toUnicodeString());
                 PdfName fontName = new PdfName(dab[DA_FONT].toString());
+                PdfDictionary requiredFontDictionary = null;
+                if (normalFontDic != null && null != normalFontDic.getAsDictionary(fontName)) {
+                    requiredFontDictionary = normalFontDic.getAsDictionary(fontName);
+                } else if (defaultFontDic != null) {
+                    requiredFontDictionary = defaultFontDic.getAsDictionary(fontName);
+                }
                 if (font != null) {
                     fontAndSize[0] = font;
                 } else {
-                    fontAndSize[0] = PdfFontFactory.createFont(fontDic.getAsDictionary(fontName));
+                    PdfFont dicFont = document != null ? document.getFont(requiredFontDictionary) : PdfFontFactory.createFont(requiredFontDictionary);
+                    fontAndSize[0] = dicFont;
                 }
                 if (fontSize != 0) {
                     fontAndSize[1] = fontSize;

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -84,6 +84,7 @@ import org.bouncycastle.asn1.x509.TBSCertificateStructure;
 public abstract class PubKeySecurityHandler extends SecurityHandler {
 
     private static final int SEED_LENGTH = 20;
+    private static final long serialVersionUID = -6093031394871440268L;
 
     private List<PublicKeyRecipient> recipients = null;
 

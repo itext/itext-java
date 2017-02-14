@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -67,12 +67,12 @@ public class IntHashtable implements Cloneable, Serializable {
     /***
      * The hash table data.
      */
-    private transient Entry[] table;
+    private Entry[] table;
 
     /***
      * The total number of entries in the hash table.
      */
-    private transient int count;
+    private int count;
 
     /***
      * The table is rehashed when its size exceeds this threshold.  (The
@@ -119,7 +119,6 @@ public class IntHashtable implements Cloneable, Serializable {
      *             than zero, or if the load factor is nonpositive.
      */
     public IntHashtable(int initialCapacity, float loadFactor) {
-        super();
         if (initialCapacity < 0) {
             throw new IllegalArgumentException(MessageFormat.format("Illegal Capacity: {0}", initialCapacity));
         }
@@ -384,7 +383,8 @@ public class IntHashtable implements Cloneable, Serializable {
      * <p>Innerclass that acts as a datastructure to create a new entry in the
      * table.</p>
      */
-    public static class Entry {
+    public static class Entry implements Serializable {
+        private static final long serialVersionUID = 8057670534065316193L;
         int key;
         int value;
         //ArrayList<Integer> values = new ArrayList<Integer>();

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,6 +104,9 @@ class PdfPagesTree implements Serializable {
      * @return the {@see PdfPage} at the specified position in this list
      */
     public PdfPage getPage(int pageNum) {
+        if (pageNum < 1 || pageNum > getNumberOfPages()) {
+            throw new IndexOutOfBoundsException(MessageFormat.format(PdfException.RequestedPageNumberIsOutOfBounds, pageNum));
+        }
         --pageNum;
         PdfPage pdfPage = pages.get(pageNum);
         if (pdfPage == null) {

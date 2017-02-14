@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -44,20 +44,6 @@
 package com.itextpdf.test;
 
 
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
-
-import java.lang.annotation.Annotation;
-import java.text.MessageFormat;
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
-import org.slf4j.ILoggerFactory;
-import org.slf4j.LoggerFactory;
-import org.slf4j.helpers.SubstituteLoggerFactory;
-
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -65,6 +51,20 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import ch.qos.logback.core.read.ListAppender;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
+import org.junit.Assert;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.SubstituteLoggerFactory;
+
+import java.lang.annotation.Annotation;
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class LogListener extends TestWatcher {
@@ -74,9 +74,6 @@ public class LogListener extends TestWatcher {
     private final ListAppender<ILoggingEvent> listAppender = new CustomListAppender<ILoggingEvent>();
 
     private final ILoggerFactory lc = LoggerFactory.getILoggerFactory();
-
-    private final String LEFT_CURLY_BRACES = "{";
-    private final String RIGHT_CURLY_BRACES = "}";
 
     @Override
     protected void starting(Description description) {
@@ -88,7 +85,6 @@ public class LogListener extends TestWatcher {
         checkLogMessages(description);
         after();
     }
-
 
     private int contains(String loggingStatement) {
         List<ILoggingEvent> list = listAppender.list;
@@ -106,19 +102,11 @@ public class LogListener extends TestWatcher {
     *  "Hello fox1 , World  fox2 !" with "Hello {0} , World {1} !"
     * */
     private boolean equalsMessageByTemplate(String message, String template) {
-        if (template.indexOf(RIGHT_CURLY_BRACES) > 0 && template.indexOf(LEFT_CURLY_BRACES) > 0) {
-            String templateWithoutParameters = template.replaceAll("\\{.*?\\} ?", "");
-            String[] splitTemplate = templateWithoutParameters.split("\\s+");
-            int prevPosition = 0;
-            for (int i = 0; i < splitTemplate.length; i++) {
-                int foundedIndex = message.indexOf(splitTemplate[i], prevPosition);
-                if (foundedIndex < 0 && foundedIndex < prevPosition) {
-                    return false;
-                } else {
-                    prevPosition = foundedIndex;
-                }
-            }
-            return true;
+        if (template.indexOf("{") > 0 && template.indexOf("}") > 0) {
+            String templateWithoutParameters = template.replace("''", "'").replaceAll("\\{[0-9]+?\\}", "(.)*?");
+            Pattern p = Pattern.compile(templateWithoutParameters, Pattern.DOTALL);
+            Matcher m = p.matcher(message);
+            return m.matches();
         } else {
             return message.contains(template);
         }
@@ -156,6 +144,9 @@ public class LogListener extends TestWatcher {
 
     private void checkLogMessages(Description description) {
         Annotation annotation = description.getAnnotation(LogMessages.class);
+        if (annotation == null) {
+            annotation = description.getTestClass().getAnnotation(LogMessages.class);
+        }
         int checkedMessages = 0;
         if (annotation != null) {
             LogMessages logMessages = (LogMessages) annotation;

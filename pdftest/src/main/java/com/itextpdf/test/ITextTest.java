@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -49,6 +49,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Rule;
@@ -112,6 +113,16 @@ public abstract class ITextTest {
         try {
             Field field = Class.forName("javax.crypto.JceSecurity").
                     getDeclaredField("isRestricted");
+            if (field.isAccessible()) {
+                // unexpected case
+                return;
+            }
+
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+            modifiersField.setAccessible(false);
+
             field.setAccessible(true);
             if (field.getBoolean(null)) {
                 field.set(null, java.lang.Boolean.FALSE);

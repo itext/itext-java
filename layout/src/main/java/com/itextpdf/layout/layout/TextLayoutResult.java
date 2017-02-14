@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,7 @@ import com.itextpdf.layout.renderer.IRenderer;
 /**
  * Represents the result of a text {@link com.itextpdf.layout.renderer.TextRenderer#layout(LayoutContext) layout}.
  */
-public class TextLayoutResult extends LayoutResult {
+public class TextLayoutResult extends MinMaxWidthLayoutResult {
 
     /**
      * Indicates whether some word was splitted during {@link com.itextpdf.layout.renderer.TextRenderer#layout(LayoutContext) layout}.
@@ -109,6 +109,7 @@ public class TextLayoutResult extends LayoutResult {
     /**
      * Indicates whether split was forced by new line symbol in rendered text.
      * The value will be set as true if, for example, the rendered text contains '\n' symbol.
+     * This value can also be true even if the text was fully placed, but had line break at the end.
      *
      * @return whether split was forced by new line or not.
      */
@@ -117,7 +118,7 @@ public class TextLayoutResult extends LayoutResult {
     }
 
     /**
-     * Sets {@link #setSplitForcedByNewline}
+     * Sets {@link #isSplitForcedByNewline}
      *
      * @param isSplitForcedByNewline indicates that split was forced by new line symbol in rendered text.
      * @return {@link com.itextpdf.layout.layout.TextLayoutResult this layout result} the setting was applied on.

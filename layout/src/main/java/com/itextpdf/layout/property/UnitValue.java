@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -60,7 +60,15 @@ public class UnitValue {
      */
     public UnitValue(int unitType, float value) {
         this.unitType = unitType;
+        assert !Float.isNaN(value);
         this.value = value;
+    }
+
+    /**
+     * Creates a copy of UnitValue object.
+     */
+    public UnitValue(UnitValue unitValue) {
+        this(unitValue.unitType, unitValue.value);
     }
 
     /**
@@ -79,6 +87,35 @@ public class UnitValue {
      */
     public static UnitValue createPercentValue(float value) {
         return new UnitValue(PERCENT, value);
+    }
+
+    /**
+     * Creates an array of UnitValue PERCENT objects with specified values.
+     *
+     * @param values the values to be stored.
+     * @return a new normalized (Σ=100%) array of {@link UnitValue#PERCENT} {@link UnitValue}.
+     */
+    public static UnitValue[] createPercentArray(float[] values) {
+        UnitValue[] resultArray = new UnitValue[values.length];
+        float sum = 0;
+        for (float val : values) sum += val;
+        for (int i = 0; i < values.length; i++) {
+            resultArray[i] = UnitValue.createPercentValue(100 * values[i] / sum);
+        }
+        return resultArray;
+    }
+
+    /**
+     * Creates an array of UnitValue POINT objects with specified values.
+     * @param values the values to be stored.
+     * @return a new array of {@link UnitValue#POINT} {@link UnitValue}
+     */
+    public static UnitValue[] createPointArray(float[] values) {
+        UnitValue[] resultArray = new UnitValue[values.length];
+        for (int i = 0; i < values.length; i++) {
+            resultArray[i] = UnitValue.createPointValue(values[i]);
+        }
+        return resultArray;
     }
 
     /**
@@ -110,6 +147,7 @@ public class UnitValue {
      * @param value a <code>float</code>
      */
     public void setValue(float value) {
+        assert !Float.isNaN(value);
         this.value = value;
     }
 
@@ -131,7 +169,7 @@ public class UnitValue {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof UnitValue)) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         UnitValue other = (UnitValue) obj;
@@ -144,5 +182,10 @@ public class UnitValue {
         hash = 71 * hash + this.unitType;
         hash = 71 * hash + Float.floatToIntBits(this.value);
         return hash;
+    }
+
+    @Override
+    public String toString() {
+        return value + (unitType == PERCENT ? "%" : "pt");
     }
 }

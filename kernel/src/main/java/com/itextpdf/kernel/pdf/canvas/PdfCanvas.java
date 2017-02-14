@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -84,7 +84,9 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -96,7 +98,7 @@ import java.util.Stack;
  * Make sure to call PdfCanvas.release() after you finished writing to the canvas.
  * It will save some memory.
  */
-public class PdfCanvas {
+public class PdfCanvas implements Serializable {
 
     private static final byte[] B = ByteUtils.getIsoBytes("B\n");
     private static final byte[] b = ByteUtils.getIsoBytes("b\n");
@@ -165,6 +167,7 @@ public class PdfCanvas {
     private static final PdfDeviceCs.Rgb rgb = new PdfDeviceCs.Rgb();
     private static final PdfDeviceCs.Cmyk cmyk = new PdfDeviceCs.Cmyk();
     private static final PdfSpecialCs.Pattern pattern = new PdfSpecialCs.Pattern();
+    private static final long serialVersionUID = -4706222391732334562L;
 
     /**
      * a LIFO stack of graphics state saved states.
@@ -206,7 +209,7 @@ public class PdfCanvas {
      * @param document      the document that the resulting content stream will be written to
      */
     public PdfCanvas(PdfStream contentStream, PdfResources resources, PdfDocument document) {
-        this.contentStream = contentStream;
+        this.contentStream = ensureStreamDataIsReadyToBeProcessed(contentStream);
         this.resources = resources;
         this.document = document;
     }
@@ -359,20 +362,21 @@ public class PdfCanvas {
      * in the content stream managed by this Canvas.
      * If an array not containing the 6 values of the matrix is passed,
      * The current canvas is returned unchanged.
+     *
      * @param array affine transformation stored as a PdfArray with 6 values
      * @return current canvas
      */
-    public PdfCanvas concatMatrix(PdfArray array){
-        if(array.size() != 6 ){
+    public PdfCanvas concatMatrix(PdfArray array) {
+        if (array.size() != 6) {
             //Throw exception or warning here
             return this;
         }
-        for(int i=0; i<array.size();i++){
-            if(!array.get(i).isNumber()){
+        for (int i = 0; i < array.size(); i++) {
+            if (!array.get(i).isNumber()) {
                 return this;
             }
         }
-        return concatMatrix(array.getAsNumber(0).doubleValue(),array.getAsNumber(1).doubleValue(),array.getAsNumber(2).doubleValue(),array.getAsNumber(3).doubleValue(),array.getAsNumber(4).doubleValue(),array.getAsNumber(5).doubleValue());
+        return concatMatrix(array.getAsNumber(0).doubleValue(), array.getAsNumber(1).doubleValue(), array.getAsNumber(2).doubleValue(), array.getAsNumber(3).doubleValue(), array.getAsNumber(4).doubleValue(), array.getAsNumber(5).doubleValue());
     }
 
     /**
@@ -437,7 +441,6 @@ public class PdfCanvas {
         if (size < 0.0001f && size > -0.0001f)
             throw new PdfException(PdfException.FontSizeIsTooSmall, size);
         currentGs.setFontSize(size);
-        font.makeIndirect(document);
         PdfName fontName = resources.addFont(document, font);
         currentGs.setFont(font);
         contentStream.getOutputStream()
@@ -686,6 +689,18 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas showText(GlyphLine text) {
+        return showText(text, new ActualTextIterator(text));
+    }
+
+    /**
+     * Shows text (operator Tj).
+     *
+     * @param text     text to show.
+     * @param iterator iterator over parts of the glyph line that should be wrapped into some marked content groups,
+     *                 e.g. /ActualText or /ReversedChars
+     * @return current canvas.
+     */
+    public PdfCanvas showText(GlyphLine text, Iterator<GlyphLine.GlyphLinePart> iterator) {
         document.checkShowTextIsoConformance(currentGs, resources);
         PdfFont font;
         if ((font = currentGs.getFont()) == null) {
@@ -694,12 +709,15 @@ public class PdfCanvas {
         float fontSize = currentGs.getFontSize() / 1000f;
         float charSpacing = currentGs.getCharSpacing();
         float scaling = currentGs.getHorizontalScaling() / 100f;
-        for (ActualTextIterator iterator = new ActualTextIterator(text); iterator.hasNext(); ) {
-            GlyphLine.GlyphLinePart glyphLinePart = iterator.next();
+        List<GlyphLine.GlyphLinePart> glyphLineParts = iteratorToList(iterator);
+        for (int partIndex = 0; partIndex < glyphLineParts.size(); ++partIndex) {
+            GlyphLine.GlyphLinePart glyphLinePart = glyphLineParts.get(partIndex);
             if (glyphLinePart.actualText != null) {
                 PdfDictionary properties = new PdfDictionary();
                 properties.put(PdfName.ActualText, new PdfString(glyphLinePart.actualText, PdfEncodings.UNICODE_BIG).setHexWriting(true));
                 beginMarkedContent(PdfName.Span, properties);
+            } else if (glyphLinePart.reversed) {
+                beginMarkedContent(PdfName.ReversedChars);
             }
             int sub = glyphLinePart.start;
             for (int i = glyphLinePart.start; i < glyphLinePart.end; i++) {
@@ -773,7 +791,7 @@ public class PdfCanvas {
                         contentStream.getOutputStream()
                                 .writeFloat(((glyph.getWidth() + glyph.getXAdvance()) * fontSize + charSpacing) * scaling, true)
                                 .writeSpace()
-                                .writeFloat(glyph.getYAdvance() * fontSize, true)// TODO shall previous y position been restored?
+                                .writeFloat(glyph.getYAdvance() * fontSize, true) // TODO shall previous y position been restored?
                                 .writeSpace()
                                 .writeBytes(Td);
                     }
@@ -786,8 +804,10 @@ public class PdfCanvas {
             }
             if (glyphLinePart.actualText != null) {
                 endMarkedContent();
+            } else if (glyphLinePart.reversed) {
+                endMarkedContent();
             }
-            if (glyphLinePart.end > sub && iterator.hasNext()) {
+            if (glyphLinePart.end > sub && partIndex + 1 < glyphLineParts.size()) {
                 contentStream.getOutputStream()
                         .writeFloat(getSubrangeWidth(text, sub, glyphLinePart.end - 1), true)
                         .writeSpace()
@@ -2186,7 +2206,7 @@ public class PdfCanvas {
             }
         }
         os.writeBytes(ID);
-        os.writeBytes(imageXObject.getPdfObject().getBytes()).writeNewLine().writeBytes(EI).writeNewLine();
+        os.writeBytes(imageXObject.getPdfObject().getBytes(false)).writeNewLine().writeBytes(EI).writeNewLine();
         restoreState();
     }
 
@@ -2352,8 +2372,21 @@ public class PdfCanvas {
     }
 
     private static PdfStream getPageStream(PdfPage page) {
-        PdfStream stream = page.getContentStream(page.getContentStreamCount() - 1);
+        PdfStream stream = page.getLastContentStream();
         return stream == null || stream.getOutputStream() == null || stream.containsKey(PdfName.Filter) ? page.newContentStreamAfter() : stream;
+    }
+
+    private PdfStream ensureStreamDataIsReadyToBeProcessed(PdfStream stream) {
+        if (!stream.isFlushed()) {
+            if (stream.getOutputStream() == null || stream.containsKey(PdfName.Filter)) {
+                try {
+                    stream.setData(stream.getBytes());
+                } catch (Exception ex) {
+                    // ignore
+                }
+            }
+        }
+        return stream;
     }
 
     /**
@@ -2401,18 +2434,26 @@ public class PdfCanvas {
     }
 
     private void applyRotation(PdfPage page) {
-        Rectangle rectagle = page.getPageSizeWithRotation();
+        Rectangle rectangle = page.getPageSizeWithRotation();
         int rotation = page.getRotation();
         switch (rotation) {
             case 90:
-                concatMatrix(0, 1, -1, 0, rectagle.getTop(), 0);
+                concatMatrix(0, 1, -1, 0, rectangle.getTop(), 0);
                 break;
             case 180:
-                concatMatrix(-1, 0, 0, -1, rectagle.getRight(), rectagle.getTop());
+                concatMatrix(-1, 0, 0, -1, rectangle.getRight(), rectangle.getTop());
                 break;
             case 270:
-                concatMatrix(0, -1, 1, 0, 0, rectagle.getRight());
+                concatMatrix(0, -1, 1, 0, 0, rectangle.getRight());
                 break;
         }
+    }
+
+    private static <T> List<T> iteratorToList(Iterator<T> iterator) {
+        List<T> list = new ArrayList<>();
+        while (iterator.hasNext()) {
+            list.add(iterator.next());
+        }
+        return list;
     }
 }

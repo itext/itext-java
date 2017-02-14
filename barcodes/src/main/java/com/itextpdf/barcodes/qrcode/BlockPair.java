@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,9 @@
  */
 package com.itextpdf.barcodes.qrcode;
 
+/**
+ * Helper class that groups a block of databytes with its corresponding block of error correction block
+ */
 final class BlockPair {
 
     private final ByteArray dataBytes;
@@ -53,10 +56,16 @@ final class BlockPair {
         errorCorrectionBytes = errorCorrection;
     }
 
+    /**
+     * @return data block of the pair
+     */
     public ByteArray getDataBytes() {
         return dataBytes;
     }
 
+    /**
+     * @return error correction block of the pair
+     */
     public ByteArray getErrorCorrectionBytes() {
         return errorCorrectionBytes;
     }

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -54,7 +54,8 @@ public class IndependentRandomAccessSource implements IRandomAccessSource {
     private final IRandomAccessSource source;
 
     /**
-     * Constructs a new OffsetRandomAccessSource
+     * Constructs a new IndependentRandomAccessSource object
+     *
      * @param source the source
      */
     public IndependentRandomAccessSource(IRandomAccessSource source) {

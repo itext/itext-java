@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -54,7 +54,9 @@ import com.itextpdf.layout.IPropertyContainer;
  * location of the edges of the background coloring.
  */
 public class Background {
+    @Deprecated
     protected Color color;
+    protected TransparentColor transparentColor;
     protected float extraLeft;
     protected float extraRight;
     protected float extraTop;
@@ -65,7 +67,16 @@ public class Background {
      * @param color the background color
      */
     public Background(Color color) {
-        this(color, 0, 0, 0, 0);
+        this(color, 1f, 0, 0, 0, 0);
+    }
+
+    /**
+     * Creates a background with a specified color and opacity.
+     * @param color the background color
+     * @param opacity the opacity of the background color; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
+     */
+    public Background(Color color, float opacity) {
+        this(color, opacity, 0, 0, 0, 0);
     }
 
     /**
@@ -79,7 +90,23 @@ public class Background {
      * @param extraBottom extra coloring at the bottom
      */
     public Background(Color color, float extraLeft, float extraTop, float extraRight, float extraBottom) {
+        this(color, 1f, extraLeft, extraTop, extraRight, extraBottom);
+    }
+    
+    /**
+     * Creates a background with a specified color, and extra space that
+     * must be counted as part of the background and therefore colored.
+     * These values are allowed to be negative.
+     * @param color the background color
+     * @param opacity the opacity of the background color; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
+     * @param extraLeft extra coloring to the left side
+     * @param extraTop extra coloring at the top
+     * @param extraRight extra coloring to the right side
+     * @param extraBottom extra coloring at the bottom
+     */
+    public Background(Color color, float opacity, float extraLeft, float extraTop, float extraRight, float extraBottom) {
         this.color = color;
+        this.transparentColor = new TransparentColor(color, opacity);
         this.extraLeft = extraLeft;
         this.extraRight = extraRight;
         this.extraTop = extraTop;
@@ -91,7 +118,15 @@ public class Background {
      * @return a {@link Color} of any supported kind
      */
     public Color getColor() {
-        return color;
+        return transparentColor.getColor();
+    }
+
+    /**
+     * Gets the opacity of the background.
+     * @return a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
+     */
+    public float getOpacity() {
+        return transparentColor.getOpacity();
     }
 
     /**

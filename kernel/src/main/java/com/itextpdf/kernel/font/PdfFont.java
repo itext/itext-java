@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -142,7 +142,46 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Check whether font contains glyph with specified unicode.
+     *
+     * @param text a java unicode string
+     * @param from start index. one or two char may be used.
+     * @return true if font contains glyph, represented with the unicode code point,
+     * otherwise false.
+     */
+    public boolean containsGlyph(String text, int from) {
+        throw new java.lang.IllegalStateException("containsGlyph(String text, int from) must be overridden");
+    }
+
     public abstract GlyphLine createGlyphLine(String content);
+
+    /**
+     * Append all supported glyphs and return number of processed chars.
+     * Composite font supports surrogate pairs.
+     *
+     * @param text String to convert to glyphs.
+     * @param from from index of the text.
+     * @param to to index of the text.
+     * @param glyphs array for a new glyphs, shall not be null.
+     * @return number of processed chars from text.
+     */
+    public int appendGlyphs(String text, int from, int to, List<Glyph> glyphs) {
+        throw new java.lang.IllegalStateException("appendGlyphs(String text, int from, int to, List<Glyph> glyphs) must be overridden");
+    }
+
+    /**
+     * Append any single glyph, even notdef.
+     * Returns number of processed chars: 2 in case surrogate pair, otherwise 1.
+     *
+     * @param text String to convert to glyphs.
+     * @param from from index of the text.
+     * @param glyphs array for a new glyph, shall not be null.
+     * @return number of processed chars: 2 in case surrogate pair, otherwise 1
+     */
+    public int appendAnyGlyph(String text, int from, List<Glyph> glyphs) {
+        throw new java.lang.IllegalStateException("appendAnyGlyph(String text, int from, List<Glyph> glyphs) must be overridden");
+    }
 
     /**
      * Converts the text into bytes to be placed in the document.
@@ -158,6 +197,15 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public abstract String decode(PdfString content);
 
+    /**
+     * Decodes a given {@link PdfString} containing encoded string (e.g. from content stream) into a {@link GlyphLine}
+     * @param content the encoded string
+     * @return the {@link GlyphLine} containing the glyphs encoded by the passed string
+     */
+    public GlyphLine decodeIntoGlyphLine(PdfString content) {
+        throw new java.lang.IllegalStateException("decodeIntoGlyphLine(PdfString content) must be overridden");
+    }
+
     public abstract float getContentWidth(PdfString content);
 
     public abstract byte[] convertToBytes(Glyph glyph);
@@ -166,6 +214,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     public abstract void writeText(String text, PdfOutputStream stream);
 
+    @Deprecated
     public void writeText(GlyphLine text, PdfOutputStream stream) {
         writeText(text, 0, text.size() - 1, stream);
     }
@@ -392,19 +441,24 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             if (Character.isWhitespace(ch)) {
                 lastWhiteSpace = i;
             }
-            tokenLength += getWidth(ch, fontSize);
-            if (tokenLength >= maxWidth || ch == '\n') {
+            float currentCharWidth = getWidth(ch, fontSize);
+            if (tokenLength + currentCharWidth >= maxWidth || ch == '\n') {
                 if (startPos < lastWhiteSpace) {
                     resultString.add(text.substring(startPos, lastWhiteSpace));
                     startPos = lastWhiteSpace + 1;
                     tokenLength = 0;
                     i = lastWhiteSpace;
+                } else if (startPos != i) {
+                    resultString.add(text.substring(startPos, i));
+                    startPos = i;
+                    tokenLength = currentCharWidth;
                 } else {
-                    resultString.add(text.substring(startPos, i + 1));
+                    resultString.add(text.substring(startPos, startPos + 1));
                     startPos = i + 1;
                     tokenLength = 0;
-                    i = i + 1;
                 }
+            } else {
+                tokenLength += currentCharWidth;
             }
         }
 
@@ -435,10 +489,18 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
         return PdfFontFactory.checkFontDictionary(fontDic, fontType, true);
     }
 
+    /**
+     * @deprecated Will be removed in 7.1
+     */
+    @Deprecated
     protected boolean checkTrueTypeFontDictionary(PdfDictionary fontDic) {
         return checkTrueTypeFontDictionary(fontDic, true);
     }
 
+    /**
+     * @deprecated Will be removed in 7.1
+     */
+    @Deprecated
     protected boolean checkTrueTypeFontDictionary(PdfDictionary fontDic, boolean isException) {
         if (fontDic == null || fontDic.get(PdfName.Subtype) == null
                 || !(fontDic.get(PdfName.Subtype).equals(PdfName.TrueType) || fontDic.get(PdfName.Subtype).equals(PdfName.Type1))) {
@@ -527,5 +589,12 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             markObjectAsIndirect(obj);
             return false;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "PdfFont{" +
+                "fontProgram=" + fontProgram +
+                '}';
     }
 }

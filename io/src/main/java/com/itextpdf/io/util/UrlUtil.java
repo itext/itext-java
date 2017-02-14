@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -76,6 +77,26 @@ public final class UrlUtil {
             url = new File(filename).toURI().toURL();
         }
         return url;
+    }
+
+    /**
+     * This method makes a normalized URI from a given filename.
+     *
+     * @param filename a given filename
+     * @return a valid URI
+     */
+    public static URI toNormalizedURI(String filename) {
+        return toNormalizedURI(new File(filename));
+    }
+
+    /**
+     * This method makes a normalized URI from a given file.
+     *
+     * @param file a given filename
+     * @return a valid URI
+     */
+    public static URI toNormalizedURI(File file) {
+        return file.toURI().normalize();
     }
 
     public static InputStream openStream(URL url) throws IOException {

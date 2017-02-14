@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -108,6 +108,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (pdfDocument.isTagged()) {
             structParents = (int) pdfDocument.getNextStructParentIndex();
             getPdfObject().put(PdfName.StructParents, new PdfNumber(structParents));
+            setTabOrder(PdfName.S);
         }
     }
 
@@ -165,7 +166,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfPage} instance.
      */
     public PdfPage setRotation(int degAngle) {
-        getPdfObject().put(PdfName.Rotate, new PdfNumber(degAngle));
+        put(PdfName.Rotate, new PdfNumber(degAngle));
         return this;
     }
 
@@ -179,7 +180,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfStream getContentStream(int index) {
         int count = getContentStreamCount();
-        if (index >= count)
+        if (index >= count || index < 0)
             throw new IndexOutOfBoundsException(MessageFormat.format("Index: {0}, Size: {1}", index, count));
         PdfObject contents = getPdfObject().get(PdfName.Contents);
         if (contents instanceof PdfStream)
@@ -279,7 +280,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             }
             if (resources == null) {
                 resources = new PdfDictionary();
-                getPdfObject().put(PdfName.Resources, resources);
+                put(PdfName.Resources, resources);
             }
             this.resources = new PdfResources(resources);
             this.resources.setReadOnly(readOnly);
@@ -294,7 +295,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfPage} instance.
      */
     public PdfPage setResources(PdfResources pdfResources) {
-        getPdfObject().put(PdfName.Resources, pdfResources.getPdfObject());
+        put(PdfName.Resources, pdfResources.getPdfObject());
         this.resources = pdfResources;
         return this;
     }
@@ -310,7 +311,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         xmp.getOutputStream().write(xmpMetadata);
         xmp.put(PdfName.Type, PdfName.Metadata);
         xmp.put(PdfName.Subtype, PdfName.XML);
-        getPdfObject().put(PdfName.Metadata, xmp);
+        put(PdfName.Metadata, xmp);
     }
 
     /**
@@ -417,6 +418,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
         xObject.getPdfObject().getOutputStream().write(getContentBytes());
         xObject.getPdfObject().mergeDifferent(dictionary);
+        //Copy inherited resources
+        if (!xObject.getPdfObject().containsKey(PdfName.Resources)) {
+            PdfObject copyResource = getResources().getPdfObject().copyTo(toDocument, true);
+            xObject.getPdfObject().put(PdfName.Resources, copyResource);
+        }
 
         return xObject;
     }
@@ -449,20 +455,20 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Flushes page and its content stream. If <code>flushContentStreams</code> is true, all content streams that are
+     * Flushes page and its content stream. If <code>flushResourcesContentStreams</code> is true, all content streams that are
      * rendered on this page (like FormXObjects, annotation appearance streams, patterns) and also all images associated
      * with this page will also be flushed.
      * <br>
      * For notes about tag structure flushing see {@link PdfPage#flush() PdfPage#flush() method}.
      * <br>
      * <br>
-     * If <code>PdfADocument</code> is used, flushing will be applied only if <code>flushContentStreams</code> is true.
+     * If <code>PdfADocument</code> is used, flushing will be applied only if <code>flushResourcesContentStreams</code> is true.
      *
-     * @param flushContentStreams if true all content streams that are rendered on this page (like form xObjects,
+     * @param flushResourcesContentStreams if true all content streams that are rendered on this page (like form xObjects,
      *                            annotation appearance streams, patterns) and also all images associated with this page
      *                            will be flushed.
      */
-    public void flush(boolean flushContentStreams) {
+    public void flush(boolean flushResourcesContentStreams) {
         // TODO log warning in case of failed flush in pdfa document case
         if (isFlushed()) {
             return;
@@ -475,9 +481,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (resources != null && resources.isModified() && !resources.isReadOnly()) {
             getPdfObject().put(PdfName.Resources, resources.getPdfObject());
         }
-        if (flushContentStreams) {
+        if (flushResourcesContentStreams) {
             getDocument().checkIsoConformance(this, IsoKey.PAGE);
-            flushContentStreams();
+            flushResourcesContentStreams();
         }
         int contentStreamCount = getContentStreamCount();
         for (int i = 0; i < contentStreamCount; i++) {
@@ -529,7 +535,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfPage} instance.
      */
     public PdfPage setMediaBox(Rectangle rectangle) {
-        getPdfObject().put(PdfName.MediaBox, new PdfArray(rectangle));
+        put(PdfName.MediaBox, new PdfArray(rectangle));
         return this;
     }
 
@@ -562,8 +568,32 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfPage} instance.
      */
     public PdfPage setCropBox(Rectangle rectangle) {
-        getPdfObject().put(PdfName.CropBox, new PdfArray(rectangle));
+        put(PdfName.CropBox, new PdfArray(rectangle));
         return this;
+    }
+
+    /**
+     * Sets the BleedBox object, that defines the region to which the contents of the page shall be clipped 
+     * when output in a production environment.
+     * 
+     * @param rectangle the {@link Rectangle} object to set, expressed in default user space units.
+     * @return this {@link PdfPage} instance.
+     */
+    public PdfPage setBleedBox(Rectangle rectangle) {
+        put(PdfName.BleedBox, new PdfArray(rectangle));
+        return this;
+    }
+
+    /**
+     * Gets the {@link Rectangle} object specified by page's BleedBox, that define the region to which the 
+     * contents of the page shall be clipped when output in a production environment.
+     *
+     * @return the {@link Rectangle} object specified by page's BleedBox, expressed in default user space units.
+     *         CropBox by default.
+     */
+    public Rectangle getBleedBox() {
+        Rectangle bleedBox = getPdfObject().getAsRectangle(PdfName.BleedBox);
+        return bleedBox == null ? getCropBox() : bleedBox;
     }
 
     /**
@@ -579,7 +609,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             Logger logger = LoggerFactory.getLogger(PdfPage.class);
             logger.warn(LogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
         }
-        getPdfObject().put(PdfName.ArtBox, new PdfArray(rectangle));
+        put(PdfName.ArtBox, new PdfArray(rectangle));
         return this;
     }
 
@@ -607,7 +637,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             Logger logger = LoggerFactory.getLogger(PdfPage.class);
             logger.warn(LogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
         }
-        getPdfObject().put(PdfName.TrimBox, new PdfArray(rectangle));
+        put(PdfName.TrimBox, new PdfArray(rectangle));
         return this;
     }
 
@@ -761,12 +791,17 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfPage} instance.
      */
     public PdfPage addAnnotation(int index, PdfAnnotation annotation, boolean tagAnnotation) {
-        if (getDocument().isTagged() && tagAnnotation) {
-            TagTreePointer tagPointer = getDocument().getTagStructureContext().getAutoTaggingPointer();
-            PdfPage prevPage = tagPointer.getCurrentPage(); // TODO what about if current tagging stream is set
-            tagPointer.setPageForTagging(this).addAnnotationTag(annotation);
-            if (prevPage != null) {
-                tagPointer.setPageForTagging(prevPage);
+        if (getDocument().isTagged()) {
+            if (tagAnnotation) {
+                TagTreePointer tagPointer = getDocument().getTagStructureContext().getAutoTaggingPointer();
+                PdfPage prevPage = tagPointer.getCurrentPage();
+                tagPointer.setPageForTagging(this).addAnnotationTag(annotation);
+                if (prevPage != null) {
+                    tagPointer.setPageForTagging(prevPage);
+                }
+            }
+            if (getTabOrder() == null) {
+                setTabOrder(PdfName.S);
             }
         }
 
@@ -803,6 +838,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
             if (annots.isEmpty()) {
                 getPdfObject().remove(PdfName.Annots);
+                setModified();
+            } else if (annots.getIndirectReference() == null) {
+                setModified();
             }
         }
 
@@ -917,6 +955,28 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Sets a name specifying the tab order that shall be used for annotations on the page.
+     * The possible values are {@link PdfName#R} (row order), {@link PdfName#C} (column order), and {@link PdfName#S} (structure order). 
+     * See ISO 32000 12.5, "Annotations" for details.
+     * @param tabOrder a {@link PdfName} specifying the annotations tab order. See method description for the allowed values.
+     * @return this {@link PdfPage} instance.
+     */
+    public PdfPage setTabOrder(PdfName tabOrder) {
+        put(PdfName.Tabs, tabOrder);
+        return this;
+    }
+
+    /**
+     * Gets a name specifying the tab order that shall be used for annotations on the page.
+     * The possible values are {@link PdfName#R} (row order), {@link PdfName#C} (column order), and {@link PdfName#S} (structure order). 
+     * See ISO 32000 12.5, "Annotations" for details.
+     * @return a {@link PdfName} specifying the annotations tab order or null if tab order is not defined.
+     */
+    public PdfName getTabOrder() {
+        return getPdfObject().getAsName(PdfName.Tabs);
+    }
+
+    /**
      * Helper method that associate specified value with specified key in the underlined {@link PdfDictionary}.
      * May be used in chain.
      *
@@ -926,6 +986,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfPage put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
         return this;
     }
 
@@ -964,7 +1025,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (annots == null && create) {
             annots = new PdfArray();
             put(PdfName.Annots, annots);
-            setModified();
         }
         return annots;
     }
@@ -988,38 +1048,43 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (contents instanceof PdfStream) {
             array = new PdfArray();
             array.add(contents);
-            getPdfObject().put(PdfName.Contents, array);
-            setModified();
+            put(PdfName.Contents, array);
         } else if (contents instanceof PdfArray) {
             array = (PdfArray) contents;
         } else {
-            throw new PdfException(PdfException.PdfPageShallHaveContent);
+            array = null;
         }
         PdfStream contentStream = new PdfStream().makeIndirect(getDocument());
-        if (before) {
-            array.add(0, contentStream);
+        if (array != null) {
+            if (before) {
+                array.add(0, contentStream);
+            } else {
+                array.add(contentStream);
+            }
+            if (array.getIndirectReference() != null) {
+                array.setModified();
+            } else {
+                setModified();
+            }
         } else {
-            array.add(contentStream);
-        }
-        if (null != array.getIndirectReference()) {
-            array.setModified();
-        } else {
-            setModified();
+            put(PdfName.Contents, contentStream);
         }
         return contentStream;
     }
 
     private void tryFlushPageTags() {
         try {
-            getDocument().getTagStructureContext().flushPageTags(this);
+            if(!getDocument().isClosing) {
+                getDocument().getTagStructureContext().flushPageTags(this);
+            }
             getDocument().getStructTreeRoot().createParentTreeEntryForPage(this);
         } catch (Exception ex) {
             throw new PdfException(PdfException.TagStructureFlushingFailedItMightBeCorrupted, ex);
         }
     }
 
-    private void flushContentStreams() {
-        flushContentStreams(getResources().getPdfObject());
+    private void flushResourcesContentStreams() {
+        flushResourcesContentStreams(getResources().getPdfObject());
 
         PdfArray annots = getAnnots(false);
         if (annots != null) {
@@ -1032,7 +1097,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private void flushContentStreams(PdfDictionary resources) {
+    private void flushResourcesContentStreams(PdfDictionary resources) {
         if (resources != null) {
             flushWithResources(resources.getAsDictionary(PdfName.XObject));
             flushWithResources(resources.getAsDictionary(PdfName.Pattern));
@@ -1048,7 +1113,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         for (PdfObject obj : objsCollection.values()) {
             if (obj.isFlushed())
                 continue;
-            flushContentStreams(((PdfDictionary) obj).getAsDictionary(PdfName.Resources));
+            flushResourcesContentStreams(((PdfDictionary) obj).getAsDictionary(PdfName.Resources));
             flushMustBeIndirectObject(obj);
         }
     }

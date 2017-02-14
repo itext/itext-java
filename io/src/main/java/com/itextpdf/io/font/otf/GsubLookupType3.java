@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -53,6 +53,7 @@ import java.util.Map;
  */
 public class GsubLookupType3 extends OpenTableLookup {
 
+    private static final long serialVersionUID = -5408042853790920298L;
     private Map<Integer, int[]> substMap;
 
     public GsubLookupType3(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {

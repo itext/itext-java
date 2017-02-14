@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,11 +48,17 @@ import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class IccProfile {
+
+/**
+ * Class used to represented the International Color Consortium profile
+ */
+public class IccProfile implements Serializable {
+    private static final long serialVersionUID = -7466035855770591929L;
     protected byte[] data;
     protected int numComponents;
     private static Map<String, Integer> cstags = new HashMap<>();
@@ -60,6 +66,15 @@ public class IccProfile {
     protected IccProfile() {
     }
 
+    /**
+     * Construct an icc profile from the passed byte[], using the passed number of components.
+     *
+     * @param data byte[] containing the raw icc profile data
+     * @param numComponents number of components the profile contains
+     * @return IccProfile constructed from the data
+     *
+     * @throws IOException when the specified number of components and the number of components in the created profile do not match.
+     */
     public static IccProfile getInstance(byte[] data, int numComponents) {
         if (data.length < 128 || data[36] != 0x61 || data[37] != 0x63
                 || data[38] != 0x73 || data[39] != 0x70)
@@ -77,6 +92,12 @@ public class IccProfile {
         return icc;
     }
 
+    /**
+     * Construct an icc profile from the passed byte[], using the passed number of components.
+     *
+     * @param data byte[] containing the raw icc profile data
+     * @return IccProfile constructed from the data
+     */
     public static IccProfile getInstance(byte[] data) {
         Integer cs;
         cs = getIccNumberOfComponents(data);
@@ -84,6 +105,14 @@ public class IccProfile {
         return getInstance(data, numComponents);
     }
 
+    /**
+     * Construct an icc profile from the passed random-access file or array.
+     *
+     * @param file random-access file or array containing the profile
+     * @return IccProfile constructed from the data
+     *
+     * @throws IOException if the source does not contain a valid icc profile
+     */
     public static IccProfile getInstance(RandomAccessFileOrArray file) {
         try {
             byte[] head = new byte[128];
@@ -120,6 +149,14 @@ public class IccProfile {
         }
     }
 
+    /**
+     * Construct an icc profile from the passed InputStream.
+     *
+     * @param stream inputstream containing the profile
+     * @return IccProfile constructed from the data
+     *
+     * @throws IOException if the source does not contain a valid icc profile
+     */
     public static IccProfile getInstance(InputStream stream) {
         RandomAccessFileOrArray raf;
         try {
@@ -131,6 +168,13 @@ public class IccProfile {
         return getInstance(raf);
     }
 
+    /**
+     * Construct an icc profile from the file found at the passed path
+     *
+     * @param filename path to the file contaning the profile
+     * @return IccProfile constructed from the data
+     * @throws IOException if the source does not contain a valid icc profile
+     */
     public static IccProfile getInstance(String filename) {
         RandomAccessFileOrArray raf;
         try {
@@ -142,6 +186,13 @@ public class IccProfile {
         return getInstance(raf);
     }
 
+    /**
+     * Get the Color space name of the icc profile found in the data.
+     *
+     * @param data byte[] containing the icc profile
+     * @return String containing the color space of the profile
+     * @throws IOException if the source does not contain a valid icc profile
+     */
     public static String getIccColorSpaceName(byte[] data) {
         String colorSpace;
         try {
@@ -152,6 +203,13 @@ public class IccProfile {
         return colorSpace;
     }
 
+    /**
+     * Get the device class of the icc profile found in the data.
+     *
+     * @param data byte[] containing the icc profile
+     * @return String containing the device class of the profile
+     * @throws IOException if the source does not contain a valid icc profile
+     */
     public static String getIccDeviceClass(byte[] data) {
         String deviceClass;
         try {
@@ -162,14 +220,30 @@ public class IccProfile {
         return deviceClass;
     }
 
+    /**
+     * Get the number of color components of the icc profile found in the data.
+     *
+     * @param data byte[] containing the icc profile
+     * @return Number of color components
+     */
     public static Integer getIccNumberOfComponents(byte[] data) {
         return cstags.get(getIccColorSpaceName(data));
     }
 
+    /**
+     * Get the icc color profile data.
+     *
+     * @return byte[] containing the data
+     */
     public byte[] getData() {
         return data;
     }
 
+    /**
+     * Get the number of color components in the profile.
+     *
+     * @return number of components
+     */
     public int getNumComponents() {
         return numComponents;
     }

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,8 @@
     address: sales@itextpdf.com
  */
 package com.itextpdf.io.util;
+
+import com.itextpdf.io.font.otf.Glyph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -206,5 +208,28 @@ public final class TextUtil {
 
     public static String charToString(char ch) {
         return String.valueOf(ch);
+    }
+
+    public static boolean isNewLine(Glyph glyph) {
+        int unicode = glyph.getUnicode();
+        return unicode == '\n' || unicode == '\r';
+    }
+
+    public static boolean isSpaceOrWhitespace(Glyph glyph) {
+        //\r, \n, and \t are whitespaces, but not space chars.
+        //\u00a0 is SpaceChar, but not whitespace.
+        return Character.isSpaceChar((char) glyph.getUnicode()) || Character.isWhitespace((char) glyph.getUnicode());
+    }
+
+    public static boolean isUni0020(Glyph g) {
+        return g.getUnicode() == ' ';
+    }
+
+    public static boolean isNonPrintable(int c) {
+        return Character.isIdentifierIgnorable(c) || c == '\u00AD';
+    }
+
+    public static boolean isWhitespaceOrNonPrintable(int code) {
+        return Character.isWhitespace(code) || isNonPrintable(code);
     }
 }

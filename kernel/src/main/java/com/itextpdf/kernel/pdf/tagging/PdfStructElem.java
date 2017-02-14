@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -191,7 +191,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public void setAttributes(PdfObject attributes) {
-        getPdfObject().put(PdfName.A, attributes);
+        put(PdfName.A, attributes);
     }
 
     public PdfString getLang() {
@@ -199,7 +199,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public void setLang(PdfString lang) {
-        getPdfObject().put(PdfName.Lang, lang);
+        put(PdfName.Lang, lang);
     }
 
     public PdfString getAlt() {
@@ -207,7 +207,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public void setAlt(PdfString alt) {
-        getPdfObject().put(PdfName.Alt, alt);
+        put(PdfName.Alt, alt);
     }
 
     public PdfString getActualText() {
@@ -215,7 +215,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public void setActualText(PdfString actualText) {
-        getPdfObject().put(PdfName.ActualText, actualText);
+        put(PdfName.ActualText, actualText);
     }
 
     public PdfString getE() {
@@ -223,7 +223,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public void setE(PdfString e) {
-        getPdfObject().put(PdfName.E, e);
+        put(PdfName.E, e);
     }
 
     @Override
@@ -232,7 +232,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
     }
 
     public void setRole(PdfName role) {
-        getPdfObject().put(PdfName.S, role);
+        put(PdfName.S, role);
     }
 
     public PdfStructElem addKid(PdfStructElem kid) {
@@ -273,6 +273,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
         } else {
             getPdfObject().remove(PdfName.K);
         }
+        setModified();
 
         IPdfStructElem removedKid = convertPdfObjectToIPdfStructElem(k);
         if (removedKid instanceof PdfMcr) {
@@ -356,6 +357,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     public PdfStructElem put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
         return this;
     }
 
@@ -381,9 +383,9 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
             throw new PdfException(PdfException.StructureElementShallContainParentObject, parent);
         }
         PdfObject k = parent.get(PdfName.K);
-        if (k == null)
+        if (k == null) {
             parent.put(PdfName.K, kid);
-        else {
+        } else {
             PdfArray a;
             if (k instanceof PdfArray) {
                 a = (PdfArray) k;
@@ -392,13 +394,17 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
                 a.add(k);
                 parent.put(PdfName.K, a);
             }
-            if (index == -1)
+            if (index == -1) {
                 a.add(kid);
-            else
+            } else {
                 a.add(index, kid);
+            }
         }
-        if (kid instanceof PdfDictionary && isStructElem((PdfDictionary) kid))
+        parent.setModified();
+        if (kid instanceof PdfDictionary && isStructElem((PdfDictionary) kid)) {
             ((PdfDictionary) kid).put(PdfName.P, parent);
+            kid.setModified();
+        }
     }
 
     @Override
@@ -460,6 +466,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
             getPdfObject().remove(PdfName.K);
             removedIndex = 0;
         }
+        setModified();
 
         return removedIndex;
     }

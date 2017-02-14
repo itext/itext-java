@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -122,14 +122,23 @@ final class Mode {
         return characterCountBitsForVersions[offset];
     }
 
+    /**
+     * @return the bits of the mode
+     */
     public int getBits() {
         return bits;
     }
 
+    /**
+     * @return the name of the mode.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return the name of the mode.
+     */
     public String toString() {
         return name;
     }

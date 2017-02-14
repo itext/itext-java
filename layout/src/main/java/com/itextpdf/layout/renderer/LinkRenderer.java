@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,13 +43,10 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
-import com.itextpdf.layout.border.Border;
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.layout.element.Link;
-import com.itextpdf.layout.property.Property;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LinkRenderer extends TextRenderer {
 
@@ -74,23 +71,19 @@ public class LinkRenderer extends TextRenderer {
 
     @Override
     public void draw(DrawContext drawContext) {
+        if (occupiedArea == null) {
+            Logger logger = LoggerFactory.getLogger(LinkRenderer.class);
+            logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
+            return;
+        }
         super.draw(drawContext);
 
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
-            applyAbsolutePositioningTranslation(false);
+            applyRelativePositioningTranslation(false);
         }
 
-        PdfLinkAnnotation linkAnnotation = ((Link)modelElement).getLinkAnnotation();
-        Rectangle pdfBBox = calculateAbsolutePdfBBox();
-        linkAnnotation.setRectangle(new PdfArray(pdfBBox));
 
-        if (isRelativePosition) {
-            applyAbsolutePositioningTranslation(true);
-        }
-
-        PdfPage page = drawContext.getDocument().getPage(occupiedArea.getPageNumber());
-        page.addAnnotation(linkAnnotation);
     }
 
     @Override

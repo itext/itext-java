@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.itextpdf</groupId>
+    <artifactId>itext7-core</artifactId>
+    <version>7.0.2</version>
+    <packaging>pom</packaging>
+
+    <name>iText 7 Core</name>
+    <description>A Free Java-PDF library</description>
+    <url>http://itextpdf.com/</url>
+    <inceptionYear>1998</inceptionYear>
+
+    <organization>
+        <name>iText Group NV</name>
+        <url>http://itextpdf.com/</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>GNU Affero General Public License v3</name>
+            <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>itext</id>
+            <name>iText Software</name>
+            <email>info@itextpdf.com</email>
+            <url>http://www.itextpdf.com</url>
+        </developer>
+    </developers>
+
+    <mailingLists>
+        <mailingList>
+            <name>iText on StackOverflow</name>
+            <subscribe>http://stackoverflow.com/questions/tagged/itext7</subscribe>
+            <archive>http://stackoverflow.com/questions/tagged/itext7</archive>
+            <otherArchives>
+                <otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
+                <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
+                <otherArchive>http://www.junlu.com/2.html</otherArchive>
+                <otherArchive>http://sourceforge.net/mailarchive/forum.php?forum_id=3273</otherArchive>
+                <otherArchive>http://www.mail-archive.com/itext-questions%40lists.sourceforge.net/</otherArchive>
+            </otherArchives>
+        </mailingList>
+    </mailingLists>
+
+    <scm>
+        <connection>ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
+        <url>ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</url>
+    </scm>
+
+    <issueManagement>
+        <system>jira</system>
+        <url>https://jira.itextsupport.com/</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>jenkins-ci</system>
+        <url>http://ci.itextsupport.com/</url>
+    </ciManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>barcodes</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>font-asian</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>forms</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>hyph</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>io</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>kernel</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>layout</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>pdfa</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>sign</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.revapi</groupId>
+          <artifactId>revapi-maven-plugin</artifactId>
+          <version>0.8.2</version>
+          <configuration>
+            <skip>true</skip>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+
+</project>

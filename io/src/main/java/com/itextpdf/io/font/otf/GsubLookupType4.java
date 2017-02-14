@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -53,6 +53,7 @@ import java.util.Map;
  * @author psoares
  */
 public class GsubLookupType4 extends OpenTableLookup {
+    private static final long serialVersionUID = -8106254947137506056L;
     /**
      * The key is the first character. The first element in the int array is the
      * output ligature

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,7 @@
  */
 package com.itextpdf.io.font.otf;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +55,7 @@ import java.util.Map;
  */
 public class GposLookupType5 extends OpenTableLookup {
 
+    private static final long serialVersionUID = 6409145706785333023L;
     private final List<MarkToLigature> marksligatures;
 
     public GposLookupType5(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
@@ -145,7 +147,8 @@ public class GposLookupType5 extends OpenTableLookup {
     }
 
 
-    public static class MarkToLigature {
+    public static class MarkToLigature implements Serializable {
+        private static final long serialVersionUID = 4249432630962669432L;
         public final Map<Integer,OtfMarkRecord> marks = new HashMap<>();
         public final Map<Integer,List<GposAnchor[]>> ligatures = new HashMap<>();
     }

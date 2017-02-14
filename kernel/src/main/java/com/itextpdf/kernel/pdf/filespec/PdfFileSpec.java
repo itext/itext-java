@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -69,6 +69,18 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
         return (PdfFileSpec) new PdfFileSpec(dict).makeIndirect(doc);
     }
 
+    /**
+     * Embed a file to a PdfDocument.
+     * @param doc PdfDocument to add the file to
+     * @param fileStore byte[] containing the file
+     * @param description file description
+     * @param fileDisplay actual file name stored in the pdf
+     * @param mimeType mime-type of the file
+     * @param fileParameter Pdfdictionary containing fil parameters
+     * @param afRelationshipValue AFRelationship key value, @see AFRelationshipValue. If <CODE>null</CODE>, @see AFRelationshipValue.Unspecified will be added.
+     * @param isUnicodeFileName
+     * @return PdfFileSpec containing the file specification of the file as Pdfobject
+     */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, byte[] fileStore, String description, String fileDisplay, PdfName mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue, boolean isUnicodeFileName) {
         PdfStream stream = new PdfStream(fileStore).makeIndirect(doc);
         PdfDictionary params = new PdfDictionary();
@@ -86,16 +98,50 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
         return createEmbeddedFileSpec(doc, stream, description, fileDisplay, mimeType, afRelationshipValue, isUnicodeFileName);
     }
 
+    /**
+     *
+     * @param doc
+     * @param filePath
+     * @param description
+     * @param fileDisplay
+     * @param mimeType
+     * @param afRelationshipValue
+     * @param isUnicodeFileName
+     * @return
+     * @throws IOException
+     */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, String filePath, String description, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) throws IOException {
         PdfStream stream = new PdfStream(doc, UrlUtil.toURL(filePath).openStream());
         return createEmbeddedFileSpec(doc, stream, description, fileDisplay, mimeType, afRelationshipValue, isUnicodeFileName);
     }
 
+    /**
+     *
+     * @param doc
+     * @param is
+     * @param description
+     * @param fileDisplay
+     * @param mimeType
+     * @param afRelationshipValue
+     * @param isUnicodeFileName
+     * @return
+     */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, InputStream is, String description, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) {
         PdfStream stream = new PdfStream(doc, is);
         return createEmbeddedFileSpec(doc, stream, description, fileDisplay, mimeType, afRelationshipValue, isUnicodeFileName);
     }
 
+    /**
+     *
+     * @param doc
+     * @param stream
+     * @param description
+     * @param fileDisplay
+     * @param mimeType
+     * @param afRelationshipValue
+     * @param isUnicodeFileName
+     * @return
+     */
     private static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, PdfStream stream, String description, String fileDisplay, PdfName mimeType, PdfName afRelationshipValue, boolean isUnicodeFileName) {
         PdfDictionary dict = new PdfDictionary();
         stream.put(PdfName.Type, PdfName.EmbeddedFile);

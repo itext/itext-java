@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,16 +43,21 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfLinkAnnotation extends PdfAnnotation {
 
     private static final long serialVersionUID = 5795613340575331536L;
+
+    private static final Logger logger = LoggerFactory.getLogger(PdfLinkAnnotation.class);
 	
     /**
      * Highlight modes.
@@ -79,11 +84,20 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     }
 
     public PdfLinkAnnotation setDestination(PdfObject destination) {
+        if (getPdfObject().containsKey(PdfName.A)) {
+            getPdfObject().remove(PdfName.A);
+            logger.warn(LogMessageConstant.DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET);
+        }
         return (PdfLinkAnnotation) put(PdfName.Dest, destination);
     }
 
     public PdfLinkAnnotation setDestination(PdfDestination destination) {
-        return (PdfLinkAnnotation) put(PdfName.Dest, destination.getPdfObject());
+        return setDestination(destination.getPdfObject());
+    }
+
+    public PdfLinkAnnotation removeDestination() {
+        getPdfObject().remove(PdfName.Dest);
+        return this;
     }
 
     public PdfLinkAnnotation setAction(PdfDictionary action) {
@@ -92,7 +106,16 @@ public class PdfLinkAnnotation extends PdfAnnotation {
 
     @Override
     public PdfLinkAnnotation setAction(PdfAction action) {
+        if (getDestinationObject() != null) {
+            removeDestination();
+            logger.warn(LogMessageConstant.ACTION_WAS_SET_TO_LINK_ANNOTATION_WITH_DESTINATION);
+        }
         return (PdfLinkAnnotation) put(PdfName.A, action.getPdfObject());
+    }
+
+    public PdfLinkAnnotation removeAction() {
+        getPdfObject().remove(PdfName.A);
+        return this;
     }
 
     public PdfName getHighlightMode() {

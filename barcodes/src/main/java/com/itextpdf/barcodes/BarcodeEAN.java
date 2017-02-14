@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -211,18 +211,14 @@ public class BarcodeEAN extends Barcode1D {
      */
     public BarcodeEAN(PdfDocument document) {
         super(document);
-        try {
-            x = 0.8f;
-            font = PdfFontFactory.createFont(FontConstants.HELVETICA, PdfEncodings.WINANSI);
-            size = 8;
-            baseline = size;
-            barHeight = size * 3;
-            guardBars = true;
-            codeType = EAN13;
-            code = "";
-        } catch (IOException e) {
-            throw new PdfException(e);
-        }
+        x = 0.8f;
+        font = document.getDefaultFont();
+        size = 8;
+        baseline = size;
+        barHeight = size * 3;
+        guardBars = true;
+        codeType = EAN13;
+        code = "";
     }
 
     /**

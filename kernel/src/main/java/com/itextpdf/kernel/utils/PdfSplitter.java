@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -110,7 +110,7 @@ public class PdfSplitter {
         while (currentPage <= numOfPages) {
             PageRange nextRange = getNextRange(currentPage, numOfPages, size);
             splitRanges.add(nextRange);
-            List<Integer> allPages = nextRange.getAllPages();
+            List<Integer> allPages = nextRange.getQualifyingPageNums(numOfPages);
             currentPage = (int) allPages.get(allPages.size() - 1) + 1;
         }
 
@@ -212,7 +212,7 @@ public class PdfSplitter {
         for (PageRange currentPageRange : pageRanges) {
             PdfDocument currentPdfDocument = createPdfDocument(currentPageRange);
             splitDocuments.add(currentPdfDocument);
-            pdfDocument.copyPagesTo(currentPageRange.getAllPages(), currentPdfDocument);
+            pdfDocument.copyPagesTo(currentPageRange.getQualifyingPageNums(pdfDocument.getNumberOfPages()), currentPdfDocument);
         }
 
         return splitDocuments;

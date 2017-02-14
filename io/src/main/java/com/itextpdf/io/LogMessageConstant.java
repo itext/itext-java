@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,14 @@ package com.itextpdf.io;
  */
 public final class LogMessageConstant {
 
+    public static final String ACTION_WAS_SET_TO_LINK_ANNOTATION_WITH_DESTINATION = "Action was set for a link annotation containing destination. The old destination will be cleared.";
+    public static final String ATTEMPT_TO_MOVE_TO_FLUSHED_PARENT = "An attempt is made to move the tag tree pointer to the tag parent which has been already flushed. Tag tree pointer is moved to the root tag instead.";
+    public static final String CLIP_ELEMENT = "Element content was clipped because some height properties are set.";
+    public static final String COLOR_NOT_FOUND = "Color \"{0}\" not found.";
+    public static final String COLOR_NOT_PARSED = "Color \"{0}\" was not parsed. It has invalid value. Defaulting to black color.";
     public static final String COLORANT_INTENSITIES_INVALID = "Some of colorant intensities are invalid: they are bigger than 1 or less than 0. We will force them to become 1 or 0 respectively.";
+    public static final String COULD_NOT_FIND_GLYPH_WITH_CODE = "Could not find glyph with the following code: {0}";
+    public static final String DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET = "Destinations are not permitted for link annotations that already have actions. The old action will be removed.";
     public static final String DOCUMENT_ALREADY_HAS_FIELD = "The document already has field {0}. Annotations of the fields with this name will be added to the existing one as children. If you want to have separate fields, please, rename them manually before copying.";
     public static final String DOCUMENT_SERIALIZATION_EXCEPTION_RAISED = "Unhandled exception while serialization";
     public static final String DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT = "DirectOnly object cannot be indirect";
@@ -56,6 +63,7 @@ public final class LogMessageConstant {
     public static final String ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED = "Element was placed in a forced way. Keep with next property will be ignored";
     public static final String ENCOUNTERED_INVALID_MCR = "Corrupted tag structure: encountered invalid marked content reference - it doesn't refer to any page or any mcid. This content reference will be ignored.";
     public static final String EXCEPTION_WHILE_UPDATING_XMPMETADATA = "Exception while updating XmpMetadata";
+    public static final String EXCEPTION_WHILE_CREATING_DEFAULT_FONT = "Exception while creating default font (Helvetica, WinAnsi)";
     public static final String FILE_CHANNEL_CLOSING_FAILED = "Closing of the file channel this source is based on failed.";
     public static final String FONT_HAS_INVALID_GLYPH = "Font {0} has invalid glyph: {1}";
     public static final String FORBID_RELEASE_IS_SET = "ForbidRelease flag is set and release is called. Releasing will not be performed.";
@@ -64,18 +72,24 @@ public final class LogMessageConstant {
     public static final String IMAGE_HAS_MASK = "Image cannot be inline if it has a Mask";
     public static final String IMAGE_HAS_JPXDECODE_FILTER = "Image cannot be inline if it has JPXDecode filter. It will be added as an ImageXObject";
     public static final String IMAGE_SIZE_CANNOT_BE_MORE_4KB = "Inline image size cannot be more than 4KB. It will be added as an ImageXObject";
-    public static final String INVALID_INDIRECT_REFERENCE = "Invalid indirect reference";
+    public static final String INCORRECT_PAGEROTATION = "Encounterd a page rotation that was not a multiple of 90°/ (Pi/2) when generating default appearances for form fields";
+    public static final String INPUT_STREAM_CONTENT_IS_LOST_ON_PDFSTREAM_SERIALIZATION = "PdfStream contains not null input stream. It's content will be lost in serialized object.";
+    public static final String INVALID_INDIRECT_REFERENCE = "Invalid indirect reference {0} {1} R";
     public static final String INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE = "Invalid key value: key {0} has null value.";
+    public static final String LAST_ROW_IS_NOT_COMPLETE = "Last row is not completed. Table bottom border may collapse as you do not expect it";
     public static final String CALCULATE_HASHCODE_FOR_MODIFIED_PDFNUMBER = "Calculate hashcode for modified PdfNumber.";
     public static final String MAKE_COPY_OF_CATALOG_DICTIONARY_IS_FORBIDDEN = "Make copy of Catalog dictionary is forbidden.";
     public static final String NOT_TAGGED_PAGES_IN_TAGGED_DOCUMENT = "Not tagged pages are copied to the tagged document. Destination document now may contain not tagged content.";
     public static final String PDF_READER_CLOSING_FAILED = "PdfReader closing failed due to the error occurred!";
     public static final String PDF_WRITER_CLOSING_FAILED = "PdfWriter closing failed due to the error occurred!";
     public static final String POPUP_ENTRY_IS_NOT_POPUP_ANNOTATION = "Popup entry in the markup annotations refers not to the annotation with Popup subtype.";
+    public static final String OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED = "Occupied area hasn't been initialized. Drawing won't be performed";
     public static final String OCSP_STATUS_IS_REVOKED = "OCSP status is revoked.";
     public static final String OCSP_STATUS_IS_UNKNOWN = "OCSP status is unknown.";
     public static final String ONE_OF_GROUPED_SOURCES_CLOSING_FAILED = "Closing of one of the grouped sources failed.";
     public static final String ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE = "Only one of artbox or trimbox can exist on the page. The trimbox will be deleted";
+    public static final String PDF_OBJECT_FLUSHING_NOT_PERFORMED = "PdfObject flushing is not performed: PdfDocument is opened in append mode and the object is not marked as modified ( see PdfObject#setModified() ).";
+    public static final String RECTANGLE_HAS_NEGATIVE_SIZE = "The {0} rectangle has negative size. It will not be displayed.";
     public static final String RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES = "The {0} rectangle has negative or zero sizes. It will not be displayed.";
     public static final String REGISTERING_DIRECTORY = "Registering directory";
     public static final String REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED = "The removing page has already been flushed.";
@@ -83,12 +97,16 @@ public final class LogMessageConstant {
     public static final String ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER = "Rotation was not correctly processed for {0}";
     public static final String SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY = "Source document has AcroForm dictionary. The pages you are going to copy may have FormFields, but they will not be copied, because you have not used any IPdfPageExtraCopier";
     public static final String START_MARKER_MISSING_IN_PFB_FILE = "Start marker is missing in the pfb file";
+    public static final String SUM_OF_TABLE_COLUMNS_IS_GREATER_THAN_100 = "Sum of table columns is greater than 100%.";
+    public static final String TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH = "Table width is more than expected due to min width of cell(s).";
+    public static final String TAG_STRUCTURE_CONTEXT_WILL_BE_REINITIALIZED_ON_SERIALIZATION = "Tag structure context is not null and will be reinitialized in the copy of document. The copy may lose some data";
     public static final String TAG_STRUCTURE_INIT_FAILED = "Tag structure initialization failed, tag structure is ignored, it might be corrupted.";
+    public static final String UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING = "Unexpected behaviour during table row collapsing. Calculated rowspan was less then 1.";
     public static final String UNKNOWN_CMAP = "Unknown CMap {0}";
+    public static final String UNKNOWN_COLOR_FORMAT_MUST_BE_RGB_OR_RRGGBB = "Unknown color format: must be rgb or rrggbb.";
     public static final String UNKNOWN_ERROR_WHILE_PROCESSING_CMAP = "Unknown error while processing CMap.";
     public static final String TOUNICODE_CMAP_MORE_THAN_2_BYTES_NOT_SUPPORTED = "ToUnicode CMap more than 2 bytes not supported.";
     public static final String WRITER_ENCRYPTION_IS_IGNORED_APPEND = "Writer encryption will be ignored, because append mode is used. Document will preserve the original encryption (or will stay unencrypted)";
     public static final String WRITER_ENCRYPTION_IS_IGNORED_PRESERVE = "Writer encryption will be ignored, because preservation of encryption is enabled. Document will preserve the original encryption (or will stay unencrypted)";
     public static final String XREF_ERROR = "Error occurred while reading cross reference table. Cross reference table will be rebuilt.";
-    public static final String INCORRECT_PAGEROTATION = "Encounterd a page rotation that was not a multiple of 90°/ (Pi/2) when generating default appearances for form fields";
 }

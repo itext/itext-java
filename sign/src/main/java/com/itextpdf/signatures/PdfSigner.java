@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -74,6 +74,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
+import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
 
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
@@ -485,6 +486,52 @@ public class PdfSigner {
      */
     public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain, Collection<ICrlClient> crlList, IOcspClient ocspClient,
                              ITSAClient tsaClient, int estimatedSize, CryptoStandard sigtype) throws IOException, GeneralSecurityException {
+        signDetached(externalDigest, externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype, (SignaturePolicyIdentifier)null);
+    }
+
+    /**
+     * Signs the document using the detached mode, CMS or CAdES equivalent.
+     * <br><br>
+     * NOTE: This method closes the underlying pdf document. This means, that current instance
+     * of PdfSigner cannot be used after this method call.
+     *
+     * @param externalSignature the interface providing the actual signing
+     * @param chain             the certificate chain
+     * @param crlList           the CRL list
+     * @param ocspClient        the OCSP client
+     * @param tsaClient         the Timestamp client
+     * @param externalDigest    an implementation that provides the digest
+     * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
+     * @param sigtype           Either Signature.CMS or Signature.CADES
+     * @param signaturePolicy the signature policy (for EPES signatures)
+     * @throws IOException
+     * @throws GeneralSecurityException
+     */
+    public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain, Collection<ICrlClient> crlList, IOcspClient ocspClient,
+                             ITSAClient tsaClient, int estimatedSize, CryptoStandard sigtype, SignaturePolicyInfo signaturePolicy) throws IOException, GeneralSecurityException {
+        signDetached(externalDigest, externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype, signaturePolicy.toSignaturePolicyIdentifier());
+    }
+
+    /**
+     * Signs the document using the detached mode, CMS or CAdES equivalent.
+     * <br><br>
+     * NOTE: This method closes the underlying pdf document. This means, that current instance
+     * of PdfSigner cannot be used after this method call.
+     *
+     * @param externalSignature the interface providing the actual signing
+     * @param chain             the certificate chain
+     * @param crlList           the CRL list
+     * @param ocspClient        the OCSP client
+     * @param tsaClient         the Timestamp client
+     * @param externalDigest    an implementation that provides the digest
+     * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
+     * @param sigtype           Either Signature.CMS or Signature.CADES
+     * @param signaturePolicy the signature policy (for EPES signatures)
+     * @throws IOException
+     * @throws GeneralSecurityException
+     */
+    public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain, Collection<ICrlClient> crlList, IOcspClient ocspClient,
+                             ITSAClient tsaClient, int estimatedSize, CryptoStandard sigtype, SignaturePolicyIdentifier signaturePolicy) throws IOException, GeneralSecurityException {
         if (closed) {
             throw new PdfException(PdfException.ThisInstanceOfPdfSignerAlreadyClosed);
         }
@@ -524,6 +571,9 @@ public class PdfSigner {
 
         String hashAlgorithm = externalSignature.getHashAlgorithm();
         PdfPKCS7 sgn = new PdfPKCS7((PrivateKey) null, chain, hashAlgorithm, null, externalDigest, false);
+        if (signaturePolicy != null) {
+            sgn.setSignaturePolicy(signaturePolicy);
+        }
         InputStream data = getRangeStream();
         byte[] hash = DigestAlgorithms.digest(data, SignUtils.getMessageDigest(hashAlgorithm, externalDigest));
         byte[] ocsp = null;
@@ -892,7 +942,7 @@ public class PdfSigner {
                 os.writeLong(range[k]).write(' ');
             }
             os.write(']');
-            System.arraycopy(bos.toByteArray(), 0, bout, (int) byteRangePosition, bos.size());
+            System.arraycopy(bos.toByteArray(), 0, bout, (int) byteRangePosition, (int)bos.size());
         } else {
             try {
                 raf = FileUtil.getRandomAccessFile(tempFile);
@@ -961,7 +1011,7 @@ public class PdfSigner {
                 if (bous.size() > lit.getBytesCount())
                     throw new IllegalArgumentException("The key is too big");
                 if (tempFile == null) {
-                    System.arraycopy(bous.toByteArray(), 0, bout, (int) lit.getPosition(), bous.size());
+                    System.arraycopy(bous.toByteArray(), 0, bout, (int) lit.getPosition(), (int)bous.size());
                 } else {
                     raf.seek(lit.getPosition());
                     raf.write(bous.toByteArray(), 0, (int) bous.size());

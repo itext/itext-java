@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -65,6 +65,7 @@ import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
 import org.bouncycastle.asn1.ess.ESSCertID;
 import org.bouncycastle.asn1.ess.ESSCertIDv2;
 import org.bouncycastle.asn1.ess.SigningCertificate;
@@ -113,6 +114,37 @@ import java.util.Set;
  */
 public class PdfPKCS7 {
 
+    private SignaturePolicyIdentifier signaturePolicyIdentifier;
+
+    // Encryption provider
+
+    /**
+     * The encryption provider, e.g. "BC" if you use BouncyCastle.
+     */
+    private String provider;
+
+    // Signature info
+
+    /**
+     * Holds value of property signName.
+     */
+    private String signName;
+
+    /**
+     * Holds value of property reason.
+     */
+    private String reason;
+
+    /**
+     * Holds value of property location.
+     */
+    private String location;
+
+    /**
+     * Holds value of property signDate.
+     */
+    private Calendar signDate;
+
     // Constructors for creating new signatures
 
     /**
@@ -144,7 +176,6 @@ public class PdfPKCS7 {
         for (Certificate element : certChain) {
             certs.add(element);
         }
-
 
         // initialize and add the digest algorithms.
         digestalgos = new HashSet<>();
@@ -412,12 +443,12 @@ public class PdfPKCS7 {
                 if (ts != null && ts.getAttrValues().size() > 0) {
                     ASN1Set attributeValues = ts.getAttrValues();
                     ASN1Sequence tokenSequence = ASN1Sequence.getInstance(attributeValues.getObjectAt(0));
-                    ContentInfo contentInfo = ContentInfo.getInstance(tokenSequence);
+                    org.bouncycastle.asn1.cms.ContentInfo contentInfo = org.bouncycastle.asn1.cms.ContentInfo.getInstance(tokenSequence);
                     this.timeStampToken = new TimeStampToken(contentInfo);
                 }
             }
             if (isTsp) {
-                ContentInfo contentInfoTsp = ContentInfo.getInstance(signedData);
+                org.bouncycastle.asn1.cms.ContentInfo contentInfoTsp = org.bouncycastle.asn1.cms.ContentInfo.getInstance(signedData);
                 this.timeStampToken = new TimeStampToken(contentInfoTsp);
                 TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
                 String algOID = info.getHashAlgorithm().getAlgorithm().getId();
@@ -438,34 +469,13 @@ public class PdfPKCS7 {
         }
     }
 
-    // Encryption provider
+    public void setSignaturePolicy(SignaturePolicyInfo signaturePolicy) {
+        this.signaturePolicyIdentifier = signaturePolicy.toSignaturePolicyIdentifier();
+    }
 
-    /**
-     * The encryption provider, e.g. "BC" if you use BouncyCastle.
-     */
-    private String provider;
-
-    // Signature info
-
-    /**
-     * Holds value of property signName.
-     */
-    private String signName;
-
-    /**
-     * Holds value of property reason.
-     */
-    private String reason;
-
-    /**
-     * Holds value of property location.
-     */
-    private String location;
-
-    /**
-     * Holds value of property signDate.
-     */
-    private Calendar signDate;
+    public void setSignaturePolicy(SignaturePolicyIdentifier signaturePolicy) {
+        this.signaturePolicyIdentifier = signaturePolicy;
+    }
 
     /**
      * Getter for property sigName.
@@ -1043,6 +1053,10 @@ public class PdfPKCS7 {
 
                 v.add(new DERSet(new DERSequence(new DERSequence(new DERSequence(aaV2)))));
                 attribute.add(new DERSequence(v));
+            }
+
+            if (signaturePolicyIdentifier != null) {
+                attribute.add(new Attribute(PKCSObjectIdentifiers.id_aa_ets_sigPolicyId, new DERSet(signaturePolicyIdentifier)));
             }
 
             return new DERSet(attribute);

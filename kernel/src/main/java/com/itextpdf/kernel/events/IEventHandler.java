@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,8 @@
     address: sales@itextpdf.com
  */
 package com.itextpdf.kernel.events;
+
+import java.io.Serializable;
 
 /**
  * Interface for handling events. EventHandlers are added to the {@link EventDispatcher}.

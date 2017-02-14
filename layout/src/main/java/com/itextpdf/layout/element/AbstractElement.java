@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -111,9 +111,9 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
         Object result = super.<T1>getProperty(property);
         if (styles != null && styles.size() > 0 && result == null && !super.hasProperty(property)) {
             for (Style style : styles) {
-                result = style.<T1>getProperty(property);
-                if (result != null || super.hasProperty(property)) {
-                    break;
+                T1 foundInStyle = style.<T1>getProperty(property);
+                if (foundInStyle != null || style.hasProperty(property)) {
+                    result = foundInStyle;
                 }
             }
         }
@@ -132,6 +132,14 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
         }
         styles.add(style);
         return (T) (Object)this;
+    }
+
+    /**
+     * Gets the child elements of this elements
+     * @return a list of children
+     */
+    public List<IElement> getChildren() {
+        return childElements;
     }
 
     protected abstract IRenderer makeNewRenderer();

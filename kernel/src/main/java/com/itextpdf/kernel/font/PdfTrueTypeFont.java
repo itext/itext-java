@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -91,7 +91,6 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
     PdfTrueTypeFont(PdfDictionary fontDictionary) {
         super(fontDictionary);
         newFont = false;
-        checkFontDictionary(fontDictionary, PdfName.TrueType);
         CMapToUnicode toUni = FontUtil.processToUnicode(fontDictionary.get(PdfName.ToUnicode));
         fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUni, false);
         fontProgram = DocTrueTypeFont.createFontProgram(fontDictionary, fontEncoding);
@@ -114,6 +113,21 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
             return glyph;
         }
         return null;
+    }
+
+    @Override
+    public boolean containsGlyph(String text, int from) {
+        return containsGlyph((int) text.charAt(from));
+    }
+
+    @Override
+    public boolean containsGlyph(int unicode) {
+        if (fontEncoding.isFontSpecific()) {
+            return fontProgram.getGlyphByCode(unicode) != null;
+        } else {
+            return fontEncoding.canEncode(unicode)
+                    && getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(unicode)) != null;
+        }
     }
 
     @Override

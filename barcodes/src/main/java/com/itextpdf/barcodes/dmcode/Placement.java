@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -56,6 +56,13 @@ public class Placement {
     private Placement() {
     }
 
+
+    /**
+     * Execute the placement
+     * @param nrow number of rows
+     * @param ncol number of columns
+     * @return array containing appropriate values for ECC200
+     */
     public static short[] doPlacement(int nrow, int ncol) {
         int key = nrow * 1000 + ncol;
         short[] pc = cache.get(key);

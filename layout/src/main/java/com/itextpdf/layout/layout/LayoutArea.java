@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -134,8 +134,9 @@ public class LayoutArea {
      */
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof LayoutArea))
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         LayoutArea that = (LayoutArea) obj;
         return pageNumber == that.pageNumber && bBox.equalsWithEpsilon(that.bBox, AbstractRenderer.EPS);
     }

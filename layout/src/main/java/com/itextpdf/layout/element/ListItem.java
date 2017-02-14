@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,7 @@ package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.ListSymbolPosition;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ListItemRenderer;
@@ -65,7 +66,7 @@ public class ListItem extends Div {
 
     /**
      * Creates a list item with text.
-     * 
+     *
      * @param text the textual contents of the list item
      */
     public ListItem(String text) {
@@ -75,12 +76,22 @@ public class ListItem extends Div {
 
     /**
      * Creates a list item with an image.
-     * 
+     *
      * @param image the graphical contents of the list item
      */
     public ListItem(Image image) {
         this();
         add(image);
+    }
+
+    @Override
+    public <T1> T1 getDefaultProperty(int property) {
+        switch (property) {
+            case Property.LIST_SYMBOL_POSITION:
+                return (T1) (Object) ListSymbolPosition.DEFAULT;
+            default:
+                return super.<T1>getDefaultProperty(property);
+        }
     }
 
     /**

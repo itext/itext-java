@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,8 @@ import java.util.List;
  * @author psoares
  */
 public class CMapByteCid extends AbstractCMap {
+
+    private static final long serialVersionUID = 8843696844192313477L;
 
     protected static class Cursor {
 

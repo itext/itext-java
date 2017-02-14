@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,11 +43,14 @@
  */
 package com.itextpdf.io.source;
 
+import java.io.Serializable;
+
 /**
  * A RandomAccessSource that wraps another RandomAccessSource and provides a window of it at a specific offset and over
  * a specific length.  Position 0 becomes the offset position in the underlying source.
  */
-public class WindowRandomAccessSource implements IRandomAccessSource {
+public class WindowRandomAccessSource implements IRandomAccessSource, Serializable {
+    private static final long serialVersionUID = -8539987600466289182L;
     /**
      * The source
      */

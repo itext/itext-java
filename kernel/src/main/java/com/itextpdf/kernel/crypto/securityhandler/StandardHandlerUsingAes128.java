@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -56,6 +56,7 @@ import java.io.OutputStream;
 public class StandardHandlerUsingAes128 extends StandardHandlerUsingStandard128 {
     private static final byte[] salt = {(byte) 0x73, (byte) 0x41, (byte) 0x6c,
             (byte) 0x54};
+    private static final long serialVersionUID = -5459302622100333593L;
 
     public StandardHandlerUsingAes128(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,
                                       int permissions, boolean encryptMetadata, boolean embeddedFilesOnly, byte[] documentId) {

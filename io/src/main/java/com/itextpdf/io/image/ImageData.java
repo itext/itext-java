@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -57,6 +57,11 @@ import java.net.URL;
 import java.util.Map;
 
 public abstract class ImageData {
+
+    /** a static that is used for attributing a unique id to each image. */
+    private static long serialId = 0;
+
+    private static final Object staticLock = new Object();
 
     protected URL url;
 
@@ -339,13 +344,11 @@ public abstract class ImageData {
         data = stream.toByteArray();
     }
 
-
-    /** a static that is used for attributing a unique id to each image. */
-    private static long serialId = 0;
-
     /** Creates a new serial id.
      * @return the new serialId */
-    private static synchronized Long getSerialId() {
-        return ++serialId;
+    private static Long getSerialId() {
+        synchronized (staticLock) {
+            return ++serialId;
+        }
     }
 }

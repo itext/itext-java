@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -93,7 +94,7 @@ public class DocumentRenderer extends RootRenderer {
         }
         PageSize lastPageSize = ensureDocumentHasNPages(currentPageNumber, customPageSize);
         if (lastPageSize == null) {
-            lastPageSize = new PageSize(document.getPdfDocument().getPage(currentPageNumber).getPageSize());
+            lastPageSize = new PageSize(document.getPdfDocument().getPage(currentPageNumber).getTrimBox());
         }
         return (currentArea = new LayoutArea(currentPageNumber, document.getPageEffectiveArea(lastPageSize)));
     }

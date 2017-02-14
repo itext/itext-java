@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.geom;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -52,8 +53,9 @@ import java.util.Set;
 /**
  * As subpath is a part of a path comprising a sequence of connected segments.
  */
-public class Subpath {
+public class Subpath implements Serializable {
 
+    private static final long serialVersionUID = -3464451279777771490L;
     private Point startPoint;
     private List<IShape> segments = new ArrayList<>();
     private boolean closed;

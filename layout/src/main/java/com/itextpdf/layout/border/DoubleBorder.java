@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -51,7 +51,7 @@ import com.itextpdf.kernel.color.Color;
  * the same width as the two borders. If a background has been set on the element the color will show in
  * between the two borders.
  */
-public class DoubleBorder extends Border{
+public class DoubleBorder extends Border {
 
     /**
      * Creates a DoubleBorder with the specified width for both the two borders as the space in between them.
@@ -72,6 +72,17 @@ public class DoubleBorder extends Border{
      */
     public DoubleBorder(Color color, float width) {
         super(color, width);
+    }
+
+    /**
+     * Creates a DoubleBorder with the specified width for both the two borders as the space in between them and
+     * the specified color for the two borders. The space in between the two borders is either colorless or will
+     * be filled with the background color of the element, if a color has been set.
+     *
+     * @param width width of the borders and the space between them
+     */
+    public DoubleBorder(Color color, float width, float opacity) {
+        super(color, width, opacity);
     }
 
     /**
@@ -122,8 +133,11 @@ public class DoubleBorder extends Border{
                 break;
         }
 
-        canvas.setFillColor(color);
-        canvas.moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).lineTo(x4, y4).lineTo(x1, y1).fill();
+        canvas.saveState()
+                .setFillColor(transparentColor.getColor());
+        transparentColor.applyFillTransparency(canvas);
+        canvas
+                .moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).lineTo(x4, y4).lineTo(x1, y1).fill();
 
         switch (borderSide) {
             case TOP:
@@ -168,7 +182,8 @@ public class DoubleBorder extends Border{
                 break;
         }
 
-        canvas.moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).lineTo(x4, y4).lineTo(x1, y1).fill();
+        canvas.moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).lineTo(x4, y4).lineTo(x1, y1).fill()
+                .restoreState();
     }
 
     /**
@@ -200,7 +215,9 @@ public class DoubleBorder extends Border{
         canvas.
                 saveState().
                 setLineWidth(thirdOfWidth).
-                setStrokeColor(color).
+                setStrokeColor(transparentColor.getColor());
+        transparentColor.applyStrokeTransparency(canvas);
+        canvas.
                 moveTo(x1, y1).
                 lineTo(x2, y2).
                 stroke().
@@ -233,7 +250,9 @@ public class DoubleBorder extends Border{
         canvas.
                 saveState().
                 setLineWidth(thirdOfWidth).
-                setStrokeColor(color).
+                setStrokeColor(transparentColor.getColor());
+        transparentColor.applyStrokeTransparency(canvas);
+        canvas.
                 moveTo(x1, y1).
                 lineTo(x2, y2).
                 stroke().

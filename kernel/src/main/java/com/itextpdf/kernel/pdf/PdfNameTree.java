@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,11 +45,13 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.PdfException;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class PdfNameTree {
+public class PdfNameTree implements Serializable {
 
     private static final int NODE_SIZE = 40;
+    private static final long serialVersionUID = 8153711383828989907L;
 
     private PdfCatalog catalog;
     private Map<String, PdfObject> items = new HashMap<>();
@@ -68,7 +70,11 @@ public class PdfNameTree {
         items = getNames();
     }
 
-
+    /**
+     * Retrieves the names stored in the name tree
+     *
+     * @return Map containing the PdfObjects stored in the tree
+     */
     public Map<String, PdfObject> getNames() {
         if (items.size() > 0) {
             return items;
@@ -112,6 +118,12 @@ public class PdfNameTree {
         return items;
     }
 
+    /**
+     * Add an entry to the name tree
+     *
+     * @param key key of the entry
+     * @param value object to add
+     */
     public void addEntry(String key, PdfObject value) {
         if (items.keySet().contains(key)) {
             throw new PdfException(PdfException.NameAlreadyExistsInTheNameTree);
@@ -120,10 +132,20 @@ public class PdfNameTree {
         items.put(key, value);
     }
 
+    /**
+     *
+     *
+     * @return True if the object has been modified, false otherwise.
+     */
     public boolean isModified() {
         return modified;
     }
 
+    /**
+     * Build a PdfDictionary containing the name tree
+     *
+     * @return PdfDictionary containing the name tree
+     */
     public PdfDictionary buildTree() {
         String[] names = new String[items.size()];
         names = items.keySet().toArray(names);

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -142,6 +142,12 @@ final class GF256Poly {
         return result;
     }
 
+    /**
+     * GF addition or subtraction (they are identical for a GF(2^n)
+     * @param other the other GF-poly
+     * @return new GF256Poly obtained by summing this GF and other
+     */
+
     GF256Poly addOrSubtract(GF256Poly other) {
         if (!field.equals(other.field)) {
             throw new IllegalArgumentException("GF256Polys do not have same GF256 field");
@@ -172,6 +178,11 @@ final class GF256Poly {
         return new GF256Poly(field, sumDiff);
     }
 
+    /**
+     * GF multiplication
+     * @param other the other GF-poly
+     * @return new GF-poly obtained by multiplying this  with other
+     */
     GF256Poly multiply(GF256Poly other) {
         if (!field.equals(other.field)) {
             throw new IllegalArgumentException("GF256Polys do not have same GF256 field");
@@ -194,6 +205,11 @@ final class GF256Poly {
         return new GF256Poly(field, product);
     }
 
+    /**
+     * GF scalar multiplication
+     * @param scalar scalar
+     * @return new GF-poly obtained by multiplying every element of this with the scalar.
+     */
     GF256Poly multiply(int scalar) {
         if (scalar == 0) {
             return field.getZero();
@@ -250,6 +266,9 @@ final class GF256Poly {
         return new GF256Poly[] { quotient, remainder };
     }
 
+    /**
+     * @return String representation of the Galois Field polynomial.
+     */
     public String toString() {
         StringBuffer result = new StringBuffer(8 * getDegree());
         for (int degree = getDegree(); degree >= 0; degree--) {

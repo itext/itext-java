@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
@@ -51,6 +52,8 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.Property;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TabRenderer extends AbstractRenderer {
     /**
@@ -66,7 +69,7 @@ public class TabRenderer extends AbstractRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea();
         Float width = retrieveWidth(area.getBBox().getWidth());
-        Float height = this.getPropertyAsFloat(Property.HEIGHT);
+        Float height = this.getPropertyAsFloat(Property.MIN_HEIGHT);
         occupiedArea = new LayoutArea(area.getPageNumber(),
                 new Rectangle(area.getBBox().getX(), area.getBBox().getY() + area.getBBox().getHeight(),(float)  width, (float) height));
 
@@ -75,6 +78,11 @@ public class TabRenderer extends AbstractRenderer {
 
     @Override
     public void draw(DrawContext drawContext) {
+        if (occupiedArea == null) {
+            Logger logger = LoggerFactory.getLogger(TabRenderer.class);
+            logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
+            return;
+        }
         ILineDrawer leader = this.<ILineDrawer>getProperty(Property.TAB_LEADER);
         if (leader == null)
             return;
@@ -84,7 +92,9 @@ public class TabRenderer extends AbstractRenderer {
             drawContext.getCanvas().openTag(new CanvasArtifact());
         }
 
+        beginElementOpacityApplying(drawContext);
         leader.draw(drawContext.getCanvas(), occupiedArea.getBBox());
+        endElementOpacityApplying(drawContext);
 
         if (isTagged) {
             drawContext.getCanvas().closeTag();

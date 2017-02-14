@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -740,6 +740,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Trans = createDirectName("Trans");
     public static final PdfName True = createDirectName("true");
     public static final PdfName Table = createDirectName("Table");
+    public static final PdfName Tabs = createDirectName("Tabs");
     public static final PdfName TBody = createDirectName("TBody");
     public static final PdfName TD = createDirectName("TD");
     public static final PdfName Text = createDirectName("Text");
@@ -761,6 +762,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName TM = createDirectName("TM");
     public static final PdfName TOC = createDirectName("TOC");
     public static final PdfName TOCI = createDirectName("TOCI");
+    public static final PdfName TP = createDirectName("TP");
     public static final PdfName Toggle = createDirectName("Toggle");
     public static final PdfName Top = createDirectName("Top");
     public static final PdfName TopSecret = createDirectName("TopSecret");
@@ -871,6 +873,10 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
         return new PdfName(name, true);
     }
 
+    /**
+     * Create a PdfName from the passed string
+     * @param value
+     */
     public PdfName(String value) {
         super();
         assert value != null;
@@ -882,6 +888,10 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
         this.value = value;
     }
 
+    /**
+     * Create a PdfName from the passed bytes
+     * @param content
+     */
     public PdfName(byte[] content) {
         super(content);
     }
@@ -901,6 +911,13 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
         return value;
     }
 
+    /**
+     * Compare this PdfName to o.
+     *
+     * @param o PdfName to compare this object to/
+     * @return Comparison between both values or, if one of the values is null, Comparison between contents. If one of the values and one of the contents are equal to null, generate values and compare those.
+
+     */
     @Override
     public int compareTo(PdfName o) {
         if (value != null && o.value != null) {

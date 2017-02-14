@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -418,6 +418,16 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      */
     public float getImageHeight() {
         return xObject.getHeight();
+    }
+
+    public Image setMaxHeight(float maxHeight) {
+        setProperty(Property.HEIGHT, maxHeight);
+        return (Image) (Object) this;
+    }
+
+    public Image setMinHeight(float minHeight) {
+        setProperty(Property.HEIGHT, minHeight);
+        return (Image) (Object) this;
     }
 
     /**

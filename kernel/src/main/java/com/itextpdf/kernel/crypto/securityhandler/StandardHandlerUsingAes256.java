@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -66,6 +66,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
     private static final int KEY_SALT_OFFSET = 40;
     private static final int SALT_LENGTH = 8;
     private static final int OU_LENGTH = 48;
+    private static final long serialVersionUID = -8365943606887257386L;
 
     protected boolean encryptMetadata;
 

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -56,6 +56,7 @@ import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -100,6 +101,8 @@ public final class FileUtil {
             if (root.exists() && root.isDirectory()) {
                 File[] files = root.listFiles();
                 if (files != null) {
+                    // Guarantee invariant order in all environments
+                    Arrays.sort(files);
                     List<String> list = new ArrayList<>();
                     for (File file : files) {
                         if (file.isDirectory() && recursive) {
@@ -116,16 +119,22 @@ public final class FileUtil {
     }
 
     public static File[] listFilesInDirectoryByFilter(String outPath, FileFilter fileFilter) {
+        File[] result = null;
         if (outPath != null && !outPath.isEmpty()) {
-            return new File(outPath).listFiles(fileFilter);
-        } else {
-            return null;
+            result = new File(outPath).listFiles(fileFilter);
         }
+        if (result != null) {
+            // Guarantee invariant order in all environments
+            Arrays.sort(result);
+        }
+        return result;
     }
 
     private static void listAllFiles(String dir, List<String> list) {
         File[] files = new File(dir).listFiles();
         if (files != null) {
+            // Guarantee invariant order in all environments
+            Arrays.sort(files);
             for (File file : files) {
                 if (file.isDirectory()) {
                     listAllFiles(file.getAbsolutePath(), list);
@@ -170,5 +179,9 @@ public final class FileUtil {
 
     public static void createDirectories(String outPath) {
         new File(outPath).mkdirs();
+    }
+
+    public static String getParentDirectory(String file) {
+        return new File(file).getParent();
     }
 }

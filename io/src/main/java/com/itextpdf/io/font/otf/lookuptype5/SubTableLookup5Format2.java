@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -57,6 +57,7 @@ import java.util.Set;
  * Contextual Substitution Subtable: Class-based context glyph substitution
  */
 public class SubTableLookup5Format2 extends ContextualSubTable {
+    private static final long serialVersionUID = -2184080481143798249L;
     private Set<Integer> substCoverageGlyphIds;
     private List<List<ContextualSubstRule>> subClassSets;
     private OtfClass classDefinition;
@@ -82,6 +83,7 @@ public class SubTableLookup5Format2 extends ContextualSubTable {
     }
 
     public static class SubstRuleFormat2 extends ContextualSubstRule {
+        private static final long serialVersionUID = 652574134066355802L;
         // inputClassIds array omits the first class in the sequence,
         // the first class is defined by corresponding index of subClassSet array
         private int[] inputClassIds;

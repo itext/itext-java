@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -46,11 +46,10 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.BadPasswordException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.Serializable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class PdfObject implements Serializable {
 
@@ -76,7 +75,7 @@ public abstract class PdfObject implements Serializable {
     // Indicates that definition of the indirect reference of the object still not found (e.g. keys in XRefStm).
     protected static final short READING = 4;
 
-    // Indicates that object changed (using in stamp mode).
+    // Indicates that object changed (is used in append mode).
     protected static final short MODIFIED = 8;
 
     // Indicates that the indirect reference of the object represents ObjectStream from original document.
@@ -151,6 +150,11 @@ public abstract class PdfObject implements Serializable {
         try {
             PdfDocument document = getIndirectReference().getDocument();
             if (document != null) {
+                if (document.isAppendMode() && !isModified()) {
+                    Logger logger = LoggerFactory.getLogger(PdfObject.class);
+                    logger.info(LogMessageConstant.PDF_OBJECT_FLUSHING_NOT_PERFORMED);
+                    return;
+                }
                 document.checkIsoConformance(this, IsoKey.PDF_OBJECT);
                 document.flushObject(this, canBeInObjStm && getType() != STREAM
                         && getType() != INDIRECT_REFERENCE && getIndirectReference().getGenNumber() == 0);
@@ -224,7 +228,7 @@ public abstract class PdfObject implements Serializable {
     /**
      * Indicates is the object has been flushed or not.
      *
-     * @return true is object has been flushed, otherwise false.
+     * @return true if object has been flushed, otherwise false.
      */
     public boolean isFlushed() {
         PdfIndirectReference indirectReference = getIndirectReference();
@@ -298,7 +302,20 @@ public abstract class PdfObject implements Serializable {
         return processCopying(document, allowDuplicating);
     }
 
-    //TODO comment! Add note about flush, modified flag and xref.
+    /**
+     * Sets the 'modified' flag to the indirect object, the flag denotes that the object was modified since the document opening.
+     * <p>
+     * This flag is meaningful only if the {@link PdfDocument} is opened in append mode
+     * (see {@link StampingProperties#useAppendMode()}).
+     * </p>
+     * <p>
+     * In append mode the whole document is preserved as is, and only changes to the document are 
+     * appended to the end of the document file. Because of this, only modified objects need to be flushed and are 
+     * allowed to be flushed (i.e. to be written).
+     * </p>
+     *
+     * @return this {@link PdfObject} instance.
+     */
     public PdfObject setModified() {
         if (indirectReference != null) {
             indirectReference.setState(MODIFIED);

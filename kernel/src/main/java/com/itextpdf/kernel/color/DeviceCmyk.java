@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -69,6 +69,8 @@ public class DeviceCmyk extends Color {
      * Predefined black DeviceCmyk color
      */
     public static final DeviceCmyk BLACK = new DeviceCmyk(0, 0, 0, 100);
+
+    private static final long serialVersionUID = 5466518014595706050L;
 
     /**
      * Creates DeviceCmyk color with all colorants intensities initialised as zeroes.

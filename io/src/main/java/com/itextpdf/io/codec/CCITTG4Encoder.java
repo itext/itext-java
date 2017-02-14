@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -240,7 +240,7 @@ public class CCITTG4Encoder {
          * Scan full bytes for all 1's.
          */
         while (bits >= 8) {
-            if (bp[pos] != -1)	/* end of run */
+            if (bp[pos] != (byte) 0xff)	/* end of run */
                 return (span + oneruns[bp[pos] & 0xff]);
             span += 8;
             bits -= 8;

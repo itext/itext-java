@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -177,14 +177,25 @@ final class FormatInformation {
         return errorCorrectionLevel;
     }
 
+    /**
+     * @return The datamask in byte-format
+     */
     byte getDataMask() {
         return dataMask;
     }
 
+    /**
+     * @return the hashcode of the QR-code format information
+     */
     public int hashCode() {
         return (errorCorrectionLevel.ordinal() << 3) | (int) dataMask;
     }
 
+    /**
+     * Compares the Format Information of this and o
+     * @param o object to compare to
+     * @return True if o is a FormatInformationObject and the error-correction level and the datamask are equal, false otherwise
+     */
     public boolean equals(Object o) {
         if (!(o instanceof FormatInformation)) {
             return false;

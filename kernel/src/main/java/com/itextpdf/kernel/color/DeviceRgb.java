@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,8 @@ import org.slf4j.LoggerFactory;
  * Color space to specify colors according to RGB color model.
  */
 public class DeviceRgb extends Color {
+
+    private static final long serialVersionUID = 7172400358137528030L;
 
     /**
      * Creates DeviceRgb color by intensities of red, green and blue colorants.

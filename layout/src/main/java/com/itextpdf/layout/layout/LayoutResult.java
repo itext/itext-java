@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -105,11 +105,7 @@ public class LayoutResult {
      * @param overflowRenderer the renderer to draw the overflowed part of the content
      */
     public LayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer) {
-        this.status = status;
-        this.occupiedArea = occupiedArea;
-        this.splitRenderer = splitRenderer;
-        this.overflowRenderer = overflowRenderer;
-        causeOfNothing = null;
+        this(status, occupiedArea, splitRenderer, overflowRenderer, null);
     }
 
     /**
@@ -121,9 +117,13 @@ public class LayoutResult {
      * @param overflowRenderer the renderer to draw the overflowed part of the content
      * @param cause the first renderer to produce {@link LayoutResult#NOTHING}
      */
+
     public LayoutResult(int status, LayoutArea occupiedArea, IRenderer splitRenderer, IRenderer overflowRenderer, IRenderer cause) {
-        this(status, occupiedArea, splitRenderer, overflowRenderer);
-        causeOfNothing = cause;
+        this.status = status;
+        this.occupiedArea = occupiedArea;
+        this.splitRenderer = splitRenderer;
+        this.overflowRenderer = overflowRenderer;
+        this.causeOfNothing = cause;
     }
 
     /**
@@ -133,6 +133,13 @@ public class LayoutResult {
      */
     public int getStatus() {
         return status;
+    }
+
+    /**
+     * Sets the status of {@link IRenderer#layout(LayoutContext)}.
+     */
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     /**

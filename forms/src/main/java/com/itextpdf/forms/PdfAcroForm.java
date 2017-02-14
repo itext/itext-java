@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -224,6 +224,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             iterateFields(field.getKids(), fields);
         }
 
+        //There's an issue described in DEVSIX-573. When you create multiple fields with different fonts those font may
+        // have same names (F1, F2, etc). So only first of them will be save in default resources.
         if (field.getFormType() != null && (field.getFormType().equals(PdfName.Tx) || field.getFormType().equals(PdfName.Ch))) {
             List<PdfDictionary> resources = getResources(field.getPdfObject());
             for (PdfDictionary resDict : resources) {
@@ -651,7 +653,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 if (xObject != null && xObject.getPdfObject().get(PdfName.Subtype) != null) {
                     Rectangle box = fieldObject.getAsRectangle(PdfName.Rect);
                     if (page.isFlushed()) {
-                        throw new PdfException(PdfException.PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
+                        throw new PdfException(PdfException.PageAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
                     }
                     PdfCanvas canvas = new PdfCanvas(page);
 
@@ -888,7 +890,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary pageDic = annot.getPageObject();
         if (pageDic != null) {
             if (warnIfPageFlushed && pageDic.isFlushed()) {
-                throw new PdfException(PdfException.PageWasAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
+                throw new PdfException(PdfException.PageAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
             }
             PdfDocument doc = pageDic.getIndirectReference().getDocument();
             PdfPage widgetPage = doc.getPage(pageDic);

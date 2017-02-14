@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -83,10 +83,21 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
      */
     protected PdfEncryption crypto;
 
+    /**
+     * Create a pdfOutputSteam writing to the passed OutputStream.
+     *
+     * @param outputStream Outputstream to write to.
+     */
     public PdfOutputStream(java.io.OutputStream outputStream) {
         super(outputStream);
     }
 
+    /**
+     * Write a PdfObject to the outputstream.
+     *
+     * @param pdfObject PdfObject to write
+     * @return this PdfOutPutStream
+     */
     @SuppressWarnings("ConstantConditions")
     public PdfOutputStream write(PdfObject pdfObject) {
         if (pdfObject.checkState(PdfObject.MUST_BE_INDIRECT) && document != null) {

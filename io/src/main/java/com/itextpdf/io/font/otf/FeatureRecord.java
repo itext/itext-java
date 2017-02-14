@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,11 +43,14 @@
  */
 package com.itextpdf.io.font.otf;
 
+import java.io.Serializable;
+
 /**
  *
  * @author psoares
  */
-public class FeatureRecord {
+public class FeatureRecord implements Serializable {
+    private static final long serialVersionUID = 6036713232626317539L;
     public String tag;
     public int[] lookups;
 }

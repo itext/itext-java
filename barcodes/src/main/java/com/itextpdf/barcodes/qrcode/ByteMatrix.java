@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -59,6 +59,11 @@ public final class ByteMatrix {
     private final int width;
     private final int height;
 
+    /**
+     * Create a ByteMatix of given width and height, with the values initialized to 0
+     * @param width width of the matrix
+     * @param height height of the matrix
+     */
     public ByteMatrix(int width, int height) {
         bytes = new byte[height][];
         for(int i = 0; i < height; i++) {
@@ -68,30 +73,61 @@ public final class ByteMatrix {
         this.height = height;
     }
 
+    /**
+     * @return height of the matrix
+     */
     public int getHeight() {
         return height;
     }
 
+    /**
+     * @return width of the matrix
+     */
     public int getWidth() {
         return width;
     }
 
+    /**
+     * Get the value of the byte at (x,y)
+     * @param x the width coordinate
+     * @param y the height coordinate
+     * @return the byte value at position (x,y)
+     */
     public byte get(int x, int y) {
         return bytes[y][x];
     }
 
+    /**
+     * @return matrix as byte[][]
+     */
     public byte[][] getArray() {
         return bytes;
     }
 
+    /**
+     * Set the value of the byte at (x,y)
+     * @param x the width coordinate
+     * @param y the height coordinate
+     * @param value the new byte value
+     */
     public void set(int x, int y, byte value) {
         bytes[y][x] = value;
     }
 
+    /**
+     * Set the value of the byte at (x,y)
+     * @param x the width coordinate
+     * @param y the height coordinate
+     * @param value the new byte value
+     */
     public void set(int x, int y, int value) {
         bytes[y][x] = (byte) value;
     }
 
+    /**
+     * Resets the contents of the entire matrix to value
+     * @param value new value of every element
+     */
     public void clear(byte value) {
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
@@ -100,6 +136,9 @@ public final class ByteMatrix {
         }
     }
 
+    /**
+     * @return String representation
+     */
     public String toString() {
         StringBuffer result = new StringBuffer(2 * width * height + 2);
         for (int y = 0; y < height; ++y) {

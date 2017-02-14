@@ -4,8 +4,9 @@
 
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.0.1</version>
+    <version>7.0.2</version>
     <packaging>pom</packaging>
+
     <name>iText 7</name>
     <description>A Free Java-PDF library</description>
     <url>http://itextpdf.com/</url>
@@ -35,8 +36,8 @@
     <mailingLists>
         <mailingList>
             <name>iText on StackOverflow</name>
-            <subscribe>http://stackoverflow.com/questions/tagged/itext</subscribe>
-            <archive>http://stackoverflow.com/questions/tagged/itext</archive>
+            <subscribe>http://stackoverflow.com/questions/tagged/itext7</subscribe>
+            <archive>http://stackoverflow.com/questions/tagged/itext7</archive>
             <otherArchives>
                 <otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
                 <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
@@ -48,8 +49,8 @@
     </mailingLists>
 
     <scm>
-        <connection>scm:git:git@gitlab.itextsupport.com:itext7/itextcore.git</connection>
-        <url>scm:git:git@gitlab.itextsupport.com:itext7/itextcore.git</url>
+        <connection>ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
+        <url>ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</url>
     </scm>
 
     <issueManagement>
@@ -64,11 +65,12 @@
 
     <modules>
         <module>barcodes</module>
-        <module>io</module>
-        <module>kernel</module>
+        <module>font-asian</module>
         <module>forms</module>
         <module>hyph</module>
-        <module>font-asian</module>
+        <module>io</module>
+        <module>itextcore</module>
+        <module>kernel</module>
         <module>layout</module>
         <module>pdfa</module>
         <module>pdftest</module>
@@ -159,7 +161,7 @@
                                     <artifactId>${project.artifactId}</artifactId>
                                     <version>${project.version}</version>
                                     <type>${project.packaging}</type>
-                                    <destFileName>itext7-${project.artifactId}-${project.version}</destFileName>
+                                    <destFileName>itext7-${project.artifactId}-${project.version}.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>../target</outputDirectory>
@@ -242,6 +244,12 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>clirr-maven-plugin</artifactId>
                 <version>2.7</version>
+                <configuration>
+                    <comparisonVersion>7.0.1</comparisonVersion>
+                    <textOutputFile>${project.build.directory}/clirr-report.txt</textOutputFile>
+                    <linkXRef>false</linkXRef>
+                    <failOnError>false</failOnError>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -389,7 +397,7 @@
                         <artifactId>clirr-maven-plugin</artifactId>
                         <version>2.7</version>
                         <configuration>
-                            <comparisonVersion>7.0.0</comparisonVersion>
+                            <comparisonVersion>7.0.1</comparisonVersion>
                             <textOutputFile>${project.build.directory}/clirr-report.txt</textOutputFile>
                             <linkXRef>false</linkXRef>
                             <failOnError>false</failOnError>
@@ -399,6 +407,50 @@
                                 <id>clirr</id>
                                 <goals>
                                     <goal>check-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.revapi</groupId>
+                        <artifactId>revapi-maven-plugin</artifactId>
+                        <version>0.8.2</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.revapi</groupId>
+                                <artifactId>revapi-java</artifactId>
+                                <version>0.13.2</version>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <checkDependencies>false</checkDependencies>
+                            <failBuildOnProblemsFound>false</failBuildOnProblemsFound>
+                            <reportSeverity>breaking</reportSeverity>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals><goal>check</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.siom79.japicmp</groupId>
+                        <artifactId>japicmp-maven-plugin</artifactId>
+                        <version>0.9.3</version>
+                        <configuration>
+                            <parameter>
+                                <onlyModified>true</onlyModified>
+                                <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
+                                <ignoreMissingClassesByRegularExpressions>
+                                    <ignoreMissingClassesByRegularExpression>org.bouncycastle.*</ignoreMissingClassesByRegularExpression>
+                                </ignoreMissingClassesByRegularExpressions>
+                            </parameter>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>cmp</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -431,7 +483,6 @@
                             <groups>${unittests}</groups>
                             <forkCount>1</forkCount>
                             <reuseForks>false</reuseForks>
-                            <parallel>methods</parallel>
                             <threadCount>10</threadCount>
                             <argLine>-Xmx1024m</argLine>
                         </configuration>

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -94,10 +94,12 @@ class TypographyUtils {
     private static Map<String, Class<?>> cachedClasses = new HashMap<>();
     private static Map<TypographyMethodSignature, AccessibleObject> cachedMethods = new HashMap<>();
 
+    private static final String typographyNotFoundException = "Cannot find pdfCalligraph module, which was implicitly required by one of the layout properties";
+
     static {
         boolean moduleFound = false;
         try {
-            Class<?> type = Class.forName(TYPOGRAPHY_PACKAGE + SHAPER);
+            Class<?> type = getTypographyClass(TYPOGRAPHY_PACKAGE + SHAPER);
             if (type != null) {
                 moduleFound = true;
             }
@@ -113,7 +115,7 @@ class TypographyUtils {
 
     static void applyOtfScript(FontProgram fontProgram, GlyphLine text, Character.UnicodeScript script) {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-            logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
+            logger.warn(typographyNotFoundException);
         } else {
             callMethod(TYPOGRAPHY_PACKAGE + SHAPER, APPLY_OTF_SCRIPT, new Class[]{TrueTypeFont.class, GlyphLine.class, Character.UnicodeScript.class},
                     fontProgram, text, script);
@@ -123,7 +125,7 @@ class TypographyUtils {
 
     static void applyKerning(FontProgram fontProgram, GlyphLine text) {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-            logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
+            logger.warn(typographyNotFoundException);
         } else {
             callMethod(TYPOGRAPHY_PACKAGE + SHAPER, APPLY_KERNING, new Class[]{FontProgram.class, GlyphLine.class},
                     fontProgram, text);
@@ -133,7 +135,7 @@ class TypographyUtils {
 
     static byte[] getBidiLevels(BaseDirection baseDirection, int[] unicodeIds) {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-            logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
+            logger.warn(typographyNotFoundException);
         } else {
             byte direction;
             switch (baseDirection) {
@@ -171,7 +173,7 @@ class TypographyUtils {
 
     static int[] reorderLine(List<LineRenderer.RendererGlyph> line, byte[] lineLevels, byte[] levels) {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-            logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
+            logger.warn(typographyNotFoundException);
         } else {
             if (levels == null) {
                 return null;
@@ -220,7 +222,7 @@ class TypographyUtils {
 
     static Collection<Character.UnicodeScript> getSupportedScripts() {
         if (!TYPOGRAPHY_MODULE_INITIALIZED) {
-            logger.warn("Cannot find advanced typography module, which was implicitly required by one of the layout properties");
+            logger.warn(typographyNotFoundException);
             return null;
         } else if (SUPPORTED_SCRIPTS != null) {
             return SUPPORTED_SCRIPTS;
@@ -289,10 +291,14 @@ class TypographyUtils {
     private static Class<?> findClass(String className) throws ClassNotFoundException {
         Class<?> c = cachedClasses.get(className);
         if (c == null) {
-            c = Class.forName(className);
+            c = getTypographyClass(className);
             cachedClasses.put(className, c);
         }
         return c;
+    }
+
+    private static Class<?> getTypographyClass(String typographyClassName) throws ClassNotFoundException {
+        return Class.forName(typographyClassName);
     }
 
     private static class TypographyMethodSignature {

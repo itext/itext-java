@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,8 @@
  */
 package com.itextpdf.layout.layout;
 
+import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
+
 /**
  * Represents the context for content {@link com.itextpdf.layout.renderer.IRenderer#layout(LayoutContext) layouting}.
  */
@@ -53,8 +55,15 @@ public class LayoutContext {
      */
     protected LayoutArea area;
 
+    protected MarginsCollapseInfo marginsCollapseInfo;
+
     public LayoutContext(LayoutArea area) {
         this.area = area;
+    }
+
+    public LayoutContext(LayoutArea area, MarginsCollapseInfo marginsCollapseInfo) {
+        this.area = area;
+        this.marginsCollapseInfo = marginsCollapseInfo;
     }
 
     /**
@@ -64,6 +73,10 @@ public class LayoutContext {
      */
     public LayoutArea getArea() {
         return area;
+    }
+
+    public MarginsCollapseInfo getMarginsCollapseInfo() {
+        return marginsCollapseInfo;
     }
 
     /**

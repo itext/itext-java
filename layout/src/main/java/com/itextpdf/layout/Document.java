@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,7 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.element.AreaBreak;
-import com.itextpdf.layout.element.BlockElement;
+import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.ILargeElement;
 import com.itextpdf.layout.renderer.DocumentRenderer;
@@ -128,13 +128,17 @@ public class Document extends RootElement<Document> {
      * @return this element
      */
     public Document add(AreaBreak areaBreak) {
+        checkClosingStatus();
         childElements.add(areaBreak);
         ensureRootRendererNotNull().addChild(areaBreak.createRendererSubTree());
+        if (immediateFlush) {
+            childElements.remove(childElements.size() - 1);
+        }
         return this;
     }
 
     @Override
-    public <T extends IElement> Document add(BlockElement<T> element) {
+    public Document add(IBlockElement element) {
         checkClosingStatus();
         super.add(element);
         if (element instanceof ILargeElement) {
@@ -190,13 +194,6 @@ public class Document extends RootElement<Document> {
         for (IElement element : childElements) {
             rootRenderer.addChild(element.createRendererSubTree());
         }
-    }
-
-    @Override
-    protected RootRenderer ensureRootRendererNotNull() {
-        if (rootRenderer == null)
-            rootRenderer = new DocumentRenderer(this, immediateFlush);
-        return rootRenderer;
     }
 
     /**
@@ -295,6 +292,13 @@ public class Document extends RootElement<Document> {
      */
     public Rectangle getPageEffectiveArea(PageSize pageSize) {
         return new Rectangle(pageSize.getLeft() + leftMargin, pageSize.getBottom() + bottomMargin, pageSize.getWidth() - leftMargin - rightMargin, pageSize.getHeight() - bottomMargin - topMargin);
+    }
+
+    @Override
+    protected RootRenderer ensureRootRendererNotNull() {
+        if (rootRenderer == null)
+            rootRenderer = new DocumentRenderer(this, immediateFlush);
+        return rootRenderer;
     }
 
     /**

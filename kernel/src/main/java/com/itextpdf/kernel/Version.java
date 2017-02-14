@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -72,14 +72,14 @@ public final class Version {
      * This String contains the version number of this iText release.
      * For debugging purposes, we request you NOT to change this constant.
      */
-    private static String release = "7.0.1";
+    private static String release = "7.0.2";
     /**
      * This String contains the iText version as shown in the producer line.
      * iText is a product developed by iText Group NV.
      * iText Group requests that you retain the iText producer line
      * in every PDF that is created or manipulated using iText.
      */
-    private String iTextVersion = iText + " " + release + " \u00a92000-2016 iText Group NV";
+    private String iTextVersion = iText + " " + release + " \u00a92000-2017 iText Group NV";
 
     /**
      * The license key.
@@ -98,9 +98,8 @@ public final class Version {
             version = new Version();
             synchronized (version) {
                 try {
-                    String licenseKeyClassFullName = "com.itextpdf.licensekey.LicenseKey";
                     String licenseeInfoMethodName = "getLicenseeInfo";
-                    Class<?> klass = Class.forName(licenseKeyClassFullName);
+                    Class<?> klass = getLicenseKeyClass();
                     if (klass != null) {
                         Method m = klass.getMethod(licenseeInfoMethodName);
                         String[] info = (String[]) m.invoke(klass.newInstance(), null);
@@ -224,6 +223,11 @@ public final class Version {
         if (cause != null && cause.getMessage() != null && cause.getMessage().contains("expired")) {
             expired = true;
         }
+    }
+
+    private static Class<?> getLicenseKeyClass() throws ClassNotFoundException {
+        String licenseKeyClassFullName = "com.itextpdf.licensekey.LicenseKey";
+        return Class.forName(licenseKeyClassFullName);
     }
 
 }

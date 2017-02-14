@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -93,7 +93,7 @@ public class LineSeparatorRenderer extends BlockRenderer {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                    return new LayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this);
+                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
                 }
             }
         }

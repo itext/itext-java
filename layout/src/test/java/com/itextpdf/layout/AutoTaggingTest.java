@@ -1,5 +1,48 @@
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2017 iText Group NV
+    Authors: iText Software.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.color.Color;
@@ -7,14 +50,23 @@ import com.itextpdf.kernel.color.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.CompressionConstants;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.border.SolidBorder;
 import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.property.ListNumberingType;
 import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -58,6 +110,9 @@ public class AutoTaggingTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
     public void imageTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "imageTest01.pdf"));
         pdfDocument.setTagged();
@@ -103,15 +158,16 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Table table = new Table(3);
+        Table table = new Table(3)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
+        Image image = new Image(ImageDataFactory.create(sourceFolder + imageName)).setWidth(100).setAutoScale(true);
 
         table.addCell(createParagraph1());
-        Image image = new Image(ImageDataFactory.create(sourceFolder + imageName));
-        image.setAutoScale(true);
         table.addCell(image);
         table.addCell(createParagraph2());
         table.addCell(image);
-        table.addCell(new Paragraph("abcdefghijklkmnopqrstuvwxyz").setFontColor(Color.GREEN));
+        table.addCell(new Paragraph("abcdefghijklmnopqrstuvwxyz").setFontColor(Color.GREEN));
         table.addCell("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
                 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
                 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
@@ -131,7 +187,9 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Table table = new Table(3);
+        Table table = new Table(3)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
 
         for (int i = 0; i < 5; ++i) {
             table.addCell(createParagraph2());
@@ -152,16 +210,26 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document document = new Document(pdfDocument);
 
-        Table table = new Table(3);
+        Table table = new Table(3)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
 
+
+        Cell cell = new Cell(1, 3).add(new Paragraph("full-width header"));
+        cell.setRole(PdfName.TH);
+        table.addHeaderCell(cell);
         for (int i = 0; i < 3; ++i) {
-            table.addHeaderCell("header " + i);
+            cell = new Cell().add(new Paragraph("header " + i));
+            cell.setRole(PdfName.TH);
+            table.addHeaderCell(cell);
         }
 
         for (int i = 0; i < 3; ++i) {
             table.addFooterCell("footer " + i);
         }
 
+        cell = new Cell(1, 3).add(new Paragraph("full-width paragraph"));
+        table.addCell(cell);
         for (int i = 0; i < 5; ++i) {
             table.addCell(createParagraph2());
         }
@@ -199,6 +267,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -233,6 +302,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -283,7 +353,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDocument);
 
-        List list = new List();
+        List list = new List(ListNumberingType.DECIMAL);
         list.add("item 1");
         list.add("item 2");
         list.add("item 3");
@@ -292,6 +362,24 @@ public class AutoTaggingTest extends ExtendedITextTest {
         doc.close();
 
         compareResult("listTest01.pdf", "cmp_listTest01.pdf");
+    }
+
+    @Test
+    public void linkTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "linkTest01.pdf"));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
+        Link link = new Link("linked text", action);
+        link.setUnderline();
+        link.getLinkAnnotation().put(PdfName.Border, new PdfArray(new int[] { 0, 0, 0 }));
+
+        doc.add(new Paragraph("before ").add(link).add(" after"));
+        doc.close();
+
+        compareResult("linkTest01.pdf", "cmp_linkTest01.pdf");
     }
 
     @Test
@@ -394,6 +482,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
@@ -430,10 +519,132 @@ public class AutoTaggingTest extends ExtendedITextTest {
         }
 
         table.complete();
+        doc.add(new Table(1).setBorder(new SolidBorder(Color.ORANGE, 2)).addCell("Is my occupied area correct?"));
 
         doc.close();
 
         compareResult("flushingTest03.pdf", "cmp_tableTest04.pdf");
+    }
+
+    @Test
+    public void wordBreaksLineEndingsTest01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(
+                new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest01.pdf",
+                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        String s = "Beaver was settled in 1856 by Mormon pioneers traveling this road.";
+        StringBuilder text = new StringBuilder();
+        for (int i = 0; i < 10; ++i) {
+            text.append(s);
+            text.append(" ");
+        }
+        Paragraph p = new Paragraph(text.toString().trim());
+        doc.add(p);
+
+        doc.close();
+
+        compareResult("wordBreaksLineEndingsTest01.pdf", "cmp_wordBreaksLineEndingsTest01.pdf");
+    }
+
+    @Test
+    public void wordBreaksLineEndingsTest02() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(
+                new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest02.pdf",
+                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        String s = "Beaver was settled in 1856 by Mormon pioneers traveling this road.";
+        Paragraph p = new Paragraph(s + " Beaver was settled in 1856 by").add(" Mormon pioneers traveling this road.");
+        doc.add(p);
+
+        doc.close();
+
+        compareResult("wordBreaksLineEndingsTest02.pdf", "cmp_wordBreaksLineEndingsTest02.pdf");
+    }
+
+    @Test
+    public void wordBreaksLineEndingsTest03() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(
+                new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest03.pdf",
+                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        String s = "Beaver was settled in 1856 by\nMormon pioneers traveling this road.";
+        Paragraph p = new Paragraph(s);
+        doc.add(p);
+
+        String s1 = "Beaver was settled in 1856 by \n Mormon pioneers traveling this road.";
+        Paragraph p1 = new Paragraph(s1);
+        doc.add(p1);
+
+        String s2 = "\nBeaver was settled in 1856 by Mormon pioneers traveling this road.";
+        Paragraph p2 = new Paragraph(s2);
+        doc.add(p2);
+
+        String s3_1 = "Beaver was settled in 1856 by";
+        String s3_2 = "\nMormon pioneers traveling this road.";
+        Paragraph p3 = new Paragraph(s3_1).add(s3_2);
+        doc.add(p3);
+
+        doc.close();
+
+        compareResult("wordBreaksLineEndingsTest03.pdf", "cmp_wordBreaksLineEndingsTest03.pdf");
+    }
+
+    @Test
+    public void wordBreaksLineEndingsTest04() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(
+                new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest04.pdf",
+                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        String s = "ShortWord Beaverwassettledin1856byMormonpioneerstravelingthisroadBeaverwassettledin1856byMormonpioneerstravelingthisroad.";
+        Paragraph p = new Paragraph(s);
+        doc.add(p);
+
+        String s1 = "ShortWord " +
+                "                                                                                          " +
+                "                                                                                          " +
+                "and another short word.";
+        Paragraph p1 = new Paragraph(s1);
+        doc.add(p1);
+
+        doc.close();
+
+        compareResult("wordBreaksLineEndingsTest04.pdf", "cmp_wordBreaksLineEndingsTest04.pdf");
+    }
+
+    @Test
+    public void wordBreaksLineEndingsTest05() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(
+                new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest05.pdf",
+                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+        pdfDocument.setTagged();
+
+        Document doc = new Document(pdfDocument);
+
+        String s = "t\n";
+        Paragraph p = new Paragraph(s).add("\n").add(s);
+        doc.add(p);
+
+        Paragraph p1 = new Paragraph(s);
+        doc.add(p1);
+
+        Paragraph p2 = new Paragraph(s).add("another t");
+        doc.add(p2);
+
+        doc.close();
+
+        compareResult("wordBreaksLineEndingsTest05.pdf", "cmp_wordBreaksLineEndingsTest05.pdf");
     }
 
     private Paragraph createParagraph1() throws IOException {
@@ -446,7 +657,7 @@ public class AutoTaggingTest extends ExtendedITextTest {
 
     private Paragraph createParagraph2() {
         Paragraph p;
-        String alphabet = "abcdefghijklkmnopqrstuvwxyz";
+        String alphabet = "abcdefghijklmnopqrstuvwxyz";
         StringBuilder longTextBuilder = new StringBuilder();
         for (int i = 0; i < 26; ++i) {
             longTextBuilder.append(alphabet);

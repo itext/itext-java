@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -63,6 +63,7 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.property.UnitValue;
 
@@ -168,9 +169,9 @@ public class AccessibleAttributesApplier {
         }
         applyPaddingAttribute(renderer, attributes);
 
-        Color color = renderer.getPropertyAsColor(Property.FONT_COLOR);
-        if (color != null && color instanceof DeviceRgb) {
-            attributes.put(PdfName.Color, new PdfArray(color.getColorValue()));
+        TransparentColor transparentColor = renderer.getPropertyAsTransparentColor(Property.FONT_COLOR);
+        if (transparentColor != null && transparentColor.getColor() instanceof DeviceRgb) {
+            attributes.put(PdfName.Color, new PdfArray(transparentColor.getColor().getColorValue()));
         }
     }
 
@@ -359,15 +360,15 @@ public class AccessibleAttributesApplier {
             for (int i = 1; i < borders.length; i++) {
                 Border border = borders[i];
                 if (border != null) {
-                    if (!border.getColor().equals(borders[0].getColor())) {
+                    if (null == borders[0] || !border.getColor().equals(borders[0].getColor())) {
                         allColorsEqual = false;
                     }
 
-                    if (border.getWidth() != borders[0].getWidth()) {
+                    if (null == borders[0] || border.getWidth() != borders[0].getWidth()) {
                         allWidthsEqual = false;
                     }
 
-                    if (border.getType() != borders[0].getType()) {
+                    if (null == borders[0] || border.getType() != borders[0].getType()) {
                         allTypesEqual = false;
                     }
                 }
@@ -491,6 +492,7 @@ public class AccessibleAttributesApplier {
     private static PdfName transformNumberingTypeToName(ListNumberingType numberingType) {
         switch (numberingType) {
             case DECIMAL:
+            case DECIMAL_LEADING_ZERO:
                 return PdfName.Decimal;
             case ROMAN_UPPER:
                 return PdfName.UpperRoman;

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -48,9 +48,19 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
-import com.itextpdf.layout.element.*;
-import com.itextpdf.layout.property.*;
-import com.itextpdf.layout.renderer.AbstractRenderer;
+import com.itextpdf.layout.element.BlockElement;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.IBlockElement;
+import com.itextpdf.layout.element.IElement;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.property.FontKerning;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.Leading;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
 import com.itextpdf.layout.splitting.DefaultSplitCharacters;
@@ -68,7 +78,7 @@ import java.util.Map;
  *
  * @param <T> this type
  */
-public abstract class RootElement<T extends IPropertyContainer> extends ElementPropertyContainer<T> implements Closeable{
+public abstract class RootElement<T extends IPropertyContainer> extends ElementPropertyContainer<T> implements Closeable {
 
     protected boolean immediateFlush = true;
     protected PdfDocument pdfDocument;
@@ -93,9 +103,12 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      * @return this element
      * @see BlockElement
      */
-    public <T2 extends IElement> T add(BlockElement<T2> element) {
+    public T add(IBlockElement element) {
         childElements.add(element);
         ensureRootRendererNotNull().addChild(element.createRendererSubTree());
+        if (immediateFlush) {
+            childElements.remove(childElements.size() - 1);
+        }
         return (T) (Object) this;
     }
 
@@ -109,7 +122,33 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
     public T add(Image image) {
         childElements.add(image);
         ensureRootRendererNotNull().addChild(image.createRendererSubTree());
+        if (immediateFlush) {
+            childElements.remove(childElements.size() - 1);
+        }
         return (T) (Object) this;
+    }
+
+    /**
+     * Gets {@link FontProvider} if presents.
+     *
+     * @return instance of {@link FontProvider} if exists, otherwise null.
+     */
+    public FontProvider getFontProvider() {
+        Object fontProvider = this.<Object>getProperty(Property.FONT_PROVIDER);
+        if (fontProvider instanceof FontProvider) {
+            return (FontProvider) fontProvider;
+        }
+        return null;
+    }
+
+    /**
+     * Sets {@link FontProvider}.
+     * Note, font provider is inherited property.
+     *
+     * @param fontProvider instance of {@link FontProvider}.
+     */
+    public void setFontProvider(FontProvider fontProvider) {
+        setProperty(Property.FONT_PROVIDER, fontProvider);
     }
 
     @Override
@@ -222,7 +261,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      * @return this object
      */
     public T showTextAligned(String text, float x, float y, TextAlignment textAlign, VerticalAlignment vertAlign, float angle) {
-        Paragraph p = new Paragraph(text);
+        Paragraph p = new Paragraph(text).setMultipliedLeading(1).setMargin(0);
         return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, angle);
     }
 
@@ -234,12 +273,12 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      * @param y         the point about which the text will be aligned and rotated
      * @param textAlign horizontal alignment about the specified point
      * @param vertAlign vertical alignment about the specified point
-     * @param angle     the angle of rotation applied to the text, in radians
+     * @param radAngle  the angle of rotation applied to the text, in radians
      * @return this object
      */
-    public T showTextAlignedKerned(String text, float x, float y, TextAlignment textAlign, VerticalAlignment vertAlign, float angle) {
-        Paragraph p = new Paragraph(text).setFontKerning(FontKerning.YES);
-        return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, angle);
+    public T showTextAlignedKerned(String text, float x, float y, TextAlignment textAlign, VerticalAlignment vertAlign, float radAngle) {
+        Paragraph p = new Paragraph(text).setMultipliedLeading(1).setMargin(0).setFontKerning(FontKerning.YES);
+        return showTextAligned(p, x, y, pdfDocument.getNumberOfPages(), textAlign, vertAlign, radAngle);
     }
 
     /**
@@ -281,14 +320,14 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      * @param pageNumber the page number to write the text
      * @param textAlign  horizontal alignment about the specified point
      * @param vertAlign  vertical alignment about the specified point
-     * @param angle      the angle of rotation applied to the text, in radians
+     * @param radAngle   the angle of rotation applied to the text, in radians
      * @return this object
      */
-    public T showTextAligned(Paragraph p, float x, float y, int pageNumber, TextAlignment textAlign, VerticalAlignment vertAlign, float angle) {
+    public T showTextAligned(Paragraph p, float x, float y, int pageNumber, TextAlignment textAlign, VerticalAlignment vertAlign, float radAngle) {
         Div div = new Div();
         div.setTextAlignment(textAlign).setVerticalAlignment(vertAlign);
-        if (angle != 0) {
-            div.setRotationAngle(angle);
+        if (radAngle != 0) {
+            div.setRotationAngle(radAngle);
         }
         div.setProperty(Property.ROTATION_POINT_X, x);
         div.setProperty(Property.ROTATION_POINT_Y, y);
@@ -311,7 +350,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
 
         if (pageNumber == 0)
             pageNumber = 1;
-        div.setFixedPosition(pageNumber, divX, divY, divSize).setHeight(divSize);
+        div.setFixedPosition(pageNumber, divX, divY, divSize).setMinHeight(divSize);
         if (p.<Leading>getProperty(Property.LEADING) == null) {
             p.setMultipliedLeading(1);
         }

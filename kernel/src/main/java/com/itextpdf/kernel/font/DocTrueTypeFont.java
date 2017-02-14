@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.io.font.FontNames;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.TrueTypeFont;
@@ -109,8 +110,9 @@ class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
         fillFontDescriptor(fontProgram, fontDescriptor);
         int dw = (fontDescriptor != null && fontDescriptor.containsKey(PdfName.DW))
                 ? (int) fontDescriptor.getAsInt(PdfName.DW) : 1000;
+        IntHashtable widths = null;
         if (toUnicode != null) {
-            IntHashtable widths = FontUtil.convertCompositeWidthsArray(fontDictionary.getAsArray(PdfName.W));
+            widths = FontUtil.convertCompositeWidthsArray(fontDictionary.getAsArray(PdfName.W));
             fontProgram.avgWidth = 0;
             for (int cid : toUnicode.getCodes()) {
                 int width = widths.containsKey(cid) ? widths.get(cid) : dw;
@@ -127,7 +129,7 @@ class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
         }
 
         if (fontProgram.codeToGlyph.get(0) == null) {
-            fontProgram.codeToGlyph.put(0, new Glyph(0, dw, -1));
+            fontProgram.codeToGlyph.put(0, new Glyph(0, widths != null && widths.containsKey(0) ? widths.get(0) : dw, -1));
         }
         return fontProgram;
     }

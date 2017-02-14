@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -101,7 +101,7 @@ public class Leading {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof Leading && type == ((Leading) obj).type && value == ((Leading) obj).value;
+        return getClass() == obj.getClass() && type == ((Leading) obj).type && value == ((Leading) obj).value;
     }
 
     @Override

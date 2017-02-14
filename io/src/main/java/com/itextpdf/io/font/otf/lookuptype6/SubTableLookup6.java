@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -53,6 +53,8 @@ import com.itextpdf.io.font.otf.OpenTypeFontTableReader;
 import java.util.List;
 
 public abstract class SubTableLookup6 extends ContextualSubTable {
+
+    private static final long serialVersionUID = -7471613803606544198L;
 
     protected SubTableLookup6(OpenTypeFontTableReader openReader, int lookupFlag) {
         super(openReader, lookupFlag);

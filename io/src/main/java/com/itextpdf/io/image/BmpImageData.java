@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -56,16 +56,23 @@ public class BmpImageData extends RawImageData {
         this.size = size;
     }
 
+
     protected BmpImageData(byte[] bytes, boolean noHeader, int size) {
         super(bytes, ImageType.BMP);
         this.noHeader = noHeader;
         this.size = size;
     }
 
+    /**
+     * @return size of the image
+     */
     public int getSize() {
         return size;
     }
 
+    /**
+     * @return True if the bitmap image does not contain a header
+     */
     public boolean isNoHeader() {
         return noHeader;
     }

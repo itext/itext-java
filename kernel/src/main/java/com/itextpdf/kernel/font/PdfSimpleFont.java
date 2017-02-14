@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -53,6 +53,7 @@ import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -89,18 +90,77 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     @Override
     public GlyphLine createGlyphLine(String content) {
         List<Glyph> glyphs = new ArrayList<>(content.length());
-        for (int i = 0; i < content.length(); i++) {
-            Glyph glyph;
-            if (fontEncoding.isFontSpecific()) {
-                glyph = fontProgram.getGlyphByCode(content.charAt(i));
-            } else {
-                glyph = getGlyph((int) content.charAt(i));
+        if (fontEncoding.isFontSpecific()) {
+            for (int i = 0; i < content.length(); i++) {
+                Glyph glyph = fontProgram.getGlyphByCode(content.charAt(i));
+                if (glyph != null) {
+                    glyphs.add(glyph);
+                }
             }
-            if (glyph != null) {
-                glyphs.add(glyph);
+        } else {
+            for (int i = 0; i < content.length(); i++) {
+                Glyph glyph = getGlyph((int) content.charAt(i));
+                if (glyph != null) {
+                    glyphs.add(glyph);
+                }
             }
         }
         return new GlyphLine(glyphs);
+    }
+
+    @Override
+    public int appendGlyphs(String text, int from, int to, List<Glyph> glyphs) {
+        int processed = 0;
+
+        if (fontEncoding.isFontSpecific()) {
+            for (int i = from; i <= to; i++) {
+                Glyph glyph = fontProgram.getGlyphByCode(text.charAt(i) & 0xFF);
+                if (glyph != null) {
+                    glyphs.add(glyph);
+                    processed++;
+                } else {
+                    break;
+                }
+            }
+        } else {
+            for (int i = from; i <= to; i++) {
+                Glyph glyph = getGlyph((int) text.charAt(i));
+                if (glyph != null && (containsGlyph(text, i) || isAppendableGlyph(glyph))) {
+                    glyphs.add(glyph);
+                    processed++;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        return processed;
+    }
+
+    @Override
+    public int appendAnyGlyph(String text, int from, List<Glyph> glyphs) {
+        Glyph glyph;
+        if (fontEncoding.isFontSpecific()) {
+            glyph = fontProgram.getGlyphByCode(text.charAt(from));
+        } else {
+            glyph = getGlyph((int) text.charAt(from));
+        }
+
+        if (glyph != null) {
+            glyphs.add(glyph);
+        }
+        return 1;
+    }
+
+    /**
+     * Checks whether the glyph is appendable, i.e. has valid unicode and code values
+     *
+     * @param glyph not-null {@link Glyph}
+     */
+    private boolean isAppendableGlyph(Glyph glyph) {
+        // If font is specific and glyph.getCode() = 0, unicode value will be also 0.
+        // Character.isIdentifierIgnorable(0) gets true.
+        return glyph.getCode() > 0 || TextUtil.isWhitespaceOrNonPrintable(glyph.getUnicode());
     }
 
     @Override
@@ -192,6 +252,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     }
 
     @Override
+    // TODO refactor using decodeIntoGlyphLine?
     public String decode(PdfString content) {
         byte[] contentBytes = content.getValueBytes();
         StringBuilder builder = new StringBuilder(contentBytes.length);
@@ -209,7 +270,27 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         return builder.toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    public GlyphLine decodeIntoGlyphLine(PdfString content) {
+        byte[] contentBytes = content.getValueBytes();
+        List<Glyph> glyphs = new ArrayList<>(contentBytes.length);
+        for (byte b : contentBytes) {
+            int code = b & 0xff;
+            int uni = fontEncoding.getUnicode(code);
+            if (uni > -1) {
+                glyphs.add(getGlyph(uni));
+            } else if (fontEncoding.getBaseEncoding() == null) {
+                glyphs.add(fontProgram.getGlyphByCode(code));
+            }
+        }
+        return new GlyphLine(glyphs);
+    }
+
+    @Override
+    // TODO refactor using decodeIntoGlyphLine?
     public float getContentWidth(PdfString content) {
         float width = 0;
         byte[] contentBytes = content.getValueBytes();

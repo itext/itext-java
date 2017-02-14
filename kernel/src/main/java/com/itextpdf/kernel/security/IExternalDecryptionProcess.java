@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,13 +43,15 @@
  */
 package com.itextpdf.kernel.security;
 
+import java.io.Serializable;
+
 import org.bouncycastle.cms.Recipient;
 import org.bouncycastle.cms.RecipientId;
 
 /**
  * Interface to externalize the retrieval of the CMS recipient info.
  */
-public interface IExternalDecryptionProcess {
+public interface IExternalDecryptionProcess extends Serializable {
 
     /**
      * Returns the ID of the CMS recipient.

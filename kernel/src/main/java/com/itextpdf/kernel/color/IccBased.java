@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -49,6 +49,8 @@ import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import java.io.InputStream;
 
 public class IccBased extends Color {
+
+    private static final long serialVersionUID = -2204252409856288615L;
 
     public IccBased(PdfCieBasedCs.IccBased cs) {
         this(cs, new float[cs.getNumberOfComponents()]); // TODO if zero if outside of the Range, default value should be the nearest to the zero valid value

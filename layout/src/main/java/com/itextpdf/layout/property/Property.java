@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -62,6 +62,7 @@ public final class Property {
     public static final int AUTO_SCALE_HEIGHT = 4;
     public static final int AUTO_SCALE_WIDTH = 5;
     public static final int BACKGROUND = 6;
+    public static final int BACKGROUND_IMAGE = 90;
     public static final int BASE_DIRECTION = 7;
     public static final int BOLD_SIMULATION = 8;
     public static final int BORDER = 9;
@@ -71,17 +72,31 @@ public final class Property {
     public static final int BORDER_TOP = 13;
     public static final int BOTTOM = 14;
     public static final int CHARACTER_SPACING = 15;
+    public static final int COLLAPSING_MARGINS = 89;
     public static final int COLSPAN = 16;
     public static final int DESTINATION = 17;
+    public static final int FILL_AVAILABLE_AREA = 86;
+    public static final int FILL_AVAILABLE_AREA_ON_SPLIT = 87;
     public static final int FIRST_LINE_INDENT = 18;
     public static final int FLUSH_ON_DRAW = 19;
     public static final int FONT = 20;
     public static final int FONT_COLOR = 21;
     public static final int FONT_KERNING = 22;
+    /**
+     * String value. 'normal'|'italic'|'oblique'
+     * Note, this property will be applied only if {@link #FONT} has String value.
+     */
+    public static final int FONT_STYLE = 94;
+    /**
+     * String value. 'normal'|'bold'|number
+     * Note, this property will be applied only if {@link #FONT} has String value.
+     */
+    public static final int FONT_WEIGHT = 95;
     public static final int FONT_SCRIPT = 23;
+    public static final int FONT_PROVIDER = 91;
     public static final int FONT_SIZE = 24;
-    public static final int FULL = 25;
     public static final int FORCED_PLACEMENT = 26;
+    public static final int FULL = 25;
     public static final int HEIGHT = 27;
     public static final int HORIZONTAL_ALIGNMENT = 28;
     /**
@@ -89,29 +104,38 @@ public final class Property {
      **/
     public static final int HORIZONTAL_SCALING = 29;
     public static final int HYPHENATION = 30;
+    public static final int IGNORE_FOOTER = 96;
+    public static final int IGNORE_HEADER = 97;
     public static final int ITALIC_SIMULATION = 31;
     public static final int KEEP_TOGETHER = 32;
     public static final int KEEP_WITH_NEXT = 81;
     public static final int LEADING = 33;
     public static final int LEFT = 34;
     public static final int LINE_DRAWER = 35;
+    public static final int LINK_ANNOTATION = 88;
     public static final int LIST_START = 36;
     public static final int LIST_SYMBOL = 37;
     public static final int LIST_SYMBOL_ALIGNMENT = 38;
     public static final int LIST_SYMBOL_INDENT = 39;
-    public static final int LIST_SYMBOLS_INITIALIZED = 40;
     public static final int LIST_SYMBOL_PRE_TEXT = 41;
+    public static final int LIST_SYMBOL_POSITION = 83;
     public static final int LIST_SYMBOL_POST_TEXT = 42;
+    public static final int LIST_SYMBOLS_INITIALIZED = 40;
     public static final int MARGIN_BOTTOM = 43;
     public static final int MARGIN_LEFT = 44;
     public static final int MARGIN_RIGHT = 45;
     public static final int MARGIN_TOP = 46;
+    public static final int MAX_HEIGHT = 84;
+    public static final int MIN_HEIGHT = 85;
+
+    public static final int OPACITY = 92;
     public static final int PADDING_BOTTOM = 47;
     public static final int PADDING_LEFT = 48;
     public static final int PADDING_RIGHT = 49;
     public static final int PADDING_TOP = 50;
     public static final int PAGE_NUMBER = 51;
     public static final int POSITION = 52;
+    @Deprecated
     public static final int REVERSED = 53;
     public static final int RIGHT = 54;
     public static final int ROTATION_ANGLE = 55;
@@ -125,6 +149,7 @@ public final class Property {
     public static final int STROKE_COLOR = 63;
     public static final int STROKE_WIDTH = 64;
     public static final int SKEW = 65;
+    public static final int TABLE_LAYOUT = 93;
     public static final int TAB_ANCHOR = 66;
     public static final int TAB_DEFAULT = 67;
     public static final int TAB_LEADER = 68;
@@ -137,10 +162,10 @@ public final class Property {
     public static final int TEXT_RISE = 72;
     public static final int TOP = 73;
     public static final int UNDERLINE = 74;
+    public static final int VERTICAL_ALIGNMENT = 75;
     /**
      * Value of 1 is equivalent to no scaling
      **/
-    public static final int VERTICAL_ALIGNMENT = 75;
     public static final int VERTICAL_SCALING = 76;
     public static final int WIDTH = 77;
     public static final int WORD_SPACING = 78;
@@ -153,7 +178,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 82;
+    private static final int MAX_INHERITED_PROPERTY_ID = 95;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -162,19 +187,21 @@ public final class Property {
         INHERITED_PROPERTIES[Property.BASE_DIRECTION] = true;
         INHERITED_PROPERTIES[Property.BOLD_SIMULATION] = true;
         INHERITED_PROPERTIES[Property.CHARACTER_SPACING] = true;
+        INHERITED_PROPERTIES[Property.COLLAPSING_MARGINS] = true;
         INHERITED_PROPERTIES[Property.FIRST_LINE_INDENT] = true;
         INHERITED_PROPERTIES[Property.FONT] = true;
         INHERITED_PROPERTIES[Property.FONT_COLOR] = true;
         INHERITED_PROPERTIES[Property.FONT_KERNING] = true;
+        INHERITED_PROPERTIES[Property.FONT_PROVIDER] = true;
         INHERITED_PROPERTIES[Property.FONT_SCRIPT] = true;
         INHERITED_PROPERTIES[Property.FONT_SIZE] = true;
+        INHERITED_PROPERTIES[Property.FONT_STYLE] = true;
+        INHERITED_PROPERTIES[Property.FONT_WEIGHT] = true;
         INHERITED_PROPERTIES[Property.FORCED_PLACEMENT] = true;
         INHERITED_PROPERTIES[Property.HYPHENATION] = true;
         INHERITED_PROPERTIES[Property.ITALIC_SIMULATION] = true;
         INHERITED_PROPERTIES[Property.KEEP_TOGETHER] = true;
-        INHERITED_PROPERTIES[Property.LIST_SYMBOL] = true;
-        INHERITED_PROPERTIES[Property.LIST_SYMBOL_PRE_TEXT] = true;
-        INHERITED_PROPERTIES[Property.LIST_SYMBOL_POST_TEXT] = true;
+        INHERITED_PROPERTIES[Property.LEADING] = true;
         INHERITED_PROPERTIES[Property.SPACING_RATIO] = true;
         INHERITED_PROPERTIES[Property.SPLIT_CHARACTERS] = true;
         INHERITED_PROPERTIES[Property.STROKE_COLOR] = true;
@@ -188,10 +215,10 @@ public final class Property {
 
     /**
      * This method checks whether a Property, in order to be picked up by the
-     * rendering engine, must be defined on the current element or renderer 
+     * rendering engine, must be defined on the current element or renderer
      * (<code>return false</code>), or may be defined in one of its parent
-     * elements or renderers (<code>return true</code>). 
-     * 
+     * elements or renderers (<code>return true</code>).
+     *
      * @param property the ID, defined in this class, of the property to check
      * @return whether the property type is inheritable
      */

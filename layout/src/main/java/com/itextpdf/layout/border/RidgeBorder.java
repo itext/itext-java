@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -87,6 +87,39 @@ public class RidgeBorder extends Border3D {
      */
     public RidgeBorder(DeviceGray color, float width) {
         super(color, width);
+    }
+
+    /**
+     * Creates a RidgeBorder instance with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity opacity of the border
+     */
+    public RidgeBorder(DeviceRgb color, float width, float opacity) {
+        super(color, width, opacity);
+    }
+
+    /**
+     * Creates a RidgeBorder instance with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity opacity of the border
+     */
+    public RidgeBorder(DeviceCmyk color, float width, float opacity) {
+        super(color, width, opacity);
+    }
+
+    /**
+     * Creates a RidgeBorder instance with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity opacity of the border
+     */
+    public RidgeBorder(DeviceGray color, float width, float opacity) {
+        super(color, width, opacity);
     }
 
     /**

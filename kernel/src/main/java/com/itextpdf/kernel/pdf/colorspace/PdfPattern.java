@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -53,6 +53,12 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 
+/**
+ * Dictionary wrapper that represent special type of color space, that uses pattern objects
+ * as the equivalent of colour values instead of the numeric component values used with other spaces.
+ * A pattern object shall be a dictionary or a stream, depending on the type of pattern.
+ * For mor information see paragraph 8.7 in ISO-32000-1.
+ */
 public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
 
     private static final long serialVersionUID = -6771280634868639993L;
@@ -61,6 +67,12 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         super(pdfObject);
     }
 
+    /**
+     * Creates the instance wrapper of correct type from the {@link PdfDictionary}
+     *
+     * @param pdfObject the {@link PdfDictionary} that represent Pattern
+     * @return new wrapper instance.
+     */
     public static PdfPattern getPatternInstance(PdfDictionary pdfObject) {
         PdfNumber type = pdfObject.getAsNumber(PdfName.PatternType);
         if (type.intValue() == 1 && pdfObject instanceof PdfStream)
@@ -70,10 +82,26 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         throw new IllegalArgumentException("pdfObject");
     }
 
+    /**
+     * Gets a transformation matrix that maps the pattern’s internal coordinate system
+     * to the default coordinate system of the pattern’s parent content stream.
+     * The concatenation of the pattern matrix with that of the parent content stream
+     * establishes the pattern coordinate space, within which all graphics objects in the pattern shall be interpreted.
+     *
+     * @return pattern matrix
+     */
     public PdfArray getMatrix() {
         return getPdfObject().getAsArray(PdfName.Matrix);
     }
 
+    /**
+     * Sets a transformation matrix that maps the pattern’s internal coordinate system
+     * to the default coordinate system of the pattern’s parent content stream.
+     * The concatenation of the pattern matrix with that of the parent content stream
+     * establishes the pattern coordinate space, within which all graphics objects in the pattern shall be interpreted.
+     *
+     * @param matrix pattern matrix to set
+     */
     public void setMatrix(PdfArray matrix) {
         getPdfObject().put(PdfName.Matrix, matrix);
         setModified();
@@ -96,23 +124,65 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
         return true;
     }
 
+    /**
+     * Wrapper that represents tiling pattern of color space. This pattern consists of a small graphical figure (cells).
+     * Painting with the pattern replicates the cell at fixed horizontal and vertical intervals to fill an area.
+     * The pattern cell can include graphical elements such as filled areas, text, and sampled images.
+     * Its shape need not be rectangular, and the spacing of tiles can differ from the dimensions of the cell itself.
+     * The appearance of the pattern cell shall be defined by a content stream
+     * containing the painting operators needed to paint one instance of the cell
+     */
     public static class Tiling extends PdfPattern {
 
         private static final long serialVersionUID = 1450379837955897673L;
 		
         private PdfResources resources = null;
 
+        /**
+         * A code that determines how the colour of the pattern cell shall be specified
+         */
         public static class PaintType {
+            /**
+             * The pattern’s content stream shall specify the colours used to paint the pattern cell.
+             */
             public static final int COLORED = 1;
+
+            /**
+             * The pattern’s content stream shall not specify any colour information.
+             * Instead, the entire cell is painted with a separately specified colour each time the pattern is used.
+             */
             public static final int UNCOLORED = 2;
         }
 
+        /**
+         * A code that controls adjustments to the spacing of tiles relative to the device pixel grid
+         */
         public static class TilingType {
+            /**
+             * Pattern cells shall be spaced consistently—that is, by a multiple of a device pixel.
+             * To achieve this, the conforming reader may need to distort the pattern cell slightly.
+             */
             public static final int CONSTANT_SPACING = 1;
+
+            /**
+             * The pattern cell shall not be distorted,
+             * but the spacing between pattern cells may vary by as much as 1 device pixel.
+             */
             public static final int NO_DISTORTION = 2;
+
+            /**
+             * Pattern cells shall be spaced consistently as in tiling type 1,
+             * but with additional distortion permitted to enable a more efficient implementation.
+             */
             public static final int CONSTANT_SPACING_AND_FASTER_TILING = 3;
         }
 
+        /**
+         * Creates new instance from the {@link PdfStream} object.
+         * This stream should have PatternType equals to 1.
+         *
+         * @param pdfObject the {@link PdfStream} that represents Tiling Pattern.
+         */
         public Tiling(PdfStream pdfObject) {
             super(pdfObject);
         }
@@ -145,6 +215,7 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
             this(bbox, xStep, yStep, true);
         }
 
+
         public Tiling(Rectangle bbox, float xStep, float yStep, boolean colored) {
             super(new PdfStream());
             getPdfObject().put(PdfName.Type, PdfName.Pattern);
@@ -158,19 +229,41 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
             getPdfObject().put(PdfName.Resources, resources.getPdfObject());
         }
 
+        /**
+         * Checks if this pattern have colored paint type.
+         *
+         * @return {@code true} if this pattern's paint type is {@link PaintType#COLORED} and {@code false} otherwise.
+         */
         public boolean isColored() {
             return getPdfObject().getAsNumber(PdfName.PaintType).intValue() == PaintType.COLORED;
         }
 
+        /**
+         * Sets the paint type.
+         *
+         * @param colored if {@code true} then the paint type will be set as {@link PaintType#COLORED},
+         *                and {@link PaintType#UNCOLORED} otherwise.
+         */
         public void setColored(boolean colored) {
             getPdfObject().put(PdfName.PaintType, new PdfNumber(colored ? PaintType.COLORED : PaintType.UNCOLORED));
             setModified();
         }
 
+        /**
+         * Gets the tiling type.
+         *
+         * @return int value of {@link TilingType}
+         */
         public int getTilingType() {
             return getPdfObject().getAsNumber(PdfName.TilingType).intValue();
         }
 
+        /**
+         * Sets the tiling type.
+         *
+         * @param tilingType int value of {@link TilingType} to set.
+         * @throws IllegalArgumentException in case of wrong value.
+         */
         public void setTilingType(int tilingType) {
             if (tilingType != TilingType.CONSTANT_SPACING && tilingType != TilingType.NO_DISTORTION &&
                     tilingType != TilingType.CONSTANT_SPACING_AND_FASTER_TILING)
@@ -179,10 +272,20 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
             setModified();
         }
 
+        /**
+         * Gets the pattern cell's bounding box. These boundaries shall be used to clip the pattern cell.
+         *
+         * @return pattern cell's bounding box.
+         */
         public Rectangle getBBox() {
             return getPdfObject().getAsArray(PdfName.BBox).toRectangle();
         }
 
+        /**
+         * Sets the pattern cell's bounding box. These boundaries shall be used to clip the pattern cell.
+         *
+         * @param bbox pattern cell's bounding box to set.
+         */
         public void setBBox(Rectangle bbox) {
             getPdfObject().put(PdfName.BBox, new PdfArray(bbox));
             setModified();
@@ -218,6 +321,9 @@ public abstract class PdfPattern extends PdfObjectWrapper<PdfDictionary> {
             return resources;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void flush() {
             resources = null;

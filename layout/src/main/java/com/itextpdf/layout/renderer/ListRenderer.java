@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,9 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.util.TextUtil;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
 import com.itextpdf.kernel.numbering.GreekAlphabetNumbering;
 import com.itextpdf.kernel.numbering.RomanNumbering;
@@ -55,7 +57,10 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.property.ListNumberingType;
+import com.itextpdf.layout.property.ListSymbolPosition;
 import com.itextpdf.layout.property.Property;
 
 import java.io.IOException;
@@ -73,41 +78,12 @@ public class ListRenderer extends BlockRenderer {
         super(modelElement);
     }
 
-    // TODO underlying should not be applied
-    // https://jira.itextsupport.com/browse/SUP-952
-
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        if (!hasOwnProperty(Property.LIST_SYMBOLS_INITIALIZED)) {
-            List<IRenderer> symbolRenderers = new ArrayList<>();
-            int listItemNum = (int) this.<Integer>getProperty(Property.LIST_START, 1);
-            for (int i = 0; i < childRenderers.size(); i++) {
-                if (childRenderers.get(i).getModelElement() instanceof ListItem) {
-                    childRenderers.get(i).setParent(this);
-                    IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum++, childRenderers.get(i));
-                    childRenderers.get(i).setParent(null);
-                    symbolRenderers.add(currentSymbolRenderer);
-                    LayoutResult listSymbolLayoutResult = currentSymbolRenderer.setParent(this).layout(layoutContext);
-                    currentSymbolRenderer.setParent(null);
-                    if (listSymbolLayoutResult.getStatus() != LayoutResult.FULL) {
-                        return new LayoutResult(LayoutResult.NOTHING, null, null, this, listSymbolLayoutResult.getCauseOfNothing());
-                    }
-                }
-            }
-            float maxSymbolWidth = 0;
-            for (IRenderer symbolRenderer : symbolRenderers) {
-                maxSymbolWidth = Math.max(maxSymbolWidth, symbolRenderer.getOccupiedArea().getBBox().getWidth());
-            }
-            Float symbolIndent = modelElement.<Float>getProperty(Property.LIST_SYMBOL_INDENT);
-            listItemNum = 0;
-            for (IRenderer childRenderer : childRenderers) {
-                childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
-                childRenderer.setProperty(Property.MARGIN_LEFT, childRenderer.getProperty(Property.MARGIN_LEFT, (Float) 0f) + maxSymbolWidth + (symbolIndent != null ? symbolIndent : 0f));
-                if (childRenderer.getModelElement() instanceof ListItem) {
-                    IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
-                    ((ListItemRenderer) childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);
-                }
-            }
+        overrideHeightProperties();
+        LayoutResult errorResult = initializeListSymbols(layoutContext);
+        if (errorResult != null) {
+            return errorResult;
         }
         LayoutResult result = super.layout(layoutContext);
         // cannot place even the first ListItemRenderer
@@ -140,8 +116,30 @@ public class ListRenderer extends BlockRenderer {
         return overflowRenderer;
     }
 
+    @Override
+    protected MinMaxWidth getMinMaxWidth(float availableWidth) {
+        LayoutResult errorResult = initializeListSymbols(new LayoutContext(new LayoutArea(1, new Rectangle(availableWidth, AbstractRenderer.INF))));
+        if (errorResult != null) {
+            return MinMaxWidthUtils.countDefaultMinMaxWidth(this, availableWidth);
+        }
+        return super.getMinMaxWidth(availableWidth);
+    }
+
     protected IRenderer makeListSymbolRenderer(int index, IRenderer renderer) {
-        Object defaultListSymbol = renderer.<Object>getProperty(Property.LIST_SYMBOL);
+        IRenderer symbolRenderer = createListSymbolRenderer(index, renderer);
+        // underlying should not be applied
+        if (symbolRenderer != null) {
+            symbolRenderer.setProperty(Property.UNDERLINE, false);
+        }
+        return symbolRenderer;
+    }
+
+    static Object getListItemOrListProperty(IRenderer listItem, IRenderer list, int propertyId) {
+        return listItem.hasProperty(propertyId) ? listItem.<Object>getProperty(propertyId) : list.<Object>getProperty(propertyId);
+    }
+
+    private IRenderer createListSymbolRenderer(int index, IRenderer renderer) {
+        Object defaultListSymbol = getListItemOrListProperty(renderer, this, Property.LIST_SYMBOL);
         if (defaultListSymbol instanceof Text) {
             return new TextRenderer((Text) defaultListSymbol);
         } else if (defaultListSymbol instanceof Image) {
@@ -152,6 +150,9 @@ public class ListRenderer extends BlockRenderer {
             switch (numberingType) {
                 case DECIMAL:
                     numberText = String.valueOf(index);
+                    break;
+                case DECIMAL_LEADING_ZERO:
+                    numberText = (index < 10 ? "0" : "") + String.valueOf(index);
                     break;
                 case ROMAN_LOWER:
                     numberText = RomanNumbering.toRomanLowerCase(index);
@@ -186,7 +187,7 @@ public class ListRenderer extends BlockRenderer {
                 default:
                     throw new IllegalStateException();
             }
-            Text textElement = new Text(renderer.<String>getProperty(Property.LIST_SYMBOL_PRE_TEXT) + numberText + renderer.<String>getProperty(Property.LIST_SYMBOL_POST_TEXT));
+            Text textElement = new Text(getListItemOrListProperty(renderer, this, Property.LIST_SYMBOL_PRE_TEXT) + numberText + getListItemOrListProperty(renderer, this, Property.LIST_SYMBOL_POST_TEXT));
             IRenderer textRenderer;
             // Be careful. There is a workaround here. For Greek symbols we first set a dummy font with document=null
             // in order for the metrics to be taken into account correctly during layout.
@@ -216,6 +217,8 @@ public class ListRenderer extends BlockRenderer {
                 textRenderer = new TextRenderer(textElement);
             }
             return textRenderer;
+        } else if (defaultListSymbol == null) { 
+            return null;
         } else {
             throw new IllegalStateException();
         }
@@ -283,5 +286,59 @@ public class ListRenderer extends BlockRenderer {
         } else {
             return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, this);
         }
+    }
+
+    private LayoutResult initializeListSymbols(LayoutContext layoutContext) {
+        if (!hasOwnProperty(Property.LIST_SYMBOLS_INITIALIZED)) {
+            List<IRenderer> symbolRenderers = new ArrayList<>();
+            int listItemNum = (int) this.<Integer>getProperty(Property.LIST_START, 1);
+            for (int i = 0; i < childRenderers.size(); i++) {
+                childRenderers.get(i).setParent(this);
+                IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum, childRenderers.get(i));
+                childRenderers.get(i).setParent(null);
+                LayoutResult listSymbolLayoutResult = null;
+                if (currentSymbolRenderer != null) {
+                    ++listItemNum;
+                    currentSymbolRenderer.setParent(this);
+                    // Workaround for the case when font is specified as string
+                    if (currentSymbolRenderer instanceof AbstractRenderer && currentSymbolRenderer.<Object>getProperty(Property.FONT) instanceof String) {
+                        PdfFont actualPdfFont = ((AbstractRenderer) currentSymbolRenderer).resolveFirstPdfFont();
+                        currentSymbolRenderer.setProperty(Property.FONT, actualPdfFont);
+                    }
+                    listSymbolLayoutResult = currentSymbolRenderer.layout(layoutContext);
+                    currentSymbolRenderer.setParent(null);
+                }
+                symbolRenderers.add(currentSymbolRenderer);
+                if (listSymbolLayoutResult != null && listSymbolLayoutResult.getStatus() != LayoutResult.FULL) {
+                    return new LayoutResult(LayoutResult.NOTHING, null, null, this, listSymbolLayoutResult.getCauseOfNothing());
+                }
+            }
+
+            float maxSymbolWidth = 0;
+            for (int i = 0; i < childRenderers.size(); i++) {
+                IRenderer symbolRenderer = symbolRenderers.get(i);
+                if (symbolRenderer != null) {
+                    IRenderer listItemRenderer = childRenderers.get(i);
+                    if ((ListSymbolPosition) getListItemOrListProperty(listItemRenderer, this, Property.LIST_SYMBOL_POSITION) != ListSymbolPosition.INSIDE) {
+                        maxSymbolWidth = Math.max(maxSymbolWidth, symbolRenderer.getOccupiedArea().getBBox().getWidth());
+                    }
+                }
+            }
+
+            Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
+            listItemNum = 0;
+            for (IRenderer childRenderer : childRenderers) {
+                childRenderer.setParent(this);
+                childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
+                float calculatedMargin = (float) childRenderer.getProperty(Property.MARGIN_LEFT, (Float) 0f);
+                if ((ListSymbolPosition) getListItemOrListProperty(childRenderer, this, Property.LIST_SYMBOL_POSITION) == ListSymbolPosition.DEFAULT) {
+                    calculatedMargin += maxSymbolWidth + (float) (symbolIndent != null ? symbolIndent : 0f);
+                }
+                childRenderer.setProperty(Property.MARGIN_LEFT, calculatedMargin);
+                IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
+                ((ListItemRenderer) childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);
+            }
+        }
+        return null;
     }
 }

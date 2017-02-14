@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -51,6 +51,7 @@ import java.util.Objects;
 
 public class PatternColor extends Color {
 
+    private static final long serialVersionUID = -2405470180325720440L;
     private PdfPattern pattern;
     // The underlying color for uncolored patterns. Will be null for colored ones.
     private Color underlyingColor;

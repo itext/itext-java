@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf;
 
 import java.io.Serializable;
 import java.security.cert.Certificate;
+import java.util.Random;
 
 public class EncryptionProperties implements Serializable {
 
@@ -81,7 +82,13 @@ public class EncryptionProperties implements Serializable {
     public EncryptionProperties setStandardEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionAlgorithm) {
         clearEncryption();
         this.userPassword = userPassword;
-        this.ownerPassword = ownerPassword;
+        if(ownerPassword != null) {
+            this.ownerPassword = ownerPassword;
+        }else{
+            int r =(int) (Integer.MAX_VALUE * Math.random());
+            this.ownerPassword = Integer.toHexString(r).getBytes();
+
+        }
         this.standardEncryptPermissions = permissions;
         this.encryptionAlgorithm = encryptionAlgorithm;
 

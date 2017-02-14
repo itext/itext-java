@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -157,7 +157,7 @@ public class Cell extends BlockElement<Cell> {
      * @param element a {@link BlockElement}
      * @return this Element
      */
-    public <T extends IElement> Cell add(BlockElement<T> element) {
+    public Cell add(IBlockElement element) {
         childElements.add(element);
         return this;
     }
@@ -169,17 +169,6 @@ public class Cell extends BlockElement<Cell> {
      * @return this Element
      */
     public Cell add(Image element) {
-        childElements.add(element);
-        return this;
-    }
-
-    /**
-     * Adds an embedded table to the cell's contents.
-     *
-     * @param element a nested {@link Table}
-     * @return this Element
-     */
-    public Cell add(Table element) {
         childElements.add(element);
         return this;
     }
@@ -229,7 +218,7 @@ public class Cell extends BlockElement<Cell> {
 
     @Override
     public String toString() {
-        return MessageFormat.format("Cell{row={0}, col={1}, rowspan={2}, colspan={3}}", row, col, rowspan, colspan);
+        return MessageFormat.format("Cell[row={0}, col={1}, rowspan={2}, colspan={3}]", row, col, rowspan, colspan);
     }
 
     @Override

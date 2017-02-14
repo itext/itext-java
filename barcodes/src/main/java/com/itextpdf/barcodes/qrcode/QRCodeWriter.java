@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -54,12 +54,30 @@ public final class QRCodeWriter {
 
     private static final int QUIET_ZONE_SIZE = 4;
 
+    /**
+     * Encode a string into a QR code with dimensions width x height, using error-correction level L and the smallest version for which he contents fit into the QR-code?
+     * @param contents String to encode into the QR code
+     * @param width width of the QR-code
+     * @param height height of the QR-code
+     * @return 2D Greyscale map containing the visual representation of the QR-code, stored as a Bytematrix
+     * @throws WriterException
+     */
     public ByteMatrix encode(String contents, int width, int height)
             throws WriterException {
 
         return encode(contents, width, height, null);
     }
 
+    /**
+     * Encode a string into a QR code with dimensions width x height. Hints contains suggestions for error-correction level and version.
+     * The default error-correction level is L, the default version is the smallest version for which the contents will fit into the QR-code.
+     * @param contents String to encode into the QR code
+     * @param width width of the QR-code
+     * @param height height of the QR-code
+     * @param hints Map containing suggestions for error-correction level and version
+     * @return 2D Greyscale map containing the visual representation of the QR-code, stored as a Bytematrix
+     * @throws WriterException
+     */
     public ByteMatrix encode(String contents, int width, int height,
                              Map<EncodeHintType,Object> hints) throws WriterException {
 

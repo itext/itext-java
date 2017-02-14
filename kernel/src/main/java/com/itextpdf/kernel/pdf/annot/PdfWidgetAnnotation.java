@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 
 import java.util.HashSet;
@@ -54,6 +55,10 @@ import java.util.HashSet;
 public class PdfWidgetAnnotation extends PdfAnnotation {
 
     private static final long serialVersionUID = 9013938639824707088L;
+    public static final int HIDDEN = 1;
+    public static final int VISIBLE_BUT_DOES_NOT_PRINT = 2;
+    public static final int HIDDEN_BUT_PRINTABLE = 3;
+    public static final int VISIBLE = 4;
 
 	public PdfWidgetAnnotation(Rectangle rect) {
         super(rect);
@@ -136,5 +141,28 @@ public class PdfWidgetAnnotation extends PdfAnnotation {
                 parent.remove(PdfName.Kids);
             }
         }
+    }
+    /**
+     * Set the visibility flags of the Widget annotation
+     * Options are: HIDDEN, HIDDEN_BUT_PRINTABLE, VISIBLE, VISIBLE_BUT_DOES_NOT_PRINT
+     * @param visibility visibility option
+     * @return the edited widget annotation
+     */
+    public PdfWidgetAnnotation setVisibility(int visibility) {
+        switch (visibility) {
+            case HIDDEN:
+                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT | PdfAnnotation.HIDDEN));
+                break;
+            case VISIBLE_BUT_DOES_NOT_PRINT:
+                break;
+            case HIDDEN_BUT_PRINTABLE:
+                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT | PdfAnnotation.NO_VIEW));
+                break;
+            case VISIBLE:
+            default:
+                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT));
+                break;
+        }
+        return this;
     }
 }

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -49,12 +49,13 @@ import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * Represents a color
  */
-public class Color {
+public class Color implements Serializable {
 
     /**
      * Predefined black DeviceRgb color
@@ -108,6 +109,7 @@ public class Color {
      * Predefined yellow DeviceRgb color
      */
     public static final Color YELLOW = new DeviceRgb(255, 255, 0);
+    private static final long serialVersionUID = -6639782922289701126L;
 
     /**
      * The color space of the color

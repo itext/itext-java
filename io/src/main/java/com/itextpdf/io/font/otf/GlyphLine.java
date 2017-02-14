@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,11 +45,13 @@ package com.itextpdf.io.font.otf;
 
 import com.itextpdf.io.util.TextUtil;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class GlyphLine {
+public class GlyphLine implements Serializable {
+    private static final long serialVersionUID = 4689818013371677649L;
     protected List<Glyph> glyphs;
     protected List<ActualText> actualText;
     public int start;
@@ -60,23 +62,48 @@ public class GlyphLine {
         this.glyphs = new ArrayList<>();
     }
 
+    /**
+     * Create a new line of Glyphs.
+     *
+     * @param glyphs list containing the glyphs
+     */
     public GlyphLine(List<Glyph> glyphs) {
         this.glyphs = glyphs;
         this.start = 0;
         this.end = glyphs.size();
     }
 
+    /**
+     * Create a new line of Glyphs from a slice of a List of Glyphs.
+     *
+     * @param glyphs list of Glyphs to slice
+     * @param start starting index of the slice
+     * @param end terminating index of the slice
+     */
     public GlyphLine(List<Glyph> glyphs, int start, int end) {
         this.glyphs = glyphs;
         this.start = start;
         this.end = end;
     }
 
+    /**
+     * Create a new line of Glyphs from a slice of a List of Glyphs, and add the actual text.
+     *
+     * @param glyphs list of Glyphs to slice
+     * @param actualText corresponding list containing the actual text the glyphs represent
+     * @param start starting index of the slice
+     * @param end terminating index of the slice
+     */
     protected GlyphLine(List<Glyph> glyphs, List<ActualText> actualText, int start, int end) {
         this(glyphs, start, end);
         this.actualText = actualText;
     }
 
+    /**
+     * Copy a line of Glyphs.
+     *
+     * @param other line of Glyphs to copy
+     */
     public GlyphLine(GlyphLine other) {
         this.glyphs = other.glyphs;
         this.actualText = other.actualText;
@@ -85,6 +112,12 @@ public class GlyphLine {
         this.idx = other.idx;
     }
 
+    /**
+     * Copy a slice of a line of Glyphs
+     * @param other line of Glyphs to copy
+     * @param start starting index of the slice
+     * @param end terminating index of the slice
+     */
     public GlyphLine(GlyphLine other, int start, int end) {
         this.glyphs = other.glyphs.subList(start, end);
         if (other.actualText != null) {
@@ -95,6 +128,12 @@ public class GlyphLine {
         this.idx = other.idx - start;
     }
 
+    /**
+     * Get the unicode string representation of the GlyphLine slice.
+     * @param start starting index of the slice
+     * @param end terminating index of the slice
+     * @return String containing the unicode representation of the slice.
+     */
     public String toUnicodeString(int start, int end) {
         ActualTextIterator iter = new ActualTextIterator(this, start, end);
         StringBuilder str = new StringBuilder();
@@ -104,17 +143,25 @@ public class GlyphLine {
                 str.append(part.actualText);
             } else {
                 for (int i = part.start; i < part.end; i++) {
-                    if (glyphs.get(i).getChars() != null) {
-                        str.append(glyphs.get(i).getChars());
-                    } else if (glyphs.get(i).hasValidUnicode()) {
-                        str.append(TextUtil.convertFromUtf32(glyphs.get(i).getUnicode()));
-                    }
+                    str.append(glyphs.get(i).getUnicodeChars());
                 }
             }
         }
         return str.toString();
     }
 
+    @Override
+    public String toString() {
+        return toUnicodeString(start, end);
+    }
+
+    /**
+     * Copy a slice of this Glyphline.
+     *
+     * @param left leftmost index of the slice
+     * @param right rightmost index of the slice
+     * @return new GlyphLine containing the copied slice
+     */
     public GlyphLine copy(int left, int right) {
         GlyphLine glyphLine = new GlyphLine();
         glyphLine.start = 0;
@@ -292,11 +339,21 @@ public class GlyphLine {
         public int start;
         public int end;
         public String actualText;
+        public boolean reversed;
+
+        public GlyphLinePart(int start, int end) {
+            this(start, end, null);
+        }
 
         public GlyphLinePart(int start, int end, String actualText) {
             this.start = start;
             this.end = end;
             this.actualText = actualText;
+        }
+
+        public GlyphLinePart setReversed(boolean reversed) {
+            this.reversed = reversed;
+            return this;
         }
     }
 
@@ -304,7 +361,9 @@ public class GlyphLine {
         boolean accept(Glyph glyph);
     }
 
-    protected static class ActualText {
+    protected static class ActualText implements Serializable {
+        private static final long serialVersionUID = 5109920013485372966L;
+
         public ActualText(String value) {
             this.value = value;
         }

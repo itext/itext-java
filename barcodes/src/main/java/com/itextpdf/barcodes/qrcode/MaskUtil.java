@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -52,14 +52,24 @@ final class MaskUtil {
     private MaskUtil() {
     }
 
-    // Apply mask penalty rule 1 and return the penalty. Find repetitive cells with the same color and
-    // give penalty to them. Example: 00000 or 11111.
+    /**
+     * Apply mask penalty rule 1 and return the penalty. Find repetitive cells with the same color and
+     * give penalty to them. Example: 00000 or 11111.
+     * @param matrix ByteMatrix to apply the penalty rule to
+     * @return the rule 1 penalty
+     */
     public static int applyMaskPenaltyRule1(ByteMatrix matrix) {
         return applyMaskPenaltyRule1Internal(matrix, true) + applyMaskPenaltyRule1Internal(matrix, false);
     }
 
-    // Apply mask penalty rule 2 and return the penalty. Find 2x2 blocks with the same color and give
-    // penalty to them.
+
+
+    /**
+     * Apply mask penalty rule 2 and return the penalty. Find 2x2 blocks with the same color and give
+     * penalty to them.
+     * @param matrix ByteMatrix to apply the penalty rule to
+     * @return the rule 2 penalty
+     */
     public static int applyMaskPenaltyRule2(ByteMatrix matrix) {
         int penalty = 0;
         byte[][] array = matrix.getArray();
@@ -76,9 +86,13 @@ final class MaskUtil {
         return penalty;
     }
 
-    // Apply mask penalty rule 3 and return the penalty. Find consecutive cells of 00001011101 or
-    // 10111010000, and give penalty to them.  If we find patterns like 000010111010000, we give
-    // penalties twice (i.e. 40 * 2).
+    /**
+     * Apply mask penalty rule 3 and return the penalty. Find consecutive cells of 00001011101 or
+     * 10111010000, and give penalty to them.  If we find patterns like 000010111010000, we give
+     * penalties twice (i.e. 40 * 2).
+     * @param matrix ByteMatrix to apply the penalty rule to
+     * @return the rule 3 penalty
+     */
     public static int applyMaskPenaltyRule3(ByteMatrix matrix) {
         int penalty = 0;
         byte[][] array = matrix.getArray();
@@ -132,15 +146,21 @@ final class MaskUtil {
         return penalty;
     }
 
-    // Apply mask penalty rule 4 and return the penalty. Calculate the ratio of dark cells and give
-    // penalty if the ratio is far from 50%. It gives 10 penalty for 5% distance. Examples:
-    // -   0% => 100
-    // -  40% =>  20
-    // -  45% =>  10
-    // -  50% =>   0
-    // -  55% =>  10
-    // -  55% =>  20
-    // - 100% => 100
+
+
+    /**
+     * Apply mask penalty rule 4 and return the penalty. Calculate the ratio of dark cells and give
+     * penalty if the ratio is far from 50%. It gives 10 penalty for 5% distance. Examples:
+     * -   0% => 100
+     * -  40% =>  20
+     * -  45% =>  10
+     * -  50% =>   0
+     * -  55% =>  10
+     * -  55% =>  20
+     * - 100% => 100
+     * @param matrix Bytematrix to apply the rule to
+     * @return the rule 4 penalty
+     */
     public static int applyMaskPenaltyRule4(ByteMatrix matrix) {
         int numDarkCells = 0;
         byte[][] array = matrix.getArray();
@@ -158,8 +178,16 @@ final class MaskUtil {
         return Math.abs((int) (darkRatio * 100 - 50)) / 5 * 10;
     }
 
-    // Return the mask bit for "getMaskPattern" at "x" and "y". See 8.8 of JISX0510:2004 for mask
-    // pattern conditions.
+
+
+    /**
+     * Return the mask bit for "getMaskPattern" at "x" and "y". See 8.8 of JISX0510:2004 for mask
+     * pattern conditions.
+     * @param maskPattern masking pattern to use
+     * @param x width coordiante
+     * @param y height-coordinate
+     * @return the mask bit at that position
+     */
     public static boolean getDataMaskBit(int maskPattern, int x, int y) {
         if (!QRCode.isValidMaskPattern(maskPattern)) {
             throw new IllegalArgumentException("Invalid mask pattern");

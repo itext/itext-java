@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,19 +43,26 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.IAccessibleElement;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.element.ListItem;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.property.ListSymbolAlignment;
+import com.itextpdf.layout.property.ListSymbolPosition;
 import com.itextpdf.layout.property.Property;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ListItemRenderer extends DivRenderer {
 
     protected IRenderer symbolRenderer;
     protected float symbolAreaWidth;
+    private boolean symbolAddedInside;
 
     /**
      * Creates a ListItemRenderer from its corresponding layout object.
@@ -72,15 +79,26 @@ public class ListItemRenderer extends DivRenderer {
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        if (symbolRenderer != null && this.<Object>getProperty(Property.HEIGHT) == null) {
-            // TODO this is actually MinHeight.
-            setProperty(Property.HEIGHT, symbolRenderer.getOccupiedArea().getBBox().getHeight());
+        if (symbolRenderer != null && this.<Object>getProperty(Property.HEIGHT) == null && !isListSymbolEmpty(symbolRenderer)) {
+            float[] ascenderDescender = calculateAscenderDescender();
+            float minHeight = Math.max(symbolRenderer.getOccupiedArea().getBBox().getHeight(), ascenderDescender[0] - ascenderDescender[1]);
+            setProperty(Property.MIN_HEIGHT, minHeight);
         }
-        return super.layout(layoutContext);
+        applyListSymbolPosition();
+        LayoutResult result = super.layout(layoutContext);
+        if (LayoutResult.PARTIAL == result.getStatus()) {
+            result.getOverflowRenderer().deleteOwnProperty(Property.MIN_HEIGHT);
+        }
+        return result;
     }
 
     @Override
     public void draw(DrawContext drawContext) {
+        if (occupiedArea == null) {
+            Logger logger = LoggerFactory.getLogger(ListItemRenderer.class);
+            logger.error(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED);
+            return;
+        }
         boolean isTagged = drawContext.isTaggingEnabled() && getModelElement() instanceof IAccessibleElement;
         TagTreePointer tagPointer = null;
         if (isTagged) {
@@ -102,11 +120,29 @@ public class ListItemRenderer extends DivRenderer {
         super.draw(drawContext);
 
         // It will be null in case of overflow (only the "split" part will contain symbol renderer.
-        if (symbolRenderer != null) {
+        if (symbolRenderer != null && !symbolAddedInside) {
             symbolRenderer.setParent(parent);
             float x = occupiedArea.getBBox().getX();
+            ListSymbolPosition symbolPosition = (ListSymbolPosition) ListRenderer.getListItemOrListProperty(this, parent, Property.LIST_SYMBOL_POSITION);
+            if (symbolPosition != ListSymbolPosition.DEFAULT) {
+                Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
+                x -= symbolAreaWidth + (float) (symbolIndent == null ? 0 : symbolIndent);
+                if (symbolPosition == ListSymbolPosition.OUTSIDE) {
+                    x += (float) this.getPropertyAsFloat(Property.MARGIN_LEFT);
+                }
+            }
+            applyMargins(occupiedArea.getBBox(), false);
+            applyBorderBox(occupiedArea.getBBox(), false);
             if (childRenderers.size() > 0) {
-                Float yLine = ((AbstractRenderer) childRenderers.get(0)).getFirstYLineRecursively();
+                Float yLine = null;
+                for (int i = 0; i < childRenderers.size(); i++) {
+                    if (childRenderers.get(i).getOccupiedArea().getBBox().getHeight() > 0) {
+                        yLine = ((AbstractRenderer) childRenderers.get(i)).getFirstYLineRecursively();
+                        if (yLine != null) {
+                            break;
+                        }
+                    }
+                }
                 if (yLine != null) {
                     if (symbolRenderer instanceof TextRenderer) {
                         ((TextRenderer) symbolRenderer).moveYLineTo((float) yLine);
@@ -118,9 +154,15 @@ public class ListItemRenderer extends DivRenderer {
                             (symbolRenderer.getOccupiedArea().getBBox().getY() + symbolRenderer.getOccupiedArea().getBBox().getHeight()));
                 }
             } else {
-                symbolRenderer.move(0, occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() -
-                        symbolRenderer.getOccupiedArea().getBBox().getHeight() - symbolRenderer.getOccupiedArea().getBBox().getY());
+                if (symbolRenderer instanceof TextRenderer) {
+                    ((TextRenderer) symbolRenderer).moveYLineTo(occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - calculateAscenderDescender()[0]);
+                } else {
+                    symbolRenderer.move(0, occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() -
+                            symbolRenderer.getOccupiedArea().getBBox().getHeight() - symbolRenderer.getOccupiedArea().getBBox().getY());
+                }
             }
+            applyBorderBox(occupiedArea.getBBox(), true);
+            applyMargins(occupiedArea.getBBox(), true);
 
             ListSymbolAlignment listSymbolAlignment = (ListSymbolAlignment)parent.<ListSymbolAlignment>getProperty(Property.LIST_SYMBOL_ALIGNMENT,
                     ListSymbolAlignment.RIGHT);
@@ -130,12 +172,16 @@ public class ListItemRenderer extends DivRenderer {
             }
             symbolRenderer.move(xPosition, 0);
 
-            if (isTagged) {
-                tagPointer.addTag(0, PdfName.Lbl);
-            }
-            symbolRenderer.draw(drawContext);
-            if (isTagged) {
-                tagPointer.moveToParent();
+            if (symbolRenderer.getOccupiedArea().getBBox().getRight() > parent.getOccupiedArea().getBBox().getLeft()) {
+                if (isTagged) {
+                    tagPointer.addTag(0, PdfName.Lbl);
+                }
+                beginElementOpacityApplying(drawContext);
+                symbolRenderer.draw(drawContext);
+                endElementOpacityApplying(drawContext);
+                if (isTagged) {
+                    tagPointer.moveToParent();
+                }
             }
         }
 
@@ -177,4 +223,56 @@ public class ListItemRenderer extends DivRenderer {
         overflowRenderer.setProperty(Property.MARGIN_LEFT, this.<Object>getProperty(Property.MARGIN_LEFT));
         return overflowRenderer;
     }
+
+    private void applyListSymbolPosition() {
+        if (symbolRenderer != null) {
+            ListSymbolPosition symbolPosition = (ListSymbolPosition) ListRenderer.getListItemOrListProperty(this, parent, Property.LIST_SYMBOL_POSITION);
+            if (symbolPosition == ListSymbolPosition.INSIDE) {
+                if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ParagraphRenderer) {
+                    ParagraphRenderer paragraphRenderer = (ParagraphRenderer) childRenderers.get(0);
+                    Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
+                    if (symbolIndent != null) {
+                        symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
+                    }
+                    paragraphRenderer.childRenderers.add(0, symbolRenderer);
+                    symbolAddedInside = true;
+                } else if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ImageRenderer) {
+                    IRenderer paragraphRenderer = new Paragraph().setMargin(0).createRendererSubTree();
+                    Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
+                    if (symbolIndent != null) {
+                        symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
+                    }
+                    paragraphRenderer.addChild(symbolRenderer);
+                    paragraphRenderer.addChild(childRenderers.get(0));
+                    childRenderers.set(0, paragraphRenderer);
+                    symbolAddedInside = true;
+                }
+                if (!symbolAddedInside) {
+                    IRenderer paragraphRenderer = new Paragraph().setMargin(0).createRendererSubTree();
+                    Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
+                    if (symbolIndent != null) {
+                        symbolRenderer.setProperty(Property.MARGIN_RIGHT, symbolIndent);
+                    }
+                    paragraphRenderer.addChild(symbolRenderer);
+                    childRenderers.add(0, paragraphRenderer);
+                    symbolAddedInside = true;
+                }
+            }
+        }
+    }
+
+    private boolean isListSymbolEmpty(IRenderer listSymbolRenderer) {
+        return listSymbolRenderer instanceof TextRenderer && ((TextRenderer) listSymbolRenderer).getText().toString().length() == 0;
+    }
+
+    private float[] calculateAscenderDescender() {
+        PdfFont listItemFont = resolveFirstPdfFont();
+        Float fontSize = this.getPropertyAsFloat(Property.FONT_SIZE);
+        if (listItemFont != null && fontSize != null) {
+            float[] ascenderDescender = TextRenderer.calculateAscenderDescender(listItemFont);
+            return new float[] {(float)fontSize * ascenderDescender[0] / TextRenderer.TEXT_SPACE_COEFF, (float)fontSize * ascenderDescender[1] / TextRenderer.TEXT_SPACE_COEFF};
+        }
+        return new float[] {0, 0};
+    }
+
 }

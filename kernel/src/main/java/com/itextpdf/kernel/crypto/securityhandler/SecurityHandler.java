@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -46,10 +46,15 @@ package com.itextpdf.kernel.crypto.securityhandler;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.security.MessageDigest;
 
-public abstract class SecurityHandler {
+public abstract class SecurityHandler implements Serializable {
 
+    private static final long serialVersionUID = 7980424575363686173L;
     /**
      * The global encryption key
      */
@@ -67,18 +72,14 @@ public abstract class SecurityHandler {
     protected int nextObjectKeySize;
 
 
-    protected MessageDigest md5;
+    protected transient MessageDigest md5;
     /**
      * Work area to prepare the object/generation bytes
      */
     protected byte[] extra = new byte[5];
 
     protected SecurityHandler() {
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-        } catch (Exception e) {
-            throw new PdfException(PdfException.PdfEncryption, e);
-        }
+        safeInitMessageDigest();
     }
 
     /**
@@ -106,4 +107,17 @@ public abstract class SecurityHandler {
     public abstract OutputStreamEncryption getEncryptionStream(java.io.OutputStream os);
 
     public abstract IDecryptor getDecryptor();
+
+    private void safeInitMessageDigest() {
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (Exception e) {
+            throw new PdfException(PdfException.PdfEncryption, e);
+        }
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        safeInitMessageDigest();
+    }
 }

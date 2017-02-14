@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -46,8 +46,8 @@ package com.itextpdf.layout.element;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
@@ -55,13 +55,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
  * A {@link Table} is a layout element that represents data in a two-dimensional
  * grid. It is filled with {@link Cell cells}, ordered in rows and columns.
- * 
+ *
  * It is an implementation of {@link ILargeElement}, which means it can be flushed
  * to the canvas, in order to reclaim memory that is locked up.
  */
@@ -72,7 +71,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     private List<Cell[]> rows;
 
-    private float[] columnWidths;
+    private UnitValue[] columnWidths;
     private int currentColumn = 0;
     private int currentRow = -1;
     private Table header;
@@ -88,82 +87,122 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     private Cell[] lastAddedRow;
 
     /**
-     * Constructs a {@code Table} with the relative column widths.
+     * Constructs a {@code Table} with the column widths in points.
+     * Note, since 7.0.2 in case auto layout column width values less than min width will be ignored.
+     * Large table must have valid column widths (>= zero), fixed layout will be used for it.
+     * By default large table has width 100%.
      *
      * @param columnWidths the relative column widths
      * @param largeTable whether parts of the table will be written before all data is added.
      */
     public Table(float[] columnWidths, boolean largeTable) {
-        this.isComplete = !largeTable;
         if (columnWidths == null) {
-            throw new NullPointerException("the.widths.array.in.table.constructor.can.not.be.null");
+            throw new NullPointerException("The widths array in table constructor can not be null.");
         }
         if (columnWidths.length == 0) {
-            throw new IllegalArgumentException("the.widths.array.in.pdfptable.constructor.can.not.have.zero.length");
+            throw new IllegalArgumentException("The widths array in table constructor can not have zero length.");
         }
-        this.columnWidths = new float[columnWidths.length];
-        float width = 0;
-        for (int i = 0; i < columnWidths.length; i++) {
-            this.columnWidths[i] = columnWidths[i];
-            width += columnWidths[i];
-        }
-        super.setWidth(width);
+        this.columnWidths = normalizeColumnWidths(columnWidths);
+        initializeLargeTable(largeTable);
         initializeRows();
     }
 
     /**
-     * Constructs a {@code Table} with the relative column widths.
+     * Constructs a {@code Table} with the column widths.
+     * Note, since 7.0.2 in case auto layout column width values less than min width will be ignored.
+     * Large table must have valid column widths (>= zero), fixed layout will be used for it.
+     * By default large table has width 100%.
+     *
+     * @param columnWidths the relative column widths
+     * @param largeTable whether parts of the table will be written before all data is added.
+     */
+    public Table(UnitValue[] columnWidths, boolean largeTable) {
+        if (columnWidths == null) {
+            throw new NullPointerException("The widths array in table constructor can not be null.");
+        }
+        if (columnWidths.length == 0) {
+            throw new IllegalArgumentException("The widths array in table constructor can not have zero length.");
+        }
+        //TODO remove in 7.1. It shall work as html tables.
+        if (hasOnlyPercents(columnWidths)) useAllAvailableWidth();
+        this.columnWidths = normalizeColumnWidths(columnWidths);
+        initializeLargeTable(largeTable);
+        initializeRows();
+    }
+
+    /**
+     * Constructs a {@code Table} with column widths.
+     * Note, since 7.0.2 in case auto layout column width values less than min width will be ignored.
      *
      * @param columnWidths the relative column widths
      */
-    public Table(float[] columnWidths) {
+    public Table(UnitValue[] columnWidths) {
         this(columnWidths, false);
     }
 
     /**
-     * Constructs a {@code Table} with {@code numColumns} columns.
+     * Constructs a {@code Table} with point column widths.
+     * Note, since 7.0.2 in case auto layout column width values less than min width will be ignored.
      *
-     * @param numColumns the number of columns
-     * @param largeTable whether parts of the table will be written before all data is added.
+     * @param pointColumnWidths the column widths in points.
      */
+    public Table(float[] pointColumnWidths) {
+        this(pointColumnWidths, false);
+    }
+
+    /**
+     * Constructs a {@code Table} with {@code numColumns} columns.
+     * Large table will have equal column widths, fixed layout will be used for it.
+     * By default large table has width 100%.
+     *
+     * @param numColumns the number of columns, each column will have equal percent width.
+     * @param largeTable whether parts of the table will be written before all data is added.
+     * @deprecated in 7.1 each column will have undefined width.
+     * Use constructor with defined column width to get predictable result.
+     */
+    @Deprecated
     public Table(int numColumns, boolean largeTable) {
-        this.isComplete = !largeTable;
         if (numColumns <= 0) {
-            throw new IllegalArgumentException("the.number.of.columns.in.pdfptable.constructor.must.be.greater.than.zero");
+            throw new IllegalArgumentException("The number of columns in Table constructor must be greater than zero");
         }
-        this.columnWidths = new float[numColumns];
+        this.columnWidths = new UnitValue[numColumns];
         for (int k = 0; k < numColumns; ++k) {
-            this.columnWidths[k] = 1;
+            this.columnWidths[k] = UnitValue.createPercentValue((float) 100 / numColumns);
         }
-        super.setWidth(UnitValue.createPercentValue(100));
+        //TODO remove in 7.1. It shall work as html tables.
+        useAllAvailableWidth();
+        this.columnWidths = normalizeColumnWidths(numColumns, true);
+        initializeLargeTable(largeTable);
         initializeRows();
     }
 
     /**
      * Constructs a {@code Table} with {@code numColumns} columns.
      *
-     * @param numColumns the number of columns
+     * @param numColumns the number of columns, each column will have equal percent width.
+     * @deprecated in 7.1 each column will have undefined width.
+     * Use constructor with defined column width to get predictable result.
      */
+    @Deprecated
     public Table(int numColumns) {
         this(numColumns, false);
     }
 
+    public Table setFixedLayout() {
+        setProperty(Property.TABLE_LAYOUT, "fixed");
+        return this;
+    }
+
+    public Table setAutoLayout() {
+        setProperty(Property.TABLE_LAYOUT, "auto");
+        return this;
+    }
+
     /**
-     * Sets the full width of the table.
-     *
-     * @param width the full width of the table.
-     * @return this element
+     * Set {@link Property#WIDTH} = 100%.
      */
-    @Override
-    public Table setWidth(UnitValue width) {
-        if (width.isPointValue() && width.getValue() == 0) {
-            width = UnitValue.createPercentValue(100);
-        }
-        UnitValue currWidth = getWidth();
-        if (!width.equals(currWidth)) {
-            super.setWidth(width);
-            calculateWidths();
-        }
+    public Table useAllAvailableWidth() {
+        setProperty(Property.WIDTH, UnitValue.createPercentValue(100));
         return this;
     }
 
@@ -173,7 +212,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
      * @param column index of the column
      * @return the width of the column
      */
-    public float getColumnWidth(int column) {
+    public UnitValue getColumnWidth(int column) {
         return columnWidths[column];
     }
 
@@ -369,7 +408,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     /**
      * Adds a new cell to the table. The implementation decides for itself which
      * row the cell will be placed on.
-     * 
+     *
      * @param cell {@code Cell} to add.
      * @return this element
      */
@@ -437,7 +476,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     /**
      * Returns a cell as specified by its location. If the cell is in a col-span
      * or row-span and is not the top left cell, then <code>null</code> is returned.
-     * 
+     *
      * @param row the row of the cell. indexes are zero-based
      * @param column the column of the cell. indexes are zero-based
      * @return the cell at the specified position.
@@ -532,12 +571,12 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     @Override
     public void flush() {
         Cell[] row = null;
+        int rowNum = rows.size();
         if (!rows.isEmpty()) {
             row = rows.get(rows.size() - 1);
         }
-
         document.add(this);
-        if (row != null) {
+        if (row != null && rowNum != rows.size()) {
             lastAddedRow = row;
         }
     }
@@ -553,12 +592,13 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         int firstRow = lastAddedRowGroups.get(0).startRow;
         int lastRow = lastAddedRowGroups.get(lastAddedRowGroups.size() - 1).finishRow;
 
-        for (Iterator<IElement> iterator = childElements.iterator(); iterator.hasNext(); ) {
-            IElement cell = iterator.next();
+        List<IElement> toRemove = new ArrayList<>();
+        for (IElement cell : childElements) {
             if (((Cell)cell).getRow() >= firstRow && ((Cell)cell).getRow() <= lastRow) {
-                iterator.remove();
+                toRemove.add(cell);
             }
         }
+        childElements.removeAll(toRemove);
 
         for (int i = 0; i <= lastRow - firstRow; i++) {
             rows.remove(firstRow - rowWindowStart);
@@ -575,21 +615,25 @@ public class Table extends BlockElement<Table> implements ILargeElement {
 
     /**
      * Gets the markup properties of the bottom border of the (current) last row.
-     * 
+     *
      * @return an array of {@link Border} objects
      */
-    public ArrayList<Border> getLastRowBottomBorder() {
-        ArrayList<Border> horizontalBorder = new ArrayList<>();
+    public List<Border> getLastRowBottomBorder() {
+        List<Border> horizontalBorder = new ArrayList<>();
         if (lastAddedRow != null) {
             for (int i = 0; i < lastAddedRow.length; i++) {
                 Cell cell = lastAddedRow[i];
+                Border border = null;
                 if (cell != null) {
-                    Border border = cell.<Border>getProperty(Property.BORDER);
-                    if (border == null) {
+                    if (cell.hasProperty(Property.BORDER_BOTTOM)) {
                         border = cell.<Border>getProperty(Property.BORDER_BOTTOM);
+                    } else if (cell.hasProperty(Property.BORDER)){
+                        border = cell.<Border>getProperty(Property.BORDER);
+                    } else {
+                        border = cell.<Border>getDefaultProperty(Property.BORDER);
                     }
-                    horizontalBorder.add(border);
                 }
+                horizontalBorder.add(border);
             }
         }
 
@@ -609,6 +653,16 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         }
     }
 
+    public Table setExtendBottomRow(boolean isExtended) {
+        setProperty(Property.FILL_AVAILABLE_AREA, isExtended);
+        return this;
+    }
+
+    public Table setExtendBottomRowOnSplit(boolean isExtended) {
+        setProperty(Property.FILL_AVAILABLE_AREA_ON_SPLIT, isExtended);
+        return this;
+    }
+
     @Override
     public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
@@ -617,16 +671,12 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         return tagProperties;
     }
 
+    /**
+     * @deprecated This method do nothing after implementation table column width algorithms.
+     */
+    @Deprecated
     protected void calculateWidths() {
-        UnitValue width = getWidth();
-        float total = 0;
-        int numCols = getNumberOfColumns();
-        for (int k = 0; k < numCols; ++k) {
-            total += columnWidths[k];
-        }
-        for (int k = 0; k < numCols; ++k) {
-            columnWidths[k] = width.getValue() * columnWidths[k] / total;
-        }
+
     }
 
     protected java.util.List<RowRange> getRowGroups() {
@@ -678,7 +728,8 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     private void ensureHeaderIsInitialized() {
         if (header == null) {
             header = new Table(columnWidths);
-            header.setWidth(getWidth());
+            UnitValue width = getWidth();
+            if (width != null) header.setWidth(width);
             header.setRole(PdfName.THead);
         }
     }
@@ -686,9 +737,65 @@ public class Table extends BlockElement<Table> implements ILargeElement {
     private void ensureFooterIsInitialized() {
         if (footer == null) {
             footer = new Table(columnWidths);
-            footer.setWidth(getWidth());
+            UnitValue width = getWidth();
+            if (width != null) footer.setWidth(width);
             footer.setRole(PdfName.TFoot);
         }
+    }
+
+    private void initializeLargeTable(boolean largeTable) {
+        this.isComplete = !largeTable;
+        if (largeTable) {
+            if (hasNegativeValue(this.columnWidths)) {
+                throw new IllegalArgumentException("Large table must have valid column widths.");
+            }
+            setWidth(UnitValue.createPercentValue(100));
+            setFixedLayout();
+        }
+    }
+
+    private static boolean hasOnlyPercents(UnitValue[] columnWidths) {
+        for (UnitValue col : columnWidths) {
+            if (col == null || col.isPointValue() || col.getValue() < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static UnitValue[] normalizeColumnWidths(float[] pointColumnWidths) {
+        UnitValue[] normalized = new UnitValue[pointColumnWidths.length];
+        for (int i = 0; i < normalized.length; i++) {
+            normalized[i] = UnitValue.createPointValue(pointColumnWidths[i]);
+        }
+        return normalized;
+    }
+
+    private static UnitValue[] normalizeColumnWidths(UnitValue[] unitColumnWidths) {
+        UnitValue[] normalized = new UnitValue[unitColumnWidths.length];
+        for (int i = 0; i < unitColumnWidths.length; i++) {
+            normalized[i]  = unitColumnWidths[i] != null
+                    ? new UnitValue(unitColumnWidths[i])
+                    : UnitValue.createPointValue(-1);
+        }
+        return normalized;
+    }
+
+    private static boolean hasNegativeValue(UnitValue[] unitColumnWidths) {
+        for (UnitValue uv : unitColumnWidths) {
+            if (uv.getValue() < 0) return true;
+        }
+        return false;
+    }
+
+    private static UnitValue[] normalizeColumnWidths(int numberOfColumns, boolean usePercents) {
+        UnitValue[] normalized = new UnitValue[numberOfColumns];
+        for (int i = 0; i < numberOfColumns; i++) {
+            normalized[i] = usePercents
+                    ? UnitValue.createPercentValue((float) 100 / numberOfColumns)
+                    : UnitValue.createPointValue(-1);
+        }
+        return normalized;
     }
 
     /**

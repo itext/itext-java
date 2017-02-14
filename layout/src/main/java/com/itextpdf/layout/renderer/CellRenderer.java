@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -50,10 +50,15 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.property.Background;
 import com.itextpdf.layout.property.Property;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class CellRenderer extends BlockRenderer {
+
+    // TODO delete after refactoring
+    protected Map<Integer, Object> oldProperties = new HashMap<>();
 
     /**
      * Creates a CellRenderer from its corresponding layout object.
@@ -71,6 +76,11 @@ public class CellRenderer extends BlockRenderer {
     @Override
     public Cell getModelElement() {
         return (Cell) super.getModelElement();
+    }
+
+    @Override
+    protected Float retrieveWidth(float parentBoxWidth) {
+        return null;
     }
 
     /**
@@ -106,7 +116,8 @@ public class CellRenderer extends BlockRenderer {
 
         // Avoid rotation
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
-        boolean avoidRotation = null != angle && null != this.<Background>getProperty(Property.BACKGROUND);
+        boolean avoidRotation = null != angle && hasProperty(Property.BACKGROUND);
+        boolean restoreRotation = hasOwnProperty(Property.ROTATION_ANGLE);
         if (avoidRotation) {
             AffineTransform transform = new AffineTransform(ctm.get(0), ctm.get(1), ctm.get(3), ctm.get(4), ctm.get(6), ctm.get(7));
             try {
@@ -116,14 +127,18 @@ public class CellRenderer extends BlockRenderer {
             }
             transform.concatenate(new AffineTransform());
             canvas.concatMatrix(transform);
-            deleteProperty(Property.ROTATION_ANGLE);
+            setProperty(Property.ROTATION_ANGLE, null);
         }
 
         super.drawBackground(drawContext);
 
         // restore concat matrix and rotation angle
         if (avoidRotation) {
-            setProperty(Property.ROTATION_ANGLE, angle);
+            if (restoreRotation) {
+                setProperty(Property.ROTATION_ANGLE, angle);
+            } else {
+                deleteOwnProperty(Property.ROTATION_ANGLE);
+            }
             canvas.concatMatrix(new AffineTransform(ctm.get(0), ctm.get(1), ctm.get(3), ctm.get(4), ctm.get(6), ctm.get(7)));
         }
     }
@@ -151,5 +166,23 @@ public class CellRenderer extends BlockRenderer {
     @Override
     public IRenderer getNextRenderer() {
         return new CellRenderer(getModelElement());
+    }
+
+    protected IRenderer saveProperties() {
+        if (null != properties) {
+            oldProperties = new HashMap<Integer, Object>();
+        } else {
+            oldProperties.clear();
+        }
+        oldProperties.putAll(properties);
+        return this;
+    }
+
+    protected IRenderer restoreProperties() {
+        if (null != oldProperties) {
+            properties.clear();
+            properties.putAll(oldProperties);
+        }
+        return this;
     }
 }

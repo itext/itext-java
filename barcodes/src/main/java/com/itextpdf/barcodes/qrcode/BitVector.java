@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -59,12 +59,21 @@ final class BitVector {
     // For efficiency, start out with some room to work.
     private static final int DEFAULT_SIZE_IN_BYTES = 32;
 
+    /**
+     * Create a bitvector usng the default size
+     */
     public BitVector() {
         sizeInBits = 0;
         array = new byte[DEFAULT_SIZE_IN_BYTES];
     }
 
     // Return the bit value at "index".
+
+    /**
+     * Return the bit value at "index".
+     * @param index index in the vector
+     * @return bit value at "index"
+     */
     public int at(int index) {
         if (index < 0 || index >= sizeInBits) {
             throw new IllegalArgumentException("Bad index: " + index);
@@ -73,17 +82,27 @@ final class BitVector {
         return (value >> (7 - (index & 0x7))) & 1;
     }
 
-    // Return the number of bits in the bit vector.
+    /**
+     * @return the number of bits in the bit vector.
+     */
     public int size() {
         return sizeInBits;
     }
 
-    // Return the number of bytes in the bit vector.
+
+    /**
+     * @return the number of bytes in the bit vector.
+     */
     public int sizeInBytes() {
         return (sizeInBits + 7) >> 3;
     }
 
     // Append one bit to the bit vector.
+
+    /**
+     * Append the a bit to the bit vector
+     * @param bit 0 or 1
+     */
     public void appendBit(int bit) {
         if (!(bit == 0 || bit == 1)) {
             throw new IllegalArgumentException("Bad bit");
@@ -99,13 +118,24 @@ final class BitVector {
         ++sizeInBits;
     }
 
-    // Append "numBits" bits in "value" to the bit vector.
-    // REQUIRES: 0<= numBits <= 32.
     //
-    // Examples:
-    // - appendBits(0x00, 1) adds 0.
-    // - appendBits(0x00, 4) adds 0000.
-    // - appendBits(0xff, 8) adds 11111111.
+    // REQUIRES:
+    //
+    //
+    //
+    //
+    //
+
+    /**
+     * Append "numBits" bits in "value" to the bit vector.
+     *
+     * Examples:
+     * - appendBits(0x00, 1) adds 0.
+     * - appendBits(0x00, 4) adds 0000.
+     * - appendBits(0xff, 8) adds 11111111.
+     * @param value int interpreted as bitvector
+     * @param numBits 0<= numBits <= 32.
+     */
     public void appendBits(int value, int numBits) {
         if (numBits < 0 || numBits > 32) {
             throw new IllegalArgumentException("Num bits must be between 0 and 32");
@@ -125,7 +155,10 @@ final class BitVector {
         }
     }
 
-    // Append "bits".
+    /**
+     * Append a different BitVector to this BitVector
+     * @param bits BitVector to append
+     */
     public void appendBitVector(BitVector bits) {
         int size = bits.size();
         for (int i = 0; i < size; ++i) {
@@ -133,7 +166,11 @@ final class BitVector {
         }
     }
 
-    // Modify the bit vector by XOR'ing with "other"
+
+    /**
+     * XOR the contents of this bitvector with the contetns of "other"
+     * @param other Bitvector of equal length
+     */
     public void xor(BitVector other) {
         if (sizeInBits != other.size()) {
             throw new IllegalArgumentException("BitVector sizes don't match");
@@ -147,6 +184,10 @@ final class BitVector {
     }
 
     // Return String like "01110111" for debugging.
+
+    /**
+     * @return String representation of the bitvector
+     */
     public String toString() {
         StringBuffer result = new StringBuffer(sizeInBits);
         for (int i = 0; i < sizeInBits; ++i) {
@@ -161,14 +202,26 @@ final class BitVector {
         return result.toString();
     }
 
-    // Callers should not assume that array.length is the exact number of bytes needed to hold
-    // sizeInBits - it will typically be larger for efficiency.
+    //
+    //
+
+    /**
+     * Callers should not assume that array.length is the exact number of bytes needed to hold
+     * sizeInBits - it will typically be larger for efficiency.
+     * @return size of the array containing the bitvector
+     */
     public byte[] getArray() {
         return array;
     }
 
-    // Add a new byte to the end, possibly reallocating and doubling the size of the array if we've
-    // run out of room.
+    //
+    //
+
+    /**
+     * Add a new byte to the end, possibly reallocating and doubling the size of the array if we've
+     * run out of room.
+     * @param value byte to add.
+     */
     private void appendByte(int value) {
         if ((sizeInBits >> 3) == array.length) {
             byte[] newArray = new byte[(array.length << 1)];

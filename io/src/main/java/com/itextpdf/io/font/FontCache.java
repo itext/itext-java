@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -55,6 +55,7 @@ import com.itextpdf.io.font.cmap.CMapParser;
 import com.itextpdf.io.font.cmap.CMapUniCid;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -80,7 +81,7 @@ public class FontCache {
     private static final String W_PROP = "W";
     private static final String W2_PROP = "W2";
 
-    private static Map<String, FontProgram> fontCache = new ConcurrentHashMap<>();
+    private static Map<FontCacheKey, FontProgram> fontCache = new ConcurrentHashMap<>();
 
     static {
         try {
@@ -162,17 +163,22 @@ public class FontCache {
     }
 
     public static FontProgram getFont(String fontName) {
-        String key = getFontCacheKey(fontName);
-        FontProgram font = null;
+        return fontCache.get(FontCacheKey.create(fontName));
+    }
+
+    static FontProgram getFont(FontCacheKey key) {
         return fontCache.get(key);
     }
 
     public static FontProgram saveFont(FontProgram font, String fontName) {
-        FontProgram fontFound = getFont(fontName);
+        return saveFont(font, FontCacheKey.create(fontName));
+    }
+
+    static FontProgram saveFont(FontProgram font, FontCacheKey key) {
+        FontProgram fontFound = fontCache.get(key);
         if (fontFound != null) {
             return fontFound;
         }
-        String key = getFontCacheKey(fontName);
         fontCache.put(key, font);
         return font;
     }
@@ -244,9 +250,5 @@ public class FontCache {
             throw new IOException(IOException.IoException, e);
         }
         return cmap;
-    }
-
-    private static String getFontCacheKey(String fontName) {
-        return fontName;
     }
 }

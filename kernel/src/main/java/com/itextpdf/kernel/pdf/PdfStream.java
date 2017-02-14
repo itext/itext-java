@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,11 +43,14 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 import org.slf4j.LoggerFactory;
 
@@ -225,6 +228,9 @@ public class PdfStream extends PdfDictionary {
      * if the {@code PdfStream} was created by {@code InputStream}.
      */
     public byte[] getBytes(boolean decoded) {
+        if (isFlushed()) {
+            throw new PdfException(PdfException.CannotOperateWithFlushedPdfStream);
+        }
         if (inputStream != null) {
             LoggerFactory.getLogger(PdfStream.class).warn("PdfStream was created by InputStream." +
                     "getBytes() always returns null in this case");
@@ -237,6 +243,9 @@ public class PdfStream extends PdfDictionary {
             try {
                 outputStream.getOutputStream().flush();
                 bytes = ((ByteArrayOutputStream) outputStream.getOutputStream()).toByteArray();
+                if (decoded && containsKey(PdfName.Filter)) {
+                    bytes = PdfReader.decodeBytes(bytes, this);
+                }
             } catch (IOException ioe) {
                 throw new PdfException(PdfException.CannotGetPdfStreamBytes, ioe, this);
             }
@@ -269,12 +278,18 @@ public class PdfStream extends PdfDictionary {
      * Sets or appends <code>bytes</code> to stream content.
      * Could not be used with streams which were created by <code>InputStream</code>.
      *
-     * @param bytes  new content for stream; if <code>null</code> and <code>append</code> is false then
-     *               stream's content will be discarded
-     * @param append if set to true then <code>bytes</code> will be appended to the end,
-     *               rather then replace original content
+     * @param bytes  New content for stream. These bytes are considered to be a raw data (i.e. not encoded/compressed/encrypted)
+     *               and if it's not true, the corresponding filters shall be set to the PdfStream object manually. 
+     *               Data compression generally should be configured via {@link PdfStream#setCompressionLevel} and 
+     *               is handled on stream writing to the output document.
+     *               If <code>null</code> and <code>append</code> is false then stream's content will be discarded.
+     * @param append If set to true then <code>bytes</code> will be appended to the end,
+     *               rather then replace original content. The original content will be decoded if needed.  
      */
     public void setData(byte[] bytes, boolean append) {
+        if (isFlushed()) {
+            throw new PdfException(PdfException.CannotOperateWithFlushedPdfStream);
+        }
         if (inputStream != null) {
             throw new PdfException(PdfException.CannotSetDataToPdfstreamWhichWasCreatedByInputStream);
         }
@@ -285,8 +300,8 @@ public class PdfStream extends PdfDictionary {
         }
 
         if (append) {
-            if (outputStreamIsUninitialized
-                    && getIndirectReference() != null && getIndirectReference().getReader() != null) {
+            if (outputStreamIsUninitialized && getIndirectReference() != null && getIndirectReference().getReader() != null
+                    || !outputStreamIsUninitialized && containsKey(PdfName.Filter)) {
                 // here is the same as in the getBytes() method: this logic makes sense only when stream is created
                 // by reader and in this case indirect reference won't be null and stream is not in the MustBeIndirect state.
 
@@ -296,8 +311,7 @@ public class PdfStream extends PdfDictionary {
                 } catch (PdfException ex) {
                     throw new PdfException(PdfException.CannotReadAStreamInOrderToAppendNewBytes, ex);
                 }
-                offset = 0;
-                outputStream.writeBytes(oldBytes);
+                outputStream.assignBytes(oldBytes, oldBytes.length);
             }
 
             if (bytes != null) {
@@ -311,8 +325,11 @@ public class PdfStream extends PdfDictionary {
             }
         }
 
-        // Only when we remove old filter will the compression logic be triggered on flushing the stream
+        offset = 0;
+        // Bytes that are set shall be not encoded, and moreover the existing bytes in cases of the appending are decoded,
+        // therefore all filters shall be removed. Compression will be handled on stream flushing.
         remove(PdfName.Filter);
+        remove(PdfName.DecodeParms);
     }
 
     /**
@@ -419,5 +436,17 @@ public class PdfStream extends PdfDictionary {
 
     protected InputStream getInputStream() {
         return inputStream;
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        if (inputStream == null || inputStream instanceof Serializable) {
+            out.defaultWriteObject();
+        } else {
+            InputStream backup = inputStream;
+            inputStream = null;
+            LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.INPUT_STREAM_CONTENT_IS_LOST_ON_PDFSTREAM_SERIALIZATION);
+            inputStream = backup;
+        }
+
     }
 }

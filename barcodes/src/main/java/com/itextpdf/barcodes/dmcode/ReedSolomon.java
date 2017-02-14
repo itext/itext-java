@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -217,6 +217,13 @@ public final class ReedSolomon {
         }
     }
 
+    /**
+     * Calculates the error correction code for the given parameters.
+     * @param wd bytearray containing the data
+     * @param nd size of the data
+     * @param datablock size of a datablock
+     * @param nc size of a errorblock
+     */
     public static void generateECC(byte[] wd, int nd, int datablock, int nc) {
         int blocks = (nd + 2) / datablock;
         int b;

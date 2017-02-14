@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,7 @@ import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.property.Background;
@@ -55,11 +56,12 @@ import com.itextpdf.layout.property.FontKerning;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.TransparentColor;
 import com.itextpdf.layout.property.Underline;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -291,10 +293,22 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
     /**
      * Sets the font of this Element.
      *
-     * @param font a {@link PdfFont font program}
+     * @param font a {@link PdfFont font}
      * @return this Element.
      */
     public T setFont(PdfFont font) {
+        setProperty(Property.FONT, font);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets the font of this Element. Note that {@link com.itextpdf.layout.font.FontProvider} shall be set as well.
+     * See {@link RootElement#setFontProvider(FontProvider)}
+     *
+     * @param font a font name to fetch from {@link com.itextpdf.layout.font.FontProvider}
+     * @return this Element.
+     */
+    public T setFont(String font) {
         setProperty(Property.FONT, font);
         return (T) (Object) this;
     }
@@ -306,7 +320,18 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @return this Element.
      */
     public T setFontColor(Color fontColor) {
-        setProperty(Property.FONT_COLOR, fontColor);
+        return setFontColor(fontColor, 1f);
+    }
+
+    /**
+     * Sets the font color of this Element and the opacity of the text.
+     *
+     * @param fontColor a {@link Color} for the text in this Element.
+     * @param opacity an opacity for the text in this Element; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent.
+     * @return this Element.
+     */
+    public T setFontColor(Color fontColor, float opacity) {
+        setProperty(Property.FONT_COLOR, fontColor != null ? new TransparentColor(fontColor, opacity) : null);
         return (T) (Object) this;
     }
 
@@ -376,7 +401,18 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @return this Element.
      */
     public T setBackgroundColor(Color backgroundColor) {
-        return setBackgroundColor(backgroundColor, 0, 0, 0, 0);
+        return setBackgroundColor(backgroundColor, 1f);
+    }
+    
+    /**
+     * Specifies a background color for the Element.
+     *
+     * @param backgroundColor the background color
+     * @param opacity the background color opacity; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent.
+     * @return this Element.
+     */
+    public T setBackgroundColor(Color backgroundColor, float opacity) {
+        return setBackgroundColor(backgroundColor, opacity, 0, 0, 0, 0);
     }
 
     /**
@@ -391,7 +427,23 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @return this Element.
      */
     public T setBackgroundColor(Color backgroundColor, float extraLeft, float extraTop, float extraRight, float extraBottom) {
-        setProperty(Property.BACKGROUND, new Background(backgroundColor, extraLeft, extraTop, extraRight, extraBottom));
+        return setBackgroundColor(backgroundColor, 1f, extraLeft, extraTop, extraRight, extraBottom);
+    }
+
+    /**
+     * Specifies a background color for the Element, and extra space that
+     * must be counted as part of the background and therefore colored.
+     *
+     * @param backgroundColor the background color
+     * @param opacity         the background color opacity; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
+     * @param extraLeft       extra coloring to the left side
+     * @param extraTop        extra coloring at the top
+     * @param extraRight      extra coloring to the right side
+     * @param extraBottom     extra coloring at the bottom
+     * @return this Element.
+     */
+    public T setBackgroundColor(Color backgroundColor, float opacity, float extraLeft, float extraTop, float extraRight, float extraBottom) {
+        setProperty(Property.BACKGROUND, backgroundColor != null ? new Background(backgroundColor, opacity, extraLeft, extraTop, extraRight, extraBottom) : null);
         return (T) (Object) this;
     }
 
@@ -616,12 +668,38 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      * @return this element
      */
     public T setUnderline(Color color, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {
-        Underline newUnderline = new Underline(color, thickness, thicknessMul, yPosition, yPositionMul, lineCapStyle);
+        return setUnderline(color, 1f, thickness, thicknessMul, yPosition, yPositionMul, lineCapStyle);
+    }
+
+    /**
+     * Sets an horizontal line that can be an underline or a strikethrough.
+     * Actually, the line can be anywhere vertically due to position parameter.
+     * Multiple call to this method will produce multiple lines.
+     * <p>
+     * The thickness of the line will be {@code thickness + thicknessMul * fontSize}.
+     * The position of the line will be {@code baseLine + yPosition + yPositionMul * fontSize}.
+     *
+     * @param color        the color of the line or <CODE>null</CODE> to follow the
+     *                     text color
+     * @param opacity      the opacity of the line; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
+     * @param thickness    the absolute thickness of the line
+     * @param thicknessMul the thickness multiplication factor with the font size
+     * @param yPosition    the absolute y position relative to the baseline
+     * @param yPositionMul the position multiplication factor with the font size
+     * @param lineCapStyle the end line cap style. Allowed values are enumerated in
+     *                     {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.LineCapStyle}
+     * @return this element
+     */
+    public T setUnderline(Color color, float opacity, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {
+        Underline newUnderline = new Underline(color, opacity, thickness, thicknessMul, yPosition, yPositionMul, lineCapStyle);
         Object currentProperty = this.<Object>getProperty(Property.UNDERLINE);
         if (currentProperty instanceof List) {
             ((List) currentProperty).add(newUnderline);
         } else if (currentProperty instanceof Underline) {
-            setProperty(Property.UNDERLINE, Arrays.asList((Underline)currentProperty, newUnderline));
+            List<Underline> mergedUnderlines = new ArrayList<>();
+            mergedUnderlines.add((Underline) currentProperty);
+            mergedUnderlines.add(newUnderline);
+            setProperty(Property.UNDERLINE, mergedUnderlines);
         } else {
             setProperty(Property.UNDERLINE, newUnderline);
         }
@@ -672,6 +750,17 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> imp
      */
     public T setDestination(String destination) {
         setProperty(Property.DESTINATION, destination);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets an opacity of the given element. It will affect element content, borders and background. Note, that it will also
+     * affect all element children, as they are the content of the given element.
+     * @param opacity a float between 0 and 1, where 1 stands for fully opaque element and 0 - for fully transparent
+     * @return this Element.
+     */
+    public T setOpacity(Float opacity) {
+        setProperty(Property.OPACITY, opacity);
         return (T) (Object) this;
     }
 }

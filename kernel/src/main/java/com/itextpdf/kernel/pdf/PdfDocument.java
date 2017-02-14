@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.Version;
@@ -54,6 +55,7 @@ import com.itextpdf.kernel.events.IEventDispatcher;
 import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.log.Counter;
 import com.itextpdf.kernel.log.CounterFactory;
@@ -69,17 +71,33 @@ import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
-import com.itextpdf.kernel.xmp.*;
+import com.itextpdf.kernel.xmp.PdfConst;
+import com.itextpdf.kernel.xmp.XMPConst;
+import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPMeta;
+import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main enter point to work with PDF document.
@@ -99,7 +117,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     protected PageSize defaultPageSize = PageSize.Default;
 
-    protected EventDispatcher eventDispatcher = new EventDispatcher();
+    protected transient EventDispatcher eventDispatcher = new EventDispatcher();
 
     /**
      * PdfWriter associated with the document.
@@ -139,6 +157,16 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     protected PdfVersion pdfVersion = PdfVersion.PDF_1_7;
 
     /**
+     * The ID entry that represents a change in a document.
+     */
+    protected PdfString modifiedDocumentId;
+
+    /**
+     * The original second id when the document is read initially.
+     */
+    private PdfString originalModifiedDocumentId;
+
+    /**
      * List of indirect objects used in the document.
      */
     final PdfXrefTable xref = new PdfXrefTable();
@@ -163,9 +191,14 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     protected boolean flushUnusedObjects = false;
 
-    protected Set<PdfFont> documentFonts = new HashSet<>();
+    private Map<PdfIndirectReference, PdfFont> documentFonts = new HashMap<>();
+    private PdfFont defaultFont = null;
 
-    protected TagStructureContext tagStructureContext;
+    protected transient TagStructureContext tagStructureContext;
+
+    private static AtomicLong lastDocumentId = new AtomicLong();
+
+    private long documentId;
 
     /**
      * Yet not copied link annotations from the other documents.
@@ -183,6 +216,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (reader == null) {
             throw new NullPointerException("reader");
         }
+        documentId = incrementDocumentId();
         this.reader = reader;
         this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
         open(null);
@@ -198,6 +232,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (writer == null) {
             throw new NullPointerException("writer");
         }
+        documentId = incrementDocumentId();
         this.writer = writer;
         this.properties = new StampingProperties(); // default values of the StampingProperties doesn't affect anything
         open(writer.properties.pdfVersion);
@@ -228,6 +263,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (writer == null) {
             throw new NullPointerException("writer");
         }
+        documentId = incrementDocumentId();
         this.reader = reader;
         this.writer = writer;
         this.properties = properties;
@@ -678,11 +714,23 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     }
                     catalog.getPdfObject().put(PdfName.Metadata, xmp);
                 }
+                String producer = null;
+                if (reader == null) {
+                    producer = Version.getInstance().getVersion();
+                } else {
+                    if (info.getPdfObject().containsKey(PdfName.Producer)) {
+                        producer = info.getPdfObject().getAsString(PdfName.Producer).toUnicodeString();
+                    }
+                    producer = addModifiedPostfix(producer);
+                }
+                info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
                 checkIsoConformance();
                 PdfObject crypto = null;
                 if (properties.appendMode) {
                     if (structTreeRoot != null && structTreeRoot.getPdfObject().isModified()) {
                         tryFlushTagStructure();
+                    } else if (tagStructureContext != null) {
+                        tagStructureContext.removeAllConnectionsToTags();
                     }
                     if (catalog.isOCPropertiesMayHaveChanged() && catalog.getOCProperties(false).getPdfObject().isModified()) {
                         catalog.getOCProperties(false).flush();
@@ -715,9 +763,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         crypto = reader.decrypt.getPdfObject();
                     }
                 } else {
-                    if (structTreeRoot != null) {
-                        tryFlushTagStructure();
-                    }
+
                     if (catalog.isOCPropertiesMayHaveChanged()) {
                         catalog.getPdfObject().put(PdfName.OCProperties, catalog.getOCProperties(false).getPdfObject());
                         catalog.getOCProperties(false).flush();
@@ -738,6 +784,9 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     for (int pageNum = 1; pageNum <= getNumberOfPages(); pageNum++) {
                         getPage(pageNum).flush();
                     }
+                    if (structTreeRoot != null) {
+                        tryFlushTagStructure();
+                    }
                     catalog.getPdfObject().flush(false);
                     info.flush();
                     flushFonts();
@@ -754,6 +803,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     }
 
                 }
+
                 byte[] originalFileID = null;
                 if (crypto == null && writer.crypto != null) {
                     originalFileID = writer.crypto.getDocumentId();
@@ -776,9 +826,30 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         originalFileID = PdfEncryption.generateNewDocumentId();
                     }
                 }
+                byte[] secondId;
+
+                if ( modifiedDocumentId != null ) {
+                    secondId = ByteUtils.getIsoBytes(modifiedDocumentId.getValue());
+                } else {
+                    if ( originalModifiedDocumentId != null ) {
+                        PdfString newModifiedId = reader.trailer.getAsArray(PdfName.ID).getAsString(1);
+
+                        if (!originalModifiedDocumentId.equals(newModifiedId)) {
+                            secondId = ByteUtils.getIsoBytes(newModifiedId.getValue());
+                        } else {
+                            secondId = PdfEncryption.generateNewDocumentId();
+                        }
+                    } else {
+                        if (isModified) {
+                            secondId = PdfEncryption.generateNewDocumentId();
+                        } else {
+                            secondId = originalFileID;
+                        }
+                    }
+                }
                 // if originalFIleID comes from crypto, it means that no need in checking modified state.
                 // For crypto purposes new documentId always generated.
-                fileId = PdfEncryption.createInfoId(originalFileID, isModified);
+                fileId = PdfEncryption.createInfoId(originalFileID, secondId);
 
                 // The following two operators prevents the possible inconsistency between root and info
                 // entries existing in the trailer object and corresponding fields. This inconsistency
@@ -1387,12 +1458,67 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     }
 
     /**
+     * The /ID entry of a document contains an array with two entries. The first one represents the initial document id.
+     * The second one should be the same entry, unless the document has been modified. iText will by default generate
+     * a modified id. But if you'd like you can set this id yourself using this setter.
+     *
+     * @param modifiedDocumentId the new modified document id
+     */
+    public void setModifiedDocumentId(PdfString modifiedDocumentId) {
+        this.modifiedDocumentId = modifiedDocumentId;
+    }
+
+    /**
+     * Create a new instance of {@link PdfFont} or load already created one.
+     *
+     * Note, PdfFont which created with {@link PdfFontFactory#createFont(PdfDictionary)} won't be cached
+     * until it will be added to {@link com.itextpdf.kernel.pdf.canvas.PdfCanvas} or {@link PdfResources}.
+     */
+    public PdfFont getFont(PdfDictionary dictionary) {
+        assert dictionary.getIndirectReference() != null;
+        if (documentFonts.containsKey(dictionary.getIndirectReference())) {
+            return documentFonts.get(dictionary.getIndirectReference());
+        } else {
+            return addFont(PdfFontFactory.createFont(dictionary));
+        }
+    }
+
+    /**
+     * Gets default font for the document: Helvetica, WinAnsi.
+     * One instance per document.
+     *
+     * @return instance of {@link PdfFont} or {@code null} on error.
+     */
+    public PdfFont getDefaultFont() {
+        if (defaultFont == null) {
+            try {
+                defaultFont = PdfFontFactory.createFont();
+                defaultFont.makeIndirect(this);
+                addFont(defaultFont);
+            } catch (IOException e) {
+                Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+                logger.error(LogMessageConstant.EXCEPTION_WHILE_CREATING_DEFAULT_FONT, e);
+                defaultFont = null;
+            }
+        }
+        return defaultFont;
+    }
+    /**
      * Gets list of indirect references.
      *
      * @return list of indirect references.
      */
     PdfXrefTable getXref() {
         return xref;
+    }
+
+    /**
+     * Adds PdfFont without an checks
+     * @return the same PdfFont instance.
+     */
+    PdfFont addFont(PdfFont font) {
+        documentFonts.put(font.getPdfObject().getIndirectReference(), font);
+        return font;
     }
 
     /**
@@ -1463,6 +1589,13 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 }
                 pdfVersion = reader.headerPdfVersion;
                 trailer = new PdfDictionary(reader.trailer);
+
+                PdfArray id = reader.trailer.getAsArray(PdfName.ID);
+
+                if (id != null) {
+                     originalModifiedDocumentId = id.getAsString(1);
+                }
+
                 catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true));
                 if (catalog.getPdfObject().containsKey(PdfName.Version)) {
                     // The version of the PDF specification to which the document conforms (for example, 1.4)
@@ -1501,37 +1634,29 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                     writer.crypto = reader.decrypt;
                 }
                 writer.document = this;
+                String producer = null;
                 if (reader == null) {
                     catalog = new PdfCatalog(this);
                     info = new PdfDocumentInfo(this).addCreationDate();
-                    info.addModDate();
-                    info.getPdfObject().put(PdfName.Producer, new PdfString(Version.getInstance().getVersion()));
+                    producer = Version.getInstance().getVersion();
                 } else {
-                    info.addModDate();
-                    String producer = null;
                     if (info.getPdfObject().containsKey(PdfName.Producer)) {
                         producer = info.getPdfObject().getAsString(PdfName.Producer).toUnicodeString();
                     }
-                    Version version = Version.getInstance();
-                    if (producer == null || !version.getVersion().contains(version.getProduct())) {
-                        producer = version.getVersion();
-                    } else {
-                        int idx = producer.indexOf("; modified using");
-                        StringBuilder buf;
-                        if (idx == -1) {
-                            buf = new StringBuilder(producer);
-                        } else {
-                            buf = new StringBuilder(producer.substring(0, idx));
-                        }
-                        buf.append("; modified using ");
-                        buf.append(version.getVersion());
-                        producer = buf.toString();
-                    }
-                    info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
+                    producer = addModifiedPostfix(producer);
                 }
+                info.addModDate();
+                info.getPdfObject().put(PdfName.Producer, new PdfString(producer));
                 trailer = new PdfDictionary();
                 trailer.put(PdfName.Root, catalog.getPdfObject().getIndirectReference());
                 trailer.put(PdfName.Info, info.getPdfObject().getIndirectReference());
+
+                if ( reader !=  null ) {
+                    // If the reader's trailer contains an ID entry, let's copy it over to the new trailer
+                    if ( reader.trailer.containsKey(PdfName.ID)) {
+                        trailer.put(PdfName.ID, reader.trailer.getAsArray(PdfName.ID));
+                    }
+                }
             }
             if (properties.appendMode) {       // Due to constructor reader and writer not null.
                 assert reader != null;
@@ -1653,8 +1778,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      *
      * @return List of {@see PdfFonts}.
      */
-    protected Set<PdfFont> getDocumentFonts() {
-        return documentFonts;
+    protected Collection<PdfFont> getDocumentFonts() {
+        return documentFonts.values();
     }
 
     protected void flushFonts() {
@@ -1951,6 +2076,80 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 } catch (IOException ignored) {
                 }
             }
+        }
+    }
+
+    private long incrementDocumentId() {
+        return lastDocumentId.incrementAndGet();
+    }
+
+    private long getDocumentId() {
+        return documentId;
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        if (tagStructureContext != null) {
+            LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.TAG_STRUCTURE_CONTEXT_WILL_BE_REINITIALIZED_ON_SERIALIZATION);
+        }
+        out.defaultWriteObject();
+    }
+
+    /**
+     * A structure storing documentId, object number and generation number. This structure is using to calculate
+     * an unique object key during the copy process.
+     */
+    static class IndirectRefDescription {
+        private long docId;
+        private int objNr;
+        private int genNr;
+
+        IndirectRefDescription(PdfIndirectReference reference) {
+            this.docId = reference.getDocument().getDocumentId();
+            this.objNr = reference.getObjNumber();
+            this.genNr = reference.getGenNumber();
+        }
+
+        @Override
+        public int hashCode() {
+            int result = (int) docId;
+            result *= 31;
+            result += objNr;
+            result *= 31;
+            result += genNr;
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            IndirectRefDescription that = (IndirectRefDescription) o;
+
+            return docId == that.docId && objNr == that.objNr && genNr == that.genNr;
+        }
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        eventDispatcher = new EventDispatcher();
+    }
+
+    private String addModifiedPostfix(String producer) {
+        Version version = Version.getInstance();
+        if (producer == null || !version.getVersion().contains(version.getProduct())) {
+            return version.getVersion();
+        } else {
+            int idx = producer.indexOf("; modified using");
+            StringBuilder buf;
+            if (idx == -1) {
+                buf = new StringBuilder(producer);
+            } else {
+                buf = new StringBuilder(producer.substring(0, idx));
+            }
+            buf.append("; modified using ");
+            buf.append(version.getVersion());
+            return buf.toString();
         }
     }
 }

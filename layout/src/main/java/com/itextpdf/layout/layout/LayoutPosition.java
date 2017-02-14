@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -59,6 +59,12 @@ public class LayoutPosition {
      * As far as layout is concerned, the object is at its original position.
      */
     public static final int RELATIVE = 2;
+
+    /**
+     * Absolute positioned objects are positioned relative to the containing block, which is the nearest enclosing
+     * ancestor block with a position other than 'static'.
+     */
+    public static final int ABSOLUTE = 3;
 
     /**
      * Fixed positioned objects are positioned relative to the viewport, i.e., the page area of the current page.

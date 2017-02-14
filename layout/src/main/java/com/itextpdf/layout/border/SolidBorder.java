@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -71,6 +71,17 @@ public class SolidBorder extends Border {
     }
 
     /**
+     * Creates a SolidBorder with the specified width, color and opacity.
+     *
+     * @param color color of the border
+     * @param width width of the border
+     * @param opacity width of the border
+     */
+    public SolidBorder(Color color, float width, float opacity) {
+        super(color, width, opacity);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -114,8 +125,12 @@ public class SolidBorder extends Border {
                 break;
         }
 
-        canvas.setFillColor(color);
-        canvas.moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).lineTo(x4, y4).lineTo(x1, y1).fill();
+        canvas.saveState()
+                .setFillColor(transparentColor.getColor());
+        transparentColor.applyFillTransparency(canvas);
+        canvas
+                .moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).lineTo(x4, y4).lineTo(x1, y1).fill()
+                .restoreState();
     }
 
     /**
@@ -125,7 +140,9 @@ public class SolidBorder extends Border {
     public void drawCellBorder(PdfCanvas canvas, float x1, float y1, float x2, float y2) {
         canvas.
                 saveState().
-                setStrokeColor(color).
+                setStrokeColor(transparentColor.getColor());
+        transparentColor.applyStrokeTransparency(canvas);
+        canvas.
                 setLineWidth(width).
                 moveTo(x1, y1).
                 lineTo(x2, y2).

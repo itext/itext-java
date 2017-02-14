@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -93,7 +93,6 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
     PdfType3Font(PdfDictionary fontDictionary) {
         super(fontDictionary);
         ensureObjectIsAddedToDocument(fontDictionary);
-        checkFontDictionary(fontDictionary, PdfName.Type3);
         subset = true;
         embedded = true;
         fontProgram = new Type3FontProgram(false);
@@ -201,6 +200,17 @@ public class PdfType3Font extends PdfSimpleFont<Type3FontProgram> {
             return glyph;
         }
         return null;
+    }
+
+    @Override
+    public boolean containsGlyph(String text, int from) {
+        return containsGlyph((int) text.charAt(from));
+    }
+
+    @Override
+    public boolean containsGlyph(int unicode) {
+        return (fontEncoding.canEncode(unicode) || unicode < 33)
+                && getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(unicode)) != null;
     }
 
     @Override

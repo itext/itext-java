@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,10 @@
  */
 package com.itextpdf.kernel.events;
 
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,5 +110,11 @@ public class EventDispatcher implements IEventDispatcher, Serializable {
         eventHandlers.clear();
     }
 
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        throw new NotSerializableException(getClass().toString());
+    }
 
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        throw new NotSerializableException(getClass().toString());
+    }
 }

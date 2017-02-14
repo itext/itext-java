@@ -1,9 +1,53 @@
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2017 iText Group NV
+    Authors: iText Software.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation with the addition of the
+    following permission added to Section 15 as permitted in Section 7(a):
+    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
+    OF THIRD PARTY RIGHTS
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program; if not, see http://www.gnu.org/licenses or write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA, 02110-1301 USA, or download the license from the following URL:
+    http://itextpdf.com/terms-of-use/
+
+    The interactive user interfaces in modified source and object code versions
+    of this program must display Appropriate Legal Notices, as required under
+    Section 5 of the GNU Affero General Public License.
+
+    In accordance with Section 7(b) of the GNU Affero General Public License,
+    a covered work must retain the producer line in every PDF that is created
+    or manipulated using iText.
+
+    You can be released from the requirements of the license by purchasing
+    a commercial license. Buying such a license is mandatory as soon as you
+    develop commercial activities involving the iText software without
+    disclosing the source code of your own applications.
+    These activities include: offering paid services to customers as an ASP,
+    serving PDFs on the fly in a web application, shipping iText with a closed
+    source product.
+
+    For more information, please contact iText Software Corp. at this
+    address: sales@itextpdf.com
+ */
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.CidFont;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.FontProgramDescriptor;
+import com.itextpdf.io.font.FontProgramDescriptorFactory;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeCollection;
@@ -25,17 +69,16 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.List;
 
 @Category(IntegrationTest.class)
 public class PdfFontTest extends ExtendedITextTest {
@@ -786,7 +829,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
         PdfDictionary pdfDictionary = (PdfDictionary) inputPdfDoc1.getPdfObject(4);
-        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(pdfDictionary.copyTo(pdfDoc));
+        PdfFont pdfTrueTypeFont = inputPdfDoc1.getFont(pdfDictionary.copyTo(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -822,7 +865,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfFont = PdfFontFactory.createFont(pdfDictionary.copyTo(pdfDoc));
+        PdfFont pdfFont = inputPdfDoc1.getFont(pdfDictionary.copyTo(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -925,7 +968,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(pdfDictionary.copyTo(pdfDoc));
+        PdfFont pdfTrueTypeFont = inputPdfDoc1.getFont(pdfDictionary.copyTo(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -962,7 +1005,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(pdfDictionary.copyTo(pdfDoc));
+        PdfFont pdfTrueTypeFont = inputPdfDoc1.getFont(pdfDictionary.copyTo(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -996,7 +1039,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        PdfFont pdfTrueTypeFont = PdfFontFactory.createFont((PdfDictionary) pdfDoc.getPdfObject(6));
+        PdfFont pdfTrueTypeFont = pdfDoc.getFont((PdfDictionary) pdfDoc.getPdfObject(6));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -1032,7 +1075,7 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        PdfFont pdfType1Font = PdfFontFactory.createFont(pdfDictionary.copyTo(pdfDoc));
+        PdfFont pdfType1Font = inputPdfDoc1.getFont(pdfDictionary.copyTo(pdfDoc));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas
@@ -1082,6 +1125,46 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
+    public void testType1FontUpdateContent2() throws IOException, InterruptedException {
+        String inputFileName1 = sourceFolder + "DocumentWithCMR10Afm.pdf";
+        String filename = destinationFolder + "DocumentWithCMR10Afm2_updated.pdf";
+        String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Afm2_updated.pdf";
+
+        PdfReader reader = new PdfReader(inputFileName1);
+        PdfWriter writer = new PdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+        PdfDictionary pdfDictionary = (PdfDictionary) pdfDoc.getPdfObject(4);
+        PdfFont pdfType1Font = pdfDoc.getFont(pdfDictionary);
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(pdfType1Font, 72)
+                .showText("New Hello world")
+                .endText()
+                .restoreState();
+        PdfFont pdfType1Font2 = pdfDoc.getFont(pdfDictionary);
+        Assert.assertEquals(pdfType1Font, pdfType1Font2);
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 620)
+                .setFontAndSize(pdfType1Font2, 72)
+                .showText("New Hello world2")
+                .endText()
+                .restoreState();
+        canvas.rectangle(100, 500, 100, 100).fill();
+        canvas.release();
+        page.flush();
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
     public void createWrongAfm1() throws IOException, InterruptedException {
         String message = "";
         try {
@@ -1112,7 +1195,7 @@ public class PdfFontTest extends ExtendedITextTest {
     })
     public void createWrongPfb() throws IOException, InterruptedException {
         byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
-        PdfFont font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(afm, afm), null);
+        PdfFont font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(afm, afm, false), null);
         byte[] streamContent = ((PdfType1Font) font).getFontProgram().getFontStreamBytes();
         Assert.assertTrue("Empty stream content expected", streamContent == null);
     }
@@ -1121,7 +1204,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void autoDetect1() throws IOException, InterruptedException {
         byte[] afm = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.afm"));
 
-        Assert.assertTrue("Type1 font expected", FontProgramFactory.createFont(afm) instanceof Type1Font);
+        Assert.assertTrue("Type1 font expected", FontProgramFactory.createFont(afm, false) instanceof Type1Font);
     }
 
     @Test
@@ -1149,11 +1232,33 @@ public class PdfFontTest extends ExtendedITextTest {
         byte[] ttf = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "abserif4_5.ttf"));
         Assert.assertTrue("TrueType (TTF) expected", FontProgramFactory.createFont(ttf) instanceof TrueTypeFont);
     }
+    
+    @Test
+    public void testPdfFontFactoryTtc() throws IOException, InterruptedException {
+        String filename = destinationFolder + "testPdfFontFactoryTtc.pdf";
+        String cmpFilename = sourceFolder + "cmp_testPdfFontFactoryTtc.pdf";
+
+        String txt = "The quick brown fox";
+
+        PdfDocument doc = new PdfDocument(new PdfWriter(filename));
+        PdfPage page = doc.addNewPage();
+
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "uming.ttc,1");
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .beginText()
+                .moveText(36, 680)
+                .setFontAndSize(font, 12)
+                .showText(txt)
+                .endText()
+                .restoreState();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.FONT_HAS_INVALID_GLYPH, count = 131)
-    })
     public void testWriteTTC() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithTTC.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTTC.pdf";
@@ -1305,11 +1410,67 @@ public class PdfFontTest extends ExtendedITextTest {
     public void testSplitString() throws IOException {
         PdfFont font = PdfFontFactory.createFont();
         List<String> list1 = font.splitString("Hello", 12f, 10);
-        Assert.assertTrue(list1.size() == 2);
+        Assert.assertTrue(list1.size() == 3);
 
         List<String> list2 = font.splitString("Digitally signed by Dmitry Trusevich\nDate: 2015.10.25 14:43:56 MSK\nReason: Test 1\nLocation: Ghent", 12f, 176);
         Assert.assertTrue(list2.size() == 5);
     }
 
+    @Test
+    public void kozminNames() throws Exception {
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("KozMinPro-Regular");
+        Assert.assertEquals(descriptor.getFontName(), "KozMinPro-Regular");
+        Assert.assertEquals(descriptor.getFullNameLowerCase(), "KozMinPro-Regular".toLowerCase());
+        Assert.assertEquals(descriptor.getFontWeight(), 400);
+    }
 
+    @Test
+    public void helveticaNames() throws Exception {
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("Helvetica");
+        Assert.assertEquals(descriptor.getFontName(), "Helvetica");
+        Assert.assertEquals(descriptor.getFullNameLowerCase(), "Helvetica".toLowerCase());
+        Assert.assertEquals(descriptor.getFullNameLowerCase(), "helvetica");
+        Assert.assertEquals(descriptor.getFontWeight(), 500);
+    }
+
+    @Test
+    public void otfByStringNames() throws Exception {
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontsFolder + "Puritan2.otf");
+        Assert.assertEquals(descriptor.getFontName(), "Puritan2");
+        Assert.assertEquals(descriptor.getFullNameLowerCase(), "Puritan 2.0 Regular".toLowerCase());
+        Assert.assertEquals(descriptor.getFamilyNameLowerCase(), "Puritan 2.0".toLowerCase());
+        Assert.assertEquals(descriptor.getStyle(), "Normal");
+        Assert.assertEquals(descriptor.getFontWeight(), 400);
+
+    }
+
+    @Test
+    public void otfByStreamNames() throws Exception {
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "Puritan2.otf")));
+        Assert.assertEquals(descriptor.getFontName(), "Puritan2");
+        Assert.assertEquals(descriptor.getFullNameLowerCase(), "Puritan 2.0 Regular".toLowerCase());
+        Assert.assertEquals(descriptor.getFamilyNameLowerCase(), "Puritan 2.0".toLowerCase());
+        Assert.assertEquals(descriptor.getStyle(), "Normal");
+        Assert.assertEquals(descriptor.getFontWeight(), 400);
+    }
+
+    @Test
+    public void ttfByStringNames() throws Exception {
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontsFolder + "abserif4_5.ttf");
+        Assert.assertEquals(descriptor.getFontName(), "AboriginalSerif");
+        Assert.assertEquals(descriptor.getFullNameLowerCase(), "Aboriginal Serif".toLowerCase());
+        Assert.assertEquals(descriptor.getFamilyNameLowerCase(), "Aboriginal Serif".toLowerCase());
+        Assert.assertEquals(descriptor.getStyle(), "Regular");
+        Assert.assertEquals(descriptor.getFontWeight(), 400);
+    }
+
+    @Test
+    public void ttfByStreamNames() throws Exception {
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "abserif4_5.ttf")));
+        Assert.assertEquals(descriptor.getFontName(), "AboriginalSerif");
+        Assert.assertEquals(descriptor.getFullNameLowerCase(), "Aboriginal Serif".toLowerCase());
+        Assert.assertEquals(descriptor.getFamilyNameLowerCase(), "Aboriginal Serif".toLowerCase());
+        Assert.assertEquals(descriptor.getStyle(), "Regular");
+        Assert.assertEquals(descriptor.getFontWeight(), 400);
+    }
 }

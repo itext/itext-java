@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,10 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
+import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.property.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,17 +65,37 @@ public abstract class RootRenderer extends AbstractRenderer {
     protected int currentPageNumber;
     private IRenderer keepWithNextHangingRenderer;
     private LayoutResult keepWithNextHangingRendererLayoutResult;
+    private MarginsCollapseHandler marginsCollapseHandler;
+    private LayoutArea initialCurrentArea;
 
     public void addChild(IRenderer renderer) {
+        // Some positioned renderers might have been fetched from non-positioned child and added to this renderer,
+        // so we use this generic mechanism of determining which renderers have been just added.
+        int numberOfChildRenderers = childRenderers.size();
+        int numberOfPositionedChildRenderers = positionedRenderers.size();
         super.addChild(renderer);
+        List<IRenderer> addedRenderers = new ArrayList<>(1);
+        List<IRenderer> addedPositionedRenderers = new ArrayList<>(1);
+        while (childRenderers.size() > numberOfChildRenderers) {
+            addedRenderers.add(childRenderers.get(numberOfChildRenderers));
+            childRenderers.remove(numberOfChildRenderers);
+        }
+        while (positionedRenderers.size() > numberOfPositionedChildRenderers) {
+            addedPositionedRenderers.add(positionedRenderers.get(numberOfPositionedChildRenderers));
+            positionedRenderers.remove(numberOfPositionedChildRenderers);
+        }
 
+        boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
         if (currentArea == null) {
-            updateCurrentArea(null);
+            updateCurrentAndInitialArea(null);
+            if (marginsCollapsingEnabled) {
+                marginsCollapseHandler = new MarginsCollapseHandler(this, null);
+            }
         }
 
         // Static layout
-        if (currentArea != null && !childRenderers.isEmpty() && childRenderers.get(childRenderers.size() - 1) == renderer) {
-            childRenderers.remove(childRenderers.size() - 1);
+        for (int i = 0; currentArea != null && i < addedRenderers.size(); i++) {
+            renderer = addedRenderers.get(i);
 
             processWaitingKeepWithNextElement(renderer);
 
@@ -81,7 +104,11 @@ public abstract class RootRenderer extends AbstractRenderer {
 
             LayoutArea storedArea = null;
             LayoutArea nextStoredArea = null;
-            while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(new LayoutContext(currentArea.clone()))).getStatus() != LayoutResult.FULL) {
+            MarginsCollapseInfo childMarginsInfo = null;
+            if (marginsCollapsingEnabled && currentArea != null && renderer != null) {
+                childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
+            }
+            while (currentArea != null && renderer != null && (result = renderer.setParent(this).layout(new LayoutContext(currentArea.clone(), childMarginsInfo))).getStatus() != LayoutResult.FULL) {
                 if (result.getStatus() == LayoutResult.PARTIAL) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
                         ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
@@ -92,16 +119,18 @@ public abstract class RootRenderer extends AbstractRenderer {
                             currentPageNumber = nextStoredArea.getPageNumber();
                             nextStoredArea = null;
                         } else {
-                            updateCurrentArea(result);
+                            updateCurrentAndInitialArea(result);
                         }
                     }
                 } else if (result.getStatus() == LayoutResult.NOTHING) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
                         if (currentArea.getBBox().getHeight() < ((ImageRenderer) result.getOverflowRenderer()).imageHeight && !currentArea.isEmptyArea()) {
-                            updateCurrentArea(result);
+                            updateCurrentAndInitialArea(result);
                         }
                         ((ImageRenderer)result.getOverflowRenderer()).autoScale(currentArea);
                         result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
+                        Logger logger = LoggerFactory.getLogger(RootRenderer.class);
+                        logger.warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
                     } else {
                         if (currentArea.isEmptyArea() && !(renderer instanceof AreaBreakRenderer)) {
                             if (Boolean.TRUE.equals(result.getOverflowRenderer().getModelElement().<Boolean>getProperty(Property.KEEP_TOGETHER))) {
@@ -129,41 +158,68 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
                                 logger.warn(MessageFormat.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
                             }
-                            renderer = result.getOverflowRenderer();
-
-                            continue;
-                        }
-                        storedArea = currentArea;
-                        if (nextStoredArea != null) {
-                            currentArea = nextStoredArea;
-                            currentPageNumber = nextStoredArea.getPageNumber();
-                            nextStoredArea = null;
                         } else {
-                            updateCurrentArea(result);
+                            storedArea = currentArea;
+                            if (nextStoredArea != null) {
+                                currentArea = nextStoredArea;
+                                currentPageNumber = nextStoredArea.getPageNumber();
+                                nextStoredArea = null;
+                            } else {
+                                updateCurrentAndInitialArea(result);
+                            }
                         }
                     }
                 }
                 renderer = result.getOverflowRenderer();
+
+                if (marginsCollapsingEnabled) {
+                    marginsCollapseHandler.endChildMarginsHandling(currentArea.getBBox());
+                    marginsCollapseHandler = new MarginsCollapseHandler(this, null);
+                    childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
+                }
+            }
+            if (marginsCollapsingEnabled) {
+                marginsCollapseHandler.endChildMarginsHandling(currentArea.getBBox());
+            }
+
+            if (null != result && null != result.getSplitRenderer()) {
+                renderer = result.getSplitRenderer();
             }
 
             // Keep renderer until next element is added for future keep with next adjustments
-            if (renderer != null && Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.KEEP_WITH_NEXT))) {
-                if (Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
-                    Logger logger = LoggerFactory.getLogger(RootRenderer.class);
-                    logger.warn(LogMessageConstant.ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED);
+            if (renderer != null && result != null) {
+                if (Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.KEEP_WITH_NEXT))) {
+                    if (Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
+                        Logger logger = LoggerFactory.getLogger(RootRenderer.class);
+                        logger.warn(LogMessageConstant.ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED);
+                        updateCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
+                    } else {
+                        keepWithNextHangingRenderer = renderer;
+                        keepWithNextHangingRendererLayoutResult = result;
+                    }
+                } else if (result.getStatus() != LayoutResult.NOTHING) {
                     updateCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
-                } else {
-                    keepWithNextHangingRenderer = renderer;
-                    keepWithNextHangingRendererLayoutResult = result;
                 }
-            } else {
-                updateCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
             }
-        } else if (positionedRenderers.size() > 0 && positionedRenderers.get(positionedRenderers.size() - 1) == renderer) {
+        }
+
+        for (int i = 0; i < addedPositionedRenderers.size(); i++) {
+            positionedRenderers.add(addedPositionedRenderers.get(i));
+            renderer = positionedRenderers.get(positionedRenderers.size() - 1);
             Integer positionedPageNumber = renderer.<Integer>getProperty(Property.PAGE_NUMBER);
             if (positionedPageNumber == null)
                 positionedPageNumber = currentPageNumber;
-            renderer.setParent(this).layout(new LayoutContext(new LayoutArea((int) positionedPageNumber, currentArea.getBBox().clone())));
+
+            LayoutArea layoutArea;
+            // For position=absolute, if none of the top, bottom, left, right properties are provided,
+            // the content should be displayed in the flow of the current content, not overlapping it.
+            // The behavior is just if it would be statically positioned except it does not affect other elements
+            if (Integer.valueOf(LayoutPosition.ABSOLUTE).equals(renderer.<Integer>getProperty(Property.POSITION)) && AbstractRenderer.noAbsolutePositionInfo(renderer)) {
+                layoutArea = new LayoutArea((int) positionedPageNumber, currentArea.getBBox().clone());
+            } else {
+                layoutArea = new LayoutArea((int) positionedPageNumber, initialCurrentArea.getBBox().clone());
+            }
+            renderer.setParent(this).layout(new LayoutContext(layoutArea));
 
             if (immediateFlush) {
                 flushSingleRenderer(renderer);
@@ -216,7 +272,7 @@ public abstract class RootRenderer extends AbstractRenderer {
 
     public LayoutArea getCurrentArea() {
         if (currentArea == null) {
-            updateCurrentArea(null);
+            updateCurrentAndInitialArea(null);
         }
         return currentArea;
     }
@@ -236,11 +292,12 @@ public abstract class RootRenderer extends AbstractRenderer {
 
     private void updateCurrentAreaAndProcessRenderer(IRenderer renderer, List<IRenderer> resultRenderers, LayoutResult result) {
         if (currentArea != null) {
-            currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - result.getOccupiedArea().getBBox().getHeight());
-            currentArea.setEmptyArea(false);
-            if (renderer != null) {
-                processRenderer(renderer, resultRenderers);
+            float resultHeight = result.getOccupiedArea().getBBox().getHeight();
+            currentArea.getBBox().setHeight(currentArea.getBBox().getHeight() - resultHeight);
+            if (currentArea.isEmptyArea() && resultHeight > 0) {
+                currentArea.setEmptyArea(false);
             }
+            processRenderer(renderer, resultRenderers);
         }
 
         if (!immediateFlush) {
@@ -272,7 +329,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                     LayoutResult firstElementSplitLayoutResult = keepWithNextHangingRenderer.setParent(this).layout(new LayoutContext(firstElementSplitLayoutArea.clone()));
                     if (firstElementSplitLayoutResult.getStatus() == LayoutResult.PARTIAL) {
                         LayoutArea storedArea = currentArea;
-                        updateCurrentArea(firstElementSplitLayoutResult);
+                        updateCurrentAndInitialArea(firstElementSplitLayoutResult);
                         LayoutResult firstElementOverflowLayoutResult = firstElementSplitLayoutResult.getOverflowRenderer().layout(new LayoutContext(currentArea.clone()));
                         if (firstElementOverflowLayoutResult.getStatus() == LayoutResult.FULL) {
                             LayoutArea secondElementLayoutArea = currentArea.clone();
@@ -284,7 +341,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 currentArea = firstElementSplitLayoutArea;
                                 currentPageNumber = firstElementSplitLayoutArea.getPageNumber();
                                 updateCurrentAreaAndProcessRenderer(firstElementSplitLayoutResult.getSplitRenderer(), new ArrayList<IRenderer>(), firstElementSplitLayoutResult);
-                                updateCurrentArea(firstElementSplitLayoutResult);
+                                updateCurrentAndInitialArea(firstElementSplitLayoutResult);
                                 updateCurrentAreaAndProcessRenderer(firstElementSplitLayoutResult.getOverflowRenderer(), new ArrayList<IRenderer>(), firstElementOverflowLayoutResult);
                             }
                         }
@@ -297,7 +354,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             }
             if (!ableToProcessKeepWithNext && !currentArea.isEmptyArea()) {
                 LayoutArea storedArea = currentArea;
-                updateCurrentArea(null);
+                updateCurrentAndInitialArea(null);
                 LayoutResult firstElementLayoutResult = keepWithNextHangingRenderer.setParent(this).layout(new LayoutContext(currentArea.clone()));
                 if (firstElementLayoutResult.getStatus() == LayoutResult.FULL) {
                     LayoutArea secondElementLayoutArea = currentArea.clone();
@@ -322,4 +379,10 @@ public abstract class RootRenderer extends AbstractRenderer {
             keepWithNextHangingRendererLayoutResult = null;
         }
     }
+
+    private void updateCurrentAndInitialArea(LayoutResult overflowResult) {
+        updateCurrentArea(overflowResult);
+        initialCurrentArea = currentArea == null ? null : currentArea.clone();
+    }
+
 }

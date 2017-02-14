@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2016 iText Group NV
+    Copyright (c) 1998-2017 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,7 @@ package com.itextpdf.layout.border;
 
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.property.TransparentColor;
 
 /**
  * Represents a border.
@@ -104,8 +105,17 @@ public abstract class Border {
     /**
      * The color of the border.
      * @see Color
+     * @deprecated use {@link Border#transparentColor} instead
      */
+    @Deprecated
     protected Color color;
+
+    /**
+     * The color of the border.
+     * @see TransparentColor
+     */
+    protected TransparentColor transparentColor;
+
     /**
      * The width of the border.
      */
@@ -118,6 +128,8 @@ public abstract class Border {
      * The hash value for the border.
      */
     private int hash;
+
+    private Side tmpSide = Side.NONE;
 
     /**
      * Creates a {@link Border border} with the given width.
@@ -137,9 +149,23 @@ public abstract class Border {
      */
     protected Border(Color color, float width) {
         this.color = color;
+        this.transparentColor = new TransparentColor(color);
         this.width = width;
     }
 
+    /**
+     * Creates a {@link Border border} with given width, {@link Color color} and opacity.
+     *
+     * @param color the color which the border should have
+     * @param width the width which the border should have
+     * @param opacity the opacity which border should have; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
+     */
+    protected Border(Color color, float width, float opacity) {
+        this.color = color;
+        this.transparentColor = new TransparentColor(color, opacity);
+        this.width = width;
+    }
+    
     /**
      * <p>
      * All borders are supposed to be drawn in such way, that inner content of the element is on the right from the
@@ -163,8 +189,42 @@ public abstract class Border {
      * @param y2 y coordinate of the ending point of the element side, that should be bordered
      * @param borderWidthBefore defines width of the border that is before the current one
      * @param borderWidthAfter defines width of the border that is after the current one
+     *
+     * @deprecated Will be removed in 7.1.0. use {@link Border#draw(PdfCanvas, float, float, float, float, Side, float, float)} instead
      */
+    @Deprecated
     public abstract void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float borderWidthBefore, float borderWidthAfter);
+
+    /**
+     * <p>
+     * All borders are supposed to be drawn in such way, that inner content of the element is on the right from the
+     * drawing direction. Borders are drawn in this order: top, right, bottom, left.
+     * </p>
+     * <p>
+     * Given points specify the line which lies on the border of the content area,
+     * therefore the border itself should be drawn to the left from the drawing direction.
+     * </p>
+     * <p>
+     * <code>borderWidthBefore</code> and <code>borderWidthAfter</code> parameters are used to
+     * define the widths of the borders that are before and after the current border, e.g. for
+     * the bottom border, <code>borderWidthBefore</code> specifies width of the right border and
+     * <code>borderWidthAfter</code> - width of the left border. Those width are used to handle areas
+     * of border joins.
+     * </p>
+     * @param canvas PdfCanvas to be written to
+     * @param x1 x coordinate of the beginning point of the element side, that should be bordered
+     * @param y1 y coordinate of the beginning point of the element side, that should be bordered
+     * @param x2 x coordinate of the ending point of the element side, that should be bordered
+     * @param y2 y coordinate of the ending point of the element side, that should be bordered
+     * @param side the {@link Border.Side}, that represents element side, that should be bordered
+     * @param borderWidthBefore defines width of the border that is before the current one
+     * @param borderWidthAfter defines width of the border that is after the current one
+     */
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, Side side, float borderWidthBefore, float borderWidthAfter) {
+        tmpSide = side;
+        draw(canvas, x1, y1, x2, y2, borderWidthBefore, borderWidthAfter);
+        tmpSide = Side.NONE;
+    }
 
     /**
      * Draws the border of a cell.
@@ -188,7 +248,16 @@ public abstract class Border {
      * @return the {@link Color color}
      */
     public Color getColor() {
-        return color;
+        return transparentColor.getColor();
+    }
+
+    /**
+     * Gets the opacity of the {@link Border border}
+     * 
+     * @return the border opacity; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
+     */
+    public float getOpacity() {
+        return transparentColor.getOpacity();
     }
 
     /**
@@ -205,6 +274,7 @@ public abstract class Border {
      */
     public void setColor(Color color) {
         this.color = color;
+        this.transparentColor = new TransparentColor(color, this.transparentColor.getOpacity());
     }
 
     /**
@@ -226,8 +296,9 @@ public abstract class Border {
         if (anObject instanceof Border) {
             Border anotherBorder = (Border) anObject;
             if (anotherBorder.getType() != getType()
-                    || anotherBorder.getColor() != getColor()
-                    || anotherBorder.getWidth() != getWidth()) {
+                    || !anotherBorder.getColor().equals(getColor())
+                    || anotherBorder.getWidth() != getWidth()
+                    || anotherBorder.transparentColor.getOpacity() != transparentColor.getOpacity()) {
                 return false;
             }
         } else {
@@ -245,6 +316,7 @@ public abstract class Border {
 
         if (h == 0) {
             h = (int) getWidth() * 31 + getColor().hashCode();
+            h = h * 31 + (int) transparentColor.getOpacity();
             hash = h;
         }
 
@@ -288,7 +360,7 @@ public abstract class Border {
             return Side.LEFT;
         }
 
-        return Side.NONE;
+        return tmpSide;
     }
 
     /**
@@ -296,5 +368,5 @@ public abstract class Border {
      * The rectangle sides are expected to be parallel to corresponding page sides
      * Otherwise the result is Side.NONE
      */
-    protected enum Side {NONE, TOP, RIGHT, BOTTOM, LEFT}
+    public enum Side {NONE, TOP, RIGHT, BOTTOM, LEFT}
 }
