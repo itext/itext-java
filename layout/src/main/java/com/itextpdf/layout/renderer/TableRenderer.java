@@ -564,7 +564,9 @@ public class TableRenderer extends AbstractRenderer {
                 }
                 LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea));
                 // we need to disable collapsing with the next row
-                if (!processAsLast && LayoutResult.NOTHING == cellResult.getStatus()) {
+                if (!processAsLast && LayoutResult.NOTHING == cellResult.getStatus()
+                    && !Boolean.TRUE.equals(this.<Boolean>getOwnProperty(Property.IGNORE_FOOTER))
+                        ) { // TODO There should be only one property for header / footer and processing as last ignoring
                     processAsLast = true;
                     // undo collapsing with the next row
                     widestRowBottomBorder = null;
@@ -585,11 +587,13 @@ public class TableRenderer extends AbstractRenderer {
                     }
                     continue;
                 }
-                if (collapsedBottomBorder != null && null != cellResult.getOccupiedArea()) {
-                    // apply the difference between collapsed table border and own cell border
-                    cellResult.getOccupiedArea().getBBox()
-                            .moveUp((collapsedBottomBorder.getWidth() - (oldBottomBorder == null ? 0 : oldBottomBorder.getWidth())) / 2)
-                            .decreaseHeight((collapsedBottomBorder.getWidth() - (oldBottomBorder == null ? 0 : oldBottomBorder.getWidth())) / 2);
+                if (collapsedBottomBorder != null) {
+                    if (null != cellResult.getOccupiedArea()) {
+                        // apply the difference between collapsed table border and own cell border
+                        cellResult.getOccupiedArea().getBBox()
+                                .moveUp((collapsedBottomBorder.getWidth() - (oldBottomBorder == null ? 0 : oldBottomBorder.getWidth())) / 2)
+                                .decreaseHeight((collapsedBottomBorder.getWidth() - (oldBottomBorder == null ? 0 : oldBottomBorder.getWidth())) / 2);
+                    }
                     cell.setProperty(Property.BORDER_BOTTOM, oldBottomBorder);
                 }
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);
@@ -620,7 +624,8 @@ public class TableRenderer extends AbstractRenderer {
                             // This is a case when last footer should be skipped and we might face an end of the table.
                             // We check if we can fit all the rows right now and the split occurred only because we reserved
                             // space for footer before, and if yes we skip footer and write all the content right now.
-                            if (null != footerRenderer && tableModel.isSkipLastFooter() && tableModel.isComplete()) {
+                            boolean skipLastFooter = null != footerRenderer && tableModel.isSkipLastFooter() && tableModel.isComplete();
+                            if (skipLastFooter) {
                                 LayoutArea potentialArea = new LayoutArea(area.getPageNumber(), layoutBox.clone());
                                 // Fix layout area
                                 Border widestRowTopBorder = bordersHandler.getWidestHorizontalBorder(rowRange.getStartRow() + row);
@@ -642,7 +647,11 @@ public class TableRenderer extends AbstractRenderer {
                                 overflowRenderer.rowRange = new Table.RowRange(0, rows.size() - row - 1);
                                 overflowRenderer.processRendererBorders(numberOfColumns);
                                 prepareFooterOrHeaderRendererForLayout(overflowRenderer, layoutBox.getWidth());
-                                if (LayoutResult.FULL == overflowRenderer.layout(new LayoutContext(potentialArea)).getStatus()) {
+//                                this.saveCellsProperties();
+                                LayoutResult res = overflowRenderer.layout(new LayoutContext(potentialArea));
+//                                this.restoreCellsProperties();
+//                                currentRow[col] = (CellRenderer) cellResult.getSplitRenderer();
+                                if (LayoutResult.FULL == res.getStatus()) {
                                     footerRenderer = null;
                                     // fix layout area and table bottom border
                                     layoutBox.increaseHeight(footerHeight).moveDown(footerHeight);
@@ -954,6 +963,11 @@ public class TableRenderer extends AbstractRenderer {
                             //bordersHandler.updateTopBorder(lastFlushedRowBottomBorder, new boolean[numberOfColumns]); // FIXME LARGE TABLE
                         }
                     }
+                } else {
+                    if (0 == this.childRenderers.size()) {
+                        occupiedArea.getBBox().moveUp(topBorderMaxWidth / 2).decreaseHeight(topBorderMaxWidth / 2);
+                        layoutBox.increaseHeight(topBorderMaxWidth / 2);
+                    }
                 }
                 if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))
                         || Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))) {
@@ -1014,11 +1028,7 @@ public class TableRenderer extends AbstractRenderer {
                         if (hasProperty(Property.MAX_HEIGHT)) {
                             splitResult[1].setProperty(Property.MAX_HEIGHT, retrieveMaxHeight() - occupiedArea.getBBox().getHeight());
                         }
-                        if (status != LayoutResult.NOTHING) {
-                            return new LayoutResult(status, occupiedArea, splitResult[0], splitResult[1], null);
-                        } else {
-                            return new LayoutResult(status, null, splitResult[0], splitResult[1], firstCauseOfNothing);
-                        }
+                        return new LayoutResult(status, status != LayoutResult.NOTHING ? occupiedArea : null, splitResult[0], splitResult[1], null == firstCauseOfNothing ? this : firstCauseOfNothing);
                     }
                 }
             }

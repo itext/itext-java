@@ -106,6 +106,7 @@ public class CellRenderer extends BlockRenderer {
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());
+        overflowRenderer.oldProperties.putAll(oldProperties);
         return overflowRenderer;
     }
 
