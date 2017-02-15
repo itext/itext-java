@@ -131,6 +131,22 @@ public class AreaBreakRenderer implements IRenderer {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IRenderer getParent() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IRenderer getRoot() {
+        return this;
+    }
+
     @Override
     public IPropertyContainer getModelElement() {
         return null;

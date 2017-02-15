@@ -619,6 +619,26 @@ public abstract class AbstractRenderer implements IRenderer {
      * {@inheritDoc}
      */
     @Override
+    public IRenderer getParent() {
+        return parent;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IRenderer getRoot() {
+        IRenderer renderer = this;
+        while (renderer.getParent() != null) {
+            renderer = renderer.getParent();
+        }
+        return renderer;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void move(float dxRight, float dyUp) {
         occupiedArea.getBBox().moveRight(dxRight);
         occupiedArea.getBBox().moveUp(dyUp);

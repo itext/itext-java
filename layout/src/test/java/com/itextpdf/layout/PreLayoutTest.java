@@ -158,6 +158,23 @@ public class PreLayoutTest extends ExtendedITextTest{
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void preLayoutTest03() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "preLayoutTest03.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDoc, PageSize.Default, false);
+        document.add(new Paragraph("A"));
+
+        IRenderer documentRenderer = document.getRenderer();
+        IRenderer paragraphRenderer = documentRenderer.getChildRenderers().get(0);
+        IRenderer textRenderer = paragraphRenderer.getChildRenderers().get(0);
+        Assert.assertEquals(documentRenderer, paragraphRenderer.getParent());
+        Assert.assertEquals(documentRenderer, textRenderer.getRoot());
+        Assert.assertNull(documentRenderer.getParent());
+        Assert.assertEquals(documentRenderer, documentRenderer.getRoot());
+    }
+
     static class TwoColumnParagraphRenderer extends ParagraphRenderer {
 
         int oneColumnPage = -1;
