@@ -200,14 +200,23 @@ public class CanvasTag {
     }
 
     public String getActualText() {
-        PdfString actualText = properties.getAsString(PdfName.ActualText);
+        return getPropertyAsString(PdfName.ActualText);
+    }
+    
+    public String getExpansionText() {
+        return getPropertyAsString(PdfName.E);
+    }
+
+    private String getPropertyAsString(PdfName name)
+    {
+        PdfString text = properties.getAsString(name);
         String result = null;
-        if (actualText != null) {
-            result = actualText.toUnicodeString();
+        if(text != null) {
+            result = text.toUnicodeString();
         }
         return result;
     }
-
+    
     private void ensurePropertiesInit() {
         if (properties == null) {
             properties = new PdfDictionary();
