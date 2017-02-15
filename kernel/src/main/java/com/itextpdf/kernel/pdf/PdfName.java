@@ -511,6 +511,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Name = createDirectName("Name");
     public static final PdfName Named = createDirectName("Named");
     public static final PdfName Names = createDirectName("Names");
+    public static final PdfName Namespace = createDirectName("Namespace");
+    public static final PdfName Namespaces = createDirectName("Namespaces");
     public static final PdfName NeedAppearances = createDirectName("NeedAppearances");
     public static final PdfName NeedsRendering = createDirectName("NeedsRendering");
     public static final PdfName NewWindow = createDirectName("NewWindow");
@@ -526,6 +528,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName NotApproved = createDirectName("NotApproved");
     public static final PdfName Note = createDirectName("Note");
     public static final PdfName NotForPublicRelease = createDirectName("NotForPublicRelease");
+    public static final PdfName NS = createDirectName("NS");
     public static final PdfName NumCopies = createDirectName("NumCopies");
     public static final PdfName Nums = createDirectName("Nums");
     public static final PdfName O = createDirectName("O");
@@ -618,6 +621,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Private = createDirectName("Private");
     public static final PdfName ProcSet = createDirectName("ProcSet");
     public static final PdfName Producer = createDirectName("Producer");
+    public static final PdfName PronunciationLexicon = createDirectName("PronunciationLexicon");
     public static final PdfName Prop_Build = createDirectName("Prop_Build");
     public static final PdfName Properties = createDirectName("Properties");
     public static final PdfName PS = createDirectName("PS");
@@ -651,11 +655,15 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Requirements = createDirectName("Requirements");
     public static final PdfName Resources = createDirectName("Resources");
     public static final PdfName ReversedChars = createDirectName("ReversedChars");
+    public static final PdfName Phoneme = createDirectName("Phoneme");
+    public static final PdfName PhoneticAlphabet = createDirectName("PhoneticAlphabet");
+    public static final PdfName Ref = createDirectName("Ref");
     public static final PdfName RI = createDirectName("RI");
     public static final PdfName RichMedia = createDirectName("RichMedia");
     public static final PdfName Ridge = createDirectName("Ridge");
     public static final PdfName RO = createDirectName("RO");
     public static final PdfName RoleMap = createDirectName("RoleMap");
+    public static final PdfName RoleMapNS = createDirectName("RoleMapNS");
     public static final PdfName ROpenArrow = createDirectName("ROpenArrow");
     public static final PdfName Root = createDirectName("Root");
     public static final PdfName Rotate = createDirectName("Rotate");

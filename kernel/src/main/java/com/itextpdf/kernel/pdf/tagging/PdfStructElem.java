@@ -57,6 +57,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -337,6 +338,54 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IP
 
     public PdfObject getK() {
         return getPdfObject().get(PdfName.K);
+    }
+    
+    public List<PdfStructElem> getRefsList() {
+        PdfArray refsArray = getPdfObject().getAsArray(PdfName.Ref);
+        if (refsArray == null) {
+            return Collections.<PdfStructElem>emptyList();
+        } else {
+            List<PdfStructElem> refs = new ArrayList<>(refsArray.size());
+            for (int i = 0; i < refsArray.size(); ++i) {
+                refs.add(new PdfStructElem(refsArray.getAsDictionary(i)));
+            }
+            return refs;
+        }
+    }
+    
+    public void addRef(PdfStructElem ref) {
+        PdfArray refsArray = getPdfObject().getAsArray(PdfName.Ref);
+        if (refsArray == null) {
+            refsArray = new PdfArray();
+            put(PdfName.Ref, refsArray);
+        }
+        refsArray.add(ref.getPdfObject());
+        setModified();
+    }
+    
+    public PdfNamespace getNamespace() {
+        PdfDictionary nsDict = getPdfObject().getAsDictionary(PdfName.NS);
+        return nsDict != null ? new PdfNamespace(nsDict) : null;
+    }
+    
+    public void setNamespace(PdfNamespace namespace) {
+        put(PdfName.NS, namespace.getPdfObject());
+    }
+    
+    public void setPhoneme(PdfString elementPhoneme) {
+        put(PdfName.Phoneme, elementPhoneme);
+    }
+    
+    public PdfString getPhoneme() {
+        return getPdfObject().getAsString(PdfName.Phoneme);
+    }
+    
+    public void setPhoneticAlphabet(PdfName phoneticAlphabet) {
+        put(PdfName.PhoneticAlphabet, phoneticAlphabet);
+    }
+    
+    public PdfName getPhoneticAlphabet() {
+        return getPdfObject().getAsName(PdfName.PhoneticAlphabet);
     }
 
     public static int identifyType(PdfDocument doc, PdfName role) {

@@ -63,6 +63,11 @@ public class AccessibilityProperties implements Serializable {
     protected String alternateDescription;
     protected String expansion;
     protected List<PdfDictionary> attributesList = new ArrayList<>();
+    
+    protected String phoneme;
+    protected PdfName phoneticAlphabet;
+    protected List<PdfDictionary> refs = new ArrayList<>(); 
+    
 
     public String getLanguage() {
         return language;
@@ -102,18 +107,52 @@ public class AccessibilityProperties implements Serializable {
 
     public AccessibilityProperties addAttributes(PdfDictionary attributes) {
         attributesList.add(attributes);
-
         return this;
     }
 
     public AccessibilityProperties clearAttributes() {
         attributesList.clear();
-
         return this;
     }
 
     public List<PdfDictionary> getAttributesList() {
         return attributesList;
+    }
+    
+    public AccessibilityProperties setPhoneme(String phoneme) {
+        this.phoneme = phoneme;
+        return this;
+    }
+    
+    public String getPhoneme() {
+        return this.phoneme;
+    }
+    
+    public AccessibilityProperties setPhoneticAlphabet(PdfName phoneticAlphabet) {
+        this.phoneticAlphabet = phoneticAlphabet;
+        return this;
+    }
+    
+    public PdfName getPhoneticAlphabet() {
+        return this.phoneticAlphabet;
+    }
+    
+    public AccessibilityProperties addRef(TagTreePointer treePointer) {
+        refs.add(treePointer.getCurrentStructElem().getPdfObject());
+        return this;
+    }
+    
+    public List<TagTreePointer> getRefsList() {
+        List<TagTreePointer> refsList = new ArrayList<>();
+        for (PdfDictionary ref : refs) {
+            refsList.add(new TagTreePointer(new PdfStructElem(ref)));
+        }
+        return refsList;
+    }
+    
+    public AccessibilityProperties clearRefs() {
+        refs.clear();
+        return this;
     }
 
     void setToStructElem(PdfStructElem elem) {
@@ -136,6 +175,16 @@ public class AccessibilityProperties implements Serializable {
 
             PdfObject combinedAttributes = combineAttributesList(attributesObject, newAttributesList, elem.getPdfObject().getAsNumber(PdfName.R));
             elem.setAttributes(combinedAttributes);
+        }
+        
+        if (getPhoneme() != null) {
+            elem.setPhoneme(new PdfString(getPhoneme()));
+        }
+        if (getPhoneticAlphabet() != null) {
+            elem.setPhoneticAlphabet(getPhoneticAlphabet());
+        }
+        for (PdfDictionary ref : refs) {
+            elem.addRef(new PdfStructElem(ref));
         }
     }
 

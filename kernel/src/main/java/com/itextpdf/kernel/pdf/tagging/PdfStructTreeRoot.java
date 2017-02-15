@@ -51,6 +51,7 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -148,6 +149,57 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         return roleMap;
     }
 
+    public List<PdfNamespace> getNamespaces() {
+        PdfArray namespacesArray = getPdfObject().getAsArray(PdfName.Namespaces);
+        if (namespacesArray == null) {
+            return Collections.<PdfNamespace>emptyList();
+        } else {
+            List<PdfNamespace> namespacesList = new ArrayList<>(namespacesArray.size());
+            for (int i = 0; i < namespacesArray.size(); ++i) {
+                namespacesList.add(new PdfNamespace(namespacesArray.getAsDictionary(i)));
+            }
+            return namespacesList;
+        }
+    }
+    
+    public void addNamespace(PdfNamespace namespace) {
+        getNamespacesObject().add(namespace.getPdfObject());
+        setModified();
+    }
+    
+    public PdfArray getNamespacesObject() {
+        PdfArray namespacesArray = getPdfObject().getAsArray(PdfName.Namespaces);
+        if (namespacesArray == null) {
+            namespacesArray = new PdfArray();
+            getPdfObject().put(PdfName.Namespaces, namespacesArray);
+            setModified();
+        }
+        return namespacesArray;
+    }
+
+    public List<PdfFileSpec> getPronunciationLexiconsList() {
+        PdfArray pronunciationLexicons = getPdfObject().getAsArray(PdfName.PronunciationLexicon);
+        if (pronunciationLexicons == null) {
+            return Collections.<PdfFileSpec>emptyList();
+        } else {
+            List<PdfFileSpec> lexiconsList = new ArrayList<>(pronunciationLexicons.size());
+            for (int i = 0; i < pronunciationLexicons.size(); ++i) {
+                lexiconsList.add(PdfFileSpec.wrapFileSpecObject(pronunciationLexicons.get(i)));
+            }
+            return lexiconsList;
+        }
+    }
+
+    public void addPronunciationLexicon(PdfFileSpec pronunciationLexiconFileSpec) {
+        PdfArray pronunciationLexicons = getPdfObject().getAsArray(PdfName.PronunciationLexicon);
+        if (pronunciationLexicons == null) {
+            pronunciationLexicons = new PdfArray();
+            getPdfObject().put(PdfName.PronunciationLexicon, pronunciationLexicons);
+        }
+        pronunciationLexicons.add(pronunciationLexiconFileSpec.getPdfObject());
+        setModified();
+    }
+    
     /**
      * Creates and flushes parent tree entry for the page.
      * Effectively this means that new content mustn't be added to the page.

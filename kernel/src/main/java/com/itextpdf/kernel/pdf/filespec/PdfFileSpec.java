@@ -59,6 +59,17 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject>  {
 	protected PdfFileSpec(PdfObject pdfObject) {
         super(pdfObject);
     }
+    
+    public static PdfFileSpec wrapFileSpecObject(PdfObject fileSpecObject) {
+	    if (fileSpecObject != null) {
+            if (fileSpecObject.isString()) {
+                return new PdfStringFS((PdfString) fileSpecObject);
+            } else if (fileSpecObject.isDictionary()) {
+                return new PdfDictionaryFS((PdfDictionary) fileSpecObject);
+            }
+        }
+        return null;
+    }
 
     public static PdfFileSpec createExternalFileSpec(PdfDocument doc, String filePath, boolean isUnicodeFileName) {
         PdfDictionary dict = new PdfDictionary();

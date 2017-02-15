@@ -118,13 +118,19 @@ public class TagTreePointer implements Serializable {
         this.contentStream = tagPointer.contentStream;
     }
 
+    TagTreePointer(PdfStructElem structElem) {
+        PdfDocument doc = structElem.getPdfObject().getIndirectReference().getDocument();
+        tagStructureContext = doc.getTagStructureContext();
+        setCurrentStructElem(structElem);
+    }
+
     /**
      * Sets a page which content will be tagged with this instance of {@code TagTreePointer}.
      * To tag page content:
      * <ol>
      * <li>Set pointer position to the tag which will be the parent of the page content item;</li>
      * <li>Call {@link #getTagReference()} to obtain the reference to the current tag;</li>
-     * <li>Pass {@code PdfTagReference} to the {@link PdfCanvas#openTag(TagReference)} method of the page's {@link PdfCanvas} to start marked content item;</li>
+     * <li>Pass {@link TagReference} to the {@link PdfCanvas#openTag(TagReference)} method of the page's {@link PdfCanvas} to start marked content item;</li>
      * <li>Draw content on {@code PdfCanvas};</li>
      * <li>Use {@link PdfCanvas#closeTag()} to finish marked content item.</li>
      * </ol>

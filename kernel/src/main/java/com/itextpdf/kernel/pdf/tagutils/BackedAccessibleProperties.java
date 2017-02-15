@@ -65,7 +65,7 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     @Override
     public String getLanguage() {
-        return backingElem.getLang().getValue();
+        return backingElem.getLang().toUnicodeString();
     }
 
     @Override
@@ -76,7 +76,7 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     @Override
     public String getActualText() {
-        return backingElem.getActualText().getValue();
+        return backingElem.getActualText().toUnicodeString();
     }
 
     @Override
@@ -87,7 +87,7 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     @Override
     public String getAlternateDescription() {
-        return backingElem.getAlt().getValue();
+        return backingElem.getAlt().toUnicodeString();
     }
 
     @Override
@@ -98,7 +98,7 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     @Override
     public String getExpansion() {
-        return backingElem.getE().getValue();
+        return backingElem.getE().toUnicodeString();
     }
 
     @Override
@@ -140,6 +140,49 @@ class BackedAccessibleProperties extends AccessibilityProperties {
             }
         }
         return attributesList;
+    }
+
+    @Override
+    public AccessibilityProperties setPhoneme(String phoneme) {
+        backingElem.setPhoneme(new PdfString(phoneme));
+        return this;
+    }
+
+    @Override
+    public String getPhoneme() {
+        return backingElem.getPhoneme().toUnicodeString();
+    }
+
+    @Override
+    public AccessibilityProperties setPhoneticAlphabet(PdfName phoneticAlphabet) {
+        backingElem.setPhoneticAlphabet(phoneticAlphabet);
+        return this;
+    }
+
+    @Override
+    public PdfName getPhoneticAlphabet() {
+        return backingElem.getPhoneticAlphabet();
+    }
+
+    @Override
+    public AccessibilityProperties addRef(TagTreePointer treePointer) {
+        backingElem.addRef(treePointer.getCurrentStructElem());
+        return this;
+    }
+
+    @Override
+    public List<TagTreePointer> getRefsList() {
+        List<TagTreePointer> refsList = new ArrayList<>();
+        for (PdfStructElem ref : backingElem.getRefsList()) {
+            refsList.add(new TagTreePointer(ref));
+        }
+        return refsList;
+    }
+
+    @Override
+    public AccessibilityProperties clearRefs() {
+        backingElem.getPdfObject().remove(PdfName.Ref);
+        return this;
     }
 
     @Override

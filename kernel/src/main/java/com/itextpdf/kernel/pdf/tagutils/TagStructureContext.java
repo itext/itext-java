@@ -123,6 +123,15 @@ public class TagStructureContext implements Serializable {
         this(document, document.getPdfVersion());
     }
 
+    /**
+     * Do not use this constructor, instead use {@link PdfDocument#getTagStructureContext()}
+     * method.
+     * <br/><br/>
+     * Creates {@code TagStructureContext} for document. There shall be only one instance of this
+     * class per {@code PdfDocument}.
+     * @param document the document which tag structure will be manipulated with this class.
+     * @param tagStructureTargetVersion the version of the pdf standard to which the tag structure shall adhere. 
+     */
     public TagStructureContext(PdfDocument document, PdfVersion tagStructureTargetVersion) {
         this.document = document;
         if (!document.isTagged()) {
