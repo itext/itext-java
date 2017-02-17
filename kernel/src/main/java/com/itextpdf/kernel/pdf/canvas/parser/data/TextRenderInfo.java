@@ -328,12 +328,12 @@ public class TextRenderInfo implements IEventData {
     /**
      * Gets /E tag (expansion text) entry value if this text chunk is marked content.
      * @return /E value or <code>null</code> if none found
-     */    
+     */
     public String getExpansionText() {
         String expansionText = null;
-        for(CanvasTag tag : canvasTagHierarchy) {
+        for (CanvasTag tag : canvasTagHierarchy) {
             expansionText = tag.getExpansionText();
-            if(expansionText != null) {
+            if (expansionText != null) {
                 break;
             }
         }

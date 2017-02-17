@@ -207,11 +207,10 @@ public class CanvasTag {
         return getPropertyAsString(PdfName.E);
     }
 
-    private String getPropertyAsString(PdfName name)
-    {
+    private String getPropertyAsString(PdfName name) {
         PdfString text = properties.getAsString(name);
         String result = null;
-        if(text != null) {
+        if (text != null) {
             result = text.toUnicodeString();
         }
         return result;
