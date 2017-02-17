@@ -1500,30 +1500,6 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    public void tableSplitTest00() throws IOException, InterruptedException {
-        String testName = "tableSplitTest00.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
-
-        String gretzky = "Make Gretzky great again!";
-
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        Document doc = new Document(pdfDoc, PageSize.A8.rotate());
-
-        Table table = new Table(2);
-        table.setBorder(new SolidBorder(Color.GREEN, 15));
-        for (int col = 0; col < 100; col++) {
-            table.addCell(new Cell().add(gretzky));
-            table.addCell(new Cell().add(gretzky));
-        }
-
-        doc.add(table);
-
-        doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
-    }
-
-    @Test
     public void tableSplitTest01() throws IOException, InterruptedException {
         String testName = "tableSplitTest01.pdf";
         String outFileName = destinationFolder + testName;
