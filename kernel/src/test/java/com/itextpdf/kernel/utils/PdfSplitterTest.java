@@ -101,7 +101,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
 
         for (int i = 1; i <= 3; i++) {
             Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "splitDocument1_" + String.valueOf(i) + ".pdf",
-                    sourceFolder + "cmp/" + "splitDocument1_" + String.valueOf(i) + ".pdf", destinationFolder, "diff_"));
+                    sourceFolder + "cmp/" + "cmp_splitDocument1_" + String.valueOf(i) + ".pdf", destinationFolder, "diff_"));
         }
     }
 
@@ -137,7 +137,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
 
         for (int i = 1; i <= 3; i++) {
             Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "splitDocument2_" + String.valueOf(i) + ".pdf",
-                    sourceFolder + "cmp/" + "splitDocument2_" + String.valueOf(i) + ".pdf", destinationFolder, "diff_"));
+                    sourceFolder + "cmp/" + "cmp_splitDocument2_" + String.valueOf(i) + ".pdf", destinationFolder, "diff_"));
         }
     }
 
@@ -171,7 +171,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
 
         for (int i = 1; i <= 2; i++) {
             Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "splitDocument3_" + i + ".pdf",
-                    sourceFolder + "cmp/" + "splitDocument3_" + String.valueOf(i) + ".pdf", destinationFolder, "diff_"));
+                    sourceFolder + "cmp/" + "cmp_splitDocument3_" + String.valueOf(i) + ".pdf", destinationFolder, "diff_"));
         }
     }
 
@@ -205,7 +205,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
 
         for (int i = 1; i <= 2; i++) {
             Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "splitDocument4_" + i + ".pdf",
-                    sourceFolder + "cmp/" + "splitDocument4_" + String.valueOf(i) + ".pdf", destinationFolder, "diff_"));
+                    sourceFolder + "cmp/" + "cmp_splitDocument4_" + String.valueOf(i) + ".pdf", destinationFolder, "diff_"));
         }
     }
 
@@ -254,7 +254,7 @@ public class PdfSplitterTest extends ExtendedITextTest{
 
         for (int i = 1; i <= 4; ++i) {
             Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "splitBySize_part" + i + ".pdf",
-                                                                 sourceFolder + "cmp/" + "splitBySize_part" + i + ".pdf", destinationFolder, "diff_"));
+                                                                 sourceFolder + "cmp/" + "cmp_splitBySize_part" + i + ".pdf", destinationFolder, "diff_"));
         }
     }
 }
