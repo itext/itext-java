@@ -449,8 +449,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                 for (PdfPage oldPage : page2page.keySet()) {
                     if (oldPage.getPdfObject() == pageObject) {
                         array.set(0, page2page.get(oldPage).getPdfObject());
+                        //Create new Array
+                        PdfArray copiedArray = new PdfArray(array);
+                        copiedArray.makeIndirect(toDocument);
                         d = new PdfStringDestination(name);
-                        toDocument.addNamedDestination(name, array);
+                        toDocument.addNamedDestination(name, copiedArray);
                     }
                 }
             }
