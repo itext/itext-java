@@ -314,7 +314,9 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
         bordersHandler.setRowRange(rowRange);
-
+        if (isOriginalRenderer()) {
+            bordersHandler.normalizeRowRange();
+        }
         initializeHeaderAndFooter(0 == rowRange.getStartRow() || area.isEmptyArea());
         collapseAllBorders();
 

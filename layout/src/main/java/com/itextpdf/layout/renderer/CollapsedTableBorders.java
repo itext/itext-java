@@ -17,7 +17,8 @@ public class CollapsedTableBorders extends TableBorders {
     // region constructors
 
     public CollapsedTableBorders(List<CellRenderer[]> rows, int numberOfColumns) {
-        this(rows, numberOfColumns, null);
+        super(rows, numberOfColumns);
+
     }
 
     public CollapsedTableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders) {
@@ -25,6 +26,12 @@ public class CollapsedTableBorders extends TableBorders {
         topBorderCollapseWith = new ArrayList<Border>();
         bottomBorderCollapseWith = new ArrayList<Border>();
     }
+
+    public CollapsedTableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders, boolean isLargeTable) {
+        this(rows, numberOfColumns, tableBoundingBorders);
+        this.isLargeTable = isLargeTable;
+    }
+
 
     // endregion
 

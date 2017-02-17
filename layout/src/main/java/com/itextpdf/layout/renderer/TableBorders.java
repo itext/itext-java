@@ -20,6 +20,8 @@ public abstract class TableBorders {
 
     protected Table.RowRange rowRange;
 
+    protected boolean isLargeTable;
+
     public TableBorders(List<CellRenderer[]> rows, int numberOfColumns) {
         this.rows = rows;
         this.numberOfColumns = numberOfColumns;
@@ -28,9 +30,19 @@ public abstract class TableBorders {
         tableBoundingBorders = new Border[4];
     }
 
+    public TableBorders(List<CellRenderer[]> rows, int numberOfColumns, boolean isLargeTable) {
+        this(rows, numberOfColumns);
+        this.isLargeTable = isLargeTable;
+    }
+
     public TableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders) {
         this(rows, numberOfColumns);
         setTableBoundingBorders(tableBoundingBorders);
+    }
+
+    public TableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders, boolean isLargeTable) {
+        this(rows, numberOfColumns, tableBoundingBorders);
+        this.isLargeTable = isLargeTable;
     }
 
     protected void initializeBorders(List<Border> lastFlushedRowBottomBorder, boolean isFirstOnPage) {
@@ -69,6 +81,13 @@ public abstract class TableBorders {
             for (int i = 0; i < borders.length; i++) {
                 tableBoundingBorders[i] = borders[i];
             }
+        }
+        return this;
+    }
+
+    protected TableBorders normalizeRowRange() {
+        if (isLargeTable) {
+            this.rowRange = new Table.RowRange(0, rowRange.getFinishRow() - rowRange.getStartRow());
         }
         return this;
     }
