@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf.tagutils;
 
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -53,6 +54,7 @@ import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
@@ -66,6 +68,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -101,15 +104,17 @@ public class TagStructureContext implements Serializable {
 
     /**
      * These two fields define the connections between tags ({@code PdfStructElem}) and
-     * layout model elements ({@code IAccessibleElement}). This connection is used as
+     * layout model elements ({@link IAccessibleElement}). This connection is used as
      * a sign that tag is not yet finished and therefore should not be flushed or removed
-     * if page tags are flushed or removed. Also, any {@code TagTreePointer} could be
+     * if page tags are flushed or removed. Also, any {@link TagTreePointer} could be
      * immediately moved to the tag with connection via it's connected element {@link TagTreePointer#moveToTag}.
      *
      * When connection is removed, accessible element role and properties are set to the structure element.
      */
     private Map<IAccessibleElement, PdfStructElem> connectedModelToStruct;
     private Map<PdfDictionary, IAccessibleElement> connectedStructToModel;
+
+    private Set<PdfDictionary> namespaces;
 
     /**
      * Do not use this constructor, instead use {@link PdfDocument#getTagStructureContext()}
@@ -142,6 +147,8 @@ public class TagStructureContext implements Serializable {
 
         this.tagStructureTargetVersion = tagStructureTargetVersion;
         forbidUnknownRoles = true;
+        
+        initRegisteredNamespaces();
 
         normalizeDocumentRootTag();
     }
@@ -379,6 +386,11 @@ public class TagStructureContext implements Serializable {
         forbidUnknownRoles = forbid;
     }
 
+    public void prepareToDocumentClosing() {
+        removeAllConnectionsToTags();
+        actualizeNamespacesInStructTreeRoot();
+    }
+
     /**
      * Method for internal usages.
      * Essentially, all it does is just making sure that for connected tags the properties are
@@ -392,6 +404,7 @@ public class TagStructureContext implements Serializable {
             structElem.setRole(element.getRole());
             if (element.getAccessibilityProperties() != null) {
                 element.getAccessibilityProperties().setToStructElem(structElem);
+                ensureNamespaceRegistered(element.getAccessibilityProperties().getNamespace());
             }
         }
     }
@@ -409,6 +422,15 @@ public class TagStructureContext implements Serializable {
 
     IAccessibleElement getModelConnectedToStruct(PdfStructElem struct) {
         return connectedStructToModel.get(struct.getPdfObject());
+    }
+
+    void ensureNamespaceRegistered(PdfNamespace namespace) {
+        if (namespace != null) {
+            PdfDictionary namespaceObj = namespace.getPdfObject();
+            if (!namespaces.contains(namespaceObj)) {
+                namespaces.add(namespaceObj);
+            }
+        }
     }
 
     void throwExceptionIfRoleIsInvalid(PdfName role) {
@@ -436,12 +458,38 @@ public class TagStructureContext implements Serializable {
         return parent;
     }
 
+    private void initRegisteredNamespaces() {
+        PdfStructTreeRoot structTreeRoot = document.getStructTreeRoot();
+        namespaces = new LinkedHashSet<>();
+        for (PdfNamespace namespace : structTreeRoot.getNamespaces()) {
+            namespaces.add(namespace.getPdfObject());
+        }
+    }
+
+    private void actualizeNamespacesInStructTreeRoot() {
+        if (namespaces.size() > 0) {
+            PdfStructTreeRoot structTreeRoot = getDocument().getStructTreeRoot();
+            PdfArray rootNamespaces = structTreeRoot.getNamespacesObject();
+            Set<PdfDictionary> newNamespaces = new LinkedHashSet<>(namespaces);
+            for (int i = 0; i < rootNamespaces.size(); ++i) {
+                newNamespaces.remove(rootNamespaces.getAsDictionary(i));
+            }
+            for (PdfDictionary newNs : newNamespaces) {
+                rootNamespaces.add(newNs);
+            }
+            if (!newNamespaces.isEmpty()) {
+                structTreeRoot.setModified();
+            }
+        }
+    }
+
     private void removeStructToModelConnection(PdfStructElem structElem) {
         if (structElem != null) {
             IAccessibleElement element = connectedStructToModel.remove(structElem.getPdfObject());
             structElem.setRole(element.getRole());
             if (element.getAccessibilityProperties() != null) {
                 element.getAccessibilityProperties().setToStructElem(structElem);
+                ensureNamespaceRegistered(element.getAccessibilityProperties().getNamespace());
             }
             if (structElem.getParent() == null) { // is flushed
                 flushStructElementAndItKids(structElem);

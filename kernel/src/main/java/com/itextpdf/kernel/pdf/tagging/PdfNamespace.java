@@ -11,6 +11,7 @@ import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
     public PdfNamespace(PdfDictionary pdfObject) {
         super(pdfObject);
+        setForbidRelease();
     }
     
     public PdfNamespace(String namespaceName) {

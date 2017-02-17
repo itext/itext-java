@@ -58,6 +58,7 @@ import com.itextpdf.kernel.pdf.tagging.IPdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
 import com.itextpdf.kernel.pdf.tagging.PdfMcrDictionary;
 import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
@@ -92,6 +93,8 @@ public class TagTreePointer implements Serializable {
     private PdfStructElem currentStructElem;
     private PdfPage currentPage;
     private PdfStream contentStream;
+    
+    private PdfNamespace currentNamespace;
 
     // '-1' value of this field means that next new kid will be the last element in the kids array
     private int nextNewKidIndex = -1;
@@ -182,6 +185,15 @@ public class TagTreePointer implements Serializable {
      */
     public PdfDocument getDocument() {
         return tagStructureContext.getDocument();
+    }
+    
+    public TagTreePointer setNamespaceForNewTags(PdfNamespace namespace) {
+        this.currentNamespace = namespace;
+        return this;
+    }
+    
+    public PdfNamespace getNamespaceForNewTags() {
+        return this.currentNamespace;
     }
 
     /**
@@ -285,7 +297,7 @@ public class TagTreePointer implements Serializable {
      * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer addTag(int index, IAccessibleElement element, boolean keepConnectedToTag) {
-        tagStructureContext.throwExceptionIfRoleIsInvalid(element.getRole());
+        tagStructureContext.throwExceptionIfRoleIsInvalid(element.getRole()); // TODO pass current namespace and use it to check?
         if (!tagStructureContext.isElementConnectedToTag(element)) {
             setNextNewKidIndex(index);
             setCurrentStructElem(addNewKid(element, keepConnectedToTag));
@@ -713,7 +725,17 @@ public class TagTreePointer implements Serializable {
         if (!keepConnectedToTag && element.getAccessibilityProperties() != null) {
             element.getAccessibilityProperties().setToStructElem(kid);
         }
+        processKidNamespace(kid);
         return addNewKid(kid);
+    }
+
+    private void processKidNamespace(PdfStructElem kid) {
+        PdfNamespace kidNamespace = kid.getNamespace();
+        if (currentNamespace != null && kidNamespace == null) {
+            kid.setNamespace(currentNamespace);
+            kidNamespace = currentNamespace;
+        }
+        tagStructureContext.ensureNamespaceRegistered(kidNamespace);
     }
 
     private PdfStructElem addNewKid(PdfStructElem kid) {

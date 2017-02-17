@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -66,6 +67,7 @@ public class AccessibilityProperties implements Serializable {
     
     protected String phoneme;
     protected PdfName phoneticAlphabet;
+    protected PdfNamespace namespace;
     protected List<PdfDictionary> refs = new ArrayList<>(); 
     
 
@@ -137,6 +139,15 @@ public class AccessibilityProperties implements Serializable {
         return this.phoneticAlphabet;
     }
     
+    public AccessibilityProperties setNamespace(PdfNamespace namespace) {
+        this.namespace = namespace;
+        return this;
+    }
+    
+    public PdfNamespace getNamespace() {
+        return this.namespace;
+    }
+    
     public AccessibilityProperties addRef(TagTreePointer treePointer) {
         refs.add(treePointer.getCurrentStructElem().getPdfObject());
         return this;
@@ -182,6 +193,9 @@ public class AccessibilityProperties implements Serializable {
         }
         if (getPhoneticAlphabet() != null) {
             elem.setPhoneticAlphabet(getPhoneticAlphabet());
+        }
+        if (getNamespace() != null) {
+            elem.setNamespace(getNamespace());
         }
         for (PdfDictionary ref : refs) {
             elem.addRef(new PdfStructElem(ref));

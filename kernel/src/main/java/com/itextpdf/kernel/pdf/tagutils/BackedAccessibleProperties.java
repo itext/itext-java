@@ -45,9 +45,11 @@ package com.itextpdf.kernel.pdf.tagutils;
 
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,7 +67,7 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     @Override
     public String getLanguage() {
-        return backingElem.getLang().toUnicodeString();
+        return toUnicodeString(backingElem.getLang());
     }
 
     @Override
@@ -76,7 +78,7 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     @Override
     public String getActualText() {
-        return backingElem.getActualText().toUnicodeString();
+        return toUnicodeString(backingElem.getActualText());
     }
 
     @Override
@@ -87,7 +89,7 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     @Override
     public String getAlternateDescription() {
-        return backingElem.getAlt().toUnicodeString();
+        return toUnicodeString(backingElem.getAlt());
     }
 
     @Override
@@ -98,7 +100,7 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     @Override
     public String getExpansion() {
-        return backingElem.getE().toUnicodeString();
+        return toUnicodeString(backingElem.getE());
     }
 
     @Override
@@ -150,7 +152,7 @@ class BackedAccessibleProperties extends AccessibilityProperties {
 
     @Override
     public String getPhoneme() {
-        return backingElem.getPhoneme().toUnicodeString();
+        return toUnicodeString(backingElem.getPhoneme());
     }
 
     @Override
@@ -162,6 +164,18 @@ class BackedAccessibleProperties extends AccessibilityProperties {
     @Override
     public PdfName getPhoneticAlphabet() {
         return backingElem.getPhoneticAlphabet();
+    }
+
+    public AccessibilityProperties setNamespace(PdfNamespace namespace) {
+        backingElem.setNamespace(namespace);
+        
+        PdfDocument doc = backingElem.getPdfObject().getIndirectReference().getDocument();
+        doc.getTagStructureContext().ensureNamespaceRegistered(namespace);
+        return this;
+    }
+
+    public PdfNamespace getNamespace() {
+        return backingElem.getNamespace();
     }
 
     @Override
@@ -188,5 +202,9 @@ class BackedAccessibleProperties extends AccessibilityProperties {
     @Override
     void setToStructElem(PdfStructElem elem) {
         // ignore, because all attributes are directly set to the structElem
+    }
+
+    private String toUnicodeString(PdfString pdfString) {
+        return pdfString != null ? pdfString.toUnicodeString() : null;
     }
 }

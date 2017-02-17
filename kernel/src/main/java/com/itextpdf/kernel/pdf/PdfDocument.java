@@ -727,10 +727,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                 checkIsoConformance();
                 PdfObject crypto = null;
                 if (properties.appendMode) {
-                    if (structTreeRoot != null && structTreeRoot.getPdfObject().isModified()) {
-                        tryFlushTagStructure();
-                    } else if (tagStructureContext != null) {
-                        tagStructureContext.removeAllConnectionsToTags();
+                    if (structTreeRoot != null) {
+                        tryFlushTagStructure(true);
                     }
                     if (catalog.isOCPropertiesMayHaveChanged() && catalog.getOCProperties(false).getPdfObject().isModified()) {
                         catalog.getOCProperties(false).flush();
@@ -785,7 +783,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
                         getPage(pageNum).flush();
                     }
                     if (structTreeRoot != null) {
-                        tryFlushTagStructure();
+                        tryFlushTagStructure(false);
                     }
                     catalog.getPdfObject().flush(false);
                     info.flush();
@@ -1855,10 +1853,14 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         }
     }
 
-    private void tryFlushTagStructure() {
+    private void tryFlushTagStructure(boolean isAppendMode) {
         try {
-            getTagStructureContext().removeAllConnectionsToTags();
-            structTreeRoot.flush();
+            if (tagStructureContext != null) {
+                tagStructureContext.prepareToDocumentClosing();
+            }
+            if (!isAppendMode || structTreeRoot.getPdfObject().isModified()) {
+                structTreeRoot.flush();
+            }
         } catch (Exception ex) {
             throw new PdfException(PdfException.TagStructureFlushingFailedItMightBeCorrupted, ex);
         }
