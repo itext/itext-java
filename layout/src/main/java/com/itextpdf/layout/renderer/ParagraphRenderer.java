@@ -192,8 +192,17 @@ public class ParagraphRenderer extends BlockRenderer {
                 processedRenderer = currentRenderer;
             } else if (result.getStatus() == LayoutResult.PARTIAL) {
                 processedRenderer = (LineRenderer) result.getSplitRenderer();
-            } else if (floatRenderers.size() > 0) {
+            } else if (currentRenderer.affectedByFloat) {
                 processedRenderer = new LineRenderer((LineRenderer) result.getSplitRenderer());
+                float borderTotalHeight = 0;
+                if (borders[0] != null) {
+                    borderTotalHeight += borders[0].getWidth();
+                }
+                if (borders[2] != null) {
+                    borderTotalHeight += borders[2].getWidth();
+                }
+                processedRenderer.getOccupiedArea().getBBox().moveUp(borderTotalHeight);
+                processedRenderer.getOccupiedArea().getBBox().setHeight(processedRenderer.getOccupiedArea().getBBox().getHeight() - borderTotalHeight);
             }
 
             TextAlignment textAlignment = (TextAlignment) this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT, TextAlignment.LEFT);
