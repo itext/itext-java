@@ -183,7 +183,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                 }
             }
             floatedRenderers = result.getFloatRenderers();
-            if (marginsCollapsingEnabled) {
+            if (marginsCollapsingEnabled && floatedRenderers.size() == 0) {
                 marginsCollapseHandler.endChildMarginsHandling(currentArea.getBBox());
             }
 

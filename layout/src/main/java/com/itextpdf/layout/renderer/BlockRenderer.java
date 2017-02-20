@@ -321,7 +321,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (result.getOccupiedArea() != null) {
                 occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), result.getOccupiedArea().getBBox()));
             }
-            if (marginsCollapsingEnabled) {
+            if (marginsCollapsingEnabled && !childRenderer.hasProperty(Property.FLOAT)) {
                 marginsCollapseHandler.endChildMarginsHandling(layoutBox);
             }
             if (result.getStatus() == LayoutResult.FULL) {

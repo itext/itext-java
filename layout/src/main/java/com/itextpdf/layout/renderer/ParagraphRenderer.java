@@ -384,8 +384,6 @@ public class ParagraphRenderer extends BlockRenderer {
             }
         }
 
-        //reduceFloatRenderersOccupiedArea(floatRenderers);
-
         LayoutArea editedArea = applyFloatPropertyOnCurrentArea(floatRenderers,layoutContext.getArea().getBBox().getWidth());
 
         if (editedArea == null) {

@@ -97,45 +97,6 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    public void floatParagraphTest03() throws IOException, InterruptedException {
-        String cmpFileName = sourceFolder + "cmp_floatParagraphTest03.pdf";
-        String outFile = destinationFolder + "floatParagraphTest03.pdf";
-
-        PdfWriter writer = new PdfWriter(outFile);
-        PdfDocument pdfDoc = new PdfDocument(writer);
-        Document doc = new Document(pdfDoc);
-
-        doc.add(new Paragraph("p1").setBorder(new SolidBorder(1)));
-        doc.add(new Paragraph("p2").setBorder(new SolidBorder(5)));
-        doc.add(new Paragraph("p3").setBorder(new SolidBorder(10)));
-        Paragraph p = new Paragraph();
-        p.add("paragraph1");
-        p.setMargin(0);
-        p.setWidth(70);
-        p.setBorder(new SolidBorder(1));
-        p.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
-        doc.add(p);
-
-        Paragraph p1 = new Paragraph();
-        p1.add("paragraph2");
-        p1.setWidth(70);
-        p1.setMargin(0);
-        p1.setBorder(new SolidBorder(5));
-        p1.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
-        doc.add(p1);
-
-        Paragraph p2 = new Paragraph();
-        p2.add("paragraph3");
-        p2.setWidth(70);
-        p2.setMargin(0);
-        p2.setBorder(new SolidBorder(10));
-        p2.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
-        doc.add(p2);
-        doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff"));
-    }
-
-    @Test
     public void floatDivTest01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatDivTest01.pdf";
         String outFile = destinationFolder + "floatDivTest01.pdf";

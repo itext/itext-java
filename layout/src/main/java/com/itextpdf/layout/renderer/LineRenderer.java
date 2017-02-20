@@ -47,7 +47,6 @@ import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.TextUtil;
-import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.TabStop;
 import com.itextpdf.layout.layout.*;
@@ -63,7 +62,6 @@ public class LineRenderer extends AbstractRenderer {
 
     // bidi levels
     protected byte[] levels;
-    protected List<Rectangle> currentLineFloatRenderers = new ArrayList<>();
 
     protected LineRenderer() {
         super();
@@ -571,7 +569,6 @@ public class LineRenderer extends AbstractRenderer {
         LineRenderer overflowRenderer = createOverflowRenderer();
         overflowRenderer.parent = parent;
         overflowRenderer.addAllProperties(getOwnProperties());
-//        overflowRenderer.currentLineFloatRenderers = currentLineFloatRenderers;
 
         return new LineRenderer[]{splitRenderer, overflowRenderer};
     }
@@ -838,27 +835,6 @@ public class LineRenderer extends AbstractRenderer {
         }
     }
 
-    private void adjustLineRendererToCurrentLineFloatRendererers(List<Rectangle> floatRenderers, Rectangle layoutBox) {
-        float maxWidth = 0;
-        float maxHeight = 0;
-        for (Rectangle floatRenderer : floatRenderers) {
-            if (floatRenderer != null) {
-                if (floatRenderer.getX() <= layoutBox.getX() && !parent.hasProperty(Property.FLOAT)) {
-                    if (maxWidth < floatRenderer.getWidth()) {
-                        maxWidth = floatRenderer.getWidth();
-                    }
-                    if (maxHeight < floatRenderer.getHeight()) {
-                        maxHeight = floatRenderer.getHeight();
-                    }
-                }
-            }
-        }
-
-        layoutBox.moveRight(maxWidth);
-        layoutBox.setWidth(layoutBox.getWidth() - maxWidth);
-        layoutBox.setHeight(layoutBox.getHeight() + maxHeight);
-    }
-
     /**
      * While resolving TextRenderer may split into several ones with different fonts.
      */
@@ -891,15 +867,4 @@ public class LineRenderer extends AbstractRenderer {
         public Glyph glyph;
         public TextRenderer renderer;
     }
-
-    private float[] calculateAscenderDescender() {
-        PdfFont listItemFont = resolveFirstPdfFont();
-        Float fontSize = this.getPropertyAsFloat(Property.FONT_SIZE);
-        if (listItemFont != null && fontSize != null) {
-            float[] ascenderDescender = TextRenderer.calculateAscenderDescender(listItemFont);
-            return new float[] {(float)fontSize * ascenderDescender[0] / TextRenderer.TEXT_SPACE_COEFF, (float)fontSize * ascenderDescender[1] / TextRenderer.TEXT_SPACE_COEFF};
-        }
-        return new float[] {0, 0};
-    }
-
 }
