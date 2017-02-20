@@ -679,8 +679,6 @@ final class TableWidths {
         }
     }
 
-    //endregion
-
     private static class CellInfo implements Comparable<CellInfo> {
         static final byte HEADER = 1;
         static final byte BODY = 2;
@@ -744,4 +742,6 @@ final class TableWidths {
             return region == o.region ? getRow() - o.getRow() : region - o.region;
         }
     }
+
+    //endregion
 }

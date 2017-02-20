@@ -96,10 +96,6 @@ public class TableRenderer extends AbstractRenderer {
     private float[] columnWidths = null;
     private List<Float> heights = new ArrayList<>();
 
-    //TODO remove
-    private float[] countedMinColumnWidth;
-    private float[] countedMaxColumnWidth;
-
     private float[] countedColumnWidth = null;
     private float totalWidthForColumns;
 
@@ -1408,7 +1404,7 @@ public class TableRenderer extends AbstractRenderer {
 
     @Override
     MinMaxWidth getMinMaxWidth(float availableWidth) {
-        final boolean isTableBeingLayouted = true;
+        final boolean isTableBeingLayouted = false;
         initializeTableLayoutBorders(isTableBeingLayouted);
 
         TableWidths tableWidths = new TableWidths(this, availableWidth, true, rightBorderMaxWidth, leftBorderMaxWidth);
@@ -1449,9 +1445,6 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         ColumnMinMaxWidth tableColWidth = countRegionMinMaxWidth(headerColWidth, footerColWidth);
-
-        countedMaxColumnWidth = tableColWidth.maxWidth;
-        countedMinColumnWidth = tableColWidth.minWidth;
 
         if (initializeBorders) {
             cleanTableLayoutBorders(isTableBeingLayouted);
@@ -1544,14 +1537,6 @@ public class TableRenderer extends AbstractRenderer {
         }
         deleteOwnProperty(Property.BORDER_BOTTOM);
         deleteOwnProperty(Property.BORDER_TOP);
-    }
-
-    float[] getMinColumnWidth() {
-        return countedMinColumnWidth;
-    }
-
-    float[] getMaxColumnWidth() {
-        return countedMaxColumnWidth;
     }
 
     @Override
