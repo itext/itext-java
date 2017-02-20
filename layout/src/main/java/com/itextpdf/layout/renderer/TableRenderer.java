@@ -183,7 +183,7 @@ public class TableRenderer extends AbstractRenderer {
         // collapse all cell borders
         if (null != rows && !isFooterRenderer() && !isHeaderRenderer()) {
             if (isOriginalNonSplitRenderer) {
-                bordersHandler.collapseAllBordersAndEmptyRows(rows, getBorders(), 0, rows.size() - 1);
+                bordersHandler.collapseAllBordersAndEmptyRows();
             } else {
                 // correctFirstRowBorderBottomProperties(numberOfColumns);
             }
@@ -306,7 +306,8 @@ public class TableRenderer extends AbstractRenderer {
 
         if (!isFooterRenderer() && !isHeaderRenderer()) {
             if (isOriginalNonSplitRenderer) {
-                bordersHandler = new CollapsedTableBorders(rows, numberOfColumns, getBorders());
+                bordersHandler = new CollapsedTableBorders(rows, numberOfColumns, getBorders(), !tableModel.isComplete() || 0 != lastFlushedRowBottomBorder.size() ? rowRange.getStartRow() : -1);
+                bordersHandler.setTopBorderCollapseWith(lastFlushedRowBottomBorder);
                 bordersHandler.initializeBorders(lastFlushedRowBottomBorder, area.isEmptyArea());
             } else {
                 bordersHandler.setBottomBorderCollapseWith(null);
@@ -314,9 +315,9 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
         bordersHandler.setRowRange(rowRange);
-        if (isOriginalRenderer()) {
-            bordersHandler.normalizeRowRange();
-        }
+//        if (isOriginalRenderer()) {
+//            bordersHandler.normalizeRowRange();
+//        }
         initializeHeaderAndFooter(0 == rowRange.getStartRow() || area.isEmptyArea());
         collapseAllBorders();
 
@@ -513,6 +514,9 @@ public class TableRenderer extends AbstractRenderer {
                     processAsLast = true;
                     // undo collapsing with the next row
                     bordersHandler.setRowRange(new Table.RowRange(rowRange.getStartRow(), rowRange.getStartRow() + row));
+//                    if (isOriginalRenderer()) {
+//                        bordersHandler.normalizeRowRange();
+//                    }
                     widestRowBottomBorder = bordersHandler.getWidestHorizontalBorder(rowRange.getStartRow() + row + 1);
                     widestRowBottomBorderWidth = null == widestRowBottomBorder ? 0 : widestRowBottomBorder.getWidth();
                     currChildRenderers.clear();
@@ -650,10 +654,10 @@ public class TableRenderer extends AbstractRenderer {
             }
 
             // maybe the table was incomplete and we can process the footer
-            if (null != footerRenderer && (0 != lastFlushedRowBottomBorder.size() || !tableModel.isComplete()) && !hasContent && 0 == childRenderers.size()) {
-                layoutBox.increaseHeight(occupiedArea.getBBox().getHeight());
-                occupiedArea.getBBox().moveUp(occupiedArea.getBBox().getHeight()).setHeight(0);
-            }
+//            if (null != footerRenderer && (0 != lastFlushedRowBottomBorder.size() || !tableModel.isComplete()) && !hasContent && 0 == childRenderers.size()) {
+//                layoutBox.increaseHeight(occupiedArea.getBBox().getHeight());
+//                occupiedArea.getBBox().moveUp(occupiedArea.getBBox().getHeight()).setHeight(0);
+//            }
 
             if (hasContent) {
                 heights.add(rowHeight);
@@ -684,6 +688,9 @@ public class TableRenderer extends AbstractRenderer {
 //                bordersHandler.setHasContent(hasContent);
 //                bordersHandler.setCellWithBigRowspanAdded(cellWithBigRowspanAdded);
                 bordersHandler.setRowRange(new Table.RowRange(rowRange.getStartRow(), rowRange.getStartRow() + row - (hasContent ? 0 : 1)));
+//                if (isOriginalRenderer()) {
+//                    bordersHandler.normalizeRowRange();
+//                }
                 bottomTableBorderWidth = bordersHandler.getMaxBottomWidth(false);
                 // Correct occupied areas of all added cells
                 correctLayoutedCellsOccupiedAreas(splits, row, targetOverflowRowIndex, layoutBox, !hasContent && cellWithBigRowspanAdded);
@@ -822,10 +829,10 @@ public class TableRenderer extends AbstractRenderer {
                         }
                     }
                 } else {
-                    if (0 == this.childRenderers.size()) {
-                        occupiedArea.getBBox().moveUp(topBorderMaxWidth / 2).decreaseHeight(topBorderMaxWidth / 2);
-                        layoutBox.increaseHeight(topBorderMaxWidth / 2);
-                    }
+//                    if (0 == this.childRenderers.size()) {
+//                        occupiedArea.getBBox().moveUp(topBorderMaxWidth / 2).decreaseHeight(topBorderMaxWidth / 2);
+//                        layoutBox.increaseHeight(topBorderMaxWidth / 2);
+//                    }
                 }
                 if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))
                         || Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA_ON_SPLIT))) {
@@ -1498,7 +1505,7 @@ public class TableRenderer extends AbstractRenderer {
 //        }
         for (int i = 0; i <= heights.size(); i++) {
             if ((i > 0 && i < heights.size()) || (i == 0 && isFooterRenderer()) || (i == heights.size() && isHeaderRenderer())) {
-                drawHorizontalBorder(i, startX, y1, drawContext.getCanvas());
+                bordersHandler.drawHorizontalBorder(i, startX, y1, drawContext.getCanvas(), countedColumnWidth);
             }
             if (i < heights.size()) {
                 y1 -= (float) heights.get(i);
@@ -1510,7 +1517,7 @@ public class TableRenderer extends AbstractRenderer {
             x1 += countedColumnWidth[0];
         }
         for (int i = 1; i < bordersHandler.getNumberOfColumns(); i++) {
-            drawVerticalBorder(i, startY, x1, drawContext.getCanvas());
+            bordersHandler.drawVerticalBorder(i, startY, x1, drawContext.getCanvas(), heights);
             if (i < countedColumnWidth.length) {
                 x1 += countedColumnWidth[i];
             }
@@ -1518,106 +1525,18 @@ public class TableRenderer extends AbstractRenderer {
 
         // Draw bounding borders. Vertical borders are the last to draw in order to collapse with header / footer
         if (!hasHeader && !isFooterRenderer()) {
-            drawHorizontalBorder(0, startX, startY, drawContext.getCanvas());
+            bordersHandler.drawHorizontalBorder(0, startX, startY, drawContext.getCanvas(), countedColumnWidth);
         }
-        if (!hasFooter && !isHeaderRenderer()) {
-            drawHorizontalBorder(heights.size(), startX, y1, drawContext.getCanvas());
+        if (!hasFooter && !isHeaderRenderer() && ((Table)getModelElement()).isComplete()) {
+            bordersHandler.drawHorizontalBorder(heights.size(), startX, y1, drawContext.getCanvas(), countedColumnWidth);
         }
         // draw left
-        drawVerticalBorder(0, startY, startX, drawContext.getCanvas());
+        bordersHandler.drawVerticalBorder(0, startY, startX, drawContext.getCanvas(), heights);
         // draw right
-        drawVerticalBorder(bordersHandler.getNumberOfColumns(), startY, x1, drawContext.getCanvas());
+        bordersHandler.drawVerticalBorder(bordersHandler.getNumberOfColumns(), startY, x1, drawContext.getCanvas(), heights);
 
         if (isTagged) {
             drawContext.getCanvas().closeTag();
-        }
-    }
-
-    private void drawHorizontalBorder(int i, float startX, float y1, PdfCanvas canvas) {
-        List<Border> borders = bordersHandler.getHorizontalBorder(rowRange.getStartRow() + i);
-        float x1 = startX;
-        float x2 = x1 + countedColumnWidth[0];
-        if (i == 0) {
-            if (true/*bordersHandler.getFirstVerticalBorder().size() > verticalBordersIndexOffset && bordersHandler.getLastVerticalBorder().size() > verticalBordersIndexOffset*/) {
-                Border firstBorder = bordersHandler.getFirstVerticalBorder().get(rowRange.getStartRow());
-                if (firstBorder != null) {
-                    x1 -= firstBorder.getWidth() / 2;
-                }
-            }
-        } else if (i == heights.size()) {
-            if (true/*bordersHandler.getFirstVerticalBorder().size() > verticalBordersIndexOffset &&
-                    bordersHandler.getLastVerticalBorder().size() > verticalBordersIndexOffset*/) {
-                Border firstBorder = bordersHandler.getFirstVerticalBorder().get(rowRange.getStartRow() + heights.size() - 1);
-                if (firstBorder != null) {
-                    x1 -= firstBorder.getWidth() / 2;
-                }
-            }
-        }
-
-        int j;
-        for (j = 1; j < borders.size(); j++) {
-            Border prevBorder = borders.get(j - 1);
-            Border curBorder = borders.get(j);
-            if (prevBorder != null) {
-                if (!prevBorder.equals(curBorder)) {
-                    prevBorder.drawCellBorder(canvas, x1, y1, x2, y1);
-                    prevBorder.drawCellBorder(canvas, x1, y1, x2, y1);
-                    x1 = x2;
-                }
-            } else {
-                x1 += countedColumnWidth[j - 1];
-                x2 = x1;
-            }
-            if (curBorder != null) {
-                x2 += countedColumnWidth[j];
-            }
-        }
-
-        Border lastBorder = borders.size() > j - 1 ? borders.get(j - 1) : null;
-        if (lastBorder != null) {
-            if (true/*bordersHandler.getVerticalBorder(j).size() > verticalBordersIndexOffset*/) {
-                if (i == 0) {
-                    if (bordersHandler.getVerticalBorder(j).get(rowRange.getStartRow() + i) != null)
-                        x2 += bordersHandler.getVerticalBorder(j).get(rowRange.getStartRow() + i).getWidth() / 2;
-                } else if (i == heights.size() && bordersHandler.getVerticalBorder(j).size() >= rowRange.getStartRow() + i - 1 && bordersHandler.getVerticalBorder(j).get(rowRange.getStartRow() + i - 1) != null) {
-                    x2 += bordersHandler.getVerticalBorder(j).get(rowRange.getStartRow() + i - 1).getWidth() / 2;
-                }
-            }
-
-            lastBorder.drawCellBorder(canvas, x1, y1, x2, y1);
-        }
-    }
-
-    private void drawVerticalBorder(int i, float startY, float x1, PdfCanvas canvas) {
-        List<Border> borders = bordersHandler.getVerticalBorder(i);
-        float y1 = startY;
-        float y2 = y1;
-        if (!heights.isEmpty()) {
-            y2 = y1 - (float) heights.get(0);
-        }
-        int j;
-        for (j = 1; j < heights.size(); j++) {
-            Border prevBorder = borders.get(rowRange.getStartRow() + j - 1);
-            Border curBorder = borders.get(rowRange.getStartRow() + j);
-            if (prevBorder != null) {
-                if (!prevBorder.equals(curBorder)) {
-                    prevBorder.drawCellBorder(canvas, x1, y1, x1, y2);
-                    y1 = y2;
-                }
-            } else {
-                y1 -= (float) heights.get(j - 1);
-                y2 = y1;
-            }
-            if (curBorder != null) {
-                y2 -= (float) heights.get(j);
-            }
-        }
-        if (borders.size() == 0) {
-            return;
-        }
-        Border lastBorder = borders.get(rowRange.getStartRow() + j - 1);
-        if (lastBorder != null) {
-            lastBorder.drawCellBorder(canvas, x1, y1, x1, y2);
         }
     }
 
@@ -1759,7 +1678,8 @@ public class TableRenderer extends AbstractRenderer {
         bordersHandler = new CollapsedTableBorders(rows, numberOfColumns);
         bordersHandler.setTableBoundingBorders(getBorders());
         bordersHandler.initializeBorders(new ArrayList<Border>(), true);
-        bordersHandler.collapseAllBordersAndEmptyRows(rows, getBorders(), rowRange.getStartRow(), rowRange.getFinishRow());
+        bordersHandler.setRowRange(rowRange);
+        bordersHandler.collapseAllBordersAndEmptyRows();
         return this;
     }
 

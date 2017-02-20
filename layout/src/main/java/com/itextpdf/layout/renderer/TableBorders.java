@@ -1,6 +1,7 @@
 package com.itextpdf.layout.renderer;
 
 
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
@@ -20,19 +21,12 @@ public abstract class TableBorders {
 
     protected Table.RowRange rowRange;
 
-    protected boolean isLargeTable;
-
     public TableBorders(List<CellRenderer[]> rows, int numberOfColumns) {
-        this.rows = rows;
+        this.rows = new ArrayList<>(rows);
         this.numberOfColumns = numberOfColumns;
         verticalBorders = new ArrayList<>();
         horizontalBorders = new ArrayList<>();
         tableBoundingBorders = new Border[4];
-    }
-
-    public TableBorders(List<CellRenderer[]> rows, int numberOfColumns, boolean isLargeTable) {
-        this(rows, numberOfColumns);
-        this.isLargeTable = isLargeTable;
     }
 
     public TableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders) {
@@ -40,25 +34,18 @@ public abstract class TableBorders {
         setTableBoundingBorders(tableBoundingBorders);
     }
 
-    public TableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders, boolean isLargeTable) {
-        this(rows, numberOfColumns, tableBoundingBorders);
-        this.isLargeTable = isLargeTable;
-    }
-
     protected void initializeBorders(List<Border> lastFlushedRowBottomBorder, boolean isFirstOnPage) {
         List<Border> tempBorders;
         // initialize vertical borders
-        if (0 != rows.size()) {
-            while (numberOfColumns + 1 > verticalBorders.size()) {
-                tempBorders = new ArrayList<Border>();
-                while (rows.size() > tempBorders.size()) {
-                    tempBorders.add(null);
-                }
-                verticalBorders.add(tempBorders);
+        while (numberOfColumns + 1 > verticalBorders.size()) {
+            tempBorders = new ArrayList<Border>();
+            while (Math.max(rows.size(), 1) > tempBorders.size()) {
+                tempBorders.add(null);
             }
+            verticalBorders.add(tempBorders);
         }
         // initialize horizontal borders
-        while (rows.size() + 1 > horizontalBorders.size()) {
+        while (Math.max(rows.size(), 1) + 1 > horizontalBorders.size()) {
             tempBorders = new ArrayList<Border>();
             while (numberOfColumns > tempBorders.size()) {
                 tempBorders.add(null);
@@ -66,13 +53,13 @@ public abstract class TableBorders {
             horizontalBorders.add(tempBorders);
         }
         // Notice that the first row on the page shouldn't collapse with the last on the previous one
-        if (null != lastFlushedRowBottomBorder && 0 < lastFlushedRowBottomBorder.size() && !isFirstOnPage) { // TODO
-            tempBorders = new ArrayList<Border>();
-            for (Border border : lastFlushedRowBottomBorder) {
-                tempBorders.add(border);
-            }
-            horizontalBorders.set(0, tempBorders);
-        }
+//        if (null != lastFlushedRowBottomBorder && 0 < lastFlushedRowBottomBorder.size() && !isFirstOnPage) { // TODO
+//            tempBorders = new ArrayList<Border>();
+//            for (Border border : lastFlushedRowBottomBorder) {
+//                tempBorders.add(border);
+//            }
+//            horizontalBorders.set(horizontalBorders.size()-1, tempBorders);
+//        }
     }
 
     protected TableBorders setTableBoundingBorders(Border[] borders) {
@@ -85,34 +72,25 @@ public abstract class TableBorders {
         return this;
     }
 
-    protected TableBorders normalizeRowRange() {
-        if (isLargeTable) {
-            this.rowRange = new Table.RowRange(0, rowRange.getFinishRow() - rowRange.getStartRow());
-        }
-        return this;
-    }
-
     protected TableBorders setRowRange(Table.RowRange rowRange) {
         this.rowRange = rowRange;
         return this;
     }
 
     protected TableBorders setStartRow(int row) {
-        this.rowRange = new Table.RowRange(row, rowRange.getFinishRow());
-        return this;
+        return setRowRange(new Table.RowRange(row, rowRange.getFinishRow()));
     }
 
     protected TableBorders setFinishRow(int row) {
-        this.rowRange = new Table.RowRange(rowRange.getStartRow(), row);
-        return this;
+        return setRowRange(new Table.RowRange(rowRange.getStartRow(), row));
     }
 
 
     // region getters
 
-    abstract  public List<Border> getVerticalBorder(int index);
+    abstract public List<Border> getVerticalBorder(int index);
 
-    abstract  public List<Border> getHorizontalBorder(int index);
+    abstract public List<Border> getHorizontalBorder(int index);
 
 
     public float getMaxTopWidth() {
@@ -170,17 +148,17 @@ public abstract class TableBorders {
 
     public Border getWidestHorizontalBorder(int row) {
         Border theWidestBorder = null;
-        if (row >= 0 && row < horizontalBorders.size()) {
+//        if (row >= 0 && row < horizontalBorders.size()) {
             theWidestBorder = getWidestBorder(getHorizontalBorder(row));
-        }
+//        }
         return theWidestBorder;
     }
 
     public Border getWidestHorizontalBorder(int row, int start, int end) {
         Border theWidestBorder = null;
-        if (row >= 0 && row < horizontalBorders.size()) {
+//        if (row >= 0 && row < horizontalBorders.size()) {
             theWidestBorder = getWidestBorder(getHorizontalBorder(row), start, end);
-        }
+//        }
         return theWidestBorder;
     }
 
@@ -216,7 +194,6 @@ public abstract class TableBorders {
     public int getHorizontalBordersSize() {
         return verticalBorders.size();
     }
-
 
 
     public float[] getCellBorderIndents(int row, int col, int rowspan, int colspan) {
@@ -342,6 +319,14 @@ public abstract class TableBorders {
         }
         return borderList;
     }
+
+    // endregion
+
+    // region draw
+
+    abstract protected TableBorders drawHorizontalBorder(int i, float startX, float y1, PdfCanvas canvas, float[] countedColumnWidth);
+
+    abstract protected TableBorders drawVerticalBorder(int i, float startY, float x1, PdfCanvas canvas, List<Float> heights);
 
     // endregion
 }
