@@ -434,8 +434,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             PdfObject pageObject = ((PdfArray) dest).get(0);
             for (PdfPage oldPage : page2page.keySet()) {
                 if (oldPage.getPdfObject() == pageObject) {
+                    PdfArray copiedArray = (PdfArray) dest.copyTo(toDocument);
                     PdfArray array = new PdfArray((PdfArray) dest);
-                    array.set(0, page2page.get(oldPage).getPdfObject());
+                    copiedArray.set(0, page2page.get(oldPage).getPdfObject());
                     d = new PdfExplicitDestination(array);
                 }
             }
@@ -448,12 +449,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                 PdfObject pageObject = array.get(0);
                 for (PdfPage oldPage : page2page.keySet()) {
                     if (oldPage.getPdfObject() == pageObject) {
-                        array.set(0, page2page.get(oldPage).getPdfObject());
-                        //Create new Array
-                        PdfArray copiedArray = new PdfArray(array);
-                        copiedArray.makeIndirect(toDocument);
+                        PdfArray copiedArray = array.copyTo(toDocument);
+                        copiedArray.set(0, page2page.get(oldPage).getPdfObject());
                         d = new PdfStringDestination(name);
-                        toDocument.addNamedDestination(name, copiedArray);
                     }
                 }
             }
