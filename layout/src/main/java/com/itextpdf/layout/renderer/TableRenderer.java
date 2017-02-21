@@ -256,9 +256,11 @@ public class TableRenderer extends AbstractRenderer {
         int row, col;
 
         if (isPositioned()) {
-            float x = (float) this.getPropertyAsFloat(Property.X);
-            float relativeX = isFixedLayout() ? 0 : layoutBox.getX();
-            layoutBox.setX(relativeX + x);
+            if (isFixedLayout()) {
+                float x = (float) this.getPropertyAsFloat(Property.X);
+                float relativeX = isFixedLayout() ? 0 : layoutBox.getX();
+                layoutBox.setX(relativeX + x);
+            }
         }
 
         Table tableModel = (Table) getModelElement();
@@ -1096,11 +1098,12 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         if (isPositioned()) {
-            float y = (float) this.getPropertyAsFloat(Property.Y);
-            float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
-            move(0, relativeY + y - occupiedArea.getBBox().getY());
+            if (isFixedLayout()) {
+                float y = (float) this.getPropertyAsFloat(Property.Y);
+                float relativeY = isFixedLayout() ? 0 : layoutBox.getY();
+                move(0, relativeY + y - occupiedArea.getBBox().getY());
+            }
         }
-
 
         if (marginsCollapsingEnabled) {
             marginsCollapseHandler.endMarginsCollapse(layoutBox);
