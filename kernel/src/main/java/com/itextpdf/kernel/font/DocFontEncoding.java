@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.io.font.FontEncoding;
@@ -53,6 +54,11 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
+
+import java.text.MessageFormat;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class allow to parse document font's encoding.
@@ -115,6 +121,14 @@ class DocFontEncoding extends FontEncoding {
                 PdfObject obj = diffs.get(k);
                 if (obj.isNumber()) {
                     currentNumber = ((PdfNumber) obj).intValue();
+                } else if (currentNumber > 255) {
+                    Logger LOGGER = LoggerFactory.getLogger(DocFontEncoding.class);
+                    LOGGER.warn(MessageFormat.format(LogMessageConstant.DOCFONT_HAS_ILLEGAL_DIFFERENCES, ((PdfName) obj).getValue()));
+                    /* don't return or break, because differences subarrays may
+                     * be in any order:
+                     * e.g. [255 /space /one 250 /two /three]
+                     * /one is invalid but all others should be parsed
+                     */
                 } else {
                     String glyphName = ((PdfName) obj).getValue();
                     int unicode = AdobeGlyphList.nameToUnicode(glyphName);
