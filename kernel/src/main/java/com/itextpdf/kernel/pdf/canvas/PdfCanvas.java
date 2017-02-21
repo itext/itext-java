@@ -2124,8 +2124,9 @@ public class PdfCanvas implements Serializable {
     public PdfCanvas openTag(TagReference tagReference) {
         if (tagReference.getRole() == null)
             return this;
-        CanvasTag tag = new CanvasTag(tagReference.getRole(), tagReference.createNextMcid());
-        tag.setProperties(tagReference.getProperties());
+        CanvasTag tag = new CanvasTag(tagReference.getRole());
+        tag.setProperties(tagReference.getProperties())
+                .addProperty(PdfName.MCID, new PdfNumber(tagReference.createNextMcid()));
         return openTag(tag);
     }
 

@@ -139,15 +139,13 @@ public class CanvasTag {
     }
 
     /**
-     * Adds a dictionary of properties to the {@link CanvasTag tag}'s properties.
+     * Sets a dictionary of properties to the {@link CanvasTag tag}'s properties. All existing properties (if any) will be lost.
      *
      * @param properties a dictionary
      * @return current {@link CanvasTag}
      */
     public CanvasTag setProperties(PdfDictionary properties) {
-        if (properties != null) {
-            this.properties = properties;
-        }
+        this.properties = properties;
         return this;
     }
 
