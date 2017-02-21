@@ -152,6 +152,7 @@ from the main (upstream) repository:
 ## <a name="rules">Coding Rules</a>
 To ensure consistency throughout the source code, keep these rules in mind as you are working:
 
+* All Java code **must** be Java 7. Sorry, no lambda expressions or other Java 8 language features.
 * All features or bug fixes **must be tested** by one or more [unit tests][unit-testing].
 * All public API methods **must be documented** with JavaDoc. To see how we document our APIs, please check
   out the existing [javadocs][javadocs].
