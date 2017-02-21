@@ -22,7 +22,7 @@ public abstract class TableBorders {
     protected Table.RowRange rowRange;
 
     public TableBorders(List<CellRenderer[]> rows, int numberOfColumns) {
-        this.rows = new ArrayList<>(rows);
+        this.rows = rows;
         this.numberOfColumns = numberOfColumns;
         verticalBorders = new ArrayList<>();
         horizontalBorders = new ArrayList<>();
@@ -183,6 +183,14 @@ public abstract class TableBorders {
         return numberOfColumns;
     }
 
+    public int getStartRow() {
+        return rowRange.getStartRow();
+    }
+
+    public int getFinishRow() {
+        return rowRange.getFinishRow();
+    }
+
     public Border[] getTableBoundingBorders() {
         return tableBoundingBorders;
     }
@@ -238,27 +246,6 @@ public abstract class TableBorders {
     // endregion
 
     //region static
-
-    /**
-     * Returns the collapsed border. We process collapse
-     * if the table border width is strictly greater than cell border width.
-     *
-     * @param cellBorder  cell border
-     * @param tableBorder table border
-     * @return the collapsed border
-     */
-    public static Border getCollapsedBorder(Border cellBorder, Border tableBorder) {
-        if (null != tableBorder) {
-            if (null == cellBorder || cellBorder.getWidth() < tableBorder.getWidth()) {
-                return tableBorder;
-            }
-        }
-        if (null != cellBorder) {
-            return cellBorder;
-        } else {
-            return Border.NO_BORDER;
-        }
-    }
 
     public static Border getCellSideBorder(Cell cellModel, int borderType) {
         Border cellModelSideBorder = cellModel.getProperty(borderType);

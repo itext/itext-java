@@ -15,7 +15,7 @@ public class CollapsedTableBorders extends TableBorders {
     private List<Border> bottomBorderCollapseWith;
 
 
-    private int startRow = -1; // TODO
+    private int startRow = -1; // TODO rename
 
     // region constructors
 
@@ -72,17 +72,16 @@ public class CollapsedTableBorders extends TableBorders {
                 }
             }
             if (!hasCells) {
-                // FIXME
-//                rows.remove(currentRow);
-//                row--;
-//                finishRow--;
-//                for (int i = 0; i < numberOfColumns; i++) {
-//                    rowsToDelete[i]++;
-//                }
-//                if (row == finishRow) {
-//                    Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-//                    logger.warn(LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE);
-//                }
+                setFinishRow(rowRange.getFinishRow() - 1);
+                rows.remove(currentRow);
+                row--;
+                for (int i = 0; i < numberOfColumns; i++) {
+                    rowsToDelete[i]++;
+                }
+                if (row == rows.size() - 1) {
+                    Logger logger = LoggerFactory.getLogger(TableRenderer.class);
+                    logger.warn(LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE);
+                }
             }
         }
         return this;
@@ -97,6 +96,15 @@ public class CollapsedTableBorders extends TableBorders {
     //endregion
 
     // region getters
+
+
+    public List<Border> getTopBorderCollapseWith() {
+        return topBorderCollapseWith;
+    }
+
+    public List<Border> getBottomBorderCollapseWith() {
+        return bottomBorderCollapseWith;
+    }
 
     public float[] getCellBorderIndents(int row, int col, int rowspan, int colspan, boolean forceNotToProcessAsLast) {
         float[] indents = new float[4];
@@ -201,18 +209,18 @@ public class CollapsedTableBorders extends TableBorders {
         }
     }
 
-    public float getMaxTopWidth(boolean forceNoToProcessAsFirst) {
+    public float getMaxTopWidth() {
         float width = 0;
-        Border widestBorder = getWidestHorizontalBorder(rowRange.getStartRow(), forceNoToProcessAsFirst, false);
+        Border widestBorder = getWidestHorizontalBorder(rowRange.getStartRow(), false, false);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
             width = widestBorder.getWidth();
         }
         return width;
     }
 
-    public float getMaxBottomWidth(boolean forceNoToProcessAsLast) {
+    public float getMaxBottomWidth() {
         float width = 0;
-        Border widestBorder = getWidestHorizontalBorder(rowRange.getFinishRow() + 1, false, forceNoToProcessAsLast); // TODO
+        Border widestBorder = getWidestHorizontalBorder(rowRange.getFinishRow() + 1, false, false); // TODO
         if (null != widestBorder && widestBorder.getWidth() >= width) {
             width = widestBorder.getWidth();
         }
@@ -224,14 +232,20 @@ public class CollapsedTableBorders extends TableBorders {
     }
 
     public List<Border> getHorizontalBorder(int index, boolean forceNotToProcessAsFirst, boolean forceNotToProcessAsLast) {
-        if (index == rowRange.getStartRow() && !forceNotToProcessAsFirst) {
+        if (index == 0) {
+            List<Border> firstBorderOnCurrentPage = getBorderList(topBorderCollapseWith, tableBoundingBorders[0], numberOfColumns);
+            return getCollapsedList(horizontalBorders.get(index), firstBorderOnCurrentPage);
+        } else if (index == horizontalBorders.size()-1) {
+            List<Border> lastBorderOnCurrentPage = getBorderList(bottomBorderCollapseWith, tableBoundingBorders[2], numberOfColumns);
+            return getCollapsedList(horizontalBorders.get(index), lastBorderOnCurrentPage);
+        } else if (index == rowRange.getStartRow() && !forceNotToProcessAsFirst) {
             List<Border> firstBorderOnCurrentPage = getBorderList(topBorderCollapseWith, tableBoundingBorders[0], numberOfColumns);
             if (0 != rows.size()) {
                 int col = 0;
                 int row = index;
                 while (col < numberOfColumns) {
                     if (null != rows.get(row - (int) Math.max(startRow, 0))[col] &&
-                            row == (int) rows.get(row - (int) Math.max(startRow, 0))[col].getPropertyAsInteger(Property.ROWSPAN) + (int) rows.get(row - (int) Math.max(startRow, 0))[col].getModelElement().getRow() - 1) {
+                            row - index + 1 <= (int) rows.get(row - (int) Math.max(startRow, 0))[col].getModelElement().getRowspan()) {
                         CellRenderer cell = rows.get(row - (int) Math.max(startRow, 0))[col];
                         Border cellModelTopBorder = getCellSideBorder(cell.getModelElement(), Property.BORDER_TOP);
                         int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
@@ -324,6 +338,12 @@ public class CollapsedTableBorders extends TableBorders {
         }
         if (colNum == col + colspan) {
             cell.setProperty(Property.BORDER_RIGHT, getCollapsedBorder(cellBorders[1], tableBorders[1]));
+        }
+        if (0 == row) {
+            cell.setProperty(Property.BORDER_TOP, getCollapsedBorder(cellBorders[0], tableBorders[0]));
+        }
+        if (rows.size() - 1 == row) {
+            cell.setProperty(Property.BORDER_BOTTOM, getCollapsedBorder(cellBorders[2], tableBorders[2]));
         }
     }
 
@@ -558,8 +578,8 @@ public class CollapsedTableBorders extends TableBorders {
         }
         int j;
         for (j = 1; j < heights.size(); j++) {
-            Border prevBorder = borders.get(rowRange.getStartRow() /*- (int) Math.max(startRow, 0)*/ + j - 1);
-            Border curBorder = borders.get(rowRange.getStartRow() /*- (int) Math.max(startRow, 0)*/ + j);
+            Border prevBorder = borders.get(rowRange.getStartRow() - (int) Math.max(startRow, 0) + j - 1);
+            Border curBorder = borders.get(rowRange.getStartRow() - (int) Math.max(startRow, 0) + j);
             if (prevBorder != null) {
                 if (!prevBorder.equals(curBorder)) {
                     prevBorder.drawCellBorder(canvas, x1, y1, x1, y2);
@@ -581,6 +601,40 @@ public class CollapsedTableBorders extends TableBorders {
             lastBorder.drawCellBorder(canvas, x1, y1, x1, y2);
         }
         return this;
+    }
+
+    // endregion
+
+    // region static
+
+    /**
+     * Returns the collapsed border. We process collapse
+     * if the table border width is strictly greater than cell border width.
+     *
+     * @param cellBorder  cell border
+     * @param tableBorder table border
+     * @return the collapsed border
+     */
+    public static Border getCollapsedBorder(Border cellBorder, Border tableBorder) {
+        if (null != tableBorder) {
+            if (null == cellBorder || cellBorder.getWidth() < tableBorder.getWidth()) {
+                return tableBorder;
+            }
+        }
+        if (null != cellBorder) {
+            return cellBorder;
+        } else {
+            return Border.NO_BORDER;
+        }
+    }
+
+    public static List<Border> getCollapsedList(List<Border> innerList, List<Border> outerList) {
+        int size = Math.min(null == innerList ? 0 : innerList.size(), null == outerList ? 0 : outerList.size());
+        List<Border> collapsedList = new ArrayList<Border>();
+        for (int i = 0; i < size; i++) {
+            collapsedList.add(getCollapsedBorder(innerList.get(i), outerList.get(i)));
+        }
+        return collapsedList;
     }
 
     // endregion
