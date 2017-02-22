@@ -1,8 +1,10 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,13 +86,15 @@ public class CollapsedTableBorders extends TableBorders {
                 }
             }
         }
+        if (rowRange.getFinishRow() < rowRange.getStartRow()) {
+            setFinishRow(rowRange.getStartRow());
+        }
         return this;
     }
 
     // endregion
 
     // region intializers
-
 
 
     //endregion
@@ -105,6 +109,7 @@ public class CollapsedTableBorders extends TableBorders {
     public List<Border> getBottomBorderCollapseWith() {
         return bottomBorderCollapseWith;
     }
+
 
     public float[] getCellBorderIndents(int row, int col, int rowspan, int colspan, boolean forceNotToProcessAsLast) {
         float[] indents = new float[4];
@@ -152,7 +157,7 @@ public class CollapsedTableBorders extends TableBorders {
     public Border getWidestHorizontalBorder(int row, boolean forceNotToProcessAsFirst, boolean forceNotToProcessWithLast) {
         Border theWidestBorder = null;
 //        if (row >= 0 && row < horizontalBorders.size()) {
-            theWidestBorder = getWidestBorder(getHorizontalBorder(row, forceNotToProcessAsFirst, forceNotToProcessWithLast));
+        theWidestBorder = getWidestBorder(getHorizontalBorder(row, forceNotToProcessAsFirst, forceNotToProcessWithLast));
 //        }
         return theWidestBorder;
     }
@@ -160,7 +165,7 @@ public class CollapsedTableBorders extends TableBorders {
     public Border getWidestHorizontalBorder(int row, int start, int end, boolean forceNotToProcessAsFirst, boolean forceNotToProcessAsLast) {
         Border theWidestBorder = null;
 //        if (row >= 0 && row < horizontalBorders.size()) {
-            theWidestBorder = getWidestBorder(getHorizontalBorder(row, forceNotToProcessAsFirst, forceNotToProcessAsLast), start, end);
+        theWidestBorder = getWidestBorder(getHorizontalBorder(row, forceNotToProcessAsFirst, forceNotToProcessAsLast), start, end);
 //        }
         return theWidestBorder;
     }
@@ -235,10 +240,10 @@ public class CollapsedTableBorders extends TableBorders {
         if (index == 0) {
             List<Border> firstBorderOnCurrentPage = getBorderList(topBorderCollapseWith, tableBoundingBorders[0], numberOfColumns);
             return getCollapsedList(horizontalBorders.get(index), firstBorderOnCurrentPage);
-        } else if (index == horizontalBorders.size()-1) {
+        } else if (index == horizontalBorders.size() - 1) {
             List<Border> lastBorderOnCurrentPage = getBorderList(bottomBorderCollapseWith, tableBoundingBorders[2], numberOfColumns);
             return getCollapsedList(horizontalBorders.get(index), lastBorderOnCurrentPage);
-        } else if (index == rowRange.getStartRow() && !forceNotToProcessAsFirst) {
+        } else if (index - (int) Math.max(startRow, 0) == rowRange.getStartRow() && !forceNotToProcessAsFirst) {
             List<Border> firstBorderOnCurrentPage = getBorderList(topBorderCollapseWith, tableBoundingBorders[0], numberOfColumns);
             if (0 != rows.size()) {
                 int col = 0;
@@ -266,7 +271,7 @@ public class CollapsedTableBorders extends TableBorders {
             }
             return firstBorderOnCurrentPage;
 
-        } else if (((index == rowRange.getFinishRow() + 1 && !forceNotToProcessAsLast) || index - (int) Math.max(startRow, 0) == horizontalBorders.size() - 1)) {
+        } else if ((index == rowRange.getFinishRow() + 1 && !forceNotToProcessAsLast)) {
             List<Border> lastBorderOnCurrentPage = getBorderList(bottomBorderCollapseWith, tableBoundingBorders[2], numberOfColumns);
             if (0 != rows.size()) {
                 int col = 0;
@@ -430,18 +435,6 @@ public class CollapsedTableBorders extends TableBorders {
         for (int i = 0; i < colspan; i++) {
             checkAndReplaceBorderInArray(horizontalBorders, row + 1, colN + i, cellBorders[2], true);
         }
-        // process big rowspan
-        if (rowspan > 1) {
-            int numOfColumns = numberOfColumns;
-            for (int k = row - rowspan + 1; k <= row; k++) {
-                List<Border> borders = horizontalBorders.get(k);
-                if (borders.size() < numOfColumns) {
-                    for (int j = borders.size(); j < numOfColumns; j++) {
-                        borders.add(null);
-                    }
-                }
-            }
-        }
         // consider left border
         for (int j = row - rowspan + 1; j <= row; j++) {
             checkAndReplaceBorderInArray(verticalBorders, colN, j, cellBorders[3], false);
@@ -449,17 +442,6 @@ public class CollapsedTableBorders extends TableBorders {
         // consider right border
         for (int i = row - rowspan + 1; i <= row; i++) {
             checkAndReplaceBorderInArray(verticalBorders, colN + colspan, i, cellBorders[1], true);
-        }
-        // process big colspan
-        if (colspan > 1) {
-            for (int k = colN; k <= colspan + colN; k++) {
-                List<Border> borders = verticalBorders.get(k);
-                if (borders.size() < row + rowspan) {
-                    for (int l = borders.size(); l < row + rowspan; l++) {
-                        borders.add(null);
-                    }
-                }
-            }
         }
     }
 
@@ -527,7 +509,7 @@ public class CollapsedTableBorders extends TableBorders {
         } else if (i == rowRange.getFinishRow() - rowRange.getStartRow() + 1) {
             if (true/*bordersHandler.getFirstVerticalBorder().size() > verticalBordersIndexOffset &&
                     bordersHandler.getLastVerticalBorder().size() > verticalBordersIndexOffset*/) {
-                Border firstBorder = getFirstVerticalBorder().get(rowRange.getStartRow() - (int) Math.max(startRow, 0) +  rowRange.getFinishRow() - rowRange.getStartRow() + 1 - 1);
+                Border firstBorder = getFirstVerticalBorder().get(rowRange.getStartRow() - (int) Math.max(startRow, 0) + rowRange.getFinishRow() - rowRange.getStartRow() + 1 - 1);
                 if (firstBorder != null) {
                     x1 -= firstBorder.getWidth() / 2;
                 }
@@ -559,7 +541,7 @@ public class CollapsedTableBorders extends TableBorders {
                 if (i == 0) {
                     if (getVerticalBorder(j).get(rowRange.getStartRow() - (int) Math.max(startRow, 0) + i) != null)
                         x2 += getVerticalBorder(j).get(rowRange.getStartRow() - (int) Math.max(startRow, 0) + i).getWidth() / 2;
-                } else if (i ==  rowRange.getFinishRow() - rowRange.getStartRow() + 1 && getVerticalBorder(j).size() >= rowRange.getStartRow() - (int) Math.max(startRow, 0) + i - 1 && getVerticalBorder(j).get(rowRange.getStartRow()  - (int) Math.max(startRow, 0)+ i - 1) != null) {
+                } else if (i == rowRange.getFinishRow() - rowRange.getStartRow() + 1 && getVerticalBorder(j).size() >= rowRange.getStartRow() - (int) Math.max(startRow, 0) + i - 1 && getVerticalBorder(j).get(rowRange.getStartRow() - (int) Math.max(startRow, 0) + i - 1) != null) {
                     x2 += getVerticalBorder(j).get(rowRange.getStartRow() - (int) Math.max(startRow, 0) + i - 1).getWidth() / 2;
                 }
             }
@@ -635,6 +617,126 @@ public class CollapsedTableBorders extends TableBorders {
             collapsedList.add(getCollapsedBorder(innerList.get(i), outerList.get(i)));
         }
         return collapsedList;
+    }
+
+    // endregion
+
+    // region occupation
+
+    protected TableBorders applyTopBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean isComplete, boolean reverse) {
+        if (!isEmpty) {
+            return applyTopBorder(occupiedBox, layoutBox, reverse);
+        } else if (isComplete) { // process empty table
+            applyTopBorder(occupiedBox, layoutBox, reverse);
+            return applyTopBorder(occupiedBox, layoutBox, reverse);
+        }
+        return this;
+    }
+
+    protected TableBorders applyBottomBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean reverse) {
+        if (!isEmpty) {
+            return applyBottomBorder(occupiedBox, layoutBox, reverse);
+        }
+        return this;
+    }
+
+    protected TableBorders applyTopBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse) {
+        float topIndent = (reverse ? -1 : 1) * getMaxTopWidth();
+        layoutBox.decreaseHeight(topIndent / 2);
+        occupiedBox.moveDown(topIndent / 2).increaseHeight(topIndent / 2);
+        return this;
+    }
+
+    protected TableBorders applyBottomBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse) {
+        float bottomTableBorderWidth = (reverse ? -1 : 1) * getMaxBottomWidth();
+        layoutBox.decreaseHeight(bottomTableBorderWidth / 2);
+        occupiedBox.moveDown(bottomTableBorderWidth / 2).increaseHeight(bottomTableBorderWidth / 2);
+        return this;
+    }
+
+
+    protected TableBorders applyCellIndents(Rectangle box, float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse) {
+        box.applyMargins(topIndent / 2, rightIndent / 2, bottomIndent / 2, leftIndent / 2, false);
+        return this;
+    }
+
+    protected float getCellVerticalAddition(float[] indents) {
+        return indents[0] / 2 + indents[2] / 2;
+    }
+
+    protected static TableBorders processRendererBorders(TableRenderer renderer) {
+        // TODO No sence in this method
+        renderer.bordersHandler = new CollapsedTableBorders(renderer.rows, ((Table) renderer.getModelElement()).getNumberOfColumns());
+        renderer.bordersHandler.setTableBoundingBorders(renderer.getBorders());
+        renderer.bordersHandler.initializeBorders();
+        renderer.bordersHandler.setRowRange(renderer.rowRange);
+        ((CollapsedTableBorders) renderer.bordersHandler).collapseAllBordersAndEmptyRows();
+        return renderer.bordersHandler;
+    }
+
+    protected TableBorders updateOnNewPage(boolean isOriginalNonSplitRenderer, boolean isFooterOrHeader, TableRenderer currentRenderer, TableRenderer headerRenderer, TableRenderer footerRenderer) {
+        if (!isFooterOrHeader) {
+            // collapse all cell borders
+            if (isOriginalNonSplitRenderer) {
+                if (null != rows) {
+                    collapseAllBordersAndEmptyRows();
+                    rightBorderMaxWidth = getMaxRightWidth();
+                    leftBorderMaxWidth = getMaxLeftWidth();
+                }
+                setTopBorderCollapseWith(((Table) currentRenderer.getModelElement()).getLastRowBottomBorder());
+            } else {
+                setTopBorderCollapseWith(null);
+                setBottomBorderCollapseWith(null);
+            }
+        }
+        if (null != footerRenderer) {
+            processRendererBorders(footerRenderer);
+            float rightFooterBorderWidth = footerRenderer.bordersHandler.getMaxRightWidth();
+            float leftFooterBorderWidth = footerRenderer.bordersHandler.getMaxLeftWidth();
+
+            leftBorderMaxWidth = Math.max(leftBorderMaxWidth, leftFooterBorderWidth);
+            rightBorderMaxWidth = Math.max(rightBorderMaxWidth, rightFooterBorderWidth);
+        }
+
+        if (null != headerRenderer) {
+            processRendererBorders(headerRenderer);
+            float rightHeaderBorderWidth = headerRenderer.bordersHandler.getMaxRightWidth();
+            float leftHeaderBorderWidth = headerRenderer.bordersHandler.getMaxLeftWidth();
+
+            leftBorderMaxWidth = Math.max(leftBorderMaxWidth, leftHeaderBorderWidth);
+            rightBorderMaxWidth = Math.max(rightBorderMaxWidth, rightHeaderBorderWidth);
+        }
+
+        return this;
+    }
+
+    protected TableBorders skipFooter(Border[] borders) {
+        setTableBoundingBorders(borders);
+        setBottomBorderCollapseWith(null);
+        return this;
+    }
+
+    protected TableBorders considerFooter(TableBorders footerBordersHandler, boolean changeThis) {
+        ((CollapsedTableBorders) footerBordersHandler).setTopBorderCollapseWith(getLastHorizontalBorder());
+        if (changeThis) {
+            setBottomBorderCollapseWith(footerBordersHandler.getHorizontalBorder(0));
+        }
+        return this;
+    }
+
+    protected TableBorders considerHeader(TableBorders headerBordersHandler, boolean changeThis) {
+        ((CollapsedTableBorders) headerBordersHandler).setBottomBorderCollapseWith(getHorizontalBorder(rowRange.getStartRow()));
+        if (changeThis) {
+            setTopBorderCollapseWith(headerBordersHandler.getLastHorizontalBorder());
+        }
+        return this;
+    }
+
+    protected TableBorders considerHeaderOccupiedArea(Rectangle occupiedBox, Rectangle layoutBox) {
+        float topBorderMaxWidth = getMaxTopWidth();
+        layoutBox.increaseHeight(topBorderMaxWidth);
+        occupiedBox.moveUp(topBorderMaxWidth).decreaseHeight(topBorderMaxWidth);
+        return this;
     }
 
     // endregion

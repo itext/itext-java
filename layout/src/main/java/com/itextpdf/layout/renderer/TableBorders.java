@@ -1,6 +1,7 @@
 package com.itextpdf.layout.renderer;
 
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
@@ -21,6 +22,9 @@ public abstract class TableBorders {
 
     protected Table.RowRange rowRange;
 
+    protected float leftBorderMaxWidth;
+    protected float rightBorderMaxWidth;
+
     public TableBorders(List<CellRenderer[]> rows, int numberOfColumns) {
         this.rows = rows;
         this.numberOfColumns = numberOfColumns;
@@ -34,7 +38,9 @@ public abstract class TableBorders {
         setTableBoundingBorders(tableBoundingBorders);
     }
 
-    protected void initializeBorders(List<Border> lastFlushedRowBottomBorder, boolean isFirstOnPage) {
+    abstract protected TableBorders updateOnNewPage(boolean isOriginalNonSplitRenderer, boolean isFooterOrHeader, TableRenderer currentRenderer, TableRenderer headerRenderer, TableRenderer footerRenderer);
+
+    protected TableBorders initializeBorders() {
         List<Border> tempBorders;
         // initialize vertical borders
         while (numberOfColumns + 1 > verticalBorders.size()) {
@@ -52,14 +58,7 @@ public abstract class TableBorders {
             }
             horizontalBorders.add(tempBorders);
         }
-        // Notice that the first row on the page shouldn't collapse with the last on the previous one
-//        if (null != lastFlushedRowBottomBorder && 0 < lastFlushedRowBottomBorder.size() && !isFirstOnPage) { // TODO
-//            tempBorders = new ArrayList<Border>();
-//            for (Border border : lastFlushedRowBottomBorder) {
-//                tempBorders.add(border);
-//            }
-//            horizontalBorders.set(horizontalBorders.size()-1, tempBorders);
-//        }
+        return this;
     }
 
     protected TableBorders setTableBoundingBorders(Border[] borders) {
@@ -92,6 +91,14 @@ public abstract class TableBorders {
 
     abstract public List<Border> getHorizontalBorder(int index);
 
+
+    public float getLeftBorderMaxWidth() {
+        return leftBorderMaxWidth;
+    }
+
+    public float getRightBorderMaxWidth() {
+        return rightBorderMaxWidth;
+    }
 
     public float getMaxTopWidth() {
         float width = 0;
@@ -203,7 +210,6 @@ public abstract class TableBorders {
         return verticalBorders.size();
     }
 
-
     public float[] getCellBorderIndents(int row, int col, int rowspan, int colspan) {
         float[] indents = new float[4];
         List<Border> borderList;
@@ -307,6 +313,15 @@ public abstract class TableBorders {
         return borderList;
     }
 
+    protected static TableBorders processRendererBorders(TableRenderer renderer) {
+        renderer.bordersHandler = new CollapsedTableBorders(renderer.rows, ((Table)renderer.getModelElement()).getNumberOfColumns());
+        renderer.bordersHandler.setTableBoundingBorders(renderer.getBorders());
+        renderer.bordersHandler.initializeBorders();
+        renderer.bordersHandler.setRowRange(renderer.rowRange);
+        ((CollapsedTableBorders)renderer.bordersHandler).collapseAllBordersAndEmptyRows();
+        return renderer.bordersHandler;
+    }
+
     // endregion
 
     // region draw
@@ -316,4 +331,30 @@ public abstract class TableBorders {
     abstract protected TableBorders drawVerticalBorder(int i, float startY, float x1, PdfCanvas canvas, List<Float> heights);
 
     // endregion
+
+    // region area occupation
+
+    abstract protected TableBorders applyTopBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean isComplete, boolean reverse);
+    abstract protected TableBorders applyBottomBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean reverse);
+
+    abstract protected TableBorders applyTopBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
+    abstract protected TableBorders applyBottomBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
+
+//    abstract protected TableBorders applyLeftAndRightBorder(Rectangle occupiedArea, Rectangle layoutBox, boolean reverse) {
+//
+//    }
+
+    abstract protected TableBorders applyCellIndents(Rectangle box, float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse);
+
+    abstract protected float getCellVerticalAddition(float[] indents);
+
+    abstract protected TableBorders skipFooter(Border[] borders);
+
+    abstract protected TableBorders considerFooter(TableBorders footerBordersHandler, boolean changeThis);
+
+    abstract protected TableBorders considerHeader(TableBorders headerBordersHandler, boolean changeThis);
+    abstract protected TableBorders considerHeaderOccupiedArea(Rectangle occupiedBox, Rectangle layoutBox);
+
+    // endregion
+
 }
