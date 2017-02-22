@@ -434,29 +434,49 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             PdfObject pageObject = ((PdfArray) dest).get(0);
             for (PdfPage oldPage : page2page.keySet()) {
                 if (oldPage.getPdfObject() == pageObject) {
-                    PdfArray copiedArray = (PdfArray) dest.copyTo(toDocument);
-                    copiedArray.set(0, page2page.get(oldPage).getPdfObject());
+                    // in the copiedArray old page ref will be correctly replaced by the new page ref as this page is already copied  
+                    PdfArray copiedArray = (PdfArray) dest.copyTo(toDocument, false);
                     d = new PdfExplicitDestination(copiedArray);
+                    break;
                 }
             }
         } else if (dest.isString()) {
             PdfNameTree destsTree = getNameTree(PdfName.Dests);
             Map<String, PdfObject> dests = destsTree.getNames();
-            String name = ((PdfString) dest).toUnicodeString();
-            PdfArray array = (PdfArray) dests.get(name);
-            if (array != null) {
-                PdfObject pageObject = array.get(0);
+            String srcDestName = ((PdfString) dest).toUnicodeString();
+            PdfArray srcDestArray = (PdfArray) dests.get(srcDestName);
+            if (srcDestArray != null) {
+                PdfObject pageObject = srcDestArray.get(0);
                 for (PdfPage oldPage : page2page.keySet()) {
                     if (oldPage.getPdfObject() == pageObject) {
-                        PdfArray copiedArray = array.copyTo(toDocument);
-                        copiedArray.set(0, page2page.get(oldPage).getPdfObject());
-                        d = new PdfStringDestination(name);
+                        d = new PdfStringDestination(srcDestName);
+                        if (!isEqualSameNameDestExist(page2page, toDocument, srcDestName, srcDestArray, oldPage)) {
+                            // in the copiedArray old page ref will be correctly replaced by the new page ref as this page is already copied  
+                            PdfArray copiedArray = srcDestArray.copyTo(toDocument, false);
+                            toDocument.addNamedDestination(srcDestName, copiedArray);
+                        }
+                        break;
                     }
                 }
             }
         }
 
         return d;
+    }
+
+    private boolean isEqualSameNameDestExist(Map<PdfPage, PdfPage> page2page, PdfDocument toDocument, String srcDestName, PdfArray srcDestArray, PdfPage oldPage) {
+        PdfArray sameNameDest = (PdfArray) toDocument.getCatalog().getNameTree(PdfName.Dests).getNames().get(srcDestName);
+        boolean equalSameNameDestExists = false;
+        if (sameNameDest != null && sameNameDest.getAsDictionary(0) != null) {
+            PdfIndirectReference existingDestPageRef = sameNameDest.getAsDictionary(0).getIndirectReference();
+            PdfIndirectReference newDestPageRef = page2page.get(oldPage).getPdfObject().getIndirectReference();
+            if (equalSameNameDestExists = existingDestPageRef.equals(newDestPageRef) && sameNameDest.size() == srcDestArray.size()) {
+                for (int i = 1; i < sameNameDest.size(); ++i) {
+                    equalSameNameDestExists = equalSameNameDestExists && sameNameDest.get(i).equals(srcDestArray.get(i));
+                }
+            }
+        }
+        return equalSameNameDestExists;
     }
 
     private void addOutlineToPage(PdfOutline outline, Map<String, PdfObject> names) {
