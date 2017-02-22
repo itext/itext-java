@@ -43,16 +43,12 @@
  */
 package com.itextpdf.barcodes;
 
-import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.color.Color;
-import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -344,7 +340,7 @@ public class Barcode128 extends Barcode1D {
                 throw new PdfException(PdfException.ThereAreIllegalCharactersForBarcode128In1);
         }
         c = text.charAt(0);
-        char currentCode = START_B;
+        char currentCode = getStartSymbol(codeSet);
         int index = 0;
         if ((codeSet == Barcode128CodeSet.AUTO || codeSet == Barcode128CodeSet.C) && isNextDigits(text, index, 2)) {
             currentCode = START_C;

@@ -52,13 +52,12 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class Barcode128Test extends ExtendedITextTest {
@@ -112,4 +111,10 @@ public class Barcode128Test extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
+
+    @Test
+    public void barcodeRawValueGenerationTest01() {
+        Assert.assertEquals(new String(new byte[] {103, 17, 18, 19, 20, 21, 17, 18, 19, 20, 21}), Barcode128.getRawText("1234512345", false, Barcode128.Barcode128CodeSet.A));
+    }
+
 }
