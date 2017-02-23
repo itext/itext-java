@@ -176,6 +176,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
     protected PdfStructTreeRoot structTreeRoot;
 
     protected int structParentIndex = -1;
+    @Deprecated
     protected boolean userProperties;
 
     protected boolean closeReader = true;
@@ -913,12 +914,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         if (structTreeRoot == null) {
             structTreeRoot = new PdfStructTreeRoot(this);
             catalog.getPdfObject().put(PdfName.StructTreeRoot, structTreeRoot.getPdfObject());
-            PdfDictionary markInfo = new PdfDictionary();
-            markInfo.put(PdfName.Marked, PdfBoolean.TRUE);
-            if (userProperties) {
-                markInfo.put(PdfName.UserProperties, new PdfBoolean(true));
-            }
-            catalog.getPdfObject().put(PdfName.MarkInfo, markInfo);
+            updateValueInMarkInfoDict(PdfName.Marked, PdfBoolean.TRUE);
 
             structParentIndex = 0;
         }
@@ -943,7 +939,7 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      * @see #getNextStructParentIndex()
      */
     public int getNextStructParentIndex() {
-        return structParentIndex++;
+        return structParentIndex < 0 ? -1 : structParentIndex++;
     }
 
     /**
@@ -1453,6 +1449,8 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
      */
     public void setUserProperties(boolean userProperties) {
         this.userProperties = userProperties;
+        PdfBoolean userPropsVal = userProperties ? PdfBoolean.TRUE : PdfBoolean.FALSE;
+        updateValueInMarkInfoDict(PdfName.UserProperties, userPropsVal);
     }
 
     /**
@@ -1864,6 +1862,15 @@ public class PdfDocument implements IEventDispatcher, Closeable, Serializable {
         } catch (Exception ex) {
             throw new PdfException(PdfException.TagStructureFlushingFailedItMightBeCorrupted, ex);
         }
+    }
+
+    private void updateValueInMarkInfoDict(PdfName key, PdfObject value) {
+        PdfDictionary markInfo = catalog.getPdfObject().getAsDictionary(PdfName.MarkInfo);
+        if (markInfo == null) {
+            markInfo = new PdfDictionary();
+            catalog.getPdfObject().put(PdfName.MarkInfo, markInfo);
+        }
+        markInfo.put(key, value);
     }
 
     /**
