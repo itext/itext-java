@@ -244,7 +244,7 @@ public class TableRenderer extends AbstractRenderer {
 
         if (!isFooterRenderer() && !isHeaderRenderer()) {
             if (isOriginalNonSplitRenderer) {
-                bordersHandler = new CollapsedTableBorders(rows, numberOfColumns, getBorders(), !tableModel.isComplete() || 0 != lastFlushedRowBottomBorder.size() ? rowRange.getStartRow() : -1);
+                bordersHandler = new CollapsedTableBorders(rows, numberOfColumns, getBorders(), !tableModel.isComplete() || 0 != lastFlushedRowBottomBorder.size() ? rowRange.getStartRow() : 0);
                 bordersHandler.initializeBorders();
             }
         }
@@ -563,7 +563,7 @@ public class TableRenderer extends AbstractRenderer {
 
             if (split || row == rows.size() - 1) {
                 bordersHandler.setFinishRow(bordersHandler.rowRange.getStartRow() + row);
-                if (!hasContent && bordersHandler.getFinishRow() != bordersHandler.getStartRow()) {
+                if (!hasContent/* && bordersHandler.getFinishRow() != bordersHandler.getStartRow()*/) {
                     bordersHandler.setFinishRow(bordersHandler.getFinishRow() - 1);
                 }
                 bottomTableBorderWidth = bordersHandler.getMaxBottomWidth();
@@ -572,7 +572,12 @@ public class TableRenderer extends AbstractRenderer {
             }
             // process footer with collapsed borders
             if ((split || row == rows.size() - 1) && null != footerRenderer) {
-                bordersHandler.applyBottomBorder(occupiedArea.getBBox(), layoutBox, tableModel.isEmpty(), true);
+                // maybe the table was incomplete and we can process the footer
+                if ((0 != lastFlushedRowBottomBorder.size() || !tableModel.isComplete()) && !hasContent && 0 == childRenderers.size()) {
+                    bordersHandler.applyTopBorder(occupiedArea.getBBox(), layoutBox, true);
+                } else {
+                    bordersHandler.applyBottomBorder(occupiedArea.getBBox(), layoutBox, tableModel.isEmpty(), true);
+                }
                 TableBorders.processRendererBorders(footerRenderer);
                 layoutBox.moveDown(footerRenderer.occupiedArea.getBBox().getHeight()).increaseHeight(footerRenderer.occupiedArea.getBBox().getHeight());
                 // apply the difference to set footer and table left/right margins identical
@@ -581,7 +586,7 @@ public class TableRenderer extends AbstractRenderer {
                 // TODO
                 //footerRenderer.bordersHandler.setTopBorderCollapseWith(0 != row || hasContent ? bordersHandler.getHorizontalBorder(rowRange.getStartRow() + row + (hasContent ? 1 : 0)) : bordersHandler.getTopBorderCollapseWith()); // TODO cellWithBigRowspanAdded ?
 
-                bordersHandler.considerFooter(footerRenderer.bordersHandler, true); // TODO
+                bordersHandler.considerFooter(footerRenderer.bordersHandler, hasContent || 0 != childRenderers.size()); // TODO Move up
                 LayoutResult res = footerRenderer.layout(new LayoutContext(new LayoutArea(area.getPageNumber(), layoutBox)));
                 layoutBox.<Rectangle>applyMargins(0, -bordersHandler.getRightBorderMaxWidth() / 2, 0, -bordersHandler.getLeftBorderMaxWidth() / 2, true);
                 float footerHeight = footerRenderer.getOccupiedAreaBBox().getHeight();
@@ -824,6 +829,7 @@ public class TableRenderer extends AbstractRenderer {
             }
         }
 
+
         if ((Boolean.TRUE.equals(getPropertyAsBoolean(Property.FILL_AVAILABLE_AREA))) && 0 != rows.size()) {
             extendLastRow(rows.get(rows.size() - 1), layoutBox);
         }
@@ -856,6 +862,7 @@ public class TableRenderer extends AbstractRenderer {
         applyMargins(occupiedArea.getBBox(), true);
         // if table is empty or is not complete we should delete footer
         if ((tableModel.isSkipLastFooter() || !tableModel.isComplete()) && null != footerRenderer) {
+            footerRenderer = null;
             borders = getBorders();
             bordersHandler.skipFooter(borders);
             if (tableModel.isComplete()) {

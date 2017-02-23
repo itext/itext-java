@@ -18,7 +18,8 @@ public abstract class TableBorders {
     protected final int numberOfColumns;
 
     protected Border[] tableBoundingBorders;
-    protected List<CellRenderer[]> rows; // TODO Maybe Table ?
+
+    protected List<CellRenderer[]> rows;
 
     protected Table.RowRange rowRange;
 
@@ -38,8 +39,37 @@ public abstract class TableBorders {
         setTableBoundingBorders(tableBoundingBorders);
     }
 
-    abstract protected TableBorders updateOnNewPage(boolean isOriginalNonSplitRenderer, boolean isFooterOrHeader, TableRenderer currentRenderer, TableRenderer headerRenderer, TableRenderer footerRenderer);
+    // region abstract
 
+    // region draw
+    abstract protected TableBorders drawHorizontalBorder(int i, float startX, float y1, PdfCanvas canvas, float[] countedColumnWidth);
+    abstract protected TableBorders drawVerticalBorder(int i, float startY, float x1, PdfCanvas canvas, List<Float> heights);
+    // endregion
+
+    // region area occupation
+    abstract protected TableBorders applyTopBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean isComplete, boolean reverse);
+    abstract protected TableBorders applyTopBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
+    abstract protected TableBorders applyBottomBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean reverse);
+    abstract protected TableBorders applyBottomBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
+
+    abstract protected TableBorders skipFooter(Border[] borders);
+    abstract protected TableBorders considerFooter(TableBorders footerBordersHandler, boolean hasContent);
+    abstract protected TableBorders considerHeader(TableBorders headerBordersHandler, boolean changeThis);
+    abstract protected TableBorders considerHeaderOccupiedArea(Rectangle occupiedBox, Rectangle layoutBox);
+
+    abstract protected TableBorders applyCellIndents(Rectangle box, float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse);
+    // endregion
+
+    // region getters
+    abstract public List<Border> getVerticalBorder(int index);
+    abstract public List<Border> getHorizontalBorder(int index);
+    abstract protected float getCellVerticalAddition(float[] indents);
+    // endregion
+
+    abstract protected TableBorders updateOnNewPage(boolean isOriginalNonSplitRenderer, boolean isFooterOrHeader, TableRenderer currentRenderer, TableRenderer headerRenderer, TableRenderer footerRenderer);
+    // endregion
+
+    // region init
     protected TableBorders initializeBorders() {
         List<Border> tempBorders;
         // initialize vertical borders
@@ -60,7 +90,9 @@ public abstract class TableBorders {
         }
         return this;
     }
+    // endregion
 
+    // region setters
     protected TableBorders setTableBoundingBorders(Border[] borders) {
         tableBoundingBorders = new Border[4];
         if (null != borders) {
@@ -83,15 +115,9 @@ public abstract class TableBorders {
     protected TableBorders setFinishRow(int row) {
         return setRowRange(new Table.RowRange(rowRange.getStartRow(), row));
     }
-
+    // endregion
 
     // region getters
-
-    abstract public List<Border> getVerticalBorder(int index);
-
-    abstract public List<Border> getHorizontalBorder(int index);
-
-
     public float getLeftBorderMaxWidth() {
         return leftBorderMaxWidth;
     }
@@ -108,7 +134,6 @@ public abstract class TableBorders {
         }
         return width;
     }
-
 
     public float getMaxBottomWidth() {
         float width = 0;
@@ -154,19 +179,11 @@ public abstract class TableBorders {
     }
 
     public Border getWidestHorizontalBorder(int row) {
-        Border theWidestBorder = null;
-//        if (row >= 0 && row < horizontalBorders.size()) {
-            theWidestBorder = getWidestBorder(getHorizontalBorder(row));
-//        }
-        return theWidestBorder;
+        return getWidestBorder(getHorizontalBorder(row));
     }
 
     public Border getWidestHorizontalBorder(int row, int start, int end) {
-        Border theWidestBorder = null;
-//        if (row >= 0 && row < horizontalBorders.size()) {
-            theWidestBorder = getWidestBorder(getHorizontalBorder(row), start, end);
-//        }
-        return theWidestBorder;
+        return getWidestBorder(getHorizontalBorder(row), start, end);
     }
 
     public List<Border> getFirstHorizontalBorder() {
@@ -184,7 +201,6 @@ public abstract class TableBorders {
     public List<Border> getLastVerticalBorder() {
         return getVerticalBorder(verticalBorders.size() - 1);
     }
-
 
     public int getNumberOfColumns() {
         return numberOfColumns;
@@ -248,11 +264,9 @@ public abstract class TableBorders {
         }
         return indents;
     }
-
     // endregion
 
     //region static
-
     public static Border getCellSideBorder(Cell cellModel, int borderType) {
         Border cellModelSideBorder = cellModel.getProperty(borderType);
         if (null == cellModelSideBorder && !cellModel.hasProperty(borderType)) {
@@ -321,40 +335,6 @@ public abstract class TableBorders {
         ((CollapsedTableBorders)renderer.bordersHandler).collapseAllBordersAndEmptyRows();
         return renderer.bordersHandler;
     }
-
-    // endregion
-
-    // region draw
-
-    abstract protected TableBorders drawHorizontalBorder(int i, float startX, float y1, PdfCanvas canvas, float[] countedColumnWidth);
-
-    abstract protected TableBorders drawVerticalBorder(int i, float startY, float x1, PdfCanvas canvas, List<Float> heights);
-
-    // endregion
-
-    // region area occupation
-
-    abstract protected TableBorders applyTopBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean isComplete, boolean reverse);
-    abstract protected TableBorders applyBottomBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean reverse);
-
-    abstract protected TableBorders applyTopBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
-    abstract protected TableBorders applyBottomBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
-
-//    abstract protected TableBorders applyLeftAndRightBorder(Rectangle occupiedArea, Rectangle layoutBox, boolean reverse) {
-//
-//    }
-
-    abstract protected TableBorders applyCellIndents(Rectangle box, float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse);
-
-    abstract protected float getCellVerticalAddition(float[] indents);
-
-    abstract protected TableBorders skipFooter(Border[] borders);
-
-    abstract protected TableBorders considerFooter(TableBorders footerBordersHandler, boolean changeThis);
-
-    abstract protected TableBorders considerHeader(TableBorders headerBordersHandler, boolean changeThis);
-    abstract protected TableBorders considerHeaderOccupiedArea(Rectangle occupiedBox, Rectangle layoutBox);
-
     // endregion
 
 }
