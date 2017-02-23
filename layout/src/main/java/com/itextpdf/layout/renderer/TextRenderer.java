@@ -1073,12 +1073,12 @@ public class TextRenderer extends AbstractRenderer {
     }
 
     @Override
-    PdfFont resolveFirstFont(String font, FontProvider provider, FontCharacteristics fc) {
+    PdfFont resolveFirstPdfFont(String font, FontProvider provider, FontCharacteristics fc) {
         FontSelectorStrategy strategy = provider.getStrategy(strToBeConverted,
                 FontFamilySplitter.splitFontFamily((String) font), fc);
         List<Glyph> resolvedGlyphs;
         PdfFont currentFont;
-        //try to find find font that can render at least one glyph.
+        //try to find first font that can render at least one glyph.
         while (!strategy.endOfText()) {
             resolvedGlyphs = strategy.nextGlyphs();
             currentFont = strategy.getCurrentFont();
@@ -1088,7 +1088,7 @@ public class TextRenderer extends AbstractRenderer {
                 }
             }
         }
-        return super.resolveFirstFont(font, provider, fc);
+        return super.resolveFirstPdfFont(font, provider, fc);
     }
 
     private static int numberOfElementsLessThan(ArrayList<Integer> numbers, int n) {

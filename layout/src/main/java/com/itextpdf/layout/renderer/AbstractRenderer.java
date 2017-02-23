@@ -1207,6 +1207,9 @@ public abstract class AbstractRenderer implements IRenderer {
         return fc;
     }
 
+    // This method is intended to get first valid PdfFont in this renderer, based of font property.
+    // It is usually done for counting some layout characteristics like ascender or descender.
+    // NOTE: It neither change Font Property of renderer, nor is guarantied to contain all glyphs used in renderer.
     PdfFont resolveFirstPdfFont() {
         Object font = this.<Object>getProperty(Property.FONT);
         if (font instanceof PdfFont) {
@@ -1217,14 +1220,18 @@ public abstract class AbstractRenderer implements IRenderer {
                 throw new IllegalStateException("Invalid font type. FontProvider expected. Cannot resolve font with string value");
             }
             FontCharacteristics fc = createFontCharacteristics();
-            return resolveFirstFont((String) font, provider, fc);
+            return resolveFirstPdfFont((String) font, provider, fc);
         } else {
             throw new IllegalStateException("String or PdfFont expected as value of FONT property");
         }
     }
 
+    // This method is intended to get first valid PdfFont described in font string,
+    // with specific FontCharacteristics with the help of specified font provider.
+    // This method is intended to be called from previous method that deals with Font Property.
+    // NOTE: It neither change Font Property of renderer, nor is guarantied to contain all glyphs used in renderer.
     // TODO this mechanism does not take text into account
-    PdfFont resolveFirstFont(String font, FontProvider provider, FontCharacteristics fc) {
+    PdfFont resolveFirstPdfFont(String font, FontProvider provider, FontCharacteristics fc) {
         return provider.getFontSelector(FontFamilySplitter.splitFontFamily(font), fc).bestMatch().getPdfFont(provider);
     }
 }
