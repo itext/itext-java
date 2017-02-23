@@ -57,11 +57,8 @@ import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.Closeable;
+import java.io.*;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Map;
 
@@ -130,6 +127,18 @@ public class PdfReader implements Closeable, Serializable {
      */
     public PdfReader(InputStream is, ReaderProperties properties) throws IOException {
         this(new RandomAccessSourceFactory().createSource(is), properties);
+    }
+
+    /**
+     * Reads and parses a PDF document.
+     *
+     * @param file the {@code File} containing the document. Stream is closed automatically, when document is closed,
+     *             if user doesn't want to close stream, he should set closeStream=false;
+     * @throws IOException           on error
+     * @throws FileNotFoundException when the specified File is not found
+     */
+    public PdfReader(java.io.File file) throws FileNotFoundException, IOException {
+        this(file.getAbsolutePath());
     }
 
     /**

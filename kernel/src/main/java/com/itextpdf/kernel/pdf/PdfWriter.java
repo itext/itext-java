@@ -50,11 +50,7 @@ import com.itextpdf.kernel.PdfException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.OutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -97,9 +93,18 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     protected boolean isUserWarnedAboutAcroFormCopying;
 
     /**
+     * Create a PdfWriter writing to the passed File and with default writer properties.
+     *
+     * @param file File to write to.
+     */
+    public PdfWriter(java.io.File file) throws FileNotFoundException {
+        this(file.getAbsolutePath());
+    }
+
+    /**
      * Create a PdfWriter writing to the passed outputstream and with default writer properties.
      *
-     * @param os Outputstream to write too.
+     * @param os Outputstream to write to.
      */
     public PdfWriter(java.io.OutputStream os) {
         this(os, new WriterProperties());
@@ -134,7 +139,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     /**
      * Create a PdfWriter writing to the passed filename and using the passed writer properties.
      *
-     * @param filename filename of the resulting pdf.
+     * @param filename   filename of the resulting pdf.
      * @param properties writerproperties to use.
      * @throws FileNotFoundException
      */
@@ -219,7 +224,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     /**
      * Write a slice of the passed byte array to the underlying stream
      *
-     * @param b byte array to slice and write.
+     * @param b   byte array to slice and write.
      * @param off starting index of the slice.
      * @param len length of the slice.
      * @throws java.io.IOException
@@ -340,7 +345,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         }
 
         if (obj.isDictionary()) {
-            PdfName subtype = ((PdfDictionary)obj).getAsName(PdfName.Subtype);
+            PdfName subtype = ((PdfDictionary) obj).getAsName(PdfName.Subtype);
             if (subtype != null && subtype.equals(PdfName.Widget)) {
                 tryToFindDuplicate = false;
             }
@@ -673,6 +678,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         /**
          * Compares this PdfWriter to the obj.
          * Two PdfWriters are equal if their hashcodes are equal and their serialized content are equal.
+         *
          * @param obj obj to compare
          * @return True if this and obj are equal, false otherwise
          */
