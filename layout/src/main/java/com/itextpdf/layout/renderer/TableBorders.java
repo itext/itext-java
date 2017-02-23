@@ -56,9 +56,9 @@ public abstract class TableBorders {
     // endregion
 
     // region area occupation
-    abstract protected TableBorders applyTopBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean isComplete, boolean reverse);
+    abstract protected TableBorders applyTopBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse);
     abstract protected TableBorders applyTopBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
-    abstract protected TableBorders applyBottomBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean reverse);
+    abstract protected TableBorders applyBottomBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse);
     abstract protected TableBorders applyBottomBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
     abstract protected TableBorders applyLeftAndRightBorder(Rectangle layoutBox, boolean reverse);
 

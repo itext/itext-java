@@ -562,7 +562,7 @@ public class TableRenderer extends AbstractRenderer {
                 if ((0 != lastFlushedRowBottomBorder.size() || !tableModel.isComplete()) && !hasContent && 0 == childRenderers.size()) {
                     bordersHandler.applyTopBorder(occupiedArea.getBBox(), layoutBox, true);
                 } else {
-                    bordersHandler.applyBottomBorder(occupiedArea.getBBox(), layoutBox, tableModel.isEmpty(), true);
+                    bordersHandler.applyBottomBorder(occupiedArea.getBBox(), layoutBox, tableModel.isEmpty(), false, true);
                 }
                 processRendererBorders(footerRenderer);
                 layoutBox.moveDown(footerRenderer.occupiedArea.getBBox().getHeight()).increaseHeight(footerRenderer.occupiedArea.getBBox().getHeight());
@@ -677,7 +677,7 @@ public class TableRenderer extends AbstractRenderer {
                         bordersHandler.applyTopBorder(occupiedArea.getBBox(), layoutBox, true);
                         // process bottom border of the last added row if there is no footer
                         if (!tableModel.isComplete() || 0 != lastFlushedRowBottomBorder.size()) {
-                            bordersHandler.applyTopBorder(occupiedArea.getBBox(), layoutBox, true, true, false);
+                            bordersHandler.applyTopBorder(occupiedArea.getBBox(), layoutBox, 0 == childRenderers.size(), true, false);
                         }
                     }
                 }
@@ -710,10 +710,8 @@ public class TableRenderer extends AbstractRenderer {
                             logger.warn(LogMessageConstant.CLIP_ELEMENT);
                             // Process borders
                             if (status == LayoutResult.NOTHING) {
-                                bordersHandler.applyTopBorder(occupiedArea.getBBox(), layoutBox, true, true, false);
-                                bordersHandler.applyBottomBorder(occupiedArea.getBBox(), layoutBox, false, false);
-                                bordersHandler.applyBottomBorder(occupiedArea.getBBox(), layoutBox, false, false); // TODO
-
+                                bordersHandler.applyTopBorder(occupiedArea.getBBox(), layoutBox, 0 == childRenderers.size(), true, false);
+                                bordersHandler.applyBottomBorder(occupiedArea.getBBox(), layoutBox, 0 == childRenderers.size(), true, false);
                             }
                             // Notice that we extend the table only on the current page
                             if (null != blockMinHeight && blockMinHeight > occupiedArea.getBBox().getHeight()) {
@@ -786,11 +784,9 @@ public class TableRenderer extends AbstractRenderer {
                     bordersHandler.applyBottomBorder(occupiedArea.getBBox(), layoutBox, false);
                 } else {
                     if (0 != lastFlushedRowBottomBorder.size()) {
-                        bordersHandler.applyTopBorder(occupiedArea.getBBox(), layoutBox, true, true, false);
+                        bordersHandler.applyTopBorder(occupiedArea.getBBox(), layoutBox, 0 == childRenderers.size(), true, false);
                     } else {
-                        bordersHandler.applyBottomBorder(occupiedArea.getBBox(), layoutBox, false, false);
-                        bordersHandler.applyBottomBorder(occupiedArea.getBBox(), layoutBox, false, false);
-
+                        bordersHandler.applyBottomBorder(occupiedArea.getBBox(), layoutBox, 0 == childRenderers.size(), true, false);
                     }
                 }
             }
@@ -801,7 +797,7 @@ public class TableRenderer extends AbstractRenderer {
             }
             if (null == footerRenderer) {
                 if (0 != childRenderers.size()) {
-                    bordersHandler.applyBottomBorder(occupiedArea.getBBox(), layoutBox, false, true);
+                    bordersHandler.applyBottomBorder(occupiedArea.getBBox(), layoutBox, 0 == childRenderers.size(), false, true);
                 }
             } else {
                 // occupied area is right here
@@ -840,18 +836,10 @@ public class TableRenderer extends AbstractRenderer {
         }
 
         applyMargins(occupiedArea.getBBox(), true);
-        // if table is empty or is not complete we should delete footer
-        if ((tableModel.isSkipLastFooter() || !tableModel.isComplete()) && null != footerRenderer) {
+        // we should process incomplete table's footer only dureing splitting
+        if (!tableModel.isComplete() && null != footerRenderer) {
             footerRenderer = null;
             bordersHandler.skipFooter(getBorders());
-            if (tableModel.isComplete()) {
-                if (0 != lastFlushedRowBottomBorder.size()) {
-                    bordersHandler.applyTopBorder(occupiedArea.getBBox(), layoutBox, true, true, false);
-                } else {
-                    bordersHandler.applyBottomBorder(occupiedArea.getBBox(), layoutBox, false, false);
-                }
-
-            }
         }
         adjustFooterAndFixOccupiedArea(layoutBox);
 

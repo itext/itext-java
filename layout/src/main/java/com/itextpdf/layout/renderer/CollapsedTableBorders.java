@@ -513,18 +513,21 @@ public class CollapsedTableBorders extends TableBorders {
         return this;
     }
 
-    protected TableBorders applyTopBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean isComplete, boolean reverse) {
+    protected TableBorders applyTopBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse) {
         if (!isEmpty) {
             return applyTopBorder(occupiedBox, layoutBox, reverse);
-        } else if (isComplete) { // process empty table
+        } else if (force) { // process empty table
             applyTopBorder(occupiedBox, layoutBox, reverse);
             return applyTopBorder(occupiedBox, layoutBox, reverse);
         }
         return this;
     }
 
-    protected TableBorders applyBottomBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean reverse) {
+    protected TableBorders applyBottomBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse) {
         if (!isEmpty) {
+            return applyBottomBorder(occupiedBox, layoutBox, reverse);
+        } else if (force) { // process empty table
+            applyBottomBorder(occupiedBox, layoutBox, reverse);
             return applyBottomBorder(occupiedBox, layoutBox, reverse);
         }
         return this;
