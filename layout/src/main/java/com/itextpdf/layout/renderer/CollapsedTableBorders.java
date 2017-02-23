@@ -13,27 +13,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CollapsedTableBorders extends TableBorders {
-    private List<Border> topBorderCollapseWith;
-    private List<Border> bottomBorderCollapseWith;
-
-    private int largeTableIndexOffset;
+    private List<Border> topBorderCollapseWith = new ArrayList<Border>();
+    private List<Border> bottomBorderCollapseWith = new ArrayList<Border>();
 
     // region constructors
     public CollapsedTableBorders(List<CellRenderer[]> rows, int numberOfColumns) {
         super(rows, numberOfColumns);
-        largeTableIndexOffset = 0;
     }
 
     public CollapsedTableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders) {
         super(rows, numberOfColumns, tableBoundingBorders);
-        topBorderCollapseWith = new ArrayList<Border>();
-        bottomBorderCollapseWith = new ArrayList<Border>();
-        largeTableIndexOffset = 0;
     }
 
-    public CollapsedTableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders, int startRow) {
-        this(rows, numberOfColumns, tableBoundingBorders);
-        this.largeTableIndexOffset = startRow;
+    public CollapsedTableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders, int largeTableIndexOffset) {
+        super(rows, numberOfColumns, tableBoundingBorders, largeTableIndexOffset);
     }
     // endregion
 
@@ -41,13 +34,12 @@ public class CollapsedTableBorders extends TableBorders {
     protected CollapsedTableBorders collapseAllBordersAndEmptyRows() {
         CellRenderer[] currentRow;
         int[] rowsToDelete = new int[numberOfColumns];
-        for (int row = rowRange.getStartRow() - largeTableIndexOffset; row <= rowRange.getFinishRow() - largeTableIndexOffset; row++) {
+        for (int row = startRow - largeTableIndexOffset; row <= finishRow - largeTableIndexOffset; row++) {
             currentRow = rows.get(row);
             boolean hasCells = false;
             for (int col = 0; col < numberOfColumns; col++) {
                 if (null != currentRow[col]) {
                     int colspan = (int) currentRow[col].getPropertyAsInteger(Property.COLSPAN);
-                    prepareBuildingBordersArrays(currentRow[col], tableBoundingBorders, numberOfColumns, row, col);
                     buildBordersArrays(currentRow[col], row, col);
                     hasCells = true;
                     if (rowsToDelete[col] > 0) {
@@ -70,7 +62,7 @@ public class CollapsedTableBorders extends TableBorders {
                 }
             }
             if (!hasCells) {
-                setFinishRow(rowRange.getFinishRow() - 1);
+                setFinishRow(finishRow - 1);
                 rows.remove(currentRow);
                 row--;
                 for (int i = 0; i < numberOfColumns; i++) {
@@ -82,8 +74,8 @@ public class CollapsedTableBorders extends TableBorders {
                 }
             }
         }
-        if (rowRange.getFinishRow() < rowRange.getStartRow()) {
-            setFinishRow(rowRange.getStartRow());
+        if (finishRow < startRow) {
+            setFinishRow(startRow);
         }
         return this;
     }
@@ -103,7 +95,7 @@ public class CollapsedTableBorders extends TableBorders {
         List<Border> borderList;
         Border border;
         // process top border
-        borderList = getHorizontalBorder(rowRange.getStartRow() + row - rowspan + 1);
+        borderList = getHorizontalBorder(startRow + row - rowspan + 1);
         for (int i = col; i < col + colspan; i++) {
             border = borderList.get(i);
             if (null != border && border.getWidth() > indents[0]) {
@@ -112,14 +104,14 @@ public class CollapsedTableBorders extends TableBorders {
         }
         // process right border
         borderList = getVerticalBorder(col + colspan);
-        for (int i = rowRange.getStartRow() - largeTableIndexOffset + row - rowspan + 1; i < rowRange.getStartRow() - largeTableIndexOffset + row + 1; i++) {
+        for (int i = startRow - largeTableIndexOffset + row - rowspan + 1; i < startRow - largeTableIndexOffset + row + 1; i++) {
             border = borderList.get(i);
             if (null != border && border.getWidth() > indents[1]) {
                 indents[1] = border.getWidth();
             }
         }
         // process bottom border
-        borderList = getHorizontalBorder(rowRange.getStartRow() + row + 1);
+        borderList = getHorizontalBorder(startRow + row + 1);
         for (int i = col; i < col + colspan; i++) {
             border = borderList.get(i);
             if (null != border && border.getWidth() > indents[2]) {
@@ -128,7 +120,7 @@ public class CollapsedTableBorders extends TableBorders {
         }
         // process left border
         borderList = getVerticalBorder(col);
-        for (int i = rowRange.getStartRow() - largeTableIndexOffset + row - rowspan + 1; i < rowRange.getStartRow() - largeTableIndexOffset + row + 1; i++) {
+        for (int i = startRow - largeTableIndexOffset + row - rowspan + 1; i < startRow - largeTableIndexOffset + row + 1; i++) {
             border = borderList.get(i);
             if (null != border && border.getWidth() > indents[3]) {
                 indents[3] = border.getWidth();
@@ -137,35 +129,7 @@ public class CollapsedTableBorders extends TableBorders {
         return indents;
     }
 
-    public Border getWidestHorizontalBorder(int row, boolean forceNotToProcessAsFirst, boolean forceNotToProcessWithLast) {
-        return getWidestBorder(getHorizontalBorder(row, forceNotToProcessAsFirst, forceNotToProcessWithLast));
-    }
-
-    public Border getWidestHorizontalBorder(int row, int start, int end, boolean forceNotToProcessAsFirst, boolean forceNotToProcessAsLast) {
-        return getWidestBorder(getHorizontalBorder(row, forceNotToProcessAsFirst, forceNotToProcessAsLast), start, end);
-    }
-
-    public Border getWidestHorizontalBorder(int row, int start, int end) {
-        return getWidestHorizontalBorder(row, start, end, false, false);
-    }
-
-    public Border getWidestVerticalBorder(int col) {
-        Border theWidestBorder = null;
-        if (col >= 0 && col < verticalBorders.size()) {
-            theWidestBorder = getWidestBorder(getVerticalBorder(col));
-        }
-        return theWidestBorder;
-    }
-
-    public Border getWidestVerticalBorder(int col, int start, int end) {
-        Border theWidestBorder = null;
-        if (col >= 0 && col < verticalBorders.size()) {
-            theWidestBorder = getWidestBorder(getVerticalBorder(col), start, end);
-        }
-        return theWidestBorder;
-    }
-
-    public List<Border> getVerticalBorder(int index) { // TODO REFACTOR
+    public List<Border> getVerticalBorder(int index) {
         if (index == 0) {
             List<Border> borderList = getBorderList(null, tableBoundingBorders[3], verticalBorders.get(0).size());
             List<Border> leftVerticalBorder = verticalBorders.get(0);
@@ -189,36 +153,15 @@ public class CollapsedTableBorders extends TableBorders {
         }
     }
 
-    public float getMaxTopWidth() {
-        float width = 0;
-        Border widestBorder = getWidestHorizontalBorder(rowRange.getStartRow(), false, false);
-        if (null != widestBorder && widestBorder.getWidth() >= width) {
-            width = widestBorder.getWidth();
-        }
-        return width;
-    }
-
-    public float getMaxBottomWidth() {
-        float width = 0;
-        Border widestBorder = getWidestHorizontalBorder(rowRange.getFinishRow() + 1, false, false); // TODO
-        if (null != widestBorder && widestBorder.getWidth() >= width) {
-            width = widestBorder.getWidth();
-        }
-        return width;
-    }
 
     public List<Border> getHorizontalBorder(int index) {
-        return getHorizontalBorder(index, false, false);
-    }
-
-    public List<Border> getHorizontalBorder(int index, boolean forceNotToProcessAsFirst, boolean forceNotToProcessAsLast) {
         if (index == largeTableIndexOffset) {
             List<Border> firstBorderOnCurrentPage = getBorderList(topBorderCollapseWith, tableBoundingBorders[0], numberOfColumns);
             return getCollapsedList(horizontalBorders.get(index - largeTableIndexOffset), firstBorderOnCurrentPage);
         } else if (index - largeTableIndexOffset == horizontalBorders.size() - 1) {
             List<Border> lastBorderOnCurrentPage = getBorderList(bottomBorderCollapseWith, tableBoundingBorders[2], numberOfColumns);
             return getCollapsedList(horizontalBorders.get(index - largeTableIndexOffset), lastBorderOnCurrentPage);
-        } else if (index - largeTableIndexOffset == rowRange.getStartRow() && !forceNotToProcessAsFirst) {
+        } else if (index - largeTableIndexOffset == startRow) {
             List<Border> firstBorderOnCurrentPage = getBorderList(topBorderCollapseWith, tableBoundingBorders[0], numberOfColumns);
             if (0 != rows.size()) {
                 int col = 0;
@@ -246,7 +189,7 @@ public class CollapsedTableBorders extends TableBorders {
             }
             return firstBorderOnCurrentPage;
 
-        } else if ((index == rowRange.getFinishRow() + 1 && !forceNotToProcessAsLast)) {
+        } else if ((index == finishRow + 1)) {
             List<Border> lastBorderOnCurrentPage = getBorderList(bottomBorderCollapseWith, tableBoundingBorders[2], numberOfColumns);
             if (0 != rows.size()) {
                 int col = 0;
@@ -303,24 +246,6 @@ public class CollapsedTableBorders extends TableBorders {
         return this;
     }
     //endregion
-
-    // region building border arrays
-    protected void prepareBuildingBordersArrays(CellRenderer cell, Border[] tableBorders, int colNum, int row, int col) {
-        Border[] cellBorders = cell.getBorders();
-        int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
-        if (0 == col) {
-            cell.setProperty(Property.BORDER_LEFT, getCollapsedBorder(cellBorders[3], tableBorders[3]));
-        }
-        if (colNum == col + colspan) {
-            cell.setProperty(Property.BORDER_RIGHT, getCollapsedBorder(cellBorders[1], tableBorders[1]));
-        }
-        if (0 == row) {
-            cell.setProperty(Property.BORDER_TOP, getCollapsedBorder(cellBorders[0], tableBorders[0]));
-        }
-        if (rows.size() - 1 == row) {
-            cell.setProperty(Property.BORDER_BOTTOM, getCollapsedBorder(cellBorders[2], tableBorders[2]));
-        }
-    }
 
     protected void buildBordersArrays(CellRenderer cell, int row, int col) {
         // We should check if the row number is less than horizontal borders array size. It can happen if the cell with
@@ -462,23 +387,18 @@ public class CollapsedTableBorders extends TableBorders {
 
     // region draw
     protected TableBorders drawHorizontalBorder(int i, float startX, float y1, PdfCanvas canvas, float[] countedColumnWidth) {
-        List<Border> borders = getHorizontalBorder(rowRange.getStartRow() /*- largeTableIndexOffset*/ + i);
+        List<Border> borders = getHorizontalBorder(startRow /*- largeTableIndexOffset*/ + i);
         float x1 = startX;
         float x2 = x1 + countedColumnWidth[0];
         if (i == 0) {
-            if (true/*bordersHandler.getFirstVerticalBorder().size() > verticalBordersIndexOffset && bordersHandler.getLastVerticalBorder().size() > verticalBordersIndexOffset*/) {
-                Border firstBorder = getFirstVerticalBorder().get(rowRange.getStartRow() - largeTableIndexOffset);
-                if (firstBorder != null) {
-                    x1 -= firstBorder.getWidth() / 2;
-                }
+            Border firstBorder = getFirstVerticalBorder().get(startRow - largeTableIndexOffset);
+            if (firstBorder != null) {
+                x1 -= firstBorder.getWidth() / 2;
             }
-        } else if (i == rowRange.getFinishRow() - rowRange.getStartRow() + 1) {
-            if (true/*bordersHandler.getFirstVerticalBorder().size() > verticalBordersIndexOffset &&
-                    bordersHandler.getLastVerticalBorder().size() > verticalBordersIndexOffset*/) {
-                Border firstBorder = getFirstVerticalBorder().get(rowRange.getStartRow() - largeTableIndexOffset + rowRange.getFinishRow() - rowRange.getStartRow() + 1 - 1);
-                if (firstBorder != null) {
-                    x1 -= firstBorder.getWidth() / 2;
-                }
+        } else if (i == finishRow - startRow + 1) {
+            Border firstBorder = getFirstVerticalBorder().get(startRow - largeTableIndexOffset + finishRow - startRow + 1 - 1);
+            if (firstBorder != null) {
+                x1 -= firstBorder.getWidth() / 2;
             }
         }
 
@@ -503,13 +423,11 @@ public class CollapsedTableBorders extends TableBorders {
 
         Border lastBorder = borders.size() > j - 1 ? borders.get(j - 1) : null;
         if (lastBorder != null) {
-            if (true/*bordersHandler.getVerticalBorder(j).size() > verticalBordersIndexOffset*/) {
-                if (i == 0) {
-                    if (getVerticalBorder(j).get(rowRange.getStartRow() - largeTableIndexOffset + i) != null)
-                        x2 += getVerticalBorder(j).get(rowRange.getStartRow() - largeTableIndexOffset + i).getWidth() / 2;
-                } else if (i == rowRange.getFinishRow() - rowRange.getStartRow() + 1 && getVerticalBorder(j).size() >= rowRange.getStartRow() - largeTableIndexOffset + i - 1 && getVerticalBorder(j).get(rowRange.getStartRow() - largeTableIndexOffset + i - 1) != null) {
-                    x2 += getVerticalBorder(j).get(rowRange.getStartRow() - largeTableIndexOffset + i - 1).getWidth() / 2;
-                }
+            if (i == 0) {
+                if (getVerticalBorder(j).get(startRow - largeTableIndexOffset + i) != null)
+                    x2 += getVerticalBorder(j).get(startRow - largeTableIndexOffset + i).getWidth() / 2;
+            } else if (i == finishRow - startRow + 1 && getVerticalBorder(j).size() >= startRow - largeTableIndexOffset + i - 1 && getVerticalBorder(j).get(startRow - largeTableIndexOffset + i - 1) != null) {
+                x2 += getVerticalBorder(j).get(startRow - largeTableIndexOffset + i - 1).getWidth() / 2;
             }
 
             lastBorder.drawCellBorder(canvas, x1, y1, x2, y1);
@@ -526,8 +444,8 @@ public class CollapsedTableBorders extends TableBorders {
         }
         int j;
         for (j = 1; j < heights.size(); j++) {
-            Border prevBorder = borders.get(rowRange.getStartRow() - largeTableIndexOffset + j - 1);
-            Border curBorder = borders.get(rowRange.getStartRow() - largeTableIndexOffset + j);
+            Border prevBorder = borders.get(startRow - largeTableIndexOffset + j - 1);
+            Border curBorder = borders.get(startRow - largeTableIndexOffset + j);
             if (prevBorder != null) {
                 if (!prevBorder.equals(curBorder)) {
                     prevBorder.drawCellBorder(canvas, x1, y1, x1, y2);
@@ -544,7 +462,7 @@ public class CollapsedTableBorders extends TableBorders {
         if (borders.size() == 0) {
             return this;
         }
-        Border lastBorder = borders.get(rowRange.getStartRow() - largeTableIndexOffset + j - 1);
+        Border lastBorder = borders.get(startRow - largeTableIndexOffset + j - 1);
         if (lastBorder != null) {
             lastBorder.drawCellBorder(canvas, x1, y1, x1, y2);
         }
@@ -553,6 +471,7 @@ public class CollapsedTableBorders extends TableBorders {
     // endregion
 
     // region static
+
     /**
      * Returns the collapsed border. We process collapse
      * if the table border width is strictly greater than cell border width.
@@ -585,6 +504,15 @@ public class CollapsedTableBorders extends TableBorders {
     // endregion
 
     // region occupation
+
+    protected TableBorders applyLeftAndRightBorder(Rectangle layoutBox, boolean reverse) {
+        if (null != layoutBox) {
+            layoutBox.<Rectangle>applyMargins(0, rightBorderMaxWidth / 2, 0, leftBorderMaxWidth / 2, reverse);
+        }
+
+        return this;
+    }
+
     protected TableBorders applyTopBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean isComplete, boolean reverse) {
         if (!isEmpty) {
             return applyTopBorder(occupiedBox, layoutBox, reverse);
@@ -627,17 +555,7 @@ public class CollapsedTableBorders extends TableBorders {
     }
     // endregion
 
-    // region footer/header
-    protected static TableBorders processRendererBorders(TableRenderer renderer) {
-        // TODO No sence in this method
-        renderer.bordersHandler = new CollapsedTableBorders(renderer.rows, ((Table) renderer.getModelElement()).getNumberOfColumns());
-        renderer.bordersHandler.setTableBoundingBorders(renderer.getBorders());
-        renderer.bordersHandler.initializeBorders();
-        renderer.bordersHandler.setRowRange(renderer.rowRange);
-        ((CollapsedTableBorders) renderer.bordersHandler).collapseAllBordersAndEmptyRows();
-        return renderer.bordersHandler;
-    }
-
+    // region update, footer/header
     protected TableBorders updateOnNewPage(boolean isOriginalNonSplitRenderer, boolean isFooterOrHeader, TableRenderer currentRenderer, TableRenderer headerRenderer, TableRenderer footerRenderer) {
         if (!isFooterOrHeader) {
             // collapse all cell borders
@@ -687,7 +605,7 @@ public class CollapsedTableBorders extends TableBorders {
     }
 
     protected TableBorders considerHeader(TableBorders headerBordersHandler, boolean changeThis) {
-        ((CollapsedTableBorders) headerBordersHandler).setBottomBorderCollapseWith(getHorizontalBorder(rowRange.getStartRow()));
+        ((CollapsedTableBorders) headerBordersHandler).setBottomBorderCollapseWith(getHorizontalBorder(startRow));
         if (changeThis) {
             setTopBorderCollapseWith(headerBordersHandler.getLastHorizontalBorder());
         }
@@ -699,6 +617,16 @@ public class CollapsedTableBorders extends TableBorders {
         layoutBox.increaseHeight(topBorderMaxWidth);
         occupiedBox.moveUp(topBorderMaxWidth).decreaseHeight(topBorderMaxWidth);
         return this;
+    }
+
+
+    protected static TableBorders processRendererBorders(TableRenderer renderer) {
+        renderer.bordersHandler = new CollapsedTableBorders(renderer.rows, ((Table) renderer.getModelElement()).getNumberOfColumns());
+        renderer.bordersHandler.setTableBoundingBorders(renderer.getBorders());
+        renderer.bordersHandler.initializeBorders();
+        renderer.bordersHandler.setRowRange(renderer.rowRange.getStartRow(), renderer.rowRange.getFinishRow());
+        ((CollapsedTableBorders) renderer.bordersHandler).collapseAllBordersAndEmptyRows();
+        return renderer.bordersHandler;
     }
     // endregion
 }

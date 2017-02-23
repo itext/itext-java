@@ -141,6 +141,7 @@ public class BorderTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
     })
     @Test
+    @Ignore
     public void incompleteTableTest01() throws IOException, InterruptedException {
         fileName = "incompleteTableTest01.pdf";
         Document doc = createDocument();
@@ -170,6 +171,7 @@ public class BorderTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore
     public void incompleteTableTest02() throws IOException, InterruptedException {
         fileName = "incompleteTableTest02.pdf";
         Document doc = createDocument();
@@ -1077,6 +1079,31 @@ public class BorderTest extends ExtendedITextTest {
         table.addCell(new Cell().add(textAlphabet + "4").setBorder(new SolidBorder(Color.GREEN, 2)));
         table.addCell(new Cell().add(textAlphabet + "5"));
         table.addCell(new Cell().add(textAlphabet + "5"));
+
+        doc.add(table);
+
+        closeDocumentAndCompareOutputs(doc);
+    }
+
+    @Test
+    public void splitCellsTest10() throws IOException, InterruptedException {
+        fileName = "splitCellsTest10.pdf";
+        Document doc = createDocument();
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(130, 180));
+
+        String textAlphabet = "Cell";
+
+        Table table = new Table(3)
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
+        table.addCell(new Cell().add(textAlphabet + "1").setBackgroundColor(Color.YELLOW));
+        table.addCell(new Cell(2, 1).add(textAlphabet + "222222222").setBackgroundColor(Color.YELLOW));
+        table.addCell(new Cell().add(textAlphabet + "3").setBackgroundColor(Color.YELLOW));
+        table.addCell(new Cell().setBackgroundColor(Color.YELLOW).add(new Paragraph(textAlphabet + "4")).setKeepTogether(true));
+        table.addCell(new Cell().setBackgroundColor(Color.YELLOW).add(new Paragraph(textAlphabet + "5")).setKeepTogether(true));
+
+
+        table.setBorderBottom(new SolidBorder(Color.BLUE, 1));
 
         doc.add(table);
 

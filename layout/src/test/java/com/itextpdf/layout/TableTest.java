@@ -73,7 +73,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
@@ -871,8 +870,7 @@ public class TableTest extends ExtendedITextTest {
                 .addCell(new Cell(2, 1).add(new Paragraph("cell 1, 1 and 2\n" + longTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + textContent)))
                 .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + textContent)))
-                ;
+                .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + textContent)));
 
         doc.add(table);
         doc.close();
@@ -1009,6 +1007,7 @@ public class TableTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
+
     @Test
     public void toLargeElementInTableTest01() throws IOException, InterruptedException {
         String testName = "toLargeElementInTableTest01.pdf";
@@ -1024,36 +1023,6 @@ public class TableTest extends ExtendedITextTest {
         cell.add(p);
         table.addCell(cell);
         doc.add(table);
-
-        doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
-    }
-
-    @Test
-    public void simpleNestedTablesTest01() throws IOException, InterruptedException {
-        String testName = "simpleNestedTablesTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
-
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        Document doc = new Document(pdfDoc);
-
-        Cell cell;
-        Table outertable = new Table(1);
-        Table innertable = new Table(1);
-
-        cell = new Cell().add("I'm a cell in an inner table.");
-        cell.setBorder(Border.NO_BORDER);
-        innertable.addCell(cell);
-
-        cell = new Cell().add(innertable);
-        outertable.addCell(cell);
-
-//        cell = new Cell().add("I'm a cell in a outer table.");
-//        outertable.addCell(cell);
-
-        // add the table
-        doc.add(outertable);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -1154,7 +1123,7 @@ public class TableTest extends ExtendedITextTest {
 
         Table innerTable = new Table(1);
         for (int i = 0; i < 4; i++) {
-            innerTable.addCell(new Cell().add("He`llo" + i));
+            innerTable.addCell(new Cell().add("Hello" + i));
         }
 
         Table outerTable = new Table(1)
@@ -1247,9 +1216,9 @@ public class TableTest extends ExtendedITextTest {
 
         String textByron =
                 "When a man hath no freedom to fight for at home,\n" +
-                "    Let him combat for that of his neighbours;\n" +
-                "Let him think of the glories of Greece and of Rome,\n" +
-                "    And get knocked on the head for his labours.\n";
+                        "    Let him combat for that of his neighbours;\n" +
+                        "Let him think of the glories of Greece and of Rome,\n" +
+                        "    And get knocked on the head for his labours.\n";
 
 
         doc.add(new Paragraph("Default layout:"));
@@ -1460,7 +1429,7 @@ public class TableTest extends ExtendedITextTest {
 
         Table table = new Table(2);
         table.setBorder(new SolidBorder(Color.GREEN, 100));
-        
+
         for (int i = 0; i < 10; i++) {
             table.addCell(new Cell().add("Cell No." + i));
         }
@@ -1609,59 +1578,6 @@ public class TableTest extends ExtendedITextTest {
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
-
-    @Test
-    public void simpleHeaderFooterTableTest01() throws IOException, InterruptedException {
-        String testName = "simpleHeaderFooterTableTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
-
-        String gretzky = "Make Gretzky great again!";
-
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        Document doc = new Document(pdfDoc, PageSize.A7.rotate());
-
-        Table table = new Table(2);
-        table.setBorder(new SolidBorder(Color.GREEN, 15));
-
-        for (int i = 0; i < 10; i++) {
-            table.addCell(new Cell().add(gretzky));
-        }
-
-        table.addHeaderCell(new Cell(1, 2).setHeight(30).add(gretzky).setBorder(new SolidBorder(Color.RED, 0.5f)));
-
-        doc.add(table);
-
-        doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
-    }
-
-    @Test
-    public void simpleHeaderFooterTableTest02() throws IOException, InterruptedException {
-        String testName = "simpleHeaderFooterTableTest02.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
-
-        String gretzky = "Make Gretzky great again!";
-
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        Document doc = new Document(pdfDoc, PageSize.A7.rotate());
-
-        Table table = new Table(2);
-        table.setBorder(new SolidBorder(Color.GREEN, 15));
-
-        for (int i = 0; i < 10; i++) {
-            table.addCell(new Cell().add(gretzky));
-        }
-
-        table.addFooterCell(new Cell(1, 2).setHeight(30).add(gretzky).setBorder(new SolidBorder(Color.RED, 0.5f)));
-
-        doc.add(table);
-
-        doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
-    }
-
 
     static class CustomRenderer extends TableRenderer {
         public CustomRenderer(Table modelElement, Table.RowRange rowRange) {

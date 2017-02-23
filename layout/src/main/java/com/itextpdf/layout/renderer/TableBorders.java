@@ -12,26 +12,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class TableBorders {
-    protected List<List<Border>> horizontalBorders;
-    protected List<List<Border>> verticalBorders;
+    protected List<List<Border>> horizontalBorders = new ArrayList<>();
+    protected List<List<Border>> verticalBorders = new ArrayList<>();
 
     protected final int numberOfColumns;
 
-    protected Border[] tableBoundingBorders;
+    protected Border[] tableBoundingBorders = new Border[4];
 
     protected List<CellRenderer[]> rows;
 
-    protected Table.RowRange rowRange;
+    protected int startRow;
+    protected int finishRow;
 
     protected float leftBorderMaxWidth;
     protected float rightBorderMaxWidth;
 
+    protected int largeTableIndexOffset = 0;
+
     public TableBorders(List<CellRenderer[]> rows, int numberOfColumns) {
         this.rows = rows;
         this.numberOfColumns = numberOfColumns;
-        verticalBorders = new ArrayList<>();
-        horizontalBorders = new ArrayList<>();
-        tableBoundingBorders = new Border[4];
     }
 
     public TableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders) {
@@ -39,6 +39,15 @@ public abstract class TableBorders {
         setTableBoundingBorders(tableBoundingBorders);
     }
 
+    public TableBorders(List<CellRenderer[]> rows, int numberOfColumns, int largeTableIndexOffset) {
+        this(rows, numberOfColumns);
+        this.largeTableIndexOffset = largeTableIndexOffset;
+    }
+
+    public TableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders, int largeTableIndexOffset) {
+        this(rows, numberOfColumns, tableBoundingBorders);
+        this.largeTableIndexOffset = largeTableIndexOffset;
+    }
     // region abstract
 
     // region draw
@@ -51,6 +60,7 @@ public abstract class TableBorders {
     abstract protected TableBorders applyTopBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
     abstract protected TableBorders applyBottomBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean reverse);
     abstract protected TableBorders applyBottomBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
+    abstract protected TableBorders applyLeftAndRightBorder(Rectangle layoutBox, boolean reverse);
 
     abstract protected TableBorders skipFooter(Border[] borders);
     abstract protected TableBorders considerFooter(TableBorders footerBordersHandler, boolean hasContent);
@@ -75,13 +85,13 @@ public abstract class TableBorders {
         // initialize vertical borders
         while (numberOfColumns + 1 > verticalBorders.size()) {
             tempBorders = new ArrayList<Border>();
-            while (Math.max(rows.size(), 1) > tempBorders.size()) {
+            while ((int) Math.max(rows.size(), 1) > tempBorders.size()) {
                 tempBorders.add(null);
             }
             verticalBorders.add(tempBorders);
         }
         // initialize horizontal borders
-        while (Math.max(rows.size(), 1) + 1 > horizontalBorders.size()) {
+        while ((int) Math.max(rows.size(), 1) + 1 > horizontalBorders.size()) {
             tempBorders = new ArrayList<Border>();
             while (numberOfColumns > tempBorders.size()) {
                 tempBorders.add(null);
@@ -103,17 +113,20 @@ public abstract class TableBorders {
         return this;
     }
 
-    protected TableBorders setRowRange(Table.RowRange rowRange) {
-        this.rowRange = rowRange;
+    protected TableBorders setRowRange(int startRow, int finishRow) {
+        this.startRow = startRow;
+        this.finishRow = finishRow;
         return this;
     }
 
     protected TableBorders setStartRow(int row) {
-        return setRowRange(new Table.RowRange(row, rowRange.getFinishRow()));
+        this.startRow = row;
+        return this;
     }
 
     protected TableBorders setFinishRow(int row) {
-        return setRowRange(new Table.RowRange(rowRange.getStartRow(), row));
+        this.finishRow = row;
+        return this;
     }
     // endregion
 
@@ -128,7 +141,7 @@ public abstract class TableBorders {
 
     public float getMaxTopWidth() {
         float width = 0;
-        Border widestBorder = getWidestHorizontalBorder(rowRange.getStartRow());
+        Border widestBorder = getWidestHorizontalBorder(startRow);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
             width = widestBorder.getWidth();
         }
@@ -137,7 +150,7 @@ public abstract class TableBorders {
 
     public float getMaxBottomWidth() {
         float width = 0;
-        Border widestBorder = getWidestHorizontalBorder(rowRange.getFinishRow() + 1);
+        Border widestBorder = getWidestHorizontalBorder(finishRow + 1);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
             width = widestBorder.getWidth();
         }
@@ -163,19 +176,11 @@ public abstract class TableBorders {
     }
 
     public Border getWidestVerticalBorder(int col) {
-        Border theWidestBorder = null;
-        if (col >= 0 && col < verticalBorders.size()) {
-            theWidestBorder = getWidestBorder(getVerticalBorder(col));
-        }
-        return theWidestBorder;
+        return getWidestBorder(getVerticalBorder(col));
     }
 
     public Border getWidestVerticalBorder(int col, int start, int end) {
-        Border theWidestBorder = null;
-        if (col >= 0 && col < verticalBorders.size()) {
-            theWidestBorder = getWidestBorder(getVerticalBorder(col), start, end);
-        }
-        return theWidestBorder;
+        return getWidestBorder(getVerticalBorder(col), start, end);
     }
 
     public Border getWidestHorizontalBorder(int row) {
@@ -187,11 +192,11 @@ public abstract class TableBorders {
     }
 
     public List<Border> getFirstHorizontalBorder() {
-        return getHorizontalBorder(rowRange.getStartRow());
+        return getHorizontalBorder(startRow);
     }
 
     public List<Border> getLastHorizontalBorder() {
-        return getHorizontalBorder(rowRange.getFinishRow() + 1);
+        return getHorizontalBorder(finishRow + 1);
     }
 
     public List<Border> getFirstVerticalBorder() {
@@ -207,11 +212,11 @@ public abstract class TableBorders {
     }
 
     public int getStartRow() {
-        return rowRange.getStartRow();
+        return startRow;
     }
 
     public int getFinishRow() {
-        return rowRange.getFinishRow();
+        return finishRow;
     }
 
     public Border[] getTableBoundingBorders() {
@@ -231,7 +236,7 @@ public abstract class TableBorders {
         List<Border> borderList;
         Border border;
         // process top border
-        borderList = getHorizontalBorder(rowRange.getStartRow() + row - rowspan + 1);
+        borderList = getHorizontalBorder(startRow + row - rowspan + 1);
         for (int i = col; i < col + colspan; i++) {
             border = borderList.get(i);
             if (null != border && border.getWidth() > indents[0]) {
@@ -240,14 +245,14 @@ public abstract class TableBorders {
         }
         // process right border
         borderList = getVerticalBorder(col + colspan);
-        for (int i = rowRange.getStartRow() + row - rowspan + 1; i < rowRange.getStartRow() + row + 1; i++) {
+        for (int i = startRow + row - rowspan + 1; i < startRow + row + 1; i++) {
             border = borderList.get(i);
             if (null != border && border.getWidth() > indents[1]) {
                 indents[1] = border.getWidth();
             }
         }
         // process bottom border
-        borderList = getHorizontalBorder(rowRange.getStartRow() + row + 1);
+        borderList = getHorizontalBorder(startRow + row + 1);
         for (int i = col; i < col + colspan; i++) {
             border = borderList.get(i);
             if (null != border && border.getWidth() > indents[2]) {
@@ -256,7 +261,7 @@ public abstract class TableBorders {
         }
         // process left border
         borderList = getVerticalBorder(col);
-        for (int i = rowRange.getStartRow() + row - rowspan + 1; i < rowRange.getStartRow() + row + 1; i++) {
+        for (int i = startRow + row - rowspan + 1; i < startRow + row + 1; i++) {
             border = borderList.get(i);
             if (null != border && border.getWidth() > indents[3]) {
                 indents[3] = border.getWidth();
@@ -325,15 +330,6 @@ public abstract class TableBorders {
             }
         }
         return borderList;
-    }
-
-    protected static TableBorders processRendererBorders(TableRenderer renderer) {
-        renderer.bordersHandler = new CollapsedTableBorders(renderer.rows, ((Table)renderer.getModelElement()).getNumberOfColumns());
-        renderer.bordersHandler.setTableBoundingBorders(renderer.getBorders());
-        renderer.bordersHandler.initializeBorders();
-        renderer.bordersHandler.setRowRange(renderer.rowRange);
-        ((CollapsedTableBorders)renderer.bordersHandler).collapseAllBordersAndEmptyRows();
-        return renderer.bordersHandler;
     }
     // endregion
 
