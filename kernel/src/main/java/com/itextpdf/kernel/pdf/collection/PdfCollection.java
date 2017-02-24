@@ -74,7 +74,6 @@ public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the Collection schema dictionary.
      * @param schema	an overview of the collection fields
-     * @return
      */
     public PdfCollection setSchema(PdfCollectionSchema schema) {
         getPdfObject().put(PdfName.Schema, schema.getPdfObject());
@@ -89,7 +88,6 @@ public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
      * Identifies the document that will be initially presented
      * in the user interface.
      * @param documentName a string that identifies an entry in the EmbeddedFiles name tree
-     * @return
      */
     public PdfCollection setInitialDocument(String documentName) {
         getPdfObject().put(PdfName.D, new PdfString(documentName));
@@ -103,7 +101,6 @@ public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the initial view.
      * @param viewType
-     * @return
      */
     public PdfCollection setView(int viewType) {
         switch (viewType) {
@@ -127,7 +124,6 @@ public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the Collection sort dictionary.
      * @param sort
-     * @return
      */
     public PdfCollection setSort(PdfCollectionSort sort){
         getPdfObject().put(PdfName.Sort, sort.getPdfObject());

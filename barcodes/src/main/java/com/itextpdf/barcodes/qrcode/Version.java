@@ -272,9 +272,6 @@ final class Version {
             return ecCodewordsPerBlock * getNumBlocks();
         }
 
-        /**
-         * @return
-         */
         public ECB[] getECBlocks() {
             return ecBlocks;
         }

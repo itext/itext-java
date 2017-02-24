@@ -2280,7 +2280,7 @@ public class PdfCanvas implements Serializable {
      * @param y
      * @param height
      * @param dummy
-     * @return
+     * @return current canvas
      */
     private PdfCanvas addForm(PdfFormXObject form, float x, float y, float height, boolean dummy) {
         PdfArray bbox = form.getPdfObject().getAsArray(PdfName.BBox);
@@ -2327,7 +2327,7 @@ public class PdfCanvas implements Serializable {
      * @param image
      * @param x
      * @param y
-     * @return
+     * @return current canvas
      */
     private PdfCanvas addImage(PdfImageXObject image, float x, float y) {
         return addImage(image, image.getWidth(), 0, 0, image.getHeight(), x, y);
@@ -2338,7 +2338,7 @@ public class PdfCanvas implements Serializable {
      *
      * @param image
      * @param rect
-     * @return
+     * @return current canvas
      */
     private PdfCanvas addImage(PdfImageXObject image, Rectangle rect) {
         return addImage(image, rect.getWidth(), 0, 0, rect.getHeight(), rect.getX(), rect.getY());
@@ -2351,7 +2351,7 @@ public class PdfCanvas implements Serializable {
      * @param x
      * @param y
      * @param width
-     * @return
+     * @return current canvas
      */
     private PdfCanvas addImage(PdfImageXObject image, float x, float y, float width) {
         return addImage(image, width, 0, 0, width / image.getWidth() * image.getHeight(), x, y);

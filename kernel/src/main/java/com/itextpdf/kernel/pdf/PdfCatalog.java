@@ -177,7 +177,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * This method sets a page layout of the document
      *
      * @param pageLayout
-     * @return
      */
     public PdfCatalog setPageLayout(PdfName pageLayout) {
         if (pageLayout.equals(PdfName.SinglePage) || pageLayout.equals(PdfName.OneColumn) ||
@@ -197,7 +196,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * screen
      *
      * @param preferences
-     * @return
      */
     public PdfCatalog setViewerPreferences(PdfViewerPreferences preferences) {
         return put(PdfName.ViewerPreferences, preferences.getPdfObject());
@@ -278,7 +276,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * stored in the PDF document.
      *
      * @param collection
-     * @return
      */
     public PdfCatalog setCollection(PdfCollection collection) {
         getPdfObject().put(PdfName.Collection, collection.getPdfObject());
@@ -315,7 +312,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     /**
      * this method return map containing all pages of the document with associated outlines.
      *
-     * @return
+     * @return map containing all pages of the document with associated outlines
      */
     Map<PdfObject, List<PdfOutline>> getPagesWithOutlines() {
         return pagesWithOutlines;
