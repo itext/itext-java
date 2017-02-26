@@ -1520,35 +1520,6 @@ public class TableRenderer extends AbstractRenderer {
 
     }
 
-    protected TableRenderer saveCellsProperties() {
-        CellRenderer[] currentRow;
-        int colN = ((Table) getModelElement()).getNumberOfColumns();
-        for (int row = 0; row < rows.size(); row++) {
-            currentRow = rows.get(row);
-            for (int col = 0; col < colN; col++) {
-                if (null != currentRow[col]) {
-                    currentRow[col].saveProperties();
-                }
-            }
-        }
-        return this;
-    }
-
-    protected TableRenderer restoreCellsProperties() {
-        CellRenderer[] currentRow;
-        int colN = ((Table) getModelElement()).getNumberOfColumns();
-        for (int row = 0; row < rows.size(); row++) {
-            currentRow = rows.get(row);
-            for (int col = 0; col < colN; col++) {
-                if (null != currentRow[col]) {
-                    currentRow[col].restoreProperties();
-                }
-            }
-        }
-        return this;
-    }
-
-
     /**
      * This are a structs used for convenience in layout.
      */

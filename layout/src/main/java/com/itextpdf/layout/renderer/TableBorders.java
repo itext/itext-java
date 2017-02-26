@@ -40,19 +40,27 @@ abstract class TableBorders {
 
     // region draw
     protected abstract TableBorders drawHorizontalBorder(int i, float startX, float y1, PdfCanvas canvas, float[] countedColumnWidth);
+
     protected abstract TableBorders drawVerticalBorder(int i, float startY, float x1, PdfCanvas canvas, List<Float> heights);
     // endregion
 
     // region area occupation
     protected abstract TableBorders applyTopTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse);
+
     protected abstract TableBorders applyTopTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
+
     protected abstract TableBorders applyBottomTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse);
+
     protected abstract TableBorders applyBottomTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
+
     protected abstract TableBorders applyLeftAndRightTableBorder(Rectangle layoutBox, boolean reverse);
 
     protected abstract TableBorders skipFooter(Border[] borders);
+
     protected abstract TableBorders collapseTableWithFooter(TableBorders footerBordersHandler, boolean hasContent);
+
     protected abstract TableBorders collapseTableWithHeader(TableBorders headerBordersHandler, boolean changeThis);
+
     protected abstract TableBorders fixHeaderOccupiedArea(Rectangle occupiedBox, Rectangle layoutBox);
 
     protected abstract TableBorders applyCellIndents(Rectangle box, float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse);
@@ -60,7 +68,9 @@ abstract class TableBorders {
 
     // region getters
     abstract public List<Border> getVerticalBorder(int index);
+
     abstract public List<Border> getHorizontalBorder(int index);
+
     protected abstract float getCellVerticalAddition(float[] indents);
     // endregion
 
