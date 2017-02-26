@@ -4,14 +4,11 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.border.Border;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.property.Property;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TableBorders {
+abstract class TableBorders {
     protected List<List<Border>> horizontalBorders = new ArrayList<>();
     protected List<List<Border>> verticalBorders = new ArrayList<>();
 
@@ -29,19 +26,10 @@ public abstract class TableBorders {
 
     protected int largeTableIndexOffset = 0;
 
-    public TableBorders(List<CellRenderer[]> rows, int numberOfColumns) {
+    public TableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders) {
         this.rows = rows;
         this.numberOfColumns = numberOfColumns;
-    }
-
-    public TableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders) {
-        this(rows, numberOfColumns);
         setTableBoundingBorders(tableBoundingBorders);
-    }
-
-    public TableBorders(List<CellRenderer[]> rows, int numberOfColumns, int largeTableIndexOffset) {
-        this(rows, numberOfColumns);
-        this.largeTableIndexOffset = largeTableIndexOffset;
     }
 
     public TableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders, int largeTableIndexOffset) {
@@ -51,32 +39,32 @@ public abstract class TableBorders {
     // region abstract
 
     // region draw
-    abstract protected TableBorders drawHorizontalBorder(int i, float startX, float y1, PdfCanvas canvas, float[] countedColumnWidth);
-    abstract protected TableBorders drawVerticalBorder(int i, float startY, float x1, PdfCanvas canvas, List<Float> heights);
+    protected abstract TableBorders drawHorizontalBorder(int i, float startX, float y1, PdfCanvas canvas, float[] countedColumnWidth);
+    protected abstract TableBorders drawVerticalBorder(int i, float startY, float x1, PdfCanvas canvas, List<Float> heights);
     // endregion
 
     // region area occupation
-    abstract protected TableBorders applyTopBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse);
-    abstract protected TableBorders applyTopBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
-    abstract protected TableBorders applyBottomBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse);
-    abstract protected TableBorders applyBottomBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
-    abstract protected TableBorders applyLeftAndRightBorder(Rectangle layoutBox, boolean reverse);
+    protected abstract TableBorders applyTopTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse);
+    protected abstract TableBorders applyTopTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
+    protected abstract TableBorders applyBottomTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse);
+    protected abstract TableBorders applyBottomTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
+    protected abstract TableBorders applyLeftAndRightTableBorder(Rectangle layoutBox, boolean reverse);
 
-    abstract protected TableBorders skipFooter(Border[] borders);
-    abstract protected TableBorders considerFooter(TableBorders footerBordersHandler, boolean hasContent);
-    abstract protected TableBorders considerHeader(TableBorders headerBordersHandler, boolean changeThis);
-    abstract protected TableBorders considerHeaderOccupiedArea(Rectangle occupiedBox, Rectangle layoutBox);
+    protected abstract TableBorders skipFooter(Border[] borders);
+    protected abstract TableBorders collapseTableWithFooter(TableBorders footerBordersHandler, boolean hasContent);
+    protected abstract TableBorders collapseTableWithHeader(TableBorders headerBordersHandler, boolean changeThis);
+    protected abstract TableBorders fixHeaderOccupiedArea(Rectangle occupiedBox, Rectangle layoutBox);
 
-    abstract protected TableBorders applyCellIndents(Rectangle box, float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse);
+    protected abstract TableBorders applyCellIndents(Rectangle box, float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse);
     // endregion
 
     // region getters
     abstract public List<Border> getVerticalBorder(int index);
     abstract public List<Border> getHorizontalBorder(int index);
-    abstract protected float getCellVerticalAddition(float[] indents);
+    protected abstract float getCellVerticalAddition(float[] indents);
     // endregion
 
-    abstract protected TableBorders updateOnNewPage(boolean isOriginalNonSplitRenderer, boolean isFooterOrHeader, TableRenderer currentRenderer, TableRenderer headerRenderer, TableRenderer footerRenderer);
+    protected abstract TableBorders updateBordersOnNewPage(boolean isOriginalNonSplitRenderer, boolean isFooterOrHeader, TableRenderer currentRenderer, TableRenderer headerRenderer, TableRenderer footerRenderer);
     // endregion
 
     // region init
@@ -176,19 +164,19 @@ public abstract class TableBorders {
     }
 
     public Border getWidestVerticalBorder(int col) {
-        return getWidestBorder(getVerticalBorder(col));
+        return BorderUtil.getWidestBorder(getVerticalBorder(col));
     }
 
     public Border getWidestVerticalBorder(int col, int start, int end) {
-        return getWidestBorder(getVerticalBorder(col), start, end);
+        return BorderUtil.getWidestBorder(getVerticalBorder(col), start, end);
     }
 
     public Border getWidestHorizontalBorder(int row) {
-        return getWidestBorder(getHorizontalBorder(row));
+        return BorderUtil.getWidestBorder(getHorizontalBorder(row));
     }
 
     public Border getWidestHorizontalBorder(int row, int start, int end) {
-        return getWidestBorder(getHorizontalBorder(row), start, end);
+        return BorderUtil.getWidestBorder(getHorizontalBorder(row), start, end);
     }
 
     public List<Border> getFirstHorizontalBorder() {
@@ -221,14 +209,6 @@ public abstract class TableBorders {
 
     public Border[] getTableBoundingBorders() {
         return tableBoundingBorders;
-    }
-
-    public int getVerticalBordersSize() {
-        return verticalBorders.size();
-    }
-
-    public int getHorizontalBordersSize() {
-        return verticalBorders.size();
     }
 
     public float[] getCellBorderIndents(int row, int col, int rowspan, int colspan) {
@@ -270,67 +250,4 @@ public abstract class TableBorders {
         return indents;
     }
     // endregion
-
-    //region static
-    public static Border getCellSideBorder(Cell cellModel, int borderType) {
-        Border cellModelSideBorder = cellModel.getProperty(borderType);
-        if (null == cellModelSideBorder && !cellModel.hasProperty(borderType)) {
-            cellModelSideBorder = cellModel.getProperty(Property.BORDER);
-            if (null == cellModelSideBorder && !cellModel.hasProperty(Property.BORDER)) {
-                cellModelSideBorder = cellModel.getDefaultProperty(Property.BORDER); // TODO Maybe we need to foresee the possibility of default side border property
-            }
-        }
-        return cellModelSideBorder;
-    }
-
-    public static Border getWidestBorder(List<Border> borderList) {
-        Border theWidestBorder = null;
-        if (0 != borderList.size()) {
-            for (Border border : borderList) {
-                if (null != border && (null == theWidestBorder || border.getWidth() > theWidestBorder.getWidth())) {
-                    theWidestBorder = border;
-                }
-            }
-        }
-        return theWidestBorder;
-    }
-
-    public static Border getWidestBorder(List<Border> borderList, int start, int end) {
-        Border theWidestBorder = null;
-        if (0 != borderList.size()) {
-            for (Border border : borderList.subList(start, end)) {
-                if (null != border && (null == theWidestBorder || border.getWidth() > theWidestBorder.getWidth())) {
-                    theWidestBorder = border;
-                }
-            }
-        }
-        return theWidestBorder;
-    }
-
-    public static List<Border> getBorderList(Border border, int size) {
-        List<Border> borderList = new ArrayList<Border>();
-        for (int i = 0; i < size; i++) {
-            borderList.add(border);
-        }
-        return borderList;
-    }
-
-    public static List<Border> getBorderList(List<Border> originalList, Border borderToCollapse, int size) {
-        List<Border> borderList = new ArrayList<Border>();
-        if (null != originalList) {
-            borderList.addAll(originalList);
-        }
-        while (borderList.size() < size) {
-            borderList.add(borderToCollapse);
-        }
-        int end = null == originalList ? size : Math.min(originalList.size(), size);
-        for (int i = 0; i < end; i++) {
-            if (null == borderList.get(i) || (null != borderToCollapse && borderList.get(i).getWidth() <= borderToCollapse.getWidth())) {
-                borderList.set(i, borderToCollapse);
-            }
-        }
-        return borderList;
-    }
-    // endregion
-
 }
