@@ -394,7 +394,8 @@ public class TableRenderer extends AbstractRenderer {
                 // Apply cell borders
                 float[] cellIndents = bordersHandler.getCellBorderIndents(currentCellInfo.finishRowInd, col, rowspan, colspan);
                 bordersHandler.applyCellIndents(cellArea.getBBox(), cellIndents[0], cellIndents[1], cellIndents[2] + widestRowBottomBorderWidth, cellIndents[3], false);
-
+                // update cell width
+                cellWidth = cellArea.getBBox().getWidth();
                 LayoutResult cellResult = cell.setParent(this).layout(new LayoutContext(cellArea));
 
                 cell.setProperty(Property.VERTICAL_ALIGNMENT, verticalAlignment);

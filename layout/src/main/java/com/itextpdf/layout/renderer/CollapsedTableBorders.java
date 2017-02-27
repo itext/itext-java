@@ -212,7 +212,7 @@ class CollapsedTableBorders extends TableBorders {
             }
             return lastBorderOnCurrentPage;
         } else {
-            return horizontalBorders.get(index - Math.max(largeTableIndexOffset, 0));
+            return horizontalBorders.get(index - largeTableIndexOffset);
         }
     }
     // endregion
